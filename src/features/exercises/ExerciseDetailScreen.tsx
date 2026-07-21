@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { deleteExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
@@ -8,7 +8,7 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';
 import { bestSets, isWorkingSet } from '@/lib/records';
-import { Card, ConfirmAction, ListRow, NumberInput, SectionTitle, Textarea } from '@/ui';
+import { Button, Card, ConfirmAction, ListRow, NumberInput, SectionTitle, Textarea } from '@/ui';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
 const longDate = (epochMs: number): string =>
@@ -52,7 +52,6 @@ function Reading({ label, value }: { label: string; value: string }) {
 export function ExerciseDetailScreen() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
 
   // `null` is "gone", `undefined` is "not answered yet" — without the
   // distinction a freshly opened screen flashes "cet exercice n'existe plus".
@@ -74,11 +73,18 @@ export function ExerciseDetailScreen() {
     });
   }
 
+  /**
+   * Back to wherever you came from, so a search or a filter survives the trip.
+   *
+   * The test is React Router's own history index, not `location.key`: creating
+   * an exercise lands here through a `replace`, which mints a fresh key while
+   * leaving the index at 0 — so the key says "you can go back" and `navigate(-1)`
+   * silently does nothing. Measured, on the very flow the user reported.
+   */
   const goBack = () => {
-    // `default` is React Router's marker for "this is the first entry": there is
-    // nothing to pop, so send them to the library instead of out of the app.
-    if (location.key === 'default') void navigate('/exercises');
-    else void navigate(-1);
+    const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (index > 0) void navigate(-1);
+    else void navigate('/exercises');
   };
 
   const back = (
@@ -252,6 +258,25 @@ export function ExerciseDetailScreen() {
             {t('exercise.catalogueNote')}
           </p>
         )}
+
+      </div>
+
+      {/* The way out, pinned in the thumb zone.
+          Sticky and not merely last in the flow: measured at the bottom of a
+          freshly created exercise it sat 86px below the fold, and on an exercise
+          with months of history it would be a thousand px down. The "Exercices"
+          link at the top is a breadcrumb, not an action — the top-right corner
+          is the one place a single hand cannot reach, and the header scrolls
+          away regardless.
+          It says "Terminé" and not "Enregistrer" because there is nothing left
+          to save: every keystroke above is already in the database. */}
+      <div
+        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
+          bg-[var(--surface-0)] px-4 pt-3 pb-3"
+      >
+        <Button variant="primary" size="lg" fullWidth onClick={goBack}>
+          {t('exercise.done')}
+        </Button>
       </div>
     </Screen>
   );

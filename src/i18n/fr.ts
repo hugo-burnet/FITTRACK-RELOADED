@@ -171,6 +171,8 @@ const fr = {
 
     catalogueNote:
       'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes et ton repos, si.',
+    /** Not "Enregistrer": there is nothing left to save, only somewhere to go. */
+    done: 'Terminé',
     edit: 'Modifier',
     delete: 'Supprimer l’exercice',
     deleteHint:

@@ -126,6 +126,33 @@ peut réutiliser, un placeholder est une **consigne qu'il faut lire**. Seule la 
 
 **La règle du Lot 1 est donc amendée**, et `index.css` le dit maintenant explicitement.
 
+### Le défaut trouvé par l'utilisateur — la fiche n'avait pas de sortie
+
+Remonté au premier essai en ligne : « il n'y a pas de bouton pour valider l'exo, c'est pas très
+ergonomique, car ça ne ferme pas la page de configuration ».
+
+**C'est une contrainte du Lot 1 que j'avais laissée passer** : « les actions primaires en bas
+d'écran, jamais en haut ». La fiche n'avait qu'une sortie, le lien « Exercices » en haut à droite —
+le seul endroit d'un téléphone qu'une main seule n'atteint pas, et qui défile hors de l'écran dès
+qu'on descend.
+
+Deux choses ont été trouvées **en mesurant**, pas en regardant, et la première correction ne
+suffisait pas :
+
+1. Un bouton simplement placé en fin de flux tombait à **86 px sous la ligne de flottaison** sur un
+   exercice fraîchement créé, et serait à un millier de pixels sur un exercice avec des mois
+   d'historique. Il est donc **collant**, épinglé au-dessus de la barre de navigation. Vérifié :
+   visible sans défiler (`top: 699` dans une fenêtre de 812) **et** une fois défilé tout en bas,
+   avec 49 px de dégagement au-dessus — rien n'est masqué dessous.
+2. **`navigate(-1)` ne faisait rien** après une création. La garde reposait sur
+   `location.key === 'default'` ; or arriver ici par un `replace` forge une clé neuve tout en
+   laissant l'index d'historique à 0. La clé disait donc « tu peux revenir » alors qu'il n'y avait
+   rien à dépiler. La garde lit maintenant `window.history.state.idx`.
+
+Le bouton dit **« Terminé »** et non « Enregistrer » : il n'y a rien à enregistrer, chaque frappe
+est déjà en base. Il ramène là d'où on vient, donc **la recherche survit au trajet** — vérifié sur
+les deux chemins (`?q=curl` et `?q=tirage+bulgare+xy`).
+
 ### Checkpoint Lot 3 — ⬜ à valider **sur le téléphone, au doigt**
 
 - [ ] Tu cherches « squat » : tu trouves. Tu tapes « developpe » **sans accent** : tu trouves quand
@@ -136,6 +163,8 @@ peut réutiliser, un placeholder est une **consigne qu'il faut lire**. Seule la 
       elle est là.
 - [ ] Tu fais défiler les 168 exercices d'un coup de pouce : c'est fluide, sans à-coups.
 - [ ] Tu ouvres un exercice depuis une recherche puis tu reviens : **ta recherche est toujours là**.
+- [ ] Sur une fiche d'exercice, le bouton **Terminé** est toujours sous ton pouce, sans défiler, et
+      il referme bien l'écran.
 
 ---
 
