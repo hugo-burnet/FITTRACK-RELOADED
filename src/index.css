@@ -26,7 +26,10 @@
   --border: #2a2a2e;
   --text-1: #f4f4f5; /* primary text */
   --text-2: #a1a1aa; /* secondary text AND every engraved micro-label */
-  --text-3: #71717a; /* deliberately faint: previous values, placeholders */
+  /* Deliberately faint, for values that are echoes of data — Lot 5's previous
+     set. NOT for placeholders: measured at 2,02:1 on the light theme, and a
+     placeholder is instructions you read, not a ghost you may reuse. */
+  --text-3: #71717a;
 
   /* Accent as INK: anything that must be legible AGAINST a surface — text, icons,
      the active-tab mark, the focus ring. --color-accent is only ever a FILL, i.e.

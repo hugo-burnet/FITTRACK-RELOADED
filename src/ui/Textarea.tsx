@@ -25,7 +25,7 @@ export function Textarea({ label, hint, labelHidden = false, className = '', ...
         rows={4}
         aria-describedby={hint ? hintId : undefined}
         className={`w-full resize-y rounded-lg bg-[var(--surface-2)] px-4 py-3 text-base
-          leading-relaxed text-[var(--text-1)] outline-none placeholder:text-[var(--text-3)]
+          leading-relaxed text-[var(--text-1)] outline-none placeholder:text-[var(--text-2)]
           focus:ring-2 focus:ring-[var(--accent-ink)] disabled:opacity-40 ${className}`}
         {...rest}
       />

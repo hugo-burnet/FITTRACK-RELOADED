@@ -80,7 +80,7 @@ export function NumberInput({
           onFocus={(e) => e.target.select()} // remplacer la valeur d'un geste, pas la corriger
           className={`metric min-h-12 w-full rounded-lg bg-[var(--surface-2)] text-center text-xl
             font-semibold text-[var(--text-1)] outline-none placeholder:font-normal
-            placeholder:text-[var(--text-3)] focus:ring-2 focus:ring-[var(--accent-ink)]
+            placeholder:text-[var(--text-2)] focus:ring-2 focus:ring-[var(--accent-ink)]
             ${suffix ? 'pr-9 pl-9' : ''}`}
           {...aria}
         />

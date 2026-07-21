@@ -20,11 +20,14 @@ export function Input({ label, hint, labelHidden = false, className = '', ...res
       >
         {label}
       </label>
+      {/* --text-2 on the placeholder, not --text-3: measured at 2,02:1 on the
+          light theme, and a placeholder is read, not glanced at. --text-3 stays
+          for values that really are echoes — Lot 5's previous set. */}
       <input
         id={id}
         aria-describedby={hint ? hintId : undefined}
         className={`min-h-12 w-full rounded-lg bg-[var(--surface-2)] px-4 text-base
-          text-[var(--text-1)] outline-none placeholder:text-[var(--text-3)]
+          text-[var(--text-1)] outline-none placeholder:text-[var(--text-2)]
           focus:ring-2 focus:ring-[var(--accent-ink)] disabled:opacity-40 ${className}`}
         {...rest}
       />
