@@ -105,6 +105,16 @@ export function ChevronDownIcon(props: IconProps) {
   );
 }
 
+/** "Add one to this collection." */
+export function PlusIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5v14" />
+      <path d="M5 12h14" />
+    </Icon>
+  );
+}
+
 /** The chosen option. The only tick in the app until Lot 5 ticks a set. */
 export function CheckIcon(props: IconProps) {
   return (

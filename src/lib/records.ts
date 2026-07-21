@@ -61,11 +61,17 @@ function pickBest(
   return best;
 }
 
-/** Warm-ups pollute neither volume nor records (RF-20, enforced from Lot 3 on). */
-const counts = (set: WorkoutSet): boolean => set.setType !== 'warmup';
+/**
+ * Warm-ups pollute neither volume nor records (RF-20, enforced from Lot 3 on).
+ *
+ * Exported because anything that *counts* sets has to agree with anything that
+ * *scores* them: a history row reading "4 séries · 100 kg × 5" where the 4
+ * includes a warm-up and the 100 kg does not is two answers to one question.
+ */
+export const isWorkingSet = (set: WorkoutSet): boolean => set.setType !== 'warmup';
 
 export function bestSets(sets: WorkoutSet[]): BestSets {
-  const scored = sets.filter(counts);
+  const scored = sets.filter(isWorkingSet);
 
   return {
     heaviest: pickBest(scored, (set) => set.weight),

@@ -5,7 +5,7 @@ import { Screen } from '@/app/Screen';
 import { db } from '@/data/db';
 import { seedDatabase } from '@/data/seed/seedDatabase';
 import { t } from '@/i18n/fr';
-import { Button, ListRow, SectionTitle } from '@/ui';
+import { Card, ConfirmAction, ListRow, SectionTitle } from '@/ui';
 
 /**
  * The screen that answers "is it the database or the display?" in five seconds.
@@ -14,69 +14,6 @@ import { Button, ListRow, SectionTitle } from '@/ui';
 
 const megabytes = (bytes: number): string =>
   (bytes / 1_048_576).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
-
-function Card({ children }: { children: React.ReactNode }) {
-  return <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">{children}</div>;
-}
-
-/**
- * Two-step confirmation rather than `window.confirm`: the native dialog is
- * jarring, unstyled, and blocks the WebView. Arming in place also keeps the
- * touch target where the thumb already is.
- */
-function ConfirmAction({
-  label,
-  hint,
-  danger = false,
-  busy,
-  onConfirm,
-}: {
-  label: string;
-  hint: string;
-  danger?: boolean;
-  busy: boolean;
-  onConfirm: () => void;
-}) {
-  const [armed, setArmed] = useState(false);
-
-  return (
-    <div className="border-b border-[var(--border)] p-4 last:border-b-0">
-      {/* The hint comes first: you read what a button does before you arm it. */}
-      <p className="mb-4 text-sm leading-relaxed text-[var(--text-2)]">{hint}</p>
-
-      {armed ? (
-        <div className="flex gap-2">
-          {/* Cancel is the filled one and sits first. Both variants are
-              transparent by charter, so leaving them side by side would make
-              erasing the database look exactly like backing out of it. */}
-          <Button variant="secondary" onClick={() => setArmed(false)} fullWidth>
-            {t('debug.cancel')}
-          </Button>
-          <Button
-            variant={danger ? 'danger' : 'primary'}
-            onClick={() => {
-              setArmed(false);
-              onConfirm();
-            }}
-            disabled={busy}
-            fullWidth
-          >
-            {t('debug.confirm')}
-          </Button>
-        </div>
-      ) : (
-        <Button
-          variant={danger ? 'danger' : 'secondary'}
-          onClick={() => setArmed(true)}
-          disabled={busy}
-          fullWidth
-        >
-          {label}
-        </Button>
-      )}
-    </div>
-  );
-}
 
 export function DebugScreen() {
   const [busy, setBusy] = useState(false);
@@ -215,12 +152,14 @@ export function DebugScreen() {
             <ConfirmAction
               label={t('debug.reseed')}
               hint={t('debug.reseedHint')}
+              confirmLabel={t('debug.confirm')}
               busy={busy}
               onConfirm={() => void run(seedDatabase, t('debug.reseedDone'))()}
             />
             <ConfirmAction
               label={t('debug.reset')}
               hint={t('debug.resetHint')}
+              confirmLabel={t('debug.confirm')}
               danger
               busy={busy}
               onConfirm={() => void run(reset, t('debug.resetDone'))()}

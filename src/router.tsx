@@ -1,5 +1,7 @@
 import { createHashRouter } from 'react-router-dom';
 import { AppShell } from './app/AppShell';
+import { ExerciseDetailScreen } from './features/exercises/ExerciseDetailScreen';
+import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
@@ -18,6 +20,11 @@ export const router = createHashRouter([
       { path: 'routines', element: <RoutinesScreen /> },
       { path: 'history', element: <HistoryScreen /> },
       { path: 'exercises', element: <ExercisesScreen /> },
+      // Static before dynamic. React Router ranks them that way on its own, but
+      // reading `new` as an exercise id would be a very confusing bug.
+      { path: 'exercises/new', element: <ExerciseFormScreen /> },
+      { path: 'exercises/:id', element: <ExerciseDetailScreen /> },
+      { path: 'exercises/:id/edit', element: <ExerciseFormScreen /> },
       { path: 'settings', element: <SettingsScreen /> },
       { path: 'settings/debug', element: <DebugScreen /> },
     ],

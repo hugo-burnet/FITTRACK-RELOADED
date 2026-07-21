@@ -11,6 +11,11 @@ const fr = {
     name: 'FitTrack',
   },
 
+  common: {
+    yes: 'Oui',
+    no: 'Non',
+  },
+
   nav: {
     label: 'Navigation principale',
     home: 'Accueil',
@@ -124,8 +129,16 @@ const fr = {
     create: 'Nouvel exercice',
     createNamed: 'Créer « {name} »',
     clearFilters: 'Retirer les filtres',
-    noMatchSearch: 'Rien ne correspond à « {search} ».',
-    noMatchFilters: 'Aucun exercice ne passe ces filtres.',
+
+    /**
+     * No big `0` here, unlike the other empty screens: this one already carries
+     * its own readout, and a second zero would just say it twice.
+     */
+    noMatchTitle: 'Rien ne correspond',
+    noMatchSearch: '« {search} » n’est ni au catalogue ni dans tes exercices.',
+    noMatchFiltersTitle: 'Aucun exercice ne passe ces filtres',
+    noMatchFilters: 'Élargis un des deux filtres.',
+    emptyTitle: 'Catalogue vide',
 
     custom: 'perso',
     unilateral: 'unilatéral',
@@ -140,12 +153,13 @@ const fr = {
     recordMostReps: 'Reps max',
     recordBestVolume: 'Meilleure série',
     recordWeightReps: '{weight} kg × {reps}',
+    recordWeight: '{weight} kg',
     recordReps: '{reps} reps',
-    recordVolume: '{volume} kg soulevés',
 
     historySection: 'Historique',
     historyEmpty: 'Aucune séance avec cet exercice. La première l’ouvrira.',
-    historySets: '{count} × {summary}',
+    historySetCount: '{count} séries',
+    historySetCountOne: '1 série',
 
     /** Notes and rest belong to you; the catalogue row belongs to the app. */
     yoursSection: 'Tes réglages',
