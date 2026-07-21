@@ -2,13 +2,17 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-21 (Lot 2 terminé, en attente du checkpoint utilisateur)
+**Dernière mise à jour :** 2026-07-21 (Lot 2 terminé, checkpoint validé sur PC)
 
 ## Lot en cours
 
-Aucun. **Lot 2 terminé, checkpoint utilisateur à valider** (voir plus bas).
-Prochaine étape : **Lot 3 — Bibliothèque d'exercices**. À partir de là, l'agent génère le plan
-détaillé du lot en début de session à partir du cadrage de `00-ROADMAP.md`.
+Aucun. **Lot 2 terminé et validé.** Prochaine étape : **Lot 3 — Bibliothèque d'exercices**.
+À partir de là, l'agent génère le plan détaillé du lot en début de session à partir du cadrage de
+`00-ROADMAP.md`.
+
+**Le checkpoint a été fait sur PC, pas sur téléphone.** Acceptable pour le Lot 2 qui ne livre aucune
+interaction tactile — mais le Lot 3 (recherche, filtres, liste longue) doit impérativement être
+vérifié au doigt sur le téléphone.
 
 **Fin de la Phase 0.** L'app a une charte, une navigation et une base. Le Lot 3 commence à livrer
 des fonctionnalités visibles.
@@ -90,14 +94,28 @@ visés, et l'utilisateur peut créer les siens sans limite (RF-08).
   toutes deux transparentes par charte : côte à côte, effacer la base ressemblait exactement à
   renoncer à l'effacer.
 
-### ✅ Checkpoint Lot 2 — à valider sur ton téléphone
+### Checkpoint Lot 2 — ✅ validé le 2026-07-21
 
-- [ ] `npm run test:run` : 65 tests passent (le plan en annonçait ~20).
-- [ ] Sur `#/settings/debug` : le nombre d'exercices est cohérent (**168**), la liste s'affiche.
-- [ ] Tu **fermes complètement** l'onglet/l'app, tu la rouvres : les données sont toujours là.
-- [ ] Tu recharges 3 fois de suite : le nombre d'exercices **ne bouge pas**.
-- [ ] Depuis Réglages → Données → Diagnostic : *Réinitialiser la base* puis *Relancer le seed*
-      te ramène bien à 168.
+**Validé sur PC**, pas sur téléphone : c'est équivalent ici (le Lot 2 ne livre aucune interaction
+tactile), mais le Lot 3 devra bien être vérifié au doigt.
+
+- [x] `npm run test:run` : 65 tests passent (le plan en annonçait ~20).
+- [x] Sur `#/settings/debug` : **168** exercices, la liste s'affiche.
+- [x] Navigateur entièrement fermé puis rouvert : les données sont toujours là.
+- [x] Trois rechargements de suite : le nombre ne bouge pas.
+- [x] *Réinitialiser la base* vide réellement la base, et le catalogue revient au rechargement
+      suivant. Le bouton *Relancer le seed* a été vérifié côté agent : 168 → 168, sans doublon.
+
+**Un point relevé par l'utilisateur pendant le checkpoint** : « si j'efface tout, les exos se
+wipent, mais si je fais Ctrl+F5 ils reviennent ». Comportement **correct** — le seed tourne à chaque
+démarrage — mais le message de l'écran **mentait** en laissant croire que le bouton était le seul
+chemin de retour. Réécrit (commit `17ef1cf`). La bonne ligne de partage à retenir pour toute la
+suite : **le catalogue appartient à l'app et revient toujours ; les séances et les exercices
+personnalisés appartiennent à l'utilisateur et ne reviennent jamais.**
+
+**Deuxième point relevé** : `GET /favicon.ico 404` à chaque chargement, réclamé à la racine du
+domaine. Corrigé par une icône SVG inline de 305 octets (commit `5b6d7ca`) — pas cosmétique, ce
+bruit permanent aurait masqué de vraies erreurs pendant les Lots 3 à 8.
 
 ---
 
@@ -215,7 +233,7 @@ ci-dessus fait foi.
 |-----|-------|------|-----------|-------------------|
 | 0 | Bootstrap & déploiement | ✅ terminé | 1 | ✅ |
 | 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
-| 2 | Couche de données | ✅ terminé | 3 | ⬜ |
+| 2 | Couche de données | ✅ terminé | 3 | ✅ |
 | 3 | Bibliothèque d'exercices | ⬜ à faire | — | ⬜ |
 | 4 | Routines | ⬜ à faire | — | ⬜ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
