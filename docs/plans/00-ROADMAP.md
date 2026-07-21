@@ -282,17 +282,22 @@ complet. Ce lot répare la moitié qui est à notre portée.
 **Budget :** 1 session.
 
 **Livrables :**
-- `ui/BodyMap.tsx` : silhouette de face et de dos en SVG, **dessinée à la main** sur une grille
-  unique, comme les icônes du Lot 1. Une région par groupe musculaire.
+- `ui/BodyMap.tsx` : silhouette de face et de dos en SVG. **La géométrie est reprise d'une source
+  sous licence permissive, pas dessinée à la main** — une anatomie crédible ne s'improvise pas, et
+  un tracé maladroit se voit immédiatement. Candidats vérifiés à l'API GitHub le 2026-07-22 :
+  [`vulovix/body-muscles`](https://github.com/vulovix/body-muscles) (**Apache-2.0**, SVG,
+  70+ régions, **zéro dépendance** — donc compatible avec le §8 qui exclut les composants tiers,
+  puisqu'on reprend la géométrie et non le composant) et
+  [`soroojshehryar/react-muscle-highlighter`](https://github.com/soroojshehryar/react-muscle-highlighter)
+  (**MIT**). Dans les deux cas : ré-indexer les régions sur nos `MuscleGroup`, restyler avec nos
+  jetons, **et porter la mention d'attribution** qu'Apache-2.0 exige.
 - Coloration pilotée par une seule prop `highlight: Partial<Record<MuscleGroup, number>>` (0 à 1).
   La fiche exercice passe `1` pour le muscle principal et `0,4` pour les secondaires ; le Lot 12
   passera un volume normalisé. **Un composant, deux usages** — c'est ce qui rend ce lot rentable.
 - Intégration sur la fiche exercice, sous la ligne d'identité.
 
-**Ce qui n'est PAS dans ce lot — l'illustration du mouvement.** C'est un problème
-d'approvisionnement, pas de développement : 336 images à sourcer et à apparier à la main sur les
-168 slugs français, avec un poids de bundle à **mesurer avant de s'engager** (une PWA qui précache
-15 Mo n'est plus une PWA). À rouvrir séparément, si l'envie revient à l'usage.
+**Ce qui n'est PAS dans ce lot — l'illustration animée du mouvement.** Ce n'est pas un problème de
+développement, c'est un problème de **licence** : cf. la section « hors périmètre » ci-dessous.
 
 **Point de vigilance :** les 18 valeurs de `MUSCLE_GROUPS` ne se dessinent pas toutes — `cardio`,
 `full_body` et `other` n'ont pas de région anatomique. Le type doit rendre ce cas **explicite**
@@ -658,12 +663,36 @@ agrandies.
 
 | Écarté | Raison |
 |---|---|
-| **Illustration animée du mouvement** (moitié de RF-06) | Problème d'approvisionnement, pas de développement : 336 images à sourcer et à apparier à la main sur 168 slugs français, avec un poids de bundle qui menace la règle du hors-ligne. Le **muscle ciblé** est traité au Lot 5bis, à un coût sans commune mesure. À rouvrir si le manque se fait sentir à l'usage. |
+| **Illustration animée du mouvement** (moitié de RF-06) | **Décision du 2026-07-22 : pas d'achat.** Ce n'est pas introuvable, c'est **vendu** — cf. l'encadré ci-dessous. Le **muscle ciblé**, lui, est traité au Lot 5bis à partir d'une source libre. |
 | Toutes les fonctionnalités sociales | Exclues du cahier des charges dès l'origine. |
 | M13 — Montres connectées / Wear OS | Projet Android natif séparé, pairing, sync Bluetooth. Coût sans commune mesure avec le gain pour un usage personnel. |
 | iOS / App Store | 99 $/an, un Mac obligatoire pour compiler. À rouvrir seulement si tu changes de téléphone. |
 | Publication sur le Play Store | 25 $, revue, politique de confidentialité, conformité. Le sideload suffit pour soi. |
 | RF-05, RF-55, RF-61 à RF-65 | Liés au compte multi-utilisateur, au social ou à la montre. |
+
+### L'enquête sur les illustrations d'exercices — 2026-07-22
+
+Menée parce que la question « des schémas comme dans Hevy, c'est prévu ? » n'avait pas de réponse
+écrite. Résultat : **le jeu d'images que tout le monde reconnaît est un produit commercial.**
+
+| Source | Licence vérifiée | Verdict |
+|---|---|---|
+| [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset) — 1 324 exos, GIFs animés, 10 langues dont le français | MIT sur les **données**, images **© [Gym Visual](https://gymvisual.com/)** | ❌ Le MIT ne couvre pas `images/`. Le dépôt les redistribue « avec permission » — une permission qui ne s'étend pas à nous : « obtain your own license there before reusing the media ». |
+| [Gym Visual](https://gymvisual.com/) — le vendeur d'origine, ciblant explicitement les développeurs d'apps | Commerciale, à l'unité | 💰 ~0,90 $ le GIF animé, <0,75 $ l'illustration au-delà de 10 articles. **~150 $ pour nos 168 exercices.** Remise « Pack » à négocier. |
+| [`ExerciseDB`](https://github.com/ExerciseDB/exercisedb-api) — 11 000 exos | **AGPL-3.0** | ❌ Virale, **et** c'est une API donc du réseau : disqualifiée deux fois. |
+| [`yuhonas/free-exercise-db`](https://github.com/yuhonas/free-exercise-db) | Unlicense **sur le dépôt** | ⚠️ La provenance des images **n'est pas documentée** dans le README. Cf. la mise en garde de `PROGRESS.md`. |
+| [`vulovix/body-muscles`](https://github.com/vulovix/body-muscles) — carte musculaire SVG, 70+ régions, zéro dépendance | **Apache-2.0** | ✅ Retenue pour le Lot 5bis. |
+| [`soroojshehryar/react-muscle-highlighter`](https://github.com/soroojshehryar/react-muscle-highlighter) | **MIT** | ✅ Repli équivalent. |
+
+**Pourquoi « c'est juste pour moi » ne dispense de rien :** le dépôt est **public**
+(`"visibility": "public"`, vérifié) et le site répond **HTTP 200 à n'importe qui**. Tout ce qui est
+commité est redistribué, quelle que soit l'intention. C'est le raisonnement de la règle non
+négociable n°3 sur les clés d'API, appliqué aux images.
+
+**À rouvrir si** l'app passe en dépôt privé, ou si le manque se fait assez sentir pour justifier
+les ~150 $. L'intégration serait alors triviale : `imageUrl` existe déjà dans le schéma, les
+fichiers seraient embarqués au build (jamais chargés à distance — règle n°2), et il ne resterait
+que la correspondance avec les 168 slugs.
 
 ---
 

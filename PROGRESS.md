@@ -205,6 +205,14 @@ Corrigé, redéployé, revérifié.
 
 ### Catalogue d'exercices — verdict de licence
 
+> ⚠️ **Corrigé le 2026-07-22 — cette section affirmait plus que ce qui avait été vérifié.**
+> Le contrôle a porté sur la **licence du dépôt** (Unlicense, confirmée deux fois via l'API
+> GitHub), **pas sur la provenance des images qu'il contient**, que son README ne documente nulle
+> part. La distinction n'est pas théorique : `hasaneyldrm/exercises-dataset` est sous MIT tout en
+> contenant des images © Gym Visual qu'il n'a le droit de redistribuer que sous conditions. Un
+> dépôt peut être libre et contenir des œuvres que le déposant n'avait pas le droit d'y mettre.
+> **La phrase « sans aucune réserve » ci-dessous ne vaut donc que pour le JSON.**
+
 `yuhonas/free-exercise-db` est sous **The Unlicense** (domaine public), vérifié via l'API GitHub.
 **Juridiquement utilisable sans aucune réserve.** Il a quand même été **écarté**, pour deux raisons
 qui n'ont rien à voir avec la licence :
@@ -451,6 +459,24 @@ numéro laid coûte moins cher qu'une renumérotation.
 
 **Placé après le Lot 5, pas avant** : l'app ne sait toujours pas enregistrer une série. De la
 finition avant la fonction, c'est le meilleur moyen d'avoir une belle app qu'on n'utilise pas.
+
+**Révision du même jour, après enquête sur les sources.** L'utilisateur a contesté le « dessiné à
+la main » — à raison, deux fois :
+
+- **La carte musculaire ne sera pas dessinée.** `vulovix/body-muscles` (Apache-2.0, SVG,
+  70+ régions, zéro dépendance) fournit une anatomie crédible. On reprend la géométrie, on la
+  ré-indexe sur nos `MuscleGroup`, on la restyle avec nos jetons, et **on porte l'attribution**.
+  Reprendre la géométrie et non le composant reste compatible avec le §8.
+- **Les animations de mouvement ne sont pas introuvables : elles sont vendues.** Le jeu qu'on
+  reconnaît dans Hevy vient de Gym Visual, ~150 $ pour nos 168 exercices. Le dataset GitHub à
+  16 400 ★ qui les héberge est MIT **sur les données seulement** ; les images restent © Gym Visual.
+  **Décision de l'utilisateur : pas d'achat.** Tableau complet dans `00-ROADMAP.md`.
+
+**Et « c'est juste pour moi » ne change rien tant que le dépôt est public** — vérifié :
+`"visibility": "public"`, site à HTTP 200 pour n'importe qui. Tout ce qui est commité est
+redistribué, quelle que soit l'intention. C'est la règle non négociable n°3 (« le code est déployé
+sur un site statique public ») appliquée aux images au lieu des clés d'API. À rouvrir seulement si
+le dépôt passe en privé.
 
 ### 2026-07-21 — Lot 0
 
