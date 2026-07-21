@@ -2,12 +2,15 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-21 (Lot 1 terminé — en attente du checkpoint téléphone)
+**Dernière mise à jour :** 2026-07-21 (Lot 1 terminé, checkpoint validé sur téléphone)
 
 ## Lot en cours
 
-Aucun. **Lot 1 terminé, checkpoint utilisateur à valider.** Prochaine étape :
-**Lot 2 — Couche de données** (`docs/plans/lot-02-data-layer.md`).
+Aucun. **Lot 1 terminé et validé.** Prochaine étape : **Lot 2 — Couche de données**
+(`docs/plans/lot-02-data-layer.md`).
+
+Fin de la Phase 0 en vue : le Lot 2 est le dernier des fondations. À la sortie, l'app aura une
+charte, une navigation et une base — le Lot 3 commence à livrer des fonctionnalités.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
 
@@ -83,15 +86,19 @@ Le plan fixe la palette. Les axes qu'il laissait libres ont été tranchés ains
   seulement deux usages (barre d'onglet actif, montée du Sheet). Rien d'élastique, rien d'autre
   n'est animé. `prefers-reduced-motion` neutralise tout.
 
-### Checkpoint Lot 1 — ⬜ à valider sur le téléphone
+### Checkpoint Lot 1 — ✅ validé le 2026-07-21
 
-- [ ] Les 5 onglets du bas fonctionnent, l'onglet actif est visuellement évident.
-- [ ] Ça ressemble à une application : pas de zoom au double-tap, pas de rebond
+- [x] Les 5 onglets du bas fonctionnent, l'onglet actif est visuellement évident.
+- [x] Ça ressemble à une application : pas de zoom au double-tap, pas de rebond
       « pull to refresh », les cibles se touchent sans viser.
-- [ ] La bascule clair/sombre (Réglages → Apparence) marche et survit à un rechargement.
-- [ ] Tu descends tout en bas d'un écran : rien n'est caché derrière la barre de navigation.
-- [ ] Réglages → Saisie : tu tapes `102,5`, la virgule reste affichée et « valeur retenue »
+- [x] La bascule clair/sombre (Réglages → Apparence) marche et survit à un rechargement.
+- [x] Tu descends tout en bas d'un écran : rien n'est caché derrière la barre de navigation.
+- [x] Réglages → Saisie : tu tapes `102,5`, la virgule reste affichée et « valeur retenue »
       indique bien 102,5 kg.
+
+Validé par l'utilisateur sur téléphone. **La charte visuelle et les primitives sont donc figées :
+les lots suivants s'appuient dessus au lieu de les redécider.** La section « parti pris visuel »
+ci-dessus fait foi.
 
 ---
 
@@ -122,7 +129,7 @@ Le plan fixe la palette. Les axes qu'il laissait libres ont été tranchés ains
 | Lot | Titre | État | Session(s) | Checkpoint validé |
 |-----|-------|------|-----------|-------------------|
 | 0 | Bootstrap & déploiement | ✅ terminé | 1 | ✅ |
-| 1 | Design system & coquille | ✅ terminé | 2 | ⬜ |
+| 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
 | 2 | Couche de données | ⬜ à faire | — | ⬜ |
 | 3 | Bibliothèque d'exercices | ⬜ à faire | — | ⬜ |
 | 4 | Routines | ⬜ à faire | — | ⬜ |
