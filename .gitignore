@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+coverage
+*.local
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Plateformes natives générées par Capacitor (Lot 10)
+android/
+ios/
+
+# Configuration locale de l'agent : réinstallable, sans valeur pour le projet
+.claude/
