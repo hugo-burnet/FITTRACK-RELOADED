@@ -24,16 +24,18 @@ Aucun. **Lot 0 terminé.** Prochaine étape : **Lot 1 — Design system & coquil
 - ✅ Les versions d'actions du plan (`checkout@v4`, `setup-node@v4`, `configure-pages@v5`,
   `upload-pages-artifact@v3`, `deploy-pages@v4`) sont acceptées telles quelles, aucune obsolescence.
 
-### Checkpoint Lot 0 — reste à faire par l'utilisateur, sur le téléphone
+### Checkpoint Lot 0 — ✅ validé le 2026-07-21
 
-- [ ] L'URL s'ouvre et affiche « FitTrack » sur fond sombre.
-- [ ] Modifier un texte de `src/App.tsx`, commiter, pousser → le site est à jour ~2 min plus tard.
+- [x] L'URL s'ouvre et affiche « FitTrack » sur fond sombre (vérifié par l'utilisateur).
+- [x] Modifier un texte de `src/App.tsx` → pousser → site à jour. Mesuré : **~40 s** entre le push
+      et la fin du job `deploy`. Le hash du bundle change bien
+      (`index-8UZIjSV8.js` → `index-Bvk5C3d_.js`), donc c'est un vrai redéploiement.
 
 ## Avancement
 
 | Lot | Titre | État | Session(s) | Checkpoint validé |
 |-----|-------|------|-----------|-------------------|
-| 0 | Bootstrap & déploiement | ✅ terminé | 1 | ⬜ à valider sur mobile |
+| 0 | Bootstrap & déploiement | ✅ terminé | 1 | ✅ |
 | 1 | Design system & coquille | ⬜ à faire | — | ⬜ |
 | 2 | Couche de données | ⬜ à faire | — | ⬜ |
 | 3 | Bibliothèque d'exercices | ⬜ à faire | — | ⬜ |
@@ -115,6 +117,12 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   maintenant mémorisés par GCM.
 - **Le serveur de dev n'est pas sur `/`** mais sur `http://localhost:5173/FITTRACK-RELOADED/`,
   à cause du `base`. Ouvrir la racine donne une 404 — ce n'est pas un bug.
+- **Après un déploiement, le navigateur sert un `index.html` périmé** pendant quelques minutes
+  (cache HTTP de GitHub Pages). Constaté pendant le test de la boucle : le fetch direct renvoyait
+  déjà le nouveau bundle alors que l'onglet affichait encore l'ancien. Un `Ctrl+Shift+R` ou un
+  `?cachebust=1` suffit. Ce n'est pas un bug **mais c'est exactement le problème que le Lot 9
+  devra traiter** : les assets sont hashés donc sûrs, c'est `index.html` qui est le point faible.
+  Raison de plus pour `registerType: 'prompt'` et l'écran « nouvelle version disponible ».
 - **Le chemin du projet contient un espace** (`FITTRACK RELOADED`). Tout code qui manipule des
   chemins doit passer par `fileURLToPath` / `path.join`, jamais par de la concaténation de chaînes
   ou `URL.pathname`.
