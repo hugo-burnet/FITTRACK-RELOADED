@@ -8,6 +8,20 @@
     />
     <meta name="theme-color" content="#0a0a0b" />
     <title>FitTrack</title>
+    <!--
+      Le module principal est différé : sans ce script bloquant, un utilisateur en
+      thème clair voit un flash noir à chaque démarrage. Doit rester synchrone et
+      utiliser la même clé que src/stores/theme.ts.
+    -->
+    <script>
+      (function () {
+        var theme = localStorage.getItem('fittrack:theme') === 'light' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute('content', theme === 'light' ? '#ffffff' : '#0a0a0b');
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
