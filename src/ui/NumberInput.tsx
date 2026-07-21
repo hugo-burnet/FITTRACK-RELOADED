@@ -19,6 +19,11 @@ const parse = (raw: string): number | undefined => {
   return Number.isNaN(parsed) ? undefined : parsed;
 };
 
+// The decimal separator is UI text, and this UI is French. Only ever applied to
+// values arriving from outside — what you typed is left exactly as you typed it.
+const format = (value: number | undefined): string =>
+  value === undefined ? '' : String(value).replace('.', ',');
+
 export function NumberInput({
   value,
   onChange,
@@ -31,7 +36,7 @@ export function NumberInput({
 }: Props) {
   // Le champ garde sa propre chaîne de saisie : sans ça, "102," est reparsé en 102
   // et la virgule disparaît sous les doigts — décimale impossible à taper.
-  const [draft, setDraft] = useState(value === undefined ? '' : String(value));
+  const [draft, setDraft] = useState(() => format(value));
   const [lastValue, setLastValue] = useState(value);
 
   // Resynchronise seulement quand la valeur change réellement depuis l'extérieur
@@ -40,7 +45,7 @@ export function NumberInput({
   // l'ancienne chaîne, visible sur un pré-remplissage.
   if (value !== lastValue) {
     setLastValue(value);
-    if (parse(draft) !== value) setDraft(value === undefined ? '' : String(value));
+    if (parse(draft) !== value) setDraft(format(value));
   }
 
   const handleInput = (raw: string) => {
@@ -79,11 +84,13 @@ export function NumberInput({
             ${suffix ? 'pr-9 pl-9' : ''}`}
           {...aria}
         />
+        {/* Engraved register, but NOT uppercased: SI symbols are case-sensitive,
+            it is "kg" and never "KG". */}
         {suffix && (
           <span
             aria-hidden="true"
-            className="label-xs pointer-events-none absolute inset-y-0 right-3 flex items-center
-              text-[var(--text-3)]"
+            className="pointer-events-none absolute inset-y-0 right-3 flex items-center
+              text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]"
           >
             {suffix}
           </span>

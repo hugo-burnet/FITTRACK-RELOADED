@@ -16,9 +16,7 @@ export function Input({ label, hint, labelHidden = false, className = '', ...res
     <div className="flex flex-col gap-2">
       <label
         htmlFor={id}
-        className={
-          labelHidden ? 'sr-only' : 'label-xs font-semibold text-[var(--text-3)]'
-        }
+        className={labelHidden ? 'sr-only' : 'label-xs font-semibold text-[var(--text-2)]'}
       >
         {label}
       </label>

@@ -37,7 +37,13 @@ describe('NumberInput', () => {
   it('incrémente du pas fourni', async () => {
     render(<Harness initial={100} />);
     await userEvent.click(screen.getByLabelText('Augmenter'));
-    expect(screen.getByTestId('value')).toHaveTextContent('102.5');
+    expect(screen.getByTestId('value')).toHaveTextContent('102.5'); // la valeur reste un nombre
+    expect(screen.getByLabelText('Poids')).toHaveValue('102,5'); // mais s’affiche en français
+  });
+
+  it('ne réécrit pas le point que tu viens de taper', async () => {
+    render(<Harness />);
+    await userEvent.type(screen.getByLabelText('Poids'), '102.5');
     expect(screen.getByLabelText('Poids')).toHaveValue('102.5');
   });
 

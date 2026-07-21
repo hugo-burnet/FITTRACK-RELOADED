@@ -13,12 +13,14 @@ type Props = { body: string; action?: ReactNode } & (
 
 export function EmptyState({ reading, unit, title, body, action }: Props) {
   return (
-    <div className="flex flex-col items-center px-6 pt-14 pb-10 text-center">
+    // my-auto, not justify-center on the parent: it centres in whatever room is
+    // left, and collapses harmlessly when there is none.
+    <div className="my-auto flex flex-col items-center px-6 py-12 text-center">
       {reading === undefined ? (
         <h2 className="text-xl font-semibold text-[var(--text-1)]">{title}</h2>
       ) : (
         <>
-          <p className="label-xs font-semibold text-[var(--text-3)]">{unit}</p>
+          <p className="label-xs font-semibold text-[var(--text-2)]">{unit}</p>
           <p className="metric mt-3 text-7xl leading-none font-semibold text-[var(--text-1)]">
             {reading}
           </p>

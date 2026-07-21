@@ -25,12 +25,14 @@
   --surface-2: #1e1e21; /* inputs, raised elements */
   --border: #2a2a2e;
   --text-1: #f4f4f5; /* primary text */
-  --text-2: #a1a1aa; /* secondary text */
-  --text-3: #71717a; /* disabled text, previous values */
+  --text-2: #a1a1aa; /* secondary text AND every engraved micro-label */
+  --text-3: #71717a; /* deliberately faint: previous values, placeholders */
 
-  /* Accent as INK (text, icons, focus ring), distinct from --color-accent which
-     is only ever a FILL. The acid green sits at 1.3:1 on white, so the light
-     theme darkens the ink and leaves the fill untouched. */
+  /* Accent as INK: anything that must be legible AGAINST a surface — text, icons,
+     the active-tab mark, the focus ring. --color-accent is only ever a FILL, i.e.
+     a shape that carries --color-accent-fg on top of it. The distinction is not
+     cosmetic: the acid green sits at 1.3:1 on white, so the light theme darkens
+     the ink and leaves the fill (and its dark text) untouched. */
   --accent-ink: #c7f252;
 
   /* Motion: mechanical, never elastic. One curve, two durations, used twice. */
@@ -68,7 +70,9 @@
   letter-spacing: -0.03em;
 }
 
-/* Engraved register: units, column heads, section names. Annotates, never narrates. */
+/* Engraved register: units, column heads, section names. Annotates, never narrates.
+   Always pair with --text-2, never --text-3: at 11px this is content, and #a1a1aa
+   on white is 2.3:1. */
 @utility label-xs {
   font-size: 0.6875rem;
   line-height: 1;
