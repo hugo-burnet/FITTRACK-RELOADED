@@ -17,46 +17,62 @@ export interface Syncable {
   deletedAt: number; // 0 = alive, otherwise epoch ms of the soft delete
 }
 
-export type MuscleGroup =
-  | 'chest'
-  | 'lats'
-  | 'upper_back'
-  | 'traps'
-  | 'shoulders'
-  | 'biceps'
-  | 'triceps'
-  | 'forearms'
-  | 'quads'
-  | 'hamstrings'
-  | 'glutes'
-  | 'calves'
-  | 'abs'
-  | 'lower_back'
-  | 'neck'
-  | 'full_body'
-  | 'cardio'
-  | 'other';
+/**
+ * The three catalogue vocabularies are declared as const arrays, not bare
+ * unions: the filter chips of Lot 3 need to enumerate them, and the seed test
+ * checks every catalogue row against them. One source of truth, so a typo in
+ * `exercises.json` fails the suite instead of producing an exercise no filter
+ * can ever find.
+ */
+export const MUSCLE_GROUPS = [
+  'chest',
+  'lats',
+  'upper_back',
+  'traps',
+  'shoulders',
+  'biceps',
+  'triceps',
+  'forearms',
+  'quads',
+  'hamstrings',
+  'glutes',
+  'calves',
+  'abs',
+  'lower_back',
+  'neck',
+  'full_body',
+  'cardio',
+  'other',
+] as const;
 
-export type Equipment =
-  | 'barbell'
-  | 'dumbbell'
-  | 'machine'
-  | 'cable'
-  | 'smith'
-  | 'bodyweight'
-  | 'band'
-  | 'kettlebell'
-  | 'plate'
-  | 'other';
+export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
+
+export const EQUIPMENT = [
+  'barbell',
+  'dumbbell',
+  'machine',
+  'cable',
+  'smith',
+  'bodyweight',
+  'band',
+  'kettlebell',
+  'plate',
+  'other',
+] as const;
+
+export type Equipment = (typeof EQUIPMENT)[number];
 
 /** Decides which input fields the live workout screen shows. */
-export type MeasurementType =
-  | 'weight_reps' // bench press: weight + reps
-  | 'reps_only' // bodyweight pull-ups
-  | 'weight_time' // weighted plank
-  | 'time_only' // plank
-  | 'distance_time' // rower, treadmill
-  | 'assisted_weight_reps'; // assisted pull-ups (the weight helps)
+export const MEASUREMENT_TYPES = [
+  'weight_reps', // bench press: weight + reps
+  'reps_only', // bodyweight pull-ups
+  'weight_time', // weighted plank
+  'time_only', // plank
+  'distance_time', // rower, treadmill
+  'assisted_weight_reps', // assisted pull-ups (the weight helps)
+] as const;
+
+export type MeasurementType = (typeof MEASUREMENT_TYPES)[number];
 
 export type SetType = 'normal' | 'warmup' | 'dropset' | 'failure';
 

@@ -68,6 +68,13 @@ const fr = {
     demoNote: 'Démonstration : rien n’est enregistré.',
   },
 
+  boot: {
+    loading: 'préparation de la base',
+    seedFailed:
+      'Le catalogue d’exercices n’a pas pu être chargé. Tes données sont intactes, le reste de l’app fonctionne.',
+    dismiss: 'Masquer',
+  },
+
   error: {
     title: 'Cet écran n’a pas pu s’afficher',
     body: 'Tes données sont intactes : elles vivent sur l’appareil, pas dans l’écran.',
