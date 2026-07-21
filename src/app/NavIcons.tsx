@@ -78,6 +78,20 @@ export function PlateIcon(props: IconProps) {
   );
 }
 
+/**
+ * "This row opens a screen". The one mark here that is not gym hardware,
+ * because it names an interface move rather than an object — but it is still
+ * drawn on the same grid, at the same stroke, rather than borrowing a "›" from
+ * whatever font happens to be loaded.
+ */
+export function ChevronRightIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" {...props}>
+      <path d="M9.5 5.5 16 12l-6.5 6.5" />
+    </Icon>
+  );
+}
+
 /** Réglages — load sliders, not a gear: this screen is a panel of numbers. */
 export function SlidersIcon(props: IconProps) {
   return (

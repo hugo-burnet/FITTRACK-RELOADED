@@ -2,17 +2,102 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-21 (Lot 1 terminé, checkpoint validé sur téléphone)
+**Dernière mise à jour :** 2026-07-21 (Lot 2 terminé, en attente du checkpoint utilisateur)
 
 ## Lot en cours
 
-Aucun. **Lot 1 terminé et validé.** Prochaine étape : **Lot 2 — Couche de données**
-(`docs/plans/lot-02-data-layer.md`).
+Aucun. **Lot 2 terminé, checkpoint utilisateur à valider** (voir plus bas).
+Prochaine étape : **Lot 3 — Bibliothèque d'exercices**. À partir de là, l'agent génère le plan
+détaillé du lot en début de session à partir du cadrage de `00-ROADMAP.md`.
 
-Fin de la Phase 0 en vue : le Lot 2 est le dernier des fondations. À la sortie, l'app aura une
-charte, une navigation et une base — le Lot 3 commence à livrer des fonctionnalités.
+**Fin de la Phase 0.** L'app a une charte, une navigation et une base. Le Lot 3 commence à livrer
+des fonctionnalités visibles.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+
+---
+
+## Lot 2 — Couche de données
+
+### Definition of Done — vérifiée le 2026-07-21
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**65 tests**), `npm run build`
+  passent tous les quatre.
+- ✅ **168 exercices** au catalogue. Un test vérifie la couverture des **18 groupes musculaires**,
+  des **10 équipements** et des **6 types de mesure** — aucun trou.
+- ✅ **Seed idempotent vérifié dans un vrai navigateur**, pas seulement en test : 168 → relance →
+  168, message « Seed terminé. ».
+- ✅ **Cycle complet vérifié** : 168 → *Réinitialiser la base* → 0 (état vide affiché) → *Relancer
+  le seed* → 168. **Zéro erreur console.** `useLiveQuery` survit bien à `db.delete()` + `db.open()`,
+  ce qui était le point risqué de l'écran.
+- ✅ Contrastes **mesurés** sur l'écran de diagnostic, thème sombre **et** clair : toutes les paires
+  texte/fond ≥ 4,5:1 (min. relevé 6,63:1). Un échec trouvé et corrigé, cf. ci-dessous.
+- ✅ Mise en page mesurée en 375×812 : aucun débordement horizontal, 32 px de marge sous le dernier
+  élément une fois défilé tout en bas. Cibles tactiles : boutons 48 px, ligne « Diagnostic » 90 px.
+
+### Catalogue d'exercices — verdict de licence
+
+`yuhonas/free-exercise-db` est sous **The Unlicense** (domaine public), vérifié via l'API GitHub.
+**Juridiquement utilisable sans aucune réserve.** Il a quand même été **écarté**, pour deux raisons
+qui n'ont rien à voir avec la licence :
+
+1. Le jeu est **entièrement en anglais**. L'interface est en français (ADR-007). Traduire 800 noms
+   d'exercices est un projet en soi, et un catalogue à moitié traduit est pire que pas de catalogue.
+2. Les images sont référencées par **URL distante** — incompatible avec la règle non négociable
+   n°2 (100 % hors-ligne, une salle = un sous-sol sans 4G).
+
+**Option 2 retenue** : 168 exercices écrits à la main en français. Largement au-dessus des ~150
+visés, et l'utilisateur peut créer les siens sans limite (RF-08).
+
+### Décisions et écarts par rapport au plan
+
+- **`getLastPerformance` ne suit pas le §5.1 de l'architecture à la lettre.** Le plan lit la
+  dernière série de l'index puis filtre les supprimées. Conséquence **vérifiée en remettant le code
+  du plan** : supprimer une séance mal saisie **vide** l'affichage de la valeur précédente au lieu
+  de faire réapparaître la séance d'avant. L'implémentation retenue remonte l'index et s'arrête sur
+  la première série vivante. Un test fige la différence — et il échoue bien avec la version du plan.
+- **`MUSCLE_GROUPS` / `EQUIPMENT` / `MEASUREMENT_TYPES` sont des tableaux `const`**, les unions en
+  sont dérivées. `exercises.json` n'est pas typé à la compilation : sans ça, une faute de frappe
+  dans un `primaryMuscle` produit un exercice qu'**aucun filtre du Lot 3 ne trouvera jamais**, et
+  rien dans la pile ne le signale. Un test valide chaque ligne du catalogue contre ces tableaux.
+  Les chips de filtre du Lot 3 s'en serviront aussi.
+- **`softDelete` prend une interface structurelle étroite**, pas un `EntityTable<T, 'id'>`. La
+  fonction ne lit jamais `T`, et TypeScript ne sait pas prouver que `IDType<T, 'id'>` vaut `string`
+  tant que `T` est un paramètre de type. Typer au plus juste évite un double cast.
+- **`touch` prend `NoInfer` sur ses changements.** Sans ça, un appelant passant un type de
+  changement plus étroit fait inférer `T` à `Syncable` et l'écriture est rejetée.
+- **`addSet` dérive `exerciseId` et `workoutId` de la ligne parente** au lieu de les accepter de
+  l'appelant : ils sont dénormalisés pour l'index, et une copie qui peut diverger de sa source est
+  un bug en attente.
+- **`createCustomExercise` n'attribue pas de slug** (le slug est la clé du catalogue) et
+  **`updateExercise` interdit d'écrire les champs `Syncable`** — signatures plus strictes que celles
+  du plan.
+- **Un exercice du catalogue supprimé n'est pas ressuscité** par un seed suivant : il garde son
+  slug. Supprimer un exercice qu'on ne fait jamais est une décision, pas un accident à annuler.
+- **`\p{M}` au lieu de la plage `[U+0300-U+036F]` écrite littéralement** pour retirer les accents.
+  Écrite en clair, cette plage est une suite de **caractères invisibles** qu'aucun relecteur ne voit
+  et qu'un éditeur peut manger : le fichier a effectivement été écrit deux fois avant que ce soit
+  repéré.
+- **`SectionTitle` extrait dans `ui/`** (il était dupliqué dans Réglages), **`ChevronRightIcon`
+  dessiné à la main** dans `NavIcons.tsx` plutôt qu'un caractère `›` emprunté à la police courante —
+  §8 de l'architecture exclut les composants tiers, et le Lot 1 dessine déjà ses icônes.
+- **Le quota de stockage est en `--text-2`, pas `--text-3`.** Mesuré : `--text-3` sur une carte en
+  thème clair donne **2,33:1**, et 3,81:1 en sombre. `--text-3` reste réservé aux valeurs qui sont
+  volontairement des échos (la valeur précédente du Lot 5, les placeholders) — un quota est un
+  chiffre qu'on lit. **Trouvé en mesurant, pas en regardant**, encore une fois.
+- **Sur l'écran de diagnostic, l'explication est au-dessus du bouton**, et à la confirmation
+  « Annuler » est le bouton **rempli**, placé en premier. Les variantes `danger` et `ghost` sont
+  toutes deux transparentes par charte : côte à côte, effacer la base ressemblait exactement à
+  renoncer à l'effacer.
+
+### ✅ Checkpoint Lot 2 — à valider sur ton téléphone
+
+- [ ] `npm run test:run` : 65 tests passent (le plan en annonçait ~20).
+- [ ] Sur `#/settings/debug` : le nombre d'exercices est cohérent (**168**), la liste s'affiche.
+- [ ] Tu **fermes complètement** l'onglet/l'app, tu la rouvres : les données sont toujours là.
+- [ ] Tu recharges 3 fois de suite : le nombre d'exercices **ne bouge pas**.
+- [ ] Depuis Réglages → Données → Diagnostic : *Réinitialiser la base* puis *Relancer le seed*
+      te ramène bien à 168.
 
 ---
 
@@ -130,7 +215,7 @@ ci-dessus fait foi.
 |-----|-------|------|-----------|-------------------|
 | 0 | Bootstrap & déploiement | ✅ terminé | 1 | ✅ |
 | 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
-| 2 | Couche de données | ⬜ à faire | — | ⬜ |
+| 2 | Couche de données | ✅ terminé | 3 | ⬜ |
 | 3 | Bibliothèque d'exercices | ⬜ à faire | — | ⬜ |
 | 4 | Routines | ⬜ à faire | — | ⬜ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
@@ -237,6 +322,21 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   deux copies de React → « Invalid hook call » sur `RouterProvider`. `npm ls react` confirmait
   pourtant une seule version dédupliquée. `rm -rf node_modules/.vite` puis redémarrage du
   serveur suffit. **Ne pas chercher le bug dans le code.**
+- **`git commit -m` avec un here-string PowerShell casse si le message contient des guillemets
+  doubles.** Le here-string est pourtant littéral côté PowerShell, mais l'exécutable `git` reparse
+  ses arguments à la mode Windows et coupe le message au premier `"` : le symptôme est une pluie de
+  `error: pathspec '...' did not match any file(s)`. **Écrire le message dans un fichier et faire
+  `git commit -F fichier`.** C'est la seule forme fiable ici, d'autant que les messages sont en
+  français avec des apostrophes typographiques.
+- **PowerShell et Bash partagent le répertoire courant dans cette session.** Un `cd` fait depuis
+  l'outil Bash déplace aussi l'outil PowerShell — un `npm run typecheck` a fini par échouer en
+  `Missing script` parce qu'il tournait dans `node_modules/dexie/dist`. Préfixer les commandes
+  longues d'un `Set-Location` sur la racine du projet.
+- **Les captures d'écran du panneau navigateur ont encore expiré** (30 s, systématiquement), alors
+  que `javascript_tool` répondait normalement. Contournement confirmé et suffisant : tout vérifier
+  par JS — `element.click()` pour les interactions, `getBoundingClientRect()` pour la mise en page,
+  et un calcul de ratio de contraste maison sur les styles calculés. Ouvrir un onglet neuf **n'a pas
+  suffi** cette fois.
 - **Le panneau navigateur intégré perd parfois l'injection d'événements** (clics et captures
   d'écran expirent) alors que l'exécution JavaScript continue de répondre. Le contournement :
   vérifier par `javascript_tool` (styles calculés, rectangles, clics `element.click()`), et

@@ -1,20 +1,19 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRightIcon } from '@/app/NavIcons';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
-import { NumberInput } from '@/ui';
+import { ListRow, NumberInput, SectionTitle } from '@/ui';
 
 const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
   { value: 'light', labelKey: 'settings.themeLight' },
 ];
 
-function SectionTitle({ children }: { children: string }) {
-  return <h2 className="label-xs mb-3 px-1 font-semibold text-[var(--text-2)]">{children}</h2>;
-}
-
 export function SettingsScreen() {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [demoWeight, setDemoWeight] = useState<number | undefined>(100);
 
@@ -87,6 +86,18 @@ export function SettingsScreen() {
             </div>
           </div>
           <p className="mt-3 px-1 text-sm text-[var(--text-2)]">{t('settings.demoNote')}</p>
+        </section>
+
+        <section>
+          <SectionTitle>{t('settings.dataSection')}</SectionTitle>
+          <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+            <ListRow
+              title={t('settings.debugLink')}
+              subtitle={t('settings.debugHint')}
+              trailing={<ChevronRightIcon />}
+              onClick={() => void navigate('/settings/debug')}
+            />
+          </div>
         </section>
       </div>
     </Screen>

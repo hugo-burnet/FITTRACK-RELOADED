@@ -4,6 +4,7 @@ import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
+import { DebugScreen } from './features/settings/DebugScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 
 // createHashRouter, not createBrowserRouter (ADR-003): GitHub Pages 404s on any
@@ -18,6 +19,7 @@ export const router = createHashRouter([
       { path: 'history', element: <HistoryScreen /> },
       { path: 'exercises', element: <ExercisesScreen /> },
       { path: 'settings', element: <SettingsScreen /> },
+      { path: 'settings/debug', element: <DebugScreen /> },
     ],
   },
 ]);

@@ -66,6 +66,40 @@ const fr = {
     demoReadingLabel: 'valeur retenue',
     demoEmpty: '—',
     demoNote: 'Démonstration : rien n’est enregistré.',
+
+    dataSection: 'Données',
+    debugLink: 'Diagnostic',
+    debugHint: 'Contenu de la base, stockage utilisé, réinitialisation.',
+  },
+
+  debug: {
+    title: 'Diagnostic',
+    back: 'Réglages',
+
+    storageSection: 'Stockage',
+    storageUsed: 'utilisé',
+    storageQuota: 'sur {quota} Mo disponibles',
+    storageUnit: 'Mo',
+    storageUnavailable: 'Le navigateur ne donne pas d’estimation de stockage.',
+
+    tablesSection: 'Tables',
+    rows: 'lignes',
+
+    recentSection: 'Derniers exercices modifiés',
+    recentEmpty: 'Aucun exercice en base. Relance le seed.',
+
+    actionsSection: 'Actions',
+    reseed: 'Relancer le seed',
+    reseedHint: 'Insère les exercices du catalogue absents de la base. N’écrase rien.',
+    reseedDone: 'Seed terminé.',
+    reset: 'Réinitialiser la base',
+    resetHint:
+      'Efface le contenu de la base : séances, routines, exercices personnalisés. Irréversible.',
+    resetDone: 'Base réinitialisée. Elle est vide tant que le seed n’est pas relancé.',
+    confirm: 'Confirmer',
+    cancel: 'Annuler',
+    working: 'En cours…',
+    failed: 'L’opération a échoué. Détail dans la console.',
   },
 
   boot: {
