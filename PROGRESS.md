@@ -322,6 +322,14 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   deux copies de React → « Invalid hook call » sur `RouterProvider`. `npm ls react` confirmait
   pourtant une seule version dédupliquée. `rm -rf node_modules/.vite` puis redémarrage du
   serveur suffit. **Ne pas chercher le bug dans le code.**
+- **Dans DevTools, la base s'appelle `fittrack` en version `10`, pas `1`.** Dexie multiplie le
+  numéro de `version(n)` par 10 en interne pour pouvoir intercaler des versions plus tard. Ce n'est
+  pas un schéma parti en vrille — ne pas « corriger » ça.
+- **Réinitialiser la base ne fait pas disparaître le catalogue durablement**, et c'est voulu : le
+  seed tourne à chaque démarrage, donc un simple rechargement réinstalle les 168 exercices. Seules
+  les données de l'utilisateur (séances, routines, exercices personnalisés) sont réellement perdues.
+  Le message de l'écran a dû être réécrit : il laissait croire que le bouton « Relancer le seed »
+  était le seul chemin de retour.
 - **`git commit -m` avec un here-string PowerShell casse si le message contient des guillemets
   doubles.** Le here-string est pourtant littéral côté PowerShell, mais l'exécutable `git` reparse
   ses arguments à la mode Windows et coupe le message au premier `"` : le symptôme est une pluie de

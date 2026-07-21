@@ -94,8 +94,9 @@ const fr = {
     reseedDone: 'Seed terminé.',
     reset: 'Réinitialiser la base',
     resetHint:
-      'Efface le contenu de la base : séances, routines, exercices personnalisés. Irréversible.',
-    resetDone: 'Base réinitialisée. Elle est vide tant que le seed n’est pas relancé.',
+      'Efface tes séances, tes routines et tes exercices personnalisés — définitivement. Le catalogue, lui, se réinstalle seul au prochain démarrage.',
+    resetDone:
+      'Base vidée. Le catalogue revient au prochain chargement ; tes séances et exercices personnalisés sont perdus.',
     confirm: 'Confirmer',
     cancel: 'Annuler',
     working: 'En cours…',
