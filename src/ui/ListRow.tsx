@@ -30,9 +30,7 @@ export function ListRow({ title, subtitle, leading, trailing, onClick, disabled 
       {leading && <span className="shrink-0 text-[var(--text-2)]">{leading}</span>}
       <span className="min-w-0 flex-1">
         <span className="block truncate text-base text-[var(--text-1)]">{title}</span>
-        {subtitle && (
-          <span className="mt-0.5 block text-sm text-[var(--text-2)]">{subtitle}</span>
-        )}
+        {subtitle && <span className="mt-0.5 block text-sm text-[var(--text-2)]">{subtitle}</span>}
       </span>
       {trailing && <span className="shrink-0 text-[var(--text-2)]">{trailing}</span>}
     </Element>

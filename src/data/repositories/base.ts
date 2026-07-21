@@ -13,8 +13,15 @@ export function newEntity<T extends Syncable>(data: Omit<T, keyof Syncable>): T 
   return { ...data, id: crypto.randomUUID(), createdAt: now, updatedAt: now, deletedAt: 0 } as T;
 }
 
-/** Applies changes and moves `updatedAt` — the field the Lot 14 sync reads. */
-export function touch<T extends Syncable>(entity: T, changes: Partial<T>): T {
+/**
+ * Applies changes and moves `updatedAt` — the field the Lot 14 sync reads.
+ *
+ * `NoInfer` on the changes: without it a caller passing a narrower change type
+ * (say `Partial<Omit<Exercise, keyof Syncable>>`) makes TypeScript infer `T`
+ * from both arguments and settle on `Syncable`, which then rejects the write.
+ * The entity alone decides what `T` is.
+ */
+export function touch<T extends Syncable>(entity: T, changes: Partial<NoInfer<T>>): T {
   return { ...entity, ...changes, updatedAt: Date.now() };
 }
 

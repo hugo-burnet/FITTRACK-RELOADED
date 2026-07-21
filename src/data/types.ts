@@ -169,11 +169,7 @@ export interface WorkoutSet extends Syncable {
 }
 
 export type PersonalRecordType =
-  | 'max_weight'
-  | 'max_reps'
-  | 'best_1rm'
-  | 'max_volume_set'
-  | 'max_volume_session';
+  'max_weight' | 'max_reps' | 'best_1rm' | 'max_volume_set' | 'max_volume_session';
 
 export interface PersonalRecord extends Syncable {
   exerciseId: string;
