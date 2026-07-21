@@ -4,6 +4,10 @@ import type { SVGProps } from 'react';
  * Hand-drawn on a single 24px grid, 2px strokes, currentColor. Drawn from the
  * gym's own hardware rather than a generic icon set: a bar, a plate, load
  * sliders. No icon library — the architecture rules out third-party UI.
+ *
+ * Lives in `ui/` rather than `app/`: `ui/` is where generic reusable pieces go
+ * (§7), and a `ui/` component reaching back into the app shell for a glyph is a
+ * backwards dependency. Moved here in Lot 3, when the second consumer appeared.
  */
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -88,6 +92,24 @@ export function ChevronRightIcon(props: IconProps) {
   return (
     <Icon width="20" height="20" {...props}>
       <path d="M9.5 5.5 16 12l-6.5 6.5" />
+    </Icon>
+  );
+}
+
+/** "This control opens a picker". Same mark as the chevron, turned a quarter. */
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <Icon width="18" height="18" {...props}>
+      <path d="M6 9.5 12 15.5 18 9.5" />
+    </Icon>
+  );
+}
+
+/** The chosen option. The only tick in the app until Lot 5 ticks a set. */
+export function CheckIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" {...props}>
+      <path d="M5 12.5 9.5 17 19 7" />
     </Icon>
   );
 }

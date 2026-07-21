@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRightIcon } from '@/app/NavIcons';
+import { ChevronRightIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { applyTheme, loadTheme } from '@/stores/theme';

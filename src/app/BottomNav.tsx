@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import type { ComponentType, SVGProps } from 'react';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { BarbellIcon, CalendarIcon, PlateIcon, ProgramIcon, SlidersIcon } from './NavIcons';
+import { BarbellIcon, CalendarIcon, PlateIcon, ProgramIcon, SlidersIcon } from '@/ui/icons';
 
 type Tab = {
   to: string;

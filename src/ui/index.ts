@@ -1,7 +1,11 @@
 export { Button } from './Button';
 export { EmptyState } from './EmptyState';
+export { FilterChip } from './FilterChip';
 export { Input } from './Input';
 export { ListRow } from './ListRow';
 export { NumberInput } from './NumberInput';
+export { OptionSheet } from './OptionSheet';
+export type { Option } from './OptionSheet';
 export { SectionTitle } from './SectionTitle';
 export { Sheet } from './Sheet';
+export { Textarea } from './Textarea';
