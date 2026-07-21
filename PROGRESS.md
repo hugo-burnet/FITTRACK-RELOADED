@@ -2,20 +2,32 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-22 (Lot 3 codé et vérifié côté agent, **checkpoint téléphone à
-faire**)
+**Dernière mise à jour :** 2026-07-22 (Lot 3 terminé, checkpoint validé en ligne)
 
 ## Lot en cours
 
-**Lot 3 — Bibliothèque d'exercices.** Code terminé, les quatre commandes passent, tout est vérifié
-et mesuré dans le navigateur. **Il reste le checkpoint utilisateur — et il doit se faire au doigt,
-sur le téléphone**, pas sur PC : ce lot est le premier qui livre de la recherche, des filtres et
-une liste de 168 lignes.
+Aucun. **Lot 3 terminé et validé.** Prochaine étape : **Lot 4 — Routines**.
 
 Premier lot dont le plan détaillé a été généré en début de session, comme prévu par le
-`00-ROADMAP.md` : `docs/plans/lot-03-exercise-library.md`.
+`00-ROADMAP.md` : `docs/plans/lot-03-exercise-library.md`. Le procédé fonctionne — à reconduire
+pour le Lot 4.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+
+### Ce dont le Lot 4 hérite (à ne pas réinventer)
+
+| Acquis au Lot 3 | Où | Ce que le Lot 4 en fait |
+|---|---|---|
+| `OptionSheet` — sélecteur à choix unique | `ui/` | Choisir un dossier, un type de série |
+| `FilterChip`, `Card`, `ConfirmAction`, `Textarea` | `ui/` | Partout |
+| `ui/icons.tsx` (les icônes ont quitté `app/`) | `ui/` | Ajouter les tracés du glisser-déposer |
+| `muscleLabel` / `equipmentLabel` / `exerciseSubtitle` | `i18n/labels.ts` | Nommer les exercices d'une routine |
+| Le relevé vivant (chiffre `.metric` + unité `.label-xs`) | `ExercisesScreen` | Compteur d'exercices / de séries d'une routine |
+| La recherche et les filtres dans l'URL | `ExercisesScreen` | Le sélecteur d'exercices de l'éditeur de routine |
+| Action primaire **collante** en bas d'écran | `ExerciseDetailScreen` | Tout écran d'édition long |
+
+**Le sélecteur d'exercices du Lot 4 est la bibliothèque du Lot 3 en mode « choisir ».** Extraire la
+liste + recherche + filtres en un composant réutilisable avant d'en écrire une seconde version.
 
 ---
 
@@ -153,18 +165,23 @@ Le bouton dit **« Terminé »** et non « Enregistrer » : il n'y a rien à enr
 est déjà en base. Il ramène là d'où on vient, donc **la recherche survit au trajet** — vérifié sur
 les deux chemins (`?q=curl` et `?q=tirage+bulgare+xy`).
 
-### Checkpoint Lot 3 — ⬜ à valider **sur le téléphone, au doigt**
+### Checkpoint Lot 3 — ✅ validé le 2026-07-22
 
-- [ ] Tu cherches « squat » : tu trouves. Tu tapes « developpe » **sans accent** : tu trouves quand
+Validé par l'utilisateur **sur le site déployé**, après la correction du bouton de sortie.
+
+- [x] Tu cherches « squat » : tu trouves. Tu tapes « developpe » **sans accent** : tu trouves quand
       même.
-- [ ] Tu filtres sur « Haltères » : la liste se réduit et le relevé en haut à droite décompte.
-- [ ] Tu crées un exercice à toi, il apparaît dans la liste et survit à un rechargement complet.
-- [ ] Tu écris une note sur une machine (« siège position 4 »), tu quittes l'écran, tu reviens :
+- [x] Tu filtres sur « Haltères » : la liste se réduit et le relevé en haut à droite décompte.
+- [x] Tu crées un exercice à toi, il apparaît dans la liste et survit à un rechargement complet.
+- [x] Tu écris une note sur une machine (« siège position 4 »), tu quittes l'écran, tu reviens :
       elle est là.
-- [ ] Tu fais défiler les 168 exercices d'un coup de pouce : c'est fluide, sans à-coups.
-- [ ] Tu ouvres un exercice depuis une recherche puis tu reviens : **ta recherche est toujours là**.
-- [ ] Sur une fiche d'exercice, le bouton **Terminé** est toujours sous ton pouce, sans défiler, et
+- [x] Tu fais défiler les 168 exercices d'un coup de pouce : c'est fluide, sans à-coups.
+- [x] Tu ouvres un exercice depuis une recherche puis tu reviens : **ta recherche est toujours là**.
+- [x] Sur une fiche d'exercice, le bouton **Terminé** est toujours sous ton pouce, sans défiler, et
       il referme bien l'écran.
+
+**Un seul défaut remonté sur tout le lot**, et c'était le bon : l'absence de sortie sur la fiche.
+Corrigé, redéployé, revérifié.
 
 ---
 
@@ -381,7 +398,7 @@ ci-dessus fait foi.
 | 0 | Bootstrap & déploiement | ✅ terminé | 1 | ✅ |
 | 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
 | 2 | Couche de données | ✅ terminé | 3 | ✅ |
-| 3 | Bibliothèque d'exercices | 🟨 codé, checkpoint à faire | 4 | ⬜ |
+| 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
 | 4 | Routines | ⬜ à faire | — | ⬜ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ⬜ à faire | — | ⬜ |
