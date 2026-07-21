@@ -2,35 +2,38 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-21 (Lot 0 — code, tests et workflow écrits et commités)
+**Dernière mise à jour :** 2026-07-21 (Lot 0 terminé — site en ligne et vérifié)
 
 ## Lot en cours
 
-**Lot 0 — Bootstrap.** Tout le travail local est fait et commité. Il reste **deux actions
-manuelles côté utilisateur** avant de pouvoir cocher le checkpoint :
+Aucun. **Lot 0 terminé.** Prochaine étape : **Lot 1 — Design system & coquille**
+(`docs/plans/lot-01-design-system.md`).
 
-1. **Réparer le push.** `git push` échoue avec `Host key verification failed` : la clé d'hôte de
-   GitHub n'est pas dans `~/.ssh/known_hosts` sur cette machine. Deux options :
-   - passer le remote en HTTPS : `git remote set-url origin https://github.com/hugo-burnet/FITTRACK-RELOADED.git`
-   - ou enregistrer la clé : `ssh-keyscan github.com >> ~/.ssh/known_hosts` puis `ssh -T git@github.com`
-2. **Activer GitHub Pages** : dépôt → Settings → Pages → **Source : GitHub Actions**
-   (⚠️ *pas* « Deploy from a branch »).
+**Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
 
-Ensuite : `git push -u origin master`, vérifier l'onglet Actions, puis le checkpoint ci-dessous.
+### Definition of Done du Lot 0 — vérifiée le 2026-07-21
 
-**Site attendu :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+- ✅ `npm run typecheck`, `npm run test:run` (1 test), `npm run build`, `npm run lint` passent en local.
+- ✅ Le workflow passe sur le runner Ubuntu : `npm ci`, typecheck, tests, build, `configure-pages`,
+  `upload-pages-artifact`, `deploy-pages` — tous verts (run #2 après correctif de branche).
+- ✅ `https://hugo-burnet.github.io/FITTRACK-RELOADED/` répond **HTTP 200**, les deux assets
+  (`index-*.js` 190 793 o, `index-*.css` 10 751 o) répondent **200** — donc `base` est correct,
+  pas de 404 sur `assets/`.
+- ✅ Rendu réel vérifié dans un navigateur : React monté, `<h1>FitTrack</h1>`, fond
+  `oklch(0.145 0 none)` (Tailwind v4 compile bien).
+- ✅ Les versions d'actions du plan (`checkout@v4`, `setup-node@v4`, `configure-pages@v5`,
+  `upload-pages-artifact@v3`, `deploy-pages@v4`) sont acceptées telles quelles, aucune obsolescence.
 
-### Checkpoint Lot 0 (à vérifier sur le téléphone)
+### Checkpoint Lot 0 — reste à faire par l'utilisateur, sur le téléphone
 
 - [ ] L'URL s'ouvre et affiche « FitTrack » sur fond sombre.
 - [ ] Modifier un texte de `src/App.tsx`, commiter, pousser → le site est à jour ~2 min plus tard.
-- [ ] L'onglet Actions est vert (jobs `build` puis `deploy`).
 
 ## Avancement
 
 | Lot | Titre | État | Session(s) | Checkpoint validé |
 |-----|-------|------|-----------|-------------------|
-| 0 | Bootstrap & déploiement | 🟨 code fait, déploiement à valider | 1 | ⬜ |
+| 0 | Bootstrap & déploiement | ✅ terminé | 1 | ⬜ à valider sur mobile |
 | 1 | Design system & coquille | ⬜ à faire | — | ⬜ |
 | 2 | Couche de données | ⬜ à faire | — | ⬜ |
 | 3 | Bibliothèque d'exercices | ⬜ à faire | — | ⬜ |
@@ -97,9 +100,19 @@ vérifiées à l'exécution.
 
 _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
-- **Le push SSH ne marche pas sur cette machine** : `Host key verification failed`. Voir « Lot en
-  cours » ci-dessus pour les deux façons de le réparer. Tant que ce n'est pas fait, l'agent ne peut
-  ni pousser ni vérifier le déploiement.
+- **`github-pages` était verrouillé sur la branche `main` alors qu'on travaille sur `master`.**
+  Symptôme : le job `build` est **entièrement vert**, le job `deploy` échoue en **1 seconde avec
+  0 étape exécutée**. Ce n'est ni le `base`, ni les permissions, ni les versions d'actions — c'est
+  une *deployment branch policy* sur l'environnement. Cause : Pages a été activé alors que le dépôt
+  était encore vide, donc GitHub a créé l'environnement épinglé sur son nom de branche par défaut
+  (`main`), qui n'existe pas ici. Correctif : Settings → Environments → `github-pages` →
+  *Deployment branches and tags* → remplacer `main` par `master`.
+  **Pour les prochains projets : pousser `master` d'abord, activer Pages ensuite.**
+- **Le push SSH ne marche pas sur cette machine** : `Host key verification failed`. Contourné en
+  passant le remote en HTTPS (`git remote set-url origin https://github.com/hugo-burnet/FITTRACK-RELOADED.git`).
+  Git Credential Manager exige une fenêtre interactive : le push ne part que si la commande est
+  lancée avec `GIT_TERMINAL_PROMPT=1` et `credential.interactive=true`. Les identifiants sont
+  maintenant mémorisés par GCM.
 - **Le serveur de dev n'est pas sur `/`** mais sur `http://localhost:5173/FITTRACK-RELOADED/`,
   à cause du `base`. Ouvrir la racine donne une 404 — ce n'est pas un bug.
 - **Le chemin du projet contient un espace** (`FITTRACK RELOADED`). Tout code qui manipule des
