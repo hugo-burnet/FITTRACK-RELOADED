@@ -2,22 +2,140 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-21 (Lot 2 terminé, checkpoint validé sur PC)
+**Dernière mise à jour :** 2026-07-22 (Lot 3 codé et vérifié côté agent, **checkpoint téléphone à
+faire**)
 
 ## Lot en cours
 
-Aucun. **Lot 2 terminé et validé.** Prochaine étape : **Lot 3 — Bibliothèque d'exercices**.
-À partir de là, l'agent génère le plan détaillé du lot en début de session à partir du cadrage de
-`00-ROADMAP.md`.
+**Lot 3 — Bibliothèque d'exercices.** Code terminé, les quatre commandes passent, tout est vérifié
+et mesuré dans le navigateur. **Il reste le checkpoint utilisateur — et il doit se faire au doigt,
+sur le téléphone**, pas sur PC : ce lot est le premier qui livre de la recherche, des filtres et
+une liste de 168 lignes.
 
-**Le checkpoint a été fait sur PC, pas sur téléphone.** Acceptable pour le Lot 2 qui ne livre aucune
-interaction tactile — mais le Lot 3 (recherche, filtres, liste longue) doit impérativement être
-vérifié au doigt sur le téléphone.
-
-**Fin de la Phase 0.** L'app a une charte, une navigation et une base. Le Lot 3 commence à livrer
-des fonctionnalités visibles.
+Premier lot dont le plan détaillé a été généré en début de session, comme prévu par le
+`00-ROADMAP.md` : `docs/plans/lot-03-exercise-library.md`.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+
+---
+
+## Lot 3 — Bibliothèque d'exercices
+
+### Definition of Done — vérifiée le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**84 tests**, +19), `npm run build`
+  passent tous les quatre.
+- ✅ **Recherche vérifiée dans un vrai navigateur** : « squat » → 9 sur 168 ; « developpe couche »
+  **sans accent** → 4 sur 168 dont « Développé couché (barre) » ; « zzzz » → 0 sur 168 avec le
+  bouton *Créer « zzzz »*. Latence de frappe **inférieure à 10 ms**.
+- ✅ **Filtres vérifiés** : Haltères → 26 sur 168 ; Haltères + Biceps → 5 sur 168. L'URL suit
+  (`#/exercises?equipment=dumbbell&muscle=biceps`).
+- ✅ **Retour arrière vérifié** : depuis une fiche, revenir retombe sur
+  `#/exercises?q=developpe%20couche`, avec le champ rempli et le relevé à 4 sur 168.
+- ✅ **Cycle complet création → note → suppression** vérifié en lisant IndexedDB directement, pas
+  le DOM : `isCustom: 1`, `isUnilateral: 1`, `quads`/`machine`, **pas de slug**,
+  `userNotes: 'siège position 4'`, `defaultRestSeconds: 45`.
+- ✅ **Pas de saut de curseur** : 16 caractères tapés un par un dans les notes,
+  `selectionStart` reste à 16 malgré une écriture en base à chaque frappe.
+- ✅ **Records et historique vérifiés avec de vraies données** (deux séances fabriquées en base,
+  puis effacées) : charge max 102,5 kg × 5, meilleure série 90 kg × 10 — deux séries différentes,
+  donc les deux lignes s'affichent bien. L'échauffement de 60 kg × 10 n'apparaît nulle part.
+- ✅ Contrastes **mesurés** sur les trois écrans + le sélecteur ouvert, thème sombre **et** clair :
+  minimum **6,49:1** en sombre, **6,04:1** en clair. Un échec trouvé et corrigé, cf. ci-dessous.
+- ✅ Cibles tactiles mesurées en 375×812 sur les trois écrans : **aucun élément sous 48 px de haut
+  ni 44 px de large**. Lignes du sélecteur : 56 px.
+- ✅ Mise en page mesurée en 375×812 : `scrollWidth === innerWidth === 375` partout (aucun
+  débordement horizontal), **32 px** sous le dernier élément une fois défilé tout en bas, sur la
+  bibliothèque comme sur la fiche.
+- ✅ En-tête de lettre collant vérifié : à 4 000 px de défilement, « E » est épinglé à 0 px du haut
+  de la zone de défilement.
+
+### Le catalogue avait 168 exercices, il en a toujours 168
+
+Aucun exercice n'a été ajouté ni retiré. Ce lot ne fait qu'exposer le catalogue du Lot 2.
+
+### Décisions et écarts par rapport au plan
+
+- **La virtualisation demandée par le cadrage n'a pas été faite — après mesure.** Un forçage
+  complet du calcul de mise en page des 168 lignes coûte **18 à 22 ms** sur cette machine, pour
+  **752 nœuds DOM** et 12 950 px de hauteur défilable ; et ce coût n'est payé qu'au rendu complet,
+  pas au défilement. Une virtualisation JS casserait la recherche du navigateur, l'ancrage du
+  défilement et les en-têtes collants, et le §8 de l'architecture exclut les composants tiers.
+  `content-visibility: auto` était le repli prévu : **il n'a pas été jugé nécessaire non plus**.
+  À rouvrir si la liste devient nettement plus longue, avec un chiffre à l'appui.
+- **La recherche et les filtres vivent dans l'URL** (`?q=`, `?muscle=`, `?equipment=`), écrits en
+  `replace`. Sans ça, ouvrir un exercice puis revenir remet la liste à zéro — l'annulation de ce
+  qu'on venait de chercher. Le `replace` évite que chaque frappe crée une entrée d'historique et
+  rende le bouton retour inutilisable. Les valeurs lues de l'URL sont **validées contre
+  `MUSCLE_GROUPS` / `EQUIPMENT`**, jamais castées : une URL est saisissable à la main.
+- **Les en-têtes de lettre disparaissent pendant une recherche.** Ils existent pour découper une
+  liste trop longue à lire d'un coup ; sur six résultats ils ne découpent rien. L'initiale est
+  calculée sur le **nom normalisé**, donc « Élévations » se range sous E — vérifié.
+- **`FilterChip` n'a pas de croix d'effacement.** Une cible de 20 px collée à une cible de 48 px
+  est ce qu'on rate les doigts moites. Retirer un filtre se fait par la première ligne du
+  sélecteur (« Tous les muscles »), ou par le bouton pleine largeur de l'état vide — au moment
+  précis où c'est urgent.
+- **Les états vides de cet écran utilisent la variante `title`, pas `reading`.** L'écran porte déjà
+  son propre relevé : un `0` de 72 px juste dessous dirait deux fois la même chose. La variante
+  `reading` du Lot 1 reste la bonne pour les écrans qui n'ont pas de compteur (Accueil, Routines,
+  Historique).
+- **Trois impasses, trois sorties différentes.** Recherche infructueuse → *Créer « ce que tu as
+  tapé »*, avec le nom déjà pré-rempli dans le formulaire. Filtres trop serrés → *Retirer les
+  filtres*. Catalogue réellement vide → l'explication du Lot 1.
+- **Les records sont dérivés de l'historique, pas lus dans `personalRecords`.** Cette table reste
+  vide jusqu'au Lot 6 : écrire un moteur incrémental maintenant serait du Lot 6 fait à moitié,
+  sans la validation de série qui l'alimente. `lib/records.ts` définit **une fois** ce qui compte
+  comme un record ; le Lot 6 (détection en direct) et le Lot 13 (recalcul complet) consomment ces
+  mêmes fonctions au lieu de redire les règles.
+- **`isWorkingSet` est exporté**, pas seulement utilisé en interne : le nombre de séries d'une
+  ligne d'historique et la valeur affichée à côté doivent parler des mêmes séries. « 4 séries ·
+  100 kg × 5 » où le 4 compte l'échauffement et le 100 kg ne le compte pas, ce sont deux réponses
+  à une seule question. **Trouvé en regardant l'écran avec de vraies données.**
+- **Les reps maximales ne s'affichent que s'il n'y a aucune charge à battre.** Sur un développé
+  couché, le maximum de répétitions est une série légère : l'appeler « record » est un mensonge.
+  Pour une traction au poids du corps, c'est le seul record qui existe.
+- **`labels.ts` vit dans `i18n/`, pas dans `features/exercises/`** comme le plan le disait. Les
+  routines (Lot 4) et la séance (Lot 5) nomment les mêmes muscles et le même matériel ; une
+  feature qui importe une autre feature est le bug de découpage que le §7 signale. Les types
+  *template literal* font **échouer le typecheck** si une valeur est ajoutée à `MUSCLE_GROUPS`
+  sans son libellé — vérifié en essayant.
+- **Les listes de muscles et de matériel restent dans l'ordre du schéma**, pas alphabétique.
+  `MUSCLE_GROUPS` suit l'anatomie (poussée, tirage, épaules, bras, jambes, gainage) et `EQUIPMENT`
+  la fréquence d'usage. Trier par libellé français rangerait quadriceps et ischio-jambiers aux
+  deux bouts de la feuille.
+- **`NavIcons.tsx` est devenu `ui/icons.tsx`.** Un jeu d'icônes est un composant générique
+  réutilisable : sa place est `ui/`. Un composant de `ui/` qui remonte chercher un glyphe dans
+  `app/` serait une dépendance à l'envers. Trois tracés ajoutés sur la même grille : chevron bas,
+  coche, plus.
+- **`Card` et `ConfirmAction` sortent de l'écran de diagnostic vers `ui/`.** Ils y étaient locaux
+  et servent maintenant quatre écrans. `ConfirmAction` prend un `confirmLabel` : le bouton de
+  confirmation reprend le verbe du bouton qui l'a armé (« Supprimer » confirme « Supprimer »).
+- **Un exercice du catalogue ne se modifie ni ne se supprime, mais ses notes et son repos, si.**
+  C'est la ligne de partage retenue au Lot 2, écrite noir sur blanc dans l'interface.
+
+### Le défaut trouvé en mesurant — les placeholders
+
+Le placeholder du champ de recherche mesurait **2,02:1 en thème clair** et 3,44:1 en sombre. Ce
+n'est pas un détail : le label du champ est en `sr-only`, donc **le placeholder est le seul nom
+visible du contrôle principal de l'écran**.
+
+Le Lot 1 rangeait les placeholders avec la « valeur précédente » du Lot 5 sous `--text-3`. Les deux
+ne demandent pourtant pas la même chose : une valeur précédente est un **écho de donnée** qu'on
+peut réutiliser, un placeholder est une **consigne qu'il faut lire**. Seule la première reste en
+`--text-3`. Après correction : **6,49:1 en sombre, 6,09:1 en clair** (commit `ee1ac2c`).
+
+**La règle du Lot 1 est donc amendée**, et `index.css` le dit maintenant explicitement.
+
+### Checkpoint Lot 3 — ⬜ à valider **sur le téléphone, au doigt**
+
+- [ ] Tu cherches « squat » : tu trouves. Tu tapes « developpe » **sans accent** : tu trouves quand
+      même.
+- [ ] Tu filtres sur « Haltères » : la liste se réduit et le relevé en haut à droite décompte.
+- [ ] Tu crées un exercice à toi, il apparaît dans la liste et survit à un rechargement complet.
+- [ ] Tu écris une note sur une machine (« siège position 4 »), tu quittes l'écran, tu reviens :
+      elle est là.
+- [ ] Tu fais défiler les 168 exercices d'un coup de pouce : c'est fluide, sans à-coups.
+- [ ] Tu ouvres un exercice depuis une recherche puis tu reviens : **ta recherche est toujours là**.
 
 ---
 
@@ -234,7 +352,7 @@ ci-dessus fait foi.
 | 0 | Bootstrap & déploiement | ✅ terminé | 1 | ✅ |
 | 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
 | 2 | Couche de données | ✅ terminé | 3 | ✅ |
-| 3 | Bibliothèque d'exercices | ⬜ à faire | — | ⬜ |
+| 3 | Bibliothèque d'exercices | 🟨 codé, checkpoint à faire | 4 | ⬜ |
 | 4 | Routines | ⬜ à faire | — | ⬜ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ⬜ à faire | — | ⬜ |
@@ -358,6 +476,18 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   l'outil Bash déplace aussi l'outil PowerShell — un `npm run typecheck` a fini par échouer en
   `Missing script` parce qu'il tournait dans `node_modules/dexie/dist`. Préfixer les commandes
   longues d'un `Set-Location` sur la racine du projet.
+- **`useLiveQuery` ne distingue pas « pas encore répondu » de « rien trouvé » : les deux valent
+  `undefined`.** Sur un écran de détail, le résultat est un « cet exercice n'existe plus » qui
+  clignote à chaque ouverture. Le contournement tient en une ligne :
+  `useLiveQuery(async () => (await getExercise(id)) ?? null)` — `null` veut dire absent,
+  `undefined` veut dire en cours. Même piège pour une liste : afficher l'état vide sur `undefined`
+  fait clignoter « rien ne correspond » à chaque frappe.
+- **Vite ignore la variable `PORT`.** Quand le port 5173 est déjà pris (une autre session Claude
+  Code dans le même dossier), Vite prend 5174 tout seul, alors que l'outil de prévisualisation
+  croit le serveur sur le port qu'il a attribué. Symptôme : « navigation denied or failed » sur un
+  port où personne n'écoute. Lire le port réel dans les logs du serveur et naviguer dessus à la
+  main. L'onglet peut être ramené de force sur le mauvais port entre deux appels — refaire la
+  navigation avant chaque script.
 - **Les captures d'écran du panneau navigateur ont encore expiré** (30 s, systématiquement), alors
   que `javascript_tool` répondait normalement. Contournement confirmé et suffisant : tout vérifier
   par JS — `element.click()` pour les interactions, `getBoundingClientRect()` pour la mise en page,
