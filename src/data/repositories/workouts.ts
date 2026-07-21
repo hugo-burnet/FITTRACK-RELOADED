@@ -143,3 +143,53 @@ export async function getLastPerformance(exerciseId: string): Promise<WorkoutSet
     .filter((set) => set.deletedAt === 0 && set.isCompleted === 1)
     .sortBy('order');
 }
+
+/**
+ * One block of a given exercise inside one session — the same unit
+ * `getLastPerformance` returns, which is why they are grouped by
+ * `workoutExerciseId` and not by `workoutId`: an exercise done twice in one
+ * session is two blocks, and merging them would collide their `order`s.
+ */
+export interface ExerciseSession {
+  workoutId: string;
+  workoutExerciseId: string;
+  /** Date of the first validated set of the block. */
+  performedAt: number;
+  sets: WorkoutSet[];
+}
+
+/**
+ * RF-10 — the whole history of one exercise, most recent first. Walks the same
+ * `[exerciseId+performedAt]` index as the previous-value query, from the same
+ * lower bound of 1: an unvalidated set is not history.
+ */
+export async function listSessionsForExercise(exerciseId: string): Promise<ExerciseSession[]> {
+  const sets = await db.workoutSets
+    .where('[exerciseId+performedAt]')
+    .between([exerciseId, 1], [exerciseId, Dexie.maxKey])
+    .filter((set) => set.deletedAt === 0 && set.isCompleted === 1)
+    .toArray();
+
+  const blocks = new Map<string, ExerciseSession>();
+
+  for (const set of sets) {
+    const block = blocks.get(set.workoutExerciseId);
+    if (block === undefined) {
+      blocks.set(set.workoutExerciseId, {
+        workoutId: set.workoutId,
+        workoutExerciseId: set.workoutExerciseId,
+        performedAt: set.performedAt,
+        sets: [set],
+      });
+      continue;
+    }
+    block.sets.push(set);
+    // Not merely the first set seen: the index order survives the filter today,
+    // but a block's date should not depend on that staying true.
+    block.performedAt = Math.min(block.performedAt, set.performedAt);
+  }
+
+  for (const block of blocks.values()) block.sets.sort((a, b) => a.order - b.order);
+
+  return [...blocks.values()].sort((a, b) => b.performedAt - a.performedAt);
+}

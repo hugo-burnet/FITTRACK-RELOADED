@@ -3,6 +3,7 @@ import { db } from '@/data/db';
 import { seedDatabase } from '@/data/seed/seedDatabase';
 import { resetDb } from '@/test/resetDb';
 import {
+  countExercises,
   createCustomExercise,
   deleteExercise,
   getExercise,
@@ -110,6 +111,24 @@ describe('createCustomExercise', () => {
   it("n'impose aucune limite de nombre", async () => {
     for (let i = 0; i < 60; i += 1) await createCustomExercise(custom(`Exercice ${i}`));
     expect(await db.exercises.where('isCustom').equals(1).count()).toBe(60);
+  });
+});
+
+describe('countExercises', () => {
+  beforeEach(resetDb);
+
+  it('compte le catalogue', async () => {
+    await seedDatabase();
+    expect(await countExercises()).toBe((await listExercises()).length);
+  });
+
+  it('ne compte pas les exercices supprimés', async () => {
+    const created = await createCustomExercise(custom('À retirer du compte'));
+    const before = await countExercises();
+
+    await deleteExercise(created.id);
+
+    expect(await countExercises()).toBe(before - 1);
   });
 });
 

@@ -10,6 +10,7 @@ import {
   finishWorkout,
   getActiveWorkout,
   getLastPerformance,
+  listSessionsForExercise,
   startWorkout,
 } from './workouts';
 import type { WorkoutExercise, WorkoutSet } from '@/data/types';
@@ -131,6 +132,90 @@ describe('getLastPerformance', () => {
     const result = await getLastPerformance('bench');
     expect(result).toHaveLength(1);
     expect(result[0]!.weight).toBe(100);
+  });
+});
+
+describe('listSessionsForExercise', () => {
+  beforeEach(resetDb);
+
+  it('rend les séances de la plus récente à la plus ancienne', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(8), sets: [[102.5, 5]] });
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(15), sets: [[105, 4]] });
+
+    const sessions = await listSessionsForExercise('bench');
+
+    expect(sessions.map((session) => session.performedAt)).toEqual([day(15), day(8), day(1)]);
+  });
+
+  it('groupe les séries de chaque séance dans leur ordre de saisie', async () => {
+    await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [
+        [60, 10],
+        [80, 8],
+        [100, 5],
+      ],
+    });
+
+    const [session] = await listSessionsForExercise('bench');
+
+    expect(session!.sets.map((set) => set.weight)).toEqual([60, 80, 100]);
+  });
+
+  it('ne mélange pas les exercices', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+    await seedWorkout({ exerciseId: 'squat', performedAt: day(2), sets: [[140, 5]] });
+
+    expect(await listSessionsForExercise('bench')).toHaveLength(1);
+  });
+
+  it('sépare deux blocs du même exercice dans une même séance', async () => {
+    // Développé couché en début puis en fin de séance : deux blocs, pas un seul
+    // dont les `order` se marcheraient dessus.
+    const workout = await startWorkout('', 'Séance libre');
+    for (const weight of [100, 60]) {
+      const we = await addExercise(workout.id, 'bench');
+      await db.workoutSets.add(
+        newEntity<WorkoutSet>({
+          workoutExerciseId: we.id,
+          exerciseId: 'bench',
+          workoutId: workout.id,
+          order: 0,
+          setType: 'normal',
+          side: 'both',
+          weight,
+          reps: 5,
+          isCompleted: 1,
+          performedAt: day(1),
+        }),
+      );
+    }
+
+    expect(await listSessionsForExercise('bench')).toHaveLength(2);
+  });
+
+  it('ignore les séances supprimées', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    await deleteWorkout(workout.id);
+    expect(await listSessionsForExercise('bench')).toEqual([]);
+  });
+
+  it('ignore les séries non validées', async () => {
+    const workout = await startWorkout('', 'Séance en cours');
+    const we = await addExercise(workout.id, 'bench');
+    await addSet(we.id, { weight: 999, reps: 1 });
+
+    expect(await listSessionsForExercise('bench')).toEqual([]);
+  });
+
+  it('rend un tableau vide pour un exercice jamais fait', async () => {
+    expect(await listSessionsForExercise('jamais-fait')).toEqual([]);
   });
 });
 

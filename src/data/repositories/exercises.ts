@@ -56,6 +56,15 @@ export async function listExercises(filter: ExerciseFilter = {}): Promise<Exerci
   return rows.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
 }
 
+/**
+ * The denominator of the library's readout ("24 **sur 168**"). Counts on the
+ * `deletedAt` index rather than reading the rows: the figure re-reads on every
+ * write, and loading 168 objects to discard them would be wasteful.
+ */
+export async function countExercises(): Promise<number> {
+  return db.exercises.where('deletedAt').equals(0).count();
+}
+
 export async function getExercise(id: string): Promise<Exercise | undefined> {
   const exercise = await db.exercises.get(id);
   return exercise !== undefined && exercise.deletedAt === 0 ? exercise : undefined;
