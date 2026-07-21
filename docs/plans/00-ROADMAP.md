@@ -262,6 +262,50 @@ fois précédente.
 
 ---
 
+## Lot 5bis — Schéma musculaire (la moitié manquante de RF-06)
+
+> **Pourquoi « 5bis » et pas une renumérotation :** décaler les Lots 6 à 20 d'un cran invaliderait
+> chaque référence croisée de `PROGRESS.md`, des plans détaillés et des messages de commit déjà
+> écrits. Un numéro laid coûte moins cher qu'une renumérotation.
+
+**Objectif :** montrer quel muscle travaille un exercice, sans dépendre du réseau ni d'un jeu
+d'images tiers.
+
+**Origine :** RF-06 demande « image ou démonstration animée » pour chaque exercice. Le Lot 2 a
+écarté `free-exercise-db` pour deux bonnes raisons (noms anglais, images en URL distante,
+incompatibles avec la règle non négociable n°2) — mais **la conséquence, l'abandon de la partie
+visuelle de RF-06, n'avait jamais été consignée**, et le tableau de couverture annonçait M2 comme
+complet. Ce lot répare la moitié qui est à notre portée.
+
+**RF couverts :** complète RF-06, prépare RF-43 (carte de chaleur, Lot 12).
+**Dépend de :** Lot 3 (la fiche exercice existe) et Lot 5 (pas de finition avant de savoir logger).
+**Budget :** 1 session.
+
+**Livrables :**
+- `ui/BodyMap.tsx` : silhouette de face et de dos en SVG, **dessinée à la main** sur une grille
+  unique, comme les icônes du Lot 1. Une région par groupe musculaire.
+- Coloration pilotée par une seule prop `highlight: Partial<Record<MuscleGroup, number>>` (0 à 1).
+  La fiche exercice passe `1` pour le muscle principal et `0,4` pour les secondaires ; le Lot 12
+  passera un volume normalisé. **Un composant, deux usages** — c'est ce qui rend ce lot rentable.
+- Intégration sur la fiche exercice, sous la ligne d'identité.
+
+**Ce qui n'est PAS dans ce lot — l'illustration du mouvement.** C'est un problème
+d'approvisionnement, pas de développement : 336 images à sourcer et à apparier à la main sur les
+168 slugs français, avec un poids de bundle à **mesurer avant de s'engager** (une PWA qui précache
+15 Mo n'est plus une PWA). À rouvrir séparément, si l'envie revient à l'usage.
+
+**Point de vigilance :** les 18 valeurs de `MUSCLE_GROUPS` ne se dessinent pas toutes — `cardio`,
+`full_body` et `other` n'ont pas de région anatomique. Le type doit rendre ce cas **explicite**
+plutôt que de laisser trois groupes silencieusement invisibles sur le dessin. C'est exactement le
+piège du champ indexé à `null` du Lot 2, transposé au graphisme : ça existe, mais rien ne le montre.
+
+**✅ Checkpoint :**
+- [ ] Tu ouvres « Développé couché » : les pectoraux sont allumés, les triceps et les épaules en
+      second, et ça correspond à ce que tu sens le lendemain.
+- [ ] Tu ouvres un exercice de cardio : l'app n'affiche pas une silhouette vide et muette.
+
+---
+
 ## Lot 6 — Outils de séance (M5 + fin du M4)
 
 **Objectif :** tout ce qui rend la séance efficace et sûre.
@@ -614,6 +658,7 @@ agrandies.
 
 | Écarté | Raison |
 |---|---|
+| **Illustration animée du mouvement** (moitié de RF-06) | Problème d'approvisionnement, pas de développement : 336 images à sourcer et à apparier à la main sur 168 slugs français, avec un poids de bundle qui menace la règle du hors-ligne. Le **muscle ciblé** est traité au Lot 5bis, à un coût sans commune mesure. À rouvrir si le manque se fait sentir à l'usage. |
 | Toutes les fonctionnalités sociales | Exclues du cahier des charges dès l'origine. |
 | M13 — Montres connectées / Wear OS | Projet Android natif séparé, pairing, sync Bluetooth. Coût sans commune mesure avec le gain pour un usage personnel. |
 | iOS / App Store | 99 $/an, un Mac obligatoire pour compiler. À rouvrir seulement si tu changes de téléphone. |
@@ -627,7 +672,7 @@ agrandies.
 | Module | Lots | Couverture |
 |---|---|---|
 | M1 Compte | 14 | Optionnel, tardif — sans objet en mono-appareil |
-| M2 Exercices | 2, 3 | Complète, sans limite de nombre |
+| M2 Exercices | 2, 3, **5bis** | Sans limite de nombre. RF-06 n'est **pas** complet avant le Lot 5bis : le champ `imageUrl` existe mais rien ne le remplit, et l'illustration du **mouvement** reste hors périmètre (cf. Lot 5bis). |
 | M3 Routines | 4, 17 | Complète + périodisation (au-delà de Hevy) |
 | M4 Séance | 5, 6 | Complète + réorganisation en séance |
 | M5 Outils | 6 | Complète + plaques élargies aux haltères/machines |

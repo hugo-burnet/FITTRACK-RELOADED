@@ -401,6 +401,7 @@ ci-dessus fait foi.
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
 | 4 | Routines | ⬜ à faire | — | ⬜ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
+| 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ⬜ à faire | — | ⬜ |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
@@ -423,6 +424,33 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
 
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
+
+### 2026-07-22 — RF-06 n'était pas complet, et le roadmap prétendait le contraire
+
+Question posée par l'utilisateur : « des schémas d'exo comme dans Hevy, avec un mouvement + le
+muscle ciblé, c'est prévu ? » Réponse après vérification : **non, et c'était un trou non consigné**.
+
+RF-06 demande « nom, groupe musculaire principal, groupes secondaires, équipement, type de mesure,
+**image ou démonstration animée** ». Le Lot 2 a écarté `free-exercise-db` pour deux bonnes raisons
+(noms anglais, images en URL distante), mais **la conséquence n'a jamais été écrite** : le champ
+`imageUrl` a été déclaré dans `types.ts` puis oublié — rien ne le remplit, rien ne l'affiche — et le
+tableau de couverture du roadmap annonçait « M2 Exercices : complète ».
+
+**La demande contient deux choses de coûts incomparables**, et les séparer est toute la décision :
+
+- **Le muscle ciblé** : la donnée existe déjà sur chaque exercice depuis le Lot 2. Il ne manque
+  qu'un dessin. Aucune dépendance, aucun octet réseau, et **le même composant est la carte de
+  chaleur du Lot 12** (RF-43) à une prop près. → **Lot 5bis créé**, après le Lot 5.
+- **L'illustration du mouvement** : 336 images à sourcer et à apparier à la main, un poids de
+  bundle qui menace la règle du hors-ligne. Problème d'approvisionnement, pas de développement.
+  → **Explicitement hors périmètre**, consigné comme tel dans le roadmap.
+
+**Numéroté 5bis et non inséré par renumérotation** : décaler les Lots 6 à 20 invaliderait chaque
+référence croisée déjà écrite dans ce fichier, dans les plans et dans les messages de commit. Un
+numéro laid coûte moins cher qu'une renumérotation.
+
+**Placé après le Lot 5, pas avant** : l'app ne sait toujours pas enregistrer une série. De la
+finition avant la fonction, c'est le meilleur moyen d'avoir une belle app qu'on n'utilise pas.
 
 ### 2026-07-21 — Lot 0
 
