@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { day, seedWorkout } from '@/test/factories';
@@ -55,6 +56,7 @@ async function addExercise(workoutId: string, exerciseId: string): Promise<Worko
     exerciseId,
     order: 0,
     supersetGroup: 0,
+    restSeconds: DEFAULT_REST_SECONDS,
   });
   await db.workoutExercises.add(workoutExercise);
   return workoutExercise;

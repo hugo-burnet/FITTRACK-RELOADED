@@ -5,7 +5,10 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'node_modules'] },
+  // `.claude` porte les worktrees de l'agent : un second projet TypeScript
+  // complet, dans lequel ESLint voit une deuxième racine de tsconfig et cesse
+  // alors de parser **tout** le dépôt. Il est déjà dans `.gitignore`.
+  { ignores: ['dist', 'coverage', 'node_modules', '.claude'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

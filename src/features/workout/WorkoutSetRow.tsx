@@ -6,6 +6,7 @@ import { isRepRange, isSetRecordable, repsReading } from '@/lib/measurement';
 import type { EntryColumn, ResolvedValues, TargetField } from '@/lib/measurement';
 import { formatNumber } from '@/ui/numberField';
 import { CheckIcon } from '@/ui/icons';
+import { RestRail } from './RestRail';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
 
@@ -46,6 +47,8 @@ type Props = {
   onComplete: (values: Partial<SetValues>) => void;
   onUncomplete: () => void;
   onMenu: () => void;
+  /** Set only on the one set currently resting. Draws the bar along the bottom. */
+  rest?: { startedAt: number; endsAt: number; onDone: () => void };
 };
 
 /**
@@ -73,6 +76,7 @@ export function WorkoutSetRow({
   onComplete,
   onUncomplete,
   onMenu,
+  rest,
 }: Props) {
   const done = set.isCompleted === 1;
 
@@ -139,7 +143,15 @@ export function WorkoutSetRow({
 
   return (
     <div
-      className={`flex min-h-14 items-center gap-1.5 px-2 transition-colors duration-[var(--dur-1)]
+      // 60 px and a bottom padding, not the 56 px of Lot 5: the row keeps a
+      // channel of its own under the controls, and the rest bar lives in it.
+      //
+      // Measured first, which is why it is not 56: 48 px of controls centred in
+      // 56 leave 4 px of slack, and a 3 px bar in it ran **under the tick**.
+      // The channel is reserved on **every** row, resting or not — a row that
+      // grew when a rest started would shove the list sixty times a session.
+      className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
+        transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
     >
       {/* The rank, and the way to anything else about this set. Lot 6 hangs the
@@ -211,17 +223,31 @@ export function WorkoutSetRow({
         onClick={() =>
           done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))
         }
-        className={`flex size-12 shrink-0 items-center justify-center rounded-lg
-          transition-[background-color,transform] duration-[var(--dur-1)] ease-[var(--ease-mech)]
-          active:scale-[0.92] disabled:pointer-events-none disabled:opacity-40
-          ${
-            done
-              ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-              : 'bg-[var(--surface-2)] text-[var(--text-2)]'
-          }`}
+        // La **zone de touche** reste à 48 px : c'est la cible tactile non
+        // négociable de la charte, et cet écran se lit une main en sueur.
+        // Seule la pastille rétrécit, à l'intérieur.
+        className="flex size-12 shrink-0 items-center justify-center
+          transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)]
+          active:scale-[0.92] disabled:pointer-events-none disabled:opacity-40"
       >
-        <CheckIcon />
+        {/* 34 px, soit 30 % de moins que la zone qui la porte. La coche suit la
+            même réduction (20 → 14 px) pour garder sa respiration dedans. */}
+        <span
+          className={`flex size-[2.125rem] items-center justify-center rounded-lg
+            transition-colors duration-[var(--dur-1)]
+            ${
+              done
+                ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                : 'bg-[var(--surface-2)] text-[var(--text-2)]'
+            }`}
+        >
+          <CheckIcon width={14} height={14} />
+        </span>
       </button>
+
+      {rest !== undefined && (
+        <RestRail startedAt={rest.startedAt} endsAt={rest.endsAt} onDone={rest.onDone} />
+      )}
     </div>
   );
 }

@@ -171,6 +171,17 @@ export interface WorkoutExercise extends Syncable {
   order: number;
   supersetGroup: number;
   notes?: string;
+
+  /**
+   * How long to rest after a set of this exercise, in seconds. DENORMALISED on
+   * purpose, like everything else in this table — cf. architecture §5.
+   *
+   * Resolved once, when the exercise enters the session: the routine can be
+   * edited or deleted mid-session, and a free session has no routine at all.
+   * Always a real duration, never `0` — unlike `RoutineExercise.restSeconds`,
+   * where `0` means "use the exercise's default". Cf. `resolveRestSeconds`.
+   */
+  restSeconds: number;
 }
 
 export interface WorkoutSet extends Syncable {

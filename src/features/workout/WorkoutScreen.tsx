@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -17,8 +17,11 @@ import {
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
+import type { SetType } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { formatRest, isRestTriggering, resolveRestSeconds } from '@/lib/rest';
 import { toBlocks } from '@/lib/routineOrder';
+import { useRestTimer } from '@/stores/restTimer';
 import {
   ActionBand,
   ActionSheet,
@@ -34,6 +37,7 @@ import {
 } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
+import { unlockChime } from './restChime';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
 import { workoutProgressLine } from './summary';
@@ -61,6 +65,40 @@ function supersetPlaces(lines: WorkoutExerciseDetail[]): Map<string, SupersetPla
   return places;
 }
 
+/** What validating a set of this exercise is worth, in rest. */
+interface RestPlan {
+  /** False between two members of a superset — the round is not over. */
+  isLastOfBlock: boolean;
+  seconds: number;
+}
+
+/**
+ * The rest each exercise owes, from the same blocks the superset marks use.
+ *
+ * A superset rests **once, after the round**, and for the **longest** duration
+ * configured in the group: recovery from a round is governed by its most
+ * demanding movement, not by whichever exercise happens to come last.
+ */
+function restPlans(lines: WorkoutExerciseDetail[]): Map<string, RestPlan> {
+  const plans = new Map<string, RestPlan>();
+
+  for (const block of toBlocks(lines.map((line) => line.row))) {
+    // Read through the resolver rather than straight off the row: a session
+    // started before this field existed has no `restSeconds` at all — the field
+    // is unindexed, so there was no migration to write and nothing backfilled
+    // the rows already in the database. `Math.max` over one `undefined` yields
+    // NaN, `endsAt` becomes NaN, and the rest ends the instant it starts.
+    const seconds = Math.max(
+      ...block.rows.map((row) => resolveRestSeconds(row.restSeconds, undefined)),
+    );
+    block.rows.forEach((row, index) => {
+      plans.set(row.id, { isLastOfBlock: index === block.rows.length - 1, seconds });
+    });
+  }
+
+  return plans;
+}
+
 /**
  * The most important screen of the application — the one read sixty times a
  * session, out of breath, one-handed.
@@ -74,6 +112,7 @@ function supersetPlaces(lines: WorkoutExerciseDetail[]): Map<string, SupersetPla
 export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const rest = useRestTimer();
 
   // `null` is "no session", `undefined` is "not answered yet". Blurring them
   // makes the screen flash its empty state on every open (Lot 3 lesson).
@@ -82,6 +121,36 @@ export function WorkoutScreen() {
     async () => (active == null ? null : await getWorkoutDetail(active.id)),
     [active?.id],
   );
+
+  /**
+   * The gesture that lets the timer make a noise two minutes from now.
+   *
+   * A mobile browser refuses to start audio outside a user gesture, and the
+   * `setTimeout` that ends a rest has none — it would fail *silently*, which is
+   * the worst failure available to a feature whose job is to be heard. On the
+   * document rather than on a wrapper: the tick that starts a rest can land on
+   * any control of this screen.
+   */
+  useEffect(() => {
+    document.addEventListener('pointerdown', unlockChime);
+    return () => document.removeEventListener('pointerdown', unlockChime);
+  }, []);
+
+  const stopRest = useRestTimer((state) => state.stop);
+  const restingSetId = rest.setId;
+
+  /**
+   * The safety net for a rest whose set is gone — deleted, or carried off with
+   * its exercise. Without it the store keeps a dead id and the session line
+   * reads "Repos 1:30" for the rest of the workout.
+   */
+  useEffect(() => {
+    if (restingSetId === null || detail == null) return;
+    const alive = detail.exercises.some((line) =>
+      line.sets.some((set) => set.id === restingSetId),
+    );
+    if (!alive) stopRest(restingSetId);
+  }, [restingSetId, detail, stopRest]);
 
   const [draft, setDraft] = useState<{ id: string; name: string; notes: string } | null>(null);
   if (detail != null && draft?.id !== detail.workout.id) {
@@ -111,6 +180,19 @@ export function WorkoutScreen() {
 
   const { workout, exercises } = detail;
   const places = supersetPlaces(exercises);
+  const plans = restPlans(exercises);
+
+  /**
+   * Validating a set is what starts a rest — and the only two things that stop
+   * one are the exercise leaving or the rest running out. Un-ticking does
+   * **not**: fixing a typo must not cost you your recovery.
+   */
+  const startRest = (rowId: string, setId: string, setType: SetType): void => {
+    const plan = plans.get(rowId);
+    if (plan === undefined) return;
+    if (!isRestTriggering({ setType }, { isLastOfBlock: plan.isLastOfBlock })) return;
+    rest.start(setId, plan.seconds);
+  };
 
   const totalSets = exercises.reduce((count, line) => count + line.sets.length, 0);
   const completedSets = exercises.reduce(
@@ -158,6 +240,16 @@ export function WorkoutScreen() {
             <span className="label-xs font-semibold text-[var(--text-2)]">
               {workoutProgressLine(completedSets, totalSets)}
             </span>
+            {/* Le seul texte du minuteur. Il ne bat pas — il dit combien dure la
+                pause, une fois. C'est du texte, donc il ne coûte aucune hauteur :
+                la ligne mesure la même chose avec et sans repos. Et c'est le
+                canal redondant qu'exige la règle du Lot 4, un accent seul ne
+                pouvant pas porter du sens. */}
+            {rest.setId !== null && (
+              <span className="label-xs font-semibold text-[var(--accent-ink)]">
+                {t('workout.restLabel', { duration: formatRest(rest.seconds) })}
+              </span>
+            )}
           </div>
 
           <ReorderableList
@@ -172,8 +264,12 @@ export function WorkoutScreen() {
                 state={state}
                 onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                 onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
+                rest={rest.setId === null ? undefined : { ...rest, setId: rest.setId, onDone: () => rest.stop() }}
                 onWrite={(setId, values) => void updateSetValues(setId, values)}
-                onComplete={(setId, values) => void completeSet(setId, values)}
+                onComplete={(setId, values, set) => {
+                  void completeSet(setId, values);
+                  startRest(line.row.id, setId, set.setType);
+                }}
                 onUncomplete={(setId) => void uncompleteSet(setId)}
                 onDeleteSet={(setId) => void deleteSet(setId)}
                 onRestoreSet={(setId) => void restoreSet(setId)}

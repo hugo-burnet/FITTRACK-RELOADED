@@ -1,4 +1,5 @@
 import { db } from '@/data/db';
+import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import { newEntity } from '@/data/repositories/base';
 import type { Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 
@@ -33,6 +34,7 @@ export async function seedWorkout(input: {
     exerciseId: input.exerciseId,
     order: 0,
     supersetGroup: 0,
+    restSeconds: DEFAULT_REST_SECONDS,
   });
 
   const sets = input.sets.map(([weight, reps], index) =>

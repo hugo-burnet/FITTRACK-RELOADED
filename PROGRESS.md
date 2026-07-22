@@ -2,23 +2,83 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-22 (Lot 5 — code livré et mesuré, **checkpoint en salle à faire**)
+**Dernière mise à jour :** 2026-07-22 (Lot 6 tranche 1 — minuteur livré et mesuré ; **checkpoint en
+salle à faire**, celui du Lot 5 aussi)
 
 ## Lot en cours
 
-**Lot 5 — Séance en direct.** Le code est livré, vérifié et commité ; **le lot n'est pas terminé**.
-Il ne le sera qu'après une vraie séance en salle et l'aller-retour de correctifs qui suivra.
+**Lot 6, tranche 1 — Minuteur de repos.** Code livré et vérifié en pilotant l'écran ; **le lot n'est
+pas terminé** tant qu'une séance en salle ne l'a pas jugé.
 
-Plan détaillé : `docs/plans/lot-05-seance-en-direct.md`, généré en début de session comme aux
-Lots 3 et 4. Le procédé tient sur quatre lots d'affilée.
+Plan détaillé : `docs/plans/lot-06-minuteur.md`. Cinq formes dessinées, quatre écartées par
+l'utilisateur — le détail et les raisons sont dans le plan, section « La forme retenue ».
 
-**Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/ — poussé, à vérifier au doigt.
+### La forme, en une phrase
 
-> ⚠️ **Ce lot n'est pas fini parce qu'il est vert.** Le Lot 4 était vert lui aussi — typecheck,
-> lint, 148 tests, contrastes mesurés, cibles mesurées — et l'utilisateur a trouvé **sept défauts
-> en deux essais au doigt**. Le Lot 5 confirme la règle : deux défauts trouvés en pilotant l'écran,
-> puis **quatre passes de retours sur les boutons**, tous justes, aucun visible au typecheck, au
-> lint ni aux tests. Il en reste certainement, et ils ne se trouveront qu'en salle.
+**Le minuteur est une barre de 3 px dans une voie, sous la série qu'on vient de cocher**, plus
+`REPOS 1:30` sur la ligne de relevés. Aucune commande, aucun appui, aucune cible tactile ajoutée.
+
+### État vérifié le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**458 tests**), `npm run build`.
+- ✅ **Vérifié dans la vraie app, sur une vraie séance** : cocher une série démarre le repos, la
+  barre avance, atteint 100 %, et **le repos se referme seul après la grâce**.
+- ✅ Contrastes mesurés aux deux thèmes : barre/ligne **12,87:1 sombre, 5,23:1 clair** ; barre/voie
+  11,06 et 4,49 ; relevé « Repos » 15,31 et 6,63. Aucune cible sous 48 × 44, aucun débordement.
+- ✅ Géométrie mesurée : ligne 60 px, voie 3 px, **3 px d'air au-dessus, 4 px en dessous**, 12 px de
+  retrait de chaque côté.
+- ⬜ **Checkpoint en salle : à faire.** Il ne teste plus que ça marche, il teste **trois paris** —
+  cf. la fin du plan.
+
+### Ce qui a été abandonné, et pourquoi
+
+- **`±15 s` n'existe pas.** Décision de l'utilisateur sur son usage réel : il ne s'en sert jamais
+  sur Hevy. Le repos par défaut est réglable par exercice depuis le Lot 3 — ajuster à chaque série
+  rustinait un défaut mal réglé au lieu de le corriger une fois. Une fonctionnalité retirée ne peut
+  pas mal se comporter. La variante avec pas-à-pas est dessinée **et mesurée** dans le plan, à
+  reprendre telle quelle si une séance la réclame.
+- **« Visible en haut de l'écran »** (roadmap) est devenu « sur la ligne de la série ». Trois
+  tentatives en haut de l'écran ont été rejetées au doigt : « un peu fat, ça prend beaucoup de
+  place », puis « ça fait posé, pas intégré à l'app » — le mot exact du Lot 5 sur les barres
+  collantes.
+
+### Les trois défauts trouvés en pilotant, pas en relisant
+
+**1. La grâce ne se déclenchait jamais.** L'effet qui l'arme dépendait de `now`, qui change chaque
+seconde : chaque battement annulait le `setTimeout` et en repartait un neuf. La barre serait restée
+affichée toute la séance. **C'est exactement le piège que `UndoRow` documente depuis le Lot 5**, et
+j'y suis retombé en l'ayant sous les yeux. Les deux minuteries — le son et la grâce — sont
+maintenant armées **une fois, depuis l'instant de fin**, et ne dépendent plus du battement. Calculer
+le délai depuis l'instant plutôt que passer une durée fixe rend aussi un montage tardif correct au
+lieu de relancer le repos.
+
+**2. `restSeconds` est `undefined` sur les séances déjà en base.** Le champ n'est pas indexé, donc
+il n'y a pas eu de migration à écrire — et rien n'a rempli les lignes existantes. `Math.max` sur un
+`undefined` rend `NaN`, `endsAt` devient `NaN`, et le repos se termine à l'instant où il démarre. La
+lecture passe désormais par `resolveRestSeconds`, qui retombe sur 120 s. **Aucun test ne pouvait le
+voir** : il fallait une base antérieure au champ.
+
+**3. La barre passait sous le bouton de validation.** 48 px de contrôles centrés dans 56 px ne
+laissent que 4 px de marge, et une barre de 3 px dedans traversait la coche — c'est ce qui faisait
+« pas fini » à l'écran. La ligne passe à **60 px** avec une réserve permanente en bas, réservée sur
+**toutes** les lignes : une ligne qui grandirait au démarrage d'un repos décalerait la liste soixante
+fois par séance.
+
+### Ce que le Lot 6 ajoute à la charte
+
+- **Le balayage de contraste doit s'étendre aux éléments non textuels.** Il parcourt les nœuds de
+  texte depuis le Lot 3 ; un filet de 3 px n'en est pas un. C'est ce qui a laissé passer le rail de
+  superset du Lot 4, mesuré ici à **1,29:1 en thème clair** — quasi invisible. Corrigé à part.
+- **`--color-accent` ne peut pas servir de filet.** Sur `--surface-2` en thème clair il mesure
+  **1,02:1** : le vert acide et le gris clair ont la même luminance. Un trait doit être lisible
+  *contre* une surface, donc c'est de l'encre — `--accent-ink`.
+- **ESLint ignore `.claude`.** Un worktree d'agent y pose un second projet TypeScript complet, et
+  ESLint cesse alors de parser **tout** le dépôt : 193 erreurs de parsing, aucune réelle.
+
+### Ce que cette tranche ne fait pas
+
+Le reste du Lot 6 — calculateur de plaques, calculateur d'échauffement, RPE, détection de record en
+direct, types de séries — est intact. C'était une tranche, décidée comme telle.
 
 ---
 

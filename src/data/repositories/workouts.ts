@@ -1,5 +1,6 @@
 import { db } from '@/data/db';
 import type { Exercise, Syncable, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import { resolveRestSeconds } from '@/lib/rest';
 import { moveItem, normalizeSupersets } from '@/lib/routineOrder';
 import { alive, newEntity, softDelete, touch } from './base';
 import { getLastPerformance } from './workoutHistory';
@@ -87,6 +88,16 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
     durationSeconds: 0,
   });
 
+  // The rest is resolved **here**, once, and copied in: the routine may be
+  // edited or deleted while the session runs, and `0` on a routine row means
+  // "use the exercise's default", which only the library can answer.
+  const library = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
+  const defaultRest = new Map(
+    library
+      .filter((exercise) => exercise !== undefined)
+      .map((exercise) => [exercise.id, exercise.defaultRestSeconds]),
+  );
+
   const exercises = rows.map((row) =>
     newEntity<WorkoutExercise>({
       workoutId: workout.id,
@@ -94,6 +105,7 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
       order: row.order,
       supersetGroup: row.supersetGroup,
       notes: row.notes,
+      restSeconds: resolveRestSeconds(row.restSeconds, defaultRest.get(row.exerciseId)),
     }),
   );
 
@@ -269,11 +281,16 @@ export async function addWorkoutExercise(
   const count = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray())
     .length;
 
+  // No routine to override anything: an exercise added mid-session takes its
+  // own default, or the product default.
+  const exercise = await db.exercises.get(exerciseId);
+
   const row = newEntity<WorkoutExercise>({
     workoutId,
     exerciseId,
     order: count,
     supersetGroup: 0,
+    restSeconds: resolveRestSeconds(undefined, exercise?.defaultRestSeconds),
   });
 
   await db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {

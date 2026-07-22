@@ -121,6 +121,14 @@ const fr = {
    */
   workout: {
     emptyName: 'Séance libre',
+    /**
+     * Le minuteur de repos n'a **aucune commande** : le filet dit où on en est,
+     * et ce relevé dit combien dure la pause. Le format est celui du Lot 4
+     * (`1:30 min · 20 kg`) — un seul format de durée dans l'app.
+     */
+    restLabel: 'Repos {duration}',
+    /** Interrogeable à la demande par un lecteur d'écran, jamais annoncé à la seconde. */
+    restRemaining: 'Repos, {time} restantes',
     /** Nom lisible par un lecteur d'écran ; à l'écran c'est une coche dessinée. */
     complete: 'Valider la série {number}',
     uncomplete: 'Annuler la série {number}',
