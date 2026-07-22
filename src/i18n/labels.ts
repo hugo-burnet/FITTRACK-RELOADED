@@ -1,4 +1,4 @@
-import type { Equipment, Exercise, MeasurementType, MuscleGroup } from '@/data/types';
+import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType } from '@/data/types';
 import { t } from './fr';
 
 /**
@@ -21,6 +21,10 @@ export const measurementLabel = (measurement: MeasurementType): string =>
 
 export const measurementHint = (measurement: MeasurementType): string =>
   t(`measurementHint.${measurement}`);
+
+export const setTypeLabel = (setType: SetType): string => t(`setType.${setType}`);
+
+export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setType}`);
 
 /** "Pectoraux · Barre" — the one line under every exercise name in the app. */
 export const exerciseSubtitle = (exercise: Exercise): string =>

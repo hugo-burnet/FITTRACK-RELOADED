@@ -98,10 +98,140 @@ const fr = {
     emptyBody: 'Le compteur démarre à ta première séance terminée.',
   },
 
+  /** Set types. Warm-ups are excluded from volume and records (RF-20). */
+  setType: {
+    normal: 'Normale',
+    warmup: 'Échauffement',
+    dropset: 'Dégressive',
+    failure: 'Jusqu’à l’échec',
+  },
+
+  setTypeHint: {
+    normal: 'Une série de travail. Elle compte dans le volume et les records.',
+    warmup: 'Ne compte ni dans le volume ni dans les records.',
+    dropset: 'Enchaînée à la précédente, charge allégée, sans repos.',
+    failure: 'Menée jusqu’à ne plus pouvoir enchaîner une répétition.',
+  },
+
   routines: {
     title: 'Routines',
     emptyBody:
       'Une routine, c’est ta séance type : les exercices, les séries et les charges visées.',
+    countUnit: 'routines',
+
+    create: 'Nouvelle routine',
+    createTitle: 'Créer',
+    newBlank: 'Routine vide',
+    newBlankHint: 'Tu la composes exercice par exercice.',
+    newFromTemplate: 'Partir d’un modèle',
+    newFromTemplateHint: 'Push / Pull / Legs, full-body, 5×5. Modifiable ensuite.',
+    newFolder: 'Nouveau dossier',
+    newFolderHint: 'Pour ranger tes routines par programme.',
+
+    /** A routine always has a name; this is what a blank one starts with. */
+    defaultName: 'Ma routine',
+    copyName: '{name} (copie)',
+    untitled: 'Sans nom',
+
+    rootFolder: 'Sans dossier',
+    noFolder: 'Aucun',
+
+    exerciseCount: '{count} exercices',
+    exerciseCountOne: '1 exercice',
+    setCount: '{count} séries',
+    setCountOne: '1 série',
+    empty: 'Aucun exercice',
+
+    actionsTitle: 'Routine',
+    duplicate: 'Dupliquer',
+    duplicateHint: 'Une copie indépendante. Modifier l’une ne touche pas à l’autre.',
+    moveTo: 'Déplacer vers un dossier',
+    delete: 'Supprimer la routine',
+    deleteHint: 'Elle disparaît avec ses exercices et ses séries prévues.',
+    deleteConfirm: 'Supprimer',
+
+    folderTitle: 'Dossier',
+    folderNameLabel: 'Nom du dossier',
+    folderNamePlaceholder: 'Push / Pull / Legs',
+    folderCreate: 'Créer le dossier',
+    folderRename: 'Renommer le dossier',
+    folderSave: 'Enregistrer',
+    folderDelete: 'Supprimer le dossier',
+    /** Names the consequence, because the consequence is that nothing is lost. */
+    folderDeleteHint: 'Le dossier disparaît. Ses {count} routines remontent à la racine.',
+    folderDeleteHintOne: 'Le dossier disparaît. Sa routine remonte à la racine.',
+    folderDeleteHintEmpty: 'Le dossier est vide.',
+    folderDeleteConfirm: 'Supprimer',
+
+    templatesTitle: 'Modèles',
+  },
+
+  routine: {
+    back: 'Routines',
+    notFound: 'Cette routine n’existe plus.',
+
+    nameLabel: 'Nom de la routine',
+    namePlaceholder: 'Poussée',
+    folderLabel: 'Dossier',
+    countUnit: 'séries',
+
+    emptyUnit: 'exercices',
+    emptyBody: 'Ajoute tes exercices, puis leurs séries et leurs charges visées.',
+
+    addExercise: 'Ajouter un exercice',
+    /** Not "Enregistrer": every keystroke above is already in the database. */
+    done: 'Terminé',
+
+    deletedExercise: 'Exercice supprimé',
+    deletedExerciseHint: 'Il ne fait plus partie de ta bibliothèque.',
+
+    addSet: 'Ajouter une série',
+    /** A set with no target is a valid plan, not a missing value. */
+    setFree: 'libre',
+    repsUnit: 'reps',
+    repsRange: '{min} – {max}',
+    /**
+     * The only planned set type Lot 4 marks. Dropsets and sets to failure are
+     * Lot 6, where the behaviour that gives them meaning arrives; planning one
+     * without it would be a label that changes nothing.
+     */
+    warmupShort: 'ÉCH.',
+
+    exerciseSheetTitle: 'Dans cette routine',
+    restLabel: 'Repos entre les séries',
+    restHint: 'Vide : le repos par défaut de l’exercice.',
+    notesLabel: 'Notes',
+    notesPlaceholder: 'Prise large, tempo lent, cale sous les talons…',
+    groupWithPrevious: 'Grouper avec le précédent',
+    groupHint: 'Un superset : tu alternes entre les deux, sans repos entre eux.',
+    ungroup: 'Dissocier le superset',
+    ungroupHint: 'Le groupe entier redevient des exercices séparés.',
+    remove: 'Retirer de la routine',
+    removeHint: 'L’exercice reste dans ta bibliothèque, avec son historique.',
+    removeConfirm: 'Retirer',
+
+    setSheetTitle: 'Série {number}',
+    setTypeLabel: 'Type de série',
+    targetRepsLabel: 'Répétitions visées',
+    targetRepsMaxLabel: 'Jusqu’à (facultatif)',
+    targetRepsHint: 'Laisse vide pour une série sans objectif chiffré.',
+    targetWeightLabel: 'Charge visée',
+    targetWeightHint: 'Laisse vide si tu décides la charge sur place.',
+    applyToAll: 'Appliquer à toutes les séries',
+    deleteSet: 'Supprimer la série',
+
+    dragHandle: 'Déplacer {name}',
+    moveUp: 'Monter',
+    moveDown: 'Descendre',
+  },
+
+  picker: {
+    title: 'Ajouter des exercices',
+    add: 'Ajouter {count} exercices',
+    addOne: 'Ajouter 1 exercice',
+    /** The picker's way out of a fruitless search: it does not leave the routine. */
+    clearSearch: 'Effacer la recherche',
+    selected: 'sélectionnés',
   },
 
   history: {

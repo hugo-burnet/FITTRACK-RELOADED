@@ -124,6 +124,30 @@ export function CheckIcon(props: IconProps) {
   );
 }
 
+/**
+ * "Take hold of this row." Two columns of notches — the knurling of a barbell,
+ * which is the one grip pattern this app's vocabulary already owns.
+ */
+export function GripIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M9 6.5v11" />
+      <path d="M15 6.5v11" />
+    </Icon>
+  );
+}
+
+/** "There is more to do with this row than open it." */
+export function MoreIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="5.5" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="18.5" r="1.5" fill="currentColor" stroke="none" />
+    </Icon>
+  );
+}
+
 /** Réglages — load sliders, not a gear: this screen is a panel of numbers. */
 export function SlidersIcon(props: IconProps) {
   return (

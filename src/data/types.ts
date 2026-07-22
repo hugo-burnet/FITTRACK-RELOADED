@@ -74,7 +74,13 @@ export const MEASUREMENT_TYPES = [
 
 export type MeasurementType = (typeof MEASUREMENT_TYPES)[number];
 
-export type SetType = 'normal' | 'warmup' | 'dropset' | 'failure';
+/**
+ * A const array for the same reason as the three above: Lot 4's set sheet has to
+ * enumerate them, and Lot 6 will add the behaviour behind each one.
+ */
+export const SET_TYPES = ['normal', 'warmup', 'dropset', 'failure'] as const;
+
+export type SetType = (typeof SET_TYPES)[number];
 
 export type Side = 'both' | 'left' | 'right';
 

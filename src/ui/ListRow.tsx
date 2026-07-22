@@ -8,6 +8,11 @@ type Props = {
   trailing?: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
+  /**
+   * Turns the row into a checkbox. Left undefined it stays a plain button — a
+   * row that is not selectable must not announce a checked state.
+   */
+  checked?: boolean;
 };
 
 /**
@@ -15,12 +20,22 @@ type Props = {
  * stacked inside a `overflow-hidden rounded-2xl` container so a list reads as one
  * block rather than a stack of floating cards.
  */
-export function ListRow({ title, subtitle, leading, trailing, onClick, disabled }: Props) {
+export function ListRow({
+  title,
+  subtitle,
+  leading,
+  trailing,
+  onClick,
+  disabled,
+  checked,
+}: Props) {
   const Element = onClick ? 'button' : 'div';
 
   return (
     <Element
       type={onClick ? 'button' : undefined}
+      role={checked === undefined ? undefined : 'checkbox'}
+      aria-checked={checked}
       onClick={onClick}
       disabled={onClick ? disabled : undefined}
       className={`flex min-h-14 w-full items-center gap-3 border-b border-[var(--border)]

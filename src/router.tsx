@@ -5,6 +5,8 @@ import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
+import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
+import { RoutineEditorScreen } from './features/routines/RoutineEditorScreen';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
 import { DebugScreen } from './features/settings/DebugScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
@@ -18,6 +20,10 @@ export const router = createHashRouter([
     children: [
       { index: true, element: <HomeScreen /> },
       { path: 'routines', element: <RoutinesScreen /> },
+      // A routine's screen is its editor: everything is written as it is typed,
+      // so there is no read-only view to separate from it.
+      { path: 'routines/:id', element: <RoutineEditorScreen /> },
+      { path: 'routines/:id/add', element: <ExercisePickerScreen /> },
       { path: 'history', element: <HistoryScreen /> },
       { path: 'exercises', element: <ExercisesScreen /> },
       // Static before dynamic. React Router ranks them that way on its own, but

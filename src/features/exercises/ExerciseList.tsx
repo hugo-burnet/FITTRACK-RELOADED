@@ -3,6 +3,7 @@ import type { Exercise } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';
 import { Card, ListRow } from '@/ui';
+import { CheckIcon } from '@/ui/icons';
 
 type Props = {
   exercises: Exercise[];
@@ -12,7 +13,9 @@ type Props = {
    * heading marks a real property of the list, it does not decorate it.
    */
   grouped: boolean;
-  onOpen: (id: string) => void;
+  onOpen: (exercise: Exercise) => void;
+  /** Present = the list is a picker: rows toggle rather than open. */
+  selectedIds?: ReadonlySet<string>;
 };
 
 type Group = { initial: string; exercises: Exercise[] };
@@ -34,12 +37,46 @@ function groupByInitial(exercises: Exercise[]): Group[] {
   return groups;
 }
 
-function Row({ exercise, onOpen }: { exercise: Exercise; onOpen: (id: string) => void }) {
+/**
+ * The selection column. A leading box rather than a trailing tick: what you scan
+ * when picking six exercises out of a list is the column of what you already
+ * have, and a column reads down one edge, not down the ragged end of the names.
+ */
+function SelectionBox({ selected }: { selected: boolean }) {
+  return (
+    <span
+      className={`flex size-6 items-center justify-center rounded-md border-2
+        transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
+        ${
+          selected
+            ? 'border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+            : 'border-[var(--border)]'
+        }`}
+    >
+      {selected && <CheckIcon width="16" height="16" />}
+    </span>
+  );
+}
+
+function Row({
+  exercise,
+  onOpen,
+  selectedIds,
+}: {
+  exercise: Exercise;
+  onOpen: (exercise: Exercise) => void;
+  selectedIds?: ReadonlySet<string>;
+}) {
+  const selectable = selectedIds !== undefined;
+  const selected = selectedIds?.has(exercise.id) ?? false;
+
   return (
     <ListRow
       title={exercise.name}
       subtitle={exerciseSubtitle(exercise)}
-      onClick={() => onOpen(exercise.id)}
+      onClick={() => onOpen(exercise)}
+      checked={selectable ? selected : undefined}
+      leading={selectable ? <SelectionBox selected={selected} /> : undefined}
       trailing={
         // The accent marks exactly two things in this lot: what you own, and
         // what is engaged. This is the first.
@@ -53,12 +90,12 @@ function Row({ exercise, onOpen }: { exercise: Exercise; onOpen: (id: string) =>
   );
 }
 
-export function ExerciseList({ exercises, grouped, onOpen }: Props) {
+export function ExerciseList({ exercises, grouped, onOpen, selectedIds }: Props) {
   if (!grouped) {
     return (
       <Card>
         {exercises.map((exercise) => (
-          <Row key={exercise.id} exercise={exercise} onOpen={onOpen} />
+          <Row key={exercise.id} exercise={exercise} onOpen={onOpen} selectedIds={selectedIds} />
         ))}
       </Card>
     );
@@ -78,7 +115,12 @@ export function ExerciseList({ exercises, grouped, onOpen }: Props) {
           </h2>
           <Card>
             {group.exercises.map((exercise) => (
-              <Row key={exercise.id} exercise={exercise} onOpen={onOpen} />
+              <Row
+                key={exercise.id}
+                exercise={exercise}
+                onOpen={onOpen}
+                selectedIds={selectedIds}
+              />
             ))}
           </Card>
         </section>
