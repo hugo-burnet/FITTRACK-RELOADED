@@ -12,14 +12,13 @@ Il ne le sera qu'après une vraie séance en salle et l'aller-retour de correcti
 Plan détaillé : `docs/plans/lot-05-seance-en-direct.md`, généré en début de session comme aux
 Lots 3 et 4. Le procédé tient sur quatre lots d'affilée.
 
-**Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
-⚠️ **Pas encore poussé** : le checkpoint demande le site déployé.
+**Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/ — poussé, à vérifier au doigt.
 
 > ⚠️ **Ce lot n'est pas fini parce qu'il est vert.** Le Lot 4 était vert lui aussi — typecheck,
 > lint, 148 tests, contrastes mesurés, cibles mesurées — et l'utilisateur a trouvé **sept défauts
-> en deux essais au doigt**. Le Lot 5 est l'écran qu'il lira essoufflé, entre deux séries. Deux
-> défauts ont déjà été trouvés en pilotant l'écran pour de vrai (cf. plus bas) ; il en reste
-> certainement, et ils ne se trouveront qu'en salle.
+> en deux essais au doigt**. Le Lot 5 confirme la règle : deux défauts trouvés en pilotant l'écran,
+> puis **quatre passes de retours sur les boutons**, tous justes, aucun visible au typecheck, au
+> lint ni aux tests. Il en reste certainement, et ils ne se trouveront qu'en salle.
 
 ---
 
@@ -154,6 +153,66 @@ graisse 600.
 placeholders, le Lot 2 des quotas, le Lot 1 des micro-libellés ; le Lot 5 lui retire son dernier
 usage annoncé. Le jeton reste déclaré avec la raison écrite en clair dans `index.css`, pour que
 personne ne le réintroduise sans lire pourquoi.
+
+### Le retour sur les boutons — quatre passes, quatre fois juste
+
+Remonté après lecture du code livré : « les boutons ne s'intègrent pas correctement dans l'app ».
+Quatre allers-retours ont suivi. **Aucun de ces défauts n'était visible au typecheck, au lint ni
+aux tests** ; trois d'entre eux ont été trouvés en regardant une capture d'écran.
+
+**1. J'avais inventé un composant visuel.** Une boîte en pointillés pour « Ajouter un exercice ».
+`border-dashed` n'existait **nulle part ailleurs** dans le dépôt — toutes les surfaces d'ici sont
+pleines et sans bordure, donc un contour vide se lit comme un emplacement à remplir. Deux « + »
+cohabitaient sur le même écran en deux langues.
+
+**2. « Démarrer la séance » passait à la ligne dans son bouton.** J'avais mesuré `168x56` et conclu
+que ça allait : la boîte allait, le texte cassait dedans.
+
+**3. Le chronomètre était un menu secret.** Il occupait le coin haut-droit, là où tous les autres
+écrans posent une icône, et cachait le seul accès à « Renommer » et « Notes ». En `--accent-ink`,
+qui dans cette charte veut dire *engagé* — une horloge en vert accent se lit comme un témoin.
+
+**4. Deux commandes empilées pour une seule action.** « Reprendre » dans la barre collante et la
+barre de reprise 32 px dessous : même vert exact (`rgb(199,242,82)`), même hauteur, même
+destination, et **toutes deux conditionnées par la même séance active** — elles ne pouvaient pas
+apparaître l'une sans l'autre.
+
+**5. « Ça chevauche, ça fait posé là. »** Les barres d'action étaient des `position: sticky` posées
+par-dessus le contenu. J'ai d'abord rustiné la couleur (`--surface-1`) : **pire**, c'est la couleur
+des cartes, mesurée identique, donc la dernière carte fondait dans la bande.
+
+**6. « Pourquoi j'ai Terminé et Démarrer ? »** — la meilleure question du lot. « Terminé » appelait
+le **même `goBack` que la flèche de l'en-tête**. Il datait du Lot 3, quand une fiche n'avait pour
+seule sortie qu'un mot en haut à droite ; la flèche est arrivée au Lot 4 et le doublon lui a
+survécu.
+
+### Ce que le Lot 5 ajoute à la charte du Lot 1
+
+La charte est figée depuis le Lot 1 et les lots suivants s'appuient dessus. Le Lot 5 n'ajoute donc
+**aucun vocabulaire visuel neuf** : il nomme ce qui existait déjà en double, et supprime ce qui
+faisait doublon.
+
+| Primitive | Ce qu'elle nomme | Points d'appel |
+|---|---|---|
+| `ui/AddRow` | « encore un de ceux-là » — le seul geste d'ajout | 4 |
+| `ui/HeaderAction` | le bouton du coin haut-droit, une icône jamais un mot | 3 |
+| `ui/ActionBand` | l'action primaire, en bande pleine largeur | 6 |
+| `ui/numberField` | le cœur décimal partagé avec `NumberInput` | 2 |
+
+Trois règles en découlent, à respecter dans les lots suivants :
+
+- **Une action primaire par écran, et jamais une navigation.** Revenir en arrière est le travail de
+  la flèche de l'en-tête. Un bouton qui appelle `goBack` en double est un bouton en trop.
+- **La bande d'action est un frère flex, jamais une superposition.** C'est le raisonnement que le
+  Lot 1 avait tenu pour la barre de navigation et jamais transposé. Le défilement vit dans `Screen`,
+  entre l'en-tête et le pied ; rien ne peut passer dessous.
+- **Sa forme est celle de la barre de reprise** — bord à bord, sans retrait, sans arrondi, 56 px.
+  C'est la seule grande surface d'accent de l'app dont l'utilisateur ne se soit jamais plaint.
+
+**`--text-3` n'a plus aucun consommateur.** Le Lot 1 le réservait à « la valeur précédente du
+Lot 5 » ; cette valeur s'est révélée être ce que la coche enregistre, et le jeton y mesurait
+2,02:1 en clair. Il reste déclaré dans `index.css` avec la raison écrite, pour que personne ne le
+réintroduise sans la lire.
 
 ### Ce que le Lot 5 ne fait pas — à savoir avant de tester
 
@@ -1079,6 +1138,18 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   fait déjà ce travail ailleurs** (`grep` sur la classe ou l'icône) et le nommer dans `ui/` s'il
   est dupliqué. Deux motifs l'étaient déjà — `AddRow` et `HeaderAction` — et c'est justement
   parce qu'ils n'avaient pas de nom que j'en ai inventé un troisième.
+- **Avant d'ajouter une commande, chercher celle qui fait déjà ce travail.** Trois défauts du
+  retour sur les boutons sont le même : un contrôle en double. « Terminé » doublait la flèche de
+  l'en-tête ; « Reprendre » doublait la barre de reprise ; « Partir d'une routine » doublait
+  l'onglet Routines. Aucun n'a été ajouté par étourderie — chacun avait une bonne raison **au
+  moment où il a été écrit**, et la raison a disparu ensuite sans que le bouton parte avec elle.
+  Contrôle à faire en fin de lot : **lister les commandes qui appellent la même chose**, et
+  vérifier que chaque écran n'a qu'une action primaire.
+- **Une règle de charte survit à la raison qui l'a fait naître.** « La vraie sortie vit dans la
+  zone du pouce » (Lot 3) a été écrite quand une fiche n'avait pour seule sortie qu'un mot en haut
+  à droite. La flèche du Lot 4 a supprimé le problème ; la règle est restée et a continué de
+  produire des boutons « Terminé » pendant deux lots. **Quand un lot corrige la cause, relire les
+  règles que cette cause avait justifiées.**
 - **Un relevé n'est pas une commande, et l'inverse non plus.** Le chronomètre de la séance
   occupait le coin haut-droit — la place que tous les autres écrans réservent à une icône
   d'action — et cachait le seul accès à « Renommer » et « Notes ». En prime il était en
