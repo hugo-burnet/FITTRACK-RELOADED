@@ -22,8 +22,8 @@ import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { toBlocks } from '@/lib/routineOrder';
 import {
+  ActionBand,
   AddRow,
-  Button,
   Card,
   EmptyState,
   Input,
@@ -167,54 +167,24 @@ export function RoutineEditorScreen() {
          from a real phone. The count now sits above the list it counts, which
          is also where it is actually informative. */
       onBack={goBack}
-      /* La sortie de cet écran et son verbe, tous deux sous le pouce. En salle
-         le verbe de cet écran est *démarrer* ; composer, c'est ce qu'on fait
-         chez soi. */
-      footer={
-        <>
-          {/* Une commande désactivée sans sa raison est un cul-de-sac. */}
-          {!running && exercises.length === 0 && (
-            <p className="mb-2 text-center text-sm text-[var(--text-2)]">
-              {t('routine.startEmptyRoutine')}
-            </p>
-          )}
+      /* Le verbe de cet écran, et rien d'autre. Il a porté « Terminé » à côté
+         pendant un temps : le même `goBack` que la flèche de l'en-tête, deux
+         commandes pour une navigation. Composer une routine, c'est ce qu'on
+         fait chez soi ; en salle, ce qu'on vient y faire, c'est démarrer.
 
-          {running ? (
-            /* Séance en cours : cet écran ne propose plus rien pour y aller.
-               Il l'a fait un temps — un bouton « Reprendre » ici — et c'était du
-               bricolage : la barre de reprise mène déjà là, en permanence, sur
-               tous les écrans. Les deux étaient du même vert, de la même
-               hauteur, à 32 px l'une de l'autre, et apparaissaient toujours
-               ensemble, puisque toutes deux conditionnées par la même séance.
-               Deux commandes pour une action, empilées : la barre garde le
-               trajet, l'écran garde sa sortie. */
-            <Button size="lg" fullWidth onClick={goBack}>
-              {t('routine.done')}
-            </Button>
-          ) : (
-            /* Pas deux moitiés égales : partager la barre en deux disait que ces
-               deux actions sont de même rang, et elles ne le sont pas.
-               « Terminé » prend la largeur de son mot, le verbe de l'écran prend
-               le reste — c'est ce qui empêchait « Démarrer » de tenir sur une
-               ligne. */
-            <div className="flex gap-2">
-              <Button size="lg" className="shrink-0" onClick={goBack}>
-                {t('routine.done')}
-              </Button>
-              <Button
-                variant="primary"
-                size="lg"
-                className="min-w-0 flex-1"
-                // Une routine sans exercice démarrerait une séance vide sous un
-                // nom qui promet des exercices.
-                disabled={active === undefined || exercises.length === 0}
-                onClick={start}
-              >
-                {t('routine.start')}
-              </Button>
-            </div>
-          )}
-        </>
+         Rien du tout quand une séance tourne : la barre de reprise mène déjà
+         là, en permanence, et les deux étaient du même vert, de la même
+         hauteur, à 32 px l'une de l'autre. */
+      footer={
+        running ? undefined : (
+          <ActionBand
+            label={t('routine.start')}
+            // Une routine sans exercice démarrerait une séance vide sous un nom
+            // qui promet des exercices. L'état vide dit déjà quoi faire.
+            disabled={active === undefined || exercises.length === 0}
+            onClick={start}
+          />
+        )
       }
     >
       <div className="flex flex-col gap-6">

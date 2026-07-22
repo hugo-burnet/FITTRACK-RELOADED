@@ -6,7 +6,7 @@ import { addWorkoutExercise, getActiveWorkout } from '@/data/repositories/workou
 import { ExerciseBrowser } from '@/features/exercises/ExerciseBrowser';
 import type { BrowserQuery } from '@/features/exercises/ExerciseBrowser';
 import { t } from '@/i18n/fr';
-import { Button } from '@/ui';
+import { ActionBand } from '@/ui';
 
 /**
  * RF-21 — an exercise you did not plan, added mid-session.
@@ -45,11 +45,14 @@ export function WorkoutAddExerciseScreen() {
       onBack={() => void navigate(-1)}
       footer={
         selected.length > 0 ? (
-          <Button variant="primary" size="lg" fullWidth onClick={() => void add()}>
-            {selected.length === 1
-              ? t('picker.addOne')
-              : t('picker.add', { count: selected.length })}
-          </Button>
+          <ActionBand
+            label={
+              selected.length === 1
+                ? t('picker.addOne')
+                : t('picker.add', { count: selected.length })
+            }
+            onClick={() => void add()}
+          />
         ) : undefined
       }
     >

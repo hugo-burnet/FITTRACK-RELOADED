@@ -15,7 +15,7 @@ import { unitLabel } from '@/i18n/labels';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
-import { Button, Card, ConfirmSheet, SectionTitle, Textarea } from '@/ui';
+import { ActionBand, Button, Card, ConfirmSheet, SectionTitle, Textarea } from '@/ui';
 import { formatNumber } from '@/ui/numberField';
 import { ElapsedTime } from './ElapsedTime';
 
@@ -99,11 +99,7 @@ export function WorkoutFinishScreen() {
     <Screen
       title={t('finish.title')}
       onBack={() => void navigate(-1)}
-      footer={
-        <Button variant="primary" size="lg" fullWidth onClick={save}>
-          {t('finish.save')}
-        </Button>
-      }
+      footer={<ActionBand label={t('finish.save')} onClick={save} />}
     >
       <div className="flex flex-col gap-6">
         <Card padded>

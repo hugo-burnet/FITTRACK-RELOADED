@@ -13,8 +13,10 @@ type Props = {
   /** Right-hand slot in the header: a count, an action. */
   action?: ReactNode;
   /**
-   * La bande d'action du bas — la sortie de l'écran et son verbe, dans la zone
-   * du pouce (règle du Lot 3). Absente, rien n'est dessiné.
+   * L'`ActionBand` de l'écran : son verbe, dans la zone du pouce (règle du
+   * Lot 3). **Une seule**, et jamais une navigation — revenir en arrière est le
+   * travail de la flèche de l'en-tête, pas d'un second bouton. Absente, rien
+   * n'est dessiné.
    */
   footer?: ReactNode;
   children: ReactNode;
@@ -73,14 +75,10 @@ export function Screen({ title, onBack, action, footer, children }: Props) {
         {children}
       </div>
 
-      {footer !== undefined && (
-        <div
-          className="safe-bottom shrink-0 border-t border-[var(--border)] bg-[var(--surface-1)]
-            px-4 pt-3 pb-3"
-        >
-          {footer}
-        </div>
-      )}
+      {/* Rendu tel quel, sans enveloppe : la bande va d'un bord à l'autre et
+          porte son propre filet. Une dalle qui contiendrait une pastille ferait
+          trois couches de décor pour une commande. */}
+      {footer}
     </section>
   );
 }

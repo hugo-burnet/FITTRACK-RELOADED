@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
-import { Button, EmptyState } from '@/ui';
+import { ActionBand, EmptyState } from '@/ui';
 
 /**
  * Where a session starts — RF-17, both ways in.
@@ -24,16 +24,12 @@ export function HomeScreen() {
   return (
     <Screen
       title={t('home.title')}
+      /* « Partir d'une routine » a été retiré : il menait à l'onglet Routines,
+         qui est une ligne plus bas et toujours là. Un bouton qui double un
+         onglet est un bouton en trop. */
       footer={
         active === null ? (
-          <div className="flex flex-col gap-2">
-            <Button variant="primary" size="lg" fullWidth onClick={startEmpty}>
-              {t('home.startEmpty')}
-            </Button>
-            <Button size="lg" fullWidth onClick={() => void navigate('/routines')}>
-              {t('home.startFromRoutine')}
-            </Button>
-          </div>
+          <ActionBand label={t('home.startEmpty')} onClick={startEmpty} />
         ) : undefined
       }
     >

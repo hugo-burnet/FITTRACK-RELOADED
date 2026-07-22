@@ -19,9 +19,9 @@ import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { toBlocks } from '@/lib/routineOrder';
 import {
+  ActionBand,
   ActionSheet,
   AddRow,
-  Button,
   Card,
   ConfirmSheet,
   EmptyState,
@@ -138,14 +138,10 @@ export function WorkoutScreen() {
         </HeaderAction>
       }
       footer={
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
+        <ActionBand
+          label={t('workout.finish')}
           onClick={() => void navigate('/workout/finish')}
-        >
-          {t('workout.finish')}
-        </Button>
+        />
       }
     >
       {exercises.length === 0 ? (

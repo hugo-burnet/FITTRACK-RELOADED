@@ -104,7 +104,6 @@ const fr = {
     title: 'Accueil',
     emptyBody: 'Le compteur démarre à ta première séance terminée.',
     startEmpty: 'Démarrer une séance vide',
-    startFromRoutine: 'Partir d’une routine',
     resumeTitle: 'Séance en cours',
     resume: 'Reprendre',
   },
@@ -281,7 +280,6 @@ const fr = {
      * était un second nom pour la même chose — et il passait à la ligne.
      */
     start: 'Démarrer',
-    startEmptyRoutine: 'Ajoute au moins un exercice pour pouvoir démarrer.',
 
     deletedExercise: 'Exercice supprimé',
     deletedExerciseHint: 'Il ne fait plus partie de ta bibliothèque.',

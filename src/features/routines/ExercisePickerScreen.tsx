@@ -5,7 +5,7 @@ import { addExercisesToRoutine } from '@/data/repositories/routines';
 import { ExerciseBrowser } from '@/features/exercises/ExerciseBrowser';
 import type { BrowserQuery } from '@/features/exercises/ExerciseBrowser';
 import { t } from '@/i18n/fr';
-import { Button } from '@/ui';
+import { ActionBand } from '@/ui';
 
 /**
  * Picking exercises for a routine — the Lot 3 library in "choose" mode.
@@ -46,11 +46,14 @@ export function ExercisePickerScreen() {
          always-present disabled button is a target that teaches you nothing. */
       footer={
         selected.length > 0 ? (
-          <Button variant="primary" size="lg" fullWidth onClick={add}>
-            {selected.length === 1
-              ? t('picker.addOne')
-              : t('picker.add', { count: selected.length })}
-          </Button>
+          <ActionBand
+            label={
+              selected.length === 1
+                ? t('picker.addOne')
+                : t('picker.add', { count: selected.length })
+            }
+            onClick={add}
+          />
         ) : undefined
       }
     >

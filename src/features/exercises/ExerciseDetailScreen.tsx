@@ -9,7 +9,7 @@ import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';
 import { bestSets, isWorkingSet } from '@/lib/records';
 import {
-  Button,
+  ActionBand,
   Card,
   ConfirmAction,
   ListRow,
@@ -132,11 +132,10 @@ export function ExerciseDetailScreen() {
     <Screen
       title={exercise.name}
       onBack={goBack}
-      footer={
-        <Button variant="primary" size="lg" fullWidth onClick={goBack}>
-          {t('exercise.done')}
-        </Button>
-      }
+      /* Le seul « Terminé » qui reste, et il a un travail : au Lot 3 cette fiche
+         n'avait aucune sortie et c'est le défaut que l'utilisateur a remonté.
+         Sur l'éditeur de routine il n'en avait pas, il doublait la flèche. */
+      footer={<ActionBand label={t('exercise.done')} onClick={goBack} />}
     >
       <div className="flex flex-col gap-9">
         <p className="-mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-base text-[var(--text-2)]">

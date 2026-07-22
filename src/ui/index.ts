@@ -1,3 +1,4 @@
+export { ActionBand } from './ActionBand';
 export { ActionSheet } from './ActionSheet';
 export type { SheetAction } from './ActionSheet';
 export { AddRow } from './AddRow';
