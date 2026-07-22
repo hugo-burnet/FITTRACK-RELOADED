@@ -2,15 +2,23 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-22 (Lot 4 codé et mesuré, checkpoint téléphone à faire)
+**Dernière mise à jour :** 2026-07-22 (Lot 4 terminé, checkpoint validé au doigt sur téléphone)
 
 ## Lot en cours
 
-**Lot 4 — Routines : codé, mesuré, commité. Checkpoint utilisateur à faire au doigt.**
+Aucun. **Lot 4 terminé et validé.** Prochaine étape : **Lot 5 — Séance en direct**, l'écran le plus
+important de l'app et le lot le plus lourd du projet (3 sessions au budget).
 
-Plan détaillé généré en début de session comme au Lot 3 : `docs/plans/lot-04-routines.md`.
+Plan détaillé généré en début de session comme au Lot 3 : `docs/plans/lot-04-routines.md`. Le
+procédé tient sur trois lots d'affilée — à reconduire pour le Lot 5.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+
+> ⚠️ **À lire avant d'écrire une ligne du Lot 5.** Le Lot 4 a été livré « vert » — typecheck, lint,
+> 148 tests, contrastes mesurés, cibles tactiles mesurées — et l'utilisateur a quand même trouvé
+> **sept défauts en deux essais sur son téléphone**. Aucun n'était détectable autrement. Le Lot 5
+> est l'écran qu'il utilisera essoufflé, entre deux séries : prévoir explicitement **un aller-retour
+> de correctifs après le premier essai réel**, et ne pas considérer le lot fini avant.
 
 ### Ce dont le Lot 5 hérite (à ne pas réinventer)
 
@@ -234,21 +242,29 @@ Mesuré : flèche et croix à **48 × 48** sur les quatre écrans, flèche bien 
 qui navigue réellement (`#/routines/xxx` → `#/routines`), `Entrée` qui défocalise champ texte **et**
 champ numérique, contrastes des deux icônes **7,03:1 à 18:1** sur les deux thèmes.
 
-### Checkpoint Lot 4 — ⬜ à faire **au doigt, sur le téléphone**
+### Checkpoint Lot 4 — ✅ validé le 2026-07-22
 
-- [ ] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.
-- [ ] **Tu tapes `102,5` en entier dans une charge cible, sans que le clavier se ferme.**
-- [ ] Tu donnes un nom court à une routine et un sous-titre : la liste se lit d'un coup d'œil.
-- [ ] **Tu fais glisser une routine sous un en-tête de dossier : elle y entre. Tu la remontes au-dessus :
+Validé par l'utilisateur **sur le site déployé, au doigt**, après trois passes de correctifs
+(sept défauts au total : cinq au premier essai, deux au second).
+
+- [x] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.
+- [x] **Tu tapes `102,5` en entier dans une charge cible, sans que le clavier se ferme.**
+- [x] Tu donnes un nom court à une routine et un sous-titre : la liste se lit d'un coup d'œil.
+- [x] **Tu fais glisser une routine sous un en-tête de dossier : elle y entre. Tu la remontes au-dessus :
       elle en ressort.**
-- [ ] Tu réordonnes les exercices **au doigt**, sans frustration — et la page défile encore
+- [x] Tu réordonnes les exercices **au doigt**, sans frustration — et la page défile encore
       normalement quand tu ne touches pas la poignée.
-- [ ] Tu dupliques une routine et tu la modifies : l'originale n'a pas bougé.
-- [ ] Tu groupes deux exercices en superset : le filet et les lettres A/B apparaissent.
-- [ ] Tu pars d'un modèle (Poussée), tu le modifies, tu le supprimes : il ne revient pas au
+- [x] Tu dupliques une routine et tu la modifies : l'originale n'a pas bougé.
+- [x] Tu groupes deux exercices en superset : le filet et les lettres A/B apparaissent.
+- [x] Tu pars d'un modèle (Poussée), tu le modifies, tu le supprimes : il ne revient pas au
       rechargement.
-- [ ] Tu ranges deux routines dans un dossier, tu supprimes le dossier : **tes routines sont
+- [x] Tu ranges deux routines dans un dossier, tu supprimes le dossier : **tes routines sont
       toujours là.**
+
+**Sept défauts remontés, sept justes, zéro faux positif.** Aucun n'était visible en relecture de
+code, et aucun n'a été trouvé par les tests : tous demandaient un pouce et un vrai écran. La leçon
+de méthode est consignée dans « Pièges rencontrés » — vérifier le **focus**, pas seulement la
+valeur, et douter d'un différé de fonctionnalité qui n'a pas été discuté avec l'utilisateur.
 
 ---
 
@@ -628,7 +644,7 @@ ci-dessus fait foi.
 | 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
 | 2 | Couche de données | ✅ terminé | 3 | ✅ |
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
-| 4 | Routines | 🟨 codé, checkpoint à faire | 5 | ⬜ |
+| 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ⬜ à faire | — | ⬜ |
@@ -809,6 +825,21 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   port où personne n'écoute. Lire le port réel dans les logs du serveur et naviguer dessus à la
   main. L'onglet peut être ramené de force sur le mauvais port entre deux appels — refaire la
   navigation avant chaque script.
+- **Vérifier un champ, c'est vérifier le focus, pas seulement la valeur.** Le bug le plus grave du
+  Lot 4 — le clavier qui se fermait à la première frappe, rendant `102,5` impossible à saisir — est
+  passé sous mes vérifications parce que je posais les valeurs par `dispatchEvent` sans jamais lire
+  `document.activeElement`. **Une écriture programmatique ne perd pas le focus comme un doigt.**
+  Tout contrôle de saisie doit désormais assurer trois choses : la valeur, `document.activeElement`,
+  et `selectionStart`.
+- **Un effet React qui dépend d'un `onClose` passé en flèche inline se rejoue à chaque rendu du
+  parent.** Inoffensif d'ordinaire ; destructeur quand l'effet appelle `focus()`, `scrollTo()` ou
+  ouvre quelque chose. Deux bugs du Lot 4 viennent de là (`Sheet` volait le focus ; `ActionSheet`
+  effaçait la feuille qu'une action venait d'ouvrir). **Un effet qui prend le focus ne doit dépendre
+  que de `open`.**
+- **Différer une fonctionnalité « faute de budget » sans le dire à l'utilisateur, c'est décider à sa
+  place.** J'avais écarté le glisser-déposer des routines dans les dossiers ; c'est le deuxième
+  retour qu'il a fait. Annoncer les renoncements **dans le résumé de fin de lot**, pas seulement
+  dans le plan qu'il ne relira pas.
 - **Le panneau navigateur ne compose jamais : `requestAnimationFrame` ne se déclenche pas et les
   transitions CSS ne démarrent pas.** Mesuré au Lot 4 : `0 frame en 1 s`,
   `document.visibilityState === 'hidden'`. Conséquences vues en vrai — une boucle `rAF` (défilement
