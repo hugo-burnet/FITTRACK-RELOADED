@@ -14,6 +14,9 @@ const fr = {
   common: {
     yes: 'Oui',
     no: 'Non',
+    /** Screen-reader names for the two controls that are drawn, never written. */
+    back: 'Retour',
+    close: 'Fermer',
   },
 
   nav: {
@@ -170,7 +173,6 @@ const fr = {
   },
 
   routine: {
-    back: 'Routines',
     notFound: 'Cette routine n’existe plus.',
 
     nameLabel: 'Nom de la routine',
@@ -284,7 +286,6 @@ const fr = {
   },
 
   exercise: {
-    back: 'Exercices',
     notFound: 'Cet exercice n’existe plus.',
 
     recordsSection: 'Records',
@@ -323,7 +324,6 @@ const fr = {
   exerciseForm: {
     createTitle: 'Nouvel exercice',
     editTitle: 'Modifier',
-    back: 'Annuler',
 
     nameLabel: 'Nom',
     namePlaceholder: 'Presse à cuisses inclinée',
@@ -362,7 +362,6 @@ const fr = {
 
   debug: {
     title: 'Diagnostic',
-    back: 'Réglages',
 
     storageSection: 'Stockage',
     storageUsed: 'utilisé',

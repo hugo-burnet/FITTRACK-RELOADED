@@ -41,16 +41,7 @@ export function ExercisePickerScreen() {
   return (
     <Screen
       title={t('picker.title')}
-      action={
-        <button
-          type="button"
-          onClick={() => void navigate(-1)}
-          className="-mr-2 flex min-h-12 items-center px-2 text-base font-semibold
-            text-[var(--text-2)]"
-        >
-          {t('exerciseForm.back')}
-        </button>
-      }
+      onBack={() => void navigate(-1)}
     >
       <ExerciseBrowser
         query={query}

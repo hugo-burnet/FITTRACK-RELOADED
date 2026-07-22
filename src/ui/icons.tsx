@@ -96,6 +96,31 @@ export function ChevronRightIcon(props: IconProps) {
   );
 }
 
+/**
+ * "Back". An arrow with a shaft rather than a bare chevron: this is Android's
+ * mark, and Android is where the app ends up (Lot 10). It replaced a text link
+ * naming the destination — reported from the phone, where a word in the corner
+ * reads as a label, not as a control.
+ */
+export function ArrowLeftIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M19 12H5" />
+      <path d="M11 6 5 12l6 6" />
+    </Icon>
+  );
+}
+
+/** "Close this sheet", for when dragging it down is not what you want to do. */
+export function CloseIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" {...props}>
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </Icon>
+  );
+}
+
 /** "This control opens a picker". Same mark as the chevron, turned a quarter. */
 export function ChevronDownIcon(props: IconProps) {
   return (

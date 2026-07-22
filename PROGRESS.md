@@ -201,6 +201,39 @@ Mesuré : 87 px avec sous-titre, 64 px sans (la ligne se referme proprement).
 Re-vérifié après ces cinq correctifs : contrastes **0 échec / min 6,04:1**, aucune cible sous
 48 × 44, aucun débordement horizontal, **148 tests**.
 
+### Deux retours du deuxième essai — la navigation et le clavier
+
+**1. Le retour est une flèche, plus le nom de la page.** Depuis le Lot 3, revenir en arrière se
+faisait en touchant le **nom de la destination** en haut à droite (« Exercices », « Routines »,
+« Réglages »). Remonté du téléphone : un mot dans un coin se lit comme une **étiquette**, pas comme
+une commande — et il posait un second texte à côté d'un titre choisi par l'utilisateur, sur 375 px.
+
+La flèche est maintenant **centralisée dans `Screen`** (prop `onBack`), à **gauche**, avant le
+titre : cinq écrans qui déclaraient chacun leur bouton en partagent un seul, identique. Le titre
+gagne toute la largeur restante et **tronque** au lieu de passer à la ligne.
+
+Atteindre le coin haut-gauche d'un pouce n'est pas le problème que ce serait pour une action
+primaire : tout écran assez long porte déjà sa vraie sortie sur une barre collante dans la zone du
+pouce (règle du Lot 3). Quatre chaînes mortes supprimées de `fr.ts` au passage.
+
+**2. La touche « OK » du clavier ne faisait rien.** Et c'est exact : **hors d'un `<form>`, `Entrée`
+n'a aucune action par défaut sur un `<input>`**. Le clavier restait donc devant la feuille, et la
+seule issue était de faire glisser la feuille vers le bas.
+
+Deux correctifs, parce que la plainte contenait deux choses :
+
+- `Input` et `NumberInput` interceptent `Entrée` → `blur()`, ce qui referme le clavier. (Pas
+  `Textarea` : là, `Entrée` doit insérer une ligne.)
+- **`Sheet` a maintenant une croix visible.** Le glissement vers le bas marche et reste, mais c'est
+  un geste qu'il faut déjà connaître — et c'était la seule façon de ranger une feuille.
+  `stopPropagation` sur le `pointerdown` de la croix : l'en-tête est la surface de glissement, sans
+  ça appuyer sur la croix aurait commencé un drag. **Vérifié : le `transform` du panneau ne bouge
+  pas à l'appui.**
+
+Mesuré : flèche et croix à **48 × 48** sur les quatre écrans, flèche bien à gauche du `h1`, retour
+qui navigue réellement (`#/routines/xxx` → `#/routines`), `Entrée` qui défocalise champ texte **et**
+champ numérique, contrastes des deux icônes **7,03:1 à 18:1** sur les deux thèmes.
+
 ### Checkpoint Lot 4 — ⬜ à faire **au doigt, sur le téléphone**
 
 - [ ] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.

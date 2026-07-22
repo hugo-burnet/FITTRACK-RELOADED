@@ -97,20 +97,9 @@ export function RoutineEditorScreen() {
     else void navigate('/routines');
   };
 
-  const back = (
-    <button
-      type="button"
-      onClick={goBack}
-      className="-mr-2 flex min-h-12 items-center px-2 text-base font-semibold
-        text-[var(--accent-ink)]"
-    >
-      {t('routine.back')}
-    </button>
-  );
-
   if (detail === null) {
     return (
-      <Screen title={t('routine.notFound')} action={back}>
+      <Screen title={t('routine.notFound')} onBack={goBack}>
         <span />
       </Screen>
     );
@@ -118,7 +107,7 @@ export function RoutineEditorScreen() {
 
   if (detail === undefined || draft === null) {
     return (
-      <Screen title="" action={back}>
+      <Screen title="" onBack={goBack}>
         <span />
       </Screen>
     );
@@ -149,12 +138,12 @@ export function RoutineEditorScreen() {
   return (
     <Screen
       title={routine.name === '' ? t('routines.untitled') : routine.name}
-      /* The back link is the only thing beside the title. A reading here made
-         three elements compete for 375px against a name the user chose, and it
+      /* The arrow is the only thing beside the title. A reading here made three
+         elements compete for 375px against a name the user chose, and it
          wrapped badly the moment the name was longer than "Poussée" — reported
          from a real phone. The count now sits above the list it counts, which
          is also where it is actually informative. */
-      action={back}
+      onBack={goBack}
     >
       <div className="flex flex-col gap-6">
         <Card padded>

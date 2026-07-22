@@ -87,19 +87,9 @@ export function ExerciseDetailScreen() {
     else void navigate('/exercises');
   };
 
-  const back = (
-    <button
-      type="button"
-      onClick={goBack}
-      className="-mr-2 flex min-h-12 items-center px-2 text-base font-semibold text-[var(--accent-ink)]"
-    >
-      {t('exercise.back')}
-    </button>
-  );
-
   if (exercise === null) {
     return (
-      <Screen title={t('exercise.notFound')} action={back}>
+      <Screen title={t('exercise.notFound')} onBack={goBack}>
         <span />
       </Screen>
     );
@@ -107,7 +97,7 @@ export function ExerciseDetailScreen() {
 
   if (exercise === undefined || draft === null || sessions === undefined) {
     return (
-      <Screen title="" action={back}>
+      <Screen title="" onBack={goBack}>
         <span />
       </Screen>
     );
@@ -131,7 +121,7 @@ export function ExerciseDetailScreen() {
   };
 
   return (
-    <Screen title={exercise.name} action={back}>
+    <Screen title={exercise.name} onBack={goBack}>
       <div className="flex flex-col gap-9">
         <p className="-mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-base text-[var(--text-2)]">
           {exerciseSubtitle(exercise)}

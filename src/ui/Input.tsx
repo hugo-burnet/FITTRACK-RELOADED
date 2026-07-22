@@ -8,7 +8,14 @@ type Props = {
   labelHidden?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'id'>;
 
-export function Input({ label, hint, labelHidden = false, className = '', ...rest }: Props) {
+export function Input({
+  label,
+  hint,
+  labelHidden = false,
+  className = '',
+  onKeyDown,
+  ...rest
+}: Props) {
   const id = useId();
   const hintId = `${id}-hint`;
 
@@ -26,6 +33,17 @@ export function Input({ label, hint, labelHidden = false, className = '', ...res
       <input
         id={id}
         aria-describedby={hint ? hintId : undefined}
+        onKeyDown={(event) => {
+          // The phone keyboard's "done" key. Left alone it does nothing at all:
+          // an input outside a <form> has no default action for Enter, so the
+          // keyboard just stays up covering half the screen. Blurring is what
+          // dismisses it.
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            event.currentTarget.blur();
+          }
+          onKeyDown?.(event);
+        }}
         className={`min-h-12 w-full rounded-lg bg-[var(--surface-2)] px-4 text-base
           text-[var(--text-1)] outline-none placeholder:text-[var(--text-2)]
           focus:ring-2 focus:ring-[var(--accent-ink)] disabled:opacity-40 ${className}`}

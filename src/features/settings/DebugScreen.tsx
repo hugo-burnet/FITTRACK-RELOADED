@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { db } from '@/data/db';
@@ -16,6 +16,7 @@ const megabytes = (bytes: number): string =>
   (bytes / 1_048_576).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
 
 export function DebugScreen() {
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [storage, setStorage] = useState<StorageEstimate | null>(null);
@@ -58,14 +59,7 @@ export function DebugScreen() {
   return (
     <Screen
       title={t('debug.title')}
-      action={
-        <Link
-          to="/settings"
-          className="-mr-2 flex min-h-12 items-center px-2 text-base font-semibold text-[var(--accent-ink)]"
-        >
-          {t('debug.back')}
-        </Link>
-      }
+      onBack={() => void navigate('/settings')}
     >
       <div className="flex flex-col gap-9">
         <section>

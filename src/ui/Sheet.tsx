@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { t } from '@/i18n/fr';
+import { CloseIcon } from './icons';
 
 type Props = {
   open: boolean;
@@ -91,7 +93,7 @@ export function Sheet({ open, onClose, title, children }: Props) {
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <button
         type="button"
-        aria-label="Fermer"
+        aria-label={t('common.close')}
         onClick={onClose}
         className="absolute inset-0 bg-black/60 transition-opacity duration-[var(--dur-2)]
           ease-[var(--ease-mech)]"
@@ -122,9 +124,29 @@ export function Sheet({ open, onClose, title, children }: Props) {
           className="sticky top-0 touch-none bg-[var(--surface-1)] pt-3 pb-4"
         >
           <div className="mx-auto h-1 w-9 rounded-full bg-[var(--border)]" />
-          <h2 id={titleId} className="mt-4 px-5 text-lg font-semibold text-[var(--text-1)]">
-            {title}
-          </h2>
+          <div className="mt-4 flex items-center gap-2 px-5">
+            <h2
+              id={titleId}
+              className="min-w-0 flex-1 truncate text-lg font-semibold text-[var(--text-1)]"
+            >
+              {title}
+            </h2>
+            {/* A visible way out. Dragging the panel down works and stays, but it
+                is a gesture you have to already know — reported from the phone,
+                where it was the only way to put a sheet away.
+                `stopPropagation` on the pointer: the header is the drag surface,
+                so without it pressing this button would begin a drag instead. */}
+            <button
+              type="button"
+              aria-label={t('common.close')}
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={onClose}
+              className="-my-2 -mr-3 flex size-12 shrink-0 items-center justify-center rounded-xl
+                text-[var(--text-2)] active:bg-[var(--surface-2)]"
+            >
+              <CloseIcon />
+            </button>
+          </div>
         </header>
 
         <div className="safe-bottom px-5 pb-5">{children}</div>

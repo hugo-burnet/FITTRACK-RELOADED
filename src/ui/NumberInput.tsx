@@ -77,6 +77,15 @@ export function NumberInput({
           value={draft}
           placeholder={placeholder}
           onChange={(e) => handleInput(e.target.value)}
+          // La touche « OK » du clavier du téléphone. Sans ça elle ne fait
+          // rien : hors d'un <form>, Entrée n'a aucune action par défaut, et le
+          // clavier reste devant la feuille. C'est le blur qui le referme.
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+          }}
           onFocus={(e) => e.target.select()} // remplacer la valeur d'un geste, pas la corriger
           className={`metric min-h-12 w-full rounded-lg bg-[var(--surface-2)] text-center text-xl
             font-semibold text-[var(--text-1)] outline-none placeholder:font-normal
