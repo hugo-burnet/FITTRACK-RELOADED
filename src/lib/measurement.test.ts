@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { measurementShape, targetParts } from './measurement';
+import { entryColumns, measurementShape, performedParts, targetParts } from './measurement';
 import type { Targets } from './measurement';
 
 /** The unit keys are deliberately not words; this is the mapping the UI applies. */
@@ -139,5 +139,89 @@ describe('targetParts', () => {
     ] as const) {
       expect(targetParts(type, full).length).toBeLessThanOrEqual(2);
     }
+  });
+});
+
+describe('entryColumns', () => {
+  const shape = (type: Parameters<typeof entryColumns>[0]) =>
+    entryColumns(type).map((column) => `${column.prefix ?? ''}${column.field}:${column.unit}`);
+
+  /**
+   * L'ordre n'est pas celui de `measurementShape` et ce n'est pas un oubli : on
+   * *lit* « 8 – 12 reps · 102,5 kg », mais on *saisit* la charge d'abord, parce
+   * que c'est l'ordre dans lequel on décide — les disques sont sur la barre
+   * avant la première répétition.
+   */
+  it('met la charge avant le compte, à l’inverse de l’ordre de lecture', () => {
+    expect(measurementShape('weight_reps').fields).toEqual(['reps', 'weight']);
+    expect(shape('weight_reps')).toEqual(['weight:kg', 'reps:reps']);
+  });
+
+  it('donne à chaque type de mesure ses colonnes de saisie', () => {
+    expect(shape('time_only')).toEqual(['duration:seconds']);
+    expect(shape('weight_time')).toEqual(['weight:kg', 'duration:seconds']);
+    expect(shape('distance_time')).toEqual(['distance:meters', 'duration:seconds']);
+  });
+
+  /** Le signe est la seule chose qui distingue un lest d'une assistance. */
+  it('porte le signe du lest et de l’assistance jusque dans la grille', () => {
+    expect(shape('reps_only')).toEqual(['+weight:kg', 'reps:reps']);
+    expect(shape('assisted_weight_reps')).toEqual(['−weight:kg', 'reps:reps']);
+    expect(entryColumns('weight_reps')[0]?.prefix).toBeUndefined();
+  });
+
+  /**
+   * Deux colonnes de saisie, jamais trois : le budget de largeur mesuré à
+   * 375 px n'en laisse pas la place, et aucun type de mesure n'en demande.
+   */
+  it('ne rend jamais plus de deux colonnes', () => {
+    for (const type of [
+      'weight_reps',
+      'reps_only',
+      'weight_time',
+      'time_only',
+      'distance_time',
+      'assisted_weight_reps',
+    ] as const) {
+      expect(entryColumns(type).length).toBeLessThanOrEqual(2);
+      expect(entryColumns(type).length).toBeGreaterThan(0);
+    }
+  });
+
+  /**
+   * Une durée se saisit en secondes, toujours — alors qu'elle *s'affiche* en
+   * m:ss au-delà d'une minute. Une unité de saisie qui change au passage d'un
+   * seuil ferait taper 90 dans un champ qui attendait 1:30.
+   */
+  it('saisit toujours une durée en secondes, même là où elle s’affiche en minutes', () => {
+    expect(entryColumns('time_only')[0]?.unit).toBe('seconds');
+    expect(targetParts('time_only', { targetDurationSeconds: 90 })[0]?.unit).toBe('minutes');
+  });
+});
+
+describe('performedParts', () => {
+  const parts = (type: Parameters<typeof performedParts>[0], set: Parameters<typeof performedParts>[1]) =>
+    performedParts(type, set).map((p) => `${p.prefix ?? ''}${p.value} ${SYMBOL[p.unit]}`);
+
+  it('met en forme une série réalisée exactement comme une série prescrite', () => {
+    expect(parts('weight_reps', { weight: 102.5, reps: 5 })).toEqual(['5 reps', '102,5 kg']);
+    expect(parts('reps_only', { weight: 10, reps: 8 })).toEqual(['8 reps', '+10 kg']);
+    expect(parts('time_only', { durationSeconds: 45 })).toEqual(['45 s']);
+    expect(parts('distance_time', { distanceMeters: 1500, durationSeconds: 360 })).toEqual([
+      '1,5 km',
+      '6:00 min',
+    ]);
+  });
+
+  it('ne renvoie rien pour une série vide', () => {
+    expect(performedParts('weight_reps', {})).toEqual([]);
+  });
+
+  /**
+   * Une planche qui aurait gardé un nombre de répétitions d'une édition
+   * antérieure afficherait une valeur que personne n'a réalisée.
+   */
+  it('ignore une valeur étrangère au type de mesure', () => {
+    expect(parts('time_only', { durationSeconds: 45, reps: 10 })).toEqual(['45 s']);
   });
 });

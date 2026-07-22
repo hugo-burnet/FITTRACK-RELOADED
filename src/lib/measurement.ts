@@ -64,6 +64,85 @@ export function measurementShape(type: MeasurementType): MeasurementShape {
   return SHAPES[type];
 }
 
+// ---------------------------------------------------------------------------
+// Saisie — ce que la grille de la séance en direct affiche comme colonnes
+// ---------------------------------------------------------------------------
+
+/** One editable column of the live workout grid. */
+export interface EntryColumn {
+  field: TargetField;
+  unit: TargetUnit;
+  /** `+` for added load, `−` for assistance — same reading as `targetParts`. */
+  prefix?: '+' | '−';
+}
+
+/**
+ * Entry order, deliberately not the reading order of `MeasurementShape.fields`.
+ *
+ * A set is *read* "8 – 12 reps · 102,5 kg" but it is *entered* load first,
+ * because that is the order it is decided in: the plates are on the bar before
+ * the first repetition.
+ */
+const ENTRY_ORDER: TargetField[] = ['weight', 'distance', 'reps', 'duration'];
+
+/**
+ * The unit each field is typed in. A duration is always entered in seconds even
+ * though it is displayed as m:ss past a minute: an input unit that changed at a
+ * threshold would have someone type 90 into a field that expected 1:30.
+ */
+const ENTRY_UNIT: Record<TargetField, TargetUnit> = {
+  weight: 'kg',
+  distance: 'meters',
+  reps: 'reps',
+  duration: 'seconds',
+};
+
+/**
+ * The columns of the live grid, derived from the same shape the set sheet and
+ * the set row read. The grid never decides on its own what an exercise is
+ * measured in — that is the whole point of this module.
+ */
+export function entryColumns(type: MeasurementType): EntryColumn[] {
+  const shape = measurementShape(type);
+
+  return ENTRY_ORDER.filter((field) => shape.fields.includes(field)).map((field) => ({
+    field,
+    unit: ENTRY_UNIT[field],
+    prefix:
+      field === 'weight'
+        ? shape.weightRole === 'added'
+          ? '+'
+          : shape.weightRole === 'assist'
+            ? '−'
+            : undefined
+        : undefined,
+  }));
+}
+
+/** What a set actually holds once performed — the mirror of `Targets`. */
+export interface Performed {
+  weight?: number;
+  reps?: number;
+  durationSeconds?: number;
+  distanceMeters?: number;
+}
+
+/**
+ * A performed set as readings, formatted exactly like a prescribed one.
+ *
+ * Remapped onto `Targets` rather than formatted again: "80 kg" must not be
+ * written one way on a routine line and another way on a history line, and the
+ * only way to guarantee that is to have a single implementation.
+ */
+export function performedParts(type: MeasurementType, set: Performed): TargetPart[] {
+  return targetParts(type, {
+    targetReps: set.reps,
+    targetWeight: set.weight,
+    targetDurationSeconds: set.durationSeconds,
+    targetDistanceMeters: set.distanceMeters,
+  });
+}
+
 /**
  * French formatting lives here rather than in the component, for the same reason
  * `NumberInput` writes a comma: in this app a number is UI text, and "102,5" is
