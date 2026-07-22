@@ -40,26 +40,25 @@ export function WorkoutAddExerciseScreen() {
   };
 
   return (
-    <Screen title={t('picker.title')} onBack={() => void navigate(-1)}>
+    <Screen
+      title={t('picker.title')}
+      onBack={() => void navigate(-1)}
+      footer={
+        selected.length > 0 ? (
+          <Button variant="primary" size="lg" fullWidth onClick={() => void add()}>
+            {selected.length === 1
+              ? t('picker.addOne')
+              : t('picker.add', { count: selected.length })}
+          </Button>
+        ) : undefined
+      }
+    >
       <ExerciseBrowser
         query={query}
         onQueryChange={setQuery}
         onPick={(exercise) => toggle(exercise.id)}
         selectedIds={new Set(selected)}
       />
-
-      {selected.length > 0 && (
-        <div
-          className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
-            bg-[var(--surface-0)] px-4 pt-3 pb-3"
-        >
-          <Button variant="primary" size="lg" fullWidth onClick={() => void add()}>
-            {selected.length === 1
-              ? t('picker.addOne')
-              : t('picker.add', { count: selected.length })}
-          </Button>
-        </div>
-      )}
     </Screen>
   );
 }

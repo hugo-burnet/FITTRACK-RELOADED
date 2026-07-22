@@ -12,13 +12,16 @@ type Props = {
   onBack?: () => void;
   /** Right-hand slot in the header: a count, an action. */
   action?: ReactNode;
+  /**
+   * La bande d'action du bas — la sortie de l'écran et son verbe, dans la zone
+   * du pouce (règle du Lot 3). Absente, rien n'est dessiné.
+   */
+  footer?: ReactNode;
   children: ReactNode;
 };
 
 /**
  * The frame every screen shares: one h1, one measure, one set of margins.
- * Centralised so no screen has to re-derive its own padding — the bottom of a
- * list disappearing behind the navigation is the classic bug here.
  *
  * The way back is an **arrow on the left**, not the destination's name on the
  * right. Reported from the phone: a word in the top corner reads as a label
@@ -26,14 +29,26 @@ type Props = {
  * beside a title the user chose, on 375px. The arrow is the mark every phone
  * already uses, and it costs the title no room.
  *
- * Reaching the top corner one-handed is not the concern it would be for a
- * primary action: every screen long enough to matter carries its real exit on a
- * sticky bar in the thumb zone.
+ * **Le défilement vit ici, entre l'en-tête et le pied.** Il vivait au-dessus,
+ * sur le `<main>` de la coquille, et les barres d'action étaient alors des
+ * `position: sticky` posées par-dessus le contenu : ça tranchait un mot en
+ * deux, et une carte glissant dessous se confondait avec la bande. Remonté du
+ * téléphone en ces termes — « ça chevauche, ça fait posé là ».
+ *
+ * C'est exactement le raisonnement que le Lot 1 a tenu pour la barre de
+ * navigation, jamais transposé à celle-ci : **frère flex, pas superposition.**
+ * Épinglée de la même façon, mais aucun écran ne peut plus cacher sa dernière
+ * ligne derrière elle — le défaut devient structurellement impossible au lieu
+ * d'être compensé par une marge que chaque écran doit se souvenir de poser.
+ *
+ * `min-h-0` sur les deux colonnes flex n'est pas décoratif : sans lui un enfant
+ * défilant refuse de rétrécir sous sa hauteur de contenu, et c'est la page
+ * entière qui se met à défiler — pied compris.
  */
-export function Screen({ title, onBack, action, children }: Props) {
+export function Screen({ title, onBack, action, footer, children }: Props) {
   return (
-    <section className="mx-auto flex min-h-full w-full max-w-[36rem] flex-col px-4 pb-8">
-      <header className="flex min-h-16 items-center gap-2 pt-5 pb-4">
+    <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
+      <header className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
         {onBack && (
           <button
             type="button"
@@ -52,8 +67,20 @@ export function Screen({ title, onBack, action, children }: Props) {
         </h1>
         {action}
       </header>
+
       {/* Grows to fill the screen so a lone empty state can centre itself in it. */}
-      <div className="flex flex-1 flex-col">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pb-8">
+        {children}
+      </div>
+
+      {footer !== undefined && (
+        <div
+          className="safe-bottom shrink-0 border-t border-[var(--border)] bg-[var(--surface-1)]
+            px-4 pt-3 pb-3"
+        >
+          {footer}
+        </div>
+      )}
     </section>
   );
 }

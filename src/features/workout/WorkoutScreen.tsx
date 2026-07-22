@@ -137,6 +137,16 @@ export function WorkoutScreen() {
           <MoreIcon />
         </HeaderAction>
       }
+      footer={
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={() => void navigate('/workout/finish')}
+        >
+          {t('workout.finish')}
+        </Button>
+      }
     >
       {exercises.length === 0 ? (
         <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
@@ -184,20 +194,6 @@ export function WorkoutScreen() {
           </Card>
         </div>
       )}
-
-      <div
-        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
-          bg-[var(--surface-0)] px-4 pt-3 pb-3"
-      >
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
-          onClick={() => void navigate('/workout/finish')}
-        >
-          {t('workout.finish')}
-        </Button>
-      </div>
 
       <ActionSheet
         open={sheet?.kind === 'workout'}

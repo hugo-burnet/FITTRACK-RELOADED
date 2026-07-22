@@ -13,7 +13,10 @@ import { BottomNav } from './BottomNav';
 export function AppShell() {
   return (
     <div className="flex h-full flex-col bg-[var(--surface-0)]">
-      <main className="safe-top flex-1 overflow-y-auto overscroll-contain">
+      {/* Le défilement est descendu dans `Screen`, entre son en-tête et sa barre
+          d'action : c'est ce qui permet à cette barre d'être un frère flex comme
+          la navigation, au lieu d'une superposition qui tranche le contenu. */}
+      <main className="safe-top flex min-h-0 flex-1 flex-col">
         <Outlet />
       </main>
       <ActiveWorkoutBar />

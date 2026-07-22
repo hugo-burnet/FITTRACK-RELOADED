@@ -8,7 +8,15 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';
 import { bestSets, isWorkingSet } from '@/lib/records';
-import { Button, Card, ConfirmAction, ListRow, NumberInput, SectionTitle, Textarea } from '@/ui';
+import {
+  Button,
+  Card,
+  ConfirmAction,
+  ListRow,
+  NumberInput,
+  SectionTitle,
+  Textarea,
+} from '@/ui';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
 const longDate = (epochMs: number): string =>
@@ -121,7 +129,15 @@ export function ExerciseDetailScreen() {
   };
 
   return (
-    <Screen title={exercise.name} onBack={goBack}>
+    <Screen
+      title={exercise.name}
+      onBack={goBack}
+      footer={
+        <Button variant="primary" size="lg" fullWidth onClick={goBack}>
+          {t('exercise.done')}
+        </Button>
+      }
+    >
       <div className="flex flex-col gap-9">
         <p className="-mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-base text-[var(--text-2)]">
           {exerciseSubtitle(exercise)}
@@ -249,24 +265,6 @@ export function ExerciseDetailScreen() {
           </p>
         )}
 
-      </div>
-
-      {/* The way out, pinned in the thumb zone.
-          Sticky and not merely last in the flow: measured at the bottom of a
-          freshly created exercise it sat 86px below the fold, and on an exercise
-          with months of history it would be a thousand px down. The "Exercices"
-          link at the top is a breadcrumb, not an action — the top-right corner
-          is the one place a single hand cannot reach, and the header scrolls
-          away regardless.
-          It says "Terminé" and not "Enregistrer" because there is nothing left
-          to save: every keystroke above is already in the database. */}
-      <div
-        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
-          bg-[var(--surface-0)] px-4 pt-3 pb-3"
-      >
-        <Button variant="primary" size="lg" fullWidth onClick={goBack}>
-          {t('exercise.done')}
-        </Button>
       </div>
     </Screen>
   );

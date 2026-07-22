@@ -42,6 +42,17 @@ export function ExercisePickerScreen() {
     <Screen
       title={t('picker.title')}
       onBack={() => void navigate(-1)}
+      /* Pinned in the thumb zone, and only once there is something to add: an
+         always-present disabled button is a target that teaches you nothing. */
+      footer={
+        selected.length > 0 ? (
+          <Button variant="primary" size="lg" fullWidth onClick={add}>
+            {selected.length === 1
+              ? t('picker.addOne')
+              : t('picker.add', { count: selected.length })}
+          </Button>
+        ) : undefined
+      }
     >
       <ExerciseBrowser
         query={query}
@@ -49,21 +60,6 @@ export function ExercisePickerScreen() {
         onPick={(exercise) => toggle(exercise.id)}
         selectedIds={new Set(selected)}
       />
-
-      {/* Pinned in the thumb zone, and only once there is something to add: an
-          always-present disabled button is a target that teaches you nothing. */}
-      {selected.length > 0 && (
-        <div
-          className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
-            bg-[var(--surface-0)] px-4 pt-3 pb-3"
-        >
-          <Button variant="primary" size="lg" fullWidth onClick={add}>
-            {selected.length === 1
-              ? t('picker.addOne')
-              : t('picker.add', { count: selected.length })}
-          </Button>
-        </div>
-      )}
     </Screen>
   );
 }

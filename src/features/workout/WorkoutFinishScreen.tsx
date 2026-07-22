@@ -96,7 +96,15 @@ export function WorkoutFinishScreen() {
   };
 
   return (
-    <Screen title={t('finish.title')} onBack={() => void navigate(-1)}>
+    <Screen
+      title={t('finish.title')}
+      onBack={() => void navigate(-1)}
+      footer={
+        <Button variant="primary" size="lg" fullWidth onClick={save}>
+          {t('finish.save')}
+        </Button>
+      }
+    >
       <div className="flex flex-col gap-6">
         <Card padded>
           <div className="flex items-start gap-2">
@@ -178,15 +186,6 @@ export function WorkoutFinishScreen() {
 
         <Button variant="danger" size="lg" fullWidth onClick={() => setConfirming(true)}>
           {t('finish.discard')}
-        </Button>
-      </div>
-
-      <div
-        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
-          bg-[var(--surface-0)] px-4 pt-3 pb-3"
-      >
-        <Button variant="primary" size="lg" fullWidth onClick={save}>
-          {t('finish.save')}
         </Button>
       </div>
 

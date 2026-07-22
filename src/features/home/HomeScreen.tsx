@@ -22,22 +22,22 @@ export function HomeScreen() {
   };
 
   return (
-    <Screen title={t('home.title')}>
+    <Screen
+      title={t('home.title')}
+      footer={
+        active === null ? (
+          <div className="flex flex-col gap-2">
+            <Button variant="primary" size="lg" fullWidth onClick={startEmpty}>
+              {t('home.startEmpty')}
+            </Button>
+            <Button size="lg" fullWidth onClick={() => void navigate('/routines')}>
+              {t('home.startFromRoutine')}
+            </Button>
+          </div>
+        ) : undefined
+      }
+    >
       <EmptyState reading="0" unit={t('units.streakDays')} body={t('home.emptyBody')} />
-
-      {active === null && (
-        <div
-          className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 flex flex-col gap-2 border-t
-            border-[var(--border)] bg-[var(--surface-0)] px-4 pt-3 pb-3"
-        >
-          <Button variant="primary" size="lg" fullWidth onClick={startEmpty}>
-            {t('home.startEmpty')}
-          </Button>
-          <Button size="lg" fullWidth onClick={() => void navigate('/routines')}>
-            {t('home.startFromRoutine')}
-          </Button>
-        </div>
-      )}
     </Screen>
   );
 }
