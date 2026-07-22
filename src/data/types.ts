@@ -111,6 +111,13 @@ export interface RoutineFolder extends Syncable {
 
 export interface Routine extends Syncable {
   name: string;
+  /**
+   * One quiet line under the name. Added in Lot 4 after real use: without it a
+   * routine you want to describe ("Poussée lourde barre + accessoires épaules")
+   * becomes a title that wraps to three lines and reads as a paragraph. Not
+   * indexed, so it needs no schema version.
+   */
+  subtitle?: string;
   folderId: string; // '' when at the root
   order: number;
   notes?: string;

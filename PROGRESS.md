@@ -141,9 +141,73 @@ La conséquence tirée : la partie du drag qui ne peut pas être exercée dans c
 traîné **au-delà** du haut de l'écran faisait accélérer la liste indéfiniment — exactement quand on
 ne peut plus corriger. Bornée.
 
+### Les cinq retours du premier essai sur téléphone — tous corrigés
+
+Remontés par l'utilisateur après une vraie session de saisie. **Cinq sur cinq étaient justes.**
+
+**1. Le clavier se fermait à la première frappe.** Le pire des cinq : il rendait la saisie décimale
+(`102,5`, quatre caractères) littéralement impossible.
+
+`Sheet` déclare son effet avec `[open, onClose]`, et cet effet appelle `panelRef.current?.focus()`.
+Or les appelants passent `onClose` en **flèche inline**, donc son identité change à chaque rendu du
+parent ; et une feuille dont les champs écrivent en base à la frappe se re-rend **à chaque
+caractère**. L'effet rejouait donc, et reprenait le focus. Mesuré : `document.activeElement`
+devenait `DIV[dialog]` dès le **premier** caractère.
+
+Le focus d'ouverture vit maintenant dans son propre effet, dépendant de `open` **seul**. Vérifié
+après correctif : `102,5` se tape en entier, focus conservé, curseur de 1 à 5 ; idem sur les notes
+(11 caractères, curseur à 11).
+
+**Pourquoi les tests ne l'ont pas vu** : je posais les valeurs par `dispatchEvent` sans jamais
+vérifier `document.activeElement`. Une saisie programmatique ne perd pas le focus de la même façon
+qu'un doigt. **Toute vérification de champ doit désormais assurer le focus, pas seulement la valeur.**
+
+**2. On ne pouvait pas glisser une routine dans un dossier.** J'avais écarté le besoin (« le budget
+de drag va aux exercices »). À tort.
+
+La liste est maintenant **plate, et un en-tête est une position, pas un contenant** : le dossier
+d'une routine **est** l'en-tête au-dessus d'elle. Déposer réordonne et range d'un seul geste, sans
+cible de dépôt à viser au pouce ni logique de transfert entre conteneurs. L'en-tête « Sans dossier »
+n'apparaît qu'à partir du premier dossier — mais alors toujours, sinon une routine entrée dans un
+dossier ne pourrait plus en ressortir. Vérifié dans les deux sens.
+
+Conséquence de mise en page : chaque routine devient **sa propre carte**, comme les exercices de
+l'éditeur — une ligne doit pouvoir se détacher de ses voisines pour être soulevée.
+
+**« Déplacer vers un dossier » reste dans le menu ⋯.** Le glisser est rapide, le sélecteur est
+précis, et avec une douzaine de routines le dossier visé peut être à deux écrans du pouce.
+
+**3. L'en-tête de l'éditeur était illisible en responsive.** Le titre est le **nom choisi par
+l'utilisateur** : lui opposer un relevé « 22 SÉRIES » *et* un lien « Routines » faisait trois
+éléments en concurrence sur 375 px, et ça cassait dès que le nom dépassait « Poussée ».
+
+L'en-tête ne porte plus que le titre et le retour — **exactement la forme de la fiche exercice du
+Lot 3**. Le relevé descend au-dessus de la liste qu'il compte, là où il est réellement informatif.
+
+**4 et 5. Les routines ont un sous-titre.** `Routine.subtitle` (non indexé, donc **aucune migration**).
+Sans lui, une routine qu'on veut décrire devient un titre qui passe à la ligne trois fois et se lit
+comme un paragraphe — et une liste de paragraphes ne se parcourt pas.
+
+Trois registres distincts sur la ligne, au lieu de deux gris identiques :
+
+| Ligne | Registre |
+|---|---|
+| `Poussée` | `text-base` / `--text-1` |
+| `Lourde — barre et accessoires épaules` | `text-sm` / `--text-2` — de la prose |
+| `9 EXERCICES · 22 SÉRIES` | `.label-xs` gravé / `--text-2` — un décompte annote, il ne raconte pas |
+
+Mesuré : 87 px avec sous-titre, 64 px sans (la ligne se referme proprement).
+
+Re-vérifié après ces cinq correctifs : contrastes **0 échec / min 6,04:1**, aucune cible sous
+48 × 44, aucun débordement horizontal, **148 tests**.
+
 ### Checkpoint Lot 4 — ⬜ à faire **au doigt, sur le téléphone**
 
 - [ ] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.
+- [ ] **Tu tapes `102,5` en entier dans une charge cible, sans que le clavier se ferme.**
+- [ ] Tu donnes un nom court à une routine et un sous-titre : la liste se lit d'un coup d'œil.
+- [ ] **Tu fais glisser une routine sous un en-tête de dossier : elle y entre. Tu la remontes au-dessus :
+      elle en ressort.**
 - [ ] Tu réordonnes les exercices **au doigt**, sans frustration — et la page défile encore
       normalement quand tu ne touches pas la poignée.
 - [ ] Tu dupliques une routine et tu la modifies : l'originale n'a pas bougé.

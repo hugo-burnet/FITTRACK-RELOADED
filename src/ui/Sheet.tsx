@@ -39,6 +39,21 @@ export function Sheet({ open, onClose, title, children }: Props) {
     return () => cancelAnimationFrame(frame);
   }, [mounted]);
 
+  /**
+   * Focus moves into the dialog **once, when it opens** — and never again.
+   *
+   * `open` is the only dependency on purpose. Callers pass `onClose` as an
+   * inline arrow, so it has a fresh identity on every parent render; a sheet
+   * whose fields write straight through to the database re-renders on every
+   * keystroke, and re-running this would pull focus off the input each time.
+   * On a phone that closes the keyboard — measured: the caret left the field on
+   * the very first character, which made "82,5" impossible to type.
+   */
+  useEffect(() => {
+    if (!open) return;
+    panelRef.current?.focus();
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -47,7 +62,6 @@ export function Sheet({ open, onClose, title, children }: Props) {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeyDown);
-    panelRef.current?.focus();
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);

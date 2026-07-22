@@ -19,6 +19,7 @@ import {
   listRoutineSummaries,
   removeRoutineExercise,
   reorderRoutineExercises,
+  reorderRoutines,
   ungroupSuperset,
   updateRoutine,
   updateRoutineSet,
@@ -102,6 +103,32 @@ describe('dossiers', () => {
     expect(summaries).toHaveLength(1);
     expect(at(summaries, 0).routine.name).toBe('Poussée');
     expect(at(summaries, 0).routine.folderId).toBe('');
+  });
+});
+
+describe('reorderRoutines', () => {
+  it('classe et range en une seule écriture', async () => {
+    const folder = await createFolder('PPL');
+    const push = await createRoutine('Poussée');
+    const pull = await createRoutine('Tirage');
+
+    // "Tirage" passe devant ET entre dans le dossier.
+    await reorderRoutines([
+      { id: pull.id, folderId: folder.id },
+      { id: push.id, folderId: '' },
+    ]);
+
+    const rows = (await listRoutineSummaries()).map((r) => r.routine);
+    expect(rows.map((r) => [r.name, r.folderId, r.order])).toEqual([
+      ['Tirage', folder.id, 0],
+      ['Poussée', '', 1],
+    ]);
+  });
+
+  it('ignore une routine absente sans casser le reste', async () => {
+    const push = await createRoutine('Poussée');
+    await reorderRoutines([{ id: 'inconnue', folderId: '' }, { id: push.id, folderId: '' }]);
+    expect(at(await listRoutineSummaries(), 0).routine.name).toBe('Poussée');
   });
 });
 

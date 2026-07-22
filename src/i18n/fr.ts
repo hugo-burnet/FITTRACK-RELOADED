@@ -142,6 +142,9 @@ const fr = {
     setCountOne: '1 série',
     empty: 'Aucun exercice',
 
+    /** Drag lives on a handle, so the handle has to say what it moves. */
+    dragHandle: 'Déplacer {name}',
+
     actionsTitle: 'Routine',
     duplicate: 'Dupliquer',
     duplicateHint: 'Une copie indépendante. Modifier l’une ne touche pas à l’autre.',
@@ -172,6 +175,12 @@ const fr = {
 
     nameLabel: 'Nom de la routine',
     namePlaceholder: 'Poussée',
+    /**
+     * Everything the name should not have to carry. A title that wraps to three
+     * lines is a paragraph, and a list of paragraphs cannot be scanned.
+     */
+    subtitleLabel: 'Sous-titre',
+    subtitlePlaceholder: 'Lourde — barre et accessoires épaules',
     folderLabel: 'Dossier',
     countUnit: 'séries',
 

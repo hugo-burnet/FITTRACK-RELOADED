@@ -237,6 +237,33 @@ export async function duplicateRoutine(id: string, name: string): Promise<Routin
   });
 }
 
+/**
+ * Applies a whole new arrangement of the routine list: which folder each routine
+ * sits in, and in what order.
+ *
+ * Takes the final list rather than a from/to pair because on this screen the two
+ * are the same gesture — the folder a routine belongs to **is** the heading it
+ * was dropped under, so moving and re-filing cannot be told apart and must be
+ * written together. `order` is the position in the list, so the caller never
+ * computes it.
+ */
+export async function reorderRoutines(
+  placement: { id: string; folderId: string }[],
+): Promise<void> {
+  await db.transaction('rw', db.routines, async () => {
+    const existing = new Map((await db.routines.toArray()).map((row) => [row.id, row]));
+
+    const changed = placement.flatMap(({ id, folderId }, order) => {
+      const routine = existing.get(id);
+      if (routine === undefined || routine.deletedAt !== 0) return [];
+      if (routine.folderId === folderId && routine.order === order) return [];
+      return [touch(routine, { folderId, order })];
+    });
+
+    if (changed.length > 0) await db.routines.bulkPut(changed);
+  });
+}
+
 /** Soft-deletes the routine AND its exercise rows AND their sets, in one transaction. */
 export async function deleteRoutine(id: string): Promise<void> {
   await db.transaction('rw', db.routines, db.routineExercises, db.routineSets, async () => {

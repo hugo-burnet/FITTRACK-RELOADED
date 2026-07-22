@@ -27,6 +27,7 @@ import { RoutineExerciseCard } from './RoutineExerciseCard';
 import type { SupersetPlace } from './RoutineExerciseCard';
 import { RoutineExerciseSheet } from './RoutineExerciseSheet';
 import { RoutineSetSheet } from './RoutineSetSheet';
+import { routineSummaryLine } from './summary';
 
 type SheetState =
   | { kind: 'folder' }
@@ -73,13 +74,18 @@ export function RoutineEditorScreen() {
   const folders = useLiveQuery(listFolders);
 
   /**
-   * The name is typed here and written straight through. The draft exists only
-   * to keep `useLiveQuery` from echoing each write back into the field and
-   * moving the caret — the exact bug Lot 3 measured on the exercise notes.
+   * Name and subtitle are typed here and written straight through. The draft
+   * exists only to keep `useLiveQuery` from echoing each write back into the
+   * field and moving the caret — the exact bug Lot 3 measured on the exercise
+   * notes.
    */
-  const [draftName, setDraftName] = useState<{ id: string; value: string } | null>(null);
-  if (detail != null && draftName?.id !== detail.routine.id) {
-    setDraftName({ id: detail.routine.id, value: detail.routine.name });
+  const [draft, setDraft] = useState<{ id: string; name: string; subtitle: string } | null>(null);
+  if (detail != null && draft?.id !== detail.routine.id) {
+    setDraft({
+      id: detail.routine.id,
+      name: detail.routine.name,
+      subtitle: detail.routine.subtitle ?? '',
+    });
   }
 
   const goBack = () => {
@@ -110,7 +116,7 @@ export function RoutineEditorScreen() {
     );
   }
 
-  if (detail === undefined || draftName === null) {
+  if (detail === undefined || draft === null) {
     return (
       <Screen title="" action={back}>
         <span />
@@ -143,37 +149,39 @@ export function RoutineEditorScreen() {
   return (
     <Screen
       title={routine.name === '' ? t('routines.untitled') : routine.name}
-      action={
-        <div className="flex items-center gap-3">
-          {/* Hidden while the routine is empty: the empty state below already
-              shows a 0, and two zeros in different units is the defect Lot 3
-              found on the library screen. */}
-          {exercises.length > 0 && (
-            <p className="text-right">
-              <span className="metric text-xl font-semibold text-[var(--text-1)]">
-                {setCount.toLocaleString('fr-FR')}
-              </span>{' '}
-              <span className="label-xs font-semibold text-[var(--text-2)]">
-                {t('routine.countUnit')}
-              </span>
-            </p>
-          )}
-          {back}
-        </div>
-      }
+      /* The back link is the only thing beside the title. A reading here made
+         three elements compete for 375px against a name the user chose, and it
+         wrapped badly the moment the name was longer than "Poussée" — reported
+         from a real phone. The count now sits above the list it counts, which
+         is also where it is actually informative. */
+      action={back}
     >
       <div className="flex flex-col gap-6">
         <Card padded>
-          <Input
-            label={t('routine.nameLabel')}
-            placeholder={t('routine.namePlaceholder')}
-            value={draftName.value}
-            enterKeyHint="done"
-            onChange={(event) => {
-              setDraftName({ id: routine.id, value: event.target.value });
-              void updateRoutine(routine.id, { name: event.target.value });
-            }}
-          />
+          <div className="flex flex-col gap-5">
+            <Input
+              label={t('routine.nameLabel')}
+              placeholder={t('routine.namePlaceholder')}
+              value={draft.name}
+              enterKeyHint="done"
+              onChange={(event) => {
+                setDraft({ ...draft, name: event.target.value });
+                void updateRoutine(routine.id, { name: event.target.value });
+              }}
+            />
+            {/* Everything the name should not have to carry, so the title stays
+                one scannable line instead of wrapping into a paragraph. */}
+            <Input
+              label={t('routine.subtitleLabel')}
+              placeholder={t('routine.subtitlePlaceholder')}
+              value={draft.subtitle}
+              enterKeyHint="done"
+              onChange={(event) => {
+                setDraft({ ...draft, subtitle: event.target.value });
+                void updateRoutine(routine.id, { subtitle: event.target.value });
+              }}
+            />
+          </div>
         </Card>
 
         <Card>
@@ -196,29 +204,39 @@ export function RoutineEditorScreen() {
             body={t('routine.emptyBody')}
           />
         ) : (
-          <ReorderableList
-            className="flex flex-col gap-3"
-            items={exercises}
-            keyOf={(line) => line.row.id}
-            onReorder={(from, to) => void reorderRoutineExercises(routine.id, from, to)}
-            renderItem={(line, _index, state) => (
-              <RoutineExerciseCard
-                line={line}
-                superset={places.get(line.row.id)}
-                state={state}
-                onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
-                onOpenSet={(set) =>
-                  setSheet({
-                    kind: 'set',
-                    setId: set.id,
-                    rowId: line.row.id,
-                    number: line.sets.indexOf(set) + 1,
-                  })
-                }
-                onAddSet={() => void addRoutineSet(line.row.id)}
-              />
-            )}
-          />
+          <div className="flex flex-col gap-2">
+            {/* The reading, above the list it measures rather than in the header
+                where it fought the routine's name for room. Outside the
+                reorderable list on purpose: that component maps its children to
+                item indices one for one, so a stray child would misalign every
+                drag. */}
+            <p className="label-xs px-1 font-semibold text-[var(--text-2)]">
+              {routineSummaryLine(exercises.length, setCount)}
+            </p>
+            <ReorderableList
+              className="flex flex-col gap-3"
+              items={exercises}
+              keyOf={(line) => line.row.id}
+              onReorder={(from, to) => void reorderRoutineExercises(routine.id, from, to)}
+              renderItem={(line, _index, state) => (
+                <RoutineExerciseCard
+                  line={line}
+                  superset={places.get(line.row.id)}
+                  state={state}
+                  onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
+                  onOpenSet={(set) =>
+                    setSheet({
+                      kind: 'set',
+                      setId: set.id,
+                      rowId: line.row.id,
+                      number: line.sets.indexOf(set) + 1,
+                    })
+                  }
+                  onAddSet={() => void addRoutineSet(line.row.id)}
+                />
+              )}
+            />
+          </div>
         )}
       </div>
 
