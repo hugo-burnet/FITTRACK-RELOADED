@@ -1065,6 +1065,26 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   par JS — `element.click()` pour les interactions, `getBoundingClientRect()` pour la mise en page,
   et un calcul de ratio de contraste maison sur les styles calculés. Ouvrir un onglet neuf **n'a pas
   suffi** cette fois.
+- **Mesurer la boîte d'un bouton, ce n'est pas mesurer son libellé.** « Démarrer la séance »
+  passait à la ligne **dans** son bouton ; j'avais relevé `168x56` et conclu que tout allait. La
+  hauteur valait 56 parce que `min-h-14` vaut 56, et le texte cassait à l'intérieur. Le contrôle
+  qui manquait tient en trois lignes — un `Range` sur le nœud de texte, `getClientRects().length`
+  > 1 — et il doit accompagner tout relevé de cible tactile. C'est la même famille d'erreur que
+  « vérifier la valeur d'un champ sans vérifier son focus ».
+- **Ne jamais inventer un composant visuel : la charte est figée depuis le Lot 1.** Le Lot 5 a
+  posé une boîte en pointillés pour « Ajouter un exercice ». `border-dashed` n'existait **nulle
+  part ailleurs** dans le dépôt — toutes les surfaces d'ici sont pleines et sans bordure, donc un
+  contour vide se lit comme un emplacement à remplir. Deux « + » cohabitaient sur le même écran
+  en deux langues. Réflexe à prendre : **avant de dessiner une commande, chercher le geste qui
+  fait déjà ce travail ailleurs** (`grep` sur la classe ou l'icône) et le nommer dans `ui/` s'il
+  est dupliqué. Deux motifs l'étaient déjà — `AddRow` et `HeaderAction` — et c'est justement
+  parce qu'ils n'avaient pas de nom que j'en ai inventé un troisième.
+- **Un relevé n'est pas une commande, et l'inverse non plus.** Le chronomètre de la séance
+  occupait le coin haut-droit — la place que tous les autres écrans réservent à une icône
+  d'action — et cachait le seul accès à « Renommer » et « Notes ». En prime il était en
+  `--accent-ink`, qui dans cette charte veut dire *engagé* : une horloge en vert accent se lit
+  comme un témoin d'état. Les relevés descendent **au-dessus de la liste qu'ils comptent**
+  (règle posée au Lot 4) ; le coin haut-droit est aux actions.
 - **Du code que rien n'exerce n'est pas du code qui marche.** Les quatre défauts du Lot 5 étaient
   dans du code écrit et *testé* au Lot 2 — `getLastPerformance` avait sept tests verts. Ils
   décrivaient tous un historique **déjà clos** ; aucun ne mettait une séance en cours et un passé
