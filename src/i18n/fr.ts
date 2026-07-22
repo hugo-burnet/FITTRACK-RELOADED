@@ -228,6 +228,8 @@ const fr = {
 
     actionsTitle: 'Routine',
     start: 'Démarrer',
+    /** Une seule séance à la fois : la barre de reprise mène à celle qui tourne. */
+    startBusyHint: 'Une séance est déjà en cours. Reprends-la par la barre verte.',
     duplicate: 'Dupliquer',
     duplicateHint: 'Une copie indépendante. Modifier l’une ne touche pas à l’autre.',
     moveTo: 'Déplacer vers un dossier',
@@ -279,7 +281,6 @@ const fr = {
      * était un second nom pour la même chose — et il passait à la ligne.
      */
     start: 'Démarrer',
-    startBusy: 'Reprendre',
     startEmptyRoutine: 'Ajoute au moins un exercice pour pouvoir démarrer.',
 
     deletedExercise: 'Exercice supprimé',

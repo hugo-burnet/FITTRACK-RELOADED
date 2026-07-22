@@ -176,14 +176,16 @@ export function RoutinesScreen() {
     void createRoutine(t('routines.defaultName')).then(openEditor);
   };
 
+  const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
+
   /**
-   * One session at a time is the only state the app has. With one already
-   * running this leads back to it rather than opening a second — the same rule
-   * the editor's "Démarrer" applies.
+   * Proposé seulement quand rien ne tourne. Avant, « Démarrer » sur la routine
+   * B pendant une séance de la routine A t'emmenait dans la séance A : le
+   * bouton mentait sur ce qu'il venait de faire. Désactivé avec sa raison, ce
+   * qu'un menu sait dire (`hint`) et qu'un bouton qui redirige ne dit pas.
    */
-  const start = async (routineId: string) => {
-    if ((await getActiveWorkout()) === undefined) await startWorkoutFromRoutine(routineId);
-    void navigate('/workout');
+  const start = (routineId: string) => {
+    void startWorkoutFromRoutine(routineId).then(() => navigate('/workout'));
   };
 
   const folderOptions: Option<string>[] = [
@@ -370,7 +372,9 @@ export function RoutinesScreen() {
                 {
                   // First, because in the gym it is the only one you want.
                   label: t('routines.start'),
-                  onSelect: () => void start(sheet.routine.id),
+                  disabled: active != null,
+                  hint: active != null ? t('routines.startBusyHint') : undefined,
+                  onSelect: () => start(sheet.routine.id),
                 },
                 {
                   label: t('routines.duplicate'),

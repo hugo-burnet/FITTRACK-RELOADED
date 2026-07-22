@@ -85,16 +85,14 @@ export function RoutineEditorScreen() {
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
 
   /**
-   * Starting is not "start another one": one session at a time is the only
-   * state the app has. With one already running the button leads back to it
-   * instead of quietly doing nothing or, worse, opening a second.
+   * `null` = aucune séance, `undefined` = pas encore répondu. Tant qu'une
+   * séance tourne, cet écran ne propose plus de démarrer : une seule séance à
+   * la fois est le seul état que l'app connaisse, et le retour vers celle qui
+   * tourne appartient à la barre de reprise.
    */
+  const running = active != null;
+
   const start = () => {
-    if (active === undefined) return;
-    if (active !== null) {
-      void navigate('/workout');
-      return;
-    }
     void startWorkoutFromRoutine(id).then(() => navigate('/workout'));
   };
 
@@ -273,32 +271,47 @@ export function RoutineEditorScreen() {
         className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
           bg-[var(--surface-0)] px-4 pt-3 pb-3"
       >
-        {/* A disabled button with no reason given is a dead end. */}
-        {active === null && exercises.length === 0 && (
+        {/* Une commande désactivée sans sa raison est un cul-de-sac. */}
+        {!running && exercises.length === 0 && (
           <p className="mb-2 text-center text-sm text-[var(--text-2)]">
             {t('routine.startEmptyRoutine')}
           </p>
         )}
-        {/* Pas deux moitiés égales : partager la barre en deux disait que ces
-            deux actions sont de même rang, et elles ne le sont pas. « Terminé »
-            prend la largeur de son mot, le verbe de l'écran prend le reste —
-            c'est ce qui empêchait « Démarrer » de tenir sur une ligne. */}
-        <div className="flex gap-2">
-          <Button size="lg" className="shrink-0" onClick={goBack}>
+
+        {running ? (
+          /* Séance en cours : cet écran ne propose plus rien pour y aller.
+             Il l'a fait un temps — un bouton « Reprendre » ici — et c'était du
+             bricolage : la barre de reprise mène déjà là, en permanence, sur
+             tous les écrans. Les deux étaient du même vert, de la même hauteur,
+             à 32 px l'une de l'autre, et apparaissaient toujours ensemble,
+             puisque toutes deux conditionnées par la même séance. Deux
+             commandes pour une action, empilées : la barre garde le trajet,
+             l'écran garde sa sortie. */
+          <Button size="lg" fullWidth onClick={goBack}>
             {t('routine.done')}
           </Button>
-          <Button
-            variant="primary"
-            size="lg"
-            className="min-w-0 flex-1"
-            // A routine with no exercise would start an empty session under a
-            // name that promises exercises.
-            disabled={active === undefined || (active === null && exercises.length === 0)}
-            onClick={start}
-          >
-            {active === null ? t('routine.start') : t('routine.startBusy')}
-          </Button>
-        </div>
+        ) : (
+          /* Pas deux moitiés égales : partager la barre en deux disait que ces
+             deux actions sont de même rang, et elles ne le sont pas. « Terminé »
+             prend la largeur de son mot, le verbe de l'écran prend le reste —
+             c'est ce qui empêchait « Démarrer » de tenir sur une ligne. */
+          <div className="flex gap-2">
+            <Button size="lg" className="shrink-0" onClick={goBack}>
+              {t('routine.done')}
+            </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              className="min-w-0 flex-1"
+              // Une routine sans exercice démarrerait une séance vide sous un
+              // nom qui promet des exercices.
+              disabled={active === undefined || exercises.length === 0}
+              onClick={start}
+            >
+              {t('routine.start')}
+            </Button>
+          </div>
+        )}
       </div>
 
       <OptionSheet<string>
