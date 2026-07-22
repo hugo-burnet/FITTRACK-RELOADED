@@ -154,6 +154,30 @@ placeholders, le Lot 2 des quotas, le Lot 1 des micro-libellés ; le Lot 5 lui r
 usage annoncé. Le jeton reste déclaré avec la raison écrite en clair dans `index.css`, pour que
 personne ne le réintroduise sans lire pourquoi.
 
+### Le défaut signalé — le filet de superset était invisible en thème clair
+
+Le filet de 3 px qui matérialise un superset était peint en `--color-accent`. Mesuré : **1,29:1 sur
+`--surface-0` en clair**, contre 15,31:1 en sombre — d'où le fait que personne ne l'ait vu. Le seuil
+WCAG 1.4.11 pour un élément non textuel porteur d'information est **3:1**.
+
+C'est la troisième occurrence du **même** défaut : le partage aplat/encre, posé au Lot 1 pour
+l'accent, transposé au rouge au Lot 4 (`--danger-ink`), et ici **pas appliqué alors que le jeton
+existait déjà**. La règle est pourtant écrite dans `index.css` : `--color-accent` est un **aplat**
+(une forme qui porte `--color-accent-fg`), `--accent-ink` est ce qui doit être **lisible contre**
+une surface. Un filet de 3 px ne porte rien par-dessus — c'est de l'encre.
+
+Les deux appels étaient de l'encre : `WorkoutExerciseCard` (Lot 5) et `RoutineExerciseCard`
+(Lot 4), le même filet dessiné deux fois. Mesuré après bascule sur `--accent-ink`, dans l'app qui
+tourne : **6,63:1 sur `--surface-0`, 6,04:1 sur `--surface-1`, 5,23:1 sur `--surface-2`** en clair ;
+le thème sombre est inchangé au bit près (15,31:1), les deux jetons y étant la même valeur.
+
+Audit fait dans la foulée : **les neuf `--color-accent` restants portent tous `--color-accent-fg`
+sur le même élément**, donc tous des aplats légitimes. Ces deux filets étaient les seuls écarts.
+
+**Les lettres A / B / C ne bougent pas.** Le correctif rend le filet visible, il ne rend pas les
+lettres inutiles — un accent seul ne peut pas porter du sens (plein soleil, daltonisme), et c'est
+la décision du Lot 4 rappelée plus bas.
+
 ### Le retour sur les boutons — quatre passes, quatre fois juste
 
 Remonté après lecture du code livré : « les boutons ne s'intègrent pas correctement dans l'app ».
@@ -1244,6 +1268,16 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   vérifier par `javascript_tool` (styles calculés, rectangles, clics `element.click()`), et
   ouvrir un onglet neuf pour retrouver les captures. Les messages de console peuvent aussi être
   ceux de la session précédente — toujours confirmer l'état réel du DOM avant de diagnostiquer.
+- **Le balayage de contraste parcourt les nœuds de texte, et un filet n'en est pas un.** « 934
+  nœuds de texte, zéro échec » au Lot 4 : le chiffre est exact et il ne prouve rien sur le filet de
+  superset, qui mesurait 1,29:1 à ce moment-là. Le balayage n'a pas échoué, **il n'a pas regardé**
+  — et un rapport qui annonce un dénombrement rassure d'autant plus qu'il est précis. WCAG 1.4.11
+  couvre les éléments **non textuels** porteurs d'information (filets, jauges, pastilles d'état,
+  bordures qui distinguent), tous invisibles à un parcours de `Node.TEXT_NODE`. Deux réflexes :
+  **dire ce que le balayage n'a pas couvert** quand on en annonce le résultat, et étendre le
+  parcours aux éléments dont la couleur *est* l'information — sinon le prochain filet repassera au
+  travers. Le repère qui trie : si l'élément porte du texte par-dessus, c'est un aplat et seul son
+  `--*-fg` compte ; s'il ne porte rien, c'est de l'encre et il se mesure contre la surface.
 
 ## Dette technique assumée
 
