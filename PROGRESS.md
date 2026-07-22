@@ -2,38 +2,181 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-22 (Lot 4 terminé, checkpoint validé au doigt sur téléphone)
+**Dernière mise à jour :** 2026-07-22 (Lot 5 — code livré et mesuré, **checkpoint en salle à faire**)
 
 ## Lot en cours
 
-Aucun. **Lot 4 terminé et validé.** Prochaine étape : **Lot 5 — Séance en direct**, l'écran le plus
-important de l'app et le lot le plus lourd du projet (3 sessions au budget).
+**Lot 5 — Séance en direct.** Le code est livré, vérifié et commité ; **le lot n'est pas terminé**.
+Il ne le sera qu'après une vraie séance en salle et l'aller-retour de correctifs qui suivra.
 
-Plan détaillé généré en début de session comme au Lot 3 : `docs/plans/lot-04-routines.md`. Le
-procédé tient sur trois lots d'affilée — à reconduire pour le Lot 5.
+Plan détaillé : `docs/plans/lot-05-seance-en-direct.md`, généré en début de session comme aux
+Lots 3 et 4. Le procédé tient sur quatre lots d'affilée.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+⚠️ **Pas encore poussé** : le checkpoint demande le site déployé.
 
-> ⚠️ **À lire avant d'écrire une ligne du Lot 5.** Le Lot 4 a été livré « vert » — typecheck, lint,
-> 148 tests, contrastes mesurés, cibles tactiles mesurées — et l'utilisateur a quand même trouvé
-> **sept défauts en deux essais sur son téléphone**. Aucun n'était détectable autrement. Le Lot 5
-> est l'écran qu'il utilisera essoufflé, entre deux séries : prévoir explicitement **un aller-retour
-> de correctifs après le premier essai réel**, et ne pas considérer le lot fini avant.
+> ⚠️ **Ce lot n'est pas fini parce qu'il est vert.** Le Lot 4 était vert lui aussi — typecheck,
+> lint, 148 tests, contrastes mesurés, cibles mesurées — et l'utilisateur a trouvé **sept défauts
+> en deux essais au doigt**. Le Lot 5 est l'écran qu'il lira essoufflé, entre deux séries. Deux
+> défauts ont déjà été trouvés en pilotant l'écran pour de vrai (cf. plus bas) ; il en reste
+> certainement, et ils ne se trouveront qu'en salle.
 
-### Ce dont le Lot 5 hérite (à ne pas réinventer)
+---
 
-| Acquis au Lot 4 | Où | Ce que le Lot 5 en fait |
+## Lot 5 — Séance en direct (cœur)
+
+### État vérifié le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**213 tests**, +65), `npm run build`.
+- ✅ **Les quatre pièges du Lot 2 vérifiés en base**, chacun avec son test (cf. ci-dessous).
+- ✅ **Reprise après un rechargement complet** : chronomètre juste, série cochée intacte, et le
+  `107,5` **tapé mais pas coché** toujours là.
+- ✅ **Chemin à un appui mesuré** : un `click` sur la coche d'une ligne intacte a écrit
+  `weight: 100, reps: 5` en base, la ligne est passée en `--surface-2`, la coche en accent.
+- ✅ **Focus vérifié comme au Lot 4** : `102,5` tapé caractère par caractère dans la grille,
+  `document.activeElement` reste le champ aux 5 frappes, `selectionStart` va de 1 à 5 — malgré une
+  écriture en base à **chaque** caractère.
+- ✅ Contrastes mesurés sur les 3 écrans × 2 thèmes : **zéro échec, minimum 6,04:1**. Un échec
+  trouvé et corrigé, cf. ci-dessous.
+- ✅ Cibles tactiles en 375 × 812 : aucun élément sous 48 px de haut ni 44 px de large, **coche et
+  cellules comprises**. Aucun débordement horizontal sur les 6 types de mesure.
+- ✅ **Clôture vérifiée en base** : séance à 7 séries dont 1 cochée → 6 séries supprimées,
+  3 exercices retirés, 1 exercice et 1 série gardés, statut `completed`, durée 247 s.
+- ✅ **Non-régression Lot 3** : la fiche exercice affiche maintenant de vraies données produites
+  par le Lot 5 — record 100 kg × 5, historique à deux dates, échauffements exclus du relevé.
+- ⬜ **Checkpoint en salle : à faire.**
+
+### Les quatre pièges du Lot 2, trouvés en lisant le code
+
+Aucun n'était détectable avant ce lot : **rien ne créait de `WorkoutSet`**, donc ce code n'avait
+jamais été exercé. Chacun a son test, qui échoue sans son correctif.
+
+1. **`getLastPerformance` renvoyait la séance en cours.** Elle remonte l'index et s'arrête sur la
+   première série validée ; dès que la série 1 d'aujourd'hui était cochée, c'était elle. La colonne
+   « précédent » aurait cessé d'être une référence pour devenir **un miroir de ce qu'on venait de
+   taper**. → `excludeWorkoutId`. Le test assère les deux comportements côte à côte.
+2. **`addSet` comptait les séries supprimées** : le `.count()` de Dexie ne filtre pas `deletedAt`.
+   Supprimer une série puis en ajouter une produisait deux séries de même `order`.
+3. **Une séance abandonnée aurait continué d'alimenter l'historique.** Le statut seul ne suffit
+   pas : `getLastPerformance` et les records du Lot 3 lisent des séries **sans jamais regarder le
+   statut de leur séance**. Une séance ratée serait devenue la référence de la suivante.
+   → `discardWorkout` cascade le *soft delete*.
+4. **`finishWorkout` gardait les séries jamais cochées.** Une routine de 6 × 4 pose 24 lignes, on
+   en fait 17 : les 7 autres ne sont pas des séries à zéro, ce sont des séries qui n'ont pas eu lieu.
+
+### Le geste — trois états, un seul appui
+
+| Ce que la cellule montre | D'où ça vient | Ce que la coche enregistre |
 |---|---|---|
-| `ReorderableList` — glisser-déposer tactile + clavier | `ui/` | Réorganiser les exercices **pendant** la séance (RF exigé par l'audit M4) |
-| `edgeScrollDelta` — défilement automatique, pur et testé | `ui/edgeScroll.ts` | Idem |
-| `ActionSheet`, `ConfirmSheet` | `ui/` | Menus « ⋯ » et confirmations de la séance |
-| `ExerciseBrowser` — la bibliothèque en composant | `features/exercises/` | Ajouter un exercice en cours de séance |
-| `getRoutineDetail(id)` — routine + exercices + séries en une lecture | `data/repositories/routines.ts` | **Démarrer une séance depuis une routine** |
-| `RoutineSet.targetReps/targetWeight` remplis | idem | Pré-remplir les séries de la séance |
-| `SET_TYPES` en tableau `const` | `data/types.ts` | Les 4 types de séries (RF-20) |
+| Un chiffre en **encre, gras** | **tu l'as tapé** — rien d'autre n'atterrit jamais là | ce chiffre |
+| Un chiffre en **gris, maigre** | la prescription du jour, sinon la dernière fois | **ce chiffre** |
+| Rien | ni prescription ni historique | rien |
 
-**Le Lot 5 branche « Démarrer » en haut de l'éditeur de routine.** L'écran existe déjà et le bouton
-a été délibérément omis (cf. ci-dessous).
+Une série identique à ce qui est proposé coûte donc **un appui**, là où le cadrage en tolérait
+deux. Toucher le champ **ne recopie pas** le gris : une valeur que tu n'as pas tapée ne doit jamais
+être indiscernable d'une valeur que tu as tapée.
+
+### Décisions et écarts par rapport au plan
+
+- **La saisie est en ligne, pas dans une feuille** — et ça ne contredit pas le Lot 4. Une routine,
+  c'est trois valeurs × cinq séries × six exercices posées d'un coup, assis ; une séance, c'est une
+  ligne à la fois, entre deux séries, une main. Une feuille coûte déjà deux appuis pour s'ouvrir et
+  se fermer.
+- **La colonne « précédent » reste une colonne**, pas un simple placeholder. Le moment où elle sert
+  vraiment, c'est **quand on ne la reprend pas** : « la dernière fois 97,5 × 5, aujourd'hui
+  j'essaie 100 ». Un placeholder disparaît à la première frappe, précisément là. Elle est tapable,
+  et elle écrit la dernière fois par-dessus la prescription.
+- **La ligne d'en-têtes (`PRÉCÉDENT · kg · REPS`) est ce qui permet à la colonne « précédent » de
+  se passer d'unités.** Les chiffres sont dans les mêmes colonnes que les champs : « 97,5 × 5 » se
+  lit une fois contre l'en-tête, pas sur chaque ligne. Sur 375 px c'est la différence entre une
+  grille et un mur de texte.
+- **Aucun store Zustand.** Le chronomètre se dérive de `startedAt`, la séance en cours se lit par
+  `getActiveWorkout()`. Un store recopierait des données persistées, ce qu'ADR-004 interdit — et
+  c'est précisément là que naissent les pertes de séance. `stores/activeWorkout.ts` n'existe pas.
+  Le Lot 6 en aura un vrai besoin (minuteur), pas celui-ci.
+- **Écriture en base à la frappe**, plus tôt que la règle non négociable n°4 ne l'exige :
+  `isCompleted` reste 0 tant que ce n'est pas coché, donc rien n'entre dans l'historique, mais un
+  kill de l'app ne coûte même pas les caractères en cours.
+- **La barre de reprise est permanente, il n'y a pas de redirection au démarrage.** Rouvrir l'app
+  en pleine séance ne prouve pas qu'on veut l'écran de séance : aller chercher un réglage de
+  machine sur une fiche exercice est exactement la raison d'en sortir. Une barre répond aux deux
+  besoins — reprendre après un kill, et revenir après être allé voir autre chose.
+- **`Démarrer` est en bas, pas en haut.** `PROGRESS.md` annonçait « en haut de l'éditeur de
+  routine » ; c'était contraire à la règle du Lot 1 (« actions primaires en bas, jamais en haut »)
+  et au défaut que l'utilisateur avait lui-même remonté au Lot 3. Arbitré avec lui : la barre
+  collante devient **« Terminé » + « Démarrer la séance »**, et « Ajouter un exercice » descend en
+  fin de liste, comme « Ajouter une série » est déjà en pied de carte. Trois boutons sur 343 px,
+  c'est trois libellés tronqués — et en salle le verbe de cet écran est *démarrer*.
+- **Une séance à la fois.** L'accueil ne propose rien quand une séance tourne, et « Démarrer »
+  devient « Reprendre » : un bouton qui ne peut rien démarrer est pire que pas de bouton.
+- **Le tonnage ne compte que les kilos qui sont vraiment la charge.** Un lest de 10 kg sur une
+  traction et une assistance de 20 kg sur une machine vivent dans le même champ qu'un développé à
+  100 kg ; les additionner produit un nombre faux. Conséquence assumée : une séance de tractions
+  affiche un tonnage nul — c'est pour ça que l'écran de fin montre **trois chiffres**.
+- **La colonne « précédent » est indexée strictement.** La série 5 ne retombe jamais sur la série 4
+  de la dernière fois : le gris n'est pas décoratif, la coche l'enregistre, donc emprunter la
+  charge d'une autre série écrirait un nombre que personne n'a soulevé.
+- **`workoutHistory.ts` extrait de `workouts.ts`.** 617 lignes, bien au-delà de la règle des 300.
+  La coupe n'est pas arbitraire : ces deux requêtes lisent **à travers** les séances (fiche
+  exercice du Lot 3, écran de séance, historique du Lot 7) alors que tout le reste écrit **dans**
+  la séance en cours.
+
+### Le défaut trouvé en pilotant l'écran — la fourchette de reps disparaissait
+
+Le premier écran réel, monté depuis une vraie routine, montrait **une case vide** là où la routine
+prescrivait 8 – 12.
+
+Cause : la prescription était recopiée dans `weight`/`reps`. Or **« 8 – 12 » n'est pas un nombre** :
+elle n'avait littéralement nulle part où aller. Et la prescription qui *passait* (100 kg) arrivait
+en texte foncé, **indiscernable de ce qu'on venait de taper**.
+
+`WorkoutSet` porte désormais sa prescription dans des champs `target*` (non indexés, donc **aucune
+migration** — même précédent que `Routine.subtitle` au Lot 4). De là découle la règle sur laquelle
+tient tout l'écran : **rien n'est en encre tant que ce n'est pas tapé.** La séance se souvient de
+ce qu'on lui a demandé même si la routine change ensuite — et le Lot 18 lira les mêmes champs :
+savoir si tu as atteint le haut de la fourchette est *toute* l'entrée de l'auto-progression.
+
+### Le défaut trouvé en mesurant — la valeur proposée était illisible
+
+Le balayage de contraste a échoué sur **chaque** valeur grisée de la grille : **3,44:1 en sombre,
+2,02:1 en clair**. Un appui y enregistrait un nombre que personne ne pouvait lire.
+
+Le Lot 1 avait rangé cette valeur sous `--text-3` en la décrivant comme « une valeur volontairement
+atténuée, un écho de donnée qu'on peut réutiliser ». **Elle ne l'est pas** : dans cette grille, le
+gris est *ce que la coche écrit*. C'est le nombre le plus lourd de conséquence de l'écran.
+
+Le gris passe donc à `--text-2`, et c'est la **graisse** qui porte la distinction proposé/saisi
+(`font-normal` contre `font-semibold`) — exactement le couple que `NumberInput` appliquait déjà à
+ses placeholders depuis le Lot 1. Mesuré après : proposé 6,49:1 en graisse 400, saisi 15,13:1 en
+graisse 600.
+
+**`--text-3` n'a plus aucun consommateur dans l'app.** Le Lot 3 l'avait déjà retiré des
+placeholders, le Lot 2 des quotas, le Lot 1 des micro-libellés ; le Lot 5 lui retire son dernier
+usage annoncé. Le jeton reste déclaré avec la raison écrite en clair dans `index.css`, pour que
+personne ne le réintroduise sans lire pourquoi.
+
+### Ce que le Lot 5 ne fait pas — à savoir avant de tester
+
+- **Le minuteur de repos** (Lot 6, RF-22/RF-27). Le repos par exercice est stocké et affiché, rien
+  ne le déclenche.
+- **Changer le type d'une série en séance** (Lot 6, RF-20). Le type est **repris de la routine** et
+  affiché (« ÉCH. »), il ne se modifie pas ici.
+- **Le RPE** (Lot 6, RF-30), **la détection de record en direct** (Lot 6, RF-23).
+- **Relire ou corriger une séance passée** (Lot 7). Cet écran ne connaît que la séance `active`.
+- **Une durée se saisit en secondes**, pas en `m:ss`. À rouvrir si ça gêne.
+- **`isUnilateral` n'est toujours lu par personne.** Le champ existe depuis le Lot 2 ; ni le
+  Lot 3, ni le 4, ni le 5 ne le consomment. C'est le contrôle de fin de lot institué au Lot 4 —
+  consigné ici comme **en attente**, pas comme oublié.
+
+### ✅ Checkpoint Lot 5 — **à faire en salle**
+
+- [ ] **Une vraie séance complète avec l'app.**
+- [ ] En pleine séance : tuer l'app depuis le gestionnaire de tâches, la rouvrir → la séance
+      reprend où elle en était, aucune série perdue.
+- [ ] Mode avion pendant toute la séance → aucune différence.
+- [ ] Saisir une série sans lunettes, d'une main, en 3 secondes.
+- [ ] Ajouter un exercice non prévu au milieu, et en réordonner deux au doigt.
+- [ ] Se tromper de ligne, décocher, corriger.
 
 ---
 
@@ -696,7 +839,7 @@ ci-dessus fait foi.
 | 2 | Couche de données | ✅ terminé | 3 | ✅ |
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
 | 4 | Routines | ✅ terminé | 5 | ✅ |
-| 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
+| 5 | Séance en direct (cœur) | 🟨 code livré | 6 | ⬜ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ⬜ à faire | — | ⬜ |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
@@ -922,6 +1065,21 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   par JS — `element.click()` pour les interactions, `getBoundingClientRect()` pour la mise en page,
   et un calcul de ratio de contraste maison sur les styles calculés. Ouvrir un onglet neuf **n'a pas
   suffi** cette fois.
+- **Du code que rien n'exerce n'est pas du code qui marche.** Les quatre défauts du Lot 5 étaient
+  dans du code écrit et *testé* au Lot 2 — `getLastPerformance` avait sept tests verts. Ils
+  décrivaient tous un historique **déjà clos** ; aucun ne mettait une séance en cours et un passé
+  dans la même base, parce qu'aucun écran ne savait encore créer une séance en cours. **Quand un
+  lot livre les premières écritures d'une table, relire les lectures qui existaient déjà** — leurs
+  tests prouvent ce qu'on savait faire, pas ce qui va arriver.
+- **Un jeton de charte réservé à un usage futur est un jeton dont personne n'a vérifié l'usage.**
+  Le Lot 1 gardait `--text-3` pour « la valeur précédente du Lot 5 », en la supposant décorative.
+  Arrivé au Lot 5, cette valeur s'est révélée être **ce que la coche enregistre** — le nombre le
+  plus lourd de conséquence de l'écran — et `--text-3` y mesurait 2,02:1. Un usage écrit à l'avance
+  décrit une intention, pas un besoin ; le besoin ne se connaît qu'à l'écran.
+- **Écrire en base par IndexedDB brut ne réveille pas `useLiveQuery`.** Dexie n'émet ses événements
+  que sur ses propres écritures : une table modifiée par `indexedDB.open()` direct laisse l'écran
+  afficher l'ancien état indéfiniment, ce qui ressemble exactement à un bug de requête. Recharger
+  la page après un montage de données fabriqué à la main — ou passer par les repositories.
 - **Le panneau navigateur intégré perd parfois l'injection d'événements** (clics et captures
   d'écran expirent) alors que l'exécution JavaScript continue de répondre. Le contournement :
   vérifier par `javascript_tool` (styles calculés, rectangles, clics `element.click()`), et
@@ -932,4 +1090,10 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
-- _(vide)_
+- **Deux repositories dépassent la règle des ~300 lignes** : `routines.ts` (504) et `workouts.ts`
+  (522, après l'extraction de `workoutHistory.ts`). La règle de `CLAUDE.md` dit de découper ; la
+  pratique du projet tolère cette taille depuis le Lot 4. Le vrai risque est la **trajectoire** :
+  le Lot 6 (minuteur, records en direct, types de séries) et le Lot 7 (édition rétroactive)
+  ajoutent tous deux à `workouts.ts`. **À découper au Lot 6**, avant qu'il ne grossisse encore —
+  la couture naturelle est `workoutSets.ts` (exercices et séries de la séance) contre `workouts.ts`
+  (cycle de vie de la séance).
