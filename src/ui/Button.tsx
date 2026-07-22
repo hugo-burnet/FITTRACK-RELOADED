@@ -11,7 +11,8 @@ const VARIANTS = {
     'bg-[var(--color-accent)] text-[var(--color-accent-fg)] active:bg-[var(--color-accent-dim)]',
   secondary: 'bg-[var(--surface-2)] text-[var(--text-1)] active:brightness-125',
   ghost: 'bg-transparent text-[var(--text-2)] active:bg-[var(--surface-1)]',
-  danger: 'bg-transparent text-[var(--color-danger)] active:bg-[var(--surface-1)]',
+  // Ink, not the fill: this variant is red text on a surface. Cf. index.css.
+  danger: 'bg-transparent text-[var(--danger-ink)] active:bg-[var(--surface-1)]',
 } as const;
 
 export function Button({

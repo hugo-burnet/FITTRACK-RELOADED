@@ -284,6 +284,11 @@ export function RoutineEditorScreen() {
         open={sheet?.kind === 'set'}
         onClose={() => setSheet(null)}
         set={openSheetSet()}
+        // What the exercise is measured in decides which fields exist at all.
+        measurementType={
+          (sheet?.kind === 'set' ? lineOf(sheet.rowId)?.exercise?.measurementType : undefined) ??
+          'weight_reps'
+        }
         number={sheet?.kind === 'set' ? sheet.number : 1}
         onSave={(changes: RoutineSetTargets) => {
           if (sheet?.kind === 'set') void updateRoutineSet(sheet.setId, changes);

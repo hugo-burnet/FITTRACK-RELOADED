@@ -357,6 +357,24 @@ describe('séries prévues', () => {
     });
   });
 
+  // Une planche se recopie comme un développé couché.
+  it('recopie aussi la durée et la distance', async () => {
+    const { routine } = await routineWith('Cardio', ['Rameur']);
+    const row = await line(routine.id, 0);
+    await updateRoutineSet(at(row.sets, 0).id, {
+      targetDurationSeconds: 120,
+      targetDistanceMeters: 500,
+    });
+
+    await addRoutineSet(row.row.id);
+
+    expect(at((await line(routine.id, 0)).sets, 1)).toMatchObject({
+      order: 1,
+      targetDurationSeconds: 120,
+      targetDistanceMeters: 500,
+    });
+  });
+
   it('la première série d’un exercice neuf est libre', async () => {
     const { routine } = await routineWith('Poussée', ['Développé']);
     const set = at((await line(routine.id, 0)).sets, 0);

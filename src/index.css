@@ -38,6 +38,13 @@
      the ink and leaves the fill (and its dark text) untouched. */
   --accent-ink: #c7f252;
 
+  /* Danger, same fill/ink split — and for the same reason, found the same way.
+     Every destructive control in the app is red TEXT on a surface, and #ff5c5c
+     measured 3.03:1 on white, 2.75:1 on a card and 2.39:1 on a pressed row. The
+     light theme therefore darkens the ink; --color-danger stays the fill, for
+     the day something needs a solid red block. */
+  --danger-ink: #ff5c5c;
+
   /* Motion: mechanical, never elastic. One curve, two durations, used twice. */
   --ease-mech: cubic-bezier(0.2, 0, 0, 1);
   --dur-1: 120ms;
@@ -54,6 +61,7 @@
   --text-2: #52525b;
   --text-3: #a1a1aa;
   --accent-ink: #46660a; /* 6.6:1 on white */
+  --danger-ink: #b91c1c; /* 6.47:1 on white, 5.89 on a card, 5.10 on a pressed row */
 }
 
 /* ---------------------------------------------------------------------------

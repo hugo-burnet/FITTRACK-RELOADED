@@ -1,7 +1,9 @@
 import type { RoutineExerciseDetail } from '@/data/repositories/routines';
-import type { RoutineSet } from '@/data/types';
+import type { MeasurementType, RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';
+import { targetParts } from '@/lib/measurement';
+import type { TargetUnit } from '@/lib/measurement';
 import type { ItemState } from '@/ui';
 import { GripIcon, MoreIcon, PlusIcon } from '@/ui/icons';
 
@@ -20,10 +22,35 @@ type Props = {
 /** A, B, C — the order you alternate in, which is what a superset is. */
 const alternationMark = (index: number): string => String.fromCharCode(65 + index);
 
-const decimal = (value: number): string => value.toLocaleString('fr-FR');
+/** The unit keys of `lib/measurement` become words only here. */
+const UNIT_LABEL: Record<TargetUnit, string> = {
+  reps: t('units.reps'),
+  kg: t('units.kg'),
+  seconds: t('units.seconds'),
+  minutes: t('units.minutes'),
+  meters: t('units.meters'),
+  kilometers: t('units.kilometers'),
+};
+
+/**
+ * `reps` is a word and takes the engraved register; every other unit here is an
+ * SI symbol, and those are case-sensitive — it is "kg", not "KG" (Lot 1 rule).
+ */
+function Unit({ unit }: { unit: TargetUnit }) {
+  return unit === 'reps' ? (
+    <span className="label-xs font-semibold text-[var(--text-2)]">{UNIT_LABEL[unit]}</span>
+  ) : (
+    <span className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]">
+      {UNIT_LABEL[unit]}
+    </span>
+  );
+}
 
 /**
  * One planned set, as a scannable line.
+ *
+ * What it shows comes from the exercise's measurement type, so a plank reads
+ * "45 s" and a rower "500 m · 2:00" instead of both being asked for repetitions.
  *
  * The figures are right-aligned into columns so a rising load reads straight
  * down the card instead of set by set — the same reasoning as the history rows
@@ -32,23 +59,16 @@ const decimal = (value: number): string => value.toLocaleString('fr-FR');
  */
 function SetRow({
   set,
+  measurementType,
   number,
   onOpen,
 }: {
   set: RoutineSet;
+  measurementType: MeasurementType;
   number: number;
   onOpen: () => void;
 }) {
-  const { targetReps, targetRepsMax, targetWeight } = set;
-
-  const reps =
-    targetReps === undefined
-      ? undefined
-      : targetRepsMax === undefined || targetRepsMax <= targetReps
-        ? String(targetReps)
-        : t('routine.repsRange', { min: targetReps, max: targetRepsMax });
-
-  const free = reps === undefined && targetWeight === undefined;
+  const parts = targetParts(measurementType, set);
 
   return (
     <button
@@ -69,32 +89,31 @@ function SetRow({
         </span>
       )}
 
-      {free ? (
+      {parts.length === 0 ? (
         <span className="flex-1 text-right text-sm text-[var(--text-2)]">
           {t('routine.setFree')}
         </span>
       ) : (
         <>
           <span className="flex-1 text-right">
-            {reps !== undefined && (
+            {parts[0] !== undefined && (
               <>
-                <span className="metric text-base font-semibold text-[var(--text-1)]">{reps}</span>{' '}
-                <span className="label-xs font-semibold text-[var(--text-2)]">
-                  {t('routine.repsUnit')}
-                </span>
+                <span className="metric text-base font-semibold text-[var(--text-1)]">
+                  {parts[0].prefix}
+                  {parts[0].value}
+                </span>{' '}
+                <Unit unit={parts[0].unit} />
               </>
             )}
           </span>
           <span className="w-[5.5rem] shrink-0 text-right">
-            {targetWeight !== undefined && (
+            {parts[1] !== undefined && (
               <>
                 <span className="metric text-base font-semibold text-[var(--text-1)]">
-                  {decimal(targetWeight)}
+                  {parts[1].prefix}
+                  {parts[1].value}
                 </span>{' '}
-                {/* Engraved, but never uppercased: it is "kg", not "KG". */}
-                <span className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]">
-                  {t('units.kg')}
-                </span>
+                <Unit unit={parts[1].unit} />
               </>
             )}
           </span>
@@ -128,9 +147,15 @@ export function RoutineExerciseCard({
   const { row, exercise, sets } = line;
   const name = exercise?.name ?? t('routine.deletedExercise');
 
+  // The rest that will actually be used: this routine's override, or failing
+  // that the one set on the exercise itself in the library (schema §4.2 makes 0
+  // mean "use the exercise default"). Showing only the override meant a rest
+  // time entered in Lot 3 looked like it had been lost.
+  const effectiveRest = row.restSeconds > 0 ? row.restSeconds : (exercise?.defaultRestSeconds ?? 0);
+
   const subtitle = [
     exercise === undefined ? t('routine.deletedExerciseHint') : exerciseSubtitle(exercise),
-    row.restSeconds > 0 ? `${row.restSeconds} ${t('units.seconds')}` : undefined,
+    effectiveRest > 0 ? `${effectiveRest} ${t('units.seconds')}` : undefined,
   ]
     .filter((part) => part !== undefined)
     .join(' · ');
@@ -195,7 +220,15 @@ export function RoutineExerciseCard({
         </div>
 
         {sets.map((set, index) => (
-          <SetRow key={set.id} set={set} number={index + 1} onOpen={() => onOpenSet(set)} />
+          <SetRow
+            key={set.id}
+            set={set}
+            // A deleted exercise still has sets to show; weight_reps is the
+            // shape that lets them read at all rather than vanish.
+            measurementType={exercise?.measurementType ?? 'weight_reps'}
+            number={index + 1}
+            onOpen={() => onOpenSet(set)}
+          />
         ))}
 
         <button

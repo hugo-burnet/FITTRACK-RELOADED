@@ -36,6 +36,10 @@ const fr = {
     streakDays: 'jours d’affilée',
     kg: 'kg',
     seconds: 's',
+    minutes: 'min',
+    meters: 'm',
+    kilometers: 'km',
+    reps: 'reps',
   },
 
   /**
@@ -211,6 +215,9 @@ const fr = {
     exerciseSheetTitle: 'Dans cette routine',
     restLabel: 'Repos entre les séries',
     restHint: 'Vide : le repos par défaut de l’exercice.',
+    /** Says where the displayed rest comes from, so an empty field is not a mystery. */
+    restFromExercise: 'Repos de l’exercice : {seconds} s. Renseigne pour le remplacer ici.',
+    restNoDefault: 'Aucun repos par défaut sur cet exercice.',
     notesLabel: 'Notes',
     notesPlaceholder: 'Prise large, tempo lent, cale sous les talons…',
     groupWithPrevious: 'Grouper avec le précédent',
@@ -226,8 +233,18 @@ const fr = {
     targetRepsLabel: 'Répétitions visées',
     targetRepsMaxLabel: 'Jusqu’à (facultatif)',
     targetRepsHint: 'Laisse vide pour une série sans objectif chiffré.',
+    /** Three labels for one field: the kilos mean something different each time. */
     targetWeightLabel: 'Charge visée',
+    targetWeightAddedLabel: 'Lest ajouté',
+    targetWeightAssistLabel: 'Assistance',
     targetWeightHint: 'Laisse vide si tu décides la charge sur place.',
+    targetWeightAddedHint: 'En plus de ton poids de corps. Vide = au poids du corps.',
+    targetWeightAssistHint: 'Ce que la machine te retire. Plus c’est haut, plus c’est facile.',
+
+    targetDurationLabel: 'Durée visée',
+    targetDurationHint: 'En secondes. 90 s s’affiche « 1:30 ».',
+    targetDistanceLabel: 'Distance visée',
+    targetDistanceHint: 'En mètres. 1 000 m s’affiche « 1 km ».',
     applyToAll: 'Appliquer à toutes les séries',
     deleteSet: 'Supprimer la série',
 

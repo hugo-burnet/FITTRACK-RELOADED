@@ -242,6 +242,57 @@ Mesuré : flèche et croix à **48 × 48** sur les quatre écrans, flèche bien 
 qui navigue réellement (`#/routines/xxx` → `#/routines`), `Entrée` qui défocalise champ texte **et**
 champ numérique, contrastes des deux icônes **7,03:1 à 18:1** sur les deux thèmes.
 
+### Le huitième retour — le type de mesure n'était branché sur rien
+
+Remonté après validation du checkpoint, et c'est le défaut le plus profond du lot : **une planche,
+un rameur et un développé couché avaient le même écran de configuration.**
+
+Trois choses, une seule cause :
+
+1. **`RoutineSet` n'avait ni durée ni distance.** Le schéma ne pouvait littéralement pas stocker
+   « planche 45 s ». Deux champs ajoutés (`targetDurationSeconds`, `targetDistanceMeters`), non
+   indexés donc **sans migration**.
+2. **`measurementType` n'était lu nulle part** en dehors du formulaire de création. Choisi au
+   Lot 2, porté par les 168 exercices, et consommé par zéro écran. C'est exactement le
+   « la création de l'exercice n'est pas reliée à l'exo dans la routine » de l'utilisateur.
+3. **Le repos par défaut de l'exercice n'était jamais consulté.** La carte n'affichait que
+   `row.restSeconds`, alors que `0` veut dire « prends celui de l'exercice » (§4.2). Un repos réglé
+   dans la bibliothèque au Lot 3 avait donc l'air perdu.
+
+**`lib/measurement.ts` (TDD, 17 tests)** est le fil manquant : un type de mesure entre, la forme
+sort. La feuille rend ses champs à partir d'elle, la ligne formate à partir d'elle — les deux ne
+peuvent plus se contredire.
+
+| Type de mesure | Champs | Ce que la ligne affiche |
+|---|---|---|
+| `weight_reps` | reps + charge | `8 – 12 REPS · 102,5 kg` |
+| `reps_only` | reps + **lest** | `8 REPS · +10 kg` |
+| `assisted_weight_reps` | reps + **assistance** | `8 REPS · −20 kg` |
+| `time_only` | durée | `45 s` |
+| `weight_time` | durée + charge | `1:30 min · 20 kg` |
+| `distance_time` | distance + durée | `1,5 km · 6:00 min` |
+
+**Le même champ de kilos veut dire trois choses**, et les appeler tous « charge » est la façon la
+plus simple pour une routine de mentir : une charge sur un développé, un **lest** qu'on ajoute à son
+poids de corps sur une traction, une **assistance** que la machine retire. D'où trois libellés et
+les signes `+` / `−` sur la ligne.
+
+Le repos affiché est désormais **le repos effectif** (l'override de la routine, sinon celui de
+l'exercice), et le champ vide porte la valeur héritée en placeholder avec la phrase qui l'explique.
+
+### Le défaut trouvé en mesurant — le rouge était illisible en thème clair
+
+Trouvé par le balayage de contraste de ce correctif, et **il ne datait pas du Lot 4** : `#ff5c5c`
+mesure **3,03:1 sur blanc, 2,75:1 sur une carte, 2,39:1 sur une ligne pressée**. Toutes les
+commandes destructives de l'app étaient concernées, y compris « Supprimer l'exercice » du Lot 3.
+
+C'est le piège que le Lot 1 avait résolu pour l'accent et **jamais transposé au rouge**. Même
+correctif, même raisonnement : `--danger-ink` (`#ff5c5c` en sombre, `#b91c1c` en clair) pour tout ce
+qui doit se lire **contre** une surface ; `--color-danger` reste le remplissage. Les deux seuls
+appels étaient de l'encre.
+
+Après : **6,08:1 en sombre, 5,89:1 en clair**, sur les six commandes destructives de l'app.
+
 ### Checkpoint Lot 4 — ✅ validé le 2026-07-22
 
 Validé par l'utilisateur **sur le site déployé, au doigt**, après trois passes de correctifs
@@ -840,6 +891,16 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   place.** J'avais écarté le glisser-déposer des routines dans les dossiers ; c'est le deuxième
   retour qu'il a fait. Annoncer les renoncements **dans le résumé de fin de lot**, pas seulement
   dans le plan qu'il ne relira pas.
+- **Un contournement écrit en silence est un bug qu'on s'interdit de voir.** En écrivant les modèles
+  de routine, j'ai constaté que `RoutineSet` n'avait pas de champ de durée — et j'ai **évité les
+  exercices chronométrés dans les modèles** au lieu de le signaler. Le trou est resté entier
+  jusqu'à ce que l'utilisateur le trouve. Quand une donnée manque pour écrire un jeu de test,
+  **c'est le schéma qu'il faut interroger, pas le jeu de test qu'il faut rétrécir.**
+- **Un champ déclaré et lu par personne ne se voit qu'à l'usage.** `measurementType` existait depuis
+  le Lot 2 sur 168 exercices et n'était consommé par **aucun** écran hors du formulaire de création.
+  Rien ne le signale : ni le typecheck, ni les tests, ni le lint. Contrôle à faire en fin de lot —
+  **lister les champs du §4 de l'architecture qu'aucun écran ne lit encore**, et dire lesquels sont
+  en attente d'un lot et lesquels sont oubliés.
 - **Le panneau navigateur ne compose jamais : `requestAnimationFrame` ne se déclenche pas et les
   transitions CSS ne démarrent pas.** Mesuré au Lot 4 : `0 frame en 1 s`,
   `document.visibilityState === 'hidden'`. Conséquences vues en vrai — une boucle `rAF` (défilement

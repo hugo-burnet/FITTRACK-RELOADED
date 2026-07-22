@@ -50,6 +50,7 @@ export function RoutineExerciseSheet({
   }
 
   const grouped = (line?.row.supersetGroup ?? 0) !== 0;
+  const exerciseRest = line?.exercise?.defaultRestSeconds ?? 0;
 
   return (
     <Sheet open={open} onClose={onClose} title={t('routine.exerciseSheetTitle')}>
@@ -68,11 +69,16 @@ export function RoutineExerciseSheet({
             }}
             step={15}
             max={900}
+            // The exercise's own rest, shown in the empty field: without it an
+            // empty box looked like the rest set back in the library was lost.
+            placeholder={exerciseRest > 0 ? String(exerciseRest) : undefined}
             suffix={t('units.seconds')}
             aria-label={t('routine.restLabel')}
           />
           <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
-            {t('routine.restHint')}
+            {exerciseRest > 0
+              ? t('routine.restFromExercise', { seconds: exerciseRest })
+              : t('routine.restNoDefault')}
           </p>
         </div>
 

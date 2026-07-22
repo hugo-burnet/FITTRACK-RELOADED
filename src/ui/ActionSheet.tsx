@@ -53,7 +53,7 @@ export function ActionSheet({ open, onClose, title, actions, children }: Props) 
           >
             <span
               className={`text-base font-semibold ${
-                action.danger ? 'text-[var(--color-danger)]' : 'text-[var(--text-1)]'
+                action.danger ? 'text-[var(--danger-ink)]' : 'text-[var(--text-1)]'
               }`}
             >
               {action.label}

@@ -12,7 +12,16 @@ import { alive, newEntity, softDelete, touch } from './base';
 
 /** What a set sheet may change. `order` is excluded: it belongs to the list, not to a form. */
 export type RoutineSetTargets = Partial<
-  Pick<RoutineSet, 'setType' | 'targetReps' | 'targetRepsMax' | 'targetWeight' | 'targetRpe'>
+  Pick<
+    RoutineSet,
+    | 'setType'
+    | 'targetReps'
+    | 'targetRepsMax'
+    | 'targetWeight'
+    | 'targetDurationSeconds'
+    | 'targetDistanceMeters'
+    | 'targetRpe'
+  >
 >;
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
@@ -447,6 +456,8 @@ export async function addRoutineSet(routineExerciseId: string): Promise<RoutineS
     targetReps: last?.targetReps,
     targetRepsMax: last?.targetRepsMax,
     targetWeight: last?.targetWeight,
+    targetDurationSeconds: last?.targetDurationSeconds,
+    targetDistanceMeters: last?.targetDistanceMeters,
     targetRpe: last?.targetRpe,
   });
 

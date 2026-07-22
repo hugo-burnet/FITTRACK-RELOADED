@@ -141,7 +141,15 @@ export interface RoutineSet extends Syncable {
   setType: SetType;
   targetReps?: number;
   targetRepsMax?: number; // range 8-12 → targetReps=8, targetRepsMax=12
+  /**
+   * Kilograms — but of three different kinds, decided by the exercise's
+   * `measurementType`: a load, a belt added to bodyweight, or the assistance a
+   * machine takes off. `lib/measurement.ts` owns that reading.
+   */
   targetWeight?: number;
+  /** Planks, carries, rows. Added in Lot 4 after use: without it a timed exercise had no target at all. */
+  targetDurationSeconds?: number;
+  targetDistanceMeters?: number;
   targetRpe?: number;
 }
 
