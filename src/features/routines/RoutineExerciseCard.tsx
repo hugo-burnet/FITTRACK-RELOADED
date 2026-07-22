@@ -1,7 +1,7 @@
 import type { RoutineExerciseDetail } from '@/data/repositories/routines';
 import type { MeasurementType, RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle } from '@/i18n/labels';
+import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { targetParts } from '@/lib/measurement';
 import type { TargetUnit } from '@/lib/measurement';
 import type { ItemState } from '@/ui';
@@ -22,26 +22,16 @@ type Props = {
 /** A, B, C — the order you alternate in, which is what a superset is. */
 const alternationMark = (index: number): string => String.fromCharCode(65 + index);
 
-/** The unit keys of `lib/measurement` become words only here. */
-const UNIT_LABEL: Record<TargetUnit, string> = {
-  reps: t('units.reps'),
-  kg: t('units.kg'),
-  seconds: t('units.seconds'),
-  minutes: t('units.minutes'),
-  meters: t('units.meters'),
-  kilometers: t('units.kilometers'),
-};
-
 /**
  * `reps` is a word and takes the engraved register; every other unit here is an
  * SI symbol, and those are case-sensitive — it is "kg", not "KG" (Lot 1 rule).
  */
 function Unit({ unit }: { unit: TargetUnit }) {
   return unit === 'reps' ? (
-    <span className="label-xs font-semibold text-[var(--text-2)]">{UNIT_LABEL[unit]}</span>
+    <span className="label-xs font-semibold text-[var(--text-2)]">{unitLabel(unit)}</span>
   ) : (
     <span className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]">
-      {UNIT_LABEL[unit]}
+      {unitLabel(unit)}
     </span>
   );
 }

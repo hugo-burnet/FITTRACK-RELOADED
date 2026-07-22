@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatNumber as format, NUMERIC, parseNumber as parse } from './numberField';
 
 type Props = {
   value: number | undefined;
@@ -10,19 +11,6 @@ type Props = {
   placeholder?: string;
   'aria-label': string;
 };
-
-const NUMERIC = /^\d*[.,]?\d*$/;
-
-const parse = (raw: string): number | undefined => {
-  if (raw === '') return undefined;
-  const parsed = Number(raw.replace(',', '.'));
-  return Number.isNaN(parsed) ? undefined : parsed;
-};
-
-// The decimal separator is UI text, and this UI is French. Only ever applied to
-// values arriving from outside — what you typed is left exactly as you typed it.
-const format = (value: number | undefined): string =>
-  value === undefined ? '' : String(value).replace('.', ',');
 
 export function NumberInput({
   value,

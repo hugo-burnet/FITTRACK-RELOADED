@@ -1,4 +1,5 @@
 import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType } from '@/data/types';
+import type { TargetUnit } from '@/lib/measurement';
 import { t } from './fr';
 
 /**
@@ -29,3 +30,9 @@ export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setTyp
 /** "Pectoraux · Barre" — the one line under every exercise name in the app. */
 export const exerciseSubtitle = (exercise: Exercise): string =>
   `${muscleLabel(exercise.primaryMuscle)} · ${equipmentLabel(exercise.equipment)}`;
+
+/**
+ * The unit keys of `lib/measurement` become words only here — the routine card
+ * and the live grid must not spell them out twice and drift apart.
+ */
+export const unitLabel = (unit: TargetUnit): string => t(`units.${unit}`);
