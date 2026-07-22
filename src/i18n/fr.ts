@@ -123,6 +123,11 @@ const fr = {
     addExercise: 'Ajouter un exercice',
     finish: 'Terminer la séance',
     setNumber: 'Série {number}',
+    /**
+     * La consigne au-dessus du champ, pour un lecteur d'écran. À l'écran c'est
+     * la fourchette seule — « 8 – 12 » sous « REPS » n'a pas besoin du mot.
+     */
+    target: 'objectif {value}',
     warmupShort: 'Éch.',
     exerciseMenu: 'Options de {name}',
     /**

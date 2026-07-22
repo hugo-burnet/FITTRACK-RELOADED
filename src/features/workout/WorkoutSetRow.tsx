@@ -2,8 +2,8 @@ import type { SetValues } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { unitLabel } from '@/i18n/labels';
-import { isRepRange, repsReading } from '@/lib/measurement';
-import type { EntryColumn, TargetField } from '@/lib/measurement';
+import { isRepRange, isSetRecordable, repsReading } from '@/lib/measurement';
+import type { EntryColumn, ResolvedValues, TargetField } from '@/lib/measurement';
 import { formatNumber } from '@/ui/numberField';
 import { CheckIcon } from '@/ui/icons';
 import { SetValueCell } from './SetValueCell';
@@ -57,6 +57,11 @@ type Props = {
  *
  * A validated row changes surface and its tick fills with the accent: the state
  * of a set has to read at arm's length, without glasses.
+ *
+ * And it goes dim when there is nothing to record — a set prescribed as a range
+ * that you have never done before. `isSetRecordable` holds that rule; the row
+ * only asks. The dim tick is the honest state: the figure is missing, and the
+ * empty field under its own target line is where it goes.
  */
 export function WorkoutSetRow({
   set,
@@ -92,15 +97,29 @@ export function WorkoutSetRow({
     set[TARGET_KEY[field]] ?? previousValue(field);
 
   /**
-   * What the ghost *reads as* — which is not always a number. A prescription of
-   * 8 – 12 is a range, so it shows in full and the tick records nothing from
-   * it: you always know your own rep count, and you type it.
+   * The one prescription that is **not** a value: a rep range. It reads on its
+   * own line above the field rather than inside it — cf. `SetValueCell.target`.
    */
-  const ghostTextOf = (field: TargetField): string | undefined =>
+  const targetOf = (field: TargetField): string | undefined =>
     field === 'reps' && isRepRange(set) ? repsReading(set)?.value : undefined;
 
+  /**
+   * What the field proposes, which is always a figure ✓ can record.
+   *
+   * On a ranged set the range is skipped and **last session's count takes the
+   * slot**. It used to leave the slot empty, which threw away the one number the
+   * tick could legitimately have recorded: you were shown "8 – 12", the 10 you
+   * did last week was hidden, and ✓ validated a set with no reps at all.
+   */
   const ghostNumberOf = (field: TargetField): number | undefined =>
-    ghostTextOf(field) === undefined ? ghostOf(field) : undefined;
+    targetOf(field) === undefined ? ghostOf(field) : previousValue(field);
+
+  /** Every column's figure as ✓ would write it: what was typed, or what is proposed. */
+  const resolved: ResolvedValues = {};
+  for (const column of columns) {
+    const value = valueOf(column.field) ?? ghostNumberOf(column.field);
+    if (value !== undefined) resolved[column.field] = value;
+  }
 
   /** One value per column of this exercise, and no key it does not measure. */
   const collect = (pick: (field: TargetField) => number | undefined): Partial<SetValues> => {
@@ -160,20 +179,33 @@ export function WorkoutSetRow({
         {previousReading === '' ? t('workout.noPrevious') : previousReading}
       </button>
 
-      {columns.map((column, index) => (
-        <SetValueCell
-          key={column.field}
-          value={valueOf(column.field)}
-          ghost={ghostTextOf(column.field) ?? formatNumber(ghostNumberOf(column.field))}
-          onChange={(next) => onWrite(single(column.field, next))}
-          width={index === 0 ? WIDTH.first : WIDTH.second}
-          aria-label={`${t('workout.setNumber', { number })} — ${unitLabel(column.unit)}`}
-        />
-      ))}
+      {columns.map((column, index) => {
+        const target = targetOf(column.field);
+        return (
+          <SetValueCell
+            key={column.field}
+            value={valueOf(column.field)}
+            ghost={formatNumber(ghostNumberOf(column.field))}
+            target={target}
+            onChange={(next) => onWrite(single(column.field, next))}
+            width={index === 0 ? WIDTH.first : WIDTH.second}
+            // The target line is drawn aria-hidden and said here instead, so a
+            // screen reader gets the prescription once, with the field it belongs to.
+            aria-label={[
+              t('workout.setNumber', { number }),
+              unitLabel(column.unit),
+              target === undefined ? undefined : t('workout.target', { value: target }),
+            ]
+              .filter((part) => part !== undefined)
+              .join(' — ')}
+          />
+        );
+      })}
 
       <button
         type="button"
         aria-pressed={done}
+        disabled={!done && !isSetRecordable(columns, resolved)}
         aria-label={
           done
             ? t('workout.uncomplete', { number })
@@ -186,7 +218,7 @@ export function WorkoutSetRow({
         }
         className={`flex size-12 shrink-0 items-center justify-center rounded-lg
           transition-[background-color,transform] duration-[var(--dur-1)] ease-[var(--ease-mech)]
-          active:scale-[0.92]
+          active:scale-[0.92] disabled:pointer-events-none disabled:opacity-40
           ${
             done
               ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'

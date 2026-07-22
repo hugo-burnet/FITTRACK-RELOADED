@@ -119,6 +119,28 @@ export function entryColumns(type: MeasurementType): EntryColumn[] {
   }));
 }
 
+/** A set's figures resolved per column: what was typed, or what is proposed. */
+export type ResolvedValues = Partial<Record<TargetField, number>>;
+
+/**
+ * Whether ✓ may record this set — **the load excepted**.
+ *
+ * The load is the one figure a set may legitimately not have: a pull-up with no
+ * belt, an empty bar, a machine whose stack you did not note. What the exercise
+ * is *measured in* — repetitions, seconds, metres — is not optional, and until
+ * now nothing checked it. A set prescribed as a range with no history behind it
+ * had neither a typed figure nor a proposed one, so the tick validated a
+ * completed set carrying no repetitions at all: counted in the séries, worth
+ * zero reps and zero tonnage in the totals, and handed to the next session as
+ * the reference for what you lifted. Rule n°4 — the tick stays shut rather than
+ * record that.
+ */
+export function isSetRecordable(columns: EntryColumn[], values: ResolvedValues): boolean {
+  return columns.every(
+    (column) => column.field === 'weight' || values[column.field] !== undefined,
+  );
+}
+
 /** What a set actually holds once performed — the mirror of `Targets`. */
 export interface Performed {
   weight?: number;

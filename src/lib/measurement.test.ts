@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { entryColumns, measurementShape, performedParts, targetParts } from './measurement';
+import {
+  entryColumns,
+  isSetRecordable,
+  measurementShape,
+  performedParts,
+  targetParts,
+} from './measurement';
 import type { Targets } from './measurement';
 
 /** The unit keys are deliberately not words; this is the mapping the UI applies. */
@@ -196,6 +202,43 @@ describe('entryColumns', () => {
   it('saisit toujours une durée en secondes, même là où elle s’affiche en minutes', () => {
     expect(entryColumns('time_only')[0]?.unit).toBe('seconds');
     expect(targetParts('time_only', { targetDurationSeconds: 90 })[0]?.unit).toBe('minutes');
+  });
+});
+
+/**
+ * Le garde-fou de la coche. Signalé depuis l'usage : sur une série prescrite en
+ * fourchette, la coche validait une série sans aucune répétition.
+ */
+describe('isSetRecordable', () => {
+  it('accepte une série dont tout est renseigné', () => {
+    expect(isSetRecordable(entryColumns('weight_reps'), { weight: 80, reps: 10 })).toBe(true);
+    expect(isSetRecordable(entryColumns('time_only'), { duration: 45 })).toBe(true);
+    expect(isSetRecordable(entryColumns('distance_time'), { distance: 1500, duration: 360 })).toBe(
+      true,
+    );
+  });
+
+  /**
+   * Une traction sans lest, une barre à vide : la charge est le seul chiffre
+   * qu'une série peut légitimement ne pas avoir.
+   */
+  it('accepte une série sans charge', () => {
+    expect(isSetRecordable(entryColumns('reps_only'), { reps: 8 })).toBe(true);
+    expect(isSetRecordable(entryColumns('weight_reps'), { reps: 5 })).toBe(true);
+    expect(isSetRecordable(entryColumns('assisted_weight_reps'), { reps: 6 })).toBe(true);
+  });
+
+  it('refuse une série à qui il manque ce qu’elle mesure', () => {
+    // Le cas signalé : fourchette 8 – 12, aucun historique, rien de saisi.
+    expect(isSetRecordable(entryColumns('weight_reps'), { weight: 80 })).toBe(false);
+    expect(isSetRecordable(entryColumns('time_only'), {})).toBe(false);
+    expect(isSetRecordable(entryColumns('distance_time'), { distance: 1500 })).toBe(false);
+  });
+
+  /** Une barre à vide reste une série ; zéro n'est pas « rien ». */
+  it('traite zéro comme une valeur', () => {
+    expect(isSetRecordable(entryColumns('weight_reps'), { weight: 0, reps: 12 })).toBe(true);
+    expect(isSetRecordable(entryColumns('time_only'), { duration: 0 })).toBe(true);
   });
 });
 
