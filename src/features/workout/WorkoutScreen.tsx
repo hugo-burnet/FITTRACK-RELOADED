@@ -20,18 +20,22 @@ import { t } from '@/i18n/fr';
 import { toBlocks } from '@/lib/routineOrder';
 import {
   ActionSheet,
+  AddRow,
   Button,
+  Card,
   ConfirmSheet,
   EmptyState,
+  HeaderAction,
   Input,
   ReorderableList,
   Sheet,
   Textarea,
 } from '@/ui';
-import { PlusIcon } from '@/ui/icons';
+import { MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
+import { workoutProgressLine } from './summary';
 
 type SheetState =
   | { kind: 'workout' }
@@ -107,6 +111,12 @@ export function WorkoutScreen() {
   const { workout, exercises } = detail;
   const places = supersetPlaces(exercises);
 
+  const totalSets = exercises.reduce((count, line) => count + line.sets.length, 0);
+  const completedSets = exercises.reduce(
+    (count, line) => count + line.sets.filter((set) => set.isCompleted === 1).length,
+    0,
+  );
+
   const lineOf = (rowId: string): WorkoutExerciseDetail | null =>
     exercises.find((line) => line.row.id === rowId) ?? null;
 
@@ -117,55 +127,63 @@ export function WorkoutScreen() {
     <Screen
       title={workout.name === '' ? t('workout.emptyName') : workout.name}
       onBack={() => void navigate('/')}
+      /* Une icône, comme sur tous les autres écrans. Le chronomètre occupait
+         cette place et **rien ne disait que c'était un menu** : un relevé qui
+         cache l'unique accès à « Renommer » et « Notes », sur l'écran le plus
+         important de l'app. Il descend au-dessus de la liste, là où le Lot 4 a
+         mis les relevés. */
       action={
-        <button
-          type="button"
-          aria-label={t('workout.workoutMenu')}
-          onClick={() => setSheet({ kind: 'workout' })}
-          className="flex min-h-12 shrink-0 items-center rounded-xl px-3 text-lg font-semibold
-            text-[var(--accent-ink)] active:bg-[var(--surface-1)]"
-        >
-          <ElapsedTime startedAt={workout.startedAt} />
-        </button>
+        <HeaderAction label={t('workout.workoutMenu')} onClick={() => setSheet({ kind: 'workout' })}>
+          <MoreIcon />
+        </HeaderAction>
       }
     >
       {exercises.length === 0 ? (
         <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
       ) : (
-        <ReorderableList
-          className="flex flex-col gap-3"
-          items={exercises}
-          keyOf={(line) => line.row.id}
-          onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
-          renderItem={(line, _index, state) => (
-            <WorkoutExerciseCard
-              line={line}
-              superset={places.get(line.row.id)}
-              state={state}
-              onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
-              onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
-              onWrite={(setId, values) => void updateSetValues(setId, values)}
-              onComplete={(setId, values) => void completeSet(setId, values)}
-              onUncomplete={(setId) => void uncompleteSet(setId)}
-              onAddSet={() => void duplicateLastSet(line.row.id)}
-            />
-          )}
-        />
-      )}
+        <div className="flex flex-col gap-2">
+          {/* Le temps écoulé et l'avancement, dans les deux registres du Lot 1 :
+              un chiffre tabulaire et un micro-libellé gravé. Hors de la liste
+              réordonnable — elle fait correspondre ses enfants aux index un pour
+              un, un enfant intrus décalerait chaque glissement. */}
+          <div className="flex items-baseline gap-2 px-1">
+            <ElapsedTime startedAt={workout.startedAt} className="text-base text-[var(--text-1)]" />
+            <span className="label-xs font-semibold text-[var(--text-2)]">
+              {workoutProgressLine(completedSets, totalSets)}
+            </span>
+          </div>
 
-      {/* In the flow rather than in the sticky bar: three buttons on 343 px is
-          three truncated labels, and this one is reached once or twice a
-          session while "Terminer" has to be under the thumb throughout. */}
-      <button
-        type="button"
-        onClick={() => void navigate('/workout/add')}
-        className="mt-3 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border
-          border-dashed border-[var(--border)] text-base font-semibold text-[var(--accent-ink)]
-          transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
-      >
-        <PlusIcon width="18" height="18" />
-        {t('workout.addExercise')}
-      </button>
+          <ReorderableList
+            className="flex flex-col gap-3"
+            items={exercises}
+            keyOf={(line) => line.row.id}
+            onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
+            renderItem={(line, _index, state) => (
+              <WorkoutExerciseCard
+                line={line}
+                superset={places.get(line.row.id)}
+                state={state}
+                onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
+                onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
+                onWrite={(setId, values) => void updateSetValues(setId, values)}
+                onComplete={(setId, values) => void completeSet(setId, values)}
+                onUncomplete={(setId) => void uncompleteSet(setId)}
+                onAddSet={() => void duplicateLastSet(line.row.id)}
+              />
+            )}
+          />
+
+          {/* Au pied de la liste qu'il allonge, dans le geste que les cartes
+              emploient déjà pour leurs séries. « Terminer » garde la barre
+              collante : c'est la seule action qu'on doit trouver sans chercher. */}
+          <Card>
+            <AddRow
+              label={t('workout.addExercise')}
+              onClick={() => void navigate('/workout/add')}
+            />
+          </Card>
+        </div>
+      )}
 
       <div
         className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]

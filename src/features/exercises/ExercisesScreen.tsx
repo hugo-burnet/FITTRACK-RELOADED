@@ -2,6 +2,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { EQUIPMENT, MUSCLE_GROUPS } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { HeaderAction } from '@/ui';
 import { PlusIcon } from '@/ui/icons';
 import { ExerciseBrowser } from './ExerciseBrowser';
 import type { BrowserQuery } from './ExerciseBrowser';
@@ -42,15 +43,12 @@ export function ExercisesScreen() {
     <Screen
       title={t('exercises.title')}
       action={
-        <button
-          type="button"
-          aria-label={t('exercises.create')}
+        <HeaderAction
+          label={t('exercises.create')}
           onClick={() => void navigate('/exercises/new')}
-          className="-mr-2 flex size-12 items-center justify-center rounded-xl
-            text-[var(--accent-ink)] active:bg-[var(--surface-1)]"
         >
           <PlusIcon />
-        </button>
+        </HeaderAction>
       }
     >
       <ExerciseBrowser

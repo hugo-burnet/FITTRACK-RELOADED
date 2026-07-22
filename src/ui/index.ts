@@ -1,11 +1,13 @@
 export { ActionSheet } from './ActionSheet';
 export type { SheetAction } from './ActionSheet';
+export { AddRow } from './AddRow';
 export { Button } from './Button';
 export { Card } from './Card';
 export { ConfirmAction } from './ConfirmAction';
 export { ConfirmSheet } from './ConfirmSheet';
 export { EmptyState } from './EmptyState';
 export { FilterChip } from './FilterChip';
+export { HeaderAction } from './HeaderAction';
 export { Input } from './Input';
 export { ListRow } from './ListRow';
 export { NumberInput } from './NumberInput';

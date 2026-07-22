@@ -126,6 +126,16 @@ const fr = {
     setNumber: 'Série {number}',
     warmupShort: 'Éch.',
     exerciseMenu: 'Options de {name}',
+    /**
+     * Le relevé au-dessus de la liste : où j'en suis, en un coup d'œil.
+     *
+     * À zéro c'est « 0 série sur 7 », pas « aucune » : règle du Lot 1, un état
+     * vide est un relevé à zéro et pas un échec — et c'est l'état qu'on lit en
+     * premier à chaque séance.
+     */
+    progress: '{done} séries sur {total}',
+    progressOne: '1 série sur {total}',
+    progressNone: '0 série sur {total}',
     deletedExercise: 'Exercice supprimé',
     notFound: 'Cette séance n’existe plus',
     /** Menu ⋯ d'un exercice de la séance. */
@@ -261,9 +271,15 @@ const fr = {
     addExercise: 'Ajouter un exercice',
     /** Not "Enregistrer": every keystroke above is already in the database. */
     done: 'Terminé',
-    /** Le verbe de cet écran en salle. Il prend la place primaire de la barre. */
-    start: 'Démarrer la séance',
-    startBusy: 'Reprendre la séance en cours',
+    /**
+     * Le verbe de cet écran en salle. Il prend la place primaire de la barre.
+     *
+     * Un seul mot, et **le même que dans le menu ⋯ de la liste** : une action
+     * garde son nom d'un bout à l'autre du parcours. « Démarrer la séance »
+     * était un second nom pour la même chose — et il passait à la ligne.
+     */
+    start: 'Démarrer',
+    startBusy: 'Reprendre',
     startEmptyRoutine: 'Ajoute au moins un exercice pour pouvoir démarrer.',
 
     deletedExercise: 'Exercice supprimé',

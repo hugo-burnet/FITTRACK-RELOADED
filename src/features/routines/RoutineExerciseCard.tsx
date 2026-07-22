@@ -4,8 +4,9 @@ import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { targetParts } from '@/lib/measurement';
 import type { TargetUnit } from '@/lib/measurement';
+import { AddRow } from '@/ui';
 import type { ItemState } from '@/ui';
-import { GripIcon, MoreIcon, PlusIcon } from '@/ui/icons';
+import { GripIcon, MoreIcon } from '@/ui/icons';
 
 /** Where this exercise sits in its superset. Absent = not in one. */
 export type SupersetPlace = { index: number; size: number };
@@ -221,16 +222,7 @@ export function RoutineExerciseCard({
           />
         ))}
 
-        <button
-          type="button"
-          onClick={onAddSet}
-          className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-base
-            font-semibold text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]
-            active:bg-[var(--surface-2)]"
-        >
-          <PlusIcon width="18" height="18" />
-          {t('routine.addSet')}
-        </button>
+        <AddRow label={t('routine.addSet')} onClick={onAddSet} />
       </div>
 
       {row.notes !== undefined && row.notes !== '' && (

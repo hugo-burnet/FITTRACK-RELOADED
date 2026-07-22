@@ -21,7 +21,15 @@ import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTempl
 import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { moveItem } from '@/lib/routineOrder';
-import { ActionSheet, Button, ConfirmSheet, EmptyState, OptionSheet, ReorderableList } from '@/ui';
+import {
+  ActionSheet,
+  Button,
+  ConfirmSheet,
+  EmptyState,
+  HeaderAction,
+  OptionSheet,
+  ReorderableList,
+} from '@/ui';
 import type { ItemState, Option } from '@/ui';
 import { GripIcon, MoreIcon, PlusIcon } from '@/ui/icons';
 import { FolderFormSheet } from './FolderFormSheet';
@@ -203,15 +211,9 @@ export function RoutinesScreen() {
               </span>
             </p>
           )}
-          <button
-            type="button"
-            aria-label={t('routines.create')}
-            onClick={() => setSheet({ kind: 'create' })}
-            className="-mr-2 flex size-12 items-center justify-center rounded-xl
-              text-[var(--accent-ink)] active:bg-[var(--surface-1)]"
-          >
+          <HeaderAction label={t('routines.create')} onClick={() => setSheet({ kind: 'create' })}>
             <PlusIcon />
-          </button>
+          </HeaderAction>
         </div>
       }
     >

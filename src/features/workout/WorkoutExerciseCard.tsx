@@ -3,8 +3,9 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
+import { AddRow } from '@/ui';
 import type { ItemState } from '@/ui';
-import { GripIcon, MoreIcon, PlusIcon } from '@/ui/icons';
+import { GripIcon, MoreIcon } from '@/ui/icons';
 import { WorkoutSetRow } from './WorkoutSetRow';
 
 /** Where this exercise sits in its superset. Absent = not in one. */
@@ -167,16 +168,7 @@ export function WorkoutExerciseCard({
           />
         ))}
 
-        <button
-          type="button"
-          onClick={onAddSet}
-          className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-base
-            font-semibold text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]
-            active:bg-[var(--surface-2)]"
-        >
-          <PlusIcon width="18" height="18" />
-          {t('workout.addSet')}
-        </button>
+        <AddRow label={t('workout.addSet')} onClick={onAddSet} />
       </div>
     </div>
   );

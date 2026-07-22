@@ -21,9 +21,18 @@ import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/w
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { toBlocks } from '@/lib/routineOrder';
-import { Button, Card, EmptyState, Input, ListRow, OptionSheet, ReorderableList } from '@/ui';
+import {
+  AddRow,
+  Button,
+  Card,
+  EmptyState,
+  Input,
+  ListRow,
+  OptionSheet,
+  ReorderableList,
+} from '@/ui';
 import type { Option } from '@/ui';
-import { ChevronDownIcon, PlusIcon } from '@/ui/icons';
+import { ChevronDownIcon } from '@/ui/icons';
 import { RoutineExerciseCard } from './RoutineExerciseCard';
 import type { SupersetPlace } from './RoutineExerciseCard';
 import { RoutineExerciseSheet } from './RoutineExerciseSheet';
@@ -244,20 +253,16 @@ export function RoutineEditorScreen() {
           </div>
         )}
 
-        {/* Moved out of the sticky bar at Lot 5 to make room for "Démarrer".
-            Three buttons on 343 px is three truncated labels — and this action
-            belongs with the list it appends to, exactly as "Ajouter une série"
-            already sits at the foot of each card. */}
-        <button
-          type="button"
-          onClick={() => void navigate(`/routines/${routine.id}/add`)}
-          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border
-            border-dashed border-[var(--border)] text-base font-semibold text-[var(--accent-ink)]
-            transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
-        >
-          <PlusIcon width="18" height="18" />
-          {t('routine.addExercise')}
-        </button>
+        {/* Sorti de la barre collante au Lot 5 pour laisser la place à
+            « Démarrer ». Il descend au pied de la liste qu'il allonge, avec le
+            geste que les cartes emploient déjà pour leurs séries — une carte,
+            pleine, sans bordure. */}
+        <Card>
+          <AddRow
+            label={t('routine.addExercise')}
+            onClick={() => void navigate(`/routines/${routine.id}/add`)}
+          />
+        </Card>
       </div>
 
       {/* The way out and the verb of this screen, both under the thumb. In the
@@ -274,14 +279,18 @@ export function RoutineEditorScreen() {
             {t('routine.startEmptyRoutine')}
           </p>
         )}
+        {/* Pas deux moitiés égales : partager la barre en deux disait que ces
+            deux actions sont de même rang, et elles ne le sont pas. « Terminé »
+            prend la largeur de son mot, le verbe de l'écran prend le reste —
+            c'est ce qui empêchait « Démarrer » de tenir sur une ligne. */}
         <div className="flex gap-2">
-          <Button size="lg" className="flex-1" onClick={goBack}>
+          <Button size="lg" className="shrink-0" onClick={goBack}>
             {t('routine.done')}
           </Button>
           <Button
             variant="primary"
             size="lg"
-            className="flex-1"
+            className="min-w-0 flex-1"
             // A routine with no exercise would start an empty session under a
             // name that promises exercises.
             disabled={active === undefined || (active === null && exercises.length === 0)}
