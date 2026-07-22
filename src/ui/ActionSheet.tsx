@@ -39,8 +39,12 @@ export function ActionSheet({ open, onClose, title, actions, children }: Props) 
             type="button"
             disabled={action.disabled}
             onClick={() => {
-              action.onSelect();
+              // Close FIRST, then act. Both calls land in one React batch, so
+              // the last write wins: an action that opens another sheet must
+              // run after the close, or it would set the state the close then
+              // clears and the second sheet would never appear.
               onClose();
+              action.onSelect();
             }}
             className="flex min-h-14 w-full flex-col justify-center gap-0.5 border-b
               border-[var(--border)] px-5 py-3 text-left transition-colors

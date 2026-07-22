@@ -63,7 +63,7 @@ export function ExercisePickerScreen() {
           always-present disabled button is a target that teaches you nothing. */}
       {selected.length > 0 && (
         <div
-          className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-6 border-t border-[var(--border)]
+          className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
             bg-[var(--surface-0)] px-4 pt-3 pb-3"
         >
           <Button variant="primary" size="lg" fullWidth onClick={add}>

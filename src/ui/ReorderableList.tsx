@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, KeyboardEvent, PointerEvent, ReactNode } from 'react';
+import { edgeScrollDelta } from './edgeScroll';
 
 /**
  * Spread onto whatever the user takes hold of. Nothing else may carry it — the
@@ -45,10 +46,6 @@ type DragState = {
   /** What a displaced row moves by: the dragged row's height plus the gap. */
   span: number;
 };
-
-/** Pixels from the edge of the scroll area at which the list starts following. */
-const EDGE_PX = 72;
-const EDGE_SPEED_PX = 14;
 
 /**
  * The nearest scrolling ancestor.
@@ -128,16 +125,12 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
     if (scroller === null) return;
 
     let frame = requestAnimationFrame(function step() {
-      const box = scroller.getBoundingClientRect();
-      const y = pointerY.current;
-
-      let delta = 0;
-      if (y < box.top + EDGE_PX) delta = -EDGE_SPEED_PX * ((box.top + EDGE_PX - y) / EDGE_PX);
-      else if (y > box.bottom - EDGE_PX)
-        delta = EDGE_SPEED_PX * ((y - (box.bottom - EDGE_PX)) / EDGE_PX);
+      const delta = edgeScrollDelta(scroller.getBoundingClientRect(), pointerY.current);
 
       if (delta !== 0) {
         scroller.scrollTop += delta;
+        // The rows were measured in viewport space at pick-up, so scrolling has
+        // to be folded back into the offset or the held row would drift.
         follow();
       }
 

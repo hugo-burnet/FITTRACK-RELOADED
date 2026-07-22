@@ -2,32 +2,156 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-22 (Lot 3 terminé, checkpoint validé en ligne)
+**Dernière mise à jour :** 2026-07-22 (Lot 4 codé et mesuré, checkpoint téléphone à faire)
 
 ## Lot en cours
 
-Aucun. **Lot 3 terminé et validé.** Prochaine étape : **Lot 4 — Routines**.
+**Lot 4 — Routines : codé, mesuré, commité. Checkpoint utilisateur à faire au doigt.**
 
-Premier lot dont le plan détaillé a été généré en début de session, comme prévu par le
-`00-ROADMAP.md` : `docs/plans/lot-03-exercise-library.md`. Le procédé fonctionne — à reconduire
-pour le Lot 4.
+Plan détaillé généré en début de session comme au Lot 3 : `docs/plans/lot-04-routines.md`.
 
 **Site en ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
 
-### Ce dont le Lot 4 hérite (à ne pas réinventer)
+### Ce dont le Lot 5 hérite (à ne pas réinventer)
 
-| Acquis au Lot 3 | Où | Ce que le Lot 4 en fait |
+| Acquis au Lot 4 | Où | Ce que le Lot 5 en fait |
 |---|---|---|
-| `OptionSheet` — sélecteur à choix unique | `ui/` | Choisir un dossier, un type de série |
-| `FilterChip`, `Card`, `ConfirmAction`, `Textarea` | `ui/` | Partout |
-| `ui/icons.tsx` (les icônes ont quitté `app/`) | `ui/` | Ajouter les tracés du glisser-déposer |
-| `muscleLabel` / `equipmentLabel` / `exerciseSubtitle` | `i18n/labels.ts` | Nommer les exercices d'une routine |
-| Le relevé vivant (chiffre `.metric` + unité `.label-xs`) | `ExercisesScreen` | Compteur d'exercices / de séries d'une routine |
-| La recherche et les filtres dans l'URL | `ExercisesScreen` | Le sélecteur d'exercices de l'éditeur de routine |
-| Action primaire **collante** en bas d'écran | `ExerciseDetailScreen` | Tout écran d'édition long |
+| `ReorderableList` — glisser-déposer tactile + clavier | `ui/` | Réorganiser les exercices **pendant** la séance (RF exigé par l'audit M4) |
+| `edgeScrollDelta` — défilement automatique, pur et testé | `ui/edgeScroll.ts` | Idem |
+| `ActionSheet`, `ConfirmSheet` | `ui/` | Menus « ⋯ » et confirmations de la séance |
+| `ExerciseBrowser` — la bibliothèque en composant | `features/exercises/` | Ajouter un exercice en cours de séance |
+| `getRoutineDetail(id)` — routine + exercices + séries en une lecture | `data/repositories/routines.ts` | **Démarrer une séance depuis une routine** |
+| `RoutineSet.targetReps/targetWeight` remplis | idem | Pré-remplir les séries de la séance |
+| `SET_TYPES` en tableau `const` | `data/types.ts` | Les 4 types de séries (RF-20) |
 
-**Le sélecteur d'exercices du Lot 4 est la bibliothèque du Lot 3 en mode « choisir ».** Extraire la
-liste + recherche + filtres en un composant réutilisable avant d'en écrire une seconde version.
+**Le Lot 5 branche « Démarrer » en haut de l'éditeur de routine.** L'écran existe déjà et le bouton
+a été délibérément omis (cf. ci-dessous).
+
+---
+
+## Lot 4 — Routines
+
+### Definition of Done — vérifiée le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**146 tests**, +62), `npm run build`
+  passent tous les quatre.
+- ✅ **Glisser-déposer vérifié par événements `pointerType: 'touch'` synthétiques**, avec relecture
+  de l'ordre **dans IndexedDB** et pas seulement du DOM : la ligne bouge, `order` est renuméroté
+  0…n sans trou, le superset survit.
+- ✅ **La page défile toujours** : `touch-action` calculé vaut `none` sur la poignée (44 × 72 px) et
+  `auto` sur la ligne et sur la carte.
+- ✅ **Duplication vérifiée dans le vrai écran** : copie à 9 exercices / 22 séries / 82,5 kg, puis
+  renommage de la copie **et** retrait d'un de ses exercices → l'original est resté à 9 exercices,
+  22 séries, 82,5 kg. Aucun identifiant partagé entre les deux arbres (test unitaire).
+- ✅ **Dossier supprimé, routines intactes** : les deux routines sont toujours là, à la racine. Le
+  texte de confirmation accorde au singulier (« Sa routine remonte à la racine. »).
+- ✅ Sélection multiple vérifiée : « curl » → 15 résultats, 3 touchés, bouton « Ajouter
+  3 exercices », lignes ajoutées aux rangs 6, 7 et 8.
+- ✅ Superset vérifié de bout en bout : groupement, lettres **A / B / C**, 3 filets d'accent de 3 px
+  (dont deux de 277 px qui enjambent la gouttière de 12 px, et un de 265 px qui s'arrête), puis
+  dissociation du groupe entier.
+- ✅ Contrastes **mesurés** sur les 3 écrans × 2 thèmes : **934 nœuds de texte, zéro échec**,
+  minimum **6,04:1**.
+- ✅ Cibles tactiles en 375×812 : **aucun élément sous 48 px de haut ni 44 px de large**.
+- ✅ Aucun débordement horizontal (`scrollWidth === innerWidth === 375`), **36 px** de dégagement
+  entre la dernière carte et la barre collante.
+- ✅ **Non-régression Lot 3 vérifiée** après l'extraction de `ExerciseBrowser` : « developpe
+  couche » → 4 résultats, `#/exercises?q=developpe+couche&muscle=chest`, et le retour depuis une
+  fiche restitue **la recherche et le filtre**.
+
+### Décisions et écarts par rapport au plan
+
+- **Les six modèles ne sont pas seedés.** Le seed du catalogue tourne à chaque démarrage ; le même
+  mécanisme ferait réapparaître « Poussée » chaque fois qu'on la supprime. La ligne de partage
+  écrite au Lot 2 s'applique telle quelle : le catalogue appartient à l'app et revient toujours, ce
+  que l'utilisateur compose lui appartient et ne revient jamais. Un modèle est donc un **choix**,
+  qui produit une routine ordinaire. Un test vérifie que **chaque slug cité existe au catalogue** —
+  sinon la routine produite manquerait silencieusement un exercice.
+- **Supprimer un dossier ne supprime pas ses routines.** Elles remontent à la racine, et le nombre
+  concerné est annoncé dans la confirmation. Ranger et détruire sont deux gestes différents.
+- **L'écran d'une routine *est* son éditeur.** Tout s'écrit à la frappe (précédent du Lot 3), donc
+  il n'y a ni état modifié à valider ni mode lecture à en distinguer.
+- **Aucun bouton « Démarrer ».** C'est le Lot 5. Un bouton qui ne fait rien est pire que pas de
+  bouton — et l'emplacement est réservé en haut de ce même écran.
+- **Pointer Events, pas l'API HTML5 de glisser-déposer.** Chrome Android n'émet **jamais**
+  `dragstart` depuis un événement tactile : un lot bâti dessus ne marcherait que sur le PC du
+  développeur, alors que le checkpoint dit « au doigt sur ton téléphone ».
+- **`touch-action: none` sur la poignée seule**, jamais sur la ligne ni sur la liste. Posé sur la
+  liste, c'est tout l'écran qui cesse de défiler.
+- **Le superset se lit à la lettre autant qu'à la couleur.** Les exercices groupés portent **A / B /
+  C** — l'ordre d'alternance, la seule information que le lecteur d'un superset a besoin de lire —
+  en plus du filet d'accent. La charte n'a qu'un accent, et un accent seul ne peut pas porter du
+  sens (plein soleil, daltonisme). Un exercice non groupé n'a pas de lettre : **l'absence de marque
+  est elle-même l'information**.
+- **« Dissocier » dissout le groupe entier**, jamais un membre. Retirer le membre du milieu d'un
+  groupe de trois n'aurait pas le même sens que retirer le premier, et une action dont l'effet
+  dépend de l'endroit où on a touché est une action à laquelle personne ne se fie.
+- **Une ligne déposée entre deux membres d'un même groupe le rejoint.** Le filet dessine un
+  contenant ; déposer dans un contenant met dedans. **La règle n'est volontairement pas généralisée**
+  à une ligne portant déjà un groupe : `[B:1, C:2, A:1, D:2]` ne dit pas si A est entré dans (C, D)
+  ou C dans (B, A) — l'information de « qui a bougé » n'est pas dans le tableau. Une règle qui
+  tranche devine. Les deux groupes se dissolvent, ce qui est **visible à l'écran**, et un test fige
+  ce comportement pour que personne ne le « répare » à l'aveugle.
+- **`originRoutineId` reste vide à la duplication.** Une copie n'est pas une version ; le champ
+  décrit une filiation qu'aucun écran ne lit. Le versionnage est du Lot 17.
+- **Le sélecteur d'exercices est un écran, pas une feuille.** Trois raisons, toutes issues des
+  168 lignes : une feuille plafonne à 88 % et imbriquerait une zone de défilement dans une autre ;
+  les en-têtes de lettre collants sont dessinés sur le fond de page et peindraient par-dessus la
+  surface de la feuille ; et le bouton retour Android du Lot 10 se comporte correctement sans rien
+  ajouter.
+- **Le sélecteur ne propose pas « Créer « x » »** sur une recherche infructueuse — créer un exercice
+  abandonnerait la routine en cours d'écriture, et le retour ne saurait pas restituer la sélection.
+  Sa sortie est **« Effacer la recherche »**, qui ne quitte pas le geste en cours.
+- **Une série se modifie dans une feuille, pas en ligne.** Trois valeurs × cinq séries × six
+  exercices sur 375 px, c'est un marécage de cibles à 24 px. **« Ajouter une série » recopie la
+  précédente** (3 × 8-12 @ 80 kg = une saisie et deux appuis) et **« Appliquer à toutes les
+  séries »** couvre la montée de charge, l'entretien le plus fréquent d'une routine.
+- **Seul l'échauffement est planifiable au Lot 4.** Dégressive et échec sont du Lot 6, où RF-20 leur
+  donne un comportement ; et une dégressive ne se planifie pas vraiment, elle se décide la barre en
+  main.
+- **Les dossiers et les routines ne se réordonnent pas au doigt.** Le budget de glisser-déposer va
+  aux exercices, où le checkpoint l'exige. Tri par création ; déplacement entre dossiers par le menu.
+
+### Le défaut trouvé en testant — les feuilles enchaînées ne s'ouvraient pas
+
+`ActionSheet` appelait `action.onSelect()` **puis** `onClose()`. Les deux atterrissent dans le même
+lot de rendu React, donc la dernière écriture gagne : toute action qui **ouvre une autre feuille**
+posait son état, que la fermeture effaçait aussitôt. *Nouveau dossier*, *Déplacer vers un dossier*,
+*Supprimer la routine*, *Renommer* — **aucune ne s'ouvrait**.
+
+Invisible aux tests unitaires (c'est de l'ordonnancement d'état React) et invisible à la lecture du
+code. **Trouvé en pilotant l'interface pour de vrai.** Correctif d'une ligne : fermer d'abord, agir
+ensuite. `OptionSheet` portait le même motif, latent — corrigé aussi.
+
+### Deux « bugs » qui n'en étaient pas — le panneau navigateur ne compose jamais
+
+Deux mesures ont paru révéler des défauts. **Les deux venaient de l'environnement de test, pas du
+code**, et les deux auraient conduit à « corriger » du code correct :
+
+1. **Le fond de la carte soulevée** restait `--surface-1` alors que la classe
+   `bg-[var(--surface-2)]` était bien posée, la règle CSS bien émise et la variable bien résolue.
+   Cause : la transition ne démarre jamais faute d'occasion de rendu. `card.style.transition =
+   'none'` → la valeur saute immédiatement à `rgb(30,30,33)`. **Le CSS était juste.**
+2. **Le défilement automatique** ne bougeait pas. Cause : `requestAnimationFrame` **ne se déclenche
+   jamais** ici — mesuré, `0 frame en 1 s`, `document.visibilityState === 'hidden'`.
+
+La conséquence tirée : la partie du drag qui ne peut pas être exercée dans ce panneau ne devait pas
+être la seule sans test. `edgeScrollDelta` a donc été **extrait en fonction pure** (`ui/edgeScroll.ts`,
+8 tests). En l'écrivant, un vrai défaut est apparu : la vitesse n'était pas bornée, donc un doigt
+traîné **au-delà** du haut de l'écran faisait accélérer la liste indéfiniment — exactement quand on
+ne peut plus corriger. Bornée.
+
+### Checkpoint Lot 4 — ⬜ à faire **au doigt, sur le téléphone**
+
+- [ ] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.
+- [ ] Tu réordonnes les exercices **au doigt**, sans frustration — et la page défile encore
+      normalement quand tu ne touches pas la poignée.
+- [ ] Tu dupliques une routine et tu la modifies : l'originale n'a pas bougé.
+- [ ] Tu groupes deux exercices en superset : le filet et les lettres A/B apparaissent.
+- [ ] Tu pars d'un modèle (Poussée), tu le modifies, tu le supprimes : il ne revient pas au
+      rechargement.
+- [ ] Tu ranges deux routines dans un dossier, tu supprimes le dossier : **tes routines sont
+      toujours là.**
 
 ---
 
@@ -407,7 +531,7 @@ ci-dessus fait foi.
 | 1 | Design system & coquille | ✅ terminé | 2 | ✅ |
 | 2 | Couche de données | ✅ terminé | 3 | ✅ |
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
-| 4 | Routines | ⬜ à faire | — | ⬜ |
+| 4 | Routines | 🟨 codé, checkpoint à faire | 5 | ⬜ |
 | 5 | Séance en direct (cœur) | ⬜ à faire | — | ⬜ |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ⬜ à faire | — | ⬜ |
@@ -588,6 +712,22 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   port où personne n'écoute. Lire le port réel dans les logs du serveur et naviguer dessus à la
   main. L'onglet peut être ramené de force sur le mauvais port entre deux appels — refaire la
   navigation avant chaque script.
+- **Le panneau navigateur ne compose jamais : `requestAnimationFrame` ne se déclenche pas et les
+  transitions CSS ne démarrent pas.** Mesuré au Lot 4 : `0 frame en 1 s`,
+  `document.visibilityState === 'hidden'`. Conséquences vues en vrai — une boucle `rAF` (défilement
+  automatique du drag) ne tourne pas du tout, et un `getComputedStyle` sur une propriété en
+  transition renvoie la valeur **de départ**, indéfiniment. Les deux ressemblent trait pour trait à
+  des bugs du code. **Avant de « corriger » quoi que ce soit qui dépende d'une frame, vérifier
+  `visibilityState` et compter les frames.** Pour trancher sur une transition :
+  `element.style.transition = 'none'` puis relire — si la valeur saute, le CSS était juste.
+  Corollaire de méthode : ce qui ne peut pas être exercé dans ce panneau doit être extrait en
+  fonction pure et testé unitairement, sinon c'est la seule partie du code sans aucune vérification.
+- **Les feuilles empilées ne se démontent pas ici** (le `transitionend` de `Sheet` n'arrive jamais).
+  `document.querySelector('[role=dialog]')` renvoie donc la feuille **précédente**, encore dans le
+  DOM. Viser `document.querySelectorAll('[role=dialog]')` **et prendre la dernière**.
+- **`textContent` ignore `text-transform`.** Les libellés en `.label-xs` s'affichent en capitales
+  mais `textContent` rend « reps », pas « REPS » (`innerText`, lui, rend les capitales). Un sélecteur
+  de test qui cherche « REPS » ne trouve rien.
 - **Les captures d'écran du panneau navigateur ont encore expiré** (30 s, systématiquement), alors
   que `javascript_tool` répondait normalement. Contournement confirmé et suffisant : tout vérifier
   par JS — `element.click()` pour les interactions, `getBoundingClientRect()` pour la mise en page,

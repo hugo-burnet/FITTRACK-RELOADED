@@ -45,8 +45,11 @@ export function OptionSheet<T extends string>({
               role="radio"
               aria-checked={selected}
               onClick={() => {
-                onSelect(option.value);
+                // Closed before the choice is applied, for the reason spelled
+                // out in ActionSheet: the two land in one batch, so whichever
+                // runs last owns the sheet state.
                 onClose();
+                onSelect(option.value);
               }}
               className="flex min-h-14 w-full items-center gap-3 border-b border-[var(--border)]
                 px-5 py-3 text-left transition-colors duration-[var(--dur-1)] last:border-b-0

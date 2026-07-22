@@ -226,7 +226,7 @@ export function RoutineEditorScreen() {
           Lot 3 lesson is not negotiable: a primary action that needs scrolling
           to reach is a primary action nobody finds. */}
       <div
-        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-6 flex gap-2 border-t
+        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 flex gap-2 border-t
           border-[var(--border)] bg-[var(--surface-0)] px-4 pt-3 pb-3"
       >
         <Button size="lg" className="flex-1" onClick={goBack}>
