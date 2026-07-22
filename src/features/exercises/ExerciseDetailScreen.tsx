@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { deleteExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
-import { listSessionsForExercise } from '@/data/repositories/workouts';
+import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';

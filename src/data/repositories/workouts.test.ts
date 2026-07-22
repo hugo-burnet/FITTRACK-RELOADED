@@ -5,6 +5,7 @@ import { day, seedWorkout } from '@/test/factories';
 import { newEntity } from './base';
 import { createCustomExercise } from './exercises';
 import { addExercisesToRoutine, addRoutineSet, createRoutine, updateRoutineSet } from './routines';
+import { getLastPerformance, listSessionsForExercise } from './workoutHistory';
 import {
   addSet,
   addWorkoutExercise,
@@ -15,9 +16,7 @@ import {
   duplicateLastSet,
   finishWorkout,
   getActiveWorkout,
-  getLastPerformance,
   getWorkoutDetail,
-  listSessionsForExercise,
   removeWorkoutExercise,
   reorderWorkoutExercises,
   startWorkout,
