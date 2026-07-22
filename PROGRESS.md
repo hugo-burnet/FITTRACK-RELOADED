@@ -26,7 +26,7 @@ Lots 3 et 4. Le procédé tient sur quatre lots d'affilée.
 
 ### État vérifié le 2026-07-22
 
-- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**213 tests**, +65), `npm run build`.
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**217 tests**, +69), `npm run build`.
 - ✅ **Les quatre pièges du Lot 2 vérifiés en base**, chacun avec son test (cf. ci-dessous).
 - ✅ **Reprise après un rechargement complet** : chronomètre juste, série cochée intacte, et le
   `107,5` **tapé mais pas coché** toujours là.
@@ -1167,6 +1167,18 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   Arrivé au Lot 5, cette valeur s'est révélée être **ce que la coche enregistre** — le nombre le
   plus lourd de conséquence de l'écran — et `--text-3` y mesurait 2,02:1. Un usage écrit à l'avance
   décrit une intention, pas un besoin ; le besoin ne se connaît qu'à l'écran.
+- **Un emplacement d'affichage qui porte deux contrats finit par mentir sur l'un des deux.** Le
+  fantôme du champ de saisie veut dire partout « la coche enregistre ça ». Sur une série prescrite
+  en fourchette il voulait dire « regarde, mais la coche ne prend rien » — même position, même
+  gris, deux sens. Le défaut **signalé** était la largeur : « 8 – 12 » ne rentre pas dans une case
+  taillée pour deux chiffres, et « 12 – 20 » se faisait couper **des deux côtés**, donc se lisait
+  « 2 – 2 ». Le défaut **trouvé en creusant** était une perte de données : la coche validait une
+  série sans aucune répétition. Élargir la case aurait réparé le symptôme signalé et laissé
+  l'autre en place. Réflexe à prendre : **quand un texte ne rentre pas dans une case, se demander
+  d'abord s'il a le droit d'y être** — un débordement est souvent la première manifestation
+  visible d'un emplacement qui sert à deux choses. Et : la largeur d'un texte dépend de la police
+  système du téléphone, jamais de celle mesurée ici — 54 px sur 56 « passait » sur cet écran et
+  nulle part ailleurs.
 - **Écrire en base par IndexedDB brut ne réveille pas `useLiveQuery`.** Dexie n'émet ses événements
   que sur ses propres écritures : une table modifiée par `indexedDB.open()` direct laisse l'écran
   afficher l'ancien état indéfiniment, ce qui ressemble exactement à un bug de requête. Recharger
