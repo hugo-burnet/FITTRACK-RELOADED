@@ -3,17 +3,50 @@ import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { day, seedWorkout } from '@/test/factories';
 import { newEntity } from './base';
+import { createCustomExercise } from './exercises';
+import { addExercisesToRoutine, addRoutineSet, createRoutine, updateRoutineSet } from './routines';
 import {
   addSet,
+  addWorkoutExercise,
   completeSet,
+  deleteSet,
   deleteWorkout,
+  discardWorkout,
+  duplicateLastSet,
   finishWorkout,
   getActiveWorkout,
   getLastPerformance,
+  getWorkoutDetail,
   listSessionsForExercise,
+  removeWorkoutExercise,
+  reorderWorkoutExercises,
   startWorkout,
+  startWorkoutFromRoutine,
+  uncompleteSet,
+  updateSetValues,
 } from './workouts';
-import type { WorkoutExercise, WorkoutSet } from '@/data/types';
+import type { Exercise, WorkoutExercise, WorkoutSet } from '@/data/types';
+
+/**
+ * Nth element, loudly. `noUncheckedIndexedAccess` is on, and answering it with
+ * `?.` everywhere would turn a broken setup into a test that quietly asserts
+ * `undefined === undefined`.
+ */
+function at<T>(list: readonly T[], index: number): T {
+  const found = list[index];
+  if (found === undefined) throw new Error(`élément ${index} absent (${list.length} au total)`);
+  return found;
+}
+
+const anExercise = (name: string, measurementType: Exercise['measurementType'] = 'weight_reps') =>
+  createCustomExercise({
+    name,
+    primaryMuscle: 'chest',
+    secondaryMuscles: [],
+    equipment: 'barbell',
+    measurementType,
+    isUnilateral: 0,
+  });
 
 /** Attaches an exercise to a workout, the way the Lot 5 screen will. */
 async function addExercise(workoutId: string, exerciseId: string): Promise<WorkoutExercise> {
@@ -364,5 +397,438 @@ describe('deleteWorkout', () => {
     expect((await db.workouts.get(kept.id))!.deletedAt).toBe(0);
     const keptSets = await db.workoutSets.where('workoutId').equals(kept.id).toArray();
     expect(keptSets.every((set) => set.deletedAt === 0)).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Les quatre pièges du Lot 2, invisibles jusqu'ici parce que rien ne créait de
+// WorkoutSet. Chacun de ces tests échoue sans son correctif.
+// ---------------------------------------------------------------------------
+
+describe('piège n°1 — la valeur précédente et la séance en cours', () => {
+  beforeEach(resetDb);
+
+  /**
+   * `getLastPerformance` remonte l'index et s'arrête sur la première série
+   * validée qu'elle trouve. Dès que la série 1 d'aujourd'hui est cochée, c'est
+   * elle : la colonne « précédent » cesse d'être une référence et devient un
+   * miroir de ce qu'on vient de taper.
+   */
+  it('exclut la séance en cours de sa propre valeur précédente', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+
+    const today = await startWorkout('', 'Séance du jour');
+    const row = await addWorkoutExercise(today.id, 'bench');
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 105, reps: 3 });
+
+    const naive = await getLastPerformance('bench');
+    expect(at(naive, 0).weight).toBe(105); // sans exclusion : le miroir
+
+    const previous = await getLastPerformance('bench', today.id);
+    expect(previous).toHaveLength(1);
+    expect(at(previous, 0).weight).toBe(100);
+  });
+
+  it("n'exclut rien quand l'exercice n'a pas encore été fait aujourd'hui", async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+    const today = await startWorkout('', 'Séance du jour');
+
+    expect(await getLastPerformance('bench', today.id)).toHaveLength(1);
+  });
+});
+
+describe('piège n°2 — l’ordre des séries après une suppression', () => {
+  beforeEach(resetDb);
+
+  /**
+   * `.count()` de Dexie ne filtre pas `deletedAt`. Supprimer une série puis en
+   * ajouter une produisait deux séries de même `order`, et l'affichage devenait
+   * celui du hasard.
+   */
+  it('ne réutilise jamais un ordre déjà pris', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    // Pose déjà la série 1 : un exercice sans ligne à cocher est un cul-de-sac.
+    const row = await addWorkoutExercise(workout.id, 'bench');
+
+    const second = await addSet(row.id);
+    await addSet(row.id);
+
+    await deleteSet(second.id);
+    await addSet(row.id);
+
+    const orders = (await db.workoutSets.where('workoutExerciseId').equals(row.id).toArray())
+      .filter((set) => set.deletedAt === 0)
+      .map((set) => set.order)
+      .sort((a, b) => a - b);
+
+    // Trois séries, moins une supprimée, plus une ajoutée : 0, 1, 2 — et non
+    // 0, 1, 2 avec un doublon, ce que produisait le comptage des supprimées.
+    expect(orders).toEqual([0, 1, 2]);
+  });
+
+  it('renumérote ce qui reste — « série 1, série 3 » se lit à l’écran', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+
+    const first = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+    await updateSetValues(first.id, { weight: 60 });
+    await addSet(row.id, { weight: 80 });
+    await addSet(row.id, { weight: 100 });
+
+    await deleteSet(first.id);
+
+    const rest = (await db.workoutSets.where('workoutExerciseId').equals(row.id).toArray())
+      .filter((set) => set.deletedAt === 0)
+      .sort((a, b) => a.order - b.order);
+
+    expect(rest.map((set) => [set.order, set.weight])).toEqual([
+      [0, 80],
+      [1, 100],
+    ]);
+  });
+});
+
+describe('piège n°3 — une séance abandonnée alimentait l’historique', () => {
+  beforeEach(resetDb);
+
+  it('sort une séance abandonnée de la valeur précédente et de l’historique', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+
+    const bad = await startWorkout('', 'Séance ratée');
+    const row = await addWorkoutExercise(bad.id, 'bench');
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 999, reps: 1 });
+
+    await discardWorkout(bad.id);
+
+    const previous = await getLastPerformance('bench');
+    expect(previous).toHaveLength(1);
+    expect(at(previous, 0).weight).toBe(100);
+    expect(await listSessionsForExercise('bench')).toHaveLength(1);
+  });
+
+  it('garde la trace de l’abandon sans la laisser compter', async () => {
+    const workout = await startWorkout('', 'Séance ratée');
+    await discardWorkout(workout.id);
+
+    const stored = await db.workouts.get(workout.id);
+    expect(stored!.status).toBe('discarded');
+    expect(stored!.deletedAt).toBeGreaterThan(0);
+    expect(await getActiveWorkout()).toBeUndefined();
+  });
+});
+
+describe('piège n°4 — les séries jamais cochées', () => {
+  beforeEach(resetDb);
+
+  /**
+   * Une routine de 4 séries en crée 4 ; on en fait 2. Les deux autres ne sont
+   * pas des séries à zéro, ce sont des séries qui n'ont pas eu lieu.
+   */
+  it('ne garde que les séries réellement cochées', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+
+    const done = await addSet(row.id);
+    await addSet(row.id);
+    await addSet(row.id);
+    await completeSet(done.id, { weight: 100, reps: 5 });
+
+    await finishWorkout(workout.id);
+
+    const kept = (await db.workoutSets.where('workoutId').equals(workout.id).toArray()).filter(
+      (set) => set.deletedAt === 0,
+    );
+    expect(kept).toHaveLength(1);
+    expect(at(kept, 0).weight).toBe(100);
+  });
+
+  it('retire un exercice dont aucune série n’a été faite', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const done = await addWorkoutExercise(workout.id, 'bench');
+    const skipped = await addWorkoutExercise(workout.id, 'squat');
+
+    const set = await addSet(done.id);
+    await completeSet(set.id, { weight: 100, reps: 5 });
+    await addSet(skipped.id);
+
+    await finishWorkout(workout.id);
+
+    const rows = (await db.workoutExercises.where('workoutId').equals(workout.id).toArray()).filter(
+      (row) => row.deletedAt === 0,
+    );
+    expect(rows).toHaveLength(1);
+    expect(at(rows, 0).exerciseId).toBe('bench');
+  });
+
+  it('clôt sans rien perdre une séance entièrement cochée', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+
+    for (const weight of [60, 80, 100]) {
+      const set = await addSet(row.id);
+      await completeSet(set.id, { weight, reps: 5 });
+    }
+
+    await finishWorkout(workout.id);
+
+    const kept = (await db.workoutSets.where('workoutId').equals(workout.id).toArray()).filter(
+      (set) => set.deletedAt === 0,
+    );
+    expect(kept).toHaveLength(3);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Démarrer, composer et lire une séance
+// ---------------------------------------------------------------------------
+
+describe('startWorkoutFromRoutine', () => {
+  beforeEach(resetDb);
+
+  it('recopie la structure de la routine, exercices et séries', async () => {
+    const bench = await anExercise('Développé couché');
+    const squat = await anExercise('Squat');
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [bench.id, squat.id]);
+
+    const workout = await startWorkoutFromRoutine(routine.id);
+
+    expect(workout.routineId).toBe(routine.id);
+    expect(workout.name).toBe('Poussée');
+    expect(workout.status).toBe('active');
+
+    const detail = await getWorkoutDetail(workout.id);
+    expect(detail!.exercises.map((line) => line.exercise?.name)).toEqual([
+      'Développé couché',
+      'Squat',
+    ]);
+    expect(detail!.exercises.every((line) => line.sets.length === 1)).toBe(true);
+  });
+
+  /**
+   * Une prescription qui nomme un nombre pré-remplit ; une fourchette, non.
+   * Pré-remplir 8 sur un « 8 – 12 » ferait cocher 8 à quelqu'un qui en a fait 12.
+   */
+  it('pré-remplit une cible unique mais jamais une fourchette', async () => {
+    const bench = await anExercise('Développé couché');
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [bench.id]);
+
+    const row = at(await db.routineExercises.where('routineId').equals(routine.id).toArray(), 0);
+    const fixed = at(await db.routineSets.where('routineExerciseId').equals(row.id).toArray(), 0);
+    await updateRoutineSet(fixed.id, { targetReps: 5, targetWeight: 100 });
+
+    const ranged = await addRoutineSet(row.id);
+    await updateRoutineSet(ranged.id, { targetReps: 8, targetRepsMax: 12, targetWeight: 80 });
+
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
+
+    expect([at(sets, 0).reps, at(sets, 0).weight]).toEqual([5, 100]);
+    // La charge est un nombre, elle passe ; la fourchette de reps ne passe pas.
+    expect(at(sets, 1).weight).toBe(80);
+    expect(at(sets, 1).reps).toBeUndefined();
+  });
+
+  it('reprend le type de série tout en laissant la série à faire', async () => {
+    const bench = await anExercise('Développé couché');
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [bench.id]);
+
+    const row = at(await db.routineExercises.where('routineId').equals(routine.id).toArray(), 0);
+    const set = at(await db.routineSets.where('routineExerciseId').equals(row.id).toArray(), 0);
+    await updateRoutineSet(set.id, { setType: 'warmup' });
+
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
+
+    expect(at(sets, 0).setType).toBe('warmup');
+    expect(at(sets, 0).isCompleted).toBe(0);
+    expect(at(sets, 0).performedAt).toBe(0);
+  });
+
+  it('reprend une durée cible', async () => {
+    const plank = await anExercise('Planche', 'time_only');
+    const routine = await createRoutine('Gainage');
+    await addExercisesToRoutine(routine.id, [plank.id]);
+
+    const row = at(await db.routineExercises.where('routineId').equals(routine.id).toArray(), 0);
+    const set = at(await db.routineSets.where('routineExerciseId').equals(row.id).toArray(), 0);
+    await updateRoutineSet(set.id, { targetDurationSeconds: 45 });
+
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
+
+    expect(at(sets, 0).durationSeconds).toBe(45);
+  });
+
+  it('refuse une routine inconnue', async () => {
+    await expect(startWorkoutFromRoutine('inexistante')).rejects.toThrow();
+  });
+});
+
+describe('getWorkoutDetail', () => {
+  beforeEach(resetDb);
+
+  /** `undefined` = pas encore répondu, `null` = absente. Piège du Lot 3. */
+  it('rend null et non undefined pour une séance absente', async () => {
+    expect(await getWorkoutDetail('inexistante')).toBeNull();
+  });
+
+  it('porte la valeur précédente de chaque exercice, hors séance en cours', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 105, reps: 3 });
+
+    const line = at((await getWorkoutDetail(workout.id))!.exercises, 0);
+    expect(line.previous).toHaveLength(1);
+    expect(at(line.previous, 0).weight).toBe(100);
+  });
+
+  it('ne montre pas les exercices retirés de la séance', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const kept = await addWorkoutExercise(workout.id, 'bench');
+    const removed = await addWorkoutExercise(workout.id, 'squat');
+    await removeWorkoutExercise(removed.id);
+
+    const detail = await getWorkoutDetail(workout.id);
+    expect(detail!.exercises).toHaveLength(1);
+    expect(at(detail!.exercises, 0).row.id).toBe(kept.id);
+  });
+});
+
+describe('composer la séance en cours', () => {
+  beforeEach(resetDb);
+
+  it('ajoute un exercice avec une première série — sinon rien à cocher', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+
+    const line = at((await getWorkoutDetail(workout.id))!.exercises, 0);
+    expect(line.row.id).toBe(row.id);
+    expect(line.sets).toHaveLength(1);
+  });
+
+  it('numérote les exercices ajoutés à la suite', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    await addWorkoutExercise(workout.id, 'bench');
+    await addWorkoutExercise(workout.id, 'squat');
+
+    const detail = await getWorkoutDetail(workout.id);
+    expect(detail!.exercises.map((line) => line.row.order)).toEqual([0, 1]);
+  });
+
+  it('retirer un exercice emporte ses séries et referme le trou', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const first = await addWorkoutExercise(workout.id, 'bench');
+    await addWorkoutExercise(workout.id, 'squat');
+
+    await removeWorkoutExercise(first.id);
+
+    const sets = await db.workoutSets.where('workoutExerciseId').equals(first.id).toArray();
+    expect(sets.every((set) => set.deletedAt > 0)).toBe(true);
+
+    const detail = await getWorkoutDetail(workout.id);
+    expect(at(detail!.exercises, 0).row.order).toBe(0);
+  });
+
+  it('réorganise les exercices pendant la séance', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    await addWorkoutExercise(workout.id, 'bench');
+    await addWorkoutExercise(workout.id, 'squat');
+    await addWorkoutExercise(workout.id, 'row');
+
+    await reorderWorkoutExercises(workout.id, 2, 0);
+
+    const detail = await getWorkoutDetail(workout.id);
+    expect(detail!.exercises.map((line) => line.row.exerciseId)).toEqual(['row', 'bench', 'squat']);
+  });
+
+  /** Précédent du Lot 4 : « ajouter une série » recopie la précédente. */
+  it('recopie la série précédente à l’ajout', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const first = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+
+    await completeSet(first.id, { weight: 102.5, reps: 5 });
+    const copy = await duplicateLastSet(row.id);
+
+    expect(copy.weight).toBe(102.5);
+    expect(copy.reps).toBe(5);
+    // Une copie n'est pas une série faite.
+    expect(copy.isCompleted).toBe(0);
+    expect(copy.performedAt).toBe(0);
+  });
+});
+
+describe('saisie et correction d’une série', () => {
+  beforeEach(resetDb);
+
+  /**
+   * On écrit plus tôt que la règle non négociable n°4 ne l'exige : chaque frappe
+   * pose la valeur, `isCompleted` reste 0. Un kill de l'app ne coûte donc même
+   * pas les trois caractères en cours, et rien n'entre dans l'historique pour
+   * autant.
+   */
+  it('écrit une valeur sans faire entrer la série dans l’historique', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const set = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+
+    await updateSetValues(set.id, { weight: 102.5 });
+
+    const stored = await db.workoutSets.get(set.id);
+    expect(stored!.weight).toBe(102.5);
+    expect(stored!.isCompleted).toBe(0);
+    expect(stored!.performedAt).toBe(0);
+    expect(await getLastPerformance('bench')).toEqual([]);
+    expect(row.id).toBe(set.workoutExerciseId);
+  });
+
+  it('efface une valeur au lieu de la garder à l’ancienne', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    await addWorkoutExercise(workout.id, 'bench');
+    const set = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+
+    await updateSetValues(set.id, { weight: 100 });
+    await updateSetValues(set.id, { weight: undefined });
+
+    expect((await db.workoutSets.get(set.id))!.weight).toBeUndefined();
+  });
+
+  it('décocher sort la série de l’historique sans effacer la saisie', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    await addWorkoutExercise(workout.id, 'bench');
+    const set = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+
+    await completeSet(set.id, { weight: 100, reps: 5 });
+    expect(await getLastPerformance('bench')).toHaveLength(1);
+
+    await uncompleteSet(set.id);
+
+    const stored = await db.workoutSets.get(set.id);
+    expect(stored!.isCompleted).toBe(0);
+    expect(stored!.performedAt).toBe(0);
+    // Décocher corrige un geste, ça n'efface pas ce qui a été tapé.
+    expect(stored!.weight).toBe(100);
+    expect(await getLastPerformance('bench')).toEqual([]);
+  });
+
+  it('valide une durée et une distance, pas seulement des kilos', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    await addWorkoutExercise(workout.id, 'rower');
+    const set = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+
+    await completeSet(set.id, { distanceMeters: 1000, durationSeconds: 240 });
+
+    const stored = await db.workoutSets.get(set.id);
+    expect(stored!.distanceMeters).toBe(1000);
+    expect(stored!.durationSeconds).toBe(240);
+    expect(stored!.isCompleted).toBe(1);
   });
 });
