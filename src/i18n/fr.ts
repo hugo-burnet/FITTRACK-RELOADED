@@ -17,6 +17,13 @@ const fr = {
     /** Screen-reader names for the two controls that are drawn, never written. */
     back: 'Retour',
     close: 'Fermer',
+    /** Le chemin du retour, après une suppression qui n'a rien demandé. */
+    undo: 'Annuler',
+    /**
+     * Le même mot pour un lecteur d'écran, avec ce qu'il rétablit — le bandeau
+     * dit sa place à l'œil, pas à l'oreille.
+     */
+    undoDelete: 'Annuler la suppression de {reading}',
   },
 
   nav: {
@@ -148,6 +155,15 @@ const fr = {
     removeExerciseConfirm:
       'Ses séries seront perdues, y compris celles déjà validées. Les autres exercices ne bougent pas.',
     deleteSet: 'Supprimer la série',
+    /**
+     * Le mot gravé sous la ligne, découvert par le balayage — et le seuil
+     * lui-même : la suppression part quand le mot est entièrement lisible.
+     * Un seul mot, donc : « Supprimer la série » demanderait un geste deux fois
+     * plus long que le pouce ne peut en faire d'une main.
+     */
+    swipeDelete: 'Supprimer',
+    /** Ce que le bandeau d'annulation barre quand la série était vide. */
+    emptySetReading: 'Série {number}',
     notesLabel: 'Notes de l’exercice',
     notesPlaceholder: 'Réglage, sensation, douleur…',
     /** Menu ⋯ de la séance. */

@@ -214,6 +214,55 @@ Lot 5 » ; cette valeur s'est révélée être ce que la coche enregistre, et le
 2,02:1 en clair. Il reste déclaré dans `index.css` avec la raison écrite, pour que personne ne le
 réintroduise sans la lire.
 
+### Le balayage pour supprimer une série — et le seuil qui est un mot
+
+Demandé après le premier essai en salle : « parfois on met une série par erreur, ou on veut en
+faire moins ». La suppression existait déjà (appui sur le rang → feuille → « Supprimer la série »),
+mais à deux appuis et une feuille modale, entre deux séries, essoufflé.
+
+Trois décisions, dans l'ordre où elles se sont imposées :
+
+- **Le seuil, c'est le mot.** Le balayage découvre « SUPPRIMER » gravé dans la surface sous la
+  ligne, et la suppression part quand le mot est **entièrement lisible**. Pas de compteur de pixels
+  à apprendre, pas de jauge à lire : la typographie *est* la jauge, et un mot à moitié découvert
+  dit « pas encore » sans légende. La largeur est **mesurée sur le span rendu**, jamais écrite en
+  dur — l'app n'embarque aucune police, donc le mot fait la largeur que le téléphone lui donne.
+  C'est la leçon du Lot 5 sur la fourchette de reps, appliquée avant d'avoir le bug. Mesuré ici :
+  71,2 px, soit un seuil de 103 px, borné à \[72, 170\] pour qu'une police exotique ne rende pas le
+  geste impossible ni gratuit.
+- **Pas de bandeau rouge.** La charte réserve `--color-danger` comme **aplat**, et un aplat rouge
+  sous le pouce serait la chose la plus forte de l'écran — plus forte qu'une série validée, qui est
+  censée l'être. Le danger reste de l'**encre**, sur le mot : `--text-2` avant le seuil,
+  `--danger-ink` après, plus la pastille haptique de 10 ms que `ReorderableList` emploie déjà à la
+  prise. Mesuré : 5,49:1 en sombre, 5,10:1 en clair sur `--surface-2`.
+- **L'annulation tient la place du disparu, pas un toast.** Un toast en pied d'écran peut dire
+  *qu'*une série est partie, jamais **laquelle** — or cet écran empile vingt lignes de deux
+  nombres. Un bandeau posé entre la 2 et la 3 n'a besoin d'aucun mot pour le dire, et il apparaît
+  sous le pouce qui vient de balayer. Coût : aucun portail, aucune surcouche, aucun z-index. Six
+  secondes, puis il se referme en `1fr → 0fr`. `restoreSet` remet la série **à son rang** (tri à
+  deux clés : l'ordre, puis la rescapée d'abord à égalité) — sans ça, une série reprise en
+  deuxième place réapparaît en troisième.
+
+**Trois défauts trouvés en pilotant, pas en relisant :**
+
+- **`touch-action` est le seul levier qui compte.** `none` (le réflexe) fige le défilement de
+  l'écran le plus défilé de l'app ; écouter sans lui fait bagarrer le geste contre le scroll
+  pendant les premières frames. `pan-y` est la réponse : le navigateur garde le vertical, en natif,
+  et cède l'horizontal.
+- **`setPointerCapture` lançait une exception et tuait le geste entier.** La capture n'est qu'un
+  confort — elle sert si le doigt sort de la ligne. Un navigateur qui la refuse laissait la ligne
+  **bloquée à moitié ouverte**, mot affiché, plus rien pour la refermer. Elle est maintenant en
+  `try`/`catch` : jamais une précondition.
+- **La suppression était déclenchée par `transitionend`.** Ça lie une **écriture en base à une
+  peinture** : un onglet mis en arrière-plan par un appel entrant — le cas que la règle n°4 nomme
+  explicitement — laissait le geste fait, la ligne partie de l'écran et **rien d'écrit**. Remplacé
+  par un `setTimeout` de 220 ms, qui se résout toujours ; et si l'app meurt dans cet intervalle, la
+  série est encore là, ce qui est le bon sens de l'échec pour une suppression.
+
+**Ce qui reste vrai après :** le balayage est un **raccourci**, pas le seul chemin. L'appui sur le
+rang ouvre toujours la feuille avec « Supprimer la série » — c'est elle qui porte l'accessibilité
+clavier et lecteur d'écran, et elle était là avant.
+
 ### Ce que le Lot 5 ne fait pas — à savoir avant de tester
 
 - **Le minuteur de repos** (Lot 6, RF-22/RF-27). Le repos par exercice est stocké et affiché, rien
@@ -236,6 +285,13 @@ réintroduise sans la lire.
 - [ ] Saisir une série sans lunettes, d'une main, en 3 secondes.
 - [ ] Ajouter un exercice non prévu au milieu, et en réordonner deux au doigt.
 - [ ] Se tromper de ligne, décocher, corriger.
+- [ ] **Balayer une série vers la droite** : le mot « SUPPRIMER » se découvre, la ligne devient
+      plus lourde au seuil, la pastille haptique se sent **sans regarder**.
+- [ ] Balayer par erreur puis appuyer sur « Annuler » → la série revient **à sa place**.
+- [ ] Défiler la liste en partant d'une ligne de série → la page défile normalement, rien ne bouge
+      latéralement. C'est le point qui casse en premier si `touch-action` bouge.
+- [ ] Balayer en partant d'un champ de saisie → **rien ne doit se passer** (le clavier ne doit pas
+      s'ouvrir en route).
 
 ---
 

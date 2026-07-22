@@ -454,6 +454,35 @@ export async function deleteSet(setId: string): Promise<void> {
   });
 }
 
+/**
+ * Reprend une suppression — la contrepartie du balayage, qui supprime sans
+ * demander.
+ *
+ * La suppression est douce : la ligne n'a jamais quitté la base, seul son rang
+ * est parti. `deleteSet` a retassé ses voisines derrière elle, si bien que son
+ * ancien `order` est maintenant occupé — c'est **devant** l'occupante qu'elle
+ * doit revenir, sinon une série reprise à la deuxième place réapparaît à la
+ * troisième et le rang affiché ment sur ce qui a été soulevé.
+ *
+ * D'où le tri à deux clés : l'ordre, puis la rescapée d'abord à égalité.
+ */
+export async function restoreSet(setId: string): Promise<void> {
+  await db.transaction('rw', db.workoutSets, async () => {
+    const set = await db.workoutSets.get(setId);
+    if (set === undefined || set.deletedAt === 0) return;
+
+    await db.workoutSets.put(touch(set, { deletedAt: 0 }));
+
+    const renumbered = (await liveSetsOf(set.workoutExerciseId))
+      .sort((a, b) => a.order - b.order || (a.id === setId ? -1 : b.id === setId ? 1 : 0))
+      .map((row, order) => ({ row, order }))
+      .filter(({ row, order }) => row.order !== order)
+      .map(({ row, order }) => touch(row, { order }));
+
+    if (renumbered.length > 0) await db.workoutSets.bulkPut(renumbered);
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Reads
 // ---------------------------------------------------------------------------

@@ -18,4 +18,6 @@ export { ReorderableList } from './ReorderableList';
 export type { ItemState } from './ReorderableList';
 export { SectionTitle } from './SectionTitle';
 export { Sheet } from './Sheet';
+export { SwipeToDelete } from './SwipeToDelete';
 export { Textarea } from './Textarea';
+export { UndoRow } from './UndoRow';

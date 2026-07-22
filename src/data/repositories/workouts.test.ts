@@ -19,6 +19,7 @@ import {
   getWorkoutDetail,
   removeWorkoutExercise,
   reorderWorkoutExercises,
+  restoreSet,
   startWorkout,
   startWorkoutFromRoutine,
   uncompleteSet,
@@ -485,6 +486,63 @@ describe('piège n°2 — l’ordre des séries après une suppression', () => {
       [0, 80],
       [1, 100],
     ]);
+  });
+
+  /**
+   * Le balayage supprime sans confirmation ; il doit donc se reprendre. La
+   * suppression étant douce, la série est encore là — ce que la restauration
+   * doit retrouver, c'est sa **place**, que `deleteSet` a renumérotée derrière
+   * elle.
+   */
+  it('remet une série supprimée à son rang, pas au bout', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+
+    const first = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+    await updateSetValues(first.id, { weight: 60 });
+    const second = await addSet(row.id, { weight: 80 });
+    await addSet(row.id, { weight: 100 });
+
+    await deleteSet(second.id);
+    await restoreSet(second.id);
+
+    const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
+    expect(sets.map((set) => [set.order, set.weight])).toEqual([
+      [0, 60],
+      [1, 80],
+      [2, 100],
+    ]);
+  });
+
+  it('rend une série validée avec sa validation', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 100, reps: 5 });
+
+    await deleteSet(set.id);
+    await restoreSet(set.id);
+
+    const restored = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 1);
+    expect([restored.isCompleted, restored.weight, restored.reps]).toEqual([1, 100, 5]);
+  });
+
+  /**
+   * Le compte à rebours du bandeau d'annulation peut expirer pendant qu'un
+   * doigt appuie dessus. Restaurer deux fois, ou restaurer une série vivante,
+   * ne doit pas la dupliquer ni décaler ses voisines.
+   */
+  it('ne fait rien sur une série qui n’a pas été supprimée', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    const second = await addSet(row.id, { weight: 80 });
+
+    await deleteSet(second.id);
+    await restoreSet(second.id);
+    await restoreSet(second.id);
+
+    const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
+    expect(sets.map((set) => set.order)).toEqual([0, 1]);
   });
 });
 

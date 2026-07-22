@@ -10,6 +10,7 @@ import {
   getWorkoutDetail,
   removeWorkoutExercise,
   reorderWorkoutExercises,
+  restoreSet,
   uncompleteSet,
   updateSetValues,
   updateWorkout,
@@ -174,6 +175,8 @@ export function WorkoutScreen() {
                 onWrite={(setId, values) => void updateSetValues(setId, values)}
                 onComplete={(setId, values) => void completeSet(setId, values)}
                 onUncomplete={(setId) => void uncompleteSet(setId)}
+                onDeleteSet={(setId) => void deleteSet(setId)}
+                onRestoreSet={(setId) => void restoreSet(setId)}
                 onAddSet={() => void duplicateLastSet(line.row.id)}
               />
             )}

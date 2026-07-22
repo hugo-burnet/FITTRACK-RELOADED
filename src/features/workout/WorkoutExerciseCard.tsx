@@ -1,12 +1,17 @@
+import { Fragment, useState } from 'react';
 import type { WorkoutExerciseDetail, SetValues } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
-import { AddRow } from '@/ui';
+import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
 import { GripIcon, MoreIcon } from '@/ui/icons';
 import { WorkoutSetRow } from './WorkoutSetRow';
+import { setReading } from './summary';
+
+/** A set that has just gone, and the slot it is still allowed to come back to. */
+type DeletedSet = { setId: string; rank: number; reading: string };
 
 /** Where this exercise sits in its superset. Absent = not in one. */
 export type SupersetPlace = { index: number; size: number };
@@ -20,6 +25,8 @@ type Props = {
   onWrite: (setId: string, values: Partial<SetValues>) => void;
   onComplete: (setId: string, values: Partial<SetValues>) => void;
   onUncomplete: (setId: string) => void;
+  onDeleteSet: (setId: string) => void;
+  onRestoreSet: (setId: string) => void;
   onAddSet: () => void;
 };
 
@@ -52,6 +59,8 @@ export function WorkoutExerciseCard({
   onWrite,
   onComplete,
   onUncomplete,
+  onDeleteSet,
+  onRestoreSet,
   onAddSet,
 }: Props) {
   const { row, exercise, sets, previous } = line;
@@ -62,6 +71,24 @@ export function WorkoutExerciseCard({
 
   const first = superset !== undefined && superset.index === 0;
   const last = superset !== undefined && superset.index === superset.size - 1;
+
+  /**
+   * One slot at a time. Swiping a second row closes the first offer — the
+   * deletion is written either way, so what expires is the shortcut back, not
+   * the data.
+   */
+  const [deleted, setDeleted] = useState<DeletedSet | null>(null);
+
+  const undoRow = deleted === null ? null : (
+    <UndoRow
+      reading={deleted.reading}
+      onUndo={() => {
+        setDeleted(null);
+        onRestoreSet(deleted.setId);
+      }}
+      onExpire={() => setDeleted(null)}
+    />
+  );
 
   return (
     <div className={`relative ${superset === undefined ? '' : 'pl-3'}`}>
@@ -155,18 +182,39 @@ export function WorkoutExerciseCard({
         </div>
 
         {sets.map((set, index) => (
-          <WorkoutSetRow
-            key={set.id}
-            set={set}
-            number={index + 1}
-            columns={columns}
-            previous={previous[index]}
-            onWrite={(values) => onWrite(set.id, values)}
-            onComplete={(values) => onComplete(set.id, values)}
-            onUncomplete={() => onUncomplete(set.id)}
-            onMenu={() => onSetMenu(set, index + 1)}
-          />
+          <Fragment key={set.id}>
+            {/* Le bandeau reprend le rang de la disparue : celle qui occupait
+                cette place est maintenant ici, donc le bandeau passe devant. */}
+            {deleted?.rank === index && undoRow}
+            <SwipeToDelete
+              label={t('workout.swipeDelete')}
+              onDelete={() => {
+                setDeleted({
+                  setId: set.id,
+                  rank: index,
+                  reading:
+                    setReading(set, columns) || t('workout.emptySetReading', { number: index + 1 }),
+                });
+                onDeleteSet(set.id);
+              }}
+            >
+              <WorkoutSetRow
+                set={set}
+                number={index + 1}
+                columns={columns}
+                previous={previous[index]}
+                onWrite={(values) => onWrite(set.id, values)}
+                onComplete={(values) => onComplete(set.id, values)}
+                onUncomplete={() => onUncomplete(set.id)}
+                onMenu={() => onSetMenu(set, index + 1)}
+              />
+            </SwipeToDelete>
+          </Fragment>
         ))}
+
+        {/* La dernière série n'a personne derrière qui la remplace : son bandeau
+            tombe en pied de grille, qui est bien la place qu'elle occupait. */}
+        {deleted !== null && deleted.rank >= sets.length && undoRow}
 
         <AddRow label={t('workout.addSet')} onClick={onAddSet} />
       </div>

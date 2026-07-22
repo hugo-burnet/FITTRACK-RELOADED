@@ -7,6 +7,7 @@ import type { EntryColumn, ResolvedValues, TargetField } from '@/lib/measurement
 import { formatNumber } from '@/ui/numberField';
 import { CheckIcon } from '@/ui/icons';
 import { SetValueCell } from './SetValueCell';
+import { setReading } from './summary';
 
 /** Which field of a stored set each entry column writes into. */
 const FIELD_KEY = {
@@ -134,13 +135,7 @@ export function WorkoutSetRow({
     return values;
   };
 
-  const previousReading = columns
-    .map((column) => {
-      const value = previousValue(column.field);
-      return value === undefined ? undefined : `${column.prefix ?? ''}${formatNumber(value)}`;
-    })
-    .filter((part) => part !== undefined)
-    .join(' × ');
+  const previousReading = previous === undefined ? '' : setReading(previous, columns);
 
   return (
     <div
