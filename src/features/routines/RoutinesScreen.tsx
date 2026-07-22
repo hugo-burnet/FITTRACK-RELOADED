@@ -16,6 +16,7 @@ import {
   updateRoutine,
 } from '@/data/repositories/routines';
 import type { RoutineSummary } from '@/data/repositories/routines';
+import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTemplates';
 import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
@@ -165,6 +166,16 @@ export function RoutinesScreen() {
 
   const startBlank = () => {
     void createRoutine(t('routines.defaultName')).then(openEditor);
+  };
+
+  /**
+   * One session at a time is the only state the app has. With one already
+   * running this leads back to it rather than opening a second — the same rule
+   * the editor's "Démarrer" applies.
+   */
+  const start = async (routineId: string) => {
+    if ((await getActiveWorkout()) === undefined) await startWorkoutFromRoutine(routineId);
+    void navigate('/workout');
   };
 
   const folderOptions: Option<string>[] = [
@@ -354,6 +365,11 @@ export function RoutinesScreen() {
         actions={
           sheet?.kind === 'routineActions'
             ? [
+                {
+                  // First, because in the gym it is the only one you want.
+                  label: t('routines.start'),
+                  onSelect: () => void start(sheet.routine.id),
+                },
                 {
                   label: t('routines.duplicate'),
                   hint: t('routines.duplicateHint'),

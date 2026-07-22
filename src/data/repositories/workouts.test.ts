@@ -607,10 +607,15 @@ describe('startWorkoutFromRoutine', () => {
   });
 
   /**
-   * Une prescription qui nomme un nombre pré-remplit ; une fourchette, non.
-   * Pré-remplir 8 sur un « 8 – 12 » ferait cocher 8 à quelqu'un qui en a fait 12.
+   * La prescription va dans les champs `target*`, jamais dans `weight`/`reps`.
+   *
+   * De là découle la règle sur laquelle tient tout l'écran : **rien n'est en
+   * encre tant que ce n'est pas tapé**. Et c'est la seule forme qui sait porter
+   * une fourchette — 8 – 12 n'est pas un nombre, donc remplir `reps` la faisait
+   * disparaître de l'écran, ce qui a été constaté sur la toute première routine
+   * réelle.
    */
-  it('pré-remplit une cible unique mais jamais une fourchette', async () => {
+  it('porte la prescription à part de ce qui a été réalisé', async () => {
     const bench = await anExercise('Développé couché');
     const routine = await createRoutine('Poussée');
     await addExercisesToRoutine(routine.id, [bench.id]);
@@ -625,10 +630,13 @@ describe('startWorkoutFromRoutine', () => {
     const workout = await startWorkoutFromRoutine(routine.id);
     const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
 
-    expect([at(sets, 0).reps, at(sets, 0).weight]).toEqual([5, 100]);
-    // La charge est un nombre, elle passe ; la fourchette de reps ne passe pas.
-    expect(at(sets, 1).weight).toBe(80);
-    expect(at(sets, 1).reps).toBeUndefined();
+    expect([at(sets, 0).targetReps, at(sets, 0).targetWeight]).toEqual([5, 100]);
+    // Rien n'est réputé réalisé : la séance n'a pas encore commencé.
+    expect([at(sets, 0).reps, at(sets, 0).weight]).toEqual([undefined, undefined]);
+
+    // La fourchette survit entière — c'est elle qui n'avait nulle part où aller.
+    expect([at(sets, 1).targetReps, at(sets, 1).targetRepsMax]).toEqual([8, 12]);
+    expect(at(sets, 1).targetWeight).toBe(80);
   });
 
   it('reprend le type de série tout en laissant la série à faire', async () => {
@@ -660,7 +668,8 @@ describe('startWorkoutFromRoutine', () => {
     const workout = await startWorkoutFromRoutine(routine.id);
     const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
 
-    expect(at(sets, 0).durationSeconds).toBe(45);
+    expect(at(sets, 0).targetDurationSeconds).toBe(45);
+    expect(at(sets, 0).durationSeconds).toBeUndefined();
   });
 
   it('refuse une routine inconnue', async () => {
@@ -748,8 +757,13 @@ describe('composer la séance en cours', () => {
     expect(detail!.exercises.map((line) => line.row.exerciseId)).toEqual(['row', 'bench', 'squat']);
   });
 
-  /** Précédent du Lot 4 : « ajouter une série » recopie la précédente. */
-  it('recopie la série précédente à l’ajout', async () => {
+  /**
+   * Précédent du Lot 4 : « ajouter une série » repropose la précédente. Ce que
+   * la série d'avant a réalisé devient la **prescription** de la nouvelle, pas
+   * son résultat — une série qui arriverait déjà remplie serait une série que
+   * l'app prétend que tu as faite.
+   */
+  it('repropose la série précédente sans la déclarer faite', async () => {
     const workout = await startWorkout('', 'Séance libre');
     const row = await addWorkoutExercise(workout.id, 'bench');
     const first = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
@@ -757,11 +771,35 @@ describe('composer la séance en cours', () => {
     await completeSet(first.id, { weight: 102.5, reps: 5 });
     const copy = await duplicateLastSet(row.id);
 
-    expect(copy.weight).toBe(102.5);
-    expect(copy.reps).toBe(5);
-    // Une copie n'est pas une série faite.
+    expect(copy.targetWeight).toBe(102.5);
+    expect(copy.targetReps).toBe(5);
+    expect(copy.weight).toBeUndefined();
+    expect(copy.reps).toBeUndefined();
     expect(copy.isCompleted).toBe(0);
     expect(copy.performedAt).toBe(0);
+  });
+
+  /** Une fourchette non encore réalisée reste une fourchette à la série suivante. */
+  it('repropose une fourchette telle quelle tant qu’elle n’est pas faite', async () => {
+    const bench = await anExercise('Développé couché');
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [bench.id]);
+
+    const routineRow = at(
+      await db.routineExercises.where('routineId').equals(routine.id).toArray(),
+      0,
+    );
+    const plan = at(
+      await db.routineSets.where('routineExerciseId').equals(routineRow.id).toArray(),
+      0,
+    );
+    await updateRoutineSet(plan.id, { targetReps: 8, targetRepsMax: 12, targetWeight: 80 });
+
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const row = at((await getWorkoutDetail(workout.id))!.exercises, 0).row;
+    const copy = await duplicateLastSet(row.id);
+
+    expect([copy.targetReps, copy.targetRepsMax]).toEqual([8, 12]);
   });
 });
 

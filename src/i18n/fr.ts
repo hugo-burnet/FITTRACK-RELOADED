@@ -103,6 +103,70 @@ const fr = {
   home: {
     title: 'Accueil',
     emptyBody: 'Le compteur démarre à ta première séance terminée.',
+    startEmpty: 'Démarrer une séance vide',
+    startFromRoutine: 'Partir d’une routine',
+    resumeTitle: 'Séance en cours',
+    resume: 'Reprendre',
+  },
+
+  /**
+   * L'écran de séance en direct. Le vocabulaire y est le plus court possible :
+   * c'est le seul écran lu essoufflé, entre deux séries.
+   */
+  workout: {
+    emptyName: 'Séance libre',
+    /** Nom lisible par un lecteur d'écran ; à l'écran c'est une coche dessinée. */
+    complete: 'Valider la série {number}',
+    uncomplete: 'Annuler la série {number}',
+    previous: 'Précédent',
+    noPrevious: '—',
+    addSet: 'Ajouter une série',
+    addExercise: 'Ajouter un exercice',
+    finish: 'Terminer la séance',
+    setNumber: 'Série {number}',
+    warmupShort: 'Éch.',
+    exerciseMenu: 'Options de {name}',
+    deletedExercise: 'Exercice supprimé',
+    notFound: 'Cette séance n’existe plus',
+    /** Menu ⋯ d'un exercice de la séance. */
+    addSetAction: 'Ajouter une série',
+    removeExercise: 'Retirer de la séance',
+    removeExerciseConfirm:
+      'Ses séries seront perdues, y compris celles déjà validées. Les autres exercices ne bougent pas.',
+    deleteSet: 'Supprimer la série',
+    notesLabel: 'Notes de l’exercice',
+    notesPlaceholder: 'Réglage, sensation, douleur…',
+    /** Menu ⋯ de la séance. */
+    workoutMenu: 'Options de la séance',
+    rename: 'Renommer la séance',
+    nameLabel: 'Nom de la séance',
+    workoutNotesLabel: 'Notes de la séance',
+    empty: 'Aucun exercice',
+    emptyBody: 'Ajoute ton premier exercice — tu peux aussi en ajouter en cours de route.',
+  },
+
+  /** L'écran de fin : ce que la séance a produit, avant de l'enregistrer. */
+  finish: {
+    title: 'Fin de séance',
+    duration: 'Durée',
+    sets: 'Séries',
+    reps: 'Reps',
+    tonnage: 'Tonnage',
+    time: 'Temps',
+    distance: 'Distance',
+    save: 'Enregistrer la séance',
+    discard: 'Abandonner la séance',
+    discardTitle: 'Abandonner cette séance ?',
+    discardBody: '{count} séries validées seront perdues. C’est sans retour.',
+    discardBodyOne: '1 série validée sera perdue. C’est sans retour.',
+    discardBodyNone: 'Aucune série n’a été validée : il n’y a rien à perdre.',
+    discardConfirm: 'Abandonner',
+    /**
+     * Le tonnage ne compte que les kilos qui sont vraiment la charge : un lest
+     * ou une assistance ne disent rien du poids réellement déplacé.
+     */
+    tonnageHint: 'Le tonnage ne compte que les charges soulevées, ni les lests ni les assistances.',
+    nothingDone: 'Aucune série validée. Rien ne sera enregistré.',
   },
 
   /** Set types. Warm-ups are excluded from volume and records (RF-20). */
@@ -153,6 +217,7 @@ const fr = {
     dragHandle: 'Déplacer {name}',
 
     actionsTitle: 'Routine',
+    start: 'Démarrer',
     duplicate: 'Dupliquer',
     duplicateHint: 'Une copie indépendante. Modifier l’une ne touche pas à l’autre.',
     moveTo: 'Déplacer vers un dossier',
@@ -196,6 +261,10 @@ const fr = {
     addExercise: 'Ajouter un exercice',
     /** Not "Enregistrer": every keystroke above is already in the database. */
     done: 'Terminé',
+    /** Le verbe de cet écran en salle. Il prend la place primaire de la barre. */
+    start: 'Démarrer la séance',
+    startBusy: 'Reprendre la séance en cours',
+    startEmptyRoutine: 'Ajoute au moins un exercice pour pouvoir démarrer.',
 
     deletedExercise: 'Exercice supprimé',
     deletedExerciseHint: 'Il ne fait plus partie de ta bibliothèque.',

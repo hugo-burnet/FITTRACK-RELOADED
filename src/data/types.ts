@@ -180,11 +180,35 @@ export interface WorkoutSet extends Syncable {
   order: number;
   setType: SetType;
   side: Side;
+
+  /**
+   * What was actually performed. Empty until typed — **nothing here is ever
+   * filled in on the user's behalf**, which is what lets the live screen show a
+   * value you entered in a different colour from one it is proposing.
+   */
   weight?: number; // always stored in KG (cf. §6)
   reps?: number;
   durationSeconds?: number;
   distanceMeters?: number;
   rpe?: number; // RF-30: 6 to 10 in steps of 0.5
+
+  /**
+   * What the session was asked to do, copied from the routine when it started.
+   * Added in Lot 5 — none of them is indexed, so no migration.
+   *
+   * The session carries its own prescription rather than reading it back
+   * through `routineId`: editing the routine next week must not rewrite what
+   * last week's session says it set out to do. Without these fields a rep range
+   * had nowhere to live and **vanished from the screen entirely** — a routine
+   * prescribing 8 – 12 showed an empty box. Lot 18 reads them too: whether you
+   * hit the top of the range is the whole input of auto-progression.
+   */
+  targetReps?: number;
+  targetRepsMax?: number;
+  targetWeight?: number;
+  targetDurationSeconds?: number;
+  targetDistanceMeters?: number;
+
   isCompleted: 0 | 1;
   performedAt: number; // 0 until validated
 }

@@ -52,11 +52,15 @@ export async function startWorkout(routineId: string, name: string): Promise<Wor
  * RF-17 — a session laid out from a routine: its exercises, their order, their
  * superset groups, their notes and their planned sets.
  *
- * The targets are copied into the set's real fields with `isCompleted: 0`, so
- * they read as a prescription to confirm rather than as something performed.
- * **A rep range is deliberately not copied**: pre-filling 8 on a "8 – 12" would
- * have someone tick 8 after doing 12, and a range is not a value. It stays
- * visible as the routine's prescription, greyed, above the empty field.
+ * The prescription is copied into the set's `target*` fields, **never into
+ * `weight`/`reps`**. One rule follows from that and the screen rests on it
+ * entirely: nothing is shown in ink until it is typed. What the routine asks
+ * for is greyed, exactly like what you lifted last week, and the tick records
+ * whichever of the two is offered.
+ *
+ * Filling `reps` directly was the first attempt and it broke on the very first
+ * real routine: a range of 8 – 12 is not a number, so it landed nowhere and the
+ * screen showed an empty box where the routine had a prescription.
  */
 export async function startWorkoutFromRoutine(routineId: string): Promise<Workout> {
   const routine = await db.routines.get(routineId);
@@ -99,8 +103,6 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
     const parent = index === undefined ? undefined : exercises[index];
     if (parent === undefined) return [];
 
-    const isRange = plan.targetRepsMax !== undefined && plan.targetRepsMax > (plan.targetReps ?? 0);
-
     return [
       newEntity<WorkoutSet>({
         workoutExerciseId: parent.id,
@@ -109,10 +111,11 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
         order: plan.order,
         setType: plan.setType,
         side: 'both',
-        weight: plan.targetWeight,
-        reps: isRange ? undefined : plan.targetReps,
-        durationSeconds: plan.targetDurationSeconds,
-        distanceMeters: plan.targetDistanceMeters,
+        targetReps: plan.targetReps,
+        targetRepsMax: plan.targetRepsMax,
+        targetWeight: plan.targetWeight,
+        targetDurationSeconds: plan.targetDurationSeconds,
+        targetDistanceMeters: plan.targetDistanceMeters,
         isCompleted: 0,
         performedAt: 0,
       }),
@@ -369,19 +372,24 @@ export async function addSet(
 }
 
 /**
- * Appends a set **copied from the last one**, the same reasoning as the routine
- * editor: another set at the same load is by far the most common next move, and
- * this makes it one tap instead of two entries.
+ * Appends a set **proposing the last one again** — another set at the same load
+ * is by far the most common next move, and this makes it one tap.
+ *
+ * What the previous set holds becomes the new one's *prescription*, not its
+ * result: the figures come up greyed, and the tick is what turns them into
+ * something performed. A set that arrived already filled in would be a set the
+ * app claims you did.
  */
 export async function duplicateLastSet(workoutExerciseId: string): Promise<WorkoutSet> {
   const last = (await liveSetsOf(workoutExerciseId)).at(-1);
 
   return addSet(workoutExerciseId, {
     setType: last?.setType ?? 'normal',
-    weight: last?.weight,
-    reps: last?.reps,
-    durationSeconds: last?.durationSeconds,
-    distanceMeters: last?.distanceMeters,
+    targetReps: last?.reps ?? last?.targetReps,
+    targetRepsMax: last?.reps === undefined ? last?.targetRepsMax : undefined,
+    targetWeight: last?.weight ?? last?.targetWeight,
+    targetDurationSeconds: last?.durationSeconds ?? last?.targetDurationSeconds,
+    targetDistanceMeters: last?.distanceMeters ?? last?.targetDistanceMeters,
   });
 }
 

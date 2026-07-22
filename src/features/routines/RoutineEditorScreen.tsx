@@ -17,12 +17,13 @@ import {
   updateRoutineSet,
 } from '@/data/repositories/routines';
 import type { RoutineExerciseDetail, RoutineSetTargets } from '@/data/repositories/routines';
+import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { toBlocks } from '@/lib/routineOrder';
 import { Button, Card, EmptyState, Input, ListRow, OptionSheet, ReorderableList } from '@/ui';
 import type { Option } from '@/ui';
-import { ChevronDownIcon } from '@/ui/icons';
+import { ChevronDownIcon, PlusIcon } from '@/ui/icons';
 import { RoutineExerciseCard } from './RoutineExerciseCard';
 import type { SupersetPlace } from './RoutineExerciseCard';
 import { RoutineExerciseSheet } from './RoutineExerciseSheet';
@@ -72,6 +73,21 @@ export function RoutineEditorScreen() {
   // distinction the screen flashes "cette routine n'existe plus" on every open.
   const detail = useLiveQuery(() => getRoutineDetail(id), [id]);
   const folders = useLiveQuery(listFolders);
+  const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
+
+  /**
+   * Starting is not "start another one": one session at a time is the only
+   * state the app has. With one already running the button leads back to it
+   * instead of quietly doing nothing or, worse, opening a second.
+   */
+  const start = () => {
+    if (active === undefined) return;
+    if (active !== null) {
+      void navigate('/workout');
+      return;
+    }
+    void startWorkoutFromRoutine(id).then(() => navigate('/workout'));
+  };
 
   /**
    * Name and subtitle are typed here and written straight through. The draft
@@ -227,26 +243,53 @@ export function RoutineEditorScreen() {
             />
           </div>
         )}
+
+        {/* Moved out of the sticky bar at Lot 5 to make room for "Démarrer".
+            Three buttons on 343 px is three truncated labels — and this action
+            belongs with the list it appends to, exactly as "Ajouter une série"
+            already sits at the foot of each card. */}
+        <button
+          type="button"
+          onClick={() => void navigate(`/routines/${routine.id}/add`)}
+          className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border
+            border-dashed border-[var(--border)] text-base font-semibold text-[var(--accent-ink)]
+            transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
+        >
+          <PlusIcon width="18" height="18" />
+          {t('routine.addExercise')}
+        </button>
       </div>
 
-      {/* The way out and the verb of this screen, both under the thumb. The
-          Lot 3 lesson is not negotiable: a primary action that needs scrolling
-          to reach is a primary action nobody finds. */}
+      {/* The way out and the verb of this screen, both under the thumb. In the
+          gym the verb of this screen is *démarrer*; editing is what you do at
+          home. The Lot 3 lesson is not negotiable: a primary action that needs
+          scrolling to reach is a primary action nobody finds. */}
       <div
-        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 flex gap-2 border-t
-          border-[var(--border)] bg-[var(--surface-0)] px-4 pt-3 pb-3"
+        className="safe-bottom sticky bottom-0 z-20 -mx-4 mt-9 border-t border-[var(--border)]
+          bg-[var(--surface-0)] px-4 pt-3 pb-3"
       >
-        <Button size="lg" className="flex-1" onClick={goBack}>
-          {t('routine.done')}
-        </Button>
-        <Button
-          variant="primary"
-          size="lg"
-          className="flex-1"
-          onClick={() => void navigate(`/routines/${routine.id}/add`)}
-        >
-          {t('routine.addExercise')}
-        </Button>
+        {/* A disabled button with no reason given is a dead end. */}
+        {active === null && exercises.length === 0 && (
+          <p className="mb-2 text-center text-sm text-[var(--text-2)]">
+            {t('routine.startEmptyRoutine')}
+          </p>
+        )}
+        <div className="flex gap-2">
+          <Button size="lg" className="flex-1" onClick={goBack}>
+            {t('routine.done')}
+          </Button>
+          <Button
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            // A routine with no exercise would start an empty session under a
+            // name that promises exercises.
+            disabled={active === undefined || (active === null && exercises.length === 0)}
+            onClick={start}
+          >
+            {active === null ? t('routine.start') : t('routine.startBusy')}
+          </Button>
+        </div>
       </div>
 
       <OptionSheet<string>

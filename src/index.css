@@ -26,9 +26,18 @@
   --border: #2a2a2e;
   --text-1: #f4f4f5; /* primary text */
   --text-2: #a1a1aa; /* secondary text AND every engraved micro-label */
-  /* Deliberately faint, for values that are echoes of data — Lot 5's previous
-     set. NOT for placeholders: measured at 2,02:1 on the light theme, and a
-     placeholder is instructions you read, not a ghost you may reuse. */
+  /* RETIRÉ DE L'USAGE AU LOT 5, et le jeton reste ici uniquement pour que
+     personne ne le réintroduise sans lire ceci.
+
+     Le Lot 1 le réservait à « la valeur précédente du Lot 5 », en la supposant
+     décorative — un écho de donnée. Elle ne l'est pas : dans la grille de la
+     séance, la valeur grisée est **ce que la coche enregistre**. Mesuré sur
+     l'écran réel : 3,44:1 en sombre, 2,02:1 en clair. Un appui y écrivait un
+     nombre que personne ne pouvait lire.
+
+     Ce qui est proposé se distingue donc de ce qui est saisi par la **graisse**
+     (`font-normal` contre `font-semibold`) sur --text-2 — le couple que
+     `NumberInput` appliquait déjà à ses placeholders depuis le Lot 1. */
   --text-3: #71717a;
 
   /* Accent as INK: anything that must be legible AGAINST a surface — text, icons,

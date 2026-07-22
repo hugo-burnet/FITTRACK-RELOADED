@@ -163,18 +163,35 @@ function distance(meters: number): TargetPart {
   return { value: decimal(Math.round((meters / 1000) * 100) / 100), unit: 'kilometers' };
 }
 
-function reps(targets: Targets): TargetPart | undefined {
+/**
+ * Exported because the live grid shows the prescription as the field's ghost,
+ * and "8 – 12" has to read identically there and on the routine line. It is
+ * also the one reading that is **not a number**, which is why the tick records
+ * nothing from it: a range is not a value you can have performed.
+ */
+export function repsReading(targets: Targets): TargetPart | undefined {
   const { targetReps, targetRepsMax } = targets;
   if (targetReps === undefined) return undefined;
 
-  // A maximum that does not exceed the minimum is not a range.
-  const value =
-    targetRepsMax !== undefined && targetRepsMax > targetReps
-      ? `${decimal(targetReps)} – ${decimal(targetRepsMax)}`
-      : decimal(targetReps);
+  const value = isRepRange(targets)
+    ? `${decimal(targetReps)} – ${decimal(targetRepsMax ?? targetReps)}`
+    : decimal(targetReps);
 
   return { value, unit: 'reps' };
 }
+
+/**
+ * A maximum that does not exceed the minimum is not a range.
+ *
+ * Named and exported because two very different things hang off it: how the
+ * reps read, and whether the live grid's tick may record them at all. A range
+ * is not a value you can have performed, so it is the one prescription the tick
+ * cannot confirm on your behalf.
+ */
+export const isRepRange = (targets: Targets): boolean =>
+  targets.targetReps !== undefined &&
+  targets.targetRepsMax !== undefined &&
+  targets.targetRepsMax > targets.targetReps;
 
 function weight(targets: Targets, role: WeightRole | undefined): TargetPart | undefined {
   if (targets.targetWeight === undefined || role === undefined) return undefined;
@@ -198,7 +215,7 @@ export function targetParts(type: MeasurementType, targets: Targets): TargetPart
   return shape.fields.flatMap((field) => {
     const part =
       field === 'reps'
-        ? reps(targets)
+        ? repsReading(targets)
         : field === 'weight'
           ? weight(targets, shape.weightRole)
           : field === 'duration'
