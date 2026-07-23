@@ -203,10 +203,18 @@ Principe : **chaque timer va où vit son sens**, et les exos finis quittent le b
    deux thèmes. **Repli instantané, pas d'animation de hauteur** : le chevron tourne (`rotate` v4),
    le corps apparaît d'un coup. Choix de v1 — à juger en salle : si le « pop » gêne, l'animation
    `1fr → 0fr` (celle d'`UndoRow`) est le repli tout prêt. **Point de checkpoint.**
-3. ⬜ Chrono global au header + repos dans le statut — dissout le bandeau `WorkoutMeter`, absorbe #5.
-4. ⬜ #7 espacement 1ère carte (après la refonte).
-5. ⬜ #6 centrage du well `RestPicker`.
-6. ⬜ #4 phrase de repos raccourcie.
+3. ✅ **Chrono au header + repos dans le statut** (`b41b221`) — bandeau `WorkoutMeter` dissous et
+   supprimé, fix #5 absorbé. Le chrono global monte au header (titre | chrono | menu) ; le repos
+   descend dans le statut de la card (le sous-titre devient « ● Repos 0:47 », `RestStatus`) et le
+   filet (`RestRail`) se pose au bas de la card, visible même repliée — c'est le cas courant, cocher
+   la dernière série referme l'exo pendant que le repos coule. L'avancement « N séries sur M » passe
+   au-dessus de la liste. Écarté comme décidé : chrono qui voyage, statut « en cours » permanent.
+   Vérifié en pilotant, deux thèmes (repos sombre 12,87 / clair 5,23). **La refonte de l'écran de
+   séance est complète (briques 2+3) — reste à la juger en salle, d'un bloc.**
+4. ⬜ #7 espacement 1ère carte — **à re-mesurer** : le bandeau ayant disparu, le rapport header/carte
+   a changé.
+5. ⬜ #6 centrage du well `RestPicker` (feuille routine).
+6. ⬜ #4 phrase de repos raccourcie (feuille routine).
 
 > **Piège d'outillage trouvé au passage — vitest exécutait les worktrees d'agent.** `test:run` n'avait
 > aucun `exclude`, donc il ramassait les tests des trois copies du dépôt sous `.claude/worktrees/` :
