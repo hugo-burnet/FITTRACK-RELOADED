@@ -2,10 +2,12 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-23 (Lot 6 tranche 1 — trois défauts du minuteur remontés en usage
-réel et corrigés : réglage du repos en `m:ss`, barre fluide, décochage qui stoppe ; puis le **même
-piège de la virgule** débusqué une cellule plus loin — la durée d'une série, dans la grille comme sur
-la routine, refuse désormais le décimal ; **checkpoint en salle à faire**, celui du Lot 5 aussi)
+**Dernière mise à jour :** 2026-07-24 (Retour post-séance en salle : survie au kill et mode avion
+**validés**. Sept retours triés — un faux bug (historique = Lot 7 non fait), un vrai corrigé
+(**bouton d'ajout en séance vide**, commit `614e523`), cinq réglages en attente. **Refonte de
+l'écran de séance décidée** avec l'utilisateur : repli des exos finis + chrono épinglé + repos dans
+le statut de la card active — à construire, une tâche à la fois. Au passage, **vitest exécutait les
+worktrees d'agent** — 943 tests fantômes ramenés à 242, commit `b7dda06`)
 
 ## Lot en cours
 
@@ -138,6 +140,77 @@ devient « 13 », `inputMode="numeric"`, aucune virgule ne s'inscrit. `typecheck
 > **Note de comptage.** Les entrées de la tranche minuteur annonçaient « 458 tests », un chiffre qui
 > ne correspond pas au dépôt : `test:run` en compte **242** ici (238 avant ce correctif). Le vrai fil
 > est 217 (Lot 5) → 238 → 242. Les deux « 458 » ci-dessus ont été ramenés à 238.
+
+### Retour post-séance, et la refonte de l'écran de séance décidée — 2026-07-24
+
+Premier vrai usage en salle du Lot 5 + minuteur. **Survie au kill et mode avion : OK.** Sept retours
+remontés, tous triés **avant** de toucher au code (le code lu et l'app pilotée en 375×812).
+
+**Deux « bugs », deux verdicts opposés :**
+
+- **Historique vide après la séance — ce n'est pas un bug.** `HistoryScreen` est une souche : l'écran
+  d'historique est le **Lot 7**, pas encore fait. La donnée, elle, est bien écrite par
+  `finishWorkout` — c'est *pourquoi* une routine déjà faite se pré-remplit ensuite
+  (`getLastPerformance`). Rien de perdu, juste pas encore d'écran pour la relire.
+- **Aucun bouton pour ajouter un exo en séance vide — vrai bug, corrigé (tâche 1, commit `614e523`).**
+  Pas un commit oublié : le sélecteur `/workout/add` et l'`AddRow` existaient. Le bouton était
+  seulement **enfermé dans la branche `exercises.length > 0`** de `WorkoutScreen`, alors que
+  l'éditeur de routine le rend toujours au pied de la liste. Sorti de la condition, même carte, même
+  geste dans les deux états. Le cas se produit via « Démarrer une séance vide » (accueil). Vérifié en
+  pilotant : bouton présent (48×343), mène à `/workout/add`.
+
+**Cinq réglages, mesurés dans l'app, en attente :**
+
+- **#7 — 1ère carte collée au header.** Gap meter→carte = **0 px** contre **12 px** entre cartes
+  (`Screen`, conteneur de scroll `padding-top: 0`). À reprendre **après** la refonte, qui rebat cette
+  mise en page.
+- **#6 — nombre mal centré dans le well du `RestPicker`** (feuille « Dans cette routine »). Le nombre
+  tombe **10 px trop haut** : le well est en `items-baseline` au lieu de `items-center`.
+- **#4 — phrase de repos trop longue.** `routine.restFromExercise` fait **2 lignes à 375 px** (3 avec
+  une police système plus grande). À raccourcir.
+- **#5 — chrono en header : absorbé par la refonte** (chrono global épinglé au header).
+- **Export JSON en fin de séance** (a. séance seule / b. historique complet) : **n'existe pas**, c'est
+  le **Lot 8** (Réglages & export/import). Aligné local-first. À cadrer plus tard.
+
+**La refonte de l'écran de séance — décidée avec l'utilisateur, à construire.**
+
+Principe : **chaque timer va où vit son sens**, et les exos finis quittent le board.
+
+- **Repli des exos terminés** en header gris/vert, dépliables au clic (accordéon). C'est le *repli*
+  qui porte « où j'en suis » — pas une horloge qui voyage. Règle de repli : replier quand toutes les
+  séries *actuelles* sont cochées ; re-déplier si on décoche ou ajoute une série ; toggle manuel au
+  clic. L'édition d'une série cochée reste possible (rouvrir l'exo — décision Lot 5 conservée).
+- **Chrono global épinglé au header** (fait de *séance*, jamais scrollé). Pas dans une card : une card
+  scrolle, et y parquer l'horloge lui donnerait deux contrats (temps + « tu es ici ») — le piège du
+  « slot à deux contrats » déjà consigné.
+- **Repos dans le statut de la card active.** Le statut « ● en cours » devient « ● Repos 0:47 » le
+  temps du repos (le point `●` reste, seul le texte bascule), en `--accent-ink`. **Le filet reste
+  inchangé** (la barre fluide du Lot 6). Le repos n'est pas un 3ᵉ élément : c'est le statut du moment.
+  Idée de l'utilisateur, retenue telle quelle. C'est un **retour** au placement pré-Lot-6-final (le
+  repos vivait sur la série), réhabilité par le repli : la card active reste près du haut.
+- **Écarté : le chrono qui « voyage » de card en card.** Il suppose une progression linéaire que
+  l'app refuse (désordre, superset, insertion mid-séance) et il double le sens que le repli porte déjà.
+- **À juger en salle** : si un repos déborde pendant qu'on prépare l'exo suivant, le décompte est sur
+  le header de l'exo *précédent* ; avec le repli il n'est qu'à un header de distance — probablement un
+  faux problème, mais à sentir au doigt.
+
+**File des tâches (ordre d'importance), une par une, arrêt entre chaque :**
+
+1. ✅ Bouton d'ajout en séance vide (`614e523`).
+2. ⬜ Repli des exos terminés (accordéon) — touche `WorkoutExerciseCard` + `WorkoutScreen`.
+3. ⬜ Chrono global au header + repos dans le statut — dissout le bandeau `WorkoutMeter`, absorbe #5.
+4. ⬜ #7 espacement 1ère carte (après la refonte).
+5. ⬜ #6 centrage du well `RestPicker`.
+6. ⬜ #4 phrase de repos raccourcie.
+
+> **Piège d'outillage trouvé au passage — vitest exécutait les worktrees d'agent.** `test:run` n'avait
+> aucun `exclude`, donc il ramassait les tests des trois copies du dépôt sous `.claude/worktrees/` :
+> **943 tests** au lieu de 242, run 4× plus long, et un test cassé dans un vieux worktree aurait fait
+> échouer la CI sans rapport avec le code. **C'est le pendant exact de la note « ESLint ignore
+> `.claude` »**, jamais transposé à vitest. Corrigé (`b7dda06`) : `exclude` reprend
+> `configDefaults.exclude` + `**/.claude/**`, et `defineConfig` vient de `vitest/config` (au lieu de
+> la triple-slash). **Le vrai compte est 242** ; toute entrée plus ancienne qui cite un autre chiffre
+> comptait peut-être les worktrees.
 
 ### Ce que le Lot 6 ajoute à la charte
 
