@@ -6,7 +6,6 @@ import { isRepRange, isSetRecordable, repsReading } from '@/lib/measurement';
 import type { EntryColumn, ResolvedValues, TargetField } from '@/lib/measurement';
 import { formatNumber } from '@/ui/numberField';
 import { CheckIcon } from '@/ui/icons';
-import { RestRail } from './RestRail';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
 
@@ -47,8 +46,6 @@ type Props = {
   onComplete: (values: Partial<SetValues>) => void;
   onUncomplete: () => void;
   onMenu: () => void;
-  /** Set only on the one set currently resting. Draws the bar along the bottom. */
-  rest?: { startedAt: number; endsAt: number; onDone: () => void };
 };
 
 /**
@@ -76,7 +73,6 @@ export function WorkoutSetRow({
   onComplete,
   onUncomplete,
   onMenu,
-  rest,
 }: Props) {
   const done = set.isCompleted === 1;
 
@@ -143,13 +139,10 @@ export function WorkoutSetRow({
 
   return (
     <div
-      // 60 px and a bottom padding, not the 56 px of Lot 5: the row keeps a
-      // channel of its own under the controls, and the rest bar lives in it.
-      //
-      // Measured first, which is why it is not 56: 48 px of controls centred in
-      // 56 leave 4 px of slack, and a 3 px bar in it ran **under the tick**.
-      // The channel is reserved on **every** row, resting or not — a row that
-      // grew when a rest started would shove the list sixty times a session.
+      // 60 px and a bottom padding, kept from Lot 5 when the rest bar still lived
+      // in this row's lower channel. The bar has since moved to the header meter
+      // (`WorkoutMeter`), where it stays in view through a scroll; the row keeps
+      // its rhythm rather than being re-tuned to reclaim the four pixels.
       className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
@@ -247,10 +240,6 @@ export function WorkoutSetRow({
           <CheckIcon width={14} height={14} />
         </span>
       </button>
-
-      {rest !== undefined && (
-        <RestRail startedAt={rest.startedAt} endsAt={rest.endsAt} onDone={rest.onDone} />
-      )}
     </div>
   );
 }

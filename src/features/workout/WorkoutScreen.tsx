@@ -19,7 +19,7 @@ import {
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import type { SetType } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { formatRest, isRestTriggering, resolveRestSeconds } from '@/lib/rest';
+import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
 import { toBlocks } from '@/lib/routineOrder';
 import { useRestTimer } from '@/stores/restTimer';
 import {
@@ -36,11 +36,10 @@ import {
   Textarea,
 } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
-import { ElapsedTime } from './ElapsedTime';
 import { unlockChime } from './restChime';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
-import { workoutProgressLine } from './summary';
+import { WorkoutMeter } from './WorkoutMeter';
 
 type SheetState =
   | { kind: 'workout' }
@@ -223,6 +222,25 @@ export function WorkoutScreen() {
           <MoreIcon />
         </HeaderAction>
       }
+      /* Le temps écoulé, l'avancement et le repos, épinglés sous le titre : les
+         relevés qu'on lit entre deux séries ne doivent pas partir au défilement. */
+      sub={
+        <WorkoutMeter
+          startedAt={workout.startedAt}
+          completedSets={completedSets}
+          totalSets={totalSets}
+          rest={
+            rest.setId === null
+              ? null
+              : {
+                  setId: rest.setId,
+                  startedAt: rest.startedAt,
+                  endsAt: rest.endsAt,
+                  onDone: () => rest.stop(),
+                }
+          }
+        />
+      }
       footer={
         <ActionBand
           label={t('workout.finish')}
@@ -234,27 +252,6 @@ export function WorkoutScreen() {
         <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
       ) : (
         <div className="flex flex-col gap-2">
-          {/* Le temps écoulé et l'avancement, dans les deux registres du Lot 1 :
-              un chiffre tabulaire et un micro-libellé gravé. Hors de la liste
-              réordonnable — elle fait correspondre ses enfants aux index un pour
-              un, un enfant intrus décalerait chaque glissement. */}
-          <div className="flex items-baseline gap-2 px-1">
-            <ElapsedTime startedAt={workout.startedAt} className="text-base text-[var(--text-1)]" />
-            <span className="label-xs font-semibold text-[var(--text-2)]">
-              {workoutProgressLine(completedSets, totalSets)}
-            </span>
-            {/* Le seul texte du minuteur. Il ne bat pas — il dit combien dure la
-                pause, une fois. C'est du texte, donc il ne coûte aucune hauteur :
-                la ligne mesure la même chose avec et sans repos. Et c'est le
-                canal redondant qu'exige la règle du Lot 4, un accent seul ne
-                pouvant pas porter du sens. */}
-            {rest.setId !== null && (
-              <span className="label-xs font-semibold text-[var(--accent-ink)]">
-                {t('workout.restLabel', { duration: formatRest(rest.seconds) })}
-              </span>
-            )}
-          </div>
-
           <ReorderableList
             className="flex flex-col gap-3"
             items={exercises}
@@ -267,7 +264,6 @@ export function WorkoutScreen() {
                 state={state}
                 onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                 onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
-                rest={rest.setId === null ? undefined : { ...rest, setId: rest.setId, onDone: () => rest.stop() }}
                 onWrite={(setId, values) => void updateSetValues(setId, values)}
                 onComplete={(setId, values, set) => {
                   void completeSet(setId, values);

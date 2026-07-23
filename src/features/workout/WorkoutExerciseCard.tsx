@@ -29,8 +29,6 @@ type Props = {
   onDeleteSet: (setId: string) => void;
   onRestoreSet: (setId: string) => void;
   onAddSet: () => void;
-  /** The rest in progress, when it belongs to one of this card's sets. */
-  rest?: { setId: string; startedAt: number; endsAt: number; onDone: () => void };
 };
 
 /** A, B, C — the order you alternate in, which is what a superset is. */
@@ -65,7 +63,6 @@ export function WorkoutExerciseCard({
   onDeleteSet,
   onRestoreSet,
   onAddSet,
-  rest,
 }: Props) {
   const { row, exercise, sets, previous } = line;
   const name = exercise?.name ?? t('workout.deletedExercise');
@@ -207,7 +204,6 @@ export function WorkoutExerciseCard({
                 number={index + 1}
                 columns={columns}
                 previous={previous[index]}
-                rest={rest?.setId === set.id ? rest : undefined}
                 onWrite={(values) => onWrite(set.id, values)}
                 onComplete={(values) => onComplete(set.id, values, set)}
                 onUncomplete={() => onUncomplete(set.id)}

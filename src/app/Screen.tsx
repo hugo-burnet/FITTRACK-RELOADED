@@ -13,6 +13,14 @@ type Props = {
   /** Right-hand slot in the header: a count, an action. */
   action?: ReactNode;
   /**
+   * A fixed band directly under the title, still outside the scroll. For the one
+   * screen that has instruments to keep in view no matter how far the content
+   * runs — the live session's clock and rest bar. On its own line, never beside
+   * the title: a reading set next to a user-chosen name makes two texts fight for
+   * one 375 px line (the Lot 4 lesson `workoutProgressLine` records).
+   */
+  sub?: ReactNode;
+  /**
    * L'`ActionBand` de l'écran : son verbe, dans la zone du pouce (règle du
    * Lot 3). **Une seule**, et jamais une navigation — revenir en arrière est le
    * travail de la flèche de l'en-tête, pas d'un second bouton. Absente, rien
@@ -47,7 +55,7 @@ type Props = {
  * défilant refuse de rétrécir sous sa hauteur de contenu, et c'est la page
  * entière qui se met à défiler — pied compris.
  */
-export function Screen({ title, onBack, action, footer, children }: Props) {
+export function Screen({ title, onBack, action, sub, footer, children }: Props) {
   return (
     <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
       <header className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
@@ -69,6 +77,10 @@ export function Screen({ title, onBack, action, footer, children }: Props) {
         </h1>
         {action}
       </header>
+
+      {/* Pinned with the header, above the scroll: whatever it holds stays in view
+          while the content below it runs. Rendered raw — it carries its own edge. */}
+      {sub}
 
       {/* Grows to fill the screen so a lone empty state can centre itself in it. */}
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pb-8">
