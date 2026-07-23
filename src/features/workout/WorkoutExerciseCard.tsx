@@ -127,7 +127,10 @@ export function WorkoutExerciseCard({
       {superset !== undefined && (
         <span
           aria-hidden="true"
-          className={`absolute top-0 left-0 w-[3px] bg-[var(--color-accent)]
+          // INK, not fill: this rule has to be legible against the surface, it does
+          // not carry --color-accent-fg on top of it. The raw accent measured 1,29:1
+          // on the light page — invisible — against 5,23:1 here. cf. index.css.
+          className={`absolute top-0 left-0 w-[3px] bg-[var(--accent-ink)]
             ${first ? 'rounded-t-full' : ''} ${last ? 'rounded-b-full' : ''}`}
           // Runs into the gap on every member but the last, so the bracket is
           // continuous rather than a stack of dashes. -0.75rem is the `gap-3` of
