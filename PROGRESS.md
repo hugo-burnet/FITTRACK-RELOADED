@@ -197,7 +197,12 @@ Principe : **chaque timer va où vit son sens**, et les exos finis quittent le b
 **File des tâches (ordre d'importance), une par une, arrêt entre chaque :**
 
 1. ✅ Bouton d'ajout en séance vide (`614e523`).
-2. ⬜ Repli des exos terminés (accordéon) — touche `WorkoutExerciseCard` + `WorkoutScreen`.
+2. ✅ **Repli des exos terminés** (`2e69376`) — dans `WorkoutExerciseCard` seul, pas `WorkoutScreen`.
+   Le header devient le bouton de repli ; repli/dépli piloté par la complétion (état ajusté pendant
+   le rendu, motif `NumberInput`), toggle manuel, re-dépli sur décochage/ajout. Vérifié en pilotant,
+   deux thèmes. **Repli instantané, pas d'animation de hauteur** : le chevron tourne (`rotate` v4),
+   le corps apparaît d'un coup. Choix de v1 — à juger en salle : si le « pop » gêne, l'animation
+   `1fr → 0fr` (celle d'`UndoRow`) est le repli tout prêt. **Point de checkpoint.**
 3. ⬜ Chrono global au header + repos dans le statut — dissout le bandeau `WorkoutMeter`, absorbe #5.
 4. ⬜ #7 espacement 1ère carte (après la refonte).
 5. ⬜ #6 centrage du well `RestPicker`.
