@@ -140,9 +140,10 @@ export function WorkoutSetRow({
   return (
     <div
       // 60 px and a bottom padding, kept from Lot 5 when the rest bar still lived
-      // in this row's lower channel. The bar has since moved to the header meter
-      // (`WorkoutMeter`), where it stays in view through a scroll; the row keeps
-      // its rhythm rather than being re-tuned to reclaim the four pixels.
+      // in this row's lower channel. The bar has since moved to the exercise
+      // card's own bottom edge (`RestRail`), where it stays in view even once the
+      // finished exercise folds; the row keeps its rhythm rather than being
+      // re-tuned to reclaim the four pixels.
       className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}

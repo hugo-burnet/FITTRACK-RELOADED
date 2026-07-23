@@ -7,6 +7,7 @@ import { entryColumns } from '@/lib/measurement';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
 import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon } from '@/ui/icons';
+import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
 import { setReading } from './summary';
 
@@ -16,9 +17,14 @@ type DeletedSet = { setId: string; rank: number; reading: string };
 /** Where this exercise sits in its superset. Absent = not in one. */
 export type SupersetPlace = { index: number; size: number };
 
+/** The rest this card owns, or null — passed only to the card whose set rests. */
+export type CardRest = { setId: string; startedAt: number; endsAt: number; onDone: () => void };
+
 type Props = {
   line: WorkoutExerciseDetail;
   superset?: SupersetPlace;
+  /** Non-null while one of this exercise's sets is resting. */
+  rest: CardRest | null;
   state: ItemState;
   onMenu: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
@@ -54,6 +60,7 @@ const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
 export function WorkoutExerciseCard({
   line,
   superset,
+  rest,
   state,
   onMenu,
   onSetMenu,
@@ -130,7 +137,7 @@ export function WorkoutExerciseCard({
       )}
 
       <div
-        className={`overflow-hidden rounded-2xl transition-colors duration-[var(--dur-1)]
+        className={`relative overflow-hidden rounded-2xl transition-colors duration-[var(--dur-1)]
           ${
             state.dragging
               ? 'bg-[var(--surface-2)] ring-2 ring-[var(--accent-ink)]'
@@ -178,19 +185,24 @@ export function WorkoutExerciseCard({
                   {name}
                 </span>
               </span>
-              {/* Déplié : le sous-titre de l'exo. Replié : ce qu'on a fait — la
-                  dernière série en relevé, comme la colonne « précédent ». */}
-              {expanded
-                ? exercise !== undefined && (
-                    <span className="truncate text-sm text-[var(--text-2)]">
-                      {exerciseSubtitle(exercise)}
-                    </span>
-                  )
-                : doneReading !== '' && (
-                    <span className="metric truncate text-sm text-[var(--text-2)]">
-                      {doneReading}
-                    </span>
-                  )}
+              {/* Le repos prend la place du sous-titre le temps qu'il coule :
+                  un repos est le statut du moment, pas un 3ᵉ élément. Sinon,
+                  déplié = sous-titre, replié = la dernière série en relevé. */}
+              {rest !== null ? (
+                <RestStatus endsAt={rest.endsAt} />
+              ) : expanded ? (
+                exercise !== undefined && (
+                  <span className="truncate text-sm text-[var(--text-2)]">
+                    {exerciseSubtitle(exercise)}
+                  </span>
+                )
+              ) : (
+                doneReading !== '' && (
+                  <span className="metric truncate text-sm text-[var(--text-2)]">
+                    {doneReading}
+                  </span>
+                )
+              )}
             </span>
             {/* ▶ replié, ▼ déplié — le mouvement de divulgation le plus courant. */}
             <ChevronDownIcon
@@ -279,6 +291,20 @@ export function WorkoutExerciseCard({
 
             <AddRow label={t('workout.addSet')} onClick={onAddSet} />
           </>
+        )}
+
+        {/* Le filet, inchangé (Lot 6), posé au bas de la card : visible que
+            l'exo soit déplié ou replié — et le cas courant est justement replié,
+            puisque cocher la dernière série referme l'exo pendant que le repos
+            coule. Keyé sur la série pour qu'un nouveau repos reparte du départ,
+            jamais du reliquat du précédent. */}
+        {rest !== null && (
+          <RestRail
+            key={rest.setId}
+            startedAt={rest.startedAt}
+            endsAt={rest.endsAt}
+            onDone={rest.onDone}
+          />
         )}
       </div>
     </div>

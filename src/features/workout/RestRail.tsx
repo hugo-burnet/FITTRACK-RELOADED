@@ -136,3 +136,33 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     </span>
   );
 }
+
+/**
+ * « ● Repos 0:47 » — the rest countdown, to the second, in the status line of the
+ * card whose set is resting. It replaces that card's subtitle while the rest runs
+ * and vanishes with it, so a rest is the *state of the moment*, not a third thing
+ * to fit on the row.
+ *
+ * Its own component so its per-second tick re-renders **only itself** — never the
+ * card around it, and never the sibling `RestRail`, which the compositor drives
+ * and must not be re-rendered every second (cf. its note above).
+ */
+export function RestStatus({ endsAt }: { endsAt: number }) {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));
+
+  return (
+    <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-[var(--accent-ink)]">
+      <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]" />
+      <span className="tabular truncate">
+        {t('workout.restLabel', { duration: formatRest(remaining) })}
+      </span>
+    </span>
+  );
+}

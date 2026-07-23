@@ -36,10 +36,11 @@ import {
   Textarea,
 } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
+import { ElapsedTime } from './ElapsedTime';
 import { unlockChime } from './restChime';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
-import { WorkoutMeter } from './WorkoutMeter';
+import { workoutProgressLine } from './summary';
 
 type SheetState =
   | { kind: 'workout' }
@@ -218,28 +219,20 @@ export function WorkoutScreen() {
          important de l'app. Il descend au-dessus de la liste, là où le Lot 4 a
          mis les relevés. */
       action={
-        <HeaderAction label={t('workout.workoutMenu')} onClick={() => setSheet({ kind: 'workout' })}>
-          <MoreIcon />
-        </HeaderAction>
-      }
-      /* Le temps écoulé, l'avancement et le repos, épinglés sous le titre : les
-         relevés qu'on lit entre deux séries ne doivent pas partir au défilement. */
-      sub={
-        <WorkoutMeter
-          startedAt={workout.startedAt}
-          completedSets={completedSets}
-          totalSets={totalSets}
-          rest={
-            rest.setId === null
-              ? null
-              : {
-                  setId: rest.setId,
-                  startedAt: rest.startedAt,
-                  endsAt: rest.endsAt,
-                  onDone: () => rest.stop(),
-                }
-          }
-        />
+        <div className="flex items-center gap-2">
+          {/* Le chrono global, épinglé au header : c'est un fait de séance, pas
+              d'exercice, donc il ne descend jamais dans une card ni ne part au
+              défilement. À droite du titre, à gauche du menu — l'avancement
+              descend au-dessus de la liste, le repos vit sur la card. Le bandeau
+              `WorkoutMeter` est dissous : chaque relevé va où vit son sens. */}
+          <ElapsedTime startedAt={workout.startedAt} className="text-base text-[var(--text-2)]" />
+          <HeaderAction
+            label={t('workout.workoutMenu')}
+            onClick={() => setSheet({ kind: 'workout' })}
+          >
+            <MoreIcon />
+          </HeaderAction>
+        </div>
       }
       footer={
         <ActionBand
@@ -252,36 +245,54 @@ export function WorkoutScreen() {
         {exercises.length === 0 ? (
           <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
         ) : (
-          <ReorderableList
-            className="flex flex-col gap-3"
-            items={exercises}
-            keyOf={(line) => line.row.id}
-            onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
-            renderItem={(line, _index, state) => (
-              <WorkoutExerciseCard
-                line={line}
-                superset={places.get(line.row.id)}
-                state={state}
-                onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
-                onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
-                onWrite={(setId, values) => void updateSetValues(setId, values)}
-                onComplete={(setId, values, set) => {
-                  void completeSet(setId, values);
-                  startRest(line.row.id, setId, set.setType);
-                }}
-                onUncomplete={(setId) => {
-                  void uncompleteSet(setId);
-                  // The rest this set started ends with it. `stop(setId)` only
-                  // touches the rest that belongs to this set, so un-ticking an
-                  // older set never cancels a rest a newer one is running.
-                  stopRest(setId);
-                }}
-                onDeleteSet={(setId) => void deleteSet(setId)}
-                onRestoreSet={(setId) => void restoreSet(setId)}
-                onAddSet={() => void duplicateLastSet(line.row.id)}
-              />
-            )}
-          />
+          <>
+            {/* L'avancement descend au-dessus de la liste qu'il compte (règle du
+                Lot 4), là où l'ancien bandeau le pinglait. */}
+            <p className="label-xs px-1 font-semibold text-[var(--text-2)]">
+              {workoutProgressLine(completedSets, totalSets)}
+            </p>
+            <ReorderableList
+              className="flex flex-col gap-3"
+              items={exercises}
+              keyOf={(line) => line.row.id}
+              onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
+              renderItem={(line, _index, state) => (
+                <WorkoutExerciseCard
+                  line={line}
+                  superset={places.get(line.row.id)}
+                  // The rest belongs to the exercise whose set is counting down.
+                  rest={
+                    rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
+                      ? {
+                          setId: rest.setId,
+                          startedAt: rest.startedAt,
+                          endsAt: rest.endsAt,
+                          onDone: () => rest.stop(),
+                        }
+                      : null
+                  }
+                  state={state}
+                  onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
+                  onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
+                  onWrite={(setId, values) => void updateSetValues(setId, values)}
+                  onComplete={(setId, values, set) => {
+                    void completeSet(setId, values);
+                    startRest(line.row.id, setId, set.setType);
+                  }}
+                  onUncomplete={(setId) => {
+                    void uncompleteSet(setId);
+                    // The rest this set started ends with it. `stop(setId)` only
+                    // touches the rest that belongs to this set, so un-ticking an
+                    // older set never cancels a rest a newer one is running.
+                    stopRest(setId);
+                  }}
+                  onDeleteSet={(setId) => void deleteSet(setId)}
+                  onRestoreSet={(setId) => void restoreSet(setId)}
+                  onAddSet={() => void duplicateLastSet(line.row.id)}
+                />
+              )}
+            />
+          </>
         )}
 
         {/* Toujours au pied de la liste, identique que la séance soit vide ou
