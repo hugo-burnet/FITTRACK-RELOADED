@@ -183,9 +183,12 @@ export function WorkoutScreen() {
   const plans = restPlans(exercises);
 
   /**
-   * Validating a set is what starts a rest — and the only two things that stop
-   * one are the exercise leaving or the rest running out. Un-ticking does
-   * **not**: fixing a typo must not cost you your recovery.
+   * Validating a set is what starts its rest. A rest ends three ways: it runs
+   * out, its exercise leaves the session, or the set is un-ticked (`onUncomplete`
+   * below). Un-ticking stops it because a set you un-tick is one you are no
+   * longer resting on — and fixing a typo is not a reason to un-tick, since the
+   * figures stay editable while the set is ticked (`SetValueCell`). Nothing
+   * fires for a warm-up or between two members of a superset (`isRestTriggering`).
    */
   const startRest = (rowId: string, setId: string, setType: SetType): void => {
     const plan = plans.get(rowId);
@@ -270,7 +273,13 @@ export function WorkoutScreen() {
                   void completeSet(setId, values);
                   startRest(line.row.id, setId, set.setType);
                 }}
-                onUncomplete={(setId) => void uncompleteSet(setId)}
+                onUncomplete={(setId) => {
+                  void uncompleteSet(setId);
+                  // The rest this set started ends with it. `stop(setId)` only
+                  // touches the rest that belongs to this set, so un-ticking an
+                  // older set never cancels a rest a newer one is running.
+                  stopRest(setId);
+                }}
                 onDeleteSet={(setId) => void deleteSet(setId)}
                 onRestoreSet={(setId) => void restoreSet(setId)}
                 onAddSet={() => void duplicateLastSet(line.row.id)}
