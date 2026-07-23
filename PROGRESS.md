@@ -3,8 +3,9 @@
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
 **Dernière mise à jour :** 2026-07-23 (Lot 6 tranche 1 — trois défauts du minuteur remontés en usage
-réel et corrigés : réglage du repos en `m:ss`, barre fluide, décochage qui stoppe ; **checkpoint en
-salle à faire**, celui du Lot 5 aussi)
+réel et corrigés : réglage du repos en `m:ss`, barre fluide, décochage qui stoppe ; puis le **même
+piège de la virgule** débusqué une cellule plus loin — la durée d'une série, dans la grille comme sur
+la routine, refuse désormais le décimal ; **checkpoint en salle à faire**, celui du Lot 5 aussi)
 
 ## Lot en cours
 
@@ -21,7 +22,7 @@ l'utilisateur — le détail et les raisons sont dans le plan, section « La for
 
 ### État vérifié le 2026-07-22
 
-- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**458 tests**), `npm run build`.
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**238 tests**), `npm run build`.
 - ✅ **Vérifié dans la vraie app, sur une vraie séance** : cocher une série démarre le repos, la
   barre avance, atteint 100 %, et **le repos se referme seul après la grâce**.
 - ✅ Contrastes mesurés aux deux thèmes : barre/ligne **12,87:1 sombre, 5,23:1 clair** ; barre/voie
@@ -106,9 +107,37 @@ vérifier si sa prémisse tient à l'écran.
 
 Vérifié en pilotant la vraie app : le picker stocke des entiers propres (150, 165, jamais 2.3) ;
 cocher arme une `CSSTransition` `width` linéaire sur la durée restante ; décocher démonte la barre ;
-recocher repart. `typecheck`, `test:run` (**458, inchangé** — trois correctifs de composant, couverts
+recocher repart. `typecheck`, `test:run` (**238, inchangé** — trois correctifs de composant, couverts
 par l'E2E), `build` : les trois passent. Le rendu fluide se juge sur un écran allumé — **checkpoint
 en salle.**
+
+### Le même piège, une cellule plus loin — la durée d'une série — 2026-07-23
+
+Le picker a réglé le **repos**, mais la même virgule attendait deux cellules plus loin, sur la durée
+*saisie*. Dans la grille de séance, une série chronométrée s'entre dans `SetValueCell` — le même champ
+que la charge, qui *doit* accepter le décimal (« 102,5 » pour une demi-plaque). Conséquence exacte du
+défaut du minuteur : sur un gainage, « 1:30 » tapé « 1,3 » y stockait **1,3 seconde**. Et la « Durée
+visée » d'une routine (`RoutineSetSheet`, un `NumberInput`) portait le même trou, **jamais corrigé**
+par la tranche minuteur — celle-ci n'avait touché que le *repos*, pas la durée prescrite.
+
+Pas de picker cette fois. Une cellule de 3,5 rem n'a pas la place des `±48 px` (c'est écrit dans
+`SetValueCell`), et surtout un clavier numérique n'a pas de touche `:` — un `m:ss` tapé n'y est pas
+atteignable. Le champ reste, on lui retire le séparateur : `ui/numberField` gagne `INTEGER` à côté de
+`NUMERIC`, et la colonne durée — grille **et** routine — refuse la virgule et passe le clavier en
+`numeric`. La charge et les reps gardent leur décimal. C'est la préférence déjà consignée en mémoire :
+*contraindre la saisie plutôt que la remplacer par des chips*.
+
+Une durée reste **en secondes entières**, comme le Lot 5 l'avait décidé (« une durée se saisit en
+secondes, pas en m:ss ») ; la grille lit déjà « 90 » partout (précédent, fantôme), donc rien ne change
+à l'affichage — seul le décimal disparaît. Aucune chaîne d'UI ajoutée.
+
+Vérifié en pilotant la vraie app sur « Gainage planche » (`time_only`) : « 1,3 » tapé dans la cellule
+devient « 13 », `inputMode="numeric"`, aucune virgule ne s'inscrit. `typecheck`, `test:run` (**242**,
++4 : la cellule et le champ entier), `build` : les trois passent.
+
+> **Note de comptage.** Les entrées de la tranche minuteur annonçaient « 458 tests », un chiffre qui
+> ne correspond pas au dépôt : `test:run` en compte **242** ici (238 avant ce correctif). Le vrai fil
+> est 217 (Lot 5) → 238 → 242. Les deux « 458 » ci-dessus ont été ramenés à 238.
 
 ### Ce que le Lot 6 ajoute à la charte
 

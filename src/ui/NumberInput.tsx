@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatNumber as format, NUMERIC, parseNumber as parse } from './numberField';
+import { formatNumber as format, INTEGER, NUMERIC, parseNumber as parse } from './numberField';
 
 type Props = {
   value: number | undefined;
@@ -9,6 +9,12 @@ type Props = {
   max?: number;
   suffix?: string;
   placeholder?: string;
+  /**
+   * Refuse the decimal separator — for a field entered in whole units, a
+   * duration above all: "1:30" reached for as "1,3" must not store 1.3 s. The
+   * load and the distance keep their decimal; only the seconds field sets this.
+   */
+  integer?: boolean;
   'aria-label': string;
 };
 
@@ -20,8 +26,10 @@ export function NumberInput({
   max = 9999,
   suffix,
   placeholder,
+  integer,
   ...aria
 }: Props) {
+  const pattern = integer ? INTEGER : NUMERIC;
   // Le champ garde sa propre chaîne de saisie : sans ça, "102," est reparsé en 102
   // et la virgule disparaît sous les doigts — décimale impossible à taper.
   const [draft, setDraft] = useState(() => format(value));
@@ -37,7 +45,7 @@ export function NumberInput({
   }
 
   const handleInput = (raw: string) => {
-    if (!NUMERIC.test(raw)) return; // refuse lettres et séparateurs multiples
+    if (!pattern.test(raw)) return; // refuse lettres, séparateurs multiples, et la virgule sur un entier
     setDraft(raw);
     onChange(parse(raw));
   };
@@ -60,7 +68,7 @@ export function NumberInput({
       <div className="relative flex w-full">
         <input
           type="text"
-          inputMode="decimal"
+          inputMode={integer ? 'numeric' : 'decimal'}
           enterKeyHint="done"
           value={draft}
           placeholder={placeholder}

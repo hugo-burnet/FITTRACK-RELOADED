@@ -10,6 +10,21 @@
 /** Digits and at most one separator. Rejects letters and a second comma. */
 export const NUMERIC = /^\d*[.,]?\d*$/;
 
+/**
+ * The same field with the separator taken away — digits only.
+ *
+ * The live grid's duration cell shares its input with the load, where a
+ * separator is not merely allowed but required: "102,5" for a half-plate. That
+ * is exactly what makes a duration dangerous in the same shape of field — a
+ * lifter reaching for a 1:30 plank types "1,3", the shape of a clock read as a
+ * decimal, and stores 1.3 seconds. Lot 6 met this on the rest timer and answered
+ * it by removing the text field outright (`RestPicker`); a 3.5rem grid cell has
+ * no room for a picker's ±48px steppers, so the duration column keeps the field
+ * and refuses the separator instead. A duration is entered in whole seconds
+ * (`measurement` ENTRY_UNIT), so it never had a use for one.
+ */
+export const INTEGER = /^\d*$/;
+
 export const parseNumber = (raw: string): number | undefined => {
   if (raw === '') return undefined;
   const parsed = Number(raw.replace(',', '.'));

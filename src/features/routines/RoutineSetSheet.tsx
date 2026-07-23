@@ -190,6 +190,9 @@ export function RoutineSetSheet({
               step={15}
               max={7200}
               suffix={t('units.seconds')}
+              // Seconds, whole ones: the same "1,3" that meant 1:30 must not land
+              // here as 1.3 s any more than it does in the live grid.
+              integer
               aria-label={t('routine.targetDurationLabel')}
             />
           </Field>

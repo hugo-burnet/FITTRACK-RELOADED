@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatNumber, NUMERIC, parseNumber } from '@/ui/numberField';
+import { formatNumber, INTEGER, NUMERIC, parseNumber } from '@/ui/numberField';
 
 type Props = {
   value: number | undefined;
@@ -33,6 +33,13 @@ type Props = {
   target?: string;
   onChange: (value: number | undefined) => void;
   width: string;
+  /**
+   * The duration column only. A load needs its decimal — "102,5" for a half-plate
+   * — but on a hold that same freedom is the bug: "1:30" typed as "1,3" stores 1.3
+   * seconds. The separator is refused here, and a duration is entered in whole
+   * seconds (cf. `measurement` ENTRY_UNIT), which is all it ever needed.
+   */
+  integer?: boolean;
   'aria-label': string;
 };
 
@@ -69,7 +76,9 @@ type Props = {
  * wrapper is a `<label>`: the line is not a separate target, it focuses the
  * field like the rest of the cell, and the 48 px stays one tap.
  */
-export function SetValueCell({ value, ghost, target, onChange, width, ...aria }: Props) {
+export function SetValueCell({ value, ghost, target, onChange, width, integer, ...aria }: Props) {
+  // The load takes a decimal, a duration only whole seconds — see `integer`.
+  const pattern = integer ? INTEGER : NUMERIC;
   // The field keeps its own input string: without it "102," is reparsed to 102
   // and the comma vanishes under the fingers — a decimal impossible to type.
   const [draft, setDraft] = useState(() => formatNumber(value));
@@ -105,7 +114,10 @@ export function SetValueCell({ value, ghost, target, onChange, width, ...aria }:
 
       <input
         type="text"
-        inputMode="decimal"
+        // A load needs the separator ("102,5"), so its keypad carries one; a
+        // duration is whole seconds, and a keypad with no separator is one fewer
+        // key to hit the wrong one of, one-handed and in a hurry.
+        inputMode={integer ? 'numeric' : 'decimal'}
         // The phone keyboard's "OK" key. Without it Enter does nothing at all
         // outside a <form>, and the keyboard stays over the grid.
         enterKeyHint="done"
@@ -113,7 +125,7 @@ export function SetValueCell({ value, ghost, target, onChange, width, ...aria }:
         placeholder={ghost}
         onChange={(event) => {
           const raw = event.target.value;
-          if (!NUMERIC.test(raw)) return; // refuse letters and a second separator
+          if (!pattern.test(raw)) return; // refuse letters, and the separator on a duration
           setDraft(raw);
           onChange(parseNumber(raw));
         }}

@@ -194,6 +194,9 @@ export function WorkoutSetRow({
             value={valueOf(column.field)}
             ghost={formatNumber(ghostNumberOf(column.field))}
             target={target}
+            // A hold is entered in whole seconds, never a decimal: "1:30" typed
+            // as "1,3" must not slip through as 1.3 s (cf. the rest timer, Lot 6).
+            integer={column.field === 'duration'}
             onChange={(next) => onWrite(single(column.field, next))}
             width={index === 0 ? WIDTH.first : WIDTH.second}
             // The target line is drawn aria-hidden and said here instead, so a
