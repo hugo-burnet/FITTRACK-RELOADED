@@ -2,7 +2,8 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-22 (Lot 6 tranche 1 — minuteur livré et mesuré ; **checkpoint en
+**Dernière mise à jour :** 2026-07-23 (Lot 6 tranche 1 — trois défauts du minuteur remontés en usage
+réel et corrigés : réglage du repos en `m:ss`, barre fluide, décochage qui stoppe ; **checkpoint en
 salle à faire**, celui du Lot 5 aussi)
 
 ## Lot en cours
@@ -63,6 +64,51 @@ laissent que 4 px de marge, et une barre de 3 px dedans traversait la coche — 
 « pas fini » à l'écran. La ligne passe à **60 px** avec une réserve permanente en bas, réservée sur
 **toutes** les lignes : une ligne qui grandirait au démarrage d'un repos décalerait la liste soixante
 fois par séance.
+
+### Trois défauts de plus, trouvés en s'en servant — 2026-07-23
+
+Le minuteur livré la veille était vérifié en pilotant l'écran de dev. Trois réglages plus tard,
+l'utilisateur en a remonté trois défauts qu'aucune vérification au clavier ne pouvait voir : il
+fallait *régler* un repos et *cocher* une série pour de vrai.
+
+**1. Un repos réglé « 2:30 » durait deux secondes.** Le champ demandait des **secondes**, alors que
+toute l'app écrit ses durées en `m:ss` (« Repos 2:00 », « 1:30 min · 20 kg »). L'utilisateur a tapé
+« 2,3 » en pensant deux minutes et demie ; le champ, qui accepte le décimal pour la charge
+(« 102,5 »), a stocké **2,3 secondes**. Au démarrage de la séance, `resolveRestSeconds` arrondit —
+`Math.round(2.3)` = 2 — et comme 2 > 0 la valeur passe pour un override valide qui bat même le
+défaut de l'exercice. Un champ dont l'unité diffère de la façon dont l'app *montre* la même grandeur
+partout ailleurs : c'est le piège qui se referme.
+
+Correctif : `ui/RestPicker`, qui parle la langue du reste de l'app — une lecture d'horloge `m:ss`,
+des raccourcis tapotables (1:00 · 1:30 · 2:00 · 2:30 · 3:00) et des `±15 s`. **Aucun champ texte :
+retaper « 2,3 » est devenu impossible.** Aux deux points de réglage (fiche exercice, feuille de
+routine) ; `NumberInput` reste tel quel, la virgule y étant indispensable pour la charge. Une donnée
+déjà corrompue ne se devine pas, mais le picker la **rend visible** : un `2.3` stocké s'affiche
+« 0:02 », aucun raccourci allumé, et un seul appui le répare.
+
+*(Ces `±15 s` règlent la durée par défaut ; ils ne contredisent pas le « ±15 s n'existe pas » plus
+haut, qui parlait d'ajuster le compte à rebours **en pleine séance** — ça n'existe toujours pas.)*
+
+**2. La barre avançait par à-coups d'une seconde.** Elle était pilotée par un `setState` à chaque
+seconde, donc elle sautait d'un cran par battement ; l'utilisateur attendait « une ligne bien
+fluide ». Remplacée par **une seule transition CSS linéaire**, armée une fois de la position courante
+jusqu'au plein, sur la durée restante : le compositeur remplit chaque image. Une transition CSS est
+calée sur l'horloge murale, donc elle reste juste après un passage en arrière-plan — là où l'ancien
+battement était étranglé à ~1 cran/minute. Repli **pas-à-pas** sous `prefers-reduced-motion`.
+
+**3. Décocher une série ne coupait pas son repos.** Le code défendait *exactement* ce comportement :
+« corriger une faute de frappe ne doit pas coûter ta récup ». La prémisse était fausse : les chiffres
+d'une série **restent modifiables une fois cochée** (`SetValueCell` n'a aucun état désactivé), donc
+on ne décoche jamais pour corriger un chiffre — décocher veut dire « pas faite », et le repos s'arrête
+avec elle. `stop(setId)` ne touche que le repos de cette série, jamais celui qu'une autre fait
+tourner. **Un raisonnement écrit dans le code n'est pas une preuve sur l'usage** : il faut aller
+vérifier si sa prémisse tient à l'écran.
+
+Vérifié en pilotant la vraie app : le picker stocke des entiers propres (150, 165, jamais 2.3) ;
+cocher arme une `CSSTransition` `width` linéaire sur la durée restante ; décocher démonte la barre ;
+recocher repart. `typecheck`, `test:run` (**458, inchangé** — trois correctifs de composant, couverts
+par l'E2E), `build` : les trois passent. Le rendu fluide se juge sur un écran allumé — **checkpoint
+en salle.**
 
 ### Ce que le Lot 6 ajoute à la charte
 
