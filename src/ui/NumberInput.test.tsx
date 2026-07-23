@@ -58,4 +58,22 @@ describe('NumberInput', () => {
     await userEvent.clear(screen.getByLabelText('Poids'));
     expect(screen.getByTestId('value')).toHaveTextContent('vide');
   });
+
+  it('sur un champ entier, refuse le séparateur décimal', async () => {
+    function IntHarness() {
+      const [value, setValue] = useState<number | undefined>(undefined);
+      return (
+        <>
+          <NumberInput value={value} onChange={setValue} integer step={15} aria-label="Durée" />
+          <output data-testid="int">{value === undefined ? 'vide' : value}</output>
+        </>
+      );
+    }
+    render(<IntHarness />);
+    // « 1,3 » pour dire « 1:30 » : la virgule est refusée d'entrée, donc pas de
+    // 1,3 s stocké — c'est tout l'intérêt du champ entier sur une durée.
+    await userEvent.type(screen.getByLabelText('Durée'), '1,3');
+    expect(screen.getByLabelText('Durée')).toHaveValue('13');
+    expect(screen.getByTestId('int')).toHaveTextContent('13');
+  });
 });

@@ -9,6 +9,8 @@ type Props = {
   max?: number;
   suffix?: string;
   placeholder?: string;
+  /** Whole numbers only — rejects the decimal separator, and ± lands on ints. */
+  integer?: boolean;
   'aria-label': string;
 };
 
@@ -20,6 +22,7 @@ export function NumberInput({
   max = 9999,
   suffix,
   placeholder,
+  integer = false,
   ...aria
 }: Props) {
   // Le champ garde sa propre chaîne de saisie : sans ça, "102," est reparsé en 102
@@ -37,14 +40,18 @@ export function NumberInput({
   }
 
   const handleInput = (raw: string) => {
-    if (!NUMERIC.test(raw)) return; // refuse lettres et séparateurs multiples
+    // Sur un champ entier, la virgule et le point sont refusés d'entrée : « 1,3 »
+    // pour dire « 1:30 » ne peut plus se glisser dans une durée en secondes et y
+    // stocker 1,3 s. Ailleurs (poids), la décimale reste indispensable.
+    const pattern = integer ? /^\d*$/ : NUMERIC;
+    if (!pattern.test(raw)) return; // refuse lettres et séparateurs multiples
     setDraft(raw);
     onChange(parse(raw));
   };
 
   const bump = (delta: number) => {
     const next = Math.min(max, Math.max(min, (value ?? 0) + delta));
-    onChange(Number(next.toFixed(2)));
+    onChange(integer ? Math.round(next) : Number(next.toFixed(2)));
   };
 
   const stepper =
@@ -60,7 +67,8 @@ export function NumberInput({
       <div className="relative flex w-full">
         <input
           type="text"
-          inputMode="decimal"
+          // Un champ entier n'offre même pas la virgule au clavier du téléphone.
+          inputMode={integer ? 'numeric' : 'decimal'}
           enterKeyHint="done"
           value={draft}
           placeholder={placeholder}
