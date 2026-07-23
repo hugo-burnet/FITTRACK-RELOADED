@@ -248,10 +248,10 @@ export function WorkoutScreen() {
         />
       }
     >
-      {exercises.length === 0 ? (
-        <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
-      ) : (
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
+        {exercises.length === 0 ? (
+          <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
+        ) : (
           <ReorderableList
             className="flex flex-col gap-3"
             items={exercises}
@@ -282,18 +282,21 @@ export function WorkoutScreen() {
               />
             )}
           />
+        )}
 
-          {/* Au pied de la liste qu'il allonge, dans le geste que les cartes
-              emploient déjà pour leurs séries. « Terminer » garde la barre
-              collante : c'est la seule action qu'on doit trouver sans chercher. */}
-          <Card>
-            <AddRow
-              label={t('workout.addExercise')}
-              onClick={() => void navigate('/workout/add')}
-            />
-          </Card>
-        </div>
-      )}
+        {/* Toujours au pied de la liste, identique que la séance soit vide ou
+            non : une séance démarrée à vide depuis l'accueil doit pouvoir
+            accueillir son premier exercice — c'était le seul écran où ce geste
+            disparaissait quand la liste était vide. Même carte que l'éditeur de
+            routine, même geste que les cartes emploient pour leurs séries.
+            « Terminer » garde la barre collante. */}
+        <Card>
+          <AddRow
+            label={t('workout.addExercise')}
+            onClick={() => void navigate('/workout/add')}
+          />
+        </Card>
+      </div>
 
       <ActionSheet
         open={sheet?.kind === 'workout'}
