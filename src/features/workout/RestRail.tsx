@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { t } from '@/i18n/fr';
 import { formatRest, restProgress } from '@/lib/rest';
 import { buzzRestOver, playChime } from './restChime';
@@ -23,12 +23,23 @@ type Props = {
  * defect this shape was reported with: "quand il se remplit, il se fond avec
  * d'autres trucs, ça fait pas fini". A lane gives the bar an end to reach.
  *
- * Ticking once a second like `ElapsedTime`, and derived from an instant rather
- * than counted: a backgrounded tab is throttled to about one tick a minute, so
- * anything that counted would drift, and coming back would show a lie.
+ * The bar is advanced by the **compositor**, not by a tick. It was first driven
+ * by a `setState` every second, and it moved in one-second jerks — reported as
+ * "des à-coups par seconde, je voyais plutôt une ligne bien fluide". So instead
+ * a single linear transition is armed once, from wherever the rest currently is
+ * to full, lasting exactly as long as the rest has left; the browser fills in
+ * every frame between. A CSS transition is timed off the wall clock, so it is
+ * also correct after the tab is backgrounded — where the old once-a-second tick
+ * was throttled to roughly one step a minute and the bar lurched on return.
  */
 export function RestRail({ startedAt, endsAt, onDone }: Props) {
-  const [now, setNow] = useState(() => Date.now());
+  const barRef = useRef<HTMLSpanElement | null>(null);
+
+  // Read once: a rest lives about two minutes, far less than it takes to change
+  // an OS accessibility setting mid-set, so there is nothing to subscribe to.
+  const [reduced] = useState(
+    () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
+  );
 
   // Pinned rather than depended on: the caller passes an inline arrow and the
   // grid above re-renders on every keystroke, which would re-arm the timers
@@ -38,19 +49,12 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     done.current = onDone;
   });
 
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const progress = restProgress(startedAt, endsAt, now);
-
   /**
    * Both moments are armed **once, from the deadline** — and neither depends on
-   * `now`.
+   * a tick.
    *
-   * Depending on the tick is what the first version did, and it was silently
-   * broken: `now` changes every second, so each tick cleared the pending
+   * Depending on `now` is what the first version did, and it was silently
+   * broken: `now` changed every second, so each tick cleared the pending
    * timeout and started a fresh one. The grace never elapsed and the bar stood
    * for the whole session. Found by driving the screen, not by a test — the
    * same trap `UndoRow` documents, walked into anyway.
@@ -75,6 +79,36 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     return () => clearTimeout(id);
   }, [endsAt]);
 
+  /**
+   * Arm the smooth bar: jump to the current position with no animation, force a
+   * reflow so the browser takes that as the start, then let it glide to full
+   * over the time that is left. Skipped under reduced motion, where the stepped
+   * path below owns the width instead.
+   */
+  useLayoutEffect(() => {
+    if (reduced) return;
+    const bar = barRef.current;
+    if (bar === null) return;
+    const remaining = Math.max(0, endsAt - Date.now());
+    bar.style.transition = 'none';
+    bar.style.width = `${restProgress(startedAt, endsAt, Date.now()) * 100}%`;
+    if (remaining === 0) return;
+    void bar.offsetWidth; // commit the start position before the next line animates from it
+    bar.style.transition = `width ${remaining}ms linear`;
+    bar.style.width = '100%';
+  }, [startedAt, endsAt, reduced]);
+
+  // The stepped fallback: under reduced motion the bar advances once a second,
+  // in discrete steps, rather than animating. Its tick runs only then, so the
+  // smooth path carries no per-second re-render.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!reduced) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  const progress = restProgress(startedAt, endsAt, now);
   const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));
 
   return (
@@ -86,6 +120,7 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
         rounded-full bg-[var(--border)]"
     >
       <span
+        ref={barRef}
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}
@@ -94,7 +129,9 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
         // that speaks every second is unusable with a screen reader.
         aria-valuetext={t('workout.restRemaining', { time: formatRest(remaining) })}
         className="block h-full rounded-full bg-[var(--accent-ink)]"
-        style={{ width: `${progress * 100}%` }}
+        // Reduced motion: the width is stepped here, once a second. Otherwise the
+        // layout effect owns it, so React must not fight it with a value of its own.
+        style={reduced ? { width: `${progress * 100}%` } : undefined}
       />
     </span>
   );
