@@ -52,7 +52,7 @@ export function NumberInput({
 
   const bump = (delta: number) => {
     const next = Math.min(max, Math.max(min, (value ?? 0) + delta));
-    onChange(Number(next.toFixed(2)));
+    onChange(integer ? Math.round(next) : Number(next.toFixed(2)));
   };
 
   const stepper =
@@ -68,6 +68,7 @@ export function NumberInput({
       <div className="relative flex w-full">
         <input
           type="text"
+          // Un champ entier n'offre même pas la virgule au clavier du téléphone.
           inputMode={integer ? 'numeric' : 'decimal'}
           enterKeyHint="done"
           value={draft}
