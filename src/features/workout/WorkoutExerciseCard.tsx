@@ -6,7 +6,7 @@ import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
-import { GripIcon, MoreIcon } from '@/ui/icons';
+import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon } from '@/ui/icons';
 import { WorkoutSetRow } from './WorkoutSetRow';
 import { setReading } from './summary';
 
@@ -73,6 +73,30 @@ export function WorkoutExerciseCard({
   const first = superset !== undefined && superset.index === 0;
   const last = superset !== undefined && superset.index === superset.size - 1;
 
+  const allDone = sets.length > 0 && sets.every((set) => set.isCompleted === 1);
+
+  /**
+   * The card folds when the last set is ticked and unfolds when one is un-ticked
+   * or added — the collapse follows completion, so a finished exercise stops
+   * taking room on the board and re-opens on its own the moment it is no longer
+   * done. A tap on the header overrides this until completion next changes.
+   *
+   * Adjusted during render, not in an effect, per the Lot 1 note (the
+   * `NumberInput` pattern): an effect would paint one frame in the stale state.
+   * The guard makes it converge — after the write `allDone === wasAllDone`.
+   */
+  const [expanded, setExpanded] = useState(!allDone);
+  const [wasAllDone, setWasAllDone] = useState(allDone);
+  if (allDone !== wasAllDone) {
+    setWasAllDone(allDone);
+    setExpanded(!allDone);
+  }
+
+  // What a folded card shows in place of the subtitle: the last set, as figures,
+  // so a glance at a closed exercise still says what was done.
+  const lastSet = sets.length > 0 ? sets[sets.length - 1] : undefined;
+  const doneReading = lastSet !== undefined ? setReading(lastSet, columns) : '';
+
   /**
    * One slot at a time. Swiping a second row closes the first offer — the
    * deletion is written either way, so what expires is the shortcut back, not
@@ -110,10 +134,12 @@ export function WorkoutExerciseCard({
           ${
             state.dragging
               ? 'bg-[var(--surface-2)] ring-2 ring-[var(--accent-ink)]'
-              : 'bg-[var(--surface-1)]'
+              : expanded
+                ? 'bg-[var(--surface-1)]'
+                : 'bg-[var(--surface-2)]'
           }`}
       >
-        <div className="flex items-stretch border-b border-[var(--border)]">
+        <div className={`flex items-stretch ${expanded ? 'border-b border-[var(--border)]' : ''}`}>
           <button
             type="button"
             aria-label={t('routines.dragHandle', { name })}
@@ -124,21 +150,54 @@ export function WorkoutExerciseCard({
             <GripIcon />
           </button>
 
-          <span className="flex min-w-0 flex-1 flex-col justify-center gap-1 py-3">
-            <span className="flex min-w-0 items-baseline gap-2">
-              {superset !== undefined && (
-                <span className="label-xs shrink-0 font-semibold text-[var(--accent-ink)]">
-                  {alternationMark(superset.index)}
+          {/* Le header EST le bouton de repli : un exo terminé se replie seul et
+              se rouvre d'un appui ici. La poignée et le menu restent des frères,
+              jamais imbriqués dedans — deux boutons dans un bouton est du HTML
+              invalide. */}
+          <button
+            type="button"
+            aria-expanded={expanded}
+            onClick={() => setExpanded((open) => !open)}
+            className="flex min-w-0 flex-1 items-center gap-2 py-3 pr-1 text-left"
+          >
+            {/* La coche verte dit « fini » ; avec la surface grisée, c'est le
+                gris-et-vert d'un exo clos. Seulement une fois replié. */}
+            {!expanded && allDone && <CheckIcon className="shrink-0 text-[var(--accent-ink)]" />}
+            <span className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+              <span className="flex min-w-0 items-baseline gap-2">
+                {superset !== undefined && (
+                  <span className="label-xs shrink-0 font-semibold text-[var(--accent-ink)]">
+                    {alternationMark(superset.index)}
+                  </span>
+                )}
+                <span
+                  className={`min-w-0 truncate text-base ${
+                    expanded ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'
+                  }`}
+                >
+                  {name}
                 </span>
-              )}
-              <span className="min-w-0 truncate text-base text-[var(--text-1)]">{name}</span>
-            </span>
-            {exercise !== undefined && (
-              <span className="truncate text-sm text-[var(--text-2)]">
-                {exerciseSubtitle(exercise)}
               </span>
-            )}
-          </span>
+              {/* Déplié : le sous-titre de l'exo. Replié : ce qu'on a fait — la
+                  dernière série en relevé, comme la colonne « précédent ». */}
+              {expanded
+                ? exercise !== undefined && (
+                    <span className="truncate text-sm text-[var(--text-2)]">
+                      {exerciseSubtitle(exercise)}
+                    </span>
+                  )
+                : doneReading !== '' && (
+                    <span className="metric truncate text-sm text-[var(--text-2)]">
+                      {doneReading}
+                    </span>
+                  )}
+            </span>
+            {/* ▶ replié, ▼ déplié — le mouvement de divulgation le plus courant. */}
+            <ChevronDownIcon
+              className={`shrink-0 text-[var(--text-2)] transition-transform
+                duration-[var(--dur-1)] ${expanded ? '' : '-rotate-90'}`}
+            />
+          </button>
 
           <button
             type="button"
@@ -151,73 +210,76 @@ export function WorkoutExerciseCard({
           </button>
         </div>
 
-        {row.notes !== undefined && row.notes !== '' && (
-          <p className="border-b border-[var(--border)] px-4 py-2 text-sm leading-relaxed
-            text-[var(--text-2)]">
-            {row.notes}
-          </p>
+        {expanded && (
+          <>
+            {row.notes !== undefined && row.notes !== '' && (
+              <p className="border-b border-[var(--border)] px-4 py-2 text-sm leading-relaxed
+                text-[var(--text-2)]">
+                {row.notes}
+              </p>
+            )}
+
+            {/* The headings. Engraved register, except on SI symbols: it is "kg",
+                never "KG" (Lot 1 rule). */}
+            <div className="flex items-center gap-1.5 px-2 pt-2 pb-1">
+              <span className="w-12 shrink-0" />
+              <span className="label-xs min-w-0 flex-1 text-center font-semibold text-[var(--text-2)]">
+                {t('workout.previous')}
+              </span>
+              {columns.map((column, index) => (
+                <span
+                  key={column.field}
+                  style={{ width: index === 0 ? WIDTH.first : WIDTH.second }}
+                  className={`shrink-0 text-center font-semibold text-[var(--text-2)] ${
+                    column.unit === 'reps' ? 'label-xs' : 'text-[0.6875rem] tracking-[0.08em]'
+                  }`}
+                >
+                  {column.prefix}
+                  {unitLabel(column.unit)}
+                </span>
+              ))}
+              <span className="w-12 shrink-0" />
+            </div>
+
+            {sets.map((set, index) => (
+              <Fragment key={set.id}>
+                {/* Le bandeau reprend le rang de la disparue : celle qui occupait
+                    cette place est maintenant ici, donc le bandeau passe devant. */}
+                {deleted?.rank === index && undoRow}
+                <SwipeToDelete
+                  label={t('workout.swipeDelete')}
+                  onDelete={() => {
+                    setDeleted({
+                      setId: set.id,
+                      rank: index,
+                      reading:
+                        setReading(set, columns) ||
+                        t('workout.emptySetReading', { number: index + 1 }),
+                    });
+                    onDeleteSet(set.id);
+                  }}
+                >
+                  <WorkoutSetRow
+                    set={set}
+                    number={index + 1}
+                    columns={columns}
+                    previous={previous[index]}
+                    onWrite={(values) => onWrite(set.id, values)}
+                    onComplete={(values) => onComplete(set.id, values, set)}
+                    onUncomplete={() => onUncomplete(set.id)}
+                    onMenu={() => onSetMenu(set, index + 1)}
+                  />
+                </SwipeToDelete>
+              </Fragment>
+            ))}
+
+            {/* La dernière série n'a personne derrière qui la remplace : son
+                bandeau tombe en pied de grille, la place qu'elle occupait. */}
+            {deleted !== null && deleted.rank >= sets.length && undoRow}
+
+            <AddRow label={t('workout.addSet')} onClick={onAddSet} />
+          </>
         )}
-
-        {/* The headings. Engraved register, except on SI symbols: it is "kg",
-            never "KG" (Lot 1 rule). */}
-        <div className="flex items-center gap-1.5 px-2 pt-2 pb-1">
-          <span className="w-12 shrink-0" />
-          <span className="label-xs min-w-0 flex-1 text-center font-semibold text-[var(--text-2)]">
-            {t('workout.previous')}
-          </span>
-          {columns.map((column, index) => (
-            <span
-              key={column.field}
-              style={{ width: index === 0 ? WIDTH.first : WIDTH.second }}
-              className={`shrink-0 text-center font-semibold text-[var(--text-2)] ${
-                column.unit === 'reps'
-                  ? 'label-xs'
-                  : 'text-[0.6875rem] tracking-[0.08em]'
-              }`}
-            >
-              {column.prefix}
-              {unitLabel(column.unit)}
-            </span>
-          ))}
-          <span className="w-12 shrink-0" />
-        </div>
-
-        {sets.map((set, index) => (
-          <Fragment key={set.id}>
-            {/* Le bandeau reprend le rang de la disparue : celle qui occupait
-                cette place est maintenant ici, donc le bandeau passe devant. */}
-            {deleted?.rank === index && undoRow}
-            <SwipeToDelete
-              label={t('workout.swipeDelete')}
-              onDelete={() => {
-                setDeleted({
-                  setId: set.id,
-                  rank: index,
-                  reading:
-                    setReading(set, columns) || t('workout.emptySetReading', { number: index + 1 }),
-                });
-                onDeleteSet(set.id);
-              }}
-            >
-              <WorkoutSetRow
-                set={set}
-                number={index + 1}
-                columns={columns}
-                previous={previous[index]}
-                onWrite={(values) => onWrite(set.id, values)}
-                onComplete={(values) => onComplete(set.id, values, set)}
-                onUncomplete={() => onUncomplete(set.id)}
-                onMenu={() => onSetMenu(set, index + 1)}
-              />
-            </SwipeToDelete>
-          </Fragment>
-        ))}
-
-        {/* La dernière série n'a personne derrière qui la remplace : son bandeau
-            tombe en pied de grille, qui est bien la place qu'elle occupait. */}
-        {deleted !== null && deleted.rank >= sets.length && undoRow}
-
-        <AddRow label={t('workout.addSet')} onClick={onAddSet} />
       </div>
     </div>
   );
