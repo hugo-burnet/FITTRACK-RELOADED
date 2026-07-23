@@ -187,7 +187,6 @@ export function RoutineSetSheet({
             <NumberInput
               value={draft.targetDurationSeconds}
               onChange={(targetDurationSeconds) => write({ targetDurationSeconds })}
-              integer
               step={15}
               max={7200}
               suffix={t('units.seconds')}
