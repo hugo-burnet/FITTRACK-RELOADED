@@ -8,12 +8,13 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle } from '@/i18n/labels';
 import { bestSets, isWorkingSet } from '@/lib/records';
+import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import {
   ActionBand,
   Card,
   ConfirmAction,
   ListRow,
-  NumberInput,
+  RestPicker,
   SectionTitle,
   Textarea,
 } from '@/ui';
@@ -227,12 +228,12 @@ export function ExerciseDetailScreen() {
               <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
                 {t('exercise.restLabel')}
               </p>
-              <NumberInput
+              <RestPicker
                 value={draft.rest}
                 onChange={writeRest}
-                step={15}
-                max={900}
-                suffix={t('units.seconds')}
+                baseWhenEmpty={DEFAULT_REST_SECONDS}
+                emptyReading={t('rest.none')}
+                clearLabel={t('rest.none')}
                 aria-label={t('exercise.restLabel')}
               />
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">

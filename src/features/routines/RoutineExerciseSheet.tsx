@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { RoutineExerciseDetail } from '@/data/repositories/routines';
 import { t } from '@/i18n/fr';
-import { Button, ConfirmAction, NumberInput, Sheet, Textarea } from '@/ui';
+import { DEFAULT_REST_SECONDS, formatRest } from '@/lib/rest';
+import { Button, ConfirmAction, RestPicker, Sheet, Textarea } from '@/ui';
 
 type Props = {
   open: boolean;
@@ -59,20 +60,20 @@ export function RoutineExerciseSheet({
           <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
             {t('routine.restLabel')}
           </p>
-          <NumberInput
+          <RestPicker
             value={draft.rest}
             onChange={(rest) => {
               setDraft({ ...draft, rest });
               // 0 is the schema's "use the exercise default" (§4.2), so an empty
-              // field and a zero mean the same thing and store the same thing.
+              // picker and a zero mean the same thing and store the same thing.
               onWrite({ restSeconds: rest ?? 0 });
             }}
-            step={15}
-            max={900}
-            // The exercise's own rest, shown in the empty field: without it an
-            // empty box looked like the rest set back in the library was lost.
-            placeholder={exerciseRest > 0 ? String(exerciseRest) : undefined}
-            suffix={t('units.seconds')}
+            // The exercise's own rest is what an empty picker inherits: shown
+            // muted in the well and stepped from, so clearing back to it never
+            // looks like the rest set in the library was lost.
+            baseWhenEmpty={exerciseRest > 0 ? exerciseRest : DEFAULT_REST_SECONDS}
+            emptyReading={exerciseRest > 0 ? formatRest(exerciseRest) : t('rest.none')}
+            clearLabel={t('routine.restInherit')}
             aria-label={t('routine.restLabel')}
           />
           <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">

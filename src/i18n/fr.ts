@@ -49,6 +49,15 @@ const fr = {
     reps: 'reps',
   },
 
+  /** The rest picker, shared by the exercise sheet and the routine sheet. */
+  rest: {
+    /** The −/+ are drawn as glyphs; these name them for the ear. */
+    decrease: 'Diminuer le repos',
+    increase: 'Augmenter le repos',
+    /** The empty reading, and the clear chip, when there is nothing to inherit. */
+    none: 'Aucun',
+  },
+
   /**
    * The catalogue's three vocabularies, in the words of a French gym. Keyed by
    * the stored value, so adding a group to MUSCLE_GROUPS without its label
@@ -328,6 +337,8 @@ const fr = {
     exerciseSheetTitle: 'Dans cette routine',
     restLabel: 'Repos entre les séries',
     restHint: 'Vide : le repos par défaut de l’exercice.',
+    /** The clear chip: returns the picker to inheriting the exercise's own rest. */
+    restInherit: 'Repos de l’exercice',
     /** Says where the displayed rest comes from, so an empty field is not a mystery. */
     restFromExercise: 'Repos de l’exercice : {seconds} s. Renseigne pour le remplacer ici.',
     restNoDefault: 'Aucun repos par défaut sur cet exercice.',

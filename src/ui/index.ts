@@ -16,6 +16,7 @@ export { OptionSheet } from './OptionSheet';
 export type { Option } from './OptionSheet';
 export { ReorderableList } from './ReorderableList';
 export type { ItemState } from './ReorderableList';
+export { RestPicker } from './RestPicker';
 export { SectionTitle } from './SectionTitle';
 export { Sheet } from './Sheet';
 export { SwipeToDelete } from './SwipeToDelete';
