@@ -2,7 +2,15 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Quatre retours d'usage post-séance, corrigés et vérifiés en
+**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 1 sur 5 : les types de séries sont
+modifiables en séance (RF-20)** — cf. la section dédiée ci-dessous. Le crochet était posé depuis le
+Lot 5 (le bouton de rang existait « pour que le Lot 6 y accroche le type ») et les quatre phrases
+dormaient dans `fr.ts` depuis le Lot 4, lues par personne. **Les marques sont des pictogrammes, pas
+des mots** — décision de l'utilisateur : « ÉCH. » et « ÉCHEC » ne se séparent pas à bout de bras.
+**Et une règle de repos manquante, trouvée en lisant** : la série *avant* une dégressive ne doit pas
+reposer. 256 tests, quatre portes vertes. **Un défaut hors périmètre trouvé en pilotant** : `addSet`
+lit le rang puis écrit sans transaction → deux séries au même `order` (tâche à part, cf. la note en
+fin de section). — Antérieurement : **Quatre retours d'usage post-séance, corrigés et vérifiés en
 pilotant le navigateur en 375 px.** (1) **Scroll impossible en recherchant un exo** : la vraie cause
 n'était pas la liste mais le clavier — sur Android il se pose *par-dessus* la vue sans en réduire la
 hauteur (`resizes-visual` par défaut), donc le conteneur `100dvh` ne débordait pas et ses derniers
@@ -46,8 +54,122 @@ une vraie séance en salle (2026-07-24)**. La tranche est close.
 
 **Lot 6, tranche 2 — Calculateur de plaques (RF-28).** Code livré (cf. section dédiée ci-dessous),
 les trois portes vertes ; **checkpoint visuel à faire** (la capture live n'a pas pu être prise, la
-pane navigateur n'était pas affichée). Reste du Lot 6 : calculateur d'échauffement, RPE/RIR,
-détection de record en direct, types de séries modifiables en séance.
+pane navigateur n'était pas affichée).
+
+**Lot 6, tranche 3 — Le reste, en 5 tâches, une par une, arrêt entre chaque.** L'ordre est celui de
+la valeur en salle, arbitré au début de la session :
+
+1. ✅ **Types de séries en séance (RF-20)** — `ed70013`, cf. la section dédiée ci-dessous.
+2. ⬜ **Record battu en direct (RF-23).** `lib/records.ts` est déjà la source unique (`bestSets`,
+   `isWorkingSet`) et son en-tête annonce le Lot 6 comme consommateur : y ajouter une fonction pure
+   « qu'est-ce que cette série vient de battre » (TDD), appelée à la validation, comparée à
+   l'historique **plus** les séries déjà faites aujourd'hui. Puis la félicitation.
+3. ⬜ **RPE, masquable (RF-30).** `WorkoutSet.rpe` existe depuis le Lot 2 et n'est lu par personne ;
+   `SetValues` le porte déjà, donc `updateSetValues` l'écrit sans rien changer au repo. Saisie dans
+   la feuille de série (celle de la tâche 1).
+4. ⬜ **Calculateur d'échauffement (RF-29).** `lib/warmup.ts` en TDD, puis insertion des séries
+   d'approche dans l'exercice — elles naissent en `setType: 'warmup'`, dont le comportement est
+   désormais complet (tâche 1).
+5. ⬜ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
+   (« aujourd'hui je suis sur une barre de 15 »). L'inventaire de plaques et l'écran de réglages
+   restent au **Lot 8**, qui les liste explicitement comme ses livrables — ne pas monter un
+   demi-écran de réglages ici.
+
+### Types de séries modifiables en séance (RF-20) — 2026-07-24
+
+**Le chemin était déjà dessiné.** Le bouton de rang de `WorkoutSetRow` portait depuis le Lot 5 le
+commentaire « Lot 6 hangs the set type here, which is why it is a button already », et `fr.ts`
+écrivait les quatre `setType.*` **avec leurs quatre `setTypeHint.*`** depuis le Lot 4 — quatre
+phrases que rien ne lisait. Le menu de série gagne « Type de série », avec le type courant en
+sous-titre (sinon il faut ouvrir la feuille pour savoir ce qu'on est en train de changer), puis un
+`OptionSheet` — le composant existait, les phrases aussi. Rien d'inventé.
+
+`updateSetType` ne touche **jamais** aux chiffres : requalifier une série change ce qu'elle *est*,
+pas ce qu'elle dit. Une série repassée en échauffement garde ses 60 × 12 et reste en base ; c'est
+`isWorkingSet` qui l'écarte du volume et des records, une seule règle pour les deux.
+
+**Les marques sont des pictogrammes, pas des mots — décision de l'utilisateur.** J'avais proposé
+trois abréviations ; il a répondu « et si on remplaçait ça par des SVG plutôt qu'une écriture ». Il a
+raison, et pour une raison qui rend le reste évident : **« ÉCH. » et « ÉCHEC » ne se séparent pas à
+bout de bras, une main, essoufflé** — et c'est la seule distance à laquelle cet écran se lit. Une
+forme se reconnaît sans se déchiffrer. Trois silhouettes volontairement éloignées :
+
+| Type | Marque | Pourquoi cette forme |
+|---|---|---|
+| Échauffement | flamme (courbe fermée) | chauffer, littéralement |
+| Dégressive | trois barres qui descendent et raccourcissent (horizontales) | c'est le geste : on retire des plaques et on repart |
+| Jusqu'à l'échec | éclair (zigzag diagonal) | tout ce qui restait y est passé |
+
+- **Une seule couleur, et ce n'est pas un compromis.** La charte n'a qu'un accent, et le rouge veut
+  déjà dire « destructif » partout dans l'app — un troisième ton aurait demandé un jeton neuf
+  (`--warn-ink` n'existe pas, `--color-warn` est un aplat à ~2:1 sur blanc). C'est donc la **forme**
+  qui porte le sens et l'accent qui appuie : exactement la règle du Lot 4, où un accent seul ne peut
+  rien porter (plein soleil, daltonisme). **Si les trois formes ne se séparent pas en salle, la
+  couleur est le repli** — et elle passera par un vrai jeton, pas par un hex en dur.
+- **La marque n'est pas une légende.** Le type se choisit dans une feuille qui l'écrit en toutes
+  lettres avec sa phrase ; le pictogramme ne fait que rappeler ce qu'on a choisi. Il n'a donc pas à
+  être devinable de zéro, seulement reconnaissable.
+- **Le numéro reste sur une série normale.** C'est lui qui dit où on en est dans l'exercice. La
+  marque le **remplace** au lieu de se serrer à côté : 48 px ne tiennent pas deux glyphes qui doivent
+  tous les deux se lire sans regarder.
+- `RoutineExerciseCard` (Lot 4) **n'a pas bougé** : sa marque « ÉCH. » se pose *à côté* du numéro, pas
+  à sa place, et l'éditeur de routine ne planifie que normale/échauffement. Ce n'est pas le même slot,
+  donc ce n'est pas la même décision.
+
+#### La règle de repos qui manquait, trouvée en lisant
+
+`setTypeHint.dropset` promet depuis le Lot 4 « enchaînée à la précédente, charge allégée, **sans
+repos** », pendant que `rest.test.ts` assérait qu'une dégressive **déclenche** un repos. Les deux ne
+peuvent pas être vrais — et **c'est le test qui a raison sur le fond** : une dégressive *termine* la
+chaîne, donc elle est due sa récup comme n'importe quelle série de travail.
+
+Ce qui manquait est **en amont** : la série *avant* une dégressive ne doit pas reposer, puisqu'on
+allège la barre et on repart. `isRestTriggering` prend donc un `nextSetType`, et une suite de
+dégressives (100 → 80 → 60) s'enchaîne sans repos jusqu'à la dernière. Le calcul du « suivant » se
+fait dans la grille de l'exercice, pas dans le bloc de superset : ce sont deux questions différentes,
+et les deux exclusions se cumulent.
+
+**Une contradiction entre une chaîne d'UI et un test est un défaut**, pas un détail de rédaction : la
+phrase promettait un comportement que le code ne rendait pas.
+
+#### Ce qui a été mesuré, en pilotant l'app en 375 px
+
+- Les trois marques rendent : **20 px de glyphe dans une cible de 48 × 48**, jamais réduite.
+- `aria-label` = « Série 2 — Dégressive » : le type est **dit**, le dessin reste `aria-hidden` comme
+  toutes les icônes de l'app. Une série normale garde « Série 2 » tout court.
+- **Contraste, deux thèmes, aucun échec** : 12,87:1 (ligne validée) et 14,24:1 (ligne intacte) en
+  sombre ; **5,23:1 et 6,04:1 en clair**. Le plancher WCAG 1.4.11 des éléments non textuels est 3:1.
+- **La règle de la dégressive vérifiée en direct** : cocher la série 1 quand la 2 est dégressive ne
+  démarre **rien** (aucun `progressbar`, aucun « Repos » à l'écran) ; cocher la dégressive démarre
+  « Repos 1:55 » avec `aria-valuetext` « Repos, 2:00 restantes ».
+- Aucun débordement horizontal, aucune erreur console.
+- `workout.warmupShort` est **supprimé** de `fr.ts` : son dernier consommateur vient de partir.
+
+#### ⬜ Checkpoint en salle — RF-20
+
+- [ ] **Les trois pictogrammes se distinguent d'un coup d'œil, bras tendu, sans les chercher.** C'est
+      le point fragile de la tâche : une forme ne se déchiffre pas, elle se reconnaît — ou pas. Si
+      deux d'entre eux se confondent, **le repli est la couleur** (un jeton propre, pas un hex), pas
+      un retour aux mots.
+- [ ] **La flamme se lit bien comme « échauffement »** et pas comme « série chaude / lourde ». C'est
+      le seul des trois dont la métaphore peut basculer.
+- [ ] Marquer une série en dégressive **en pleine séance**, la barre en main : le chemin
+      rang → « Type de série » → choix se fait-il d'une main, entre deux séries ?
+- [ ] **La série qui précède une dégressive ne déclenche aucun repos** — et ça ne surprend pas. Le
+      pari est que c'est ce que tu attends (on allège et on repart) ; si ça donne l'impression d'un
+      minuteur qui a raté son départ, c'est la règle qu'il faut revoir, pas le code.
+- [ ] Une série repassée en échauffement **après** avoir été validée : ses kilos restent affichés,
+      et elle disparaît du volume et des records. Vérifiable sur l'écran de fin.
+
+> **Un défaut hors périmètre, trouvé en lisant la base — deux séries au même rang.** Le dump
+> IndexedDB de la séance de test montrait **deux séries vivantes à `order: 1`**. `addSet` calcule le
+> rang avec `(await liveSetsOf(...)).length` **puis** écrit, sans transaction — alors que `deleteSet`
+> et `restoreSet`, juste en dessous dans le même fichier, sont déjà enveloppés dans
+> `db.transaction('rw', …)`. Deux ajouts qui se chevauchent lisent donc la même longueur. Reproduit
+> par deux clics dans le même tick JS ; sur téléphone, un double appui ou une frame en retard suffit.
+> **C'est la famille du « piège n°2 » du Lot 2** (le `.count()` qui comptait les supprimées) — même
+> symptôme, autre cause. Sorti du chemin en tâche à part pour ne pas gonfler le commit du Lot 6 ;
+> `addWorkoutExercise` est à vérifier au même titre.
 
 ### Calculateur de plaques (RF-28) — 2026-07-24
 
@@ -366,6 +488,9 @@ Principe : **chaque timer va où vit son sens**, et les exos finis quittent le b
 Le reste du Lot 6 — calculateur de plaques, calculateur d'échauffement, RPE, détection de record en
 direct, types de séries — est intact. C'était une tranche, décidée comme telle.
 
+> **Périmé depuis.** Les plaques ont été livrées en tranche 2 et les types de séries en tranche 3,
+> tâche 1. Reste : record en direct, RPE, échauffement, poids de barre — cf. « Lot en cours ».
+
 ---
 
 ## Lot 5 — Séance en direct (cœur)
@@ -637,8 +762,9 @@ clavier et lecteur d'écran, et elle était là avant.
 
 - **Le minuteur de repos** (Lot 6, RF-22/RF-27). Le repos par exercice est stocké et affiché, rien
   ne le déclenche.
-- **Changer le type d'une série en séance** (Lot 6, RF-20). Le type est **repris de la routine** et
-  affiché (« ÉCH. »), il ne se modifie pas ici.
+- ~~**Changer le type d'une série en séance** (Lot 6, RF-20). Le type est **repris de la routine** et
+  affiché (« ÉCH. »), il ne se modifie pas ici.~~ **Fait au Lot 6, tranche 3, tâche 1** — et le
+  « ÉCH. » de l'écran de séance est devenu un pictogramme.
 - **Le RPE** (Lot 6, RF-30), **la détection de record en direct** (Lot 6, RF-23).
 - **Relire ou corriger une séance passée** (Lot 7). Cet écran ne connaît que la séance `active`.
 - **Une durée se saisit en secondes**, pas en `m:ss`. À rouvrir si ça gêne.
