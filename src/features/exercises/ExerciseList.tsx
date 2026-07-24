@@ -93,11 +93,16 @@ function Row({
 export function ExerciseList({ exercises, grouped, onOpen, selectedIds }: Props) {
   if (!grouped) {
     return (
-      <Card>
-        {exercises.map((exercise) => (
-          <Row key={exercise.id} exercise={exercise} onOpen={onOpen} selectedIds={selectedIds} />
-        ))}
-      </Card>
+      // `Card` has overflow-hidden, which makes its automatic minimum flex
+      // height zero. Without this wrapper the filtered list is squeezed to 0px
+      // instead of making Screen's scroll area overflow.
+      <div className="shrink-0">
+        <Card>
+          {exercises.map((exercise) => (
+            <Row key={exercise.id} exercise={exercise} onOpen={onOpen} selectedIds={selectedIds} />
+          ))}
+        </Card>
+      </div>
     );
   }
 
