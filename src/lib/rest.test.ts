@@ -46,8 +46,40 @@ describe('isRestTriggering', () => {
   });
 
   it('fires for drop sets and sets to failure', () => {
+    // A drop set is the *end* of a chain, not its middle: once the last drop is
+    // done, the rest is owed like any other working set.
     expect(isRestTriggering({ setType: 'dropset' }, { isLastOfBlock: true })).toBe(true);
     expect(isRestTriggering({ setType: 'failure' }, { isLastOfBlock: true })).toBe(true);
+  });
+
+  it('does not fire when the next set is a drop set', () => {
+    // What "dégressive" means, in the app's own words: "enchaînée à la
+    // précédente, charge allégée, sans repos". The set that has no rest is the
+    // one *before* it — you strip the bar and carry straight on.
+    expect(
+      isRestTriggering(normal, { isLastOfBlock: true, nextSetType: 'dropset' }),
+    ).toBe(false);
+    expect(
+      isRestTriggering({ setType: 'failure' }, { isLastOfBlock: true, nextSetType: 'dropset' }),
+    ).toBe(false);
+  });
+
+  it('fires when the next set is anything else', () => {
+    expect(isRestTriggering(normal, { isLastOfBlock: true, nextSetType: 'normal' })).toBe(true);
+    expect(isRestTriggering(normal, { isLastOfBlock: true, nextSetType: 'failure' })).toBe(true);
+    // Last set of the exercise: nothing follows, so nothing chains.
+    expect(isRestTriggering(normal, { isLastOfBlock: true, nextSetType: undefined })).toBe(true);
+  });
+
+  it('chains a whole run of drop sets, and rests after the last one', () => {
+    // 100 → 80 → 60: two hand-offs with no rest, then the recovery.
+    expect(isRestTriggering(normal, { isLastOfBlock: true, nextSetType: 'dropset' })).toBe(false);
+    expect(
+      isRestTriggering({ setType: 'dropset' }, { isLastOfBlock: true, nextSetType: 'dropset' }),
+    ).toBe(false);
+    expect(
+      isRestTriggering({ setType: 'dropset' }, { isLastOfBlock: true, nextSetType: undefined }),
+    ).toBe(true);
   });
 });
 

@@ -1,13 +1,31 @@
+import type { ComponentType, SVGProps } from 'react';
 import type { SetValues } from '@/data/repositories/workouts';
-import type { WorkoutSet } from '@/data/types';
+import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { unitLabel } from '@/i18n/labels';
+import { setTypeLabel, unitLabel } from '@/i18n/labels';
 import { isRepRange, isSetRecordable, repsReading } from '@/lib/measurement';
 import type { EntryColumn, ResolvedValues, TargetField } from '@/lib/measurement';
 import { formatNumber } from '@/ui/numberField';
-import { CheckIcon } from '@/ui/icons';
+import { BoltIcon, CheckIcon, DropsetIcon, FlameIcon } from '@/ui/icons';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
+
+/**
+ * RF-20 — what a set that is not a plain working set shows in place of its rank.
+ *
+ * A mark, not a word: "ÉCH." (échauffement) and "ÉCHEC" do not separate at arm's
+ * length, one-handed, out of breath — and that is the only distance this screen
+ * is ever read at. The shape carries it; the accent is a second channel, never
+ * the only one (Lot 4 rule: sunlight, colour blindness).
+ *
+ * `normal` is absent on purpose: a normal set keeps its number, which is the
+ * reading that says where you are in the exercise.
+ */
+const TYPE_MARK: Partial<Record<SetType, ComponentType<SVGProps<SVGSVGElement>>>> = {
+  warmup: FlameIcon,
+  dropset: DropsetIcon,
+  failure: BoltIcon,
+};
 
 /** Which field of a stored set each entry column writes into. */
 const FIELD_KEY = {
@@ -75,6 +93,7 @@ export function WorkoutSetRow({
   onMenu,
 }: Props) {
   const done = set.isCompleted === 1;
+  const Mark = TYPE_MARK[set.setType];
 
   /**
    * Strictly the set of the same rank, never a fallback onto the last one of the
@@ -148,21 +167,27 @@ export function WorkoutSetRow({
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
     >
-      {/* The rank, and the way to anything else about this set. Lot 6 hangs the
-          set type here, which is why it is a button already. */}
+      {/* The rank, and the way to anything else about this set — including the
+          set type (RF-20), which is what this button was kept for since Lot 5.
+          The mark replaces the number rather than crowding beside it: 48 px does
+          not hold two glyphs that both have to read without looking. */}
       <button
         type="button"
-        aria-label={t('workout.setNumber', { number })}
+        // The type is said, never left to the drawing: the mark is aria-hidden
+        // like every other icon here, so a screen reader gets the word.
+        aria-label={
+          Mark === undefined
+            ? t('workout.setNumber', { number })
+            : `${t('workout.setNumber', { number })} — ${setTypeLabel(set.setType)}`
+        }
         onClick={onMenu}
         className="flex size-12 shrink-0 items-center justify-center rounded-lg text-sm
           text-[var(--text-2)] active:bg-[var(--surface-2)]"
       >
-        {set.setType === 'warmup' ? (
-          <span className="label-xs font-semibold text-[var(--accent-ink)]">
-            {t('workout.warmupShort')}
-          </span>
-        ) : (
+        {Mark === undefined ? (
           <span className="tabular">{number}</span>
+        ) : (
+          <Mark className="text-[var(--accent-ink)]" />
         )}
       </button>
 

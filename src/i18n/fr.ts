@@ -152,7 +152,15 @@ const fr = {
      * la fourchette seule — « 8 – 12 » sous « REPS » n'a pas besoin du mot.
      */
     target: 'objectif {value}',
-    warmupShort: 'Éch.',
+    /**
+     * RF-20 — le type de série se change **en séance**, au menu du rang.
+     *
+     * Une routine ne peut prescrire que « normale » et « échauffement » : qu'une
+     * série devienne dégressive ou parte à l'échec se décide la barre en main.
+     * L'entrée du menu porte le type courant en sous-titre, sinon il faudrait
+     * ouvrir la feuille pour savoir ce qu'on est en train de changer.
+     */
+    setTypeAction: 'Type de série',
     exerciseMenu: 'Options de {name}',
     /**
      * Le relevé au-dessus de la liste : où j'en suis, en un coup d'œil.

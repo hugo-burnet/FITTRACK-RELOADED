@@ -39,25 +39,33 @@ function pickPositive(value: number | undefined): number | undefined {
   return Math.round(value);
 }
 
-/** Where the validated set sits in its superset block. */
+/** Where the validated set sits — in its superset block, and in its own grid. */
 export interface RestContext {
   /** False only for a set that has another exercise of the same group after it. */
   isLastOfBlock: boolean;
+  /** The next set of the same exercise, if there is one. */
+  nextSetType?: SetType;
 }
 
 /**
  * Whether validating this set starts a rest.
  *
- * Two exclusions, both deliberate:
+ * Three exclusions, all deliberate:
  *
  * - **Warm-up sets start nothing.** They are sub-maximal and not tiring; timing
  *   them slows the session down for no recovery benefit.
  * - **Nothing fires between two members of a superset.** The minimal rest
  *   between its members is what *defines* a superset — time them apart and they
  *   are simply two exercises. The rest belongs to the end of the round.
+ * - **Nothing fires when a drop set follows.** RF-20, in the app's own wording:
+ *   a "dégressive" is *enchaînée à la précédente, charge allégée, sans repos*.
+ *   The set that skips its rest is therefore the one **before** it — you strip
+ *   the bar and carry straight on. The drop set itself ends the chain and is
+ *   owed a rest like any other working set, however many drops it took.
  */
 export function isRestTriggering(set: { setType: SetType }, context: RestContext): boolean {
   if (set.setType === 'warmup') return false;
+  if (context.nextSetType === 'dropset') return false;
   return context.isLastOfBlock;
 }
 

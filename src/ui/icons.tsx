@@ -173,6 +173,51 @@ export function MoreIcon(props: IconProps) {
   );
 }
 
+/* ---------------------------------------------------------------------------
+   Les trois marques de type de série (RF-20), au rang de la ligne.
+   Elles ont remplacé « ÉCH. » et ses deux voisins de mots : « ÉCH. » et
+   « ÉCHEC » ne se séparent pas à bout de bras, une main, essoufflé. Une forme,
+   elle, se reconnaît sans se lire.
+   Dessinées pour que les **silhouettes** soient maximalement distinctes — une
+   courbe fermée, des barres horizontales, un zigzag diagonal — parce que la
+   couleur seule ne peut pas porter du sens (règle du Lot 4 : plein soleil,
+   daltonisme). Elles ne sont pas une légende : le type se choisit dans une
+   feuille qui l'écrit en toutes lettres, la marque ne fait que le rappeler.
+   --------------------------------------------------------------------------- */
+
+/** Échauffement — une flamme. Chauffer, littéralement. */
+export function FlameIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" {...props}>
+      <path d="M12 3c3.2 3.1 5.5 5.7 5.5 9a5.5 5.5 0 0 1-11 0c0-1.7.7-3.2 2-4.7.4 1 1 1.8 1.9 2.3.3-2.7.8-4.8 1.6-6.6Z" />
+    </Icon>
+  );
+}
+
+/**
+ * Dégressive — la charge qui tombe par paliers. Trois barres qui descendent et
+ * raccourcissent : c'est le geste (on retire des plaques et on repart), pas une
+ * flèche générique vers le bas.
+ */
+export function DropsetIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" {...props}>
+      <path d="M4 6.5h15" />
+      <path d="M4 12h10" />
+      <path d="M4 17.5h5" />
+    </Icon>
+  );
+}
+
+/** Jusqu'à l'échec — l'éclair : tout ce qui restait y est passé. */
+export function BoltIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" {...props}>
+      <path d="M13.5 2.5 5 13.5h6L10.5 21.5 19 10.5h-6l.5-8Z" />
+    </Icon>
+  );
+}
+
 /** Réglages — load sliders, not a gear: this screen is a panel of numbers. */
 export function SlidersIcon(props: IconProps) {
   return (

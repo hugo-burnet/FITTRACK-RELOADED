@@ -1,5 +1,12 @@
 import { db } from '@/data/db';
-import type { Exercise, Syncable, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type {
+  Exercise,
+  SetType,
+  Syncable,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
 import { resolveRestSeconds } from '@/lib/rest';
 import { moveItem, normalizeSupersets } from '@/lib/routineOrder';
 import { alive, newEntity, softDelete, touch } from './base';
@@ -426,6 +433,21 @@ export async function updateSetValues(setId: string, values: Partial<SetValues>)
   const set = await db.workoutSets.get(setId);
   if (set === undefined) return;
   await db.workoutSets.put(touch(set, values));
+}
+
+/**
+ * RF-20 — what kind of set this is, decided **with the bar in your hands**.
+ *
+ * Only warm-up and normal can be planned (`RoutineSetSheet`): whether a set
+ * turns into a drop set or goes to failure is not something a routine written on
+ * the sofa can know. Changing the type never touches the figures — a set
+ * re-labelled as a warm-up keeps what was lifted, it simply stops counting
+ * towards volume and records (`isWorkingSet`).
+ */
+export async function updateSetType(setId: string, setType: SetType): Promise<void> {
+  const set = await db.workoutSets.get(setId);
+  if (set === undefined) return;
+  await db.workoutSets.put(touch(set, { setType }));
 }
 
 /**

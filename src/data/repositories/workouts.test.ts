@@ -24,6 +24,7 @@ import {
   startWorkout,
   startWorkoutFromRoutine,
   uncompleteSet,
+  updateSetType,
   updateSetValues,
 } from './workouts';
 import type { Exercise, WorkoutExercise, WorkoutSet } from '@/data/types';
@@ -914,6 +915,28 @@ describe('saisie et correction d’une série', () => {
     // Décocher corrige un geste, ça n'efface pas ce qui a été tapé.
     expect(stored!.weight).toBe(100);
     expect(await getLastPerformance('bench')).toEqual([]);
+  });
+
+  /**
+   * RF-20. Requalifier une série ne touche pas à ce qui a été soulevé : on
+   * change ce que la série *est*, pas ce qu'elle dit. La conséquence passe par
+   * `isWorkingSet`, une seule règle pour le volume et les records.
+   */
+  it('change le type d’une série sans toucher aux chiffres ni à la validation', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    await addWorkoutExercise(workout.id, 'bench');
+    const set = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+
+    await completeSet(set.id, { weight: 60, reps: 12 });
+    await updateSetType(set.id, 'warmup');
+
+    const stored = await db.workoutSets.get(set.id);
+    expect(stored!.setType).toBe('warmup');
+    expect(stored!.weight).toBe(60);
+    expect(stored!.reps).toBe(12);
+    expect(stored!.isCompleted).toBe(1);
+    // Elle reste dans l'historique — c'est le scoring qui l'écarte, pas la base.
+    expect(await getLastPerformance('bench')).toHaveLength(1);
   });
 
   it('valide une durée et une distance, pas seulement des kilos', async () => {

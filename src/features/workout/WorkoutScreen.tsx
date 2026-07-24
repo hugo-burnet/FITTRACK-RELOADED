@@ -12,13 +12,16 @@ import {
   reorderWorkoutExercises,
   restoreSet,
   uncompleteSet,
+  updateSetType,
   updateSetValues,
   updateWorkout,
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import type { SetType } from '@/data/types';
+import { SET_TYPES } from '@/data/types';
+import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
 import { toBlocks } from '@/lib/routineOrder';
 import { useRestTimer } from '@/stores/restTimer';
@@ -31,6 +34,7 @@ import {
   EmptyState,
   HeaderAction,
   Input,
+  OptionSheet,
   ReorderableList,
   Sheet,
   Textarea,
@@ -52,7 +56,15 @@ type SheetState =
   | { kind: 'exerciseNotes'; rowId: string }
   | { kind: 'removeExercise'; rowId: string }
   | { kind: 'set'; setId: string; number: number }
+  | { kind: 'setType'; setId: string; number: number }
   | { kind: 'plates' };
+
+/** RF-20 — the four types, each with the sentence `fr.ts` already gives it. */
+const SET_TYPE_OPTIONS = SET_TYPES.map((value) => ({
+  value,
+  label: setTypeLabel(value),
+  hint: setTypeHint(value),
+}));
 
 /** The bar loads a plate sheet reads, kept out of `SheetState` so its close
  *  animation still has valid numbers after the card's menu is gone. */
@@ -198,10 +210,21 @@ export function WorkoutScreen() {
    * figures stay editable while the set is ticked (`SetValueCell`). Nothing
    * fires for a warm-up or between two members of a superset (`isRestTriggering`).
    */
-  const startRest = (rowId: string, setId: string, setType: SetType): void => {
-    const plan = plans.get(rowId);
+  const startRest = (line: WorkoutExerciseDetail, setId: string, setType: SetType): void => {
+    const plan = plans.get(line.row.id);
     if (plan === undefined) return;
-    if (!isRestTriggering({ setType }, { isLastOfBlock: plan.isLastOfBlock })) return;
+    // The set that follows, in this exercise's own grid: a drop set is chained to
+    // the one before it, so that one hands over with no rest (`isRestTriggering`).
+    const index = line.sets.findIndex((set) => set.id === setId);
+    const next = index === -1 ? undefined : line.sets[index + 1];
+    if (
+      !isRestTriggering(
+        { setType },
+        { isLastOfBlock: plan.isLastOfBlock, nextSetType: next?.setType },
+      )
+    ) {
+      return;
+    }
     rest.start(setId, plan.seconds);
   };
 
@@ -216,6 +239,21 @@ export function WorkoutScreen() {
 
   const nameOf = (rowId: string): string =>
     lineOf(rowId)?.exercise?.name ?? t('workout.deletedExercise');
+
+  /**
+   * The type of one set, by id. Falls back to `normal` rather than throwing: the
+   * sheet keeps rendering through its closing animation, by which point the set
+   * it was opened on may already be deleted.
+   */
+  const setOf = (setId: string): WorkoutSet | undefined => {
+    for (const line of exercises) {
+      const found = line.sets.find((set) => set.id === setId);
+      if (found !== undefined) return found;
+    }
+    return undefined;
+  };
+
+  const typeOf = (setId: string): SetType => setOf(setId)?.setType ?? 'normal';
 
   /**
    * The distinct loads to size plates for — every weight the bar is set to across
@@ -333,7 +371,7 @@ export function WorkoutScreen() {
                   onWrite={(setId, values) => void updateSetValues(setId, values)}
                   onComplete={(setId, values, set) => {
                     void completeSet(setId, values);
-                    startRest(line.row.id, setId, set.setType);
+                    startRest(line, setId, set.setType);
                   }}
                   onUncomplete={(setId) => {
                     void uncompleteSet(setId);
@@ -459,6 +497,17 @@ export function WorkoutScreen() {
         title={sheet?.kind === 'set' ? t('workout.setNumber', { number: sheet.number }) : ''}
         actions={[
           {
+            label: t('workout.setTypeAction'),
+            // The current type, so the entry says what it is about to change
+            // rather than making you open the sheet to find out.
+            hint: sheet?.kind === 'set' ? setTypeLabel(typeOf(sheet.setId)) : undefined,
+            onSelect: () => {
+              if (sheet?.kind === 'set') {
+                setSheet({ kind: 'setType', setId: sheet.setId, number: sheet.number });
+              }
+            },
+          },
+          {
             label: t('workout.deleteSet'),
             danger: true,
             onSelect: () => {
@@ -466,6 +515,17 @@ export function WorkoutScreen() {
             },
           },
         ]}
+      />
+
+      <OptionSheet
+        open={sheet?.kind === 'setType'}
+        onClose={() => setSheet(null)}
+        title={t('workout.setTypeAction')}
+        options={SET_TYPE_OPTIONS}
+        value={sheet?.kind === 'setType' ? typeOf(sheet.setId) : 'normal'}
+        onSelect={(setType) => {
+          if (sheet?.kind === 'setType') void updateSetType(sheet.setId, setType);
+        }}
       />
 
       <PlateLoadSheet
