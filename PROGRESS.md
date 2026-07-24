@@ -2,7 +2,13 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**RF-28 — les plaques disponibles sont désormais
+**Dernière mise à jour :** 2026-07-25 (**Lot 6 officiellement terminé — checkpoint téléphone
+RF-28 validé par l’utilisateur**). Sans plaque de 25 kg, une cible de 100 kg sur une barre de 20 kg
+affiche bien **2 × 20 kg par côté** ; la désélection persiste après rechargement ; remettre 25 kg
+restaure **25 + 15 kg par côté**. Les trois tranches du Lot 6 sont maintenant validées en usage
+réel. Aucun lot suivant n’est ouvert par cette clôture.
+
+**Historique précédent :** 2026-07-24 (**RF-28 — les plaques disponibles sont désormais
 configurables, globales et persistées dans IndexedDB** — cf. la section dédiée ci-dessous).
 La feuille « Plaques à charger » propose les dix dénominations canoniques dans une section
 repliable neutre, sans comptage de paires ni plaque personnalisée. Toutes sont actives par défaut ;
@@ -14,7 +20,7 @@ devient **2 × 20 kg par côté** sans plaque de 25 kg, persiste après recharge
 **L’implémentation du Lot 6 est terminée ; sa clôture officielle attend le checkpoint téléphone
 RF-28 demandé à l’utilisateur.**
 
-**Historique précédent :** 2026-07-24 (**Reste du Lot 6, tâche 5 sur 5 : le poids de
+**Historique antérieur :** 2026-07-24 (**Reste du Lot 6, tâche 5 sur 5 : le poids de
 barre se règle là où il sert, dans « Plaques à charger » (RF-31)** — cf. la section dédiée
 ci-dessous. Valeur éphémère par exercice de la séance affichée : elle survit à la fermeture de la
 feuille, mais pas à une navigation ou un rechargement. Barre et Smith réglables ; machine à plaques
@@ -87,14 +93,14 @@ passes vertes, 242 tests. Il ne reste que le **checkpoint en salle** de la refon
 (`614e523`), refonte de l'écran de séance complète (briques 2+3), vitest ne ramasse plus les
 worktrees d'agent (`b7dda06`).)
 
-## Lot en cours
+## Dernier lot terminé
 
 **Lot 6, tranche 1 — Minuteur de repos.** Code livré, vérifié en pilotant l'écran, puis **validé sur
 une vraie séance en salle (2026-07-24)**. La tranche est close.
 
 **Lot 6, tranche 2 — Calculateur de plaques (RF-28).** Code et configuration des dénominations
 livrés (cf. sections dédiées ci-dessous). La vérification navigateur en 375 × 812 px est faite ;
-**le checkpoint final sur téléphone reste à valider par l’utilisateur**.
+**le checkpoint final sur téléphone est validé par l’utilisateur (2026-07-25)**.
 
 **Lot 6, tranche 3 — Le reste, en 5 tâches, une par une, arrêt entre chaque.** La tranche est
 **terminée et validée en usage réel (2026-07-24)**. L'ordre était celui de la valeur en salle,
@@ -115,10 +121,9 @@ arbitré au début de la session :
    sélection durable des dénominations a finalement été sortie pour achever RF-28. `1e03a31` ;
    checkpoint validé sur téléphone et en usage réel.
 
-**Clôture officielle du Lot 6 : prête, mais pas encore prononcée.** Toute l’implémentation est
-terminée et les vérifications automatisées/navigateur sont vertes. Selon la règle de la roadmap
-(ne pas fermer un lot avant validation de tout son checkpoint), le test téléphone de la sélection
-persistante RF-28 est le seul verrou restant.
+**Clôture officielle du Lot 6 : terminée le 2026-07-25.** Toute l’implémentation, les vérifications
+automatisées/navigateur et les checkpoints téléphone sont validés. Le Lot 5bis, le Lot 7 et le
+Lot 8 ne sont pas commencés.
 
 ### Plaques disponibles configurables (RF-28) — 2026-07-24
 
@@ -170,8 +175,9 @@ exercice.
 `typecheck`, `lint`, `test:run` et `build` passent. Le build conserve seulement l’avertissement Vite
 déjà connu sur le chunk principal supérieur à 500 kB.
 
-**🟨 Checkpoint téléphone RF-28 : à valider par l’utilisateur.** Après cette validation, le Lot 6
-pourra être clôturé officiellement sans ouvrir le Lot 5bis, le Lot 7 ou le Lot 8.
+**✅ Checkpoint téléphone RF-28 : validé par l’utilisateur le 2026-07-25.** Sans 25 kg, 100 kg sur
+une barre de 20 kg donne **2 × 20 kg par côté** et le choix survit au rechargement. Après
+resélection de 25 kg, le schéma retrouve **25 + 15 kg par côté**.
 
 ### Poids de barre réglable (RF-31) — 2026-07-24
 
@@ -1840,7 +1846,7 @@ ci-dessus fait foi.
 | 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
-| 6 | Outils de séance | 🟨 implémentation terminée ; checkpoint RF-28 final à valider | 6–7 | ✅ minuteur + tranche 3 · 🟨 RF-28 téléphone |
+| 6 | Outils de séance | ✅ terminé | 6–7 | ✅ **en salle** |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
 | 9 | PWA & installation | ⬜ à faire | — | ⬜ |
