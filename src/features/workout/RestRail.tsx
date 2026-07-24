@@ -116,8 +116,11 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     <span
       // The lane. Inset from the row's walls so a full bar can never be read as
       // a rule between two rows: a border runs edge to edge, this stops short.
+      // Lifted a few px off the header divider rather than sitting flush on it —
+      // reported from the phone as glued to the separator; the gap lets the bar
+      // read as its own object instead of a thickening of the rule below it.
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] overflow-hidden
+      className="pointer-events-none absolute inset-x-3 bottom-[5px] h-[3px] overflow-hidden
         rounded-full bg-[var(--border)]"
     >
       <span
