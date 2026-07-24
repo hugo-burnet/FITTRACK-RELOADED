@@ -2,7 +2,19 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 5 sur 5 : le poids de
+**Dernière mise à jour :** 2026-07-24 (**RF-28 — les plaques disponibles sont désormais
+configurables, globales et persistées dans IndexedDB** — cf. la section dédiée ci-dessous).
+La feuille « Plaques à charger » propose les dix dénominations canoniques dans une section
+repliable neutre, sans comptage de paires ni plaque personnalisée. Toutes sont actives par défaut ;
+un inventaire vide reste valide. Chaque bascule écrit immédiatement via le repository `settings`,
+réveille `useLiveQuery` et recalcule tous les schémas ouverts. Vérifié dans la vraie app en
+375 × 812 px : cibles de 48 px, aucun débordement, focus neutre, 100 kg sur une barre de 20 kg
+devient **2 × 20 kg par côté** sans plaque de 25 kg, persiste après rechargement, puis redevient
+**25 · 15 kg** après resélection. 24 fichiers, **332 tests** (+12), quatre portes vertes.
+**L’implémentation du Lot 6 est terminée ; sa clôture officielle attend le checkpoint téléphone
+RF-28 demandé à l’utilisateur.**
+
+**Historique précédent :** 2026-07-24 (**Reste du Lot 6, tâche 5 sur 5 : le poids de
 barre se règle là où il sert, dans « Plaques à charger » (RF-31)** — cf. la section dédiée
 ci-dessous. Valeur éphémère par exercice de la séance affichée : elle survit à la fermeture de la
 feuille, mais pas à une navigation ou un rechargement. Barre et Smith réglables ; machine à plaques
@@ -80,9 +92,9 @@ worktrees d'agent (`b7dda06`).)
 **Lot 6, tranche 1 — Minuteur de repos.** Code livré, vérifié en pilotant l'écran, puis **validé sur
 une vraie séance en salle (2026-07-24)**. La tranche est close.
 
-**Lot 6, tranche 2 — Calculateur de plaques (RF-28).** Code livré (cf. section dédiée ci-dessous),
-les trois portes vertes ; **checkpoint visuel à faire** (la capture live n'a pas pu être prise, la
-pane navigateur n'était pas affichée).
+**Lot 6, tranche 2 — Calculateur de plaques (RF-28).** Code et configuration des dénominations
+livrés (cf. sections dédiées ci-dessous). La vérification navigateur en 375 × 812 px est faite ;
+**le checkpoint final sur téléphone reste à valider par l’utilisateur**.
 
 **Lot 6, tranche 3 — Le reste, en 5 tâches, une par une, arrêt entre chaque.** La tranche est
 **terminée et validée en usage réel (2026-07-24)**. L'ordre était celui de la valeur en salle,
@@ -98,13 +110,68 @@ arbitré au début de la session :
    travail. Spécification `6db57de`, implémentation `b90ecae`, cf. la section dédiée ci-dessous.
 5. ✅ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
    (« aujourd'hui je suis sur une barre de 15 »). Choix éphémère par exercice tant que l’écran de
-   séance reste monté, retenu après fermeture/réouverture de la feuille. Aucun réglage global :
-   l'inventaire de plaques et les valeurs persistantes restent au **Lot 8**. `1e03a31` ;
+   séance reste monté, retenu après fermeture/réouverture de la feuille. Le comptage des paires,
+   le poids de barre global et les autres réglages matériels restent au **Lot 8** ; seule la
+   sélection durable des dénominations a finalement été sortie pour achever RF-28. `1e03a31` ;
    checkpoint validé sur téléphone et en usage réel.
 
-**Clôture officielle du Lot 6 : pas encore.** La tranche 1 et la tranche 3 sont validées en salle,
-mais la tranche 2 conserve son checkpoint visuel RF-28 à faire. Selon la règle de la roadmap
-(ne pas fermer un lot avant validation de tout son checkpoint), RF-28 est le seul verrou restant.
+**Clôture officielle du Lot 6 : prête, mais pas encore prononcée.** Toute l’implémentation est
+terminée et les vérifications automatisées/navigateur sont vertes. Selon la règle de la roadmap
+(ne pas fermer un lot avant validation de tout son checkpoint), le test téléphone de la sélection
+persistante RF-28 est le seul verrou restant.
+
+### Plaques disponibles configurables (RF-28) — 2026-07-24
+
+**Une source de vérité globale, durable et sans migration.** Le repository
+`src/data/repositories/settings.ts` lit et écrit la clé `availablePlateWeightsKg` dans la table
+`settings` existante. Il normalise les valeurs sur les dix dénominations canoniques
+25 / 20 / 15 / 10 / 5 / 2,5 / 1,25 / 1 / 0,5 / 0,25 kg, supprime doublons et valeurs invalides,
+et conserve l’ordre canonique. Une absence de réglage ou une valeur historique inutilisable
+retombe sur toutes les plaques ; un tableau vide explicite reste valide. Chaque sauvegarde tient
+dans un seul `db.settings.put`. Aucun composant n’importe `db` et le schéma Dexie ne change pas.
+
+**Le flux reste local-first et réactif.** `WorkoutScreen` observe le repository avec
+`useLiveQuery`, fournit toutes les plaques pendant la lecture initiale, puis transmet la sélection
+à `PlateLoadSheet`. La feuille construit un `PlateInventory` et le passe à chaque appel de
+`computePlateLoad` : tous les schémas se recalculent immédiatement, sans modifier le moteur pur.
+La sauvegarde est attendue ; en cas d’échec, le choix courant reste visible et un message localisé
+invite à réessayer.
+
+**Interface dans « Plaques à charger ».** Une section native repliable « Plaques disponibles »
+est placée après le poids de barre et avant les schémas. Elle affiche le compte sélectionné, puis
+une grille 5 × 2 de boutons `aria-pressed` de 48 px minimum. Les états sélectionné, désélectionné
+et focus emploient la palette neutre : aucun accent visuel réservé aux records. Toutes les
+dénominations peuvent être retirées ; l’état vide affiche explicitement qu’aucune plaque n’est
+sélectionnée et les schémas rendent le poids manquant. Le poids de barre RF-31 reste éphémère par
+exercice.
+
+**TDD et régression :**
+
+- repository : import absent au rouge, puis **7 tests verts** sur valeur par défaut, lecture,
+  normalisation, persistance, inventaire vide, repli sûr et écriture atomique ;
+- feuille : cinq comportements ajoutés au rouge, puis **8 tests verts** au total sur l’affichage,
+  le recalcul, la persistance déléguée, l’état vide et le message d’échec ;
+- un test rouge supplémentaire a reproduit la double ponctuation de l’annonce lecteur d’écran
+  « Barre nue… », puis le gabarit localisé a été corrigé ;
+- suite complète : **24 fichiers, 332 tests** — soit 12 tests de plus que le checkpoint RF-31.
+
+**Pilotage réel, 375 × 812 px, port 5173, base `/FITTRACK-RELOADED/` :**
+
+- `innerWidth === document.body.scrollWidth === 375` ; aucun débordement horizontal ;
+- les dix boutons mesurent **57,6 × 48 px** et restent actionnables à une main ;
+- retirer 25 kg passe le compteur à 9/10 et transforme 100 kg sur barre de 20 kg en
+  **2 × 20 kg par côté** ; les schémas 40/60/80 kg se recalculent aussi ;
+- recharger l’app conserve 9/10 et **2 × 20 kg** ;
+- remettre 25 kg restaure 10/10 et **25 + 15 kg par côté** ;
+- retirer les dix plaques donne 0/10, le message d’état vide, une barre nue et 80 kg manquants
+  pour une cible de 100 kg ;
+- les dix plaques ont été restaurées à la fin ; aucune erreur ni aucun avertissement navigateur.
+
+`typecheck`, `lint`, `test:run` et `build` passent. Le build conserve seulement l’avertissement Vite
+déjà connu sur le chunk principal supérieur à 500 kB.
+
+**🟨 Checkpoint téléphone RF-28 : à valider par l’utilisateur.** Après cette validation, le Lot 6
+pourra être clôturé officiellement sans ouvrir le Lot 5bis, le Lot 7 ou le Lot 8.
 
 ### Poids de barre réglable (RF-31) — 2026-07-24
 
@@ -1773,7 +1840,7 @@ ci-dessus fait foi.
 | 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
-| 6 | Outils de séance | 🟨 tranches 1 et 3 validées ; tranche 2 à valider | 6–7 | ✅ minuteur + tranche 3 · ⬜ RF-28 |
+| 6 | Outils de séance | 🟨 implémentation terminée ; checkpoint RF-28 final à valider | 6–7 | ✅ minuteur + tranche 3 · 🟨 RF-28 téléphone |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
 | 9 | PWA & installation | ⬜ à faire | — | ⬜ |
