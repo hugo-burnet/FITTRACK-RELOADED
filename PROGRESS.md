@@ -2,7 +2,22 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Trois retours d'usage sur les plaques + le repos, corrigés
+**Dernière mise à jour :** 2026-07-24 (**Quatre retours d'usage post-séance, corrigés et vérifiés en
+pilotant le navigateur en 375 px.** (1) **Scroll impossible en recherchant un exo** : la vraie cause
+n'était pas la liste mais le clavier — sur Android il se pose *par-dessus* la vue sans en réduire la
+hauteur (`resizes-visual` par défaut), donc le conteneur `100dvh` ne débordait pas et ses derniers
+résultats restaient piégés derrière le clavier. Corrigé **à la racine** par `interactive-widget=resizes-content`
+dans le viewport (`index.html`) — global, pas seulement le picker de routine. (2) **Filet de repos collé
+au séparateur** : relevé de `bottom-0` à `bottom-[5px]` (`RestRail.tsx`), 5,8 px de gap mesurés. (3)
+**« x série sur y » qui partait au scroll** : déplacé dans le slot `sub` de `Screen` (épinglé sous
+l'en-tête, hors défilement, sur sa propre ligne — règle du Lot 4), vérifié en direct qu'il suit la
+validation. (4) **Impossible de supprimer une série dans une routine** : chaque ligne enveloppée dans
+`SwipeToDelete`, le composant exact de la séance en direct (`RoutineExerciseCard.tsx` + `deleteRoutineSet`).
+Piège corrigé au passage : le wrapper faisait de chaque ligne un `:last-child`, ce qui cassait les
+séparateurs via `last:border-b-0` — le filet est désormais piloté par une prop `last`. 252 tests, trois
+portes vertes. **Leçon transverse** : un scroll « impossible » est souvent un problème de clavier/viewport,
+pas de liste ; la corriger dans la liste aurait masqué le défaut sans le résoudre. — Antérieurement :
+**Trois retours d'usage sur les plaques + le repos, corrigés
 en pilotant depuis le téléphone** — cf. section « Trois retours … » sous le calculateur de plaques.
 En résumé : (1) le picker de repos débordait sur « 3:00 » → grille 5 colonnes ; (2) le filet de repos
 tombait sous « Ajouter une série » → remonté sur le séparateur header/corps ; (3) les plaques étaient
