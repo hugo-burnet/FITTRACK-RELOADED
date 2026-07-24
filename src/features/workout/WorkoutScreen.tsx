@@ -261,6 +261,19 @@ export function WorkoutScreen() {
           </HeaderAction>
         </div>
       }
+      /* L'avancement, épinglé sous l'en-tête, hors du défilement : « il faut que
+         ça reste visible tout le temps » — reporté du téléphone, où le relevé
+         posé au-dessus de la liste partait au premier scroll. Sur sa propre
+         ligne, jamais à côté du titre (leçon du Lot 4). Rien tant que la séance
+         est vide : l'état vide dit déjà « 0 ». */
+      sub={
+        exercises.length > 0 ? (
+          <p className="label-xs border-b border-[var(--border)] px-4 pb-3 font-semibold
+            text-[var(--text-2)]">
+            {workoutProgressLine(completedSets, totalSets)}
+          </p>
+        ) : undefined
+      }
       footer={
         <ActionBand
           label={t('workout.finish')}
@@ -273,11 +286,9 @@ export function WorkoutScreen() {
           <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
         ) : (
           <>
-            {/* L'avancement descend au-dessus de la liste qu'il compte (règle du
-                Lot 4), là où l'ancien bandeau le pinglait. */}
-            <p className="label-xs px-1 font-semibold text-[var(--text-2)]">
-              {workoutProgressLine(completedSets, totalSets)}
-            </p>
+            {/* L'avancement ne vit plus ici : il est épinglé sous l'en-tête
+                (prop `sub`), pour rester visible même une fois la liste
+                défilée. */}
             <ReorderableList
               className="flex flex-col gap-3"
               items={exercises}
