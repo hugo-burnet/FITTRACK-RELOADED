@@ -15,3 +15,7 @@ ios/
 
 # Configuration locale de l'agent : réinstallable, sans valeur pour le projet
 .claude/
+
+# Artefacts locaux de conception et d'analyse Codex
+.superpowers/
+.tmp/
