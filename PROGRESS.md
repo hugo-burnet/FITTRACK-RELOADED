@@ -9,8 +9,9 @@ feuille, mais pas à une navigation ou un rechargement. Barre et Smith réglable
 fixe à 0 kg, sans faux réglage de barre. Aucun schéma, repository, réglage global ni stockage ajouté.
 Vérifié en 375 × 812 px : 20 → 15 kg recalcule immédiatement 100 kg en 25 + 15 + 2,5 par côté ;
 15 kg est encore lu après fermeture/réouverture ; aucun débordement, cibles de 48 px, focus neutre,
-console vide. 320 tests (+7 pour RF-31), quatre portes vertes. **La tranche 3 est terminée en code ;
-reste le checkpoint en salle.** — Antérieurement : **Reste du Lot 6, tâche 4 sur 5 : le calculateur
+console vide. 320 tests (+7 pour RF-31), quatre portes vertes. **La tranche 3 est terminée et
+validée en usage réel ; le checkpoint RF-31 est validé sur téléphone et en salle.** —
+Antérieurement : **Reste du Lot 6, tâche 4 sur 5 : le calculateur
 d’échauffement insère une rampe configurable avant les séries de travail (RF-29)** — cf. la section
 dédiée ci-dessous. Rampe proposée 40 % × 10, 60 % × 5, 80 % × 3, arrondie vers le bas au pas de
 2,5 kg, sans limite de nombre d’étapes. Écriture immédiate dans une seule transaction Dexie :
@@ -83,21 +84,27 @@ une vraie séance en salle (2026-07-24)**. La tranche est close.
 les trois portes vertes ; **checkpoint visuel à faire** (la capture live n'a pas pu être prise, la
 pane navigateur n'était pas affichée).
 
-**Lot 6, tranche 3 — Le reste, en 5 tâches, une par une, arrêt entre chaque.** L'ordre est celui de
-la valeur en salle, arbitré au début de la session :
+**Lot 6, tranche 3 — Le reste, en 5 tâches, une par une, arrêt entre chaque.** La tranche est
+**terminée et validée en usage réel (2026-07-24)**. L'ordre était celui de la valeur en salle,
+arbitré au début de la session :
 
 1. ✅ **Types de séries en séance (RF-20)** — `ed70013`, cf. la section dédiée ci-dessous.
 2. ✅ **Record battu en direct (RF-23)** — `825c66b`, cf. la section dédiée ci-dessous.
 3. ✅ **RPE, masquable (RF-30).** Saisie repliable dans la feuille de série, aucune colonne ni badge
    dans la grille. `updateSetValues` existant écrit ou efface la valeur ; aucun changement de
-   repository, de schéma ou de réglage global. Cf. la section dédiée ci-dessous.
+   repository, de schéma ou de réglage global. `629abc7`, cf. la section dédiée ci-dessous.
 4. ✅ **Calculateur d'échauffement (RF-29).** Rampe en pourcentages configurable dans le menu `⋯`
    de l’exercice, moteur pur en TDD et insertion transactionnelle immédiate avant les séries de
-   travail. Cf. la section dédiée ci-dessous.
+   travail. Spécification `6db57de`, implémentation `b90ecae`, cf. la section dédiée ci-dessous.
 5. ✅ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
    (« aujourd'hui je suis sur une barre de 15 »). Choix éphémère par exercice tant que l’écran de
    séance reste monté, retenu après fermeture/réouverture de la feuille. Aucun réglage global :
-   l'inventaire de plaques et les valeurs persistantes restent au **Lot 8**.
+   l'inventaire de plaques et les valeurs persistantes restent au **Lot 8**. `1e03a31` ;
+   checkpoint validé sur téléphone et en usage réel.
+
+**Clôture officielle du Lot 6 : pas encore.** La tranche 1 et la tranche 3 sont validées en salle,
+mais la tranche 2 conserve son checkpoint visuel RF-28 à faire. Selon la règle de la roadmap
+(ne pas fermer un lot avant validation de tout son checkpoint), RF-28 est le seul verrou restant.
 
 ### Poids de barre réglable (RF-31) — 2026-07-24
 
@@ -147,11 +154,10 @@ entièrement disponible hors-ligne.
 `typecheck`, `lint`, `test:run` et `build` passent. Le build conserve seulement l’avertissement Vite
 déjà connu sur le chunk principal supérieur à 500 kB.
 
-**Checkpoint salle précis :** sur un exercice à la barre prévu à 100 kg, prendre réellement une
-barre de 15 kg, ouvrir l’icône « Plaques à charger », appuyer deux fois sur − et vérifier d’un coup
-d’œil **25 + 15 + 2,5 kg par côté**. Fermer puis rouvrir la feuille : 15 kg doit rester. Ouvrir
-ensuite les plaques d’un autre exercice de la séance : il doit garder son propre défaut, sans
-hériter silencieusement des 15 kg du premier.
+**✅ Checkpoint salle RF-31 : validé par l'utilisateur sur téléphone et en usage réel
+(2026-07-24).** Le poids de barre réglable recalcule correctement les plaques, reste propre à
+l'exercice, survit à la fermeture/réouverture de la feuille et revient au défaut après navigation
+ou rechargement. Barre et Smith sont réglables ; la machine à plaques reste fixée à 0 kg.
 
 ### Calculateur d’échauffement (RF-29) — 2026-07-24
 
@@ -200,10 +206,9 @@ erreur de production.
 - après rechargement complet, le même ordre et les mêmes cibles sont relus par la vue Dexie ;
 - aucune erreur ni aucun avertissement navigateur.
 
-**Checkpoint salle précis :** sur un exercice barre prévu à 100 kg, ouvrir `⋯` → « Calculer
-l’échauffement », garder 40/60/80, insérer, puis valider les trois approches. Vérifier qu’elles
-restent avant la série de travail après fermeture/réouverture de l’app, qu’aucune ne lance le repos
-et que le passage aux charges proposées est naturel avec le matériel réellement disponible.
+**✅ Checkpoint salle RF-29 : validé en usage réel (2026-07-24).** Sur un exercice barre prévu à
+100 kg, la rampe 40/60/80 s'insère avant la série de travail, persiste après fermeture/réouverture
+de l'app, ne lance pas de repos et reste naturelle avec le matériel réellement disponible.
 
 ### RPE masquable (RF-30) — 2026-07-24
 
@@ -245,6 +250,8 @@ description accessible de la valeur courante, choix de 8,5 et effacement vers `u
 feuille d'exercice, où sa condition était impossible ; puis le focus global dessinait une ligne
 accent sous la divulgation. Le composant vit maintenant dans la vraie feuille de série et ses focus
 utilisent `--text-2`, tout en restant visibles au clavier.
+
+**✅ Checkpoint salle RF-30 : validé en usage réel (2026-07-24).**
 
 ### Record battu en direct (RF-23) — 2026-07-24
 
@@ -343,20 +350,20 @@ séance à trois séries) — pas sur des données injectées.
 - **Le bandeau balaye avec sa ligne** : il est le second enfant du bloc qui porte le `translateX`
   (vérifié dans le DOM), donc supprimer une série de record ne laisse pas sa félicitation derrière.
 
-#### ⬜ Checkpoint en salle — RF-23
+#### ✅ Checkpoint en salle — RF-23, validé en usage réel le 2026-07-24
 
-- [ ] **Un record se voit sans le chercher, entre deux séries.** C'est tout le pari : si le bandeau
+- [x] **Un record se voit sans le chercher, entre deux séries.** C'est tout le pari : si le bandeau
       passe inaperçu à bout de bras, c'est le repère qui est trop discret — pas la détection.
-- [ ] **L'étoile sur l'exo replié se comprend.** C'est le seul endroit où la forme est seule, sans le
+- [x] **L'étoile sur l'exo replié se comprend.** C'est le seul endroit où la forme est seule, sans le
       mot à côté. Si elle se lit « favori » plutôt que « record », le repli est le bon endroit mais
       pas la bonne marque.
-- [ ] **« Record · Meilleure série » veut dire quelque chose en salle.** « Charge max » est évident ;
+- [x] **« Record · Meilleure série » veut dire quelque chose en salle.** « Charge max » est évident ;
       le volume d'une série l'est moins. Si ça ne parle pas, ce record ne mérite peut-être pas un
       bandeau — le montrer serait alors du bruit sur l'écran le plus chargé de l'app.
-- [ ] **Le bandeau qui descend d'une ligne** quand une série suivante fait mieux : est-ce que ça se
+- [x] **Le bandeau qui descend d'une ligne** quand une série suivante fait mieux : est-ce que ça se
       lit comme « le record a bougé », ou comme « j'ai perdu mon record » ? C'est le point où la
       dérivation se voit à l'œil nu.
-- [ ] **Rien ne fête une première fois.** Un exercice jamais fait ne dit rien à sa première série de
+- [x] **Rien ne fête une première fois.** Un exercice jamais fait ne dit rien à sa première série de
       travail. Si ça donne l'impression que la détection ne marche pas, c'est la règle « il faut un
       tenant du titre » qu'il faut revoir — pas le code.
 
@@ -430,20 +437,20 @@ phrase promettait un comportement que le code ne rendait pas.
 - Aucun débordement horizontal, aucune erreur console.
 - `workout.warmupShort` est **supprimé** de `fr.ts` : son dernier consommateur vient de partir.
 
-#### ⬜ Checkpoint en salle — RF-20
+#### ✅ Checkpoint en salle — RF-20, validé en usage réel le 2026-07-24
 
-- [ ] **Les trois pictogrammes se distinguent d'un coup d'œil, bras tendu, sans les chercher.** C'est
+- [x] **Les trois pictogrammes se distinguent d'un coup d'œil, bras tendu, sans les chercher.** C'est
       le point fragile de la tâche : une forme ne se déchiffre pas, elle se reconnaît — ou pas. Si
       deux d'entre eux se confondent, **le repli est la couleur** (un jeton propre, pas un hex), pas
       un retour aux mots.
-- [ ] **La flamme se lit bien comme « échauffement »** et pas comme « série chaude / lourde ». C'est
+- [x] **La flamme se lit bien comme « échauffement »** et pas comme « série chaude / lourde ». C'est
       le seul des trois dont la métaphore peut basculer.
-- [ ] Marquer une série en dégressive **en pleine séance**, la barre en main : le chemin
+- [x] Marquer une série en dégressive **en pleine séance**, la barre en main : le chemin
       rang → « Type de série » → choix se fait-il d'une main, entre deux séries ?
-- [ ] **La série qui précède une dégressive ne déclenche aucun repos** — et ça ne surprend pas. Le
+- [x] **La série qui précède une dégressive ne déclenche aucun repos** — et ça ne surprend pas. Le
       pari est que c'est ce que tu attends (on allège et on repart) ; si ça donne l'impression d'un
       minuteur qui a raté son départ, c'est la règle qu'il faut revoir, pas le code.
-- [ ] Une série repassée en échauffement **après** avoir été validée : ses kilos restent affichés,
+- [x] Une série repassée en échauffement **après** avoir été validée : ses kilos restent affichés,
       et elle disparaît du volume et des records. Vérifiable sur l'écran de fin.
 
 > **Un défaut hors périmètre, trouvé en lisant la base — deux séries au même rang.** Le dump
@@ -1766,7 +1773,7 @@ ci-dessus fait foi.
 | 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
-| 6 | Outils de séance | 🟨 tranche 3 terminée en code | 6–7 | ✅ minuteur · ⬜ checkpoint plaques/outils |
+| 6 | Outils de séance | 🟨 tranches 1 et 3 validées ; tranche 2 à valider | 6–7 | ✅ minuteur + tranche 3 · ⬜ RF-28 |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
 | 9 | PWA & installation | ⬜ à faire | — | ⬜ |
