@@ -250,8 +250,10 @@ const fr = {
     platesPerSide: 'De chaque côté',
     /** La charge totale visée, en gros, au-dessus du schéma. */
     platesTotalReading: '{weight} kg',
-    /** La barre nue, d'où part le calcul. */
-    platesBar: 'Barre {weight} kg',
+    /** Le seul réglage local du calculateur : la barre utilisée aujourd’hui. */
+    platesBarWeight: 'Poids de la barre',
+    /** Une machine à plaques n’a pas de barre réglable dans ce lot. */
+    platesMachineBase: 'Charge à vide {weight} kg',
     /** Un côté sans aucune plaque : la charge visée est celle de la barre seule. */
     platesEmpty: 'Barre nue, aucune plaque à ajouter.',
     /** La liste des plaques d'un côté, séparées par des points médians. */

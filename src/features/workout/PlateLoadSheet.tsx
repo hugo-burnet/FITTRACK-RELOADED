@@ -1,5 +1,6 @@
 import { t } from '@/i18n/fr';
 import { computePlateLoad, type PlateCount } from '@/lib/plates';
+import { NumberInput } from '@/ui';
 import { formatNumber } from '@/ui/numberField';
 import { Sheet } from '@/ui/Sheet';
 
@@ -47,6 +48,8 @@ type Props = {
   loads: number[];
   barWeight: number;
   sides: number;
+  barWeightAdjustable: boolean;
+  onBarWeightChange: (barWeight: number) => void;
 };
 
 /**
@@ -60,10 +63,36 @@ type Props = {
  * that rule and fail the contrast floor the app holds itself to. The diagram is
  * the glance; the reading under it is the exact answer.
  */
-export function PlateLoadSheet({ open, onClose, loads, barWeight, sides }: Props) {
+export function PlateLoadSheet({
+  open,
+  onClose,
+  loads,
+  barWeight,
+  sides,
+  barWeightAdjustable,
+  onBarWeightChange,
+}: Props) {
   return (
     <Sheet open={open} onClose={onClose} title={t('workout.platesTitle')}>
       <div className="pb-2">
+        {barWeightAdjustable && (
+          <div className="mb-6 flex flex-col gap-2 border-b border-[var(--border)] pb-6">
+            <span className="label-xs font-semibold text-[var(--text-2)]">
+              {t('workout.platesBarWeight')}
+            </span>
+            <NumberInput
+              value={barWeight}
+              onChange={(value) => onBarWeightChange(value ?? 0)}
+              min={0}
+              max={Number.MAX_SAFE_INTEGER}
+              step={2.5}
+              suffix={t('units.kg')}
+              focusTone="neutral"
+              aria-label={t('workout.platesBarWeight')}
+            />
+          </div>
+        )}
+
         {loads.map((weightKg, index) => (
           <PlateBlock
             key={index}
@@ -76,9 +105,14 @@ export function PlateLoadSheet({ open, onClose, loads, barWeight, sides }: Props
           />
         ))}
 
-        <p className="mt-6 border-t border-[var(--border)] pt-4 text-center text-sm text-[var(--text-2)]">
-          {t('workout.platesBar', { weight: formatNumber(barWeight) })}
-        </p>
+        {!barWeightAdjustable && (
+          <p
+            className="mt-6 border-t border-[var(--border)] pt-4 text-center text-sm
+              text-[var(--text-2)]"
+          >
+            {t('workout.platesMachineBase', { weight: formatNumber(barWeight) })}
+          </p>
+        )}
       </div>
     </Sheet>
   );

@@ -100,7 +100,7 @@ export function NumberInput({
             placeholder:text-[var(--text-2)]
             ${
               focusTone === 'neutral'
-                ? 'focus:ring-2 focus:ring-[var(--text-2)]'
+                ? 'focus:ring-2 focus:ring-[var(--text-2)] focus-visible:[outline-color:var(--text-2)]'
                 : 'focus:ring-2 focus:ring-[var(--accent-ink)]'
             }
             ${suffix ? 'pr-9 pl-9' : ''}`}

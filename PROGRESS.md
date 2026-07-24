@@ -2,7 +2,15 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 4 sur 5 : le calculateur
+**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 5 sur 5 : le poids de
+barre se règle là où il sert, dans « Plaques à charger » (RF-31)** — cf. la section dédiée
+ci-dessous. Valeur éphémère par exercice de la séance affichée : elle survit à la fermeture de la
+feuille, mais pas à une navigation ou un rechargement. Barre et Smith réglables ; machine à plaques
+fixe à 0 kg, sans faux réglage de barre. Aucun schéma, repository, réglage global ni stockage ajouté.
+Vérifié en 375 × 812 px : 20 → 15 kg recalcule immédiatement 100 kg en 25 + 15 + 2,5 par côté ;
+15 kg est encore lu après fermeture/réouverture ; aucun débordement, cibles de 48 px, focus neutre,
+console vide. 320 tests (+7 pour RF-31), quatre portes vertes. **La tranche 3 est terminée en code ;
+reste le checkpoint en salle.** — Antérieurement : **Reste du Lot 6, tâche 4 sur 5 : le calculateur
 d’échauffement insère une rampe configurable avant les séries de travail (RF-29)** — cf. la section
 dédiée ci-dessous. Rampe proposée 40 % × 10, 60 % × 5, 80 % × 3, arrondie vers le bas au pas de
 2,5 kg, sans limite de nombre d’étapes. Écriture immédiate dans une seule transaction Dexie :
@@ -86,10 +94,64 @@ la valeur en salle, arbitré au début de la session :
 4. ✅ **Calculateur d'échauffement (RF-29).** Rampe en pourcentages configurable dans le menu `⋯`
    de l’exercice, moteur pur en TDD et insertion transactionnelle immédiate avant les séries de
    travail. Cf. la section dédiée ci-dessous.
-5. ⬜ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
-   (« aujourd'hui je suis sur une barre de 15 »). L'inventaire de plaques et l'écran de réglages
-   restent au **Lot 8**, qui les liste explicitement comme ses livrables — ne pas monter un
-   demi-écran de réglages ici.
+5. ✅ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
+   (« aujourd'hui je suis sur une barre de 15 »). Choix éphémère par exercice tant que l’écran de
+   séance reste monté, retenu après fermeture/réouverture de la feuille. Aucun réglage global :
+   l'inventaire de plaques et les valeurs persistantes restent au **Lot 8**.
+
+### Poids de barre réglable (RF-31) — 2026-07-24
+
+**La durée de vie est volontairement courte et explicite.** `WorkoutScreen` garde le poids choisi
+dans un état React indexé par `WorkoutExercise.id`. Fermer puis rouvrir « Plaques à charger » sur le
+même exercice conserve donc le choix du jour. Changer d’exercice n’emporte pas la valeur avec lui ;
+quitter/recharger l’écran la remet au défaut matériel. Rien n’est écrit dans IndexedDB,
+`localStorage`, Zustand ou un repository. Ce n’est ni un réglage global anticipé, ni un début
+d’inventaire de salle.
+
+**Le contrat matériel reste étroit :**
+
+- barre olympique et Smith : défaut 20 kg, poids réglable sans quota, par pas de 2,5 kg ou saisie
+  décimale directe ;
+- machine à plaques : base fixe 0 kg, texte honnête « Charge à vide 0 kg », aucun contrôle nommé
+  « Poids de la barre » ;
+- machine à broche, haltère fixe, charge ajoutée/assistée : toujours exclus par les deux portes
+  existantes de `platesConfigFor`.
+
+`plateConfig.ts` expose maintenant `barWeightAdjustable` avec le poids et le nombre de côtés.
+`PlateLoadSheet` réutilise le `NumberInput` existant au-dessus des schémas : trois contrôles de
+48 px, surfaces et focus neutres, aucun accent. Le contrôle remplace le rappel passif de barre au
+lieu d’ajouter une nouvelle carte ou une seconde feuille. Toute modification repasse immédiatement
+les charges distinctes dans `computePlateLoad` ; le moteur reste pur, sans accès réseau et
+entièrement disponible hors-ligne.
+
+**TDD :** deux cycles rouges puis verts, plus la régression trouvée en revue :
+
+- 4 cas sur `platesConfigFor` : barre, Smith, machine à plaques et mesure non chargeable ;
+- 3 cas sur `PlateLoadSheet` : recalcul 20 → 15 kg, machine sans faux réglage et effacement ramené
+  visiblement à 0 kg plutôt qu’interprété en silence ;
+- suite complète : **23 fichiers, 320 tests**.
+
+**Pilotage réel, 375 × 812 px, port 5173, base `/FITTRACK-RELOADED/` :**
+
+- `innerWidth === document.body.scrollWidth === 375` ; feuille sans débordement horizontal
+  (`375,2 px` de boîte composée sur un viewport de 375 px, sans hausse du `scrollWidth`) ;
+- boutons − / + / fermer : **48 × 48 px** ; champ : **216 × 48 px** ;
+- `getComputedStyle` du focus : halo et `outlineColor` `rgb(161, 161, 170)` (`--text-2`), jamais
+  l’accent réservé aux records et séries validées ;
+- sur les charges 40/60/80/100 kg, passer la barre de 20 à 15 kg recalcule immédiatement les quatre
+  lectures ; 100 kg devient **25 · 15 · 2,5 par côté** ;
+- après fermeture complète puis réouverture, le champ lit encore **15** et le schéma de 100 kg
+  porte encore **25 · 15 · 2,5** ;
+- aucune erreur ni aucun avertissement navigateur.
+
+`typecheck`, `lint`, `test:run` et `build` passent. Le build conserve seulement l’avertissement Vite
+déjà connu sur le chunk principal supérieur à 500 kB.
+
+**Checkpoint salle précis :** sur un exercice à la barre prévu à 100 kg, prendre réellement une
+barre de 15 kg, ouvrir l’icône « Plaques à charger », appuyer deux fois sur − et vérifier d’un coup
+d’œil **25 + 15 + 2,5 kg par côté**. Fermer puis rouvrir la feuille : 15 kg doit rester. Ouvrir
+ensuite les plaques d’un autre exercice de la séance : il doit garder son propre défaut, sans
+hériter silencieusement des 15 kg du premier.
 
 ### Calculateur d’échauffement (RF-29) — 2026-07-24
 
@@ -1704,7 +1766,7 @@ ci-dessus fait foi.
 | 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
-| 6 | Outils de séance | 🟨 minuteur validé · plaques livrées | 6–7 | ✅ minuteur · ⬜ plaques (visuel) · ⬜ reste |
+| 6 | Outils de séance | 🟨 tranche 3 terminée en code | 6–7 | ✅ minuteur · ⬜ checkpoint plaques/outils |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
 | 9 | PWA & installation | ⬜ à faire | — | ⬜ |

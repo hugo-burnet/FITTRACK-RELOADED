@@ -76,7 +76,13 @@ const SET_TYPE_OPTIONS = SET_TYPES.map((value) => ({
 
 /** The bar loads a plate sheet reads, kept out of `SheetState` so its close
  *  animation still has valid numbers after the card's menu is gone. */
-type PlatesView = { loads: number[]; barWeight: number; sides: number };
+type PlatesView = {
+  rowId: string;
+  loads: number[];
+  barWeight: number;
+  sides: number;
+  barWeightAdjustable: boolean;
+};
 
 /** Same derivation as the routine editor, from the same pure function. */
 function supersetPlaces(lines: WorkoutExerciseDetail[]): Map<string, SupersetPlace> {
@@ -140,6 +146,12 @@ export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
+  /**
+   * RF-31 is deliberately session-screen state, keyed by workout exercise.
+   * Closing the sheet keeps today's bar choice; leaving/reloading the screen
+   * drops it. Lot 8 will own persistent defaults and equipment inventory.
+   */
+  const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
   const rest = useRestTimer();
 
   // `null` is "no session", `undefined` is "not answered yet". Blurring them
@@ -413,9 +425,11 @@ export function WorkoutScreen() {
                     config !== null && loads.length > 0
                       ? () => {
                           setPlatesView({
+                            rowId: line.row.id,
                             loads,
-                            barWeight: config.barWeight,
+                            barWeight: plateBarWeights[line.row.id] ?? config.barWeight,
                             sides: config.sides,
+                            barWeightAdjustable: config.barWeightAdjustable,
                           });
                           setSheet({ kind: 'plates' });
                         }
@@ -618,6 +632,12 @@ export function WorkoutScreen() {
         loads={platesView?.loads ?? []}
         barWeight={platesView?.barWeight ?? 20}
         sides={platesView?.sides ?? 2}
+        barWeightAdjustable={platesView?.barWeightAdjustable ?? false}
+        onBarWeightChange={(barWeight) => {
+          if (platesView === null) return;
+          setPlateBarWeights((current) => ({ ...current, [platesView.rowId]: barWeight }));
+          setPlatesView({ ...platesView, barWeight });
+        }}
       />
     </Screen>
   );

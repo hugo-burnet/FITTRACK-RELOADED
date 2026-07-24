@@ -7,10 +7,19 @@ import { measurementShape } from '@/lib/measurement';
  * showing them a plate diagram would be a confident lie. Kept out of
  * `lib/plates` so the engine stays free of the app's `Equipment` vocabulary.
  */
-const LOADABLE: Partial<Record<Equipment, { barWeight: number; sides: number }>> = {
-  barbell: { barWeight: 20, sides: 2 },
-  smith: { barWeight: 20, sides: 2 },
-  plate: { barWeight: 0, sides: 2 }, // plate-loaded machine (leg press, hack squat)
+export interface PlateConfig {
+  barWeight: number;
+  sides: number;
+  /** Only a bar or Smith has a bar whose weight the lifter can swap today. */
+  barWeightAdjustable: boolean;
+}
+
+const LOADABLE: Partial<Record<Equipment, PlateConfig>> = {
+  barbell: { barWeight: 20, sides: 2, barWeightAdjustable: true },
+  smith: { barWeight: 20, sides: 2, barWeightAdjustable: true },
+  // A plate-loaded machine has a fixed zero base in this lot. Its sled or frame
+  // belongs to the equipment inventory/settings work of Lot 8, not to RF-31.
+  plate: { barWeight: 0, sides: 2, barWeightAdjustable: false },
 };
 
 /**
@@ -21,7 +30,7 @@ const LOADABLE: Partial<Record<Equipment, { barWeight: number; sides: number }>>
  * the equipment has to be one that takes plates. The workout screen calls this
  * to decide whether the "Plaques" menu entry appears at all.
  */
-export function platesConfigFor(exercise: Exercise): { barWeight: number; sides: number } | null {
+export function platesConfigFor(exercise: Exercise): PlateConfig | null {
   if (measurementShape(exercise.measurementType).weightRole !== 'load') return null;
   return LOADABLE[exercise.equipment] ?? null;
 }
