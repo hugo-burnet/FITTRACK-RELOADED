@@ -6,7 +6,7 @@ import { day, seedWorkout } from '@/test/factories';
 import { newEntity } from './base';
 import { createCustomExercise } from './exercises';
 import { addExercisesToRoutine, addRoutineSet, createRoutine, updateRoutineSet } from './routines';
-import { getLastPerformance, listSessionsForExercise } from './workoutHistory';
+import { getLastPerformance, listRecordSets, listSessionsForExercise } from './workoutHistory';
 import {
   addSet,
   addWorkoutExercise,
@@ -252,6 +252,78 @@ describe('listSessionsForExercise', () => {
 
   it('rend un tableau vide pour un exercice jamais fait', async () => {
     expect(await listSessionsForExercise('jamais-fait')).toEqual([]);
+  });
+});
+
+describe('listRecordSets', () => {
+  beforeEach(resetDb);
+
+  it('rend les séries validées de chaque exercice demandé', async () => {
+    await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [
+        [100, 5],
+        [95, 6],
+      ],
+    });
+    await seedWorkout({ exerciseId: 'squat', performedAt: day(2), sets: [[140, 5]] });
+
+    const universe = await listRecordSets(['bench', 'squat']);
+
+    // Trié pour l'assertion seulement : l'ordre de sortie suit l'index
+    // `[exerciseId+performedAt]`, et deux séries d'une même séance partagent leur
+    // date. Aucun consommateur n'en dépend — `bestSets` note, il ne parcourt pas.
+    expect(universe.get('bench')?.map((set) => set.weight).sort()).toEqual([100, 95].sort());
+    expect(universe.get('squat')?.map((set) => set.weight)).toEqual([140]);
+  });
+
+  /**
+   * La différence avec `getLastPerformance`, qui exclut la séance en cours :
+   * ici elle **compte**. Une série cochée à la 2 est la référence de la 3.
+   */
+  it('inclut les séries déjà validées dans la séance en cours', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+
+    const workout = await startWorkout('', 'Aujourd’hui');
+    const we = await addExercise(workout.id, 'bench');
+    const set = await addSet(we.id, { weight: 105, reps: 5 });
+    await completeSet(set.id, { weight: 105, reps: 5 });
+
+    const universe = await listRecordSets(['bench']);
+
+    expect(universe.get('bench')?.map((one) => one.weight)).toEqual([100, 105]);
+  });
+
+  it('ignore les séries non validées, les supprimées et les séances abandonnées', async () => {
+    const discarded = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[200, 1]],
+    });
+    await discardWorkout(discarded.id);
+
+    const workout = await startWorkout('', 'Aujourd’hui');
+    const we = await addExercise(workout.id, 'bench');
+    await addSet(we.id, { weight: 999, reps: 1 }); // jamais cochée
+    const gone = await addSet(we.id, { weight: 300, reps: 1 });
+    await completeSet(gone.id, { weight: 300, reps: 1 });
+    await deleteSet(gone.id);
+
+    expect(await listRecordSets(['bench'])).toEqual(new Map([['bench', []]]));
+  });
+
+  it('rend une entrée vide, jamais absente, pour un exercice jamais fait', async () => {
+    expect(await listRecordSets(['jamais-fait'])).toEqual(new Map([['jamais-fait', []]]));
+  });
+
+  it('ne demande qu’une fois un exercice présent deux fois dans la séance', async () => {
+    await seedWorkout({ exerciseId: 'bench', performedAt: day(1), sets: [[100, 5]] });
+
+    const universe = await listRecordSets(['bench', 'bench']);
+
+    expect(universe.size).toBe(1);
+    expect(universe.get('bench')).toHaveLength(1);
   });
 });
 

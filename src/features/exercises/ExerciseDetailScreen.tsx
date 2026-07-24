@@ -6,7 +6,7 @@ import { deleteExercise, getExercise, updateExercise } from '@/data/repositories
 import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle } from '@/i18n/labels';
+import { exerciseSubtitle, recordLabel } from '@/i18n/labels';
 import { bestSets, isWorkingSet } from '@/lib/records';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import {
@@ -160,19 +160,16 @@ export function ExerciseDetailScreen() {
             <SectionTitle>{t('exercise.recordsSection')}</SectionTitle>
             <Card>
               {heaviest !== undefined && (
-                <Reading label={t('exercise.recordHeaviest')} value={topSetLabel([heaviest])!} />
+                <Reading label={recordLabel('heaviest')} value={topSetLabel([heaviest])!} />
               )}
               {showReps && (
                 <Reading
-                  label={t('exercise.recordMostReps')}
+                  label={recordLabel('mostReps')}
                   value={t('exercise.recordReps', { reps: mostReps.reps! })}
                 />
               )}
               {showVolume && (
-                <Reading
-                  label={t('exercise.recordBestVolume')}
-                  value={topSetLabel([bestVolume])!}
-                />
+                <Reading label={recordLabel('bestVolume')} value={topSetLabel([bestVolume])!} />
               )}
             </Card>
           </section>

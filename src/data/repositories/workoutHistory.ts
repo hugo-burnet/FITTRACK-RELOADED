@@ -64,6 +64,40 @@ export interface ExerciseSession {
   sets: WorkoutSet[];
 }
 
+/**
+ * RF-23 — every set that counts for each of these exercises, keyed by exercise.
+ *
+ * The universe a live record is judged against, and it deliberately does **not**
+ * exclude the session in progress: a record broken on set 2 is a record, and the
+ * only thing separating set 2 from last month's set is its date. `bestSets` then
+ * hands ties to the older one, so equalling your own set 1 is not a record.
+ *
+ * The opposite of `getLastPerformance`, which exists precisely to keep the
+ * current session out — that column is a reference, this one is a scoreboard.
+ *
+ * One index range per exercise rather than `anyOf('exerciseId')`: the composite
+ * index skips unvalidated rows outright instead of reading them to throw them
+ * away, and a session in progress is mostly unvalidated rows. Warm-ups are kept
+ * — `isWorkingSet` is the one place that decides they do not count (`lib/records`).
+ */
+export async function listRecordSets(
+  exerciseIds: string[],
+): Promise<Map<string, WorkoutSet[]>> {
+  const unique = [...new Set(exerciseIds)];
+
+  const lists = await Promise.all(
+    unique.map((exerciseId) =>
+      db.workoutSets
+        .where('[exerciseId+performedAt]')
+        .between([exerciseId, 1], [exerciseId, Dexie.maxKey])
+        .filter((set) => set.deletedAt === 0 && set.isCompleted === 1)
+        .toArray(),
+    ),
+  );
+
+  return new Map(unique.map((exerciseId, index) => [exerciseId, lists[index]!]));
+}
+
 /** RF-10 — the whole history of one exercise, most recent first. */
 export async function listSessionsForExercise(exerciseId: string): Promise<ExerciseSession[]> {
   const sets = await db.workoutSets

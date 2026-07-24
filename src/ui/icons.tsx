@@ -218,6 +218,27 @@ export function BoltIcon(props: IconProps) {
   );
 }
 
+/**
+ * RF-23 — a record. Filled, because it is read at 16 px inside a strip.
+ *
+ * A new glyph rather than a reused one: nothing in the app means "best" yet, and
+ * the two candidates that do exist mean something else (the check means *done*,
+ * the bolt means *to failure*). A trophy was drawn first and dropped — its
+ * silhouette is a closed rounded shape on a stem, which is the flame's silhouette
+ * at arm's length, and the type marks are built on being maximally distinct
+ * (Lot 6, task 1). A star is radial and spiky: it collides with none of the three.
+ */
+export function StarIcon(props: IconProps) {
+  return (
+    <Icon width="20" height="20" fill="currentColor" stroke="none" {...props}>
+      <path
+        d="M12 2.5 14.47 8.6 21.03 9.06 15.99 13.3 17.58 19.66 12 16.2 6.42 19.66 8.01 13.3
+          2.97 9.06 9.53 8.6Z"
+      />
+    </Icon>
+  );
+}
+
 /** Réglages — load sliders, not a gear: this screen is a panel of numbers. */
 export function SlidersIcon(props: IconProps) {
   return (

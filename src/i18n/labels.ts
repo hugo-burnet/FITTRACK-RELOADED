@@ -1,5 +1,6 @@
 import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType } from '@/data/types';
 import type { TargetUnit } from '@/lib/measurement';
+import type { RecordKind } from '@/lib/records';
 import { t } from './fr';
 
 /**
@@ -26,6 +27,14 @@ export const measurementHint = (measurement: MeasurementType): string =>
 export const setTypeLabel = (setType: SetType): string => t(`setType.${setType}`);
 
 export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setType}`);
+
+/**
+ * « Charge max » — the name of a record, wherever it is read.
+ *
+ * The exercise sheet lists the three, the live session congratulates them
+ * (RF-23): naming them twice is how the same fact ends up with two names.
+ */
+export const recordLabel = (kind: RecordKind): string => t(`record.${kind}`);
 
 /** "Pectoraux · Barre" — the one line under every exercise name in the app. */
 export const exerciseSubtitle = (exercise: Exercise): string =>

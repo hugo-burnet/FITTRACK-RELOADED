@@ -18,10 +18,13 @@ import {
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
+import { listRecordSets } from '@/data/repositories/workoutHistory';
 import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
+import { recordsBeatenBy } from '@/lib/records';
+import type { RecordKind } from '@/lib/records';
 import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
 import { toBlocks } from '@/lib/routineOrder';
 import { useRestTimer } from '@/stores/restTimer';
@@ -143,6 +146,22 @@ export function WorkoutScreen() {
   );
 
   /**
+   * RF-23 — the scoreboard every set of this session is judged against: each
+   * exercise's whole validated history, **today's ticked sets included**.
+   *
+   * A second query rather than a field of `getWorkoutDetail`, because it answers a
+   * different question than the "précédent" column does — that one exists to keep
+   * the current session *out* (`excludeWorkoutId`), this one to let it in.
+   *
+   * Re-read live, and that is the point: nothing about a record is stored, so
+   * un-ticking a set, deleting it or turning it into a warm-up mid-session
+   * un-makes its record with no invalidation code at all. Keyed on the exercise
+   * ids, so adding an exercise re-subscribes and nothing else does.
+   */
+  const exerciseIds = detail?.exercises.map((line) => line.row.exerciseId) ?? [];
+  const recordSets = useLiveQuery(() => listRecordSets(exerciseIds), [exerciseIds.join()]);
+
+  /**
    * The gesture that lets the timer make a noise two minutes from now.
    *
    * A mobile browser refuses to start audio outside a user gesture, and the
@@ -227,6 +246,27 @@ export function WorkoutScreen() {
     }
     rest.start(setId, plan.seconds);
   };
+
+  /**
+   * The set that holds each record, by set id — the question asked again on every
+   * render instead of an answer written down anywhere (cf. `recordsBeatenBy`).
+   *
+   * Only this session's sets can carry a mark: a record set last month is history,
+   * not news. And only the **first** of the records a set takes is kept, because a
+   * heavier set at equal reps almost always takes the volume record with the load
+   * one — two lines of congratulation for one set is noise, and "Charge max" is
+   * the headline of the two.
+   */
+  const records = new Map<string, RecordKind>();
+  for (const line of exercises) {
+    const universe = recordSets?.get(line.row.exerciseId);
+    if (universe === undefined) continue;
+    for (const set of line.sets) {
+      if (set.isCompleted !== 1) continue;
+      const [top] = recordsBeatenBy(set, universe);
+      if (top !== undefined) records.set(set.id, top.kind);
+    }
+  }
 
   const totalSets = exercises.reduce((count, line) => count + line.sets.length, 0);
   const completedSets = exercises.reduce(
@@ -353,6 +393,7 @@ export function WorkoutScreen() {
                         }
                       : null
                   }
+                  records={records}
                   state={state}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onPlates={

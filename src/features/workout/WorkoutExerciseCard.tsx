@@ -4,9 +4,11 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
+import type { RecordKind } from '@/lib/records';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
-import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon } from '@/ui/icons';
+import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon, StarIcon } from '@/ui/icons';
+import { RecordNote } from './RecordNote';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
 import { setReading } from './summary';
@@ -25,6 +27,12 @@ type Props = {
   superset?: SupersetPlace;
   /** Non-null while one of this exercise's sets is resting. */
   rest: CardRest | null;
+  /**
+   * RF-23 — which sets of the session hold a record right now, by set id. The
+   * card only ever looks up its own. Re-derived on every render from each
+   * exercise's whole validated history, never stored: cf. `recordsBeatenBy`.
+   */
+  records: Map<string, RecordKind>;
   state: ItemState;
   onMenu: () => void;
   /** Opens the plate calculator. Absent when the exercise has no bar to load. */
@@ -63,6 +71,7 @@ export function WorkoutExerciseCard({
   line,
   superset,
   rest,
+  records,
   state,
   onMenu,
   onPlates,
@@ -106,6 +115,18 @@ export function WorkoutExerciseCard({
   // so a glance at a closed exercise still says what was done.
   const lastSet = sets.length > 0 ? sets[sets.length - 1] : undefined;
   const doneReading = lastSet !== undefined ? setReading(lastSet, columns) : '';
+
+  /**
+   * RF-23 on a folded card — and it is not a nice-to-have.
+   *
+   * Ticking the **last** set folds the exercise, and the last set is usually the
+   * top one: without a mark up here, the strip under it would appear and be shut
+   * away in the same frame, so the one record you most wanted to see would be the
+   * one you never see. The header says *that* there is one, unfolding says which
+   * set and which record — the same disclosure the fold already applies to the
+   * figures, and the reason it is drawn only while folded.
+   */
+  const hasRecord = sets.some((set) => records.has(set.id));
 
   /**
    * One slot at a time. Swiping a second row closes the first offer — the
@@ -193,6 +214,21 @@ export function WorkoutExerciseCard({
                 >
                   {name}
                 </span>
+                {/* Replié seulement, comme la coche et le relevé de la dernière
+                    série : déplié, le bandeau sous la ligne le dit mieux — il dit
+                    laquelle. `role="img"` plutôt qu'`aria-hidden` : c'est la seule
+                    trace du record quand la carte est fermée, donc elle doit
+                    entrer dans le nom du bouton. */}
+                {!expanded && hasRecord && (
+                  <StarIcon
+                    width={16}
+                    height={16}
+                    role="img"
+                    aria-hidden={false}
+                    aria-label={t('workout.recordFolded')}
+                    className="shrink-0 text-[var(--accent-ink)]"
+                  />
+                )}
               </span>
               {/* Le repos prend la place du sous-titre le temps qu'il coule :
                   un repos est le statut du moment, pas un 3ᵉ élément. Sinon,
@@ -293,7 +329,9 @@ export function WorkoutExerciseCard({
               <span className="w-12 shrink-0" />
             </div>
 
-            {sets.map((set, index) => (
+            {sets.map((set, index) => {
+              const record = records.get(set.id);
+              return (
               <Fragment key={set.id}>
                 {/* Le bandeau reprend le rang de la disparue : celle qui occupait
                     cette place est maintenant ici, donc le bandeau passe devant. */}
@@ -321,9 +359,14 @@ export function WorkoutExerciseCard({
                     onUncomplete={() => onUncomplete(set.id)}
                     onMenu={() => onSetMenu(set, index + 1)}
                   />
+                  {/* Dans le bloc qui balaye, pas à côté : la félicitation est le
+                      bas de cette ligne, donc elle part avec elle et découvre le
+                      même « Supprimer ». */}
+                  {record !== undefined && <RecordNote kind={record} />}
                 </SwipeToDelete>
               </Fragment>
-            ))}
+              );
+            })}
 
             {/* La dernière série n'a personne derrière qui la remplace : son
                 bandeau tombe en pied de grille, la place qu'elle occupait. */}

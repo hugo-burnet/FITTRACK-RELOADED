@@ -79,3 +79,77 @@ export function bestSets(sets: WorkoutSet[]): BestSets {
     bestVolume: pickBest(scored, setVolume),
   };
 }
+
+/**
+ * The three records of an exercise — the keys of `BestSets`, so a record can
+ * never be named here without a way to compute it there.
+ */
+export type RecordKind = keyof BestSets;
+
+export interface BeatenRecord {
+  kind: RecordKind;
+  /**
+   * The set that held it until now. There is always one: with nothing to beat,
+   * nothing was beaten.
+   */
+  beaten: WorkoutSet;
+}
+
+/**
+ * RF-23 — what the set just ticked has beaten, most significant first.
+ *
+ * `others` is every set that counts for the same exercise, **today's already
+ * validated ones included**: a record broken on set 2 is a record, and the only
+ * thing that makes set 2 different from last month's set is its date. The
+ * candidate may be in there — the caller hands over the whole exercise and this
+ * filters it out, which is what makes the call impossible to get wrong.
+ *
+ * Two rules are worth their line:
+ *
+ * - **A record needs an incumbent.** The first set of an exercise you have never
+ *   done beats nothing; it *becomes* the mark. Congratulating it would fire on
+ *   the first working set of every new exercise, and could not name what was
+ *   beaten. Ties do not count either, which is `pickBest`'s rule read from the
+ *   other side: a record is established the first time you reach it.
+ * - **Repetitions are only a record where there is no load to beat.** On a bench
+ *   press the rep maximum is a light set, and calling it a record is a lie — the
+ *   rule the exercise sheet already applies to its display, moved here where it
+ *   belongs.
+ *
+ * Nothing is stored. Asking the question again on every render is what makes an
+ * un-tick, a deletion or a mid-session requalification to warm-up (Lot 6, task
+ * 1) invalidate a record for free, with no cascade to keep in sync — cf. the
+ * note on `personalRecords` in PROGRESS.md.
+ */
+export function recordsBeatenBy(candidate: WorkoutSet, others: WorkoutSet[]): BeatenRecord[] {
+  if (!isWorkingSet(candidate)) return [];
+
+  const best = bestSets(others.filter((set) => set.id !== candidate.id));
+  const beaten: BeatenRecord[] = [];
+
+  const load = candidate.weight;
+  const hasLoad = load !== undefined && load > 0;
+
+  // Load first: it is the headline when a set takes two records at once.
+  if (hasLoad && best.heaviest !== undefined && load > best.heaviest.weight!) {
+    beaten.push({ kind: 'heaviest', beaten: best.heaviest });
+  }
+
+  const volume = setVolume(candidate);
+  if (volume > 0 && best.bestVolume !== undefined && volume > setVolume(best.bestVolume)) {
+    beaten.push({ kind: 'bestVolume', beaten: best.bestVolume });
+  }
+
+  const reps = candidate.reps;
+  if (
+    !hasLoad &&
+    best.heaviest === undefined &&
+    reps !== undefined &&
+    best.mostReps !== undefined &&
+    reps > best.mostReps.reps!
+  ) {
+    beaten.push({ kind: 'mostReps', beaten: best.mostReps });
+  }
+
+  return beaten;
+}

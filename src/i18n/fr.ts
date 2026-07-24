@@ -191,6 +191,16 @@ const fr = {
     emptySetReading: 'Série {number}',
     notesLabel: 'Notes de l’exercice',
     notesPlaceholder: 'Réglage, sensation, douleur…',
+    /**
+     * RF-23 — la félicitation, sur la ligne qui a battu le record et pas dans un
+     * toast en pied d'écran : un bandeau ne peut pas dire *laquelle* des vingt
+     * lignes a battu quoi. Le nom du record vient de `record.*`, le même que la
+     * fiche exercice. La série battue n'est pas répétée ici : la colonne
+     * « précédent » de cette ligne l'affiche déjà, deux centimètres au-dessus.
+     */
+    recordBeaten: 'Record · {record}',
+    /** La marque de l'exo replié : il y a un record dedans, ouvre pour voir lequel. */
+    recordFolded: 'Record',
     /** Menu ⋯ de la séance. */
     workoutMenu: 'Options de la séance',
     rename: 'Renommer la séance',
@@ -253,6 +263,18 @@ const fr = {
     warmup: 'Échauffement',
     dropset: 'Dégressive',
     failure: 'Jusqu’à l’échec',
+  },
+
+  /**
+   * Les trois records d'un exercice, nommés **une fois** pour toute l'app : la
+   * fiche exercice les liste, la séance en direct les fête (RF-23), et un même
+   * fait ne peut pas avoir deux noms. Clés = `RecordKind` de `lib/records`, donc
+   * un quatrième record sans nom français ne passe pas le typecheck.
+   */
+  record: {
+    heaviest: 'Charge max',
+    mostReps: 'Reps max',
+    bestVolume: 'Meilleure série',
   },
 
   setTypeHint: {
@@ -468,9 +490,6 @@ const fr = {
     notFound: 'Cet exercice n’existe plus.',
 
     recordsSection: 'Records',
-    recordHeaviest: 'Charge max',
-    recordMostReps: 'Reps max',
-    recordBestVolume: 'Meilleure série',
     recordWeightReps: '{weight} kg × {reps}',
     recordWeight: '{weight} kg',
     recordReps: '{reps} reps',
