@@ -395,6 +395,12 @@ const fr = {
     targetDistanceHint: 'En mètres. 1 000 m s’affiche « 1 km ».',
     applyToAll: 'Appliquer à toutes les séries',
     deleteSet: 'Supprimer la série',
+    /**
+     * Le mot gravé sous la ligne, découvert par le balayage — même geste et même
+     * seuil que la séance en direct (cf. `workout.swipeDelete`) : une série d'une
+     * routine se supprime d'un glissé vers la droite, sans passer par la feuille.
+     */
+    swipeDelete: 'Supprimer',
 
     dragHandle: 'Déplacer {name}',
     moveUp: 'Monter',

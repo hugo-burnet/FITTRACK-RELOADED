@@ -4,7 +4,7 @@ import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { targetParts } from '@/lib/measurement';
 import type { TargetUnit } from '@/lib/measurement';
-import { AddRow } from '@/ui';
+import { AddRow, SwipeToDelete } from '@/ui';
 import type { ItemState } from '@/ui';
 import { GripIcon, MoreIcon } from '@/ui/icons';
 
@@ -17,6 +17,7 @@ type Props = {
   state: ItemState;
   onMenu: () => void;
   onOpenSet: (set: RoutineSet) => void;
+  onDeleteSet: (set: RoutineSet) => void;
   onAddSet: () => void;
 };
 
@@ -52,11 +53,18 @@ function SetRow({
   set,
   measurementType,
   number,
+  last,
   onOpen,
 }: {
   set: RoutineSet;
   measurementType: MeasurementType;
   number: number;
+  /**
+   * Whether this is the last set of the card — the `SwipeToDelete` wrapper makes
+   * every row a `:last-child` of its own container, so the divider can no longer
+   * be dropped with `last:border-b-0`; it is driven here instead.
+   */
+  last: boolean;
   onOpen: () => void;
 }) {
   const parts = targetParts(measurementType, set);
@@ -65,9 +73,9 @@ function SetRow({
     <button
       type="button"
       onClick={onOpen}
-      className="flex min-h-12 w-full items-center gap-3 border-b border-[var(--border)] px-4 py-2
-        text-left transition-colors duration-[var(--dur-1)] last:border-b-0
-        active:bg-[var(--surface-2)]"
+      className={`flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left
+        transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
+        ${last ? '' : 'border-b border-[var(--border)]'}`}
     >
       <span className="tabular w-5 shrink-0 text-sm text-[var(--text-2)]">{number}</span>
 
@@ -133,6 +141,7 @@ export function RoutineExerciseCard({
   state,
   onMenu,
   onOpenSet,
+  onDeleteSet,
   onAddSet,
 }: Props) {
   const { row, exercise, sets } = line;
@@ -213,16 +222,26 @@ export function RoutineExerciseCard({
           </button>
         </div>
 
+        {/* Même geste que la séance en direct : un glissé vers la droite
+            découvre « Supprimer » et retire la série, sans passer par la
+            feuille. Un simple appui ouvre toujours cette feuille — le balayage
+            avale le tap qui le termine, jamais le tap franc. */}
         {sets.map((set, index) => (
-          <SetRow
+          <SwipeToDelete
             key={set.id}
-            set={set}
-            // A deleted exercise still has sets to show; weight_reps is the
-            // shape that lets them read at all rather than vanish.
-            measurementType={exercise?.measurementType ?? 'weight_reps'}
-            number={index + 1}
-            onOpen={() => onOpenSet(set)}
-          />
+            label={t('routine.swipeDelete')}
+            onDelete={() => onDeleteSet(set)}
+          >
+            <SetRow
+              set={set}
+              // A deleted exercise still has sets to show; weight_reps is the
+              // shape that lets them read at all rather than vanish.
+              measurementType={exercise?.measurementType ?? 'weight_reps'}
+              number={index + 1}
+              last={index === sets.length - 1}
+              onOpen={() => onOpenSet(set)}
+            />
+          </SwipeToDelete>
         ))}
 
         <AddRow label={t('routine.addSet')} onClick={onAddSet} />

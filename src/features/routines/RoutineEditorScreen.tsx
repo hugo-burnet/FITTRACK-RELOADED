@@ -263,6 +263,7 @@ export function RoutineEditorScreen() {
                       number: line.sets.indexOf(set) + 1,
                     })
                   }
+                  onDeleteSet={(set) => void deleteRoutineSet(set.id)}
                   onAddSet={() => void addRoutineSet(line.row.id)}
                 />
               )}
