@@ -2,7 +2,11 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Le rang d'une série passe sous transaction** — le défaut
+**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 2 sur 5 : le record battu se voit en
+direct, sur la ligne qui l'a battu (RF-23)** — cf. la section dédiée ci-dessous. **Rien n'est écrit
+en base** : `personalRecords` reste vide et la question est reposée à chaque rendu, ce qui rend
+gratuite l'invalidation d'un record décoché, supprimé ou requalifié en échauffement. 279 tests (+20),
+quatre portes vertes. — Antérieurement : **Le rang d'une série passe sous transaction** — le défaut
 hors périmètre relevé à la tâche 1 est corrigé, et il touchait bien `addWorkoutExercise` aussi : cf.
 la note en fin de section « Types de séries ». 259 tests, quatre portes vertes. — Antérieurement :
 **Reste du Lot 6, tâche 1 sur 5 : les types de séries sont
@@ -63,10 +67,7 @@ pane navigateur n'était pas affichée).
 la valeur en salle, arbitré au début de la session :
 
 1. ✅ **Types de séries en séance (RF-20)** — `ed70013`, cf. la section dédiée ci-dessous.
-2. ⬜ **Record battu en direct (RF-23).** `lib/records.ts` est déjà la source unique (`bestSets`,
-   `isWorkingSet`) et son en-tête annonce le Lot 6 comme consommateur : y ajouter une fonction pure
-   « qu'est-ce que cette série vient de battre » (TDD), appelée à la validation, comparée à
-   l'historique **plus** les séries déjà faites aujourd'hui. Puis la félicitation.
+2. ✅ **Record battu en direct (RF-23)** — `825c66b`, cf. la section dédiée ci-dessous.
 3. ⬜ **RPE, masquable (RF-30).** `WorkoutSet.rpe` existe depuis le Lot 2 et n'est lu par personne ;
    `SetValues` le porte déjà, donc `updateSetValues` l'écrit sans rien changer au repo. Saisie dans
    la feuille de série (celle de la tâche 1).
@@ -77,6 +78,120 @@ la valeur en salle, arbitré au début de la session :
    (« aujourd'hui je suis sur une barre de 15 »). L'inventaire de plaques et l'écran de réglages
    restent au **Lot 8**, qui les liste explicitement comme ses livrables — ne pas monter un
    demi-écran de réglages ici.
+
+### Record battu en direct (RF-23) — 2026-07-24
+
+**La décision qui commande tout le reste : rien n'est écrit.** `personalRecords` existe depuis le
+Lot 2 et reste vide ; la détection en direct est **dérivée**, comme le Lot 3 dérive les records de
+l'historique qu'il lit. C'était le point à trancher, et voici pourquoi il tombe de ce côté :
+
+- **Un record est un fait sur l'historique, pas un événement.** Écrit à la validation, il devient un
+  mensonge à la seconde où on décoche la série, où on la supprime, où on retape un chiffre — et
+  depuis la tâche 1, où on la **requalifie en échauffement en pleine séance**. Chacun de ces gestes
+  est à un appui sur cet écran. Il faudrait donc cinq chemins d'invalidation en cascade, tous à
+  garder synchrones avec la vérité. **Dérivé, ça ne coûte rien : la question est simplement reposée
+  à chaque rendu.** Vérifié en pilotant, les trois cas.
+- **Le Lot 13 (recalcul complet) lira la même fonction**, donc une seule règle pour les trois
+  consommateurs — ce que l'en-tête de `records.ts` promet depuis le Lot 3.
+- `personalRecords` reste ce qu'elle est : **un cache**. Le jour où la lecture d'historique coûterait
+  (une année de séances, six exercices, à chaque frappe), c'est elle qu'on remplit — avec **cette**
+  fonction, pas une autre. La remplir aujourd'hui serait un cache sans lecteur, et un cache qui peut
+  mentir.
+
+**`recordsBeatenBy(candidate, others)`** (TDD, 15 tests) répond littéralement à « qu'est-ce que cette
+série vient de battre » : elle rend les records battus, le plus significatif d'abord, **avec la série
+qui les tenait**. Trois règles méritent leur ligne :
+
+- **Un record demande un tenant du titre.** La première série d'un exercice jamais fait ne bat rien,
+  elle *devient* la marque. Sinon la félicitation partirait sur la première série de travail de
+  chaque nouvel exercice, sans pouvoir nommer ce qu'elle a battu. L'égalité ne compte pas non plus —
+  c'est la règle de `pickBest` lue par l'autre bout : un record s'établit la première fois qu'on
+  l'atteint.
+- **Les reps ne comptent que là où il n'y a aucune charge à battre.** Au développé, le maximum de
+  répétitions est une série légère, et l'appeler record est un mensonge. La fiche exercice appliquait
+  déjà cette règle **à son affichage** (`showReps`) ; elle descend là où elle appartient.
+- **La candidate se filtre elle-même** des `others`. Le site d'appel passe tout l'exercice — c'est ce
+  qui rend l'appel impossible à rater.
+
+**La comparaison inclut les séries déjà validées aujourd'hui.** `listRecordSets` est **l'exact
+opposé de `getLastPerformance`** : celle-là existe pour tenir la séance en cours *dehors* (la colonne
+« précédent » est une référence, pas un miroir), celle-ci pour l'y faire entrer (un record battu à la
+série 2 est un record). Une requête par exercice sur `[exerciseId+performedAt]`, qui saute les séries
+non validées au lieu de les lire pour les jeter.
+
+> **Conséquence assumée : le bandeau suit le record, il ne fige pas l'instant.** Si la série 2 bat
+> l'historique puis que la série 3 bat la série 2, le bandeau **descend** sur la 3. Deux « records »
+> pour un même exercice seraient un écran qui se contredit ; et figer l'instant demanderait de
+> stocker l'événement — exactement ce qu'on vient d'écarter.
+
+#### La félicitation vit dans la card, pas dans un toast
+
+Un bandeau en pied d'écran ne peut pas dire **laquelle** des vingt lignes a battu **quoi** — et le
+temps de la chercher, il est parti. C'est le raisonnement d'`UndoRow` (Lot 5), appliqué à l'émotion
+inverse : ici la **position est la moitié du message**.
+
+- **Un bandeau sous la ligne** (`RecordNote`), sur la surface de la série validée, à 12 px — le
+  retrait de `RestRail`, pour que les deux choses qui pendent sous une série s'accordent. Il ne
+  répète pas les chiffres battus : la colonne « précédent » de cette ligne-là les montre déjà, deux
+  centimètres au-dessus.
+- **Pas dans la pastille de rang.** Ce créneau de 48 px appartient au **type** de série depuis la
+  tâche 1, et un record peut parfaitement être une dégressive ou une série à l'échec — **vérifié en
+  pilotant : la marque dégressive et le bandeau cohabitent** sans se disputer la place.
+- **Une étoile sur la card repliée, et ce n'est pas un ornement.** Cocher la **dernière** série
+  replie l'exercice, et la dernière est souvent la plus lourde : sans marque au repli, le seul record
+  qu'on voulait voir serait celui qu'on ne voit jamais — apparu et refermé dans la même image.
+  **Constaté en pilotant, c'est exactement ce qui s'est passé.** Le header dit *qu'il y en a un*,
+  déplier dit *laquelle et lequel* : la même divulgation que le repli applique déjà aux chiffres.
+- **L'accent est légitime ici comme nulle part ailleurs** : la charte le réserve aux séries validées
+  **et aux records**, et c'est les deux à la fois.
+- **Une étoile, pas un trophée.** Un trophée a été dessiné puis écarté : sa silhouette est une forme
+  fermée arrondie sur un pied, c'est-à-dire **celle de la flamme** à bout de bras — et les marques de
+  la tâche 1 tiennent sur des silhouettes maximalement distinctes. L'étoile est radiale et pointue :
+  elle ne rentre en collision avec aucune des trois.
+- **Les trois records sont nommés une seule fois** pour toute l'app (`record.*` + `recordLabel`), et
+  la fiche exercice lit désormais les mêmes noms — ses trois clés `exercise.record{Heaviest,MostReps,
+  BestVolume}` sont supprimées. Un même fait ne peut pas avoir deux noms.
+
+#### Ce qui a été mesuré, en pilotant l'app en 375 px
+
+Sur une vraie séance montée dans l'app (une séance terminée à 100 kg × 5 comme historique, puis une
+séance à trois séries) — pas sur des données injectées.
+
+- **L'égalité ne fête rien** : la série 1 à 100 × 5 face à un historique à 100 kg n'affiche aucun
+  bandeau, et aucune étoile n'apparaît au repli.
+- **Deux records distincts sur deux lignes distinctes** : « Record · Charge max » sous la série 2
+  (102,5 × 5) et « Record · Meilleure série » sous la série 3 (60 × 12, soit 720 contre 512,5). Une
+  seule ligne d'écran ne pourrait pas dire ça.
+- **Les trois invalidations, en direct** : requalifier la série 2 en échauffement **efface son
+  record** en gardant ses 102,5 × 5 affichés ; décocher la série 3 efface le sien ; recocher le
+  rend. Aucun code d'invalidation n'existe.
+- **Survie au rechargement complet** : les deux bandeaux sont là après un F5, et l'exercice replié
+  garde son étoile — mesuré à 5 instants sur 2 s, deux rechargements de suite, pour écarter une
+  bascule tardive.
+- **Contraste, deux thèmes** : **12,87:1** en sombre et **5,23:1** en clair (accent-ink sur
+  `--surface-2`, la paire déjà mesurée pour le statut de repos).
+- **Géométrie** : bandeau 343,2 × **24 px** à x = 16, étoile 14 px ; les lignes de série restent à
+  **60 px** et les coches à **48 × 48** — le bandeau s'ajoute *sous* la ligne sans la toucher. Aucun
+  bouton sous 44 px, **aucun débordement horizontal**, **aucune erreur console**.
+- **Le bandeau balaye avec sa ligne** : il est le second enfant du bloc qui porte le `translateX`
+  (vérifié dans le DOM), donc supprimer une série de record ne laisse pas sa félicitation derrière.
+
+#### ⬜ Checkpoint en salle — RF-23
+
+- [ ] **Un record se voit sans le chercher, entre deux séries.** C'est tout le pari : si le bandeau
+      passe inaperçu à bout de bras, c'est le repère qui est trop discret — pas la détection.
+- [ ] **L'étoile sur l'exo replié se comprend.** C'est le seul endroit où la forme est seule, sans le
+      mot à côté. Si elle se lit « favori » plutôt que « record », le repli est le bon endroit mais
+      pas la bonne marque.
+- [ ] **« Record · Meilleure série » veut dire quelque chose en salle.** « Charge max » est évident ;
+      le volume d'une série l'est moins. Si ça ne parle pas, ce record ne mérite peut-être pas un
+      bandeau — le montrer serait alors du bruit sur l'écran le plus chargé de l'app.
+- [ ] **Le bandeau qui descend d'une ligne** quand une série suivante fait mieux : est-ce que ça se
+      lit comme « le record a bougé », ou comme « j'ai perdu mon record » ? C'est le point où la
+      dérivation se voit à l'œil nu.
+- [ ] **Rien ne fête une première fois.** Un exercice jamais fait ne dit rien à sa première série de
+      travail. Si ça donne l'impression que la détection ne marche pas, c'est la règle « il faut un
+      tenant du titre » qu'il faut revoir — pas le code.
 
 ### Types de séries modifiables en séance (RF-20) — 2026-07-24
 
