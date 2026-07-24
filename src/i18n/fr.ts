@@ -339,8 +339,9 @@ const fr = {
     restHint: 'Vide : le repos par défaut de l’exercice.',
     /** The clear chip: returns the picker to inheriting the exercise's own rest. */
     restInherit: 'Repos de l’exercice',
-    /** Says where the displayed rest comes from, so an empty field is not a mystery. */
-    restFromExercise: 'Repos de l’exercice : {seconds} s. Renseigne pour le remplacer ici.',
+    /** Says where the displayed rest comes from, so an empty field is not a mystery.
+        The value itself sits in the well above; the line only names its source. */
+    restFromExercise: 'Vide : le repos de l’exercice s’applique.',
     restNoDefault: 'Aucun repos par défaut sur cet exercice.',
     notesLabel: 'Notes',
     notesPlaceholder: 'Prise large, tempo lent, cale sous les talons…',

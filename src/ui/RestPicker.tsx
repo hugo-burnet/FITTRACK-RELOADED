@@ -76,26 +76,31 @@ export function RestPicker({
 
         {/* The well. The reading is inked and carries its unit once it is an
             explicit choice; while inheriting it sits muted and unlabelled, so
-            the lit clear chip below is what says where the number comes from. */}
+            the lit clear chip below is what says where the number comes from.
+            The pair is centred vertically (`items-center`) — baseline alignment
+            let the tall digits ride ~10 px high in the well — while the number
+            and its unit keep their own baseline relationship in the inner span. */}
         <div
-          className="flex min-h-14 flex-1 items-baseline justify-center gap-1.5 rounded-lg
+          className="flex min-h-14 flex-1 items-center justify-center rounded-lg
             bg-[var(--surface-2)]"
         >
-          <span
-            className={`metric text-3xl font-semibold ${
-              isSet ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'
-            }`}
-          >
-            {isSet ? formatRest(value) : emptyReading}
-          </span>
-          {isSet && (
+          <span className="flex items-baseline gap-1.5">
             <span
-              aria-hidden="true"
-              className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]"
+              className={`metric text-3xl font-semibold ${
+                isSet ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'
+              }`}
             >
-              {t('units.minutes')}
+              {isSet ? formatRest(value) : emptyReading}
             </span>
-          )}
+            {isSet && (
+              <span
+                aria-hidden="true"
+                className="text-[0.6875rem] font-semibold tracking-[0.08em] text-[var(--text-2)]"
+              >
+                {t('units.minutes')}
+              </span>
+            )}
+          </span>
         </div>
 
         <button type="button" aria-label={t('rest.increase')} onClick={() => bump(STEP)} className={stepper}>

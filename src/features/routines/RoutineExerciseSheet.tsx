@@ -78,7 +78,7 @@ export function RoutineExerciseSheet({
           />
           <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
             {exerciseRest > 0
-              ? t('routine.restFromExercise', { seconds: exerciseRest })
+              ? t('routine.restFromExercise')
               : t('routine.restNoDefault')}
           </p>
         </div>
