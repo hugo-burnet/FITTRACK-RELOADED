@@ -252,6 +252,12 @@ const fr = {
     platesTotalReading: '{weight} kg',
     /** Le seul réglage local du calculateur : la barre utilisée aujourd’hui. */
     platesBarWeight: 'Poids de la barre',
+    /** Le matériel global de la salle, configuré là où il sert. */
+    platesAvailable: 'Plaques disponibles',
+    platesAvailableCount: '{selected} sur {total}',
+    platesAvailableOption: '{weight} kg',
+    platesAvailableEmpty: 'Aucune plaque sélectionnée.',
+    platesAvailableSaveError: 'Impossible d’enregistrer les plaques disponibles.',
     /** Une machine à plaques n’a pas de barre réglable dans ce lot. */
     platesMachineBase: 'Charge à vide {weight} kg',
     /** Un côté sans aucune plaque : la charge visée est celle de la barre seule. */

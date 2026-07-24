@@ -18,12 +18,17 @@ import {
   updateWorkout,
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
+import {
+  getAvailablePlateWeightsKg,
+  setAvailablePlateWeightsKg,
+} from '@/data/repositories/settings';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { listRecordSets } from '@/data/repositories/workoutHistory';
 import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
+import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { recordsBeatenBy } from '@/lib/records';
 import type { RecordKind } from '@/lib/records';
 import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
@@ -161,6 +166,7 @@ export function WorkoutScreen() {
     async () => (active == null ? null : await getWorkoutDetail(active.id)),
     [active?.id],
   );
+  const availablePlateWeightsKg = useLiveQuery(getAvailablePlateWeightsKg);
 
   /**
    * RF-23 — the scoreboard every set of this session is judged against: each
@@ -633,6 +639,10 @@ export function WorkoutScreen() {
         barWeight={platesView?.barWeight ?? 20}
         sides={platesView?.sides ?? 2}
         barWeightAdjustable={platesView?.barWeightAdjustable ?? false}
+        availablePlateWeightsKg={availablePlateWeightsKg ?? [...DEFAULT_PLATES_KG]}
+        onAvailablePlateWeightsChange={async (weights) => {
+          await setAvailablePlateWeightsKg(weights);
+        }}
         onBarWeightChange={(barWeight) => {
           if (platesView === null) return;
           setPlateBarWeights((current) => ({ ...current, [platesView.rowId]: barWeight }));

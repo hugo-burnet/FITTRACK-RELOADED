@@ -1,6 +1,13 @@
+import { useState } from 'react';
 import { t } from '@/i18n/fr';
-import { computePlateLoad, type PlateCount } from '@/lib/plates';
+import {
+  computePlateLoad,
+  DEFAULT_PLATES_KG,
+  type PlateCount,
+  type PlateInventory,
+} from '@/lib/plates';
 import { NumberInput } from '@/ui';
+import { ChevronDownIcon } from '@/ui/icons';
 import { formatNumber } from '@/ui/numberField';
 import { Sheet } from '@/ui/Sheet';
 
@@ -50,6 +57,8 @@ type Props = {
   sides: number;
   barWeightAdjustable: boolean;
   onBarWeightChange: (barWeight: number) => void;
+  availablePlateWeightsKg: readonly number[];
+  onAvailablePlateWeightsChange: (weights: number[]) => void | Promise<void>;
 };
 
 /**
@@ -71,7 +80,26 @@ export function PlateLoadSheet({
   sides,
   barWeightAdjustable,
   onBarWeightChange,
+  availablePlateWeightsKg,
+  onAvailablePlateWeightsChange,
 }: Props) {
+  const [availablePlatesSaveFailed, setAvailablePlatesSaveFailed] = useState(false);
+  const inventory: PlateInventory = availablePlateWeightsKg.map((weight) => ({ weight }));
+
+  const toggleAvailablePlate = async (weight: number) => {
+    const selected = availablePlateWeightsKg.includes(weight);
+    const next = DEFAULT_PLATES_KG.filter((option) =>
+      option === weight ? !selected : availablePlateWeightsKg.includes(option),
+    );
+
+    try {
+      await onAvailablePlateWeightsChange(next);
+      setAvailablePlatesSaveFailed(false);
+    } catch {
+      setAvailablePlatesSaveFailed(true);
+    }
+  };
+
   return (
     <Sheet open={open} onClose={onClose} title={t('workout.platesTitle')}>
       <div className="pb-2">
@@ -93,12 +121,80 @@ export function PlateLoadSheet({
           </div>
         )}
 
+        <details className="group mb-6 border-b border-[var(--border)] pb-6">
+          <summary
+            className="flex min-h-12 cursor-pointer list-none items-center gap-3 rounded-xl
+              px-1 text-left active:bg-[var(--surface-2)]
+              focus-visible:[outline-color:var(--text-2)]
+              [&::-webkit-details-marker]:hidden"
+          >
+            <span className="min-w-0 flex-1 text-base font-semibold text-[var(--text-1)]">
+              {t('workout.platesAvailable')}
+            </span>
+            <span className="metric text-sm text-[var(--text-2)]">
+              {t('workout.platesAvailableCount', {
+                selected: availablePlateWeightsKg.length,
+                total: DEFAULT_PLATES_KG.length,
+              })}
+            </span>
+            <ChevronDownIcon
+              aria-hidden="true"
+              className="shrink-0 text-[var(--text-2)] transition-transform
+                duration-[var(--dur-1)] group-open:rotate-180"
+            />
+          </summary>
+
+          <div className="grid grid-cols-5 gap-2 pt-3">
+            {DEFAULT_PLATES_KG.map((weight) => {
+              const selected = availablePlateWeightsKg.includes(weight);
+              const label = t('workout.platesAvailableOption', {
+                weight: formatNumber(weight),
+              });
+
+              return (
+                <button
+                  key={weight}
+                  type="button"
+                  aria-pressed={selected}
+                  aria-label={label}
+                  onClick={() => void toggleAvailablePlate(weight)}
+                  className={`metric min-h-12 rounded-xl border px-1 text-xs
+                    transition-[box-shadow,border-color,background-color,color]
+                    duration-[var(--dur-1)] focus-visible:[outline-color:var(--text-2)]
+                    ${
+                      selected
+                        ? `border-[var(--text-2)] bg-[var(--text-2)] font-bold
+                          text-[var(--surface-0)] ring-1 ring-inset ring-[var(--text-2)]`
+                        : `border-[var(--border)] bg-[var(--surface-2)] font-medium
+                          text-[var(--text-2)]`
+                    }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+
+          {availablePlateWeightsKg.length === 0 && (
+            <p className="mt-3 text-sm text-[var(--text-2)]">
+              {t('workout.platesAvailableEmpty')}
+            </p>
+          )}
+
+          {availablePlatesSaveFailed && (
+            <p role="alert" className="mt-3 text-sm font-medium text-[var(--danger-ink)]">
+              {t('workout.platesAvailableSaveError')}
+            </p>
+          )}
+        </details>
+
         {loads.map((weightKg, index) => (
           <PlateBlock
             key={index}
             weightKg={weightKg}
             barWeight={barWeight}
             sides={sides}
+            inventory={inventory}
             // Each further load is set off by a divider: the loads are a list of
             // separate answers, not one reading that runs together.
             divided={index > 0}
@@ -123,14 +219,16 @@ function PlateBlock({
   weightKg,
   barWeight,
   sides,
+  inventory,
   divided,
 }: {
   weightKg: number;
   barWeight: number;
   sides: number;
+  inventory: PlateInventory;
   divided: boolean;
 }) {
-  const load = computePlateLoad(weightKg, { barWeight, sides });
+  const load = computePlateLoad(weightKg, { barWeight, sides, inventory });
   const slabs = expand(load.perSide);
   const reading = slabs.length === 0 ? t('workout.platesEmpty') : readingLine(load.perSide);
 
