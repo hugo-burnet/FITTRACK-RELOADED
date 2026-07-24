@@ -38,8 +38,13 @@ function readingLine(perSide: PlateCount[]): string {
 type Props = {
   open: boolean;
   onClose: () => void;
-  /** The target load, in kg. */
-  weightKg: number;
+  /**
+   * The exercise's distinct loads, in kg, in the order they appear. One diagram
+   * is drawn per load: a heavy set and its back-off set hang different iron on
+   * the same bar, so a single figure for the whole exercise would be wrong for
+   * every set but one.
+   */
+  loads: number[];
   barWeight: number;
   sides: number;
 };
@@ -55,71 +60,91 @@ type Props = {
  * that rule and fail the contrast floor the app holds itself to. The diagram is
  * the glance; the reading under it is the exact answer.
  */
-export function PlateLoadSheet({ open, onClose, weightKg, barWeight, sides }: Props) {
-  const load = computePlateLoad(weightKg, { barWeight, sides });
-  const slabs = expand(load.perSide);
-
+export function PlateLoadSheet({ open, onClose, loads, barWeight, sides }: Props) {
   return (
     <Sheet open={open} onClose={onClose} title={t('workout.platesTitle')}>
       <div className="pb-2">
-        <p className="text-center">
-          <span className="metric text-4xl text-[var(--text-1)]">
-            {t('workout.platesTotalReading', { weight: formatNumber(weightKg) })}
-          </span>
+        {loads.map((weightKg, index) => (
+          <PlateBlock
+            key={index}
+            weightKg={weightKg}
+            barWeight={barWeight}
+            sides={sides}
+            // Each further load is set off by a divider: the loads are a list of
+            // separate answers, not one reading that runs together.
+            divided={index > 0}
+          />
+        ))}
+
+        <p className="mt-6 border-t border-[var(--border)] pt-4 text-center text-sm text-[var(--text-2)]">
+          {t('workout.platesBar', { weight: formatNumber(barWeight) })}
         </p>
+      </div>
+    </Sheet>
+  );
+}
 
-        {load.belowBar ? (
-          <p className="mt-4 text-center text-sm text-[var(--text-2)]">
-            {t('workout.platesBelowBar', { weight: formatNumber(barWeight) })}
+/** One load's answer: the weight, the head-on bar, and the exact per-side reading. */
+function PlateBlock({
+  weightKg,
+  barWeight,
+  sides,
+  divided,
+}: {
+  weightKg: number;
+  barWeight: number;
+  sides: number;
+  divided: boolean;
+}) {
+  const load = computePlateLoad(weightKg, { barWeight, sides });
+  const slabs = expand(load.perSide);
+  const reading = slabs.length === 0 ? t('workout.platesEmpty') : readingLine(load.perSide);
+
+  return (
+    <div className={divided ? 'mt-6 border-t border-[var(--border)] pt-6' : ''}>
+      <p className="text-center">
+        <span className="metric text-4xl text-[var(--text-1)]">
+          {t('workout.platesTotalReading', { weight: formatNumber(weightKg) })}
+        </span>
+      </p>
+
+      {load.belowBar ? (
+        <p className="mt-4 text-center text-sm text-[var(--text-2)]">
+          {t('workout.platesBelowBar', { weight: formatNumber(barWeight) })}
+        </p>
+      ) : (
+        <>
+          {/* The head-on bar. Hidden from assistive tech — the reading below
+              says the same thing in words. */}
+          <div aria-hidden="true" className="mt-6 flex items-center justify-center overflow-x-auto">
+            {/* The sleeve, running toward the lifter. */}
+            <span className="h-2 w-7 shrink-0 rounded-l-sm bg-[var(--text-2)]" />
+            {slabs.map((weight, index) => (
+              <span
+                key={index}
+                style={{ height: slabHeight(weight), width: slabWidth(weight) }}
+                className="shrink-0 rounded-sm border border-[var(--border)] bg-[var(--surface-2)]"
+              />
+            ))}
+            {/* The sleeve tip past the last plate, where the collar clamps. */}
+            <span className="h-2 w-3 shrink-0 rounded-r-sm bg-[var(--text-2)]" />
+          </div>
+
+          <p className="label-xs mt-5 text-center font-semibold text-[var(--text-2)]">
+            {t('workout.platesPerSide')}
           </p>
-        ) : (
-          <>
-            {/* The head-on bar. Hidden from assistive tech — the reading below
-                says the same thing in words. */}
-            <div
-              aria-hidden="true"
-              className="mt-6 flex items-center justify-center overflow-x-auto"
-            >
-              {/* The sleeve, running toward the lifter. */}
-              <span className="h-2 w-7 shrink-0 rounded-l-sm bg-[var(--text-2)]" />
-              {slabs.map((weight, index) => (
-                <span
-                  key={index}
-                  style={{ height: slabHeight(weight), width: slabWidth(weight) }}
-                  className="shrink-0 rounded-sm border border-[var(--border)] bg-[var(--surface-2)]"
-                />
-              ))}
-              {/* The sleeve tip past the last plate, where the collar clamps. */}
-              <span className="h-2 w-3 shrink-0 rounded-r-sm bg-[var(--text-2)]" />
-            </div>
+          <p className="metric mt-1.5 text-center text-lg text-[var(--text-1)]">{reading}</p>
 
-            <p className="label-xs mt-5 text-center font-semibold text-[var(--text-2)]">
-              {t('workout.platesPerSide')}
-            </p>
-            <p className="metric mt-1.5 text-center text-lg text-[var(--text-1)]">
-              {slabs.length === 0 ? t('workout.platesEmpty') : readingLine(load.perSide)}
-            </p>
+          {/* Read aloud for a screen reader in place of the diagram. */}
+          <p className="sr-only">{t('workout.platesAria', { plates: reading })}</p>
 
-            {/* Read aloud for a screen reader in place of the diagram. */}
-            <p className="sr-only">
-              {t('workout.platesAria', {
-                plates: slabs.length === 0 ? t('workout.platesEmpty') : readingLine(load.perSide),
-              })}
-            </p>
-          </>
-        )}
-
-        <div className="mt-6 border-t border-[var(--border)] pt-4 text-center">
-          <p className="text-sm text-[var(--text-2)]">
-            {t('workout.platesBar', { weight: formatNumber(barWeight) })}
-          </p>
           {load.remainderKg > 0 && (
-            <p className="mt-1 text-sm text-[var(--text-2)]">
+            <p className="mt-2 text-center text-sm text-[var(--text-2)]">
               {t('workout.platesRemainder', { weight: formatNumber(load.remainderKg) })}
             </p>
           )}
-        </div>
-      </div>
-    </Sheet>
+        </>
+      )}
+    </div>
   );
 }

@@ -108,11 +108,15 @@ export function RestPicker({
         </button>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      {/* A 5-column grid, not a wrapping flex row: at 375 px the five chips
+          overran and "3:00" dropped alone onto a second line. The grid keeps
+          them on one row and equal-width whatever the system font measures. */}
+      <div className="mt-3 grid grid-cols-5 gap-2">
         {PRESETS.map((seconds) => (
           <Chip
             key={seconds}
             numeric
+            fill
             label={formatRest(seconds)}
             active={value === seconds}
             onClick={() => onChange(seconds)}
@@ -139,11 +143,14 @@ function Chip({
   label,
   active,
   numeric = false,
+  fill = false,
   onClick,
 }: {
   label: string;
   active: boolean;
   numeric?: boolean;
+  /** Stretch to the grid cell (presets) rather than hug the label (clear chip). */
+  fill?: boolean;
   onClick: () => void;
 }) {
   return (
@@ -151,8 +158,10 @@ function Chip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`min-h-12 rounded-xl px-4 text-base font-semibold transition-colors
-        duration-[var(--dur-1)] ease-[var(--ease-mech)] ${numeric ? 'metric' : ''} ${
+      className={`min-h-12 rounded-xl text-base font-semibold transition-colors
+        duration-[var(--dur-1)] ease-[var(--ease-mech)] ${fill ? 'w-full px-1' : 'px-4'} ${
+          numeric ? 'metric' : ''
+        } ${
           active
             ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
             : 'bg-[var(--surface-2)] text-[var(--text-1)]'

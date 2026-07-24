@@ -17,7 +17,7 @@ import {
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import type { Exercise, SetType, WorkoutSet } from '@/data/types';
+import type { SetType } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
 import { toBlocks } from '@/lib/routineOrder';
@@ -54,9 +54,9 @@ type SheetState =
   | { kind: 'set'; setId: string; number: number }
   | { kind: 'plates' };
 
-/** The bar load a plate sheet reads, kept out of `SheetState` so its close
- *  animation still has valid numbers after the set menu is gone. */
-type PlatesView = { weightKg: number; barWeight: number; sides: number };
+/** The bar loads a plate sheet reads, kept out of `SheetState` so its close
+ *  animation still has valid numbers after the card's menu is gone. */
+type PlatesView = { loads: number[]; barWeight: number; sides: number };
 
 /** Same derivation as the routine editor, from the same pure function. */
 function supersetPlaces(lines: WorkoutExerciseDetail[]): Map<string, SupersetPlace> {
@@ -217,46 +217,23 @@ export function WorkoutScreen() {
   const nameOf = (rowId: string): string =>
     lineOf(rowId)?.exercise?.name ?? t('workout.deletedExercise');
 
-  /** A set and the exercise it belongs to — the plate calculator needs both. */
-  const setContext = (setId: string): { set: WorkoutSet; exercise: Exercise } | null => {
-    for (const line of exercises) {
-      const set = line.sets.find((candidate) => candidate.id === setId);
-      if (set !== undefined && line.exercise !== undefined) return { set, exercise: line.exercise };
-    }
-    return null;
-  };
-
   /**
-   * The set menu, which always deletes and — on a barbell load with a weight
-   * entered — offers the plate calculator. The load comes from what was typed,
-   * or failing that the prescription: you check plates before you lift, when the
-   * cell is still the grey target.
+   * The distinct loads to size plates for — every weight the bar is set to across
+   * the exercise's sets, in order, de-duplicated. Warm-ups are included: you load
+   * the bar for those too. A back-off set at 55 and a top set at 100 each get
+   * their own diagram, rather than one figure standing in for both.
    */
-  const setSheetActions = () => {
-    const context = sheet?.kind === 'set' ? setContext(sheet.setId) : null;
-    const config = context !== null ? platesConfigFor(context.exercise) : null;
-    const weight = context?.set.weight ?? context?.set.targetWeight;
-    const actions = [];
-
-    if (context !== null && config !== null && weight !== undefined && weight > 0) {
-      actions.push({
-        label: t('workout.plates'),
-        onSelect: () => {
-          setPlatesView({ weightKg: weight, barWeight: config.barWeight, sides: config.sides });
-          setSheet({ kind: 'plates' });
-        },
-      });
+  const exerciseLoads = (line: WorkoutExerciseDetail): number[] => {
+    const seen = new Set<number>();
+    const loads: number[] = [];
+    for (const set of line.sets) {
+      const weight = set.weight ?? set.targetWeight;
+      if (weight !== undefined && weight > 0 && !seen.has(weight)) {
+        seen.add(weight);
+        loads.push(weight);
+      }
     }
-
-    actions.push({
-      label: t('workout.deleteSet'),
-      danger: true,
-      onSelect: () => {
-        if (sheet?.kind === 'set') void deleteSet(sheet.setId);
-      },
-    });
-
-    return actions;
+    return loads;
   };
 
   return (
@@ -306,7 +283,13 @@ export function WorkoutScreen() {
               items={exercises}
               keyOf={(line) => line.row.id}
               onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
-              renderItem={(line, _index, state) => (
+              renderItem={(line, _index, state) => {
+                // The bar's setup and every distinct load it takes across the
+                // exercise's sets. Absent config or no load → no plate icon.
+                const config =
+                  line.exercise !== undefined ? platesConfigFor(line.exercise) : null;
+                const loads = config !== null ? exerciseLoads(line) : [];
+                return (
                 <WorkoutExerciseCard
                   line={line}
                   superset={places.get(line.row.id)}
@@ -323,6 +306,18 @@ export function WorkoutScreen() {
                   }
                   state={state}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
+                  onPlates={
+                    config !== null && loads.length > 0
+                      ? () => {
+                          setPlatesView({
+                            loads,
+                            barWeight: config.barWeight,
+                            sides: config.sides,
+                          });
+                          setSheet({ kind: 'plates' });
+                        }
+                      : undefined
+                  }
                   onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
                   onWrite={(setId, values) => void updateSetValues(setId, values)}
                   onComplete={(setId, values, set) => {
@@ -340,7 +335,8 @@ export function WorkoutScreen() {
                   onRestoreSet={(setId) => void restoreSet(setId)}
                   onAddSet={() => void duplicateLastSet(line.row.id)}
                 />
-              )}
+                );
+              }}
             />
           </>
         )}
@@ -450,13 +446,21 @@ export function WorkoutScreen() {
         open={sheet?.kind === 'set'}
         onClose={() => setSheet(null)}
         title={sheet?.kind === 'set' ? t('workout.setNumber', { number: sheet.number }) : ''}
-        actions={setSheetActions()}
+        actions={[
+          {
+            label: t('workout.deleteSet'),
+            danger: true,
+            onSelect: () => {
+              if (sheet?.kind === 'set') void deleteSet(sheet.setId);
+            },
+          },
+        ]}
       />
 
       <PlateLoadSheet
         open={sheet?.kind === 'plates'}
         onClose={() => setSheet(null)}
-        weightKg={platesView?.weightKg ?? 0}
+        loads={platesView?.loads ?? []}
         barWeight={platesView?.barWeight ?? 20}
         sides={platesView?.sides ?? 2}
       />

@@ -14,9 +14,10 @@ type Props = {
 };
 
 /**
- * The rest timer, entire: a bar in a lane along the bottom of the set you just
- * ticked. No row, no control, no tap target — the session screen gains nothing
- * it did not already have.
+ * The rest timer, entire: a bar in a lane on the resting exercise's card, anchored
+ * to the bottom of its header — the divider between header and body, which is also
+ * the card's own bottom edge once the finished exercise folds. No row, no control,
+ * no tap target — the session screen gains nothing it did not already have.
  *
  * It sits **in a track** rather than on the row's own edge. Without one it ran
  * wall to wall when full and read as a border between two rows, which is the
@@ -116,7 +117,7 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
       // The lane. Inset from the row's walls so a full bar can never be read as
       // a rule between two rows: a border runs edge to edge, this stops short.
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-3 bottom-1 h-[3px] overflow-hidden
+      className="pointer-events-none absolute inset-x-3 bottom-0 h-[3px] overflow-hidden
         rounded-full bg-[var(--border)]"
     >
       <span

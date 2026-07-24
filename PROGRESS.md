@@ -2,12 +2,14 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Tâche 2 du reste-Lot-6 livrée : le calculateur de plaques
-(RF-28).** Moteur pur en TDD (10 tests) + feuille « Plaques à charger » au menu ⋯ d'une série de
-barre ; schéma monochrome par choix de charte. Quatre portes vertes, **252 tests**. Checkpoint visuel
-en attente (pane navigateur non affichée, pas de capture). Section dédiée plus bas.
-— Antérieurement : **Checkpoints en salle validés par l'utilisateur : Lot 5 et
-minuteur du Lot 6 sont bons.** Tout ce qui était livré a été jugé sur une vraie séance et tient — les
+**Dernière mise à jour :** 2026-07-24 (**Trois retours d'usage sur les plaques + le repos, corrigés
+en pilotant depuis le téléphone** — cf. section « Trois retours … » sous le calculateur de plaques.
+En résumé : (1) le picker de repos débordait sur « 3:00 » → grille 5 colonnes ; (2) le filet de repos
+tombait sous « Ajouter une série » → remonté sur le séparateur header/corps ; (3) les plaques étaient
+introuvables **et** figées sur une seule charge → icône visible sur la carte + **un schéma par charge
+distincte**. 252 tests, quatre portes vertes. — Antérieurement : **Tâche 2 du reste-Lot-6 livrée : le
+calculateur de plaques (RF-28)**, moteur pur en TDD (10 tests), schéma monochrome par choix de charte.
+Et : **Checkpoints en salle validés par l'utilisateur : Lot 5 et minuteur du Lot 6 sont bons.** Tout ce qui était livré a été jugé sur une vraie séance et tient — les
 trois paris du minuteur (filet sous la série, repos dans le statut de la card, rendu fluide) sont
 confirmés. Le Lot 5 est **terminé** ; le Lot 6 reste ouvert sur son **reste** (plaques, échauffement,
 RPE, record en direct, types de séries), seule la tranche minuteur y est close. Prochain travail :
@@ -66,7 +68,38 @@ barre (« plus léger que la barre seule »).
 
 État vérifié le 2026-07-24 : `typecheck`, `lint` (0 warning), `test:run` (**252**, +10), `build` —
 les quatre passent. Le cas du checkpoint (102,5 kg → 25+15+1,25 par côté) **est** un test qui passe.
-⬜ Checkpoint visuel : ouvrir le menu ⋯ d'une série de barre → « Plaques à charger ».
+
+#### Trois retours d'usage — plaques + repos — 2026-07-24
+
+Pilotés depuis le téléphone sur ton serveur de dev (la pane navigateur de la session Claude ne
+s'affichait pas — aucune capture possible ici, mais le HMR montrait tout à chaud).
+
+**1. Le picker de repos débordait — `3:00` passait à la ligne.** Les 5 chips (`1:00 … 3:00`) étaient
+en `flex flex-wrap` : à 375 px la dernière tombait seule sur une 2ᵉ ligne. Passées en
+**`grid grid-cols-5`** → une seule ligne, largeurs égales, garanti quelle que soit la police système.
+Le chip « hériter » garde sa ligne à lui (c'est un mode, pas une 6ᵉ durée).
+
+**2. Le filet de repos vivait sous « Ajouter une série » — ça n'avait pas de sens déplié.** `RestRail`
+était en `absolute … bottom-1`, ancré au conteneur de la carte, donc collé tout en bas. Remonté **sur
+le séparateur header/corps** : le header passe `relative`, le filet en `bottom-0` dedans. Bonus gratuit
+— cocher la dernière série **replie** l'exo, et le bas du header devient alors le bas de la carte, donc
+le filet **reste visible replié** (le cas courant) sans layout shift.
+
+**3. Les plaques étaient introuvables, et figées sur une seule charge.** Deux défauts en un :
+- *Découvrabilité* : l'accès était planqué derrière l'appui sur le **numéro** de série, qui ne se lit
+  pas comme un bouton. Déplacé sur une **icône plaque** (`PlateIcon`, déjà dans l'app — réutilisée, pas
+  inventée) posée dans le header de la carte, à droite du bloc titre/sous-titre, avant le ⋯. Rendue
+  seulement pour un exercice de barre. Retirée du menu ⋯ (une seule porte). Passage intermédiaire par
+  le menu ⋯ de l'exercice, abandonné au profit de l'icône sur retour utilisateur.
+- *Correction* : le calcul prenait **une seule charge** (la dernière série de travail) pour tout
+  l'exercice — « on fait une série à 100 puis une à 55, et ça prend 55 pour tous ». `PlateLoadSheet`
+  prend désormais la **liste des charges distinctes** (`exerciseLoads` dédoublonne dans l'ordre,
+  échauffements compris — on charge la barre pour eux aussi) et dessine **un schéma par charge**. La
+  barre nue est rappelée une seule fois en bas.
+
+`typecheck`, `lint`, `test:run` (**252**, inchangé — corrections de composants + moteur déjà couvert),
+`build` : les quatre passent après les trois correctifs. ⬜ Checkpoint visuel toujours à valider en
+salle (icône plaque → un schéma par charge ; filet sur le séparateur ; picker sur une ligne).
 
 Plan détaillé : `docs/plans/lot-06-minuteur.md`. Cinq formes dessinées, quatre écartées par
 l'utilisateur — le détail et les raisons sont dans le plan, section « La forme retenue ».

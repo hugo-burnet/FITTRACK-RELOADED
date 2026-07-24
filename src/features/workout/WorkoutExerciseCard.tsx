@@ -6,7 +6,7 @@ import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
-import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon } from '@/ui/icons';
+import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon } from '@/ui/icons';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
 import { setReading } from './summary';
@@ -27,6 +27,8 @@ type Props = {
   rest: CardRest | null;
   state: ItemState;
   onMenu: () => void;
+  /** Opens the plate calculator. Absent when the exercise has no bar to load. */
+  onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
   onWrite: (setId: string, values: Partial<SetValues>) => void;
   /** The set itself comes back up: only it knows whether a rest is owed. */
@@ -63,6 +65,7 @@ export function WorkoutExerciseCard({
   rest,
   state,
   onMenu,
+  onPlates,
   onSetMenu,
   onWrite,
   onComplete,
@@ -149,7 +152,10 @@ export function WorkoutExerciseCard({
                 : 'bg-[var(--surface-2)]'
           }`}
       >
-        <div className={`flex items-stretch ${expanded ? 'border-b border-[var(--border)]' : ''}`}>
+        <div
+          className={`relative flex items-stretch
+            ${expanded ? 'border-b border-[var(--border)]' : ''}`}
+        >
           <button
             type="button"
             aria-label={t('routines.dragHandle', { name })}
@@ -214,6 +220,23 @@ export function WorkoutExerciseCard({
             />
           </button>
 
+          {/* Les plaques à charger, sur la carte de l'exo plutôt que dans le
+              menu : chercher « qu'est-ce que je charge » va à l'exercice, pas à
+              une série, et l'icône dit ce que le menu cachait. Rendu seulement
+              quand l'exo charge une barre (`onPlates` fourni). Frère du menu,
+              jamais imbriqué. */}
+          {onPlates !== undefined && (
+            <button
+              type="button"
+              aria-label={t('workout.plates')}
+              onClick={onPlates}
+              className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+            >
+              <PlateIcon width={20} height={20} />
+            </button>
+          )}
+
           <button
             type="button"
             aria-label={t('workout.exerciseMenu', { name })}
@@ -223,6 +246,20 @@ export function WorkoutExerciseCard({
           >
             <MoreIcon />
           </button>
+
+          {/* Le filet vit sur le séparateur header/corps — le bas du header. Une
+              série cochée referme l'exo, et le bas du header devient alors le bas
+              de la carte : le filet reste donc visible replié, sans jamais tomber
+              sous « Ajouter une série » quand la carte est ouverte. Keyé sur la
+              série pour repartir du départ, jamais du reliquat du précédent. */}
+          {rest !== null && (
+            <RestRail
+              key={rest.setId}
+              startedAt={rest.startedAt}
+              endsAt={rest.endsAt}
+              onDone={rest.onDone}
+            />
+          )}
         </div>
 
         {expanded && (
@@ -294,20 +331,6 @@ export function WorkoutExerciseCard({
 
             <AddRow label={t('workout.addSet')} onClick={onAddSet} />
           </>
-        )}
-
-        {/* Le filet, inchangé (Lot 6), posé au bas de la card : visible que
-            l'exo soit déplié ou replié — et le cas courant est justement replié,
-            puisque cocher la dernière série referme l'exo pendant que le repos
-            coule. Keyé sur la série pour qu'un nouveau repos reparte du départ,
-            jamais du reliquat du précédent. */}
-        {rest !== null && (
-          <RestRail
-            key={rest.setId}
-            startedAt={rest.startedAt}
-            endsAt={rest.endsAt}
-            onDone={rest.onDone}
-          />
         )}
       </div>
     </div>
