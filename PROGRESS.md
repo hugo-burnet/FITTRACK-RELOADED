@@ -2,15 +2,18 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 1 sur 5 : les types de séries sont
+**Dernière mise à jour :** 2026-07-24 (**Le rang d'une série passe sous transaction** — le défaut
+hors périmètre relevé à la tâche 1 est corrigé, et il touchait bien `addWorkoutExercise` aussi : cf.
+la note en fin de section « Types de séries ». 259 tests, quatre portes vertes. — Antérieurement :
+**Reste du Lot 6, tâche 1 sur 5 : les types de séries sont
 modifiables en séance (RF-20)** — cf. la section dédiée ci-dessous. Le crochet était posé depuis le
 Lot 5 (le bouton de rang existait « pour que le Lot 6 y accroche le type ») et les quatre phrases
 dormaient dans `fr.ts` depuis le Lot 4, lues par personne. **Les marques sont des pictogrammes, pas
 des mots** — décision de l'utilisateur : « ÉCH. » et « ÉCHEC » ne se séparent pas à bout de bras.
 **Et une règle de repos manquante, trouvée en lisant** : la série *avant* une dégressive ne doit pas
 reposer. 256 tests, quatre portes vertes. **Un défaut hors périmètre trouvé en pilotant** : `addSet`
-lit le rang puis écrit sans transaction → deux séries au même `order` (tâche à part, cf. la note en
-fin de section). — Antérieurement : **Quatre retours d'usage post-séance, corrigés et vérifiés en
+lit le rang puis écrit sans transaction → deux séries au même `order` (sorti en tâche à part,
+**corrigé depuis**). — Antérieurement : **Quatre retours d'usage post-séance, corrigés et vérifiés en
 pilotant le navigateur en 375 px.** (1) **Scroll impossible en recherchant un exo** : la vraie cause
 n'était pas la liste mais le clavier — sur Android il se pose *par-dessus* la vue sans en réduire la
 hauteur (`resizes-visual` par défaut), donc le conteneur `100dvh` ne débordait pas et ses derniers
@@ -170,6 +173,32 @@ phrase promettait un comportement que le code ne rendait pas.
 > **C'est la famille du « piège n°2 » du Lot 2** (le `.count()` qui comptait les supprimées) — même
 > symptôme, autre cause. Sorti du chemin en tâche à part pour ne pas gonfler le commit du Lot 6 ;
 > `addWorkoutExercise` est à vérifier au même titre.
+
+#### ✅ Corrigé — le rang d'une série se lit et s'écrit sous transaction — 2026-07-24
+
+La lecture du rang et l'écriture de la ligne sont désormais **une seule** `db.transaction('rw',
+db.workoutExercises, db.workoutSets, …)`. IndexedDB sérialise deux transactions `readwrite` de
+portées qui se recouvrent, donc la seconde ne lit plus qu'après le commit de la première.
+
+- **`addSet` et `duplicateLastSet` passent par un seul chemin d'écriture**, `appendSet`, qui lit les
+  voisines vivantes **une fois** et en tire les deux réponses : le rang, et la série à reproposer.
+  C'étaient deux lectures pour une seule décision — `duplicateLastSet` lisait la dernière série
+  *avant* d'appeler `addSet`, qui relisait la même liste pour compter.
+- **`addWorkoutExercise` avait bien le même trou**, et il était réel : la transaction existait déjà
+  mais la lecture du compte était restée *dehors*, juste au-dessus. Le test l'a confirmé avant le
+  correctif (deux exercices ajoutés en même temps, tous deux à `order: 0`). La lecture est rentrée
+  dans la transaction ; celle de la fiche exercice (repos par défaut) reste dehors, ce n'est pas
+  l'objet de la course et la valeur est un instantané de toute façon.
+- **Trois tests** (`workouts.test.ts`, « rangs concurrents — deux appuis dans le même tick ») lancent
+  deux appels en `Promise.all` et assèrent des rangs distincts. **Les trois échouent sans le
+  correctif** — vérifié : `[0, 0]`, `[0, 1, 1]`, `[0, 0]`.
+
+**Une transaction n'est pas un ornement de la ligne qui écrit** : ici les deux appels de `deleteSet`
+et `restoreSet` étaient enveloppés, celui d'`addSet` non, et rien ne le signalait — c'est la
+*lecture* qui décide, pas l'écriture. Toute lecture qui sert à calculer ce qu'on va écrire appartient
+à la transaction de cette écriture.
+
+État vérifié : `typecheck`, `lint`, `test:run` (**259**, +3), `build` — les quatre passent.
 
 ### Calculateur de plaques (RF-28) — 2026-07-24
 

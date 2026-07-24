@@ -280,27 +280,33 @@ async function rewriteOrder(
 /**
  * RF-21 — an exercise you did not plan, added mid-session, **with a first set**.
  * An exercise carrying no row to tick is a dead end.
+ *
+ * Its rank is read and written inside the transaction, for the same reason
+ * `appendSet` does it: two exercises added in the same tick would otherwise
+ * both land at the end.
  */
 export async function addWorkoutExercise(
   workoutId: string,
   exerciseId: string,
 ): Promise<WorkoutExercise> {
-  const count = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray())
-    .length;
-
   // No routine to override anything: an exercise added mid-session takes its
-  // own default, or the product default.
+  // own default, or the product default. Resolved once, outside: the library is
+  // not what the concurrent callers are racing over, and the value is a
+  // snapshot either way.
   const exercise = await db.exercises.get(exerciseId);
 
-  const row = newEntity<WorkoutExercise>({
-    workoutId,
-    exerciseId,
-    order: count,
-    supersetGroup: 0,
-    restSeconds: resolveRestSeconds(undefined, exercise?.defaultRestSeconds),
-  });
+  return db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {
+    const count = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray())
+      .length;
 
-  await db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {
+    const row = newEntity<WorkoutExercise>({
+      workoutId,
+      exerciseId,
+      order: count,
+      supersetGroup: 0,
+      restSeconds: resolveRestSeconds(undefined, exercise?.defaultRestSeconds),
+    });
+
     await db.workoutExercises.add(row);
     await db.workoutSets.add(
       newEntity<WorkoutSet>({
@@ -314,9 +320,9 @@ export async function addWorkoutExercise(
         performedAt: 0,
       }),
     );
-  });
 
-  return row;
+    return row;
+  });
 }
 
 export async function updateWorkoutExercise(
@@ -358,7 +364,9 @@ export async function reorderWorkoutExercises(
 // ---------------------------------------------------------------------------
 
 /**
- * Appends a set to an exercise of the current workout.
+ * Appends a set to an exercise of the current workout — the one write path for
+ * `addSet` and `duplicateLastSet`, which differ only in what they derive from
+ * the siblings.
  *
  * `exerciseId` and `workoutId` are copied from the parent row rather than
  * accepted from the caller: they are denormalised for the sake of one index
@@ -367,32 +375,51 @@ export async function reorderWorkoutExercises(
  *
  * The rank comes from the **live** siblings. Dexie's `.count()` does not filter
  * `deletedAt`, so counting rows would hand a freshly added set the rank of one
- * that was deleted, and two sets sharing an `order` display in whatever order
- * IndexedDB happens to return them.
+ * that was deleted.
+ *
+ * Reading that rank and writing the set is **one transaction**, and that is the
+ * whole point. Read-then-write outside one leaves the gap open for a second
+ * call to read the same length before the first has written: two live sets at
+ * the same `order`, displayed in whatever order IndexedDB returns them, and a
+ * `getLastPerformance` — indexed by `order` — matching ranks ambiguously next
+ * session. It takes no exotic timing, only a double tap or a late frame; it was
+ * reproduced with two clicks in the same JS tick. Same symptom as the `.count()`
+ * trap, another cause.
  */
+async function appendSet(
+  workoutExerciseId: string,
+  derive: (siblings: WorkoutSet[]) => NewSetValues,
+): Promise<WorkoutSet> {
+  return db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {
+    const parent = await db.workoutExercises.get(workoutExerciseId);
+    if (parent === undefined) {
+      throw new Error(`Ligne d'exercice introuvable : ${workoutExerciseId}`);
+    }
+
+    const siblings = await liveSetsOf(workoutExerciseId);
+
+    const set = newEntity<WorkoutSet>({
+      order: siblings.length,
+      setType: 'normal',
+      side: 'both',
+      isCompleted: 0,
+      performedAt: 0,
+      ...derive(siblings),
+      workoutExerciseId,
+      exerciseId: parent.exerciseId,
+      workoutId: parent.workoutId,
+    });
+
+    await db.workoutSets.add(set);
+    return set;
+  });
+}
+
 export async function addSet(
   workoutExerciseId: string,
   values: NewSetValues = {},
 ): Promise<WorkoutSet> {
-  const parent = await db.workoutExercises.get(workoutExerciseId);
-  if (parent === undefined) {
-    throw new Error(`Ligne d'exercice introuvable : ${workoutExerciseId}`);
-  }
-
-  const set = newEntity<WorkoutSet>({
-    order: (await liveSetsOf(workoutExerciseId)).length,
-    setType: 'normal',
-    side: 'both',
-    isCompleted: 0,
-    performedAt: 0,
-    ...values,
-    workoutExerciseId,
-    exerciseId: parent.exerciseId,
-    workoutId: parent.workoutId,
-  });
-
-  await db.workoutSets.add(set);
-  return set;
+  return appendSet(workoutExerciseId, () => values);
 }
 
 /**
@@ -403,17 +430,22 @@ export async function addSet(
  * result: the figures come up greyed, and the tick is what turns them into
  * something performed. A set that arrived already filled in would be a set the
  * app claims you did.
+ *
+ * The last set is read from the same siblings the rank comes from, inside the
+ * same transaction: what is copied and where it lands are one decision.
  */
 export async function duplicateLastSet(workoutExerciseId: string): Promise<WorkoutSet> {
-  const last = (await liveSetsOf(workoutExerciseId)).at(-1);
+  return appendSet(workoutExerciseId, (siblings) => {
+    const last = siblings.at(-1);
 
-  return addSet(workoutExerciseId, {
-    setType: last?.setType ?? 'normal',
-    targetReps: last?.reps ?? last?.targetReps,
-    targetRepsMax: last?.reps === undefined ? last?.targetRepsMax : undefined,
-    targetWeight: last?.weight ?? last?.targetWeight,
-    targetDurationSeconds: last?.durationSeconds ?? last?.targetDurationSeconds,
-    targetDistanceMeters: last?.distanceMeters ?? last?.targetDistanceMeters,
+    return {
+      setType: last?.setType ?? 'normal',
+      targetReps: last?.reps ?? last?.targetReps,
+      targetRepsMax: last?.reps === undefined ? last?.targetRepsMax : undefined,
+      targetWeight: last?.weight ?? last?.targetWeight,
+      targetDurationSeconds: last?.durationSeconds ?? last?.targetDurationSeconds,
+      targetDistanceMeters: last?.distanceMeters ?? last?.targetDistanceMeters,
+    };
   });
 }
 

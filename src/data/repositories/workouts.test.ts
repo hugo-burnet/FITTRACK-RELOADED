@@ -328,6 +328,58 @@ describe('addSet', () => {
   });
 });
 
+/**
+ * Même famille que le piège n°2 plus bas — deux séries au même `order` — mais
+ * une autre cause : lire le rang puis écrire, sans transaction, laisse deux
+ * ajouts qui se chevauchent lire la même longueur.
+ *
+ * `Promise.all` reproduit exactement ce qu'un double appui produit sur
+ * téléphone : les deux appels partent dans le même tick et s'entrelacent sur
+ * leur premier `await`.
+ */
+describe('rangs concurrents — deux appuis dans le même tick', () => {
+  beforeEach(resetDb);
+
+  const liveOrders = async (workoutExerciseId: string): Promise<number[]> =>
+    (await db.workoutSets.where('workoutExerciseId').equals(workoutExerciseId).toArray())
+      .filter((set) => set.deletedAt === 0)
+      .map((set) => set.order)
+      .sort((a, b) => a - b);
+
+  it('ne donne jamais le même rang à deux séries ajoutées en même temps', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const we = await addExercise(workout.id, 'bench');
+
+    await Promise.all([addSet(we.id), addSet(we.id)]);
+
+    expect(await liveOrders(we.id)).toEqual([0, 1]);
+  });
+
+  it('ne donne jamais le même rang à deux duplications en même temps', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const we = await addExercise(workout.id, 'bench');
+    const first = await addSet(we.id);
+    await completeSet(first.id, { weight: 100, reps: 5 });
+
+    await Promise.all([duplicateLastSet(we.id), duplicateLastSet(we.id)]);
+
+    expect(await liveOrders(we.id)).toEqual([0, 1, 2]);
+  });
+
+  /** Le même trou, une table plus haut : « Ajouter un exercice », deux fois. */
+  it('ne donne jamais le même rang à deux exercices ajoutés en même temps', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+
+    await Promise.all([
+      addWorkoutExercise(workout.id, 'bench'),
+      addWorkoutExercise(workout.id, 'squat'),
+    ]);
+
+    const detail = await getWorkoutDetail(workout.id);
+    expect(detail!.exercises.map((line) => line.row.order)).toEqual([0, 1]);
+  });
+});
+
 describe('completeSet', () => {
   beforeEach(resetDb);
 
