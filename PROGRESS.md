@@ -629,11 +629,12 @@ Principe : **chaque timer va où vit son sens**, et les exos finis quittent le b
 
 ### Ce que cette tranche ne fait pas
 
-Le reste du Lot 6 — calculateur de plaques, calculateur d'échauffement, RPE, détection de record en
-direct, types de séries — est intact. C'était une tranche, décidée comme telle.
+À la livraison de cette tranche, le reste du Lot 6 — plaques, échauffement, RPE, record en direct
+et types de séries — était intact. C'était une tranche, décidée comme telle.
 
-> **Périmé depuis.** Les plaques ont été livrées en tranche 2 et les types de séries en tranche 3,
-> tâche 1. Reste : record en direct, RPE, échauffement, poids de barre — cf. « Lot en cours ».
+> **Périmé depuis.** Les plaques ont été livrées en tranche 2, puis les types de séries et le record
+> en direct en tranche 3, tâches 1 et 2. Restent : RPE, échauffement et poids de barre — cf.
+> « Lot en cours ».
 
 ---
 
@@ -909,7 +910,8 @@ clavier et lecteur d'écran, et elle était là avant.
 - ~~**Changer le type d'une série en séance** (Lot 6, RF-20). Le type est **repris de la routine** et
   affiché (« ÉCH. »), il ne se modifie pas ici.~~ **Fait au Lot 6, tranche 3, tâche 1** — et le
   « ÉCH. » de l'écran de séance est devenu un pictogramme.
-- **Le RPE** (Lot 6, RF-30), **la détection de record en direct** (Lot 6, RF-23).
+- **Le RPE** (Lot 6, RF-30). ~~La détection de record en direct (Lot 6, RF-23).~~ **Fait au Lot 6,
+  tranche 3, tâche 2** — dérivé de l'historique et des séries validées de la séance.
 - **Relire ou corriger une séance passée** (Lot 7). Cet écran ne connaît que la séance `active`.
 - **Une durée se saisit en secondes**, pas en `m:ss`. À rouvrir si ça gêne.
 - **`isUnilateral` n'est toujours lu par personne.** Le champ existe depuis le Lot 2 ; ni le
