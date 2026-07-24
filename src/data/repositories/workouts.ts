@@ -9,6 +9,7 @@ import type {
 } from '@/data/types';
 import { resolveRestSeconds } from '@/lib/rest';
 import { moveItem, normalizeSupersets } from '@/lib/routineOrder';
+import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { alive, newEntity, softDelete, touch } from './base';
 import { getLastPerformance } from './workoutHistory';
 
@@ -446,6 +447,57 @@ export async function duplicateLastSet(workoutExerciseId: string): Promise<Worko
       targetDurationSeconds: last?.durationSeconds ?? last?.targetDurationSeconds,
       targetDistanceMeters: last?.distanceMeters ?? last?.targetDistanceMeters,
     };
+  });
+}
+
+/**
+ * Inserts a complete warm-up ramp before the existing live sets.
+ *
+ * The generated figures are prescriptions only. The athlete still validates
+ * every set in the grid, so performed values and completion timestamps remain
+ * empty until that tap.
+ *
+ * Reading, inserting and shifting share one Dexie transaction. Concurrent
+ * insertions therefore cannot leave duplicate ranks, and a failure while
+ * shifting rolls the whole ramp back.
+ */
+export async function insertWarmupSets(
+  workoutExerciseId: string,
+  suggestions: readonly WarmupSetSuggestion[],
+): Promise<WorkoutSet[]> {
+  return db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {
+    const parent = await db.workoutExercises.get(workoutExerciseId);
+    if (parent === undefined) {
+      throw new Error(`Ligne d’exercice introuvable : ${workoutExerciseId}`);
+    }
+
+    const siblings = await liveSetsOf(workoutExerciseId);
+    const inserted = suggestions.map((suggestion, order) =>
+      newEntity<WorkoutSet>({
+        workoutExerciseId,
+        exerciseId: parent.exerciseId,
+        workoutId: parent.workoutId,
+        order,
+        setType: 'warmup',
+        side: 'both',
+        targetWeight: suggestion.weightKg,
+        targetReps: suggestion.reps,
+        isCompleted: 0,
+        performedAt: 0,
+      }),
+    );
+    const shifted = siblings.map((set, index) =>
+      touch(set, { order: inserted.length + index }),
+    );
+
+    if (inserted.length > 0) {
+      await db.workoutSets.bulkAdd(inserted);
+    }
+    if (shifted.length > 0) {
+      await db.workoutSets.bulkPut(shifted);
+    }
+
+    return inserted;
   });
 }
 

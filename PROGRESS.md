@@ -2,7 +2,14 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 3 sur 5 : le RPE facultatif se saisit
+**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 4 sur 5 : le calculateur
+d’échauffement insère une rampe configurable avant les séries de travail (RF-29)** — cf. la section
+dédiée ci-dessous. Rampe proposée 40 % × 10, 60 % × 5, 80 % × 3, arrondie vers le bas au pas de
+2,5 kg, sans limite de nombre d’étapes. Écriture immédiate dans une seule transaction Dexie :
+`setType: 'warmup'`, cibles seulement, rangs continus, rollback complet. Vérifié en 375 × 812 px :
+aucun débordement, cibles de 48 px minimum, focus et actions neutres, ordre 40/60/80 puis 100 × 5
+encore lu après rechargement. 313 tests (+29 pour RF-29), quatre portes vertes. — Antérieurement :
+**Reste du Lot 6, tâche 3 sur 5 : le RPE facultatif se saisit
 dans la feuille de série sans charger la grille (RF-30)** — cf. la section dédiée ci-dessous.
 Échelle 6–10 par pas de 0,5, effacement explicite, écriture immédiate via `updateSetValues`, état de
 divulgation purement éphémère. Vérifié en 375 px : dix cibles de 48 × 60,64 px minimum, sélection et
@@ -76,13 +83,65 @@ la valeur en salle, arbitré au début de la session :
 3. ✅ **RPE, masquable (RF-30).** Saisie repliable dans la feuille de série, aucune colonne ni badge
    dans la grille. `updateSetValues` existant écrit ou efface la valeur ; aucun changement de
    repository, de schéma ou de réglage global. Cf. la section dédiée ci-dessous.
-4. ⬜ **Calculateur d'échauffement (RF-29).** `lib/warmup.ts` en TDD, puis insertion des séries
-   d'approche dans l'exercice — elles naissent en `setType: 'warmup'`, dont le comportement est
-   désormais complet (tâche 1).
+4. ✅ **Calculateur d'échauffement (RF-29).** Rampe en pourcentages configurable dans le menu `⋯`
+   de l’exercice, moteur pur en TDD et insertion transactionnelle immédiate avant les séries de
+   travail. Cf. la section dédiée ci-dessous.
 5. ⬜ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
    (« aujourd'hui je suis sur une barre de 15 »). L'inventaire de plaques et l'écran de réglages
    restent au **Lot 8**, qui les liste explicitement comme ses livrables — ne pas monter un
    demi-écran de réglages ici.
+
+### Calculateur d’échauffement (RF-29) — 2026-07-24
+
+**Le calcul reste explicite et modifiable.** L’action « Calculer l’échauffement » vit dans le menu
+`⋯` de chaque exercice dont la mesure porte une vraie charge (`weightRole: 'load'`) ; elle ne
+surcharge ni le header ni la grille. La feuille propose 40 % × 10, 60 % × 5 et 80 % × 3, avec
+pourcentage et répétitions éditables, suppression et ajout d’étapes sans quota. La charge de travail
+vient de la première série non-échauffement (`weight`, puis `targetWeight`) et reste modifiable.
+Les exercices au poids du corps, assistés, ou mesurés seulement en temps/distance n’exposent pas
+l’action.
+
+**Règles du moteur pur `lib/warmup.ts` :**
+
+- calcul en centièmes de kilogramme entiers, puis arrondi **vers le bas** au pas de 2,5 kg ;
+- charge minimale de 20 kg pour une barre ou une Smith, zéro pour les autres charges ;
+- résultat conservé seulement si `0 < charge d’approche < charge de travail` ;
+- deux étapes aboutissant au même poids restent deux séries distinctes ;
+- validation stricte des nombres finis, des pourcentages dans `]0, 100[` et des répétitions
+  entières positives ;
+- aucune limite artificielle sur le nombre d’étapes.
+
+**La persistance est une seule décision transactionnelle.** `insertWarmupSets` lit le parent et les
+séries vivantes, crée toutes les nouvelles lignes avec `setType: 'warmup'`, `targetWeight` et
+`targetReps` seulement, puis décale les séries existantes dans la même transaction Dexie. Les tests
+couvrent l’ordre, les soft-deletes, deux insertions concurrentes, le parent absent et le rollback
+après échec de renumérotation. Les séries générées restent non validées (`isCompleted: 0`,
+`performedAt: 0`) : les règles déjà livrées les excluent du volume, des records et du repos.
+
+**TDD :** les trois nouveaux blocs ont été vus rouges puis verts :
+
+- 15 cas exécutés pour le moteur et ses entrées invalides ;
+- 5 cas repository ajoutés au fichier de séances ;
+- 9 cas exécutés pour l’éligibilité et le préremplissage.
+
+Suite complète : **21 fichiers, 313 tests**. `typecheck`, `lint`, `test:run` et `build` sont verts.
+Le build garde l’avertissement Vite déjà connu sur le chunk principal supérieur à 500 kB ; aucune
+erreur de production.
+
+**Pilotage réel, 375 × 812 px, base `/FITTRACK-RELOADED/` :**
+
+- `document.body.scrollWidth === innerWidth === 375` et la feuille mesure 375 px sans débordement ;
+- chaque bouton et champ mesuré fait **48 px de haut minimum** ;
+- le focus du champ de charge est `rgb(161, 161, 170)` (`--text-2`), pas l’accent ;
+- l’ajout d’une quatrième étape fonctionne et invalide correctement une ligne incomplète ;
+- après insertion, la grille lit 40 × 10, 60 × 5, 80 × 3 puis la série de travail 100 × 5 ;
+- après rechargement complet, le même ordre et les mêmes cibles sont relus par la vue Dexie ;
+- aucune erreur ni aucun avertissement navigateur.
+
+**Checkpoint salle précis :** sur un exercice barre prévu à 100 kg, ouvrir `⋯` → « Calculer
+l’échauffement », garder 40/60/80, insérer, puis valider les trois approches. Vérifier qu’elles
+restent avant la série de travail après fermeture/réouverture de l’app, qu’aucune ne lance le repos
+et que le passage aux charges proposées est naturel avec le matériel réellement disponible.
 
 ### RPE masquable (RF-30) — 2026-07-24
 

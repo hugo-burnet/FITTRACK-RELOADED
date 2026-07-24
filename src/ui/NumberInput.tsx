@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t } from '@/i18n/fr';
 import { formatNumber as format, INTEGER, NUMERIC, parseNumber as parse } from './numberField';
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
   max?: number;
   suffix?: string;
   placeholder?: string;
+  focusTone?: 'accent' | 'neutral';
   /**
    * Refuse the decimal separator — for a field entered in whole units, a
    * duration above all: "1:30" reached for as "1,3" must not store 1.3 s. The
@@ -26,6 +28,7 @@ export function NumberInput({
   max = 9999,
   suffix,
   placeholder,
+  focusTone = 'accent',
   integer,
   ...aria
 }: Props) {
@@ -57,11 +60,19 @@ export function NumberInput({
 
   const stepper =
     'min-h-12 w-12 shrink-0 rounded-lg bg-[var(--surface-2)] text-xl text-[var(--text-1)] ' +
-    'transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)] active:scale-[0.94]';
+    'transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)] active:scale-[0.94] ' +
+    (focusTone === 'neutral'
+      ? 'focus-visible:[outline-color:var(--text-2)]'
+      : 'focus-visible:[outline-color:var(--accent-ink)]');
 
   return (
     <div className="flex items-stretch gap-1">
-      <button type="button" aria-label="Diminuer" onClick={() => bump(-step)} className={stepper}>
+      <button
+        type="button"
+        aria-label={t('common.decrease')}
+        onClick={() => bump(-step)}
+        className={stepper}
+      >
         −
       </button>
 
@@ -86,7 +97,12 @@ export function NumberInput({
           onFocus={(e) => e.target.select()} // remplacer la valeur d'un geste, pas la corriger
           className={`metric min-h-12 w-full rounded-lg bg-[var(--surface-2)] text-center text-xl
             font-semibold text-[var(--text-1)] outline-none placeholder:font-normal
-            placeholder:text-[var(--text-2)] focus:ring-2 focus:ring-[var(--accent-ink)]
+            placeholder:text-[var(--text-2)]
+            ${
+              focusTone === 'neutral'
+                ? 'focus:ring-2 focus:ring-[var(--text-2)]'
+                : 'focus:ring-2 focus:ring-[var(--accent-ink)]'
+            }
             ${suffix ? 'pr-9 pl-9' : ''}`}
           {...aria}
         />
@@ -103,7 +119,12 @@ export function NumberInput({
         )}
       </div>
 
-      <button type="button" aria-label="Augmenter" onClick={() => bump(step)} className={stepper}>
+      <button
+        type="button"
+        aria-label={t('common.increase')}
+        onClick={() => bump(step)}
+        className={stepper}
+      >
         +
       </button>
     </div>

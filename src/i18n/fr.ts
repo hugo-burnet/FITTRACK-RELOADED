@@ -17,6 +17,8 @@ const fr = {
     /** Screen-reader names for the two controls that are drawn, never written. */
     back: 'Retour',
     close: 'Fermer',
+    decrease: 'Diminuer',
+    increase: 'Augmenter',
     /** Le chemin du retour, après une suppression qui n'a rien demandé. */
     undo: 'Annuler',
     /**
@@ -218,6 +220,25 @@ const fr = {
     workoutNotesLabel: 'Notes de la séance',
     empty: 'Aucun exercice',
     emptyBody: 'Ajoute ton premier exercice — tu peux aussi en ajouter en cours de route.',
+    /** RF-29 — a configurable ramp inserted before the working sets. */
+    warmupAction: 'Calculer l’échauffement',
+    warmupTitle: 'Échauffement',
+    warmupTarget: 'Charge de travail',
+    warmupStepPercentage: 'Pourcentage',
+    warmupStepReps: 'Répétitions',
+    warmupStepWeight: 'Charge proposée',
+    warmupStepPercentageShort: '%',
+    warmupStepRepsShort: 'reps',
+    warmupStepWeightShort: 'kg',
+    warmupRemoveStep: 'Supprimer cette étape',
+    warmupAddStep: 'Ajouter une étape',
+    warmupInsert: 'Insérer les séries',
+    warmupInvalidTarget: 'Renseigne une charge de travail positive.',
+    warmupInvalidSteps:
+      'Chaque étape demande un pourcentage entre 0 et 100 et des répétitions entières.',
+    warmupNoSuggestion: 'Aucune charge d’approche inférieure n’est disponible avec ce pas.',
+    warmupInsertError: 'Les séries n’ont pas été insérées. Réessaie.',
+    warmupPreviewEmpty: '—',
     /**
      * Le calculateur de plaques (RF-28), accroché au menu ⋯ d'une série. N'apparaît
      * que sur une vraie charge de barre (barbell, Smith, machine à plaques) : sur

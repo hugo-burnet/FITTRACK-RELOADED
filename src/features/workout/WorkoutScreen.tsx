@@ -8,6 +8,7 @@ import {
   duplicateLastSet,
   getActiveWorkout,
   getWorkoutDetail,
+  insertWarmupSets,
   removeWorkoutExercise,
   reorderWorkoutExercises,
   restoreSet,
@@ -47,6 +48,8 @@ import { ElapsedTime } from './ElapsedTime';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { unlockChime } from './restChime';
+import { WarmupSheet } from './WarmupSheet';
+import { warmupContextFor } from './warmupContext';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
 import { WorkoutRpeField } from './WorkoutRpeField';
@@ -59,6 +62,7 @@ type SheetState =
   | { kind: 'exercise'; rowId: string }
   | { kind: 'exerciseNotes'; rowId: string }
   | { kind: 'removeExercise'; rowId: string }
+  | { kind: 'warmup'; rowId: string }
   | { kind: 'set'; setId: string; number: number }
   | { kind: 'setType'; setId: string; number: number }
   | { kind: 'plates' };
@@ -277,6 +281,14 @@ export function WorkoutScreen() {
 
   const lineOf = (rowId: string): WorkoutExerciseDetail | null =>
     exercises.find((line) => line.row.id === rowId) ?? null;
+
+  const warmupContextOf = (rowId: string) => {
+    const line = lineOf(rowId);
+    return line === null ? null : warmupContextFor(line);
+  };
+
+  const warmupLine = sheet?.kind === 'warmup' ? lineOf(sheet.rowId) : null;
+  const warmupContext = warmupLine === null ? null : warmupContextFor(warmupLine);
 
   const nameOf = (rowId: string): string =>
     lineOf(rowId)?.exercise?.name ?? t('workout.deletedExercise');
@@ -498,6 +510,18 @@ export function WorkoutScreen() {
               if (sheet?.kind === 'exercise') void duplicateLastSet(sheet.rowId);
             },
           },
+          ...(sheet?.kind === 'exercise' && warmupContextOf(sheet.rowId) !== null
+            ? [
+                {
+                  label: t('workout.warmupAction'),
+                  onSelect: () => {
+                    if (sheet?.kind === 'exercise') {
+                      setSheet({ kind: 'warmup', rowId: sheet.rowId });
+                    }
+                  },
+                },
+              ]
+            : []),
           {
             label: t('workout.notesLabel'),
             onSelect: () => {
@@ -513,6 +537,17 @@ export function WorkoutScreen() {
             },
           },
         ]}
+      />
+
+      <WarmupSheet
+        open={sheet?.kind === 'warmup' && warmupContext !== null}
+        onClose={() => setSheet(null)}
+        initialTargetWeightKg={warmupContext?.targetWeightKg}
+        minimumWeightKg={warmupContext?.minimumWeightKg ?? 0}
+        onInsert={async (suggestions) => {
+          if (sheet?.kind !== 'warmup') return;
+          await insertWarmupSets(sheet.rowId, suggestions);
+        }}
       />
 
       <ExerciseNotesSheet

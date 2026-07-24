@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
+import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { day, seedWorkout } from '@/test/factories';
@@ -18,6 +19,7 @@ import {
   finishWorkout,
   getActiveWorkout,
   getWorkoutDetail,
+  insertWarmupSets,
   removeWorkoutExercise,
   reorderWorkoutExercises,
   restoreSet,
@@ -168,6 +170,145 @@ describe('getLastPerformance', () => {
     const result = await getLastPerformance('bench');
     expect(result).toHaveLength(1);
     expect(result[0]!.weight).toBe(100);
+  });
+});
+
+describe('insertWarmupSets', () => {
+  beforeEach(resetDb);
+
+  const ramp: readonly WarmupSetSuggestion[] = [
+    { weightKg: 40, reps: 10 },
+    { weightKg: 60, reps: 5 },
+    { weightKg: 80, reps: 3 },
+  ];
+
+  it('insère des cibles échauffement avant les séries de travail', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const parent = await addExercise(workout.id, 'bench');
+    const working = await addSet(parent.id, {
+      setType: 'failure',
+      weight: 100,
+      reps: 5,
+      targetWeight: 100,
+      targetReps: 5,
+    });
+
+    const inserted = await insertWarmupSets(parent.id, ramp);
+    const detail = await getWorkoutDetail(workout.id);
+    const sets = at(detail!.exercises, 0).sets;
+
+    expect(
+      inserted.map((set) => ({
+        setType: set.setType,
+        targetWeight: set.targetWeight,
+        targetReps: set.targetReps,
+        weight: set.weight,
+        reps: set.reps,
+        isCompleted: set.isCompleted,
+        performedAt: set.performedAt,
+      })),
+    ).toEqual([
+      {
+        setType: 'warmup',
+        targetWeight: 40,
+        targetReps: 10,
+        weight: undefined,
+        reps: undefined,
+        isCompleted: 0,
+        performedAt: 0,
+      },
+      {
+        setType: 'warmup',
+        targetWeight: 60,
+        targetReps: 5,
+        weight: undefined,
+        reps: undefined,
+        isCompleted: 0,
+        performedAt: 0,
+      },
+      {
+        setType: 'warmup',
+        targetWeight: 80,
+        targetReps: 3,
+        weight: undefined,
+        reps: undefined,
+        isCompleted: 0,
+        performedAt: 0,
+      },
+    ]);
+    expect(sets.map((set) => set.order)).toEqual([0, 1, 2, 3]);
+    expect(sets[3]).toMatchObject({
+      id: working.id,
+      setType: 'failure',
+      weight: 100,
+      reps: 5,
+      targetWeight: 100,
+      targetReps: 5,
+    });
+  });
+
+  it('ignore les lignes soft-deleted lors de la renumérotation', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const parent = await addExercise(workout.id, 'bench');
+    const gone = await addSet(parent.id);
+    const living = await addSet(parent.id, { targetWeight: 100, targetReps: 5 });
+    await deleteSet(gone.id);
+
+    await insertWarmupSets(parent.id, ramp.slice(0, 1));
+
+    const rows = (await db.workoutSets.where('workoutExerciseId').equals(parent.id).toArray())
+      .filter((set) => set.deletedAt === 0)
+      .sort((a, b) => a.order - b.order);
+    expect(rows.map((set) => [set.id, set.order])).toEqual([
+      [expect.any(String), 0],
+      [living.id, 1],
+    ]);
+  });
+
+  it('sérialise deux insertions lancées dans le même tick', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const parent = await addExercise(workout.id, 'bench');
+    await addSet(parent.id, { targetWeight: 100, targetReps: 5 });
+
+    await Promise.all([
+      insertWarmupSets(parent.id, ramp.slice(0, 2)),
+      insertWarmupSets(parent.id, ramp.slice(2)),
+    ]);
+
+    const rows = (await db.workoutSets.where('workoutExerciseId').equals(parent.id).toArray())
+      .filter((set) => set.deletedAt === 0)
+      .sort((a, b) => a.order - b.order);
+    expect(rows.map((set) => set.order)).toEqual([0, 1, 2, 3]);
+    expect(new Set(rows.map((set) => set.order)).size).toBe(4);
+    expect(rows.filter((set) => set.setType === 'warmup')).toHaveLength(3);
+  });
+
+  it('refuse une ligne parente absente sans écrire', async () => {
+    await expect(insertWarmupSets('absente', ramp)).rejects.toThrow(
+      'Ligne d’exercice introuvable',
+    );
+    expect(await db.workoutSets.count()).toBe(0);
+  });
+
+  it('annule aussi les ajouts si la renumérotation échoue', async () => {
+    const workout = await startWorkout('', 'Séance libre');
+    const parent = await addExercise(workout.id, 'bench');
+    const working = await addSet(parent.id, { targetWeight: 100, targetReps: 5 });
+    const fail = vi
+      .spyOn(db.workoutSets, 'bulkPut')
+      .mockRejectedValueOnce(new Error('échec injecté'));
+
+    try {
+      await expect(insertWarmupSets(parent.id, ramp)).rejects.toThrow('échec injecté');
+    } finally {
+      fail.mockRestore();
+    }
+
+    const rows = (await db.workoutSets.where('workoutExerciseId').equals(parent.id).toArray()).filter(
+      (set) => set.deletedAt === 0,
+    );
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ id: working.id, order: 0, setType: 'normal' });
   });
 });
 
