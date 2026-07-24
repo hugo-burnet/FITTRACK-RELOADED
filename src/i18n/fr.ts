@@ -269,7 +269,7 @@ const fr = {
     /** Une charge plus légère que la barre seule : il n'y a rien à charger. */
     platesBelowBar: 'Plus léger que la barre seule ({weight} kg).',
     /** Lecture du schéma pour un lecteur d'écran ; le dessin lui est masqué. */
-    platesAria: 'De chaque côté : {plates}.',
+    platesAria: 'De chaque côté : {plates}',
   },
 
   /** L'écran de fin : ce que la séance a produit, avant de l'enregistrer. */

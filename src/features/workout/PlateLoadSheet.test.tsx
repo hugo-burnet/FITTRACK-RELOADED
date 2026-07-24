@@ -126,6 +126,9 @@ describe('PlateLoadSheet', () => {
 
     expect(screen.getByText('Barre nue, aucune plaque à ajouter.')).toBeInTheDocument();
     expect(screen.getByText('Il manque 80 kg pour la charge exacte.')).toBeInTheDocument();
+    expect(
+      screen.getByText('De chaque côté : Barre nue, aucune plaque à ajouter.'),
+    ).toBeInTheDocument();
 
     await expandAvailablePlates();
     expect(screen.getByText('Aucune plaque sélectionnée.')).toBeInTheDocument();
