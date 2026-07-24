@@ -190,6 +190,29 @@ const fr = {
     workoutNotesLabel: 'Notes de la séance',
     empty: 'Aucun exercice',
     emptyBody: 'Ajoute ton premier exercice — tu peux aussi en ajouter en cours de route.',
+    /**
+     * Le calculateur de plaques (RF-28), accroché au menu ⋯ d'une série. N'apparaît
+     * que sur une vraie charge de barre (barbell, Smith, machine à plaques) : sur
+     * une machine à broche ou un haltère fixe, il n'y a rien à charger.
+     */
+    plates: 'Plaques à charger',
+    platesTitle: 'Plaques à charger',
+    /** Le repère sous le schéma : le compte vaut pour un seul côté, l'autre est identique. */
+    platesPerSide: 'De chaque côté',
+    /** La charge totale visée, en gros, au-dessus du schéma. */
+    platesTotalReading: '{weight} kg',
+    /** La barre nue, d'où part le calcul. */
+    platesBar: 'Barre {weight} kg',
+    /** Un côté sans aucune plaque : la charge visée est celle de la barre seule. */
+    platesEmpty: 'Barre nue, aucune plaque à ajouter.',
+    /** La liste des plaques d'un côté, séparées par des points médians. */
+    platesReadingPlate: '{count} × {weight}',
+    /** Une charge que le rack ne peut pas composer exactement. */
+    platesRemainder: 'Il manque {weight} kg pour la charge exacte.',
+    /** Une charge plus légère que la barre seule : il n'y a rien à charger. */
+    platesBelowBar: 'Plus léger que la barre seule ({weight} kg).',
+    /** Lecture du schéma pour un lecteur d'écran ; le dessin lui est masqué. */
+    platesAria: 'De chaque côté : {plates}.',
   },
 
   /** L'écran de fin : ce que la séance a produit, avant de l'enregistrer. */

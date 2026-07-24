@@ -17,7 +17,7 @@ import {
   updateWorkoutExercise,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import type { SetType } from '@/data/types';
+import type { Exercise, SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
 import { toBlocks } from '@/lib/routineOrder';
@@ -37,6 +37,8 @@ import {
 } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
+import { PlateLoadSheet } from './PlateLoadSheet';
+import { platesConfigFor } from './plateConfig';
 import { unlockChime } from './restChime';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
@@ -49,7 +51,12 @@ type SheetState =
   | { kind: 'exercise'; rowId: string }
   | { kind: 'exerciseNotes'; rowId: string }
   | { kind: 'removeExercise'; rowId: string }
-  | { kind: 'set'; setId: string; number: number };
+  | { kind: 'set'; setId: string; number: number }
+  | { kind: 'plates' };
+
+/** The bar load a plate sheet reads, kept out of `SheetState` so its close
+ *  animation still has valid numbers after the set menu is gone. */
+type PlatesView = { weightKg: number; barWeight: number; sides: number };
 
 /** Same derivation as the routine editor, from the same pure function. */
 function supersetPlaces(lines: WorkoutExerciseDetail[]): Map<string, SupersetPlace> {
@@ -112,6 +119,7 @@ function restPlans(lines: WorkoutExerciseDetail[]): Map<string, RestPlan> {
 export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   const rest = useRestTimer();
 
   // `null` is "no session", `undefined` is "not answered yet". Blurring them
@@ -208,6 +216,48 @@ export function WorkoutScreen() {
 
   const nameOf = (rowId: string): string =>
     lineOf(rowId)?.exercise?.name ?? t('workout.deletedExercise');
+
+  /** A set and the exercise it belongs to — the plate calculator needs both. */
+  const setContext = (setId: string): { set: WorkoutSet; exercise: Exercise } | null => {
+    for (const line of exercises) {
+      const set = line.sets.find((candidate) => candidate.id === setId);
+      if (set !== undefined && line.exercise !== undefined) return { set, exercise: line.exercise };
+    }
+    return null;
+  };
+
+  /**
+   * The set menu, which always deletes and — on a barbell load with a weight
+   * entered — offers the plate calculator. The load comes from what was typed,
+   * or failing that the prescription: you check plates before you lift, when the
+   * cell is still the grey target.
+   */
+  const setSheetActions = () => {
+    const context = sheet?.kind === 'set' ? setContext(sheet.setId) : null;
+    const config = context !== null ? platesConfigFor(context.exercise) : null;
+    const weight = context?.set.weight ?? context?.set.targetWeight;
+    const actions = [];
+
+    if (context !== null && config !== null && weight !== undefined && weight > 0) {
+      actions.push({
+        label: t('workout.plates'),
+        onSelect: () => {
+          setPlatesView({ weightKg: weight, barWeight: config.barWeight, sides: config.sides });
+          setSheet({ kind: 'plates' });
+        },
+      });
+    }
+
+    actions.push({
+      label: t('workout.deleteSet'),
+      danger: true,
+      onSelect: () => {
+        if (sheet?.kind === 'set') void deleteSet(sheet.setId);
+      },
+    });
+
+    return actions;
+  };
 
   return (
     <Screen
@@ -400,15 +450,15 @@ export function WorkoutScreen() {
         open={sheet?.kind === 'set'}
         onClose={() => setSheet(null)}
         title={sheet?.kind === 'set' ? t('workout.setNumber', { number: sheet.number }) : ''}
-        actions={[
-          {
-            label: t('workout.deleteSet'),
-            danger: true,
-            onSelect: () => {
-              if (sheet?.kind === 'set') void deleteSet(sheet.setId);
-            },
-          },
-        ]}
+        actions={setSheetActions()}
+      />
+
+      <PlateLoadSheet
+        open={sheet?.kind === 'plates'}
+        onClose={() => setSheet(null)}
+        weightKg={platesView?.weightKg ?? 0}
+        barWeight={platesView?.barWeight ?? 20}
+        sides={platesView?.sides ?? 2}
       />
     </Screen>
   );

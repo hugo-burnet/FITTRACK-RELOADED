@@ -2,8 +2,17 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Les trois derniers réglages de la feuille routine / mise en
-page sont faits** — #7 espacement 1ère carte : re-mesuré, déjà résolu par la suppression du bandeau
+**Dernière mise à jour :** 2026-07-24 (**Tâche 2 du reste-Lot-6 livrée : le calculateur de plaques
+(RF-28).** Moteur pur en TDD (10 tests) + feuille « Plaques à charger » au menu ⋯ d'une série de
+barre ; schéma monochrome par choix de charte. Quatre portes vertes, **252 tests**. Checkpoint visuel
+en attente (pane navigateur non affichée, pas de capture). Section dédiée plus bas.
+— Antérieurement : **Checkpoints en salle validés par l'utilisateur : Lot 5 et
+minuteur du Lot 6 sont bons.** Tout ce qui était livré a été jugé sur une vraie séance et tient — les
+trois paris du minuteur (filet sous la série, repos dans le statut de la card, rendu fluide) sont
+confirmés. Le Lot 5 est **terminé** ; le Lot 6 reste ouvert sur son **reste** (plaques, échauffement,
+RPE, record en direct, types de séries), seule la tranche minuteur y est close. Prochain travail :
+Lot 5bis (schéma musculaire) ou la suite du Lot 6. — Antérieurement : **Les trois derniers réglages
+de la feuille routine / mise en page sont faits** — #7 espacement 1ère carte : re-mesuré, déjà résolu par la suppression du bandeau
 (24 px, comme partout, aucun code) ; #6 well du `RestPicker` centré (`items-center`, nombre à 10/10 px
 du well) ; #4 phrase de repos ramenée de 2 lignes à 1. **Un défaut de plus trouvé en pilotant** — le
 `ConfirmSheet` mangeait ses boutons : `safe-bottom` et `pb-5` posaient tous deux `padding-bottom` et
@@ -15,8 +24,49 @@ worktrees d'agent (`b7dda06`).)
 
 ## Lot en cours
 
-**Lot 6, tranche 1 — Minuteur de repos.** Code livré et vérifié en pilotant l'écran ; **le lot n'est
-pas terminé** tant qu'une séance en salle ne l'a pas jugé.
+**Lot 6, tranche 1 — Minuteur de repos.** Code livré, vérifié en pilotant l'écran, puis **validé sur
+une vraie séance en salle (2026-07-24)**. La tranche est close.
+
+**Lot 6, tranche 2 — Calculateur de plaques (RF-28).** Code livré (cf. section dédiée ci-dessous),
+les trois portes vertes ; **checkpoint visuel à faire** (la capture live n'a pas pu être prise, la
+pane navigateur n'était pas affichée). Reste du Lot 6 : calculateur d'échauffement, RPE/RIR,
+détection de record en direct, types de séries modifiables en séance.
+
+### Calculateur de plaques (RF-28) — 2026-07-24
+
+**Le moteur** (`src/lib/plates.ts`, pur, TDD, 10 tests) décompose une charge en plaques **par côté** :
+greedy du plus lourd au plus léger, ce qui est aussi le compte de plaques minimal qu'un pratiquant
+saisit. Tout tourne en **centièmes entiers** (0,25 kg → 25) pour qu'aucune soustraction ne croise un
+fantôme de flottant. Ce qu'il ne peut pas composer exactement est rendu comme `remainderKg` (« il
+manque 1 kg »), jamais arrondi en douce. Pas barbell-only (recommandation audit M5) : `sides: 1` =
+machine à plaques à un seul peg, `barWeight` bas + `sides: 2` = haltère chargeable, et un rack fini
+(`countPerSide`) modélise la paire unique de 25 que rationne toute salle.
+
+- **Un test corrigé, pas son assertion.** Le premier test supposait un jeu s'arrêtant à 1,25 kg —
+  faux, le jeu par défaut descend à 0,25, donc 40,5/côté = 25+15+0,5 **est** atteignable et le moteur
+  a raison de renvoyer 101. J'ai changé le **rack du test** (rack grossier), pas le résultat. C'est la
+  règle CLAUDE.md : un test qui échoue ne se « corrige » pas sur l'assertion sans comprendre pourquoi.
+
+**La face** (`PlateLoadSheet.tsx`) : une barre **vue de face**, plaques dessinées comme des dalles
+dont la **hauteur porte le poids** (√ du poids, comme le diamètre du vrai disque), plus la lecture
+exacte « De chaque côté · 25 · 15 · 1,25 kg ». Accrochée au menu ⋯ d'une série, `platesConfigFor`
+(`plateConfig.ts`) ne l'offre que sur une **vraie charge de barre** : `weightRole === 'load'` **et**
+équipement ∈ {barbell, Smith, plaque}. Une machine à broche ou un haltère fixe n'a rien à charger —
+lui montrer un schéma serait un mensonge assuré. Cas limites honnêtes : reliquat, et charge sous la
+barre (« plus léger que la barre seule »).
+
+- **Le schéma est monochrome, en encre — un choix, pas un défaut.** La charte n'a **qu'un accent**,
+  réservé aux records et aux séries validées ; six couleurs de plaques réelles (IPF) casseraient à la
+  fois cette règle et le plancher de contraste. La hauteur + l'étiquette portent la distinction. C'est
+  « réutiliser le vocabulaire avant d'inventer » appliqué. Alternative colorée gardée en réserve si une
+  séance la réclame. **À trancher au checkpoint visuel.**
+- **`platesConfigFor` extrait dans son propre fichier** (`plateConfig.ts`) : cohabiter avec un
+  composant cassait le fast-refresh (react-refresh), et ça garde `lib/plates` sans le vocabulaire
+  `Equipment` de l'app.
+
+État vérifié le 2026-07-24 : `typecheck`, `lint` (0 warning), `test:run` (**252**, +10), `build` —
+les quatre passent. Le cas du checkpoint (102,5 kg → 25+15+1,25 par côté) **est** un test qui passe.
+⬜ Checkpoint visuel : ouvrir le menu ⋯ d'une série de barre → « Plaques à charger ».
 
 Plan détaillé : `docs/plans/lot-06-minuteur.md`. Cinq formes dessinées, quatre écartées par
 l'utilisateur — le détail et les raisons sont dans le plan, section « La forme retenue ».
@@ -35,8 +85,8 @@ l'utilisateur — le détail et les raisons sont dans le plan, section « La for
   11,06 et 4,49 ; relevé « Repos » 15,31 et 6,63. Aucune cible sous 48 × 44, aucun débordement.
 - ✅ Géométrie mesurée : ligne 60 px, voie 3 px, **3 px d'air au-dessus, 4 px en dessous**, 12 px de
   retrait de chaque côté.
-- ⬜ **Checkpoint en salle : à faire.** Il ne teste plus que ça marche, il teste **trois paris** —
-  cf. la fin du plan.
+- ✅ **Checkpoint en salle : validé.** Les **trois paris** tiennent sur une vraie séance — cf. la
+  fin du plan.
 
 ### Ce qui a été abandonné, et pourquoi
 
@@ -291,7 +341,7 @@ direct, types de séries — est intact. C'était une tranche, décidée comme t
   3 exercices retirés, 1 exercice et 1 série gardés, statut `completed`, durée 247 s.
 - ✅ **Non-régression Lot 3** : la fiche exercice affiche maintenant de vraies données produites
   par le Lot 5 — record 100 kg × 5, historique à deux dates, échauffements exclus du relevé.
-- ⬜ **Checkpoint en salle : à faire.**
+- ✅ **Checkpoint en salle : validé par l'utilisateur.**
 
 ### Les quatre pièges du Lot 2, trouvés en lisant le code
 
@@ -548,7 +598,7 @@ clavier et lecteur d'écran, et elle était là avant.
   Lot 3, ni le 4, ni le 5 ne le consomment. C'est le contrôle de fin de lot institué au Lot 4 —
   consigné ici comme **en attente**, pas comme oublié.
 
-### ✅ Checkpoint Lot 5 — **à faire en salle**
+### ✅ Checkpoint Lot 5 — **validé en salle (2026-07-24)**
 
 - [ ] **Une vraie séance complète avec l'app.**
 - [ ] En pleine séance : tuer l'app depuis le gestionnaire de tâches, la rouvrir → la séance
@@ -1226,9 +1276,9 @@ ci-dessus fait foi.
 | 2 | Couche de données | ✅ terminé | 3 | ✅ |
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
 | 4 | Routines | ✅ terminé | 5 | ✅ |
-| 5 | Séance en direct (cœur) | 🟨 code livré | 6 | ⬜ **en salle** |
+| 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
-| 6 | Outils de séance | ⬜ à faire | — | ⬜ |
+| 6 | Outils de séance | 🟨 minuteur validé · plaques livrées | 6–7 | ✅ minuteur · ⬜ plaques (visuel) · ⬜ reste |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
 | 9 | PWA & installation | ⬜ à faire | — | ⬜ |
