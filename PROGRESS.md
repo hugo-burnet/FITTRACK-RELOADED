@@ -2,12 +2,16 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (Retour post-séance en salle : survie au kill et mode avion
-**validés**. Sept retours triés — un faux bug (historique = Lot 7 non fait), un vrai corrigé
-(**bouton d'ajout en séance vide**, commit `614e523`), cinq réglages en attente. **Refonte de
-l'écran de séance décidée** avec l'utilisateur : repli des exos finis + chrono épinglé + repos dans
-le statut de la card active — à construire, une tâche à la fois. Au passage, **vitest exécutait les
-worktrees d'agent** — 943 tests fantômes ramenés à 242, commit `b7dda06`)
+**Dernière mise à jour :** 2026-07-24 (**Les trois derniers réglages de la feuille routine / mise en
+page sont faits** — #7 espacement 1ère carte : re-mesuré, déjà résolu par la suppression du bandeau
+(24 px, comme partout, aucun code) ; #6 well du `RestPicker` centré (`items-center`, nombre à 10/10 px
+du well) ; #4 phrase de repos ramenée de 2 lignes à 1. **Un défaut de plus trouvé en pilotant** — le
+`ConfirmSheet` mangeait ses boutons : `safe-bottom` et `pb-5` posaient tous deux `padding-bottom` et
+s'écrasaient ; nouvel utilitaire additif `sheet-bottom`, **28 px** de gap sous les boutons. Quatre
+passes vertes, 242 tests. Il ne reste que le **checkpoint en salle** de la refonte.
+— Rappel antérieur : survie au kill et mode avion **validés**, bouton d'ajout en séance vide corrigé
+(`614e523`), refonte de l'écran de séance complète (briques 2+3), vitest ne ramasse plus les
+worktrees d'agent (`b7dda06`).)
 
 ## Lot en cours
 
@@ -211,10 +215,33 @@ Principe : **chaque timer va où vit son sens**, et les exos finis quittent le b
    au-dessus de la liste. Écarté comme décidé : chrono qui voyage, statut « en cours » permanent.
    Vérifié en pilotant, deux thèmes (repos sombre 12,87 / clair 5,23). **La refonte de l'écran de
    séance est complète (briques 2+3) — reste à la juger en salle, d'un bloc.**
-4. ⬜ #7 espacement 1ère carte — **à re-mesurer** : le bandeau ayant disparu, le rapport header/carte
-   a changé.
-5. ⬜ #6 centrage du well `RestPicker` (feuille routine).
-6. ⬜ #4 phrase de repos raccourcie (feuille routine).
+4. ✅ **#7 espacement 1ère carte — re-mesuré, rien à corriger.** Le bandeau `WorkoutMeter` dissous
+   en tâche 3, l'écran de séance retombe sur la frame `Screen` partagée : header→contenu = **24 px**
+   (les 16 px de `pb-4` du header + l'interligne), **identique à l'écran Exercices** (24 px aussi),
+   mesuré dans l'app. Le « collé à 0 px » était le *bandeau* qui butait contre la 1ère carte, pas la
+   frame ; il n'existe plus. Aucun changement de code — le correctif était la suppression du bandeau.
+5. ✅ **#6 centrage du well `RestPicker`** — `items-baseline` → `items-center` sur le well, la paire
+   nombre+unité passant dans un span interne qui garde son `items-baseline` à elle. Les chiffres
+   montaient ~10 px trop haut parce que l'alignement baseline calait tout le groupe sur la ligne de
+   base au lieu de le centrer. Mesuré dans l'app : « 1:30 » à **10 px du haut / 10 px du bas** du well
+   (centré au pixel), le « min » toujours calé sur la ligne de base des chiffres.
+6. ✅ **#4 phrase de repos raccourcie** — `routine.restFromExercise` passe de « Repos de l'exercice :
+   {seconds} s. Renseigne pour le remplacer ici. » (**2 lignes**) à « Vide : le repos de l'exercice
+   s'applique. » (**1 ligne**, mesurée à 335 px). Le nombre est retiré de la phrase : il vit déjà dans
+   le well juste au-dessus (`emptyReading`, en `m:ss`), donc le répéter en « s » était à la fois
+   redondant *et* incohérent avec le well. Param `{seconds}` retiré du call site en conséquence.
+
+> **Un même utilitaire ne peut pas poser `padding-bottom` deux fois — le sheet mangeait ses boutons.**
+> Retour de l'utilisateur en pilotant : dans un `ConfirmSheet` (« Abandonner cette séance ? »), les
+> boutons étaient collés au bas de l'écran. Cause : le corps du `Sheet` était `safe-bottom px-5 pb-5`,
+> et `safe-bottom` **comme** `pb-5` posent tous deux `padding-bottom` — deux utilitaires du même calque
+> qui s'écrasent, l'inset (0 px sur un écran sans encoche) l'emportant. Le gap voulu de 20 px était
+> annulé, et sur téléphone il ne restait que la barre de gestes. Nouvel utilitaire dédié `sheet-bottom`
+> = `calc(env(safe-area-inset-bottom, 0px) + 1.75rem)` : **une** déclaration, additive (gap réel **plus**
+> barre de gestes). `safe-bottom` reste tel quel pour `BottomNav`, où il est seul et correct. Mesuré :
+> **28 px** sous les boutons du `ConfirmSheet` (était 0). C'est le pendant `padding-bottom` de la note
+> Lot 1 sur le calque des utilitaires — deux propriétés identiques ne s'additionnent jamais, la
+> dernière gagne.
 
 > **Piège d'outillage trouvé au passage — vitest exécutait les worktrees d'agent.** `test:run` n'avait
 > aucun `exclude`, donc il ramassait les tests des trois copies du dépôt sous `.claude/worktrees/` :

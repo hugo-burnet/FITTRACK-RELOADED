@@ -149,7 +149,7 @@ export function Sheet({ open, onClose, title, children }: Props) {
           </div>
         </header>
 
-        <div className="safe-bottom px-5 pb-5">{children}</div>
+        <div className="sheet-bottom px-5">{children}</div>
       </div>
     </div>,
     document.body,

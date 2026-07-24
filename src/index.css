@@ -105,6 +105,14 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* The floor of a bottom sheet: a real gap *plus* the gesture bar, added — not a
+   bare `safe-bottom pb-*`, where two padding-bottom utilities collide and the
+   inset (0 on a plain screen) silently wins, leaving the primary action jammed
+   against the bottom edge. One declaration, one source of truth. */
+@utility sheet-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1.75rem);
+}
+
 @utility safe-top {
   padding-top: env(safe-area-inset-top, 0px);
 }
