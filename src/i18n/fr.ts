@@ -161,6 +161,16 @@ const fr = {
      * ouvrir la feuille pour savoir ce qu'on est en train de changer.
      */
     setTypeAction: 'Type de série',
+    /**
+     * RF-30 — volontairement dans la feuille de série, jamais dans la grille.
+     * L’entrée reste visible pour que le RPE soit découvrable ; seule l’échelle
+     * se déplie, à la demande.
+     */
+    rpeLabel: 'Effort perçu (RPE)',
+    rpeEmpty: 'Non renseigné',
+    rpeValue: '{value} / 10',
+    rpeOption: 'RPE {value} sur 10',
+    rpeClear: 'Effacer le RPE',
     exerciseMenu: 'Options de {name}',
     /**
      * Le relevé au-dessus de la liste : où j'en suis, en un coup d'œil.

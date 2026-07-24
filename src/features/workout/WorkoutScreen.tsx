@@ -49,6 +49,7 @@ import { platesConfigFor } from './plateConfig';
 import { unlockChime } from './restChime';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
+import { WorkoutRpeField } from './WorkoutRpeField';
 import { workoutProgressLine } from './summary';
 
 type SheetState =
@@ -556,7 +557,14 @@ export function WorkoutScreen() {
             },
           },
         ]}
-      />
+      >
+        {sheet?.kind === 'set' && (
+          <WorkoutRpeField
+            value={setOf(sheet.setId)?.rpe}
+            onChange={(rpe) => void updateSetValues(sheet.setId, { rpe })}
+          />
+        )}
+      </ActionSheet>
 
       <OptionSheet
         open={sheet?.kind === 'setType'}

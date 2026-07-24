@@ -2,8 +2,13 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 2 sur 5 : le record battu se voit en
-direct, sur la ligne qui l'a battu (RF-23)** — cf. la section dédiée ci-dessous. **Rien n'est écrit
+**Dernière mise à jour :** 2026-07-24 (**Reste du Lot 6, tâche 3 sur 5 : le RPE facultatif se saisit
+dans la feuille de série sans charger la grille (RF-30)** — cf. la section dédiée ci-dessous.
+Échelle 6–10 par pas de 0,5, effacement explicite, écriture immédiate via `updateSetValues`, état de
+divulgation purement éphémère. Vérifié en 375 px : dix cibles de 48 × 60,64 px minimum, sélection et
+focus neutres, valeur puis effacement relus après rechargement depuis IndexedDB via Dexie. 284 tests
+(+4 pour RF-30), quatre portes vertes. — Antérieurement : **Reste du Lot 6, tâche 2 sur 5 : le record battu se
+voit en direct, sur la ligne qui l'a battu (RF-23)** — cf. la section dédiée ci-dessous. **Rien n'est écrit
 en base** : `personalRecords` reste vide et la question est reposée à chaque rendu, ce qui rend
 gratuite l'invalidation d'un record décoché, supprimé ou requalifié en échauffement. 279 tests (+20),
 quatre portes vertes. — Antérieurement : **Le rang d'une série passe sous transaction** — le défaut
@@ -68,9 +73,9 @@ la valeur en salle, arbitré au début de la session :
 
 1. ✅ **Types de séries en séance (RF-20)** — `ed70013`, cf. la section dédiée ci-dessous.
 2. ✅ **Record battu en direct (RF-23)** — `825c66b`, cf. la section dédiée ci-dessous.
-3. ⬜ **RPE, masquable (RF-30).** `WorkoutSet.rpe` existe depuis le Lot 2 et n'est lu par personne ;
-   `SetValues` le porte déjà, donc `updateSetValues` l'écrit sans rien changer au repo. Saisie dans
-   la feuille de série (celle de la tâche 1).
+3. ✅ **RPE, masquable (RF-30).** Saisie repliable dans la feuille de série, aucune colonne ni badge
+   dans la grille. `updateSetValues` existant écrit ou efface la valeur ; aucun changement de
+   repository, de schéma ou de réglage global. Cf. la section dédiée ci-dessous.
 4. ⬜ **Calculateur d'échauffement (RF-29).** `lib/warmup.ts` en TDD, puis insertion des séries
    d'approche dans l'exercice — elles naissent en `setType: 'warmup'`, dont le comportement est
    désormais complet (tâche 1).
@@ -78,6 +83,47 @@ la valeur en salle, arbitré au début de la session :
    (« aujourd'hui je suis sur une barre de 15 »). L'inventaire de plaques et l'écran de réglages
    restent au **Lot 8**, qui les liste explicitement comme ses livrables — ne pas monter un
    demi-écran de réglages ici.
+
+### RPE masquable (RF-30) — 2026-07-24
+
+**« Masquable » ne crée pas un réglage avant le Lot 8.** Le RPE ne prend jamais une colonne, un
+badge ou une préférence dans la grille principale. L'entrée « Effort perçu (RPE) » reste en revanche
+toujours visible dans la feuille de la série : c'est elle qui rend la fonction découvrable. Son
+sous-titre dit « Non renseigné » ou la valeur courante ; un appui déplie l'échelle dans la même
+feuille.
+
+**État et persistance sont volontairement séparés :**
+
+- l'ouverture de l'échelle est un `useState` local à `WorkoutRpeField` ; fermer la feuille l'oublie ;
+- la valeur appartient toujours à `WorkoutSet.rpe`, déjà prévu au Lot 2 ;
+- `WorkoutScreen` relaie seulement `{ rpe }` à `updateSetValues`, qui écrivait déjà `SetValues` ;
+- « — » écrit `undefined` et efface donc réellement la propriété ;
+- aucun changement de repository, de schéma Dexie, de Zustand ou de réglage global.
+
+**La forme vient de la salle, pas d'un formulaire de bureau.** Les neuf valeurs de 6 à 10 par pas
+de 0,5 et l'effacement tiennent en **2 × 5**. La sélection gagne un fond, une graisse et une double
+bordure neutres ; elle n'emprunte jamais l'accent réservé aux records et aux séries validées.
+`aria-pressed` porte la sélection et la valeur courante est reliée comme description accessible au
+bouton de divulgation.
+
+**TDD :** quatre tests de composant ont été vus rouges puis verts : masquage jusqu'à la demande,
+description accessible de la valeur courante, choix de 8,5 et effacement vers `undefined`.
+
+**Pilotage réel, 375 × 812 px :**
+
+- les dix cibles mesurent toutes **48 px de haut** et **60,64 px de large au minimum** ;
+- la feuille ouverte tient entièrement dans le viewport ;
+- `getComputedStyle` mesure la sélection à `font-weight: 700`, fond `rgb(161, 161, 170)` et texte
+  sombre, contre `500`, fond `rgb(30, 30, 33)` et texte secondaire pour une valeur non choisie ;
+- aucun contrôle RPE ne prend la couleur `--accent-ink` ;
+- 8,5 reste lu après un rechargement complet, puis « Non renseigné » reste lu après effacement et
+  second rechargement : dans les deux cas, le rendu est réhydraté par l'abonnement Dexie, pas gardé
+  par l'état React.
+
+**Pièges trouvés uniquement en pilotant :** le premier câblage avait placé le composant dans la
+feuille d'exercice, où sa condition était impossible ; puis le focus global dessinait une ligne
+accent sous la divulgation. Le composant vit maintenant dans la vraie feuille de série et ses focus
+utilisent `--text-2`, tout en restant visibles au clavier.
 
 ### Record battu en direct (RF-23) — 2026-07-24
 
@@ -910,8 +956,9 @@ clavier et lecteur d'écran, et elle était là avant.
 - ~~**Changer le type d'une série en séance** (Lot 6, RF-20). Le type est **repris de la routine** et
   affiché (« ÉCH. »), il ne se modifie pas ici.~~ **Fait au Lot 6, tranche 3, tâche 1** — et le
   « ÉCH. » de l'écran de séance est devenu un pictogramme.
-- **Le RPE** (Lot 6, RF-30). ~~La détection de record en direct (Lot 6, RF-23).~~ **Fait au Lot 6,
-  tranche 3, tâche 2** — dérivé de l'historique et des séries validées de la séance.
+- ~~**Le RPE** (Lot 6, RF-30).~~ **Fait au Lot 6, tranche 3, tâche 3** — repliable dans la feuille de
+  série, jamais ajouté à la grille. ~~La détection de record en direct (Lot 6, RF-23).~~ **Fait au
+  Lot 6, tranche 3, tâche 2** — dérivé de l'historique et des séries validées de la séance.
 - **Relire ou corriger une séance passée** (Lot 7). Cet écran ne connaît que la séance `active`.
 - **Une durée se saisit en secondes**, pas en `m:ss`. À rouvrir si ça gêne.
 - **`isUnilateral` n'est toujours lu par personne.** Le champ existe depuis le Lot 2 ; ni le
@@ -1896,6 +1943,13 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
   parcours aux éléments dont la couleur *est* l'information — sinon le prochain filet repassera au
   travers. Le repère qui trie : si l'élément porte du texte par-dessus, c'est un aplat et seul son
   `--*-fg` compte ; s'il ne porte rien, c'est de l'encre et il se mesure contre la surface.
+- **Dans une colonne flex, `overflow-hidden` change la taille minimale automatique.** La recherche
+  d'exercices coupait le regroupement alphabétique et rendait alors directement une `Card`
+  (`overflow-hidden`) comme enfant du corps flex de `Screen`. Cette carte pouvait rétrécir à 0 px :
+  ses 139 lignes existaient dans le DOM, mais le conteneur ne voyait que 160 px de contenu et
+  n'avait donc rien à faire défiler. Un wrapper `shrink-0` sur la liste filtrée restaure sa hauteur
+  intrinsèque ; vérifié en navigateur mobile avec 9 846 px de course et un `scrollTop` passé de 0
+  à 600. Le `h-full` de la coquille transmettait seulement la contrainte, il n'était pas la cause.
 
 ## Dette technique assumée
 
