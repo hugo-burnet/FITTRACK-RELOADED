@@ -2,9 +2,19 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <!--
+      `interactive-widget=resizes-content` : sans lui, le clavier logiciel se pose
+      PAR-DESSUS la vue sans en réduire la hauteur (comportement Android par
+      défaut, `resizes-visual`). Le conteneur défilant garde alors sa pleine
+      hauteur 100dvh, une liste courte ne déborde pas, et ses derniers résultats
+      restent piégés derrière le clavier — impossibles à faire remonter. Reporté
+      du téléphone : recherche d'exercice, on ne pouvait plus scroller la liste.
+      Avec `resizes-content`, la vue mise en page rétrécit à la zone au-dessus du
+      clavier, la liste déborde et redevient défilable.
+    -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, interactive-widget=resizes-content"
     />
     <meta name="theme-color" content="#0a0a0b" />
     <title>FitTrack</title>
