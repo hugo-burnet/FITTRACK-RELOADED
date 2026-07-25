@@ -487,6 +487,21 @@ const fr = {
 
   history: {
     title: 'Historique',
+    regularity: 'Régularité',
+    streak: 'Semaines',
+    streakOne: 'Semaine',
+    weeklyGoal: 'Objectif hebdo',
+    defineGoal: 'Définir',
+    goalPrompt: 'Choisis ton rythme pour suivre ta régularité.',
+    goalSheetTitle: 'Séances par semaine',
+    goalInput: 'Nombre de séances par semaine',
+    goalSave: 'Enregistrer',
+    journal: 'Journal',
+    exerciseCount: '{count} exercices',
+    exerciseCountOne: '1 exercice',
+    setCount: '{count} séries',
+    setCountOne: '1 série',
+    showMore: 'Afficher plus',
     emptyBody: 'Chaque séance terminée s’ajoute ici, et y reste. Aucune limite de durée.',
   },
 
