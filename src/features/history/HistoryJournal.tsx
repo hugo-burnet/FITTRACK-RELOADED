@@ -113,7 +113,7 @@ export function HistoryJournal({
     const filtered = filterExerciseName !== undefined;
 
     return (
-      <div className="flex min-h-80 flex-1">
+      <div className="flex min-h-80 flex-1 justify-center">
         <EmptyState
           reading="0"
           unit={t('units.workouts')}
