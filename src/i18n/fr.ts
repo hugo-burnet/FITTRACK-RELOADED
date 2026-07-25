@@ -520,6 +520,8 @@ const fr = {
     setCountOne: '1 série',
     showMore: 'Afficher plus',
     emptyBody: 'Chaque séance terminée s’ajoute ici, et y reste. Aucune limite de durée.',
+    filteredEmptyBody: 'Aucune séance terminée ne contient « {exercise} ».',
+    showAllExercises: 'Voir tous les exercices',
   },
 
   exercises: {

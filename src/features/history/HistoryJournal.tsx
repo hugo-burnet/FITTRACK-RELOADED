@@ -4,6 +4,8 @@ import { Button, Card, EmptyState } from '@/ui';
 
 interface Props {
   page: HistoryPage | undefined;
+  filterExerciseName?: string;
+  onClearExercise: () => void;
   onShowMore: () => void;
 }
 
@@ -79,7 +81,12 @@ export function HistoryWorkoutSummaryList({
   );
 }
 
-export function HistoryJournal({ page, onShowMore }: Props) {
+export function HistoryJournal({
+  page,
+  filterExerciseName,
+  onClearExercise,
+  onShowMore,
+}: Props) {
   if (page === undefined) {
     return (
       <div aria-hidden="true" className="space-y-3">
@@ -90,12 +97,27 @@ export function HistoryJournal({ page, onShowMore }: Props) {
   }
 
   if (page.items.length === 0) {
+    const filtered = filterExerciseName !== undefined;
+
     return (
       <div className="flex min-h-80 flex-1">
         <EmptyState
           reading="0"
           unit={t('units.workouts')}
-          body={t('history.emptyBody')}
+          body={
+            filtered
+              ? t('history.filteredEmptyBody', {
+                  exercise: filterExerciseName,
+                })
+              : t('history.emptyBody')
+          }
+          action={
+            filtered ? (
+              <Button variant="secondary" fullWidth onClick={onClearExercise}>
+                {t('history.showAllExercises')}
+              </Button>
+            ) : undefined
+          }
         />
       </div>
     );

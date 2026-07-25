@@ -40,6 +40,9 @@ export function HistoryScreen() {
     [exerciseId],
   );
   const exerciseOptions = useLiveQuery(listHistoryExerciseOptions, []);
+  const selectedExerciseName = exerciseOptions?.find(
+    (option) => option.id === exerciseId,
+  )?.name;
   const goalHistory = useLiveQuery(getWeeklyTrainingGoalHistory, []);
   const page = useLiveQuery(
     () => listHistoryPage({ exerciseId }, 0, pageSize),
@@ -90,8 +93,7 @@ export function HistoryScreen() {
           <div
             role="group"
             aria-label={t('history.viewSelector')}
-            className="grid grid-cols-2 gap-[3px] overflow-hidden rounded-2xl
-              border-[3px] border-[var(--border)] bg-[var(--border)]"
+            className="grid grid-cols-2"
           >
             {(['journal', 'calendar'] as const).map((option) => {
               const active = view === option;
@@ -101,11 +103,12 @@ export function HistoryScreen() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => setView(option)}
-                  className={`min-h-12 px-3 text-base font-semibold transition-colors
-                    duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
+                  className={`relative min-h-12 px-3 text-base font-semibold
+                    transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
+                    active:opacity-70 ${
                       active
-                        ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                        : 'bg-[var(--surface-1)] text-[var(--text-1)] active:bg-[var(--surface-2)]'
+                        ? 'text-[var(--accent-ink)]'
+                        : 'text-[var(--text-2)]'
                     }`}
                 >
                   {t(
@@ -113,6 +116,13 @@ export function HistoryScreen() {
                       ? 'history.journal'
                       : 'history.calendar',
                   )}
+                  <span
+                    aria-hidden="true"
+                    className={`absolute bottom-0 left-1/2 h-[3px] w-5 -translate-x-1/2
+                      rounded-t-full bg-[var(--accent-ink)] transition-transform
+                      duration-[var(--dur-1)] ease-[var(--ease-mech)]
+                      ${active ? 'scale-x-100' : 'scale-x-0'}`}
+                  />
                 </button>
               );
             })}
@@ -135,6 +145,8 @@ export function HistoryScreen() {
             </h2>
             <HistoryJournal
               page={page}
+              filterExerciseName={selectedExerciseName}
+              onClearExercise={() => changeExercise(undefined)}
               onShowMore={() => setPageSize((current) => current + 20)}
             />
           </section>
