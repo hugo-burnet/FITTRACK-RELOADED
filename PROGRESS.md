@@ -2,13 +2,13 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-25 (**Lot 07 démarré — jalon 07A consultation/régularité en
-cours**). La direction Journal / Calendrier a été validée avec le design FitTrack. Le moteur de
-semaine locale, le streak à objectifs historisés sans plafond, le réglage initialisable au tap,
-le repository paginé et le premier écran Journal sont implémentés. Vérification réelle en
-375 × 812 px : carte lisible, feuille dans la zone du pouce, saisie directe de `4`, puis affichage
-`0 / 4`, aucune erreur navigateur. **Le calendrier mensuel et le filtre exercice restent à faire
-pour fermer 07A ; le détail/édition/suppression (07B) et l’import Hevy CSV (07C) suivent.**
+**Dernière mise à jour :** 2026-07-25 (**jalon 07A terminé ; jalon 07B interrompu après le détail
+et la suppression**). Le Journal et le Calendrier partagent désormais le filtre exercice ; la
+grille mensuelle est testée et l’interface a été vérifiée en 375 × 812 px sans débordement. Pour
+07B, les transactions de lecture, sauvegarde et suppression d’archives sont prêtes, puis le détail
+en lecture seule et la suppression confirmée ont été branchés. **L’édition rétroactive reste à
+implémenter à partir de la Task 3 du plan 07B.** État figé : 26 fichiers, **393 tests**, `lint`,
+`typecheck`, `test:run` et `build` verts.
 
 **Historique précédent :** 2026-07-25 (**Lot 6 officiellement terminé — checkpoint téléphone
 RF-28 validé par l’utilisateur**). Sans plaque de 25 kg, une cible de 100 kg sur une barre de 20 kg
@@ -116,28 +116,35 @@ worktrees d'agent (`b7dda06`).)
 - repository `src/data/repositories/history.ts` : journal récent d’abord, pagination 20 + 1,
   filtre exercice prêt, lecture d’un jour local et options d’exercices réellement pratiqués ;
 - écran Journal : carte Régularité, objectif initialisable et modifiable au tap, rail
-  proportionnel, état vide et séances archivées réelles.
+  proportionnel, état vide et séances archivées réelles ;
+- grille mensuelle pure en TDD, vue Calendrier conforme au langage visuel FitTrack et filtre par
+  exercice partagé entre Journal et Calendrier ;
+- navigation depuis les résumés vers le détail archivé, totaux et séries en lecture seule,
+  confirmation de suppression et notice de retour au Journal.
 
 **TDD et portes :**
 
 - `src/lib/history.test.ts` : 15 tests ;
 - `src/data/repositories/settings.test.ts` : 10 nouveaux tests, 17 au total ;
-- `src/data/repositories/history.test.ts` : 7 tests ;
-- suite complète : **26 fichiers, 364 tests** ;
+- `src/data/repositories/history.test.ts` : 32 tests, dont les mutations transactionnelles 07B ;
+- suite complète : **26 fichiers, 393 tests** ;
 - `lint`, `typecheck`, `test:run` et `build` passent. Le warning Vite historique sur le chunk
   principal supérieur à 500 kB reste inchangé.
 
 **Prochaine reprise exacte :**
 
-1. exécuter la Task 5 du plan 07A : grille mensuelle pure en TDD, vue Calendrier et filtre
-   exercice partagé ;
-2. écrire/exécuter le plan 07B : détail, édition transactionnelle et suppression ;
-3. écrire/exécuter le plan 07C : import `workout_data.csv` Hevy, aperçu, mapping, déduplication et
+1. reprendre la **Task 3** de
+   `docs/superpowers/plans/2026-07-25-lot-07b-detail-edition-suppression.md` : brouillon pur en TDD,
+   écran d’édition, ajout/réordre sans limite, confirmation de sortie et sauvegarde
+   transactionnelle ;
+2. remettre l’action « Modifier » dans le détail seulement quand la route d’édition existe ;
+3. effectuer la vérification mobile complète de 07B (détail, modification persistée, suppression) ;
+4. écrire/exécuter le plan 07C : import `workout_data.csv` Hevy, aperçu, mapping, déduplication et
    transaction atomique. `measurement_data.csv` reste réservé au futur lot Mesures.
 
-**Checkpoint manuel demandé :** ouvrir Historique sur téléphone, taper la case « Définir »,
-enregistrer le rythme réel (par exemple 4), fermer/réouvrir l’app et vérifier que `0 / 4` reste
-affiché. Si des séances terminées existent déjà, vérifier qu’elles apparaissent dans le Journal.
+**Checkpoint manuel demandé :** sur téléphone, ouvrir une séance terminée depuis le Journal,
+vérifier ses totaux, puis supprimer uniquement une séance de test et confirmer sa disparition du
+Journal et du Calendrier. L’édition ne fait pas partie de l’état livré à ce point d’arrêt.
 
 ## Dernier lot terminé
 
