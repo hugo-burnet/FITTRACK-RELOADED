@@ -65,6 +65,20 @@ function WorkoutRow({ summary }: { summary: HistoryWorkoutSummary }) {
   );
 }
 
+export function HistoryWorkoutSummaryList({
+  items,
+}: {
+  items: readonly HistoryWorkoutSummary[];
+}) {
+  return (
+    <Card>
+      {items.map((summary) => (
+        <WorkoutRow key={summary.workoutId} summary={summary} />
+      ))}
+    </Card>
+  );
+}
+
 export function HistoryJournal({ page, onShowMore }: Props) {
   if (page === undefined) {
     return (
@@ -89,11 +103,7 @@ export function HistoryJournal({ page, onShowMore }: Props) {
 
   return (
     <div className="space-y-4">
-      <Card>
-        {page.items.map((summary) => (
-          <WorkoutRow key={summary.workoutId} summary={summary} />
-        ))}
-      </Card>
+      <HistoryWorkoutSummaryList items={page.items} />
 
       {page.hasMore && (
         <Button variant="secondary" fullWidth onClick={onShowMore}>

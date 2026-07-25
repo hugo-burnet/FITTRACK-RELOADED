@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addLocalWeeks,
+  buildMonthGrid,
   calculateWeeklyRegularity,
   resolveWeeklyGoal,
   startOfLocalWeek,
@@ -169,6 +170,66 @@ describe('calculateWeeklyRegularity', () => {
       currentCompleted: 0,
       currentGoal: 4,
       streak: 0,
+    });
+  });
+});
+
+describe('buildMonthGrid', () => {
+  it('construit six semaines du lundi au dimanche pour un mois commençant un dimanche', () => {
+    const grid = buildMonthGrid(at(2025, 5, 1), []);
+
+    expect(grid).toHaveLength(42);
+    expect(grid[0]).toMatchObject({
+      dayOfMonth: 26,
+      inCurrentMonth: false,
+    });
+    expect(grid[6]).toMatchObject({
+      dayOfMonth: 1,
+      inCurrentMonth: true,
+    });
+    expect(grid[41]).toMatchObject({
+      dayOfMonth: 6,
+      inCurrentMonth: false,
+    });
+    expect(new Date(grid[0]!.timestamp).getDay()).toBe(1);
+    expect(new Date(grid[41]!.timestamp).getDay()).toBe(0);
+  });
+
+  it('inclut le 29 février d’une année bissextile', () => {
+    const grid = buildMonthGrid(at(2024, 1, 10), []);
+    const februaryDays = grid.filter((day) => day.inCurrentMonth);
+
+    expect(februaryDays).toHaveLength(29);
+    expect(februaryDays.at(-1)?.dayOfMonth).toBe(29);
+  });
+
+  it('traverse le changement d’année sans perdre l’ordre des jours', () => {
+    const grid = buildMonthGrid(at(2025, 11, 15), []);
+
+    expect(grid[0]).toMatchObject({
+      dayOfMonth: 1,
+      inCurrentMonth: true,
+    });
+    expect(grid[34]).toMatchObject({
+      dayOfMonth: 4,
+      inCurrentMonth: false,
+    });
+    expect(new Date(grid[34]!.timestamp).getFullYear()).toBe(2026);
+  });
+
+  it('marque une seule fois un jour qui contient plusieurs séances', () => {
+    const firstWorkout = at(2026, 6, 14, 7);
+    const secondWorkout = at(2026, 6, 14, 19);
+    const grid = buildMonthGrid(at(2026, 6, 1), [
+      firstWorkout,
+      secondWorkout,
+    ]);
+
+    const workoutDays = grid.filter((day) => day.hasWorkout);
+    expect(workoutDays).toHaveLength(1);
+    expect(workoutDays[0]).toMatchObject({
+      dayOfMonth: 14,
+      inCurrentMonth: true,
     });
   });
 });

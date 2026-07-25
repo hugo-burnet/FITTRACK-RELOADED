@@ -3,6 +3,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
   listCompletedWorkoutTimestamps,
+  listHistoryDay,
+  listHistoryExerciseOptions,
   listHistoryPage,
 } from '@/data/repositories/history';
 import {
@@ -11,19 +13,45 @@ import {
 } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { calculateWeeklyRegularity } from '@/lib/history';
+import { HistoryCalendar } from './HistoryCalendar';
+import { HistoryExerciseFilter } from './HistoryExerciseFilter';
 import { HistoryJournal } from './HistoryJournal';
 import { HistorySummaryCard } from './HistorySummaryCard';
 import { WeeklyGoalSheet } from './WeeklyGoalSheet';
 
+type HistoryView = 'journal' | 'calendar';
+
 export function HistoryScreen() {
   const [openedAt] = useState(() => Date.now());
+  const [view, setView] = useState<HistoryView>('journal');
+  const [exerciseId, setExerciseId] = useState<string>();
   const [pageSize, setPageSize] = useState(20);
   const [goalOpen, setGoalOpen] = useState(false);
   const [goalDraft, setGoalDraft] = useState<number | undefined>();
+  const [visibleMonth, setVisibleMonth] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1).getTime();
+  });
+  const [selectedDay, setSelectedDay] = useState<number>();
 
   const timestamps = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
+  const filteredTimestamps = useLiveQuery(
+    () => listCompletedWorkoutTimestamps({ exerciseId }),
+    [exerciseId],
+  );
+  const exerciseOptions = useLiveQuery(listHistoryExerciseOptions, []);
   const goalHistory = useLiveQuery(getWeeklyTrainingGoalHistory, []);
-  const page = useLiveQuery(() => listHistoryPage({}, 0, pageSize), [pageSize]);
+  const page = useLiveQuery(
+    () => listHistoryPage({ exerciseId }, 0, pageSize),
+    [exerciseId, pageSize],
+  );
+  const selectedDayWorkouts = useLiveQuery(
+    () =>
+      selectedDay === undefined
+        ? Promise.resolve(undefined)
+        : listHistoryDay({ exerciseId }, selectedDay),
+    [exerciseId, selectedDay],
+  );
 
   const regularity = calculateWeeklyRegularity(
     timestamps ?? [],
@@ -36,23 +64,90 @@ export function HistoryScreen() {
     setGoalOpen(true);
   };
 
+  const changeMonth = (amount: number) => {
+    setVisibleMonth((current) => {
+      const month = new Date(current);
+      return new Date(
+        month.getFullYear(),
+        month.getMonth() + amount,
+        1,
+      ).getTime();
+    });
+    setSelectedDay(undefined);
+  };
+
+  const changeExercise = (nextExerciseId: string | undefined) => {
+    setExerciseId(nextExerciseId);
+    setPageSize(20);
+  };
+
   return (
     <Screen title={t('history.title')}>
       <div className="space-y-7">
         <HistorySummaryCard regularity={regularity} onEditGoal={openGoal} />
 
-        <section aria-labelledby="history-journal-title">
-          <h2
-            id="history-journal-title"
-            className="label-xs mb-3 px-1 font-semibold text-[var(--text-2)]"
+        <div className="space-y-3">
+          <div
+            role="group"
+            aria-label={t('history.viewSelector')}
+            className="grid grid-cols-2 gap-[3px] overflow-hidden rounded-2xl
+              border-[3px] border-[var(--border)] bg-[var(--border)]"
           >
-            {t('history.journal')}
-          </h2>
-          <HistoryJournal
-            page={page}
-            onShowMore={() => setPageSize((current) => current + 20)}
+            {(['journal', 'calendar'] as const).map((option) => {
+              const active = view === option;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setView(option)}
+                  className={`min-h-12 px-3 text-base font-semibold transition-colors
+                    duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
+                      active
+                        ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                        : 'bg-[var(--surface-1)] text-[var(--text-1)] active:bg-[var(--surface-2)]'
+                    }`}
+                >
+                  {t(
+                    option === 'journal'
+                      ? 'history.journal'
+                      : 'history.calendar',
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <HistoryExerciseFilter
+            options={exerciseOptions}
+            value={exerciseId}
+            onChange={changeExercise}
           />
-        </section>
+        </div>
+
+        {view === 'journal' ? (
+          <section aria-labelledby="history-journal-title">
+            <h2
+              id="history-journal-title"
+              className="label-xs mb-3 px-1 font-semibold text-[var(--text-2)]"
+            >
+              {t('history.journal')}
+            </h2>
+            <HistoryJournal
+              page={page}
+              onShowMore={() => setPageSize((current) => current + 20)}
+            />
+          </section>
+        ) : (
+          <HistoryCalendar
+            visibleMonth={visibleMonth}
+            completedWorkoutTimestamps={filteredTimestamps}
+            selectedDay={selectedDay}
+            selectedDayWorkouts={selectedDayWorkouts}
+            onChangeMonth={changeMonth}
+            onSelectDay={setSelectedDay}
+          />
+        )}
       </div>
 
       <WeeklyGoalSheet

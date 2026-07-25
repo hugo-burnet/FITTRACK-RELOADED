@@ -9,6 +9,13 @@ export interface WeeklyRegularity {
   streak: number;
 }
 
+export interface CalendarDay {
+  timestamp: number;
+  dayOfMonth: number;
+  inCurrentMonth: boolean;
+  hasWorkout: boolean;
+}
+
 /** Monday 00:00 in the device's local calendar. */
 export function startOfLocalWeek(timestamp: number): number {
   const date = new Date(timestamp);
@@ -76,4 +83,39 @@ export function calculateWeeklyRegularity(
   }
 
   return { currentCompleted, currentGoal, streak };
+}
+
+export function buildMonthGrid(
+  visibleMonth: number,
+  completedWorkoutTimestamps: readonly number[],
+): CalendarDay[] {
+  const month = new Date(visibleMonth);
+  const year = month.getFullYear();
+  const monthIndex = month.getMonth();
+  const firstDay = new Date(year, monthIndex, 1);
+  const gridStart = new Date(startOfLocalWeek(firstDay.getTime()));
+  const workoutDays = new Set(
+    completedWorkoutTimestamps.map((timestamp) => {
+      const date = new Date(timestamp);
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+      ).getTime();
+    }),
+  );
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(gridStart);
+    date.setDate(gridStart.getDate() + index);
+    const timestamp = date.getTime();
+
+    return {
+      timestamp,
+      dayOfMonth: date.getDate(),
+      inCurrentMonth:
+        date.getFullYear() === year && date.getMonth() === monthIndex,
+      hasWorkout: workoutDays.has(timestamp),
+    };
+  });
 }
