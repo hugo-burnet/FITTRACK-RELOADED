@@ -51,7 +51,10 @@ Une `Card` placée avant le sélecteur de vue contient deux relevés :
 - streak hebdomadaire courant ;
 - progression de la semaine vers l’objectif choisi.
 
-L’objectif n’est jamais codé en dur. La table `settings` stocke une valeur entière de 1 à 7.
+L’objectif n’est jamais codé en dur. La table `settings` stocke, sous la clé
+`weeklyTrainingGoalHistory`, un tableau ordonné de `{ effectiveFromWeek, sessions }`.
+`effectiveFromWeek` est le timestamp local du lundi 00:00 et `sessions` un entier strictement
+positif, sans plafond artificiel.
 
 À la première ouverture, tant que le réglage est absent :
 
@@ -59,9 +62,11 @@ L’objectif n’est jamais codé en dur. La table `settings` stocke une valeur 
 - la seconde case affiche **Définir** et **Objectif hebdo** ;
 - un texte explique : « Choisis ton rythme pour suivre ta régularité. »
 
-Un appui sur cette case ouvre une feuille « Séances par semaine ». Après sélection, par exemple
-4, la carte affiche `3 / 4` et quatre encoches, dont trois engagées. Un nouvel appui rouvre la
-même feuille. Le nombre d’encoches suit l’objectif de 1 à 7.
+Un appui sur cette case ouvre une feuille « Séances par semaine ». Elle réutilise `NumberInput`
+avec une borne minimale de 1, aucune borne maximale, des commandes −/+, et la saisie directe.
+Après validation, par exemple 4, la carte affiche `3 / 4`. Un nouvel appui rouvre la même feuille.
+Le rail de progression représente le ratio `réalisé / objectif` plutôt qu’un nombre fixe
+d’encoches : il reste lisible quelle que soit la valeur choisie.
 
 Une semaine va du lundi 00:00 au dimanche 23:59:59 dans le fuseau local. Une semaine close
 compte dans le streak si son nombre de séances terminées atteint l’objectif. La semaine en cours :
@@ -70,9 +75,18 @@ compte dans le streak si son nombre de séances terminées atteint l’objectif.
 - ne casse jamais le streak avant sa clôture ;
 - affiche en permanence la progression `réalisé / objectif`.
 
-Changer l’objectif recalcule le streak sur tout l’historique avec la nouvelle valeur. Le Lot 07
-ne versionne pas les objectifs successifs : il décrit le rythme actuel de l’utilisateur, pas une
-planification périodisée.
+Le premier objectif enregistré devient la base de tout l’historique, y compris des séances Hevy
+importées plus tard. Son `effectiveFromWeek` vaut `0`. Un changement ultérieur prend effet au
+lundi de la semaine courante :
+
+- si un objectif existe déjà pour cette semaine, il est remplacé ;
+- les semaines antérieures conservent l’objectif qui leur était applicable ;
+- les semaines futures utilisent le dernier objectif connu jusqu’au prochain changement.
+
+Cette chronologie légère adapte le streak aux changements de programme sans réécrire le passé.
+Elle ne constitue pas un planificateur périodisé : aucun objectif futur n’est programmé à l’avance.
+Les bornes de semaine sont calculées avec le calendrier local, jamais en ajoutant un nombre fixe
+de millisecondes, afin de rester correctes lors des changements d’heure.
 
 ### 2.3 Journal
 
@@ -271,7 +285,9 @@ La logique métier est développée en TDD.
 Tests unitaires purs :
 
 - bornes lundi–dimanche, changement de mois et d’année ;
-- streak sans objectif, semaine en cours, semaine close, changement d’objectif ;
+- streak sans objectif, semaine en cours, semaine close, premier objectif rétroactif ;
+- changement d’objectif préservant les semaines antérieures et remplaçant la valeur de la semaine
+  courante ;
 - regroupement journal/calendrier et filtre exercice ;
 - parsing de dates Hevy françaises ;
 - champs CSV entre guillemets, virgules et retours à la ligne dans les notes ;
@@ -310,7 +326,7 @@ Parcours navigateur :
 - synchronisation continue avec Hevy ;
 - import de `measurement_data.csv`, réservé au lot Mesures corporelles ;
 - graphiques de progression, heatmap musculaire et statistiques avancées ;
-- objectifs hebdomadaires historisés ou variables selon les phases du programme ;
+- programmation à l’avance d’objectifs variables selon les phases d’un programme ;
 - réseau, compte ou backend.
 
 Ces exclusions ne limitent pas les données conservées. Elles maintiennent le Lot 07 centré sur
