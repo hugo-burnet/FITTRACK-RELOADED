@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import {
   listCompletedWorkoutTimestamps,
@@ -13,6 +14,7 @@ import {
 } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { calculateWeeklyRegularity } from '@/lib/history';
+import { Card } from '@/ui';
 import { HistoryCalendar } from './HistoryCalendar';
 import { HistoryExerciseFilter } from './HistoryExerciseFilter';
 import { HistoryJournal } from './HistoryJournal';
@@ -20,8 +22,18 @@ import { HistorySummaryCard } from './HistorySummaryCard';
 import { WeeklyGoalSheet } from './WeeklyGoalSheet';
 
 type HistoryView = 'journal' | 'calendar';
+type HistoryNotice = 'deleted' | 'missing';
+
+function readHistoryNotice(state: unknown): HistoryNotice | undefined {
+  if (state === null || typeof state !== 'object') return undefined;
+  const notice = (state as { historyNotice?: unknown }).historyNotice;
+  return notice === 'deleted' || notice === 'missing' ? notice : undefined;
+}
 
 export function HistoryScreen() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [historyNotice] = useState(() => readHistoryNotice(location.state));
   const [openedAt] = useState(() => Date.now());
   const [view, setView] = useState<HistoryView>('journal');
   const [exerciseId, setExerciseId] = useState<string>();
@@ -33,6 +45,11 @@ export function HistoryScreen() {
     return new Date(today.getFullYear(), today.getMonth(), 1).getTime();
   });
   const [selectedDay, setSelectedDay] = useState<number>();
+
+  useEffect(() => {
+    if (historyNotice === undefined) return;
+    void navigate(location.pathname, { replace: true, state: null });
+  }, [historyNotice, location.pathname, navigate]);
 
   const timestamps = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
   const filteredTimestamps = useLiveQuery(
@@ -87,6 +104,20 @@ export function HistoryScreen() {
   return (
     <Screen title={t('history.title')}>
       <div className="space-y-7">
+        {historyNotice !== undefined && (
+          <div role="status">
+            <Card padded>
+              <p className="text-sm leading-relaxed text-[var(--text-1)]">
+                {t(
+                  historyNotice === 'deleted'
+                    ? 'history.deletedNotice'
+                    : 'history.missingNotice',
+                )}
+              </p>
+            </Card>
+          </div>
+        )}
+
         <HistorySummaryCard regularity={regularity} onEditGoal={openGoal} />
 
         <div className="space-y-3">

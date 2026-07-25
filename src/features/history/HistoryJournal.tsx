@@ -1,6 +1,8 @@
 import type { HistoryPage, HistoryWorkoutSummary } from '@/data/repositories/history';
 import { t } from '@/i18n/fr';
 import { Button, Card, EmptyState } from '@/ui';
+import { ChevronRightIcon } from '@/ui/icons';
+import { Link } from 'react-router-dom';
 
 interface Props {
   page: HistoryPage | undefined;
@@ -36,33 +38,44 @@ function countLabel(
 
 function WorkoutRow({ summary }: { summary: HistoryWorkoutSummary }) {
   return (
-    <article className="border-b border-[var(--border)] px-4 py-4 last:border-b-0">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold text-[var(--text-1)]">
-            {summary.name}
-          </h3>
-          <p className="mt-1 text-sm capitalize text-[var(--text-2)]">
-            {dateFormatter.format(summary.startedAt)}
+    <article className="border-b border-[var(--border)] last:border-b-0">
+      <Link
+        to={`/history/${summary.workoutId}`}
+        className="flex min-h-12 w-full items-center gap-3 px-4 py-4 text-left
+          transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+      >
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h3 className="truncate text-base font-semibold text-[var(--text-1)]">
+                {summary.name}
+              </h3>
+              <p className="mt-1 text-sm capitalize text-[var(--text-2)]">
+                {dateFormatter.format(summary.startedAt)}
+              </p>
+            </div>
+            <p className="metric shrink-0 text-sm font-semibold text-[var(--text-2)]">
+              {formatDuration(summary.durationSeconds)}
+            </p>
+          </div>
+          <p className="mt-3 text-sm text-[var(--text-2)]">
+            {countLabel(
+              summary.exerciseCount,
+              'history.exerciseCountOne',
+              'history.exerciseCount',
+            )}
+            <span aria-hidden="true"> · </span>
+            {countLabel(
+              summary.completedSetCount,
+              'history.setCountOne',
+              'history.setCount',
+            )}
           </p>
         </div>
-        <p className="metric shrink-0 text-sm font-semibold text-[var(--text-2)]">
-          {formatDuration(summary.durationSeconds)}
-        </p>
-      </div>
-      <p className="mt-3 text-sm text-[var(--text-2)]">
-        {countLabel(
-          summary.exerciseCount,
-          'history.exerciseCountOne',
-          'history.exerciseCount',
-        )}
-        <span aria-hidden="true"> · </span>
-        {countLabel(
-          summary.completedSetCount,
-          'history.setCountOne',
-          'history.setCount',
-        )}
-      </p>
+        <span className="shrink-0 text-[var(--text-2)]">
+          <ChevronRightIcon />
+        </span>
+      </Link>
     </article>
   );
 }
