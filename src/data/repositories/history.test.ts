@@ -1,14 +1,28 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { createCustomExercise } from '@/data/repositories/exercises';
-import { deleteWorkout, startWorkout } from '@/data/repositories/workouts';
+import { bestSets } from '@/lib/records';
+import {
+  addWorkoutExercise,
+  addSet,
+  deleteWorkout,
+  startWorkout,
+} from '@/data/repositories/workouts';
+import {
+  getLastPerformance,
+  listRecordSets,
+} from '@/data/repositories/workoutHistory';
 import { day, seedWorkout } from '@/test/factories';
 import { resetDb } from '@/test/resetDb';
 import {
+  type ArchivedWorkoutDraft,
+  deleteArchivedWorkout,
+  getArchivedWorkoutDetail,
   listCompletedWorkoutTimestamps,
   listHistoryDay,
   listHistoryExerciseOptions,
   listHistoryPage,
+  saveArchivedWorkout,
 } from './history';
 
 describe('history repository', () => {
@@ -164,5 +178,601 @@ describe('history repository', () => {
     await db.workoutSets.update(sets[0]!.id, { deletedAt: Date.now() });
 
     expect((await listHistoryPage({}, 0, 20)).items[0]?.completedSetCount).toBe(1);
+  });
+});
+
+describe('archived workout mutations', () => {
+  beforeEach(resetDb);
+
+  function draftFor(workoutId: string): ArchivedWorkoutDraft {
+    return {
+      workoutId,
+      name: 'Séance corrigée',
+      startedAt: day(3),
+      durationSeconds: 3600,
+      exercises: [],
+    };
+  }
+
+  it('ne lit comme archive qu’une séance terminée vivante', async () => {
+    const completed = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const active = await startWorkout('', 'En cours');
+
+    expect((await getArchivedWorkoutDetail(completed.id))?.workout.id).toBe(completed.id);
+    expect(await getArchivedWorkoutDetail(active.id)).toBeNull();
+    expect(await getArchivedWorkoutDetail('missing')).toBeNull();
+  });
+
+  it('refuse de modifier une séance qui n’est pas archivée', async () => {
+    const active = await startWorkout('', 'En cours');
+
+    await expect(saveArchivedWorkout(draftFor(active.id))).rejects.toThrow(
+      'Archived workout not found',
+    );
+  });
+
+  it('exige un nom non vide', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+
+    await expect(
+      saveArchivedWorkout({ ...draftFor(workout.id), name: '   ' }),
+    ).rejects.toThrow('Workout name is required');
+  });
+
+  it.each([Number.NaN, Number.POSITIVE_INFINITY, -1])(
+    'refuse le timestamp de début invalide %s',
+    async (startedAt) => {
+      const workout = await seedWorkout({
+        exerciseId: 'bench',
+        performedAt: day(1),
+        sets: [[100, 5]],
+      });
+
+      await expect(
+        saveArchivedWorkout({ ...draftFor(workout.id), startedAt }),
+      ).rejects.toThrow('Workout start must be a valid timestamp');
+    },
+  );
+
+  it.each([-1, 1.5])('refuse la durée invalide %s', async (durationSeconds) => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+
+    await expect(
+      saveArchivedWorkout({ ...draftFor(workout.id), durationSeconds }),
+    ).rejects.toThrow('Workout duration must be a non-negative integer');
+  });
+
+  it('refuse un identifiant de ligne d’exercice répété', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const row = await db.workoutExercises.where('workoutId').equals(workout.id).first();
+    expect(row).toBeDefined();
+
+    await expect(
+      saveArchivedWorkout({
+        ...draftFor(workout.id),
+        exercises: [
+          {
+            id: row!.id,
+            exerciseId: 'bench',
+            supersetGroup: 0,
+            restSeconds: 120,
+            sets: [],
+          },
+          {
+            id: row!.id,
+            exerciseId: 'squat',
+            supersetGroup: 0,
+            restSeconds: 120,
+            sets: [],
+          },
+        ],
+      }),
+    ).rejects.toThrow('Workout exercise ids must be unique');
+  });
+
+  it('refuse un identifiant de série répété', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const row = await db.workoutExercises.where('workoutId').equals(workout.id).first();
+    const set = await db.workoutSets.where('workoutId').equals(workout.id).first();
+    expect(row).toBeDefined();
+    expect(set).toBeDefined();
+
+    await expect(
+      saveArchivedWorkout({
+        ...draftFor(workout.id),
+        exercises: [{
+          id: row!.id,
+          exerciseId: 'bench',
+          supersetGroup: 0,
+          restSeconds: 120,
+          sets: [
+            { id: set!.id, setType: 'normal', side: 'both', weight: 100, reps: 5 },
+            { id: set!.id, setType: 'normal', side: 'both', weight: 90, reps: 8 },
+          ],
+        }],
+      }),
+    ).rejects.toThrow('Workout set ids must be unique');
+  });
+
+  it('refuse une ligne d’exercice appartenant à une autre séance', async () => {
+    const target = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const other = await seedWorkout({
+      exerciseId: 'squat',
+      performedAt: day(2),
+      sets: [[140, 5]],
+    });
+    const foreignRow = await db.workoutExercises.where('workoutId').equals(other.id).first();
+    expect(foreignRow).toBeDefined();
+
+    await expect(
+      saveArchivedWorkout({
+        ...draftFor(target.id),
+        exercises: [{
+          id: foreignRow!.id,
+          exerciseId: foreignRow!.exerciseId,
+          supersetGroup: 0,
+          restSeconds: foreignRow!.restSeconds,
+          sets: [],
+        }],
+      }),
+    ).rejects.toThrow('Workout exercise does not belong to archived workout');
+  });
+
+  it('refuse une série appartenant à une autre séance', async () => {
+    const target = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const other = await seedWorkout({
+      exerciseId: 'squat',
+      performedAt: day(2),
+      sets: [[140, 5]],
+    });
+    const targetRow = await db.workoutExercises.where('workoutId').equals(target.id).first();
+    const foreignSet = await db.workoutSets.where('workoutId').equals(other.id).first();
+    expect(targetRow).toBeDefined();
+    expect(foreignSet).toBeDefined();
+
+    await expect(
+      saveArchivedWorkout({
+        ...draftFor(target.id),
+        exercises: [{
+          id: targetRow!.id,
+          exerciseId: targetRow!.exerciseId,
+          supersetGroup: 0,
+          restSeconds: targetRow!.restSeconds,
+          sets: [{
+            id: foreignSet!.id,
+            setType: 'normal',
+            side: 'both',
+            weight: 100,
+            reps: 5,
+          }],
+        }],
+      }),
+    ).rejects.toThrow('Workout set does not belong to archived workout');
+  });
+
+  it('remplace atomiquement les métadonnées, exercices et séries', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5], [90, 8]],
+    });
+    const detail = await getArchivedWorkoutDetail(workout.id);
+    expect(detail).not.toBeNull();
+
+    const row = detail!.exercises[0]!;
+    await saveArchivedWorkout({
+      workoutId: workout.id,
+      name: 'Poussée corrigée',
+      notes: 'Bonne séance',
+      startedAt: day(8),
+      durationSeconds: 2700,
+      exercises: [{
+        id: row.row.id,
+        exerciseId: row.row.exerciseId,
+        supersetGroup: 0,
+        restSeconds: row.row.restSeconds,
+        notes: 'Tempo contrôlé',
+        sets: [{
+          id: row.sets[0]!.id,
+          setType: 'warmup',
+          side: 'both',
+          weight: 60,
+          reps: 10,
+        }, {
+          setType: 'normal',
+          side: 'both',
+          weight: 102.5,
+          reps: 5,
+          rpe: 8.5,
+        }],
+      }],
+    });
+
+    const saved = await getArchivedWorkoutDetail(workout.id);
+    expect(saved?.workout).toMatchObject({
+      name: 'Poussée corrigée',
+      notes: 'Bonne séance',
+      startedAt: day(8),
+      endedAt: day(8) + 2_700_000,
+      durationSeconds: 2700,
+    });
+    expect(saved?.exercises[0]?.row).toMatchObject({
+      order: 0,
+      notes: 'Tempo contrôlé',
+    });
+    expect(saved?.exercises[0]?.sets).toHaveLength(2);
+    expect(saved?.exercises[0]?.sets[0]?.performedAt).toBe(day(8));
+    expect(saved?.exercises[0]?.sets[1]).toMatchObject({
+      exerciseId: row.row.exerciseId,
+      workoutId: workout.id,
+      setType: 'normal',
+      weight: 102.5,
+      reps: 5,
+      rpe: 8.5,
+      isCompleted: 1,
+      performedAt: day(8) + 2,
+    });
+  });
+
+  it('retire réellement les résultats optionnels absents du brouillon', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const detail = await getArchivedWorkoutDetail(workout.id);
+    const row = detail!.exercises[0]!;
+    await db.workoutSets.update(row.sets[0]!.id, {
+      durationSeconds: 45,
+      distanceMeters: 250,
+      rpe: 9,
+    });
+
+    await saveArchivedWorkout({
+      ...draftFor(workout.id),
+      exercises: [{
+        id: row.row.id,
+        exerciseId: row.row.exerciseId,
+        supersetGroup: 0,
+        restSeconds: row.row.restSeconds,
+        sets: [{
+          id: row.sets[0]!.id,
+          setType: 'normal',
+          side: 'both',
+          weight: 95,
+          reps: 6,
+        }],
+      }],
+    });
+
+    const saved = await db.workoutSets.get(row.sets[0]!.id);
+    expect(saved).not.toHaveProperty('durationSeconds');
+    expect(saved).not.toHaveProperty('distanceMeters');
+    expect(saved).not.toHaveProperty('rpe');
+  });
+
+  it('supprime logiquement les exercices et séries omis du brouillon', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5], [90, 8]],
+    });
+    const originalRow = await db.workoutExercises.where('workoutId').equals(workout.id).first();
+    const originalSets = await db.workoutSets.where('workoutId').equals(workout.id).toArray();
+
+    await saveArchivedWorkout(draftFor(workout.id));
+
+    expect((await db.workoutExercises.get(originalRow!.id))?.deletedAt).toBeGreaterThan(0);
+    for (const set of originalSets) {
+      expect((await db.workoutSets.get(set.id))?.deletedAt).toBeGreaterThan(0);
+    }
+  });
+
+  it('crée des UUID, rangs continus et identifiants dénormalisés cohérents', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+
+    await saveArchivedWorkout({
+      ...draftFor(workout.id),
+      startedAt: 0,
+      exercises: [{
+        exerciseId: 'squat',
+        supersetGroup: 1,
+        restSeconds: 180,
+        sets: [
+          { setType: 'normal', side: 'both', weight: 140, reps: 5 },
+          { setType: 'normal', side: 'both', weight: 130, reps: 8 },
+        ],
+      }, {
+        exerciseId: 'bench',
+        supersetGroup: 1,
+        restSeconds: 120,
+        sets: [
+          { setType: 'warmup', side: 'both', weight: 60, reps: 10 },
+        ],
+      }],
+    });
+
+    const detail = await getArchivedWorkoutDetail(workout.id);
+    expect(detail?.exercises.map(({ row }) => row.order)).toEqual([0, 1]);
+    expect(detail?.exercises.map(({ row }) => row.id)).toEqual([
+      expect.stringMatching(/^[0-9a-f-]{36}$/),
+      expect.stringMatching(/^[0-9a-f-]{36}$/),
+    ]);
+    expect(detail?.exercises[0]?.sets.map((set) => set.order)).toEqual([0, 1]);
+    expect(detail?.exercises[1]?.sets.map((set) => set.order)).toEqual([0]);
+    expect(detail?.exercises.flatMap(({ sets }) => sets.map((set) => set.performedAt)))
+      .toEqual([1, 2, 3]);
+
+    for (const { row, sets } of detail!.exercises) {
+      for (const set of sets) {
+        expect(set.id).toMatch(/^[0-9a-f-]{36}$/);
+        expect(set).toMatchObject({
+          workoutId: workout.id,
+          workoutExerciseId: row.id,
+          exerciseId: row.exerciseId,
+          isCompleted: 1,
+        });
+      }
+    }
+  });
+
+  it('conserve le décalage relatif des séries existantes et garantit performedAt > 0', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5], [90, 8]],
+    });
+    const detail = await getArchivedWorkoutDetail(workout.id);
+    const row = detail!.exercises[0]!;
+    await db.workoutSets.update(row.sets[0]!.id, { performedAt: workout.startedAt + 5_000 });
+    await db.workoutSets.update(row.sets[1]!.id, { performedAt: workout.startedAt - 5_000 });
+
+    await saveArchivedWorkout({
+      ...draftFor(workout.id),
+      startedAt: 0,
+      exercises: [{
+        id: row.row.id,
+        exerciseId: row.row.exerciseId,
+        supersetGroup: 0,
+        restSeconds: row.row.restSeconds,
+        sets: row.sets.map((set) => ({
+          id: set.id,
+          setType: set.setType,
+          side: set.side,
+          weight: set.weight,
+          reps: set.reps,
+        })),
+      }],
+    });
+
+    const saved = await getArchivedWorkoutDetail(workout.id);
+    expect(saved?.exercises[0]?.sets.map((set) => set.performedAt)).toEqual([5_000, 1]);
+  });
+
+  it('annule tout le remplacement si le dernier bulkPut échoue', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5], [90, 8]],
+    });
+    const detail = await getArchivedWorkoutDetail(workout.id);
+    const row = detail!.exercises[0]!;
+    const snapshot = async () => ({
+      workout: await db.workouts.get(workout.id),
+      rows: (await db.workoutExercises.where('workoutId').equals(workout.id).toArray())
+        .sort((left, right) => left.id.localeCompare(right.id)),
+      sets: (await db.workoutSets.where('workoutId').equals(workout.id).toArray())
+        .sort((left, right) => left.id.localeCompare(right.id)),
+    });
+    const before = await snapshot();
+    const fail = vi
+      .spyOn(db.workoutSets, 'bulkPut')
+      .mockRejectedValueOnce(new Error('échec injecté'));
+
+    try {
+      await expect(
+        saveArchivedWorkout({
+          ...draftFor(workout.id),
+          name: 'Ne doit pas rester',
+          exercises: [{
+            id: row.row.id,
+            exerciseId: row.row.exerciseId,
+            supersetGroup: 0,
+            restSeconds: row.row.restSeconds,
+            sets: [{
+              id: row.sets[0]!.id,
+              setType: 'normal',
+              side: 'both',
+              weight: 110,
+              reps: 3,
+            }],
+          }],
+        }),
+      ).rejects.toThrow('échec injecté');
+    } finally {
+      fail.mockRestore();
+    }
+
+    expect(await snapshot()).toStrictEqual(before);
+  });
+
+  it('supprime logiquement toute l’archive avec un timestamp unique', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+
+    await deleteArchivedWorkout(workout.id);
+
+    const savedWorkout = await db.workouts.get(workout.id);
+    const savedRow = await db.workoutExercises.where('workoutId').equals(workout.id).first();
+    const savedSet = await db.workoutSets.where('workoutId').equals(workout.id).first();
+    const timestamps = [
+      savedWorkout!.deletedAt,
+      savedWorkout!.updatedAt,
+      savedRow!.deletedAt,
+      savedRow!.updatedAt,
+      savedSet!.deletedAt,
+      savedSet!.updatedAt,
+    ];
+    expect(timestamps[0]).toBeGreaterThan(0);
+    expect(new Set(timestamps)).toEqual(new Set([timestamps[0]]));
+  });
+
+  it('refuse une séance active sans modifier ses lignes', async () => {
+    const workout = await startWorkout('', 'En cours');
+    const row = await addWorkoutExercise(workout.id, 'bench');
+    await addSet(row.id, { weight: 100, reps: 5 });
+    const snapshot = async () => ({
+      workout: await db.workouts.get(workout.id),
+      rows: await db.workoutExercises.where('workoutId').equals(workout.id).toArray(),
+      sets: await db.workoutSets.where('workoutId').equals(workout.id).toArray(),
+    });
+    const before = await snapshot();
+
+    await expect(deleteArchivedWorkout(workout.id)).rejects.toThrow(
+      'Archived workout not found',
+    );
+
+    expect(await snapshot()).toStrictEqual(before);
+  });
+
+  it('refuse une archive déjà supprimée', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    await deleteWorkout(workout.id);
+
+    await expect(deleteArchivedWorkout(workout.id)).rejects.toThrow(
+      'Archived workout not found',
+    );
+  });
+
+  it('annule toute la suppression si une écriture enfant échoue', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const snapshot = async () => ({
+      workout: await db.workouts.get(workout.id),
+      rows: await db.workoutExercises.where('workoutId').equals(workout.id).toArray(),
+      sets: await db.workoutSets.where('workoutId').equals(workout.id).toArray(),
+    });
+    const before = await snapshot();
+    const fail = vi
+      .spyOn(db.workoutSets, 'bulkPut')
+      .mockRejectedValueOnce(new Error('échec enfant injecté'));
+
+    try {
+      await expect(deleteArchivedWorkout(workout.id)).rejects.toThrow(
+        'échec enfant injecté',
+      );
+    } finally {
+      fail.mockRestore();
+    }
+
+    expect(await snapshot()).toStrictEqual(before);
+  });
+
+  it.each([
+    { label: 'une charge abaissée', setType: 'normal' as const, weight: 90 },
+    { label: 'une série requalifiée en échauffement', setType: 'warmup' as const, weight: 110 },
+  ])('recalcule le record après $label', async ({ setType, weight }) => {
+    const incumbent = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const corrected = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(2),
+      sets: [[110, 5]],
+    });
+    const incumbentSet = await db.workoutSets.where('workoutId').equals(incumbent.id).first();
+    const detail = await getArchivedWorkoutDetail(corrected.id);
+    const row = detail!.exercises[0]!;
+
+    await saveArchivedWorkout({
+      workoutId: corrected.id,
+      name: corrected.name,
+      startedAt: corrected.startedAt,
+      durationSeconds: corrected.durationSeconds,
+      exercises: [{
+        id: row.row.id,
+        exerciseId: row.row.exerciseId,
+        supersetGroup: row.row.supersetGroup,
+        restSeconds: row.row.restSeconds,
+        sets: [{
+          id: row.sets[0]!.id,
+          setType,
+          side: 'both',
+          weight,
+          reps: 5,
+        }],
+      }],
+    });
+
+    const recordSets = (await listRecordSets(['bench'])).get('bench')!;
+    expect(bestSets(recordSets).heaviest?.id).toBe(incumbentSet!.id);
+    expect(await db.personalRecords.count()).toBe(0);
+  });
+
+  it('retire une archive supprimée de la dernière performance et des records', async () => {
+    const previous = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const removed = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(2),
+      sets: [[110, 5]],
+    });
+    const previousSet = await db.workoutSets.where('workoutId').equals(previous.id).first();
+
+    await deleteArchivedWorkout(removed.id);
+
+    expect((await getLastPerformance('bench')).map((set) => set.id)).toEqual([
+      previousSet!.id,
+    ]);
+    const recordSets = (await listRecordSets(['bench'])).get('bench')!;
+    expect(recordSets.map((set) => set.id)).toEqual([previousSet!.id]);
+    expect(await db.personalRecords.count()).toBe(0);
   });
 });

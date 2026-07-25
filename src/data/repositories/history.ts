@@ -1,5 +1,14 @@
 import { db } from '@/data/db';
-import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type {
+  Exercise,
+  SetType,
+  Side,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
+import { newEntity, touch } from './base';
+import { getWorkoutDetail, type WorkoutDetail } from './workouts';
 
 export interface HistoryFilters {
   exerciseId?: string;
@@ -17,6 +26,35 @@ export interface HistoryWorkoutSummary {
 export interface HistoryPage {
   items: HistoryWorkoutSummary[];
   hasMore: boolean;
+}
+
+export interface ArchivedSetDraft {
+  id?: string;
+  setType: SetType;
+  side: Side;
+  weight?: number;
+  reps?: number;
+  durationSeconds?: number;
+  distanceMeters?: number;
+  rpe?: number;
+}
+
+export interface ArchivedExerciseDraft {
+  id?: string;
+  exerciseId: string;
+  supersetGroup: number;
+  restSeconds: number;
+  notes?: string;
+  sets: ArchivedSetDraft[];
+}
+
+export interface ArchivedWorkoutDraft {
+  workoutId: string;
+  name: string;
+  notes?: string;
+  startedAt: number;
+  durationSeconds: number;
+  exercises: ArchivedExerciseDraft[];
 }
 
 const byMostRecent = (left: Workout, right: Workout): number =>
@@ -136,4 +174,219 @@ export async function listHistoryExerciseOptions(): Promise<
     .sort((left, right) =>
       left.name.localeCompare(right.name, 'fr', { sensitivity: 'base' }),
     );
+}
+
+export async function getArchivedWorkoutDetail(
+  workoutId: string,
+): Promise<WorkoutDetail | null> {
+  const detail = await getWorkoutDetail(workoutId);
+  return detail?.workout.status === 'completed' ? detail : null;
+}
+
+function assertArchivedDraft(draft: ArchivedWorkoutDraft): void {
+  if (draft.name.trim() === '') throw new RangeError('Workout name is required');
+  if (!Number.isFinite(draft.startedAt) || draft.startedAt < 0) {
+    throw new RangeError('Workout start must be a valid timestamp');
+  }
+  if (!Number.isInteger(draft.durationSeconds) || draft.durationSeconds < 0) {
+    throw new RangeError('Workout duration must be a non-negative integer');
+  }
+
+  const exerciseIds = draft.exercises.flatMap((row) =>
+    row.id === undefined ? [] : [row.id],
+  );
+  if (new Set(exerciseIds).size !== exerciseIds.length) {
+    throw new RangeError('Workout exercise ids must be unique');
+  }
+
+  const setIds = draft.exercises.flatMap((row) =>
+    row.sets.flatMap((set) => (set.id === undefined ? [] : [set.id])),
+  );
+  if (new Set(setIds).size !== setIds.length) {
+    throw new RangeError('Workout set ids must be unique');
+  }
+}
+
+export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<void> {
+  assertArchivedDraft(draft);
+
+  await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
+    const workout = await db.workouts.get(draft.workoutId);
+    if (
+      workout === undefined ||
+      workout.deletedAt !== 0 ||
+      workout.status !== 'completed'
+    ) {
+      throw new Error('Archived workout not found');
+    }
+
+    const rows = (
+      await db.workoutExercises.where('workoutId').equals(draft.workoutId).toArray()
+    ).filter((row) => row.deletedAt === 0);
+    const rowIds = new Set(rows.map((row) => row.id));
+    if (draft.exercises.some((row) => row.id !== undefined && !rowIds.has(row.id))) {
+      throw new Error('Workout exercise does not belong to archived workout');
+    }
+
+    const sets = (
+      await db.workoutSets.where('workoutId').equals(draft.workoutId).toArray()
+    ).filter((set) => set.deletedAt === 0);
+    const setIds = new Set(sets.map((set) => set.id));
+    if (
+      draft.exercises.some((row) =>
+        row.sets.some((set) => set.id !== undefined && !setIds.has(set.id)),
+      )
+    ) {
+      throw new Error('Workout set does not belong to archived workout');
+    }
+
+    const rowsById = new Map(rows.map((row) => [row.id, row]));
+    const setsById = new Map(sets.map((set) => [set.id, set]));
+    const keptRowIds = new Set<string>();
+    const keptSetIds = new Set<string>();
+    let setSequence = 0;
+
+    const nextRows: WorkoutExercise[] = [];
+    const nextSets: WorkoutSet[] = [];
+
+    for (const [order, rowDraft] of draft.exercises.entries()) {
+      const existingRow = rowDraft.id === undefined ? undefined : rowsById.get(rowDraft.id);
+      const rowData = {
+        workoutId: workout.id,
+        exerciseId: rowDraft.exerciseId,
+        order,
+        supersetGroup: rowDraft.supersetGroup,
+        restSeconds: rowDraft.restSeconds,
+        ...(rowDraft.notes === undefined ? {} : { notes: rowDraft.notes }),
+      };
+      const row =
+        existingRow === undefined
+          ? newEntity<WorkoutExercise>(rowData)
+          : touch<WorkoutExercise>(
+              {
+                id: existingRow.id,
+                createdAt: existingRow.createdAt,
+                updatedAt: existingRow.updatedAt,
+                deletedAt: 0,
+                ...rowData,
+              },
+              {},
+            );
+      nextRows.push(row);
+      keptRowIds.add(row.id);
+
+      for (const [orderInExercise, setDraft] of rowDraft.sets.entries()) {
+        const sequence = setSequence;
+        setSequence += 1;
+        const existingSet = setDraft.id === undefined ? undefined : setsById.get(setDraft.id);
+        const setData = {
+          workoutExerciseId: row.id,
+          exerciseId: row.exerciseId,
+          workoutId: workout.id,
+          order: orderInExercise,
+          setType: setDraft.setType,
+          side: setDraft.side,
+          ...(setDraft.weight === undefined ? {} : { weight: setDraft.weight }),
+          ...(setDraft.reps === undefined ? {} : { reps: setDraft.reps }),
+          ...(setDraft.durationSeconds === undefined
+            ? {}
+            : { durationSeconds: setDraft.durationSeconds }),
+          ...(setDraft.distanceMeters === undefined
+            ? {}
+            : { distanceMeters: setDraft.distanceMeters }),
+          ...(setDraft.rpe === undefined ? {} : { rpe: setDraft.rpe }),
+          ...(existingSet?.targetReps === undefined
+            ? {}
+            : { targetReps: existingSet.targetReps }),
+          ...(existingSet?.targetRepsMax === undefined
+            ? {}
+            : { targetRepsMax: existingSet.targetRepsMax }),
+          ...(existingSet?.targetWeight === undefined
+            ? {}
+            : { targetWeight: existingSet.targetWeight }),
+          ...(existingSet?.targetDurationSeconds === undefined
+            ? {}
+            : { targetDurationSeconds: existingSet.targetDurationSeconds }),
+          ...(existingSet?.targetDistanceMeters === undefined
+            ? {}
+            : { targetDistanceMeters: existingSet.targetDistanceMeters }),
+          isCompleted: 1 as const,
+          performedAt:
+            existingSet === undefined
+              ? Math.max(1, draft.startedAt + sequence + 1)
+              : Math.max(
+                  1,
+                  existingSet.performedAt + draft.startedAt - workout.startedAt,
+                ),
+        };
+        const set =
+          existingSet === undefined
+            ? newEntity<WorkoutSet>(setData)
+            : touch<WorkoutSet>(
+                {
+                  id: existingSet.id,
+                  createdAt: existingSet.createdAt,
+                  updatedAt: existingSet.updatedAt,
+                  deletedAt: 0,
+                  ...setData,
+                },
+                {},
+              );
+        nextSets.push(set);
+        keptSetIds.add(set.id);
+      }
+    }
+
+    const deletedAt = Date.now();
+    const deletedRows = rows
+      .filter((row) => !keptRowIds.has(row.id))
+      .map((row) => touch(row, { deletedAt }));
+    const deletedSets = sets
+      .filter((set) => !keptSetIds.has(set.id))
+      .map((set) => touch(set, { deletedAt }));
+    const updatedWorkout = touch<Workout>(
+      {
+        id: workout.id,
+        createdAt: workout.createdAt,
+        updatedAt: workout.updatedAt,
+        deletedAt: 0,
+        routineId: workout.routineId,
+        name: draft.name,
+        status: 'completed',
+        startedAt: draft.startedAt,
+        endedAt: draft.startedAt + draft.durationSeconds * 1000,
+        durationSeconds: draft.durationSeconds,
+        ...(draft.notes === undefined ? {} : { notes: draft.notes }),
+      },
+      {},
+    );
+
+    await db.workouts.put(updatedWorkout);
+    await db.workoutExercises.bulkPut([...nextRows, ...deletedRows]);
+    await db.workoutSets.bulkPut([...nextSets, ...deletedSets]);
+  });
+}
+
+export async function deleteArchivedWorkout(workoutId: string): Promise<void> {
+  await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
+    const workout = await db.workouts.get(workoutId);
+    if (
+      workout === undefined ||
+      workout.deletedAt !== 0 ||
+      workout.status !== 'completed'
+    ) {
+      throw new Error('Archived workout not found');
+    }
+
+    const [rows, sets] = await Promise.all([
+      db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
+      db.workoutSets.where('workoutId').equals(workoutId).toArray(),
+    ]);
+    const now = Date.now();
+    const deleted = { deletedAt: now, updatedAt: now };
+
+    await db.workouts.put({ ...workout, ...deleted });
+    await db.workoutExercises.bulkPut(rows.map((row) => ({ ...row, ...deleted })));
+    await db.workoutSets.bulkPut(sets.map((set) => ({ ...set, ...deleted })));
+  });
 }
