@@ -2,13 +2,21 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-25 (**Lot 6 officiellement terminé — checkpoint téléphone
+**Dernière mise à jour :** 2026-07-25 (**Lot 07 démarré — jalon 07A consultation/régularité en
+cours**). La direction Journal / Calendrier a été validée avec le design FitTrack. Le moteur de
+semaine locale, le streak à objectifs historisés sans plafond, le réglage initialisable au tap,
+le repository paginé et le premier écran Journal sont implémentés. Vérification réelle en
+375 × 812 px : carte lisible, feuille dans la zone du pouce, saisie directe de `4`, puis affichage
+`0 / 4`, aucune erreur navigateur. **Le calendrier mensuel et le filtre exercice restent à faire
+pour fermer 07A ; le détail/édition/suppression (07B) et l’import Hevy CSV (07C) suivent.**
+
+**Historique précédent :** 2026-07-25 (**Lot 6 officiellement terminé — checkpoint téléphone
 RF-28 validé par l’utilisateur**). Sans plaque de 25 kg, une cible de 100 kg sur une barre de 20 kg
 affiche bien **2 × 20 kg par côté** ; la désélection persiste après rechargement ; remettre 25 kg
 restaure **25 + 15 kg par côté**. Les trois tranches du Lot 6 sont maintenant validées en usage
-réel. Aucun lot suivant n’est ouvert par cette clôture.
+réel.
 
-**Historique précédent :** 2026-07-24 (**RF-28 — les plaques disponibles sont désormais
+**Historique antérieur :** 2026-07-24 (**RF-28 — les plaques disponibles sont désormais
 configurables, globales et persistées dans IndexedDB** — cf. la section dédiée ci-dessous).
 La feuille « Plaques à charger » propose les dix dénominations canoniques dans une section
 repliable neutre, sans comptage de paires ni plaque personnalisée. Toutes sont actives par défaut ;
@@ -92,6 +100,44 @@ passes vertes, 242 tests. Il ne reste que le **checkpoint en salle** de la refon
 — Rappel antérieur : survie au kill et mode avion **validés**, bouton d'ajout en séance vide corrigé
 (`614e523`), refonte de l'écran de séance complète (briques 2+3), vitest ne ramasse plus les
 worktrees d'agent (`b7dda06`).)
+
+## Lot en cours — Lot 07
+
+### Jalon 07A — consultation et régularité
+
+**Livré dans cette session :**
+
+- spec validée : `docs/superpowers/specs/2026-07-25-lot-07-historique-design.md` ;
+- plan d’exécution : `docs/superpowers/plans/2026-07-25-lot-07a-consultation-regularite.md` ;
+- moteur pur `src/lib/history.ts` : semaine locale lundi–dimanche, traversée DST, résolution de
+  l’objectif applicable et streak qui ne casse pas sur une semaine courante incomplète ;
+- réglage `weeklyTrainingGoalHistory` dans `settings` : premier objectif rétroactif, changements
+  suivants effectifs au lundi, remplacement dans la même semaine, entier positif sans maximum ;
+- repository `src/data/repositories/history.ts` : journal récent d’abord, pagination 20 + 1,
+  filtre exercice prêt, lecture d’un jour local et options d’exercices réellement pratiqués ;
+- écran Journal : carte Régularité, objectif initialisable et modifiable au tap, rail
+  proportionnel, état vide et séances archivées réelles.
+
+**TDD et portes :**
+
+- `src/lib/history.test.ts` : 15 tests ;
+- `src/data/repositories/settings.test.ts` : 10 nouveaux tests, 17 au total ;
+- `src/data/repositories/history.test.ts` : 7 tests ;
+- suite complète : **26 fichiers, 364 tests** ;
+- `lint`, `typecheck`, `test:run` et `build` passent. Le warning Vite historique sur le chunk
+  principal supérieur à 500 kB reste inchangé.
+
+**Prochaine reprise exacte :**
+
+1. exécuter la Task 5 du plan 07A : grille mensuelle pure en TDD, vue Calendrier et filtre
+   exercice partagé ;
+2. écrire/exécuter le plan 07B : détail, édition transactionnelle et suppression ;
+3. écrire/exécuter le plan 07C : import `workout_data.csv` Hevy, aperçu, mapping, déduplication et
+   transaction atomique. `measurement_data.csv` reste réservé au futur lot Mesures.
+
+**Checkpoint manuel demandé :** ouvrir Historique sur téléphone, taper la case « Définir »,
+enregistrer le rythme réel (par exemple 4), fermer/réouvrir l’app et vérifier que `0 / 4` reste
+affiché. Si des séances terminées existent déjà, vérifier qu’elles apparaissent dans le Journal.
 
 ## Dernier lot terminé
 
