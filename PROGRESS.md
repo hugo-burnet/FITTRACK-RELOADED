@@ -2,13 +2,20 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-25 (**jalon 07A terminé ; jalon 07B interrompu après le détail
+**Dernière mise à jour :** 2026-07-27 (**refactorisation pré-07B terminée**). Les façades publiques
+`workouts.ts` et `routines.ts` conservent exactement leurs APIs, tandis que leurs responsabilités
+sont réparties dans huit modules internes de moins de 300 lignes. Aucun consommateur, test,
+comportement ou périmètre de transaction Dexie n’a changé. Les changements 07B déjà en cours dans
+`history.ts` et `fr.ts` ont conservé leurs empreintes. **393 tests**, `lint`, `typecheck`,
+`test:run` et `build` sont verts ; le warning Vite historique sur le chunk principal reste le seul
+avertissement.
+
+**État fonctionnel repris :** 2026-07-25 (**jalon 07A terminé ; jalon 07B interrompu après le détail
 et la suppression**). Le Journal et le Calendrier partagent désormais le filtre exercice ; la
 grille mensuelle est testée et l’interface a été vérifiée en 375 × 812 px sans débordement. Pour
 07B, les transactions de lecture, sauvegarde et suppression d’archives sont prêtes, puis le détail
 en lecture seule et la suppression confirmée ont été branchés. **L’édition rétroactive reste à
-implémenter à partir de la Task 3 du plan 07B.** État figé : 26 fichiers, **393 tests**, `lint`,
-`typecheck`, `test:run` et `build` verts.
+implémenter à partir de la Task 3 du plan 07B.** La refactorisation ne déplace pas cette reprise.
 
 **Historique précédent :** 2026-07-25 (**Lot 6 officiellement terminé — checkpoint téléphone
 RF-28 validé par l’utilisateur**). Sans plaque de 25 kg, une cible de 100 kg sur une barre de 20 kg
@@ -2209,10 +2216,8 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
-- **Deux repositories dépassent la règle des ~300 lignes** : `routines.ts` (504) et `workouts.ts`
-  (522, après l'extraction de `workoutHistory.ts`). La règle de `CLAUDE.md` dit de découper ; la
-  pratique du projet tolère cette taille depuis le Lot 4. Le vrai risque est la **trajectoire** :
-  le Lot 6 (minuteur, records en direct, types de séries) et le Lot 7 (édition rétroactive)
-  ajoutent tous deux à `workouts.ts`. **À découper au Lot 6**, avant qu'il ne grossisse encore —
-  la couture naturelle est `workoutSets.ts` (exercices et séries de la séance) contre `workouts.ts`
-  (cycle de vie de la séance).
+- **Remboursée le 2026-07-27 — les deux repositories dépassaient la règle des ~300 lignes.**
+  `workouts.ts` avait atteint 682 lignes et `routines.ts` 504 avant la reprise de l’édition
+  rétroactive. Ils sont désormais des façades de 32 et 39 lignes. Cycle de vie, exercices, séries
+  et lectures composées vivent dans huit modules spécialisés ; le plus long, `workoutSets.ts`,
+  fait 266 lignes. Les imports publics, les tests et les transactions Dexie sont restés inchangés.
