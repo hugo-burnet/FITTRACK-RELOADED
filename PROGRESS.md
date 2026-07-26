@@ -2,20 +2,25 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**refactorisation pré-07B terminée**). Les façades publiques
+**Dernière mise à jour :** 2026-07-27 (**jalon 07B implémenté**). Une séance archivée se modifie
+désormais dans un brouillon local : nom, notes, date, heure, durée, exercices et séries, avec ajout,
+suppression et réordonnancement sans quota. La sortie sale demande confirmation et
+`saveArchivedWorkout` reste l’unique écriture transactionnelle. Le détail propose de nouveau
+« Modifier ». Vérifié dans la vraie app en **375 × 812 px** : aucun débordement horizontal, aucune
+cible sous 48 px, recherche dans les 168 exercices, ajout d’un Rameur avec champs distance/durée,
+réordre au clavier, abandon protégé, sauvegarde persistée et tonnage recalculé de 500 à 525 kg.
+Console vide. **401 tests**, `lint`, `typecheck`, `test:run` et `build` sont verts ; le warning Vite
+historique sur le chunk principal reste le seul avertissement.
+
+**État fonctionnel repris :** le code du jalon 07B est complet. Il reste son checkpoint sur le
+téléphone réel, notamment une correction persistée puis la suppression d’une séance de test. La
+prochaine tranche de développement est 07C : import hors-ligne de `workout_data.csv` Hevy avec
+aperçu, association des exercices, déduplication et transaction atomique.
+
+**Historique précédent :** 2026-07-27 (**refactorisation pré-07B terminée**). Les façades publiques
 `workouts.ts` et `routines.ts` conservent exactement leurs APIs, tandis que leurs responsabilités
 sont réparties dans huit modules internes de moins de 300 lignes. Aucun consommateur, test,
-comportement ou périmètre de transaction Dexie n’a changé. Les changements 07B déjà en cours dans
-`history.ts` et `fr.ts` ont conservé leurs empreintes. **393 tests**, `lint`, `typecheck`,
-`test:run` et `build` sont verts ; le warning Vite historique sur le chunk principal reste le seul
-avertissement.
-
-**État fonctionnel repris :** 2026-07-25 (**jalon 07A terminé ; jalon 07B interrompu après le détail
-et la suppression**). Le Journal et le Calendrier partagent désormais le filtre exercice ; la
-grille mensuelle est testée et l’interface a été vérifiée en 375 × 812 px sans débordement. Pour
-07B, les transactions de lecture, sauvegarde et suppression d’archives sont prêtes, puis le détail
-en lecture seule et la suppression confirmée ont été branchés. **L’édition rétroactive reste à
-implémenter à partir de la Task 3 du plan 07B.** La refactorisation ne déplace pas cette reprise.
+comportement ou périmètre de transaction Dexie n’a changé.
 
 **Historique précédent :** 2026-07-25 (**Lot 6 officiellement terminé — checkpoint téléphone
 RF-28 validé par l’utilisateur**). Sans plaque de 25 kg, une cible de 100 kg sur une barre de 20 kg
@@ -110,7 +115,7 @@ worktrees d'agent (`b7dda06`).)
 
 ## Lot en cours — Lot 07
 
-### Jalon 07A — consultation et régularité
+### Jalons 07A et 07B — consultation, régularité et correction
 
 **Livré dans cette session :**
 
@@ -127,31 +132,32 @@ worktrees d'agent (`b7dda06`).)
 - grille mensuelle pure en TDD, vue Calendrier conforme au langage visuel FitTrack et filtre par
   exercice partagé entre Journal et Calendrier ;
 - navigation depuis les résumés vers le détail archivé, totaux et séries en lecture seule,
-  confirmation de suppression et notice de retour au Journal.
+  confirmation de suppression et notice de retour au Journal ;
+- éditeur rétroactif à brouillon local : métadonnées, exercices et séries, ajout/suppression/réordre
+  sans quota, sortie protégée et sauvegarde transactionnelle unique.
 
 **TDD et portes :**
 
 - `src/lib/history.test.ts` : 15 tests ;
 - `src/data/repositories/settings.test.ts` : 10 nouveaux tests, 17 au total ;
 - `src/data/repositories/history.test.ts` : 32 tests, dont les mutations transactionnelles 07B ;
-- suite complète : **26 fichiers, 393 tests** ;
+- `src/features/history/historyDraft.test.ts` : 8 tests purs de dates locales, copie indépendante et
+  brouillons temporaires ;
+- suite complète : **27 fichiers, 401 tests** ;
 - `lint`, `typecheck`, `test:run` et `build` passent. Le warning Vite historique sur le chunk
   principal supérieur à 500 kB reste inchangé.
 
 **Prochaine reprise exacte :**
 
-1. reprendre la **Task 3** de
-   `docs/superpowers/plans/2026-07-25-lot-07b-detail-edition-suppression.md` : brouillon pur en TDD,
-   écran d’édition, ajout/réordre sans limite, confirmation de sortie et sauvegarde
-   transactionnelle ;
-2. remettre l’action « Modifier » dans le détail seulement quand la route d’édition existe ;
-3. effectuer la vérification mobile complète de 07B (détail, modification persistée, suppression) ;
-4. écrire/exécuter le plan 07C : import `workout_data.csv` Hevy, aperçu, mapping, déduplication et
+1. effectuer le checkpoint téléphone complet de 07B : détail, modification persistée et
+   suppression d’une séance de test ;
+2. écrire/exécuter le plan 07C : import `workout_data.csv` Hevy, aperçu, mapping, déduplication et
    transaction atomique. `measurement_data.csv` reste réservé au futur lot Mesures.
 
 **Checkpoint manuel demandé :** sur téléphone, ouvrir une séance terminée depuis le Journal,
-vérifier ses totaux, puis supprimer uniquement une séance de test et confirmer sa disparition du
-Journal et du Calendrier. L’édition ne fait pas partie de l’état livré à ce point d’arrêt.
+modifier une charge et le type d’une série, enregistrer puis recharger pour vérifier les totaux.
+Ensuite supprimer uniquement une séance de test et confirmer sa disparition du Journal, du
+Calendrier et des records.
 
 ## Dernier lot terminé
 

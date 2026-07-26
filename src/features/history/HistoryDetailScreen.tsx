@@ -97,6 +97,12 @@ export function HistoryDetailScreen() {
         title={t('history.detailActions')}
         actions={[
           {
+            label: t('history.edit'),
+            onSelect: () => {
+              void navigate(`/history/${detail.workout.id}/edit`);
+            },
+          },
+          {
             label: t('history.delete'),
             danger: true,
             onSelect: () => {
