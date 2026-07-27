@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Equipment, Exercise } from '@/data/types';
+import catalogueRows from '@/data/seed/exercises.json';
+import type { CatalogueExercise } from '@/data/seed/seedDatabase';
 import type { HevyParsedSet } from './hevyCsv';
 import {
+  findCanonicalHevyExercise,
   inferHevyEquipment,
   inferHevyMeasurementType,
   normalizeHevyExerciseTitle,
@@ -28,6 +31,23 @@ function exercise(name: string, equipment: Equipment): Exercise {
     isCustom: 0,
     isUnilateral: 0,
   };
+}
+
+const catalogue = (catalogueRows as CatalogueExercise[]).map(
+  (row): Exercise => ({
+    ...row,
+    id: row.slug,
+    createdAt: 1,
+    updatedAt: 1,
+    deletedAt: 0,
+    isCustom: 0,
+  }),
+);
+
+function catalogueExercise(slug: string): Exercise {
+  const found = catalogue.find((candidate) => candidate.slug === slug);
+  if (found === undefined) throw new Error(`Missing catalogue slug: ${slug}`);
+  return found;
 }
 
 describe('inferHevyMeasurementType', () => {
@@ -113,5 +133,87 @@ describe('Hevy exercise title matching', () => {
         (candidate) => candidate.name,
       ),
     ).toEqual(['Tirage épaules', 'Tirage zèbre']);
+  });
+
+  it.each([
+    ['Abduction Hanche', 'hip-abduction-machine'],
+    ['Adduction Hanche', 'hip-adduction-machine'],
+    ['Chest Press (Machine)', 'machine-chest-press'],
+    ['Curl Biceps (Haltère)', 'dumbbell-curl'],
+    ['Curl Marteau (Haltère)', 'hammer-curl'],
+    ['Dead Hang', 'dead-hang'],
+    ['Développé Couché (Haltère)', 'dumbbell-bench-press'],
+    [
+      'Développé Couché Incliné (Haltère)',
+      'dumbbell-incline-bench-press',
+    ],
+    ['Élévation Latérale (Poulie)', 'cable-lateral-raise'],
+    [
+      'Extension Dos (Hyperextension Lestée)',
+      'weighted-back-extension',
+    ],
+    ['Extension Jambes', 'leg-extension'],
+    ['Extension Triceps Corde', 'cable-triceps-pushdown-rope'],
+    ['Kickbacks Poulie', 'cable-glute-kickback'],
+    ['Leg Curl Assis', 'seated-leg-curl'],
+    ['Planche', 'plank'],
+    ['Planche Latérale', 'side-plank'],
+    ['Presse à Cuisses Horizontal', 'leg-press'],
+    ['Presse Épaules Assis (Machine)', 'machine-shoulder-press'],
+    ['Tirage Poitrine (Poulie)', 'lat-pulldown'],
+    ['Tirage vers Visage', 'face-pull'],
+  ])('maps %s to the catalogue slug %s', (title, slug) => {
+    const candidate = catalogueExercise(slug);
+    expect(
+      findCanonicalHevyExercise(title, candidate.measurementType, [
+        candidate,
+      ])?.slug,
+    ).toBe(slug);
+  });
+
+  it.each([
+    'Développé Debout Poulie Centrée',
+    'Hip Thrust (Dumbbell)',
+    'Rotation Externe Poulie',
+    'Tirage bas iso-latéral',
+  ])('does not invent a canonical target for %s', (title) => {
+    expect(
+      findCanonicalHevyExercise(title, 'weight_reps', catalogue),
+    ).toBeUndefined();
+  });
+
+  it('rejects an alias target with an incompatible measurement', () => {
+    const deadHang = catalogueExercise('dead-hang');
+    expect(
+      findCanonicalHevyExercise('Dead Hang', 'time_only', [
+        { ...deadHang, measurementType: 'weight_reps' },
+      ]),
+    ).toBeUndefined();
+  });
+
+  it('uses bilingual movement synonyms for non-canonical titles', () => {
+    const exercises = [
+      exercise('Développé épaules (haltères)', 'dumbbell'),
+      exercise('Curl haltères', 'dumbbell'),
+    ];
+    expect(
+      rankHevyExerciseCandidates(
+        'Seated Dumbbell Shoulder Press',
+        exercises,
+      )[0]?.name,
+    ).toBe('Développé épaules (haltères)');
+  });
+
+  it('uses movement tokens to distinguish a horizontal low row', () => {
+    const exercises = [
+      exercise('Tirage horizontal (poulie basse)', 'cable'),
+      exercise('Tirage vertical (poulie haute)', 'cable'),
+    ];
+    expect(
+      rankHevyExerciseCandidates(
+        'Horizontal Low Cable Row',
+        exercises,
+      )[0]?.name,
+    ).toBe('Tirage horizontal (poulie basse)');
   });
 });

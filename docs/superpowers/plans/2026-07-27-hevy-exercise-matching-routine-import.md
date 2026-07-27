@@ -144,10 +144,12 @@ in the key prevents barbell, dumbbell and Smith variants from collapsing onto on
 exactly the twenty safe aliases from Step 1:
 
 ```ts
-export const HEVY_EXERCISE_SLUG_BY_KEY = Object.freeze({
+export const HEVY_EXERCISE_SLUG_BY_KEY: Readonly<
+  Record<string, string>
+> = Object.freeze({
   'abduction hanche|other': 'hip-abduction-machine',
   'adduction hanche|other': 'hip-adduction-machine',
-  'chest press|machine': 'machine-chest-press',
+  'chest pres|machine': 'machine-chest-press',
   'curl bicep|dumbbell': 'dumbbell-curl',
   'curl marteau|dumbbell': 'hammer-curl',
   'dead hang|other': 'dead-hang',
@@ -165,7 +167,7 @@ export const HEVY_EXERCISE_SLUG_BY_KEY = Object.freeze({
   'presse epaule assi|machine': 'machine-shoulder-press',
   'tirage poitrine|cable': 'lat-pulldown',
   'tirage ver visage|other': 'face-pull',
-} satisfies Readonly<Record<string, string>>);
+});
 ```
 
 Because equipment words are removed by normalization, canonical resolution must also require the
@@ -222,6 +224,7 @@ const MATCH_TOKEN = new Map<string, string>([
   ['leg', 'jambe'],
   ['low', 'bas'],
   ['plank', 'gainage'],
+  ['pres', 'developpe'],
   ['press', 'developpe'],
   ['raise', 'elevation'],
   ['row', 'tirage'],

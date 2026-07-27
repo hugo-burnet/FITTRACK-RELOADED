@@ -4,6 +4,7 @@ import type {
   MeasurementType,
 } from '@/data/types';
 import type { HevyParsedSet } from './hevyCsv';
+import { HEVY_EXERCISE_SLUG_BY_KEY } from './hevyExerciseAliases';
 
 const COMBINING_MARKS = /\p{M}/gu;
 const NON_WORDS = /[^\p{L}\p{N}]+/gu;
@@ -39,6 +40,23 @@ const EQUIPMENT_WORDS = new Set([
   'poulie',
   'smith',
   'corp',
+]);
+
+const MATCH_TOKEN = new Map<string, string>([
+  ['back', 'dos'],
+  ['basse', 'bas'],
+  ['chest', 'poitrine'],
+  ['dumbbell', 'haltere'],
+  ['face', 'visage'],
+  ['hang', 'suspension'],
+  ['leg', 'jambe'],
+  ['low', 'bas'],
+  ['plank', 'gainage'],
+  ['pres', 'developpe'],
+  ['press', 'developpe'],
+  ['raise', 'elevation'],
+  ['row', 'tirage'],
+  ['shoulder', 'epaule'],
 ]);
 
 function fold(value: string): string {
@@ -127,6 +145,25 @@ export function inferHevyEquipment(title: string): Equipment {
   return 'other';
 }
 
+export function findCanonicalHevyExercise(
+  sourceTitle: string,
+  measurementType: MeasurementType,
+  exercises: readonly Exercise[],
+): Exercise | undefined {
+  const sourceEquipment = inferHevyEquipment(sourceTitle);
+  const key = `${normalizeHevyExerciseTitle(sourceTitle)}|${sourceEquipment}`;
+  const slug = HEVY_EXERCISE_SLUG_BY_KEY[key];
+  if (slug === undefined) return undefined;
+
+  return exercises.find(
+    (exercise) =>
+      exercise.slug === slug &&
+      exercise.measurementType === measurementType &&
+      (sourceEquipment === 'other' ||
+        exercise.equipment === sourceEquipment),
+  );
+}
+
 function diceCoefficient(
   source: ReadonlySet<string>,
   candidate: ReadonlySet<string>,
@@ -139,6 +176,37 @@ function diceCoefficient(
   return (2 * intersection) / (source.size + candidate.size);
 }
 
+function matchTokens(value: string): string[] {
+  return tokens(value)
+    .filter((token) => !STOP_WORDS.has(token))
+    .map((token) => MATCH_TOKEN.get(token) ?? token);
+}
+
+function orderedTokenSimilarity(
+  source: readonly string[],
+  candidate: readonly string[],
+): number {
+  const longest = Math.max(source.length, candidate.length);
+  if (longest === 0) return 0;
+
+  const previous = Array.from(
+    { length: candidate.length + 1 },
+    () => 0,
+  );
+  for (const sourceToken of source) {
+    let diagonal = 0;
+    for (let index = 1; index <= candidate.length; index += 1) {
+      const above = previous[index]!;
+      previous[index] =
+        sourceToken === candidate[index - 1]
+          ? diagonal + 1
+          : Math.max(previous[index]!, previous[index - 1]!);
+      diagonal = above;
+    }
+  }
+  return previous[candidate.length]! / longest;
+}
+
 export function rankHevyExerciseCandidates(
   sourceTitle: string,
   exercises: readonly Exercise[],
@@ -146,6 +214,7 @@ export function rankHevyExerciseCandidates(
   const sourceName = normalizeHevyExerciseTitle(sourceTitle);
   const sourceTokens = new Set(sourceName.split(' ').filter(Boolean));
   const sourceEquipment = inferHevyEquipment(sourceTitle);
+  const sourceMatchTokens = matchTokens(sourceTitle);
 
   return [...exercises].sort((left, right) => {
     const score = (exercise: Exercise) => {
@@ -153,10 +222,26 @@ export function rankHevyExerciseCandidates(
       const candidateTokens = new Set(
         candidateName.split(' ').filter(Boolean),
       );
+      const candidateMatchTokens = matchTokens(exercise.name);
+      const equipmentScore =
+        sourceEquipment === 'other'
+          ? 0
+          : exercise.equipment === sourceEquipment
+            ? 120
+            : -120;
       return (
         (candidateName === sourceName ? 1000 : 0) +
-        diceCoefficient(sourceTokens, candidateTokens) * 100 +
-        (exercise.equipment === sourceEquipment ? 10 : 0) -
+        diceCoefficient(
+          new Set(sourceMatchTokens),
+          new Set(candidateMatchTokens),
+        ) *
+          100 +
+        orderedTokenSimilarity(
+          sourceMatchTokens,
+          candidateMatchTokens,
+        ) *
+          40 +
+        equipmentScore -
         Math.abs(sourceTokens.size - candidateTokens.size)
       );
     };
