@@ -98,11 +98,11 @@ Les cibles réutilisables sont copiées selon la mesure :
 
 - répétitions réalisées → `targetReps` ;
 - durée réalisée → `targetDurationSeconds` ;
-- distance réalisée → `targetDistanceMeters`.
+- distance réalisée → `targetDistanceMeters` ;
+- poids réalisé sur chaque série → `targetWeight`.
 
-Les poids et le RPE réalisés ne deviennent pas des objectifs de routine. Ils décrivent une
-performance passée et risqueraient de figer une charge devenue obsolète. Le repos utilise le
-comportement par défaut de l’exercice, car le CSV Hevy ne fournit pas un repos de routine fiable.
+Le RPE réalisé ne devient pas un objectif de routine. Le repos utilise le comportement par défaut
+de l’exercice, car le CSV Hevy ne fournit pas un repos de routine fiable.
 
 ## Dossier d’import
 
