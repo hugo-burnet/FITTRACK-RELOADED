@@ -2,7 +2,20 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**import Hevy enrichi : détection fiable + routines**).
+**Dernière mise à jour :** 2026-07-27 (**filtres du sélecteur d’exercices Hevy**). La fenêtre de
+validation manuelle propose maintenant les filtres **Muscle** et **Matériel** de la bibliothèque.
+Recherche, muscle, matériel et compatibilité du type de mesure se combinent ; fermer ou valider
+une association remet les trois critères à zéro. Vérifié avec le vrai CSV : `Épaules + Poulie +
+elevations` ne conserve que `Élévations latérales (poulie)`. À **402 × 698 px**, aucun débordement
+horizontal et aucune erreur console sur le parcours testé. **35 fichiers de tests, 521 tests** ;
+`lint`, `typecheck`, `test:run` et `build` sont verts. Le warning Vite historique sur le chunk
+principal reste le seul avertissement.
+
+**État fonctionnel repris :** tester sur le téléphone les filtres Muscle et Matériel pendant les
+quatre associations manuelles Hevy, puis terminer les checkpoints d’import et de séance décrits
+ci-dessous.
+
+**Historique précédent :** 2026-07-27 (**import Hevy enrichi : détection fiable + routines**).
 Les titres Hevy connus sont maintenant associés par alias canonique vers les `slug` stables du
 catalogue ; le classement de secours comprend des synonymes français/anglais et donne un poids
 fort au matériel. Les identités de mapping incluent désormais le matériel : barre, haltères et
