@@ -130,6 +130,18 @@ export function ChevronDownIcon(props: IconProps) {
   );
 }
 
+/** Replier toutes les cartes — deux panneaux qui se rapprochent. */
+export function CollapseAllIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 4.5h14" />
+      <path d="m8 7 4 3 4-3" />
+      <path d="m8 17 4-3 4 3" />
+      <path d="M5 19.5h14" />
+    </Icon>
+  );
+}
+
 /** "Add one to this collection." */
 export function PlusIcon(props: IconProps) {
   return (

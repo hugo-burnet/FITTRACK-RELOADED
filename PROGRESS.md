@@ -2,19 +2,27 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**jalon 07C implémenté**). L’Historique importe désormais
-hors ligne `workout_data.csv` depuis Hevy : lecture RFC 4180, validation détaillée, aperçu,
-association explicite et mémorisée des exercices, créations personnalisées sans quota,
-déduplication et écriture Dexie atomique. Le fichier réel a été vérifié dans l’app en
-**375 × 812 px** : **4 séances, 24 exercices et 90 séries** importés, puis **0 importée et
-4 ignorées** à la seconde passe. Aucun débordement horizontal, aucune cible visible sous 48 px,
-console vide. **31 fichiers, 472 tests**, `lint`, `typecheck`, `test:run` et `build` sont verts ;
-le warning Vite historique sur le chunk principal à **630,58 kB** reste le seul avertissement.
+**Dernière mise à jour :** 2026-07-27 (**retours d’usage post-07C implémentés**). L’association
+Hevy affiche désormais un cercle vide tant qu’elle reste à confirmer, puis une coche après choix ;
+les associations mémorisées reviennent précochées. La validation finale expose aussi son état
+dans le contenu et ramène le focus sur l’erreur, au lieu de laisser croire que le bouton
+« Importer » n’a rien fait. En séance active, une commande SVG « Tout replier » de **48 × 48 px**
+reste épinglée à droite de l’avancement et replie toutes les cartes, y compris après une
+réouverture manuelle. Vérifié dans l’app en **375 × 812 px** : zéro débordement horizontal,
+associations vierges/cochées/mémorisées lisibles et trois cartes repliées en un appui.
+**31 fichiers, 472 tests**, `lint`, `typecheck`, `test:run` et `build` sont verts ; le warning Vite
+historique sur le chunk principal à **631,97 kB** reste le seul avertissement.
 
 **État fonctionnel repris :** le code du Lot 07 est complet jusqu’au jalon 07C. Restent les
 checkpoints sur le téléphone réel : terminer la vérification 07B, puis choisir le CSV depuis
 Android, contrôler les associations, importer, recharger hors ligne, ouvrir/corriger une séance
-importée et confirmer qu’une seconde importation ne crée aucun doublon.
+importée et confirmer qu’une seconde importation ne crée aucun doublon. Vérifier aussi les coches
+pendant l’association et « Tout replier » au milieu d’une vraie séance.
+
+**Historique précédent :** 2026-07-27 (**jalon 07C implémenté**). L’Historique importe hors ligne
+`workout_data.csv` depuis Hevy : lecture RFC 4180, validation détaillée, aperçu, association
+explicite et mémorisée des exercices, créations personnalisées sans quota, déduplication et
+écriture Dexie atomique.
 
 **Historique précédent :** 2026-07-27 (**refactorisation pré-07B terminée**). Les façades publiques
 `workouts.ts` et `routines.ts` conservent exactement leurs APIs, tandis que leurs responsabilités

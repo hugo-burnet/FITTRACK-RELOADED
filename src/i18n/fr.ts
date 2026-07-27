@@ -185,6 +185,7 @@ const fr = {
     progress: '{done} séries sur {total}',
     progressOne: '1 série sur {total}',
     progressNone: '0 série sur {total}',
+    collapseAll: 'Tout replier',
     deletedExercise: 'Exercice supprimé',
     notFound: 'Cette séance n’existe plus',
     /** Menu ⋯ d'un exercice de la séance. */

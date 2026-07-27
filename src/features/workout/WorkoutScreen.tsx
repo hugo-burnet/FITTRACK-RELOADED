@@ -48,7 +48,7 @@ import {
   Sheet,
   Textarea,
 } from '@/ui';
-import { MoreIcon } from '@/ui/icons';
+import { CollapseAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
@@ -151,6 +151,7 @@ export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
+  const [collapseSignal, setCollapseSignal] = useState(0);
   /**
    * RF-31 is deliberately session-screen state, keyed by workout exercise.
    * Closing the sheet keeps today's bar choice; leaving/reloading the screen
@@ -377,10 +378,20 @@ export function WorkoutScreen() {
          est vide : l'état vide dit déjà « 0 ». */
       sub={
         exercises.length > 0 ? (
-          <p className="label-xs border-b border-[var(--border)] px-4 pb-3 font-semibold
-            text-[var(--text-2)]">
-            {workoutProgressLine(completedSets, totalSets)}
-          </p>
+          <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
+            <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
+              {workoutProgressLine(completedSets, totalSets)}
+            </p>
+            <button
+              type="button"
+              aria-label={t('workout.collapseAll')}
+              onClick={() => setCollapseSignal((current) => current + 1)}
+              className="flex size-12 shrink-0 items-center justify-center text-[var(--text-2)]
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+            >
+              <CollapseAllIcon />
+            </button>
+          </div>
         ) : undefined
       }
       footer={
@@ -426,6 +437,7 @@ export function WorkoutScreen() {
                   }
                   records={records}
                   state={state}
+                  collapseSignal={collapseSignal}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onPlates={
                     config !== null && loads.length > 0

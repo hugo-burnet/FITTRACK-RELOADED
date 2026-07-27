@@ -34,6 +34,7 @@ type Props = {
    */
   records: Map<string, RecordKind>;
   state: ItemState;
+  collapseSignal: number;
   onMenu: () => void;
   /** Opens the plate calculator. Absent when the exercise has no bar to load. */
   onPlates?: () => void;
@@ -73,6 +74,7 @@ export function WorkoutExerciseCard({
   rest,
   records,
   state,
+  collapseSignal,
   onMenu,
   onPlates,
   onSetMenu,
@@ -106,7 +108,12 @@ export function WorkoutExerciseCard({
    */
   const [expanded, setExpanded] = useState(!allDone);
   const [wasAllDone, setWasAllDone] = useState(allDone);
-  if (allDone !== wasAllDone) {
+  const [seenCollapseSignal, setSeenCollapseSignal] = useState(collapseSignal);
+  if (collapseSignal !== seenCollapseSignal) {
+    setSeenCollapseSignal(collapseSignal);
+    setWasAllDone(allDone);
+    setExpanded(false);
+  } else if (allDone !== wasAllDone) {
     setWasAllDone(allDone);
     setExpanded(!allDone);
   }
