@@ -2,7 +2,11 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**filtres du sélecteur d’exercices Hevy**). La fenêtre de
+**Dernière mise à jour :** 2026-07-27 (**poids des routines Hevy**). Chaque série d’une routine
+importée reprend maintenant le poids exact de la série correspondante dans la séance
+représentative (`targetWeight`). Une série sans poids reste sans cible et le RPE n’est pas copié.
+
+**Historique précédent :** 2026-07-27 (**filtres du sélecteur d’exercices Hevy**). La fenêtre de
 validation manuelle propose maintenant les filtres **Muscle** et **Matériel** de la bibliothèque.
 Recherche, muscle, matériel et compatibilité du type de mesure se combinent ; fermer ou valider
 une association remet les trois critères à zéro. Vérifié avec le vrai CSV : `Épaules + Poulie +

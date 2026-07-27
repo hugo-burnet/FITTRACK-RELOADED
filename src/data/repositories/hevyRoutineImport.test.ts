@@ -103,7 +103,7 @@ const cardio: HevyParsedWorkout = {
 };
 
 describe('Hevy routine entities', () => {
-  it('builds ordered routines without supersets, weights or RPE targets', () => {
+  it('builds ordered routines with per-set weights but without supersets or RPE targets', () => {
     const entities = buildHevyRoutineEntities(
       selectHevyRoutineSources([upperA]),
       resolvedExercises,
@@ -136,8 +136,8 @@ describe('Hevy routine entities', () => {
       order: 0,
       setType: 'normal',
       targetReps: 8,
+      targetWeight: 80,
     });
-    expect(entities.sets[0]).not.toHaveProperty('targetWeight');
     expect(entities.sets[0]).not.toHaveProperty('targetRpe');
     expect(entities.sets[1]).toMatchObject({
       setType: 'warmup',

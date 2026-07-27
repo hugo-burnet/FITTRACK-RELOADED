@@ -407,8 +407,15 @@ describe('Hevy import repository', () => {
     expect(sets.find((set) => set.setType === 'warmup')).toMatchObject({
       setType: 'warmup',
       targetReps: 10,
+      targetWeight: 40,
     });
-    expect(sets.every((set) => !('targetWeight' in set))).toBe(true);
+    expect(sets.find((set) => set.targetReps === 8)).toMatchObject({
+      targetReps: 8,
+      targetWeight: 80,
+    });
+    expect(
+      sets.find((set) => set.targetDurationSeconds === 60),
+    ).not.toHaveProperty('targetWeight');
     expect(sets.every((set) => !('targetRpe' in set))).toBe(true);
   });
 

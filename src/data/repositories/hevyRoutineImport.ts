@@ -90,6 +90,9 @@ export function buildHevyRoutineEntities(
             ...(parsedSet.reps === undefined
               ? {}
               : { targetReps: parsedSet.reps }),
+            ...(parsedSet.weight === undefined
+              ? {}
+              : { targetWeight: parsedSet.weight }),
             ...(parsedSet.durationSeconds === undefined
               ? {}
               : {
