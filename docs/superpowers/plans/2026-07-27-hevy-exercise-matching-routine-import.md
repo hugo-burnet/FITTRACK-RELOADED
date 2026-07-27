@@ -154,7 +154,7 @@ export const HEVY_EXERCISE_SLUG_BY_KEY = Object.freeze({
   'developpe couche|dumbbell': 'dumbbell-bench-press',
   'developpe couche incline|dumbbell': 'dumbbell-incline-bench-press',
   'elevation laterale|cable': 'cable-lateral-raise',
-  'extension do hyperextension lestee|other': 'weighted-back-extension',
+  'extension dos hyperextension lestee|other': 'weighted-back-extension',
   'extension jambe|other': 'leg-extension',
   'extension tricep corde|other': 'cable-triceps-pushdown-rope',
   'kickback|cable': 'cable-glute-kickback',
