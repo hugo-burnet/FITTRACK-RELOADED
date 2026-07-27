@@ -624,11 +624,16 @@ const fr = {
     importWillSkipOne: '1 séance déjà présente sera ignorée.',
     importCustomCount: '{count} exercices personnels seront créés.',
     importCustomCountOne: '1 exercice personnel sera créé.',
+    importRoutineFolder:
+      'Le dossier « {folder} » sera créé avec : {names}.',
     importContinue: 'Continuer',
     importSubmit: 'Importer',
     importWorking: 'Import en cours…',
     importSuccessTitle: 'Import terminé',
     importSuccessBody: '{imported} séances importées, {skipped} ignorées.',
+    importRoutineCount:
+      '{count} routines créées dans « {folder} ».',
+    importRoutineCountOne: '1 routine créée dans « {folder} ».',
     importBackToHistory: 'Voir l’historique',
     importFailed: 'Aucune donnée n’a été écrite. Réessaie.',
     importedNotice:

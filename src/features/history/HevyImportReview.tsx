@@ -69,6 +69,15 @@ export function HevyImportReview({
               )}
             </p>
           )}
+          {draft.routineFolderName !== undefined &&
+            draft.routineNames.length > 0 && (
+              <p>
+                {t('history.importRoutineFolder', {
+                  folder: draft.routineFolderName,
+                  names: draft.routineNames.join(', '),
+                })}
+              </p>
+            )}
         </div>
       </Card>
     </div>

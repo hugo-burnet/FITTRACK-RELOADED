@@ -33,6 +33,7 @@ export interface HevyImportPreparation {
   exercises: Exercise[];
   existingImportKeys: string[];
   savedMappings: HevyExerciseMappings;
+  aliveRoutineFolderNames?: string[];
 }
 
 export interface HevyImportResult {
@@ -70,10 +71,11 @@ export async function prepareHevyImport(
   const requested = new Set(
     data.workouts.map((workout) => workout.importKey),
   );
-  const [exercises, keys, savedMappings] = await Promise.all([
+  const [exercises, keys, savedMappings, folders] = await Promise.all([
     db.exercises.where('deletedAt').equals(0).toArray(),
     existingImportKeys(requested),
     getHevyExerciseMappings(),
+    db.routineFolders.where('deletedAt').equals(0).toArray(),
   ]);
   return {
     exercises: exercises.sort((left, right) =>
@@ -81,6 +83,7 @@ export async function prepareHevyImport(
     ),
     existingImportKeys: keys,
     savedMappings,
+    aliveRoutineFolderNames: folders.map((folder) => folder.name),
   };
 }
 

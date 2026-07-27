@@ -232,8 +232,49 @@ describe('Hevy import mapping draft', () => {
     expect(draft).toMatchObject({
       importableWorkouts: 0,
       skippedWorkouts: 1,
+      routineNames: [],
       rows: [],
     });
+    expect(draft).not.toHaveProperty('routineFolderName');
+  });
+
+  it('previews the dated folder and representative routine', () => {
+    const importedAt = new Date(2026, 6, 27, 12).getTime();
+    const draft = createHevyImportDraft(
+      data,
+      {
+        exercises: [bench],
+        existingImportKeys: [],
+        savedMappings: {},
+        aliveRoutineFolderNames: [],
+      },
+      importedAt,
+    );
+
+    expect(draft).toMatchObject({
+      importedAt,
+      routineFolderName: 'Import Hevy — 27/07/2026',
+      routineNames: ['Séance A'],
+    });
+  });
+
+  it('previews the first available folder suffix', () => {
+    const draft = createHevyImportDraft(
+      data,
+      {
+        exercises: [bench],
+        existingImportKeys: [],
+        savedMappings: {},
+        aliveRoutineFolderNames: [
+          'Import Hevy — 27/07/2026',
+        ],
+      },
+      new Date(2026, 6, 27, 12).getTime(),
+    );
+
+    expect(draft.routineFolderName).toBe(
+      'Import Hevy — 27/07/2026 (2)',
+    );
   });
 
   it('sets one immutable user resolution and exports all choices', () => {

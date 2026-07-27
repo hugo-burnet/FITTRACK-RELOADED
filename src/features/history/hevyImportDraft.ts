@@ -8,11 +8,13 @@ import {
   normalizeHevyExerciseTitle,
   rankHevyExerciseCandidates,
 } from '@/lib/hevyExerciseMatch';
+import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import type {
   HevyExerciseResolution,
   HevyExerciseResolutions,
   HevyImportPreparation,
 } from '@/data/repositories/hevyImport';
+import { nextHevyImportFolderName } from '@/data/repositories/hevyRoutineImport';
 
 export interface HevyMappingDraftRow {
   source: HevySourceExercise;
@@ -24,12 +26,16 @@ export interface HevyMappingDraftRow {
 export interface HevyImportDraft {
   importableWorkouts: number;
   skippedWorkouts: number;
+  importedAt: number;
+  routineFolderName?: string;
+  routineNames: string[];
   rows: HevyMappingDraftRow[];
 }
 
 export function createHevyImportDraft(
   data: HevyImportData,
   preparation: HevyImportPreparation,
+  importedAt = Date.now(),
 ): HevyImportDraft {
   const duplicateKeys = new Set(preparation.existingImportKeys);
   const importable = data.workouts.filter(
@@ -47,6 +53,14 @@ export function createHevyImportDraft(
       .filter((exercise) => exercise.deletedAt === 0)
       .map((exercise) => [exercise.id, exercise]),
   );
+  const routineSources = selectHevyRoutineSources(importable);
+  const routineFolderName =
+    routineSources.length === 0
+      ? undefined
+      : nextHevyImportFolderName(
+          importedAt,
+          preparation.aliveRoutineFolderNames ?? [],
+        );
 
   const rows = data.sourceExercises
     .filter((source) =>
@@ -104,6 +118,11 @@ export function createHevyImportDraft(
   return {
     importableWorkouts: importable.length,
     skippedWorkouts: data.workouts.length - importable.length,
+    importedAt,
+    ...(routineFolderName === undefined
+      ? {}
+      : { routineFolderName }),
+    routineNames: routineSources.map((routine) => routine.name),
     rows,
   };
 }

@@ -145,6 +145,7 @@ export function HevyImportScreen() {
       const result = await importHevyWorkouts(
         ready.data,
         resolutionsFromHevyDraft(ready.draft),
+        ready.draft.importedAt,
       );
       setState({ step: 'done', result });
     } catch {
@@ -253,6 +254,20 @@ export function HevyImportScreen() {
                 skipped: state.result.skippedWorkouts,
               })}
             </p>
+            {state.result.createdRoutines > 0 &&
+              state.result.routineFolderName !== undefined && (
+                <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
+                  {t(
+                    state.result.createdRoutines === 1
+                      ? 'history.importRoutineCountOne'
+                      : 'history.importRoutineCount',
+                    {
+                      count: state.result.createdRoutines,
+                      folder: state.result.routineFolderName,
+                    },
+                  )}
+                </p>
+              )}
           </div>
         </div>
       )}

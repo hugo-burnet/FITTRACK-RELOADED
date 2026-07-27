@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
-import type { Exercise, Workout } from '@/data/types';
+import type { Exercise, RoutineFolder, Workout } from '@/data/types';
 import {
   parseHevyCsv,
   type HevyImportData,
@@ -185,6 +185,12 @@ describe('Hevy import repository', () => {
         importKey: data.workouts[0]!.importKey,
       }),
     );
+    await db.routineFolders.add(
+      newEntity<RoutineFolder>({
+        name: 'Import Hevy — 27/07/2026',
+        order: 0,
+      }),
+    );
 
     const result = await prepareHevyImport(data);
 
@@ -197,6 +203,9 @@ describe('Hevy import repository', () => {
     expect(result.savedMappings).toEqual({
       'developpe couche': bench.id,
     });
+    expect(result.aliveRoutineFolderNames).toEqual([
+      'Import Hevy — 27/07/2026',
+    ]);
   });
 
   it('writes workouts, exercise blocks, sets and mappings coherently', async () => {
