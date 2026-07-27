@@ -23,6 +23,8 @@ function mappingReading(
       label:
         row.resolutionSource === 'saved'
           ? t('history.importSaved')
+          : row.resolutionSource === 'canonical'
+            ? t('history.importCanonical')
           : t('history.importSelected'),
       value: exercise?.name ?? t('history.importSelected'),
     };

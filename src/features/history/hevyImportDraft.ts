@@ -4,6 +4,7 @@ import type {
   HevySourceExercise,
 } from '@/lib/hevyCsv';
 import {
+  findCanonicalHevyExercise,
   normalizeHevyExerciseTitle,
   rankHevyExerciseCandidates,
 } from '@/lib/hevyExerciseMatch';
@@ -17,7 +18,7 @@ export interface HevyMappingDraftRow {
   source: HevySourceExercise;
   suggestion?: Exercise;
   resolution?: HevyExerciseResolution;
-  resolutionSource?: 'saved' | 'user';
+  resolutionSource?: 'saved' | 'canonical' | 'user';
 }
 
 export interface HevyImportDraft {
@@ -66,22 +67,36 @@ export function createHevyImportDraft(
         (exercise) =>
           exercise.measurementType === source.measurementType,
       );
-      const suggestion = rankHevyExerciseCandidates(
+      const canonical = findCanonicalHevyExercise(
         source.sourceTitle,
+        source.measurementType,
         compatibleExercises,
-      )[0];
+      );
+      const suggestion =
+        canonical ??
+        rankHevyExerciseCandidates(
+          source.sourceTitle,
+          compatibleExercises,
+        )[0];
+      const automatic = saved ?? canonical;
+      const resolutionSource =
+        saved !== undefined
+          ? 'saved'
+          : canonical !== undefined
+            ? 'canonical'
+            : undefined;
 
       return {
         source,
         ...(suggestion === undefined ? {} : { suggestion }),
-        ...(saved === undefined
+        ...(automatic === undefined || resolutionSource === undefined
           ? {}
           : {
               resolution: {
                 kind: 'existing' as const,
-                exerciseId: saved.id,
+                exerciseId: automatic.id,
               },
-              resolutionSource: 'saved' as const,
+              resolutionSource,
             }),
       };
     });

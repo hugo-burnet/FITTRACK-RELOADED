@@ -610,6 +610,7 @@ const fr = {
       'Confirme chaque proposition ou choisis un autre exercice.',
     importSuggested: 'Proposition',
     importSaved: 'Association mémorisée',
+    importCanonical: 'Détection sûre',
     importSelected: 'Associé',
     importChooseExercise: 'Choisir un exercice FitTrack',
     importUseSuggestion: 'Utiliser cette proposition',

@@ -70,6 +70,33 @@ const incompatibleBench: Exercise = {
   measurementType: 'time_only',
 };
 
+function dataFor(sourceExercise: HevySourceExercise): HevyImportData {
+  const timed = sourceExercise.measurementType === 'time_only';
+  return {
+    ...data,
+    workouts: [
+      {
+        ...data.workouts[0]!,
+        exercises: [
+          {
+            ...data.workouts[0]!.exercises[0]!,
+            sourceTitle: sourceExercise.sourceTitle,
+            sets: [
+              {
+                sourceLine: 2,
+                order: 0,
+                setType: 'normal',
+                ...(timed ? { durationSeconds: 60 } : { weight: 20, reps: 8 }),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    sourceExercises: [sourceExercise],
+  };
+}
+
 describe('Hevy import mapping draft', () => {
   it('reuses a saved mapping to an alive exercise', () => {
     const draft = createHevyImportDraft(data, {
@@ -118,6 +145,81 @@ describe('Hevy import mapping draft', () => {
 
     expect(draft.rows[0]!.suggestion?.id).toBe(bench.id);
     expect(draft.rows[0]!.resolution).toBeUndefined();
+  });
+
+  it('preconfirms an alive compatible canonical alias', () => {
+    const deadHangSource: HevySourceExercise = {
+      sourceTitle: 'Dead Hang',
+      measurementType: 'time_only',
+      equipment: 'other',
+    };
+    const deadHang: Exercise = {
+      ...bench,
+      id: 'dead-hang',
+      name: 'Suspension à la barre',
+      slug: 'dead-hang',
+      equipment: 'bodyweight',
+      measurementType: 'time_only',
+    };
+
+    const draft = createHevyImportDraft(dataFor(deadHangSource), {
+      exercises: [deadHang],
+      existingImportKeys: [],
+      savedMappings: {},
+    });
+
+    expect(draft.rows[0]).toMatchObject({
+      resolution: { kind: 'existing', exerciseId: deadHang.id },
+      resolutionSource: 'canonical',
+    });
+  });
+
+  it('keeps an approximate match unresolved', () => {
+    const unknown: HevySourceExercise = {
+      sourceTitle: 'Rotation Externe Poulie',
+      measurementType: 'weight_reps',
+      equipment: 'cable',
+    };
+    const draft = createHevyImportDraft(dataFor(unknown), {
+      exercises: [bench],
+      existingImportKeys: [],
+      savedMappings: {},
+    });
+
+    expect(draft.rows[0]!.suggestion).toBeDefined();
+    expect(draft.rows[0]!.resolution).toBeUndefined();
+  });
+
+  it('keeps a saved mapping ahead of a canonical alias', () => {
+    const dumbbellSource: HevySourceExercise = {
+      sourceTitle: 'Développé Couché (Haltère)',
+      measurementType: 'weight_reps',
+      equipment: 'dumbbell',
+    };
+    const canonical: Exercise = {
+      ...bench,
+      id: 'dumbbell-bench',
+      name: 'Développé couché (haltères)',
+      slug: 'dumbbell-bench-press',
+      equipment: 'dumbbell',
+    };
+    const saved: Exercise = {
+      ...canonical,
+      id: 'saved-bench',
+      slug: undefined,
+      isCustom: 1,
+    };
+
+    const draft = createHevyImportDraft(dataFor(dumbbellSource), {
+      exercises: [canonical, saved],
+      existingImportKeys: [],
+      savedMappings: { 'developpe couche': saved.id },
+    });
+
+    expect(draft.rows[0]).toMatchObject({
+      resolution: { kind: 'existing', exerciseId: saved.id },
+      resolutionSource: 'saved',
+    });
   });
 
   it('removes sources used only by duplicate workouts', () => {
