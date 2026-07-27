@@ -163,6 +163,8 @@ export interface Workout extends Syncable {
   endedAt: number; // 0 until finished
   durationSeconds: number; // real time excluding pauses, computed on close
   notes?: string;
+  importSource?: 'hevy_csv';
+  importKey?: string;
 }
 
 export interface WorkoutExercise extends Syncable {

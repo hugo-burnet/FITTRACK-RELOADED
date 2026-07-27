@@ -3,11 +3,15 @@ import {
   startOfLocalWeek,
   type WeeklyTrainingGoal,
 } from '@/lib/history';
+import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 
 const AVAILABLE_PLATE_WEIGHTS_KEY = 'availablePlateWeightsKg';
 const WEEKLY_TRAINING_GOAL_HISTORY_KEY = 'weeklyTrainingGoalHistory';
+const HEVY_EXERCISE_MAPPINGS_KEY = 'hevyExerciseMappings';
 const CANONICAL_PLATE_WEIGHTS = new Set<number>(DEFAULT_PLATES_KG);
+
+export type HevyExerciseMappings = Record<string, string>;
 
 function defaultPlateWeights(): number[] {
   return [...DEFAULT_PLATES_KG];
@@ -111,4 +115,42 @@ export async function setWeeklyTrainingGoal(
 
     return next;
   });
+}
+
+function normalizeHevyExerciseMappings(
+  value: unknown,
+): HevyExerciseMappings {
+  if (
+    typeof value !== 'object' ||
+    value === null ||
+    Array.isArray(value)
+  ) {
+    return {};
+  }
+
+  const normalized: HevyExerciseMappings = {};
+  for (const [sourceTitle, exerciseId] of Object.entries(value)) {
+    if (typeof exerciseId !== 'string' || exerciseId.trim() === '') continue;
+    const key = normalizeHevyExerciseTitle(sourceTitle);
+    if (key === '') continue;
+    normalized[key] = exerciseId;
+  }
+  return normalized;
+}
+
+export async function getHevyExerciseMappings(): Promise<HevyExerciseMappings> {
+  const setting = await db.settings.get(HEVY_EXERCISE_MAPPINGS_KEY);
+  return normalizeHevyExerciseMappings(setting?.value);
+}
+
+export async function setHevyExerciseMappings(
+  mappings: Readonly<HevyExerciseMappings>,
+): Promise<HevyExerciseMappings> {
+  const normalized = normalizeHevyExerciseMappings(mappings);
+  await db.settings.put({
+    key: HEVY_EXERCISE_MAPPINGS_KEY,
+    value: normalized,
+    updatedAt: Date.now(),
+  });
+  return normalized;
 }

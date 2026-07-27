@@ -4,8 +4,10 @@ import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { resetDb } from '@/test/resetDb';
 import {
   getAvailablePlateWeightsKg,
+  getHevyExerciseMappings,
   getWeeklyTrainingGoalHistory,
   setAvailablePlateWeightsKg,
+  setHevyExerciseMappings,
   setWeeklyTrainingGoal,
 } from './settings';
 
@@ -151,5 +153,57 @@ describe('weekly training goal history setting', () => {
       { effectiveFromWeek: 0, sessions: 4 },
       { effectiveFromWeek: augustMonday, sessions: 3 },
     ]);
+  });
+});
+
+describe('Hevy exercise mappings setting', () => {
+  beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
+
+  it('returns an empty object before the first Hevy import', async () => {
+    expect(await getHevyExerciseMappings()).toEqual({});
+  });
+
+  it('normalizes source titles and preserves selected exercise ids', async () => {
+    await setHevyExerciseMappings({
+      'Développés couchés (barre)': 'bench-id',
+      'Curl avec haltères': 'curl-id',
+    });
+
+    expect(await getHevyExerciseMappings()).toEqual({
+      'developpe couche': 'bench-id',
+      curl: 'curl-id',
+    });
+  });
+
+  it('drops corrupt entries without losing valid mappings', async () => {
+    await db.settings.put({
+      key: 'hevyExerciseMappings',
+      value: {
+        squat: 'squat-id',
+        numeric: 12,
+        empty: '',
+        '': 'missing-key',
+      },
+      updatedAt: 1,
+    });
+
+    expect(await getHevyExerciseMappings()).toEqual({
+      squat: 'squat-id',
+    });
+  });
+
+  it('stores a fresh updatedAt and returns the normalized mapping', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(4_200);
+
+    const stored = await setHevyExerciseMappings({
+      'Squat (barre)': 'squat-id',
+    });
+
+    expect(stored).toEqual({ squat: 'squat-id' });
+    expect(await db.settings.get('hevyExerciseMappings')).toMatchObject({
+      value: { squat: 'squat-id' },
+      updatedAt: 4_200,
+    });
   });
 });
