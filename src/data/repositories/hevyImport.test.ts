@@ -204,7 +204,11 @@ describe('Hevy import repository', () => {
       customExercise('Développé couché'),
     );
 
-    const result = await importHevyWorkouts(data, resolutions(bench.id));
+    const result = await importHevyWorkouts(
+      data,
+      resolutions(bench.id),
+      new Date(2026, 6, 27, 12).getTime(),
+    );
 
     expect(result).toEqual({
       importedWorkouts: 1,
@@ -212,6 +216,8 @@ describe('Hevy import repository', () => {
       createdExercises: 1,
       importedExercises: 2,
       importedSets: 3,
+      createdRoutines: 1,
+      routineFolderName: 'Import Hevy — 27/07/2026',
     });
 
     const workout = (await db.workouts.toArray())[0]!;
@@ -359,5 +365,87 @@ describe('Hevy import repository', () => {
       2,
     );
     expect(await db.personalRecords.count()).toBe(0);
+  });
+
+  it('creates one dated folder and representative routines atomically', async () => {
+    const importedAt = new Date(2026, 6, 27, 12).getTime();
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+
+    const result = await importHevyWorkouts(
+      data,
+      resolutions(bench.id),
+      importedAt,
+    );
+
+    expect(result).toMatchObject({
+      importedWorkouts: 1,
+      createdRoutines: 1,
+      routineFolderName: 'Import Hevy — 27/07/2026',
+    });
+    const folders = await db.routineFolders.toArray();
+    const routines = await db.routines.toArray();
+    const rows = await db.routineExercises.toArray();
+    const sets = await db.routineSets.toArray();
+    expect(folders).toHaveLength(1);
+    expect(routines).toHaveLength(1);
+    expect(routines[0]).toMatchObject({
+      name: 'Séance A',
+      folderId: folders[0]!.id,
+    });
+    expect(rows.map((row) => row.supersetGroup)).toEqual([0, 0]);
+    expect(sets.find((set) => set.setType === 'warmup')).toMatchObject({
+      setType: 'warmup',
+      targetReps: 10,
+    });
+    expect(sets.every((set) => !('targetWeight' in set))).toBe(true);
+    expect(sets.every((set) => !('targetRpe' in set))).toBe(true);
+  });
+
+  it('creates no second folder when every workout is a duplicate', async () => {
+    const importedAt = new Date(2026, 6, 27, 12).getTime();
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    await importHevyWorkouts(data, resolutions(bench.id), importedAt);
+
+    const result = await importHevyWorkouts(
+      data,
+      resolutions(bench.id),
+      importedAt,
+    );
+
+    expect(result.createdRoutines).toBe(0);
+    expect(result).not.toHaveProperty('routineFolderName');
+    expect(await db.routineFolders.count()).toBe(1);
+    expect(await db.routines.count()).toBe(1);
+  });
+
+  it('rolls back routines and workouts together', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const fail = vi
+      .spyOn(db.routineSets, 'bulkAdd')
+      .mockRejectedValueOnce(new Error('disk full'));
+
+    try {
+      await expect(
+        importHevyWorkouts(
+          data,
+          resolutions(bench.id),
+          new Date(2026, 6, 27, 12).getTime(),
+        ),
+      ).rejects.toThrow('disk full');
+    } finally {
+      fail.mockRestore();
+    }
+
+    expect(await db.workouts.count()).toBe(0);
+    expect(await db.routineFolders.count()).toBe(0);
+    expect(await db.routines.count()).toBe(0);
+    expect(await db.routineExercises.count()).toBe(0);
+    expect(await db.routineSets.count()).toBe(0);
   });
 });

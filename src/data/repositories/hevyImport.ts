@@ -3,15 +3,17 @@ import type {
   Equipment,
   Exercise,
   MeasurementType,
-  Workout,
-  WorkoutExercise,
-  WorkoutSet,
 } from '@/data/types';
 import type { HevyImportData, HevyParsedWorkout } from '@/lib/hevyCsv';
 import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
-import { resolveRestSeconds } from '@/lib/rest';
+import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import { newEntity } from './base';
 import type { NewExercise } from './exercises';
+import {
+  buildHevyRoutineEntities,
+  nextHevyImportFolderName,
+} from './hevyRoutineImport';
+import { buildHevyWorkoutEntities } from './hevyWorkoutEntities';
 import {
   getHevyExerciseMappings,
   setHevyExerciseMappings,
@@ -39,6 +41,8 @@ export interface HevyImportResult {
   createdExercises: number;
   importedExercises: number;
   importedSets: number;
+  createdRoutines: number;
+  routineFolderName?: string;
 }
 
 async function existingImportKeys(
@@ -144,112 +148,24 @@ async function resolveExercises(
   return { bySourceKey, created, mappings };
 }
 
-interface ImportEntities {
-  workouts: Workout[];
-  rows: WorkoutExercise[];
-  sets: WorkoutSet[];
-}
-
-function buildEntities(
-  parsedWorkouts: readonly HevyParsedWorkout[],
-  exercises: ReadonlyMap<string, Exercise>,
-): ImportEntities {
-  const workouts: Workout[] = [];
-  const rows: WorkoutExercise[] = [];
-  const sets: WorkoutSet[] = [];
-
-  for (const parsed of parsedWorkouts) {
-    const workout = newEntity<Workout>({
-      routineId: '',
-      name: parsed.title,
-      status: 'completed',
-      startedAt: parsed.startedAt,
-      endedAt: parsed.endedAt,
-      durationSeconds: parsed.durationSeconds,
-      ...(parsed.notes === undefined ? {} : { notes: parsed.notes }),
-      importSource: 'hevy_csv',
-      importKey: parsed.importKey,
-    });
-    workouts.push(workout);
-
-    const totalSets = parsed.exercises.reduce(
-      (total, exercise) => total + exercise.sets.length,
-      0,
-    );
-    let sequence = 0;
-    for (const parsedExercise of parsed.exercises) {
-      const sourceKey = normalizeHevyExerciseTitle(
-        parsedExercise.sourceTitle,
-      );
-      const exercise = exercises.get(sourceKey);
-      if (exercise === undefined) {
-        throw new Error(`Missing resolved Hevy exercise: ${sourceKey}`);
-      }
-      const row = newEntity<WorkoutExercise>({
-        workoutId: workout.id,
-        exerciseId: exercise.id,
-        order: parsedExercise.order,
-        supersetGroup: parsedExercise.supersetGroup,
-        ...(parsedExercise.notes === undefined
-          ? {}
-          : { notes: parsedExercise.notes }),
-        restSeconds: resolveRestSeconds(
-          undefined,
-          exercise.defaultRestSeconds,
-        ),
-      });
-      rows.push(row);
-
-      for (const parsedSet of parsedExercise.sets) {
-        sequence += 1;
-        const performedAt =
-          parsed.startedAt +
-          Math.floor(
-            ((parsed.endedAt - parsed.startedAt) * sequence) /
-              (totalSets + 1),
-          );
-        sets.push(
-          newEntity<WorkoutSet>({
-            workoutExerciseId: row.id,
-            exerciseId: exercise.id,
-            workoutId: workout.id,
-            order: parsedSet.order,
-            setType: parsedSet.setType,
-            side: 'both',
-            ...(parsedSet.weight === undefined
-              ? {}
-              : { weight: parsedSet.weight }),
-            ...(parsedSet.reps === undefined
-              ? {}
-              : { reps: parsedSet.reps }),
-            ...(parsedSet.durationSeconds === undefined
-              ? {}
-              : { durationSeconds: parsedSet.durationSeconds }),
-            ...(parsedSet.distanceMeters === undefined
-              ? {}
-              : { distanceMeters: parsedSet.distanceMeters }),
-            ...(parsedSet.rpe === undefined ? {} : { rpe: parsedSet.rpe }),
-            isCompleted: 1,
-            performedAt,
-          }),
-        );
-      }
-    }
-  }
-  return { workouts, rows, sets };
-}
-
 export async function importHevyWorkouts(
   data: HevyImportData,
   resolutions: Readonly<HevyExerciseResolutions>,
+  importedAt = Date.now(),
 ): Promise<HevyImportResult> {
   return db.transaction(
     'rw',
-    db.exercises,
-    db.workouts,
-    db.workoutExercises,
-    db.workoutSets,
-    db.settings,
+    [
+      db.exercises,
+      db.workouts,
+      db.workoutExercises,
+      db.workoutSets,
+      db.routineFolders,
+      db.routines,
+      db.routineExercises,
+      db.routineSets,
+      db.settings,
+    ],
     async () => {
       const duplicateKeys = new Set(
         await existingImportKeys(
@@ -266,6 +182,7 @@ export async function importHevyWorkouts(
           createdExercises: 0,
           importedExercises: 0,
           importedSets: 0,
+          createdRoutines: 0,
         };
       }
 
@@ -280,7 +197,29 @@ export async function importHevyWorkouts(
         measurementBySourceKey,
         resolutions,
       );
-      const entities = buildEntities(importable, resolved.bySourceKey);
+      const entities = buildHevyWorkoutEntities(
+        importable,
+        resolved.bySourceKey,
+      );
+      const routineSources = selectHevyRoutineSources(importable);
+      const [folders, routines] = await Promise.all([
+        db.routineFolders
+          .where('deletedAt')
+          .equals(0)
+          .toArray(),
+        db.routines.where('deletedAt').equals(0).toArray(),
+      ]);
+      const routineFolderName = nextHevyImportFolderName(
+        importedAt,
+        folders.map((folder) => folder.name),
+      );
+      const routineEntities = buildHevyRoutineEntities(
+        routineSources,
+        resolved.bySourceKey,
+        routineFolderName,
+        folders.length,
+        routines.length,
+      );
 
       if (resolved.created.length > 0) {
         await db.exercises.bulkAdd(resolved.created);
@@ -288,6 +227,10 @@ export async function importHevyWorkouts(
       await db.workouts.bulkAdd(entities.workouts);
       await db.workoutExercises.bulkAdd(entities.rows);
       await db.workoutSets.bulkAdd(entities.sets);
+      await db.routineFolders.add(routineEntities.folder);
+      await db.routines.bulkAdd(routineEntities.routines);
+      await db.routineExercises.bulkAdd(routineEntities.rows);
+      await db.routineSets.bulkAdd(routineEntities.sets);
       await setHevyExerciseMappings(resolved.mappings);
 
       return {
@@ -296,6 +239,8 @@ export async function importHevyWorkouts(
         createdExercises: resolved.created.length,
         importedExercises: entities.rows.length,
         importedSets: entities.sets.length,
+        createdRoutines: routineEntities.routines.length,
+        routineFolderName,
       };
     },
   );
