@@ -1,0 +1,12 @@
+title,start_time,end_time,description,exercise_title,superset_id,exercise_notes,set_index,set_type,weight_kg,reps,distance_km,duration_seconds,rpe
+"Séance Alpha","15 janv. 2025, 07:00","15 janv. 2025, 07:45","Prévu, puis ""validé""
+Sans identité","Poussée imaginaire","paire-alpha","Tempo ""contrôlé""","0","warmup","20.5","12","","","6"
+"Séance Alpha","15 janv. 2025, 07:00","15 janv. 2025, 07:45","Prévu, puis ""validé""
+Sans identité","Poussée imaginaire","paire-alpha","Tempo ""contrôlé""","1","normal","30","10","","","7,5"
+"Séance Alpha","15 janv. 2025, 07:00","15 janv. 2025, 07:45","Prévu, puis ""validé""
+Sans identité","Tirage fictif","paire-alpha","","0","failure","","15","","",""
+"Séance Bêta","18 janv. 2025, 08:00","18 janv. 2025, 08:30","","Maintien statique fictif","","","0","normal","","","","60",""
+"Séance Bêta","18 janv. 2025, 08:00","18 janv. 2025, 08:30","","Course simulée","","","0","normal","","","1,25","300",""
+"Séance Gamma","21 janv. 2025, 17:15","21 janv. 2025, 17:50","","Porté chronométré fictif","","","0","dropset","18.75","","","45",""
+"Séance Delta","24 janv. 2025, 06:30","24 janv. 2025, 07:15","","Poussée imaginaire","","","0","normal","35","8","","","8"
+"Séance Delta","24 janv. 2025, 06:30","24 janv. 2025, 07:15","","Tirage fictif","","","0","warmup","","20","","",""

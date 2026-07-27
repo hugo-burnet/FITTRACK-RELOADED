@@ -2,20 +2,19 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**jalon 07B implémenté**). Une séance archivée se modifie
-désormais dans un brouillon local : nom, notes, date, heure, durée, exercices et séries, avec ajout,
-suppression et réordonnancement sans quota. La sortie sale demande confirmation et
-`saveArchivedWorkout` reste l’unique écriture transactionnelle. Le détail propose de nouveau
-« Modifier ». Vérifié dans la vraie app en **375 × 812 px** : aucun débordement horizontal, aucune
-cible sous 48 px, recherche dans les 168 exercices, ajout d’un Rameur avec champs distance/durée,
-réordre au clavier, abandon protégé, sauvegarde persistée et tonnage recalculé de 500 à 525 kg.
-Console vide. **401 tests**, `lint`, `typecheck`, `test:run` et `build` sont verts ; le warning Vite
-historique sur le chunk principal reste le seul avertissement.
+**Dernière mise à jour :** 2026-07-27 (**jalon 07C implémenté**). L’Historique importe désormais
+hors ligne `workout_data.csv` depuis Hevy : lecture RFC 4180, validation détaillée, aperçu,
+association explicite et mémorisée des exercices, créations personnalisées sans quota,
+déduplication et écriture Dexie atomique. Le fichier réel a été vérifié dans l’app en
+**375 × 812 px** : **4 séances, 24 exercices et 90 séries** importés, puis **0 importée et
+4 ignorées** à la seconde passe. Aucun débordement horizontal, aucune cible visible sous 48 px,
+console vide. **31 fichiers, 472 tests**, `lint`, `typecheck`, `test:run` et `build` sont verts ;
+le warning Vite historique sur le chunk principal à **630,58 kB** reste le seul avertissement.
 
-**État fonctionnel repris :** le code du jalon 07B est complet. Il reste son checkpoint sur le
-téléphone réel, notamment une correction persistée puis la suppression d’une séance de test. La
-prochaine tranche de développement est 07C : import hors-ligne de `workout_data.csv` Hevy avec
-aperçu, association des exercices, déduplication et transaction atomique.
+**État fonctionnel repris :** le code du Lot 07 est complet jusqu’au jalon 07C. Restent les
+checkpoints sur le téléphone réel : terminer la vérification 07B, puis choisir le CSV depuis
+Android, contrôler les associations, importer, recharger hors ligne, ouvrir/corriger une séance
+importée et confirmer qu’une seconde importation ne crée aucun doublon.
 
 **Historique précédent :** 2026-07-27 (**refactorisation pré-07B terminée**). Les façades publiques
 `workouts.ts` et `routines.ts` conservent exactement leurs APIs, tandis que leurs responsabilités
@@ -114,6 +113,53 @@ passes vertes, 242 tests. Il ne reste que le **checkpoint en salle** de la refon
 worktrees d'agent (`b7dda06`).)
 
 ## Lot en cours — Lot 07
+
+### Jalon 07C — import CSV Hevy hors ligne
+
+**Livré dans cette session :**
+
+- parseur pur RFC 4180 des 14 colonnes Hevy : BOM, guillemets, virgules, retours à la ligne,
+  dates locales françaises, nombres décimaux, types de séries et cinq formes de mesure ;
+- regroupement stable des séances, exercices, supersets et séries, avec provenance
+  `importSource: 'hevy_csv'` et clé d’import déterministe ;
+- suggestions déterministes, choix explicite parmi tous les exercices de mesure compatible,
+  création personnalisée et mappings mémorisés seulement vers des exercices encore vivants ;
+- préparation en lecture seule puis transaction Dexie unique couvrant exercices, séances, blocs,
+  séries et mappings ; rollback testé et aucune écriture avant l’action finale ;
+- assistant mobile `/history/import` avec erreurs françaises par ligne, compteurs, revue,
+  résultat séparant importées/ignorées et raccourci depuis l’Historique ;
+- fixture strictement anonymisée de quatre séances couvrant notes multilignes, supersets,
+  `normal`, `warmup`, `dropset`, `failure` et les cinq formes de mesure.
+
+**TDD, revue et portes :**
+
+- tests rouges puis verts pour le parseur, les suggestions, les mappings, le repository atomique,
+  le brouillon d’interface, la fixture complète et le refus d’un en-tête connu dupliqué ;
+- revue finale : le nom d’un exercice choisi hors proposition est maintenant restitué dans la
+  liste ; une réimportation faite uniquement de doublons peut aller jusqu’au récapitulatif final ;
+- suite complète : **31 fichiers, 472 tests** ;
+- `lint`, `typecheck`, `test:run` et `build` passent. Le seul avertissement reste le chunk Vite
+  principal supérieur à 500 kB (**630,58 kB**, gzip **181,71 kB**).
+
+**Vérification du fichier réel :**
+
+- export détecté : **4 séances, 24 exercices, 90 séries** ;
+- premier import : **4 importées, 0 ignorée** ; le Journal affiche les quatre séances et leurs
+  nombres d’exercices/séries ;
+- seconde passe : mappings repris, **0 importée, 4 ignorées**, aucune erreur console ;
+- rendu 375 × 812 px sans débordement horizontal ni cible visible sous 48 px.
+
+**Prochaine reprise exacte :**
+
+1. effectuer le checkpoint téléphone complet 07B ;
+2. effectuer le checkpoint téléphone 07C ci-dessous ;
+3. une fois ces validations manuelles obtenues, clôturer officiellement le Lot 07 et reprendre
+   le prochain lot de `docs/plans/00-ROADMAP.md`.
+
+**Checkpoint manuel demandé :** sur Android, ouvrir Historique → Importer depuis Hevy, choisir
+`workout_data.csv`, contrôler plusieurs associations, terminer l’import puis recharger en mode
+avion. Ouvrir une séance importée, corriger une charge, enregistrer et vérifier le total. Relancer
+enfin le même import et confirmer que les quatre séances sont ignorées sans doublon.
 
 ### Jalons 07A et 07B — consultation, régularité et correction
 

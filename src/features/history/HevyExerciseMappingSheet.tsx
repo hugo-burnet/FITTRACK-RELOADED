@@ -31,9 +31,14 @@ export function HevyExerciseMappingSheet({
   };
 
   const needle = normalizeSearch(search);
-  const filtered = exercises.filter((exercise) =>
-    normalizeSearch(exercise.name).includes(needle),
-  );
+  const filtered =
+    row === null
+      ? []
+      : exercises.filter(
+          (exercise) =>
+            exercise.measurementType === row.source.measurementType &&
+            normalizeSearch(exercise.name).includes(needle),
+        );
 
   return (
     <Sheet

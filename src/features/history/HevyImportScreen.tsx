@@ -220,6 +220,7 @@ export function HevyImportScreen() {
           {state.step === 'mapping' ? (
             <HevyImportMappingStep
               draft={state.draft}
+              exercises={state.preparation.exercises}
               onOpen={setOpenedRow}
             />
           ) : (

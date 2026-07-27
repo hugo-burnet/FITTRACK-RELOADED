@@ -1,19 +1,24 @@
 import { t } from '@/i18n/fr';
 import { Card } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
+import type { Exercise } from '@/data/types';
 import type {
   HevyImportDraft,
   HevyMappingDraftRow,
 } from './hevyImportDraft';
 
-function mappingReading(row: HevyMappingDraftRow): {
+function mappingReading(
+  row: HevyMappingDraftRow,
+  exercises: readonly Exercise[],
+): {
   label: string;
   value: string;
 } {
   if (row.resolution?.kind === 'existing') {
-    const exercise = row.suggestion?.id === row.resolution.exerciseId
-      ? row.suggestion
-      : undefined;
+    const selectedId = row.resolution.exerciseId;
+    const exercise = exercises.find(
+      (candidate) => candidate.id === selectedId,
+    );
     return {
       label:
         row.resolutionSource === 'saved'
@@ -36,9 +41,11 @@ function mappingReading(row: HevyMappingDraftRow): {
 
 export function HevyImportMappingStep({
   draft,
+  exercises,
   onOpen,
 }: {
   draft: HevyImportDraft;
+  exercises: readonly Exercise[];
   onOpen: (row: HevyMappingDraftRow) => void;
 }) {
   const unresolved = draft.rows.filter(
@@ -66,7 +73,7 @@ export function HevyImportMappingStep({
 
       <Card>
         {draft.rows.map((row) => {
-          const reading = mappingReading(row);
+          const reading = mappingReading(row, exercises);
           return (
             <button
               key={row.source.sourceTitle}

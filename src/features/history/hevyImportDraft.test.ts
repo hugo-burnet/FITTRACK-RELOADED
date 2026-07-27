@@ -64,6 +64,12 @@ const bench: Exercise = {
   isUnilateral: 0,
 };
 
+const incompatibleBench: Exercise = {
+  ...bench,
+  id: 'timed-bench',
+  measurementType: 'time_only',
+};
+
 describe('Hevy import mapping draft', () => {
   it('reuses a saved mapping to an alive exercise', () => {
     const draft = createHevyImportDraft(data, {
@@ -88,6 +94,19 @@ describe('Hevy import mapping draft', () => {
 
     expect(draft.rows[0]!.resolution).toBeUndefined();
     expect(unresolvedHevySources(draft)).toEqual([source]);
+  });
+
+  it('ignores saved mappings and suggestions with incompatible measures', () => {
+    const draft = createHevyImportDraft(data, {
+      exercises: [incompatibleBench],
+      existingImportKeys: [],
+      savedMappings: {
+        'developpe couche': incompatibleBench.id,
+      },
+    });
+
+    expect(draft.rows[0]!.resolution).toBeUndefined();
+    expect(draft.rows[0]!.suggestion).toBeUndefined();
   });
 
   it('keeps a suggestion separate from explicit resolution', () => {

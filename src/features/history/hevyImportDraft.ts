@@ -56,11 +56,19 @@ export function createHevyImportDraft(
     .map((source): HevyMappingDraftRow => {
       const sourceKey = normalizeHevyExerciseTitle(source.sourceTitle);
       const savedId = preparation.savedMappings[sourceKey];
-      const saved =
+      const mapped =
         savedId === undefined ? undefined : exercisesById.get(savedId);
+      const saved =
+        mapped?.measurementType === source.measurementType
+          ? mapped
+          : undefined;
+      const compatibleExercises = preparation.exercises.filter(
+        (exercise) =>
+          exercise.measurementType === source.measurementType,
+      );
       const suggestion = rankHevyExerciseCandidates(
         source.sourceTitle,
-        preparation.exercises,
+        compatibleExercises,
       )[0];
 
       return {

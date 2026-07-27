@@ -112,9 +112,14 @@ export function parseHevyCsv(text: string): HevyCsvResult {
     };
   }
 
-  const unexpected = headerRow.cells.filter(
-    (header) => !HEVY_HEADERS.includes(header as HevyHeader),
-  );
+  const seenHeaders = new Set<string>();
+  const unexpected = headerRow.cells.filter((header) => {
+    const duplicated = seenHeaders.has(header);
+    seenHeaders.add(header);
+    return (
+      duplicated || !HEVY_HEADERS.includes(header as HevyHeader)
+    );
+  });
   if (unexpected.length > 0) {
     return {
       ok: false,

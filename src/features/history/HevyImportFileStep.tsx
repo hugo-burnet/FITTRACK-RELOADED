@@ -48,6 +48,8 @@ export function HevyImportFileStep({
           ref={inputRef}
           type="file"
           accept=".csv,text/csv"
+          aria-hidden="true"
+          tabIndex={-1}
           className="sr-only"
           onChange={(event) => {
             const file = event.target.files?.[0];

@@ -100,6 +100,7 @@ interface ResolvedExercises {
 
 async function resolveExercises(
   sourceKeysToResolve: readonly string[],
+  measurementBySourceKey: ReadonlyMap<string, MeasurementType>,
   resolutions: Readonly<HevyExerciseResolutions>,
 ): Promise<ResolvedExercises> {
   const bySourceKey = new Map<string, Exercise>();
@@ -108,8 +109,12 @@ async function resolveExercises(
 
   for (const sourceKey of sourceKeysToResolve) {
     const resolution = resolutions[sourceKey];
+    const measurementType = measurementBySourceKey.get(sourceKey);
     if (resolution === undefined) {
       throw new Error(`Missing Hevy exercise resolution: ${sourceKey}`);
+    }
+    if (measurementType === undefined) {
+      throw new Error(`Missing Hevy exercise source: ${sourceKey}`);
     }
 
     let exercise: Exercise;
@@ -125,6 +130,11 @@ async function resolveExercises(
         isCustom: 1,
       });
       created.push(exercise);
+    }
+    if (exercise.measurementType !== measurementType) {
+      throw new Error(
+        `Hevy exercise measurement is incompatible: ${sourceKey}`,
+      );
     }
 
     bySourceKey.set(sourceKey, exercise);
@@ -259,8 +269,15 @@ export async function importHevyWorkouts(
         };
       }
 
+      const measurementBySourceKey = new Map(
+        data.sourceExercises.map((source) => [
+          normalizeHevyExerciseTitle(source.sourceTitle),
+          source.measurementType,
+        ]),
+      );
       const resolved = await resolveExercises(
         sourceKeys(importable),
+        measurementBySourceKey,
         resolutions,
       );
       const entities = buildEntities(importable, resolved.bySourceKey);

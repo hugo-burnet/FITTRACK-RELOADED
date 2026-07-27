@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import type { Exercise, Workout } from '@/data/types';
-import type { HevyImportData } from '@/lib/hevyCsv';
+import {
+  parseHevyCsv,
+  type HevyImportData,
+} from '@/lib/hevyCsv';
 import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
 import { resetDb } from '@/test/resetDb';
+import fixture from '@/test/fixtures/hevy-workout-data.csv?raw';
 import { newEntity } from './base';
 import {
   createCustomExercise,
@@ -126,6 +130,41 @@ async function counts() {
 
 describe('Hevy import repository', () => {
   beforeEach(resetDb);
+
+  it('imports the complete anonymized fixture', async () => {
+    const parsed = parseHevyCsv(fixture);
+
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const fixtureResolutions = Object.fromEntries(
+      parsed.data.sourceExercises.map((source) => [
+        normalizeHevyExerciseTitle(source.sourceTitle),
+        {
+          kind: 'custom' as const,
+          exercise: customExercise(
+            source.sourceTitle,
+            source.measurementType,
+          ),
+        },
+      ]),
+    );
+
+    const result = await importHevyWorkouts(
+      parsed.data,
+      fixtureResolutions,
+    );
+
+    expect(result).toMatchObject({
+      importedWorkouts: parsed.data.workoutCount,
+      skippedWorkouts: 0,
+      createdExercises: parsed.data.exerciseCount,
+      importedExercises: 7,
+      importedSets: parsed.data.setCount,
+    });
+    expect(await db.workouts.count()).toBe(parsed.data.workoutCount);
+    expect(await db.workoutExercises.count()).toBe(7);
+    expect(await db.workoutSets.count()).toBe(parsed.data.setCount);
+  });
 
   it('prepares alive exercises, saved mappings and duplicate keys', async () => {
     const bench = await createCustomExercise(
@@ -275,6 +314,18 @@ describe('Hevy import repository', () => {
       importHevyWorkouts(data, resolutions(bench.id)),
     ).rejects.toThrow('Hevy exercise target is unavailable');
     expect(await db.workouts.count()).toBe(0);
+  });
+
+  it('rejects an existing target with incompatible measures', async () => {
+    const timedBench = await createCustomExercise(
+      customExercise('Développé couché chronométré', 'time_only'),
+    );
+    const before = await counts();
+
+    await expect(
+      importHevyWorkouts(data, resolutions(timedBench.id)),
+    ).rejects.toThrow('Hevy exercise measurement is incompatible');
+    expect(await counts()).toEqual(before);
   });
 
   it('rolls back custom exercises, workouts and settings on failure', async () => {

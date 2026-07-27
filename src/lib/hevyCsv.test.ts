@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import fixture from '@/test/fixtures/hevy-workout-data.csv?raw';
 import { parseHevyCsv } from './hevyCsv';
 
 const HEADER =
@@ -46,6 +47,29 @@ function row(overrides: Partial<Record<string, string>> = {}): string {
 }
 
 describe('parseHevyCsv RFC 4180 input', () => {
+  it('parses the complete anonymized fixture', () => {
+    const result = parseHevyCsv(fixture);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.workoutCount).toBe(4);
+    expect(
+      new Set(
+        result.data.sourceExercises.map(
+          (source) => source.measurementType,
+        ),
+      ),
+    ).toEqual(
+      new Set([
+        'weight_reps',
+        'reps_only',
+        'time_only',
+        'distance_time',
+        'weight_time',
+      ]),
+    );
+  });
+
   it('preserves commas, quotes and newlines inside quoted notes', () => {
     const csv = `${HEADER}\r\n${row({
       description: 'Lourd, mais propre',
@@ -78,6 +102,17 @@ describe('parseHevyCsv RFC 4180 input', () => {
       ok: false,
       issues: [
         { line: 1, code: 'unexpected_header', field: 'body_weight' },
+      ],
+    });
+  });
+
+  it('rejects a duplicated known column to enforce 14 headers', () => {
+    const result = parseHevyCsv(`${HEADER},rpe`);
+
+    expect(result).toEqual({
+      ok: false,
+      issues: [
+        { line: 1, code: 'unexpected_header', field: 'rpe' },
       ],
     });
   });
