@@ -14,6 +14,7 @@ import { ActionBand, Card } from '@/ui';
 import { HevyExerciseMappingSheet } from './HevyExerciseMappingSheet';
 import { HevyImportFileStep } from './HevyImportFileStep';
 import { HevyImportMappingStep } from './HevyImportMappingStep';
+import { HevyImportOperationStatus } from './HevyImportOperationStatus';
 import { HevyImportReview } from './HevyImportReview';
 import {
   createHevyImportDraft,
@@ -225,16 +226,13 @@ export function HevyImportScreen() {
             />
           ) : (
             <>
-              {state.step === 'review' && state.failed && (
-                <div role="alert">
-                  <Card padded>
-                    <p className="text-sm text-[var(--danger-ink)]">
-                      {t('history.importFailed')}
-                    </p>
-                  </Card>
-                </div>
-              )}
               <HevyImportReview data={state.data} draft={state.draft} />
+              {state.step === 'importing' && (
+                <HevyImportOperationStatus kind="working" />
+              )}
+              {state.step === 'review' && state.failed && (
+                <HevyImportOperationStatus kind="failed" />
+              )}
             </>
           )}
         </div>

@@ -1,6 +1,6 @@
 import { t } from '@/i18n/fr';
 import { Card } from '@/ui';
-import { ChevronRightIcon } from '@/ui/icons';
+import { CheckIcon, ChevronRightIcon } from '@/ui/icons';
 import type { Exercise } from '@/data/types';
 import type {
   HevyImportDraft,
@@ -74,6 +74,7 @@ export function HevyImportMappingStep({
       <Card>
         {draft.rows.map((row) => {
           const reading = mappingReading(row, exercises);
+          const confirmed = row.resolution !== undefined;
           return (
             <button
               key={row.source.sourceTitle}
@@ -89,6 +90,17 @@ export function HevyImportMappingStep({
                 <span className="mt-1 block text-sm text-[var(--text-2)]">
                   {reading.label} · {reading.value}
                 </span>
+              </span>
+              <span
+                aria-hidden="true"
+                className={`flex size-6 shrink-0 items-center justify-center rounded-full border
+                  ${
+                    confirmed
+                      ? 'border-[var(--accent-ink)] bg-[var(--accent-ink)] text-[var(--surface-0)]'
+                      : 'border-[var(--text-2)] text-transparent'
+                  }`}
+              >
+                {confirmed && <CheckIcon width={14} height={14} strokeWidth={2.5} />}
               </span>
               <ChevronRightIcon className="shrink-0 text-[var(--text-2)]" />
             </button>
