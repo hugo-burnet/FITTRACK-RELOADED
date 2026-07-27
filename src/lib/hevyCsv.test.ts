@@ -337,3 +337,117 @@ describe('parseHevyCsv values and grouping', () => {
     });
   });
 });
+
+describe('parseHevyCsv source exercise inference', () => {
+  it('infers all five supported measurement types and explicit equipment', () => {
+    const csv = [
+      HEADER,
+      row({ exercise_title: 'Squat (barre)' }),
+      row({
+        exercise_title: 'Pompes au poids du corps',
+        weight_kg: '',
+        reps: '12',
+      }),
+      row({
+        exercise_title: 'Planche',
+        weight_kg: '',
+        reps: '',
+        duration_seconds: '60',
+      }),
+      row({
+        exercise_title: 'Rameur',
+        weight_kg: '',
+        reps: '',
+        distance_km: '1',
+        duration_seconds: '300',
+      }),
+      row({
+        exercise_title: 'Farmer hold avec haltères',
+        reps: '',
+        duration_seconds: '45',
+      }),
+    ].join('\n');
+
+    const result = parseHevyCsv(csv);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.sourceExercises).toEqual([
+      {
+        sourceTitle: 'Squat (barre)',
+        measurementType: 'weight_reps',
+        equipment: 'barbell',
+      },
+      {
+        sourceTitle: 'Pompes au poids du corps',
+        measurementType: 'reps_only',
+        equipment: 'bodyweight',
+      },
+      {
+        sourceTitle: 'Planche',
+        measurementType: 'time_only',
+        equipment: 'other',
+      },
+      {
+        sourceTitle: 'Rameur',
+        measurementType: 'distance_time',
+        equipment: 'other',
+      },
+      {
+        sourceTitle: 'Farmer hold avec haltères',
+        measurementType: 'weight_time',
+        equipment: 'dumbbell',
+      },
+    ]);
+    expect(result.data.exerciseCount).toBe(5);
+  });
+
+  it('rejects incompatible measurements under one source title', () => {
+    const csv = [
+      HEADER,
+      row({ exercise_title: 'Exercice mixte' }),
+      row({
+        exercise_title: 'Exercice mixte',
+        set_index: '1',
+        weight_kg: '',
+        reps: '',
+        duration_seconds: '60',
+      }),
+    ].join('\n');
+
+    expect(parseHevyCsv(csv)).toEqual({
+      ok: false,
+      issues: [
+        {
+          line: 2,
+          code: 'invalid_measurement',
+          field: 'exercise_title',
+          value: 'Exercice mixte',
+        },
+      ],
+    });
+  });
+
+  it('counts a repeated source title once across multiple workouts', () => {
+    const csv = [
+      HEADER,
+      row(),
+      row({
+        title: 'Séance B',
+        start_time: '25 juil. 2026, 15:05',
+        end_time: '25 juil. 2026, 16:05',
+      }),
+    ].join('\n');
+
+    const result = parseHevyCsv(csv);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data).toMatchObject({
+      workoutCount: 2,
+      exerciseCount: 1,
+      setCount: 2,
+    });
+    expect(result.data.sourceExercises).toHaveLength(1);
+  });
+});
