@@ -171,8 +171,8 @@ describe('Hevy exercise mappings setting', () => {
     });
 
     expect(await getHevyExerciseMappings()).toEqual({
-      'developpe couche': 'bench-id',
-      curl: 'curl-id',
+      'developpe couche|barbell': 'bench-id',
+      'curl|dumbbell': 'curl-id',
     });
   });
 
@@ -189,7 +189,7 @@ describe('Hevy exercise mappings setting', () => {
     });
 
     expect(await getHevyExerciseMappings()).toEqual({
-      squat: 'squat-id',
+      'squat|other': 'squat-id',
     });
   });
 
@@ -200,9 +200,9 @@ describe('Hevy exercise mappings setting', () => {
       'Squat (barre)': 'squat-id',
     });
 
-    expect(stored).toEqual({ squat: 'squat-id' });
+    expect(stored).toEqual({ 'squat|barbell': 'squat-id' });
     expect(await db.settings.get('hevyExerciseMappings')).toMatchObject({
-      value: { squat: 'squat-id' },
+      value: { 'squat|barbell': 'squat-id' },
       updatedAt: 4_200,
     });
   });

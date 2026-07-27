@@ -5,7 +5,7 @@ import {
   parseHevyCsv,
   type HevyImportData,
 } from '@/lib/hevyCsv';
-import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
+import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import { resetDb } from '@/test/resetDb';
 import fixture from '@/test/fixtures/hevy-workout-data.csv?raw';
 import { newEntity } from './base';
@@ -107,11 +107,11 @@ function customExercise(
 
 function resolutions(benchId: string): HevyExerciseResolutions {
   return {
-    [normalizeHevyExerciseTitle('Développé couché (barre)')]: {
+    [hevyExerciseSourceKey('Développé couché (barre)')]: {
       kind: 'existing',
       exerciseId: benchId,
     },
-    [normalizeHevyExerciseTitle('Planche')]: {
+    [hevyExerciseSourceKey('Planche')]: {
       kind: 'custom',
       exercise: customExercise('Planche', 'time_only'),
     },
@@ -138,7 +138,7 @@ describe('Hevy import repository', () => {
     if (!parsed.ok) return;
     const fixtureResolutions = Object.fromEntries(
       parsed.data.sourceExercises.map((source) => [
-        normalizeHevyExerciseTitle(source.sourceTitle),
+        hevyExerciseSourceKey(source.sourceTitle),
         {
           kind: 'custom' as const,
           exercise: customExercise(
@@ -201,7 +201,7 @@ describe('Hevy import repository', () => {
       data.workouts[0]!.importKey,
     ]);
     expect(result.savedMappings).toEqual({
-      'developpe couche': bench.id,
+      'developpe couche|barbell': bench.id,
     });
     expect(result.aliveRoutineFolderNames).toEqual([
       'Import Hevy — 27/07/2026',
@@ -284,8 +284,8 @@ describe('Hevy import repository', () => {
     });
     expect(await db.settings.get('hevyExerciseMappings')).toMatchObject({
       value: {
-        'developpe couche': bench.id,
-        planche: plank?.id,
+        'developpe couche|barbell': bench.id,
+        'planche|other': plank?.id,
       },
     });
   });

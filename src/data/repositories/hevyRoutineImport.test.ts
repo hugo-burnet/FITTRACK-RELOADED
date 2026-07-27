@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Exercise } from '@/data/types';
 import type { HevyParsedWorkout } from '@/lib/hevyCsv';
-import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
+import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import {
   buildHevyRoutineEntities,
@@ -35,9 +35,9 @@ const plank = exercise('plank', 'Planche', 'time_only');
 const rower = exercise('rower', 'Rameur', 'distance_time');
 
 const resolvedExercises = new Map([
-  [normalizeHevyExerciseTitle('Développé couché'), bench],
-  [normalizeHevyExerciseTitle('Planche'), plank],
-  [normalizeHevyExerciseTitle('Rameur'), rower],
+  [hevyExerciseSourceKey('Développé couché'), bench],
+  [hevyExerciseSourceKey('Planche'), plank],
+  [hevyExerciseSourceKey('Rameur'), rower],
 ]);
 
 const upperA: HevyParsedWorkout = {

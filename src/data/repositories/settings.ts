@@ -3,7 +3,7 @@ import {
   startOfLocalWeek,
   type WeeklyTrainingGoal,
 } from '@/lib/history';
-import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
+import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 
 const AVAILABLE_PLATE_WEIGHTS_KEY = 'availablePlateWeightsKg';
@@ -131,7 +131,7 @@ function normalizeHevyExerciseMappings(
   const normalized: HevyExerciseMappings = {};
   for (const [sourceTitle, exerciseId] of Object.entries(value)) {
     if (typeof exerciseId !== 'string' || exerciseId.trim() === '') continue;
-    const key = normalizeHevyExerciseTitle(sourceTitle);
+    const key = hevyExerciseSourceKey(sourceTitle);
     if (key === '') continue;
     normalized[key] = exerciseId;
   }

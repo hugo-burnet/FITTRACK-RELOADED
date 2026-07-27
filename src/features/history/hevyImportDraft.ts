@@ -5,6 +5,7 @@ import type {
 } from '@/lib/hevyCsv';
 import {
   findCanonicalHevyExercise,
+  hevyExerciseSourceKey,
   normalizeHevyExerciseTitle,
   rankHevyExerciseCandidates,
 } from '@/lib/hevyExerciseMatch';
@@ -44,7 +45,7 @@ export function createHevyImportDraft(
   const activeSourceKeys = new Set(
     importable.flatMap((workout) =>
       workout.exercises.map((exercise) =>
-        normalizeHevyExerciseTitle(exercise.sourceTitle),
+        hevyExerciseSourceKey(exercise.sourceTitle),
       ),
     ),
   );
@@ -65,12 +66,16 @@ export function createHevyImportDraft(
   const rows = data.sourceExercises
     .filter((source) =>
       activeSourceKeys.has(
-        normalizeHevyExerciseTitle(source.sourceTitle),
+        hevyExerciseSourceKey(source.sourceTitle),
       ),
     )
     .map((source): HevyMappingDraftRow => {
-      const sourceKey = normalizeHevyExerciseTitle(source.sourceTitle);
-      const savedId = preparation.savedMappings[sourceKey];
+      const sourceKey = hevyExerciseSourceKey(source.sourceTitle);
+      const legacyName = normalizeHevyExerciseTitle(source.sourceTitle);
+      const savedId =
+        preparation.savedMappings[sourceKey] ??
+        preparation.savedMappings[legacyName] ??
+        preparation.savedMappings[`${legacyName}|other`];
       const mapped =
         savedId === undefined ? undefined : exercisesById.get(savedId);
       const saved =
@@ -132,11 +137,11 @@ export function setHevyImportResolution(
   sourceTitle: string,
   resolution: HevyExerciseResolution,
 ): HevyImportDraft {
-  const sourceKey = normalizeHevyExerciseTitle(sourceTitle);
+  const sourceKey = hevyExerciseSourceKey(sourceTitle);
   return {
     ...draft,
     rows: draft.rows.map((row) =>
-      normalizeHevyExerciseTitle(row.source.sourceTitle) === sourceKey
+      hevyExerciseSourceKey(row.source.sourceTitle) === sourceKey
         ? { ...row, resolution, resolutionSource: 'user' }
         : row,
     ),
@@ -161,7 +166,7 @@ export function resolutionsFromHevyDraft(
         `Unresolved Hevy exercise: ${row.source.sourceTitle}`,
       );
     }
-    resolutions[normalizeHevyExerciseTitle(row.source.sourceTitle)] =
+    resolutions[hevyExerciseSourceKey(row.source.sourceTitle)] =
       row.resolution;
   }
   return resolutions;

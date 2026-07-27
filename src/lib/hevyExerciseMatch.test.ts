@@ -5,6 +5,7 @@ import type { CatalogueExercise } from '@/data/seed/seedDatabase';
 import type { HevyParsedSet } from './hevyCsv';
 import {
   findCanonicalHevyExercise,
+  hevyExerciseSourceKey,
   inferHevyEquipment,
   inferHevyMeasurementType,
   normalizeHevyExerciseTitle,
@@ -90,6 +91,15 @@ describe('Hevy exercise title matching', () => {
     expect(
       normalizeHevyExerciseTitle('Développés couchés (Haltères)'),
     ).toBe('developpe couche');
+  });
+
+  it('keeps equipment variants distinct in persistent source keys', () => {
+    expect(hevyExerciseSourceKey('Développé Couché (barre)')).toBe(
+      'developpe couche|barbell',
+    );
+    expect(hevyExerciseSourceKey('Développé Couché (haltère)')).toBe(
+      'developpe couche|dumbbell',
+    );
   });
 
   it.each([

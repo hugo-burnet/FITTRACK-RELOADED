@@ -5,7 +5,7 @@ import type {
   RoutineFolder,
   RoutineSet,
 } from '@/data/types';
-import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
+import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import type { HevyRoutineSource } from '@/lib/hevyRoutineSelection';
 import { newEntity } from './base';
 
@@ -63,7 +63,7 @@ export function buildHevyRoutineEntities(
     routines.push(routine);
 
     for (const parsedExercise of source.workout.exercises) {
-      const sourceKey = normalizeHevyExerciseTitle(
+      const sourceKey = hevyExerciseSourceKey(
         parsedExercise.sourceTitle,
       );
       const exercise = exercisesBySourceKey.get(sourceKey);

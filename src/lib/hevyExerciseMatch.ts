@@ -35,6 +35,7 @@ const EQUIPMENT_WORDS = new Set([
   'haltere',
   'kettlebell',
   'machine',
+  'other',
   'plate',
   'poid',
   'poulie',
@@ -145,13 +146,19 @@ export function inferHevyEquipment(title: string): Equipment {
   return 'other';
 }
 
+export function hevyExerciseSourceKey(title: string): string {
+  const normalizedTitle = normalizeHevyExerciseTitle(title);
+  if (normalizedTitle === '') return '';
+  return `${normalizedTitle}|${inferHevyEquipment(title)}`;
+}
+
 export function findCanonicalHevyExercise(
   sourceTitle: string,
   measurementType: MeasurementType,
   exercises: readonly Exercise[],
 ): Exercise | undefined {
   const sourceEquipment = inferHevyEquipment(sourceTitle);
-  const key = `${normalizeHevyExerciseTitle(sourceTitle)}|${sourceEquipment}`;
+  const key = hevyExerciseSourceKey(sourceTitle);
   const slug = HEVY_EXERCISE_SLUG_BY_KEY[key];
   if (slug === undefined) return undefined;
 

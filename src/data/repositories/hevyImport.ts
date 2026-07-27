@@ -5,7 +5,7 @@ import type {
   MeasurementType,
 } from '@/data/types';
 import type { HevyImportData, HevyParsedWorkout } from '@/lib/hevyCsv';
-import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
+import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import { newEntity } from './base';
 import type { NewExercise } from './exercises';
@@ -92,7 +92,7 @@ function sourceKeys(workouts: readonly HevyParsedWorkout[]): string[] {
     ...new Set(
       workouts.flatMap((workout) =>
         workout.exercises.map((exercise) =>
-          normalizeHevyExerciseTitle(exercise.sourceTitle),
+          hevyExerciseSourceKey(exercise.sourceTitle),
         ),
       ),
     ),
@@ -191,7 +191,7 @@ export async function importHevyWorkouts(
 
       const measurementBySourceKey = new Map(
         data.sourceExercises.map((source) => [
-          normalizeHevyExerciseTitle(source.sourceTitle),
+          hevyExerciseSourceKey(source.sourceTitle),
           source.measurementType,
         ]),
       );

@@ -5,7 +5,7 @@ import type {
   WorkoutSet,
 } from '@/data/types';
 import type { HevyParsedWorkout } from '@/lib/hevyCsv';
-import { normalizeHevyExerciseTitle } from '@/lib/hevyExerciseMatch';
+import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import { resolveRestSeconds } from '@/lib/rest';
 import { newEntity } from './base';
 
@@ -43,7 +43,7 @@ export function buildHevyWorkoutEntities(
     );
     let sequence = 0;
     for (const parsedExercise of parsed.exercises) {
-      const sourceKey = normalizeHevyExerciseTitle(
+      const sourceKey = hevyExerciseSourceKey(
         parsedExercise.sourceTitle,
       );
       const exercise = exercises.get(sourceKey);

@@ -295,7 +295,7 @@ describe('Hevy import mapping draft', () => {
       resolutionSource: 'user',
     });
     expect(resolutionsFromHevyDraft(next)).toEqual({
-      'developpe couche': {
+      'developpe couche|barbell': {
         kind: 'existing',
         exerciseId: bench.id,
       },
