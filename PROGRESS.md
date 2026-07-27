@@ -2,23 +2,33 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**retours d’usage post-07C implémentés**). L’association
-Hevy affiche désormais un cercle vide tant qu’elle reste à confirmer, puis une coche après choix ;
-les associations mémorisées reviennent précochées. La validation finale expose aussi son état
-dans le contenu et ramène le focus sur l’erreur, au lieu de laisser croire que le bouton
-« Importer » n’a rien fait. En séance active, une commande SVG réversible de **48 × 48 px**
-reste épinglée à droite de l’avancement : liste + chevron haut pour « Tout replier », liste +
-chevron bas pour « Tout déplier ». Vérifié dans l’app en **375 × 812 px** : zéro débordement
-horizontal, trois cartes ouvertes → toutes repliées → toutes dépliées, et une carte rouverte
-manuellement n’empêche pas le dépliage global suivant. Associations vierges/cochées/mémorisées
-également lisibles. **32 fichiers, 473 tests**, `lint`, `typecheck`, `test:run` et `build` sont
-verts ; le warning Vite historique sur le chunk principal reste le seul avertissement.
+**Dernière mise à jour :** 2026-07-27 (**import Hevy enrichi : détection fiable + routines**).
+Les titres Hevy connus sont maintenant associés par alias canonique vers les `slug` stables du
+catalogue ; le classement de secours comprend des synonymes français/anglais et donne un poids
+fort au matériel. Les identités de mapping incluent désormais le matériel : barre, haltères et
+Smith ne peuvent plus s’écraser. Les anciens mappings sans matériel restent relus en repli.
+Sur le vrai export de validation, **20 exercices sur 24** reviennent directement cochés et justes ;
+seuls `Rotation Externe Poulie`, `Hip Thrust (Dumbbell)`, `Tirage bas iso-latéral` et
+`Développé Debout Poulie Centrée` restent à choisir.
 
-**État fonctionnel repris :** le code du Lot 07 est complet jusqu’au jalon 07C. Restent les
-checkpoints sur le téléphone réel : terminer la vérification 07B, puis choisir le CSV depuis
-Android, contrôler les associations, importer, recharger hors ligne, ouvrir/corriger une séance
-importée et confirmer qu’une seconde importation ne crée aucun doublon. Vérifier aussi les coches
-pendant l’association et la bascule « Tout replier / Tout déplier » au milieu d’une vraie séance.
+Le même import crée maintenant un dossier `Import Hevy — JJ/MM/AAAA` et une routine par nom de
+séance. Pour chaque nom, la référence est la plus complète des cinq séances les plus récentes,
+puis la plus récente en cas d’égalité. Ordre, nombre et type des séries sont repris ; aucun
+superset, poids cible ni RPE cible n’est inventé. Dossier, routines, séances, exercices et mappings
+partagent la même transaction Dexie.
+
+**Vérification réelle en 375 × 812 px :** 4 séances, 24 exercices et 90 séries détectés ;
+4 routines `LOWER A`, `UPPER B`, `LOWER B`, `UPPER A` créées dans un seul dossier daté ; zéro
+débordement horizontal et zéro erreur console. La seconde importation annonce **0 importée,
+4 ignorées** et laisse un seul dossier avec 4 routines. **34 fichiers de tests, 519 tests** ;
+`lint`, `typecheck`, `test:run` et `build` sont verts. Le warning Vite historique sur le chunk
+principal reste le seul avertissement.
+
+**État fonctionnel repris :** le code du Lot 07 est complet jusqu’au jalon 07C et ses retours
+d’usage. Restent les checkpoints sur le téléphone réel : choisir le CSV depuis Android, vérifier
+les quatre associations manuelles, importer, recharger hors ligne, ouvrir/corriger une séance et
+une routine importées, puis confirmer la réimportation sans doublon. Terminer aussi la vérification
+07B et la bascule « Tout replier / Tout déplier » au milieu d’une vraie séance.
 
 **Historique précédent :** 2026-07-27 (**jalon 07C implémenté**). L’Historique importe hors ligne
 `workout_data.csv` depuis Hevy : lecture RFC 4180, validation détaillée, aperçu, association
