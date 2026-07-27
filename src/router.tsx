@@ -5,6 +5,7 @@ import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryDetailScreen } from './features/history/HistoryDetailScreen';
 import { HistoryEditScreen } from './features/history/HistoryEditScreen';
+import { HevyImportScreen } from './features/history/HevyImportScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
 import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
@@ -36,6 +37,7 @@ export const router = createHashRouter([
       { path: 'workout/add', element: <WorkoutAddExerciseScreen /> },
       { path: 'workout/finish', element: <WorkoutFinishScreen /> },
       { path: 'history', element: <HistoryScreen /> },
+      { path: 'history/import', element: <HevyImportScreen /> },
       { path: 'history/:workoutId/edit', element: <HistoryEditScreen /> },
       { path: 'history/:workoutId', element: <HistoryDetailScreen /> },
       { path: 'exercises', element: <ExercisesScreen /> },

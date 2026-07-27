@@ -252,3 +252,14 @@ export function SlidersIcon(props: IconProps) {
     </Icon>
   );
 }
+
+/** Import — a local file entering the history tray. */
+export function ImportIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 3v11" />
+      <path d="m7.5 10 4.5 4.5 4.5-4.5" />
+      <path d="M4 17.5v2.5h16v-2.5" />
+    </Icon>
+  );
+}

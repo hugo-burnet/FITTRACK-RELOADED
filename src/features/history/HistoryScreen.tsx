@@ -14,7 +14,8 @@ import {
 } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { calculateWeeklyRegularity } from '@/lib/history';
-import { Card } from '@/ui';
+import { Card, HeaderAction } from '@/ui';
+import { ImportIcon } from '@/ui/icons';
 import { HistoryCalendar } from './HistoryCalendar';
 import { HistoryExerciseFilter } from './HistoryExerciseFilter';
 import { HistoryJournal } from './HistoryJournal';
@@ -22,12 +23,16 @@ import { HistorySummaryCard } from './HistorySummaryCard';
 import { WeeklyGoalSheet } from './WeeklyGoalSheet';
 
 type HistoryView = 'journal' | 'calendar';
-type HistoryNotice = 'deleted' | 'missing';
+type HistoryNotice = 'deleted' | 'missing' | 'imported';
 
 function readHistoryNotice(state: unknown): HistoryNotice | undefined {
   if (state === null || typeof state !== 'object') return undefined;
   const notice = (state as { historyNotice?: unknown }).historyNotice;
-  return notice === 'deleted' || notice === 'missing' ? notice : undefined;
+  return notice === 'deleted' ||
+    notice === 'missing' ||
+    notice === 'imported'
+    ? notice
+    : undefined;
 }
 
 export function HistoryScreen() {
@@ -102,7 +107,17 @@ export function HistoryScreen() {
   };
 
   return (
-    <Screen title={t('history.title')}>
+    <Screen
+      title={t('history.title')}
+      action={
+        <HeaderAction
+          label={t('history.importAction')}
+          onClick={() => void navigate('/history/import')}
+        >
+          <ImportIcon />
+        </HeaderAction>
+      }
+    >
       <div className="space-y-7">
         {historyNotice !== undefined && (
           <div role="status">
@@ -111,7 +126,9 @@ export function HistoryScreen() {
                 {t(
                   historyNotice === 'deleted'
                     ? 'history.deletedNotice'
-                    : 'history.missingNotice',
+                    : historyNotice === 'missing'
+                      ? 'history.missingNotice'
+                      : 'history.importedNotice',
                 )}
               </p>
             </Card>
