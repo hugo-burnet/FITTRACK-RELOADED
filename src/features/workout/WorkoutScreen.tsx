@@ -48,7 +48,7 @@ import {
   Sheet,
   Textarea,
 } from '@/ui';
-import { CollapseAllIcon, MoreIcon } from '@/ui/icons';
+import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
@@ -57,6 +57,10 @@ import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
 import type { SupersetPlace } from './WorkoutExerciseCard';
+import {
+  INITIAL_WORKOUT_FOLD_COMMAND,
+  nextWorkoutFoldCommand,
+} from './workoutFold';
 import { WorkoutRpeField } from './WorkoutRpeField';
 import { workoutProgressLine } from './summary';
 
@@ -151,7 +155,10 @@ export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
-  const [collapseSignal, setCollapseSignal] = useState(0);
+  const [foldCommand, setFoldCommand] = useState(
+    INITIAL_WORKOUT_FOLD_COMMAND,
+  );
+  const willExpandAll = !foldCommand.expanded;
   /**
    * RF-31 is deliberately session-screen state, keyed by workout exercise.
    * Closing the sheet keeps today's bar choice; leaving/reloading the screen
@@ -384,12 +391,16 @@ export function WorkoutScreen() {
             </p>
             <button
               type="button"
-              aria-label={t('workout.collapseAll')}
-              onClick={() => setCollapseSignal((current) => current + 1)}
+              aria-label={t(
+                willExpandAll
+                  ? 'workout.expandAll'
+                  : 'workout.collapseAll',
+              )}
+              onClick={() => setFoldCommand(nextWorkoutFoldCommand)}
               className="flex size-12 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
             >
-              <CollapseAllIcon />
+              {willExpandAll ? <ExpandAllIcon /> : <CollapseAllIcon />}
             </button>
           </div>
         ) : undefined
@@ -437,7 +448,7 @@ export function WorkoutScreen() {
                   }
                   records={records}
                   state={state}
-                  collapseSignal={collapseSignal}
+                  foldCommand={foldCommand}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onPlates={
                     config !== null && loads.length > 0

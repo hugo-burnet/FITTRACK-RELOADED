@@ -6,18 +6,19 @@
 Hevy affiche désormais un cercle vide tant qu’elle reste à confirmer, puis une coche après choix ;
 les associations mémorisées reviennent précochées. La validation finale expose aussi son état
 dans le contenu et ramène le focus sur l’erreur, au lieu de laisser croire que le bouton
-« Importer » n’a rien fait. En séance active, une commande SVG « Tout replier » de **48 × 48 px**
-reste épinglée à droite de l’avancement et replie toutes les cartes, y compris après une
-réouverture manuelle. Vérifié dans l’app en **375 × 812 px** : zéro débordement horizontal,
-associations vierges/cochées/mémorisées lisibles et trois cartes repliées en un appui.
-**31 fichiers, 472 tests**, `lint`, `typecheck`, `test:run` et `build` sont verts ; le warning Vite
-historique sur le chunk principal à **631,97 kB** reste le seul avertissement.
+« Importer » n’a rien fait. En séance active, une commande SVG réversible de **48 × 48 px**
+reste épinglée à droite de l’avancement : liste + chevron haut pour « Tout replier », liste +
+chevron bas pour « Tout déplier ». Vérifié dans l’app en **375 × 812 px** : zéro débordement
+horizontal, trois cartes ouvertes → toutes repliées → toutes dépliées, et une carte rouverte
+manuellement n’empêche pas le dépliage global suivant. Associations vierges/cochées/mémorisées
+également lisibles. **32 fichiers, 473 tests**, `lint`, `typecheck`, `test:run` et `build` sont
+verts ; le warning Vite historique sur le chunk principal reste le seul avertissement.
 
 **État fonctionnel repris :** le code du Lot 07 est complet jusqu’au jalon 07C. Restent les
 checkpoints sur le téléphone réel : terminer la vérification 07B, puis choisir le CSV depuis
 Android, contrôler les associations, importer, recharger hors ligne, ouvrir/corriger une séance
 importée et confirmer qu’une seconde importation ne crée aucun doublon. Vérifier aussi les coches
-pendant l’association et « Tout replier » au milieu d’une vraie séance.
+pendant l’association et la bascule « Tout replier / Tout déplier » au milieu d’une vraie séance.
 
 **Historique précédent :** 2026-07-27 (**jalon 07C implémenté**). L’Historique importe hors ligne
 `workout_data.csv` depuis Hevy : lecture RFC 4180, validation détaillée, aperçu, association

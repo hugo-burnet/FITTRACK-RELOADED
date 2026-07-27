@@ -11,6 +11,7 @@ import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon, StarIcon } f
 import { RecordNote } from './RecordNote';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
+import type { WorkoutFoldCommand } from './workoutFold';
 import { setReading } from './summary';
 
 /** A set that has just gone, and the slot it is still allowed to come back to. */
@@ -34,7 +35,7 @@ type Props = {
    */
   records: Map<string, RecordKind>;
   state: ItemState;
-  collapseSignal: number;
+  foldCommand: WorkoutFoldCommand;
   onMenu: () => void;
   /** Opens the plate calculator. Absent when the exercise has no bar to load. */
   onPlates?: () => void;
@@ -74,7 +75,7 @@ export function WorkoutExerciseCard({
   rest,
   records,
   state,
-  collapseSignal,
+  foldCommand,
   onMenu,
   onPlates,
   onSetMenu,
@@ -108,11 +109,13 @@ export function WorkoutExerciseCard({
    */
   const [expanded, setExpanded] = useState(!allDone);
   const [wasAllDone, setWasAllDone] = useState(allDone);
-  const [seenCollapseSignal, setSeenCollapseSignal] = useState(collapseSignal);
-  if (collapseSignal !== seenCollapseSignal) {
-    setSeenCollapseSignal(collapseSignal);
+  const [seenFoldVersion, setSeenFoldVersion] = useState(
+    foldCommand.version,
+  );
+  if (foldCommand.version !== seenFoldVersion) {
+    setSeenFoldVersion(foldCommand.version);
     setWasAllDone(allDone);
-    setExpanded(false);
+    setExpanded(foldCommand.expanded);
   } else if (allDone !== wasAllDone) {
     setWasAllDone(allDone);
     setExpanded(!allDone);

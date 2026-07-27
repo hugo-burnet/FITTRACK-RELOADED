@@ -154,8 +154,10 @@ if (foldCommand.version !== seenFoldVersion) {
 export function CollapseAllIcon(props: IconProps) {
   return (
     <Icon {...props}>
-      <path d="m7 8 5 4 5-4" />
-      <path d="m7 16 5-4 5 4" />
+      <path d="M4 7h7" />
+      <path d="M4 12h7" />
+      <path d="M4 17h7" />
+      <path d="m14 14 3-3 3 3" />
     </Icon>
   );
 }
@@ -163,8 +165,10 @@ export function CollapseAllIcon(props: IconProps) {
 export function ExpandAllIcon(props: IconProps) {
   return (
     <Icon {...props}>
-      <path d="m7 10 5-4 5 4" />
-      <path d="m7 14 5 4 5-4" />
+      <path d="M4 7h7" />
+      <path d="M4 12h7" />
+      <path d="M4 17h7" />
+      <path d="m14 10 3 3 3-3" />
     </Icon>
   );
 }

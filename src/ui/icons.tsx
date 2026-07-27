@@ -130,14 +130,26 @@ export function ChevronDownIcon(props: IconProps) {
   );
 }
 
-/** Replier toutes les cartes — deux panneaux qui se rapprochent. */
+/** Collapse every card — the list and the closing chevron share one mark. */
 export function CollapseAllIcon(props: IconProps) {
   return (
     <Icon {...props}>
-      <path d="M5 4.5h14" />
-      <path d="m8 7 4 3 4-3" />
-      <path d="m8 17 4-3 4 3" />
-      <path d="M5 19.5h14" />
+      <path d="M4 7h7" />
+      <path d="M4 12h7" />
+      <path d="M4 17h7" />
+      <path d="m14 14 3-3 3 3" />
+    </Icon>
+  );
+}
+
+/** Expand every card — the same list with its opening chevron. */
+export function ExpandAllIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M4 7h7" />
+      <path d="M4 12h7" />
+      <path d="M4 17h7" />
+      <path d="m14 10 3 3 3-3" />
     </Icon>
   );
 }

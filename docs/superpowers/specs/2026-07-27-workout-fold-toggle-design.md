@@ -38,10 +38,11 @@ et de chevrons, se lit en outre comme un sablier.
 
 Le contrôle conserve sa cible carrée de 48 × 48 px et n’affiche aucun texte.
 
-- **Tout replier :** deux chevrons simples pointent vers le centre.
-- **Tout déplier :** les mêmes chevrons pointent vers l’extérieur.
+- **Tout replier :** une liste miniature de cartes accompagnée d’un chevron haut.
+- **Tout déplier :** la même liste accompagnée d’un chevron bas.
 
-Les traits périphériques qui donnaient une silhouette de sablier disparaissent.
+Le pictogramme reprend ainsi le vocabulaire liste + chevron déjà appris sur les cartes,
+sans silhouette de sablier ni croix involontaire.
 Le `aria-label` correspond toujours à l’action disponible et change en même temps
 que le pictogramme.
 
