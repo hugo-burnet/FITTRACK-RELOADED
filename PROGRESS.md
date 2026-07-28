@@ -2,6 +2,36 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-28 (**phase 0 — baseline de
+refactorisation terminée**). Le tag `refactor-phase-0-start-2026-07-28` pointe
+sur `fcfb03ab4cfea6e23c7c74a868feb46b3e219bb5` ; la référence durable est
+`docs/baselines/2026-07-28-refactor-baseline.md`. Aucune fonctionnalité
+applicative ni aucun schéma Dexie n'a changé.
+
+**Historique de charge mesuré, pas produit.** Le dataset déterministe contient
+2 000 séances, 16 000 lignes et 64 000 séries. Le benchmark opt-in a mesuré
+`listHistoryPage({}, 0, 20)`, `listCompletedWorkoutTimestamps()` et une
+projection annuelle bornée de `listExportSources`; la projection historique
+reste le P0 à corriger séparément avant toute refactorisation structurelle.
+
+**Scan d'architecture fait, sans décision d'interface.**
+`improve-codebase-architecture`, `codebase-design` et `refactoring` ont été
+utilisés. `reduce-system-complexity` n'est pas installé, car aucune source
+vérifiée n'a été trouvée. Deux candidats sont consignés dans le rapport
+temporaire ; la projection historique est la recommandation principale après
+le correctif P0 séparé.
+
+Les anomalies d'hôte sont consignées dans la baseline mais non corrigées :
+`npm.ps1` est bloqué et le membre
+`CompressionLevel.SmallestSize` manque sous Windows PowerShell 5.1. Les mesures
+gzip utilisent une variante compatible. **57 fichiers, 766 tests** avant la
+passation de cette tâche.
+
+**Checkpoint manuel : aucune donnée du téléphone n'a été modifiée. Ouvrir
+FitTrack, vérifier que l'accueil, l'historique et une séance existante
+s'affichent comme avant. Aucun parcours fonctionnel neuf n'est attendu :
+la phase 0 est une référence de mesure.**
+
 **Dernière mise à jour :** 2026-07-28 (**jalon G4 — volume d’entraînement
 hebdomadaire**). Le quatrième et dernier graphique de la première couche
 d’analyse existe : `Historique → Analyses → Volume d’entraînement`. Spec :
