@@ -2,6 +2,73 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-28 (**jalon G4 — volume d’entraînement
+hebdomadaire**). Le quatrième et dernier graphique de la première couche
+d’analyse existe : `Historique → Analyses → Volume d’entraînement`. Spec :
+`docs/superpowers/specs/2026-07-28-analytics-weekly-volume-design.md`.
+
+**Un écran, deux cadrans, les semaines ne bougent pas.** `Tonnage` additionne
+les charges externes réellement soulevées ; `Durée` additionne
+`Workout.durationSeconds`, donc la séance complète et jamais les seules séries
+chronométrées. Changer de métrique garde la semaine sélectionnée. Changer de
+période revient à la semaine la plus récente.
+
+**Le tonnage ne possède aucune formule neuve.** Chaque séance passe par
+`sessionTotals()` avec le `weightRole` du type de mesure résolu par l’instantané
+08A/08B : les échauffements, l’assistance et le lest ne se glissent donc pas
+dans G4 par une seconde définition. Le poids du corps n’est pas inventé. Douze
+tests neufs fixent en plus les deux séances d’une même semaine, les trous
+internes, l’absence de semaines avant le début de l’historique, `Tout`, le
+dimanche soir dans son offset, le changement d’heure, la moyenne avec zéro et
+la durée de séance opposée exprès à celle d’une série.
+
+**Quatrième graphique, quatrième passage par la même porte.**
+`listExportSources({ kind: 'period', from, to })`, `periodBounds()` et
+`listCompletedWorkoutTimestamps()` : aucune requête, aucun repository et aucune
+définition de « séance qui compte » ajoutés. `WeeklyVolumeScreen` est différé ;
+le build le sort à **6,40 kB** (**2,39 kB gzip**). Aucune dépendance, aucun jeton
+de couleur et aucun octet de bibliothèque de graphiques.
+
+**Le tonnage et la durée par muscle sont écartés, pas oubliés.** G3 donne déjà
+la répartition des séries. Des kilos de squat et des kilos de mollets ne sont
+pas commensurables ; une durée de séance ne se répartit pas honnêtement entre
+ses exercices. G4 reste donc la seule lecture que ses deux unités partagent
+réellement : leur évolution dans le temps.
+
+**Zéro accent.** Une grosse semaine n’est ni un objectif atteint ni
+automatiquement une victoire. Toutes les barres restent en `--text-2`.
+La première version pilotée avait pourtant deux défauts que le typecheck ne
+pouvait pas voir : l’axe écrivait **« 20,9 K »**, parce que `.label-xs`
+capitalisait le suffixe compact `k`, et le moignon zéro, l’axe et la fente de
+sélection ne mesuraient que **1,10:1 à 1,29:1**. L’axe est désormais en chiffres
+tabulaires sans transformation de casse ; les repères informatifs utilisent
+`--text-2` et la sélection est un contour qui franchit la base. Mesuré après
+correction : **7,18:1 en sombre, 7,03:1 en clair**, sans introduire une couleur
+qui porterait un faux sens.
+
+**55 fichiers, 760 tests** (+2 fichiers, +16) ; `lint`, `typecheck`, `test:run`
+et `build` sont verts.
+
+**Vérifié en pilotant, en 375 × 812 px**, sur les trois semaines présentes dans
+la base locale : 8 842,5 kg, 20 868,4 kg puis une semaine courante à zéro ; la
+liste et le cadran concordent, la semaine zéro est visible et sélectionnable,
+la bascule vers la durée garde le 20 juillet sélectionné, et le retour au
+tonnage rend bien 20 868,4 kg. Le changement 12 → 4 semaines revient à la
+semaine la plus récente. SVG `role="img"` avec résumé complet, hors ordre de
+tabulation ; une seule fente de sélection ; plus petite cible **48 px** ; aucun
+débordement (`scrollWidth === innerWidth === 375`) ; aucune erreur console.
+L’entrée « Volume d’entraînement » existe une seule fois entre le rythme et les
+muscles sur l’écran Analyses.
+
+**Checkpoint à vérifier sur le téléphone :** ouvre **Historique → Analyses →
+Volume d’entraînement**. Sur « Tonnage », vérifie à la main une semaine avec une
+séance de charge et une séance au poids du corps : seuls les kilos externes
+réellement soulevés doivent compter. Passe à « Durée » : la semaine sélectionnée
+ne doit pas changer et le total doit être la somme des durées complètes de tes
+séances. Tape une semaine sans entraînement au milieu de ton historique : elle
+doit rester visible et lire zéro. Change enfin de période et vérifie que les
+semaines antérieures à ta première séance ne sont jamais inventées.
+
 **Deux constats consignés, non codés** (2026-07-28, fin de session) :
 
 **1. Une série n'est pas une unité de coût constante d'un muscle à l'autre.** Relevé par
@@ -23,7 +90,7 @@ personnelle). Une vraie solution demande de savoir *quand* le mapping a été en
 champ de plus. Risque faible et décroissant : l'usage est passé à la saisie dans l'app, et une
 réimportation des mêmes séances est dédupliquée.
 
-**Dernière mise à jour :** 2026-07-28 (**le semis réconcilie la classification — sans quoi le
+**Historique précédent :** 2026-07-28 (**le semis réconcilie la classification — sans quoi le
 correctif catalogue n'atteignait personne**).
 
 **Défaut livré par moi, trouvé par une capture d'écran du téléphone.** Après le correctif catalogue,

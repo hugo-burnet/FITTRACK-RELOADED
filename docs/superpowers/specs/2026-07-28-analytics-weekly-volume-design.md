@@ -149,15 +149,16 @@ La charte du Lot 1 est figée ; G4 ne crée aucun nouveau jeton.
 
 ### Couleur
 
-- surfaces : `--surface-1`, `--surface-2` ;
-- tracé : `--text-2` ;
-- axe et zéro : `--border` ;
+- surfaces : `--surface-1` ;
+- tracé, axe, zéro et contour de sélection : `--text-2` ;
 - texte principal : `--text-1` ;
 - aucun accent dans le graphique.
 
 Une semaine très chargée n’est ni un record à célébrer ni un objectif atteint.
-Le maximum reste gris. La sélection est la fente `--surface-2` déjà apprise sur
-G2 et ne change jamais la couleur de la barre.
+Le maximum reste gris. La sélection est le contour de la fente verticale et ne
+change jamais la couleur de la barre. Le pilotage a écarté l’aplat
+`--surface-2` prévu au cadrage : mesuré à 1,10:1 en thème sombre, il était
+invisible et non conforme pour un repère porteur d’information.
 
 ### Typographie
 
@@ -203,7 +204,7 @@ G4 réutilise `ChartSurface` et `barLayout()` :
 
 - une barre part toujours du zéro ;
 - le plafond est le maximum observé, avec un minimum technique de 1 ;
-- une semaine à zéro reçoit le moignon de 4 px dans `--border` de G2 ;
+- une semaine à zéro reçoit le moignon de 4 px dans `--text-2` ;
 - la ligne de base est le seul filet ;
 - aucune grille ;
 - l’appui choisit la semaine la plus proche en x ;
@@ -286,8 +287,8 @@ est un bouton de 48 px minimum qui sélectionne la semaine correspondante. Elle
 porte chaque zéro ; aucune information n’est accessible uniquement par la forme
 ou la couleur.
 
-Le contraste non textuel est mesuré pour les barres, moignons de zéro, marqueurs
-fente de sélection et axe contre la carte.
+Le contraste non textuel est mesuré pour les barres, moignons de zéro, contour
+de sélection et axe contre la carte.
 
 Le graphique fonctionne en thème sombre et clair, à 375 px de large, sans
 débordement horizontal.
