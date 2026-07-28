@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { plotBounds, plotPoints } from './plot';
+import { barLayout, plotBounds, plotPoints } from './plot';
 
 const box = { width: 300, height: 100 };
 
@@ -51,5 +51,66 @@ describe('plotPoints', () => {
       expect(point.y).toBeGreaterThanOrEqual(0);
       expect(point.y).toBeLessThanOrEqual(box.height);
     }
+  });
+});
+
+describe('barLayout', () => {
+  it('mesure une barre depuis zéro, pas depuis le minimum des données', () => {
+    // La longueur d'une barre EST la quantité : 2 et 4 doivent faire du simple
+    // au double, pas « la petite et la grande ».
+    const bars = barLayout([2, 4], box, 4);
+    expect(bars[1]!.height).toBe(box.height);
+    expect(bars[0]!.height).toBe(box.height / 2);
+  });
+
+  it('honore un plafond supérieur au maximum réel, pour que le manque se voie', () => {
+    // Objectif 5, semaines à 2 : les barres montent à deux cinquièmes. C'est ce
+    // qui remplace une ligne de repère en pointillés.
+    const bars = barLayout([2, 2], box, 5);
+    expect(bars[0]!.height).toBeCloseTo(box.height * 0.4);
+  });
+
+  it('conserve la colonne d’une valeur nulle, avec une hauteur nulle', () => {
+    const bars = barLayout([3, 0, 3], box, 3);
+    expect(bars).toHaveLength(3);
+    expect(bars[1]!.height).toBe(0);
+    expect(bars[1]!.width).toBe(bars[0]!.width);
+  });
+
+  it('ne divise pas par zéro quand tout est à zéro', () => {
+    for (const bar of barLayout([0, 0, 0], box, 1)) {
+      expect(bar.height).toBe(0);
+      expect(Number.isFinite(bar.y)).toBe(true);
+    }
+  });
+
+  it('ne divise pas par zéro non plus sur un plafond nul', () => {
+    for (const bar of barLayout([0, 0], box, 0)) {
+      expect(Number.isFinite(bar.height)).toBe(true);
+      expect(Number.isFinite(bar.y)).toBe(true);
+    }
+  });
+
+  it('donne à une barre unique la largeur d’une colonne, pas toute la boîte', () => {
+    const bar = barLayout([3], box, 3)[0]!;
+    expect(bar.width).toBeLessThan(box.width);
+    expect(bar.width).toBeGreaterThan(0);
+  });
+
+  it('ne rend rien sans valeur', () => {
+    expect(barLayout([], box, 1)).toEqual([]);
+  });
+
+  it('range les colonnes dans la boîte, sans chevauchement', () => {
+    const bars = barLayout([1, 2, 3, 4, 5], box, 5);
+    bars.forEach((bar, index) => {
+      expect(bar.x).toBeGreaterThanOrEqual(0);
+      expect(bar.x + bar.width).toBeLessThanOrEqual(box.width + 0.001);
+      expect(bar.y).toBeGreaterThanOrEqual(0);
+      expect(bar.y + bar.height).toBeCloseTo(box.height);
+      expect(bar.centerX).toBeCloseTo(bar.x + bar.width / 2);
+      const previous = bars[index - 1];
+      if (previous !== undefined) expect(bar.x).toBeGreaterThanOrEqual(previous.x + previous.width);
+    });
   });
 });

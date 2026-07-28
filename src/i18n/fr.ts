@@ -39,6 +39,7 @@ const fr = {
 
   units: {
     workouts: 'séances',
+    workout: 'séance',
     routines: 'routines',
     exercises: 'exercices',
     sets: 'séries',
@@ -867,6 +868,10 @@ const fr = {
     pickExercise: 'Choisis un exercice pour voir sa progression.',
     empty: 'Aucun exercice pratiqué pour l’instant. La première séance ouvrira cet écran.',
 
+    /** Les deux sections de l'écran d'accueil des analyses. */
+    overviewSection: 'Vue d’ensemble',
+    exercisesSection: 'Exercices',
+
     metricFilter: 'Métrique',
     metricSheetTitle: 'Ce que la courbe compte',
     periodFilter: 'Période',
@@ -890,6 +895,51 @@ const fr = {
     singleSession: 'Une seule séance sur cette période : la courbe commencera à la suivante.',
     noMetric:
       'Cet exercice n’a pas de type de mesure connu, donc rien de comparable d’une séance à l’autre.',
+  },
+
+  /**
+   * Les séances par semaine (G2). Une semaine sans séance **se dit** : c'est
+   * l'information que cet écran existe pour donner, pas un trou dans les
+   * données.
+   */
+  weekly: {
+    title: 'Séances par semaine',
+    /** L'entrée depuis l'écran des analyses. */
+    link: 'Séances par semaine',
+    subtitle: 'Ton rythme, semaine par semaine',
+
+    weekOf: 'Semaine du {date}',
+    /** Le compte d'une semaine, y compris « 0 séance ». */
+    sessions: '{count} séances',
+    sessionsOne: '1 séance',
+    sessionsNone: '0 séance',
+
+    /** Sous la lecture : l'objectif de CETTE semaine-là, et s'il est tenu. */
+    goalReached: 'Objectif {goal} · atteint',
+    goalMissed: 'Objectif {goal} · il en manquait {missing}',
+    goalMissedOne: 'Objectif {goal} · il en manquait une',
+
+    /** Ce que la fenêtre dit vraiment, sous le graphique. */
+    average: '{average} séances par semaine en moyenne.',
+    tally: '{reached} semaines sur {judged} à l’objectif.',
+    tallyOne: '{reached} semaine sur {judged} à l’objectif.',
+
+    /** Le zéro et le plafond, gravés — la base n'est pas arbitraire, elle est zéro. */
+    scaleZero: '0',
+
+    /** Aucun objectif jamais défini : on n'en invente pas un pour féliciter. */
+    noGoal:
+      'Aucun objectif hebdomadaire défini, donc aucune semaine n’est validée. Il se règle sur la carte Régularité de l’Historique.',
+    noGoalAction: 'Aller à l’Historique',
+
+    weeksSection: 'Semaines',
+    emptyPeriod: 'Aucune séance sur cette période.',
+    singleWeek: 'Une seule semaine sur cette période : un rythme demande plusieurs semaines.',
+
+    /** Ce que le graphique dit à un lecteur d'écran, en une phrase. */
+    chartSummary:
+      'Séances par semaine sur {count} semaines, du {first} au {last}. De {min} à {max} séances, {average} en moyenne.',
+    chartSummaryOne: 'Séances de la semaine du {first} : {current}.',
   },
 
   /** Le nom de chaque métrique. Il porte l'unité quand elle ne va pas de soi. */

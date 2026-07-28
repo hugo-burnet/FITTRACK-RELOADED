@@ -1,43 +1,64 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
-import { listHistoryExerciseOptions } from '@/data/repositories/history';
+import {
+  listCompletedWorkoutTimestamps,
+  listHistoryExerciseOptions,
+} from '@/data/repositories/history';
 import { t } from '@/i18n/fr';
-import { Card, ListRow } from '@/ui';
+import { Card, ListRow, SectionTitle } from '@/ui';
 
 /**
- * Which exercise to look at — nothing more, in this version.
+ * What to look at — the whole of this screen.
  *
- * The list is the exercises **actually performed**, the same source the history
- * filter reads: an exercise never done has no progression to show, so there is
- * no empty chart to design a state for.
+ * Two sections since milestone G2: the readings that span the whole history,
+ * then the exercises. The exercise list is the ones **actually performed**, the
+ * same source the history filter reads, so there is no empty chart to design a
+ * state for. The weekly row obeys the same rule: with no completed session ever,
+ * it is not offered rather than opening on twelve bars at zero.
  */
 export function AnalyticsScreen() {
   const navigate = useNavigate();
   const options = useLiveQuery(listHistoryExerciseOptions, []);
+  const completed = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
+
+  const hasHistory = completed !== undefined && completed.length > 0;
+  const hasExercises = options !== undefined && options.length > 0;
 
   return (
     <Screen title={t('analytics.title')} onBack={() => void navigate('/history')}>
-      <div className="space-y-4">
-        <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">
-          {t('analytics.pickExercise')}
-        </p>
-
-        {options !== undefined && options.length === 0 ? (
-          <Card padded>
-            <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('analytics.empty')}</p>
-          </Card>
-        ) : (
-          <Card>
-            {(options ?? []).map((option) => (
+      <div className="space-y-7">
+        {hasHistory && (
+          <section>
+            <SectionTitle>{t('analytics.overviewSection')}</SectionTitle>
+            <Card>
               <ListRow
-                key={option.id}
-                title={option.name}
-                onClick={() => void navigate(`/analytics/exercises/${option.id}`)}
+                title={t('weekly.link')}
+                subtitle={t('weekly.subtitle')}
+                onClick={() => void navigate('/analytics/weekly')}
               />
-            ))}
-          </Card>
+            </Card>
+          </section>
         )}
+
+        <section>
+          <SectionTitle>{t('analytics.exercisesSection')}</SectionTitle>
+          {options !== undefined && !hasExercises ? (
+            <Card padded>
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('analytics.empty')}</p>
+            </Card>
+          ) : (
+            <Card>
+              {(options ?? []).map((option) => (
+                <ListRow
+                  key={option.id}
+                  title={option.name}
+                  onClick={() => void navigate(`/analytics/exercises/${option.id}`)}
+                />
+              ))}
+            </Card>
+          )}
+        </section>
       </div>
     </Screen>
   );

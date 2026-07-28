@@ -23,6 +23,12 @@ const ExerciseAnalyticsScreen = lazy(() =>
   })),
 );
 
+const WeeklySessionsScreen = lazy(() =>
+  import('./WeeklySessionsScreen').then((module) => ({
+    default: module.WeeklySessionsScreen,
+  })),
+);
+
 /**
  * An empty frame, not a spinner: the chunk arrives from the cache in a frame or
  * two, and a spinner shown for 30 ms is a flash of anxiety, not information.
@@ -39,6 +45,14 @@ export function ExerciseAnalyticsRoute() {
   return (
     <Suspense fallback={<span />}>
       <ExerciseAnalyticsScreen />
+    </Suspense>
+  );
+}
+
+export function WeeklySessionsRoute() {
+  return (
+    <Suspense fallback={<span />}>
+      <WeeklySessionsScreen />
     </Suspense>
   );
 }

@@ -2,7 +2,114 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**jalons G0 + G1 — la couche d'analyse et la première
+**Dernière mise à jour :** 2026-07-28 (**jalon G2 — séances par semaine**). Le rythme
+d'entraînement a son histogramme : `Historique → Analyses → Séances par semaine`. Spec :
+`docs/superpowers/specs/2026-07-28-analytics-weekly-sessions-design.md`.
+
+**Aucune requête neuve, et l'alternative légère a été refusée pour une raison de fond.**
+`listCompletedWorkoutTimestamps()` (Lot 07) rend exactement ce qu'un compte de séances demande —
+sauf qu'elle ne rend que des `number`. Or une séance porte son propre
+`startedTimezoneOffsetMinutes` (jalon 08A), et sans lui il est impossible de dire dans quelle
+semaine civile elle tombe. `listExportSources({ kind: 'period', from, to })` rend le `Workout`
+entier, donc l'offset vient avec. `'all'` passe par `{ kind: 'all-history' }`, qui existait déjà :
+inventer `from: 0` aurait marché **et** aurait été l'app décidant en silence de sa date de
+naissance.
+
+**Contradiction connue, consignée plutôt que glissée :** la carte Régularité de l'Historique
+groupe encore par l'offset du téléphone d'aujourd'hui. Sur une seule zone elle donne le même
+résultat que cet écran ; après un voyage, non. Hors périmètre de G2 — la corriger veut dire changer
+la signature d'une lecture du Lot 07 et rejouer ses 15 tests.
+
+**Le moteur de régularité est réutilisé, et rien n'a été déplacé.** `startOfLocalWeek`,
+`addLocalWeeks` et `resolveWeeklyGoal` sont importés de `lib/history.ts`, comme `periods.ts` le
+faisait déjà. Déplacer aurait coûté un renommage à travers quatre fichiers du Lot 07 pour zéro
+comportement gagné. `resolveWeeklyGoal` est le point qui compte : **l'objectif change dans le
+temps**, et une semaine de juin doit être jugée sur l'objectif de juin. Vérifié en pilotant, et
+c'est visible dans le dessin : avec un objectif passé à 4 il y a six semaines, la semaine du
+1er juin à **3 séances est verte** parce que l'objectif d'alors était 2. Sous l'objectif
+d'aujourd'hui le décompte donnerait 6 semaines validées, pas 8.
+
+**Le fuseau :** `weekStartOf(startedAt, offset)` en trois pas — le jour civil de la séance
+(`localDateKey`), ce jour reconstruit **à midi** dans le calendrier du lecteur, puis
+`startOfLocalWeek`. Midi et non minuit : dans certains fuseaux minuit n'existe pas le jour d'un
+passage à l'heure d'été et `new Date(y, m, d)` glisse d'un jour. La reconstruction dans le
+calendrier du lecteur est aussi ce qui fait tomber le résultat **exactement** sur l'un des seaux
+énumérés ; sans elle, une séance et son seau vivraient dans deux référentiels et ne se
+rencontreraient jamais. Offset absent (séances d'avant la migration v2) → offset du lecteur, donc
+le comportement du Lot 07 à l'identique.
+
+**Zéro est une mesure — c'est la règle de G1 retournée, et c'est le point de conception du
+jalon.** G1 : « une séance sans valeur pour la métrique ne produit aucun point, jamais un zéro »,
+parce qu'un zéro inventé fait plonger la courbe. Ici, **une semaine sans séance n'est pas une
+donnée manquante : c'est une semaine où on ne s'est pas entraîné**, et c'est l'information que
+l'écran existe pour donner. Les deux règles disent la même chose — on ne trace que ce qu'on sait.
+D'où la conséquence structurelle : **la liste des barres vient de la période, pas des séances.**
+C'est aussi ce qui rend la moyenne honnête, « 3 séances par semaine » calculé en sautant les
+semaines vides ne voulant rien dire.
+
+**Une barre n'est pas une ligne — ce qui a été factorisé, et ce qui ne l'a pas été.** G1 interdisait
+d'abstraire avant deux cas concrets ; il y en a deux, et la réponse est que **le dessin ne se
+factorise pas et l'interaction se factorise entièrement**.
+
+- *Pas partagé — l'échelle.* `plotBounds` borne par les données et non par zéro, et G1 a payé ce
+  choix en gravant le min et le max. Pour un histogramme ce serait un mensonge : **la longueur
+  d'une barre EST la quantité**, 2 et 4 doivent faire du simple au double. D'où `barLayout()` à
+  côté de `plotPoints()`, et pas un drapeau : une ligne et une barre ne sont pas d'accord sur ce
+  que veut dire le bas de la boîte. Les deux étiquettes gravées ne sont donc plus le min et le max
+  mais **le plafond et le zéro**.
+- *Pas partagé — la marque et la sélection.* Un anneau autour d'une barre de hauteur **zéro**
+  n'entoure rien, or la semaine à zéro est précisément celle qu'on veut taper. La sélection est un
+  repère **sous le filet de base**. Vérifié en pilotant : taper la colonne du 8 juin (0 séance)
+  sélectionne bien cette semaine et affiche « 0 séance · Objectif 2 · il en manquait 2 ».
+- *Partagé, et c'est tout — la surface.* `ChartSurface` : le `<svg>`, son `viewBox`, `role="img"`
+  + résumé, l'absence d'ordre de tabulation, `touch-none`, la capture du pointeur et « la marque la
+  plus proche en x ». Il reçoit **les abscisses**, pas les données : il ne sait ni ce qu'est une
+  séance ni ce qu'est une semaine. `ProgressChart` est réécrit par-dessus — non-régression vérifiée
+  en pilotant : même `viewBox -12 -12 324 144`, même résumé lecteur d'écran, un seul point accent,
+  et le geste sélectionne toujours (appui au tiers → 82,5 kg au 25 mai).
+- *Pas fait :* aucun `<Chart type="line" | "bar">`, aucune couche « série ». Deux cas ne font pas
+  une bibliothèque.
+
+**Une seule chose est colorée : la semaine qui atteint son objectif.** La charte réserve l'accent
+aux actions primaires, **aux séries validées** et aux records. Une semaine tenue est une semaine
+validée au sens exact où une série cochée l'est : un engagement pris puis tenu. Même vert, même
+fait, autre échelle. Et **l'objectif fixe le plafond de l'échelle** plutôt que d'ajouter une ligne
+de repère : objectif 5 contre des semaines à 2 laisse les barres à deux cinquièmes, le manque se
+voit sans qu'on l'écrive — et un repère aurait été un escalier, l'objectif changeant dans le temps.
+Cas traité : **aucun objectif jamais défini** → aucune barre verte, et une phrase renvoyant vers
+l'Historique. Inventer un objectif serait féliciter quelqu'un pour une cible qu'il n'a pas choisie ;
+`goalWeeksReached` rend d'ailleurs `judged: 0` et non « 0 sur 12 ».
+
+**Le warning Vite historique a disparu, et c'est un effet de bord à ne pas prendre pour une
+victoire.** Avant ce jalon : `index` à **653,67 kB** (gzip 188,58) avec l'avertissement. Après :
+`index` **398,10 kB** (gzip 107,06) + un chunk `Screen` partagé de **258,21 kB** (gzip 83,95), sans
+avertissement. La troisième route différée a donné à Rollup une frontière pour sortir de l'entrée
+du code déjà commun. **Les octets n'ont pas disparu, ils se sont scindés** ; c'est le premier
+chargement qui est découpé, pas le total qui baisse. `ChartSurface` sort en chunk partagé de
+1,48 kB, `WeeklySessionsScreen` à 6,41 kB (gzip 2,35).
+
+**50 fichiers de tests, 705 tests** (+1 fichier, +26) ; `lint`, `typecheck`, `test:run` et `build`
+sont verts, et le build n'a plus **aucun** avertissement.
+
+**Vérifié en pilotant, en 375 × 812 px**, sur 67 séances injectées couvrant 26 semaines avec deux
+trous, un changement d'objectif, deux séances le même jour et un dimanche à 23 h 30 porté à UTC+2 :
+12 seaux dont les deux semaines vides ; les deux séances du même jour comptent pour 2 ; **la séance
+du dimanche 23 h 30 reste dans SA semaine** (5 le 29 juin, 0 le 6 juillet — elle aurait glissé sans
+son offset) ; moyenne 2,9 ; 8 semaines sur 12 à l'objectif ; échelle gravée 5 / 0 ; aucun
+débordement horizontal (`scrollWidth === innerWidth === 375`) ; plus petite cible 48 px ; SVG hors
+ordre de tabulation ; aucune erreur console.
+
+**Checkpoint à vérifier sur le téléphone :** ouvrir **Historique → l'icône de courbe → Séances par
+semaine**. Le nombre de barres doit être le nombre de semaines de la période, **trous compris** —
+une semaine où tu n'as rien fait doit apparaître comme une colonne vide, pas disparaître. Tape une
+de ces colonnes vides : la lecture doit dire « 0 séance ». Vérifie ensuite que les semaines vertes
+sont bien celles où tu as tenu ton rythme, et que la phrase du bas (« X semaines sur Y à
+l'objectif ») correspond à ce que tu comptes à la main. Si tu changes ton objectif hebdo dans
+l'Historique, **les semaines passées ne doivent pas changer de couleur** — seules les semaines à
+partir de ce lundi sont jugées sur la nouvelle cible. Enfin, change de période : 4, 12, 26, 52
+semaines et Tout.
+
+**Historique précédent :** 2026-07-28 (**jalons G0 + G1 — la couche d'analyse et la première
 courbe**). Un exercice a maintenant sa progression : `Historique → Analyses`, ou « Voir la
 progression » depuis sa fiche. Spec :
 `docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md`.

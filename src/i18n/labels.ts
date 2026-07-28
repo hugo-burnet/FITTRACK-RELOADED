@@ -61,6 +61,19 @@ export const metricHint = (key: MetricKey): string => t(`metricHint.${key}`);
 export const periodLabel = (key: PeriodKey): string => t(`period.${key}`);
 
 /**
+ * « 4 séances », « 1 séance », « 0 séance ».
+ *
+ * Zero has its own wording rather than falling through to the plural, because a
+ * week with no session is a reading this screen prints on purpose — not an
+ * absence to be phrased around.
+ */
+export function weeklySessionsReading(count: number): string {
+  if (count === 0) return t('weekly.sessionsNone');
+  if (count === 1) return t('weekly.sessionsOne');
+  return t('weekly.sessions', { count });
+}
+
+/**
  * A metric's value as it is read: « 102,5 kg », « 1:30 min », « 5 séries ».
  *
  * Durations go through `formatDuration` rather than printing raw seconds, so a

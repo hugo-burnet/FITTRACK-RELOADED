@@ -1,12 +1,12 @@
-import { useRef } from 'react';
 import type { MetricPoint } from '@/lib/analytics/metrics';
 import { plotPoints } from '@/lib/analytics/plot';
+import { ChartSurface } from './ChartSurface';
 
 /**
- * The curve. Hand-drawn SVG, no charting library — cf. the spec, §2.3: the one
- * thing a library actually computes lives in `lib/analytics/plot.ts`, where it
- * is tested, and what is left is thirty lines of markup that already speak the
- * app's tokens.
+ * The curve. Hand-drawn SVG, no charting library — cf. the spec of G1, §2.3: the
+ * one thing a library actually computes lives in `lib/analytics/plot.ts`, where
+ * it is tested, and what is left is thirty lines of markup that already speak
+ * the app's tokens.
  *
  * **One thing is coloured: the point holding the record.** The charte reserves
  * the accent for primary actions, validated sets and records — "nothing else".
@@ -18,6 +18,10 @@ import { plotPoints } from '@/lib/analytics/plot';
  * are engraved at both ends of the scale by the card around this component, and
  * the two dates sit under the plot. On 375px a grid is noise that makes the
  * curve harder to read, not easier.
+ *
+ * The `<svg>`, the accessibility contract and the tap-the-nearest-mark gesture
+ * moved to `ChartSurface` at milestone G2, when the histogram turned out to need
+ * exactly those and nothing more. Not a pixel of this rendering changed.
  */
 
 const BOX = { width: 300, height: 120 };
@@ -42,59 +46,23 @@ interface Props {
 }
 
 export function ProgressChart({ points, bestIndex, selectedIndex, onSelect, summary }: Props) {
-  const svg = useRef<SVGSVGElement>(null);
   /** Each point paired with where it lands, so nothing indexes across two lists. */
   const plotted = plotPoints(
     points.map((point) => point.value),
     BOX,
   ).map((position, index) => ({ position, point: points[index]! }));
 
-  /**
-   * The nearest point in x, not the one under the finger.
-   *
-   * A 8px dot is a target nobody hits reliably out of breath, and a per-point
-   * hit area would leave dead zones between them. Here the whole plot is live:
-   * you have to be *closest*, never accurate.
-   */
-  const selectNearest = (clientX: number) => {
-    const box = svg.current?.getBoundingClientRect();
-    if (box === undefined || plotted.length === 0) return;
-
-    const ratio = (clientX - box.left) / box.width;
-    const x = ratio * (BOX.width + PAD * 2) - PAD;
-
-    let nearest = 0;
-    let distance = Number.POSITIVE_INFINITY;
-    plotted.forEach(({ position }, index) => {
-      const candidate = Math.abs(position.x - x);
-      if (candidate < distance) {
-        distance = candidate;
-        nearest = index;
-      }
-    });
-    onSelect(nearest);
-  };
-
   const path = plotted
     .map(({ position }, index) => `${index === 0 ? 'M' : 'L'} ${position.x} ${position.y}`)
     .join(' ');
 
   return (
-    <svg
-      ref={svg}
-      role="img"
-      aria-label={summary}
-      viewBox={`${-PAD} ${-PAD} ${BOX.width + PAD * 2} ${BOX.height + PAD * 2}`}
-      className="w-full touch-none"
-      style={{ height: BOX.height + PAD * 2 }}
-      onPointerDown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId);
-        selectNearest(event.clientX);
-      }}
-      onPointerMove={(event) => {
-        // Only while dragging: scrubbing the curve moves the reading above it.
-        if (event.buttons !== 0) selectNearest(event.clientX);
-      }}
+    <ChartSurface
+      box={BOX}
+      pad={PAD}
+      label={summary}
+      xs={plotted.map(({ position }) => position.x)}
+      onSelect={onSelect}
     >
       {/* 2px, round joins — a hairline disappears at arm's length. Drawn only
           from two points on: a line to nowhere is not a trend. */}
@@ -140,6 +108,6 @@ export function ProgressChart({ points, bestIndex, selectedIndex, onSelect, summ
           </g>
         );
       })}
-    </svg>
+    </ChartSurface>
   );
 }

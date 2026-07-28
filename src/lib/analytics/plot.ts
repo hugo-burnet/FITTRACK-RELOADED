@@ -22,6 +22,18 @@ export interface PlotRange {
   max: number;
 }
 
+/** One column of a histogram: where it sits, and how tall it stands. */
+export interface BarSlot {
+  x: number;
+  centerX: number;
+  width: number;
+  y: number;
+  height: number;
+}
+
+/** How much of a column the bar itself fills; the rest is the gap between two. */
+const BAR_FILL = 0.62;
+
 /**
  * The vertical range, **bounded by the data and not by zero**.
  *
@@ -65,4 +77,43 @@ export function plotPoints(values: readonly number[], box: PlotBox): PlotPoint[]
     x: values.length === 1 ? box.width / 2 : step * index,
     y: box.height - ((value - min) / span) * box.height,
   }));
+}
+
+/**
+ * Columns of equal width, measured **from zero** — the second geometry of this
+ * module, and deliberately not a variant of the first.
+ *
+ * `plotBounds` bounds the scale by the data rather than by zero, and milestone
+ * G1 paid for that freedom by engraving the minimum and the maximum. For a
+ * histogram the same choice would be a lie: **the length of a bar *is* the
+ * quantity**, so two sessions and four sessions have to read as double, not as
+ * "the short one and the tall one". A bar that does not start at zero
+ * misrepresents its neighbour. Hence a separate function rather than a flag: a
+ * line and a bar disagree about what the bottom of the box means.
+ *
+ * `ceiling` comes from the caller because it is not only the data's business:
+ * the weekly chart passes the largest of the counts **and the largest goal in
+ * the window**, so an unreached target squashes the bars downward and the
+ * shortfall is visible without a dashed reference line being drawn.
+ */
+export function barLayout(
+  values: readonly number[],
+  box: PlotBox,
+  ceiling: number,
+): BarSlot[] {
+  if (values.length === 0) return [];
+
+  // A column always exists, even for a week with no session: the gap is the
+  // information. A ceiling of zero is opened to 1 so an empty window still
+  // lays out its columns instead of dividing by nothing.
+  const slot = box.width / values.length;
+  const width = slot * BAR_FILL;
+  const top = ceiling > 0 ? ceiling : 1;
+
+  return values.map((value, index) => {
+    const height = (Math.max(0, value) / top) * box.height;
+    const x = slot * index + (slot - width) / 2;
+
+    return { x, centerX: x + width / 2, width, y: box.height - height, height };
+  });
 }

@@ -1,6 +1,10 @@
 import { createHashRouter } from 'react-router-dom';
 import { AppShell } from './app/AppShell';
-import { AnalyticsRoute, ExerciseAnalyticsRoute } from './features/analytics/routes';
+import {
+  AnalyticsRoute,
+  ExerciseAnalyticsRoute,
+  WeeklySessionsRoute,
+} from './features/analytics/routes';
 import { ExerciseDetailScreen } from './features/exercises/ExerciseDetailScreen';
 import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
@@ -44,6 +48,7 @@ export const router = createHashRouter([
       // Pas de sixième onglet (§12.1) : la barre en compte cinq depuis le Lot 1.
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
+      { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
       { path: 'analytics/exercises/:exerciseId', element: <ExerciseAnalyticsRoute /> },
       { path: 'exercises', element: <ExercisesScreen /> },
       // Static before dynamic. React Router ranks them that way on its own, but
