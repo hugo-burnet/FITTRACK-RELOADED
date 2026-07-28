@@ -80,7 +80,7 @@ export function WeeklyVolumeCard({
         </div>
 
         <div className="mt-5 flex gap-3">
-          <div className="label-xs flex shrink-0 flex-col justify-between py-1 text-right font-semibold text-[var(--text-2)]">
+          <div className="metric flex shrink-0 flex-col justify-between py-1 text-right text-xs font-semibold text-[var(--text-2)]">
             <span>{weeklyVolumeScaleReading(ceiling, metric)}</span>
             <span>{t('volume.scaleZero')}</span>
           </div>

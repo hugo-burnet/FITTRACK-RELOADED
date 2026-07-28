@@ -52,7 +52,9 @@ export function WeeklyVolumeChart({
           width={bars[selectedIndex]!.width * 1.5}
           height={BOX.height + PAD * 2}
           rx={2}
-          fill="var(--surface-2)"
+          fill="none"
+          stroke="var(--text-2)"
+          strokeWidth={1}
         />
       )}
 
@@ -75,7 +77,7 @@ export function WeeklyVolumeChart({
             width={slot.width}
             height={ZERO_STUB}
             rx={1}
-            fill="var(--border)"
+            fill="var(--text-2)"
           />
         ),
       )}
@@ -85,7 +87,7 @@ export function WeeklyVolumeChart({
         y1={BOX.height}
         x2={BOX.width}
         y2={BOX.height}
-        stroke="var(--border)"
+        stroke="var(--text-2)"
         strokeWidth={1}
       />
     </ChartSurface>
