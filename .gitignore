@@ -16,6 +16,13 @@ ios/
 # Configuration locale de l'agent : réinstallable, sans valeur pour le projet
 .claude/
 .worktrees/
+.codex/
+AGENTS.md
+
+# Skills d'agent installés localement. Ignorés pour deux raisons : ils sont
+# réinstallables comme `.claude/`, et ils embarquent du code tiers avec ses
+# propres licences — que ce dépôt PUBLIC redistribuerait s'il les versionnait.
+.agents/
 
 # Artefacts locaux de conception et d'analyse Codex
 .superpowers/
