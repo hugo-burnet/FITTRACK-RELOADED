@@ -1636,6 +1636,30 @@
     "isUnilateral": 0
   },
   {
+    "slug": "hip-hinge-back-extension",
+    "name": "Extension de hanche au banc",
+    "primaryMuscle": "glutes",
+    "secondaryMuscles": [
+      "hamstrings",
+      "lower_back"
+    ],
+    "equipment": "bodyweight",
+    "measurementType": "reps_only",
+    "isUnilateral": 0
+  },
+  {
+    "slug": "weighted-hip-hinge-back-extension",
+    "name": "Extension de hanche au banc (lestée)",
+    "primaryMuscle": "glutes",
+    "secondaryMuscles": [
+      "hamstrings",
+      "lower_back"
+    ],
+    "equipment": "plate",
+    "measurementType": "weight_reps",
+    "isUnilateral": 0
+  },
+  {
     "slug": "superman",
     "name": "Superman",
     "primaryMuscle": "lower_back",
