@@ -5,6 +5,7 @@ import {
   ExerciseAnalyticsRoute,
   MuscleBalanceRoute,
   WeeklySessionsRoute,
+  WeeklyVolumeRoute,
 } from './features/analytics/routes';
 import { ExerciseDetailScreen } from './features/exercises/ExerciseDetailScreen';
 import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
@@ -50,6 +51,7 @@ export const router = createHashRouter([
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
       { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
+      { path: 'analytics/volume', element: <WeeklyVolumeRoute /> },
       { path: 'analytics/muscles', element: <MuscleBalanceRoute /> },
       { path: 'analytics/exercises/:exerciseId', element: <ExerciseAnalyticsRoute /> },
       { path: 'exercises', element: <ExercisesScreen /> },

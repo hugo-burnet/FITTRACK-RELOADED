@@ -38,6 +38,11 @@ export function AnalyticsScreen() {
                 onClick={() => void navigate('/analytics/weekly')}
               />
               <ListRow
+                title={t('volume.link')}
+                subtitle={t('volume.subtitle')}
+                onClick={() => void navigate('/analytics/volume')}
+              />
+              <ListRow
                 title={t('muscles.link')}
                 subtitle={t('muscles.subtitle')}
                 onClick={() => void navigate('/analytics/muscles')}

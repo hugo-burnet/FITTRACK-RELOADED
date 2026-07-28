@@ -29,6 +29,12 @@ const WeeklySessionsScreen = lazy(() =>
   })),
 );
 
+const WeeklyVolumeScreen = lazy(() =>
+  import('./WeeklyVolumeScreen').then((module) => ({
+    default: module.WeeklyVolumeScreen,
+  })),
+);
+
 const MuscleBalanceScreen = lazy(() =>
   import('./MuscleBalanceScreen').then((module) => ({
     default: module.MuscleBalanceScreen,
@@ -59,6 +65,14 @@ export function WeeklySessionsRoute() {
   return (
     <Suspense fallback={<span />}>
       <WeeklySessionsScreen />
+    </Suspense>
+  );
+}
+
+export function WeeklyVolumeRoute() {
+  return (
+    <Suspense fallback={<span />}>
+      <WeeklyVolumeScreen />
     </Suspense>
   );
 }
