@@ -6,6 +6,7 @@ import type {
 import type { WorkoutDetail } from '@/data/repositories/workouts';
 import type { Exercise, MeasurementType } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { resolveRestSeconds } from '@/lib/rest';
 import { normalizeSupersets } from '@/lib/routineOrder';
 
@@ -123,33 +124,44 @@ export function draftFromArchivedDetail(detail: WorkoutDetail): HistoryWorkoutDr
     ...(detail.workout.notes === undefined ? {} : { notes: detail.workout.notes }),
     startedAt: detail.workout.startedAt,
     durationSeconds: detail.workout.durationSeconds,
-    exercises: detail.exercises.map(({ row, exercise, sets }) => ({
-      id: row.id,
-      draftId: row.id,
-      exerciseId: row.exerciseId,
-      exerciseName: exercise?.name ?? t('history.deletedExercise'),
-      ...(exercise === undefined ? {} : { measurementType: exercise.measurementType }),
-      supersetGroup: row.supersetGroup,
-      restSeconds: row.restSeconds,
-      ...(row.notes === undefined ? {} : { notes: row.notes }),
-      sets: sets
-        .filter((set) => set.isCompleted === 1)
-        .map((set) => ({
-          id: set.id,
-          draftId: set.id,
-          setType: set.setType,
-          side: set.side,
-          ...(set.weight === undefined ? {} : { weight: set.weight }),
-          ...(set.reps === undefined ? {} : { reps: set.reps }),
-          ...(set.durationSeconds === undefined
-            ? {}
-            : { durationSeconds: set.durationSeconds }),
-          ...(set.distanceMeters === undefined
-            ? {}
-            : { distanceMeters: set.distanceMeters }),
-          ...(set.rpe === undefined ? {} : { rpe: set.rpe }),
-        })),
-    })),
+    exercises: detail.exercises.map(({ row, exercise, sets }) => {
+      // The editor shows and edits what the session recorded, not what the
+      // library says today: `measurementType` decides which fields a set even
+      // offers, so reading it from the library would re-type figures already
+      // typed. Neither field is persisted back — `saveArchivedWorkout` re-derives
+      // the snapshot, and only when the row's `exerciseId` actually changes.
+      const identity = resolveExerciseIdentity(row, exercise);
+
+      return {
+        id: row.id,
+        draftId: row.id,
+        exerciseId: row.exerciseId,
+        exerciseName: identity.name ?? t('history.deletedExercise'),
+        ...(identity.measurementType === undefined
+          ? {}
+          : { measurementType: identity.measurementType }),
+        supersetGroup: row.supersetGroup,
+        restSeconds: row.restSeconds,
+        ...(row.notes === undefined ? {} : { notes: row.notes }),
+        sets: sets
+          .filter((set) => set.isCompleted === 1)
+          .map((set) => ({
+            id: set.id,
+            draftId: set.id,
+            setType: set.setType,
+            side: set.side,
+            ...(set.weight === undefined ? {} : { weight: set.weight }),
+            ...(set.reps === undefined ? {} : { reps: set.reps }),
+            ...(set.durationSeconds === undefined
+              ? {}
+              : { durationSeconds: set.durationSeconds }),
+            ...(set.distanceMeters === undefined
+              ? {}
+              : { distanceMeters: set.distanceMeters }),
+            ...(set.rpe === undefined ? {} : { rpe: set.rpe }),
+          })),
+      };
+    }),
   };
 }
 

@@ -3,6 +3,7 @@ import type { WorkoutDetail } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatDuration, setTypeLabel, unitLabel } from '@/i18n/labels';
+import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
@@ -62,17 +63,21 @@ function TotalReading({ label, value }: { label: string; value: ReactNode }) {
 
 export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
   const { workout, exercises } = detail;
+  // The row's own snapshot, then today's library — the rule the export reads a
+  // past session through, and the only way this screen and a document shared
+  // from it can agree after the exercise has been renamed or re-typed.
   const completed = exercises.map((line) => ({
     line,
+    identity: resolveExerciseIdentity(line.row, line.exercise),
     sets: line.sets.filter((set) => set.isCompleted === 1),
   }));
-  const entries: VolumeEntry[] = completed.flatMap(({ line, sets }) =>
+  const entries: VolumeEntry[] = completed.flatMap(({ identity, sets }) =>
     sets.map((set) => ({
       set,
       weightRole:
-        line.exercise === undefined
+        identity.measurementType === undefined
           ? undefined
-          : measurementShape(line.exercise.measurementType).weightRole,
+          : measurementShape(identity.measurementType).weightRole,
     })),
   );
   const totals = sessionTotals(entries);
@@ -155,11 +160,11 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
         <div className="space-y-4">
           {completed
             .filter(({ sets }) => sets.length > 0)
-            .map(({ line, sets }) => (
+            .map(({ line, identity, sets }) => (
               <Card key={line.row.id}>
                 <div className="border-b border-[var(--border)] px-4 py-3">
                   <h3 className="text-base font-semibold text-[var(--text-1)]">
-                    {line.exercise?.name ?? t('history.deletedExercise')}
+                    {identity.name ?? t('history.deletedExercise')}
                   </h3>
                   {line.row.notes?.trim() && (
                     <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-[var(--text-2)]">
@@ -169,10 +174,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
                 </div>
 
                 {sets.map((set) => {
-                  const parts = performedReadings(
-                    set,
-                    line.exercise?.measurementType,
-                  );
+                  const parts = performedReadings(set, identity.measurementType);
                   const readings = [
                     ...parts.map(readingPart),
                     setTypeLabel(set.setType),

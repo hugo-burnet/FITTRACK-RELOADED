@@ -2,7 +2,56 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**jalons E1 + E2 — la projection d'export et le Markdown**).
+**Dernière mise à jour :** 2026-07-28 (**jalon 08B — l'historique lit l'instantané**).
+La contradiction ouverte par E2 est refermée : après un renommage, l'écran de détail d'une séance
+passée et le document partagé depuis cet écran donnent désormais **le même nom**, parce qu'ils
+appliquent la même règle.
+
+Cette règle a un seul endroit : `resolveExerciseIdentity(row, exercise)` dans
+`src/lib/exerciseSnapshot.ts` — l'instantané de la ligne, puis la bibliothèque d'aujourd'hui, puis
+rien, **champ par champ**. Elle vivait dans `projectCoachExport`, qui l'appelle maintenant au lieu
+de la porter. Champ par champ et non « l'instantané ou la bibliothèque, en bloc » : une ligne peut
+porter un instantané partiel, et retomber sur la bibliothèque pour les quatre parce qu'un seul
+manque perdrait les trois autres. La fonction ne rend aucune clé absente plutôt qu'une clé à
+`undefined` : nommer le trou en français reste au appelant — `t('history.deletedExercise')` sur un
+écran, `t('export.unknownExercise')` dans un document.
+
+**Ce n'est pas qu'un titre.** `exerciseMeasurementType` décide **quels chiffres d'une série sont
+lus** : `HistoryWorkoutDetail` s'en sert pour `performedParts` (les valeurs affichées) et pour
+`measurementShape().weightRole` (ce qui compte comme tonnage). D'où les tests du jalon, écrits sur
+des fixtures où l'instantané et la bibliothèque se contredisent **exprès** — un test où les deux
+concordent ne peut pas dire lequel a été lu : une séance enregistrée en gainage dont l'exercice est
+retypé en charge × reps doit continuer à se lire « 45 s », et une séance en charge × reps dont
+l'exercice devient assisté doit continuer à compter ses 800 kg de tonnage. Trois des six tests
+échouent sur l'ancien code, vérifié en le remettant.
+
+**`historyDraft.ts` avait le même défaut**, et il était plus grave : l'éditeur d'archive prenait
+son `measurementType` dans la bibliothèque, donc le retypage d'un exercice changeait **quels champs
+une série passée offrait à la saisie**. Rebranché aussi. Rien ne change côté persistance :
+`saveArchivedWorkout` re-dérivait déjà l'instantané, et seulement quand l'`exerciseId` de la ligne
+change réellement. `HistoryExerciseEditor` n'avait rien à corriger — il affiche ce que le brouillon
+lui donne.
+
+**La fiche exercice n'a pas ce défaut** : elle décrit l'exercice *lui-même*, pas une séance passée,
+donc son titre et son sous-titre doivent bien être ceux d'aujourd'hui ; et sa liste de séances
+passe par `topSetLabel`, qui ne lit aucun `measurementType`.
+
+**Un point laissé tel quel, à décider :** `WorkoutFinishScreen` lit encore
+`line.exercise.measurementType` et `line.exercise?.name`. C'est le récapitulatif de la séance qu'on
+vient de finir — la fenêtre pour que la bibliothèque ait changé entre-temps est de quelques
+minutes, et l'écran n'est pas de l'historique. Hors périmètre de ce jalon, signalé plutôt que
+glissé dedans.
+
+**45 fichiers de tests, 641 tests** (+1 fichier, +12) ; `lint`, `typecheck`, `test:run` et `build`
+sont verts. Le warning Vite historique sur le chunk principal reste le seul avertissement.
+
+**Checkpoint à vérifier sur le téléphone :** renommer un exercice de la bibliothèque, puis ouvrir
+une ancienne séance qui l'utilise dans l'Historique — le détail doit afficher **l'ancien nom**, et
+`⋯` → **Copier le texte** doit donner exactement le même. Puis `⋯` → **Modifier** sur cette même
+séance : l'en-tête de l'exercice porte l'ancien nom lui aussi, et les champs de saisie de ses
+séries n'ont pas changé de nature. Enregistrer sans rien toucher ne doit rien réécrire.
+
+**Historique précédent :** 2026-07-28 (**jalons E1 + E2 — la projection d'export et le Markdown**).
 Une séance sort maintenant de l'app en trois gestes : `⋯` → **Partager** → la feuille système.
 Une entrée **Copier le texte** est à côté, au même rang, parce que « coller dans une IA » est
 l'usage nommé et que le presse-papiers est ce geste-là.
@@ -20,7 +69,8 @@ travail (**6**) sont exactement ceux affichés par l'écran, parce que la projec
 `sessionTotals` : l'assistance des dips et la série d'échauffement sont hors tonnage des deux
 côtés. Aucune erreur console, aucun débordement horizontal en 375 px, cibles de 56 px.
 
-**Une contradiction créée par ce jalon, laissée ouverte volontairement :** au même moment, l'écran
+**Une contradiction créée par ce jalon, laissée ouverte volontairement** (refermée depuis, par le
+jalon 08B ci-dessus) **:** au même moment, l'écran
 `HistoryWorkoutDetail` de cette séance affiche, lui, **le nouveau nom** — il lit encore la
 bibliothèque. L'export a raison, l'écran a tort, et c'est l'état que le jalon 08A annonçait
 (« aucun consommateur n'est encore rebranché »). Le rebrancher touche aussi
