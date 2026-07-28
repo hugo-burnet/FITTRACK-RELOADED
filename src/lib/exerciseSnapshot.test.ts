@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Exercise, Syncable, WorkoutExercise } from '@/data/types';
-import { exerciseSnapshotOfRow, snapshotOf } from './exerciseSnapshot';
+import {
+  exerciseSnapshotOfRow,
+  resolveExerciseIdentity,
+  snapshotOf,
+} from './exerciseSnapshot';
 
 const stamps: Syncable = {
   id: 'id',
@@ -69,5 +73,54 @@ describe('exerciseSnapshotOfRow', () => {
 
   it('rend un objet vide pour une ligne antérieure au champ', () => {
     expect(exerciseSnapshotOfRow(row())).toEqual({});
+  });
+});
+
+describe('resolveExerciseIdentity', () => {
+  it("préfère l'instantané à la bibliothèque d'aujourd'hui", () => {
+    const identity = resolveExerciseIdentity(
+      row(snapshotOf(exercise())),
+      exercise({
+        name: 'Développé couché (barre)',
+        measurementType: 'reps_only',
+        primaryMuscle: 'shoulders',
+        equipment: 'dumbbell',
+      }),
+    );
+
+    expect(identity).toEqual({
+      name: 'Développé couché',
+      measurementType: 'weight_reps',
+      primaryMuscle: 'chest',
+      equipment: 'barbell',
+    });
+  });
+
+  it('retombe sur la bibliothèque pour une ligne sans instantané', () => {
+    expect(resolveExerciseIdentity(row(), exercise())).toEqual({
+      name: 'Développé couché',
+      measurementType: 'weight_reps',
+      primaryMuscle: 'chest',
+      equipment: 'barbell',
+    });
+  });
+
+  it('arbitre champ par champ, pas en bloc', () => {
+    const identity = resolveExerciseIdentity(
+      row({ exerciseName: 'Squat avant' }),
+      exercise({ name: 'Squat', measurementType: 'weight_reps' }),
+    );
+
+    expect(identity).toMatchObject({
+      name: 'Squat avant',
+      measurementType: 'weight_reps',
+    });
+  });
+
+  it("n'invente rien quand ni la ligne ni la bibliothèque ne savent", () => {
+    const identity = resolveExerciseIdentity(row(), undefined);
+
+    expect(identity).toEqual({});
+    expect(Object.keys(identity)).toEqual([]);
   });
 });

@@ -1,4 +1,5 @@
 import type { WorkoutSet } from '@/data/types';
+import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { measurementShape, type TargetField } from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 import { isoWithOffset, localDateKey, localOffsetMinutes } from '@/lib/timezone';
@@ -17,28 +18,16 @@ import type {
  * Rows in, a shareable document out. Pure by construction (architecture §7):
  * nothing here reads Dexie, nothing here writes French.
  *
- * It is also the first consumer of the exercise snapshot (milestone 08A), which
- * is why the fallback rule lives here and is tested without a database: the one
- * thing this layer must guarantee is that exporting a session twice, a rename
- * apart, produces the same document.
+ * It was the first consumer of the exercise snapshot (milestone 08A), which is
+ * why the fallback rule was written here first. It now lives in
+ * `lib/exerciseSnapshot` and is shared with the history screen: while the two
+ * read a past session differently, a rename gave the same session two names —
+ * the old one in the document, the new one on the screen above it.
  */
 
 /** The snapshot wins, then today's library, then nothing. Field by field. */
 function identityOf(entry: ExportSource['exercises'][number]): Omit<ExportExercise, 'sets'> {
-  const { row, exercise } = entry;
-
-  return {
-    ...(row.exerciseName ?? exercise?.name ? { name: row.exerciseName ?? exercise?.name } : {}),
-    ...(row.exerciseMeasurementType ?? exercise?.measurementType
-      ? { measurementType: row.exerciseMeasurementType ?? exercise?.measurementType }
-      : {}),
-    ...(row.exercisePrimaryMuscle ?? exercise?.primaryMuscle
-      ? { primaryMuscle: row.exercisePrimaryMuscle ?? exercise?.primaryMuscle }
-      : {}),
-    ...(row.exerciseEquipment ?? exercise?.equipment
-      ? { equipment: row.exerciseEquipment ?? exercise?.equipment }
-      : {}),
-  };
+  return resolveExerciseIdentity(entry.row, entry.exercise);
 }
 
 /**

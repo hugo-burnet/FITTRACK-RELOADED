@@ -136,6 +136,29 @@ it('creates an independent draft from an archived detail', () => {
   });
 });
 
+it('opens the archive editor on the frozen exercise, not on the library', () => {
+  const detail = detailFixture();
+  const line = detail.exercises[0]!;
+  line.row.exerciseName = 'Développé couché';
+  line.row.exerciseMeasurementType = 'weight_reps';
+  line.exercise = { ...line.exercise!, name: 'Bench press', measurementType: 'time_only' };
+
+  expect(draftFromArchivedDetail(detail).exercises[0]).toMatchObject({
+    exerciseName: 'Développé couché',
+    measurementType: 'weight_reps',
+  });
+});
+
+it('names the gap only when neither the row nor the library knows', () => {
+  const detail = detailFixture();
+  detail.exercises[0]!.exercise = undefined;
+
+  expect(draftFromArchivedDetail(detail).exercises[0]).toMatchObject({
+    exerciseName: 'Exercice supprimé',
+  });
+  expect(draftFromArchivedDetail(detail).exercises[0]!.measurementType).toBeUndefined();
+});
+
 it('creates new exercise and set drafts with temporary ids', () => {
   const exercise = detailFixture().exercises[0]!.exercise!;
   const exerciseDraft = newHistoryExerciseDraft(exercise);
