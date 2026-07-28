@@ -308,6 +308,16 @@ const fr = {
   },
 
   /**
+   * Un côté n'est nommé que lorsqu'il y en a un : `both` n'a pas de mot, parce
+   * qu'écrire « Les deux » sur chaque série d'un développé couché serait du
+   * bruit sur la seule information qui n'en est pas une.
+   */
+  side: {
+    left: 'Gauche',
+    right: 'Droite',
+  },
+
+  /**
    * Les trois records d'un exercice, nommés **une fois** pour toute l'app : la
    * fiche exercice les liste, la séance en direct les fête (RF-23), et un même
    * fait ne peut pas avoir deux noms. Clés = `RecordKind` de `lib/records`, donc
@@ -640,6 +650,17 @@ const fr = {
       'Les séances Hevy importées sont maintenant dans ton historique.',
     importExerciseSearch: 'Chercher un exercice',
     importNoExercise: 'Aucun exercice ne correspond.',
+
+    /** Sortir une séance de l'app : la feuille système, ou le presse-papiers. */
+    share: 'Partager',
+    shareCopy: 'Copier le texte',
+    /**
+     * Le presse-papiers ne se voit pas. Un partage annulé, si : il n'a donc rien
+     * à annoncer, et seule la copie a besoin d'être confirmée.
+     */
+    shareCopied: 'Séance copiée dans le presse-papiers.',
+    shareFailed: 'La séance n’a pas pu être partagée ni copiée.',
+    shareTitle: 'FitTrack — {name}',
   },
 
   exercises: {
@@ -777,6 +798,52 @@ const fr = {
     cancel: 'Annuler',
     working: 'En cours…',
     failed: 'L’opération a échoué. Détail dans la console.',
+  },
+
+  /**
+   * Le document Markdown envoyé à un coach ou collé dans une IA. C'est le seul
+   * endroit du dictionnaire dont le lecteur n'est pas devant l'écran : les
+   * phrases y sont complètes, parce que personne ne pourra demander « ça veut
+   * dire quoi, ce chiffre ».
+   */
+  export: {
+    title: 'Export FitTrack',
+    scopeWorkout: 'Périmètre : la séance « {name} » du {date}',
+    scopeExercise: 'Périmètre : {name}, tout l’historique de cet exercice',
+    scopeExerciseAnonymous: 'Périmètre : un exercice, tout son historique',
+    scopePeriod: 'Période : {from} → {to}',
+    scopeAll: 'Périmètre : tout l’historique',
+    exportedAt: 'Export du {date}',
+    workoutCount: 'Séances : {count}',
+    workingSetCount: 'Séries de travail : {count}',
+    /** L'unique chiffre agrégé du document dit lui-même ce qu'il ne compte pas. */
+    tonnageNote:
+      'Le tonnage ne compte que la charge externe réellement soulevée : ni assistance, ni poids du corps, échauffements exclus.',
+    workoutHeading: '{name} — {date}',
+    duration: 'Durée : {value}',
+    tonnage: 'Tonnage : {value}',
+    workingSets: '{count} séries de travail',
+    /** Ni instantané, ni bibliothèque. On le dit, on ne l'invente pas. */
+    unknownExercise: 'Exercice inconnu',
+    /** Une case vide se lit comme un bug de génération ; un tiret, comme un trou. */
+    missingValue: '—',
+    columnSet: 'Série',
+    columnType: 'Type',
+    columnSide: 'Côté',
+    columnReps: 'Reps',
+    columnDuration: 'Durée',
+    columnDistance: 'Distance',
+    columnRpe: 'RPE',
+    /**
+     * Trois en-têtes pour un même champ, parce que ce sont trois choses
+     * différentes : la charge soulevée, la ceinture ajoutée au poids du corps,
+     * et l'aide que la machine retire. Les appeler toutes « Charge » est la
+     * façon la plus simple de mentir sur ce qui a été fait.
+     */
+    columnWeightLoad: 'Charge',
+    columnWeightAdded: 'Charge ajoutée',
+    columnWeightAssist: 'Assistance',
+    empty: 'Aucune séance sur ce périmètre.',
   },
 
   boot: {

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { WorkoutDetail } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { setTypeLabel, unitLabel } from '@/i18n/labels';
+import { formatDuration, setTypeLabel, unitLabel } from '@/i18n/labels';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
@@ -20,25 +20,6 @@ const startTime = new Intl.DateTimeFormat('fr-FR', {
   hour: '2-digit',
   minute: '2-digit',
 });
-
-function formatDuration(seconds: number): string {
-  const rounded = Math.max(0, Math.round(seconds));
-  if (rounded < 60) return `${rounded} ${t('units.seconds')}`;
-
-  const minutes = Math.floor(rounded / 60);
-  const remainingSeconds = rounded % 60;
-  if (minutes < 60) {
-    return remainingSeconds === 0
-      ? `${minutes} ${t('units.minutes')}`
-      : `${minutes}:${String(remainingSeconds).padStart(2, '0')} ${t('units.minutes')}`;
-  }
-
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  return remainingMinutes === 0
-    ? `${hours} ${t('units.hours')}`
-    : `${hours} ${t('units.hours')} ${String(remainingMinutes).padStart(2, '0')}`;
-}
 
 function readingPart(part: TargetPart): string {
   return `${part.prefix ?? ''}${part.value} ${unitLabel(part.unit)}`;

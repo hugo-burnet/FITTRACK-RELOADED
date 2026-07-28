@@ -2,7 +2,61 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**jalon 08A — l'instantané des métadonnées d'exercice**).
+**Dernière mise à jour :** 2026-07-28 (**jalons E1 + E2 — la projection d'export et le Markdown**).
+Une séance sort maintenant de l'app en trois gestes : `⋯` → **Partager** → la feuille système.
+Une entrée **Copier le texte** est à côté, au même rang, parce que « coller dans une IA » est
+l'usage nommé et que le presse-papiers est ce geste-là.
+
+La chaîne est en quatre maillons dont un seul touche Dexie :
+`listExportSources` (requêtes bornées, quatre périmètres) → `projectCoachExport` (pur, aucune
+chaîne française) → `serializeMarkdown` (pur) → `shareText` (`src/platform/`). Chaque flèche est
+testée seule ; la projection et le sérialiseur n'ont jamais besoin d'une base.
+
+**C'est le premier consommateur de l'instantané 08A, et il le valide.** Vérifié en pilotant sur une
+vraie séance à trois exercices : renommer « Good morning (barre) » en « RENOMMÉ APRÈS COUP » et
+changer son muscle et son matériel ne bouge **rien** dans le document réexporté — ni le nom, ni
+« Ischio-jambiers · Barre ». Le tonnage du document (**922,5 kg**) et son compte de séries de
+travail (**6**) sont exactement ceux affichés par l'écran, parce que la projection appelle la même
+`sessionTotals` : l'assistance des dips et la série d'échauffement sont hors tonnage des deux
+côtés. Aucune erreur console, aucun débordement horizontal en 375 px, cibles de 56 px.
+
+**Une contradiction créée par ce jalon, laissée ouverte volontairement :** au même moment, l'écran
+`HistoryWorkoutDetail` de cette séance affiche, lui, **le nouveau nom** — il lit encore la
+bibliothèque. L'export a raison, l'écran a tort, et c'est l'état que le jalon 08A annonçait
+(« aucun consommateur n'est encore rebranché »). Le rebrancher touche aussi
+`exerciseMeasurementType`, donc la façon dont ses chiffres sont *lus* et pas seulement son titre :
+ça mérite son jalon et ses tests.
+
+**Quatre écarts argumentés avec le document de finition**, détaillés dans la spec :
+`src/lib/export/` plutôt qu'un second arbre `src/domain/` (§7 de l'architecture définit déjà `lib/`
+comme LA couche pure, et deux couches au contrat identique n'auraient aucune règle pour les
+départager) ; pas de `definitions: MetricDefinition[]` (un export de séances n'a aucune métrique —
+le seul chiffre agrégé, le tonnage, dit lui-même ce qu'il ne compte pas, en une phrase dans
+l'en-tête) ; **partage de texte et non de fichier** (le `.md` en pièce jointe fait ouvrir quelque
+chose au lecteur, le téléchargement fait chercher un fichier — le fichier arrivera avec le CSV, où
+il *est* le produit) ; et la politique de fuseau appliquée ici, à son premier consommateur, plutôt
+qu'en E0.
+
+**Deux petits déplacements au passage :** `formatDuration` quitte `HistoryWorkoutDetail` pour
+`i18n/labels.ts`, parce que l'écran et le document doivent écrire la même séance de la même
+longueur ; et `src/platform/` naît, nommément comme un ajout au §7 de l'architecture (un
+adaptateur d'API navigateur n'est ni pur, ni une porte vers la base, ni un composant).
+
+**Hors périmètre assumé :** pas d'écran `/settings/export` (il n'a de sens qu'avec un choix de
+format, donc avec E3/E4), pas de CSV, pas de JSON, pas de téléchargement.
+
+**44 fichiers de tests, 629 tests** (+5 fichiers, +86) ; `lint`, `typecheck`, `test:run` et `build`
+sont verts. Le warning Vite historique sur le chunk principal reste le seul avertissement.
+
+**Checkpoint à vérifier sur le téléphone :** ouvrir une vraie séance dans l'Historique, `⋯` →
+**Partager**, et vérifier que la feuille Android s'ouvre et que le texte arrive **dans le corps**
+du message (WhatsApp, Gmail, une note) et non en pièce jointe. Fermer la feuille sans choisir :
+l'app ne doit **rien** afficher. Puis `⋯` → **Copier le texte**, coller dans une conversation avec
+une IA et lire le document : les colonnes doivent correspondre à ce que chaque exercice se mesure
+en (pas de colonne « Charge » sur un gainage, « Assistance » sur une machine assistée), les
+décimales être françaises, et aucune série ne doit être résumée.
+
+**Historique précédent :** 2026-07-28 (**jalon 08A — l'instantané des métadonnées d'exercice**).
 Chaque `WorkoutExercise` fige désormais le nom, le type de mesure, le muscle principal et le
 matériel de son exercice **au moment où il entre dans la séance**, et chaque `Workout` porte
 `startedTimezoneOffsetMinutes`. Renommer un exercice, changer son type de mesure ou son muscle ne

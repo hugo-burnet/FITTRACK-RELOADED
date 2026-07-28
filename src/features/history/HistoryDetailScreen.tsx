@@ -6,7 +6,12 @@ import {
   deleteArchivedWorkout,
   getArchivedWorkoutDetail,
 } from '@/data/repositories/history';
+import { listExportSources } from '@/data/repositories/exportQueries';
 import { t } from '@/i18n/fr';
+import { projectCoachExport } from '@/lib/export/projectCoachExport';
+import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
+import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
+import { copyText, shareText, type ShareOutcome } from '@/platform/share';
 import { ActionSheet, Card, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { HistoryWorkoutDetail } from './HistoryWorkoutDetail';
@@ -23,10 +28,26 @@ export function HistoryDetailScreen() {
   const [actionsOpen, setActionsOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleteFailed, setDeleteFailed] = useState(false);
+  const [shareOutcome, setShareOutcome] = useState<ShareOutcome | null>(null);
   const detail = useLiveQuery(
     () => getArchivedWorkoutDetail(workoutId),
     [workoutId],
   );
+
+  // Serialised ahead of the tap, not on it. The system share sheet only opens
+  // while the gesture is still "fresh"; an `await` on Dexie between the click
+  // and `navigator.share` spends that credit and Android refuses to open it.
+  // Derived from `listExportSources` rather than from `detail`, because the two
+  // answer different questions — cf. the header of `exportQueries.ts`.
+  const markdown = useLiveQuery(async () => {
+    const scope = { kind: 'workout', workoutId } as const;
+    const sources = await listExportSources(scope);
+    if (sources.length === 0) return '';
+
+    return serializeMarkdown(
+      projectCoachExport(scope, sources, DEFAULT_EXPORT_OPTIONS, Date.now()),
+    );
+  }, [workoutId]);
 
   useEffect(() => {
     if (detail !== null) return;
@@ -53,6 +74,25 @@ export function HistoryDetailScreen() {
       </Screen>
     );
   }
+
+  // 'shared' and 'cancelled' say nothing on purpose: the share sheet was visible
+  // and its outcome is already known to whoever dismissed it. Announcing a
+  // cancellation as an event teaches people to ignore the alert slot.
+  const announce = (outcome: ShareOutcome) =>
+    setShareOutcome(outcome === 'copied' || outcome === 'failed' ? outcome : null);
+
+  const share = () => {
+    setShareOutcome(null);
+    void shareText({
+      title: t('history.shareTitle', { name: detail.workout.name }),
+      text: markdown ?? '',
+    }).then(announce);
+  };
+
+  const copy = () => {
+    setShareOutcome(null);
+    void copyText(markdown ?? '').then(announce);
+  };
 
   const deleteWorkout = () => {
     void deleteArchivedWorkout(detail.workout.id)
@@ -88,6 +128,21 @@ export function HistoryDetailScreen() {
             </Card>
           </div>
         )}
+        {shareOutcome !== null && (
+          <div role="status">
+            <Card padded>
+              <p
+                className={`text-sm leading-relaxed ${
+                  shareOutcome === 'failed'
+                    ? 'text-[var(--danger-ink)]'
+                    : 'text-[var(--text-2)]'
+                }`}
+              >
+                {t(shareOutcome === 'failed' ? 'history.shareFailed' : 'history.shareCopied')}
+              </p>
+            </Card>
+          </div>
+        )}
         <HistoryWorkoutDetail detail={detail} />
       </div>
 
@@ -96,6 +151,19 @@ export function HistoryDetailScreen() {
         onClose={() => setActionsOpen(false)}
         title={t('history.detailActions')}
         actions={[
+          {
+            label: t('history.share'),
+            // Nothing to share until the serialisation has answered. Disabled
+            // rather than hidden: an entry that appears a beat later moves the
+            // two below it under a finger already on its way down.
+            disabled: markdown === undefined || markdown === '',
+            onSelect: share,
+          },
+          {
+            label: t('history.shareCopy'),
+            disabled: markdown === undefined || markdown === '',
+            onSelect: copy,
+          },
           {
             label: t('history.edit'),
             onSelect: () => {

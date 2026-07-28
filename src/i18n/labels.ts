@@ -1,4 +1,4 @@
-import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType } from '@/data/types';
+import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType, Side } from '@/data/types';
 import type { TargetUnit } from '@/lib/measurement';
 import type { RecordKind } from '@/lib/records';
 import { t } from './fr';
@@ -45,3 +45,34 @@ export const exerciseSubtitle = (exercise: Exercise): string =>
  * and the live grid must not spell them out twice and drift apart.
  */
 export const unitLabel = (unit: TargetUnit): string => t(`units.${unit}`);
+
+/** « Gauche » / « Droite ». `both` has no word: it is the unremarkable case. */
+export const sideLabel = (side: Side): string =>
+  side === 'both' ? '' : t(side === 'left' ? 'side.left' : 'side.right');
+
+/**
+ * A session length as a human reads it: « 45 s », « 12:30 min », « 1 h 12 ».
+ *
+ * Lives here rather than in the screen that first needed it because the Markdown
+ * export prints the same duration. Two implementations would eventually write
+ * the same session two different lengths, and the export is precisely the
+ * artefact where that would be discovered by someone else.
+ */
+export function formatDuration(seconds: number): string {
+  const rounded = Math.max(0, Math.round(seconds));
+  if (rounded < 60) return `${rounded} ${t('units.seconds')}`;
+
+  const minutes = Math.floor(rounded / 60);
+  const remainingSeconds = rounded % 60;
+  if (minutes < 60) {
+    return remainingSeconds === 0
+      ? `${minutes} ${t('units.minutes')}`
+      : `${minutes}:${String(remainingSeconds).padStart(2, '0')} ${t('units.minutes')}`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes === 0
+    ? `${hours} ${t('units.hours')}`
+    : `${hours} ${t('units.hours')} ${String(remainingMinutes).padStart(2, '0')}`;
+}

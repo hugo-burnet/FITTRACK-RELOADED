@@ -204,6 +204,16 @@ interface ExportSet {
 }
 ```
 
+**Ajouté pendant l'implémentation :** `ExportWorkout.totals: SessionTotals`. Le
+Markdown affiche la durée et le tonnage d'une séance, et les recalculer dans
+chaque sérialiseur (Markdown, puis CSV, puis JSON) est la façon la plus sûre
+d'obtenir trois tonnages différents. La projection appelle donc `sessionTotals`
+— **la fonction même que l'écran d'historique affiche** — et transporte le
+résultat. Ce n'est pas la synthèse trompeuse que le §4.2 du document source
+écarte : c'est le chiffre déjà à l'écran, transporté au lieu d'être réinventé.
+Vérifié en pilotant : l'écran et le document annoncent tous deux 922,5 kg et
+6 séries de travail sur la même séance.
+
 Retirés du modèle du document : `locale` (constante `'fr-FR'`, donc du bruit) et
 l'objet `timezone.currentOffsetMinutes` (l'offset qui compte est celui de chaque
 séance, déjà porté par `ExportWorkout` ; celui du téléphone au moment de
@@ -370,6 +380,16 @@ et `navigator.share` ferait perdre la transient activation et Android refuserait
 d'ouvrir la feuille.
 
 ## Ce que ce jalon prouve du jalon 08A
+
+> **Constaté en pilotant, et laissé tel quel :** après un renommage, le document
+> exporté garde l'ancien nom pendant que **l'écran de détail de la même séance
+> affiche le nouveau**. Les deux ne peuvent pas avoir raison, et c'est l'export
+> qui a raison. C'est l'état que `PROGRESS.md` annonçait — « aucun consommateur
+> n'est encore rebranché sur l'instantané » — devenu visible. Rebrancher
+> `HistoryWorkoutDetail` sur `row.exerciseName` **et** sur
+> `row.exerciseMeasurementType` change la façon dont les chiffres d'une séance
+> sont lus, pas seulement son titre : ça mérite son propre jalon et ses propres
+> tests, pas une ligne glissée dans celui-ci.
 
 Le test de non-régression est le point de tout l'enchaînement : projeter une
 séance, renommer son exercice dans la bibliothèque, reprojeter — **le nom ne
