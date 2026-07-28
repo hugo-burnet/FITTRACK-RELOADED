@@ -36,6 +36,11 @@ export const MUSCLE_GROUPS = [
   'quads',
   'hamstrings',
   'glutes',
+  // Added after milestone G3 read the catalogue back: hip adduction was filed
+  // under `glutes`, which is the muscle the *opposite* movement trains. The
+  // vocabulary simply had no box for the inner thigh, so six sets a week were
+  // landing on the wrong bar.
+  'adductors',
   'calves',
   'abs',
   'lower_back',

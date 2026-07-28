@@ -2,7 +2,74 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**jalon G3 — séries par muscle**). La répartition existe :
+**Dernière mise à jour :** 2026-07-28 (**correctif catalogue — G3 a trouvé un vrai défaut, et ce
+n'était pas dans G3**). Retour d'usage : « les séries me paraissent incohérentes… en fait j'ai
+l'impression que certains exos sont mal mappés ». Il avait raison, et le vrai CSV Hevy l'a prouvé.
+
+**Diagnostic fait sur ses vraies données, pas sur une fixture.** Son export réel (5 séances,
+110 séries de travail, 24 titres) rejoué dans le vrai pipeline d'import : **abdominaux 15 et épaules
+6**. Or il ne fait que du gainage en abdos. Quatre défauts, tous dans le **catalogue**, aucun dans
+le moteur de G3 :
+
+| Défaut | Effet |
+|---|---|
+| Aucune rotation externe / coiffe dans les 168 exercices | « Rotation Externe Poulie » classé sur un **crunch** → 4 séries d'épaules en abdos |
+| Aucun développé épaules à la poulie | « Développé Debout Poulie Centrée » sur un **Pallof press** → 4 de plus en abdos |
+| `Adduction à la machine` classée `glutes` | l'adduction travaille les **adducteurs** ; c'est l'ABduction qui fait le moyen fessier |
+| 7 rowings horizontaux classés `lats` | et le catalogue **se contredisait** : « Rowing buste appuyé » était en `upper_back`, « Rowing à la machine » en `lats` |
+
+Après correction, sur les mêmes 110 séries : **abdominaux 7, épaules 14**, fessiers 22 → 16,
+adducteurs 6, haut du dos 3 → 5. Et **les 24 titres tombent automatiquement, zéro « À choisir »**
+(il y en avait 4).
+
+**`adductors` est le 19e `MuscleGroup`,** décidé avec l'utilisateur. Le vocabulaire n'avait pas la
+case, donc six séries par semaine atterrissaient sur le muscle que le mouvement *opposé* travaille.
+**Les deux garde-fous ont sauté au typecheck, exactement comme ils sont faits pour** : l'étiquette
+française de `fr.ts` et le `Record<MuscleGroup, MuscleScope>` de G3. C'est la première fois qu'ils
+servent, et ils ont désigné les deux seuls endroits à corriger.
+
+**La règle de classement du dos est écrite plutôt que devinée** : **plan vertical** (traction,
+tirage vertical, pull-over) → grand dorsal ; **plan horizontal** (rowing, tirage horizontal) → haut
+du dos, parce que c'est de la rétraction d'omoplates. Appliquée aux 7 d'un coup. Piège désamorcé en
+route : le slug `rowing-machine` n'est pas un rowing, c'est le **Rameur** (cardio) — première
+tentative reprise depuis les vrais slugs, avec une garde qui refuse de reclasser ce qui n'était pas
+`lats`.
+
+**Quatre tests ont échoué, et il ne fallait surtout pas retourner leur assertion.**
+`hevyExerciseMatch.test.ts` affirmait « does not invent a canonical target for » les quatre titres
+en question. Ce test disait vrai **de l'état du catalogue**, pas d'un comportement voulu. Les quatre
+sont donc passés dans le tableau « maps X to slug Y », même assertion, et **la règle de fond est
+gardée dans un test neuf** sur un titre inconnu : un titre non couvert ne reçoit aucune association
+d'office. Ce n'est pas l'assertion qui a changé, c'est le catalogue.
+
+**Le vrai manque que ce bug a révélé, et il dépasse le cas : rien ne permettait de réparer un
+historique déjà écrit.** La migration v2 a gelé le muscle sur chaque ligne — c'est tout l'acquis de
+08A/08B — donc corriger le catalogue ne rattrape rien. D'où
+`resnapshotHistory()` (`repositories/historyRepair.ts`) et **Réglages → Réparer les muscles de
+l'historique**, sous `ConfirmSheet` : **ça repeint le passé, donc jamais automatique et jamais
+silencieux**, et la phrase de confirmation annonce le prix (un exercice renommé depuis prendra son
+nouveau nom) au lieu de demander « es-tu sûr ? ». Cinq tests, dont le piège qui compte :
+`snapshotOf(undefined)` rend `{}`, et l'écrire **effacerait** la seule trace de ce qu'était une
+ligne dont l'exercice a disparu — la fonction garde donc la ligne intacte. Les exercices
+soft-deleted sont lus (un exercice supprimé est encore celui qui a été pratiqué), `updatedAt` est
+touché seulement quand la ligne change vraiment (ADR-002).
+
+**52 fichiers, 735 tests** (+1 fichier, +6) ; quatre portes vertes, aucun avertissement au build.
+
+**Vérifié en pilotant**, base repartie de zéro pour semer le catalogue corrigé : Rameur toujours en
+`cardio`, puis un historique fabriqué **dans l'état du bug** (adduction gelée en `glutes`, tirage
+horizontal en `lats`, plus une ligne dont l'exercice n'existe pas). Avant : Fessiers 6, Grand dorsal
+4. Après le bouton : **Adducteurs 6, Haut du dos 4**, Fessiers et Grand dorsal à 0, rapport
+« 2 exercices de séance corrigés » — la troisième ligne gardée, et son instantané « Machine de la
+vieille salle / quads » **intact**.
+
+**Checkpoint à vérifier sur le téléphone :** ouvrir **Réglages → Réparer les muscles de
+l'historique**, lire la phrase de confirmation, confirmer. Puis **Historique → Analyses → Séries par
+muscle** : tes abdominaux doivent tomber à tes seules séries de gainage, et tes épaules remonter.
+Vérifie ensuite dans l'Historique qu'aucune séance n'a changé de charge ni de répétitions — la
+réparation ne touche que le nom, le muscle, le matériel et le type de mesure.
+
+**Historique précédent :** 2026-07-28 (**jalon G3 — séries par muscle**). La répartition existe :
 `Historique → Analyses → Séries par muscle`. Spec :
 `docs/superpowers/specs/2026-07-28-analytics-muscle-group-series-design.md`.
 

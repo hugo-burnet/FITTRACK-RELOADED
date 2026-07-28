@@ -5,7 +5,8 @@ import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
-import { ListRow, NumberInput, SectionTitle } from '@/ui';
+import { resnapshotHistory } from '@/data/repositories/historyRepair';
+import { ConfirmSheet, ListRow, NumberInput, SectionTitle } from '@/ui';
 
 const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
@@ -16,6 +17,19 @@ export function SettingsScreen() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [demoWeight, setDemoWeight] = useState<number | undefined>(100);
+  const [repairOpen, setRepairOpen] = useState(false);
+  /** Ce que la réparation a fait, dit une fois et sans fenêtre à fermer. */
+  const [repairReport, setRepairReport] = useState<string>();
+
+  const repair = () => {
+    void resnapshotHistory().then(({ repaired }) => {
+      setRepairReport(
+        repaired === 0
+          ? t('settings.repairDoneNone')
+          : t(repaired === 1 ? 'settings.repairDoneOne' : 'settings.repairDone', { repaired }),
+      );
+    });
+  };
 
   const chooseTheme = (next: Theme) => {
     setTheme(next);
@@ -92,14 +106,31 @@ export function SettingsScreen() {
           <SectionTitle>{t('settings.dataSection')}</SectionTitle>
           <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
             <ListRow
+              title={t('settings.repairLink')}
+              subtitle={t('settings.repairHint')}
+              onClick={() => setRepairOpen(true)}
+            />
+            <ListRow
               title={t('settings.debugLink')}
               subtitle={t('settings.debugHint')}
               trailing={<ChevronRightIcon />}
               onClick={() => void navigate('/settings/debug')}
             />
           </div>
+          {repairReport !== undefined && (
+            <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">{repairReport}</p>
+          )}
         </section>
       </div>
+
+      <ConfirmSheet
+        open={repairOpen}
+        onClose={() => setRepairOpen(false)}
+        title={t('settings.repairConfirmTitle')}
+        body={t('settings.repairConfirmBody')}
+        confirmLabel={t('settings.repairConfirmAction')}
+        onConfirm={repair}
+      />
     </Screen>
   );
 }

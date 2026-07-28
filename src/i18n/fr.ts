@@ -80,6 +80,7 @@ const fr = {
     quads: 'Quadriceps',
     hamstrings: 'Ischio-jambiers',
     glutes: 'Fessiers',
+    adductors: 'Adducteurs',
     calves: 'Mollets',
     abs: 'Abdominaux',
     lower_back: 'Lombaires',
@@ -770,6 +771,22 @@ const fr = {
     dataSection: 'Données',
     debugLink: 'Diagnostic',
     debugHint: 'Contenu de la base, stockage utilisé, réinitialisation.',
+
+    /**
+     * La réparation de l'instantané. Elle **repeint le passé**, ce que le jalon
+     * 08A existe pour empêcher — donc jamais automatique, jamais silencieuse,
+     * et la phrase de confirmation dit le prix plutôt que « es-tu sûr ? ».
+     */
+    repairLink: 'Réparer les muscles de l’historique',
+    repairHint:
+      'À utiliser après avoir corrigé un exercice mal classé : les séances passées gardent sinon l’ancien muscle.',
+    repairConfirmTitle: 'Réparer l’historique',
+    repairConfirmBody:
+      'Chaque séance passée reprendra le nom, le muscle, le matériel et le type de mesure que ses exercices ont AUJOURD’HUI dans la bibliothèque. Un exercice renommé depuis prendra donc son nouveau nom. Rien n’est supprimé, et les charges et répétitions ne bougent pas.',
+    repairConfirmAction: 'Réparer',
+    repairDone: '{repaired} exercices de séance corrigés.',
+    repairDoneOne: '1 exercice de séance corrigé.',
+    repairDoneNone: 'Rien à corriger : l’historique est déjà d’accord avec la bibliothèque.',
   },
 
   debug: {

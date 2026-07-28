@@ -152,6 +152,14 @@ describe('Hevy exercise title matching', () => {
     ['Curl Biceps (Haltère)', 'dumbbell-curl'],
     ['Curl Marteau (Haltère)', 'hammer-curl'],
     ['Dead Hang', 'dead-hang'],
+    // Les quatre suivants n'avaient aucune cible tant que le catalogue ne les
+    // couvrait pas, et le classement de secours les envoyait n'importe où —
+    // « Rotation Externe Poulie » sur un crunch, donc des épaules comptées en
+    // abdominaux. Ce n'est pas l'assertion qui a changé, c'est le catalogue.
+    ['Développé Debout Poulie Centrée', 'cable-shoulder-press'],
+    ['Hip Thrust (Dumbbell)', 'dumbbell-hip-thrust'],
+    ['Rotation Externe Poulie', 'cable-external-rotation'],
+    ['Tirage bas iso-latéral', 'seated-cable-row'],
     ['Développé Couché (Haltère)', 'dumbbell-bench-press'],
     [
       'Développé Couché Incliné (Haltère)',
@@ -181,14 +189,13 @@ describe('Hevy exercise title matching', () => {
     ).toBe(slug);
   });
 
-  it.each([
-    'Développé Debout Poulie Centrée',
-    'Hip Thrust (Dumbbell)',
-    'Rotation Externe Poulie',
-    'Tirage bas iso-latéral',
-  ])('does not invent a canonical target for %s', (title) => {
+  it('does not invent a canonical target for an unknown title', () => {
+    // La règle elle-même n'a pas bougé et doit rester tenue : un titre que le
+    // catalogue ne couvre pas ne reçoit AUCUNE association d'office, il part en
+    // choix explicite. C'est ce qui empêche une suggestion de se transformer en
+    // fait par simple absence de vigilance.
     expect(
-      findCanonicalHevyExercise(title, 'weight_reps', catalogue),
+      findCanonicalHevyExercise('Mouvement Inconnu Xyz', 'weight_reps', catalogue),
     ).toBeUndefined();
   });
 

@@ -55,6 +55,7 @@ export const MUSCLE_SCOPE: Record<MuscleGroup, MuscleScope> = {
   quads: 'region',
   hamstrings: 'region',
   glutes: 'region',
+  adductors: 'region',
   calves: 'region',
   abs: 'region',
   lower_back: 'region',

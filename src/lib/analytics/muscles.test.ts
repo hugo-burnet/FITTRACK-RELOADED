@@ -95,11 +95,11 @@ describe('MUSCLE_SCOPE', () => {
 });
 
 describe('muscleBalance', () => {
-  it('liste les quinze régions même sans aucune séance', () => {
+  it('liste les seize régions même sans aucune séance', () => {
     // La liste vient de l’anatomie, pas des données : un muscle négligé qui
     // disparaît est un muscle qu’on ne remarque pas.
     const { ranked, unscoped, total } = muscleBalance([]);
-    expect(ranked).toHaveLength(15);
+    expect(ranked).toHaveLength(16);
     expect(ranked.every((entry) => entry.sets === 0)).toBe(true);
     expect(unscoped).toEqual([]);
     expect(total).toBe(0);

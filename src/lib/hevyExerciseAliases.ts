@@ -8,18 +8,26 @@ export const HEVY_EXERCISE_SLUG_BY_KEY: Readonly<
   'curl marteau|dumbbell': 'hammer-curl',
   'dead hang|other': 'dead-hang',
   'developpe couche|dumbbell': 'dumbbell-bench-press',
+  // Sans cible dans le catalogue, le classement de secours l'envoyait sur un
+  // « Pallof press » — donc quatre séries d'épaules comptées en abdominaux.
+  'developpe debout centree|cable': 'cable-shoulder-press',
   'developpe couche incline|dumbbell': 'dumbbell-incline-bench-press',
   'elevation laterale|cable': 'cable-lateral-raise',
   'extension dos hyperextension lestee|other':
     'weighted-back-extension',
   'extension jambe|other': 'leg-extension',
   'extension tricep corde|other': 'cable-triceps-pushdown-rope',
+  'hip thrust|dumbbell': 'dumbbell-hip-thrust',
   'kickback|cable': 'cable-glute-kickback',
   'leg curl assi|other': 'seated-leg-curl',
   'planche|other': 'plank',
   'planche laterale|other': 'side-plank',
   'presse cuisse horizontal|other': 'leg-press',
   'presse epaule assi|machine': 'machine-shoulder-press',
+  // Idem : aucune rotation externe n'existait, et « poulie » suffisait à le
+  // faire atterrir sur un crunch à la poulie haute.
+  'rotation externe|cable': 'cable-external-rotation',
+  'tirage bas iso lateral|other': 'seated-cable-row',
   'tirage poitrine|cable': 'lat-pulldown',
   'tirage ver visage|other': 'face-pull',
 });

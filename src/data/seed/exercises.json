@@ -3,7 +3,10 @@
     "slug": "barbell-bench-press",
     "name": "Développé couché (barre)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -12,7 +15,10 @@
     "slug": "barbell-incline-bench-press",
     "name": "Développé incliné (barre)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders", "triceps"],
+    "secondaryMuscles": [
+      "shoulders",
+      "triceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -21,7 +27,9 @@
     "slug": "barbell-decline-bench-press",
     "name": "Développé décliné (barre)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -30,7 +38,10 @@
     "slug": "dumbbell-bench-press",
     "name": "Développé couché (haltères)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -39,7 +50,10 @@
     "slug": "dumbbell-incline-bench-press",
     "name": "Développé incliné (haltères)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders", "triceps"],
+    "secondaryMuscles": [
+      "shoulders",
+      "triceps"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -48,7 +62,9 @@
     "slug": "dumbbell-fly",
     "name": "Écarté couché (haltères)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -57,7 +73,9 @@
     "slug": "dumbbell-incline-fly",
     "name": "Écarté incliné (haltères)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -66,7 +84,9 @@
     "slug": "cable-crossover",
     "name": "Écarté à la poulie vis-à-vis",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -75,7 +95,9 @@
     "slug": "cable-low-fly",
     "name": "Écarté à la poulie basse",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -84,7 +106,10 @@
     "slug": "machine-chest-press",
     "name": "Développé à la machine",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -93,7 +118,9 @@
     "slug": "pec-deck",
     "name": "Butterfly (pec deck)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -102,7 +129,10 @@
     "slug": "smith-bench-press",
     "name": "Développé couché (Smith)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
     "equipment": "smith",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -111,7 +141,11 @@
     "slug": "push-up",
     "name": "Pompes",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders", "abs"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders",
+      "abs"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -120,7 +154,10 @@
     "slug": "chest-dip",
     "name": "Dips (buste penché)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -129,7 +166,10 @@
     "slug": "band-chest-press",
     "name": "Développé élastique",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["triceps", "shoulders"],
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
     "equipment": "band",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -138,7 +178,9 @@
     "slug": "plate-svend-press",
     "name": "Svend press (disque)",
     "primaryMuscle": "chest",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "plate",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -147,7 +189,10 @@
     "slug": "pull-up",
     "name": "Traction pronation",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["biceps", "upper_back"],
+    "secondaryMuscles": [
+      "biceps",
+      "upper_back"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -156,7 +201,9 @@
     "slug": "chin-up",
     "name": "Traction supination",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["biceps"],
+    "secondaryMuscles": [
+      "biceps"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -165,7 +212,10 @@
     "slug": "assisted-pull-up",
     "name": "Traction assistée (machine)",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["biceps", "upper_back"],
+    "secondaryMuscles": [
+      "biceps",
+      "upper_back"
+    ],
     "equipment": "machine",
     "measurementType": "assisted_weight_reps",
     "isUnilateral": 0
@@ -174,7 +224,10 @@
     "slug": "lat-pulldown",
     "name": "Tirage vertical (poulie haute)",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["biceps", "upper_back"],
+    "secondaryMuscles": [
+      "biceps",
+      "upper_back"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -183,7 +236,9 @@
     "slug": "close-grip-lat-pulldown",
     "name": "Tirage vertical prise serrée",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["biceps"],
+    "secondaryMuscles": [
+      "biceps"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -192,7 +247,10 @@
     "slug": "straight-arm-pulldown",
     "name": "Pull-over à la poulie haute",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["triceps", "upper_back"],
+    "secondaryMuscles": [
+      "triceps",
+      "upper_back"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -200,8 +258,12 @@
   {
     "slug": "barbell-row",
     "name": "Rowing barre",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps", "lower_back"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps",
+      "lower_back"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -209,8 +271,11 @@
   {
     "slug": "pendlay-row",
     "name": "Rowing Pendlay",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -218,8 +283,11 @@
   {
     "slug": "t-bar-row",
     "name": "Rowing T-bar",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -227,8 +295,11 @@
   {
     "slug": "dumbbell-row",
     "name": "Rowing haltère",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -236,8 +307,11 @@
   {
     "slug": "seated-cable-row",
     "name": "Tirage horizontal (poulie basse)",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -245,8 +319,11 @@
   {
     "slug": "machine-row",
     "name": "Rowing à la machine",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -255,7 +332,10 @@
     "slug": "dumbbell-pullover",
     "name": "Pull-over (haltère)",
     "primaryMuscle": "lats",
-    "secondaryMuscles": ["chest", "triceps"],
+    "secondaryMuscles": [
+      "chest",
+      "triceps"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -263,8 +343,11 @@
   {
     "slug": "inverted-row",
     "name": "Rowing australien",
-    "primaryMuscle": "lats",
-    "secondaryMuscles": ["upper_back", "biceps"],
+    "primaryMuscle": "upper_back",
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -273,7 +356,10 @@
     "slug": "face-pull",
     "name": "Face pull (poulie)",
     "primaryMuscle": "upper_back",
-    "secondaryMuscles": ["shoulders", "traps"],
+    "secondaryMuscles": [
+      "shoulders",
+      "traps"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -282,7 +368,9 @@
     "slug": "reverse-pec-deck",
     "name": "Oiseau à la machine (pec deck inversé)",
     "primaryMuscle": "upper_back",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -291,7 +379,9 @@
     "slug": "dumbbell-rear-delt-fly",
     "name": "Oiseau (haltères)",
     "primaryMuscle": "upper_back",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -300,7 +390,10 @@
     "slug": "chest-supported-row",
     "name": "Rowing buste appuyé",
     "primaryMuscle": "upper_back",
-    "secondaryMuscles": ["lats", "biceps"],
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -309,7 +402,10 @@
     "slug": "seal-row",
     "name": "Rowing allongé (banc)",
     "primaryMuscle": "upper_back",
-    "secondaryMuscles": ["lats", "biceps"],
+    "secondaryMuscles": [
+      "lats",
+      "biceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -318,7 +414,9 @@
     "slug": "band-pull-apart",
     "name": "Écartés élastiques",
     "primaryMuscle": "upper_back",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "band",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -327,7 +425,9 @@
     "slug": "barbell-shrug",
     "name": "Haussement d’épaules (barre)",
     "primaryMuscle": "traps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -336,7 +436,9 @@
     "slug": "dumbbell-shrug",
     "name": "Haussement d’épaules (haltères)",
     "primaryMuscle": "traps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -345,7 +447,9 @@
     "slug": "smith-shrug",
     "name": "Haussement d’épaules (Smith)",
     "primaryMuscle": "traps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "smith",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -354,7 +458,9 @@
     "slug": "cable-shrug",
     "name": "Haussement d’épaules (poulie)",
     "primaryMuscle": "traps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -363,7 +469,10 @@
     "slug": "barbell-upright-row",
     "name": "Rowing menton (barre)",
     "primaryMuscle": "traps",
-    "secondaryMuscles": ["shoulders", "biceps"],
+    "secondaryMuscles": [
+      "shoulders",
+      "biceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -372,7 +481,10 @@
     "slug": "farmers-walk",
     "name": "Marche du fermier",
     "primaryMuscle": "traps",
-    "secondaryMuscles": ["forearms", "full_body"],
+    "secondaryMuscles": [
+      "forearms",
+      "full_body"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_time",
     "isUnilateral": 0
@@ -381,7 +493,10 @@
     "slug": "barbell-overhead-press",
     "name": "Développé militaire (barre)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps", "abs"],
+    "secondaryMuscles": [
+      "triceps",
+      "abs"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -390,7 +505,9 @@
     "slug": "seated-barbell-press",
     "name": "Développé militaire assis (barre)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -399,7 +516,9 @@
     "slug": "dumbbell-shoulder-press",
     "name": "Développé épaules (haltères)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -408,7 +527,9 @@
     "slug": "arnold-press",
     "name": "Développé Arnold",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -417,7 +538,9 @@
     "slug": "machine-shoulder-press",
     "name": "Développé épaules à la machine",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -426,7 +549,9 @@
     "slug": "smith-overhead-press",
     "name": "Développé militaire (Smith)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "smith",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -435,7 +560,10 @@
     "slug": "kettlebell-overhead-press",
     "name": "Développé épaules (kettlebell)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps", "abs"],
+    "secondaryMuscles": [
+      "triceps",
+      "abs"
+    ],
     "equipment": "kettlebell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -444,7 +572,9 @@
     "slug": "dumbbell-lateral-raise",
     "name": "Élévations latérales (haltères)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["traps"],
+    "secondaryMuscles": [
+      "traps"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -453,7 +583,9 @@
     "slug": "cable-lateral-raise",
     "name": "Élévations latérales (poulie)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["traps"],
+    "secondaryMuscles": [
+      "traps"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -462,7 +594,9 @@
     "slug": "machine-lateral-raise",
     "name": "Élévations latérales à la machine",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["traps"],
+    "secondaryMuscles": [
+      "traps"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -471,7 +605,9 @@
     "slug": "dumbbell-front-raise",
     "name": "Élévations frontales (haltères)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["chest"],
+    "secondaryMuscles": [
+      "chest"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -480,7 +616,9 @@
     "slug": "plate-front-raise",
     "name": "Élévations frontales (disque)",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["chest"],
+    "secondaryMuscles": [
+      "chest"
+    ],
     "equipment": "plate",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -489,16 +627,64 @@
     "slug": "band-lateral-raise",
     "name": "Élévations latérales élastiques",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["traps"],
+    "secondaryMuscles": [
+      "traps"
+    ],
     "equipment": "band",
     "measurementType": "reps_only",
+    "isUnilateral": 0
+  },
+  {
+    "slug": "cable-external-rotation",
+    "name": "Rotation externe (poulie)",
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": [
+      "upper_back"
+    ],
+    "equipment": "cable",
+    "measurementType": "weight_reps",
+    "isUnilateral": 1
+  },
+  {
+    "slug": "band-external-rotation",
+    "name": "Rotation externe (élastique)",
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": [
+      "upper_back"
+    ],
+    "equipment": "band",
+    "measurementType": "weight_reps",
+    "isUnilateral": 1
+  },
+  {
+    "slug": "dumbbell-external-rotation",
+    "name": "Rotation externe (haltère)",
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": [
+      "upper_back"
+    ],
+    "equipment": "dumbbell",
+    "measurementType": "weight_reps",
+    "isUnilateral": 1
+  },
+  {
+    "slug": "cable-shoulder-press",
+    "name": "Développé épaules (poulie)",
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": [
+      "triceps"
+    ],
+    "equipment": "cable",
+    "measurementType": "weight_reps",
     "isUnilateral": 0
   },
   {
     "slug": "handstand-push-up",
     "name": "Pompes en équilibre",
     "primaryMuscle": "shoulders",
-    "secondaryMuscles": ["triceps"],
+    "secondaryMuscles": [
+      "triceps"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -507,7 +693,9 @@
     "slug": "barbell-curl",
     "name": "Curl barre",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -516,7 +704,9 @@
     "slug": "ez-bar-curl",
     "name": "Curl barre EZ",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -525,7 +715,9 @@
     "slug": "dumbbell-curl",
     "name": "Curl haltères",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -534,7 +726,9 @@
     "slug": "hammer-curl",
     "name": "Curl marteau",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -543,7 +737,9 @@
     "slug": "incline-dumbbell-curl",
     "name": "Curl incliné (haltères)",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -552,7 +748,9 @@
     "slug": "concentration-curl",
     "name": "Curl concentré",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -561,7 +759,9 @@
     "slug": "spider-curl",
     "name": "Curl araignée",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -570,7 +770,9 @@
     "slug": "preacher-curl",
     "name": "Curl au pupitre (Larry Scott)",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -579,7 +781,9 @@
     "slug": "machine-preacher-curl",
     "name": "Curl au pupitre à la machine",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -588,7 +792,9 @@
     "slug": "cable-curl",
     "name": "Curl à la poulie basse",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -597,7 +803,9 @@
     "slug": "band-curl",
     "name": "Curl élastique",
     "primaryMuscle": "biceps",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "band",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -606,7 +814,10 @@
     "slug": "close-grip-bench-press",
     "name": "Développé couché prise serrée",
     "primaryMuscle": "triceps",
-    "secondaryMuscles": ["chest", "shoulders"],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -624,7 +835,10 @@
     "slug": "triceps-dip",
     "name": "Dips (buste droit)",
     "primaryMuscle": "triceps",
-    "secondaryMuscles": ["chest", "shoulders"],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -633,7 +847,10 @@
     "slug": "assisted-dip",
     "name": "Dips assistés (machine)",
     "primaryMuscle": "triceps",
-    "secondaryMuscles": ["chest", "shoulders"],
+    "secondaryMuscles": [
+      "chest",
+      "shoulders"
+    ],
     "equipment": "machine",
     "measurementType": "assisted_weight_reps",
     "isUnilateral": 0
@@ -642,7 +859,9 @@
     "slug": "bench-dip",
     "name": "Dips entre deux bancs",
     "primaryMuscle": "triceps",
-    "secondaryMuscles": ["chest"],
+    "secondaryMuscles": [
+      "chest"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -705,7 +924,9 @@
     "slug": "diamond-push-up",
     "name": "Pompes diamant",
     "primaryMuscle": "triceps",
-    "secondaryMuscles": ["chest"],
+    "secondaryMuscles": [
+      "chest"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -741,7 +962,9 @@
     "slug": "reverse-curl",
     "name": "Curl inversé (barre)",
     "primaryMuscle": "forearms",
-    "secondaryMuscles": ["biceps"],
+    "secondaryMuscles": [
+      "biceps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -768,7 +991,9 @@
     "slug": "dead-hang",
     "name": "Suspension à la barre",
     "primaryMuscle": "forearms",
-    "secondaryMuscles": ["lats"],
+    "secondaryMuscles": [
+      "lats"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -777,7 +1002,11 @@
     "slug": "barbell-back-squat",
     "name": "Squat (barre, nuque)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "hamstrings", "lower_back"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "lower_back"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -786,7 +1015,10 @@
     "slug": "barbell-front-squat",
     "name": "Squat avant (barre)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "abs"],
+    "secondaryMuscles": [
+      "glutes",
+      "abs"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -795,7 +1027,9 @@
     "slug": "smith-squat",
     "name": "Squat (Smith)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "smith",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -804,7 +1038,9 @@
     "slug": "hack-squat",
     "name": "Hack squat (machine)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -813,7 +1049,10 @@
     "slug": "leg-press",
     "name": "Presse à cuisses",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "hamstrings"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -831,7 +1070,10 @@
     "slug": "goblet-squat",
     "name": "Goblet squat (haltère)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "abs"],
+    "secondaryMuscles": [
+      "glutes",
+      "abs"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -840,7 +1082,10 @@
     "slug": "kettlebell-goblet-squat",
     "name": "Goblet squat (kettlebell)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "abs"],
+    "secondaryMuscles": [
+      "glutes",
+      "abs"
+    ],
     "equipment": "kettlebell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -849,7 +1094,10 @@
     "slug": "bulgarian-split-squat",
     "name": "Fente bulgare",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "hamstrings"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -858,7 +1106,10 @@
     "slug": "walking-lunge",
     "name": "Fentes marchées",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "hamstrings"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -867,7 +1118,9 @@
     "slug": "barbell-lunge",
     "name": "Fentes (barre)",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -876,7 +1129,9 @@
     "slug": "step-up",
     "name": "Montée sur banc",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -885,7 +1140,9 @@
     "slug": "bodyweight-squat",
     "name": "Squat au poids du corps",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -894,7 +1151,10 @@
     "slug": "pistol-squat",
     "name": "Pistol squat",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes", "abs"],
+    "secondaryMuscles": [
+      "glutes",
+      "abs"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 1
@@ -912,7 +1172,9 @@
     "slug": "wall-sit",
     "name": "Chaise contre le mur",
     "primaryMuscle": "quads",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -921,7 +1183,10 @@
     "slug": "romanian-deadlift",
     "name": "Soulevé de terre roumain (barre)",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["glutes", "lower_back"],
+    "secondaryMuscles": [
+      "glutes",
+      "lower_back"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -930,7 +1195,10 @@
     "slug": "dumbbell-romanian-deadlift",
     "name": "Soulevé de terre roumain (haltères)",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["glutes", "lower_back"],
+    "secondaryMuscles": [
+      "glutes",
+      "lower_back"
+    ],
     "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -939,7 +1207,10 @@
     "slug": "stiff-leg-deadlift",
     "name": "Soulevé de terre jambes tendues",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["glutes", "lower_back"],
+    "secondaryMuscles": [
+      "glutes",
+      "lower_back"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -948,7 +1219,9 @@
     "slug": "lying-leg-curl",
     "name": "Leg curl allongé",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["calves"],
+    "secondaryMuscles": [
+      "calves"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -957,7 +1230,9 @@
     "slug": "seated-leg-curl",
     "name": "Leg curl assis",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["calves"],
+    "secondaryMuscles": [
+      "calves"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -966,7 +1241,9 @@
     "slug": "nordic-curl",
     "name": "Nordic curl",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -975,7 +1252,10 @@
     "slug": "good-morning",
     "name": "Good morning (barre)",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["lower_back", "glutes"],
+    "secondaryMuscles": [
+      "lower_back",
+      "glutes"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -984,7 +1264,9 @@
     "slug": "cable-pull-through",
     "name": "Pull-through à la poulie",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -993,7 +1275,11 @@
     "slug": "kettlebell-swing",
     "name": "Swing (kettlebell)",
     "primaryMuscle": "hamstrings",
-    "secondaryMuscles": ["glutes", "lower_back", "full_body"],
+    "secondaryMuscles": [
+      "glutes",
+      "lower_back",
+      "full_body"
+    ],
     "equipment": "kettlebell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1002,8 +1288,22 @@
     "slug": "barbell-hip-thrust",
     "name": "Hip thrust (barre)",
     "primaryMuscle": "glutes",
-    "secondaryMuscles": ["hamstrings"],
+    "secondaryMuscles": [
+      "hamstrings"
+    ],
     "equipment": "barbell",
+    "measurementType": "weight_reps",
+    "isUnilateral": 0
+  },
+  {
+    "slug": "dumbbell-hip-thrust",
+    "name": "Hip thrust (haltère)",
+    "primaryMuscle": "glutes",
+    "secondaryMuscles": [
+      "hamstrings",
+      "quads"
+    ],
+    "equipment": "dumbbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
   },
@@ -1011,7 +1311,9 @@
     "slug": "machine-hip-thrust",
     "name": "Hip thrust à la machine",
     "primaryMuscle": "glutes",
-    "secondaryMuscles": ["hamstrings"],
+    "secondaryMuscles": [
+      "hamstrings"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1020,7 +1322,9 @@
     "slug": "glute-bridge",
     "name": "Pont fessier",
     "primaryMuscle": "glutes",
-    "secondaryMuscles": ["hamstrings"],
+    "secondaryMuscles": [
+      "hamstrings"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1029,7 +1333,9 @@
     "slug": "cable-glute-kickback",
     "name": "Kickback fessier (poulie)",
     "primaryMuscle": "glutes",
-    "secondaryMuscles": ["hamstrings"],
+    "secondaryMuscles": [
+      "hamstrings"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -1046,8 +1352,10 @@
   {
     "slug": "hip-adduction-machine",
     "name": "Adduction à la machine",
-    "primaryMuscle": "glutes",
-    "secondaryMuscles": ["quads"],
+    "primaryMuscle": "adductors",
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1065,7 +1373,11 @@
     "slug": "sumo-deadlift",
     "name": "Soulevé de terre sumo",
     "primaryMuscle": "glutes",
-    "secondaryMuscles": ["quads", "hamstrings", "lower_back"],
+    "secondaryMuscles": [
+      "quads",
+      "hamstrings",
+      "lower_back"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1128,7 +1440,10 @@
     "slug": "plank",
     "name": "Gainage planche",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["lower_back", "shoulders"],
+    "secondaryMuscles": [
+      "lower_back",
+      "shoulders"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -1137,7 +1452,9 @@
     "slug": "side-plank",
     "name": "Gainage latéral",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["lower_back"],
+    "secondaryMuscles": [
+      "lower_back"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 1
@@ -1146,7 +1463,10 @@
     "slug": "weighted-plank",
     "name": "Gainage lesté",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["lower_back", "shoulders"],
+    "secondaryMuscles": [
+      "lower_back",
+      "shoulders"
+    ],
     "equipment": "plate",
     "measurementType": "weight_time",
     "isUnilateral": 0
@@ -1155,7 +1475,9 @@
     "slug": "hanging-leg-raise",
     "name": "Relevé de jambes suspendu",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1164,7 +1486,9 @@
     "slug": "hanging-knee-raise",
     "name": "Relevé de genoux suspendu",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["forearms"],
+    "secondaryMuscles": [
+      "forearms"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1209,7 +1533,9 @@
     "slug": "russian-twist",
     "name": "Russian twist (disque)",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["lower_back"],
+    "secondaryMuscles": [
+      "lower_back"
+    ],
     "equipment": "plate",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1218,7 +1544,10 @@
     "slug": "ab-wheel-rollout",
     "name": "Roulette abdominale",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["lower_back", "lats"],
+    "secondaryMuscles": [
+      "lower_back",
+      "lats"
+    ],
     "equipment": "other",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1227,7 +1556,9 @@
     "slug": "dead-bug",
     "name": "Dead bug",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["lower_back"],
+    "secondaryMuscles": [
+      "lower_back"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1236,7 +1567,9 @@
     "slug": "pallof-press",
     "name": "Pallof press (poulie)",
     "primaryMuscle": "abs",
-    "secondaryMuscles": ["shoulders"],
+    "secondaryMuscles": [
+      "shoulders"
+    ],
     "equipment": "cable",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -1245,7 +1578,12 @@
     "slug": "conventional-deadlift",
     "name": "Soulevé de terre (barre)",
     "primaryMuscle": "lower_back",
-    "secondaryMuscles": ["glutes", "hamstrings", "quads", "traps"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "quads",
+      "traps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1254,7 +1592,10 @@
     "slug": "rack-pull",
     "name": "Rack pull",
     "primaryMuscle": "lower_back",
-    "secondaryMuscles": ["traps", "glutes"],
+    "secondaryMuscles": [
+      "traps",
+      "glutes"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1263,7 +1604,10 @@
     "slug": "back-extension",
     "name": "Extension lombaire (banc)",
     "primaryMuscle": "lower_back",
-    "secondaryMuscles": ["glutes", "hamstrings"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1272,7 +1616,10 @@
     "slug": "weighted-back-extension",
     "name": "Extension lombaire lestée",
     "primaryMuscle": "lower_back",
-    "secondaryMuscles": ["glutes", "hamstrings"],
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
     "equipment": "plate",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1281,7 +1628,9 @@
     "slug": "machine-back-extension",
     "name": "Extension lombaire à la machine",
     "primaryMuscle": "lower_back",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "machine",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1290,7 +1639,9 @@
     "slug": "superman",
     "name": "Superman",
     "primaryMuscle": "lower_back",
-    "secondaryMuscles": ["glutes"],
+    "secondaryMuscles": [
+      "glutes"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -1308,7 +1659,9 @@
     "slug": "neck-extension",
     "name": "Extension de nuque (lestée)",
     "primaryMuscle": "neck",
-    "secondaryMuscles": ["traps"],
+    "secondaryMuscles": [
+      "traps"
+    ],
     "equipment": "plate",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1317,7 +1670,9 @@
     "slug": "neck-harness-extension",
     "name": "Extension de nuque au harnais",
     "primaryMuscle": "neck",
-    "secondaryMuscles": ["traps"],
+    "secondaryMuscles": [
+      "traps"
+    ],
     "equipment": "other",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1326,7 +1681,11 @@
     "slug": "power-clean",
     "name": "Épaulé (power clean)",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["quads", "traps", "shoulders"],
+    "secondaryMuscles": [
+      "quads",
+      "traps",
+      "shoulders"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1335,7 +1694,11 @@
     "slug": "clean-and-jerk",
     "name": "Épaulé-jeté",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["quads", "shoulders", "traps"],
+    "secondaryMuscles": [
+      "quads",
+      "shoulders",
+      "traps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1344,7 +1707,11 @@
     "slug": "snatch",
     "name": "Arraché",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["quads", "shoulders", "traps"],
+    "secondaryMuscles": [
+      "quads",
+      "shoulders",
+      "traps"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1353,7 +1720,10 @@
     "slug": "thruster",
     "name": "Thruster",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["quads", "shoulders"],
+    "secondaryMuscles": [
+      "quads",
+      "shoulders"
+    ],
     "equipment": "barbell",
     "measurementType": "weight_reps",
     "isUnilateral": 0
@@ -1362,7 +1732,10 @@
     "slug": "kettlebell-clean-and-press",
     "name": "Épaulé-développé (kettlebell)",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["shoulders", "quads"],
+    "secondaryMuscles": [
+      "shoulders",
+      "quads"
+    ],
     "equipment": "kettlebell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -1371,7 +1744,10 @@
     "slug": "turkish-get-up",
     "name": "Relevé turc",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["shoulders", "abs"],
+    "secondaryMuscles": [
+      "shoulders",
+      "abs"
+    ],
     "equipment": "kettlebell",
     "measurementType": "weight_reps",
     "isUnilateral": 1
@@ -1380,7 +1756,10 @@
     "slug": "burpee",
     "name": "Burpee",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["chest", "quads"],
+    "secondaryMuscles": [
+      "chest",
+      "quads"
+    ],
     "equipment": "bodyweight",
     "measurementType": "reps_only",
     "isUnilateral": 0
@@ -1389,7 +1768,10 @@
     "slug": "battle-ropes",
     "name": "Cordes ondulatoires",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["shoulders", "forearms"],
+    "secondaryMuscles": [
+      "shoulders",
+      "forearms"
+    ],
     "equipment": "other",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -1398,7 +1780,10 @@
     "slug": "sled-push",
     "name": "Poussée de traîneau",
     "primaryMuscle": "full_body",
-    "secondaryMuscles": ["quads", "glutes"],
+    "secondaryMuscles": [
+      "quads",
+      "glutes"
+    ],
     "equipment": "other",
     "measurementType": "weight_time",
     "isUnilateral": 0
@@ -1407,7 +1792,10 @@
     "slug": "treadmill-run",
     "name": "Course sur tapis",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["quads", "calves"],
+    "secondaryMuscles": [
+      "quads",
+      "calves"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1416,7 +1804,10 @@
     "slug": "outdoor-run",
     "name": "Course en extérieur",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["quads", "calves"],
+    "secondaryMuscles": [
+      "quads",
+      "calves"
+    ],
     "equipment": "other",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1425,7 +1816,11 @@
     "slug": "rowing-machine",
     "name": "Rameur",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["lats", "quads", "upper_back"],
+    "secondaryMuscles": [
+      "lats",
+      "quads",
+      "upper_back"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1434,7 +1829,10 @@
     "slug": "stationary-bike",
     "name": "Vélo d’appartement",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["quads", "calves"],
+    "secondaryMuscles": [
+      "quads",
+      "calves"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1443,7 +1841,10 @@
     "slug": "elliptical",
     "name": "Vélo elliptique",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["quads", "glutes"],
+    "secondaryMuscles": [
+      "quads",
+      "glutes"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1452,7 +1853,11 @@
     "slug": "stair-climber",
     "name": "Escalier (stepper)",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["quads", "glutes", "calves"],
+    "secondaryMuscles": [
+      "quads",
+      "glutes",
+      "calves"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1461,7 +1866,10 @@
     "slug": "ski-erg",
     "name": "Ski erg",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["lats", "triceps"],
+    "secondaryMuscles": [
+      "lats",
+      "triceps"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1470,7 +1878,10 @@
     "slug": "assault-bike",
     "name": "Vélo à air (assault bike)",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["quads", "shoulders"],
+    "secondaryMuscles": [
+      "quads",
+      "shoulders"
+    ],
     "equipment": "machine",
     "measurementType": "distance_time",
     "isUnilateral": 0
@@ -1479,7 +1890,9 @@
     "slug": "jump-rope",
     "name": "Corde à sauter",
     "primaryMuscle": "cardio",
-    "secondaryMuscles": ["calves"],
+    "secondaryMuscles": [
+      "calves"
+    ],
     "equipment": "other",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -1488,7 +1901,9 @@
     "slug": "stretching-session",
     "name": "Étirements",
     "primaryMuscle": "other",
-    "secondaryMuscles": ["full_body"],
+    "secondaryMuscles": [
+      "full_body"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -1497,7 +1912,9 @@
     "slug": "mobility-session",
     "name": "Mobilité",
     "primaryMuscle": "other",
-    "secondaryMuscles": ["full_body"],
+    "secondaryMuscles": [
+      "full_body"
+    ],
     "equipment": "bodyweight",
     "measurementType": "time_only",
     "isUnilateral": 0
@@ -1506,7 +1923,9 @@
     "slug": "foam-rolling",
     "name": "Rouleau de massage",
     "primaryMuscle": "other",
-    "secondaryMuscles": ["full_body"],
+    "secondaryMuscles": [
+      "full_body"
+    ],
     "equipment": "other",
     "measurementType": "time_only",
     "isUnilateral": 0
