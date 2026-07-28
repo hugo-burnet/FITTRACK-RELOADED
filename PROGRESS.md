@@ -2,7 +2,53 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**une hypothèse ne porte plus l'habit d'une certitude**).
+**Dernière mise à jour :** 2026-07-28 (**le semis réconcilie la classification — sans quoi le
+correctif catalogue n'atteignait personne**).
+
+**Défaut livré par moi, trouvé par une capture d'écran du téléphone.** Après le correctif catalogue,
+l'écran affichait encore **Fessiers 22**, **Grand dorsal 12 contre Haut du dos 6**, et Adducteurs à
+zéro : exactement l'état d'avant. Cause : `seedDatabase()` était **strictement additif** — il
+n'insérait que les slugs manquants et n'écrivait jamais sur une fiche existante. Les 4 exercices
+neufs arrivaient donc bien, mais `Adduction à la machine` et les 7 rowings, déjà présents,
+**gardaient leur ancien muscle**. Le correctif ne touchait qu'une installation neuve.
+
+**Et la conséquence en cascade, qui est le vrai enseignement : « Réparer l'historique » relit la
+bibliothèque.** Il a donc consciencieusement recopié `glutes` sur l'adduction. Le bouton
+fonctionnait ; **c'est sa source qui était périmée**. Une réparation ne peut jamais dépasser la
+qualité de ce qu'elle relit — le checkpoint annoncé envoyait droit dans le mur.
+
+**`reconcileClassification()` réaligne `primaryMuscle` et `secondaryMuscles`, et rien d'autre.**
+Arbitrage tranché après consultation (« le plus adapté ») : quel muscle un mouvement travaille est
+une donnée anatomique dont l'app répond et dont **tous** les graphiques dépendent ; le **nom**, les
+**notes** (`userNotes`, « siège position 4 » est l'exemple même du checkpoint du Lot 3) et le
+**repos par défaut** appartiennent à l'utilisateur et ne sont touchés sur aucune ligne, jamais.
+L'option « n'écrire que sur les fiches jamais modifiées » a été écartée pour une raison de fond :
+elle échoue exactement là où ça compte, une seule note posée sur un rowing suffisant à lui laisser
+son muscle faux à vie.
+
+Écarts assumés, écrits plutôt que cachés : une fiche du catalogue **délibérément** reclassée par
+l'utilisateur sera réalignée — ses propres exercices (`isCustom: 1`, sans slug) sont intouchables et
+c'est là qu'un désaccord se loge. Les fiches **soft-deleted sont réalignées aussi** : un exercice
+supprimé reste celui qui a été pratiqué, et son historique lit encore son muscle. Rien n'est écrit
+quand rien ne diffère — la fonction tourne à chaque démarrage, et un `updatedAt` bougé pour rien
+salirait toutes les lignes aux yeux de la synchronisation future (ADR-002).
+
+Piège rencontré en écrivant les tests : **`slug` n'est pas indexé**, donc `where('slug')` échoue.
+La réconciliation charge la table une fois — le semis la lisait déjà.
+
+**53 fichiers, 744 tests** (+5), quatre portes vertes.
+
+**Vérifié en pilotant, sur l'état exact du téléphone reproduit** : catalogue remis à l'ancienne
+classification, note « Siège position 4 » et repos 210 s posés dessus, historique gelé sur les
+anciens muscles. Au rechargement, la bibliothèque se réaligne seule (**adducteurs**, **haut du
+dos**) et **la note, le repos et le nom sont intacts** ; l'historique, lui, **reste gelé** — le passé
+ne se repeint pas tout seul. Après le bouton : « 2 exercices de séance corrigés », et l'écran affiche
+**Adducteurs 6 · Haut du dos 4**.
+
+**Ordre à respecter, et c'est le nouveau checkpoint :** ouvrir l'app **d'abord** (le semis réaligne
+la bibliothèque), **puis** Réglages → Réparer. L'inverse ne donne rien.
+
+**Historique précédent :** 2026-07-28 (**une hypothèse ne porte plus l'habit d'une certitude**).
 Suite directe du correctif catalogue ci-dessous. Question posée par l'utilisateur : « on devrait
 améliorer la reconnaissance des exos ? » — **non, et les chiffres le disent** : les quatre titres qui
 partaient n'importe où n'avaient aucune cible au catalogue. Cinq exercices ajoutés et quatre lignes

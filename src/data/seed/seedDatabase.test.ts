@@ -114,3 +114,83 @@ describe('catalogue exercises.json', () => {
     expect([...MEASUREMENT_TYPES].filter((type) => !covered.has(type))).toEqual([]);
   });
 });
+
+describe('réconciliation de la classification', () => {
+  beforeEach(resetDb);
+
+  it('réaligne le muscle d’une fiche du catalogue livrée avec une erreur', async () => {
+    // Le défaut trouvé en usage : le semis n'ajoutait que les slugs manquants,
+    // donc la correction d'un muscle mal classé n'atteignait JAMAIS un
+    // téléphone où l'app était déjà installée. Et « Réparer l'historique »
+    // relisant cette bibliothèque, il recopiait consciencieusement l'erreur.
+    await seedDatabase();
+    const row = (await db.exercises.toArray()).find((e) => e.slug === 'seated-cable-row');
+    await db.exercises.update(row!.id, { primaryMuscle: 'lats', updatedAt: 1 });
+
+    await seedDatabase();
+
+    const fixed = await db.exercises.get(row!.id);
+    expect(fixed!.primaryMuscle).toBe('upper_back');
+    // La ligne a vraiment changé : la synchronisation future doit la voir.
+    expect(fixed!.updatedAt).toBeGreaterThan(1);
+  });
+
+  it('ne touche ni au nom, ni aux notes, ni au repos par défaut', async () => {
+    // La classification appartient à l'app ; le reste appartient à
+    // l'utilisateur. « Siège position 4 » est l'exemple même du Lot 3.
+    await seedDatabase();
+    const row = (await db.exercises.toArray()).find((e) => e.slug === 'seated-cable-row');
+    await db.exercises.update(row!.id, {
+      primaryMuscle: 'lats',
+      name: 'Mon tirage à moi',
+      userNotes: 'Siège position 4',
+      defaultRestSeconds: 210,
+    });
+
+    await seedDatabase();
+
+    const kept = await db.exercises.get(row!.id);
+    expect(kept!.primaryMuscle).toBe('upper_back');
+    expect(kept!.name).toBe('Mon tirage à moi');
+    expect(kept!.userNotes).toBe('Siège position 4');
+    expect(kept!.defaultRestSeconds).toBe(210);
+  });
+
+  it('laisse les exercices personnalisés entièrement tranquilles', async () => {
+    const mine = newEntity<Exercise>({
+      name: 'Machine de ma salle',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isCustom: 1,
+      isUnilateral: 0,
+    });
+    await db.exercises.add(mine);
+
+    await seedDatabase();
+
+    expect((await db.exercises.get(mine.id))!.primaryMuscle).toBe('chest');
+  });
+
+  it('n’écrit rien quand tout est déjà d’accord', async () => {
+    await seedDatabase();
+    const before = (await db.exercises.toArray()).find((e) => e.slug === 'seated-cable-row');
+
+    await seedDatabase();
+
+    expect((await db.exercises.get(before!.id))!.updatedAt).toBe(before!.updatedAt);
+  });
+
+  it('réaligne aussi une fiche supprimée, qui reste celle qui a été pratiquée', async () => {
+    await seedDatabase();
+    const row = (await db.exercises.toArray()).find((e) => e.slug === 'seated-cable-row');
+    await db.exercises.update(row!.id, { primaryMuscle: 'lats', deletedAt: 5_000 });
+
+    await seedDatabase();
+
+    const fixed = await db.exercises.get(row!.id);
+    expect(fixed!.primaryMuscle).toBe('upper_back');
+    expect(fixed!.deletedAt).toBe(5_000);
+  });
+});
