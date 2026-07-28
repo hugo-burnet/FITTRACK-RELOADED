@@ -34,8 +34,17 @@ jalon, et c'est ce que §5 tranche.
 
 Pas de sélecteur de métrique : **une seule quantité, la série de travail.** Le
 tonnage par muscle serait une autre lecture (une série de mollets et une série
-de squat ne pèsent pas pareil) et il appartient à G4, comme le tonnage par
-semaine. Un seul sélecteur, donc, `PERIOD_KEYS`, déjà écrit et déjà traduit.
+de squat ne pèsent pas pareil), mais G4 l’écarte et ne garde que le tonnage et
+la durée par semaine. Un seul sélecteur, donc, `PERIOD_KEYS`, déjà écrit et déjà
+traduit.
+
+Cette réserve ne signifie pas qu’un futur tonnage rendrait les muscles
+comparables. **Une série n’est pas une unité de coût constante d’un muscle à
+l’autre**, mais un kilo ne l’est pas davantage : les kilos d’élévations de
+mollets et les kilos de squat décrivent deux mécaniques différentes. G3 donne
+donc un ordre de grandeur inter-muscles, et une lecture solide d’un muscle
+comparé à lui-même dans le temps, surtout quand il vaut zéro ou presque. Ce
+n’est pas un score d’effort ni un verdict d’équilibre.
 
 ---
 
@@ -514,8 +523,9 @@ G1 ni sous G2. Idem pour `ChartSurface.tsx`, qui n'est pas touché (§4.2).
   le Lot 5bis, donc une géométrie SVG reprise sous licence permissive avec son
   attribution. Nommé, pas fait ;
 - les **muscles secondaires** et la migration v3 qui les porterait (§3) ;
-- le **tonnage par muscle** et la durée par muscle — G4, même raison que le
-  tonnage par semaine ;
+- le **tonnage par muscle** et la durée par muscle — écartés de G4 : le premier
+  compare des mécaniques non commensurables et la seconde ne peut pas répartir
+  honnêtement une durée de séance entre ses exercices ;
 - **taper un muscle pour voir les exercices qui l'ont nourri** — utile, mais c'est
   un second écran et une seconde lecture ; il n'entre pas dans un jalon qui en
   livre un ;
