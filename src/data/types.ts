@@ -165,6 +165,20 @@ export interface Workout extends Syncable {
   notes?: string;
   importSource?: 'hevy_csv';
   importKey?: string;
+
+  /**
+   * Minutes to ADD to UTC to get the local clock where the session happened —
+   * `+120` for Paris in summer, i.e. the sign opposite to `getTimezoneOffset()`.
+   *
+   * Stored rather than recomputed because a session's civil day must not move.
+   * Grouping by the phone's *current* offset makes a 23:30 session change day,
+   * and therefore week, after a flight — the totals of a past week would then
+   * depend on where you are standing when you look at them.
+   *
+   * Worth exactly nothing until the first trip, and impossible to reconstruct
+   * afterwards. Not indexed: nothing queries by offset.
+   */
+  startedTimezoneOffsetMinutes?: number;
 }
 
 export interface WorkoutExercise extends Syncable {
@@ -184,6 +198,34 @@ export interface WorkoutExercise extends Syncable {
    * where `0` means "use the exercise's default". Cf. `resolveRestSeconds`.
    */
   restSeconds: number;
+
+  /**
+   * The exercise **as it was** when this row entered the session. DENORMALISED
+   * on purpose, exactly like `restSeconds` above and for the same reason: the
+   * library can be edited afterwards, and a past session must not change.
+   *
+   * Without them, renaming an exercise renamed every session that ever used it,
+   * changing its `measurementType` reinterpreted values already recorded, and
+   * changing its `primaryMuscle` moved months of volume onto another muscle —
+   * retroactively, and silently. An export run today would then disagree with
+   * an export of the same session run tomorrow.
+   *
+   * **Written when `exerciseId` is written, never refreshed.** A row whose
+   * exercise is corrected in the archive editor gets a new snapshot; a library
+   * edit gets nothing. That asymmetry is the whole point.
+   *
+   * Optional because rows predating this field exist. Absence is the only
+   * quality signal there is, and it is enough: fall back to the library, which
+   * still holds the row — `deleteExercise` soft-deletes, so an exercise is
+   * never actually gone. Neither `secondaryMuscles` nor `isUnilateral` is
+   * copied: nothing reads them from history, and the library still has them.
+   *
+   * None of the four is indexed, so they cost no index migration.
+   */
+  exerciseName?: string;
+  exerciseMeasurementType?: MeasurementType;
+  exercisePrimaryMuscle?: MuscleGroup;
+  exerciseEquipment?: Equipment;
 }
 
 export interface WorkoutSet extends Syncable {

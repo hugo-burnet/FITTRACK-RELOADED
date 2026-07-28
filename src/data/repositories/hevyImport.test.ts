@@ -251,6 +251,10 @@ describe('Hevy import repository', () => {
       notes: 'Note séance',
       importSource: 'hevy_csv',
       importKey: 'hevy:a',
+      // Lu à la date de la séance, pas à celle de l'import : le CSV Hevy porte
+      // une heure murale sans fuseau, et `hevyCsv` la lit dans celui de
+      // l'appareil.
+      startedTimezoneOffsetMinutes: -new Date(1_000).getTimezoneOffset(),
     });
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({
@@ -259,11 +263,16 @@ describe('Hevy import repository', () => {
       supersetGroup: 1,
       notes: 'Banc 4',
       restSeconds: 120,
+      exerciseName: bench.name,
+      exerciseMeasurementType: bench.measurementType,
+      exercisePrimaryMuscle: bench.primaryMuscle,
+      exerciseEquipment: bench.equipment,
     });
     expect(rows[1]).toMatchObject({
       exerciseId: plank?.id,
       order: 1,
       supersetGroup: 1,
+      exerciseName: 'Planche',
     });
     expect(sets.map((set) => set.performedAt)).toEqual([
       3_500,

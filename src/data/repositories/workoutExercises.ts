@@ -3,6 +3,7 @@ import type { WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resolveRestSeconds } from '@/lib/rest';
 import { moveItem, normalizeSupersets } from '@/lib/routineOrder';
 import { alive, newEntity, softDelete, touch } from './base';
+import { snapshotOf } from '@/lib/exerciseSnapshot';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
 
@@ -65,6 +66,7 @@ export async function addWorkoutExercise(
       order: count,
       supersetGroup: 0,
       restSeconds: resolveRestSeconds(undefined, exercise?.defaultRestSeconds),
+      ...snapshotOf(exercise),
     });
 
     await db.workoutExercises.add(row);

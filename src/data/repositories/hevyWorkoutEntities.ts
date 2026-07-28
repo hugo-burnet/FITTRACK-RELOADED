@@ -7,7 +7,9 @@ import type {
 import type { HevyParsedWorkout } from '@/lib/hevyCsv';
 import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
 import { resolveRestSeconds } from '@/lib/rest';
+import { localOffsetMinutes } from '@/lib/timezone';
 import { newEntity } from './base';
+import { snapshotOf } from '@/lib/exerciseSnapshot';
 
 export interface HevyWorkoutEntities {
   workouts: Workout[];
@@ -34,6 +36,10 @@ export function buildHevyWorkoutEntities(
       ...(parsed.notes === undefined ? {} : { notes: parsed.notes }),
       importSource: 'hevy_csv',
       importKey: parsed.importKey,
+      // The CSV carries a wall-clock date with no zone. `hevyCsv` reads it in
+      // the device's zone, so the offset that reproduces it is the device's
+      // offset AT THAT DATE — not today's, which is why it is read per session.
+      startedTimezoneOffsetMinutes: localOffsetMinutes(parsed.startedAt),
     });
     workouts.push(workout);
 
@@ -62,6 +68,7 @@ export function buildHevyWorkoutEntities(
           undefined,
           exercise.defaultRestSeconds,
         ),
+        ...snapshotOf(exercise),
       });
       rows.push(row);
 

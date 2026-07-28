@@ -1,4 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
+import { snapshotOf } from '@/lib/exerciseSnapshot';
+import { localOffsetMinutes } from '@/lib/timezone';
 import type {
   BodyMeasurement,
   Exercise,
@@ -57,6 +59,34 @@ export class FitTrackDB extends Dexie {
       progressPhotos: 'id, takenAt, deletedAt',
       photoBlobs: 'key',
       settings: 'key',
+    });
+
+    // Backfills the exercise snapshot and the session's original UTC offset.
+    // No `.stores()`: none of the five fields is indexed, so the schema itself
+    // is unchanged and version 1's declaration carries over.
+    //
+    // Both backfills are the best information available and the only one there
+    // is. A row whose exercise was renamed before this ran records the new
+    // name — undetectable, and no worse than the status quo it replaces. The
+    // offsets are exact: the platform's zone database knows what the offset was
+    // on the day of each session.
+    this.version(2).upgrade(async (tx) => {
+      const exercises = await tx.table<Exercise>('exercises').toArray();
+      const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+
+      await tx
+        .table<WorkoutExercise>('workoutExercises')
+        .toCollection()
+        .modify((row) => {
+          Object.assign(row, snapshotOf(byId.get(row.exerciseId)));
+        });
+
+      await tx
+        .table<Workout>('workouts')
+        .toCollection()
+        .modify((workout) => {
+          workout.startedTimezoneOffsetMinutes = localOffsetMinutes(workout.startedAt);
+        });
     });
   }
 }

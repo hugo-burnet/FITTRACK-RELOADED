@@ -1,7 +1,9 @@
 import { db } from '@/data/db';
 import type { Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resolveRestSeconds } from '@/lib/rest';
+import { localOffsetMinutes } from '@/lib/timezone';
 import { alive, newEntity, softDelete, touch } from './base';
+import { snapshotOf } from '@/lib/exerciseSnapshot';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
 
@@ -19,13 +21,15 @@ export async function getActiveWorkout(): Promise<Workout | undefined> {
 
 /** RF-17. `routineId` is '' for an empty workout — never null, cf. architecture §3. */
 export async function startWorkout(routineId: string, name: string): Promise<Workout> {
+  const startedAt = Date.now();
   const workout = newEntity<Workout>({
     routineId,
     name,
     status: 'active',
-    startedAt: Date.now(),
+    startedAt,
     endedAt: 0,
     durationSeconds: 0,
+    startedTimezoneOffsetMinutes: localOffsetMinutes(startedAt),
   });
   await db.workouts.add(workout);
   return workout;
@@ -61,23 +65,25 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
       .toArray(),
   ).sort(byOrder);
 
+  const startedAt = Date.now();
   const workout = newEntity<Workout>({
     routineId,
     name: routine.name,
     status: 'active',
-    startedAt: Date.now(),
+    startedAt,
     endedAt: 0,
     durationSeconds: 0,
+    startedTimezoneOffsetMinutes: localOffsetMinutes(startedAt),
   });
 
   // The rest is resolved **here**, once, and copied in: the routine may be
   // edited or deleted while the session runs, and `0` on a routine row means
-  // "use the exercise's default", which only the library can answer.
+  // "use the exercise's default", which only the library can answer. The same
+  // read now also freezes each exercise's identity onto its row — one lookup,
+  // two denormalisations, both for the same reason.
   const library = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
-  const defaultRest = new Map(
-    library
-      .filter((exercise) => exercise !== undefined)
-      .map((exercise) => [exercise.id, exercise.defaultRestSeconds]),
+  const byId = new Map(
+    library.filter((exercise) => exercise !== undefined).map((exercise) => [exercise.id, exercise]),
   );
 
   const exercises = rows.map((row) =>
@@ -87,7 +93,11 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
       order: row.order,
       supersetGroup: row.supersetGroup,
       notes: row.notes,
-      restSeconds: resolveRestSeconds(row.restSeconds, defaultRest.get(row.exerciseId)),
+      restSeconds: resolveRestSeconds(
+        row.restSeconds,
+        byId.get(row.exerciseId)?.defaultRestSeconds,
+      ),
+      ...snapshotOf(byId.get(row.exerciseId)),
     }),
   );
 

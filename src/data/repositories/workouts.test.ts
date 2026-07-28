@@ -5,7 +5,7 @@ import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { day, seedWorkout } from '@/test/factories';
 import { newEntity } from './base';
-import { createCustomExercise } from './exercises';
+import { createCustomExercise, updateExercise } from './exercises';
 import { addExercisesToRoutine, addRoutineSet, createRoutine, updateRoutineSet } from './routines';
 import { getLastPerformance, listRecordSets, listSessionsForExercise } from './workoutHistory';
 import {
@@ -1215,5 +1215,76 @@ describe('saisie et correction d’une série', () => {
     expect(stored!.distanceMeters).toBe(1000);
     expect(stored!.durationSeconds).toBe(240);
     expect(stored!.isCompleted).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// L'instantané des métadonnées d'exercice (jalon 08A)
+// ---------------------------------------------------------------------------
+
+describe("instantané de l'exercice", () => {
+  beforeEach(resetDb);
+
+  it('fige les métadonnées quand la routine ouvre la séance', async () => {
+    const bench = await anExercise('Développé couché');
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [bench.id]);
+
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const row = at(await db.workoutExercises.where('workoutId').equals(workout.id).toArray(), 0);
+
+    expect(row.exerciseName).toBe('Développé couché');
+    expect(row.exerciseMeasurementType).toBe('weight_reps');
+    expect(row.exercisePrimaryMuscle).toBe('chest');
+    expect(row.exerciseEquipment).toBe('barbell');
+  });
+
+  it("fige les métadonnées d'un exercice ajouté en cours de séance", async () => {
+    const squat = await anExercise('Squat');
+    const workout = await startWorkout('', 'Séance libre');
+
+    const row = await addWorkoutExercise(workout.id, squat.id);
+
+    expect(row.exerciseName).toBe('Squat');
+    expect(row.exerciseEquipment).toBe('barbell');
+  });
+
+  it("n'invente rien quand l'exercice est introuvable", async () => {
+    const workout = await startWorkout('', 'Séance libre');
+
+    const row = await addWorkoutExercise(workout.id, 'inexistant');
+
+    expect(row.exerciseName).toBeUndefined();
+    expect(row.exerciseMeasurementType).toBeUndefined();
+  });
+
+  /**
+   * La raison d'être du lot. Sans instantané, renommer un exercice renommait
+   * rétroactivement toutes les séances qui l'avaient utilisé, et changer son
+   * muscle principal déplaçait des mois de volume sur un autre muscle.
+   */
+  it('ne bouge plus quand la bibliothèque change après coup', async () => {
+    const bench = await anExercise('Développé couché');
+    const workout = await startWorkout('', 'Séance libre');
+    const row = await addWorkoutExercise(workout.id, bench.id);
+
+    await updateExercise(bench.id, {
+      name: 'Développé incliné',
+      primaryMuscle: 'shoulders',
+      measurementType: 'reps_only',
+    });
+
+    const stored = await db.workoutExercises.get(row.id);
+    expect(stored!.exerciseName).toBe('Développé couché');
+    expect(stored!.exercisePrimaryMuscle).toBe('chest');
+    expect(stored!.exerciseMeasurementType).toBe('weight_reps');
+  });
+
+  it("écrit le fuseau d'origine de la séance", async () => {
+    const workout = await startWorkout('', 'Séance libre');
+
+    expect(workout.startedTimezoneOffsetMinutes).toBe(
+      -new Date(workout.startedAt).getTimezoneOffset(),
+    );
   });
 });

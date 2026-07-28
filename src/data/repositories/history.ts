@@ -8,6 +8,8 @@ import type {
   WorkoutSet,
 } from '@/data/types';
 import { newEntity, touch } from './base';
+import { exerciseSnapshotOfRow } from '@/lib/exerciseSnapshot';
+import { loadExerciseSnapshots } from './exerciseSnapshot';
 import { getWorkoutDetail, type WorkoutDetail } from './workouts';
 
 export interface HistoryFilters {
@@ -210,6 +212,13 @@ function assertArchivedDraft(draft: ArchivedWorkoutDraft): void {
 export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<void> {
   assertArchivedDraft(draft);
 
+  // Read outside the transaction, which is scoped to the three session tables.
+  // Only rows whose exercise is new or corrected consume this — the rest keep
+  // the snapshot they were created with.
+  const snapshots = await loadExerciseSnapshots(
+    draft.exercises.map((row) => row.exerciseId),
+  );
+
   await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
     const workout = await db.workouts.get(draft.workoutId);
     if (
@@ -251,27 +260,37 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
 
     for (const [order, rowDraft] of draft.exercises.entries()) {
       const existingRow = rowDraft.id === undefined ? undefined : rowsById.get(rowDraft.id);
+      // The snapshot follows `exerciseId`, and only `exerciseId`. A new row, or
+      // a row whose exercise the user corrects, is asserting what was actually
+      // performed and gets today's metadata. A row left alone keeps what it was
+      // created with, even if the library has been edited since — that is the
+      // whole reason the fields exist.
+      const snapshot =
+        existingRow === undefined || existingRow.exerciseId !== rowDraft.exerciseId
+          ? (snapshots.get(rowDraft.exerciseId) ?? {})
+          : exerciseSnapshotOfRow(existingRow);
       const rowData = {
         workoutId: workout.id,
         exerciseId: rowDraft.exerciseId,
         order,
         supersetGroup: rowDraft.supersetGroup,
         restSeconds: rowDraft.restSeconds,
+        ...snapshot,
         ...(rowDraft.notes === undefined ? {} : { notes: rowDraft.notes }),
       };
       const row =
         existingRow === undefined
           ? newEntity<WorkoutExercise>(rowData)
           : touch<WorkoutExercise>(
-              {
-                id: existingRow.id,
-                createdAt: existingRow.createdAt,
-                updatedAt: existingRow.updatedAt,
-                deletedAt: 0,
-                ...rowData,
-              },
-              {},
-            );
+            {
+              id: existingRow.id,
+              createdAt: existingRow.createdAt,
+              updatedAt: existingRow.updatedAt,
+              deletedAt: 0,
+              ...rowData,
+            },
+            {},
+          );
       nextRows.push(row);
       keptRowIds.add(row.id);
 
@@ -315,23 +334,23 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
             existingSet === undefined
               ? Math.max(1, draft.startedAt + sequence + 1)
               : Math.max(
-                  1,
-                  existingSet.performedAt + draft.startedAt - workout.startedAt,
-                ),
+                1,
+                existingSet.performedAt + draft.startedAt - workout.startedAt,
+              ),
         };
         const set =
           existingSet === undefined
             ? newEntity<WorkoutSet>(setData)
             : touch<WorkoutSet>(
-                {
-                  id: existingSet.id,
-                  createdAt: existingSet.createdAt,
-                  updatedAt: existingSet.updatedAt,
-                  deletedAt: 0,
-                  ...setData,
-                },
-                {},
-              );
+              {
+                id: existingSet.id,
+                createdAt: existingSet.createdAt,
+                updatedAt: existingSet.updatedAt,
+                deletedAt: 0,
+                ...setData,
+              },
+              {},
+            );
         nextSets.push(set);
         keptSetIds.add(set.id);
       }

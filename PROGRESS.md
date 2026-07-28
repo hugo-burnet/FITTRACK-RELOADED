@@ -2,7 +2,43 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-27 (**poids des routines Hevy**). Chaque série d’une routine
+**Dernière mise à jour :** 2026-07-28 (**jalon 08A — l'instantané des métadonnées d'exercice**).
+Chaque `WorkoutExercise` fige désormais le nom, le type de mesure, le muscle principal et le
+matériel de son exercice **au moment où il entre dans la séance**, et chaque `Workout` porte
+`startedTimezoneOffsetMinutes`. Renommer un exercice, changer son type de mesure ou son muscle ne
+réécrit plus le passé — c'est le prérequis des exports et des graphiques, posé pendant qu'il reste
+peu de données à rattraper.
+
+Les quatre points de création écrivent l'instantané : `startWorkoutFromRoutine` (qui réutilise le
+`bulkGet` déjà fait pour le repos), `addWorkoutExercise`, l'import Hevy, et l'éditeur d'archive.
+Règle unique : **l'instantané suit l'`exerciseId`**. Ligne créée ou exercice corrigé → métadonnées
+d'aujourd'hui ; ligne inchangée → jamais retouchée, même si la bibliothèque bouge.
+
+Deux écarts assumés avec le document de finition, documentés dans la spec :
+`deleteExercise` est un **soft delete**, donc supprimer un exercice ne perd aucune métadonnée —
+d'où l'abandon de `snapshotQuality` (ses trois valeurs étaient inatteignables), remplacé par des
+champs simplement optionnels dont l'absence est le seul signal. Et `secondaryMuscles` /
+`isUnilateral` ne sont pas copiés : aucun export ni graphique planifié ne les lit, et la
+bibliothèque les conserve.
+
+Migration `version(2).upgrade()` sans changement de `stores` — aucun des cinq champs n'est indexé.
+Elle est **testée sur une vraie base version 1** (`src/data/dbMigration.test.ts`) : c'est le seul
+endroit du dépôt où le chemin de migration s'exécute, `resetDb` ouvrant partout ailleurs
+directement le schéma courant. **39 fichiers de tests, 543 tests** ; `lint`, `typecheck`,
+`test:run` et `build` sont verts. Le warning Vite historique sur le chunk principal reste le seul
+avertissement.
+
+**Aucun consommateur n'est encore rebranché sur l'instantané** : les écrans continuent de lire la
+bibliothèque. Les brancher est le travail des jalons d'export et de graphiques, qui savent ce dont
+ils ont besoin.
+
+**Checkpoint à vérifier sur le téléphone :** ouvrir l'app une fois (la migration s'exécute au
+premier chargement), vérifier qu'aucune séance de l'historique n'a changé d'apparence, puis
+renommer un exercice de la bibliothèque et rouvrir une ancienne séance qui l'utilise — elle doit
+encore afficher **l'ancien nom** une fois les écrans rebranchés, et l'ancien nom est déjà en base
+dès maintenant (visible via l'écran de debug ou un export ultérieur).
+
+**Historique précédent :** 2026-07-27 (**poids des routines Hevy**). Chaque série d’une routine
 importée reprend maintenant le poids exact de la série correspondante dans la séance
 représentative (`targetWeight`). Une série sans poids reste sans cible et le RPE n’est pas copié.
 

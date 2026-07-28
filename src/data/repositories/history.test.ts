@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
-import { createCustomExercise } from '@/data/repositories/exercises';
+import { createCustomExercise, updateExercise } from '@/data/repositories/exercises';
+import type { MuscleGroup, WorkoutExercise } from '@/data/types';
 import { bestSets } from '@/lib/records';
 import {
   addWorkoutExercise,
@@ -774,5 +775,131 @@ describe('archived workout mutations', () => {
     const recordSets = (await listRecordSets(['bench'])).get('bench')!;
     expect(recordSets.map((set) => set.id)).toEqual([previousSet!.id]);
     expect(await db.personalRecords.count()).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// L'instantané des métadonnées dans l'éditeur d'archive (jalon 08A)
+// ---------------------------------------------------------------------------
+
+describe("instantané de l'exercice dans une archive", () => {
+  beforeEach(resetDb);
+
+  const anExercise = (name: string, primaryMuscle: MuscleGroup) =>
+    createCustomExercise({
+      name,
+      primaryMuscle,
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+
+  async function rowOf(workoutId: string): Promise<WorkoutExercise> {
+    const rows = (await db.workoutExercises.where('workoutId').equals(workoutId).toArray()).filter(
+      (row) => row.deletedAt === 0,
+    );
+    const row = rows[0];
+    if (row === undefined) throw new Error('aucune ligne vivante');
+    return row;
+  }
+
+  it('fige les métadonnées sur une ligne créée dans l’éditeur', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const squat = await anExercise('Squat', 'quads');
+
+    await saveArchivedWorkout({
+      workoutId: workout.id,
+      name: 'Séance corrigée',
+      startedAt: day(1),
+      durationSeconds: 3600,
+      exercises: [{
+        exerciseId: squat.id,
+        supersetGroup: 0,
+        restSeconds: 120,
+        sets: [{ setType: 'normal', side: 'both', weight: 140, reps: 5 }],
+      }],
+    });
+
+    const row = await rowOf(workout.id);
+    expect(row.exerciseName).toBe('Squat');
+    expect(row.exercisePrimaryMuscle).toBe('quads');
+  });
+
+  /**
+   * Corriger l'exercice d'une série, c'est affirmer ce qui a réellement été
+   * fait : la ligne mérite les métadonnées d'aujourd'hui de son nouvel
+   * exercice, pas celles de l'ancien.
+   */
+  it('réécrit l’instantané quand l’exercice de la ligne change', async () => {
+    const bench = await anExercise('Développé couché', 'chest');
+    const squat = await anExercise('Squat', 'quads');
+    const workout = await seedWorkout({
+      exerciseId: bench.id,
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const before = await rowOf(workout.id);
+
+    await saveArchivedWorkout({
+      workoutId: workout.id,
+      name: 'Séance corrigée',
+      startedAt: day(1),
+      durationSeconds: 3600,
+      exercises: [{
+        id: before.id,
+        exerciseId: squat.id,
+        supersetGroup: 0,
+        restSeconds: before.restSeconds,
+        sets: [{ setType: 'normal', side: 'both', weight: 140, reps: 5 }],
+      }],
+    });
+
+    const after = await rowOf(workout.id);
+    expect(after.exerciseName).toBe('Squat');
+    expect(after.exercisePrimaryMuscle).toBe('quads');
+  });
+
+  it('conserve l’instantané d’une ligne dont l’exercice ne change pas', async () => {
+    const bench = await anExercise('Développé couché', 'chest');
+    const workout = await seedWorkout({
+      exerciseId: bench.id,
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    const before = await rowOf(workout.id);
+    await db.workoutExercises.put({
+      ...before,
+      exerciseName: 'Développé couché',
+      exerciseMeasurementType: 'weight_reps',
+      exercisePrimaryMuscle: 'chest',
+      exerciseEquipment: 'barbell',
+    });
+
+    await updateExercise(bench.id, { name: 'Développé incliné', primaryMuscle: 'shoulders' });
+
+    await saveArchivedWorkout({
+      workoutId: workout.id,
+      name: 'Séance corrigée',
+      startedAt: day(1),
+      durationSeconds: 3600,
+      exercises: [{
+        id: before.id,
+        exerciseId: bench.id,
+        supersetGroup: 0,
+        restSeconds: before.restSeconds,
+        notes: 'Tempo contrôlé',
+        sets: [{ setType: 'normal', side: 'both', weight: 100, reps: 5 }],
+      }],
+    });
+
+    const after = await rowOf(workout.id);
+    expect(after.notes).toBe('Tempo contrôlé');
+    expect(after.exerciseName).toBe('Développé couché');
+    expect(after.exercisePrimaryMuscle).toBe('chest');
   });
 });
