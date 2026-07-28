@@ -82,8 +82,16 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
           while the content below it runs. Rendered raw — it carries its own edge. */}
       {sub}
 
-      {/* Grows to fill the screen so a lone empty state can centre itself in it. */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pb-8">
+      {/* Grows to fill the screen so a lone empty state can centre itself in it.
+          `pt-3` — le contenu ne colle pas au titre. Avec le `pb-4` de l'en-tête
+          au-dessus, ça fait 28 px : **exactement l'écart que les écrans posent
+          déjà entre deux blocs** (`space-y-7`). L'en-tête devient donc un bloc
+          comme les autres au lieu d'un couvercle posé dessus. Remonté de l'écran
+          en ces termes — « les composants sont toujours collés au header ».
+          Ici et pas dans chaque écran : la marge est une propriété du cadre, et
+          vingt écrans qui se souviennent chacun d'une valeur finissent par en
+          oublier une. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pt-3 pb-8">
         {children}
       </div>
 

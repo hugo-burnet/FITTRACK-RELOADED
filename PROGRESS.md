@@ -68,6 +68,25 @@ Vérifié en 375 × 812 px sur un historique de 9 semaines injecté : aucun déb
 (`scrollWidth === innerWidth === 375`), cibles de 48 et 56 px, un seul point accent, résumé
 lecteur d'écran complet, aucune erreur console.
 
+**Deux retours d'usage corrigés juste après, sur capture d'écran :** (1) **le point du record était
+rogné à droite** — l'anneau de sélection fait `r = 9` plus 1,5 px de trait, soit 9,75 px, et le
+`viewBox` n'en réservait que 8 ; or le dernier point est précisément là où le record se trouve le
+plus souvent. `PAD` passe à 12, marge restante mesurée : 2,25 px. (2) **le contenu collait à
+l'en-tête sur tous les écrans** — `Screen` ne posait aucune marge haute sur sa zone de défilement.
+`pt-3` ajouté **là**, dans le cadre, et pas dans vingt écrans dont un finirait par l'oublier : avec
+le `pb-4` de l'en-tête ça fait 28 px, exactement l'écart que les écrans posent déjà entre deux blocs
+(`space-y-7`). Vérifié à 12 px sur Historique, Exercices, Routines, Réglages, Analyses, Progression,
+Diagnostic, formulaire d'exercice et éditeur de routine. La bande épinglée de la séance en direct
+reste au ras de l'en-tête, volontairement : c'est un bandeau d'instruments qui porte son propre
+filet, et le contenu reçoit ses 12 px sous elle.
+
+**Simulation complète du checkpoint** (l'utilisateur n'a pas encore assez d'historique) : 78 séances
+et 226 séries fabriquées sur 9 mois. Cinq cas vérifiés dans l'app réelle — 40 séances avec plateau,
+blessure et remontée ; assistance décroissante ; séance unique ; exercice retypé (10 séances en
+base, **6 points**, aucun zéro inventé) ; deux séances le même jour civil (**deux points**). Deux
+pièges posés exprès et désamorcés : un échauffement à 150 kg au milieu de séries à 80 kg (la ligne
+lit **80 kg**) et l'égalité de record (le point vert tombe sur la **première** fois atteinte).
+
 **Checkpoint à vérifier sur le téléphone :** ouvrir **Historique → l'icône de courbe**, choisir un
 exercice que tu pratiques depuis des semaines. La courbe doit correspondre à ce que tu as
 réellement fait, et le point vert doit être la séance où tu as posé ta meilleure marque — la

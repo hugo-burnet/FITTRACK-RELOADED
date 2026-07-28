@@ -21,8 +21,15 @@ import { plotPoints } from '@/lib/analytics/plot';
  */
 
 const BOX = { width: 300, height: 120 };
-/** Room for the dot radius and its surface ring, so nothing clips at the edges. */
-const PAD = 8;
+/**
+ * Room for the widest mark drawn at a point, so nothing clips at the edges.
+ *
+ * The measurement, not a guess: the selection ring is `r = 9` with a 1.5px
+ * stroke straddling it, so it reaches **9.75px** from the centre. At 8px the
+ * last point — which is exactly where the record usually sits — lost two pixels
+ * off its right edge. Reported from the screen.
+ */
+const PAD = 12;
 
 interface Props {
   points: readonly MetricPoint[];
