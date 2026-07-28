@@ -38,6 +38,44 @@ calendrier du lecteur est aussi ce qui fait tomber le résultat **exactement** s
 rencontreraient jamais. Offset absent (séances d'avant la migration v2) → offset du lecteur, donc
 le comportement du Lot 07 à l'identique.
 
+**Un retour d'usage corrigé juste après, et il portait sur le raisonnement central du jalon :
+« l'app me montre des semaines à 0 avant que mon historique commence, ça sert pas à
+grand-chose ».** Il a raison. La règle « une semaine sans séance est une semaine où on ne s'est
+pas entraîné » n'est vraie **qu'à partir de la première séance enregistrée**. Avant elle, un zéro
+n'est pas une mesure : c'est une semaine dont l'app ne sait rien, donc exactement le zéro inventé
+que G1 interdit — la règle avait été appliquée trop loin. Et il coûtait deux fois : trois semaines
+d'historique réel dessinaient **neuf barres vides devant elles**, et la moyenne annonçait **0,5
+séance par semaine au lieu de 1,5**, parce qu'elle divise par le nombre de seaux.
+
+La distinction à tenir est fine : **une semaine vide *avant* l'historique n'existe pas ; un trou
+*dans* l'historique reste**, c'est lui l'information. `weeklySessionCounts` reçoit donc
+`hasEarlierHistory`, et **il ne peut pas être déduit à l'intérieur** : la fenêtre ne rend que son
+propre contenu, et vu de l'intérieur « rien avant » et « rien pendant » sont indiscernables.
+L'écran répond avec `listCompletedWorkoutTimestamps()` — la lecture de `number` nus écartée plus
+haut pour le comptage, ici au bon niveau puisqu'on ne lui demande qu'un booléen. Vérifié dans les
+deux sens en pilotant : 3 semaines d'historique dans une fenêtre de 12 → **4 barres**, axe partant
+de la première séance, moyenne 1,5, et le trou du milieu conservé ; puis une séance ajoutée 20
+semaines en arrière → les **12 barres** reviennent, vides du début comprises, moyenne 0,5. Trois
+tests neufs fixent les deux sens et leur frontière.
+
+**Un second retour d'usage, sur le dessin cette fois : « je comprends pas ce qu'est la colonne
+blanche, ni pourquoi la hauteur est comme ça ».** Deux questions, une seule cause — si ça demande
+une explication, c'est raté. (1) **La barre sélectionnée changeait de couleur** (`--text-2` →
+`--text-1`), alors que la spec elle-même disait « la sélection n'est pas une couleur » : elle se
+lisait donc comme une *troisième catégorie* à côté du vert et du gris, au lieu d'un curseur. (2)
+**Une semaine à zéro ne dessinait rien du tout**, donc l'œil lisait un espacement irrégulier
+plutôt qu'une colonne vide — et une fois le rythme des colonnes cassé, toutes les hauteurs
+paraissent arbitraires.
+
+Corrigé en trois points : la sélection est **la fente allumée** (`--surface-2`), dessinée en
+premier, et elle **franchit la ligne de base en haut et en bas** — parce qu'aucune barre ne fait
+ça, donc elle ne peut pas être prise pour une valeur ; c'était exactement l'erreur de la version
+blanche. Une barre garde une seule règle de couleur : accent si l'objectif est atteint, `--text-2`
+sinon, quoi qu'il arrive. Et une semaine à zéro reçoit **4 px dans le ton de l'axe** : « cette
+semaine existe, et elle vaut zéro », sans jamais se lire comme une petite quantité. Vérifié en
+pilotant, y compris le cas décisif — taper la semaine vide pose bien la bande dessus et la lecture
+affiche « 0 séance ».
+
 **Zéro est une mesure — c'est la règle de G1 retournée, et c'est le point de conception du
 jalon.** G1 : « une séance sans valeur pour la métrique ne produit aucun point, jamais un zéro »,
 parce qu'un zéro inventé fait plonger la courbe. Ici, **une semaine sans séance n'est pas une
@@ -88,7 +126,7 @@ du code déjà commun. **Les octets n'ont pas disparu, ils se sont scindés** ; 
 chargement qui est découpé, pas le total qui baisse. `ChartSurface` sort en chunk partagé de
 1,48 kB, `WeeklySessionsScreen` à 6,41 kB (gzip 2,35).
 
-**50 fichiers de tests, 705 tests** (+1 fichier, +26) ; `lint`, `typecheck`, `test:run` et `build`
+**50 fichiers de tests, 708 tests** (+1 fichier, +29) ; `lint`, `typecheck`, `test:run` et `build`
 sont verts, et le build n'a plus **aucun** avertissement.
 
 **Vérifié en pilotant, en 375 × 812 px**, sur 67 séances injectées couvrant 26 semaines avec deux

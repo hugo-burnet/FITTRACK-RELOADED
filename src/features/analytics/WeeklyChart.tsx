@@ -18,11 +18,18 @@ import { ChartSurface } from './ChartSurface';
  */
 
 const BOX = { width: 300, height: 120 };
-/** Small: nothing overshoots sideways, and the selection mark sits under the
- *  baseline rather than around a bar. */
+/** Small: nothing overshoots sideways, and nothing is drawn above the ceiling. */
 const PAD = 6;
-/** Where the selection tick is drawn, below the baseline. */
-const TICK = 4;
+/**
+ * The mark a week with **no** session gets, in the tone of the baseline.
+ *
+ * Reported from use: an empty week drew nothing at all, so the eye read a gap
+ * in the spacing rather than a column at zero — and once the rhythm of the
+ * columns is broken, every other height looks arbitrary. Three pixels of the
+ * axis's own colour say "this week exists, and it is zero" without ever reading
+ * as a small quantity.
+ */
+const ZERO_STUB = 4;
 
 interface Props {
   buckets: readonly WeekBucket[];
@@ -49,43 +56,50 @@ export function WeeklyChart({ buckets, ceiling, selectedIndex, onSelect, summary
       xs={bars.map(({ slot }) => slot.centerX)}
       onSelect={onSelect}
     >
-      {bars.map(({ slot, bucket }, index) => {
+      {/* Selection is the lit **slot**, drawn first so everything sits on top of
+          it. Not a change of the bar's colour — that made the selected week read
+          as a third category rather than as a cursor, and it was unreadable on a
+          week at zero, which has no surface to recolour. Not a ring either: a
+          ring around a bar of height zero encloses nothing, and the empty week
+          is precisely the one worth tapping. A lit column works at any height,
+          including none. */}
+      {bars[selectedIndex] !== undefined && (
+        <rect
+          x={bars[selectedIndex]!.slot.x - bars[selectedIndex]!.slot.width * 0.25}
+          // Crossing the baseline, top and bottom, because **no bar ever does**:
+          // a block that stops at the axis is read as a value, and that is the
+          // mistake the previous version made in white.
+          y={-PAD}
+          width={bars[selectedIndex]!.slot.width * 1.5}
+          height={BOX.height + PAD * 2}
+          rx={2}
+          fill="var(--surface-2)"
+        />
+      )}
+
+      {bars.map(({ slot, bucket }) => {
         const reached = bucket.goal !== null && bucket.sessions >= bucket.goal;
-        const isSelected = index === selectedIndex;
 
-        return (
-          <g key={bucket.weekStart}>
-            {slot.height > 0 && (
-              <rect
-                x={slot.x}
-                y={slot.y}
-                width={slot.width}
-                height={slot.height}
-                rx={Math.min(2, slot.width / 2)}
-                fill={
-                  reached
-                    ? 'var(--accent-ink)'
-                    : isSelected
-                      ? 'var(--text-1)'
-                      : 'var(--text-2)'
-                }
-              />
-            )}
-
-            {/* Selection is a mark under the baseline, not a ring around the
-                bar: a ring around a bar of height zero encloses nothing, and
-                the empty week is precisely the one worth tapping. */}
-            {isSelected && (
-              <rect
-                x={slot.x}
-                y={BOX.height + 2}
-                width={slot.width}
-                height={TICK / 2}
-                rx={TICK / 4}
-                fill={reached ? 'var(--accent-ink)' : 'var(--text-1)'}
-              />
-            )}
-          </g>
+        return slot.height > 0 ? (
+          <rect
+            key={bucket.weekStart}
+            x={slot.x}
+            y={slot.y}
+            width={slot.width}
+            height={slot.height}
+            rx={Math.min(2, slot.width / 2)}
+            fill={reached ? 'var(--accent-ink)' : 'var(--text-2)'}
+          />
+        ) : (
+          <rect
+            key={bucket.weekStart}
+            x={slot.x}
+            y={BOX.height - ZERO_STUB}
+            width={slot.width}
+            height={ZERO_STUB}
+            rx={1}
+            fill="var(--border)"
+          />
         );
       })}
 

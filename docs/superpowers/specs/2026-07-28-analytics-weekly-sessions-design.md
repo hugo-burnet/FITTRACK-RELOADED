@@ -135,6 +135,35 @@ période, pas des séances.** De `from` à `to`, une semaine à la fois via
 séance jusqu'à la semaine courante — pas de date de naissance inventée pour
 l'app, même règle qu'en G0.
 
+### 5.1 Correctif après usage — jamais avant la première séance
+
+**La règle ci-dessus était appliquée trop loin, et le défaut est sorti dès le
+premier usage réel :** un historique de trois semaines dessinait **neuf barres
+vides devant lui**, et la moyenne annonçait 0,5 séance par semaine au lieu
+de 1,5.
+
+La qualification manquante : « une semaine sans séance est une semaine où on ne
+s'est pas entraîné » n'est vraie **qu'à partir de la première séance
+enregistrée**. Avant elle, un zéro n'est pas une mesure — c'est une semaine dont
+l'app ne sait rien, donc exactement le zéro inventé que G1 interdit. Et il coûte
+deux fois : il écrase les vraies barres pour ne rien montrer, et il fausse toute
+moyenne calculée sur le nombre de seaux.
+
+La distinction à tenir, et elle est fine :
+
+| Semaine vide | Verdict |
+|---|---|
+| **Avant** la première séance de l'historique | N'existe pas. L'app n'en sait rien. |
+| **Dans** l'historique (un trou, une blessure, un déménagement) | Reste. C'est l'information. |
+
+`weeklySessionCounts` reçoit donc un quatrième argument, `hasEarlierHistory`.
+**Il ne peut pas être déduit à l'intérieur** : `sessions` ne contient que ce que
+la fenêtre a rendu, et vu de l'intérieur « rien avant la fenêtre » et « rien
+pendant la fenêtre » sont indiscernables. L'écran répond à la question avec
+`listCompletedWorkoutTimestamps()` — des `number` nus, la lecture que §2 avait
+écartée pour le comptage et qui est ici exactement au bon niveau : on ne lui
+demande qu'un booléen.
+
 Et c'est aussi ce qui rend la moyenne honnête : « 3,2 séances par semaine »
 calculée en sautant les semaines vides ne veut rien dire.
 
@@ -209,11 +238,31 @@ est du vide impossible à distinguer d'une marge.
 Un point porte un anneau de surface pour ne pas fusionner avec son voisin ; une
 barre n'a pas ce problème, elle a un intervalle. Un anneau de sélection autour
 d'une barre de hauteur **zéro** n'entoure rien — or une semaine à zéro doit
-rester sélectionnable, c'est même la barre qu'on veut taper. La sélection est
-donc **un repère sous le filet de base**, à l'aplomb de la colonne : il existe
-que la barre existe ou non.
+rester sélectionnable, c'est même la barre qu'on veut taper.
+
+La sélection est donc **la fente allumée** (`--surface-2`), dessinée avant tout
+le reste, et elle **franchit la ligne de base en haut comme en bas** : aucune
+barre ne fait ça, donc le bloc ne peut pas être lu comme une valeur.
 
 Comme en G1, la sélection n'est **pas** une couleur : l'accent est déjà pris.
+**Et pas non plus la couleur de la barre.** Premier jet corrigé après usage : la
+barre sélectionnée passait de `--text-2` à `--text-1`, ce qui contredisait la
+phrase ci-dessus sans qu'on s'en aperçoive et se lisait comme une *troisième
+catégorie* à côté du vert et du gris — « je comprends pas ce qu'est la colonne
+blanche ». Une barre porte une seule règle de couleur : accent si l'objectif est
+atteint, `--text-2` sinon, quoi qu'il arrive.
+
+### 6.2 bis — une semaine à zéro doit se voir
+
+Toujours après usage : une semaine sans séance ne dessinait **rien**, donc l'œil
+lisait un espacement irrégulier plutôt qu'une colonne vide. Et une fois le
+rythme des colonnes cassé, toutes les hauteurs paraissent arbitraires — d'où la
+seconde question, « pourquoi la hauteur est comme ça ».
+
+Une semaine à zéro reçoit donc **4 px dans le ton de l'axe** (`--border`). Ce
+n'est pas une quantité : c'est l'axe qui s'épaissit là où une colonne existe et
+ne vaut rien. Dire « il n'y a pas eu de séance » et ne rien dessiner du tout ne
+sont pas la même chose.
 
 ### 6.3 Ce qui se partage, et c'est tout : la surface
 

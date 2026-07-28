@@ -60,10 +60,11 @@ describe('weekStartOf', () => {
 describe('weeklySessionCounts', () => {
   const bounds = periodBounds('4w', now); // 6, 13, 20 et 27 juillet
 
-  it('rend une semaine par semaine de la fenêtre, séances ou pas', () => {
+  it('rend une semaine par semaine de la fenêtre dès que l’historique la précède', () => {
     // C'est le renversement de la règle de G1 : une semaine sans séance n'est
-    // pas une donnée manquante, c'est une semaine sans entraînement.
-    const buckets = weeklySessionCounts([], bounds, []);
+    // pas une donnée manquante, c'est une semaine sans entraînement — à
+    // condition que l'historique existe déjà à ce moment-là.
+    const buckets = weeklySessionCounts([], bounds, [], true);
     expect(buckets).toHaveLength(4);
     expect(buckets.map((bucket) => bucket.sessions)).toEqual([0, 0, 0, 0]);
     expect(buckets.map((bucket) => bucket.weekStart)).toEqual([
@@ -74,6 +75,42 @@ describe('weeklySessionCounts', () => {
     ]);
   });
 
+  it('ne commence pas avant la première séance enregistrée', () => {
+    // Le défaut trouvé en usage : un historique de trois semaines dessinait
+    // neuf barres vides devant lui. Avant la première séance, un zéro n'est pas
+    // une semaine sans entraînement — c'est une semaine dont l'app ne sait
+    // rien, donc le zéro inventé que G1 interdit.
+    const at = new Date(2026, 6, 21, 18, 0, 0).getTime();
+    const buckets = weeklySessionCounts([session(at, localOffsetMinutes(at))], bounds, [], false);
+    expect(buckets.map((bucket) => bucket.weekStart)).toEqual([
+      week(2026, 6, 20),
+      week(2026, 6, 27),
+    ]);
+    expect(buckets.map((bucket) => bucket.sessions)).toEqual([1, 0]);
+  });
+
+  it('garde les trous situés DANS l’historique, eux', () => {
+    // La semaine du 13 est vide mais l'historique la précède : c'est une vraie
+    // semaine sans entraînement, elle doit rester visible. C'est toute la
+    // différence avec le cas ci-dessus.
+    const early = new Date(2026, 6, 7, 18, 0, 0).getTime();
+    const late = new Date(2026, 6, 21, 18, 0, 0).getTime();
+    const buckets = weeklySessionCounts(
+      [session(early, localOffsetMinutes(early)), session(late, localOffsetMinutes(late))],
+      bounds,
+      [],
+      false,
+    );
+    expect(buckets.map((bucket) => bucket.sessions)).toEqual([1, 0, 1, 0]);
+  });
+
+  it('garde toute la fenêtre quand l’historique commence avant elle, même vide', () => {
+    // Quelqu'un qui s'entraîne depuis un an et n'a rien fait depuis trois mois
+    // doit voir douze barres à zéro : là, c'est l'information.
+    const buckets = weeklySessionCounts([], bounds, [], true);
+    expect(buckets).toHaveLength(4);
+  });
+
   it('compte deux séances du même jour comme deux', () => {
     const morning = new Date(2026, 6, 21, 8, 0, 0).getTime();
     const evening = new Date(2026, 6, 21, 19, 0, 0).getTime();
@@ -81,13 +118,15 @@ describe('weeklySessionCounts', () => {
       [session(morning, localOffsetMinutes(morning)), session(evening, localOffsetMinutes(evening))],
       bounds,
       [],
+      true,
     );
     expect(buckets[2]!.sessions).toBe(2);
   });
 
   it('ignore une séance hors de la fenêtre plutôt que de l’écraser sur un bord', () => {
     const old = new Date(2026, 5, 1, 10, 0, 0).getTime();
-    const buckets = weeklySessionCounts([session(old, localOffsetMinutes(old))], bounds, []);
+    const buckets = weeklySessionCounts([session(old, localOffsetMinutes(old))], bounds, [], true);
+    expect(buckets).toHaveLength(4);
     expect(buckets.reduce((total, bucket) => total + bucket.sessions, 0)).toBe(0);
   });
 
@@ -111,17 +150,19 @@ describe('weeklySessionCounts', () => {
       { effectiveFromWeek: 0, sessions: 2 },
       { effectiveFromWeek: week(2026, 6, 20), sessions: 4 },
     ];
-    const buckets = weeklySessionCounts([], bounds, goals);
+    const buckets = weeklySessionCounts([], bounds, goals, true);
     expect(buckets.map((bucket) => bucket.goal)).toEqual([2, 2, 4, 4]);
   });
 
   it('laisse l’objectif absent quand aucun n’a jamais été défini', () => {
-    expect(weeklySessionCounts([], bounds, []).every((bucket) => bucket.goal === null)).toBe(true);
+    const buckets = weeklySessionCounts([], bounds, [], true);
+    expect(buckets).toHaveLength(4);
+    expect(buckets.every((bucket) => bucket.goal === null)).toBe(true);
   });
 
   it('ne juge pas les semaines antérieures à un objectif qui n’est pas le premier', () => {
     const goals = [{ effectiveFromWeek: week(2026, 6, 20), sessions: 3 }];
-    expect(weeklySessionCounts([], bounds, goals).map((bucket) => bucket.goal)).toEqual([
+    expect(weeklySessionCounts([], bounds, goals, true).map((bucket) => bucket.goal)).toEqual([
       null,
       null,
       3,
@@ -131,7 +172,7 @@ describe('weeklySessionCounts', () => {
 
   it('compte les semaines d’un changement d’heure comme les autres', () => {
     const october = new Date(2026, 9, 27, 14, 0, 0).getTime();
-    const buckets = weeklySessionCounts([], periodBounds('4w', october), []);
+    const buckets = weeklySessionCounts([], periodBounds('4w', october), [], true);
     expect(buckets).toHaveLength(4);
     for (const bucket of buckets) {
       expect(new Date(bucket.weekStart).getDay()).toBe(1);

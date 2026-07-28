@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { listExportSources } from '@/data/repositories/exportQueries';
+import { listCompletedWorkoutTimestamps } from '@/data/repositories/history';
 import { getWeeklyTrainingGoalHistory } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { periodLabel, weeklySessionsReading } from '@/i18n/labels';
@@ -38,15 +39,28 @@ export function WeeklySessionsScreen() {
   const [selectedIndex, setSelectedIndex] = useState<number>();
 
   const goals = useLiveQuery(getWeeklyTrainingGoalHistory, []);
-  const sources = useLiveQuery(() => {
-    const { from, to } = periodBounds(period, openedAt);
-    // `'all'` has no lower bound, and `ExportScope` already has the door for
-    // that case — same rules, same reads. Inventing `from: 0` would work and
-    // would also be the app quietly deciding when it was born.
-    return listExportSources(
-      from === undefined ? { kind: 'all-history' } : { kind: 'period', from, to },
-    );
-  }, [period, openedAt]);
+  /**
+   * Bare timestamps, only to answer one question: did anything happen **before**
+   * this window? Without it the chart draws empty weeks in front of a history
+   * that had not started yet — a zero the app invents, not one it observed.
+   *
+   * It cannot come from `sources`: that read returns the window's contents, and
+   * from the inside "nothing before" and "nothing during" look the same.
+   */
+  const allStarts = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
+
+  const { from, to } = periodBounds(period, openedAt);
+  const sources = useLiveQuery(
+    () =>
+      // `'all'` has no lower bound, and `ExportScope` already has the door for
+      // that case — same rules, same reads. Inventing `from: 0` would work and
+      // would also be the app quietly deciding when it was born.
+      listExportSources(from === undefined ? { kind: 'all-history' } : { kind: 'period', from, to }),
+    [from, to],
+  );
+
+  const hasEarlierHistory =
+    from !== undefined && (allStarts ?? []).some((startedAt) => startedAt < from);
 
   const buckets = weeklySessionCounts(
     (sources ?? []).map((source) => ({
@@ -55,8 +69,9 @@ export function WeeklySessionsScreen() {
         ? {}
         : { timezoneOffsetMinutes: source.workout.startedTimezoneOffsetMinutes }),
     })),
-    periodBounds(period, openedAt),
+    { from, to },
     goals ?? [],
+    hasEarlierHistory,
   );
 
   const selected = Math.min(selectedIndex ?? buckets.length - 1, buckets.length - 1);
@@ -100,7 +115,7 @@ export function WeeklySessionsScreen() {
             selectedIndex={selected}
             onSelect={setSelectedIndex}
             onOpenHistory={openHistory}
-            stale={sources === undefined || goals === undefined}
+            stale={sources === undefined || goals === undefined || allStarts === undefined}
           />
         )}
 
