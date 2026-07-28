@@ -1,4 +1,6 @@
 import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType, Side } from '@/data/types';
+import type { MetricKey, MetricUnit } from '@/lib/analytics/metrics';
+import type { PeriodKey } from '@/lib/analytics/periods';
 import type { TargetUnit } from '@/lib/measurement';
 import type { RecordKind } from '@/lib/records';
 import { t } from './fr';
@@ -49,6 +51,35 @@ export const unitLabel = (unit: TargetUnit): string => t(`units.${unit}`);
 /** « Gauche » / « Droite ». `both` has no word: it is the unremarkable case. */
 export const sideLabel = (side: Side): string =>
   side === 'both' ? '' : t(side === 'left' ? 'side.left' : 'side.right');
+
+/** « Charge max » — the name of what a curve counts, wherever it is read. */
+export const metricLabel = (key: MetricKey): string => t(`metric.${key}`);
+
+/** One sentence under the curve: what that number really counts, and excludes. */
+export const metricHint = (key: MetricKey): string => t(`metricHint.${key}`);
+
+export const periodLabel = (key: PeriodKey): string => t(`period.${key}`);
+
+/**
+ * A metric's value as it is read: « 102,5 kg », « 1:30 min », « 5 séries ».
+ *
+ * Durations go through `formatDuration` rather than printing raw seconds, so a
+ * plank reads the same length on the chart, in the session, and in the export —
+ * the reason that function was moved here in the first place.
+ */
+export function metricReading(value: number, unit: MetricUnit): string {
+  if (unit === 'seconds') return formatDuration(value);
+
+  const rounded = Math.round(value * 100) / 100;
+  const figure = rounded.toLocaleString('fr-FR');
+
+  if (unit === 'sets') return `${figure} ${t(rounded === 1 ? 'units.set' : 'units.sets')}`;
+  if (unit === 'meters' && rounded >= 1000) {
+    return `${(Math.round((rounded / 1000) * 100) / 100).toLocaleString('fr-FR')} ${t('units.kilometers')}`;
+  }
+
+  return `${figure} ${unitLabel(unit)}`;
+}
 
 /**
  * A session length as a human reads it: « 45 s », « 12:30 min », « 1 h 12 ».

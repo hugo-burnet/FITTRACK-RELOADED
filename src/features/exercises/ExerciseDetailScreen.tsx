@@ -18,6 +18,7 @@ import {
   SectionTitle,
   Textarea,
 } from '@/ui';
+import { ChevronRightIcon } from '@/ui/icons';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
 const longDate = (epochMs: number): string =>
@@ -174,6 +175,18 @@ export function ExerciseDetailScreen() {
             </Card>
           </section>
         ) : null}
+
+        {/* Rien à tracer sans séance : la ligne n'existe pas plutôt que de
+            mener à une carte vide. C'est le premier des trois états vides. */}
+        {sessions.length > 0 && (
+          <Card>
+            <ListRow
+              title={t('analytics.exerciseLink')}
+              onClick={() => void navigate(`/analytics/exercises/${exercise.id}`)}
+              trailing={<ChevronRightIcon />}
+            />
+          </Card>
+        )}
 
         <section>
           <SectionTitle>{t('exercise.historySection')}</SectionTitle>

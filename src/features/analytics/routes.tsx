@@ -1,0 +1,44 @@
+import { lazy, Suspense } from 'react';
+
+/**
+ * The two analysis screens, loaded on demand.
+ *
+ * They live here rather than in `router.tsx` for a mechanical reason: a file
+ * that exports both components and a non-component (the router itself) loses
+ * fast refresh, and the rule that says so was already clean across the repo.
+ *
+ * The deferral itself is §12.2 of the finishing document: **the live session
+ * must not pay the JavaScript of the charts.** Without a charting library the
+ * bill is a few kilobytes — the rule is kept for what it prevents tomorrow, on
+ * a bundle Vite already warns about.
+ */
+
+const AnalyticsScreen = lazy(() =>
+  import('./AnalyticsScreen').then((module) => ({ default: module.AnalyticsScreen })),
+);
+
+const ExerciseAnalyticsScreen = lazy(() =>
+  import('./ExerciseAnalyticsScreen').then((module) => ({
+    default: module.ExerciseAnalyticsScreen,
+  })),
+);
+
+/**
+ * An empty frame, not a spinner: the chunk arrives from the cache in a frame or
+ * two, and a spinner shown for 30 ms is a flash of anxiety, not information.
+ */
+export function AnalyticsRoute() {
+  return (
+    <Suspense fallback={<span />}>
+      <AnalyticsScreen />
+    </Suspense>
+  );
+}
+
+export function ExerciseAnalyticsRoute() {
+  return (
+    <Suspense fallback={<span />}>
+      <ExerciseAnalyticsScreen />
+    </Suspense>
+  );
+}

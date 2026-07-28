@@ -2,7 +2,82 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**jalon 08B — l'historique lit l'instantané**).
+**Dernière mise à jour :** 2026-07-28 (**jalons G0 + G1 — la couche d'analyse et la première
+courbe**). Un exercice a maintenant sa progression : `Historique → Analyses`, ou « Voir la
+progression » depuis sa fiche. Spec :
+`docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md`.
+
+**G0 n'a ajouté aucune requête, et c'est le point de conception du jalon.** Le document de
+finition demandait trois lectures bornées neuves (§9.1) ; les trois existaient déjà sous un autre
+nom. `listExportSources(scope)` applique exactement ses règles — séances archivées, lignes et
+séries vivantes, séries validées seulement, `from` inclusif / `to` exclusif, bornage par l'index
+`startedAt` — et son en-tête l'annonçait depuis E1 (« the bounded reads the exports **and, later,
+the charts** are built on »). Écrire `analyticsQueries.ts` aurait fait deux portes vers la même
+table avec deux définitions possibles de « séance qui compte » : exactement la faute que 08B vient
+de réparer entre l'écran d'historique et l'export.
+
+Ce qui manquait, c'est l'agrégation. Elle est pure, dans `src/lib/analytics/` : `periods.ts`
+(bornes tombant sur des débuts de semaine locale — « il y a 28 × 24 h » coupe une semaine en deux
+et fait clignoter le premier point selon l'heure d'ouverture), `metrics.ts`, `plot.ts` et
+`sessions.ts`.
+
+**`metrics.ts` porte la seule règle qui compte : jamais la même métrique pour tous les types
+d'exercice.** Onze métriques, réparties par `measurementType` **lu dans l'instantané**. Sans cette
+table, « charge max » sur une machine assistée félicite la séance la plus *aidée* — le poids d'une
+assistance dort dans le même champ que celui d'un développé couché. D'où aussi
+`betterWhen: 'higher' | 'lower'`, qui n'existe que pour l'assistance : **descendre y est une
+victoire**, donc le record est le minimum. Vérifié en pilotant : sur les dips assistés, le point
+accent est à `cy = 120`, tout en bas de la boîte.
+
+Deux règles héritées, jamais réécrites : les échauffements sortent par `isWorkingSet`, et le
+tonnage passe par `sessionTotals` — aucun troisième calcul du tonnage n'existe dans ce dépôt. Et
+une règle neuve : **une séance sans valeur pour la métrique ne produit aucun point, jamais un
+zéro.** Un zéro serait tracé, et une courbe qui plonge au sol parce qu'un exercice a été retypé est
+un mensonge que le lecteur ne peut pas voir.
+
+**Le graphique est un cadran, pas une illustration.** SVG à la main, zéro dépendance : la seule
+chose qu'une bibliothèque calcule vraiment est dans `plot.ts`, où elle est testée, et Recharts
+aurait coûté ~100 kB gzip sur un chunk déjà signalé, plus une charte à re-mater et des tooltips au
+survol — inutilisables au doigt. **Une seule chose est colorée : le point qui détient le record**,
+parce que la charte réserve l'accent aux actions primaires, séries validées et records, « rien
+d'autre » — une courbe de séances passées n'est aucun des trois, son sommet si. Aucune grille : le
+min et le max sont **gravés aux deux bouts**, ce qui est le prix payé comptant pour une échelle qui
+ne part pas de zéro (80 → 85 kg sur un axe partant de zéro est plat, donc muet). Deux étiquettes,
+jamais une par point. On **tape**, on ne survole pas : un appui n'importe où sélectionne le point le
+plus proche en x, donc aucune cible ponctuelle à viser. Le tableau accessible n'est pas un doublon
+caché : c'est la liste de séances, et elle porte chaque valeur.
+
+**Un défaut trouvé uniquement en pilotant :** ouvrir la courbe d'un second exercice gardait la
+sélection du premier — le gainage s'ouvrait sur le 2 juin parce que c'est là qu'on avait tapé sur le
+développé couché. Cause : **React Router ne remonte pas le composant quand seul le paramètre
+change.** Corrigé par l'état clé-sur-l'exercice, l'idiome que `ExerciseDetailScreen` utilise déjà.
+La période, elle, survit exprès : c'est la fenêtre qu'on lit, pas une propriété de l'exercice.
+
+**Les routes d'analyse sont les seules différées** (§12.2), et le découpage est mesuré :
+`ExerciseAnalyticsScreen` sort à **9,34 kB** (gzip 3,25) du bundle principal. La séance en direct ne
+paie pas le JavaScript des graphiques.
+
+**Trois écarts argumentés avec le document de finition**, détaillés dans la spec : pas de
+`analyticsQueries.ts` (ci-dessus) ; **pas d'allure (min/km)** — elle demande une seconde inversion
+de sens et une unité composite que rien d'autre n'écrit, une inversion suffit à un premier jalon ;
+**pas de 1RM estimé** — c'est RF-46 et il appartient au Lot 12, avec sa formule configurable en TDD.
+
+**49 fichiers de tests, 679 tests** (+4 fichiers, +38) ; `lint`, `typecheck`, `test:run` et `build`
+sont verts. Le warning Vite historique sur le chunk principal reste le seul avertissement.
+Vérifié en 375 × 812 px sur un historique de 9 semaines injecté : aucun débordement horizontal
+(`scrollWidth === innerWidth === 375`), cibles de 48 et 56 px, un seul point accent, résumé
+lecteur d'écran complet, aucune erreur console.
+
+**Checkpoint à vérifier sur le téléphone :** ouvrir **Historique → l'icône de courbe**, choisir un
+exercice que tu pratiques depuis des semaines. La courbe doit correspondre à ce que tu as
+réellement fait, et le point vert doit être la séance où tu as posé ta meilleure marque — la
+**première** fois que tu l'as atteinte, pas la dernière. Balaie la courbe du doigt : le grand chiffre
+au-dessus doit suivre, et la liste dessous doit donner les mêmes valeurs. Puis change de métrique et
+de période. Enfin, ouvre un exercice **assisté** (dips ou traction assistée) : la courbe descend
+quand tu progresses, la phrase sous le graphique doit dire « Moins, c'est mieux », et le point vert
+doit être **en bas**.
+
+**Historique précédent :** 2026-07-28 (**jalon 08B — l'historique lit l'instantané**).
 La contradiction ouverte par E2 est refermée : après un renommage, l'écran de détail d'une séance
 passée et le document partagé depuis cet écran donnent désormais **le même nom**, parce qu'ils
 appliquent la même règle.

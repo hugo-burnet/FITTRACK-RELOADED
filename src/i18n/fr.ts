@@ -42,6 +42,7 @@ const fr = {
     routines: 'routines',
     exercises: 'exercices',
     sets: 'séries',
+    set: 'série',
     streakDays: 'jours d’affilée',
     kg: 'kg',
     seconds: 's',
@@ -851,6 +852,83 @@ const fr = {
     seedFailed:
       'Le catalogue d’exercices n’a pas pu être chargé. Tes données sont intactes, le reste de l’app fonctionne.',
     dismiss: 'Masquer',
+  },
+
+  /**
+   * Les graphiques. Le nom d'une métrique dit **ce qu'elle compte**, jamais
+   * « progression » ni « performance » : une courbe qui ne sait pas nommer son
+   * chiffre est une courbe qu'on croit sur parole.
+   */
+  analytics: {
+    title: 'Analyses',
+    action: 'Analyses',
+    /** L'entrée depuis la fiche exercice. */
+    exerciseLink: 'Voir la progression',
+    pickExercise: 'Choisis un exercice pour voir sa progression.',
+    empty: 'Aucun exercice pratiqué pour l’instant. La première séance ouvrira cet écran.',
+
+    metricFilter: 'Métrique',
+    metricSheetTitle: 'Ce que la courbe compte',
+    periodFilter: 'Période',
+    periodSheetTitle: 'Période',
+
+    /** Ce que le graphique dit à un lecteur d'écran, en une phrase. */
+    chartSummary:
+      '{metric} sur {count} séances, du {first} au {last}. Minimum {min}, maximum {max}, dernière valeur {current}.',
+    chartSummaryOne: '{metric} sur une seule séance, le {first} : {current}.',
+
+    /** L'échelle, gravée aux deux bouts — il n'y a pas d'axe dessiné. */
+    scaleMin: 'Min',
+    scaleMax: 'Max',
+    record: 'Record',
+    latest: 'Dernière',
+
+    sessionsSection: 'Séances',
+    emptyPeriod: 'Aucune séance sur cette période.',
+    emptyPeriodAction: 'Voir tout l’historique',
+    /** Une courbe demande deux points. Le dire, plutôt que tracer un trait vers rien. */
+    singleSession: 'Une seule séance sur cette période : la courbe commencera à la suivante.',
+    noMetric:
+      'Cet exercice n’a pas de type de mesure connu, donc rien de comparable d’une séance à l’autre.',
+  },
+
+  /** Le nom de chaque métrique. Il porte l'unité quand elle ne va pas de soi. */
+  metric: {
+    topWeight: 'Charge max',
+    bestSetVolume: 'Meilleure série',
+    sessionTonnage: 'Tonnage de la séance',
+    topReps: 'Répétitions max',
+    totalReps: 'Répétitions totales',
+    workingSets: 'Séries de travail',
+    lowestAssist: 'Assistance minimale',
+    topDuration: 'Durée max',
+    totalDuration: 'Durée totale',
+    topDistance: 'Distance max',
+    totalDistance: 'Distance totale',
+  },
+
+  /** Ce que chaque métrique compte vraiment, sous la courbe. Une phrase. */
+  metricHint: {
+    topWeight: 'La série de travail la plus lourde de la séance.',
+    bestSetVolume: 'La meilleure série de la séance, charge × répétitions.',
+    sessionTonnage:
+      'Charge × répétitions, additionné sur la séance. Ne compte ni l’assistance ni le poids du corps.',
+    topReps: 'La série de travail la plus longue en répétitions.',
+    totalReps: 'Toutes les répétitions de travail de la séance.',
+    workingSets: 'Les séries de la séance, échauffement exclu.',
+    lowestAssist: 'L’assistance la plus faible de la séance. Moins, c’est mieux.',
+    topDuration: 'La série de travail la plus longue.',
+    totalDuration: 'Le temps de travail cumulé de la séance.',
+    topDistance: 'La série de travail la plus longue en distance.',
+    totalDistance: 'La distance cumulée de la séance.',
+  },
+
+  period: {
+    '4w': '4 semaines',
+    '12w': '12 semaines',
+    '26w': '26 semaines',
+    '52w': '52 semaines',
+    all: 'Tout',
   },
 
   error: {

@@ -278,6 +278,20 @@ export function SlidersIcon(props: IconProps) {
 }
 
 /** Import — a local file entering the history tray. */
+/**
+ * Analyses — une courbe montante et ses deux points, pas un graphique en barres :
+ * ce que cet écran dessine, c'est une progression dans le temps.
+ */
+export function TrendIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M4 19V5" />
+      <path d="M4 19h16" />
+      <path d="m7.5 15 4-5 3 2.5L20 7" />
+    </Icon>
+  );
+}
+
 export function ImportIcon(props: IconProps) {
   return (
     <Icon {...props}>

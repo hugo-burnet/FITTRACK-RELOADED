@@ -15,7 +15,7 @@ import {
 import { t } from '@/i18n/fr';
 import { calculateWeeklyRegularity } from '@/lib/history';
 import { Card, HeaderAction } from '@/ui';
-import { ImportIcon } from '@/ui/icons';
+import { ImportIcon, TrendIcon } from '@/ui/icons';
 import { HistoryCalendar } from './HistoryCalendar';
 import { HistoryExerciseFilter } from './HistoryExerciseFilter';
 import { HistoryJournal } from './HistoryJournal';
@@ -110,12 +110,22 @@ export function HistoryScreen() {
     <Screen
       title={t('history.title')}
       action={
-        <HeaderAction
-          label={t('history.importAction')}
-          onClick={() => void navigate('/history/import')}
-        >
-          <ImportIcon />
-        </HeaderAction>
+        // Deux actions, pas un onglet de plus : la barre du bas en compte cinq
+        // depuis le Lot 1, et les analyses lisent l'historique qu'on regarde.
+        <div className="flex shrink-0 items-center">
+          <HeaderAction
+            label={t('analytics.action')}
+            onClick={() => void navigate('/analytics')}
+          >
+            <TrendIcon />
+          </HeaderAction>
+          <HeaderAction
+            label={t('history.importAction')}
+            onClick={() => void navigate('/history/import')}
+          >
+            <ImportIcon />
+          </HeaderAction>
+        </div>
       }
     >
       <div className="space-y-7">
