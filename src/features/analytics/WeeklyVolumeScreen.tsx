@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { listExportSources } from '@/data/repositories/exportQueries';
 import { listCompletedWorkoutTimestamps } from '@/data/repositories/history';
+import type { ExportSource } from '@/lib/export/types';
 import { t } from '@/i18n/fr';
 import {
   periodLabel,
@@ -19,7 +20,18 @@ import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
 import { WeeklyVolumeCard } from './WeeklyVolumeCard';
 
 const longDate = (at: number): string =>
-  new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  new Date(at).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+interface ResolvedVolumeQuery {
+  from: number | undefined;
+  to: number;
+  sources: ExportSource[];
+  allStarts: number[];
+}
 
 /**
  * G4 — the load carried by each observed week, as external tonnage or complete
@@ -34,6 +46,7 @@ export function WeeklyVolumeScreen() {
   const [period, setPeriod] = useState<PeriodKey>('12w');
   const [metric, setMetric] = useState<WeeklyVolumeMetric>('tonnage');
   const [selectedIndex, setSelectedIndex] = useState<number>();
+  const [resolvedQuery, setResolvedQuery] = useState<ResolvedVolumeQuery>();
 
   const { from, to } = periodBounds(period, openedAt);
   const sources = useLiveQuery(
@@ -44,9 +57,36 @@ export function WeeklyVolumeScreen() {
     [from, to],
   );
   const allStarts = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
+  const currentQuery =
+    sources === undefined || allStarts === undefined
+      ? undefined
+      : { from, to, sources, allStarts };
+
+  if (
+    currentQuery !== undefined &&
+    (resolvedQuery === undefined ||
+      resolvedQuery.from !== currentQuery.from ||
+      resolvedQuery.to !== currentQuery.to ||
+      resolvedQuery.sources !== currentQuery.sources ||
+      resolvedQuery.allStarts !== currentQuery.allStarts)
+  ) {
+    setResolvedQuery(currentQuery);
+  }
+
+  const presentedQuery = currentQuery ?? resolvedQuery;
+  const stale = currentQuery === undefined;
   const hasEarlierHistory =
-    from !== undefined && (allStarts ?? []).some((startedAt) => startedAt < from);
-  const buckets = weeklyVolumeBuckets(sources ?? [], { from, to }, hasEarlierHistory);
+    presentedQuery?.from !== undefined &&
+    presentedQuery.allStarts.some((startedAt) => startedAt < presentedQuery.from!);
+  const buckets =
+    presentedQuery === undefined
+      ? []
+      : weeklyVolumeBuckets(
+          presentedQuery.sources,
+          { from: presentedQuery.from, to: presentedQuery.to },
+          hasEarlierHistory,
+        );
+  const hasSessions = (presentedQuery?.sources.length ?? 0) > 0;
   const selected = Math.min(selectedIndex ?? buckets.length - 1, buckets.length - 1);
 
   const changePeriod = (next: PeriodKey) => {
@@ -56,7 +96,7 @@ export function WeeklyVolumeScreen() {
 
   return (
     <Screen title={t('volume.title')} onBack={() => void navigate(-1)}>
-      <div className="space-y-7">
+      <div className="space-y-7" aria-busy={stale}>
         <div className="flex gap-2 overflow-x-auto pb-1">
           <FilterChip
             label={periodLabel(period)}
@@ -70,7 +110,7 @@ export function WeeklyVolumeScreen() {
           />
         </div>
 
-        {buckets.length === 0 ? (
+        {presentedQuery === undefined ? null : !hasSessions ? (
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
               {t('volume.emptyPeriod')}
@@ -91,11 +131,11 @@ export function WeeklyVolumeScreen() {
             metric={metric}
             selectedIndex={selected}
             onSelect={setSelectedIndex}
-            stale={sources === undefined || allStarts === undefined}
+            stale={stale}
           />
         )}
 
-        {buckets.length > 0 && (
+        {hasSessions && buckets.length > 0 && (
           <section>
             <SectionTitle>{t('volume.weeksSection')}</SectionTitle>
             <Card>

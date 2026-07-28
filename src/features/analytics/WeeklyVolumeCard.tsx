@@ -18,7 +18,11 @@ const shortDate = (at: number): string =>
   new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 
 const longDate = (at: number): string =>
-  new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  new Date(at).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
 interface Props {
   buckets: readonly WeeklyVolumeBucket[];

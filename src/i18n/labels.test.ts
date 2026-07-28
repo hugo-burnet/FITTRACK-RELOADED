@@ -19,6 +19,10 @@ describe('weekly volume labels', () => {
     expect(weeklyVolumeReading(3_690, 'duration')).toBe('1 h 02');
   });
 
+  it('lit une semaine sans durée en minutes, jamais en secondes', () => {
+    expect(weeklyVolumeReading(0, 'duration')).toBe('0 min');
+  });
+
   it('grave les grands tonnages sous une forme compacte', () => {
     expect(weeklyVolumeScaleReading(12_400, 'tonnage')).toMatch(/^12,4\s?k$/);
   });

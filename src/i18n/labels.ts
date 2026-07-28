@@ -89,16 +89,23 @@ export function muscleSetsReading(count: number): string {
 export const weeklyVolumeMetricLabel = (metric: WeeklyVolumeMetric): string =>
   t(metric === 'tonnage' ? 'volume.metricTonnage' : 'volume.metricDuration');
 
+const weeklyDurationReading = (value: number): string => {
+  const roundedToMinute = Math.round(value / 60) * 60;
+  return roundedToMinute === 0
+    ? `0 ${t('units.minutes')}`
+    : formatDuration(roundedToMinute);
+};
+
 /** A weekly total, without second-level noise on an hour-scale chart. */
 export function weeklyVolumeReading(value: number, metric: WeeklyVolumeMetric): string {
-  if (metric === 'duration') return formatDuration(Math.round(value / 60) * 60);
+  if (metric === 'duration') return weeklyDurationReading(value);
   const rounded = Math.round(value * 10) / 10;
   return `${rounded.toLocaleString('fr-FR')} ${unitLabel('kg')}`;
 }
 
 /** The short engraving beside the chart, where a four-digit label would steal the plot. */
 export function weeklyVolumeScaleReading(value: number, metric: WeeklyVolumeMetric): string {
-  if (metric === 'duration') return formatDuration(Math.round(value / 60) * 60);
+  if (metric === 'duration') return weeklyDurationReading(value);
   return new Intl.NumberFormat('fr-FR', {
     notation: 'compact',
     maximumFractionDigits: 1,

@@ -26,7 +26,7 @@ la durée de séance opposée exprès à celle d’une série.
 `listExportSources({ kind: 'period', from, to })`, `periodBounds()` et
 `listCompletedWorkoutTimestamps()` : aucune requête, aucun repository et aucune
 définition de « séance qui compte » ajoutés. `WeeklyVolumeScreen` est différé ;
-le build le sort à **6,40 kB** (**2,39 kB gzip**). Aucune dépendance, aucun jeton
+le build le sort à **6,72 kB** (**2,52 kB gzip**). Aucune dépendance, aucun jeton
 de couleur et aucun octet de bibliothèque de graphiques.
 
 **Le tonnage et la durée par muscle sont écartés, pas oubliés.** G3 donne déjà
@@ -46,7 +46,13 @@ tabulaires sans transformation de casse ; les repères informatifs utilisent
 correction : **7,18:1 en sombre, 7,03:1 en clair**, sans introduire une couleur
 qui porterait un faux sens.
 
-**55 fichiers, 760 tests** (+2 fichiers, +16) ; `lint`, `typecheck`, `test:run`
+**Revue indépendante refermée.** L’écran distingue maintenant la lecture Dexie
+en cours d’une période réellement vide : il conserve le dernier graphique à
+opacité réduite au changement de période et n’annonce plus prématurément
+« Aucune séance ». Les dates longues incluent l’année pour rendre `Tout`
+non ambigu, et une durée hebdomadaire nulle se lit **0 min**, jamais 0 s.
+
+**56 fichiers, 764 tests** (+3 fichiers, +20) ; `lint`, `typecheck`, `test:run`
 et `build` sont verts.
 
 **Vérifié en pilotant, en 375 × 812 px**, sur les trois semaines présentes dans
