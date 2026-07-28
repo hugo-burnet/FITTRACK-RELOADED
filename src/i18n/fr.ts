@@ -942,6 +942,45 @@ const fr = {
     chartSummaryOne: 'Séances de la semaine du {first} : {current}.',
   },
 
+  /**
+   * Les séries par muscle (G3). Un muscle à **0 série** reste à l'écran : sur
+   * une période, l'app a la couverture complète de ce qui a été fait, donc un
+   * zéro est un fait observé — et c'est le seul fait que cet écran existe pour
+   * donner. Un muscle négligé qui disparaît est un muscle qu'on ne remarque pas.
+   */
+  muscles: {
+    title: 'Séries par muscle',
+    /** L'entrée depuis l'écran des analyses. */
+    link: 'Séries par muscle',
+    subtitle: 'Ce que tu travailles, et ce que tu négliges',
+
+    /** La lecture d'en-tête : le total, il ne dépend d'aucun geste. */
+    totalLabel: 'Séries de travail',
+    sets: '{count} séries',
+    setsOne: '1 série',
+    setsNone: '0 série',
+    /** Ce qui rend deux périodes comparables entre elles. */
+    weeklyRate: '{rate} par semaine',
+
+    /**
+     * Ce qui est **mesuré**, et non comment lire le dessin — la même nature que
+     * `metricHint` sous une courbe. Le muscle principal seul est une
+     * approximation : elle s'écrit, elle ne se cache pas.
+     */
+    footnote:
+      'Comptées sur le muscle principal de chaque exercice. Échauffements exclus.',
+
+    /** Les groupes sans région anatomique, quand ils portent quelque chose. */
+    unscopedSection: 'Hors répartition',
+    /** Ni instantané, ni exercice : un trou de l'app, pas un choix de l'utilisateur. */
+    unknownMuscle: 'Muscle inconnu',
+
+    emptyPeriod: 'Aucune série de travail sur cette période.',
+    /** Des séries, mais aucune sur une région : quinze zéros seraient un mensonge. */
+    noRegion:
+      'Aucune série sur un muscle identifié dans cette période. Ce qui a été fait est listé ci-dessous.',
+  },
+
   /** Le nom de chaque métrique. Il porte l'unité quand elle ne va pas de soi. */
   metric: {
     topWeight: 'Charge max',

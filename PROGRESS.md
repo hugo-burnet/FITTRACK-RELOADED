@@ -2,7 +2,116 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**jalon G2 — séances par semaine**). Le rythme
+**Dernière mise à jour :** 2026-07-28 (**jalon G3 — séries par muscle**). La répartition existe :
+`Historique → Analyses → Séries par muscle`. Spec :
+`docs/superpowers/specs/2026-07-28-analytics-muscle-group-series-design.md`.
+
+**Aucune requête neuve, troisième fois de suite.** `listExportSources({ kind: 'period', from, to })`
+et `periodBounds()`, comme G1 et G2. Un troisième fichier de requêtes ferait **une troisième
+définition de « séance qui compte »** — la faute que 08B a passé une session à réparer.
+
+**Le muscle principal seul, et c'était la décision à prendre d'avance.** `secondaryMuscles` a été
+exclu de l'instantané exprès au jalon 08A et n'existe que dans la bibliothèque **d'aujourd'hui** :
+une répartition qui le lirait redistribuerait six mois de séries passées à chaque édition d'un
+exercice — le bug de 08B, transposé du nom au muscle. La migration v3 a été examinée et écartée :
+elle ne pourrait remplir les lignes existantes qu'avec la bibliothèque d'aujourd'hui, donc en
+**inventant** le passé au lieu de le conserver. Et surtout, la pondération (1 au principal, 0,4 aux
+secondaires) ne peut pas devenir une unité de comptage : « 48 » cesserait d'être un nombre de séries
+pour devenir un score dont le total ne vaut plus ce qui a été fait, et qu'aucun comptage manuel dans
+l'Historique ne retrouve. **Un compte se vérifie, un score se croit** — et être vérifiable est la
+seule prétention de cet écran. L'approximation est écrite sur l'écran, en une phrase.
+
+**G3 est une troisième forme, et `ChartSurface` n'est pas touché — vérifié, pas supposé.** Ses trois
+possessions tombent une par une. (1) **Pas de `<svg>`** : les étiquettes sont des noms français à
+taille de lecture, et un `<text>` dans un `viewBox` mis à l'échelle ment sur sa taille — c'est
+exactement pourquoi G1 et G2 gardent tout leur texte **hors** du SVG ; le texte en HTML impose la
+barre en HTML. (2) **Pas de « marque la plus proche en x »** : les marques sont empilées en y. (3)
+**Pas de résumé lecteur d'écran séparé, parce que le dessin EST la liste.** En G1 et G2, le `<svg>`
+était muet et il fallait une liste jumelle en dessous ; une ligne classée porte son nom et son
+nombre en texte. Il n'y a pas de doublon accessible à écrire quand il n'y a pas d'original
+inaccessible.
+
+**Donc aucune sélection, et c'est une conséquence, pas un oubli.** G1 et G2 ont un curseur parce
+qu'une marque posée sur un axe partagé ne peut pas porter son étiquette. Une ligne classée la porte
+déjà : une sélection ne révélerait **rien**. Les lignes ne sont donc pas des boutons — vérifié en
+pilotant, aucun `<button>` dans les quinze `<li>`.
+
+**Une troisième géométrie dans `plot.ts`, et pas une généralisation des deux premières.**
+`barFractions(values, ceiling)` rend une **part de piste de 0 à 1**, et non des coordonnées, parce
+que la piste est fluide (§ ci-dessus) — c'est aussi ce que le rail de `HistorySummaryCard` consomme
+déjà (`scaleX`). Ce n'est pas `barLayout` couché : `barLayout` place N colonnes **le long** d'une
+boîte (`slot`, `centerX`, `BAR_FILL`) parce que l'axe des abscisses est à lui ; ici la mise en page
+appartient au DOM et quatre des cinq champs de `BarSlot` seraient ignorés. Ce que la fonction
+possède vraiment : **une valeur nulle rend exactement 0, jamais le plancher** (l'absence n'est pas
+une petite quantité), et **une valeur non nulle garde un plancher** de 2 % (1 série sur un plafond
+de 60 fait deux pixels et se lit comme zéro). C'est le symétrique de la leçon de G2, que G2 n'avait
+pas rencontré.
+
+**Le zéro : information, et c'est le point de conception du jalon.** Transposition de la leçon de
+G2, demandée au cadrage. Ce qui départageait en G2 n'était pas « vide » mais **ce que l'app sait** :
+avant le premier enregistrement elle ne sait rien, au milieu elle sait tout. Ici, sur une période,
+la couverture est complète par construction — « 0 série de mollets en 12 semaines » est un fait
+**observé**, et c'est le seul fait que cet écran existe pour donner. **La liste des lignes vient donc
+de l'anatomie, pas des données.** Un muscle négligé qui disparaît de la liste est un muscle qu'on ne
+remarque pas : ce serait le seul vrai échec possible de cet écran. Un muscle à zéro reçoit **4 px en
+`--border`**, la réponse exacte de G2 tournée de 90°.
+
+**Sauf trois, et c'est ainsi que le type devient explicite.** `cardio`, `full_body` et `other` n'ont
+aucune région anatomique. Le critère qui tranche est celui ci-dessus : « 0 série de Corps entier »
+ne dit rien à personne — ce ne sont pas des muscles, ce sont des cases de rangement. Ils sortent du
+classement et **n'apparaissent que s'ils portent quelque chose** : faire disparaître quarante séries
+de cardio serait l'autre faute, celle que le Lot 5bis nomme (« ça existe, mais rien ne le montre »).
+D'où `MUSCLE_SCOPE: Record<MuscleGroup, 'region' | 'unscoped'>` — **un `Record` et pas une liste** :
+ajouter une valeur à `MUSCLE_GROUPS` sans la classer casse le typecheck, même mécanique que
+`muscle.*` dans `fr.ts`. Un quatrième cas est nommé plutôt qu'avalé : une ligne dont le muscle ne se
+résout pas va sous « Muscle inconnu », **jamais fondue dans `other`** — `other` est un choix de
+l'utilisateur, l'inconnu est un trou de l'app. `neck` n'est pas un cas spécial : décider quels
+muscles méritent une ligne serait l'app décidant ce que son utilisateur a le droit de négliger.
+
+**Zéro chose colorée, et il faut le dire parce que la règle en demande une.** La charte réserve
+l'accent aux actions primaires, aux séries validées et aux records ; **G3 n'a aucun des trois.**
+Colorer le muscle le plus travaillé serait **féliciter un déséquilibre**, l'inverse exact de ce que
+l'écran sert à voir ; colorer le moins travaillé serait une alerte que l'app n'a aucun seuil pour
+justifier. La règle dit « une seule chose colorée **et c'est une information** », pas « il en faut
+une ».
+
+**Une erreur de la spec corrigée pendant l'implémentation, et elle valait la peine.** La spec
+affirmait que `hasEarlierHistory` n'avait aucun sens ici — vrai pour la répartition (un muscle ne
+commence pas d'exister à une date), **faux pour la moyenne hebdomadaire de l'en-tête**, qui est un
+chiffre *par semaine* et hérite mot pour mot du défaut que G2 a payé en usage. `listCompletedWorkoutTimestamps()`
+est donc lu ici aussi, et le nombre de semaines n'est pas `WEEKS[period]` mais
+**`weeklySessionCounts(...).length`**, le moteur de G2 lui-même : les deux écrans ne peuvent pas
+diviser par deux nombres différents. Vérifié en pilotant — 4 semaines d'historique dans une fenêtre
+de 12, 26 ou 52 donnent **13,6 par semaine** dans les trois cas, jamais 5,7.
+
+**51 fichiers de tests, 729 tests** (+1 fichier, +21) ; `lint`, `typecheck`, `test:run` et `build`
+sont verts, et le build n'a toujours **aucun** avertissement. `MuscleBalanceScreen` sort à
+**4,94 kB** (gzip 1,89) en quatrième route différée.
+
+**Vérifié en pilotant, en 375 × 812 px**, sur 8 séances et 68 séries de travail injectées sur
+4 semaines, avec cinq pièges posés exprès et tous désamorcés : **4 échauffements exclus** (total 68
+et non 72) ; **le même exercice deux fois dans une séance additionne** (Pectoraux 13 = 4+2+4+3) ; une
+ligne dont **l'instantané dit « mollets » et la bibliothèque « épaules »** compte pour les mollets
+(2), et les épaules restent à 3 ; **égalité Biceps 6 / Triceps 6 départagée par l'ordre canonique** ;
+**Cardio 5 et Muscle inconnu 1 en « Hors répartition »**, jamais fondus ensemble ni dans « Autre ».
+Quatre régions à 0 (Trapèzes, Avant-bras, Lombaires, Cou) restent à l'écran avec leur moignon de
+4 px en `--border`, visuellement impossible à confondre avec la plus petite quantité réelle (20,2 px
+pour 2 séries). **La longueur est la quantité** : 8/13 mesuré à 0,615 contre 0,615 attendu. Aucun
+débordement horizontal (`scrollWidth === innerWidth === 375`), plus petite cible 48 px, aucune
+erreur console, et l'état vide affiche bien sa phrase au lieu de quinze barres à zéro.
+
+**Checkpoint à vérifier sur le téléphone :** ouvrir **Historique → l'icône de courbe → Séries par
+muscle**. Le total en haut doit être **le nombre de séries de travail que tu as réellement faites**
+sur la période — échauffements exclus — et il doit se retrouver à la main dans l'Historique si tu
+comptes. Vérifie que les muscles que tu sais négliger sont bien **en bas de la liste, à zéro, et
+toujours visibles** : c'est ce que l'écran existe pour montrer. Attention au sens de la mesure : un
+exercice compte pour **son muscle principal seulement**, donc le développé couché ne donne rien aux
+triceps — la phrase sous le graphique le dit. Renomme ou **reclasse** un exercice dans la
+bibliothèque (change son muscle principal) : **la répartition passée ne doit pas bouger.** Enfin,
+change de période — 4, 12, 26, 52 semaines et Tout : la moyenne « par semaine » ne doit pas
+s'effondrer quand la fenêtre est plus large que ton historique.
+
+**Historique précédent :** 2026-07-28 (**jalon G2 — séances par semaine**). Le rythme
 d'entraînement a son histogramme : `Historique → Analyses → Séances par semaine`. Spec :
 `docs/superpowers/specs/2026-07-28-analytics-weekly-sessions-design.md`.
 

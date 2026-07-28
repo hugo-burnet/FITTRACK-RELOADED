@@ -35,6 +35,15 @@ export interface BarSlot {
 const BAR_FILL = 0.62;
 
 /**
+ * The shortest a **non-zero** bar is allowed to be, as a share of its track.
+ *
+ * One set against a ceiling of sixty is 1.7 % — two pixels, which reads as
+ * nothing. A quantity that exists has to look like one; the difference between
+ * "a little" and "none at all" is the whole subject of a distribution.
+ */
+const MIN_FRACTION = 0.02;
+
+/**
  * The vertical range, **bounded by the data and not by zero**.
  *
  * A progression from 80 to 85 kg drawn from a zero baseline is a flat line, and
@@ -115,5 +124,38 @@ export function barLayout(
     const x = slot * index + (slot - width) / 2;
 
     return { x, centerX: x + width / 2, width, y: box.height - height, height };
+  });
+}
+
+/**
+ * A share of the track, 0 to 1 — the third geometry of this module, and no more
+ * a generalisation of the other two than they are of each other.
+ *
+ * **Why a fraction and not coordinates**, when `plotPoints` and `barLayout` both
+ * return pixels: these marks carry HTML labels on their own line. A muscle name
+ * has to be read in French at reading size, and a `<text>` inside a scaled
+ * `viewBox` lies about its size — which is exactly why milestones G1 and G2 keep
+ * every word of theirs *outside* the SVG. Labels in HTML means bars in HTML,
+ * means a fluid track whose width is unknown until render. It is also what the
+ * regularity rail of `HistorySummaryCard` already consumes (`scaleX(fraction)`).
+ *
+ * And it is not `barLayout` turned on its side: `barLayout` places N columns
+ * **along** a box — `slot`, `centerX`, `BAR_FILL` — because the horizontal axis
+ * is its own. Here the rows are laid out by the DOM, so four of `BarSlot`'s five
+ * fields would be ignored. What is left is one quantity per row.
+ *
+ * `ceiling` comes from the caller, as it does for `barLayout`: here it is simply
+ * the largest count. There is no goal to fold in — this screen has no target to
+ * hold anyone to, cf. the spec of G3, §4.5.
+ */
+export function barFractions(values: readonly number[], ceiling: number): number[] {
+  const top = ceiling > 0 ? ceiling : 1;
+
+  return values.map((value) => {
+    // Exactly zero, never the floor: absence is not a small quantity. A muscle
+    // with no set at all is marked by the stub in the axis's own tone, and the
+    // two must not be confused — that distinction is the point of the screen.
+    if (value <= 0) return 0;
+    return Math.min(1, Math.max(MIN_FRACTION, value / top));
   });
 }

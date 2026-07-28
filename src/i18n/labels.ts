@@ -74,6 +74,18 @@ export function weeklySessionsReading(count: number): string {
 }
 
 /**
+ * « 48 séries », « 1 série », « 0 série ».
+ *
+ * Zero has its own wording for the same reason the weekly one does, and here it
+ * matters more: a muscle at zero is the reading milestone G3 exists to print.
+ */
+export function muscleSetsReading(count: number): string {
+  if (count === 0) return t('muscles.setsNone');
+  if (count === 1) return t('muscles.setsOne');
+  return t('muscles.sets', { count });
+}
+
+/**
  * A metric's value as it is read: « 102,5 kg », « 1:30 min », « 5 séries ».
  *
  * Durations go through `formatDuration` rather than printing raw seconds, so a

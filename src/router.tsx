@@ -3,6 +3,7 @@ import { AppShell } from './app/AppShell';
 import {
   AnalyticsRoute,
   ExerciseAnalyticsRoute,
+  MuscleBalanceRoute,
   WeeklySessionsRoute,
 } from './features/analytics/routes';
 import { ExerciseDetailScreen } from './features/exercises/ExerciseDetailScreen';
@@ -49,6 +50,7 @@ export const router = createHashRouter([
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
       { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
+      { path: 'analytics/muscles', element: <MuscleBalanceRoute /> },
       { path: 'analytics/exercises/:exerciseId', element: <ExerciseAnalyticsRoute /> },
       { path: 'exercises', element: <ExercisesScreen /> },
       // Static before dynamic. React Router ranks them that way on its own, but

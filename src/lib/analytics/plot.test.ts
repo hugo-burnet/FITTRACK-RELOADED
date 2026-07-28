@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { barLayout, plotBounds, plotPoints } from './plot';
+import { barFractions, barLayout, plotBounds, plotPoints } from './plot';
 
 const box = { width: 300, height: 100 };
 
@@ -112,5 +112,39 @@ describe('barLayout', () => {
       const previous = bars[index - 1];
       if (previous !== undefined) expect(bar.x).toBeGreaterThanOrEqual(previous.x + previous.width);
     });
+  });
+});
+
+describe('barFractions', () => {
+  it('rend la part de la piste, la longueur étant la quantité', () => {
+    // 20 et 10 sous un plafond de 20 : du simple au double, comme barLayout.
+    expect(barFractions([20, 10], 20)).toEqual([1, 0.5]);
+  });
+
+  it('rend exactement zéro pour une valeur nulle, jamais le plancher', () => {
+    // L’absence n’est pas une petite quantité : c’est le moignon `--border`
+    // qui la dit, et il ne doit pas être confondu avec une barre minuscule.
+    expect(barFractions([0, 40], 40)[0]).toBe(0);
+  });
+
+  it('garde une valeur non nulle visible sous un grand plafond', () => {
+    // 1 sur 60 fait 1,7 % de la piste, soit deux pixels : lisible comme zéro.
+    const [tiny] = barFractions([1], 60);
+    expect(tiny).toBeGreaterThan(1 / 60);
+    expect(tiny).toBeLessThan(0.1);
+  });
+
+  it('ne divise pas par zéro sur un plafond nul', () => {
+    expect(barFractions([0, 0], 0)).toEqual([0, 0]);
+  });
+
+  it('ne dépasse jamais la piste', () => {
+    for (const fraction of barFractions([5, 12], 10)) {
+      expect(fraction).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('ne rend rien sans valeur', () => {
+    expect(barFractions([], 10)).toEqual([]);
   });
 });
