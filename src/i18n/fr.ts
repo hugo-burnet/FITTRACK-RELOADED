@@ -964,6 +964,36 @@ const fr = {
   },
 
   /**
+   * Le volume hebdomadaire (G4). Deux cadrans sur les mêmes semaines : la
+   * charge externe réellement soulevée et le temps complet passé en séance.
+   * Aucun vert : une grande quantité n'est ni un objectif ni un jugement.
+   */
+  volume: {
+    title: 'Volume d’entraînement',
+    link: 'Volume d’entraînement',
+    subtitle: 'Tonnage et durée par semaine',
+    metricSheetTitle: 'Ce que le graphique mesure',
+    metricTonnage: 'Tonnage',
+    metricDuration: 'Durée',
+    weekOf: 'Semaine du {date}',
+    total: 'Total · {value}',
+    average: 'Moyenne par semaine · {value}',
+    weeksSection: 'Semaines',
+    scaleZero: '0',
+    emptyPeriod: 'Aucune séance sur cette période.',
+    zeroTonnage:
+      'Ces séances ne contiennent aucune charge externe comptée dans le tonnage.',
+    singleWeek:
+      'Une seule semaine sur cette période : une tendance demande plusieurs semaines.',
+    tonnageHint:
+      'Charges externes soulevées. Assistance, lest, poids du corps et échauffements exclus.',
+    durationHint: 'Somme des durées complètes des séances.',
+    chartSummary:
+      '{metric} sur {count} semaines, du {first} au {last}. Minimum {min}, maximum {max}, moyenne {average}.',
+    chartSummaryOne: '{metric} de la semaine du {first} : {current}.',
+  },
+
+  /**
    * Les séries par muscle (G3). Un muscle à **0 série** reste à l'écran : sur
    * une période, l'app a la couverture complète de ce qui a été fait, donc un
    * zéro est un fait observé — et c'est le seul fait que cet écran existe pour

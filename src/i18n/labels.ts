@@ -1,6 +1,7 @@
 import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType, Side } from '@/data/types';
 import type { MetricKey, MetricUnit } from '@/lib/analytics/metrics';
 import type { PeriodKey } from '@/lib/analytics/periods';
+import type { WeeklyVolumeMetric } from '@/lib/analytics/volume';
 import type { TargetUnit } from '@/lib/measurement';
 import type { RecordKind } from '@/lib/records';
 import { t } from './fr';
@@ -83,6 +84,25 @@ export function muscleSetsReading(count: number): string {
   if (count === 0) return t('muscles.setsNone');
   if (count === 1) return t('muscles.setsOne');
   return t('muscles.sets', { count });
+}
+
+export const weeklyVolumeMetricLabel = (metric: WeeklyVolumeMetric): string =>
+  t(metric === 'tonnage' ? 'volume.metricTonnage' : 'volume.metricDuration');
+
+/** A weekly total, without second-level noise on an hour-scale chart. */
+export function weeklyVolumeReading(value: number, metric: WeeklyVolumeMetric): string {
+  if (metric === 'duration') return formatDuration(Math.round(value / 60) * 60);
+  const rounded = Math.round(value * 10) / 10;
+  return `${rounded.toLocaleString('fr-FR')} ${unitLabel('kg')}`;
+}
+
+/** The short engraving beside the chart, where a four-digit label would steal the plot. */
+export function weeklyVolumeScaleReading(value: number, metric: WeeklyVolumeMetric): string {
+  if (metric === 'duration') return formatDuration(Math.round(value / 60) * 60);
+  return new Intl.NumberFormat('fr-FR', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value);
 }
 
 /**
