@@ -2,6 +2,27 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Deux constats consignés, non codés** (2026-07-28, fin de session) :
+
+**1. Une série n'est pas une unité de coût constante d'un muscle à l'autre.** Relevé par
+l'utilisateur : « les lombaires et le haut du dos ne sont pas du tout chargés pareil ». Trois séries
+d'hyperextension à 10 kg et trois de tirage horizontal à 47,5 kg pèsent identiquement sur cet écran.
+**Le classement inter-muscles de G3 est donc un ordre de grandeur, pas un verdict** — ce qu'il sait
+dire honnêtement, c'est un muscle comparé à lui-même dans le temps, et un zéro ou un quasi-zéro.
+C'est une limite de la forme, pas un défaut à corriger ; à écrire dans la spec G3. (Le tonnage par
+muscle de G4 ne la lèvera qu'en partie : des kilos de mollets et des kilos de squat ne sont pas
+comparables non plus.)
+
+**2. Une association Hevy mémorisée passe avant un alias canonique** (`saved ?? canonical`,
+`hevyImportDraft.ts`). Conséquence : les quatre mauvais choix mémorisés lors du premier import
+battraient les alias corrects ajoutés depuis, sur une réimportation future. **Le correctif envisagé
+a été écarté en l'écrivant** : faire repasser en choix explicite les cas où les deux sources
+divergent rouvrirait la question **à chaque import, indéfiniment**, puisque le conflit se recrée à
+l'identique — et le cas le plus fréquent est légitime (un titre Hevy associé exprès à une machine
+personnelle). Une vraie solution demande de savoir *quand* le mapping a été enregistré, donc un
+champ de plus. Risque faible et décroissant : l'usage est passé à la saisie dans l'app, et une
+réimportation des mêmes séances est dédupliquée.
+
 **Dernière mise à jour :** 2026-07-28 (**le semis réconcilie la classification — sans quoi le
 correctif catalogue n'atteignait personne**).
 
