@@ -620,13 +620,17 @@ const fr = {
     importSetCount: '{count} séries',
     importMappingTitle: 'Associer les exercices',
     importMappingBody:
-      'Confirme chaque proposition ou choisis un autre exercice.',
-    importSuggested: 'Proposition',
+      'Vérifie les détections sûres, et choisis toi-même le reste.',
+    /**
+     * Plus « Proposition » : l'app ne propose plus rien quand elle n'est pas
+     * sûre. Un nom affiché dans cette colonne se lit comme une décision déjà
+     * prise, et c'est ainsi que quatre séries d'épaules ont fini en abdominaux.
+     */
+    importSuggested: 'À choisir',
     importSaved: 'Association mémorisée',
     importCanonical: 'Détection sûre',
     importSelected: 'Associé',
     importChooseExercise: 'Choisir un exercice FitTrack',
-    importUseSuggestion: 'Utiliser cette proposition',
     importCreateCustom: 'Créer « {name} »',
     importUnresolved: '{count} associations restantes',
     importUnresolvedOne: '1 association restante',

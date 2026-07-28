@@ -63,21 +63,12 @@ export function HevyExerciseMappingSheet({
       >
         {row !== null && (
           <div className="space-y-4">
-            {row.suggestion !== undefined && (
-              <Button
-                variant="primary"
-                fullWidth
-                onClick={() =>
-                  select({
-                    kind: 'existing',
-                    exerciseId: row.suggestion!.id,
-                  })
-                }
-              >
-                {t('history.importUseSuggestion')} · {row.suggestion.name}
-              </Button>
-            )}
-
+            {/* Plus de bouton « utiliser la suggestion ». Il portait le premier
+                candidat du classement de secours en variante primaire, pleine
+                largeur, en tête de feuille — et sur un titre sans cible au
+                catalogue, cette assurance était fausse. Ce que l'app croit
+                probable est maintenant le premier de la liste ci-dessous : même
+                nombre d'appuis, mais le choix est vu et pris. */}
             <Input
               label={t('history.importExerciseSearch')}
               labelHidden

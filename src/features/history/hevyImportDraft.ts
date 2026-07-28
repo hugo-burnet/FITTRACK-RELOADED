@@ -1,4 +1,3 @@
-import type { Exercise } from '@/data/types';
 import type {
   HevyImportData,
   HevySourceExercise,
@@ -7,7 +6,6 @@ import {
   findCanonicalHevyExercise,
   hevyExerciseSourceKey,
   normalizeHevyExerciseTitle,
-  rankHevyExerciseCandidates,
 } from '@/lib/hevyExerciseMatch';
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import type {
@@ -17,9 +15,24 @@ import type {
 } from '@/data/repositories/hevyImport';
 import { nextHevyImportFolderName } from '@/data/repositories/hevyRoutineImport';
 
+/**
+ * Une ligne à associer.
+ *
+ * **Il n'y a délibérément plus de `suggestion`.** Le brouillon portait le
+ * premier candidat du classement de secours, que la feuille affichait en bouton
+ * primaire pleine largeur — donc une hypothèse habillée en certitude. Sur un
+ * import réel, « Rotation Externe Poulie » s'y présentait comme « Crunch à la
+ * poulie haute » et un seul appui gelait quatre séries d'épaules en
+ * abdominaux, définitivement (l'instantané du jalon 08A).
+ *
+ * Ce que l'app croit probable n'a pas disparu pour autant : il **ordonne la
+ * liste** de la feuille (`filterHevyMappingExercises`). Le bon candidat reste à
+ * un appui, mais c'est un choix pris parmi ses alternatives, pas une réponse
+ * qu'on entérine. `resolution` n'est donc jamais posé d'office que par un alias
+ * canonique ou un mapping déjà mémorisé — les deux seules sources sûres.
+ */
 export interface HevyMappingDraftRow {
   source: HevySourceExercise;
-  suggestion?: Exercise;
   resolution?: HevyExerciseResolution;
   resolutionSource?: 'saved' | 'canonical' | 'user';
 }
@@ -91,12 +104,6 @@ export function createHevyImportDraft(
         source.measurementType,
         compatibleExercises,
       );
-      const suggestion =
-        canonical ??
-        rankHevyExerciseCandidates(
-          source.sourceTitle,
-          compatibleExercises,
-        )[0];
       const automatic = saved ?? canonical;
       const resolutionSource =
         saved !== undefined
@@ -107,7 +114,6 @@ export function createHevyImportDraft(
 
       return {
         source,
-        ...(suggestion === undefined ? {} : { suggestion }),
         ...(automatic === undefined || resolutionSource === undefined
           ? {}
           : {

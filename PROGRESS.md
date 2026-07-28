@@ -2,7 +2,38 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-28 (**correctif catalogue — G3 a trouvé un vrai défaut, et ce
+**Dernière mise à jour :** 2026-07-28 (**une hypothèse ne porte plus l'habit d'une certitude**).
+Suite directe du correctif catalogue ci-dessous. Question posée par l'utilisateur : « on devrait
+améliorer la reconnaissance des exos ? » — **non, et les chiffres le disent** : les quatre titres qui
+partaient n'importe où n'avaient aucune cible au catalogue. Cinq exercices ajoutés et quatre lignes
+d'alias ont fait 20/24 → **24/24 sans toucher une ligne d'algorithme**. Améliorer le classement de
+secours n'aurait produit que de **meilleures mauvaises réponses** : il ne se déclenche que là où le
+catalogue est muet, et aucun score ne sort une rotation externe d'une liste qui n'en contient pas.
+
+**Ce qu'il fallait corriger, c'est ce que l'app fait quand elle ne sait pas.** `HevyMappingDraftRow`
+portait `suggestion = canonical ?? rankHevyExerciseCandidates(...)[0]` — donc, faute d'alias, le
+premier d'un classement flou. La feuille l'affichait en **bouton `primary`, pleine largeur, en tête**
+(l'élément le plus sûr de la charte) et la ligne de revue affichait son **nom** sous l'étiquette
+« Proposition ». Un appui, et l'hypothèse était gelée par l'instantané 08A.
+
+**`suggestion` est supprimé, pas rendu prudent.** Réduit au certain, il devenait exactement
+`resolution` : deux noms pour une chose. `resolution` n'est donc plus posé d'office que par un
+**alias canonique** ou un **mapping mémorisé**, les deux seules sources sûres.
+
+**Et la vraisemblance n'est pas jetée — elle descend à sa vraie place : elle ordonne la liste.**
+`filterHevyMappingExercises` trie désormais par `rankHevyExerciseCandidates`. Le bon candidat reste à
+un seul appui, mais c'est un choix pris **parmi ses alternatives** au lieu d'une réponse entérinée.
+Rien n'est écarté : l'ordre change, jamais le contenu — un test le fixe.
+
+Étiquettes suivies : « Proposition » devient **« À choisir »**, et `importUseSuggestion` est
+supprimée (chaîne morte). **53 fichiers, 739 tests** (+1 fichier, +4), quatre portes vertes.
+
+**Vérifié par les tests, pas en pilotant** — et c'est signalé plutôt que glissé : avec le catalogue
+corrigé, les 24 titres du vrai CSV sont tous canoniques, donc la feuille d'association ne s'ouvre
+plus du tout sur cet export. Le nouveau comportement se voit sur un titre non couvert ; les trois
+tests neufs le fixent, le parcours réel n'a pas été rejoué au doigt.
+
+**Historique précédent :** 2026-07-28 (**correctif catalogue — G3 a trouvé un vrai défaut, et ce
 n'était pas dans G3**). Retour d'usage : « les séries me paraissent incohérentes… en fait j'ai
 l'impression que certains exos sont mal mappés ». Il avait raison, et le vrai CSV Hevy l'a prouvé.
 

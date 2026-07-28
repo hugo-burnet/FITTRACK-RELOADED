@@ -35,9 +35,11 @@ function mappingReading(
       value: row.resolution.exercise.name,
     };
   }
+  // Rien de sûr : la ligne le dit, plutôt que d'afficher le nom d'une
+  // hypothèse — un nom lu dans cette colonne se lit comme une décision prise.
   return {
     label: t('history.importSuggested'),
-    value: row.suggestion?.name ?? t('history.importChooseExercise'),
+    value: t('history.importChooseExercise'),
   };
 }
 

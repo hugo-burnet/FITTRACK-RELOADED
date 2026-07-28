@@ -133,17 +133,19 @@ describe('Hevy import mapping draft', () => {
     });
 
     expect(draft.rows[0]!.resolution).toBeUndefined();
-    expect(draft.rows[0]!.suggestion).toBeUndefined();
+    expect(draft.rows[0]).not.toHaveProperty('suggestion');
   });
 
-  it('keeps a suggestion separate from explicit resolution', () => {
+  it('laisse le choix ouvert quand rien de certain ne correspond', () => {
+    // `data` porte « Développé Couché », que l'alias canonique ne couvre pas
+    // sous cette forme. Avant, la ligne s'ouvrait quand même sur un nom.
     const draft = createHevyImportDraft(data, {
       exercises: [bench],
       existingImportKeys: [],
       savedMappings: {},
     });
 
-    expect(draft.rows[0]!.suggestion?.id).toBe(bench.id);
+    expect(draft.rows[0]).not.toHaveProperty('suggestion');
     expect(draft.rows[0]!.resolution).toBeUndefined();
   });
 
@@ -174,7 +176,12 @@ describe('Hevy import mapping draft', () => {
     });
   });
 
-  it('keeps an approximate match unresolved', () => {
+  it('ne propose rien du tout sur un rapprochement approximatif', () => {
+    // Le défaut trouvé en usage, et c'est ce titre-là qui l'a révélé : faute de
+    // cible au catalogue, le classement de secours rendait « Crunch à la poulie
+    // haute », affiché en bouton primaire pleine largeur — l'élément le plus
+    // sûr de la charte. Quatre séries d'épaules comptées en abdominaux, par un
+    // seul appui. Une hypothèse ne doit pas porter l'habit d'une certitude.
     const unknown: HevySourceExercise = {
       sourceTitle: 'Rotation Externe Poulie',
       measurementType: 'weight_reps',
@@ -186,7 +193,7 @@ describe('Hevy import mapping draft', () => {
       savedMappings: {},
     });
 
-    expect(draft.rows[0]!.suggestion).toBeDefined();
+    expect(draft.rows[0]).not.toHaveProperty('suggestion');
     expect(draft.rows[0]!.resolution).toBeUndefined();
   });
 
