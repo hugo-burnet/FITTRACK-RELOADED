@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "bench:history": "vitest bench src/data/repositories/history.bench.ts --run",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
