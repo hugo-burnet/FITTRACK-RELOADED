@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type { Exercise } from '@/data/types';
 import type { HevyMappingDraftRow } from './hevyImportDraft';
+import {
+  setHevyImportResolution,
+  unresolvedHevySources,
+  type HevyImportDraft,
+} from './hevyImportDraft';
 import { filterHevyMappingExercises } from './hevyExerciseMappingFilters';
 import { HevyExerciseMappingSheet } from './HevyExerciseMappingSheet';
 
@@ -104,5 +109,91 @@ describe('HevyExerciseMappingSheet', () => {
     const reopenedDialog = screen.getByRole('dialog', { name: 'Développé Hevy' });
     expect(within(reopenedDialog).getByRole('button', { name: 'Muscle' })).toBeInTheDocument();
     expect(within(reopenedDialog).getByRole('button', { name: 'Matériel' })).toBeInTheDocument();
+  });
+
+  it('ne permet pas à une cible supprimée de résoudre la ligne ou d’activer Continuer', () => {
+    const deleted = {
+      ...exercises[0]!,
+      id: 'deleted-target',
+      name: 'Cible FitTrack supprimée',
+      deletedAt: 2,
+    };
+    const conflictRow: HevyMappingDraftRow = {
+      source: {
+        sourceTitle: 'Ancien exercice Hevy',
+        measurementType: 'weight_reps',
+        equipment: 'dumbbell',
+      },
+      review: {
+        status: 'conflict',
+        identityKey: 'ancien exercice hevy',
+        observation: {
+          source: 'hevy_csv',
+          sourceTitle: 'Ancien exercice Hevy',
+          measurementType: 'weight_reps',
+          equipmentHint: 'dumbbell',
+          sessionCount: 1,
+          setCount: 1,
+          examples: [],
+        },
+        reason: 'target_deleted',
+        suggestions: [{ exercise: deleted }],
+      },
+    };
+    const initialDraft: HevyImportDraft = {
+      importableWorkouts: 1,
+      skippedWorkouts: 0,
+      importedAt: 1,
+      routineNames: [],
+      rows: [conflictRow],
+    };
+
+    function Harness() {
+      const [draft, setDraft] = useState(initialDraft);
+      return (
+        <>
+          <HevyExerciseMappingSheet
+            row={conflictRow}
+            exercises={[deleted]}
+            onClose={vi.fn()}
+            onSelect={(resolution) =>
+              setDraft((current) =>
+                setHevyImportResolution(
+                  current,
+                  conflictRow.source.sourceTitle,
+                  resolution,
+                ),
+              )
+            }
+          />
+          <button
+            type="button"
+            disabled={unresolvedHevySources(draft).length > 0}
+          >
+            Continuer
+          </button>
+          <output>
+            {draft.rows[0]?.resolution === undefined
+              ? 'non résolu'
+              : 'résolu'}
+          </output>
+        </>
+      );
+    }
+
+    render(<Harness />);
+
+    const dialog = screen.getByRole('dialog', {
+      name: 'Ancien exercice Hevy',
+    });
+    expect(
+      within(dialog).queryByRole('button', {
+        name: /Cible FitTrack supprimée/,
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Continuer' }),
+    ).toBeDisabled();
+    expect(screen.getByText('non résolu')).toBeInTheDocument();
   });
 });

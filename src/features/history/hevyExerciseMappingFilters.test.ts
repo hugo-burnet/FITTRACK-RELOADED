@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import type { Exercise, Syncable } from '@/data/types';
+import type { Exercise } from '@/data/types';
+import catalogueRows from '@/data/seed/exercises.json';
+import type { CatalogueExercise } from '@/data/seed/seedDatabase';
 import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
 import { filterHevyMappingExercises } from './hevyExerciseMappingFilters';
 import type { HevyMappingDraftRow } from './hevyImportDraft';
 
-const exercise = (name: string, over: Partial<Omit<Exercise, keyof Syncable>> = {}): Exercise => ({
+const exercise = (name: string, over: Partial<Exercise> = {}): Exercise => ({
   id: name,
   createdAt: 1,
   updatedAt: 1,
@@ -19,7 +21,27 @@ const exercise = (name: string, over: Partial<Omit<Exercise, keyof Syncable>> = 
   ...over,
 });
 
-const row = (sourceTitle: string): HevyMappingDraftRow => ({
+const catalogue = (catalogueRows as CatalogueExercise[]).map(
+  (entry): Exercise => ({
+    ...entry,
+    id: entry.slug,
+    createdAt: 1,
+    updatedAt: 1,
+    deletedAt: 0,
+    isCustom: 0,
+  }),
+);
+
+function catalogueExercise(slug: string): Exercise {
+  const found = catalogue.find((candidate) => candidate.slug === slug);
+  if (found === undefined) throw new Error(`Missing catalogue slug: ${slug}`);
+  return found;
+}
+
+const row = (
+  sourceTitle: string,
+  suggestions: readonly Exercise[] = [],
+): HevyMappingDraftRow => ({
   source: { sourceTitle, measurementType: 'weight_reps', equipment: 'cable' },
   review: {
     status: 'needs_confirmation',
@@ -33,7 +55,9 @@ const row = (sourceTitle: string): HevyMappingDraftRow => ({
       setCount: 0,
       examples: [],
     },
-    suggestions: [],
+    suggestions: suggestions.map((candidate) => ({
+      exercise: candidate,
+    })),
   },
 });
 
@@ -80,5 +104,41 @@ describe('filterHevyMappingExercises', () => {
     const catalogue = [exercise('Gainage', { measurementType: 'time_only' })];
 
     expect(filterHevyMappingExercises(catalogue, row('Rotation Externe Poulie'), '')).toEqual([]);
+  });
+
+  it('préserve les suggestions du registre avant le classement lexical avec le vrai catalogue', () => {
+    const pallof = catalogueExercise('pallof-press');
+    const shoulderPress = catalogueExercise('cable-shoulder-press');
+    const sourceRow = row(
+      'Développé Debout Poulie Centrée',
+      [pallof, shoulderPress],
+    );
+
+    const list = filterHevyMappingExercises(
+      catalogue,
+      sourceRow,
+      '',
+    );
+
+    expect(list[0]?.slug).toBe('pallof-press');
+    expect(list.indexOf(pallof)).toBeLessThan(
+      list.indexOf(shoulderPress),
+    );
+    expect(new Set(list.map((candidate) => candidate.id)).size).toBe(
+      list.length,
+    );
+  });
+
+  it('exclut toujours les exercices supprimés', () => {
+    const deleted = exercise('Ancienne presse', { deletedAt: 2 });
+    const alive = exercise('Presse active');
+
+    expect(
+      filterHevyMappingExercises(
+        [deleted, alive],
+        row('Presse', [deleted]),
+        '',
+      ).map((candidate) => candidate.id),
+    ).toEqual([alive.id]);
   });
 });

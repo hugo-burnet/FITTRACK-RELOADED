@@ -23,11 +23,39 @@ export function filterHevyMappingExercises(
   const needle = normalizeSearch(search);
   const compatible = exercises.filter(
     (exercise) =>
+      exercise.deletedAt === 0 &&
       exercise.measurementType === row.source.measurementType &&
       normalizeSearch(exercise.name).includes(needle) &&
       (muscle === undefined || exercise.primaryMuscle === muscle) &&
       (equipment === undefined || exercise.equipment === equipment),
   );
+  const compatibleById = new Map(
+    compatible.map((exercise) => [exercise.id, exercise]),
+  );
+  const reviewSuggestions =
+    row.review.status === 'confirmed'
+      ? []
+      : row.review.suggestions;
+  const prioritized: Exercise[] = [];
+  const prioritizedIds = new Set<string>();
+  for (const suggestion of reviewSuggestions) {
+    const current = compatibleById.get(suggestion.exercise.id);
+    if (
+      current !== undefined &&
+      !prioritizedIds.has(current.id)
+    ) {
+      prioritized.push(current);
+      prioritizedIds.add(current.id);
+    }
+  }
 
-  return rankHevyExerciseCandidates(row.source.sourceTitle, compatible);
+  return [
+    ...prioritized,
+    ...rankHevyExerciseCandidates(
+      row.source.sourceTitle,
+      compatible.filter(
+        (exercise) => !prioritizedIds.has(exercise.id),
+      ),
+    ),
+  ];
 }
