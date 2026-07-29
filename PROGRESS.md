@@ -2,6 +2,35 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**identité fiable des exercices importés —
+conception validée**). L’enquête sur le vrai `workout_data.csv` a isolé la
+régression : les quatre séries `LOWER A` nommées « Développé Debout Poulie
+Centrée » sont un **Pallof press**, mais l’alias livré les préconfirme sur
+`cable-shoulder-press`. Le catalogue possédait déjà `pallof-press`, correctement
+classé `abs + cable + weight_reps` ; ce n’est donc ni un manque de bibliothèque
+ni une erreur du CSV, mais une suggestion humaine encodée comme certitude puis
+protégée par un test.
+
+**Architecture décidée.** La fiche `Exercise` reste la connaissance canonique
+du mouvement. Une nouvelle table `externalExerciseBindings` conservera
+séparément les identités externes **confirmées par l’utilisateur**. Les aliases
+livrés et le classement lexical ne pourront produire que des suggestions. La
+clé externe conservera tous les mots discriminants (`poulie`, `machine`,
+`assis`, `debout`, `centrée`) ; aucune identité inconnue ne sera préconfirmée.
+Le registre pur préparera les résolutions, puis le repository écrira exercices
+personnalisés, liaisons, séances, séries et routines dans une transaction
+unique.
+
+**Spec :**
+`docs/superpowers/specs/2026-07-29-external-exercise-identity-design.md`.
+L’utilisateur doit maintenant relire et approuver la spec avant la rédaction du
+plan d’implémentation. Aucun comportement de production n’a encore changé.
+
+**Checkpoint téléphone après implémentation :** réinitialiser FitTrack, importer
+le CSV (6 séances, 25 intitulés, 136 séries), confirmer le Pallof press, vérifier
+les deux séances `LOWER A` et les analyses musculaires, puis réimporter le même
+fichier et constater zéro doublon.
+
 **Dernière mise à jour :** 2026-07-29 (**phase 6 — première preuve
 d’intégration du parcours de séance**). `WorkoutScreen` possède désormais un
 test qui traverse le vrai routeur React, les repositories, Dexie et
