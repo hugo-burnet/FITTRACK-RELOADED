@@ -660,6 +660,7 @@ const fr = {
     importEvidenceOne: '{sessionCount} séance · {setCount} séries',
     importEvidence: '{sessionCount} séances · {setCount} séries',
     importEvidenceSet: '{weight} kg × {reps}',
+    importEvidenceValueSeparator: ' · ',
     importEvidenceExamples: 'Exemples dans le fichier',
     importNeedsConfirmation: 'À confirmer',
     importConfirmed: 'Confirmé',

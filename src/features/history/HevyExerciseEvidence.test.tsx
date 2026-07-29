@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { t } from '@/i18n/fr';
 import { describe, expect, it } from 'vitest';
 import { HevyExerciseEvidence } from './HevyExerciseEvidence';
 
@@ -9,6 +10,10 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 });
 
 describe('HevyExerciseEvidence', () => {
+  it('localise le séparateur des valeurs partielles', () => {
+    expect(t('history.importEvidenceValueSeparator')).toBe(' · ');
+  });
+
   it('affiche le résumé et des séances exemples localisées', () => {
     const startedAt = Date.UTC(2024, 6, 9, 12);
 

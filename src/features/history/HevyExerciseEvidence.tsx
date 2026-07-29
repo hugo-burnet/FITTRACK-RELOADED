@@ -43,7 +43,9 @@ function formatSet(set: HevyExerciseEvidenceExample['sets'][number]): string {
       : `${formatNumber(set.distanceMeters)} ${t('units.meters')}`,
   ];
 
-  return values.filter((value): value is string => value !== undefined).join(' · ');
+  return values
+    .filter((value): value is string => value !== undefined)
+    .join(t('history.importEvidenceValueSeparator'));
 }
 
 export function HevyExerciseEvidence({
