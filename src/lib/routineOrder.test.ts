@@ -1,9 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { moveItem, normalizeSupersets, toBlocks } from './routineOrder';
+import {
+  moveItem,
+  normalizeSupersets,
+  supersetPlaces,
+  toBlocks,
+} from './routineOrder';
 
 /** Shorthand: a list of rows described by their superset group alone. */
 const rows = (...groups: number[]) => groups.map((supersetGroup, i) => ({ supersetGroup, i }));
 const groups = (result: { supersetGroup: number }[]) => result.map((row) => row.supersetGroup);
+const identifiedRows = (...groups: number[]) =>
+  groups.map((supersetGroup, index) => ({
+    id: `row-${index}`,
+    supersetGroup,
+  }));
 
 describe('moveItem', () => {
   it('moves an item down', () => {
@@ -111,5 +121,37 @@ describe('toBlocks', () => {
     const source = rows(0, 2, 2, 0, 1, 1);
     const flattened = toBlocks(source).flatMap((block) => block.rows);
     expect(flattened).toEqual(source);
+  });
+});
+
+describe('supersetPlaces', () => {
+  it('omits rows outside a superset', () => {
+    expect(supersetPlaces(identifiedRows(0, 0))).toEqual(new Map());
+  });
+
+  it('indexes every member and shares the complete block size', () => {
+    expect([...supersetPlaces(identifiedRows(0, 4, 4, 4, 0))]).toEqual([
+      ['row-1', { index: 0, size: 3 }],
+      ['row-2', { index: 1, size: 3 }],
+      ['row-3', { index: 2, size: 3 }],
+    ]);
+  });
+
+  it('keeps independent blocks independent', () => {
+    expect([...supersetPlaces(identifiedRows(1, 1, 0, 2, 2))]).toEqual([
+      ['row-0', { index: 0, size: 2 }],
+      ['row-1', { index: 1, size: 2 }],
+      ['row-3', { index: 0, size: 2 }],
+      ['row-4', { index: 1, size: 2 }],
+    ]);
+  });
+
+  it('never mutates its input', () => {
+    const input = identifiedRows(1, 1);
+    const before = structuredClone(input);
+
+    supersetPlaces(input);
+
+    expect(input).toEqual(before);
   });
 });

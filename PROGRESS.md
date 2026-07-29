@@ -2,6 +2,29 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**placement des supersets
+centralisé**). `lib/routineOrder` possède désormais toute la projection d’un
+superset persistant vers son rendu : `supersetPlaces(rows)` rend l’index A/B/C
+et la taille du bloc. L’éditeur de routine et la séance en direct ne
+reconstruisent plus cette règle chacun de leur côté.
+
+**Connaissance réellement dédupliquée.** Les deux écrans utilisent la même
+fonction et les deux cartes importent le même type `SupersetPlace`. Il ne reste
+qu’une déclaration de l’interface et une implémentation de la règle. La
+normalisation, la numérotation persistée, les props et le rendu visuel restent
+inchangés.
+
+**Preuves.** Les 20 tests existants de `routineOrder` formaient la baseline ;
+quatre tests TDD couvrent les lignes seules, les index, la taille, plusieurs
+blocs et la non-mutation. Deux mutants manuels ont été tués : inclusion de
+`group === 0` et taille forcée à `1`. Lint, typecheck, **767 tests** dans 58
+fichiers et build de production passent.
+
+**Checkpoint téléphone :** ouvrir une routine avec un superset de trois
+exercices, vérifier A/B/C et le filet continu, démarrer la séance puis contrôler
+le même rendu. Réordonner ensuite un membre et vérifier que routine et séance
+restent cohérentes.
+
 **Dernière mise à jour :** 2026-07-29 (**chargement des périodes d’analyse
 centralisé**). `useHistoricalPeriod(period, openedAt)` est désormais la seam
 commune à « Séances par semaine », « Séries par muscle » et « Volume

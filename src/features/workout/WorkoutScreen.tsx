@@ -32,7 +32,7 @@ import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { recordsBeatenBy } from '@/lib/records';
 import type { RecordKind } from '@/lib/records';
 import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
-import { toBlocks } from '@/lib/routineOrder';
+import { supersetPlaces, toBlocks } from '@/lib/routineOrder';
 import { useRestTimer } from '@/stores/restTimer';
 import {
   ActionBand,
@@ -56,7 +56,6 @@ import { unlockChime } from './restChime';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
 import { WorkoutExerciseCard } from './WorkoutExerciseCard';
-import type { SupersetPlace } from './WorkoutExerciseCard';
 import {
   INITIAL_WORKOUT_FOLD_COMMAND,
   nextWorkoutFoldCommand,
@@ -92,20 +91,6 @@ type PlatesView = {
   sides: number;
   barWeightAdjustable: boolean;
 };
-
-/** Same derivation as the routine editor, from the same pure function. */
-function supersetPlaces(lines: WorkoutExerciseDetail[]): Map<string, SupersetPlace> {
-  const places = new Map<string, SupersetPlace>();
-
-  for (const block of toBlocks(lines.map((line) => line.row))) {
-    if (block.group === 0) continue;
-    block.rows.forEach((row, index) => {
-      places.set(row.id, { index, size: block.rows.length });
-    });
-  }
-
-  return places;
-}
 
 /** What validating a set of this exercise is worth, in rest. */
 interface RestPlan {
@@ -249,7 +234,7 @@ export function WorkoutScreen() {
   }
 
   const { workout, exercises } = detail;
-  const places = supersetPlaces(exercises);
+  const places = supersetPlaces(exercises.map(({ row }) => row));
   const plans = restPlans(exercises);
 
   /**

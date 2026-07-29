@@ -21,6 +21,12 @@ export interface Block<T> {
   rows: T[];
 }
 
+/** Where one exercise sits in its superset. Absent from the map = ungrouped. */
+export interface SupersetPlace {
+  index: number;
+  size: number;
+}
+
 /**
  * Moves one item, returning a new array. An out-of-range index returns the list
  * unchanged rather than splicing a hole into it: the caller is a pointer
@@ -100,4 +106,25 @@ export function toBlocks<T extends Groupable>(rows: readonly T[]): Block<T>[] {
   }
 
   return blocks;
+}
+
+/**
+ * Indexes every grouped row for the A / B / C marks and the shared bracket.
+ *
+ * Both the routine editor and the live workout render the same stored concept,
+ * so they read the same projection rather than rebuilding it in their screens.
+ */
+export function supersetPlaces<T extends Groupable & { id: string }>(
+  rows: readonly T[],
+): Map<string, SupersetPlace> {
+  const places = new Map<string, SupersetPlace>();
+
+  for (const block of toBlocks(rows)) {
+    if (block.group === 0) continue;
+    block.rows.forEach((row, index) => {
+      places.set(row.id, { index, size: block.rows.length });
+    });
+  }
+
+  return places;
 }

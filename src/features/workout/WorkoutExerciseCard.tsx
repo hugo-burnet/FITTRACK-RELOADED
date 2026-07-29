@@ -5,6 +5,7 @@ import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
 import type { RecordKind } from '@/lib/records';
+import type { SupersetPlace } from '@/lib/routineOrder';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
 import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon, StarIcon } from '@/ui/icons';
@@ -16,9 +17,6 @@ import { setReading } from './summary';
 
 /** A set that has just gone, and the slot it is still allowed to come back to. */
 type DeletedSet = { setId: string; rank: number; reading: string };
-
-/** Where this exercise sits in its superset. Absent = not in one. */
-export type SupersetPlace = { index: number; size: number };
 
 /** The rest this card owns, or null — passed only to the card whose set rests. */
 export type CardRest = { setId: string; startedAt: number; endsAt: number; onDone: () => void };

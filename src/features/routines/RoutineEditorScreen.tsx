@@ -20,7 +20,7 @@ import type { RoutineExerciseDetail, RoutineSetTargets } from '@/data/repositori
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { toBlocks } from '@/lib/routineOrder';
+import { supersetPlaces } from '@/lib/routineOrder';
 import {
   ActionBand,
   AddRow,
@@ -34,7 +34,6 @@ import {
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 import { RoutineExerciseCard } from './RoutineExerciseCard';
-import type { SupersetPlace } from './RoutineExerciseCard';
 import { RoutineExerciseSheet } from './RoutineExerciseSheet';
 import { RoutineSetSheet } from './RoutineSetSheet';
 import { routineSummaryLine } from './summary';
@@ -43,26 +42,6 @@ type SheetState =
   | { kind: 'folder' }
   | { kind: 'exercise'; rowId: string }
   | { kind: 'set'; setId: string; rowId: string; number: number };
-
-/**
- * Where each exercise sits in its superset, keyed by row id.
- *
- * Derived from the stored groups by the same pure function the repository
- * normalises with, so the bracket on screen can never disagree with the numbers
- * in the database.
- */
-function supersetPlaces(lines: RoutineExerciseDetail[]): Map<string, SupersetPlace> {
-  const places = new Map<string, SupersetPlace>();
-
-  for (const block of toBlocks(lines.map((line) => line.row))) {
-    if (block.group === 0) continue;
-    block.rows.forEach((row, index) => {
-      places.set(row.id, { index, size: block.rows.length });
-    });
-  }
-
-  return places;
-}
 
 /**
  * A routine's screen **is** its editor.
@@ -137,7 +116,7 @@ export function RoutineEditorScreen() {
   }
 
   const { routine, exercises } = detail;
-  const places = supersetPlaces(exercises);
+  const places = supersetPlaces(exercises.map(({ row }) => row));
   const setCount = exercises.reduce((total, line) => total + line.sets.length, 0);
 
   const lineOf = (rowId: string): RoutineExerciseDetail | null =>

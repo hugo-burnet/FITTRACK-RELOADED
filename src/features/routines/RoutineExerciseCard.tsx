@@ -4,12 +4,10 @@ import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { targetParts } from '@/lib/measurement';
 import type { TargetUnit } from '@/lib/measurement';
+import type { SupersetPlace } from '@/lib/routineOrder';
 import { AddRow, SwipeToDelete } from '@/ui';
 import type { ItemState } from '@/ui';
 import { GripIcon, MoreIcon } from '@/ui/icons';
-
-/** Where this exercise sits in its superset. Absent = not in one. */
-export type SupersetPlace = { index: number; size: number };
 
 type Props = {
   line: RoutineExerciseDetail;
