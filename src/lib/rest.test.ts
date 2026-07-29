@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { formatRest, isRestTriggering, resolveRestSeconds, restProgress } from './rest';
+import {
+  DEFAULT_REST_SECONDS,
+  formatRest,
+  isRestTriggering,
+  resolveRestSeconds,
+  restPlans,
+  restProgress,
+} from './rest';
+
+const plannedRows = (...rows: Array<{ supersetGroup: number; restSeconds?: number }>) =>
+  rows.map((row, index) => ({
+    id: `row-${index}`,
+    ...row,
+  }));
 
 describe('resolveRestSeconds', () => {
   it('prefers the routine override', () => {
@@ -80,6 +93,64 @@ describe('isRestTriggering', () => {
     expect(
       isRestTriggering({ setType: 'dropset' }, { isLastOfBlock: true, nextSetType: undefined }),
     ).toBe(true);
+  });
+});
+
+describe('restPlans', () => {
+  it('plans independent rest for ungrouped rows', () => {
+    expect([
+      ...restPlans(
+        plannedRows(
+          { supersetGroup: 0, restSeconds: 60 },
+          { supersetGroup: 0, restSeconds: 90 },
+        ),
+      ),
+    ]).toEqual([
+      ['row-0', { isLastOfBlock: true, seconds: 60 }],
+      ['row-1', { isLastOfBlock: true, seconds: 90 }],
+    ]);
+  });
+
+  it('shares the longest rest and marks only the end of a superset', () => {
+    expect([
+      ...restPlans(
+        plannedRows(
+          { supersetGroup: 7, restSeconds: 90 },
+          { supersetGroup: 7, restSeconds: 180 },
+          { supersetGroup: 7, restSeconds: 120 },
+        ),
+      ),
+    ]).toEqual([
+      ['row-0', { isLastOfBlock: false, seconds: 180 }],
+      ['row-1', { isLastOfBlock: false, seconds: 180 }],
+      ['row-2', { isLastOfBlock: true, seconds: 180 }],
+    ]);
+  });
+
+  it('normalizes missing and invalid legacy durations', () => {
+    expect([
+      ...restPlans(
+        plannedRows(
+          { supersetGroup: 3 },
+          { supersetGroup: 3, restSeconds: 0 },
+          { supersetGroup: 3, restSeconds: Number.NaN },
+        ),
+      ),
+    ]).toEqual([
+      ['row-0', { isLastOfBlock: false, seconds: DEFAULT_REST_SECONDS }],
+      ['row-1', { isLastOfBlock: false, seconds: DEFAULT_REST_SECONDS }],
+      ['row-2', { isLastOfBlock: true, seconds: DEFAULT_REST_SECONDS }],
+    ]);
+  });
+
+  it('never mutates its input', () => {
+    const input = plannedRows(
+      { supersetGroup: 1, restSeconds: 60 },
+      { supersetGroup: 1, restSeconds: 90 },
+    );
+    const before = structuredClone(input);
+    restPlans(input);
+    expect(input).toEqual(before);
   });
 });
 

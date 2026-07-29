@@ -1,4 +1,5 @@
 import type { SetType } from '@/data/types';
+import { toBlocks, type Groupable } from '@/lib/routineOrder';
 
 /**
  * The rest timer's rules, pure by construction (architecture §7): numbers in,
@@ -67,6 +68,39 @@ export function isRestTriggering(set: { setType: SetType }, context: RestContext
   if (set.setType === 'warmup') return false;
   if (context.nextSetType === 'dropset') return false;
   return context.isLastOfBlock;
+}
+
+export interface RestPlan {
+  isLastOfBlock: boolean;
+  seconds: number;
+}
+
+/**
+ * The rest owed by every exercise after one complete round of its block.
+ *
+ * Superset members share the longest configured duration so the round gives
+ * every exercise at least its own requested recovery. Only the final member
+ * closes the block and may start that rest.
+ */
+export function restPlans<T extends Groupable & { id: string; restSeconds?: number }>(
+  rows: readonly T[],
+): Map<string, RestPlan> {
+  const plans = new Map<string, RestPlan>();
+
+  for (const block of toBlocks(rows)) {
+    const seconds = Math.max(
+      ...block.rows.map((row) => resolveRestSeconds(row.restSeconds, undefined)),
+    );
+
+    block.rows.forEach((row, index) => {
+      plans.set(row.id, {
+        isLastOfBlock: index === block.rows.length - 1,
+        seconds,
+      });
+    });
+  }
+
+  return plans;
 }
 
 /**

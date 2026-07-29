@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**plans de repos par bloc
+centralisés**). `lib/rest` possède désormais la transformation des exercices
+ordonnés en `RestPlan` : durée commune du bloc et identification de son dernier
+membre. `WorkoutScreen` ne reconstruit plus cette règle et projette seulement
+ses détails vers les lignes persistées.
+
+**Comportement préservé.** Un exercice simple conserve sa propre durée. Les
+membres d’un superset partagent toujours la durée la plus longue et seul le
+dernier peut déclencher le minuteur. Les lignes historiques sans durée passent
+toujours par `resolveRestSeconds`. Aucun changement de store, de rendu, de son,
+de schéma ou de donnée.
+
+**Preuves.** La baseline comptait 21 tests de `rest` et 24 de `routineOrder`.
+Quatre tests TDD couvrent les lignes seules, le maximum d’un superset, les
+durées historiques invalides et la non-mutation. Deux mutants manuels ont été
+tués : durée du premier membre à la place du maximum, puis tous les membres
+marqués comme fins de bloc. Lint, typecheck, **771 tests** dans 58 fichiers et
+build de production passent.
+
+**Checkpoint téléphone :** lancer une séance avec un exercice simple puis un
+superset dont les repos diffèrent. Vérifier la durée propre du premier, aucun
+repos entre les membres du superset, puis la durée la plus longue après son
+dernier membre.
+
 **Dernière mise à jour :** 2026-07-29 (**placement des supersets
 centralisé**). `lib/routineOrder` possède désormais toute la projection d’un
 superset persistant vers son rendu : `supersetPlaces(rows)` rend l’index A/B/C

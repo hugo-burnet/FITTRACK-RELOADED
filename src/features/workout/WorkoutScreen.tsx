@@ -31,8 +31,8 @@ import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { recordsBeatenBy } from '@/lib/records';
 import type { RecordKind } from '@/lib/records';
-import { isRestTriggering, resolveRestSeconds } from '@/lib/rest';
-import { supersetPlaces, toBlocks } from '@/lib/routineOrder';
+import { isRestTriggering, restPlans } from '@/lib/rest';
+import { supersetPlaces } from '@/lib/routineOrder';
 import { useRestTimer } from '@/stores/restTimer';
 import {
   ActionBand,
@@ -91,40 +91,6 @@ type PlatesView = {
   sides: number;
   barWeightAdjustable: boolean;
 };
-
-/** What validating a set of this exercise is worth, in rest. */
-interface RestPlan {
-  /** False between two members of a superset — the round is not over. */
-  isLastOfBlock: boolean;
-  seconds: number;
-}
-
-/**
- * The rest each exercise owes, from the same blocks the superset marks use.
- *
- * A superset rests **once, after the round**, and for the **longest** duration
- * configured in the group: recovery from a round is governed by its most
- * demanding movement, not by whichever exercise happens to come last.
- */
-function restPlans(lines: WorkoutExerciseDetail[]): Map<string, RestPlan> {
-  const plans = new Map<string, RestPlan>();
-
-  for (const block of toBlocks(lines.map((line) => line.row))) {
-    // Read through the resolver rather than straight off the row: a session
-    // started before this field existed has no `restSeconds` at all — the field
-    // is unindexed, so there was no migration to write and nothing backfilled
-    // the rows already in the database. `Math.max` over one `undefined` yields
-    // NaN, `endsAt` becomes NaN, and the rest ends the instant it starts.
-    const seconds = Math.max(
-      ...block.rows.map((row) => resolveRestSeconds(row.restSeconds, undefined)),
-    );
-    block.rows.forEach((row, index) => {
-      plans.set(row.id, { isLastOfBlock: index === block.rows.length - 1, seconds });
-    });
-  }
-
-  return plans;
-}
 
 /**
  * The most important screen of the application — the one read sixty times a
@@ -235,7 +201,7 @@ export function WorkoutScreen() {
 
   const { workout, exercises } = detail;
   const places = supersetPlaces(exercises.map(({ row }) => row));
-  const plans = restPlans(exercises);
+  const plans = restPlans(exercises.map(({ row }) => row));
 
   /**
    * Validating a set is what starts its rest. A rest ends three ways: it runs
