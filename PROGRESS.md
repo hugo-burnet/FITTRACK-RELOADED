@@ -2,34 +2,40 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-29 (**identité fiable des exercices importés —
-conception validée**). L’enquête sur le vrai `workout_data.csv` a isolé la
-régression : les quatre séries `LOWER A` nommées « Développé Debout Poulie
-Centrée » sont un **Pallof press**, mais l’alias livré les préconfirme sur
-`cable-shoulder-press`. Le catalogue possédait déjà `pallof-press`, correctement
-classé `abs + cable + weight_reps` ; ce n’est donc ni un manque de bibliothèque
-ni une erreur du CSV, mais une suggestion humaine encodée comme certitude puis
-protégée par un test.
+**Dernière mise à jour :** 2026-07-29 (**identité fiable des exercices importés
+livrée**). La cause exacte de la régression était l’alias « Développé Debout
+Poulie Centrée » encodé comme certitude vers `cable-shoulder-press`, alors que
+les quatre séries concernées dans les deux séances `LOWER A` sont un **Pallof
+press** pour les abdominaux. La suggestion pointe désormais vers
+`pallof-press`, déjà correctement décrit `abs + cable + weight_reps`.
 
-**Architecture décidée.** La fiche `Exercise` reste la connaissance canonique
-du mouvement. Une nouvelle table `externalExerciseBindings` conservera
-séparément les identités externes **confirmées par l’utilisateur**. Les aliases
-livrés et le classement lexical ne pourront produire que des suggestions. La
-clé externe conservera tous les mots discriminants (`poulie`, `machine`,
-`assis`, `debout`, `centrée`) ; aucune identité inconnue ne sera préconfirmée.
-Le registre pur préparera les résolutions, puis le repository écrira exercices
-personnalisés, liaisons, séances, séries et routines dans une transaction
-unique.
+**Autorité séparée et persistante.** Le schéma Dexie v3 ajoute la table
+`externalExerciseBindings`, distincte du catalogue canonique `exercises`. Une
+clé d’identité exacte conserve tous les mots discriminants du titre source
+(`poulie`, `machine`, `assis`, `debout`, `centrée`) tout en normalisant seulement
+Unicode, casse, accents, ponctuation et espaces. Les aliases et le classement
+lexical ne sont que des suggestions : ils ne sont **jamais préconfirmés** et
+seule une décision explicite de l’utilisateur fait autorité puis peut être
+réutilisée aux imports suivants. Une liaison absente ou devenue incompatible
+reste à confirmer ou passe en conflit ; aucun fallback silencieux ne la
+remplace.
 
-**Spec :**
-`docs/superpowers/specs/2026-07-29-external-exercise-identity-design.md`.
-L’utilisateur doit maintenant relire et approuver la spec avant la rédaction du
-plan d’implémentation. Aucun comportement de production n’a encore changé.
+**Import sûr et réimport idempotent.** Les exercices personnalisés éventuels,
+liaisons confirmées, séances, séries, routines et clés d’import sont écrits
+atomiquement dans une seule transaction : une erreur annule tout. Réimporter le
+même CSV crée zéro séance, zéro série, zéro routine et zéro exercice en doublon.
+La bibliothèque d’exercices n’a pas été remplacée : elle contenait déjà le bon
+mouvement et une bibliothèque plus grande n’aurait pas fourni l’identifiant
+stable absent du CSV Hevy.
 
-**Checkpoint téléphone après implémentation :** réinitialiser FitTrack, importer
-le CSV (6 séances, 25 intitulés, 136 séries), confirmer le Pallof press, vérifier
-les deux séances `LOWER A` et les analyses musculaires, puis réimporter le même
-fichier et constater zéro doublon.
+**Preuves fraîches.** `npm run lint` et `npm run typecheck` sortent avec le code
+0 ; les **804 tests dans 63 fichiers** passent ; le build de production Vite
+compile **193 modules** et sort avec le code 0.
+
+**Checkpoint téléphone demandé :** réinitialiser FitTrack, importer le CSV,
+confirmer les **25 identités**, inspecter les deux séances `LOWER A` et les
+analyses musculaires, puis réimporter exactement le même fichier et constater
+zéro doublon.
 
 **Dernière mise à jour :** 2026-07-29 (**phase 6 — première preuve
 d’intégration du parcours de séance**). `WorkoutScreen` possède désormais un
