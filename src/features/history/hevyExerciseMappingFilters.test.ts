@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Exercise, Syncable } from '@/data/types';
+import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
 import { filterHevyMappingExercises } from './hevyExerciseMappingFilters';
 import type { HevyMappingDraftRow } from './hevyImportDraft';
 
@@ -20,6 +21,20 @@ const exercise = (name: string, over: Partial<Omit<Exercise, keyof Syncable>> = 
 
 const row = (sourceTitle: string): HevyMappingDraftRow => ({
   source: { sourceTitle, measurementType: 'weight_reps', equipment: 'cable' },
+  review: {
+    status: 'needs_confirmation',
+    identityKey: externalExerciseIdentityKey(sourceTitle),
+    observation: {
+      source: 'hevy_csv',
+      sourceTitle,
+      measurementType: 'weight_reps',
+      equipmentHint: 'cable',
+      sessionCount: 0,
+      setCount: 0,
+      examples: [],
+    },
+    suggestions: [],
+  },
 });
 
 describe('filterHevyMappingExercises', () => {
