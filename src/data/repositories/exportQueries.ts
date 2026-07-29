@@ -63,15 +63,49 @@ async function selectWorkouts(scope: ExportScope): Promise<Workout[]> {
   return found.filter(isArchived).sort(byOldestFirst);
 }
 
+async function loadWorkoutGraph(
+  workoutIds: readonly string[],
+): Promise<{
+  rows: WorkoutExercise[];
+  sets: WorkoutSet[];
+}> {
+  if (workoutIds.length === 0) return { rows: [], sets: [] };
+
+  return db.transaction(
+    'r',
+    db.workoutExercises,
+    db.workoutSets,
+    async () => {
+      const [rowsByWorkout, setsByWorkout] = await Promise.all([
+        Promise.all(
+          workoutIds.map((workoutId) =>
+            db.workoutExercises
+              .where('workoutId')
+              .equals(workoutId)
+              .toArray(),
+          ),
+        ),
+        Promise.all(
+          workoutIds.map((workoutId) =>
+            db.workoutSets.where('workoutId').equals(workoutId).toArray(),
+          ),
+        ),
+      ]);
+
+      return {
+        rows: rowsByWorkout.flat(),
+        sets: setsByWorkout.flat(),
+      };
+    },
+  );
+}
+
 export async function listExportSources(scope: ExportScope): Promise<ExportSource[]> {
   const workouts = await selectWorkouts(scope);
   if (workouts.length === 0) return [];
 
   const workoutIds = workouts.map((workout) => workout.id);
-  const [allRows, allSets] = await Promise.all([
-    db.workoutExercises.where('workoutId').anyOf(workoutIds).toArray(),
-    db.workoutSets.where('workoutId').anyOf(workoutIds).toArray(),
-  ]);
+  const { rows: allRows, sets: allSets } = await loadWorkoutGraph(workoutIds);
 
   const rows = alive(allRows).filter(
     (row) => scope.kind !== 'exercise' || row.exerciseId === scope.exerciseId,
