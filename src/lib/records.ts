@@ -157,3 +157,35 @@ export function recordsBeatenBy(candidate: WorkoutSet, others: WorkoutSet[]): Be
 
   return beaten;
 }
+
+export interface WorkoutRecordGroup {
+  exerciseId: string;
+  sets: readonly WorkoutSet[];
+}
+
+/**
+ * The single record headline shown on each validated set of a live workout.
+ *
+ * The universe includes the current workout, so `recordsBeatenBy` remains the
+ * canonical place that excludes the candidate and preserves record ordering.
+ */
+export function workoutRecordKinds(
+  groups: readonly WorkoutRecordGroup[],
+  setsByExercise: ReadonlyMap<string, WorkoutSet[]> | undefined,
+): Map<string, RecordKind> {
+  const records = new Map<string, RecordKind>();
+  if (setsByExercise === undefined) return records;
+
+  for (const group of groups) {
+    const universe = setsByExercise.get(group.exerciseId);
+    if (universe === undefined) continue;
+
+    for (const set of group.sets) {
+      if (set.isCompleted !== 1) continue;
+      const [top] = recordsBeatenBy(set, universe);
+      if (top !== undefined) records.set(set.id, top.kind);
+    }
+  }
+
+  return records;
+}

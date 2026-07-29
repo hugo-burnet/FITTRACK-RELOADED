@@ -29,8 +29,7 @@ import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
-import { recordsBeatenBy } from '@/lib/records';
-import type { RecordKind } from '@/lib/records';
+import { workoutRecordKinds } from '@/lib/records';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useRestTimer } from '@/stores/restTimer';
@@ -229,26 +228,10 @@ export function WorkoutScreen() {
     rest.start(setId, plan.seconds);
   };
 
-  /**
-   * The set that holds each record, by set id — the question asked again on every
-   * render instead of an answer written down anywhere (cf. `recordsBeatenBy`).
-   *
-   * Only this session's sets can carry a mark: a record set last month is history,
-   * not news. And only the **first** of the records a set takes is kept, because a
-   * heavier set at equal reps almost always takes the volume record with the load
-   * one — two lines of congratulation for one set is noise, and "Charge max" is
-   * the headline of the two.
-   */
-  const records = new Map<string, RecordKind>();
-  for (const line of exercises) {
-    const universe = recordSets?.get(line.row.exerciseId);
-    if (universe === undefined) continue;
-    for (const set of line.sets) {
-      if (set.isCompleted !== 1) continue;
-      const [top] = recordsBeatenBy(set, universe);
-      if (top !== undefined) records.set(set.id, top.kind);
-    }
-  }
+  const records = workoutRecordKinds(
+    exercises.map(({ row, sets }) => ({ exerciseId: row.exerciseId, sets })),
+    recordSets,
+  );
 
   const totalSets = exercises.reduce((count, line) => count + line.sets.length, 0);
   const completedSets = exercises.reduce(

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { WorkoutSet } from '@/data/types';
-import { bestSets, recordsBeatenBy, setVolume } from './records';
+import { bestSets, recordsBeatenBy, setVolume, workoutRecordKinds } from './records';
 
 let sequence = 0;
 
@@ -196,5 +196,61 @@ describe('recordsBeatenBy', () => {
   it('ne fête rien sur un gainage : une durée n’est pas un record ici', () => {
     const before = aSet({ durationSeconds: 60, performedAt: 1_000 });
     expect(kinds(aSet({ durationSeconds: 90, performedAt: 2_000 }), [before])).toEqual([]);
+  });
+});
+
+describe('workoutRecordKinds', () => {
+  it('returns no records while the live universe is unavailable', () => {
+    const candidate = aSet({ weight: 105, reps: 5 });
+    expect(
+      workoutRecordKinds([{ exerciseId: 'ex', sets: [candidate] }], undefined),
+    ).toEqual(new Map());
+  });
+
+  it('ignores an uncompleted candidate', () => {
+    const before = aSet({ weight: 100, reps: 5 });
+    const candidate = aSet({ weight: 105, reps: 5, isCompleted: 0 });
+    expect(
+      workoutRecordKinds(
+        [{ exerciseId: 'ex', sets: [candidate] }],
+        new Map([['ex', [before]]]),
+      ),
+    ).toEqual(new Map());
+  });
+
+  it('keeps only the highest-priority record beaten by a set', () => {
+    const before = aSet({ weight: 100, reps: 5 });
+    const candidate = aSet({ weight: 105, reps: 10 });
+    expect(
+      workoutRecordKinds(
+        [{ exerciseId: 'ex', sets: [candidate] }],
+        new Map([['ex', [before, candidate]]]),
+      ),
+    ).toEqual(new Map([[candidate.id, 'heaviest']]));
+  });
+
+  it('keeps exercise universes isolated', () => {
+    const loadBefore = aSet({ exerciseId: 'load', weight: 100, reps: 5 });
+    const loadCandidate = aSet({ exerciseId: 'load', weight: 105, reps: 3 });
+    const repsBefore = aSet({ exerciseId: 'reps', reps: 12 });
+    const repsCandidate = aSet({ exerciseId: 'reps', reps: 14 });
+
+    expect(
+      workoutRecordKinds(
+        [
+          { exerciseId: 'load', sets: [loadCandidate] },
+          { exerciseId: 'reps', sets: [repsCandidate] },
+        ],
+        new Map([
+          ['load', [loadBefore, loadCandidate]],
+          ['reps', [repsBefore, repsCandidate]],
+        ]),
+      ),
+    ).toEqual(
+      new Map([
+        [loadCandidate.id, 'heaviest'],
+        [repsCandidate.id, 'mostReps'],
+      ]),
+    );
   });
 });

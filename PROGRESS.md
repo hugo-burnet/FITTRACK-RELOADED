@@ -2,6 +2,30 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**records visibles en séance
+centralisés**). `lib/records` possède désormais la projection
+`workoutRecordKinds(groups, setsByExercise)` : elle sélectionne les séries
+validées de la séance, les compare à leur univers live et associe chaque série
+à son unique record principal. `WorkoutScreen` ne reconstruit plus cette règle.
+
+**Comportement préservé.** La comparaison inclut toujours les séries déjà
+validées de la séance, ignore les échauffements via `recordsBeatenBy` et ne
+félicite jamais une première performance sans record à battre. Lorsqu’une série
+bat la charge et le volume, seule « Charge max » reste affichée. Aucun
+changement de requête Dexie, de rendu, de texte, de schéma ou de donnée.
+
+**Preuves.** La baseline comptait 25 tests de `records`. Quatre tests TDD
+couvrent le chargement de l’univers live, l’exclusion des séries non validées,
+la priorité d’un double record et l’isolation de plusieurs exercices. Deux
+mutants manuels ont été tués : suppression du filtre `isCompleted`, puis prise
+du dernier record au lieu du premier. Lint, typecheck, **775 tests** dans 58
+fichiers et build de production passent.
+
+**Checkpoint téléphone :** dans une séance avec historique, valider une série
+qui bat à la fois la charge et le volume. Vérifier qu’une seule félicitation
+« Charge max » apparaît, qu’elle disparaît au décochage et revient au
+recochage.
+
 **Dernière mise à jour :** 2026-07-29 (**plans de repos par bloc
 centralisés**). `lib/rest` possède désormais la transformation des exercices
 ordonnés en `RestPlan` : durée commune du bloc et identification de son dernier
