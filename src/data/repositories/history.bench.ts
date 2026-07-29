@@ -11,6 +11,14 @@ import {
 import { resetDb } from '@/test/resetDb';
 
 const DAY_MS = 86_400_000;
+const ANNUAL_SCOPE = {
+  kind: 'period',
+  from: LARGE_HISTORY_PROFILE.startedAt,
+  to: LARGE_HISTORY_PROFILE.startedAt + 365 * DAY_MS,
+} as const;
+
+const EXPECTED_ANNUAL_WORKOUTS = 244;
+const MAX_ANNUAL_PROJECTION_MS = 5_000;
 const OPTIONS = {
   iterations: 3,
   time: 0,
@@ -37,7 +45,29 @@ beforeAll(async () => {
       `(${counts.workouts} workouts, ${counts.workoutExercises} rows, ` +
       `${counts.workoutSets} sets)`,
   );
-}, 120_000);
+
+  const projectionStartedAt = performance.now();
+  const annualSources = await listExportSources(ANNUAL_SCOPE);
+  const projectionElapsedMs = performance.now() - projectionStartedAt;
+
+  console.info(
+    `bounded annual projection: ${projectionElapsedMs.toFixed(1)} ms ` +
+      `(${annualSources.length} workouts)`,
+  );
+
+  if (annualSources.length !== EXPECTED_ANNUAL_WORKOUTS) {
+    throw new Error(
+      `Unexpected annual projection count: ${annualSources.length}`,
+    );
+  }
+
+  if (projectionElapsedMs >= MAX_ANNUAL_PROJECTION_MS) {
+    throw new Error(
+      `Bounded annual projection exceeded ${MAX_ANNUAL_PROJECTION_MS} ms: ` +
+        `${projectionElapsedMs.toFixed(1)} ms`,
+    );
+  }
+}, 360_000);
 
 bench(
   'history first page from 2,000 workouts',
@@ -58,11 +88,7 @@ bench(
 bench(
   'bounded one-year export projection',
   async () => {
-    await listExportSources({
-      kind: 'period',
-      from: LARGE_HISTORY_PROFILE.startedAt,
-      to: LARGE_HISTORY_PROFILE.startedAt + 365 * DAY_MS,
-    });
+    await listExportSources(ANNUAL_SCOPE);
   },
   OPTIONS,
 );
