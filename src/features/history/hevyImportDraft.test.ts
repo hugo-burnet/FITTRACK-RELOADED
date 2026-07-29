@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import type { Exercise } from '@/data/types';
+import type {
+  Exercise,
+  ExternalExerciseBinding,
+} from '@/data/types';
 import type {
   HevyImportData,
   HevySourceExercise,
 } from '@/lib/hevyCsv';
+import type { HevyImportPreparation } from '@/data/repositories/hevyImport';
 import {
   createHevyImportDraft,
   customResolutionFor,
@@ -64,96 +68,62 @@ const bench: Exercise = {
   isUnilateral: 0,
 };
 
-const incompatibleBench: Exercise = {
-  ...bench,
-  id: 'timed-bench',
-  measurementType: 'time_only',
-};
+function preparation(
+  overrides: Partial<HevyImportPreparation> = {},
+): HevyImportPreparation {
+  return {
+    exercises: [bench],
+    existingImportKeys: [],
+    confirmedBindings: [],
+    aliveRoutineFolderNames: [],
+    ...overrides,
+  } as HevyImportPreparation;
+}
 
-function dataFor(sourceExercise: HevySourceExercise): HevyImportData {
-  const timed = sourceExercise.measurementType === 'time_only';
+function binding(
+  exerciseId: string,
+  overrides: Partial<ExternalExerciseBinding> = {},
+): ExternalExerciseBinding {
+  return {
+    id: 'binding',
+    createdAt: 1,
+    updatedAt: 1,
+    deletedAt: 0,
+    source: 'hevy_csv',
+    identityKey: 'developpe couche barre',
+    sourceTitle: source.sourceTitle,
+    exerciseId,
+    measurementType: 'weight_reps',
+    equipmentHint: 'barbell',
+    verification: 'user',
+    confirmedAt: 1,
+    ...overrides,
+  };
+}
+
+function dataFor(
+  sourceExercise: HevySourceExercise,
+  workouts: HevyImportData['workouts'] = data.workouts,
+): HevyImportData {
   return {
     ...data,
-    workouts: [
-      {
-        ...data.workouts[0]!,
-        exercises: [
-          {
-            ...data.workouts[0]!.exercises[0]!,
-            sourceTitle: sourceExercise.sourceTitle,
-            sets: [
-              {
-                sourceLine: 2,
-                order: 0,
-                setType: 'normal',
-                ...(timed ? { durationSeconds: 60 } : { weight: 20, reps: 8 }),
-              },
-            ],
-          },
-        ],
-      },
-    ],
+    workouts: workouts.map((workout) => ({
+      ...workout,
+      exercises: workout.exercises.map((exercise) => ({
+        ...exercise,
+        sourceTitle: sourceExercise.sourceTitle,
+      })),
+    })),
     sourceExercises: [sourceExercise],
   };
 }
 
 describe('Hevy import mapping draft', () => {
-  it('reuses a saved mapping to an alive exercise', () => {
-    const draft = createHevyImportDraft(data, {
-      exercises: [bench],
-      existingImportKeys: [],
-      savedMappings: { 'developpe couche': bench.id },
-    });
-
-    expect(draft.rows[0]).toMatchObject({
-      resolution: { kind: 'existing', exerciseId: bench.id },
-      resolutionSource: 'saved',
-    });
-    expect(unresolvedHevySources(draft)).toEqual([]);
-  });
-
-  it('ignores a saved mapping whose target disappeared', () => {
-    const draft = createHevyImportDraft(data, {
-      exercises: [],
-      existingImportKeys: [],
-      savedMappings: { 'developpe couche': 'missing' },
-    });
-
-    expect(draft.rows[0]!.resolution).toBeUndefined();
-    expect(unresolvedHevySources(draft)).toEqual([source]);
-  });
-
-  it('ignores saved mappings and suggestions with incompatible measures', () => {
-    const draft = createHevyImportDraft(data, {
-      exercises: [incompatibleBench],
-      existingImportKeys: [],
-      savedMappings: {
-        'developpe couche': incompatibleBench.id,
-      },
-    });
-
-    expect(draft.rows[0]!.resolution).toBeUndefined();
-    expect(draft.rows[0]).not.toHaveProperty('suggestion');
-  });
-
-  it('laisse le choix ouvert quand rien de certain ne correspond', () => {
-    // `data` porte « Développé Couché », que l'alias canonique ne couvre pas
-    // sous cette forme. Avant, la ligne s'ouvrait quand même sur un nom.
-    const draft = createHevyImportDraft(data, {
-      exercises: [bench],
-      existingImportKeys: [],
-      savedMappings: {},
-    });
-
-    expect(draft.rows[0]).not.toHaveProperty('suggestion');
-    expect(draft.rows[0]!.resolution).toBeUndefined();
-  });
-
-  it('preconfirms an alive compatible canonical alias', () => {
+  it('keeps a catalogue alias as an unconfirmed suggestion', () => {
     const deadHangSource: HevySourceExercise = {
       sourceTitle: 'Dead Hang',
       measurementType: 'time_only',
-      equipment: 'other',
+      equipment: 'bodyweight',
     };
     const deadHang: Exercise = {
       ...bench,
@@ -164,77 +134,186 @@ describe('Hevy import mapping draft', () => {
       measurementType: 'time_only',
     };
 
-    const draft = createHevyImportDraft(dataFor(deadHangSource), {
-      exercises: [deadHang],
-      existingImportKeys: [],
-      savedMappings: {},
-    });
+    const draft = createHevyImportDraft(
+      dataFor(deadHangSource),
+      preparation({ exercises: [deadHang] }),
+    );
 
-    expect(draft.rows[0]).toMatchObject({
-      resolution: { kind: 'existing', exerciseId: deadHang.id },
-      resolutionSource: 'canonical',
-    });
+    expect(draft.rows[0]!.review.status).toBe('needs_confirmation');
+    expect(draft.rows[0]!.resolution).toBeUndefined();
+    expect(unresolvedHevySources(draft)).toHaveLength(1);
+    expect(
+      draft.rows[0]!.review.status === 'needs_confirmation'
+        ? draft.rows[0]!.review.suggestions[0]?.exercise.id
+        : undefined,
+    ).toBe(deadHang.id);
   });
 
-  it('ne propose rien du tout sur un rapprochement approximatif', () => {
-    // Le défaut trouvé en usage, et c'est ce titre-là qui l'a révélé : faute de
-    // cible au catalogue, le classement de secours rendait « Crunch à la poulie
-    // haute », affiché en bouton primaire pleine largeur — l'élément le plus
-    // sûr de la charte. Quatre séries d'épaules comptées en abdominaux, par un
-    // seul appui. Une hypothèse ne doit pas porter l'habit d'une certitude.
-    const unknown: HevySourceExercise = {
-      sourceTitle: 'Rotation Externe Poulie',
-      measurementType: 'weight_reps',
-      equipment: 'cable',
-    };
-    const draft = createHevyImportDraft(dataFor(unknown), {
-      exercises: [bench],
-      existingImportKeys: [],
-      savedMappings: {},
-    });
+  it('pre-resolves only a valid user-confirmed binding', () => {
+    const draft = createHevyImportDraft(
+      data,
+      preparation({ confirmedBindings: [binding(bench.id)] }),
+    );
 
-    expect(draft.rows[0]).not.toHaveProperty('suggestion');
+    expect(draft.rows[0]).toMatchObject({
+      review: {
+        status: 'confirmed',
+        exercise: { id: bench.id },
+      },
+      resolution: { kind: 'existing', exerciseId: bench.id },
+      resolutionSource: 'binding',
+    });
+    expect(unresolvedHevySources(draft)).toEqual([]);
+  });
+
+  it('never pre-resolves a legacy mapping-shaped suggestion', () => {
+    const legacyPreparation = {
+      ...preparation(),
+      savedMappings: {
+        'developpe couche|barbell': bench.id,
+      },
+    } as HevyImportPreparation;
+
+    const draft = createHevyImportDraft(data, legacyPreparation);
+
+    expect(draft.rows[0]!.review.status).toBe('needs_confirmation');
     expect(draft.rows[0]!.resolution).toBeUndefined();
   });
 
-  it('keeps a saved mapping ahead of a canonical alias', () => {
-    const dumbbellSource: HevySourceExercise = {
-      sourceTitle: 'Développé Couché (Haltère)',
-      measurementType: 'weight_reps',
-      equipment: 'dumbbell',
-    };
-    const canonical: Exercise = {
-      ...bench,
-      id: 'dumbbell-bench',
-      name: 'Développé couché (haltères)',
-      slug: 'dumbbell-bench-press',
-      equipment: 'dumbbell',
-    };
-    const saved: Exercise = {
-      ...canonical,
-      id: 'saved-bench',
-      slug: undefined,
-      isCustom: 1,
+  it.each([
+    {
+      name: 'deleted',
+      exercise: { ...bench, deletedAt: 2 },
+      expectedReason: 'target_deleted',
+    },
+    {
+      name: 'measurement-incompatible',
+      exercise: { ...bench, measurementType: 'time_only' as const },
+      expectedReason: 'measurement_changed',
+    },
+  ])(
+    'keeps a $name bound target as a conflict',
+    ({ exercise, expectedReason }) => {
+      const draft = createHevyImportDraft(
+        data,
+        preparation({
+          exercises: [exercise],
+          confirmedBindings: [binding(exercise.id)],
+        }),
+      );
+
+      expect(draft.rows[0]!.review).toMatchObject({
+        status: 'conflict',
+        reason: expectedReason,
+      });
+      expect(draft.rows[0]!.resolution).toBeUndefined();
+      expect(unresolvedHevySources(draft)).toEqual([source]);
+    },
+  );
+
+  it.each(['needs_confirmation', 'conflict'] as const)(
+    'lets a user resolve a %s row',
+    (initialStatus) => {
+      const initial =
+        initialStatus === 'conflict'
+          ? createHevyImportDraft(
+              data,
+              preparation({
+                exercises: [bench],
+                confirmedBindings: [binding('missing')],
+              }),
+            )
+          : createHevyImportDraft(data, preparation());
+
+      expect(initial.rows[0]!.review.status).toBe(initialStatus);
+
+      const next = setHevyImportResolution(
+        initial,
+        source.sourceTitle,
+        { kind: 'existing', exerciseId: bench.id },
+      );
+
+      expect(next.rows[0]).toMatchObject({
+        resolution: { kind: 'existing', exerciseId: bench.id },
+        resolutionSource: 'user',
+      });
+      expect(unresolvedHevySources(next)).toEqual([]);
+    },
+  );
+
+  it('does not treat a conflict as resolved by a stale binding source', () => {
+    const conflict = createHevyImportDraft(
+      data,
+      preparation({
+        exercises: [bench],
+        confirmedBindings: [binding('missing')],
+      }),
+    );
+    const stale = {
+      ...conflict,
+      rows: conflict.rows.map((row) => ({
+        ...row,
+        resolution: {
+          kind: 'existing' as const,
+          exerciseId: bench.id,
+        },
+        resolutionSource: 'binding' as const,
+      })),
     };
 
-    const draft = createHevyImportDraft(dataFor(dumbbellSource), {
-      exercises: [canonical, saved],
-      existingImportKeys: [],
-      savedMappings: { 'developpe couche': saved.id },
-    });
+    expect(unresolvedHevySources(stale)).toEqual([source]);
+  });
 
-    expect(draft.rows[0]).toMatchObject({
-      resolution: { kind: 'existing', exerciseId: saved.id },
-      resolutionSource: 'saved',
+  it('aggregates sessions and sets with the three newest examples', () => {
+    const workouts = [1, 4, 2, 3].map((startedAt) => ({
+      ...data.workouts[0]!,
+      title: `Séance ${startedAt}`,
+      importKey: `hevy:${startedAt}`,
+      startedAt,
+      exercises: [
+        {
+          ...data.workouts[0]!.exercises[0]!,
+          sets: [
+            {
+              sourceLine: startedAt,
+              order: 0,
+              setType: 'normal' as const,
+              weight: startedAt,
+              reps: 10,
+            },
+            {
+              sourceLine: startedAt + 10,
+              order: 1,
+              setType: 'normal' as const,
+              weight: startedAt,
+              reps: 8,
+            },
+          ],
+        },
+      ],
+    }));
+
+    const draft = createHevyImportDraft(
+      dataFor(source, workouts),
+      preparation(),
+    );
+
+    expect(draft.rows[0]!.review.observation).toMatchObject({
+      sessionCount: 4,
+      setCount: 8,
     });
+    expect(
+      draft.rows[0]!.review.observation.examples.map(
+        (example) => example.workoutName,
+      ),
+    ).toEqual(['Séance 4', 'Séance 3', 'Séance 2']);
   });
 
   it('removes sources used only by duplicate workouts', () => {
-    const draft = createHevyImportDraft(data, {
-      exercises: [bench],
-      existingImportKeys: ['hevy:a'],
-      savedMappings: {},
-    });
+    const draft = createHevyImportDraft(
+      data,
+      preparation({ existingImportKeys: ['hevy:a'] }),
+    );
 
     expect(draft).toMatchObject({
       importableWorkouts: 0,
@@ -249,12 +328,7 @@ describe('Hevy import mapping draft', () => {
     const importedAt = new Date(2026, 6, 27, 12).getTime();
     const draft = createHevyImportDraft(
       data,
-      {
-        exercises: [bench],
-        existingImportKeys: [],
-        savedMappings: {},
-        aliveRoutineFolderNames: [],
-      },
+      preparation(),
       importedAt,
     );
 
@@ -265,44 +339,16 @@ describe('Hevy import mapping draft', () => {
     });
   });
 
-  it('previews the first available folder suffix', () => {
-    const draft = createHevyImportDraft(
-      data,
-      {
-        exercises: [bench],
-        existingImportKeys: [],
-        savedMappings: {},
-        aliveRoutineFolderNames: [
-          'Import Hevy — 27/07/2026',
-        ],
-      },
-      new Date(2026, 6, 27, 12).getTime(),
+  it('exports exact-identity resolutions', () => {
+    const initial = createHevyImportDraft(data, preparation());
+    const next = setHevyImportResolution(
+      initial,
+      source.sourceTitle,
+      { kind: 'existing', exerciseId: bench.id },
     );
 
-    expect(draft.routineFolderName).toBe(
-      'Import Hevy — 27/07/2026 (2)',
-    );
-  });
-
-  it('sets one immutable user resolution and exports all choices', () => {
-    const initial = createHevyImportDraft(data, {
-      exercises: [bench],
-      existingImportKeys: [],
-      savedMappings: {},
-    });
-
-    const next = setHevyImportResolution(initial, source.sourceTitle, {
-      kind: 'existing',
-      exerciseId: bench.id,
-    });
-
-    expect(initial.rows[0]!.resolution).toBeUndefined();
-    expect(next.rows[0]).toMatchObject({
-      resolution: { kind: 'existing', exerciseId: bench.id },
-      resolutionSource: 'user',
-    });
     expect(resolutionsFromHevyDraft(next)).toEqual({
-      'developpe couche|barbell': {
+      'developpe couche barre': {
         kind: 'existing',
         exerciseId: bench.id,
       },
@@ -310,11 +356,7 @@ describe('Hevy import mapping draft', () => {
   });
 
   it('refuses to export an unresolved draft', () => {
-    const draft = createHevyImportDraft(data, {
-      exercises: [bench],
-      existingImportKeys: [],
-      savedMappings: {},
-    });
+    const draft = createHevyImportDraft(data, preparation());
 
     expect(() => resolutionsFromHevyDraft(draft)).toThrow(
       'Unresolved Hevy exercise',

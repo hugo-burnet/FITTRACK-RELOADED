@@ -21,6 +21,12 @@ export function HevyImportReview({
   const customCount = draft.rows.filter(
     (row) => row.resolution?.kind === 'custom',
   ).length;
+  const newConfirmationCount = draft.rows.filter(
+    (row) => row.resolutionSource === 'user',
+  ).length;
+  const reusedConfirmationCount = draft.rows.filter(
+    (row) => row.resolutionSource === 'binding',
+  ).length;
 
   return (
     <div className="space-y-5">
@@ -69,6 +75,20 @@ export function HevyImportReview({
               )}
             </p>
           )}
+          <p>
+            {countText(
+              newConfirmationCount,
+              'history.importNewConfirmationOne',
+              'history.importNewConfirmation',
+            )}
+          </p>
+          <p>
+            {countText(
+              reusedConfirmationCount,
+              'history.importReusedConfirmationOne',
+              'history.importReusedConfirmation',
+            )}
+          </p>
           {draft.routineFolderName !== undefined &&
             draft.routineNames.length > 0 && (
               <p>

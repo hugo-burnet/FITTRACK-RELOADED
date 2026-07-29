@@ -2,10 +2,16 @@ import type {
   HevyImportData,
   HevySourceExercise,
 } from '@/lib/hevyCsv';
+import type { Exercise } from '@/data/types';
 import {
-  findCanonicalHevyExercise,
-  hevyExerciseSourceKey,
-  normalizeHevyExerciseTitle,
+  createExternalExerciseIdentityRegistry,
+  externalExerciseIdentityKey,
+  type ExternalExerciseObservation,
+  type ExternalExerciseReviewEntry,
+} from '@/lib/externalExerciseIdentity';
+import {
+  findSuggestedHevyExercise,
+  rankHevyExerciseCandidates,
 } from '@/lib/hevyExerciseMatch';
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import type {
@@ -15,26 +21,11 @@ import type {
 } from '@/data/repositories/hevyImport';
 import { nextHevyImportFolderName } from '@/data/repositories/hevyRoutineImport';
 
-/**
- * Une ligne à associer.
- *
- * **Il n'y a délibérément plus de `suggestion`.** Le brouillon portait le
- * premier candidat du classement de secours, que la feuille affichait en bouton
- * primaire pleine largeur — donc une hypothèse habillée en certitude. Sur un
- * import réel, « Rotation Externe Poulie » s'y présentait comme « Crunch à la
- * poulie haute » et un seul appui gelait quatre séries d'épaules en
- * abdominaux, définitivement (l'instantané du jalon 08A).
- *
- * Ce que l'app croit probable n'a pas disparu pour autant : il **ordonne la
- * liste** de la feuille (`filterHevyMappingExercises`). Le bon candidat reste à
- * un appui, mais c'est un choix pris parmi ses alternatives, pas une réponse
- * qu'on entérine. `resolution` n'est donc jamais posé d'office que par un alias
- * canonique ou un mapping déjà mémorisé — les deux seules sources sûres.
- */
 export interface HevyMappingDraftRow {
   source: HevySourceExercise;
+  review: ExternalExerciseReviewEntry;
   resolution?: HevyExerciseResolution;
-  resolutionSource?: 'saved' | 'canonical' | 'user';
+  resolutionSource?: 'binding' | 'user';
 }
 
 export interface HevyImportDraft {
@@ -46,6 +37,116 @@ export interface HevyImportDraft {
   rows: HevyMappingDraftRow[];
 }
 
+function buildObservations(
+  data: HevyImportData,
+  importable: HevyImportData['workouts'],
+): ExternalExerciseObservation[] {
+  const sourcesByIdentityKey = new Map(
+    data.sourceExercises.map((source) => [
+      externalExerciseIdentityKey(source.sourceTitle),
+      source,
+    ]),
+  );
+  const sessionsByIdentityKey = new Map<
+    string,
+    ExternalExerciseObservation['examples']
+  >();
+
+  for (const workout of importable) {
+    const setsByIdentityKey = new Map<
+      string,
+      ExternalExerciseObservation['examples'][number]['sets']
+    >();
+    for (const exercise of workout.exercises) {
+      const identityKey = externalExerciseIdentityKey(
+        exercise.sourceTitle,
+      );
+      setsByIdentityKey.set(identityKey, [
+        ...(setsByIdentityKey.get(identityKey) ?? []),
+        ...exercise.sets.map((set) => ({
+          ...(set.weight === undefined ? {} : { weight: set.weight }),
+          ...(set.reps === undefined ? {} : { reps: set.reps }),
+          ...(set.durationSeconds === undefined
+            ? {}
+            : { durationSeconds: set.durationSeconds }),
+          ...(set.distanceMeters === undefined
+            ? {}
+            : { distanceMeters: set.distanceMeters }),
+        })),
+      ]);
+    }
+
+    for (const [identityKey, sets] of setsByIdentityKey) {
+      sessionsByIdentityKey.set(identityKey, [
+        ...(sessionsByIdentityKey.get(identityKey) ?? []),
+        {
+          workoutName: workout.title,
+          startedAt: workout.startedAt,
+          sets,
+        },
+      ]);
+    }
+  }
+
+  return [...sessionsByIdentityKey].flatMap(
+    ([identityKey, sessions]) => {
+      const source = sourcesByIdentityKey.get(identityKey);
+      if (source === undefined) return [];
+      const newestFirst = [...sessions].sort(
+        (left, right) => right.startedAt - left.startedAt,
+      );
+      return [
+        {
+          source: 'hevy_csv',
+          sourceTitle: source.sourceTitle,
+          measurementType: source.measurementType,
+          equipmentHint: source.equipment,
+          sessionCount: sessions.length,
+          setCount: sessions.reduce(
+            (total, session) => total + session.sets.length,
+            0,
+          ),
+          examples: newestFirst.slice(0, 3),
+        },
+      ];
+    },
+  );
+}
+
+function suggestionMap(
+  observations: readonly ExternalExerciseObservation[],
+  preparation: HevyImportPreparation,
+): ReadonlyMap<string, readonly Exercise[]> {
+  const suggestions = new Map<string, Exercise[]>();
+  for (const observation of observations) {
+    const compatible = preparation.exercises.filter(
+      (exercise) =>
+        exercise.deletedAt === 0 &&
+        exercise.measurementType === observation.measurementType,
+    );
+    const suggested = findSuggestedHevyExercise(
+      observation.sourceTitle,
+      observation.measurementType,
+      compatible,
+    );
+    const ranked = rankHevyExerciseCandidates(
+      observation.sourceTitle,
+      compatible,
+    );
+    suggestions.set(observationKey(observation), [
+      ...(suggested === undefined ? [] : [suggested]),
+      ...ranked.filter((exercise) => exercise.id !== suggested?.id),
+    ]);
+  }
+  return suggestions;
+}
+
+function observationKey(
+  observation: ExternalExerciseObservation,
+): string {
+  return externalExerciseIdentityKey(observation.sourceTitle);
+}
+
 export function createHevyImportDraft(
   data: HevyImportData,
   preparation: HevyImportPreparation,
@@ -55,17 +156,18 @@ export function createHevyImportDraft(
   const importable = data.workouts.filter(
     (workout) => !duplicateKeys.has(workout.importKey),
   );
-  const activeSourceKeys = new Set(
-    importable.flatMap((workout) =>
-      workout.exercises.map((exercise) =>
-        hevyExerciseSourceKey(exercise.sourceTitle),
-      ),
-    ),
+  const observations = buildObservations(data, importable);
+  const registry = createExternalExerciseIdentityRegistry(
+    preparation.exercises,
+    preparation.confirmedBindings,
+    suggestionMap(observations, preparation),
   );
-  const exercisesById = new Map(
-    preparation.exercises
-      .filter((exercise) => exercise.deletedAt === 0)
-      .map((exercise) => [exercise.id, exercise]),
+  const reviews = registry.review(observations);
+  const sourcesByIdentityKey = new Map(
+    data.sourceExercises.map((source) => [
+      externalExerciseIdentityKey(source.sourceTitle),
+      source,
+    ]),
   );
   const routineSources = selectHevyRoutineSources(importable);
   const routineFolderName =
@@ -76,55 +178,24 @@ export function createHevyImportDraft(
           preparation.aliveRoutineFolderNames ?? [],
         );
 
-  const rows = data.sourceExercises
-    .filter((source) =>
-      activeSourceKeys.has(
-        hevyExerciseSourceKey(source.sourceTitle),
-      ),
-    )
-    .map((source): HevyMappingDraftRow => {
-      const sourceKey = hevyExerciseSourceKey(source.sourceTitle);
-      const legacyName = normalizeHevyExerciseTitle(source.sourceTitle);
-      const savedId =
-        preparation.savedMappings[sourceKey] ??
-        preparation.savedMappings[legacyName] ??
-        preparation.savedMappings[`${legacyName}|other`];
-      const mapped =
-        savedId === undefined ? undefined : exercisesById.get(savedId);
-      const saved =
-        mapped?.measurementType === source.measurementType
-          ? mapped
-          : undefined;
-      const compatibleExercises = preparation.exercises.filter(
-        (exercise) =>
-          exercise.measurementType === source.measurementType,
-      );
-      const canonical = findCanonicalHevyExercise(
-        source.sourceTitle,
-        source.measurementType,
-        compatibleExercises,
-      );
-      const automatic = saved ?? canonical;
-      const resolutionSource =
-        saved !== undefined
-          ? 'saved'
-          : canonical !== undefined
-            ? 'canonical'
-            : undefined;
-
-      return {
+  const rows = reviews.flatMap((review): HevyMappingDraftRow[] => {
+    const source = sourcesByIdentityKey.get(review.identityKey);
+    if (source === undefined) return [];
+    if (review.status !== 'confirmed') {
+      return [{ source, review }];
+    }
+    return [
+      {
         source,
-        ...(automatic === undefined || resolutionSource === undefined
-          ? {}
-          : {
-              resolution: {
-                kind: 'existing' as const,
-                exerciseId: automatic.id,
-              },
-              resolutionSource,
-            }),
-      };
-    });
+        review,
+        resolution: {
+          kind: 'existing',
+          exerciseId: review.exercise.id,
+        },
+        resolutionSource: 'binding',
+      },
+    ];
+  });
 
   return {
     importableWorkouts: importable.length,
@@ -143,11 +214,11 @@ export function setHevyImportResolution(
   sourceTitle: string,
   resolution: HevyExerciseResolution,
 ): HevyImportDraft {
-  const sourceKey = hevyExerciseSourceKey(sourceTitle);
+  const identityKey = externalExerciseIdentityKey(sourceTitle);
   return {
     ...draft,
     rows: draft.rows.map((row) =>
-      hevyExerciseSourceKey(row.source.sourceTitle) === sourceKey
+      row.review.identityKey === identityKey
         ? { ...row, resolution, resolutionSource: 'user' }
         : row,
     ),
@@ -158,7 +229,18 @@ export function unresolvedHevySources(
   draft: HevyImportDraft,
 ): HevySourceExercise[] {
   return draft.rows
-    .filter((row) => row.resolution === undefined)
+    .filter(
+      (row) => {
+        const userResolved =
+          row.resolution !== undefined &&
+          row.resolutionSource === 'user';
+        const bindingResolved =
+          row.resolution !== undefined &&
+          row.resolutionSource === 'binding' &&
+          row.review.status === 'confirmed';
+        return !userResolved && !bindingResolved;
+      },
+    )
     .map((row) => row.source);
 }
 
@@ -172,8 +254,7 @@ export function resolutionsFromHevyDraft(
         `Unresolved Hevy exercise: ${row.source.sourceTitle}`,
       );
     }
-    resolutions[hevyExerciseSourceKey(row.source.sourceTitle)] =
-      row.resolution;
+    resolutions[row.review.identityKey] = row.resolution;
   }
   return resolutions;
 }

@@ -13,6 +13,20 @@ const row: HevyMappingDraftRow = {
     measurementType: 'weight_reps',
     equipment: 'dumbbell',
   },
+  review: {
+    status: 'needs_confirmation',
+    identityKey: 'developpe hevy',
+    observation: {
+      source: 'hevy_csv',
+      sourceTitle: 'Développé Hevy',
+      measurementType: 'weight_reps',
+      equipmentHint: 'dumbbell',
+      sessionCount: 1,
+      setCount: 1,
+      examples: [],
+    },
+    suggestions: [],
+  },
 };
 
 function exercise(

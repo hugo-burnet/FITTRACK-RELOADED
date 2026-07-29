@@ -8,6 +8,7 @@ import { Button, FilterChip, Input, OptionSheet, Sheet } from '@/ui';
 import type { Option } from '@/ui';
 import { customResolutionFor, type HevyMappingDraftRow } from './hevyImportDraft';
 import { filterHevyMappingExercises } from './hevyExerciseMappingFilters';
+import { HevyExerciseEvidence } from './HevyExerciseEvidence';
 
 type MuscleFilter = MuscleGroup | '';
 type EquipmentFilter = Equipment | '';
@@ -63,12 +64,10 @@ export function HevyExerciseMappingSheet({
       >
         {row !== null && (
           <div className="space-y-4">
-            {/* Plus de bouton « utiliser la suggestion ». Il portait le premier
-                candidat du classement de secours en variante primaire, pleine
-                largeur, en tête de feuille — et sur un titre sans cible au
-                catalogue, cette assurance était fausse. Ce que l'app croit
-                probable est maintenant le premier de la liste ci-dessous : même
-                nombre d'appuis, mais le choix est vu et pris. */}
+            <HevyExerciseEvidence
+              observation={row.review.observation}
+            />
+
             <Input
               label={t('history.importExerciseSearch')}
               labelHidden
@@ -117,7 +116,16 @@ export function HevyExerciseMappingSheet({
                     px-5 py-3 text-left text-base text-[var(--text-1)]
                     last:border-b-0 active:bg-[var(--surface-2)]"
                   >
-                    {exercise.name}
+                    <span className="min-w-0">
+                      <span className="block truncate font-semibold">
+                        {exercise.name}
+                      </span>
+                      <span className="mt-0.5 block text-sm text-[var(--text-2)]">
+                        {muscleLabel(exercise.primaryMuscle)}
+                        {t('history.importEvidenceValueSeparator')}
+                        {equipmentLabel(exercise.equipment)}
+                      </span>
+                    </span>
                   </button>
                 ))
               )}
