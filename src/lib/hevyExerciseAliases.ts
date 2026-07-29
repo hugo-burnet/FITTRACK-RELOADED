@@ -8,9 +8,7 @@ export const HEVY_EXERCISE_SLUG_BY_KEY: Readonly<
   'curl marteau|dumbbell': 'hammer-curl',
   'dead hang|other': 'dead-hang',
   'developpe couche|dumbbell': 'dumbbell-bench-press',
-  // Sans cible dans le catalogue, le classement de secours l'envoyait sur un
-  // « Pallof press » — donc quatre séries d'épaules comptées en abdominaux.
-  'developpe debout centree|cable': 'cable-shoulder-press',
+  'developpe debout centree|cable': 'pallof-press',
   'developpe couche incline|dumbbell': 'dumbbell-incline-bench-press',
   'elevation laterale|cable': 'cable-lateral-raise',
   'extension dos hyperextension lestee|other':

@@ -4,7 +4,7 @@ import catalogueRows from '@/data/seed/exercises.json';
 import type { CatalogueExercise } from '@/data/seed/seedDatabase';
 import type { HevyParsedSet } from './hevyCsv';
 import {
-  findCanonicalHevyExercise,
+  findSuggestedHevyExercise,
   hevyExerciseSourceKey,
   inferHevyEquipment,
   inferHevyMeasurementType,
@@ -156,7 +156,7 @@ describe('Hevy exercise title matching', () => {
     // couvrait pas, et le classement de secours les envoyait n'importe où —
     // « Rotation Externe Poulie » sur un crunch, donc des épaules comptées en
     // abdominaux. Ce n'est pas l'assertion qui a changé, c'est le catalogue.
-    ['Développé Debout Poulie Centrée', 'cable-shoulder-press'],
+    ['Développé Debout Poulie Centrée', 'pallof-press'],
     ['Hip Thrust (Dumbbell)', 'dumbbell-hip-thrust'],
     ['Rotation Externe Poulie', 'cable-external-rotation'],
     ['Tirage bas iso-latéral', 'seated-cable-row'],
@@ -183,29 +183,43 @@ describe('Hevy exercise title matching', () => {
   ])('maps %s to the catalogue slug %s', (title, slug) => {
     const candidate = catalogueExercise(slug);
     expect(
-      findCanonicalHevyExercise(title, candidate.measurementType, [
+      findSuggestedHevyExercise(title, candidate.measurementType, [
         candidate,
       ])?.slug,
     ).toBe(slug);
   });
 
-  it('does not invent a canonical target for an unknown title', () => {
+  it('does not invent a suggested target for an unknown title', () => {
     // La règle elle-même n'a pas bougé et doit rester tenue : un titre que le
     // catalogue ne couvre pas ne reçoit AUCUNE association d'office, il part en
     // choix explicite. C'est ce qui empêche une suggestion de se transformer en
     // fait par simple absence de vigilance.
     expect(
-      findCanonicalHevyExercise('Mouvement Inconnu Xyz', 'weight_reps', catalogue),
+      findSuggestedHevyExercise(
+        'Mouvement Inconnu Xyz',
+        'weight_reps',
+        catalogue,
+      ),
     ).toBeUndefined();
   });
 
   it('rejects an alias target with an incompatible measurement', () => {
     const deadHang = catalogueExercise('dead-hang');
     expect(
-      findCanonicalHevyExercise('Dead Hang', 'time_only', [
+      findSuggestedHevyExercise('Dead Hang', 'time_only', [
         { ...deadHang, measurementType: 'weight_reps' },
       ]),
     ).toBeUndefined();
+  });
+
+  it('never suggests shoulder press for the Pallof source title', () => {
+    expect(
+      findSuggestedHevyExercise(
+        'Développé Debout Poulie Centrée',
+        'weight_reps',
+        catalogue,
+      )?.slug,
+    ).not.toBe('cable-shoulder-press');
   });
 
   it('uses bilingual movement synonyms for non-canonical titles', () => {

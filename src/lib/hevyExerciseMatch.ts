@@ -152,7 +152,7 @@ export function hevyExerciseSourceKey(title: string): string {
   return `${normalizedTitle}|${inferHevyEquipment(title)}`;
 }
 
-export function findCanonicalHevyExercise(
+export function findSuggestedHevyExercise(
   sourceTitle: string,
   measurementType: MeasurementType,
   exercises: readonly Exercise[],
@@ -170,6 +170,11 @@ export function findCanonicalHevyExercise(
         exercise.equipment === sourceEquipment),
   );
 }
+
+/**
+ * @deprecated Task 5 removes the final caller; Task 6 removes this alias.
+ */
+export const findCanonicalHevyExercise = findSuggestedHevyExercise;
 
 function diceCoefficient(
   source: ReadonlySet<string>,
