@@ -100,7 +100,7 @@ async function seedVersion1(): Promise<void> {
   legacy.close();
 }
 
-describe('migration vers la version 2', () => {
+describe('migration vers la version 3', () => {
   afterEach(async () => {
     const { db } = await import('./db');
     await db.delete();
@@ -112,7 +112,10 @@ describe('migration vers la version 2', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(2);
+    expect(db.verno).toBe(3);
+    expect(db.tables.map((table) => table.name)).toContain('externalExerciseBindings');
+    expect(await db.exercises.get('bench')).toBeDefined();
+    expect(await db.workouts.get('winter')).toBeDefined();
 
     const bench = await db.workoutExercises.get('row-bench');
     expect(bench).toMatchObject({

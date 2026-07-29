@@ -4,6 +4,7 @@ import { localOffsetMinutes } from '@/lib/timezone';
 import type {
   BodyMeasurement,
   Exercise,
+  ExternalExerciseBinding,
   PersonalRecord,
   ProgressPhoto,
   Routine,
@@ -24,6 +25,7 @@ export interface PhotoBlob {
 
 export class FitTrackDB extends Dexie {
   exercises!: EntityTable<Exercise, 'id'>;
+  externalExerciseBindings!: EntityTable<ExternalExerciseBinding, 'id'>;
   routineFolders!: EntityTable<RoutineFolder, 'id'>;
   routines!: EntityTable<Routine, 'id'>;
   routineExercises!: EntityTable<RoutineExercise, 'id'>;
@@ -87,6 +89,24 @@ export class FitTrackDB extends Dexie {
         .modify((workout) => {
           workout.startedTimezoneOffsetMinutes = localOffsetMinutes(workout.startedAt);
         });
+    });
+
+    this.version(3).stores({
+      exercises: 'id, name, primaryMuscle, equipment, isCustom, updatedAt, deletedAt',
+      externalExerciseBindings: 'id, [source+identityKey], exerciseId, updatedAt, deletedAt',
+      routineFolders: 'id, order, updatedAt, deletedAt',
+      routines: 'id, folderId, order, updatedAt, deletedAt',
+      routineExercises: 'id, routineId, [routineId+order], deletedAt',
+      routineSets: 'id, routineExerciseId, [routineExerciseId+order], deletedAt',
+      workouts: 'id, status, startedAt, routineId, updatedAt, deletedAt',
+      workoutExercises: 'id, workoutId, [workoutId+order], exerciseId, deletedAt',
+      workoutSets:
+        'id, workoutExerciseId, [workoutExerciseId+order], workoutId, [exerciseId+performedAt], deletedAt',
+      personalRecords: 'id, exerciseId, [exerciseId+type], achievedAt, deletedAt',
+      bodyMeasurements: 'id, type, [type+measuredAt], deletedAt',
+      progressPhotos: 'id, takenAt, deletedAt',
+      photoBlobs: 'key',
+      settings: 'key',
     });
   }
 }

@@ -109,6 +109,19 @@ export interface Exercise extends Syncable {
   defaultRestSeconds?: number; // RF-27: per-exercise rest
 }
 
+export type ExternalExerciseSource = 'hevy_csv';
+
+export interface ExternalExerciseBinding extends Syncable {
+  source: ExternalExerciseSource;
+  identityKey: string;
+  sourceTitle: string;
+  exerciseId: string;
+  measurementType: MeasurementType;
+  equipmentHint?: Equipment;
+  verification: 'user';
+  confirmedAt: number;
+}
+
 export interface RoutineFolder extends Syncable {
   name: string;
   order: number; // RF-12
