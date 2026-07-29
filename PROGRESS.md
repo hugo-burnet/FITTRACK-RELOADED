@@ -2,6 +2,36 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**phase 6 — première preuve
+d’intégration du parcours de séance**). `WorkoutScreen` possède désormais un
+test qui traverse le vrai routeur React, les repositories, Dexie et
+`fake-indexeddb` sans mock : il saisit 80 kg et 10 répétitions, attend leur
+écriture, démonte entièrement l’écran, le remonte puis vérifie la reprise avant
+de valider la série.
+
+**L’invariant « aucune perte de données » est protégé à son interface
+utilisateur.** Les valeurs restent écrites avant la coche et la validation
+conserve charge et répétitions tout en ajoutant `isCompleted` et `performedAt`.
+Le store éphémère de repos est arrêté de part et d’autre du scénario pour ne
+laisser aucun état singleton entre les tests. Aucun fichier de production,
+texte UI, schéma, donnée ou dépendance n’a changé.
+
+**Preuves.** Un mutant manuel qui coupait le branchement
+`onWrite → updateSetValues` a fait échouer l’attente Dexie sur les deux valeurs,
+puis le code exact a été restauré et son absence de diff confirmée. Une revue
+indépendante n’a relevé aucun problème critique, important ou mineur. Lint,
+typecheck, **776 tests dans 59 fichiers** et build de production passent.
+
+**Checkpoint téléphone :** pendant une séance, saisir charge et répétitions
+sans cocher la série, forcer la fermeture de FitTrack puis la rouvrir. Vérifier
+que la même séance et les deux valeurs reviennent, puis cocher la série. Aucun
+changement visuel neuf n’est attendu.
+
+**Prochaine tranche de phase 6 :** composer une routine complète à travers
+`RoutinesScreen`, `RoutineEditorScreen` et `ExercisePickerScreen`, puis
+retrouver son résumé persistant dans la liste avant le premier gros découpage
+de `RoutinesScreen`.
+
 **Dernière mise à jour :** 2026-07-29 (**records visibles en séance
 centralisés**). `lib/records` possède désormais la projection
 `workoutRecordKinds(groups, setsByExercise)` : elle sélectionne les séries
