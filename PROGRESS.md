@@ -2,6 +2,26 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**projection historique — P0 corrigé,
+module approfondi**). La lecture annuelle bornée respecte désormais la porte
+opt-in de 5 000 ms sur le dataset de référence de 2 000 séances. Le schéma Dexie,
+les données et les comportements visibles n'ont pas changé.
+
+**Deux commits applicatifs séparés.** Le correctif remplace les grands `anyOf`
+par des lectures `workoutId` petites, indexées et bornées. La refactorisation
+fait de `listHistoricalWorkouts` la seam unique : sélection, soft-delete,
+validation, ordre et identité historique restent derrière le repository ;
+exports et analytics ne reçoivent plus les entités Dexie.
+
+**Preuves.** Le benchmark annuel opt-in respecte la porte de 5 000 ms ; lint,
+typecheck, tests unitaires et build de production sont verts. La baseline lente
+reste versionnée dans `docs/baselines/2026-07-28-refactor-baseline.md`.
+
+**Checkpoint téléphone :** ouvrir Historique → Analyses et comparer les périodes
+4, 12, 26, 52 semaines et Tout. Vérifier ensuite une séance contenant un
+exercice renommé ou supprimé, puis partager son export Markdown : nom historique,
+totaux, séries et dates doivent être identiques à avant la refactorisation.
+
 **Dernière mise à jour :** 2026-07-28 (**phase 0 — baseline de
 refactorisation terminée**). Le tag `refactor-phase-0-start-2026-07-28` pointe
 sur `fcfb03ab4cfea6e23c7c74a868feb46b3e219bb5` ; la référence durable est
