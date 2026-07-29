@@ -2,23 +2,24 @@ import { db } from '@/data/db';
 import type {
   Equipment,
   Exercise,
+  ExternalExerciseBinding,
   MeasurementType,
 } from '@/data/types';
-import type { HevyImportData, HevyParsedWorkout } from '@/lib/hevyCsv';
-import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
+import type {
+  HevyImportData,
+  HevyParsedWorkout,
+  HevySourceExercise,
+} from '@/lib/hevyCsv';
+import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import { newEntity } from './base';
 import type { NewExercise } from './exercises';
+import { listExternalExerciseBindings } from './externalExerciseBindings';
 import {
   buildHevyRoutineEntities,
   nextHevyImportFolderName,
 } from './hevyRoutineImport';
 import { buildHevyWorkoutEntities } from './hevyWorkoutEntities';
-import {
-  getHevyExerciseMappings,
-  setHevyExerciseMappings,
-  type HevyExerciseMappings,
-} from './settings';
 
 export type HevyExerciseResolution =
   | { kind: 'existing'; exerciseId: string }
@@ -32,8 +33,8 @@ export type HevyExerciseResolutions = Record<
 export interface HevyImportPreparation {
   exercises: Exercise[];
   existingImportKeys: string[];
-  savedMappings: HevyExerciseMappings;
-  aliveRoutineFolderNames?: string[];
+  confirmedBindings: ExternalExerciseBinding[];
+  aliveRoutineFolderNames: string[];
 }
 
 export interface HevyImportResult {
@@ -71,10 +72,10 @@ export async function prepareHevyImport(
   const requested = new Set(
     data.workouts.map((workout) => workout.importKey),
   );
-  const [exercises, keys, savedMappings, folders] = await Promise.all([
-    db.exercises.where('deletedAt').equals(0).toArray(),
+  const [exercises, keys, confirmedBindings, folders] = await Promise.all([
+    db.exercises.toArray(),
     existingImportKeys(requested),
-    getHevyExerciseMappings(),
+    listExternalExerciseBindings('hevy_csv'),
     db.routineFolders.where('deletedAt').equals(0).toArray(),
   ]);
   return {
@@ -82,7 +83,7 @@ export async function prepareHevyImport(
       left.name.localeCompare(right.name, 'fr'),
     ),
     existingImportKeys: keys,
-    savedMappings,
+    confirmedBindings,
     aliveRoutineFolderNames: folders.map((folder) => folder.name),
   };
 }
@@ -92,7 +93,7 @@ function sourceKeys(workouts: readonly HevyParsedWorkout[]): string[] {
     ...new Set(
       workouts.flatMap((workout) =>
         workout.exercises.map((exercise) =>
-          hevyExerciseSourceKey(exercise.sourceTitle),
+          externalExerciseIdentityKey(exercise.sourceTitle),
         ),
       ),
     ),
@@ -102,25 +103,35 @@ function sourceKeys(workouts: readonly HevyParsedWorkout[]): string[] {
 interface ResolvedExercises {
   bySourceKey: Map<string, Exercise>;
   created: Exercise[];
-  mappings: HevyExerciseMappings;
+  bindings: ExternalExerciseBinding[];
 }
 
 async function resolveExercises(
   sourceKeysToResolve: readonly string[],
-  measurementBySourceKey: ReadonlyMap<string, MeasurementType>,
+  sourceByIdentityKey: ReadonlyMap<string, HevySourceExercise>,
   resolutions: Readonly<HevyExerciseResolutions>,
+  importedAt: number,
 ): Promise<ResolvedExercises> {
   const bySourceKey = new Map<string, Exercise>();
   const created: Exercise[] = [];
-  const mappings = await getHevyExerciseMappings();
+  const existingBindingGroups = new Map<
+    string,
+    ExternalExerciseBinding[]
+  >();
+  for (const binding of await listExternalExerciseBindings('hevy_csv')) {
+    const group = existingBindingGroups.get(binding.identityKey) ?? [];
+    group.push(binding);
+    existingBindingGroups.set(binding.identityKey, group);
+  }
+  const bindings: ExternalExerciseBinding[] = [];
 
   for (const sourceKey of sourceKeysToResolve) {
     const resolution = resolutions[sourceKey];
-    const measurementType = measurementBySourceKey.get(sourceKey);
+    const source = sourceByIdentityKey.get(sourceKey);
     if (resolution === undefined) {
       throw new Error(`Missing Hevy exercise resolution: ${sourceKey}`);
     }
-    if (measurementType === undefined) {
+    if (source === undefined) {
       throw new Error(`Missing Hevy exercise source: ${sourceKey}`);
     }
 
@@ -138,17 +149,60 @@ async function resolveExercises(
       });
       created.push(exercise);
     }
-    if (exercise.measurementType !== measurementType) {
+    if (exercise.measurementType !== source.measurementType) {
       throw new Error(
         `Hevy exercise measurement is incompatible: ${sourceKey}`,
       );
     }
 
     bySourceKey.set(sourceKey, exercise);
-    mappings[sourceKey] = exercise.id;
+    const existingGroup = existingBindingGroups.get(sourceKey) ?? [];
+    const existingBinding = existingGroup.reduce<
+      ExternalExerciseBinding | undefined
+    >(
+      (latest, binding) =>
+        latest === undefined ||
+        binding.confirmedAt > latest.confirmedAt
+          ? binding
+          : latest,
+      undefined,
+    );
+    bindings.push(
+      ...existingGroup
+        .filter((binding) => binding.id !== existingBinding?.id)
+        .map((binding) => ({
+          ...binding,
+          updatedAt: importedAt,
+          deletedAt: importedAt,
+        })),
+    );
+    bindings.push(
+      existingBinding === undefined
+        ? newEntity<ExternalExerciseBinding>({
+            source: 'hevy_csv',
+            identityKey: sourceKey,
+            sourceTitle: source.sourceTitle,
+            exerciseId: exercise.id,
+            measurementType: source.measurementType,
+            equipmentHint: source.equipment,
+            verification: 'user',
+            confirmedAt: importedAt,
+          })
+        : {
+            ...existingBinding,
+            sourceTitle: source.sourceTitle,
+            exerciseId: exercise.id,
+            measurementType: source.measurementType,
+            equipmentHint: source.equipment,
+            verification: 'user',
+            confirmedAt: importedAt,
+            updatedAt: importedAt,
+            deletedAt: 0,
+          },
+    );
   }
 
-  return { bySourceKey, created, mappings };
+  return { bySourceKey, created, bindings };
 }
 
 export async function importHevyWorkouts(
@@ -167,7 +221,7 @@ export async function importHevyWorkouts(
       db.routines,
       db.routineExercises,
       db.routineSets,
-      db.settings,
+      db.externalExerciseBindings,
     ],
     async () => {
       const duplicateKeys = new Set(
@@ -189,16 +243,17 @@ export async function importHevyWorkouts(
         };
       }
 
-      const measurementBySourceKey = new Map(
+      const sourceByIdentityKey = new Map(
         data.sourceExercises.map((source) => [
-          hevyExerciseSourceKey(source.sourceTitle),
-          source.measurementType,
+          externalExerciseIdentityKey(source.sourceTitle),
+          source,
         ]),
       );
       const resolved = await resolveExercises(
         sourceKeys(importable),
-        measurementBySourceKey,
+        sourceByIdentityKey,
         resolutions,
+        importedAt,
       );
       const entities = buildHevyWorkoutEntities(
         importable,
@@ -227,6 +282,7 @@ export async function importHevyWorkouts(
       if (resolved.created.length > 0) {
         await db.exercises.bulkAdd(resolved.created);
       }
+      await db.externalExerciseBindings.bulkPut(resolved.bindings);
       await db.workouts.bulkAdd(entities.workouts);
       await db.workoutExercises.bulkAdd(entities.rows);
       await db.workoutSets.bulkAdd(entities.sets);
@@ -234,7 +290,6 @@ export async function importHevyWorkouts(
       await db.routines.bulkAdd(routineEntities.routines);
       await db.routineExercises.bulkAdd(routineEntities.rows);
       await db.routineSets.bulkAdd(routineEntities.sets);
-      await setHevyExerciseMappings(resolved.mappings);
 
       return {
         importedWorkouts: entities.workouts.length,

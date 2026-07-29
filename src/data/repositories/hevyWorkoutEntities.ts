@@ -5,7 +5,7 @@ import type {
   WorkoutSet,
 } from '@/data/types';
 import type { HevyParsedWorkout } from '@/lib/hevyCsv';
-import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
+import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
 import { resolveRestSeconds } from '@/lib/rest';
 import { localOffsetMinutes } from '@/lib/timezone';
 import { newEntity } from './base';
@@ -49,7 +49,7 @@ export function buildHevyWorkoutEntities(
     );
     let sequence = 0;
     for (const parsedExercise of parsed.exercises) {
-      const sourceKey = hevyExerciseSourceKey(
+      const sourceKey = externalExerciseIdentityKey(
         parsedExercise.sourceTitle,
       );
       const exercise = exercises.get(sourceKey);

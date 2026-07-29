@@ -1,11 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
-import type { Exercise, RoutineFolder, Workout } from '@/data/types';
+import type {
+  Exercise,
+  ExternalExerciseBinding,
+  RoutineFolder,
+  Workout,
+} from '@/data/types';
 import {
   parseHevyCsv,
   type HevyImportData,
+  type HevyParsedWorkout,
 } from '@/lib/hevyCsv';
-import { hevyExerciseSourceKey } from '@/lib/hevyExerciseMatch';
+import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
 import { resetDb } from '@/test/resetDb';
 import fixture from '@/test/fixtures/hevy-workout-data.csv?raw';
 import { newEntity } from './base';
@@ -18,7 +24,6 @@ import {
   prepareHevyImport,
   type HevyExerciseResolutions,
 } from './hevyImport';
-import { setHevyExerciseMappings } from './settings';
 import {
   getLastPerformance,
   listRecordSets,
@@ -107,11 +112,11 @@ function customExercise(
 
 function resolutions(benchId: string): HevyExerciseResolutions {
   return {
-    [hevyExerciseSourceKey('Développé couché (barre)')]: {
+    [externalExerciseIdentityKey('Développé couché (barre)')]: {
       kind: 'existing',
       exerciseId: benchId,
     },
-    [hevyExerciseSourceKey('Planche')]: {
+    [externalExerciseIdentityKey('Planche')]: {
       kind: 'custom',
       exercise: customExercise('Planche', 'time_only'),
     },
@@ -121,11 +126,137 @@ function resolutions(benchId: string): HevyExerciseResolutions {
 async function counts() {
   return {
     exercises: await db.exercises.count(),
+    bindings: await db.externalExerciseBindings.count(),
     workouts: await db.workouts.count(),
     workoutExercises: await db.workoutExercises.count(),
     workoutSets: await db.workoutSets.count(),
-    settings: await db.settings.count(),
+    routineFolders: await db.routineFolders.count(),
+    routines: await db.routines.count(),
+    routineExercises: await db.routineExercises.count(),
+    routineSets: await db.routineSets.count(),
   };
+}
+
+const pallofSourceTitle = 'Développé Debout Poulie Centrée';
+const additionalSourceTitles = Array.from(
+  { length: 24 },
+  (_, index) => `Exercice test ${index + 1}`,
+);
+
+function twentyFiveIdentityData(): HevyImportData {
+  const firstWorkoutExercises: HevyParsedWorkout['exercises'] = [
+    {
+      sourceTitle: pallofSourceTitle,
+      order: 0,
+      supersetGroup: 0,
+      sets: [
+        {
+          sourceLine: 2,
+          order: 0,
+          setType: 'normal',
+          weight: 10,
+          reps: 15,
+        },
+        {
+          sourceLine: 3,
+          order: 1,
+          setType: 'normal',
+          weight: 15,
+          reps: 12,
+        },
+      ],
+    },
+    ...additionalSourceTitles.map((sourceTitle, index) => ({
+      sourceTitle,
+      order: index + 1,
+      supersetGroup: 0,
+      sets: [
+        {
+          sourceLine: index + 4,
+          order: 0,
+          setType: 'normal' as const,
+          weight: 20,
+          reps: 10,
+        },
+      ],
+    })),
+  ];
+  const workouts: HevyParsedWorkout[] = [
+    {
+      title: 'LOWER A',
+      startedAt: 1_000,
+      endedAt: 11_000,
+      durationSeconds: 10,
+      importKey: 'hevy:lower-a:1',
+      exercises: firstWorkoutExercises,
+    },
+    {
+      title: 'LOWER A',
+      startedAt: 21_000,
+      endedAt: 31_000,
+      durationSeconds: 10,
+      importKey: 'hevy:lower-a:2',
+      exercises: [
+        {
+          sourceTitle: pallofSourceTitle,
+          order: 0,
+          supersetGroup: 0,
+          sets: [
+            {
+              sourceLine: 30,
+              order: 0,
+              setType: 'normal',
+              weight: 10,
+              reps: 15,
+            },
+            {
+              sourceLine: 31,
+              order: 1,
+              setType: 'normal',
+              weight: 15,
+              reps: 12,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+  return {
+    workouts,
+    sourceExercises: [
+      {
+        sourceTitle: pallofSourceTitle,
+        measurementType: 'weight_reps',
+        equipment: 'cable',
+      },
+      ...additionalSourceTitles.map((sourceTitle) => ({
+        sourceTitle,
+        measurementType: 'weight_reps' as const,
+        equipment: 'other' as const,
+      })),
+    ],
+    workoutCount: workouts.length,
+    exerciseCount: 25,
+    setCount: 28,
+  };
+}
+
+function twentyFiveIdentityResolutions(
+  pallofId: string,
+): HevyExerciseResolutions {
+  return Object.fromEntries([
+    [
+      externalExerciseIdentityKey(pallofSourceTitle),
+      { kind: 'existing' as const, exerciseId: pallofId },
+    ],
+    ...additionalSourceTitles.map((sourceTitle) => [
+      externalExerciseIdentityKey(sourceTitle),
+      {
+        kind: 'custom' as const,
+        exercise: customExercise(sourceTitle),
+      },
+    ]),
+  ]);
 }
 
 describe('Hevy import repository', () => {
@@ -138,7 +269,7 @@ describe('Hevy import repository', () => {
     if (!parsed.ok) return;
     const fixtureResolutions = Object.fromEntries(
       parsed.data.sourceExercises.map((source) => [
-        hevyExerciseSourceKey(source.sourceTitle),
+        externalExerciseIdentityKey(source.sourceTitle),
         {
           kind: 'custom' as const,
           exercise: customExercise(
@@ -166,13 +297,166 @@ describe('Hevy import repository', () => {
     expect(await db.workoutSets.count()).toBe(parsed.data.setCount);
   });
 
-  it('prepares alive exercises, saved mappings and duplicate keys', async () => {
+  it('writes 25 exact confirmed bindings and keeps Pallof history out of shoulder press', async () => {
+    const importedAt = new Date(2026, 6, 29, 12).getTime();
+    const pallof = await createCustomExercise({
+      ...customExercise('Pallof press'),
+      primaryMuscle: 'abs',
+      equipment: 'cable',
+    });
+    const shoulderPress = await createCustomExercise({
+      ...customExercise('Développé épaules (poulie)'),
+      primaryMuscle: 'shoulders',
+      equipment: 'cable',
+    });
+    const importData = twentyFiveIdentityData();
+
+    await importHevyWorkouts(
+      importData,
+      twentyFiveIdentityResolutions(pallof.id),
+      importedAt,
+    );
+
+    expect(await db.externalExerciseBindings.count()).toBe(25);
+    expect(
+      await db.workoutExercises
+        .where('exerciseId')
+        .equals(pallof.id)
+        .count(),
+    ).toBe(2);
+    expect(
+      await db.workoutSets.where('exerciseId').equals(pallof.id).count(),
+    ).toBe(4);
+    expect(
+      await db.workoutExercises
+        .where('exerciseId')
+        .equals(shoulderPress.id)
+        .count(),
+    ).toBe(0);
+    expect(
+      await db.externalExerciseBindings
+        .where('[source+identityKey]')
+        .equals([
+          'hevy_csv',
+          externalExerciseIdentityKey(pallofSourceTitle),
+        ])
+        .first(),
+    ).toMatchObject({
+      sourceTitle: pallofSourceTitle,
+      exerciseId: pallof.id,
+      measurementType: 'weight_reps',
+      equipmentHint: 'cable',
+      verification: 'user',
+      confirmedAt: importedAt,
+    });
+  });
+
+  it('keeps only one active binding for an exact source identity', async () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
-    await setHevyExerciseMappings({
-      'Développé couché (barre)': bench.id,
+    const identityKey = externalExerciseIdentityKey(
+      'Développé couché (barre)',
+    );
+    await db.externalExerciseBindings.bulkAdd([
+      newEntity<ExternalExerciseBinding>({
+        source: 'hevy_csv',
+        identityKey,
+        sourceTitle: 'Développé couché (barre)',
+        exerciseId: bench.id,
+        measurementType: 'weight_reps',
+        equipmentHint: 'barbell',
+        verification: 'user',
+        confirmedAt: 1,
+      }),
+      newEntity<ExternalExerciseBinding>({
+        source: 'hevy_csv',
+        identityKey,
+        sourceTitle: 'Développé couché (barre)',
+        exerciseId: bench.id,
+        measurementType: 'weight_reps',
+        equipmentHint: 'barbell',
+        verification: 'user',
+        confirmedAt: 2,
+      }),
+    ]);
+
+    await importHevyWorkouts(data, resolutions(bench.id), 3);
+
+    const active = (
+      await db.externalExerciseBindings
+        .where('[source+identityKey]')
+        .equals(['hevy_csv', identityKey])
+        .toArray()
+    ).filter((binding) => binding.deletedAt === 0);
+    expect(active).toHaveLength(1);
+    expect(active[0]).toMatchObject({
+      exerciseId: bench.id,
+      confirmedAt: 3,
     });
+  });
+
+  it('rolls back bindings, exercises, workouts, sets and routines after a late failure', async () => {
+    const pallof = await createCustomExercise({
+      ...customExercise('Pallof press'),
+      primaryMuscle: 'abs',
+      equipment: 'cable',
+    });
+    await createCustomExercise({
+      ...customExercise('Développé épaules (poulie)'),
+      primaryMuscle: 'shoulders',
+      equipment: 'cable',
+    });
+    const before = await counts();
+    const fail = vi
+      .spyOn(db.routineSets, 'bulkAdd')
+      .mockRejectedValueOnce(new Error('disk full'));
+
+    try {
+      await expect(
+        importHevyWorkouts(
+          twentyFiveIdentityData(),
+          twentyFiveIdentityResolutions(pallof.id),
+        ),
+      ).rejects.toThrow('disk full');
+    } finally {
+      fail.mockRestore();
+    }
+
+    expect(await counts()).toEqual(before);
+  });
+
+  it('prepares confirmed bindings and distrusts legacy mappings', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const pallof = await createCustomExercise({
+      ...customExercise('Pallof press'),
+      primaryMuscle: 'abs',
+      equipment: 'cable',
+    });
+    const identityKey = externalExerciseIdentityKey(
+      'Développé Debout Poulie Centrée',
+    );
+    await db.settings.put({
+      key: 'hevyExerciseMappings',
+      value: {
+        [identityKey]: 'cable-shoulder-press',
+      },
+      updatedAt: 1,
+    });
+    await db.externalExerciseBindings.add(
+      newEntity<ExternalExerciseBinding>({
+        source: 'hevy_csv',
+        identityKey,
+        sourceTitle: 'Développé Debout Poulie Centrée',
+        exerciseId: pallof.id,
+        measurementType: 'weight_reps',
+        equipmentHint: 'cable',
+        verification: 'user',
+        confirmedAt: 2,
+      }),
+    );
     await db.workouts.add(
       newEntity<Workout>({
         routineId: '',
@@ -200,15 +484,56 @@ describe('Hevy import repository', () => {
     expect(result.existingImportKeys).toEqual([
       data.workouts[0]!.importKey,
     ]);
-    expect(result.savedMappings).toEqual({
-      'developpe couche|barbell': bench.id,
-    });
+    expect(result.confirmedBindings).toEqual([
+      expect.objectContaining({
+        identityKey,
+        exerciseId: pallof.id,
+        verification: 'user',
+      }),
+    ]);
+    expect(result).not.toHaveProperty('savedMappings');
     expect(result.aliveRoutineFolderNames).toEqual([
       'Import Hevy — 27/07/2026',
     ]);
   });
 
-  it('writes workouts, exercise blocks, sets and mappings coherently', async () => {
+  it('prepares soft-deleted binding targets so review can explain the conflict', async () => {
+    const retired = await createCustomExercise(
+      customExercise('Ancien développé'),
+    );
+    const deletedAt = 4_200;
+    await db.exercises.update(retired.id, { deletedAt });
+    const identityKey = externalExerciseIdentityKey('Ancien développé');
+    await db.externalExerciseBindings.add(
+      newEntity<ExternalExerciseBinding>({
+        source: 'hevy_csv',
+        identityKey,
+        sourceTitle: 'Ancien développé',
+        exerciseId: retired.id,
+        measurementType: 'weight_reps',
+        equipmentHint: 'other',
+        verification: 'user',
+        confirmedAt: 1,
+      }),
+    );
+
+    const result = await prepareHevyImport(data);
+
+    expect(result.exercises).toContainEqual(
+      expect.objectContaining({
+        id: retired.id,
+        deletedAt,
+      }),
+    );
+    expect(result.confirmedBindings).toContainEqual(
+      expect.objectContaining({
+        identityKey,
+        exerciseId: retired.id,
+      }),
+    );
+  });
+
+  it('writes workouts, exercise blocks, sets and bindings coherently', async () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
@@ -291,12 +616,28 @@ describe('Hevy import repository', () => {
       rpe: 7.5,
       isCompleted: 1,
     });
-    expect(await db.settings.get('hevyExerciseMappings')).toMatchObject({
-      value: {
-        'developpe couche|barbell': bench.id,
-        'planche|other': plank?.id,
+    expect(
+      (await db.externalExerciseBindings.toArray())
+        .map((binding) => ({
+          identityKey: binding.identityKey,
+          exerciseId: binding.exerciseId,
+          verification: binding.verification,
+        }))
+        .sort((left, right) =>
+          left.identityKey.localeCompare(right.identityKey),
+        ),
+    ).toEqual([
+      {
+        identityKey: 'developpe couche barre',
+        exerciseId: bench.id,
+        verification: 'user',
       },
-    });
+      {
+        identityKey: 'planche',
+        exerciseId: plank?.id,
+        verification: 'user',
+      },
+    ]);
   });
 
   it('skips an already imported workout without adding rows', async () => {
@@ -311,6 +652,10 @@ describe('Hevy import repository', () => {
     expect(second).toMatchObject({
       importedWorkouts: 0,
       skippedWorkouts: 1,
+      createdExercises: 0,
+      importedExercises: 0,
+      importedSets: 0,
+      createdRoutines: 0,
     });
     expect(await counts()).toEqual(before);
   });
@@ -321,10 +666,14 @@ describe('Hevy import repository', () => {
     );
     expect(await counts()).toEqual({
       exercises: 0,
+      bindings: 0,
       workouts: 0,
       workoutExercises: 0,
       workoutSets: 0,
-      settings: 0,
+      routineFolders: 0,
+      routines: 0,
+      routineExercises: 0,
+      routineSets: 0,
     });
   });
 
@@ -352,7 +701,7 @@ describe('Hevy import repository', () => {
     expect(await counts()).toEqual(before);
   });
 
-  it('rolls back custom exercises, workouts and settings on failure', async () => {
+  it('rolls back custom exercises, workouts and bindings on failure', async () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
