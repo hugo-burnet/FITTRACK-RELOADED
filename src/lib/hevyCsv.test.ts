@@ -53,20 +53,8 @@ describe('parseHevyCsv RFC 4180 input', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.workoutCount).toBe(4);
-    expect(
-      new Set(
-        result.data.sourceExercises.map(
-          (source) => source.measurementType,
-        ),
-      ),
-    ).toEqual(
-      new Set([
-        'weight_reps',
-        'reps_only',
-        'time_only',
-        'distance_time',
-        'weight_time',
-      ]),
+    expect(new Set(result.data.sourceExercises.map((source) => source.measurementType))).toEqual(
+      new Set(['weight_reps', 'reps_only', 'time_only', 'distance_time', 'weight_time']),
     );
   });
 
@@ -81,9 +69,7 @@ describe('parseHevyCsv RFC 4180 input', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.workouts[0]!.notes).toBe('Lourd, mais propre');
-    expect(result.data.workouts[0]!.exercises[0]!.notes).toBe(
-      'Banc "4"\nPrise moyenne',
-    );
+    expect(result.data.workouts[0]!.exercises[0]!.notes).toBe('Banc "4"\nPrise moyenne');
   });
 
   it('rejects a missing required column before reading rows', () => {
@@ -100,9 +86,7 @@ describe('parseHevyCsv RFC 4180 input', () => {
 
     expect(result).toEqual({
       ok: false,
-      issues: [
-        { line: 1, code: 'unexpected_header', field: 'body_weight' },
-      ],
+      issues: [{ line: 1, code: 'unexpected_header', field: 'body_weight' }],
     });
   });
 
@@ -111,9 +95,7 @@ describe('parseHevyCsv RFC 4180 input', () => {
 
     expect(result).toEqual({
       ok: false,
-      issues: [
-        { line: 1, code: 'unexpected_header', field: 'rpe' },
-      ],
+      issues: [{ line: 1, code: 'unexpected_header', field: 'rpe' }],
     });
   });
 
@@ -150,9 +132,7 @@ describe('parseHevyCsv values and grouping', () => {
       durationSeconds: 300,
       rpe: 7.5,
     });
-    expect(result.data.workouts[0]!.exercises[0]!.sets[0]).not.toHaveProperty(
-      'weight',
-    );
+    expect(result.data.workouts[0]!.exercises[0]!.sets[0]).not.toHaveProperty('weight');
   });
 
   it.each([
@@ -162,20 +142,13 @@ describe('parseHevyCsv values and grouping', () => {
     ['drop', 'dropset'],
     ['failure', 'failure'],
   ] as const)('maps the Hevy set type %s to %s', (source, expected) => {
-    const result = parseHevyCsv(
-      `${HEADER}\n${row({ set_type: source })}`,
-    );
+    const result = parseHevyCsv(`${HEADER}\n${row({ set_type: source })}`);
 
-    expect(
-      result.ok &&
-        result.data.workouts[0]!.exercises[0]!.sets[0]!.setType,
-    ).toBe(expected);
+    expect(result.ok && result.data.workouts[0]!.exercises[0]!.sets[0]!.setType).toBe(expected);
   });
 
   it('rejects an unknown set type with its physical line', () => {
-    const result = parseHevyCsv(
-      `${HEADER}\n${row({ set_type: 'myo' })}`,
-    );
+    const result = parseHevyCsv(`${HEADER}\n${row({ set_type: 'myo' })}`);
 
     expect(result).toEqual({
       ok: false,
@@ -215,17 +188,53 @@ describe('parseHevyCsv values and grouping', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.workouts).toHaveLength(1);
-    expect(
-      result.data.workouts[0]!.exercises.map(
-        (exercise) => exercise.sourceTitle,
-      ),
-    ).toEqual(['Curl', 'Squat']);
-    expect(
-      result.data.workouts[0]!.exercises[0]!.sets.map((set) => set.weight),
-    ).toEqual([10, 12]);
+    expect(result.data.workouts[0]!.exercises.map((exercise) => exercise.sourceTitle)).toEqual([
+      'Curl',
+      'Squat',
+    ]);
+    expect(result.data.workouts[0]!.exercises[0]!.sets.map((set) => set.weight)).toEqual([10, 12]);
     expect(result.data).toMatchObject({
       workoutCount: 1,
       exerciseCount: 2,
+      setCount: 3,
+    });
+  });
+
+  it('groups case, accent and punctuation variants under their first display title', () => {
+    const csv = [
+      HEADER,
+      row({
+        exercise_title: 'Développé debout centré',
+        set_index: '0',
+      }),
+      row({
+        exercise_title: 'DEVELOPPE-DEBOUT-CENTRE',
+        set_index: '1',
+      }),
+      row({
+        exercise_title: 'développé, debout centré !',
+        set_index: '2',
+      }),
+    ].join('\n');
+
+    const result = parseHevyCsv(csv);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.workouts[0]!.exercises).toHaveLength(1);
+    expect(result.data.workouts[0]!.exercises[0]).toMatchObject({
+      sourceTitle: 'Développé debout centré',
+      sets: [{ order: 0 }, { order: 1 }, { order: 2 }],
+    });
+    expect(result.data.sourceExercises).toEqual([
+      {
+        sourceTitle: 'Développé debout centré',
+        measurementType: 'weight_reps',
+        equipment: 'other',
+      },
+    ]);
+    expect(result.data).toMatchObject({
+      exerciseCount: 1,
       setCount: 3,
     });
   });
@@ -242,11 +251,9 @@ describe('parseHevyCsv values and grouping', () => {
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(
-      result.data.workouts[0]!.exercises.map(
-        (exercise) => exercise.supersetGroup,
-      ),
-    ).toEqual([1, 1, 2]);
+    expect(result.data.workouts[0]!.exercises.map((exercise) => exercise.supersetGroup)).toEqual([
+      1, 1, 2,
+    ]);
   });
 
   it('generates a stable import key from title and timestamps', () => {
@@ -256,9 +263,7 @@ describe('parseHevyCsv values and grouping', () => {
     expect(first.ok).toBe(true);
     expect(second.ok).toBe(true);
     if (!first.ok || !second.ok) return;
-    expect(first.data.workouts[0]!.importKey).toBe(
-      second.data.workouts[0]!.importKey,
-    );
+    expect(first.data.workouts[0]!.importKey).toBe(second.data.workouts[0]!.importKey);
   });
 
   it.each([
@@ -463,6 +468,32 @@ describe('parseHevyCsv source exercise inference', () => {
     });
   });
 
+  it('rejects incompatible measurements across source title variants', () => {
+    const csv = [
+      HEADER,
+      row({ exercise_title: 'Élévation latérale' }),
+      row({
+        exercise_title: 'ELEVATION-LATERALE!',
+        set_index: '1',
+        weight_kg: '',
+        reps: '',
+        duration_seconds: '60',
+      }),
+    ].join('\n');
+
+    expect(parseHevyCsv(csv)).toEqual({
+      ok: false,
+      issues: [
+        {
+          line: 2,
+          code: 'invalid_measurement',
+          field: 'exercise_title',
+          value: 'Élévation latérale',
+        },
+      ],
+    });
+  });
+
   it('counts a repeated source title once across multiple workouts', () => {
     const csv = [
       HEADER,
@@ -484,5 +515,35 @@ describe('parseHevyCsv source exercise inference', () => {
       setCount: 2,
     });
     expect(result.data.sourceExercises).toHaveLength(1);
+  });
+
+  it('counts source title variants once across multiple workouts', () => {
+    const csv = [
+      HEADER,
+      row({ exercise_title: 'Développé debout centré' }),
+      row({
+        title: 'Séance B',
+        start_time: '25 juil. 2026, 15:05',
+        end_time: '25 juil. 2026, 16:05',
+        exercise_title: 'DEVELOPPE-DEBOUT-CENTRE!',
+      }),
+    ].join('\n');
+
+    const result = parseHevyCsv(csv);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data).toMatchObject({
+      workoutCount: 2,
+      exerciseCount: 1,
+      setCount: 2,
+    });
+    expect(result.data.sourceExercises).toEqual([
+      {
+        sourceTitle: 'Développé debout centré',
+        measurementType: 'weight_reps',
+        equipment: 'other',
+      },
+    ]);
   });
 });

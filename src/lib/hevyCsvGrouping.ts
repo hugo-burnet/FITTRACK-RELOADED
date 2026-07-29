@@ -1,59 +1,60 @@
-import type {
-  HevyCsvIssue,
-  HevyParsedExercise,
-  HevyParsedWorkout,
-} from './hevyCsv';
+import type { HevyCsvIssue, HevyParsedExercise, HevyParsedWorkout } from './hevyCsv';
+import { externalExerciseIdentityKey } from './externalExerciseIdentity';
 import type { ValidHevyRow } from './hevyCsvValues';
+
+interface ExerciseBuilder {
+  sourceTitle: string;
+  rows: ValidHevyRow[];
+}
 
 interface WorkoutBuilder {
   row: ValidHevyRow;
-  exerciseRows: Map<string, ValidHevyRow[]>;
+  exercisesByIdentityKey: Map<string, ExerciseBuilder>;
 }
 
 function normalizeImportTitle(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, ' ');
+  return value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim().replace(/\s+/g, ' ');
 }
 
-export function makeHevyImportKey(
-  title: string,
-  startedAt: number,
-  endedAt: number,
-): string {
+export function makeHevyImportKey(title: string, startedAt: number, endedAt: number): string {
   return `hevy_csv:${startedAt}:${endedAt}:${normalizeImportTitle(title)}`;
 }
 
-export function buildHevyWorkouts(
-  rows: readonly ValidHevyRow[],
-): { workouts?: HevyParsedWorkout[]; issues: HevyCsvIssue[] } {
+export function buildHevyWorkouts(rows: readonly ValidHevyRow[]): {
+  workouts?: HevyParsedWorkout[];
+  issues: HevyCsvIssue[];
+} {
   const groups = new Map<string, WorkoutBuilder>();
   for (const row of rows) {
     const key = `${row.title}\u0000${row.startedAt}\u0000${row.endedAt}`;
     const workout = groups.get(key);
     if (workout === undefined) {
+      const identityKey = externalExerciseIdentityKey(row.exerciseTitle);
       groups.set(key, {
         row,
-        exerciseRows: new Map([[row.exerciseTitle, [row]]]),
+        exercisesByIdentityKey: new Map([
+          [identityKey, { sourceTitle: row.exerciseTitle, rows: [row] }],
+        ]),
       });
       continue;
     }
-    const exercise = workout.exerciseRows.get(row.exerciseTitle);
+    const identityKey = externalExerciseIdentityKey(row.exerciseTitle);
+    const exercise = workout.exercisesByIdentityKey.get(identityKey);
     if (exercise === undefined) {
-      workout.exerciseRows.set(row.exerciseTitle, [row]);
+      workout.exercisesByIdentityKey.set(identityKey, {
+        sourceTitle: row.exerciseTitle,
+        rows: [row],
+      });
     } else {
-      exercise.push(row);
+      exercise.rows.push(row);
     }
   }
 
   const issues: HevyCsvIssue[] = [];
-  const workouts = [...groups.values()].map(({ row, exerciseRows }) => {
+  const workouts = [...groups.values()].map(({ row, exercisesByIdentityKey }) => {
     const supersetGroups = new Map<string, number>();
-    const exercises = [...exerciseRows.entries()].map(
-      ([sourceTitle, sourceRows], exerciseIndex): HevyParsedExercise => {
+    const exercises = [...exercisesByIdentityKey.values()].map(
+      ({ sourceTitle, rows: sourceRows }, exerciseIndex): HevyParsedExercise => {
         const indexes = new Set<number>();
         for (const sourceRow of sourceRows) {
           if (indexes.has(sourceRow.set.order)) {
@@ -93,9 +94,7 @@ export function buildHevyWorkouts(
             ? {}
             : { sourceSupersetId: first.sourceSupersetId }),
           supersetGroup,
-          ...(first.exerciseNotes === undefined
-            ? {}
-            : { notes: first.exerciseNotes }),
+          ...(first.exerciseNotes === undefined ? {} : { notes: first.exerciseNotes }),
           sets,
         };
       },
@@ -107,11 +106,7 @@ export function buildHevyWorkouts(
       endedAt: row.endedAt,
       durationSeconds: Math.floor((row.endedAt - row.startedAt) / 1000),
       ...(row.description === undefined ? {} : { notes: row.description }),
-      importKey: makeHevyImportKey(
-        row.title,
-        row.startedAt,
-        row.endedAt,
-      ),
+      importKey: makeHevyImportKey(row.title, row.startedAt, row.endedAt),
       exercises,
     };
   });

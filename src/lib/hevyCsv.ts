@@ -1,21 +1,10 @@
-import type {
-  Equipment,
-  MeasurementType,
-  SetType,
-} from '@/data/types';
-import {
-  inferHevyEquipment,
-  inferHevyMeasurementType,
-} from './hevyExerciseMatch';
+import type { Equipment, MeasurementType, SetType } from '@/data/types';
+import { inferHevyEquipment, inferHevyMeasurementType } from './hevyExerciseMatch';
+import { externalExerciseIdentityKey } from './externalExerciseIdentity';
 import { buildHevyWorkouts } from './hevyCsvGrouping';
 export { makeHevyImportKey } from './hevyCsvGrouping';
 import { readCsvRows } from './hevyCsvRows';
-import {
-  HEVY_HEADERS,
-  parseHevyRow,
-  type HevyHeader,
-  type ValidHevyRow,
-} from './hevyCsvValues';
+import { HEVY_HEADERS, parseHevyRow, type HevyHeader, type ValidHevyRow } from './hevyCsvValues';
 
 export type HevyCsvIssueCode =
   | 'empty_file'
@@ -82,8 +71,7 @@ export interface HevyImportData {
 }
 
 export type HevyCsvResult =
-  | { ok: true; data: HevyImportData }
-  | { ok: false; issues: HevyCsvIssue[] };
+  { ok: true; data: HevyImportData } | { ok: false; issues: HevyCsvIssue[] };
 
 export function parseHevyCsv(text: string): HevyCsvResult {
   const parsedRows = readCsvRows(text);
@@ -98,9 +86,7 @@ export function parseHevyCsv(text: string): HevyCsvResult {
     return { ok: false, issues: [{ line: 1, code: 'empty_file' }] };
   }
 
-  const missing = HEVY_HEADERS.filter(
-    (header) => !headerRow.cells.includes(header),
-  );
+  const missing = HEVY_HEADERS.filter((header) => !headerRow.cells.includes(header));
   if (missing.length > 0) {
     return {
       ok: false,
@@ -116,9 +102,7 @@ export function parseHevyCsv(text: string): HevyCsvResult {
   const unexpected = headerRow.cells.filter((header) => {
     const duplicated = seenHeaders.has(header);
     seenHeaders.add(header);
-    return (
-      duplicated || !HEVY_HEADERS.includes(header as HevyHeader)
-    );
+    return duplicated || !HEVY_HEADERS.includes(header as HevyHeader);
   });
   if (unexpected.length > 0) {
     return {
@@ -147,21 +131,25 @@ export function parseHevyCsv(text: string): HevyCsvResult {
     return { ok: false, issues: built.issues };
   }
   const workouts = built.workouts;
-  const sourceSets = new Map<string, HevyParsedSet[]>();
+  const sourcesByIdentityKey = new Map<string, { sourceTitle: string; sets: HevyParsedSet[] }>();
   for (const workout of workouts) {
     for (const exercise of workout.exercises) {
-      const existing = sourceSets.get(exercise.sourceTitle);
+      const identityKey = externalExerciseIdentityKey(exercise.sourceTitle);
+      const existing = sourcesByIdentityKey.get(identityKey);
       if (existing === undefined) {
-        sourceSets.set(exercise.sourceTitle, [...exercise.sets]);
+        sourcesByIdentityKey.set(identityKey, {
+          sourceTitle: exercise.sourceTitle,
+          sets: [...exercise.sets],
+        });
       } else {
-        existing.push(...exercise.sets);
+        existing.sets.push(...exercise.sets);
       }
     }
   }
 
   const sourceExercises: HevySourceExercise[] = [];
   const measurementIssues: HevyCsvIssue[] = [];
-  for (const [sourceTitle, sets] of sourceSets) {
+  for (const { sourceTitle, sets } of sourcesByIdentityKey.values()) {
     const measurementType = inferHevyMeasurementType(sets);
     if (measurementType === undefined) {
       measurementIssues.push({
@@ -193,8 +181,7 @@ export function parseHevyCsv(text: string): HevyCsvResult {
         (total, workout) =>
           total +
           workout.exercises.reduce(
-            (exerciseTotal, exercise) =>
-              exerciseTotal + exercise.sets.length,
+            (exerciseTotal, exercise) => exerciseTotal + exercise.sets.length,
             0,
           ),
         0,
