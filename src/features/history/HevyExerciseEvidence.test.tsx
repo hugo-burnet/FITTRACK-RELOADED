@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { t } from '@/i18n/fr';
 import { describe, expect, it } from 'vitest';
 import { HevyExerciseEvidence } from './HevyExerciseEvidence';
 
@@ -10,8 +9,24 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 });
 
 describe('HevyExerciseEvidence', () => {
-  it('localise le séparateur des valeurs partielles', () => {
-    expect(t('history.importEvidenceValueSeparator')).toBe(' · ');
+  it('rend les valeurs partielles avec le séparateur localisé', () => {
+    render(
+      <HevyExerciseEvidence
+        observation={{
+          sessionCount: 1,
+          setCount: 1,
+          examples: [
+            {
+              workoutName: 'CONDITIONING',
+              startedAt: Date.UTC(2024, 6, 9, 12),
+              sets: [{ weight: 10, durationSeconds: 45 }],
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('10 kg · 45 s')).toBeVisible();
   });
 
   it('affiche le résumé et des séances exemples localisées', () => {
