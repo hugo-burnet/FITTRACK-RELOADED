@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
-import { listExportSources } from '@/data/repositories/exportQueries';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { listCompletedWorkoutTimestamps } from '@/data/repositories/history';
 import { t } from '@/i18n/fr';
 import { muscleLabel, muscleSetsReading, periodLabel } from '@/i18n/labels';
@@ -20,7 +20,7 @@ import { MuscleBalanceCard } from './MuscleBalanceCard';
  * reading — a set of calf raises and a set of squats do not weigh the same — and
  * it belongs to milestone G4, like tonnage per week.
  *
- * The read is `listExportSources({ kind: 'period' })`, third milestone through
+ * The read is `listHistoricalWorkouts({ kind: 'period' })`, third milestone through
  * the same door. A third query file would be a third definition of "a session
  * that counts", which is the fault 08B spent a session repairing.
  */
@@ -34,7 +34,11 @@ export function MuscleBalanceScreen() {
   const { from, to } = periodBounds(period, openedAt);
   const sources = useLiveQuery(
     () =>
-      listExportSources(from === undefined ? { kind: 'all-history' } : { kind: 'period', from, to }),
+      listHistoricalWorkouts(
+        from === undefined
+          ? { kind: 'all-history' }
+          : { kind: 'period', from, to },
+      ),
     [from, to],
   );
 
@@ -57,10 +61,10 @@ export function MuscleBalanceScreen() {
    */
   const weeks = weeklySessionCounts(
     (sources ?? []).map((source) => ({
-      startedAt: source.workout.startedAt,
-      ...(source.workout.startedTimezoneOffsetMinutes === undefined
+      startedAt: source.startedAt,
+      ...(source.timezoneOffsetMinutes === undefined
         ? {}
-        : { timezoneOffsetMinutes: source.workout.startedTimezoneOffsetMinutes }),
+        : { timezoneOffsetMinutes: source.timezoneOffsetMinutes }),
     })),
     { from, to },
     [],

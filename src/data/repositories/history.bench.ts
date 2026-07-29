@@ -1,5 +1,5 @@
 import { beforeAll, bench } from 'vitest';
-import { listExportSources } from '@/data/repositories/exportQueries';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import {
   listCompletedWorkoutTimestamps,
   listHistoryPage,
@@ -47,7 +47,7 @@ beforeAll(async () => {
   );
 
   const projectionStartedAt = performance.now();
-  const annualSources = await listExportSources(ANNUAL_SCOPE);
+  const annualSources = await listHistoricalWorkouts(ANNUAL_SCOPE);
   const projectionElapsedMs = performance.now() - projectionStartedAt;
 
   console.info(
@@ -88,7 +88,7 @@ bench(
 bench(
   'bounded one-year export projection',
   async () => {
-    await listExportSources(ANNUAL_SCOPE);
+    await listHistoricalWorkouts(ANNUAL_SCOPE);
   },
   OPTIONS,
 );

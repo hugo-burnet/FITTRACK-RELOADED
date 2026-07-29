@@ -6,7 +6,7 @@ import {
   deleteArchivedWorkout,
   getArchivedWorkoutDetail,
 } from '@/data/repositories/history';
-import { listExportSources } from '@/data/repositories/exportQueries';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { t } from '@/i18n/fr';
 import { projectCoachExport } from '@/lib/export/projectCoachExport';
 import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
@@ -37,11 +37,11 @@ export function HistoryDetailScreen() {
   // Serialised ahead of the tap, not on it. The system share sheet only opens
   // while the gesture is still "fresh"; an `await` on Dexie between the click
   // and `navigator.share` spends that credit and Android refuses to open it.
-  // Derived from `listExportSources` rather than from `detail`, because the two
-  // answer different questions — cf. the header of `exportQueries.ts`.
+  // Derived from `listHistoricalWorkouts` rather than from `detail`, because
+  // the two answer different questions.
   const markdown = useLiveQuery(async () => {
     const scope = { kind: 'workout', workoutId } as const;
-    const sources = await listExportSources(scope);
+    const sources = await listHistoricalWorkouts(scope);
     if (sources.length === 0) return '';
 
     return serializeMarkdown(

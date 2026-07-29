@@ -4,7 +4,7 @@ import { addLocalWeeks, startOfLocalWeek } from '@/lib/history';
  * How far back a chart looks.
  *
  * Pure by construction (architecture §7): a key and an instant in, two bounds
- * out. The bounds feed `ExportScope`, so the charts read history through the
+ * out. The bounds feed `HistoricalScope`, so the charts read history through the
  * very queries the exports do — cf. the spec, §1.
  */
 
@@ -22,7 +22,7 @@ const WEEKS: Record<Exclude<PeriodKey, 'all'>, number> = {
 export interface PeriodBounds {
   /** Inclusive. Absent for `'all'` — no invented birthday for the app. */
   from?: number;
-  /** Exclusive, the bounds `listHistoryDay` and `listExportSources` use. */
+  /** Exclusive, the bounds `listHistoryDay` and `listHistoricalWorkouts` use. */
   to: number;
 }
 

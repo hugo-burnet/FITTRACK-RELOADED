@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
-import { listExportSources } from '@/data/repositories/exportQueries';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { listCompletedWorkoutTimestamps } from '@/data/repositories/history';
 import { getWeeklyTrainingGoalHistory } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
@@ -21,7 +21,7 @@ import { WeeklyCard } from './WeeklyCard';
  * four-figure kilos do not read the same way, and mixing them would demand
  * exactly the abstraction this milestone exists not to invent too early.
  *
- * The read is `listExportSources({ kind: 'period' })` — no new query, cf. §2 of
+ * The read is `listHistoricalWorkouts({ kind: 'period' })` — no new query, cf. §2 of
  * the spec. `listCompletedWorkoutTimestamps` would be lighter but returns bare
  * numbers, and a session's week cannot be judged without the offset it was
  * recorded under.
@@ -52,10 +52,14 @@ export function WeeklySessionsScreen() {
   const { from, to } = periodBounds(period, openedAt);
   const sources = useLiveQuery(
     () =>
-      // `'all'` has no lower bound, and `ExportScope` already has the door for
+      // `'all'` has no lower bound, and `HistoricalScope` already has the door for
       // that case — same rules, same reads. Inventing `from: 0` would work and
       // would also be the app quietly deciding when it was born.
-      listExportSources(from === undefined ? { kind: 'all-history' } : { kind: 'period', from, to }),
+      listHistoricalWorkouts(
+        from === undefined
+          ? { kind: 'all-history' }
+          : { kind: 'period', from, to },
+      ),
     [from, to],
   );
 
@@ -64,10 +68,10 @@ export function WeeklySessionsScreen() {
 
   const buckets = weeklySessionCounts(
     (sources ?? []).map((source) => ({
-      startedAt: source.workout.startedAt,
-      ...(source.workout.startedTimezoneOffsetMinutes === undefined
+      startedAt: source.startedAt,
+      ...(source.timezoneOffsetMinutes === undefined
         ? {}
-        : { timezoneOffsetMinutes: source.workout.startedTimezoneOffsetMinutes }),
+        : { timezoneOffsetMinutes: source.timezoneOffsetMinutes }),
     })),
     { from, to },
     goals ?? [],

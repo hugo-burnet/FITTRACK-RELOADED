@@ -1,6 +1,5 @@
 import { addLocalWeeks, startOfLocalWeek } from '@/lib/history';
-import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
-import type { ExportSource } from '@/lib/export/types';
+import type { HistoricalWorkout } from '@/lib/historyProjection';
 import { measurementShape } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { PeriodBounds } from './periods';
@@ -14,40 +13,40 @@ export interface WeeklyVolumeBucket {
   durationSeconds: number;
 }
 
-function sourceTonnage(source: ExportSource): number {
+function sourceTonnage(workout: HistoricalWorkout): number {
   return sessionTotals(
-    source.exercises.flatMap((entry) => {
-      const { measurementType } = resolveExerciseIdentity(entry.row, entry.exercise);
+    workout.exercises.flatMap((exercise) => {
       const weightRole =
-        measurementType === undefined ? undefined : measurementShape(measurementType).weightRole;
-      return entry.sets.map((set) => ({ set, weightRole }));
+        exercise.measurementType === undefined
+          ? undefined
+          : measurementShape(exercise.measurementType).weightRole;
+      return exercise.sets.map((set) => ({ set, weightRole }));
     }),
   ).tonnage;
 }
 
 export function weeklyVolumeBuckets(
-  sources: readonly ExportSource[],
+  sources: readonly HistoricalWorkout[],
   bounds: PeriodBounds,
   hasEarlierHistory = false,
 ): WeeklyVolumeBucket[] {
   const totals = new Map<number, { tonnage: number; durationSeconds: number }>();
 
   for (const source of sources) {
-    const { workout } = source;
     if (
-      (bounds.from !== undefined && workout.startedAt < bounds.from) ||
-      workout.startedAt >= bounds.to
+      (bounds.from !== undefined && source.startedAt < bounds.from) ||
+      source.startedAt >= bounds.to
     ) {
       continue;
     }
 
     const weekStart = weekStartOf(
-      workout.startedAt,
-      workout.startedTimezoneOffsetMinutes,
+      source.startedAt,
+      source.timezoneOffsetMinutes,
     );
     const current = totals.get(weekStart) ?? { tonnage: 0, durationSeconds: 0 };
     current.tonnage += sourceTonnage(source);
-    current.durationSeconds += workout.durationSeconds;
+    current.durationSeconds += source.durationSeconds;
     totals.set(weekStart, current);
   }
 

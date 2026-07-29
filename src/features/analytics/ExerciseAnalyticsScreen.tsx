@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { getExercise } from '@/data/repositories/exercises';
-import { listExportSources } from '@/data/repositories/exportQueries';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { t } from '@/i18n/fr';
 import { metricLabel, metricReading, periodLabel } from '@/i18n/labels';
 import {
@@ -21,7 +21,7 @@ import { ProgressCard } from './ProgressCard';
  * allows. Cf. `docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md`.
  *
  * Every rule about *what counts* lives in `lib/analytics/` and every rule about
- * *what is read* lives in `listExportSources`; this screen orchestrates and
+ * *what is read* lives in `listHistoricalWorkouts`; this screen orchestrates and
  * displays, which is all §7 of the architecture lets it do.
  */
 
@@ -65,7 +65,12 @@ export function ExerciseAnalyticsScreen() {
   const exercise = useLiveQuery(async () => (await getExercise(exerciseId)) ?? null, [exerciseId]);
   const sources = useLiveQuery(() => {
     const { from, to } = periodBounds(period, openedAt);
-    return listExportSources({ kind: 'exercise', exerciseId, from, to });
+    return listHistoricalWorkouts({
+      kind: 'exercise',
+      exerciseId,
+      from,
+      to,
+    });
   }, [exerciseId, period, openedAt]);
 
   if (exercise === null) {

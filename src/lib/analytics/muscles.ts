@@ -1,6 +1,8 @@
-import { MUSCLE_GROUPS, type MuscleGroup, type WorkoutSet } from '@/data/types';
-import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
-import type { ExportSource } from '@/lib/export/types';
+import { MUSCLE_GROUPS, type MuscleGroup } from '@/data/types';
+import type {
+  HistoricalSet,
+  HistoricalWorkout,
+} from '@/lib/historyProjection';
 import { isWorkingSet } from '@/lib/records';
 
 /**
@@ -67,9 +69,9 @@ export const MUSCLE_SCOPE: Record<MuscleGroup, MuscleScope> = {
 
 /** One session row, reduced to what a count per muscle needs. */
 export interface MuscleRow {
-  /** Resolved by `resolveExerciseIdentity`: the snapshot, then the library. */
+  /** Resolved by the historical repository: snapshot, then library. */
   primaryMuscle?: MuscleGroup;
-  sets: WorkoutSet[];
+  sets: HistoricalSet[];
 }
 
 export interface MuscleCount {
@@ -146,21 +148,19 @@ export function muscleBalance(rows: readonly MuscleRow[]): MuscleBalance {
 }
 
 /**
- * The repository's rows, under the identity **each session was recorded with**.
- *
- * The only real decision here is not this module's to make: `resolveExerciseIdentity`
- * (milestone 08B) owns it — the row's snapshot, then today's library, then
- * nothing, field by field. Reading the library first is what made a rename, and
- * would make a reclassification, rewrite the past.
+ * Historical exercises, already under the identity each session recorded.
+ * Identity resolution belongs to the repository seam; this pure projection
+ * only reduces the canonical DTO to the fields the balance needs.
  */
-export function toMuscleRows(sources: readonly ExportSource[]): MuscleRow[] {
-  return sources.flatMap((source) =>
-    source.exercises.map((entry) => {
-      const { primaryMuscle } = resolveExerciseIdentity(entry.row, entry.exercise);
-      return {
-        ...(primaryMuscle === undefined ? {} : { primaryMuscle }),
-        sets: entry.sets,
-      };
-    }),
+export function toMuscleRows(
+  workouts: readonly HistoricalWorkout[],
+): MuscleRow[] {
+  return workouts.flatMap((workout) =>
+    workout.exercises.map((exercise) => ({
+      ...(exercise.primaryMuscle === undefined
+        ? {}
+        : { primaryMuscle: exercise.primaryMuscle }),
+      sets: exercise.sets,
+    })),
   );
 }

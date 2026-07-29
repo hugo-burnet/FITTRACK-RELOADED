@@ -23,7 +23,9 @@ export interface BestSets {
 }
 
 /** 0 whenever either half is missing: a plank and a pull-up have no tonnage. */
-export function setVolume(set: WorkoutSet): number {
+export function setVolume(
+  set: Pick<WorkoutSet, 'weight' | 'reps'>,
+): number {
   if (set.weight === undefined || set.reps === undefined) return 0;
   return set.weight * set.reps;
 }
@@ -68,7 +70,9 @@ function pickBest(
  * *scores* them: a history row reading "4 séries · 100 kg × 5" where the 4
  * includes a warm-up and the 100 kg does not is two answers to one question.
  */
-export const isWorkingSet = (set: WorkoutSet): boolean => set.setType !== 'warmup';
+export const isWorkingSet = (
+  set: Pick<WorkoutSet, 'setType'>,
+): boolean => set.setType !== 'warmup';
 
 export function bestSets(sets: WorkoutSet[]): BestSets {
   const scored = sets.filter(isWorkingSet);

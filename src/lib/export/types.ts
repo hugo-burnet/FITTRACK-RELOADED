@@ -1,14 +1,11 @@
 import type {
   Equipment,
-  Exercise,
   MeasurementType,
   MuscleGroup,
   SetType,
   Side,
-  Workout,
-  WorkoutExercise,
-  WorkoutSet,
 } from '@/data/types';
+import type { HistoricalScope } from '@/lib/historyProjection';
 import type { SessionTotals } from '@/lib/volume';
 
 /**
@@ -26,13 +23,7 @@ import type { SessionTotals } from '@/lib/volume';
  * "one session" and would let "no filter at all" mean either the whole history
  * or a bug.
  */
-export type ExportScope =
-  | { kind: 'workout'; workoutId: string }
-  /** `from`/`to` narrow the exercise's own history; absent means all of it. */
-  | { kind: 'exercise'; exerciseId: string; from?: number; to?: number }
-  /** `from` inclusive, `to` exclusive — the bounds `listHistoryDay` already uses. */
-  | { kind: 'period'; from: number; to: number }
-  | { kind: 'all-history' };
+export type ExportScope = HistoricalScope;
 
 export interface ExportOptions {
   /**
@@ -54,22 +45,6 @@ export const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
   includeNotes: true,
   includeIds: false,
 };
-
-/**
- * The rows one session contributes, as the repository hands them over.
- *
- * `exercise` is today's library row — kept **even when soft-deleted**, because a
- * deleted exercise is still the exercise that was performed. It is only ever a
- * fallback: the row's own snapshot wins, cf. `projectCoachExport`.
- */
-export interface ExportSource {
-  workout: Workout;
-  exercises: Array<{
-    row: WorkoutExercise;
-    exercise: Exercise | undefined;
-    sets: WorkoutSet[];
-  }>;
-}
 
 export interface CoachExport {
   format: 'fittrack-coach-export';

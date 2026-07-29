@@ -1,4 +1,4 @@
-import type { WorkoutSet } from '@/data/types';
+import type { SetType } from '@/data/types';
 import type { WeightRole } from './measurement';
 import { isWorkingSet, setVolume } from './records';
 
@@ -26,8 +26,16 @@ export interface SessionTotals {
  * One set and what its kilos mean, which only the exercise's measurement type
  * knows. Absent for a set whose exercise has no weight field at all.
  */
+export interface VolumeSet {
+  setType: SetType;
+  weight?: number;
+  reps?: number;
+  durationSeconds?: number;
+  distanceMeters?: number;
+}
+
 export interface VolumeEntry {
-  set: WorkoutSet;
+  set: VolumeSet;
   weightRole?: WeightRole;
 }
 

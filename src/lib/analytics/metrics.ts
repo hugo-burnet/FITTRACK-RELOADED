@@ -1,4 +1,5 @@
-import type { MeasurementType, WorkoutSet } from '@/data/types';
+import type { MeasurementType } from '@/data/types';
+import type { HistoricalSet } from '@/lib/historyProjection';
 import { measurementShape } from '@/lib/measurement';
 import { isWorkingSet, setVolume } from '@/lib/records';
 import { sessionTotals } from '@/lib/volume';
@@ -95,7 +96,7 @@ export interface AnalyticsSession {
   startedAt: number;
   /** From the snapshot, falling back to the library. May be absent. */
   measurementType?: MeasurementType;
-  sets: WorkoutSet[];
+  sets: HistoricalSet[];
 }
 
 export interface MetricPoint {
@@ -106,8 +107,8 @@ export interface MetricPoint {
 
 /** Largest of a mapped figure, `undefined` when nothing carries one. */
 function best(
-  sets: WorkoutSet[],
-  read: (set: WorkoutSet) => number | undefined,
+  sets: HistoricalSet[],
+  read: (set: HistoricalSet) => number | undefined,
   pick: (a: number, b: number) => number,
 ): number | undefined {
   let found: number | undefined;

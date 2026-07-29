@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
-import { listExportSources } from '@/data/repositories/exportQueries';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { listCompletedWorkoutTimestamps } from '@/data/repositories/history';
-import type { ExportSource } from '@/lib/export/types';
+import type { HistoricalWorkout } from '@/lib/historyProjection';
 import { t } from '@/i18n/fr';
 import {
   periodLabel,
@@ -29,7 +29,7 @@ const longDate = (at: number): string =>
 interface ResolvedVolumeQuery {
   from: number | undefined;
   to: number;
-  sources: ExportSource[];
+  sources: HistoricalWorkout[];
   allStarts: number[];
 }
 
@@ -51,7 +51,7 @@ export function WeeklyVolumeScreen() {
   const { from, to } = periodBounds(period, openedAt);
   const sources = useLiveQuery(
     () =>
-      listExportSources(
+      listHistoricalWorkouts(
         from === undefined ? { kind: 'all-history' } : { kind: 'period', from, to },
       ),
     [from, to],
