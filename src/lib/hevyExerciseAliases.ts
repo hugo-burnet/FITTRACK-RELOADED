@@ -1,4 +1,4 @@
-export const HEVY_EXERCISE_SLUG_BY_KEY: Readonly<
+export const HEVY_EXERCISE_SUGGESTION_SLUG_BY_KEY: Readonly<
   Record<string, string>
 > = Object.freeze({
   'abduction hanche|other': 'hip-abduction-machine',

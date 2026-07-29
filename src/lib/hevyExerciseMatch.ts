@@ -4,7 +4,7 @@ import type {
   MeasurementType,
 } from '@/data/types';
 import type { HevyParsedSet } from './hevyCsv';
-import { HEVY_EXERCISE_SLUG_BY_KEY } from './hevyExerciseAliases';
+import { HEVY_EXERCISE_SUGGESTION_SLUG_BY_KEY } from './hevyExerciseAliases';
 
 const COMBINING_MARKS = /\p{M}/gu;
 const NON_WORDS = /[^\p{L}\p{N}]+/gu;
@@ -159,7 +159,7 @@ export function findSuggestedHevyExercise(
 ): Exercise | undefined {
   const sourceEquipment = inferHevyEquipment(sourceTitle);
   const key = hevyExerciseSourceKey(sourceTitle);
-  const slug = HEVY_EXERCISE_SLUG_BY_KEY[key];
+  const slug = HEVY_EXERCISE_SUGGESTION_SLUG_BY_KEY[key];
   if (slug === undefined) return undefined;
 
   return exercises.find(
@@ -170,11 +170,6 @@ export function findSuggestedHevyExercise(
         exercise.equipment === sourceEquipment),
   );
 }
-
-/**
- * @deprecated Task 5 removes the final caller; Task 6 removes this alias.
- */
-export const findCanonicalHevyExercise = findSuggestedHevyExercise;
 
 function diceCoefficient(
   source: ReadonlySet<string>,
