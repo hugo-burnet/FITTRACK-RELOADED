@@ -2,6 +2,29 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-07-29 (**chargement des périodes d’analyse
+centralisé**). `useHistoricalPeriod(period, openedAt)` est désormais la seam
+commune à « Séances par semaine », « Séries par muscle » et « Volume
+d’entraînement ». Le hook calcule la fenêtre, choisit la portée historique, lit
+les séances et l’antériorité, puis rend un snapshot cohérent avec son état
+`stale`.
+
+**Comportement préservé.** Les moteurs analytiques, périodes, tris, snapshots et
+règles de séries n’ont pas changé. L’écran de progression d’un exercice garde sa
+lecture spécialisée. Au premier chargement, les trois analyses globales
+n’annoncent plus un faux état vide ; pendant un changement de période, elles ne
+peuvent plus associer les nouvelles bornes à l’ancien résultat Dexie.
+
+**Preuves.** Le cycle TDD couvre la fenêtre bornée, `Tout`, l’historique
+antérieur et la conservation atomique du snapshot précédent. Lint, typecheck,
+**763 tests** dans 58 fichiers et build de production passent. Aucun changement
+de schéma, migration, donnée ou texte UI.
+
+**Checkpoint téléphone :** ouvrir Historique → Analyses, puis les trois analyses
+globales. Passer de 12 à 4 semaines puis à `Tout` : l’ancien rendu doit rester
+brièvement visible à opacité réduite, sans faux message vide. Les chiffres,
+semaines et répartitions doivent rester identiques.
+
 **Dernière mise à jour :** 2026-07-29 (**projection historique — P0 corrigé,
 module approfondi**). La lecture annuelle bornée respecte désormais la porte
 opt-in de 5 000 ms sur le dataset de référence de 2 000 séances. Le schéma Dexie,

@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
-import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
-import { listCompletedWorkoutTimestamps } from '@/data/repositories/history';
 import { t } from '@/i18n/fr';
 import { muscleLabel, muscleSetsReading, periodLabel } from '@/i18n/labels';
 import { muscleBalance, toMuscleRows } from '@/lib/analytics/muscles';
-import { PERIOD_KEYS, periodBounds, type PeriodKey } from '@/lib/analytics/periods';
+import { PERIOD_KEYS, type PeriodKey } from '@/lib/analytics/periods';
 import { weeklySessionCounts } from '@/lib/analytics/weeks';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
 import { MuscleBalanceCard } from './MuscleBalanceCard';
+import { useHistoricalPeriod } from './useHistoricalPeriod';
 
 /**
  * RF-42 — how the working sets of a period are shared out between muscles.
@@ -20,9 +18,8 @@ import { MuscleBalanceCard } from './MuscleBalanceCard';
  * reading — a set of calf raises and a set of squats do not weigh the same — and
  * it belongs to milestone G4, like tonnage per week.
  *
- * The read is `listHistoricalWorkouts({ kind: 'period' })`, third milestone through
- * the same door. A third query file would be a third definition of "a session
- * that counts", which is the fault 08B spent a session repairing.
+ * `useHistoricalPeriod` keeps this screen on the same historical seam and
+ * returns the window and its earlier-history signal as one coherent snapshot.
  */
 export function MuscleBalanceScreen() {
   const navigate = useNavigate();
@@ -31,27 +28,9 @@ export function MuscleBalanceScreen() {
   const [openedAt] = useState(() => Date.now());
   const [period, setPeriod] = useState<PeriodKey>('12w');
 
-  const { from, to } = periodBounds(period, openedAt);
-  const sources = useLiveQuery(
-    () =>
-      listHistoricalWorkouts(
-        from === undefined
-          ? { kind: 'all-history' }
-          : { kind: 'period', from, to },
-      ),
-    [from, to],
-  );
-
-  /**
-   * Bare timestamps, for one question only: did anything happen **before** this
-   * window? The distribution itself does not care — a muscle does not begin to
-   * exist on a date — but the **per-week rate** does, and it inherits milestone
-   * G2's lesson exactly: three weeks of history divided by a twelve-week window
-   * reports a third of the real rhythm.
-   */
-  const allStarts = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
-  const hasEarlierHistory =
-    from !== undefined && (allStarts ?? []).some((startedAt) => startedAt < from);
+  const historicalPeriod = useHistoricalPeriod(period, openedAt);
+  const data = historicalPeriod.data;
+  const workouts = data?.workouts ?? [];
 
   /**
    * The week count comes from G2's own engine rather than from `WEEKS[period]`,
@@ -59,21 +38,26 @@ export function MuscleBalanceScreen() {
    * two different numbers — including the case they were both written for, a
    * window wider than the history behind it.
    */
-  const weeks = weeklySessionCounts(
-    (sources ?? []).map((source) => ({
-      startedAt: source.startedAt,
-      ...(source.timezoneOffsetMinutes === undefined
-        ? {}
-        : { timezoneOffsetMinutes: source.timezoneOffsetMinutes }),
-    })),
-    { from, to },
-    [],
-    hasEarlierHistory,
-  ).length;
+  const weeks =
+    data === undefined
+      ? 0
+      : weeklySessionCounts(
+          workouts.map((workout) => ({
+            startedAt: workout.startedAt,
+            ...(workout.timezoneOffsetMinutes === undefined
+              ? {}
+              : {
+                  timezoneOffsetMinutes:
+                    workout.timezoneOffsetMinutes,
+                }),
+          })),
+          data.bounds,
+          [],
+          data.hasEarlierHistory,
+        ).length;
 
-  const balance = muscleBalance(toMuscleRows(sources ?? []));
+  const balance = muscleBalance(toMuscleRows(workouts));
   const rankedTotal = balance.ranked.reduce((sum, entry) => sum + entry.sets, 0);
-  const stale = sources === undefined || allStarts === undefined;
 
   return (
     <Screen title={t('muscles.title')} onBack={() => void navigate(-1)}>
@@ -86,7 +70,7 @@ export function MuscleBalanceScreen() {
           />
         </div>
 
-        {balance.total === 0 ? (
+        {data === undefined ? null : balance.total === 0 ? (
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">
               {t('muscles.emptyPeriod')}
@@ -109,7 +93,11 @@ export function MuscleBalanceScreen() {
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('muscles.noRegion')}</p>
           </Card>
         ) : (
-          <MuscleBalanceCard balance={balance} weeks={weeks} stale={stale} />
+          <MuscleBalanceCard
+            balance={balance}
+            weeks={weeks}
+            stale={historicalPeriod.stale}
+          />
         )}
 
         {/* The three groups with no anatomical region, and the rows whose muscle
