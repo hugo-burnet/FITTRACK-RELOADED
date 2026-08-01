@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   Exercise,
   ExternalExerciseBinding,
@@ -339,20 +339,115 @@ describe('Hevy import mapping draft', () => {
     });
   });
 
-  it('exports exact-identity resolutions', () => {
+  it('uses the identity registry to materialize authoritative import entities', () => {
     const initial = createHevyImportDraft(data, preparation());
     const next = setHevyImportResolution(
       initial,
       source.sourceTitle,
       { kind: 'existing', exerciseId: bench.id },
     );
-
-    expect(resolutionsFromHevyDraft(next)).toEqual({
-      'developpe couche barre': {
-        kind: 'existing',
-        exerciseId: bench.id,
+    const authoritative = {
+      exercisesByIdentityKey: new Map([
+        ['developpe couche barre', bench],
+      ]),
+      exercisesToCreate: [],
+      bindingsToWrite: [binding(bench.id)],
+    };
+    const resolve = vi.fn().mockReturnValue(authoritative);
+    const draft = {
+      ...next,
+      identityRegistry: {
+        ...next.identityRegistry!,
+        resolve,
       },
-    });
+    };
+
+    expect(resolutionsFromHevyDraft(draft)).toBe(authoritative);
+    expect(resolve).toHaveBeenCalledWith(
+      next.rows.map((row) => row.review),
+      [
+        {
+          identityKey: 'developpe couche barre',
+          kind: 'existing',
+          exerciseId: bench.id,
+        },
+      ],
+      next.importedAt,
+    );
+  });
+
+  it('materializes an explicit user choice through the real identity registry', () => {
+    const importedAt = 7_500;
+    const initial = createHevyImportDraft(
+      data,
+      preparation(),
+      importedAt,
+    );
+    const draft = setHevyImportResolution(
+      initial,
+      source.sourceTitle,
+      { kind: 'existing', exerciseId: bench.id },
+    );
+
+    const resolution = resolutionsFromHevyDraft(draft);
+    const identityKey = draft.rows[0]!.review.identityKey;
+
+    expect(resolution.exercisesByIdentityKey.get(identityKey)).toBe(
+      bench,
+    );
+    expect(resolution.exercisesToCreate).toEqual([]);
+    expect(resolution.bindingsToWrite).toEqual([
+      expect.objectContaining({
+        source: 'hevy_csv',
+        identityKey,
+        sourceTitle: source.sourceTitle,
+        exerciseId: bench.id,
+        verification: 'user',
+        confirmedAt: importedAt,
+      }),
+    ]);
+  });
+
+  it('reuses a valid user binding without materializing a new confirmation', () => {
+    const draft = createHevyImportDraft(
+      data,
+      preparation({ confirmedBindings: [binding(bench.id)] }),
+      8_500,
+    );
+
+    const resolution = resolutionsFromHevyDraft(draft);
+    const identityKey = draft.rows[0]!.review.identityKey;
+
+    expect(resolution.exercisesByIdentityKey.get(identityKey)).toBe(
+      bench,
+    );
+    expect(resolution.exercisesToCreate).toEqual([]);
+    expect(resolution.bindingsToWrite).toEqual([]);
+  });
+
+  it('does not pass an unconfirmed suggestion as a user decision', () => {
+    const draft = createHevyImportDraft(data, preparation());
+    const resolve = vi.fn();
+    const forged = {
+      ...draft,
+      identityRegistry: {
+        ...draft.identityRegistry!,
+        resolve,
+      },
+      rows: draft.rows.map((row) => ({
+        ...row,
+        resolution: {
+          kind: 'existing' as const,
+          exerciseId: bench.id,
+        },
+        resolutionSource: undefined,
+      })),
+    };
+
+    expect(() => resolutionsFromHevyDraft(forged)).toThrow(
+      'Unresolved Hevy exercise',
+    );
+    expect(resolve).not.toHaveBeenCalled();
   });
 
   it('refuses to export an unresolved draft', () => {

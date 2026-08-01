@@ -6,7 +6,10 @@ import type { Exercise } from '@/data/types';
 import {
   createExternalExerciseIdentityRegistry,
   externalExerciseIdentityKey,
+  type ExternalExerciseDecision,
+  type ExternalExerciseIdentityRegistry,
   type ExternalExerciseObservation,
+  type ExternalExerciseResolution,
   type ExternalExerciseReviewEntry,
 } from '@/lib/externalExerciseIdentity';
 import {
@@ -16,7 +19,6 @@ import {
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
 import type {
   HevyExerciseResolution,
-  HevyExerciseResolutions,
   HevyImportPreparation,
 } from '@/data/repositories/hevyImport';
 import { nextHevyImportFolderName } from '@/data/repositories/hevyRoutineImport';
@@ -35,6 +37,7 @@ export interface HevyImportDraft {
   routineFolderName?: string;
   routineNames: string[];
   rows: HevyMappingDraftRow[];
+  identityRegistry?: ExternalExerciseIdentityRegistry;
 }
 
 function buildObservations(
@@ -206,6 +209,7 @@ export function createHevyImportDraft(
       : { routineFolderName }),
     routineNames: routineSources.map((routine) => routine.name),
     rows,
+    identityRegistry: registry,
   };
 }
 
@@ -246,17 +250,38 @@ export function unresolvedHevySources(
 
 export function resolutionsFromHevyDraft(
   draft: HevyImportDraft,
-): HevyExerciseResolutions {
-  const resolutions: HevyExerciseResolutions = {};
+): ExternalExerciseResolution {
+  const decisions: ExternalExerciseDecision[] = [];
   for (const row of draft.rows) {
-    if (row.resolution === undefined) {
-      throw new Error(
-        `Unresolved Hevy exercise: ${row.source.sourceTitle}`,
-      );
+    if (
+      row.review.status === 'confirmed' &&
+      row.resolutionSource === 'binding' &&
+      row.resolution !== undefined
+    ) {
+      continue;
     }
-    resolutions[row.review.identityKey] = row.resolution;
+    if (
+      row.resolutionSource === 'user' &&
+      row.resolution !== undefined
+    ) {
+      decisions.push({
+        identityKey: row.review.identityKey,
+        ...row.resolution,
+      });
+      continue;
+    }
+    throw new Error(
+      `Unresolved Hevy exercise: ${row.source.sourceTitle}`,
+    );
   }
-  return resolutions;
+  if (draft.identityRegistry === undefined) {
+    throw new Error('Missing Hevy exercise identity registry');
+  }
+  return draft.identityRegistry.resolve(
+    draft.rows.map((row) => row.review),
+    decisions,
+    draft.importedAt,
+  );
 }
 
 export function customResolutionFor(

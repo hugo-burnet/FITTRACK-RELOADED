@@ -10,9 +10,11 @@ import type {
   HevyParsedWorkout,
   HevySourceExercise,
 } from '@/lib/hevyCsv';
-import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
+import {
+  externalExerciseIdentityKey,
+  type ExternalExerciseResolution,
+} from '@/lib/externalExerciseIdentity';
 import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
-import { newEntity } from './base';
 import type { NewExercise } from './exercises';
 import { listExternalExerciseBindings } from './externalExerciseBindings';
 import {
@@ -24,11 +26,6 @@ import { buildHevyWorkoutEntities } from './hevyWorkoutEntities';
 export type HevyExerciseResolution =
   | { kind: 'existing'; exerciseId: string }
   | { kind: 'custom'; exercise: NewExercise };
-
-export type HevyExerciseResolutions = Record<
-  string,
-  HevyExerciseResolution
->;
 
 export interface HevyImportPreparation {
   exercises: Exercise[];
@@ -106,14 +103,60 @@ interface ResolvedExercises {
   bindings: ExternalExerciseBinding[];
 }
 
-async function resolveExercises(
+function assertAuthoritativeBinding(
+  binding: ExternalExerciseBinding,
+  sourceKey: string,
+  source: HevySourceExercise,
+  exercise: Exercise,
+): void {
+  if (
+    binding.source !== 'hevy_csv' ||
+    binding.identityKey !== sourceKey ||
+    binding.sourceTitle !== source.sourceTitle ||
+    binding.exerciseId !== exercise.id ||
+    binding.measurementType !== source.measurementType ||
+    binding.equipmentHint !== source.equipment ||
+    binding.verification !== 'user' ||
+    binding.deletedAt !== 0
+  ) {
+    throw new Error(
+      `Invalid authoritative Hevy exercise binding: ${sourceKey}`,
+    );
+  }
+}
+
+async function validateResolution(
   sourceKeysToResolve: readonly string[],
   sourceByIdentityKey: ReadonlyMap<string, HevySourceExercise>,
-  resolutions: Readonly<HevyExerciseResolutions>,
+  resolution: ExternalExerciseResolution,
   importedAt: number,
 ): Promise<ResolvedExercises> {
   const bySourceKey = new Map<string, Exercise>();
-  const created: Exercise[] = [];
+  const requestedKeys = new Set(sourceKeysToResolve);
+  const createdById = new Map(
+    resolution.exercisesToCreate.map((exercise) => [
+      exercise.id,
+      exercise,
+    ]),
+  );
+  if (createdById.size !== resolution.exercisesToCreate.length) {
+    throw new Error('Duplicate authoritative Hevy exercise');
+  }
+  const referencedCreatedIds = new Set<string>();
+  const incomingBindingsByIdentityKey = new Map<
+    string,
+    ExternalExerciseBinding
+  >();
+  for (const binding of resolution.bindingsToWrite) {
+    if (
+      incomingBindingsByIdentityKey.has(binding.identityKey)
+    ) {
+      throw new Error(
+        `Duplicate authoritative Hevy exercise binding: ${binding.identityKey}`,
+      );
+    }
+    incomingBindingsByIdentityKey.set(binding.identityKey, binding);
+  }
   const existingBindingGroups = new Map<
     string,
     ExternalExerciseBinding[]
@@ -125,29 +168,46 @@ async function resolveExercises(
   }
   const bindings: ExternalExerciseBinding[] = [];
 
+  for (const key of resolution.exercisesByIdentityKey.keys()) {
+    if (!requestedKeys.has(key)) {
+      throw new Error(
+        `Unexpected authoritative Hevy exercise resolution: ${key}`,
+      );
+    }
+  }
+
   for (const sourceKey of sourceKeysToResolve) {
-    const resolution = resolutions[sourceKey];
     const source = sourceByIdentityKey.get(sourceKey);
-    if (resolution === undefined) {
+    const resolvedExercise =
+      resolution.exercisesByIdentityKey.get(sourceKey);
+    if (resolvedExercise === undefined) {
       throw new Error(`Missing Hevy exercise resolution: ${sourceKey}`);
     }
     if (source === undefined) {
       throw new Error(`Missing Hevy exercise source: ${sourceKey}`);
     }
 
-    let exercise: Exercise;
-    if (resolution.kind === 'existing') {
-      const existing = await db.exercises.get(resolution.exerciseId);
-      if (existing === undefined || existing.deletedAt !== 0) {
-        throw new Error(`Hevy exercise target is unavailable: ${sourceKey}`);
+    const created = createdById.get(resolvedExercise.id);
+    let exercise: Exercise | undefined;
+    if (created !== undefined) {
+      if (
+        created.deletedAt !== 0 ||
+        created.isCustom !== 1 ||
+        (await db.exercises.get(created.id)) !== undefined
+      ) {
+        throw new Error(
+          `Hevy exercise target is unavailable: ${sourceKey}`,
+        );
       }
-      exercise = existing;
+      referencedCreatedIds.add(created.id);
+      exercise = created;
     } else {
-      exercise = newEntity<Exercise>({
-        ...resolution.exercise,
-        isCustom: 1,
-      });
-      created.push(exercise);
+      exercise = await db.exercises.get(resolvedExercise.id);
+      if (exercise === undefined || exercise.deletedAt !== 0) {
+        throw new Error(
+          `Hevy exercise target is unavailable: ${sourceKey}`,
+        );
+      }
     }
     if (exercise.measurementType !== source.measurementType) {
       throw new Error(
@@ -157,57 +217,76 @@ async function resolveExercises(
 
     bySourceKey.set(sourceKey, exercise);
     const existingGroup = existingBindingGroups.get(sourceKey) ?? [];
-    const existingBinding = existingGroup.reduce<
-      ExternalExerciseBinding | undefined
-    >(
-      (latest, binding) =>
-        latest === undefined ||
+    const incomingBinding =
+      incomingBindingsByIdentityKey.get(sourceKey);
+    if (incomingBinding !== undefined) {
+      assertAuthoritativeBinding(
+        incomingBinding,
+        sourceKey,
+        source,
+        exercise,
+      );
+    }
+    const reusableBindings = existingGroup.filter(
+      (binding) =>
+        binding.verification === 'user' &&
+        binding.exerciseId === exercise.id &&
+        binding.measurementType === source.measurementType,
+    );
+    if (
+      incomingBinding === undefined &&
+      reusableBindings.length === 0
+    ) {
+      throw new Error(
+        `Missing authoritative Hevy exercise binding: ${sourceKey}`,
+      );
+    }
+    const bindingToKeep =
+      incomingBinding ??
+      reusableBindings.reduce((latest, binding) =>
         binding.confirmedAt > latest.confirmedAt
           ? binding
           : latest,
-      undefined,
-    );
+      );
     bindings.push(
       ...existingGroup
-        .filter((binding) => binding.id !== existingBinding?.id)
+        .filter((binding) => binding.id !== bindingToKeep.id)
         .map((binding) => ({
           ...binding,
           updatedAt: importedAt,
           deletedAt: importedAt,
         })),
     );
-    bindings.push(
-      existingBinding === undefined
-        ? newEntity<ExternalExerciseBinding>({
-            source: 'hevy_csv',
-            identityKey: sourceKey,
-            sourceTitle: source.sourceTitle,
-            exerciseId: exercise.id,
-            measurementType: source.measurementType,
-            equipmentHint: source.equipment,
-            verification: 'user',
-            confirmedAt: importedAt,
-          })
-        : {
-            ...existingBinding,
-            sourceTitle: source.sourceTitle,
-            exerciseId: exercise.id,
-            measurementType: source.measurementType,
-            equipmentHint: source.equipment,
-            verification: 'user',
-            confirmedAt: importedAt,
-            updatedAt: importedAt,
-            deletedAt: 0,
-          },
-    );
+    if (incomingBinding !== undefined) {
+      bindings.push(incomingBinding);
+    }
   }
 
-  return { bySourceKey, created, bindings };
+  for (const exercise of resolution.exercisesToCreate) {
+    if (!referencedCreatedIds.has(exercise.id)) {
+      throw new Error(
+        `Unexpected authoritative Hevy exercise: ${exercise.id}`,
+      );
+    }
+  }
+  for (const key of incomingBindingsByIdentityKey.keys()) {
+    if (!requestedKeys.has(key)) {
+      throw new Error(
+        `Unexpected authoritative Hevy exercise binding: ${key}`,
+      );
+    }
+  }
+
+  return {
+    bySourceKey,
+    created: resolution.exercisesToCreate,
+    bindings,
+  };
 }
 
 export async function importHevyWorkouts(
   data: HevyImportData,
-  resolutions: Readonly<HevyExerciseResolutions>,
+  resolution: ExternalExerciseResolution,
   importedAt = Date.now(),
 ): Promise<HevyImportResult> {
   return db.transaction(
@@ -249,10 +328,10 @@ export async function importHevyWorkouts(
           source,
         ]),
       );
-      const resolved = await resolveExercises(
+      const resolved = await validateResolution(
         sourceKeys(importable),
         sourceByIdentityKey,
-        resolutions,
+        resolution,
         importedAt,
       );
       const entities = buildHevyWorkoutEntities(

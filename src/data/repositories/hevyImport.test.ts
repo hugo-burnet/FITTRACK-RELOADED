@@ -11,7 +11,13 @@ import {
   type HevyImportData,
   type HevyParsedWorkout,
 } from '@/lib/hevyCsv';
-import { externalExerciseIdentityKey } from '@/lib/externalExerciseIdentity';
+import {
+  createExternalExerciseIdentityRegistry,
+  externalExerciseIdentityKey,
+  type ExternalExerciseDecision,
+  type ExternalExerciseObservation,
+  type ExternalExerciseResolution,
+} from '@/lib/externalExerciseIdentity';
 import { resetDb } from '@/test/resetDb';
 import fixture from '@/test/fixtures/hevy-workout-data.csv?raw';
 import { newEntity } from './base';
@@ -22,12 +28,17 @@ import {
 import {
   importHevyWorkouts,
   prepareHevyImport,
-  type HevyExerciseResolutions,
+  type HevyExerciseResolution,
 } from './hevyImport';
 import {
   getLastPerformance,
   listRecordSets,
 } from './workoutHistory';
+
+type HevyExerciseResolutions = Record<
+  string,
+  HevyExerciseResolution
+>;
 
 const data: HevyImportData = {
   workouts: [
@@ -96,6 +107,17 @@ const data: HevyImportData = {
   setCount: 3,
 };
 
+const benchOnlyData: HevyImportData = {
+  ...data,
+  workouts: data.workouts.map((workout) => ({
+    ...workout,
+    exercises: workout.exercises.slice(0, 1),
+  })),
+  sourceExercises: data.sourceExercises.slice(0, 1),
+  exerciseCount: 1,
+  setCount: 2,
+};
+
 function customExercise(
   name: string,
   measurementType: Exercise['measurementType'] = 'weight_reps',
@@ -121,6 +143,60 @@ function resolutions(benchId: string): HevyExerciseResolutions {
       exercise: customExercise('Planche', 'time_only'),
     },
   };
+}
+
+async function authoritativeResolution(
+  importData: HevyImportData,
+  decisions: HevyExerciseResolutions,
+  confirmedAt = Date.now(),
+): Promise<ExternalExerciseResolution> {
+  const registry = createExternalExerciseIdentityRegistry(
+    await db.exercises.toArray(),
+    (await db.externalExerciseBindings.toArray()).filter(
+      (binding) => binding.deletedAt === 0,
+    ),
+    new Map(),
+  );
+  const observations: ExternalExerciseObservation[] =
+    importData.sourceExercises.map((sourceExercise) => ({
+      source: 'hevy_csv',
+      sourceTitle: sourceExercise.sourceTitle,
+      measurementType: sourceExercise.measurementType,
+      equipmentHint: sourceExercise.equipment,
+      sessionCount: 1,
+      setCount: 1,
+      examples: [],
+    }));
+  const entries = registry.review(observations);
+  const authoritativeDecisions = entries.flatMap(
+    (entry): ExternalExerciseDecision[] => {
+      const decision = decisions[entry.identityKey];
+      return decision === undefined
+        ? []
+        : [{ identityKey: entry.identityKey, ...decision }];
+    },
+  );
+  return registry.resolve(
+    entries,
+    authoritativeDecisions,
+    confirmedAt,
+  );
+}
+
+async function importWithDecisions(
+  importData: HevyImportData,
+  decisions: HevyExerciseResolutions,
+  importedAt = Date.now(),
+) {
+  return importHevyWorkouts(
+    importData,
+    await authoritativeResolution(
+      importData,
+      decisions,
+      importedAt,
+    ),
+    importedAt,
+  );
 }
 
 async function counts() {
@@ -282,7 +358,7 @@ describe('Hevy import repository', () => {
 
     const result = await importHevyWorkouts(
       parsed.data,
-      fixtureResolutions,
+      await authoritativeResolution(parsed.data, fixtureResolutions),
     );
 
     expect(result).toMatchObject({
@@ -311,7 +387,7 @@ describe('Hevy import repository', () => {
     });
     const importData = twentyFiveIdentityData();
 
-    await importHevyWorkouts(
+    await importWithDecisions(
       importData,
       twentyFiveIdentityResolutions(pallof.id),
       importedAt,
@@ -381,7 +457,7 @@ describe('Hevy import repository', () => {
       }),
     ]);
 
-    await importHevyWorkouts(data, resolutions(bench.id), 3);
+    await importWithDecisions(data, resolutions(bench.id), 3);
 
     const active = (
       await db.externalExerciseBindings
@@ -392,7 +468,7 @@ describe('Hevy import repository', () => {
     expect(active).toHaveLength(1);
     expect(active[0]).toMatchObject({
       exerciseId: bench.id,
-      confirmedAt: 3,
+      confirmedAt: 2,
     });
   });
 
@@ -414,7 +490,7 @@ describe('Hevy import repository', () => {
 
     try {
       await expect(
-        importHevyWorkouts(
+        importWithDecisions(
           twentyFiveIdentityData(),
           twentyFiveIdentityResolutions(pallof.id),
         ),
@@ -538,7 +614,7 @@ describe('Hevy import repository', () => {
       customExercise('Développé couché'),
     );
 
-    const result = await importHevyWorkouts(
+    const result = await importWithDecisions(
       data,
       resolutions(bench.id),
       new Date(2026, 6, 27, 12).getTime(),
@@ -644,10 +720,10 @@ describe('Hevy import repository', () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
-    await importHevyWorkouts(data, resolutions(bench.id));
+    await importWithDecisions(data, resolutions(bench.id));
     const before = await counts();
 
-    const second = await importHevyWorkouts(data, resolutions(bench.id));
+    const second = await importWithDecisions(data, resolutions(bench.id));
 
     expect(second).toMatchObject({
       importedWorkouts: 0,
@@ -661,7 +737,13 @@ describe('Hevy import repository', () => {
   });
 
   it('rejects a missing resolution before any write', async () => {
-    await expect(importHevyWorkouts(data, {})).rejects.toThrow(
+    await expect(
+      importHevyWorkouts(data, {
+        exercisesByIdentityKey: new Map(),
+        exercisesToCreate: [],
+        bindingsToWrite: [],
+      }),
+    ).rejects.toThrow(
       'Missing Hevy exercise resolution',
     );
     expect(await counts()).toEqual({
@@ -681,10 +763,14 @@ describe('Hevy import repository', () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
+    const resolution = await authoritativeResolution(
+      data,
+      resolutions(bench.id),
+    );
     await db.exercises.update(bench.id, { deletedAt: Date.now() });
 
     await expect(
-      importHevyWorkouts(data, resolutions(bench.id)),
+      importHevyWorkouts(data, resolution),
     ).rejects.toThrow('Hevy exercise target is unavailable');
     expect(await db.workouts.count()).toBe(0);
   });
@@ -694,11 +780,129 @@ describe('Hevy import repository', () => {
       customExercise('Développé couché chronométré', 'time_only'),
     );
     const before = await counts();
+    const sourceKey = externalExerciseIdentityKey(
+      benchOnlyData.sourceExercises[0]!.sourceTitle,
+    );
 
     await expect(
-      importHevyWorkouts(data, resolutions(timedBench.id)),
+      importHevyWorkouts(benchOnlyData, {
+        exercisesByIdentityKey: new Map([
+          [sourceKey, timedBench],
+        ]),
+        exercisesToCreate: [],
+        bindingsToWrite: [],
+      }),
     ).rejects.toThrow('Hevy exercise measurement is incompatible');
     expect(await counts()).toEqual(before);
+  });
+
+  it('rejects a suggested exercise without a registry-materialized user binding', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const sourceKey = externalExerciseIdentityKey(
+      benchOnlyData.sourceExercises[0]!.sourceTitle,
+    );
+    const before = await counts();
+
+    await expect(
+      importHevyWorkouts(benchOnlyData, {
+        exercisesByIdentityKey: new Map([[sourceKey, bench]]),
+        exercisesToCreate: [],
+        bindingsToWrite: [],
+      }),
+    ).rejects.toThrow(
+      'Missing authoritative Hevy exercise binding',
+    );
+    expect(await counts()).toEqual(before);
+  });
+
+  it('upserts the exact binding materialized by the registry in the import transaction', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const importedAt = 9_000;
+    const resolution = await authoritativeResolution(
+      benchOnlyData,
+      {
+        [externalExerciseIdentityKey(
+          benchOnlyData.sourceExercises[0]!.sourceTitle,
+        )]: {
+          kind: 'existing',
+          exerciseId: bench.id,
+        },
+      },
+      importedAt,
+    );
+    const returnedBinding = resolution.bindingsToWrite[0]!;
+
+    await importHevyWorkouts(
+      benchOnlyData,
+      resolution,
+      importedAt,
+    );
+
+    expect(
+      await db.externalExerciseBindings.get(returnedBinding.id),
+    ).toEqual(returnedBinding);
+  });
+
+  it('atomically replaces a changed binding with the one materialized by the registry', async () => {
+    const previous = await createCustomExercise(
+      customExercise('Ancien développé couché'),
+    );
+    const replacement = await createCustomExercise(
+      customExercise('Nouveau développé couché'),
+    );
+    const identityKey = externalExerciseIdentityKey(
+      benchOnlyData.sourceExercises[0]!.sourceTitle,
+    );
+    const previousBinding = newEntity<ExternalExerciseBinding>({
+      source: 'hevy_csv',
+      identityKey,
+      sourceTitle: benchOnlyData.sourceExercises[0]!.sourceTitle,
+      exerciseId: previous.id,
+      measurementType: 'weight_reps',
+      equipmentHint: 'barbell',
+      verification: 'user',
+      confirmedAt: 1_000,
+    });
+    await db.externalExerciseBindings.add(previousBinding);
+    const importedAt = 10_000;
+    const resolution = await authoritativeResolution(
+      benchOnlyData,
+      {
+        [identityKey]: {
+          kind: 'existing',
+          exerciseId: replacement.id,
+        },
+      },
+      importedAt,
+    );
+    const replacementBinding = resolution.bindingsToWrite[0]!;
+
+    await importHevyWorkouts(
+      benchOnlyData,
+      resolution,
+      importedAt,
+    );
+
+    expect(
+      await db.externalExerciseBindings.get(replacementBinding.id),
+    ).toEqual(replacementBinding);
+    expect(
+      await db.externalExerciseBindings.get(previousBinding.id),
+    ).toMatchObject({
+      deletedAt: importedAt,
+      updatedAt: importedAt,
+    });
+    const active = (
+      await db.externalExerciseBindings
+        .where('[source+identityKey]')
+        .equals(['hevy_csv', identityKey])
+        .toArray()
+    ).filter((binding) => binding.deletedAt === 0);
+    expect(active).toEqual([replacementBinding]);
   });
 
   it('rolls back custom exercises, workouts and bindings on failure', async () => {
@@ -712,7 +916,7 @@ describe('Hevy import repository', () => {
 
     try {
       await expect(
-        importHevyWorkouts(data, resolutions(bench.id)),
+        importWithDecisions(data, resolutions(bench.id)),
       ).rejects.toThrow('disk full');
     } finally {
       fail.mockRestore();
@@ -725,7 +929,7 @@ describe('Hevy import repository', () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
-    await importHevyWorkouts(data, resolutions(bench.id));
+    await importWithDecisions(data, resolutions(bench.id));
 
     expect(await getLastPerformance(bench.id)).toHaveLength(2);
     expect((await listRecordSets([bench.id])).get(bench.id)).toHaveLength(
@@ -740,7 +944,7 @@ describe('Hevy import repository', () => {
       customExercise('Développé couché'),
     );
 
-    const result = await importHevyWorkouts(
+    const result = await importWithDecisions(
       data,
       resolutions(bench.id),
       importedAt,
@@ -782,9 +986,9 @@ describe('Hevy import repository', () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
-    await importHevyWorkouts(data, resolutions(bench.id), importedAt);
+    await importWithDecisions(data, resolutions(bench.id), importedAt);
 
-    const result = await importHevyWorkouts(
+    const result = await importWithDecisions(
       data,
       resolutions(bench.id),
       importedAt,
@@ -806,7 +1010,7 @@ describe('Hevy import repository', () => {
 
     try {
       await expect(
-        importHevyWorkouts(
+        importWithDecisions(
           data,
           resolutions(bench.id),
           new Date(2026, 6, 27, 12).getTime(),
