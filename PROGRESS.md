@@ -2,6 +2,55 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**nouvelle palette — vert en clair, orange en
+sombre**). Recolorage complet des deux thèmes depuis une référence visuelle fournie par
+l'utilisateur. Aucune logique, aucun layout, aucune structure, aucune chaîne d'UI n'a changé.
+
+**Le recolorage a tenu dans les jetons, et c'est la mesure de la dette évitée.** Les 622 usages
+de couleur répartis sur 94 fichiers passaient déjà tous par `var(--…)` : aucune classe de palette
+Tailwind, aucun hex dans un composant. `src/index.css` était le seul fichier à recolorer.
+
+**L'accent devient dépendant du thème, ce qu'il n'était pas.** Le vert acide était commun aux deux
+thèmes ; il y a maintenant un vert `#15803D` en clair et un orange `#FF8A3D` en sombre. `@theme`
+étant un scope statique unique, il ne fait plus que **relayer** (`--color-accent: var(--accent-fill)`).
+Les trois noms publics `--color-accent`, `--color-accent-dim` et `--color-accent-fg` sont inchangés :
+aucun composant n'a bougé et les utilitaires `bg-accent` suivent toujours le thème. Vérifié en
+pilotant sur les deux thèmes plutôt que supposé.
+
+**Un écart assumé, mesuré, et c'est le seul.** En clair, `#15803D` est le **fond** de bouton, pas
+l'encre : il donne **4,33:1 sur `--surface-2`**, sous le plancher de 4,5, et l'encre d'accent
+atterrit justement sur les lignes pressées et les étiquettes de 11 px. `--accent-ink` prend donc
+`#166534`, le hover de la palette fournie — **7,1:1 sur une carte, 6,3:1 sur `--surface-2`**. En
+sombre la question ne se pose pas : l'orange fait 8,0:1 sur le fond, encre et fond partagent une
+valeur. La séparation fill/ink du Lot 1 n'a pas été inventée pour l'occasion, elle a resservi telle
+quelle.
+
+**`--accent-soft` a un consommateur, sinon c'était un jeton mort.** La carte soulevée pendant un
+glisser-déposer utilisait `--surface-2`, qui est aussi sa couleur **au repos** : soulever ne
+changeait que l'anneau. Trois fichiers, un échange de couleur, zéro layout.
+
+**Couleurs codées en dur restantes, toutes remplacées :** le voile des feuilles (`bg-black/60` →
+jeton `--scrim`), la barre système Android dans `stores/theme.ts` **et** dans `index.html` (le
+script anti-flash synchrone, qui aurait sinon fait clignoter l'ancien noir au démarrage), et le
+favicon SVG inline, qui portait encore le noir et le vert acide.
+
+**Trois commentaires corrigés plutôt que laissés à mentir.** Ils citaient des mesures du vert acide
+(« 1,29:1 sur la page claire ») devenues fausses. Dans ce dépôt un commentaire porte une mesure ;
+un chiffre périmé y coûte plus cher qu'une phrase absente.
+
+**Un test modifié, signalé plutôt que glissé.** `theme.test.ts` fixait `#0a0a0b` / `#ffffff` sur la
+balise `theme-color`. Ce qu'il vérifie — la balise suit `--surface-0` — est intact ; c'est la
+palette qui a changé, pas la règle.
+
+**Preuves fraîches.** Les quatre portes sortent avec le code 0 : lint, typecheck, **870 tests dans
+70 fichiers** et build Vite. `--danger` et `--warn` restent hors palette fournie ; seule leur tenue
+sur les nouvelles surfaces a été revérifiée (rouge à 5,8:1 en sombre, 5,7:1 en clair).
+
+**Checkpoint téléphone :** ouvrir l'app, vérifier l'orange sur le bouton primaire, l'onglet actif et
+une série validée. Basculer en thème clair dans Réglages et contrôler que le vert n'a jamais l'air
+délavé sur une ligne pressée ni sur une étiquette en petites capitales. Vérifier enfin qu'aucun
+flash noir n'apparaît au démarrage en thème clair.
+
 **Dernière mise à jour :** 2026-08-01 (**bouton deload en séance livré**).
 
 - Bouton `80%` ajouté au header de la séance en cours : confirmation, réduction des seules séries
