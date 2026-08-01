@@ -2,6 +2,42 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**phase 6 — parcours de routine protégé
+et collection approfondie**). Un test d’intégration traverse désormais les
+vrais `RoutinesScreen`, `RoutineEditorScreen` et `ExercisePickerScreen`, avec le
+routeur React, les repositories, Dexie et `fake-indexeddb`, sans mock. Il crée
+une routine vide, la renomme, choisit un exercice, ajoute une deuxième série,
+démonte entièrement le parcours puis remonte la liste et retrouve le nom ainsi
+que le résumé persistant `1 exercice · 2 séries`.
+
+**Premier gros découpage de `RoutinesScreen` terminé.** Le nouveau module profond
+`RoutineCollection` reçoit seulement les résumés chargés, les dossiers chargés
+et un callback d’intentions. Il masque l’état vide, les lignes, les headings
+racine/dossiers, le drag clavier/tactile et la conversion d’un déplacement en
+placement persistant. `RoutinesScreen` conserve les live queries, la distinction
+chargement/vide, la navigation, les commandes repositories et toutes les
+feuilles. Il passe de **429 à 280 lignes** ; le nouveau module en compte 197.
+Aucun rendu, texte, route, repository, schéma, migration, donnée ou dépendance
+n’a changé.
+
+**Preuves.** Le test de parcours a tué un mutant qui neutralisait l’écriture des
+exercices sélectionnés. Les tests d’interface ont tué la suppression du heading
+racine et la perte du contexte dossier pendant un déplacement. Les revues de
+tâche puis la revue globale finale ne relèvent plus aucun problème critique,
+important ou mineur. Les portes fraîches sortent avec le code 0 : lint,
+typecheck, **831 tests dans 66 fichiers**, build Vite de **194 modules** et
+`git diff --check`.
+
+**Suite de la phase 6.** `RoutineEditorScreen` reste hors de cette tranche à 318
+lignes ; son éventuel découpage demandera une preuve de préservation et un plan
+séparés. Le checkpoint manuel Hevy décrit dans l’entrée suivante reste lui aussi
+à effectuer indépendamment.
+
+**Checkpoint téléphone demandé :** créer une routine vide, la renommer, ajouter
+un exercice et une deuxième série, forcer la fermeture de FitTrack, rouvrir
+l’application, puis vérifier que la liste affiche le même nom et
+`1 exercice · 2 séries`. Aucun changement visuel n’est attendu.
+
 **Dernière mise à jour :** 2026-08-01 (**identité fiable des exercices importés
 livrée**). La cause exacte de la régression était l’alias « Développé Debout
 Poulie Centrée » encodé comme certitude vers `cable-shoulder-press`, alors que
