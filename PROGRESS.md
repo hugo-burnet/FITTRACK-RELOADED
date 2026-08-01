@@ -2,6 +2,21 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**export coach — autorité des séries de
+travail centralisée**). Quand les échauffements sont exclus, le contenu exporté
+et `workingSetCount` reposent désormais tous deux sur `isWorkingSet`. Le format,
+les options et le comportement public de l’export restent inchangés.
+
+**Preuves.** Le test de caractérisation couvre les séries `warmup`, `normal`,
+`dropset` et `failure`, leur renumérotation et la cohérence du compteur. Un
+mutant manuel limitant l’autorité canonique aux séries `normal` a bien fait
+échouer le test (1 série comptée au lieu de 3). Les portes fraîches sortent avec
+le code 0 : lint, typecheck, **835 tests dans 66 fichiers**, build Vite de
+**194 modules** et `git diff --check`.
+
+**Checkpoint téléphone :** aucun — aucun écran, format d’export ni comportement
+utilisateur n’a changé.
+
 **Dernière mise à jour :** 2026-08-01 (**phase 6 — chronologie hebdomadaire
 centralisée**). `knownWeekStarts` est désormais l’unique autorité qui décide
 quelles semaines locales sont suffisamment connues pour être rendues. Les
