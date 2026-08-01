@@ -11,7 +11,7 @@
 - Checkpoint téléphone : valider une première série, activer `80%`, vérifier que seules les séries
   restantes changent, tuer/reprendre l'app puis partager la séance et contrôler la note.
 
-**Preuves fraîches.** Les quatre portes sortent avec le code 0 : typecheck, **861 tests dans 70
+**Preuves fraîches.** Les quatre portes sortent avec le code 0 : typecheck, **870 tests dans 70
 fichiers**, build Vite de **197 modules** et lint.
 
 **Dernière mise à jour :** 2026-08-01 (**export de tout l’historique depuis les
