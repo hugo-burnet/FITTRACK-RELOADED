@@ -118,6 +118,25 @@ const benchOnlyData: HevyImportData = {
   setCount: 2,
 };
 
+const partiallyDuplicatedData: HevyImportData = {
+  ...data,
+  workouts: [
+    {
+      ...data.workouts[0]!,
+      exercises: data.workouts[0]!.exercises.slice(0, 1),
+    },
+    {
+      ...data.workouts[0]!,
+      title: 'Séance B',
+      startedAt: 21_000,
+      endedAt: 31_000,
+      importKey: 'hevy:b',
+      exercises: data.workouts[0]!.exercises.slice(1),
+    },
+  ],
+  workoutCount: 2,
+};
+
 function customExercise(
   name: string,
   measurementType: Exercise['measurementType'] = 'weight_reps',
@@ -796,6 +815,55 @@ describe('Hevy import repository', () => {
     expect(await counts()).toEqual(before);
   });
 
+  it('imports the remaining workout when part of the reviewed draft became a duplicate', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const resolution = await authoritativeResolution(
+      partiallyDuplicatedData,
+      resolutions(bench.id),
+      6_000,
+    );
+    await db.workouts.add(
+      newEntity<Workout>({
+        routineId: '',
+        name: 'Import concurrent',
+        status: 'completed',
+        startedAt: 1_000,
+        endedAt: 11_000,
+        durationSeconds: 10,
+        importSource: 'hevy_csv',
+        importKey: 'hevy:a',
+      }),
+    );
+
+    const result = await importHevyWorkouts(
+      partiallyDuplicatedData,
+      resolution,
+      6_000,
+    );
+
+    expect(result).toMatchObject({
+      importedWorkouts: 1,
+      skippedWorkouts: 1,
+      createdExercises: 1,
+      importedExercises: 1,
+      importedSets: 1,
+    });
+    expect(
+      await db.externalExerciseBindings
+        .where('[source+identityKey]')
+        .equals(['hevy_csv', 'developpe couche barre'])
+        .count(),
+    ).toBe(0);
+    expect(
+      await db.externalExerciseBindings
+        .where('[source+identityKey]')
+        .equals(['hevy_csv', 'planche'])
+        .count(),
+    ).toBe(1);
+  });
+
   it('rejects a suggested exercise without a registry-materialized user binding', async () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
@@ -903,6 +971,49 @@ describe('Hevy import repository', () => {
         .toArray()
     ).filter((binding) => binding.deletedAt === 0);
     expect(active).toEqual([replacementBinding]);
+  });
+
+  it('rejects a registry binding id already owned by another source identity', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const collision = newEntity<ExternalExerciseBinding>({
+      source: 'hevy_csv',
+      identityKey: 'unrelated identity',
+      sourceTitle: 'Unrelated identity',
+      exerciseId: bench.id,
+      measurementType: 'weight_reps',
+      equipmentHint: 'barbell',
+      verification: 'user',
+      confirmedAt: 1,
+    });
+    await db.externalExerciseBindings.add(collision);
+    const resolution = await authoritativeResolution(
+      benchOnlyData,
+      resolutions(bench.id),
+      11_000,
+    );
+    const collidingResolution: ExternalExerciseResolution = {
+      ...resolution,
+      bindingsToWrite: resolution.bindingsToWrite.map((binding) => ({
+        ...binding,
+        id: collision.id,
+      })),
+    };
+    const before = await counts();
+
+    await expect(
+      importHevyWorkouts(
+        benchOnlyData,
+        collidingResolution,
+        11_000,
+      ),
+    ).rejects.toThrow('Hevy exercise binding id is unavailable');
+
+    expect(await counts()).toEqual(before);
+    expect(
+      await db.externalExerciseBindings.get(collision.id),
+    ).toEqual(collision);
   });
 
   it('rolls back custom exercises, workouts and bindings on failure', async () => {

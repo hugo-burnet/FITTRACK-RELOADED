@@ -127,12 +127,13 @@ function assertAuthoritativeBinding(
 
 async function validateResolution(
   sourceKeysToResolve: readonly string[],
+  allowedSourceKeys: readonly string[],
   sourceByIdentityKey: ReadonlyMap<string, HevySourceExercise>,
   resolution: ExternalExerciseResolution,
   importedAt: number,
 ): Promise<ResolvedExercises> {
   const bySourceKey = new Map<string, Exercise>();
-  const requestedKeys = new Set(sourceKeysToResolve);
+  const allowedKeys = new Set(allowedSourceKeys);
   const createdById = new Map(
     resolution.exercisesToCreate.map((exercise) => [
       exercise.id,
@@ -157,6 +158,15 @@ async function validateResolution(
     }
     incomingBindingsByIdentityKey.set(binding.identityKey, binding);
   }
+  const existingBindingsById = new Map(
+    (
+      await db.externalExerciseBindings.bulkGet(
+        resolution.bindingsToWrite.map((binding) => binding.id),
+      )
+    ).flatMap((binding) =>
+      binding === undefined ? [] : [[binding.id, binding] as const],
+    ),
+  );
   const existingBindingGroups = new Map<
     string,
     ExternalExerciseBinding[]
@@ -169,7 +179,7 @@ async function validateResolution(
   const bindings: ExternalExerciseBinding[] = [];
 
   for (const key of resolution.exercisesByIdentityKey.keys()) {
-    if (!requestedKeys.has(key)) {
+    if (!allowedKeys.has(key)) {
       throw new Error(
         `Unexpected authoritative Hevy exercise resolution: ${key}`,
       );
@@ -220,6 +230,19 @@ async function validateResolution(
     const incomingBinding =
       incomingBindingsByIdentityKey.get(sourceKey);
     if (incomingBinding !== undefined) {
+      const existingWithSameId = existingBindingsById.get(
+        incomingBinding.id,
+      );
+      if (
+        existingWithSameId !== undefined &&
+        (existingWithSameId.source !== incomingBinding.source ||
+          existingWithSameId.identityKey !==
+            incomingBinding.identityKey)
+      ) {
+        throw new Error(
+          `Hevy exercise binding id is unavailable: ${incomingBinding.id}`,
+        );
+      }
       assertAuthoritativeBinding(
         incomingBinding,
         sourceKey,
@@ -262,15 +285,20 @@ async function validateResolution(
     }
   }
 
+  const allowedCreatedIds = new Set(
+    [...resolution.exercisesByIdentityKey]
+      .filter(([identityKey]) => allowedKeys.has(identityKey))
+      .map(([, exercise]) => exercise.id),
+  );
   for (const exercise of resolution.exercisesToCreate) {
-    if (!referencedCreatedIds.has(exercise.id)) {
+    if (!allowedCreatedIds.has(exercise.id)) {
       throw new Error(
         `Unexpected authoritative Hevy exercise: ${exercise.id}`,
       );
     }
   }
   for (const key of incomingBindingsByIdentityKey.keys()) {
-    if (!requestedKeys.has(key)) {
+    if (!allowedKeys.has(key)) {
       throw new Error(
         `Unexpected authoritative Hevy exercise binding: ${key}`,
       );
@@ -279,7 +307,9 @@ async function validateResolution(
 
   return {
     bySourceKey,
-    created: resolution.exercisesToCreate,
+    created: resolution.exercisesToCreate.filter((exercise) =>
+      referencedCreatedIds.has(exercise.id),
+    ),
     bindings,
   };
 }
@@ -330,6 +360,7 @@ export async function importHevyWorkouts(
       );
       const resolved = await validateResolution(
         sourceKeys(importable),
+        sourceKeys(data.workouts),
         sourceByIdentityKey,
         resolution,
         importedAt,
