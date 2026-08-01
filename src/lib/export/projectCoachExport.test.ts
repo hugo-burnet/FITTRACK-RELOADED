@@ -434,7 +434,7 @@ describe('projectCoachExport — sets', () => {
 });
 
 describe('projectCoachExport — options', () => {
-  const threeSets = () =>
+  const mixedSets = () =>
     source({
       notes: 'Bonne séance.',
       exercises: [
@@ -446,35 +446,35 @@ describe('projectCoachExport — options', () => {
               weight: 40,
               reps: 12,
             }),
-            historicalSet(),
-            historicalSet(),
+            historicalSet({ setType: 'normal' }),
+            historicalSet({ setType: 'dropset' }),
+            historicalSet({ setType: 'failure' }),
           ],
         }),
       ],
     });
 
   it('drops warm-ups and renumbers what remains', () => {
-    const data = project([threeSets()], {
+    const data = project([mixedSets()], {
       ...DEFAULT_EXPORT_OPTIONS,
       includeWarmups: false,
     });
     const sets = data.workouts[0]?.exercises[0]?.sets ?? [];
 
-    expect(sets).toHaveLength(2);
-    expect(sets.map((one) => one.number)).toEqual([1, 2]);
-    expect(
-      sets.every((one) => one.type !== 'warmup'),
-    ).toBe(true);
+    expect(sets).toHaveLength(3);
+    expect(sets.map((one) => one.number)).toEqual([1, 2, 3]);
+    expect(sets.map((one) => one.type)).toEqual(['normal', 'dropset', 'failure']);
+    expect(data.workingSetCount).toBe(sets.length);
   });
 
   it('keeps warm-ups by default', () => {
     expect(
-      project([threeSets()]).workouts[0]?.exercises[0]?.sets,
-    ).toHaveLength(3);
+      project([mixedSets()]).workouts[0]?.exercises[0]?.sets,
+    ).toHaveLength(4);
   });
 
   it('drops both kinds of notes on request', () => {
-    const data = project([threeSets()], {
+    const data = project([mixedSets()], {
       ...DEFAULT_EXPORT_OPTIONS,
       includeNotes: false,
     });
