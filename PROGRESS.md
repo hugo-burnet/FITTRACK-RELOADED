@@ -2,6 +2,42 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**phase 6 — chronologie hebdomadaire
+centralisée**). `knownWeekStarts` est désormais l’unique autorité qui décide
+quelles semaines locales sont suffisamment connues pour être rendues. Les
+analyses « Séances par semaine » et « Volume d’entraînement » lui confient la
+même règle : commencer à la borne seulement quand l’historique la précède,
+sinon à la plus ancienne semaine observée, conserver les trous internes et ne
+rien inventer pour un historique complet vide.
+
+**Comportement préservé.** Les interfaces de `weeklySessionCounts` et
+`weeklyVolumeBuckets` restent inchangées. Comptage, objectifs historiques,
+filtrage de période, offsets des séances, tonnage et durée restent propres à
+leurs moteurs. L’énumération passe toujours par `startOfLocalWeek` et
+`addLocalWeeks`, jamais par une durée fixe, afin de traverser les changements
+d’heure sans décaler les semaines.
+
+**Preuves.** Quatre tests ciblent directement la nouvelle seam : fenêtre
+connue, plus ancienne semaine, historique `Tout` vide et DST. Deux mutants
+manuels ont été tués, l’un ignorant `hasEarlierHistory`, l’autre imposant la
+borne même quand l’application ne connaît pas encore ces semaines. La revue de
+tâche ne relève aucun problème critique, important ou mineur. Les portes
+fraîches sortent avec le code 0 : lint, typecheck, **835 tests dans 66 fichiers**,
+build Vite de **194 modules** et `git diff --check`.
+
+**Décision de refacto.** Trois conceptions concurrentes ont évalué
+`RoutineEditorScreen`. Son interface de route est déjà minimale et ses vrais
+modules cohésifs — carte, feuille d’exercice et feuille de série — sont déjà
+extraits. Un hook de modèle ou une union géante d’intentions déplacerait le
+câblage sans créer de module plus profond ; ce découpage est donc explicitement
+abandonné. `WorkoutScreen` reste un chantier à haut risque tant que ses parcours
+de minuteur, plaques, échauffement et restauration ne sont pas mieux protégés.
+
+**Checkpoint téléphone demandé :** ouvrir Historique → Analyses, comparer les
+vues 4 semaines et `Tout` de « Séances par semaine » puis « Volume
+d’entraînement ». Les deux écrans doivent afficher les mêmes semaines connues,
+les mêmes zéros internes, totaux et moyennes qu’avant cette refacto.
+
 **Dernière mise à jour :** 2026-08-01 (**phase 6 — parcours de routine protégé
 et collection approfondie**). Un test d’intégration traverse désormais les
 vrais `RoutinesScreen`, `RoutineEditorScreen` et `ExercisePickerScreen`, avec le
