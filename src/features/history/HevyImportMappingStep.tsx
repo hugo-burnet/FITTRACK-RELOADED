@@ -1,4 +1,9 @@
 import { t } from '@/i18n/fr';
+import {
+  equipmentLabel,
+  measurementLabel,
+  muscleLabel,
+} from '@/i18n/labels';
 import { Card } from '@/ui';
 import { CheckIcon, ChevronRightIcon } from '@/ui/icons';
 import type { Exercise } from '@/data/types';
@@ -8,18 +13,29 @@ import type {
 } from './hevyImportDraft';
 import { unresolvedHevySources } from './hevyImportDraft';
 
-function selectedExerciseName(
+type MappingTarget = Pick<
+  Exercise,
+  'name' | 'primaryMuscle' | 'equipment' | 'measurementType'
+>;
+
+function selectedExercise(
   row: HevyMappingDraftRow,
   exercises: readonly Exercise[],
-): string | undefined {
+): MappingTarget | undefined {
   if (row.resolution?.kind === 'custom') {
-    return row.resolution.exercise.name;
+    return row.resolution.exercise;
   }
-  if (row.resolution?.kind !== 'existing') return undefined;
-  const selectedId = row.resolution.exerciseId;
-  return exercises.find(
-    (candidate) => candidate.id === selectedId,
-  )?.name;
+  if (row.resolution?.kind === 'existing') {
+    const selectedId = row.resolution.exerciseId;
+    const resolved = exercises.find(
+      (candidate) => candidate.id === selectedId,
+    );
+    if (resolved !== undefined) return resolved;
+  }
+  if (row.review.status === 'confirmed') {
+    return row.review.exercise;
+  }
+  return row.review.suggestions[0]?.exercise;
 }
 
 function conflictReason(
@@ -30,6 +46,7 @@ function conflictReason(
     target_missing: 'history.importConflictMissing',
     target_deleted: 'history.importConflictDeleted',
     measurement_changed: 'history.importConflictMeasurement',
+    multiple_active_targets: 'history.importConflictMultipleTargets',
   } as const;
   return t(key[row.review.reason]);
 }
@@ -41,8 +58,10 @@ function mappingReading(
   status: string;
   value?: string;
   detail?: string;
+  target?: MappingTarget;
   confirmed: boolean;
 } {
+  const target = selectedExercise(row, exercises);
   const confirmed =
     row.resolution !== undefined &&
     (row.resolutionSource === 'user' ||
@@ -52,15 +71,18 @@ function mappingReading(
     return {
       status: t('history.importConfirmed'),
       value:
-        selectedExerciseName(row, exercises) ??
+        target?.name ??
         t('history.importChooseExercise'),
+      target,
       confirmed: true,
     };
   }
   if (row.review.status === 'conflict') {
     return {
       status: t('history.importConflict'),
+      value: target?.name,
       detail: conflictReason(row),
+      target,
       confirmed: false,
     };
   }
@@ -68,6 +90,7 @@ function mappingReading(
     return {
       status: t('history.importNeedsConfirmation'),
       value: row.review.exercise.name,
+      target,
       confirmed: false,
     };
   }
@@ -76,8 +99,22 @@ function mappingReading(
     value:
       row.review.suggestions[0]?.exercise.name ??
       t('history.importChooseExercise'),
+    target,
     confirmed: false,
   };
+}
+
+function evidenceSummary(row: HevyMappingDraftRow): string {
+  const { sessionCount, setCount } = row.review.observation;
+  const key =
+    sessionCount === 1
+      ? setCount === 1
+        ? 'history.importEvidenceOneSetOne'
+        : 'history.importEvidenceOne'
+      : setCount === 1
+        ? 'history.importEvidenceSetOne'
+        : 'history.importEvidence';
+  return t(key, { sessionCount, setCount });
 }
 
 export function HevyImportMappingStep({
@@ -122,17 +159,35 @@ export function HevyImportMappingStep({
                 px-4 py-3 text-left last:border-b-0 active:bg-[var(--surface-2)]"
             >
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-base font-semibold text-[var(--text-1)]">
+                <span className="block text-base font-semibold leading-snug text-[var(--text-1)]">
                   {row.source.sourceTitle}
                 </span>
-                <span className="mt-1 block text-sm font-semibold text-[var(--text-2)]">
+                <span className="mt-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--text-2)]">
                   {reading.status}
                 </span>
                 {reading.value !== undefined && (
-                  <span className="block text-sm text-[var(--text-2)]">
+                  <span className="mt-0.5 block text-sm font-semibold text-[var(--text-1)]">
                     {reading.value}
                   </span>
                 )}
+                {reading.target !== undefined && (
+                  <span className="mt-0.5 flex flex-wrap items-center gap-x-1 text-sm text-[var(--text-2)]">
+                    <span>{muscleLabel(reading.target.primaryMuscle)}</span>
+                    <span aria-hidden="true">
+                      {t('history.importEvidenceValueSeparator')}
+                    </span>
+                    <span>{equipmentLabel(reading.target.equipment)}</span>
+                    <span aria-hidden="true">
+                      {t('history.importEvidenceValueSeparator')}
+                    </span>
+                    <span>
+                      {measurementLabel(reading.target.measurementType)}
+                    </span>
+                  </span>
+                )}
+                <span className="mt-1.5 block text-sm text-[var(--text-2)]">
+                  {evidenceSummary(row)}
+                </span>
                 {reading.detail !== undefined && (
                   <span className="block text-sm text-[var(--danger)]">
                     {reading.detail}

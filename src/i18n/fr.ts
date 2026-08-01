@@ -670,6 +670,8 @@ const fr = {
     importConflictMissing: 'L’exercice associé est introuvable',
     importConflictDeleted: 'L’exercice associé a été supprimé',
     importConflictMeasurement: 'Le type de mesure a changé',
+    importConflictMultipleTargets:
+      'Plusieurs exercices sont associés à cette source',
     importNewConfirmationOne: '{count} nouvelle association',
     importNewConfirmation: '{count} nouvelles associations',
     importReusedConfirmationOne: '{count} association confirmée réutilisée',

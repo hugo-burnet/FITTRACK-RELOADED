@@ -47,7 +47,11 @@ export interface ConflictingExternalExercise {
   status: 'conflict';
   identityKey: string;
   observation: ExternalExerciseObservation;
-  reason: 'target_missing' | 'target_deleted' | 'measurement_changed';
+  reason:
+    | 'multiple_active_targets'
+    | 'target_missing'
+    | 'target_deleted'
+    | 'measurement_changed';
   suggestions: readonly ExerciseSuggestion[];
 }
 
@@ -155,14 +159,19 @@ export function createExternalExerciseIdentityRegistry(
   suggestions: ReadonlyMap<string, readonly Exercise[]>,
 ): ExternalExerciseIdentityRegistry {
   const exercisesById = new Map(exercises.map((exercise) => [exercise.id, exercise]));
-  const bindingsByIdentityKey = new Map<string, ExternalExerciseBinding>();
+  const bindingsByIdentityKey = new Map<
+    string,
+    ExternalExerciseBinding[]
+  >();
   for (const binding of bindings) {
     if (
       binding.source === 'hevy_csv' &&
       binding.deletedAt === 0 &&
       binding.verification === 'user'
     ) {
-      bindingsByIdentityKey.set(binding.identityKey, binding);
+      const group = bindingsByIdentityKey.get(binding.identityKey) ?? [];
+      group.push(binding);
+      bindingsByIdentityKey.set(binding.identityKey, group);
     }
   }
 
@@ -171,9 +180,9 @@ export function createExternalExerciseIdentityRegistry(
   ): ExternalExerciseReviewEntry[] =>
     observations.map((observation) => {
       const identityKey = externalExerciseIdentityKey(observation.sourceTitle);
-      const binding = bindingsByIdentityKey.get(identityKey);
+      const bindingGroup = bindingsByIdentityKey.get(identityKey);
       const entrySuggestions = makeSuggestionList(suggestions, identityKey);
-      if (binding === undefined) {
+      if (bindingGroup === undefined) {
         return {
           status: 'needs_confirmation',
           identityKey,
@@ -181,6 +190,30 @@ export function createExternalExerciseIdentityRegistry(
           suggestions: entrySuggestions,
         };
       }
+
+      if (
+        new Set(bindingGroup.map((binding) => binding.exerciseId))
+          .size > 1
+      ) {
+        return {
+          status: 'conflict',
+          identityKey,
+          observation,
+          reason: 'multiple_active_targets',
+          suggestions: entrySuggestions,
+        };
+      }
+
+      const binding = bindingGroup.reduce((preferred, candidate) => {
+        if (candidate.confirmedAt !== preferred.confirmedAt) {
+          return candidate.confirmedAt > preferred.confirmedAt
+            ? candidate
+            : preferred;
+        }
+        return candidate.id.localeCompare(preferred.id) < 0
+          ? candidate
+          : preferred;
+      });
 
       const target = exercisesById.get(binding.exerciseId);
       const reason = bindingConflictReason(binding, observation, target);

@@ -127,6 +127,63 @@ describe('ExternalExerciseIdentityRegistry.review', () => {
     });
   });
 
+  it('requires an explicit decision when active bindings target different exercises', () => {
+    const first = exercise('first');
+    const second = exercise('second');
+    const registry = createExternalExerciseIdentityRegistry(
+      [first, second],
+      [binding(first), binding(second)],
+      new Map(),
+    );
+
+    expect(registry.review([observation()])[0]).toMatchObject({
+      status: 'conflict',
+      reason: 'multiple_active_targets',
+    });
+  });
+
+  it('selects duplicate bindings deterministically by confirmation time then id', () => {
+    const pallof = exercise('pallof');
+    const validLatest = {
+      ...binding(pallof),
+      id: 'binding-z',
+      confirmedAt: 2,
+    };
+    const incompatibleOlder = {
+      ...binding(pallof),
+      id: 'binding-a',
+      confirmedAt: 1,
+      measurementType: 'time_only' as const,
+    };
+    const validTieWinner = {
+      ...validLatest,
+      id: 'binding-a',
+    };
+    const incompatibleTieLoser = {
+      ...incompatibleOlder,
+      id: 'binding-z',
+      confirmedAt: 2,
+    };
+
+    for (const bindings of [
+      [incompatibleOlder, validLatest],
+      [validLatest, incompatibleOlder],
+      [incompatibleTieLoser, validTieWinner],
+      [validTieWinner, incompatibleTieLoser],
+    ]) {
+      const registry = createExternalExerciseIdentityRegistry(
+        [pallof],
+        bindings,
+        new Map(),
+      );
+
+      expect(registry.review([observation()])[0]).toMatchObject({
+        status: 'confirmed',
+        exercise: pallof,
+      });
+    }
+  });
+
   it('reports a deleted target as a conflict', () => {
     const deleted = exercise('deleted', { deletedAt: 10 });
     const registry = createExternalExerciseIdentityRegistry(

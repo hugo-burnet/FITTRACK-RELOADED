@@ -180,7 +180,7 @@ describe('HevyImportMappingStep', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('opens the Pallof target metadata and source evidence', async () => {
+  it('shows Pallof target metadata and source evidence on its row before opening details', async () => {
     const user = userEvent.setup();
     const sourceObservation = observation(
       'Développé Debout Poulie Centrée',
@@ -213,11 +213,20 @@ describe('HevyImportMappingStep', () => {
     }
 
     render(<Harness />);
-    await user.click(
-      screen.getByRole('button', {
-        name: /Développé Debout Poulie Centrée/,
-      }),
-    );
+    const pallofButton = screen.getByRole('button', {
+      name: /Développé Debout Poulie Centrée/,
+    });
+    expect(within(pallofButton).getByText('Pallof press')).toBeInTheDocument();
+    expect(within(pallofButton).getByText('Abdominaux')).toBeInTheDocument();
+    expect(within(pallofButton).getByText('Poulie')).toBeInTheDocument();
+    expect(
+      within(pallofButton).getByText('Poids et répétitions'),
+    ).toBeInTheDocument();
+    expect(
+      within(pallofButton).getByText('2 séances · 4 séries'),
+    ).toBeInTheDocument();
+
+    await user.click(pallofButton);
 
     const dialog = screen.getByRole('dialog', {
       name: 'Développé Debout Poulie Centrée',

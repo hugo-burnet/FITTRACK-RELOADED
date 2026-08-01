@@ -1,12 +1,51 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
+import {
+  CATALOGUE_SIZE,
+  seedDatabase,
+} from '@/data/seed/seedDatabase';
 import { parseHevyCsv } from '@/lib/hevyCsv';
 import { resetDb } from '@/test/resetDb';
 import fixture from './__fixtures__/hevy-workout-data-real-anonymized.csv?raw';
 import { HevyImportScreen } from './HevyImportScreen';
+
+const EXPECTED_CATALOGUE_SLUGS = {
+  'Abduction Hanche': 'hip-abduction-machine',
+  'Adduction Hanche': 'hip-adduction-machine',
+  'Chest Press (Machine)': 'machine-chest-press',
+  'Curl Biceps (Haltère)': 'dumbbell-curl',
+  'Curl Marteau (Haltère)': 'hammer-curl',
+  'Dead Hang': 'dead-hang',
+  'Développé Couché (Haltère)': 'dumbbell-bench-press',
+  'Développé Couché Incliné (Haltère)':
+    'dumbbell-incline-bench-press',
+  'Développé Debout Poulie Centrée': 'pallof-press',
+  'Élévation Latérale (Poulie)': 'cable-lateral-raise',
+  'Extension Dos (Hyperextension Lestée)':
+    'weighted-back-extension',
+  'Extension Jambes': 'leg-extension',
+  'Extension Triceps Corde': 'cable-triceps-pushdown-rope',
+  'Hip Thrust (Dumbbell)': 'dumbbell-hip-thrust',
+  'Kickbacks Poulie': 'cable-glute-kickback',
+  'Leg Curl Assis': 'seated-leg-curl',
+  Planche: 'plank',
+  'Planche Latérale': 'side-plank',
+  'Presse à Cuisses Horizontal': 'leg-press',
+  'Presse Épaules Assis (Machine)': 'machine-shoulder-press',
+  'Rotation Externe Poulie': 'cable-external-rotation',
+  'Tirage bas iso-latéral': 'seated-cable-row',
+  'Tirage Poitrine (Poulie)': 'lat-pulldown',
+  'Tirage vers Visage': 'face-pull',
+} as const;
 
 function renderImportScreen() {
   return render(
@@ -21,6 +60,12 @@ function renderImportScreen() {
 function exactTextPattern(value: string): RegExp {
   return new RegExp(
     `^${value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:À confirmer|Confirmé)`,
+  );
+}
+
+function startingWith(value: string): RegExp {
+  return new RegExp(
+    `^${value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
   );
 }
 
@@ -94,6 +139,10 @@ describe('HevyImportScreen — parcours CSV réel', () => {
       ]),
     );
 
+    await seedDatabase();
+    const catalogue = await db.exercises.toArray();
+    expect(catalogue).toHaveLength(CATALOGUE_SIZE);
+
     const user = userEvent.setup();
     const mounted = renderImportScreen();
 
@@ -106,9 +155,31 @@ describe('HevyImportScreen — parcours CSV réel', () => {
       await user.click(
         screen.getByRole('button', { name: exactTextPattern(source.sourceTitle) }),
       );
+      const dialog = screen.getByRole('dialog', {
+        name: source.sourceTitle,
+      });
+      if (source.sourceTitle === 'Oiseau (Machine)') {
+        await user.click(
+          within(dialog).getByRole('button', {
+            name: `Créer « ${source.sourceTitle} »`,
+          }),
+        );
+        continue;
+      }
+      const slug =
+        EXPECTED_CATALOGUE_SLUGS[
+          source.sourceTitle as keyof typeof EXPECTED_CATALOGUE_SLUGS
+        ];
+      if (slug === undefined) {
+        throw new Error(`Suggestion catalogue manquante: ${source.sourceTitle}`);
+      }
+      const target = catalogue.find((exercise) => exercise.slug === slug);
+      if (target === undefined) {
+        throw new Error(`Exercice catalogue manquant: ${slug}`);
+      }
       await user.click(
-        screen.getByRole('button', {
-          name: `Créer « ${source.sourceTitle} »`,
+        within(dialog).getByRole('button', {
+          name: startingWith(target.name),
         }),
       );
     }
@@ -134,7 +205,7 @@ describe('HevyImportScreen — parcours CSV réel', () => {
     expect(failLate).toHaveBeenCalledOnce();
     await waitFor(async () => {
       expect(await importedTableCounts()).toEqual({
-        exercises: 0,
+        exercises: CATALOGUE_SIZE,
         externalExerciseBindings: 0,
         workouts: 0,
         workoutExercises: 0,
@@ -158,7 +229,7 @@ describe('HevyImportScreen — parcours CSV réel', () => {
     await screen.findByRole('heading', { name: 'Import terminé' });
     await waitFor(async () => {
       expect(await importedTableCounts()).toEqual({
-        exercises: 25,
+        exercises: CATALOGUE_SIZE + 1,
         externalExerciseBindings: 25,
         workouts: 6,
         workoutExercises: 53,
@@ -169,6 +240,48 @@ describe('HevyImportScreen — parcours CSV réel', () => {
         routineSets: 136,
       });
     });
+    const pallof = (await db.exercises.toArray()).find(
+      (exercise) => exercise.slug === 'pallof-press',
+    );
+    const cableShoulderPress = (await db.exercises.toArray()).find(
+      (exercise) => exercise.slug === 'cable-shoulder-press',
+    );
+    expect(pallof).toMatchObject({
+      primaryMuscle: 'abs',
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+    });
+    expect(cableShoulderPress).toBeDefined();
+    const pallofRows = await db.workoutExercises
+      .where('exerciseId')
+      .equals(pallof!.id)
+      .toArray();
+    expect(pallofRows).toHaveLength(2);
+    for (const row of pallofRows) {
+      expect(row).toMatchObject({
+        exercisePrimaryMuscle: 'abs',
+        exerciseEquipment: 'cable',
+        exerciseMeasurementType: 'weight_reps',
+      });
+    }
+    expect(
+      await db.workoutSets
+        .where('exerciseId')
+        .equals(pallof!.id)
+        .count(),
+    ).toBe(4);
+    expect(
+      await db.workoutExercises
+        .where('exerciseId')
+        .equals(cableShoulderPress!.id)
+        .count(),
+    ).toBe(0);
+    expect(
+      await db.workoutSets
+        .where('exerciseId')
+        .equals(cableShoulderPress!.id)
+        .count(),
+    ).toBe(0);
     const countsAfterFirstImport = await importedTableCounts();
 
     mounted.unmount();
@@ -179,5 +292,5 @@ describe('HevyImportScreen — parcours CSV réel', () => {
     await screen.findByRole('heading', { name: 'Import terminé' });
     expect(screen.getByText('0 séances importées, 6 ignorées.')).toBeVisible();
     expect(await importedTableCounts()).toEqual(countsAfterFirstImport);
-  }, 30_000);
+  }, 60_000);
 });
