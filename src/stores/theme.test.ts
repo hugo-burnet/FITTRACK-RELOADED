@@ -25,13 +25,13 @@ describe('theme', () => {
   it('met à jour la couleur de la barre système', () => {
     const meta = document.createElement('meta');
     meta.name = 'theme-color';
-    meta.content = '#0a0a0b';
+    meta.content = '#12110f';
     document.head.append(meta);
 
     applyTheme('light');
-    expect(meta.content).toBe('#ffffff');
+    expect(meta.content).toBe('#f7f8f6');
     applyTheme('dark');
-    expect(meta.content).toBe('#0a0a0b');
+    expect(meta.content).toBe('#12110f');
 
     meta.remove();
   });

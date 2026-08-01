@@ -11,8 +11,8 @@ type Props = {
  * Opens a picker, and shows what that picker currently holds.
  *
  * Engaged, it is a FILL of --color-accent carrying --color-accent-fg, never the
- * accent as text on a surface: the acid green sits at 1.3:1 on white, which is
- * the fill/ink split Lot 1 measured its way into.
+ * accent as text on a surface — that is --accent-ink, measured separately. The
+ * fill/ink split Lot 1 measured its way into.
  *
  * No clear "×" inside the chip. A 20px cross next to a 48px target is exactly
  * the thing you miss with damp fingers, and clearing a filter belongs where you

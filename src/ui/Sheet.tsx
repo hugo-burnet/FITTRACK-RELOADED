@@ -95,7 +95,7 @@ export function Sheet({ open, onClose, title, children }: Props) {
         type="button"
         aria-label={t('common.close')}
         onClick={onClose}
-        className="absolute inset-0 bg-black/60 transition-opacity duration-[var(--dur-2)]
+        className="absolute inset-0 bg-[var(--scrim)] transition-opacity duration-[var(--dur-2)]
           ease-[var(--ease-mech)]"
         style={{ opacity: raised ? 1 : 0 }}
       />

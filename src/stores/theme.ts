@@ -4,8 +4,8 @@ export const THEME_STORAGE_KEY = 'fittrack:theme';
 
 /** Kept in sync with --surface-0 in index.css. Drives the Android system bar. */
 const SYSTEM_BAR_COLOR: Record<Theme, string> = {
-  dark: '#0a0a0b',
-  light: '#ffffff',
+  dark: '#12110f',
+  light: '#f7f8f6',
 };
 
 export function loadTheme(): Theme {

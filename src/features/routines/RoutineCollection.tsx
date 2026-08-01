@@ -83,7 +83,7 @@ function RoutineRow({
         duration-[var(--dur-1)]
         ${
           state.dragging
-            ? 'bg-[var(--surface-2)] ring-2 ring-[var(--accent-ink)]'
+            ? 'bg-[var(--accent-soft)] ring-2 ring-[var(--accent-ink)]'
             : 'bg-[var(--surface-1)]'
         }`}
     >

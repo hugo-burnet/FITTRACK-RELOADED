@@ -167,8 +167,8 @@ export function RoutineExerciseCard({
         <span
           aria-hidden="true"
           // INK, not fill: this rule has to be legible against the surface, it does
-          // not carry --color-accent-fg on top of it. The raw accent measured 1,29:1
-          // on the light page — invisible — against 5,23:1 here. cf. index.css.
+          // not carry --color-accent-fg on top of it. The fill is only ever measured
+          // against the text it carries, never against the page. cf. index.css.
           className={`absolute top-0 left-0 w-[3px] bg-[var(--accent-ink)]
             ${first ? 'rounded-t-full' : ''} ${last ? 'rounded-b-full' : ''}`}
           // Runs into the gap on every member but the last, so the bracket is
@@ -182,7 +182,7 @@ export function RoutineExerciseCard({
         className={`overflow-hidden rounded-2xl transition-colors duration-[var(--dur-1)]
           ${
             state.dragging
-              ? 'bg-[var(--surface-2)] ring-2 ring-[var(--accent-ink)]'
+              ? 'bg-[var(--accent-soft)] ring-2 ring-[var(--accent-ink)]'
               : 'bg-[var(--surface-1)]'
           }`}
       >
