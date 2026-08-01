@@ -221,6 +221,13 @@ const fr = {
     recordFolded: 'Record',
     /** Menu ⋯ de la séance. */
     workoutMenu: 'Options de la séance',
+    deloadAction: 'Activer le deload à 80 %',
+    deloadActive: 'Deload actif à 80 %',
+    deloadTitle: 'Deload à 80 %',
+    deloadBody: 'Les séries restantes passeront à 80 %, arrondies à 2,5 kg.',
+    deloadConfirm: 'Appliquer',
+    deloadNote: 'Deload — charges réduites à 80 %.',
+    deloadError: 'Le deload n’a pas pu être appliqué. Réessaie.',
     rename: 'Renommer la séance',
     nameLabel: 'Nom de la séance',
     workoutNotesLabel: 'Notes de la séance',

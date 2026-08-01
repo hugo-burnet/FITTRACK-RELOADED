@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
+  applyWorkoutDeload,
   completeSet,
   deleteSet,
   duplicateLastSet,
@@ -28,6 +29,7 @@ import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
+import { measurementShape } from '@/lib/measurement';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { workoutRecordKinds } from '@/lib/records';
 import { isRestTriggering, restPlans } from '@/lib/rest';
@@ -49,6 +51,7 @@ import {
 } from '@/ui';
 import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
+import { DeloadSheet } from './DeloadSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { unlockChime } from './restChime';
@@ -64,6 +67,7 @@ import { workoutProgressLine } from './summary';
 
 type SheetState =
   | { kind: 'workout' }
+  | { kind: 'deload' }
   | { kind: 'rename' }
   | { kind: 'notes' }
   | { kind: 'exercise'; rowId: string }
@@ -199,6 +203,21 @@ export function WorkoutScreen() {
   }
 
   const { workout, exercises } = detail;
+  const deloadActive = workout.deloadPercent === 80;
+  const canDeload = exercises.some((line) =>
+    (() => {
+      const role = measurementShape(line.exercise?.measurementType ?? 'weight_reps').weightRole;
+      return (
+        role !== undefined &&
+        role !== 'assist' &&
+        line.sets.some(
+          (set, index) =>
+            set.isCompleted === 0 &&
+            (set.weight ?? set.targetWeight ?? line.previous[index]?.weight) !== undefined,
+        )
+      );
+    })(),
+  );
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const plans = restPlans(exercises.map(({ row }) => row));
 
@@ -303,6 +322,16 @@ export function WorkoutScreen() {
               défilement. À droite du titre, à gauche du menu — l'avancement
               descend au-dessus de la liste, le repos vit sur la card. Le bandeau
               `WorkoutMeter` est dissous : chaque relevé va où vit son sens. */}
+          <HeaderAction
+            label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
+            pressed={deloadActive}
+            disabled={deloadActive || !canDeload}
+            onClick={() => setSheet({ kind: 'deload' })}
+          >
+            <span className="metric text-xs font-bold" aria-hidden="true">
+              80%
+            </span>
+          </HeaderAction>
           <ElapsedTime startedAt={workout.startedAt} className="text-base text-[var(--text-2)]" />
           <HeaderAction
             label={t('workout.workoutMenu')}
@@ -443,6 +472,17 @@ export function WorkoutScreen() {
           { label: t('workout.rename'), onSelect: () => setSheet({ kind: 'rename' }) },
           { label: t('workout.workoutNotesLabel'), onSelect: () => setSheet({ kind: 'notes' }) },
         ]}
+      />
+
+      <DeloadSheet
+        open={sheet?.kind === 'deload'}
+        onClose={() => setSheet(null)}
+        onApply={async () => {
+          const updated = await applyWorkoutDeload(workout.id, t('workout.deloadNote'));
+          if (updated !== null) {
+            setDraft({ id: updated.id, name: updated.name, notes: updated.notes ?? '' });
+          }
+        }}
       />
 
       <Sheet

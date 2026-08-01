@@ -18,18 +18,25 @@ export function HeaderAction({
   label,
   onClick,
   children,
+  pressed,
+  disabled = false,
 }: {
   label: string;
   onClick: () => void;
   children: ReactNode;
+  pressed?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      aria-pressed={pressed}
+      disabled={disabled}
       onClick={onClick}
-      className="-mr-2 flex size-12 shrink-0 items-center justify-center rounded-xl
-        text-[var(--accent-ink)] active:bg-[var(--surface-1)]"
+      className={`-mr-2 flex size-12 shrink-0 items-center justify-center rounded-xl
+        text-[var(--accent-ink)] active:bg-[var(--surface-1)] disabled:opacity-60
+        ${pressed ? 'bg-[var(--surface-2)]' : ''}`}
     >
       {children}
     </button>
