@@ -181,6 +181,8 @@ export interface Workout extends Syncable {
   endedAt: number; // 0 until finished
   durationSeconds: number; // real time excluding pauses, computed on close
   notes?: string;
+  /** Applied once to remaining live-workout loads; absent when no deload was applied. */
+  deloadPercent?: number;
   importSource?: 'hevy_csv';
   importKey?: string;
 
