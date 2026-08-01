@@ -2,6 +2,18 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**bouton deload en séance livré**).
+
+- Bouton `80%` ajouté au header de la séance en cours : confirmation, réduction des seules séries
+  restantes au pas de 2,5 kg, protection contre la double application et reprise après fermeture.
+- Le deload ajoute sans écraser la note `Deload — charges réduites à 80 %.` ; l'export Markdown la
+  restitue par son pipeline de notes existant.
+- Checkpoint téléphone : valider une première série, activer `80%`, vérifier que seules les séries
+  restantes changent, tuer/reprendre l'app puis partager la séance et contrôler la note.
+
+**Preuves fraîches.** Les quatre portes sortent avec le code 0 : typecheck, **861 tests dans 70
+fichiers**, build Vite de **197 modules** et lint.
+
 **Dernière mise à jour :** 2026-08-01 (**export de tout l’historique depuis les
 Réglages**). La section Données propose désormais « Exporter tout
 l’historique ». Le document réutilise sans divergence la chaîne canonique
