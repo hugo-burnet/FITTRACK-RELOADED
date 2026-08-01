@@ -1,14 +1,14 @@
 import type { HevyParsedWorkout } from './hevyCsv';
 import { normalizeHevyExerciseTitle } from './hevyExerciseMatch';
+import { normalizeRoutineName } from './routineName';
 
 export interface HevyRoutineSource {
   name: string;
   workout: HevyParsedWorkout;
 }
 
-export function normalizeHevyRoutineName(name: string): string {
-  return name.trim().replace(/\s+/g, ' ').toLocaleLowerCase('fr');
-}
+/** Le regroupement de l'import et le rattachement de l'accueil, même règle. */
+export const normalizeHevyRoutineName = normalizeRoutineName;
 
 function displayName(name: string): string {
   return name.trim().replace(/\s+/g, ' ');

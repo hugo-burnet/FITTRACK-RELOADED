@@ -13,9 +13,13 @@
  * les séances restent dans l'historique — et ils se testent sans base.
  */
 
+import { normalizeRoutineName } from './routineName';
+
 /** Une routine candidate, dans l'ordre où l'utilisateur l'a rangée. */
 export interface SuggestionCandidate {
   routineId: string;
+  /** Son nom — le rattrapage quand la séance n'a pas gardé de `routineId`. */
+  name: string;
   /** `Routine.order` — la départage quand les dates ne suffisent pas. */
   order: number;
 }
@@ -24,6 +28,8 @@ export interface SuggestionCandidate {
 export interface SuggestionWorkout {
   /** `''` pour une séance libre ou un import sans routine d'origine. */
   routineId: string;
+  /** Le titre de la séance — le seul lien restant quand `routineId` ne dit rien. */
+  name: string;
   startedAt: number;
 }
 
@@ -34,22 +40,64 @@ export interface SuggestedPick {
 }
 
 /**
- * Date de la dernière réalisation de chaque routine **connue**.
+ * Les routines candidates indexées par nom, pour rattacher les séances qui n'ont
+ * pas de `routineId`.
  *
- * Le filtre sur `known` est ce qui empêche une routine supprimée de revenir par
- * la porte de l'historique : ses séances existent encore, elle non.
+ * Un nom porté par deux routines vaut `null` : on ne devine pas laquelle a été
+ * faite, et un tirage au sort qui change d'un chargement à l'autre serait pire
+ * que de ne rien rattacher.
  */
+function candidatesByName(
+  candidates: readonly SuggestionCandidate[],
+): Map<string, string | null> {
+  const byName = new Map<string, string | null>();
+
+  for (const candidate of candidates) {
+    const key = normalizeRoutineName(candidate.name);
+    if (key === '') continue;
+    byName.set(key, byName.has(key) ? null : candidate.routineId);
+  }
+
+  return byName;
+}
+
+/**
+ * La routine à laquelle une séance compte, ou `null` si aucune.
+ *
+ * `routineId` d'abord, le nom ensuite. Le rattrapage par le nom n'est pas un
+ * confort : l'import Hevy écrit ses séances **sans** `routineId` tout en
+ * fabriquant les routines à partir de ces mêmes séances groupées par titre.
+ * Sans lui, une bibliothèque importée reste « jamais réalisée » pour toujours,
+ * et l'accueil propose sa routine dans un ordre qui n'a aucun sens.
+ *
+ * Rattacher au nom **d'une routine existante** ne fait pas revenir une routine
+ * supprimée : elle n'est pas candidate, donc elle n'est proposable par aucun
+ * chemin.
+ */
+function attributedRoutineId(
+  workout: SuggestionWorkout,
+  known: ReadonlySet<string>,
+  byName: ReadonlyMap<string, string | null>,
+): string | null {
+  if (known.has(workout.routineId)) return workout.routineId;
+  return byName.get(normalizeRoutineName(workout.name)) ?? null;
+}
+
+/** Date de la dernière réalisation de chaque routine **connue**. */
 function lastPerformedByRoutine(
   workouts: readonly SuggestionWorkout[],
-  known: ReadonlySet<string>,
+  candidates: readonly SuggestionCandidate[],
 ): Map<string, number> {
+  const known = new Set(candidates.map((candidate) => candidate.routineId));
+  const byName = candidatesByName(candidates);
   const lastPerformed = new Map<string, number>();
 
   for (const workout of workouts) {
-    if (workout.routineId === '' || !known.has(workout.routineId)) continue;
-    const current = lastPerformed.get(workout.routineId);
+    const routineId = attributedRoutineId(workout, known, byName);
+    if (routineId === null) continue;
+    const current = lastPerformed.get(routineId);
     if (current === undefined || workout.startedAt > current) {
-      lastPerformed.set(workout.routineId, workout.startedAt);
+      lastPerformed.set(routineId, workout.startedAt);
     }
   }
 
@@ -70,10 +118,7 @@ export function pickSuggestedRoutine(
 ): SuggestedPick | null {
   if (candidates.length === 0) return null;
 
-  const lastPerformed = lastPerformedByRoutine(
-    completedWorkouts,
-    new Set(candidates.map((candidate) => candidate.routineId)),
-  );
+  const lastPerformed = lastPerformedByRoutine(completedWorkouts, candidates);
 
   const ranked = [...candidates].sort(
     (left, right) =>

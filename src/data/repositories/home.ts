@@ -49,8 +49,14 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
   ]);
 
   const pick = pickSuggestedRoutine(
-    routines.map(({ routine }) => ({ routineId: routine.id, order: routine.order })),
-    completed.map(({ routineId, startedAt }) => ({ routineId, startedAt })),
+    routines.map(({ routine }) => ({
+      routineId: routine.id,
+      name: routine.name,
+      order: routine.order,
+    })),
+    // Le nom voyage avec la séance : les séances importées n'ont pas de
+    // `routineId`, c'est par leur titre que `pickSuggestedRoutine` les rattache.
+    completed.map(({ routineId, name, startedAt }) => ({ routineId, name, startedAt })),
   );
   const picked =
     pick === null
