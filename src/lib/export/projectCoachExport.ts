@@ -72,7 +72,7 @@ function projectExercise(
       : measurementShape(exercise.measurementType).fields;
   const kept = options.includeWarmups
     ? exercise.sets
-    : exercise.sets.filter((set) => set.setType !== 'warmup');
+    : exercise.sets.filter(isWorkingSet);
 
   return {
     ...(options.includeIds
