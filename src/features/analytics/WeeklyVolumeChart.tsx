@@ -1,5 +1,6 @@
 import { barLayout } from '@/lib/analytics/plot';
 import { ChartSurface } from './ChartSurface';
+import { ColumnFrame, ZeroStub } from './ColumnFrame';
 
 /**
  * Tonnage or duration, one column per observed week.
@@ -12,7 +13,6 @@ import { ChartSurface } from './ChartSurface';
 
 const BOX = { width: 300, height: 120 };
 const PAD = 6;
-const ZERO_STUB = 4;
 const SINGLE_BAR_WIDTH = 18;
 
 interface Props {
@@ -45,19 +45,6 @@ export function WeeklyVolumeChart({
       xs={bars.map((slot) => slot.centerX)}
       onSelect={onSelect}
     >
-      {bars[selectedIndex] !== undefined && (
-        <rect
-          x={bars[selectedIndex]!.x - bars[selectedIndex]!.width * 0.25}
-          y={-PAD}
-          width={bars[selectedIndex]!.width * 1.5}
-          height={BOX.height + PAD * 2}
-          rx={2}
-          fill="none"
-          stroke="var(--text-2)"
-          strokeWidth={1}
-        />
-      )}
-
       {bars.map((slot, index) =>
         slot.height > 0 ? (
           <rect
@@ -70,26 +57,12 @@ export function WeeklyVolumeChart({
             fill="var(--text-2)"
           />
         ) : (
-          <rect
-            key={index}
-            x={slot.x}
-            y={BOX.height - ZERO_STUB}
-            width={slot.width}
-            height={ZERO_STUB}
-            rx={1}
-            fill="var(--text-2)"
-          />
+          <ZeroStub key={index} slot={slot} box={BOX} />
         ),
       )}
 
-      <line
-        x1={0}
-        y1={BOX.height}
-        x2={BOX.width}
-        y2={BOX.height}
-        stroke="var(--text-2)"
-        strokeWidth={1}
-      />
+      {/* Baseline and cursor, shared with the sessions chart — cf. ColumnFrame. */}
+      <ColumnFrame box={BOX} selected={bars[selectedIndex]} />
     </ChartSurface>
   );
 }

@@ -1,6 +1,7 @@
 import { barLayout } from '@/lib/analytics/plot';
 import type { WeekBucket } from '@/lib/analytics/weeks';
 import { ChartSurface } from './ChartSurface';
+import { ColumnFrame, ZeroStub } from './ColumnFrame';
 
 /**
  * The histogram. Same hand-drawn SVG as the curve, same `ChartSurface`, and
@@ -20,16 +21,6 @@ import { ChartSurface } from './ChartSurface';
 const BOX = { width: 300, height: 120 };
 /** Small: nothing overshoots sideways, and nothing is drawn above the ceiling. */
 const PAD = 6;
-/**
- * The mark a week with **no** session gets, in the tone of the baseline.
- *
- * Reported from use: an empty week drew nothing at all, so the eye read a gap
- * in the spacing rather than a column at zero — and once the rhythm of the
- * columns is broken, every other height looks arbitrary. Three pixels of the
- * axis's own colour say "this week exists, and it is zero" without ever reading
- * as a small quantity.
- */
-const ZERO_STUB = 4;
 
 interface Props {
   buckets: readonly WeekBucket[];
@@ -56,27 +47,6 @@ export function WeeklyChart({ buckets, ceiling, selectedIndex, onSelect, summary
       xs={bars.map(({ slot }) => slot.centerX)}
       onSelect={onSelect}
     >
-      {/* Selection is the lit **slot**, drawn first so everything sits on top of
-          it. Not a change of the bar's colour — that made the selected week read
-          as a third category rather than as a cursor, and it was unreadable on a
-          week at zero, which has no surface to recolour. Not a ring either: a
-          ring around a bar of height zero encloses nothing, and the empty week
-          is precisely the one worth tapping. A lit column works at any height,
-          including none. */}
-      {bars[selectedIndex] !== undefined && (
-        <rect
-          x={bars[selectedIndex]!.slot.x - bars[selectedIndex]!.slot.width * 0.25}
-          // Crossing the baseline, top and bottom, because **no bar ever does**:
-          // a block that stops at the axis is read as a value, and that is the
-          // mistake the previous version made in white.
-          y={-PAD}
-          width={bars[selectedIndex]!.slot.width * 1.5}
-          height={BOX.height + PAD * 2}
-          rx={2}
-          fill="var(--surface-2)"
-        />
-      )}
-
       {bars.map(({ slot, bucket }) => {
         const reached = bucket.goal !== null && bucket.sessions >= bucket.goal;
 
@@ -91,28 +61,12 @@ export function WeeklyChart({ buckets, ceiling, selectedIndex, onSelect, summary
             fill={reached ? 'var(--accent-ink)' : 'var(--text-2)'}
           />
         ) : (
-          <rect
-            key={bucket.weekStart}
-            x={slot.x}
-            y={BOX.height - ZERO_STUB}
-            width={slot.width}
-            height={ZERO_STUB}
-            rx={1}
-            fill="var(--border)"
-          />
+          <ZeroStub key={bucket.weekStart} slot={slot} box={BOX} />
         );
       })}
 
-      {/* The zero the bars stand on. Not a grid — the one line without which a
-          week at zero cannot be seen at all. */}
-      <line
-        x1={0}
-        y1={BOX.height}
-        x2={BOX.width}
-        y2={BOX.height}
-        stroke="var(--border)"
-        strokeWidth={1}
-      />
+      {/* Baseline and cursor, shared with the volume chart — cf. ColumnFrame. */}
+      <ColumnFrame box={BOX} selected={bars[selectedIndex]?.slot} />
     </ChartSurface>
   );
 }

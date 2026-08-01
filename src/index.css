@@ -62,6 +62,13 @@
      Reserved for a state the accent ink already points at. */
   --accent-soft: #3a2115; /* --text-2 reads 7,0:1 on it */
 
+  /* The one rule a chart draws, and the stub a bucket at zero gets.
+     Neither --border nor --text-2: --border is tuned for a card edge and
+     measures 1,35:1 on a light card — invisible under a bar; --text-2 is text
+     and drew a baseline heavier than the data standing on it. Its own job, its
+     own floor: 3:1, the graphical-object threshold. */
+  --axis: #756e64; /* 3,5:1 on a card, 3,9:1 on the page */
+
   /* Danger, same fill/ink split — and for the same reason, found the same way.
      Every destructive control in the app is red TEXT on a surface, and #ff5c5c
      measured 3.03:1 on white, 2.75:1 on a card and 2.39:1 on a pressed row. The
@@ -100,6 +107,7 @@
   --accent-ink: #166534; /* 7,1:1 on a card, 6,3:1 on --surface-2 */
 
   --accent-soft: #dcfce7;
+  --axis: #869087; /* 3,3:1 on a card, 3,1:1 on the page */
 
   --danger-ink: #b91c1c; /* 6.47:1 on white, 5.89 on a card, 5.10 on a pressed row */
 }
