@@ -792,6 +792,11 @@ const fr = {
     demoNote: 'Démonstration : rien n’est enregistré.',
 
     dataSection: 'Données',
+    exportHistoryLink: 'Exporter tout l’historique',
+    exportHistoryHint: 'Partage toutes tes séances dans un document texte lisible.',
+    exportHistoryTitle: 'FitTrack — historique complet',
+    exportHistoryCopied: 'Historique copié dans le presse-papiers.',
+    exportHistoryFailed: 'L’historique n’a pas pu être partagé ni copié.',
     debugLink: 'Diagnostic',
     debugHint: 'Contenu de la base, stockage utilisé, réinitialisation.',
 

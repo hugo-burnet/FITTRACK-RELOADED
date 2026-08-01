@@ -1,8 +1,14 @@
 import { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
+import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { t } from '@/i18n/fr';
+import { projectCoachExport } from '@/lib/export/projectCoachExport';
+import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
+import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
+import { shareText, type ShareOutcome } from '@/platform/share';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { resnapshotHistory } from '@/data/repositories/historyRepair';
@@ -18,8 +24,18 @@ export function SettingsScreen() {
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [demoWeight, setDemoWeight] = useState<number | undefined>(100);
   const [repairOpen, setRepairOpen] = useState(false);
+  const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
   /** Ce que la réparation a fait, dit une fois et sans fenêtre à fermer. */
   const [repairReport, setRepairReport] = useState<string>();
+  const historyMarkdown = useLiveQuery(async () => {
+    const scope = { kind: 'all-history' } as const;
+    const sources = await listHistoricalWorkouts(scope);
+    if (sources.length === 0) return '';
+
+    return serializeMarkdown(
+      projectCoachExport(scope, sources, DEFAULT_EXPORT_OPTIONS, Date.now()),
+    );
+  }, []);
 
   const repair = () => {
     void resnapshotHistory().then(({ repaired }) => {
@@ -34,6 +50,16 @@ export function SettingsScreen() {
   const chooseTheme = (next: Theme) => {
     setTheme(next);
     applyTheme(next);
+  };
+
+  const shareHistory = () => {
+    setHistoryShareOutcome(null);
+    void shareText({
+      title: t('settings.exportHistoryTitle'),
+      text: historyMarkdown ?? '',
+    }).then((outcome) => {
+      setHistoryShareOutcome(outcome === 'copied' || outcome === 'failed' ? outcome : null);
+    });
   };
 
   return (
@@ -106,6 +132,12 @@ export function SettingsScreen() {
           <SectionTitle>{t('settings.dataSection')}</SectionTitle>
           <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
             <ListRow
+              title={t('settings.exportHistoryLink')}
+              subtitle={t('settings.exportHistoryHint')}
+              disabled={historyMarkdown === undefined || historyMarkdown === ''}
+              onClick={shareHistory}
+            />
+            <ListRow
               title={t('settings.repairLink')}
               subtitle={t('settings.repairHint')}
               onClick={() => setRepairOpen(true)}
@@ -119,6 +151,22 @@ export function SettingsScreen() {
           </div>
           {repairReport !== undefined && (
             <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">{repairReport}</p>
+          )}
+          {historyShareOutcome !== null && (
+            <p
+              role="status"
+              className={`mt-3 px-1 text-sm leading-relaxed ${
+                historyShareOutcome === 'failed'
+                  ? 'text-[var(--danger-ink)]'
+                  : 'text-[var(--text-2)]'
+              }`}
+            >
+              {t(
+                historyShareOutcome === 'failed'
+                  ? 'settings.exportHistoryFailed'
+                  : 'settings.exportHistoryCopied',
+              )}
+            </p>
           )}
         </section>
       </div>
