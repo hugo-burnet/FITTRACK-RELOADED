@@ -47,22 +47,41 @@ describe('RoutineCollection', () => {
     const rootRoutine = routine('routine-root', 'Racine');
     const pushFolder = folder('folder-push', 'Push');
     const pushRoutine = routine('routine-push', 'Pouss\u00e9e', pushFolder.id, 1);
+    const legsFolder = folder('folder-legs', 'Jambes', 1);
+    const legsRoutine = routine('routine-legs', 'Squat', legsFolder.id, 1);
     render(
       <RoutineCollection
-        summaries={[summary(rootRoutine), summary(pushRoutine)]}
-        folders={[pushFolder]}
+        summaries={[summary(rootRoutine), summary(pushRoutine), summary(legsRoutine)]}
+        folders={[pushFolder, legsFolder]}
         onIntent={vi.fn()}
       />,
     );
 
     const rootHeading = screen.getByRole('heading', { name: 'Sans dossier' });
     const rootName = screen.getByText('Racine');
-    const folderHeading = screen.getByRole('heading', { name: 'Push' });
-    const folderName = screen.getByText('Pouss\u00e9e');
+    const pushHeading = screen.getByRole('heading', { name: 'Push' });
+    const pushName = screen.getByText('Pouss\u00e9e');
+    const legsHeading = screen.getByRole('heading', { name: 'Jambes' });
+    const legsName = screen.getByText('Squat');
 
     expect(rootHeading.compareDocumentPosition(rootName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
-    expect(rootName.compareDocumentPosition(folderHeading) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
-    expect(folderHeading.compareDocumentPosition(folderName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(rootName.compareDocumentPosition(pushHeading) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(pushHeading.compareDocumentPosition(pushName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(pushName.compareDocumentPosition(legsHeading) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(legsHeading.compareDocumentPosition(legsName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+  });
+
+  it('renders a root routine without a heading when no folders exist', () => {
+    render(
+      <RoutineCollection
+        summaries={[summary(routine('routine-root', 'Racine'))]}
+        folders={[]}
+        onIntent={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Racine')).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Sans dossier' })).not.toBeInTheDocument();
   });
 
   it('rend la racine m\u00eame vide d\u00e8s qu\u2019un dossier existe', () => {

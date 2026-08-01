@@ -93,7 +93,11 @@ export function RoutinesScreen() {
         return;
       case 'reorderRoutines':
         void reorderRoutines(intent.placement.map(({ id, folderId }) => ({ id, folderId })));
+        return;
     }
+
+    const unhandled: never = intent;
+    return unhandled;
   };
 
   return (
