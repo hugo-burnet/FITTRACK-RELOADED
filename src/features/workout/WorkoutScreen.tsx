@@ -49,6 +49,7 @@ import {
   ReorderableList,
   Sheet,
   Textarea,
+  Toggle,
 } from '@/ui';
 import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
@@ -330,22 +331,16 @@ export function WorkoutScreen() {
               deload et le menu, donc encadré de deux boutons : il se lisait comme
               un troisième bouton qui refuse de répondre. Reporté du téléphone. La
               lecture d'abord, les commandes groupées contre le bord — le même
-              ordre que l'en-tête des routines, où le compte précède le `+`. */}
+              ordre que l'en-tête des routines, où le compte précède le `+`.
+
+              Le deload a quitté cette rangée : un carré `80%` allumé ne disait
+              pas s'il était *actif* ou simplement *tapé*. Il est descendu sur la
+              barre d'avancement, en interrupteur (`Toggle`). */}
           <ElapsedTime
             startedAt={workout.startedAt}
             className="text-base font-semibold text-[var(--text-2)]"
             label={(time) => t('workout.elapsedLabel', { time })}
           />
-          <HeaderAction
-            label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
-            pressed={deloadActive}
-            disabled={deloadActive || !canDeload}
-            onClick={() => setSheet({ kind: 'deload' })}
-          >
-            <span className="metric text-xs font-bold" aria-hidden="true">
-              {t('workout.deloadMark')}
-            </span>
-          </HeaderAction>
           <HeaderAction
             label={t('workout.workoutMenu')}
             onClick={() => setSheet({ kind: 'workout' })}
@@ -365,6 +360,17 @@ export function WorkoutScreen() {
             <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
               {workoutProgressLine(completedSets, totalSets)}
             </p>
+            {/* Le deload, à gauche du plier/déplier et séparé de lui : deux
+                commandes voisines qui se touchent, sur un écran qu'on manipule
+                d'une main en sueur, c'est un appui pour l'autre. */}
+            <Toggle
+              label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
+              mark={t('workout.deloadMark')}
+              checked={deloadActive}
+              disabled={deloadActive || !canDeload}
+              onChange={() => setSheet({ kind: 'deload' })}
+            />
+            <span className="w-4 shrink-0" />
             <button
               type="button"
               aria-label={t(

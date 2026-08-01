@@ -87,7 +87,7 @@ describe('WorkoutScreen — persistance', () => {
     });
   });
 
-  it('applique le deload depuis le header et garde son état après remontage', async () => {
+  it('applique le deload depuis la barre d’avancement et garde son état après remontage', async () => {
     const workoutId = await seedActiveWorkout();
     const initial = await firstSet(workoutId);
     await db.workoutSets.update(initial.id, { targetWeight: 100, targetReps: 5 });
@@ -95,7 +95,7 @@ describe('WorkoutScreen — persistance', () => {
     const mounted = renderWorkout();
 
     await screen.findByText('Développé couché');
-    await user.click(screen.getByRole('button', { name: 'Activer le deload à 80 %' }));
+    await user.click(screen.getByRole('switch', { name: 'Activer le deload à 80 %' }));
     expect(
       screen.getByText('Les séries restantes passeront à 80 %, arrondies à 2,5 kg.'),
     ).toBeVisible();
@@ -107,7 +107,9 @@ describe('WorkoutScreen — persistance', () => {
         '80',
       );
     });
-    expect(screen.getByRole('button', { name: 'Deload actif à 80 %' })).toBeDisabled();
+    const applied = screen.getByRole('switch', { name: 'Deload actif à 80 %' });
+    expect(applied).toBeChecked();
+    expect(applied).toBeDisabled();
     await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
     await user.click(screen.getByRole('button', { name: 'Notes de la séance' }));
     expect(screen.getByRole('textbox', { name: 'Notes de la séance' })).toHaveValue(
@@ -116,7 +118,7 @@ describe('WorkoutScreen — persistance', () => {
 
     mounted.unmount();
     renderWorkout();
-    expect(await screen.findByRole('button', { name: 'Deload actif à 80 %' })).toBeDisabled();
+    expect(await screen.findByRole('switch', { name: 'Deload actif à 80 %' })).toBeDisabled();
   });
 
   it('conserve le type assisté du snapshot quand la bibliothèque le masque', async () => {
@@ -139,7 +141,7 @@ describe('WorkoutScreen — persistance', () => {
     expect(t('workout.deloadMark')).toBe('80%');
     await screen.findByText('Tractions assistées retirées');
     expect(screen.getByText('−kg')).toBeVisible();
-    const action = screen.getByRole('button', { name: 'Activer le deload à 80 %' });
+    const action = screen.getByRole('switch', { name: 'Activer le deload à 80 %' });
     expect(action).toBeDisabled();
     expect(screen.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveAttribute(
       'placeholder',

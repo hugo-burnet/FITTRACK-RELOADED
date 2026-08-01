@@ -21,4 +21,5 @@ export { SectionTitle } from './SectionTitle';
 export { Sheet } from './Sheet';
 export { SwipeToDelete } from './SwipeToDelete';
 export { Textarea } from './Textarea';
+export { Toggle } from './Toggle';
 export { UndoRow } from './UndoRow';
