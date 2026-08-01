@@ -18,6 +18,7 @@ import {
   updateSetValues,
   updateWorkout,
   updateWorkoutExercise,
+  workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import {
   getAvailablePlateWeightsKg,
@@ -207,7 +208,7 @@ export function WorkoutScreen() {
   const canDeload = exercises.some((line) =>
     (() => {
       return (
-        isDeloadEligibleMeasurement(line.exercise?.measurementType) &&
+        isDeloadEligibleMeasurement(workoutExerciseIdentityOf(line).measurementType) &&
         line.sets.some(
           (set, index) =>
             set.isCompleted === 0 &&
@@ -267,8 +268,12 @@ export function WorkoutScreen() {
   const warmupLine = sheet?.kind === 'warmup' ? lineOf(sheet.rowId) : null;
   const warmupContext = warmupLine === null ? null : warmupContextFor(warmupLine);
 
-  const nameOf = (rowId: string): string =>
-    lineOf(rowId)?.exercise?.name ?? t('workout.deletedExercise');
+  const nameOf = (rowId: string): string => {
+    const line = lineOf(rowId);
+    return line === null
+      ? t('workout.deletedExercise')
+      : workoutExerciseIdentityOf(line).name ?? t('workout.deletedExercise');
+  };
 
   /**
    * The type of one set, by id. Falls back to `normal` rather than throwing: the

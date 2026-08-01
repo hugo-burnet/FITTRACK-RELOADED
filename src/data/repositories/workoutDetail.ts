@@ -1,5 +1,9 @@
 import { db } from '@/data/db';
 import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import {
+  resolveWorkoutExerciseIdentity,
+  type WorkoutExerciseIdentity,
+} from '@/lib/exerciseSnapshot';
 import { alive } from './base';
 import { getLastPerformance } from './workoutHistory';
 
@@ -9,6 +13,8 @@ export interface WorkoutExerciseDetail {
   row: WorkoutExercise;
   /** `undefined` when the exercise was deleted from the library after being added. */
   exercise: Exercise | undefined;
+  /** Snapshot, then library (including soft-deleted rows), then the explicit grid fallback. */
+  identity?: WorkoutExerciseIdentity;
   sets: WorkoutSet[];
   /** RF-19 — the same exercise, last time. Never this session. */
   previous: WorkoutSet[];
@@ -17,6 +23,16 @@ export interface WorkoutExerciseDetail {
 export interface WorkoutDetail {
   workout: Workout;
   exercises: WorkoutExerciseDetail[];
+}
+
+/**
+ * Reads the repository-resolved identity, with a compatibility path for
+ * in-memory details assembled by tests and pure consumers.
+ */
+export function workoutExerciseIdentityOf(
+  line: Pick<WorkoutExerciseDetail, 'row' | 'exercise' | 'identity'>,
+): WorkoutExerciseIdentity {
+  return line.identity ?? resolveWorkoutExerciseIdentity(line.row, line.exercise);
 }
 
 /**
@@ -43,9 +59,11 @@ export async function getWorkoutDetail(workoutId: string): Promise<WorkoutDetail
   ]);
 
   const library = new Map<string, Exercise>();
-  // A soft-deleted exercise reads as missing, exactly as `getExercise` has it.
+  const activeLibrary = new Map<string, Exercise>();
   for (const exercise of found) {
-    if (exercise !== undefined && exercise.deletedAt === 0) library.set(exercise.id, exercise);
+    if (exercise === undefined) continue;
+    library.set(exercise.id, exercise);
+    if (exercise.deletedAt === 0) activeLibrary.set(exercise.id, exercise);
   }
 
   const setsPerRow = new Map<string, WorkoutSet[]>();
@@ -68,7 +86,8 @@ export async function getWorkoutDetail(workoutId: string): Promise<WorkoutDetail
     workout,
     exercises: rows.map((row) => ({
       row,
-      exercise: library.get(row.exerciseId),
+      exercise: activeLibrary.get(row.exerciseId),
+      identity: resolveWorkoutExerciseIdentity(row, library.get(row.exerciseId)),
       sets: (setsPerRow.get(row.id) ?? []).sort(byOrder),
       previous: history.get(row.exerciseId) ?? [],
     })),

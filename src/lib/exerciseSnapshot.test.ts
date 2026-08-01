@@ -3,6 +3,7 @@ import type { Exercise, Syncable, WorkoutExercise } from '@/data/types';
 import {
   exerciseSnapshotOfRow,
   resolveExerciseIdentity,
+  resolveWorkoutExerciseIdentity,
   snapshotOf,
 } from './exerciseSnapshot';
 
@@ -122,5 +123,29 @@ describe('resolveExerciseIdentity', () => {
 
     expect(identity).toEqual({});
     expect(Object.keys(identity)).toEqual([]);
+  });
+});
+
+describe('resolveWorkoutExerciseIdentity', () => {
+  it("conserve le type de l'instantané avant celui de la bibliothèque", () => {
+    expect(
+      resolveWorkoutExerciseIdentity(
+        row({ exerciseMeasurementType: 'assisted_weight_reps' }),
+        exercise({ measurementType: 'weight_reps' }),
+      ).measurementType,
+    ).toBe('assisted_weight_reps');
+  });
+
+  it("conserve le type de bibliothèque d'une ancienne ligne sans instantané", () => {
+    expect(
+      resolveWorkoutExerciseIdentity(
+        row(),
+        exercise({ measurementType: 'time_only', deletedAt: 1 }),
+      ).measurementType,
+    ).toBe('time_only');
+  });
+
+  it("n'utilise weight_reps que lorsque les deux sources sont absentes", () => {
+    expect(resolveWorkoutExerciseIdentity(row(), undefined).measurementType).toBe('weight_reps');
   });
 });

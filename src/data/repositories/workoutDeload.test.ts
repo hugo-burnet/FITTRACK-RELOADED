@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import Dexie from 'dexie';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
 import { projectCoachExport } from '@/lib/export/projectCoachExport';
@@ -15,9 +16,43 @@ import {
   finishWorkout,
   getWorkoutDetail,
   startWorkout,
+  updateSetValues,
+  updateWorkout,
 } from './workouts';
 
 const NOTE = 'Deload — charges réduites à 80 %.';
+
+function deferred<T>() {
+  let settle: ((value: T) => void) | undefined;
+  const promise = new Promise<T>((resolve) => {
+    settle = resolve;
+  });
+  return {
+    promise,
+    resolve(value: T) {
+      if (settle === undefined) throw new Error('deferred promise not initialized');
+      settle(value);
+    },
+  };
+}
+
+function blockWorkoutWrites() {
+  const release = deferred<void>();
+  const done = db.transaction('rw', db.workouts, async () => {
+    await db.workouts.get('__transaction_lock__');
+    await Dexie.waitFor(release.promise);
+  });
+  return { release, done };
+}
+
+function blockSetWrites() {
+  const release = deferred<void>();
+  const done = db.transaction('rw', db.workoutSets, async () => {
+    await db.workoutSets.get('__transaction_lock__');
+    await Dexie.waitFor(release.promise);
+  });
+  return { release, done };
+}
 
 async function liveSet(workoutId: string, exerciseId = 'bench') {
   const row = await addWorkoutExercise(workoutId, exerciseId);
@@ -29,6 +64,7 @@ async function liveSet(workoutId: string, exerciseId = 'bench') {
 
 describe('applyWorkoutDeload', () => {
   beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
 
   it('uses typed, target, then previous loads and leaves completed sets intact', async () => {
     await seedWorkout({
@@ -76,7 +112,80 @@ describe('applyWorkoutDeload', () => {
     expect((await db.workoutSets.get(set.id))?.targetWeight).toBe(80);
   });
 
-  it('uses the missing-exercise fallback after an assisted exercise is soft-deleted', async () => {
+  it('serializes two genuinely concurrent applications', async () => {
+    const workout = await startWorkout('', 'Poussée');
+    const { set } = await liveSet(workout.id);
+    await db.workoutSets.update(set.id, { targetWeight: 100 });
+
+    const results = await Promise.all([
+      applyWorkoutDeload(workout.id, NOTE),
+      applyWorkoutDeload(workout.id, NOTE),
+    ]);
+
+    expect(results.filter((result) => result !== null)).toHaveLength(1);
+    expect((await db.workoutSets.get(set.id))?.targetWeight).toBe(80);
+    expect((await db.workouts.get(workout.id))?.deloadPercent).toBe(80);
+  });
+
+  it('does not let a concurrent workout rename erase the deload marker or note', async () => {
+    const workout = await startWorkout('', 'Poussée');
+    const { set } = await liveSet(workout.id);
+    await db.workoutSets.update(set.id, { targetWeight: 100 });
+    const blocker = blockWorkoutWrites();
+
+    const [rename, deload] = Dexie.ignoreTransaction(() => [
+      updateWorkout(workout.id, { name: 'Poussée courte' }),
+      applyWorkoutDeload(workout.id, NOTE),
+    ]);
+    blocker.release.resolve(undefined);
+    await Promise.all([blocker.done, rename, deload]);
+
+    expect(await db.workouts.get(workout.id)).toMatchObject({
+      name: 'Poussée courte',
+      notes: NOTE,
+      deloadPercent: 80,
+    });
+  });
+
+  it('does not let a concurrent value edit restore a stale target load', async () => {
+    const workout = await startWorkout('', 'Poussée');
+    const { set } = await liveSet(workout.id);
+    await db.workoutSets.update(set.id, { targetWeight: 100 });
+    const blocker = blockSetWrites();
+
+    const [edit, deload] = Dexie.ignoreTransaction(() => [
+      updateSetValues(set.id, { reps: 6 }),
+      applyWorkoutDeload(workout.id, NOTE),
+    ]);
+    blocker.release.resolve(undefined);
+    await Promise.all([blocker.done, edit, deload]);
+
+    expect(await db.workoutSets.get(set.id)).toMatchObject({ targetWeight: 80, reps: 6 });
+    expect((await db.workouts.get(workout.id))?.deloadPercent).toBe(80);
+  });
+
+  it('keeps validation coherent when it races with deload', async () => {
+    const workout = await startWorkout('', 'Poussée');
+    const { set } = await liveSet(workout.id);
+    await db.workoutSets.update(set.id, { targetWeight: 100 });
+    const blocker = blockSetWrites();
+
+    const [validation, deload] = Dexie.ignoreTransaction(() => [
+      completeSet(set.id, { reps: 5 }),
+      applyWorkoutDeload(workout.id, NOTE),
+    ]);
+    blocker.release.resolve(undefined);
+    const [, , deloadResult] = await Promise.all([blocker.done, validation, deload]);
+    const stored = await db.workoutSets.get(set.id);
+
+    expect(stored).toMatchObject({ isCompleted: 1, reps: 5 });
+    if (deloadResult !== null) {
+      expect(stored?.targetWeight).toBe(80);
+      expect((await db.workouts.get(workout.id))?.deloadPercent).toBe(80);
+    }
+  });
+
+  it('keeps an assisted snapshot ineligible after its exercise is soft-deleted', async () => {
     const assisted = await createCustomExercise({
       name: 'Tractions assistées retirées',
       primaryMuscle: 'lats',
@@ -89,6 +198,55 @@ describe('applyWorkoutDeload', () => {
     const { set } = await liveSet(workout.id, assisted.id);
     await db.workoutSets.update(set.id, { targetWeight: 40 });
     await db.exercises.update(assisted.id, { deletedAt: Date.now() });
+
+    await expect(applyWorkoutDeload(workout.id, NOTE)).resolves.toBeNull();
+    expect((await db.workoutSets.get(set.id))?.targetWeight).toBe(40);
+    expect((await db.workouts.get(workout.id))?.deloadPercent).toBeUndefined();
+  });
+
+  it('uses a soft-deleted library type for an old row without a snapshot', async () => {
+    const assisted = await createCustomExercise({
+      name: 'Tractions assistées historiques',
+      primaryMuscle: 'lats',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'assisted_weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Technique');
+    const { row, set } = await liveSet(workout.id, assisted.id);
+    await db.workoutExercises.update(row.id, {
+      exerciseName: undefined,
+      exerciseMeasurementType: undefined,
+      exercisePrimaryMuscle: undefined,
+      exerciseEquipment: undefined,
+    });
+    await db.workoutSets.update(set.id, { targetWeight: 40 });
+    await db.exercises.update(assisted.id, { deletedAt: Date.now() });
+
+    await expect(applyWorkoutDeload(workout.id, NOTE)).resolves.toBeNull();
+    expect((await db.workoutSets.get(set.id))?.targetWeight).toBe(40);
+  });
+
+  it('falls back to weight and reps only when both snapshot and library row are absent', async () => {
+    const assisted = await createCustomExercise({
+      name: 'Exercice disparu',
+      primaryMuscle: 'lats',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'assisted_weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Technique');
+    const { row, set } = await liveSet(workout.id, assisted.id);
+    await db.workoutExercises.update(row.id, {
+      exerciseName: undefined,
+      exerciseMeasurementType: undefined,
+      exercisePrimaryMuscle: undefined,
+      exerciseEquipment: undefined,
+    });
+    await db.workoutSets.update(set.id, { targetWeight: 40 });
+    await db.exercises.delete(assisted.id);
 
     await expect(applyWorkoutDeload(workout.id, NOTE)).resolves.toMatchObject({
       deloadPercent: 80,

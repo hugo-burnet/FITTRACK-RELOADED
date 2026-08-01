@@ -5,6 +5,7 @@ import {
   DELOAD_PERCENT,
   isDeloadEligibleMeasurement,
 } from '@/lib/deload';
+import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { alive, touch } from './base';
 import { getLastPerformance } from './workoutHistory';
 
@@ -48,14 +49,15 @@ export async function applyWorkoutDeload(
       const found = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
       const library = new Map(
         found.flatMap((exercise) =>
-          exercise !== undefined && exercise.deletedAt === 0
-            ? ([[exercise.id, exercise]] as const)
-            : [],
+          exercise === undefined ? [] : ([[exercise.id, exercise]] as const),
         ),
       );
       const eligibleRows = new Set(
         rows.flatMap((row) => {
-          const type = library.get(row.exerciseId)?.measurementType;
+          const type = resolveWorkoutExerciseIdentity(
+            row,
+            library.get(row.exerciseId),
+          ).measurementType;
           return isDeloadEligibleMeasurement(type) ? [row.id] : [];
         }),
       );

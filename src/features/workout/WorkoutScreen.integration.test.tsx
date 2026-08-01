@@ -119,7 +119,7 @@ describe('WorkoutScreen — persistance', () => {
     expect(await screen.findByRole('button', { name: 'Deload actif à 80 %' })).toBeDisabled();
   });
 
-  it('garde le deload disponible quand un exercice assisté est supprimé de la bibliothèque', async () => {
+  it('conserve le type assisté du snapshot quand la bibliothèque le masque', async () => {
     const exercise = await createCustomExercise({
       name: 'Tractions assistées retirées',
       primaryMuscle: 'lats',
@@ -134,21 +134,16 @@ describe('WorkoutScreen — persistance', () => {
     const initial = await firstSet(workoutId);
     await db.workoutSets.update(initial.id, { targetWeight: 100, targetReps: 5 });
     await db.exercises.update(exercise.id, { deletedAt: Date.now() });
-    const user = userEvent.setup();
     renderWorkout();
 
     expect(t('workout.deloadMark')).toBe('80%');
-    await screen.findByText(t('workout.deletedExercise'));
+    await screen.findByText('Tractions assistées retirées');
+    expect(screen.getByText('−kg')).toBeVisible();
     const action = screen.getByRole('button', { name: 'Activer le deload à 80 %' });
-    expect(action).toBeEnabled();
-    await user.click(action);
-    await user.click(screen.getByRole('button', { name: 'Appliquer' }));
-
-    await waitFor(() => {
-      expect(screen.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveAttribute(
-        'placeholder',
-        '80',
-      );
-    });
+    expect(action).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveAttribute(
+      'placeholder',
+      '100',
+    );
   });
 });

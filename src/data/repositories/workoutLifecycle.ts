@@ -139,9 +139,11 @@ export async function updateWorkout(
   id: string,
   changes: Partial<Pick<Workout, 'name' | 'notes'>>,
 ): Promise<void> {
-  const workout = await db.workouts.get(id);
-  if (workout === undefined) return;
-  await db.workouts.put(touch(workout, changes));
+  await db.transaction('rw', db.workouts, async () => {
+    const workout = await db.workouts.get(id);
+    if (workout === undefined) return;
+    await db.workouts.put(touch(workout, changes));
+  });
 }
 
 /**

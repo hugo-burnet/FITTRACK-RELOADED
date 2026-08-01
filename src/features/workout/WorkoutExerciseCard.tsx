@@ -1,5 +1,9 @@
 import { Fragment, useState } from 'react';
-import type { WorkoutExerciseDetail, SetValues } from '@/data/repositories/workouts';
+import {
+  workoutExerciseIdentityOf,
+  type WorkoutExerciseDetail,
+  type SetValues,
+} from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
@@ -85,10 +89,9 @@ export function WorkoutExerciseCard({
   onAddSet,
 }: Props) {
   const { row, exercise, sets, previous } = line;
-  const name = exercise?.name ?? t('workout.deletedExercise');
-  // A deleted exercise still has sets to show; weight_reps is the shape that
-  // lets them read at all rather than vanish.
-  const columns = entryColumns(exercise?.measurementType ?? 'weight_reps');
+  const identity = workoutExerciseIdentityOf(line);
+  const name = identity.name ?? t('workout.deletedExercise');
+  const columns = entryColumns(identity.measurementType);
 
   const first = superset !== undefined && superset.index === 0;
   const last = superset !== undefined && superset.index === superset.size - 1;

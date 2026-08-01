@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import type { Exercise, WorkoutExercise, WorkoutSet } from '@/data/types';
+import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { warmupContextFor } from './warmupContext';
 
 const exercise = (overrides: Partial<Exercise> = {}): Exercise => ({
@@ -52,6 +53,7 @@ const detail = (
 ): WorkoutExerciseDetail => ({
   row,
   exercise: currentExercise,
+  identity: resolveWorkoutExerciseIdentity(row, currentExercise),
   sets,
   previous: [],
 });

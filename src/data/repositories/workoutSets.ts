@@ -14,6 +14,25 @@ export type SetValues = Pick<
   'weight' | 'reps' | 'durationSeconds' | 'distanceMeters' | 'rpe'
 >;
 
+/**
+ * Reads and replaces one set under the same IndexedDB write transaction.
+ *
+ * IndexedDB serializes overlapping read-write transactions that touch this
+ * object store. The callback therefore derives its replacement from the state
+ * left by the transaction ordered before it, rather than publishing a stale
+ * whole-row snapshot after another repository operation has committed.
+ */
+async function mutateSet(
+  setId: string,
+  changes: (set: WorkoutSet) => Partial<WorkoutSet>,
+): Promise<void> {
+  await db.transaction('rw', db.workoutSets, async () => {
+    const set = await db.workoutSets.get(setId);
+    if (set === undefined) return;
+    await db.workoutSets.put(touch(set, changes(set)));
+  });
+}
+
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
 
 const liveSetsOf = async (workoutExerciseId: string): Promise<WorkoutSet[]> =>
@@ -173,9 +192,7 @@ export async function insertWarmupSets(
  * the old one under a blank cell.
  */
 export async function updateSetValues(setId: string, values: Partial<SetValues>): Promise<void> {
-  const set = await db.workoutSets.get(setId);
-  if (set === undefined) return;
-  await db.workoutSets.put(touch(set, values));
+  await mutateSet(setId, () => values);
 }
 
 /**
@@ -188,9 +205,7 @@ export async function updateSetValues(setId: string, values: Partial<SetValues>)
  * towards volume and records (`isWorkingSet`).
  */
 export async function updateSetType(setId: string, setType: SetType): Promise<void> {
-  const set = await db.workoutSets.get(setId);
-  if (set === undefined) return;
-  await db.workoutSets.put(touch(set, { setType }));
+  await mutateSet(setId, () => ({ setType }));
 }
 
 /**
@@ -202,9 +217,7 @@ export async function completeSet(
   setId: string,
   values: Partial<SetValues> = {},
 ): Promise<void> {
-  const set = await db.workoutSets.get(setId);
-  if (set === undefined) return;
-  await db.workoutSets.put(touch(set, { ...values, isCompleted: 1, performedAt: Date.now() }));
+  await mutateSet(setId, () => ({ ...values, isCompleted: 1, performedAt: Date.now() }));
 }
 
 /**
@@ -215,9 +228,7 @@ export async function completeSet(
  * the history and out of the previous-value column.
  */
 export async function uncompleteSet(setId: string): Promise<void> {
-  const set = await db.workoutSets.get(setId);
-  if (set === undefined) return;
-  await db.workoutSets.put(touch(set, { isCompleted: 0, performedAt: 0 }));
+  await mutateSet(setId, () => ({ isCompleted: 0, performedAt: 0 }));
 }
 
 /** Renumbers what is left: "série 1, série 3" is a hole you can read on screen. */

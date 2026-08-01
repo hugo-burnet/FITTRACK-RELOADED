@@ -73,6 +73,11 @@ export interface ExerciseIdentity {
   equipment?: Equipment;
 }
 
+/** A live workout must always have a grid shape, even for a truly missing exercise. */
+export interface WorkoutExerciseIdentity extends ExerciseIdentity {
+  measurementType: MeasurementType;
+}
+
 /**
  * The snapshot wins, then today's library, then nothing. **Field by field.**
  *
@@ -103,5 +108,23 @@ export function resolveExerciseIdentity(
     ...(measurementType === undefined ? {} : { measurementType }),
     ...(primaryMuscle === undefined ? {} : { primaryMuscle }),
     ...(equipment === undefined ? {} : { equipment }),
+  };
+}
+
+/**
+ * The historical identity used by every live-workout consumer.
+ *
+ * A row snapshot wins field by field, including over a soft-deleted library
+ * row. The library row remains valid metadata for pre-snapshot workout rows.
+ * Only a row absent from both sources takes the legacy `weight_reps` grid.
+ */
+export function resolveWorkoutExerciseIdentity(
+  row: WorkoutExercise,
+  exercise: Exercise | undefined,
+): WorkoutExerciseIdentity {
+  const identity = resolveExerciseIdentity(row, exercise);
+  return {
+    ...identity,
+    measurementType: identity.measurementType ?? 'weight_reps',
   };
 }
