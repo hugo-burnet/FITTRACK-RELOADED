@@ -118,9 +118,12 @@ export function ProgressCard({ metric, points, selectedIndex, onSelect, stale }:
 
         {/* What the number counts, and what it leaves out. A curve that cannot
             name its figure is a curve taken on trust. */}
-        <p className="mt-4 border-t border-[var(--border)] pt-3 text-sm leading-relaxed text-[var(--text-2)]">
-          {metricHint(metric.key)}
-        </p>
+        <div className="mt-4 border-t border-[var(--border)] pt-3 text-sm leading-relaxed text-[var(--text-2)]">
+          <p>{metricHint(metric.key)}</p>
+          {/* La légende du point plein. À partir de deux points seulement : avec
+              une seule séance le record est la seule valeur qu'il y ait. */}
+          {points.length > 1 && <p className="mt-1">{t('analytics.chartLegend')}</p>}
+        </div>
       </div>
     </Card>
   );

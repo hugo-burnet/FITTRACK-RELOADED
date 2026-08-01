@@ -23,10 +23,20 @@ const buckets: WeekBucket[] = COUNTS.map((sessions, index) => ({
   goal: null,
 }));
 
-/** Every mark that is not a data bar: the axis, the stub, the cursor. */
+/**
+ * Every mark that is not a data bar: the axis, the stub, the cursor.
+ *
+ * A bar is recognised by its ink, and both data inks are excluded — the muted
+ * one and the full accent. Naming them here rather than the frame's own colours
+ * is deliberate: the test has to keep failing when a chart grows a frame mark of
+ * a colour nobody has thought of yet, which is exactly the drift it exists to
+ * catch.
+ */
+const DATA_INKS = ['var(--accent-data)', 'var(--accent-ink)'];
+
 const frameOf = (container: HTMLElement) =>
   [...container.querySelectorAll('line, rect')]
-    .filter((node) => node.getAttribute('fill') !== 'var(--text-2)')
+    .filter((node) => !DATA_INKS.includes(node.getAttribute('fill') ?? ''))
     .map((node) => node.outerHTML);
 
 // Rendus dans le test et pas dans le corps du `describe` : le nettoyage

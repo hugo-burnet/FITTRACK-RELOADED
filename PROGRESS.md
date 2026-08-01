@@ -2,7 +2,51 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-01 (**V2 de l'écran d'accueil + Progression dans la
+**Dernière mise à jour :** 2026-08-01 (**les graphiques passent dans la teinte du thème :
+jeton `--accent-data`**). Rapporté du téléphone comme « le orange ne s'applique pas, mais
+seulement en mode sombre » sur le volume et sur la progression d'exercice.
+
+**Le diagnostic tenait en une capture des deux thèmes côte à côte.** Les marques des
+graphiques étaient dessinées en `--text-2` — une couleur réglée pour du **texte**. En clair,
+la lisibilité la pousse vers #5c675e : sombre, et encore visiblement vert, donc les colonnes
+avaient l'air d'appartenir à l'app. En sombre elle la pousse vers #b9b1a8 : si clair que la
+teinte a disparu et qu'une barre se lit blanche. D'où un défaut qui n'existait vraiment
+qu'en sombre, sans qu'aucune ligne de code ne soit conditionnée au thème. **Une couleur
+réglée pour un paragraphe ne peut pas être aussi l'encre de données de l'app.**
+
+**`--accent-data` est un jeton neuf parce que c'est un métier neuf** — le même raisonnement
+que `--axis` au retour précédent. Deux intensités d'**une seule** teinte, jamais une teinte
+contre un gris : le ton atténué est l'observation ordinaire, `--accent-ink` est celle qui
+veut dire quelque chose. Mesuré au plancher des objets graphiques (3:1) et les deux tons
+tenus à plus de 2:1 l'un de l'autre — sombre #a85a20 (3,5:1 sur une carte, 2,2:1 contre
+l'encre), clair #4d9c72 (3,3:1 sur une carte, 2,1:1 contre l'encre). En clair l'atténué est
+plus **clair** que l'encre, en sombre plus **foncé** : chacun s'éloigne de son fond.
+
+**Le contrat de sens n'a pas bougé, il est juste devenu lisible.** L'accent plein continue
+de dire « objectif atteint » (séances) et « record » (courbe), et le volume n'a toujours
+aucune colonne pleine — il n'a ni objectif ni record, et une grande quantité n'est pas un
+compliment. Ce qui a changé, c'est que les autres marques ne sont plus grises.
+
+**Trois phrases de légende, et c'est la moitié du correctif.** Deux intensités d'une même
+teinte que personne n'explique sont de la décoration ; nommées, c'est de l'information —
+« Les colonnes pleines sont les semaines où l'objectif est atteint », « Le point plein est
+le record de la période », et sur le volume « Toutes les semaines ont la même couleur : le
+volume n'a pas d'objectif à atteindre », qui répond à la question telle qu'elle a été posée.
+Chacune est conditionnée à son repère : pas de légende d'objectif si aucun objectif n'a
+jamais été défini, pas de légende de record sur une séance unique.
+
+**Le test du cadre partagé reconnaissait une barre à sa couleur** (`!== var(--text-2)`) et
+serait devenu aveugle. Il liste maintenant les deux encres de données. Vérifié par mutant :
+repeindre la ligne de base en `--border` fait toujours tomber le test. Les quatre portes
+sortent à 0 : lint, typecheck, **880 tests dans 72 fichiers**, build Vite.
+
+**Checkpoint téléphone :** en sombre, ouvrir Progression → Volume d'entraînement et
+Progression d'exercice : les colonnes et la courbe doivent être orange, pas beige. Sur
+Séances par semaine, vérifier qu'on distingue au premier coup d'œil la semaine à l'objectif
+(orange vif) des autres (orange sourd) — et lire les trois légendes sous les graphiques.
+Repasser en clair et vérifier la même chose en vert.
+
+**Mise à jour précédente :** 2026-08-01 (**V2 de l'écran d'accueil + Progression dans la
 barre**). L'accueil était un compteur à zéro et un bouton ; il répond maintenant à quatre
 questions dans l'ordre où on se les pose : où j'en suis cette semaine, quoi lancer, ce que
 j'ai fait dernièrement, où sont les courbes.

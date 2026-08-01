@@ -8,11 +8,16 @@ import { ChartSurface } from './ChartSurface';
  * it is tested, and what is left is thirty lines of markup that already speak
  * the app's tokens.
  *
- * **One thing is coloured: the point holding the record.** The charte reserves
- * the accent for primary actions, validated sets and records — "nothing else".
- * A curve of past sessions is none of the three; its peak is. So the accent
- * stays information instead of becoming decoration, and at arm's length the one
- * green pixel is the one you were looking for.
+ * **The curve carries the accent's hue; the point holding the record carries it
+ * at full strength.** The charte reserves the accent for primary actions,
+ * validated sets and records — "nothing else" — and a curve of past sessions is
+ * none of the three, its peak is. That much is unchanged: the record is still
+ * the only bright mark on the drawing, so the accent stays information instead
+ * of becoming decoration. What changed at the phone review is the line and the
+ * ordinary points: drawn in --text-2 they were grey in a coloured app, and in
+ * the dark theme a colour tuned for text lands almost white. They are now
+ * --accent-data, the same hue muted, which is what makes the record read as
+ * *more* of something rather than as the only thing.
  *
  * **No grid, no axes.** Direct labels before gridlines: the minimum and maximum
  * are engraved at both ends of the scale by the card around this component, and
@@ -70,7 +75,7 @@ export function ProgressChart({ points, bestIndex, selectedIndex, onSelect, summ
         <path
           d={path}
           fill="none"
-          stroke="var(--text-2)"
+          stroke="var(--accent-data)"
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -89,7 +94,7 @@ export function ProgressChart({ points, bestIndex, selectedIndex, onSelect, summ
               cx={position.x}
               cy={position.y}
               r={isSelected ? 6 : 4.5}
-              fill={isBest ? 'var(--accent-ink)' : 'var(--text-2)'}
+              fill={isBest ? 'var(--accent-ink)' : 'var(--accent-data)'}
               stroke="var(--surface-1)"
               strokeWidth={2}
             />

@@ -62,6 +62,23 @@
      Reserved for a state the accent ink already points at. */
   --accent-soft: #3a2115; /* --text-2 reads 7,0:1 on it */
 
+  /* The accent as DATA INK: the mark a chart draws for an ordinary observation —
+     a column, a curve, a point. Its own token because it has its own job, found
+     the same way the others were: on the phone, the two column charts and the
+     curve read as **grey drawings in a coloured app**, and only in dark. The
+     cause is that they were drawn in --text-2, which is chosen for text: in the
+     light theme legibility pushes it to #5c675e, dark and still visibly green;
+     in the dark theme it pushes it to #b9b1a8, so light that the hue is gone and
+     a bar reads white. A colour tuned for a paragraph cannot also be the app's
+     data ink.
+     Two intensities of ONE hue, never a hue against a grey: the muted tone is
+     the ordinary observation, --accent-ink is the one that means something —
+     "goal reached" on the sessions chart, "record" on the curve. The cards say
+     so in a sentence, because two intensities without a legend are decoration.
+     Measured as a graphical object (3:1 floor), and the two tones are kept apart
+     by more than 2:1 so the distinction survives a bright gym. */
+  --accent-data: #a85a20; /* 3,5:1 on a card, 3,7:1 on the page, 2,2:1 vs the ink */
+
   /* The one rule a chart draws, and the stub a bucket at zero gets.
      Neither --border nor --text-2: --border is tuned for a card edge and
      measures 1,35:1 on a light card — invisible under a bar; --text-2 is text
@@ -107,6 +124,11 @@
   --accent-ink: #166534; /* 7,1:1 on a card, 6,3:1 on --surface-2 */
 
   --accent-soft: #dcfce7;
+
+  /* Same job, mirrored: here the muted tone is LIGHTER than the ink, because on
+     a white card that is the direction away from the background. */
+  --accent-data: #4d9c72; /* 3,3:1 on a card, 3,1:1 on the page, 2,1:1 vs the ink */
+
   --axis: #869087; /* 3,3:1 on a card, 3,1:1 on the page */
 
   --danger-ink: #b91c1c; /* 6.47:1 on white, 5.89 on a card, 5.10 on a pressed row */

@@ -115,6 +115,10 @@ export function WeeklyVolumeCard({
         <div className="mt-4 border-t border-[var(--border)] pt-3 text-sm leading-relaxed text-[var(--text-2)]">
           <p>{t('volume.total', { value: reading(total) })}</p>
           <p className="mt-1">{t('volume.average', { value: reading(average) })}</p>
+          {/* Pourquoi rien ne ressort : dit une fois, à côté de ce que la mesure
+              compte. Sur une seule semaine il n'y a rien à comparer, donc rien à
+              expliquer. */}
+          {buckets.length > 1 && <p className="mt-1">{t('volume.chartLegend')}</p>}
           <p className="mt-3">
             {t(metric === 'tonnage' ? 'volume.tonnageHint' : 'volume.durationHint')}
           </p>

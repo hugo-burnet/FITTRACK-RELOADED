@@ -986,6 +986,14 @@ const fr = {
     record: 'Record',
     latest: 'Dernière',
 
+    /**
+     * Ce que le point plein de la courbe veut dire. Même raison que sur les
+     * séances : deux intensités d'une même teinte ne s'expliquent pas toutes
+     * seules. Affichée à partir de deux points — avec une seule séance, le
+     * « record » est la seule valeur qu'il y ait, et le dire serait creux.
+     */
+    chartLegend: 'Le point plein est le record de la période.',
+
     sessionsSection: 'Séances',
     emptyPeriod: 'Aucune séance sur cette période.',
     emptyPeriodAction: 'Voir tout l’historique',
@@ -1016,6 +1024,14 @@ const fr = {
     goalReached: 'Objectif {goal} · atteint',
     goalMissed: 'Objectif {goal} · il en manquait {missing}',
     goalMissedOne: 'Objectif {goal} · il en manquait une',
+
+    /**
+     * Ce que les deux intensités du graphique veulent dire. Sans cette phrase,
+     * deux tons d'une même teinte sont de la décoration ; avec elle, c'est une
+     * information. Affichée seulement quand un objectif existe : sans objectif,
+     * aucune colonne n'est pleine et la légende annoncerait un repère absent.
+     */
+    chartLegend: 'Les colonnes pleines sont les semaines où l’objectif est atteint.',
 
     /** Ce que la fenêtre dit vraiment, sous le graphique. */
     average: '{average} séances par semaine en moyenne.',
@@ -1062,6 +1078,14 @@ const fr = {
       'Ces séances ne contiennent aucune charge externe comptée dans le tonnage.',
     singleWeek:
       'Une seule semaine sur cette période : une tendance demande plusieurs semaines.',
+    /**
+     * Pourquoi aucune colonne ne ressort ici, alors que le graphique des séances
+     * en met une en avant. Un aplat uniforme sans explication se lit comme une
+     * couleur qui n'a pas pris — c'est exactement le retour qui est arrivé du
+     * téléphone. Dit une fois, c'est une réponse.
+     */
+    chartLegend:
+      'Toutes les semaines ont la même couleur : le volume n’a pas d’objectif à atteindre.',
     tonnageHint:
       'Charges externes soulevées. Assistance, lest, poids du corps et échauffements exclus.',
     durationHint: 'Somme des durées complètes des séances.',

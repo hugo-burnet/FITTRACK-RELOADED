@@ -147,9 +147,16 @@ export function WeeklyCard({ buckets, selectedIndex, onSelect, onOpenHistory, st
               </button>
             </>
           ) : (
-            <p className="mt-1">
-              {t(reached === 1 ? 'weekly.tallyOne' : 'weekly.tally', { reached, judged })}
-            </p>
+            <>
+              <p className="mt-1">
+                {t(reached === 1 ? 'weekly.tallyOne' : 'weekly.tally', { reached, judged })}
+              </p>
+              {/* La légende des deux intensités. Sous le compte, pas au-dessus :
+                  on lit d'abord ce que la fenêtre dit, ensuite comment elle le
+                  dessine. Et seulement ici — sans objectif jamais défini, aucune
+                  colonne n'est pleine et la phrase désignerait un repère absent. */}
+              <p className="mt-1">{t('weekly.chartLegend')}</p>
+            </>
           )}
         </div>
       </div>

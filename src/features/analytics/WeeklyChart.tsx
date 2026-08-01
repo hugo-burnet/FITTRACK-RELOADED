@@ -7,11 +7,16 @@ import { ColumnFrame, ZeroStub } from './ColumnFrame';
  * The histogram. Same hand-drawn SVG as the curve, same `ChartSurface`, and
  * deliberately not the same geometry — cf. the spec of G2, §6.
  *
- * **One thing is coloured: the week that reached its goal.** The charte reserves
- * the accent for primary actions, **validated sets** and records. A week that
- * holds its target is a validated week in the exact sense a ticked set is: a
- * commitment made, then kept. Same green, same fact, another scale. At arm's
- * length the green bars are the rhythm and the grey ones are the gaps.
+ * **Every column carries the accent's hue; the week that reached its goal
+ * carries it at full strength.** The charte reserves the accent for primary
+ * actions, **validated sets** and records, and a week that holds its target is a
+ * validated week in the exact sense a ticked set is: a commitment made, then
+ * kept. What changed at the phone review is the *other* bars: drawn in --text-2
+ * they were grey in a coloured app, and unreadably so in dark, where a colour
+ * tuned for text lands almost white. They are now --accent-data — the same hue,
+ * muted. At arm's length the bright columns are the weeks that counted and the
+ * muted ones are the rhythm around them. The card names the distinction in a
+ * sentence: two intensities nobody explains are decoration.
  *
  * **No grid.** The one rule drawn is the baseline the bars stand on — and a bar
  * needs it, because its length is measured from zero and a week at zero would
@@ -58,7 +63,7 @@ export function WeeklyChart({ buckets, ceiling, selectedIndex, onSelect, summary
             width={slot.width}
             height={slot.height}
             rx={Math.min(2, slot.width / 2)}
-            fill={reached ? 'var(--accent-ink)' : 'var(--text-2)'}
+            fill={reached ? 'var(--accent-ink)' : 'var(--accent-data)'}
           />
         ) : (
           <ZeroStub key={bucket.weekStart} slot={slot} box={BOX} />
