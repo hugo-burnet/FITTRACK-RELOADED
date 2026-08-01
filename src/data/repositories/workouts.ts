@@ -30,3 +30,5 @@ export type { NewSetValues, SetValues } from './workoutSets';
 
 export { getWorkoutDetail } from './workoutDetail';
 export type { WorkoutDetail, WorkoutExerciseDetail } from './workoutDetail';
+
+export { applyWorkoutDeload } from './workoutDeload';
