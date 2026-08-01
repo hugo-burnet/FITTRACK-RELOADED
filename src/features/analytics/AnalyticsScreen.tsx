@@ -26,7 +26,10 @@ export function AnalyticsScreen() {
   const hasExercises = options !== undefined && options.length > 0;
 
   return (
-    <Screen title={t('analytics.title')} onBack={() => void navigate('/history')}>
+    // Plus de flèche de retour : cet écran est devenu la racine d'un onglet, et
+    // une flèche sur une racine d'onglet promet un ailleurs qui n'existe pas.
+    // L'Historique, d'où on entrait, est l'onglet juste à gauche.
+    <Screen title={t('analytics.title')}>
       <div className="space-y-7">
         {hasHistory && (
           <section>

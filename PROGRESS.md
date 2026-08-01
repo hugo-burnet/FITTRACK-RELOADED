@@ -2,6 +2,57 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**V2 de l'écran d'accueil + Progression dans la
+barre**). L'accueil était un compteur à zéro et un bouton ; il répond maintenant à quatre
+questions dans l'ordre où on se les pose : où j'en suis cette semaine, quoi lancer, ce que
+j'ai fait dernièrement, où sont les courbes.
+
+**La suggestion est une fonction pure, pas une heuristique.** `pickSuggestedRoutine`
+(`src/lib/home.ts`) rend la routine **réalisée le moins récemment**, une routine jamais faite
+passant devant toutes les autres, égalités tranchées par l'ordre de la liste. Aucun modèle de
+récupération musculaire : il demanderait des données que l'app n'a pas, et une suggestion
+qu'on ne peut pas expliquer en une phrase est une suggestion qu'on ignore — la phrase est
+d'ailleurs écrite sous le bouton. Les séances libres et les imports sans `routineId` sont
+ignorés, et une routine supprimée ne peut pas revenir par la porte de l'historique : la carte
+des dernières réalisations est filtrée sur les routines vivantes avant d'être lue.
+
+**Une seule lecture pour tout l'écran.** `getHomeDashboard` lit les séances terminées **une
+fois** et les trois blocs s'y servent : la régularité prend leurs dates, la suggestion leurs
+`routineId`, le mini-historique leurs trois premières lignes — et les compteurs
+d'exercices/séries ne sont calculés que pour ces trois-là. `listFilteredCompletedWorkouts` et
+`buildSummaries` d'`history.ts` sont devenus publics pour ça, plutôt que de rejouer la même
+requête à côté.
+
+**Zéro deuxième implémentation de la série hebdomadaire.** L'accueil appelle
+`calculateWeeklyRegularity`, la fonction de l'Historique, sur les mêmes dates et le même
+historique d'objectifs. **Sans objectif défini, la carte n'affiche qu'une colonne** : la série
+vaut zéro tant qu'il n'y a rien à tenir, et « 0 semaines d'affilée » à quelqu'un qui
+s'entraîne trois fois par semaine serait un reproche fabriqué. Pas de `2 / 4` inventé non
+plus.
+
+**Progression remplace Réglages dans la barre.** On regarde ses courbes toutes les semaines,
+on change une préférence trois fois par an. Les Réglages passent dans l'en-tête de l'accueil
+(icône `SlidersIcon`), la barre reste à cinq onglets (§12.1), et `/analytics` devient une
+racine d'onglet — sa flèche de retour vers l'Historique est retirée, une flèche sur une racine
+d'onglet promet un ailleurs qui n'existe pas. Le chargement paresseux des cinq écrans
+d'analyse est intact : l'accueil ne dessine aucun graphique, seulement trois liens.
+
+**Preuves.** Six tests neufs sur la fonction de suggestion (jamais réalisée prioritaire, moins
+récente choisie, séance sans routine ignorée, routine supprimée écartée, égalité stable dans
+les deux sens, aucune routine → `null`). Les quatre portes sortent avec le code 0 : typecheck,
+lint, **880 tests dans 72 fichiers** et build Vite. Vérifié en pilotant le navigateur sur les
+deux thèmes : base vide (« aucune routine »), écran plein sans objectif hebdo (une colonne),
+écran plein avec objectif (deux colonnes), et les deux entrées vers les analyses. Les états
+de chargement et d'erreur de lecture n'ont pas été reproduits à l'écran — seul le code les
+couvre.
+
+**Checkpoint téléphone :** ouvrir l'accueil et vérifier que la routine proposée est bien celle
+que tu as faite il y a le plus longtemps. Taper la carte de la semaine → Séances par semaine.
+Taper une séance du mini-historique → son détail. Vérifier les cinq onglets (Accueil,
+Routines, Historique, Progression, Exercices) et que l'icône en haut à droite ouvre les
+Réglages. Démarrer la routine proposée, puis revenir à l'accueil : le bouton « Démarrer »
+doit être inerte et la bande « séance libre » avoir disparu tant que la séance tourne.
+
 **Dernière mise à jour :** 2026-08-01 (**retours téléphone sur la palette : cadre de
 graphique unifié, header de séance décollé**). Trois défauts rapportés en photo, trois
 causes distinctes — aucune n'était la palette.

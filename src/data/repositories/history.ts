@@ -62,7 +62,14 @@ export interface ArchivedWorkoutDraft {
 const byMostRecent = (left: Workout, right: Workout): number =>
   right.startedAt - left.startedAt || right.id.localeCompare(left.id);
 
-async function listFilteredCompletedWorkouts(filters: HistoryFilters): Promise<Workout[]> {
+/**
+ * Les séances terminées, les plus récentes d'abord.
+ *
+ * Exportée pour l'accueil, qui a besoin des lignes elles-mêmes (leur `routineId`)
+ * et pas seulement de leurs dates : sans ça il lui faudrait un second parcours
+ * de la table pour lire ce que celui-ci a déjà en main.
+ */
+export async function listCompletedWorkouts(filters: HistoryFilters = {}): Promise<Workout[]> {
   const completed = (
     await db.workouts.where('status').equals('completed').toArray()
   ).filter((workout) => workout.deletedAt === 0);
@@ -81,7 +88,9 @@ async function listFilteredCompletedWorkouts(filters: HistoryFilters): Promise<W
     .sort(byMostRecent);
 }
 
-async function buildSummaries(workouts: readonly Workout[]): Promise<HistoryWorkoutSummary[]> {
+export async function buildWorkoutSummaries(
+  workouts: readonly Workout[],
+): Promise<HistoryWorkoutSummary[]> {
   if (workouts.length === 0) return [];
 
   const workoutIds = workouts.map((workout) => workout.id);
@@ -118,7 +127,7 @@ function countByWorkout(
 export async function listCompletedWorkoutTimestamps(
   filters: HistoryFilters = {},
 ): Promise<number[]> {
-  return (await listFilteredCompletedWorkouts(filters)).map((workout) => workout.startedAt);
+  return (await listCompletedWorkouts(filters)).map((workout) => workout.startedAt);
 }
 
 export async function listHistoryPage(
@@ -126,13 +135,13 @@ export async function listHistoryPage(
   offset: number,
   limit = 20,
 ): Promise<HistoryPage> {
-  const completed = await listFilteredCompletedWorkouts(filters);
+  const completed = await listCompletedWorkouts(filters);
   const safeOffset = Math.max(0, Math.trunc(offset));
   const safeLimit = Math.max(1, Math.trunc(limit));
   const window = completed.slice(safeOffset, safeOffset + safeLimit + 1);
 
   return {
-    items: await buildSummaries(window.slice(0, safeLimit)),
+    items: await buildWorkoutSummaries(window.slice(0, safeLimit)),
     hasMore: window.length > safeLimit,
   };
 }
@@ -146,17 +155,17 @@ export async function listHistoryDay(
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
 
-  const workouts = (await listFilteredCompletedWorkouts(filters)).filter(
+  const workouts = (await listCompletedWorkouts(filters)).filter(
     (workout) => workout.startedAt >= start.getTime() && workout.startedAt < end.getTime(),
   );
-  return buildSummaries(workouts);
+  return buildWorkoutSummaries(workouts);
 }
 
 export async function listHistoryExerciseOptions(): Promise<
   Array<Pick<Exercise, 'id' | 'name'>>
 > {
   const completedIds = new Set(
-    (await listFilteredCompletedWorkouts({})).map((workout) => workout.id),
+    (await listCompletedWorkouts({})).map((workout) => workout.id),
   );
   if (completedIds.size === 0) return [];
 

@@ -33,6 +33,12 @@ const fr = {
     home: 'Accueil',
     routines: 'Routines',
     history: 'Historique',
+    /**
+     * A remplacé Réglages dans la barre : on regarde ses courbes bien plus
+     * souvent qu'on ne change une préférence, et les Réglages restent à une
+     * icône de là, dans l'en-tête de l'accueil.
+     */
+    progress: 'Progression',
     exercises: 'Exercices',
     settings: 'Réglages',
   },
@@ -125,9 +131,46 @@ const fr = {
   home: {
     title: 'Accueil',
     emptyBody: 'Le compteur démarre à ta première séance terminée.',
-    startEmpty: 'Démarrer une séance vide',
+    /** Le même nom que la séance elle-même porte (`workout.emptyName`). */
+    startEmpty: 'Démarrer une séance libre',
     resumeTitle: 'Séance en cours',
     resume: 'Reprendre',
+
+    /** La lecture de la semaine. Toute la carte mène aux séances par semaine. */
+    weekSection: 'Cette semaine',
+    weekLink: 'Voir les séances par semaine',
+    weekSessions: 'séances cette semaine',
+    weekSessionsOne: 'séance cette semaine',
+    streakLabel: 'semaines d’affilée',
+    streakLabelOne: 'semaine d’affilée',
+
+    /** La carte principale : quelle routine lancer aujourd'hui. */
+    suggestionSection: 'À lancer',
+    /** La règle, écrite : une suggestion qu'on ne peut pas expliquer s'ignore. */
+    suggestionRule: 'La routine que tu as faite il y a le plus longtemps.',
+    neverPerformed: 'Jamais réalisée',
+    lastToday: 'Réalisée aujourd’hui',
+    lastYesterday: 'Réalisée hier',
+    lastDays: 'Réalisée il y a {count} jours',
+    lastDate: 'Réalisée le {date}',
+    startRoutine: 'Démarrer {name}',
+    noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
+    createRoutine: 'Créer une routine',
+    /** La lecture a échoué — pas la base : rien n'est perdu, seulement illisible. */
+    readError: 'Ces données n’ont pas pu être lues. Tes séances sont intactes sur l’appareil.',
+
+    recentSection: 'Dernières séances',
+    recentEmpty: 'Aucune séance terminée pour l’instant.',
+    seeAll: 'Tout voir',
+
+    /**
+     * Les trois raccourcis. Les mots courts sont pour l'œil, sur trois colonnes
+     * de 375 px ; le nom complet de chaque analyse est donné à l'oreille.
+     */
+    progressSection: 'Progression',
+    progressPace: 'Rythme',
+    progressVolume: 'Volume',
+    progressMuscles: 'Muscles',
   },
 
   /**

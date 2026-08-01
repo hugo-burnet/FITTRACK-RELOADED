@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import type { ComponentType, SVGProps } from 'react';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { BarbellIcon, CalendarIcon, PlateIcon, ProgramIcon, SlidersIcon } from '@/ui/icons';
+import { BarbellIcon, CalendarIcon, PlateIcon, ProgramIcon, TrendIcon } from '@/ui/icons';
 
 type Tab = {
   to: string;
@@ -15,8 +15,11 @@ const TABS: Tab[] = [
   { to: '/', end: true, labelKey: 'nav.home', Icon: BarbellIcon },
   { to: '/routines', labelKey: 'nav.routines', Icon: ProgramIcon },
   { to: '/history', labelKey: 'nav.history', Icon: CalendarIcon },
+  // Progression a pris la place des Réglages : on regarde ses courbes toutes les
+  // semaines, on change une préférence trois fois par an. Les Réglages vivent
+  // désormais dans l'en-tête de l'accueil, à une icône d'ici.
+  { to: '/analytics', labelKey: 'nav.progress', Icon: TrendIcon },
   { to: '/exercises', labelKey: 'nav.exercises', Icon: PlateIcon },
-  { to: '/settings', labelKey: 'nav.settings', Icon: SlidersIcon },
 ];
 
 export function BottomNav() {
