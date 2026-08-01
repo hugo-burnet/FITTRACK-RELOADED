@@ -71,7 +71,7 @@ describe('RoutineCollection', () => {
     expect(legsHeading.compareDocumentPosition(legsName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
   });
 
-  it('renders a root routine without a heading when no folders exist', () => {
+  it('rend une routine racine sans titre lorsqu’aucun dossier n’existe', () => {
     render(
       <RoutineCollection
         summaries={[summary(routine('routine-root', 'Racine'))]}
