@@ -25,14 +25,6 @@ tâche ne relève aucun problème critique, important ou mineur. Les portes
 fraîches sortent avec le code 0 : lint, typecheck, **835 tests dans 66 fichiers**,
 build Vite de **194 modules** et `git diff --check`.
 
-**Décision de refacto.** Trois conceptions concurrentes ont évalué
-`RoutineEditorScreen`. Son interface de route est déjà minimale et ses vrais
-modules cohésifs — carte, feuille d’exercice et feuille de série — sont déjà
-extraits. Un hook de modèle ou une union géante d’intentions déplacerait le
-câblage sans créer de module plus profond ; ce découpage est donc explicitement
-abandonné. `WorkoutScreen` reste un chantier à haut risque tant que ses parcours
-de minuteur, plaques, échauffement et restauration ne sont pas mieux protégés.
-
 **Checkpoint téléphone demandé :** ouvrir Historique → Analyses, comparer les
 vues 4 semaines et `Tout` de « Séances par semaine » puis « Volume
 d’entraînement ». Les deux écrans doivent afficher les mêmes semaines connues,

@@ -61,6 +61,18 @@ export function weekStartOf(startedAt: number, offsetMinutes?: number): number {
   return startOfLocalWeek(new Date(year!, month! - 1, day!, 12).getTime());
 }
 
+/**
+ * The local Monday starts the app knows well enough to render.
+ *
+ * `observedWeekStarts` supplies the weeks found in the selected window. When
+ * history precedes a finite window (`hasEarlierHistory`), the range begins at
+ * `bounds.from`; otherwise it begins at the oldest observed week, so an
+ * unknown pre-history never becomes invented zeroes. With no observations
+ * (including an empty `'all'` history), there is no known week to return.
+ * `bounds.to` is exclusive. Enumeration uses the regularity engine's
+ * `startOfLocalWeek` and `addLocalWeeks`, rather than a fixed duration, so it
+ * remains safe across daylight-saving transitions.
+ */
 export function knownWeekStarts(
   observedWeekStarts: Iterable<number>,
   bounds: PeriodBounds,
@@ -83,29 +95,9 @@ export function knownWeekStarts(
 }
 
 /**
- * One bucket per week of the window — **including the empty ones, but never
- * before the history itself starts**.
- *
- * Milestone G1's rule turned around, and the reversal is the point: a week with
- * no session is not a missing reading, it is a week nobody trained. Hence the
- * structural consequence — **the buckets come from the period, not from the
- * sessions.**
- *
- * But only as far back as there is history, and that qualification was missing
- * from the first cut. Reported from use: three weeks of real history drew nine
- * empty bars in front of themselves. **Before the first recorded session a zero
- * is not a week without training — it is a week the app knows nothing about**,
- * which is exactly the invented zero G1 forbids, and it flattens the real bars
- * to make room for nothing.
- *
- * So the caller says whether any session predates the window. It cannot be
- * derived here: `sessions` holds only what the window returned, and "no session
- * before the window" and "no session in the window" are indistinguishable from
- * the inside. A gap *inside* the history stays — that one is information.
- *
- * For `'all'` (no lower bound) the buckets start at the oldest session's week,
- * which is the same rule stated for the widest window, and why an empty history
- * returns an empty array rather than inventing a birthday for the app.
+ * The weekly metric: count sessions in each known week and resolve that week's
+ * historical goal. Week selection, including empty internal weeks, belongs to
+ * `knownWeekStarts`.
  */
 export function weeklySessionCounts(
   sessions: readonly WeeklySession[],
