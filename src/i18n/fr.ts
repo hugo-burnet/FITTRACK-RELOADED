@@ -221,6 +221,8 @@ const fr = {
     recordFolded: 'Record',
     /** Menu ⋯ de la séance. */
     workoutMenu: 'Options de la séance',
+    /** Le chrono du header : sans lui un lecteur d'écran annonce « 0:02 » seul. */
+    elapsedLabel: 'Séance en cours depuis {time}',
     deloadAction: 'Activer le deload à 80 %',
     deloadActive: 'Deload actif à 80 %',
     deloadMark: '80%',

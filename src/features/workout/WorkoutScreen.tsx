@@ -324,7 +324,18 @@ export function WorkoutScreen() {
               d'exercice, donc il ne descend jamais dans une card ni ne part au
               défilement. À droite du titre, à gauche du menu — l'avancement
               descend au-dessus de la liste, le repos vit sur la card. Le bandeau
-              `WorkoutMeter` est dissous : chaque relevé va où vit son sens. */}
+              `WorkoutMeter` est dissous : chaque relevé va où vit son sens.
+
+              **Le relevé passe devant les commandes.** Il était posé entre le
+              deload et le menu, donc encadré de deux boutons : il se lisait comme
+              un troisième bouton qui refuse de répondre. Reporté du téléphone. La
+              lecture d'abord, les commandes groupées contre le bord — le même
+              ordre que l'en-tête des routines, où le compte précède le `+`. */}
+          <ElapsedTime
+            startedAt={workout.startedAt}
+            className="text-base font-semibold text-[var(--text-2)]"
+            label={(time) => t('workout.elapsedLabel', { time })}
+          />
           <HeaderAction
             label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
             pressed={deloadActive}
@@ -335,7 +346,6 @@ export function WorkoutScreen() {
               {t('workout.deloadMark')}
             </span>
           </HeaderAction>
-          <ElapsedTime startedAt={workout.startedAt} className="text-base text-[var(--text-2)]" />
           <HeaderAction
             label={t('workout.workoutMenu')}
             onClick={() => setSheet({ kind: 'workout' })}

@@ -34,9 +34,16 @@ export function HeaderAction({
       aria-pressed={pressed}
       disabled={disabled}
       onClick={onClick}
-      className={`-mr-2 flex size-12 shrink-0 items-center justify-center rounded-xl
-        text-[var(--accent-ink)] active:bg-[var(--surface-1)] disabled:opacity-60
-        ${pressed ? 'bg-[var(--surface-2)]' : ''}`}
+      // `last:` and not a bare `-mr-2`: the negative margin exists so the icon's
+      // 48px box overhangs the screen padding and the glyph lands on the optical
+      // edge. That is a property of the button at the EDGE, not of every button.
+      // Applied to all of them it ate exactly the `gap-2` of the workout header —
+      // reported from the phone, the deload chip glued to the chronometer — and
+      // it silently overlapped the two icons of the history header by 8px.
+      className={`flex size-12 shrink-0 items-center justify-center rounded-xl
+        text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]
+        last:-mr-2 active:bg-[var(--surface-1)] disabled:opacity-60
+        ${pressed ? 'bg-[var(--accent-soft)]' : ''}`}
     >
       {children}
     </button>

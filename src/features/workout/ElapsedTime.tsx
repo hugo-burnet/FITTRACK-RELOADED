@@ -13,9 +13,19 @@ import { formatElapsed } from './elapsed';
 export function ElapsedTime({
   startedAt,
   className = '',
+  label,
 }: {
   startedAt: number;
   className?: string;
+  /**
+   * An accessible name, for the one caller where the figure stands alone.
+   *
+   * Optional rather than built in: on the finish screen and the resume bar the
+   * reading already sits under a written label, and naming it here would have a
+   * screen reader announce the same thing twice. Deliberately not a live region
+   * either — a value that speaks every second is unusable.
+   */
+  label?: (time: string) => string;
 }) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -24,5 +34,11 @@ export function ElapsedTime({
     return () => clearInterval(id);
   }, []);
 
-  return <span className={`metric tabular ${className}`}>{formatElapsed((now - startedAt) / 1000)}</span>;
+  const time = formatElapsed((now - startedAt) / 1000);
+
+  return (
+    <span className={`metric tabular ${className}`} aria-label={label?.(time)}>
+      {time}
+    </span>
+  );
 }
