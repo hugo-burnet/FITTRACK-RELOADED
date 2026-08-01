@@ -29,7 +29,7 @@ import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
-import { measurementShape } from '@/lib/measurement';
+import { isDeloadEligibleMeasurement } from '@/lib/deload';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { workoutRecordKinds } from '@/lib/records';
 import { isRestTriggering, restPlans } from '@/lib/rest';
@@ -206,10 +206,8 @@ export function WorkoutScreen() {
   const deloadActive = workout.deloadPercent === 80;
   const canDeload = exercises.some((line) =>
     (() => {
-      const role = measurementShape(line.exercise?.measurementType ?? 'weight_reps').weightRole;
       return (
-        role !== undefined &&
-        role !== 'assist' &&
+        isDeloadEligibleMeasurement(line.exercise?.measurementType) &&
         line.sets.some(
           (set, index) =>
             set.isCompleted === 0 &&
@@ -329,7 +327,7 @@ export function WorkoutScreen() {
             onClick={() => setSheet({ kind: 'deload' })}
           >
             <span className="metric text-xs font-bold" aria-hidden="true">
-              80%
+              {t('workout.deloadMark')}
             </span>
           </HeaderAction>
           <ElapsedTime startedAt={workout.startedAt} className="text-base text-[var(--text-2)]" />

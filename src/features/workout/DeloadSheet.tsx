@@ -48,7 +48,13 @@ export function DeloadSheet({
         <Button variant="secondary" size="lg" onClick={onClose} fullWidth>
           {t('exercise.cancel')}
         </Button>
-        <Button size="lg" disabled={submitting} onClick={() => void apply()} fullWidth>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={submitting}
+          onClick={() => void apply()}
+          fullWidth
+        >
           {t('workout.deloadConfirm')}
         </Button>
       </div>

@@ -61,7 +61,8 @@ describe('applyWorkoutDeload', () => {
 
   it('appends the note once and cannot reduce the workout twice', async () => {
     const workout = await startWorkout('', 'Poussée');
-    await db.workouts.update(workout.id, { notes: 'Épaule sensible.' });
+    const existingNotes = '  Épaule sensible.\n  ';
+    await db.workouts.update(workout.id, { notes: existingNotes });
     const { set } = await liveSet(workout.id);
     await db.workoutSets.update(set.id, { targetWeight: 100 });
 
@@ -70,9 +71,29 @@ describe('applyWorkoutDeload', () => {
 
     expect(await db.workouts.get(workout.id)).toMatchObject({
       deloadPercent: 80,
-      notes: `Épaule sensible.\n\n${NOTE}`,
+      notes: `${existingNotes}\n\n${NOTE}`,
     });
     expect((await db.workoutSets.get(set.id))?.targetWeight).toBe(80);
+  });
+
+  it('uses the missing-exercise fallback after an assisted exercise is soft-deleted', async () => {
+    const assisted = await createCustomExercise({
+      name: 'Tractions assistées retirées',
+      primaryMuscle: 'lats',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'assisted_weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Technique');
+    const { set } = await liveSet(workout.id, assisted.id);
+    await db.workoutSets.update(set.id, { targetWeight: 40 });
+    await db.exercises.update(assisted.id, { deletedAt: Date.now() });
+
+    await expect(applyWorkoutDeload(workout.id, NOTE)).resolves.toMatchObject({
+      deloadPercent: 80,
+    });
+    expect((await db.workoutSets.get(set.id))?.targetWeight).toBe(32.5);
   });
 
   it('does not touch hidden or assisted weights', async () => {

@@ -223,6 +223,7 @@ const fr = {
     workoutMenu: 'Options de la séance',
     deloadAction: 'Activer le deload à 80 %',
     deloadActive: 'Deload actif à 80 %',
+    deloadMark: '80%',
     deloadTitle: 'Deload à 80 %',
     deloadBody: 'Les séries restantes passeront à 80 %, arrondies à 2,5 kg.',
     deloadConfirm: 'Appliquer',

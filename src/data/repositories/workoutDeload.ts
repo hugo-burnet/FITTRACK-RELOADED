@@ -1,18 +1,24 @@
 import { db } from '@/data/db';
 import type { Workout, WorkoutSet } from '@/data/types';
-import { calculateDeloadWeight, DELOAD_PERCENT } from '@/lib/deload';
-import { measurementShape } from '@/lib/measurement';
+import {
+  calculateDeloadWeight,
+  DELOAD_PERCENT,
+  isDeloadEligibleMeasurement,
+} from '@/lib/deload';
 import { alive, touch } from './base';
 import { getLastPerformance } from './workoutHistory';
 
 const byOrder = (left: WorkoutSet, right: WorkoutSet): number => left.order - right.order;
 
 function appendNote(notes: string | undefined, note: string): string | undefined {
-  const current = notes?.trim();
+  const current = notes;
+  const normalizedCurrent = current?.trim();
   const addition = note.trim();
   if (addition === '') return current;
-  if (current?.includes(addition)) return current;
-  return current === undefined || current === '' ? addition : `${current}\n\n${addition}`;
+  if (normalizedCurrent?.includes(addition)) return current;
+  return normalizedCurrent === undefined || normalizedCurrent === ''
+    ? addition
+    : `${current}\n\n${addition}`;
 }
 
 export async function applyWorkoutDeload(
@@ -41,15 +47,16 @@ export async function applyWorkoutDeload(
       );
       const found = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
       const library = new Map(
-        found
-          .filter((exercise) => exercise !== undefined)
-          .map((exercise) => [exercise.id, exercise]),
+        found.flatMap((exercise) =>
+          exercise !== undefined && exercise.deletedAt === 0
+            ? ([[exercise.id, exercise]] as const)
+            : [],
+        ),
       );
       const eligibleRows = new Set(
         rows.flatMap((row) => {
-          const type = library.get(row.exerciseId)?.measurementType ?? 'weight_reps';
-          const role = measurementShape(type).weightRole;
-          return role !== undefined && role !== 'assist' ? [row.id] : [];
+          const type = library.get(row.exerciseId)?.measurementType;
+          return isDeloadEligibleMeasurement(type) ? [row.id] : [];
         }),
       );
       const live = alive(
