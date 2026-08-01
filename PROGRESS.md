@@ -2,6 +2,25 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**export de tout l’historique depuis les
+Réglages**). La section Données propose désormais « Exporter tout
+l’historique ». Le document réutilise sans divergence la chaîne canonique
+`listHistoricalWorkouts` → `projectCoachExport` → `serializeMarkdown`, avec la
+portée `{ kind: 'all-history' }`, puis ouvre la feuille de partage native. Si
+elle n’est pas disponible, le presse-papiers prend le relais ; les issues de
+copie et d’échec sont annoncées dans l’écran.
+
+**Preuves.** Le cycle TDD couvre deux séances réunies dans un même Markdown, la
+portée globale, l’historique vide, le repli presse-papiers et l’échec total. Les
+tests ciblés de Réglages, du partage individuel et de l’adaptateur de plateforme
+passent : **17 tests dans 3 fichiers**. Les portes fraîches sortent avec le code
+0 : lint, typecheck, **839 tests dans 67 fichiers** et build Vite de **194
+modules**.
+
+**Checkpoint téléphone demandé :** ouvrir Réglages → Données → Exporter tout
+l’historique. Vérifier que la feuille de partage contient les premières et
+dernières séances et annonce « Périmètre : tout l’historique ».
+
 **Dernière mise à jour :** 2026-08-01 (**export coach — autorité des séries de
 travail centralisée**). Quand les échauffements sont exclus, le contenu exporté
 et `workingSetCount` reposent désormais tous deux sur `isWorkingSet`. Le format,
