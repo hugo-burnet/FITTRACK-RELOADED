@@ -2,6 +2,63 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
+**Dernière mise à jour :** 2026-08-01 (**retours téléphone sur la palette : cadre de
+graphique unifié, header de séance décollé**). Trois défauts rapportés en photo, trois
+causes distinctes — aucune n'était la palette.
+
+**Les deux graphiques en colonnes avaient divergé sur leurs trois marques communes.**
+Ligne de base, moignon de zéro et sélection : `--border` d'un côté, `--text-2` de l'autre ;
+une fente pleine ici, un contour là. `ChartSurface` avait factorisé l'interaction en
+laissant le dessin de côté — vrai d'une courbe contre un histogramme, **faux d'un
+histogramme contre un histogramme**. `ColumnFrame` possède désormais les trois marques et
+les deux écrans le partagent : la façon dont deux graphiques restent identiques, c'est
+qu'il n'y en a plus qu'un à changer.
+
+**La sélection devient une marque sous la colonne.** Les deux réponses précédentes
+échouaient à la mesure sur le thème clair : la fente pleine était `--surface-2` sur une
+carte blanche — **1,14:1, invisible** — et le contour traversant la base se lisait comme un
+rectangle égaré. La marque reprend l'atome de l'onglet engagé de la barre du bas. Elle
+fonctionne à n'importe quelle hauteur, **y compris zéro** — la semaine vide est justement
+celle qui mérite d'être tapée — et elle est en `--text-1`, **jamais l'accent** : sur le
+graphique des séances l'accent dit déjà « objectif atteint », et une encre ne peut pas dire
+deux choses sur un même dessin.
+
+**`--axis` est un jeton neuf parce que c'est un métier neuf.** Ni `--border`, réglé pour un
+bord de carte et qui mesure **1,35:1** sur une carte claire — invisible sous une barre — ni
+`--text-2`, qui dessinait une ligne de base plus lourde que la donnée posée dessus. Son
+propre plancher : 3:1, le seuil des objets graphiques.
+
+**Le « ça colle » du header avait une cause exacte, et elle mordait ailleurs aussi.**
+`HeaderAction` portait `-mr-2` : une marge négative qui existe pour que la cible de 48 px
+déborde la marge d'écran et que le glyphe tombe sur le bord optique. C'est une propriété du
+bouton **du bord**, pas de tous. Appliquée à chacun, elle mangeait exactement le `gap-2` du
+header de séance — d'où la puce deload collée au chrono — et **superposait de 8 px les deux
+icônes du header de l'Historique**, sans que personne l'ait vu. `last:-mr-2` corrige les
+deux. Vérifié en pilotant : gaps de 8 px réels, cibles de 48 px intactes.
+
+**Le chrono passe devant les commandes.** Posé entre le deload et le menu, il était encadré
+de deux boutons et se lisait comme un troisième bouton qui refuse de répondre. La lecture
+d'abord, les commandes groupées contre le bord — l'ordre de l'en-tête des routines, où le
+compte précède le `+`. Il gagne la graisse d'un instrument et **un nom accessible** : un
+lecteur d'écran annonçait « 0:02 » tout seul. L'étiquette est optionnelle et posée au seul
+appelant où le chiffre est nu ; sur l'écran de fin et la barre de reprise il est déjà sous
+un libellé écrit, et le nommer ferait doublon.
+
+**L'état deload actif passe en `--accent-soft`.** Il était un aplat `--surface-2`, une tache
+grise ; le jeton existe désormais et son emploi est précisément celui-là — un état que
+l'encre d'accent désigne déjà (6,4:1 en sombre, 6,5:1 en clair).
+
+**Preuves.** Un test neuf compare les deux cadres marque par marque, et un mutant a été tué
+en le vérifiant : remettre une ligne de base propre au graphique de volume fait sortir
+**3 marques contre 2** et casse aussi le test du curseur. Les quatre portes sortent avec le
+code 0 : lint, typecheck, **874 tests dans 71 fichiers** et build Vite.
+
+**Checkpoint téléphone :** ouvrir Analyses → Séances par semaine puis Volume
+d'entraînement, et vérifier que les deux écrans ont la même ligne de base, le même moignon
+de zéro et le même curseur. Taper une semaine vide au milieu : elle doit rester
+sélectionnable et son curseur visible. Puis, en séance, vérifier l'espace entre le chrono,
+la puce `80%` et le menu, et le fond orange sourd une fois le deload appliqué.
+
 **Dernière mise à jour :** 2026-08-01 (**nouvelle palette — vert en clair, orange en
 sombre**). Recolorage complet des deux thèmes depuis une référence visuelle fournie par
 l'utilisateur. Aucune logique, aucun layout, aucune structure, aucune chaîne d'UI n'a changé.
