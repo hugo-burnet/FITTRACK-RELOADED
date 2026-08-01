@@ -15,25 +15,21 @@ import {
   reorderRoutines,
   updateRoutine,
 } from '@/data/repositories/routines';
-import type { RoutineSummary } from '@/data/repositories/routines';
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTemplates';
 import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { moveItem } from '@/lib/routineOrder';
 import {
   ActionSheet,
-  Button,
   ConfirmSheet,
-  EmptyState,
   HeaderAction,
   OptionSheet,
-  ReorderableList,
 } from '@/ui';
-import type { ItemState, Option } from '@/ui';
-import { GripIcon, MoreIcon, PlusIcon } from '@/ui/icons';
+import type { Option } from '@/ui';
+import { PlusIcon } from '@/ui/icons';
 import { FolderFormSheet } from './FolderFormSheet';
-import { routineSummaryLine } from './summary';
+import { RoutineCollection } from './RoutineCollection';
+import type { RoutineCollectionIntent } from './RoutineCollection';
 
 /** One sheet at a time: two stacked modals fight over the body scroll lock. */
 type SheetState =
@@ -45,124 +41,6 @@ type SheetState =
   | { kind: 'routineActions'; routine: Routine }
   | { kind: 'routineMove'; routine: Routine }
   | { kind: 'routineDelete'; routine: Routine };
-
-/**
- * The list is flat, and a heading is a position in it rather than a container.
- *
- * That is what makes filing a routine a drag: the folder a routine belongs to is
- * simply the heading above it, so dropping it anywhere both reorders it and
- * re-files it. There is no separate "drop into folder" target to aim at with a
- * thumb, and no cross-container bookkeeping.
- */
-type Entry =
-  | { kind: 'heading'; id: string; folder?: RoutineFolder }
-  | { kind: 'routine'; id: string; summary: RoutineSummary };
-
-function toEntries(summaries: RoutineSummary[], folders: RoutineFolder[]): Entry[] {
-  const entries: Entry[] = [];
-  const inFolder = (id: string) => summaries.filter((row) => row.routine.folderId === id);
-
-  // The root heading appears only once folders exist — but then it must always
-  // be there, or a routine dragged into a folder could never come back out.
-  if (folders.length > 0) entries.push({ kind: 'heading', id: 'root' });
-  for (const summary of inFolder('')) {
-    entries.push({ kind: 'routine', id: summary.routine.id, summary });
-  }
-
-  for (const folder of folders) {
-    entries.push({ kind: 'heading', id: folder.id, folder });
-    for (const summary of inFolder(folder.id)) {
-      entries.push({ kind: 'routine', id: summary.routine.id, summary });
-    }
-  }
-
-  return entries;
-}
-
-/** Reads each routine's folder back out of where it now sits. */
-function toPlacement(entries: Entry[]): { id: string; folderId: string }[] {
-  const placement: { id: string; folderId: string }[] = [];
-  let folderId = '';
-
-  for (const entry of entries) {
-    if (entry.kind === 'heading') folderId = entry.folder?.id ?? '';
-    else placement.push({ id: entry.id, folderId });
-  }
-
-  return placement;
-}
-
-/**
- * A routine: a handle, the routine itself, and its menu.
- *
- * Its own card rather than a hairline inside a shared one — a row has to be able
- * to lift away from its neighbours to be dragged, which is the same reason the
- * editor gives each exercise a card.
- */
-function RoutineRow({
-  summary,
-  state,
-  onOpen,
-  onMenu,
-}: {
-  summary: RoutineSummary;
-  state: ItemState;
-  onOpen: () => void;
-  onMenu: () => void;
-}) {
-  const { routine, exerciseCount, setCount } = summary;
-  const subtitle = routine.subtitle?.trim();
-
-  return (
-    <div
-      className={`flex items-stretch overflow-hidden rounded-2xl transition-colors
-        duration-[var(--dur-1)]
-        ${
-          state.dragging
-            ? 'bg-[var(--surface-2)] ring-2 ring-[var(--accent-ink)]'
-            : 'bg-[var(--surface-1)]'
-        }`}
-    >
-      <button
-        type="button"
-        aria-label={t('routines.dragHandle', { name: routine.name })}
-        className="flex w-11 shrink-0 cursor-grab items-center justify-center text-[var(--text-2)]
-          active:cursor-grabbing"
-        {...state.handleProps}
-      >
-        <GripIcon />
-      </button>
-
-      <button
-        type="button"
-        onClick={onOpen}
-        className="flex min-h-16 min-w-0 flex-1 flex-col justify-center gap-1 py-3 text-left
-          transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
-      >
-        <span className="truncate text-base text-[var(--text-1)]">{routine.name}</span>
-        {/* The quiet line: everything the title should not have to carry. */}
-        {subtitle !== undefined && subtitle !== '' && (
-          <span className="truncate text-sm text-[var(--text-2)]">{subtitle}</span>
-        )}
-        {/* Engraved, not prose: a count annotates, it does not narrate — and it
-            keeps the two grey lines from reading as one grey block. */}
-        <span className="label-xs font-semibold text-[var(--text-2)]">
-          {routineSummaryLine(exerciseCount, setCount)}
-        </span>
-      </button>
-
-      <button
-        type="button"
-        aria-label={`${t('routines.actionsTitle')} — ${routine.name}`}
-        onClick={onMenu}
-        className="flex w-12 shrink-0 items-center justify-center text-[var(--text-2)]
-          transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
-      >
-        <MoreIcon />
-      </button>
-    </div>
-  );
-}
 
 export function RoutinesScreen() {
   const navigate = useNavigate();
@@ -196,7 +74,27 @@ export function RoutinesScreen() {
   // `undefined` is "not answered yet" — rendering the empty state on it flashes
   // "0 routines" on every load.
   const loaded = summaries !== undefined && folders !== undefined;
-  const entries = loaded ? toEntries(summaries, folders) : [];
+  const handleCollectionIntent = (intent: RoutineCollectionIntent) => {
+    switch (intent.kind) {
+      case 'createBlank':
+        startBlank();
+        return;
+      case 'showTemplates':
+        setSheet({ kind: 'templates' });
+        return;
+      case 'openRoutine':
+        openEditor(intent.routine);
+        return;
+      case 'openRoutineActions':
+        setSheet({ kind: 'routineActions', routine: intent.routine });
+        return;
+      case 'openFolderActions':
+        setSheet({ kind: 'folderActions', folder: intent.folder });
+        return;
+      case 'reorderRoutines':
+        void reorderRoutines(intent.placement.map(({ id, folderId }) => ({ id, folderId })));
+    }
+  };
 
   return (
     <Screen
@@ -219,64 +117,13 @@ export function RoutinesScreen() {
         </div>
       }
     >
-      {loaded &&
-        (summaries.length === 0 && folders.length === 0 ? (
-          <EmptyState
-            reading="0"
-            unit={t('routines.countUnit')}
-            body={t('routines.emptyBody')}
-            action={
-              <div className="flex flex-col gap-2">
-                <Button variant="primary" size="lg" fullWidth onClick={startBlank}>
-                  {t('routines.newBlank')}
-                </Button>
-                <Button fullWidth onClick={() => setSheet({ kind: 'templates' })}>
-                  {t('routines.newFromTemplate')}
-                </Button>
-              </div>
-            }
-          />
-        ) : (
-          <ReorderableList
-            className="flex flex-col gap-3"
-            items={entries}
-            keyOf={(entry) => entry.id}
-            onReorder={(from, to) =>
-              void reorderRoutines(toPlacement(moveItem(entries, from, to)))
-            }
-            renderItem={(entry, _index, state) =>
-              entry.kind === 'routine' ? (
-                <RoutineRow
-                  summary={entry.summary}
-                  state={state}
-                  onOpen={() => openEditor(entry.summary.routine)}
-                  onMenu={() => setSheet({ kind: 'routineActions', routine: entry.summary.routine })}
-                />
-              ) : (
-                // Headings are landmarks, not rows: no handle, so they stay put
-                // while routines move between them.
-                <div className="flex items-center gap-2 px-1 pt-2">
-                  <h2 className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
-                    {entry.folder?.name ?? t('routines.rootFolder')}
-                  </h2>
-                  {entry.folder !== undefined && (
-                    <button
-                      type="button"
-                      aria-label={`${t('routines.folderTitle')} — ${entry.folder.name}`}
-                      onClick={() =>
-                        entry.folder && setSheet({ kind: 'folderActions', folder: entry.folder })
-                      }
-                      className="-my-2 -mr-2 flex size-12 items-center justify-center
-                        text-[var(--text-2)]"
-                    >
-                      <MoreIcon width="18" height="18" />
-                    </button>
-                  )}
-                </div>
-              )
-            }
-          />
-        ))}
+      {loaded && (
+        <RoutineCollection
+          summaries={summaries}
+          folders={folders}
+          onIntent={handleCollectionIntent}
+        />
+      )}
 
       <ActionSheet
         open={sheet?.kind === 'create'}
