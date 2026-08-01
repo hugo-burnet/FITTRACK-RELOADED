@@ -61,6 +61,27 @@ export function weekStartOf(startedAt: number, offsetMinutes?: number): number {
   return startOfLocalWeek(new Date(year!, month! - 1, day!, 12).getTime());
 }
 
+export function knownWeekStarts(
+  observedWeekStarts: Iterable<number>,
+  bounds: PeriodBounds,
+  hasEarlierHistory = false,
+): number[] {
+  const observed = [...observedWeekStarts];
+  const oldest = observed.length === 0 ? undefined : Math.min(...observed);
+  const first = bounds.from !== undefined && hasEarlierHistory ? bounds.from : oldest;
+  if (first === undefined) return [];
+
+  const starts: number[] = [];
+  for (
+    let weekStart = startOfLocalWeek(first);
+    weekStart < bounds.to;
+    weekStart = addLocalWeeks(weekStart, 1)
+  ) {
+    starts.push(weekStart);
+  }
+  return starts;
+}
+
 /**
  * One bucket per week of the window — **including the empty ones, but never
  * before the history itself starts**.
@@ -99,23 +120,11 @@ export function weeklySessionCounts(
     counts.set(week, (counts.get(week) ?? 0) + 1);
   }
 
-  const oldest = counts.size === 0 ? undefined : Math.min(...counts.keys());
-  // The window's own start only wins when history reaches back past it.
-  const first = bounds.from !== undefined && hasEarlierHistory ? bounds.from : oldest;
-  if (first === undefined) return [];
-
-  const buckets: WeekBucket[] = [];
-  // Stepped week by week rather than divided by 604 800 000: a week is not
-  // always 168 hours long, twice a year.
-  for (let week = startOfLocalWeek(first); week < bounds.to; week = addLocalWeeks(week, 1)) {
-    buckets.push({
-      weekStart: week,
-      sessions: counts.get(week) ?? 0,
-      goal: resolveWeeklyGoal(goals, week),
-    });
-  }
-
-  return buckets;
+  return knownWeekStarts(counts.keys(), bounds, hasEarlierHistory).map((weekStart) => ({
+    weekStart,
+    sessions: counts.get(weekStart) ?? 0,
+    goal: resolveWeeklyGoal(goals, weekStart),
+  }));
 }
 
 /**

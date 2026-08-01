@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { localOffsetMinutes } from '@/lib/timezone';
 import { addLocalWeeks, startOfLocalWeek } from '@/lib/history';
 import { periodBounds } from './periods';
-import { goalWeeksReached, weeklyAverage, weeklySessionCounts, weekStartOf } from './weeks';
+import {
+  goalWeeksReached,
+  knownWeekStarts,
+  weeklyAverage,
+  weeklySessionCounts,
+  weekStartOf,
+} from './weeks';
 
 /** Lundi 27 juillet 2026, 14 h locale — l'instant depuis lequel on lit. */
 const now = new Date(2026, 6, 27, 14, 0, 0).getTime();
@@ -14,6 +20,41 @@ const session = (at: number, timezoneOffsetMinutes?: number) =>
   timezoneOffsetMinutes === undefined
     ? { startedAt: at }
     : { startedAt: at, timezoneOffsetMinutes };
+
+describe('knownWeekStarts', () => {
+  const bounds = periodBounds('4w', now);
+
+  it('part de la borne quand une histoire antérieure rend toute la fenêtre connue', () => {
+    expect(knownWeekStarts([], bounds, true)).toEqual([
+      week(2026, 6, 6),
+      week(2026, 6, 13),
+      week(2026, 6, 20),
+      week(2026, 6, 27),
+    ]);
+  });
+
+  it('part de la plus ancienne semaine observée et conserve les trous internes', () => {
+    expect(knownWeekStarts([week(2026, 6, 20), week(2026, 6, 6)], bounds)).toEqual([
+      week(2026, 6, 6),
+      week(2026, 6, 13),
+      week(2026, 6, 20),
+      week(2026, 6, 27),
+    ]);
+  });
+
+  it('ne fabrique aucune semaine pour une histoire complète vide', () => {
+    expect(knownWeekStarts([], periodBounds('all', now))).toEqual([]);
+  });
+
+  it('énumère les semaines par calendrier local à travers un changement d’heure', () => {
+    const october = new Date(2026, 9, 27, 14, 0, 0).getTime();
+    const starts = knownWeekStarts([], periodBounds('4w', october), true);
+
+    expect(starts).toHaveLength(4);
+    expect(starts[3]).toBe(addLocalWeeks(starts[0]!, 3));
+    expect(starts.every((start) => new Date(start).getHours() === 0)).toBe(true);
+  });
+});
 
 describe('weekStartOf', () => {
   it('range une séance dans la semaine de son propre jour civil', () => {

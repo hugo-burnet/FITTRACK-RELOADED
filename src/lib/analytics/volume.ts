@@ -1,9 +1,8 @@
-import { addLocalWeeks, startOfLocalWeek } from '@/lib/history';
 import type { HistoricalWorkout } from '@/lib/historyProjection';
 import { measurementShape } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { PeriodBounds } from './periods';
-import { weekStartOf } from './weeks';
+import { knownWeekStarts, weekStartOf } from './weeks';
 
 export type WeeklyVolumeMetric = 'tonnage' | 'duration';
 
@@ -50,21 +49,10 @@ export function weeklyVolumeBuckets(
     totals.set(weekStart, current);
   }
 
-  const oldest = totals.size === 0 ? undefined : Math.min(...totals.keys());
-  const first = bounds.from !== undefined && hasEarlierHistory ? bounds.from : oldest;
-  if (first === undefined) return [];
-
-  const buckets: WeeklyVolumeBucket[] = [];
-  for (
-    let weekStart = startOfLocalWeek(first);
-    weekStart < bounds.to;
-    weekStart = addLocalWeeks(weekStart, 1)
-  ) {
+  return knownWeekStarts(totals.keys(), bounds, hasEarlierHistory).map((weekStart) => {
     const value = totals.get(weekStart) ?? { tonnage: 0, durationSeconds: 0 };
-    buckets.push({ weekStart, ...value });
-  }
-
-  return buckets;
+    return { weekStart, ...value };
+  });
 }
 
 export function weeklyVolumeValues(
