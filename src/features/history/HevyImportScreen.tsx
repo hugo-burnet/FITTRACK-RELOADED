@@ -149,7 +149,7 @@ export function HevyImportScreen() {
       );
       setState({ step: 'done', result });
     } catch {
-      setState({ step: 'review', failed: true, ...ready });
+      setState({ step: 'review', ...ready, failed: true });
     }
   };
 

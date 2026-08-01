@@ -3,7 +3,7 @@ import { EQUIPMENT, MUSCLE_GROUPS } from '@/data/types';
 import type { Equipment, Exercise, MuscleGroup } from '@/data/types';
 import type { HevyExerciseResolution } from '@/data/repositories/hevyImport';
 import { t } from '@/i18n/fr';
-import { equipmentLabel, muscleLabel } from '@/i18n/labels';
+import { equipmentLabel, measurementLabel, muscleLabel } from '@/i18n/labels';
 import { Button, FilterChip, Input, OptionSheet, Sheet } from '@/ui';
 import type { Option } from '@/ui';
 import { customResolutionFor, type HevyMappingDraftRow } from './hevyImportDraft';
@@ -124,6 +124,8 @@ export function HevyExerciseMappingSheet({
                         {muscleLabel(exercise.primaryMuscle)}
                         {t('history.importEvidenceValueSeparator')}
                         {equipmentLabel(exercise.equipment)}
+                        {t('history.importEvidenceValueSeparator')}
+                        {measurementLabel(exercise.measurementType)}
                       </span>
                     </span>
                   </button>

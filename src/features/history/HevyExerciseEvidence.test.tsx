@@ -9,6 +9,40 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 });
 
 describe('HevyExerciseEvidence', () => {
+  it('pluralise indépendamment une séance et une série', () => {
+    render(
+      <HevyExerciseEvidence
+        observation={{
+          sessionCount: 1,
+          setCount: 1,
+          examples: [],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('1 séance · 1 série')).toBeVisible();
+  });
+
+  it('pluralise une séance avec plusieurs séries', () => {
+    render(
+      <HevyExerciseEvidence
+        observation={{ sessionCount: 1, setCount: 2, examples: [] }}
+      />,
+    );
+
+    expect(screen.getByText('1 séance · 2 séries')).toBeVisible();
+  });
+
+  it('pluralise plusieurs séances avec une série', () => {
+    render(
+      <HevyExerciseEvidence
+        observation={{ sessionCount: 2, setCount: 1, examples: [] }}
+      />,
+    );
+
+    expect(screen.getByText('2 séances · 1 série')).toBeVisible();
+  });
+
   it('rend les valeurs partielles avec le séparateur localisé', () => {
     render(
       <HevyExerciseEvidence

@@ -55,8 +55,12 @@ export function HevyExerciseEvidence({
 }): React.ReactNode {
   const summaryKey =
     observation.sessionCount === 1
-      ? 'history.importEvidenceOne'
-      : 'history.importEvidence';
+      ? observation.setCount === 1
+        ? 'history.importEvidenceOneSetOne'
+        : 'history.importEvidenceOne'
+      : observation.setCount === 1
+        ? 'history.importEvidenceSetOne'
+        : 'history.importEvidence';
 
   return (
     <section className="space-y-3">

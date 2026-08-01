@@ -224,7 +224,7 @@ describe('HevyImportMappingStep', () => {
     });
     expect(within(dialog).getByText('Pallof press')).toBeInTheDocument();
     expect(
-      within(dialog).getByText('Abdominaux · Poulie'),
+      within(dialog).getByText('Abdominaux · Poulie · Poids et répétitions'),
     ).toBeInTheDocument();
     expect(
       within(dialog).getByText('2 séances · 4 séries'),

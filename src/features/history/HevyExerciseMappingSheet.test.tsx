@@ -64,6 +64,19 @@ const exercises = [
 ];
 
 describe('HevyExerciseMappingSheet', () => {
+  it('affiche le type de mesure de chaque cible proposée', () => {
+    render(
+      <HevyExerciseMappingSheet
+        row={row}
+        exercises={exercises}
+        onClose={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(screen.getAllByText(/Poids et répétitions/)).toHaveLength(3);
+  });
+
   it('combines measurement, search, muscle and equipment filters', () => {
     expect(
       filterHevyMappingExercises(exercises, row, 'developpe', 'chest', 'dumbbell').map(
