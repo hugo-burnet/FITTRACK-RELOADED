@@ -2,7 +2,7 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-07-29 (**identité fiable des exercices importés
+**Dernière mise à jour :** 2026-08-01 (**identité fiable des exercices importés
 livrée**). La cause exacte de la régression était l’alias « Développé Debout
 Poulie Centrée » encodé comme certitude vers `cable-shoulder-press`, alors que
 les quatre séries concernées dans les deux séances `LOWER A` sont un **Pallof
@@ -28,8 +28,19 @@ La bibliothèque d’exercices n’a pas été remplacée : elle contenait déj�
 mouvement et une bibliothèque plus grande n’aurait pas fourni l’identifiant
 stable absent du CSV Hevy.
 
+**Chemin complet durci.** Le parseur groupe désormais les variantes de casse,
+d’accent et de ponctuation dès leur clé d’identité exacte, avant l’inférence du
+type de mesure. Le draft appelle réellement le registre central pour produire
+les décisions autorisées ; le repository ne peut plus transformer seul une
+suggestion en confirmation utilisateur. Le scénario anonymisé issu du CSV réel
+protège 6 séances, 25 identités et 136 séries, l’échec transactionnel tardif,
+la conservation des choix, la reprise et l’invariance des neuf tables au
+réimport. Toutes les valeurs de performance de la fixture sont synthétiques ;
+les commits locaux qui contenaient brièvement les anciennes valeurs ont été
+réécrits et leur blob purgé avant tout push.
+
 **Preuves fraîches.** `npm run lint` et `npm run typecheck` sortent avec le code
-0 ; les **804 tests dans 63 fichiers** passent ; le build de production Vite
+0 ; les **821 tests dans 64 fichiers** passent ; le build de production Vite
 compile **193 modules** et sort avec le code 0.
 
 **Checkpoint téléphone demandé :** réinitialiser FitTrack, importer le CSV,
