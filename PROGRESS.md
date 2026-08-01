@@ -40,8 +40,9 @@ les commits locaux qui contenaient brièvement les anciennes valeurs ont été
 réécrits et leur blob purgé avant tout push.
 
 **Preuves fraîches.** `npm run lint` et `npm run typecheck` sortent avec le code
-0 ; les **821 tests dans 64 fichiers** passent ; le build de production Vite
-compile **193 modules** et sort avec le code 0.
+0 ; les **823 tests dans 64 fichiers** passent ; le build de production Vite
+compile **193 modules** et sort avec le code 0. La revue finale de l’ensemble
+des changements ne relève aucun problème critique, important ou mineur.
 
 **Checkpoint téléphone demandé :** réinitialiser FitTrack, importer le CSV,
 confirmer les **25 identités**, inspecter les deux séances `LOWER A` et les
