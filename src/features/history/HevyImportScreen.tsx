@@ -119,22 +119,33 @@ export function HevyImportScreen() {
   });
   const [openedRow, setOpenedRow] =
     useState<HevyMappingDraftRow | null>(null);
-  /** L'utilisateur a lu l'avertissement et veut ajouter à ce qui est là. */
-  const [ignoresNotEmpty, setIgnoresNotEmpty] = useState(false);
-  const populated = useLiveQuery(
-    async () => {
-      const [workouts, routines] = await Promise.all([
-        db.workouts.toArray(),
-        db.routines.toArray(),
-      ]);
-      return (
-        workouts.some((workout) => workout.deletedAt === 0) ||
-        routines.some((routine) => routine.deletedAt === 0)
-      );
-    },
-    [],
-    false,
-  );
+  const populated = useLiveQuery(async () => {
+    const [workouts, routines] = await Promise.all([
+      db.workouts.toArray(),
+      db.routines.toArray(),
+    ]);
+    return (
+      workouts.some((workout) => workout.deletedAt === 0) ||
+      routines.some((routine) => routine.deletedAt === 0)
+    );
+  }, []);
+
+  /*
+   * La décision est prise **une fois**, à l'ouverture de l'écran, et pas relue
+   * en continu.
+   *
+   * Deux raisons. La première est que l'import remplit lui-même la base : un
+   * garde-fou branché en direct s'inviterait à la fin de l'import qu'il venait
+   * d'autoriser. La seconde est une course, attrapée par l'intégration continue
+   * et pas en local : tant que la lecture n'a pas répondu, afficher le choix du
+   * fichier laisse une fenêtre où l'utilisateur (ou un test) saisit un champ qui
+   * disparaît à la réponse suivante — le fichier part alors dans le vide.
+   * D'où l'attente explicite : rien tant qu'on ne sait pas.
+   */
+  const [gate, setGate] = useState<'unknown' | 'blocked' | 'open'>('unknown');
+  if (gate === 'unknown' && populated !== undefined) {
+    setGate(populated ? 'blocked' : 'open');
+  }
 
   const chooseFile = async (file: File) => {
     if (!isImportableFileName(file.name)) {
@@ -255,14 +266,18 @@ export function HevyImportScreen() {
       }
       footer={footer}
     >
-      {state.step === 'file' && populated && !ignoresNotEmpty && (
+      {state.step === 'file' && gate === 'unknown' && (
+        <div aria-hidden="true" className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+      )}
+
+      {state.step === 'file' && gate === 'blocked' && (
         <NotEmptyStep
           onPurge={() => void navigate('/settings/debug')}
-          onIgnore={() => setIgnoresNotEmpty(true)}
+          onIgnore={() => setGate('open')}
         />
       )}
 
-      {state.step === 'file' && (!populated || ignoresNotEmpty) && (
+      {state.step === 'file' && gate === 'open' && (
         <HevyImportFileStep
           issues={state.issues}
           message={state.message}

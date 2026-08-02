@@ -80,7 +80,10 @@ async function chooseFixture(user: ReturnType<typeof userEvent.setup>) {
     ).not.toBeNull(),
   );
   const bypass = screen.queryByRole('button', { name: 'Importer quand même' });
-  if (bypass !== null) await user.click(bypass);
+  if (bypass !== null) {
+    await user.click(bypass);
+    await screen.findByRole('heading', { name: 'Choisir l’export' });
+  }
 
   const input = document.querySelector<HTMLInputElement>('input[type="file"]');
   if (input === null) throw new Error('champ de fichier introuvable');
