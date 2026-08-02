@@ -26,12 +26,25 @@
       Dessinée en SVG inline plutôt qu'en fichier : aucune requête réseau, donc
       rien à mettre en cache hors-ligne. C'est la barre chargée de l'onglet
       Accueil, à traits épaissis pour rester lisible à 16 px.
-      Le jeu d'icônes PWA complet (192/512/maskable) arrive au Lot 9.
+
+      Elle reste en data-URI même depuis le Lot 9, qui a pourtant ajouté
+      public/icon.svg : le favori s'affiche au premier rendu, avant que le
+      service worker n'existe. Un fichier coûterait une requête réseau à cet
+      instant précis, et le jour où elle échoue on regarde une page sans icône.
+      Le jeu 192/512/maskable, lui, vit dans le manifeste — un lanceur lit le
+      manifeste, jamais cette ligne.
     -->
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312110f'/%3E%3Cg stroke='%23ff8a3d' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M11 16h10'/%3E%3Cpath d='M9.5 11v10'/%3E%3Cpath d='M22.5 11v10'/%3E%3C/g%3E%3C/svg%3E"
     />
+    <!--
+      iOS ne lit pas le manifeste pour choisir l'icône de l'écran d'accueil : il
+      lit cette balise, et rien d'autre. Sans elle, « Sur l'écran d'accueil »
+      depuis Safari pose une capture de la page en guise d'icône.
+      Le chemin est relatif pour rester valable sous le `base` du dépôt.
+    -->
+    <link rel="apple-touch-icon" href="./apple-touch-icon-180x180.png" />
     <!--
       Le module principal est différé : sans ce script bloquant, un utilisateur en
       thème clair voit un flash noir à chaque démarrage. Doit rester synchrone et

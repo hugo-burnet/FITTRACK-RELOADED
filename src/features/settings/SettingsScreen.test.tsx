@@ -6,6 +6,7 @@ import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
 import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
+import { watchInstall } from '@/platform/install';
 import { SettingsScreen } from './SettingsScreen';
 
 async function seedCompletedWorkout(name: string, startedAt: number): Promise<void> {
@@ -146,5 +147,63 @@ describe('SettingsScreen — export de l’historique', () => {
     expect(await screen.findByRole('status')).toHaveTextContent(
       'L’historique n’a pas pu être partagé ni copié.',
     );
+  });
+});
+
+describe('SettingsScreen — installation', () => {
+  beforeEach(resetDb);
+  // Le module garde l'événement différé dans son état de module. Le vider entre
+  // deux tests par le vrai chemin — celui qu'emprunte une installation faite
+  // depuis le menu du navigateur — plutôt qu'en tripotant un verrou privé.
+  afterEach(() => window.dispatchEvent(new Event('appinstalled')));
+
+  const installAction = () =>
+    screen.findByRole('button', { name: /Installer sur l’écran d’accueil/ });
+
+  /** Rejoue ce que Chrome envoie quand il juge l'app installable. */
+  function offerInstall(outcome: 'accepted' | 'dismissed') {
+    watchInstall();
+    const event = new Event('beforeinstallprompt', { cancelable: true });
+    Object.assign(event, {
+      prompt: vi.fn().mockResolvedValue(undefined),
+      userChoice: Promise.resolve({ outcome }),
+    });
+    window.dispatchEvent(event);
+  }
+
+  it('explique le geste à faire quand le navigateur ne propose aucune invite', async () => {
+    renderSettings();
+
+    await userEvent.click(await installAction());
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Déjà installée, ou à ajouter depuis le menu du navigateur.',
+    );
+  });
+
+  it('confirme une installation acceptée', async () => {
+    offerInstall('accepted');
+    renderSettings();
+
+    await userEvent.click(await installAction());
+
+    expect(await screen.findByRole('status')).toHaveTextContent('FitTrack est installée.');
+  });
+
+  it('ne traite pas un refus comme une panne', async () => {
+    offerInstall('dismissed');
+    renderSettings();
+
+    await userEvent.click(await installAction());
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Installation annulée.');
+  });
+
+  it('annonce que la copie hors-ligne n’est pas encore prête', async () => {
+    // jsdom n'a pas de service worker, donc `isOfflineReady` est faux : c'est
+    // l'état d'un tout premier chargement, avant que le précache soit rempli.
+    renderSettings();
+
+    expect(await screen.findByText('Copie hors-ligne en cours de préparation.')).toBeVisible();
   });
 });

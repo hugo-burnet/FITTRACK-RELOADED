@@ -2,7 +2,83 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-02 (**sauvegarde CSV : export depuis FitTrack, réimport
+**Dernière mise à jour :** 2026-08-02 (**Lot 9 — PWA : l'app s'installe et démarre sans
+réseau**). Le jalon V1. La ligne 3 du README promettait « hors-ligne » depuis le Lot 0 ;
+elle est vraie depuis ce lot et pas avant.
+
+**Ce que le lot ajoute, en une phrase :** `vite-plugin-pwa` en `registerType: 'prompt'`, un
+manifeste complet, quatre icônes, un bandeau « nouvelle version disponible », une ligne
+d'installation dans les réglages, et `docs/INSTALLATION.md`.
+
+**Le vrai sujet n'était pas l'installation, c'était la mise à jour.** Le Lot 0 avait déjà
+consigné la version douce du problème : après un déploiement, l'onglet servait l'ancien
+`index.html` pendant quelques minutes. Un service worker transforme ces quelques minutes en
+**définitif**, parce qu'une fois installé ce n'est plus le réseau qui décide de la version
+qui tourne. D'où `registerType: 'prompt'` — mais ça ne fait que la moitié du travail :
+l'autre moitié est que **quelque chose doit le dire**, sinon le nouveau worker attend
+derrière l'ancien indéfiniment et l'app est figée tout aussi complètement, en silence.
+`UpdateBanner` est cette moitié.
+
+**Et le risque symétrique — recharger sous une séance en cours — est la raison pour laquelle
+le bandeau demande au lieu d'agir.** Règle n°4. « Plus tard » ne fait que masquer : le worker
+continue d'attendre, la bascule se fera à une ouverture suivante.
+
+**Le bandeau a été vérifié en déployant vraiment une v2 sous une page ouverte**, pas en
+lisant la config : v1 installée et aux commandes → build d'une v2 → bandeau affiché → « Plus
+tard » masque → rechargement, le bandeau revient → « Recharger » bascule et l'app repart.
+**Le premier essai a échoué pour une raison qui n'était pas un bug de l'app** : la
+modification déclenchant la v2 était un commentaire, que la minification supprime — le bundle
+ressortait octet pour octet identique et le worker ne voyait donc aucune nouvelle version.
+À retenir pour le Lot 10 et pour tout test de déploiement : **une v2 se fabrique avec une
+chaîne visible, jamais avec un commentaire.**
+
+**Le hors-ligne a été vérifié en coupant le réseau dans un vrai Chromium** : accueil,
+bibliothèque (175 exercices), et une route différée (`Progression`) s'ouvrent toutes, zéro
+erreur de page. Le précache fait **28 entrées / 777 Kio** — la limite de 2 Mio par fichier de
+Workbox n'est pas en vue, le plus gros morceau étant `index-*.js` à 433 Ko. Cette limite
+mérite quand même d'être surveillée : elle est **silencieuse**, un fichier au-dessus est
+simplement omis du précache et le build reste vert.
+
+**Les icônes sont générées, pas dessinées.** `scripts/generate-icons.mjs` reprend la
+géométrie de `BarbellIcon` (`src/ui/icons.tsx`) et sort le 192, le 512, le maskable et
+l'apple-touch. `sharp` n'est **pas** en devDependency : le script tourne à la main quand la
+marque change, et la CI fait un `npm ci` à chaque push — payer une chaîne d'image native à
+chaque déploiement pour quatre fichiers déjà commités serait un mauvais échange. La commande
+est dans l'en-tête du script.
+
+**Le maskable est un fichier séparé, pas un `purpose: 'any maskable'` partagé.** Un lanceur
+qui rogne l'icône « any » mangerait ses coins arrondis ; et le dessin n'est pas le même — la
+version maskable est réduite (échelle 16 au lieu de 18,5) pour tenir dans le cercle de
+sûreté de 80 %, où la marque à sa taille normale passait sur le papier et paraissait à
+l'étroit à l'œil.
+
+**Deux détails qui ne se voient qu'une fois sur le téléphone :** iOS ne lit pas le manifeste
+pour choisir son icône, il lit `<link rel="apple-touch-icon">` — sans cette balise, « Sur
+l'écran d'accueil » depuis Safari pose une capture de la page. Et le favicon reste en
+data-URI malgré `public/icon.svg`, parce qu'il s'affiche au premier rendu, avant que le
+service worker n'existe.
+
+**`isInstalled()` garde `matchMedia` derrière un `typeof`** : jsdom ne l'implémente pas du
+tout ici (vérifié, ce n'est pas une précaution théorique), et un appel nu ferait échouer
+chaque test montant l'écran de réglages — pour une ligne qui ne parle que d'affichage.
+
+**Ce que le lot ne fait pas :** le minuteur ne sonne toujours pas écran éteint. Une PWA ne
+sait pas le faire de façon fiable ; c'est la raison d'être du Lot 10.
+
+Les quatre portes sortent à 0 : lint, typecheck, **945 tests dans 80 fichiers**, build Vite.
+
+**Checkpoint téléphone (jalon V1) :**
+1. Ouvrir le site dans Chrome, aller dans **Réglages → Application → Installer sur l'écran
+   d'accueil**. L'icône doit apparaître dans le tiroir d'applications.
+2. Lancer depuis l'icône : **pas de barre d'adresse**.
+3. La même section doit afficher « Prête pour le hors-ligne ».
+4. **Mode avion, fermer l'app, la relancer depuis l'icône** : elle doit démarrer entièrement.
+5. Pousser une version et rouvrir l'app : le bandeau « Une nouvelle version est disponible »
+   doit apparaître, et « Recharger » doit basculer dessus.
+
+La procédure complète, iPhone compris, est dans `docs/INSTALLATION.md`.
+
+**Mise à jour précédente :** 2026-08-02 (**sauvegarde CSV : export depuis FitTrack, réimport
 comme un fichier Hevy**). Dernier morceau avant le v1, décidé en discussion : un seul format
 pour sortir et pour rentrer, plutôt qu'un export d'un côté et un importeur de l'autre.
 
@@ -3317,7 +3393,7 @@ ci-dessus fait foi.
 | 6 | Outils de séance | ✅ terminé | 6–7 | ✅ **en salle** |
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
-| 9 | PWA & installation | ⬜ à faire | — | ⬜ |
+| 9 | PWA & installation | ✅ terminé | 2026-08-02 | ⬜ **à vérifier sur le téléphone** |
 | 10 | Android (Capacitor) | ⬜ à faire | — | ⬜ |
 | 11 | Mesures & photos | ⬜ à faire | — | ⬜ |
 | 12 | Statistiques | ⬜ à faire | — | ⬜ |
@@ -3331,6 +3407,14 @@ ci-dessus fait foi.
 | 20 | Voix & accessibilité | ⬜ à faire | — | ⬜ |
 
 Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
+
+> ⚠️ **Les lignes 7 et 8 sont en retard sur la réalité.** Le récit en tête de ce fichier
+> décrit l'historique, le calendrier, les réglages et l'export/import comme livrés, et le code
+> les contient (`src/features/history/`, `src/features/settings/`, `csvRoundTrip.test.ts`) —
+> mais leurs lignes disent encore « à faire », et le §« Lot en cours » plus bas est resté figé
+> sur le Lot 07. Laissé tel quel volontairement au Lot 9 : **seul l'utilisateur valide un
+> checkpoint**, et deviner à sa place lesquels sont passés produirait un tableau faux mais
+> d'apparence fiable, ce qui est pire que celui-ci. À reprendre d'un coup, en confirmant.
 
 ## Décisions prises en cours de route
 

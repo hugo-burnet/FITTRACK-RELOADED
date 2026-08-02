@@ -11,6 +11,21 @@ const fr = {
     name: 'FitTrack',
   },
 
+  /**
+   * Le bandeau de mise à jour. Il paraît quand une nouvelle version attend
+   * derrière celle qui tourne, et il ne part que sur décision.
+   *
+   * « Recharger » et pas « Mettre à jour » : le mot doit annoncer ce qui va se
+   * passer à l'écran — la page se recharge — plutôt que le résultat abstrait.
+   * Quelqu'un au milieu d'une séance doit pouvoir lire le bouton et comprendre
+   * qu'il vaut mieux attendre la fin.
+   */
+  update: {
+    available: 'Une nouvelle version est disponible.',
+    reload: 'Recharger',
+    later: 'Plus tard',
+  },
+
   common: {
     yes: 'Oui',
     no: 'Non',
@@ -848,6 +863,30 @@ const fr = {
 
   settings: {
     title: 'Réglages',
+
+    /**
+     * La section « Application » — l'installation sur l'écran d'accueil et
+     * l'état du cache hors-ligne.
+     *
+     * Le libellé ne dit ni « PWA » ni « service worker » : ce que l'utilisateur
+     * veut savoir, c'est si l'app marchera dans un sous-sol sans 4G. La ligne
+     * répond à ça, en français, sans nommer la machinerie.
+     */
+    appSection: 'Application',
+    installLink: 'Installer sur l’écran d’accueil',
+    installHint: 'L’app s’ouvre depuis son icône, sans barre d’adresse.',
+    installDone: 'FitTrack est installée.',
+    installDismissed: 'Installation annulée.',
+    installFailed: 'L’installation n’a pas pu démarrer.',
+    /**
+     * Affiché quand le navigateur ne propose rien : soit l'app est déjà
+     * installée, soit c'est un iPhone (Safari n'a pas d'invite programmable) ou
+     * un navigateur qui n'en veut pas. Renvoyer vers `docs/INSTALLATION.md`
+     * serait un lien mort dans l'app — la phrase décrit donc le geste.
+     */
+    installUnavailable: 'Déjà installée, ou à ajouter depuis le menu du navigateur.',
+    offlineReady: 'Prête pour le hors-ligne : l’app démarre sans réseau.',
+    offlinePending: 'Copie hors-ligne en cours de préparation.',
 
     appearanceSection: 'Apparence',
     theme: 'Thème',

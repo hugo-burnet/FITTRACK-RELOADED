@@ -4,6 +4,9 @@ Application personnelle de suivi de musculation. Local-first, hors-ligne, sans c
 
 **En ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
 
+**Sur ton téléphone :** l'app s'installe depuis le navigateur et fonctionne en mode avion —
+`docs/INSTALLATION.md`.
+
 ## Développement
 
 ```bash
@@ -21,6 +24,10 @@ npm run dev
 
 > Le serveur de dev sert l'app sous `/FITTRACK-RELOADED/` (le `base` de `vite.config.ts`
 > correspond au nom du dépôt GitHub). Ouvre http://localhost:5173/FITTRACK-RELOADED/.
+
+> Le service worker n'est **pas** actif en développement : `npm run dev` ne l'enregistre pas, et
+> le bandeau de mise à jour ne peut donc pas s'y déclencher. Pour tester le hors-ligne ou une
+> bascule de version, il faut un vrai build : `npm run build && npm run preview`.
 
 ## Déploiement
 

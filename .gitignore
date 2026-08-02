@@ -1,6 +1,8 @@
 node_modules
 dist
 dist-ssr
+# Service worker de développement, régénéré par vite-plugin-pwa à chaque `npm run dev`.
+dev-dist
 coverage
 *.local
 *.tsbuildinfo
