@@ -25,17 +25,39 @@ export function hevyImportFolderBaseName(importedAt: number): string {
   return `Import Hevy — ${date}`;
 }
 
-export function nextHevyImportFolderName(
-  importedAt: number,
+function nextFolderName(
+  base: string,
   aliveFolderNames: readonly string[],
 ): string {
-  const base = hevyImportFolderBaseName(importedAt);
   const occupied = new Set(aliveFolderNames);
   if (!occupied.has(base)) return base;
 
   let suffix = 2;
   while (occupied.has(`${base} (${suffix})`)) suffix += 1;
   return `${base} (${suffix})`;
+}
+
+export function nextHevyImportFolderName(
+  importedAt: number,
+  aliveFolderNames: readonly string[],
+): string {
+  return nextFolderName(hevyImportFolderBaseName(importedAt), aliveFolderNames);
+}
+
+/**
+ * Le dossier des routines qu'on ne fait plus (`isDormantRoutine`). Séparé du
+ * dossier d'import pour que la liste des routines actives reste celle qu'on
+ * ouvre avant une séance, sans avoir à faire le tri à la main après chaque
+ * restauration.
+ */
+export function nextHevyArchiveFolderName(
+  importedAt: number,
+  aliveFolderNames: readonly string[],
+): string {
+  return nextFolderName(
+    `${hevyImportFolderBaseName(importedAt)} — Archivé`,
+    aliveFolderNames,
+  );
 }
 
 export function buildHevyRoutineEntities(
@@ -76,8 +98,13 @@ export function buildHevyRoutineEntities(
         routineId: routine.id,
         exerciseId: exercise.id,
         order: parsedExercise.order,
-        supersetGroup: 0,
-        restSeconds: 0,
+        // Le superset est déjà résolu par le regroupement (`superset_id` de la
+        // colonne Hevy) : la routine reconstruite le perdait alors que la
+        // donnée était là, à côté, dans la même séance.
+        supersetGroup: parsedExercise.supersetGroup,
+        // `0` garde son sens de `RoutineExercise` — « prends le repos par
+        // défaut de l'exercice » — quand le fichier ne dit rien.
+        restSeconds: parsedExercise.restSeconds ?? 0,
       });
       rows.push(row);
 

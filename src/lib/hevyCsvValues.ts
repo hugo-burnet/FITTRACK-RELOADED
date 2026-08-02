@@ -1,4 +1,11 @@
-import type { SetType } from '@/data/types';
+import {
+  EQUIPMENT,
+  MEASUREMENT_TYPES,
+  type Equipment,
+  type MeasurementType,
+  type SetType,
+  type Side,
+} from '@/data/types';
 import type {
   HevyCsvIssue,
   HevyParsedSet,
@@ -24,6 +31,27 @@ export const HEVY_HEADERS = [
 
 export type HevyHeader = (typeof HEVY_HEADERS)[number];
 
+/**
+ * Les colonnes que FitTrack ajoute aux 14 de Hevy quand c'est lui qui écrit le
+ * fichier — cf. `hevyCsvExport`.
+ *
+ * Elles sont **facultatives des deux côtés** : un export Hevy authentique n'en
+ * a aucune et s'importe comme avant, et une valeur illisible est ignorée plutôt
+ * que refusée. Le format reste celui de Hevy ; ces colonnes ne font que rendre
+ * à l'import ce que les 14 colonnes ne savent pas transporter (le repos, le
+ * côté travaillé, l'identité de mesure, la routine d'origine). Un fichier
+ * FitTrack reste donc lisible par n'importe quel outil qui lit du Hevy.
+ */
+export const FITTRACK_HEADERS = [
+  'fittrack_routine',
+  'fittrack_rest_seconds',
+  'fittrack_measurement',
+  'fittrack_equipment',
+  'fittrack_side',
+] as const;
+
+export type FittrackHeader = (typeof FITTRACK_HEADERS)[number];
+
 export interface ValidHevyRow {
   sourceLine: number;
   title: string;
@@ -34,22 +62,63 @@ export interface ValidHevyRow {
   sourceSupersetId?: string;
   exerciseNotes?: string;
   set: HevyParsedSet;
+  /** Nom de la routine d'origine — colonne `fittrack_routine`, si elle est là. */
+  routineName?: string;
+  /** Repos de l'exercice en secondes — colonne `fittrack_rest_seconds`. */
+  restSeconds?: number;
+  /** Type de mesure déclaré, qui dispense de l'inférer du contenu des séries. */
+  measurementType?: MeasurementType;
+  /** Matériel déclaré, qui dispense de le deviner du titre. */
+  equipment?: Equipment;
 }
 
-const FRENCH_MONTHS = new Map([
-  ['janv.', 0],
-  ['févr.', 1],
-  ['mars', 2],
-  ['avr.', 3],
-  ['mai', 4],
-  ['juin', 5],
-  ['juil.', 6],
-  ['août', 7],
-  ['sept.', 8],
-  ['oct.', 9],
-  ['nov.', 10],
-  ['déc.', 11],
-]);
+/**
+ * Les mois tels que Hevy les écrit en français. Exportés parce que l'écriture
+ * (`hevyCsvExport`) doit produire **exactement** ce que cette table relit : deux
+ * listes de mois qui divergent, et l'app n'arrive plus à relire ses propres
+ * fichiers.
+ */
+export const FRENCH_MONTH_LABELS = [
+  'janv.',
+  'févr.',
+  'mars',
+  'avr.',
+  'mai',
+  'juin',
+  'juil.',
+  'août',
+  'sept.',
+  'oct.',
+  'nov.',
+  'déc.',
+] as const;
+
+const FRENCH_MONTHS = new Map<string, number>(
+  FRENCH_MONTH_LABELS.map((label, index) => [label, index]),
+);
+
+const SIDES: readonly Side[] = ['both', 'left', 'right'];
+
+/**
+ * Une valeur d'extension illisible ne fait pas échouer l'import : la colonne
+ * est un bonus, et un fichier retouché à la main dans un tableur doit rester
+ * importable. On retombe alors sur le comportement Hevy — inférence, défauts.
+ */
+function optionalMember<T extends string>(
+  raw: string | undefined,
+  allowed: readonly T[],
+): T | undefined {
+  const value = raw?.trim().toLowerCase();
+  if (value === undefined || value === '') return undefined;
+  return allowed.find((member) => member === value);
+}
+
+function optionalCount(raw: string | undefined): number | undefined {
+  const value = raw?.trim();
+  if (value === undefined || value === '') return undefined;
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
+}
 
 const SET_TYPE_MAP: Readonly<Record<string, SetType>> = {
   normal: 'normal',
@@ -119,14 +188,16 @@ function optionalNumber(
   return value;
 }
 
+type CsvRecord = Record<HevyHeader, string> & Partial<Record<FittrackHeader, string>>;
+
 function toRecord(
   headers: readonly string[],
   row: CsvRow,
-): Record<HevyHeader, string> | undefined {
+): CsvRecord | undefined {
   if (row.cells.length !== headers.length) return undefined;
   return Object.fromEntries(
     headers.map((header, index) => [header, row.cells[index]]),
-  ) as Record<HevyHeader, string>;
+  ) as CsvRecord;
 }
 
 export function parseHevyRow(
@@ -257,6 +328,12 @@ export function parseHevyRow(
     });
   }
 
+  const routineName = optionalText(record.fittrack_routine ?? '');
+  const restSeconds = optionalCount(record.fittrack_rest_seconds);
+  const measurementType = optionalMember(record.fittrack_measurement, MEASUREMENT_TYPES);
+  const equipment = optionalMember(record.fittrack_equipment, EQUIPMENT);
+  const side = optionalMember(record.fittrack_side, SIDES);
+
   if (
     issues.length > 0 ||
     startedAt === undefined ||
@@ -278,10 +355,15 @@ export function parseHevyRow(
       exerciseTitle,
       sourceSupersetId: optionalText(record.superset_id),
       exerciseNotes: optionalText(record.exercise_notes),
+      ...(routineName === undefined ? {} : { routineName }),
+      ...(restSeconds === undefined ? {} : { restSeconds }),
+      ...(measurementType === undefined ? {} : { measurementType }),
+      ...(equipment === undefined ? {} : { equipment }),
       set: {
         sourceLine: row.line,
         order: setIndex,
         setType,
+        ...(side === undefined ? {} : { side }),
         ...(weight === undefined ? {} : { weight }),
         ...(reps === undefined ? {} : { reps }),
         ...(distanceKm === undefined

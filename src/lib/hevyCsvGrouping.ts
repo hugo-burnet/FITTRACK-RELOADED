@@ -95,6 +95,14 @@ export function buildHevyWorkouts(rows: readonly ValidHevyRow[]): {
             : { sourceSupersetId: first.sourceSupersetId }),
           supersetGroup,
           ...(first.exerciseNotes === undefined ? {} : { notes: first.exerciseNotes }),
+          // Les colonnes `fittrack_*` sont écrites sur chaque ligne de série ;
+          // celles-ci décrivent l'exercice, donc la première ligne du groupe
+          // fait foi — comme les notes et l'identifiant de superset au-dessus.
+          ...(first.restSeconds === undefined ? {} : { restSeconds: first.restSeconds }),
+          ...(first.measurementType === undefined
+            ? {}
+            : { measurementType: first.measurementType }),
+          ...(first.equipment === undefined ? {} : { equipment: first.equipment }),
           sets,
         };
       },
@@ -102,6 +110,7 @@ export function buildHevyWorkouts(rows: readonly ValidHevyRow[]): {
 
     return {
       title: row.title,
+      ...(row.routineName === undefined ? {} : { routineName: row.routineName }),
       startedAt: row.startedAt,
       endedAt: row.endedAt,
       durationSeconds: Math.floor((row.endedAt - row.startedAt) / 1000),

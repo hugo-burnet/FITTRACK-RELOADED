@@ -646,7 +646,9 @@ describe('Hevy import repository', () => {
       importedExercises: 2,
       importedSets: 3,
       createdRoutines: 1,
-      routineFolderName: 'Import Hevy — 27/07/2026',
+      // La séance du jeu d'essai date de 1970 : sa routine dort depuis
+      // longtemps, elle est donc rangée à l'archive (`isDormantRoutine`).
+      archivedRoutineFolderName: 'Import Hevy — 27/07/2026 — Archivé',
     });
 
     const workout = (await db.workouts.toArray())[0]!;
@@ -1050,6 +1052,8 @@ describe('Hevy import repository', () => {
   });
 
   it('creates one dated folder and representative routines atomically', async () => {
+    // Séance de 1970 → routine dormante → dossier d'archive. Le partage entre
+    // les deux dossiers a son propre test plus bas.
     const importedAt = new Date(2026, 6, 27, 12).getTime();
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
@@ -1064,7 +1068,7 @@ describe('Hevy import repository', () => {
     expect(result).toMatchObject({
       importedWorkouts: 1,
       createdRoutines: 1,
-      routineFolderName: 'Import Hevy — 27/07/2026',
+      archivedRoutineFolderName: 'Import Hevy — 27/07/2026 — Archivé',
     });
     const folders = await db.routineFolders.toArray();
     const routines = await db.routines.toArray();
@@ -1076,7 +1080,9 @@ describe('Hevy import repository', () => {
       name: 'Séance A',
       folderId: folders[0]!.id,
     });
-    expect(rows.map((row) => row.supersetGroup)).toEqual([0, 0]);
+    // Les deux exercices du jeu d'essai partagent `superset_id: '7'` : la
+    // routine reconstruite garde le superset, elle le perdait avant.
+    expect(rows.map((row) => row.supersetGroup)).toEqual([1, 1]);
     expect(sets.find((set) => set.setType === 'warmup')).toMatchObject({
       setType: 'warmup',
       targetReps: 10,
@@ -1090,6 +1096,75 @@ describe('Hevy import repository', () => {
       sets.find((set) => set.targetDurationSeconds === 60),
     ).not.toHaveProperty('targetWeight');
     expect(sets.every((set) => !('targetRpe' in set))).toBe(true);
+  });
+
+  /**
+   * La reconstruction ramène **tout** ce que l'historique contient, y compris la
+   * full body de l'hiver dernier. Deux dossiers plutôt qu'un : ce qui tourne
+   * encore d'un côté, ce qui dort de l'autre, sinon la liste qu'on ouvre avant
+   * une séance se remplit de routines qu'on ne fait plus.
+   */
+  it('range les routines dormantes dans un dossier d’archive séparé', async () => {
+    const importedAt = new Date(2026, 6, 27, 12).getTime();
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const recent: HevyImportData = {
+      ...data,
+      workouts: [
+        ...data.workouts,
+        {
+          ...data.workouts[0]!,
+          title: 'Séance récente',
+          startedAt: importedAt - 2 * 86_400_000,
+          endedAt: importedAt - 2 * 86_400_000 + 3_600_000,
+          importKey: 'hevy:recent',
+        },
+      ],
+    };
+
+    const result = await importWithDecisions(
+      recent,
+      resolutions(bench.id),
+      importedAt,
+    );
+
+    expect(result).toMatchObject({
+      createdRoutines: 2,
+      routineFolderName: 'Import Hevy — 27/07/2026',
+      archivedRoutineFolderName: 'Import Hevy — 27/07/2026 — Archivé',
+    });
+    const folders = await db.routineFolders.toArray();
+    const routines = await db.routines.toArray();
+    const folderOf = (name: string) =>
+      folders.find((folder) => folder.id === routines.find((routine) => routine.name === name)?.folderId)?.name;
+    expect(folders).toHaveLength(2);
+    expect(folderOf('Séance récente')).toBe('Import Hevy — 27/07/2026');
+    expect(folderOf('Séance A')).toBe('Import Hevy — 27/07/2026 — Archivé');
+    // Les ordres restent distincts : deux dossiers au même rang se rangeraient
+    // au hasard dans la liste des routines.
+    expect(new Set(folders.map((folder) => folder.order)).size).toBe(2);
+    expect(new Set(routines.map((routine) => routine.order)).size).toBe(2);
+  });
+
+  /**
+   * Le lien qui manquait : l'import fabriquait une routine à partir de séances
+   * qui, elles, restaient sans routine. L'accueil annonçait « jamais réalisée »
+   * sur une routine née de cet historique-là, et l'export CSV ressortait sans
+   * routine ce que l'import venait d'en déduire.
+   */
+  it('rattache les séances importées à la routine reconstruite à partir d’elles', async () => {
+    const importedAt = new Date(2026, 6, 27, 12).getTime();
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+
+    await importWithDecisions(data, resolutions(bench.id), importedAt);
+
+    const routine = (await db.routines.toArray())[0]!;
+    const workouts = await db.workouts.toArray();
+    expect(workouts).toHaveLength(1);
+    expect(workouts[0]?.routineId).toBe(routine.id);
   });
 
   it('creates no second folder when every workout is a duplicate', async () => {

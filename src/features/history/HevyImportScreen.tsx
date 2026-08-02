@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
+import { db } from '@/data/db';
 import {
   importHevyWorkouts,
   prepareHevyImport,
@@ -10,9 +12,10 @@ import {
 import type { HevyCsvIssue, HevyImportData } from '@/lib/hevyCsv';
 import { parseHevyCsv } from '@/lib/hevyCsv';
 import { t } from '@/i18n/fr';
-import { ActionBand, Card } from '@/ui';
+import { Button, ActionBand, Card } from '@/ui';
 import { HevyExerciseMappingSheet } from './HevyExerciseMappingSheet';
 import { HevyImportFileStep } from './HevyImportFileStep';
+import { isImportableFileName } from './importFileName';
 import { HevyImportMappingStep } from './HevyImportMappingStep';
 import { HevyImportOperationStatus } from './HevyImportOperationStatus';
 import { HevyImportReview } from './HevyImportReview';
@@ -47,6 +50,43 @@ function readyState(value: ReadyState): ReadyState {
   };
 }
 
+/**
+ * Restaurer par-dessus des données existantes n'a pas de sens : les séances
+ * sont dédoublonnées par leur clé d'import, mais les routines reconstruites
+ * viendraient doubler celles déjà là. On laisse entrer, on explique, et on
+ * emmène vider — plutôt que de griser un bouton qui n'aurait rien dit.
+ *
+ * Le passage en force reste possible d'un cran : ajouter un export Hevy à un
+ * historique déjà présent est le cas pour lequel cet écran a été écrit, et il
+ * marche toujours.
+ */
+function NotEmptyStep({
+  onPurge,
+  onIgnore,
+}: {
+  onPurge: () => void;
+  onIgnore: () => void;
+}) {
+  return (
+    <Card padded>
+      <h2 className="text-lg font-semibold text-[var(--text-1)]">
+        {t('history.importNotEmptyTitle')}
+      </h2>
+      <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+        {t('history.importNotEmptyBody')}
+      </p>
+      <div className="mt-6 flex flex-col gap-2">
+        <Button variant="primary" size="lg" onClick={onPurge} fullWidth>
+          {t('history.importNotEmptyAction')}
+        </Button>
+        <Button variant="ghost" size="lg" onClick={onIgnore} fullWidth>
+          {t('history.importAnyway')}
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
 function DetectedCounts({ data }: { data: HevyImportData }) {
   return (
     <Card padded>
@@ -79,9 +119,25 @@ export function HevyImportScreen() {
   });
   const [openedRow, setOpenedRow] =
     useState<HevyMappingDraftRow | null>(null);
+  /** L'utilisateur a lu l'avertissement et veut ajouter à ce qui est là. */
+  const [ignoresNotEmpty, setIgnoresNotEmpty] = useState(false);
+  const populated = useLiveQuery(
+    async () => {
+      const [workouts, routines] = await Promise.all([
+        db.workouts.toArray(),
+        db.routines.toArray(),
+      ]);
+      return (
+        workouts.some((workout) => workout.deletedAt === 0) ||
+        routines.some((routine) => routine.deletedAt === 0)
+      );
+    },
+    [],
+    false,
+  );
 
   const chooseFile = async (file: File) => {
-    if (file.name.toLowerCase() !== 'workout_data.csv') {
+    if (!isImportableFileName(file.name)) {
       setState({
         step: 'file',
         issues: [],
@@ -199,7 +255,14 @@ export function HevyImportScreen() {
       }
       footer={footer}
     >
-      {state.step === 'file' && (
+      {state.step === 'file' && populated && !ignoresNotEmpty && (
+        <NotEmptyStep
+          onPurge={() => void navigate('/settings/debug')}
+          onIgnore={() => setIgnoresNotEmpty(true)}
+        />
+      )}
+
+      {state.step === 'file' && (!populated || ignoresNotEmpty) && (
         <HevyImportFileStep
           issues={state.issues}
           message={state.message}
@@ -254,6 +317,13 @@ export function HevyImportScreen() {
                 skipped: state.result.skippedWorkouts,
               })}
             </p>
+            {state.result.archivedRoutineFolderName !== undefined && (
+              <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
+                {t('history.importArchivedFolderHint', {
+                  folder: state.result.archivedRoutineFolderName,
+                })}
+              </p>
+            )}
             {state.result.createdRoutines > 0 &&
               state.result.routineFolderName !== undefined && (
                 <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">

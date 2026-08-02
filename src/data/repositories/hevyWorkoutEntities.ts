@@ -20,6 +20,13 @@ export interface HevyWorkoutEntities {
 export function buildHevyWorkoutEntities(
   parsedWorkouts: readonly HevyParsedWorkout[],
   exercises: ReadonlyMap<string, Exercise>,
+  /**
+   * La routine reconstruite à laquelle chaque séance appartient, par clé
+   * d'import. Une séance importée doit pointer vers elle comme une séance
+   * lancée depuis l'app : c'est ce lien que lisent l'accueil (« dernière fois
+   * que tu l'as faite ») et l'export CSV.
+   */
+  routineIdByImportKey: ReadonlyMap<string, string> = new Map(),
 ): HevyWorkoutEntities {
   const workouts: Workout[] = [];
   const rows: WorkoutExercise[] = [];
@@ -27,7 +34,7 @@ export function buildHevyWorkoutEntities(
 
   for (const parsed of parsedWorkouts) {
     const workout = newEntity<Workout>({
-      routineId: '',
+      routineId: routineIdByImportKey.get(parsed.importKey) ?? '',
       name: parsed.title,
       status: 'completed',
       startedAt: parsed.startedAt,
@@ -64,8 +71,11 @@ export function buildHevyWorkoutEntities(
         ...(parsedExercise.notes === undefined
           ? {}
           : { notes: parsedExercise.notes }),
+        // Le repos déclaré par un export FitTrack d'abord, le défaut de
+        // l'exercice ensuite : un fichier Hevy n'a pas cette colonne et retombe
+        // sur le second, exactement comme avant.
         restSeconds: resolveRestSeconds(
-          undefined,
+          parsedExercise.restSeconds,
           exercise.defaultRestSeconds,
         ),
         ...snapshotOf(exercise),
@@ -87,7 +97,8 @@ export function buildHevyWorkoutEntities(
             workoutId: workout.id,
             order: parsedSet.order,
             setType: parsedSet.setType,
-            side: 'both',
+            // Hevy ne dit pas quel côté a travaillé ; FitTrack, si.
+            side: parsedSet.side ?? 'both',
             ...(parsedSet.weight === undefined
               ? {}
               : { weight: parsedSet.weight }),

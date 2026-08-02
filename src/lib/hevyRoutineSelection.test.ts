@@ -29,7 +29,50 @@ function workout(
   };
 }
 
+/** La même séance, mais issue d'une routine — comme l'écrit l'export FitTrack. */
+function fromRoutine(
+  routineName: string,
+  title: string,
+  startedAt: number,
+  exerciseTitles: readonly string[],
+): HevyParsedWorkout {
+  return { ...workout(title, startedAt, exerciseTitles), routineName };
+}
+
 describe('selectHevyRoutineSources', () => {
+  it('groupe par routine déclarée plutôt que par titre de séance', () => {
+    const result = selectHevyRoutineSources([
+      fromRoutine('LOWER A', 'LOWER A', 100, ['squat']),
+      // Séance renommée à la volée : elle appartient toujours à sa routine.
+      fromRoutine('LOWER A', 'LOWER A (dos en vrac)', 200, ['squat', 'presse']),
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.name).toBe('LOWER A');
+    expect(result[0]?.lastPerformedAt).toBe(200);
+  });
+
+  it('laisse les séances libres en dehors des routines reconstruites', () => {
+    const result = selectHevyRoutineSources([
+      fromRoutine('LOWER A', 'LOWER A', 100, ['squat']),
+      // Pas de routine derrière : elle ne doit pas en devenir une.
+      workout('Séance libre du dimanche', 200, ['vélo']),
+    ]);
+
+    expect(result.map((source) => source.name)).toEqual(['LOWER A']);
+  });
+
+  it('retombe sur le titre quand le fichier ne déclare aucune routine', () => {
+    const result = selectHevyRoutineSources([
+      workout('UPPER A', 100, ['bench']),
+      workout('UPPER A', 300, ['bench', 'row']),
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.name).toBe('UPPER A');
+    expect(result[0]?.lastPerformedAt).toBe(300);
+  });
+
   it('groups titles without regard to case or repeated spaces', () => {
     const result = selectHevyRoutineSources([
       workout('UPPER A', 100, ['bench']),

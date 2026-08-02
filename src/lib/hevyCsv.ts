@@ -1,10 +1,15 @@
-import type { Equipment, MeasurementType, SetType } from '@/data/types';
+import type { Equipment, MeasurementType, SetType, Side } from '@/data/types';
 import { inferHevyEquipment, inferHevyMeasurementType } from './hevyExerciseMatch';
 import { externalExerciseIdentityKey } from './externalExerciseIdentity';
 import { buildHevyWorkouts } from './hevyCsvGrouping';
 export { makeHevyImportKey } from './hevyCsvGrouping';
 import { readCsvRows } from './hevyCsvRows';
-import { HEVY_HEADERS, parseHevyRow, type HevyHeader, type ValidHevyRow } from './hevyCsvValues';
+import {
+  FITTRACK_HEADERS,
+  HEVY_HEADERS,
+  parseHevyRow,
+  type ValidHevyRow,
+} from './hevyCsvValues';
 
 export type HevyCsvIssueCode =
   | 'empty_file'
@@ -35,6 +40,8 @@ export interface HevyParsedSet {
   distanceMeters?: number;
   durationSeconds?: number;
   rpe?: number;
+  /** Côté travaillé, absent d'un fichier Hevy — cf. `FITTRACK_HEADERS`. */
+  side?: Side;
 }
 
 export interface HevyParsedExercise {
@@ -43,11 +50,18 @@ export interface HevyParsedExercise {
   sourceSupersetId?: string;
   supersetGroup: number;
   notes?: string;
+  /** Repos déclaré par FitTrack, absent d'un fichier Hevy. */
+  restSeconds?: number;
+  /** Mesure et matériel déclarés : ils dispensent de les deviner du titre. */
+  measurementType?: MeasurementType;
+  equipment?: Equipment;
   sets: HevyParsedSet[];
 }
 
 export interface HevyParsedWorkout {
   title: string;
+  /** La routine d'origine, déclarée par FitTrack. Absente = séance libre. */
+  routineName?: string;
   startedAt: number;
   endedAt: number;
   durationSeconds: number;
@@ -98,11 +112,15 @@ export function parseHevyCsv(text: string): HevyCsvResult {
     };
   }
 
+  // Les 14 de Hevy, plus les colonnes `fittrack_*` que l'app ajoute quand c'est
+  // elle qui écrit. Tout le reste est refusé : une colonne inconnue est presque
+  // toujours un fichier qui n'est pas celui qu'on croit.
+  const known = new Set<string>([...HEVY_HEADERS, ...FITTRACK_HEADERS]);
   const seenHeaders = new Set<string>();
   const unexpected = headerRow.cells.filter((header) => {
     const duplicated = seenHeaders.has(header);
     seenHeaders.add(header);
-    return duplicated || !HEVY_HEADERS.includes(header as HevyHeader);
+    return duplicated || !known.has(header);
   });
   if (unexpected.length > 0) {
     return {
@@ -131,7 +149,15 @@ export function parseHevyCsv(text: string): HevyCsvResult {
     return { ok: false, issues: built.issues };
   }
   const workouts = built.workouts;
-  const sourcesByIdentityKey = new Map<string, { sourceTitle: string; sets: HevyParsedSet[] }>();
+  const sourcesByIdentityKey = new Map<
+    string,
+    {
+      sourceTitle: string;
+      sets: HevyParsedSet[];
+      measurementType?: MeasurementType;
+      equipment?: Equipment;
+    }
+  >();
   for (const workout of workouts) {
     for (const exercise of workout.exercises) {
       const identityKey = externalExerciseIdentityKey(exercise.sourceTitle);
@@ -140,17 +166,27 @@ export function parseHevyCsv(text: string): HevyCsvResult {
         sourcesByIdentityKey.set(identityKey, {
           sourceTitle: exercise.sourceTitle,
           sets: [...exercise.sets],
+          ...(exercise.measurementType === undefined
+            ? {}
+            : { measurementType: exercise.measurementType }),
+          ...(exercise.equipment === undefined ? {} : { equipment: exercise.equipment }),
         });
       } else {
         existing.sets.push(...exercise.sets);
+        existing.measurementType ??= exercise.measurementType;
+        existing.equipment ??= exercise.equipment;
       }
     }
   }
 
   const sourceExercises: HevySourceExercise[] = [];
   const measurementIssues: HevyCsvIssue[] = [];
-  for (const { sourceTitle, sets } of sourcesByIdentityKey.values()) {
-    const measurementType = inferHevyMeasurementType(sets);
+  for (const source of sourcesByIdentityKey.values()) {
+    const { sourceTitle, sets } = source;
+    // Déclaré d'abord, deviné ensuite. L'inférence lit ce que les séries
+    // contiennent : elle ne peut pas distinguer une traction assistée d'un
+    // développé, alors que le fichier, lui, le sait quand FitTrack l'a écrit.
+    const measurementType = source.measurementType ?? inferHevyMeasurementType(sets);
     if (measurementType === undefined) {
       measurementIssues.push({
         line: sets[0]?.sourceLine ?? 1,
@@ -163,7 +199,7 @@ export function parseHevyCsv(text: string): HevyCsvResult {
     sourceExercises.push({
       sourceTitle,
       measurementType,
-      equipment: inferHevyEquipment(sourceTitle),
+      equipment: source.equipment ?? inferHevyEquipment(sourceTitle),
     });
   }
   if (measurementIssues.length > 0) {

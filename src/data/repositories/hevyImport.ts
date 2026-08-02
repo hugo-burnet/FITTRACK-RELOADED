@@ -14,11 +14,15 @@ import {
   externalExerciseIdentityKey,
   type ExternalExerciseResolution,
 } from '@/lib/externalExerciseIdentity';
-import { selectHevyRoutineSources } from '@/lib/hevyRoutineSelection';
+import {
+  isDormantRoutine,
+  selectHevyRoutineSources,
+} from '@/lib/hevyRoutineSelection';
 import type { NewExercise } from './exercises';
 import { listExternalExerciseBindings } from './externalExerciseBindings';
 import {
   buildHevyRoutineEntities,
+  nextHevyArchiveFolderName,
   nextHevyImportFolderName,
 } from './hevyRoutineImport';
 import { buildHevyWorkoutEntities } from './hevyWorkoutEntities';
@@ -42,6 +46,8 @@ export interface HevyImportResult {
   importedSets: number;
   createdRoutines: number;
   routineFolderName?: string;
+  /** Le dossier des routines qui dorment, quand l'import en a rangé. */
+  archivedRoutineFolderName?: string;
 }
 
 async function existingImportKeys(
@@ -365,10 +371,6 @@ export async function importHevyWorkouts(
         resolution,
         importedAt,
       );
-      const entities = buildHevyWorkoutEntities(
-        importable,
-        resolved.bySourceKey,
-      );
       const routineSources = selectHevyRoutineSources(importable);
       const [folders, routines] = await Promise.all([
         db.routineFolders
@@ -377,16 +379,64 @@ export async function importHevyWorkouts(
           .toArray(),
         db.routines.where('deletedAt').equals(0).toArray(),
       ]);
-      const routineFolderName = nextHevyImportFolderName(
-        importedAt,
-        folders.map((folder) => folder.name),
+      const folderNames = folders.map((folder) => folder.name);
+      // Deux dossiers : ce qui tourne encore, et ce qui dort depuis plus d'un
+      // mois. Un historique un peu long ramène toujours des routines qu'on ne
+      // fait plus — elles reviennent rangées plutôt que mélangées à celles
+      // qu'on ouvre avant chaque séance.
+      const active = routineSources.filter(
+        (source) => !isDormantRoutine(source, importedAt),
       );
+      const dormant = routineSources.filter((source) =>
+        isDormantRoutine(source, importedAt),
+      );
+      const routineFolderName = nextHevyImportFolderName(importedAt, folderNames);
+      const archivedFolderName = nextHevyArchiveFolderName(importedAt, [
+        ...folderNames,
+        routineFolderName,
+      ]);
       const routineEntities = buildHevyRoutineEntities(
-        routineSources,
+        active,
         resolved.bySourceKey,
         routineFolderName,
         folders.length,
         routines.length,
+      );
+      const archivedEntities = buildHevyRoutineEntities(
+        dormant,
+        resolved.bySourceKey,
+        archivedFolderName,
+        folders.length + 1,
+        routines.length + routineEntities.routines.length,
+      );
+
+      /*
+       * Chaque séance importée pointe vers la routine reconstruite **à partir
+       * d'elle**. Sans ce lien, l'import fabriquait une routine et un historique
+       * qui ne se connaissaient pas : l'accueil annonçait « jamais réalisée »
+       * sur une routine née de ces séances-là, et l'export CSV ressortait sans
+       * routine ce que l'import venait d'en déduire.
+       *
+       * `buildHevyRoutineEntities` rend ses routines dans l'ordre de ses
+       * sources, ce qui permet de les apparier une à une.
+       */
+      const routineIdByImportKey = new Map<string, string>();
+      for (const [sources, built] of [
+        [active, routineEntities.routines],
+        [dormant, archivedEntities.routines],
+      ] as const) {
+        sources.forEach((source, index) => {
+          const routine = built[index];
+          if (routine === undefined) return;
+          for (const importKey of source.importKeys) {
+            routineIdByImportKey.set(importKey, routine.id);
+          }
+        });
+      }
+      const entities = buildHevyWorkoutEntities(
+        importable,
+        resolved.bySourceKey,
+        routineIdByImportKey,
       );
 
       if (resolved.created.length > 0) {
@@ -396,10 +446,15 @@ export async function importHevyWorkouts(
       await db.workouts.bulkAdd(entities.workouts);
       await db.workoutExercises.bulkAdd(entities.rows);
       await db.workoutSets.bulkAdd(entities.sets);
-      await db.routineFolders.add(routineEntities.folder);
-      await db.routines.bulkAdd(routineEntities.routines);
-      await db.routineExercises.bulkAdd(routineEntities.rows);
-      await db.routineSets.bulkAdd(routineEntities.sets);
+      // Un dossier vide n'est pas créé : sans routine dormante, l'utilisateur
+      // ne doit pas trouver un dossier « Archivé » qui ne contient rien.
+      const created = [routineEntities, archivedEntities].filter(
+        (group) => group.routines.length > 0,
+      );
+      await db.routineFolders.bulkAdd(created.map((group) => group.folder));
+      await db.routines.bulkAdd(created.flatMap((group) => group.routines));
+      await db.routineExercises.bulkAdd(created.flatMap((group) => group.rows));
+      await db.routineSets.bulkAdd(created.flatMap((group) => group.sets));
 
       return {
         importedWorkouts: entities.workouts.length,
@@ -407,8 +462,12 @@ export async function importHevyWorkouts(
         createdExercises: resolved.created.length,
         importedExercises: entities.rows.length,
         importedSets: entities.sets.length,
-        createdRoutines: routineEntities.routines.length,
-        routineFolderName,
+        createdRoutines:
+          routineEntities.routines.length + archivedEntities.routines.length,
+        ...(routineEntities.routines.length > 0 ? { routineFolderName } : {}),
+        ...(archivedEntities.routines.length > 0
+          ? { archivedRoutineFolderName: archivedFolderName }
+          : {}),
       };
     },
   );

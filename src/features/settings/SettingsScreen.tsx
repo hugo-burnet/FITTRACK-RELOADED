@@ -3,12 +3,15 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
+import { db } from '@/data/db';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { t } from '@/i18n/fr';
 import { projectCoachExport } from '@/lib/export/projectCoachExport';
 import { serializeMarkdown } from '@/lib/export/serializeMarkdown';
 import { DEFAULT_EXPORT_OPTIONS } from '@/lib/export/types';
 import { shareText, type ShareOutcome } from '@/platform/share';
+import { saveTextFile } from '@/platform/saveFile';
+import { buildCsvExport, csvExportFileName } from '@/data/repositories/csvExport';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { resnapshotHistory } from '@/data/repositories/historyRepair';
@@ -25,6 +28,10 @@ export function SettingsScreen() {
   const [demoWeight, setDemoWeight] = useState<number | undefined>(100);
   const [repairOpen, setRepairOpen] = useState(false);
   const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
+  /** Ce que la sauvegarde CSV a donné, dit une fois sous la liste. */
+  const [csvMessage, setCsvMessage] = useState<string>();
+  const [csvFailed, setCsvFailed] = useState(false);
+  const [csvBusy, setCsvBusy] = useState(false);
   /** Ce que la réparation a fait, dit une fois et sans fenêtre à fermer. */
   const [repairReport, setRepairReport] = useState<string>();
   const historyMarkdown = useLiveQuery(async () => {
@@ -36,6 +43,16 @@ export function SettingsScreen() {
       projectCoachExport(scope, sources, DEFAULT_EXPORT_OPTIONS, Date.now()),
     );
   }, []);
+
+  /** Le compte des séances terminées : rien à sauvegarder, rien à cliquer. */
+  const workoutCount = useLiveQuery(
+    async () =>
+      (await db.workouts.where('status').equals('completed').toArray()).filter(
+        (workout) => workout.deletedAt === 0,
+      ).length,
+    [],
+    0,
+  );
 
   const repair = () => {
     void resnapshotHistory().then(({ repaired }) => {
@@ -50,6 +67,39 @@ export function SettingsScreen() {
   const chooseTheme = (next: Theme) => {
     setTheme(next);
     applyTheme(next);
+  };
+
+  /**
+   * La sauvegarde réimportable. Le fichier est fabriqué au clic et pas tenu à
+   * jour en permanence : un `useLiveQuery` sur tout l'historique reconstruirait
+   * le CSV entier à chaque série validée, pour un bouton qu'on touche deux fois
+   * par mois.
+   */
+  const saveCsv = async () => {
+    if (csvBusy) return;
+    setCsvBusy(true);
+    setCsvMessage(undefined);
+    setCsvFailed(false);
+    try {
+      const csv = await buildCsvExport();
+      const outcome = await saveTextFile({
+        name: csvExportFileName(Date.now()),
+        text: csv,
+        type: 'text/csv;charset=utf-8',
+        title: t('settings.exportCsvTitle'),
+      });
+      if (outcome === 'failed') {
+        setCsvFailed(true);
+        setCsvMessage(t('settings.exportCsvFailed'));
+      } else if (outcome === 'downloaded') {
+        setCsvMessage(t('settings.exportCsvDownloaded'));
+      }
+    } catch {
+      setCsvFailed(true);
+      setCsvMessage(t('settings.exportCsvFailed'));
+    } finally {
+      setCsvBusy(false);
+    }
   };
 
   const shareHistory = () => {
@@ -138,6 +188,12 @@ export function SettingsScreen() {
               onClick={shareHistory}
             />
             <ListRow
+              title={t('settings.exportCsvLink')}
+              subtitle={t('settings.exportCsvHint')}
+              disabled={csvBusy || workoutCount === 0}
+              onClick={() => void saveCsv()}
+            />
+            <ListRow
               title={t('settings.repairLink')}
               subtitle={t('settings.repairHint')}
               onClick={() => setRepairOpen(true)}
@@ -149,6 +205,16 @@ export function SettingsScreen() {
               onClick={() => void navigate('/settings/debug')}
             />
           </div>
+          {csvMessage !== undefined && (
+            <p
+              role="status"
+              className={`mt-3 px-1 text-sm leading-relaxed ${
+                csvFailed ? 'text-[var(--danger-ink)]' : 'text-[var(--text-2)]'
+              }`}
+            >
+              {csvMessage}
+            </p>
+          )}
           {repairReport !== undefined && (
             <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">{repairReport}</p>
           )}

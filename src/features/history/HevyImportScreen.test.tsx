@@ -70,6 +70,18 @@ function startingWith(value: string): RegExp {
 }
 
 async function chooseFixture(user: ReturnType<typeof userEvent.setup>) {
+  // Sur une base déjà remplie, l'écran demande d'abord d'aller vider — c'est
+  // exactement le second import de ce test, qui vérifie le dédoublonnage.
+  // Ajouter à un historique existant reste possible, d'un cran de plus.
+  await waitFor(() =>
+    expect(
+      document.querySelector('input[type="file"]') ??
+        screen.queryByRole('button', { name: 'Importer quand même' }),
+    ).not.toBeNull(),
+  );
+  const bypass = screen.queryByRole('button', { name: 'Importer quand même' });
+  if (bypass !== null) await user.click(bypass);
+
   const input = document.querySelector<HTMLInputElement>('input[type="file"]');
   if (input === null) throw new Error('champ de fichier introuvable');
   await user.upload(

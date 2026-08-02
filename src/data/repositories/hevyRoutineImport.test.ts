@@ -103,7 +103,7 @@ const cardio: HevyParsedWorkout = {
 };
 
 describe('Hevy routine entities', () => {
-  it('builds ordered routines with per-set weights but without supersets or RPE targets', () => {
+  it('builds ordered routines with per-set weights, supersets and rest, but no RPE target', () => {
     const entities = buildHevyRoutineEntities(
       selectHevyRoutineSources([upperA]),
       resolvedExercises,
@@ -129,8 +129,12 @@ describe('Hevy routine entities', () => {
         restSeconds: row.restSeconds,
       })),
     ).toEqual([
-      { order: 0, supersetGroup: 0, restSeconds: 0 },
-      { order: 1, supersetGroup: 0, restSeconds: 0 },
+      // Le superset vient du regroupement des lignes (`superset_id`) : la
+      // routine reconstruite le portait à 0 alors que la séance le savait.
+      // `restSeconds: 0` reste « prends le défaut de l'exercice » — un fichier
+      // Hevy n'a pas de colonne de repos, seul un export FitTrack en a une.
+      { order: 0, supersetGroup: 1, restSeconds: 0 },
+      { order: 1, supersetGroup: 1, restSeconds: 0 },
     ]);
     expect(entities.sets[0]).toMatchObject({
       order: 0,

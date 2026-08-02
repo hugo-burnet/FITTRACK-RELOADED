@@ -650,9 +650,22 @@ const fr = {
     importTitle: 'Importer Hevy',
     importChooseTitle: 'Choisir l’export',
     importChooseBody:
-      'Sélectionne workout_data.csv. Le fichier reste sur cet appareil.',
+      'Sélectionne workout_data.csv (Hevy) ou une sauvegarde FitTrack. Le fichier reste sur cet appareil.',
     importChooseFile: 'Choisir le CSV',
-    importWrongFile: 'Choisis le fichier workout_data.csv.',
+    importWrongFile:
+      'Choisis workout_data.csv (Hevy) ou un fichier fittrack-….csv.',
+    /**
+     * Restaurer par-dessus des données existantes n'a pas de sens : les séances
+     * sont dédoublonnées, mais les routines reviendraient en double. L'écran
+     * s'ouvre quand même — on entre, on lit pourquoi, et on va vider. Bloquer le
+     * bouton lui-même n'aurait rien expliqué.
+     */
+    importNotEmptyTitle: 'Vide d’abord la base',
+    importNotEmptyBody:
+      'Un import se fait sur une base vide, sinon tes routines reviennent en double. Vide les données, puis reviens ici.',
+    importNotEmptyAction: 'Vider les données',
+    /** Le cas rare : ajouter un export Hevy à un historique déjà là. */
+    importAnyway: 'Importer quand même',
     importReadError: 'Le fichier n’a pas pu être lu.',
     importErrorsTitle: 'Import impossible',
     importErrorLine: 'Ligne {line}',
@@ -696,6 +709,13 @@ const fr = {
     importCustomCountOne: '1 exercice personnel sera créé.',
     importRoutineFolder:
       'Le dossier « {folder} » sera créé avec : {names}.',
+    /**
+     * Les routines qu'on ne fait plus depuis un mois sont rangées à part : un
+     * historique un peu long en ramène toujours, et la liste qu'on ouvre avant
+     * une séance doit rester celle des routines vivantes.
+     */
+    importArchivedFolderHint:
+      'Les routines sans séance depuis un mois sont rangées dans « {folder} ».',
     importContinue: 'Continuer',
     importSubmit: 'Importer',
     importWorking: 'Import en cours…',
@@ -848,6 +868,18 @@ const fr = {
     exportHistoryLink: 'Exporter tout l’historique',
     exportHistoryHint: 'Partage toutes tes séances dans un document texte lisible.',
     exportHistoryTitle: 'FitTrack — historique complet',
+    /**
+     * L'export CSV — la sauvegarde, celle qu'on remet dans l'app. Le libellé dit
+     * « sauvegarde » et pas « CSV » : le format est un moyen, ce qu'on cherche
+     * ici c'est de ne pas perdre ses séances.
+     */
+    exportCsvLink: 'Sauvegarder l’historique (CSV)',
+    exportCsvHint:
+      'Un fichier réimportable dans FitTrack, lisible dans un tableur. Les routines jamais réalisées n’y sont pas.',
+    exportCsvTitle: 'Sauvegarde FitTrack',
+    exportCsvDownloaded: 'Sauvegarde téléchargée.',
+    exportCsvEmpty: 'Aucune séance terminée à sauvegarder.',
+    exportCsvFailed: 'La sauvegarde n’a pas pu être enregistrée.',
     exportHistoryCopied: 'Historique copié dans le presse-papiers.',
     exportHistoryFailed: 'L’historique n’a pas pu être partagé ni copié.',
     debugLink: 'Diagnostic',

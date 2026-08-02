@@ -2,7 +2,69 @@
 
 > Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-01 (**les graphiques passent dans la teinte du thème :
+**Dernière mise à jour :** 2026-08-02 (**sauvegarde CSV : export depuis FitTrack, réimport
+comme un fichier Hevy**). Dernier morceau avant le v1, décidé en discussion : un seul format
+pour sortir et pour rentrer, plutôt qu'un export d'un côté et un importeur de l'autre.
+
+**Le format est celui de Hevy, plus cinq colonnes.** Les 14 colonnes d'origine, dans leur
+ordre, et `fittrack_routine`, `fittrack_rest_seconds`, `fittrack_measurement`,
+`fittrack_equipment`, `fittrack_side` — exactement ce que le format de Hevy ne sait pas
+transporter. Elles sont facultatives des deux côtés : un export Hevy authentique n'en a
+aucune et s'importe comme avant, une valeur illisible est ignorée plutôt que refusée. Le
+fichier reste donc lisible par n'importe quel outil qui lit du Hevy, et l'app y retrouve ce
+que Hevy aurait perdu. **Réutiliser l'importeur existant est ce qui rend l'affaire petite :
+seul le sérialiseur était à écrire.**
+
+**Le vrai bug était ailleurs : l'import fabriquait une routine à partir de séances qui
+restaient sans routine.** `hevyWorkoutEntities` écrivait `routineId: ''` pendant que
+`hevyRoutineImport` déduisait les routines de ces mêmes séances groupées par titre. D'où
+« LOWER A — jamais réalisée » sur un accueil dont l'historique en était plein (rapporté du
+téléphone), et un export CSV qui ressortait sans routine ce que l'import venait d'en
+déduire. Les séances importées pointent désormais vers la routine née d'elles. Le
+rattachement par le nom dans `pickSuggestedRoutine` reste : il rattrape les bases déjà
+importées, qu'aucune migration ne réécrit.
+
+**Ce que la reconstruction rend maintenant, en plus :** le repos par exercice (colonne
+`fittrack_rest_seconds`), les supersets — la donnée était déjà dans `superset_id`, le
+constructeur de routines la mettait simplement à 0 — et le côté travaillé des séries
+unilatérales. Les routines dormantes (aucune séance depuis un mois, `isDormantRoutine`)
+partent dans un dossier « … — Archivé » séparé : un historique un peu long en ramène
+toujours, et la liste qu'on ouvre avant une séance doit rester celle des routines vivantes.
+
+**L'heure exportée est celle du fuseau de l'appareil, pas celle stockée par la séance.** Le
+format n'écrit qu'une heure murale à la minute, et l'import la relit dans le fuseau de
+l'appareil : écrire l'heure d'une séance faite à l'étranger la ferait revenir décalée. Entre
+conserver l'instant et conserver l'heure affichée, une sauvegarde conserve l'instant. Sur un
+téléphone qui n'a pas voyagé, les deux sont la même valeur — changements d'heure compris,
+l'offset étant lu à l'instant de la séance.
+
+**L'import sur une base non vide : on entre, on lit, on va vider.** Les séances sont
+dédoublonnées par leur clé d'import, mais les routines reconstruites viendraient doubler
+celles déjà là. L'écran s'ouvre donc quand même et explique, avec un bouton qui emmène à
+l'écran de vidage — plutôt qu'un bouton grisé qui n'aurait rien dit. « Importer quand même »
+reste d'un cran en dessous : ajouter un export Hevy à un historique existant est le cas pour
+lequel cet écran a été écrit.
+
+**Ce qui n'est pas dans le fichier, et ne peut pas y être :** une routine **jamais
+réalisée** (le format décrit des séances, elle n'en a aucune), les réglages, et les secondes
+des horaires. Le JSON complet du Lot 8 reste le seul « tout revient à l'identique ».
+
+**Le test qui compte est l'aller-retour** (`csvRoundTrip.test.ts`) : on sème une séance
+tordue à dessein — superset, échauffement, RPE, série unilatérale, repos non standard, notes
+à guillemets —, on exporte, **on vide la base**, on réimporte, on compare. Vérifié aussi en
+navigateur réel : import d'un `fittrack-….csv`, deux dossiers de routines dont l'archive,
+accueil qui affiche « Réalisée le 3 janvier » au lieu de « jamais », téléchargement du
+fichier et relecture de son en-tête. Les quatre portes sortent à 0 : lint, typecheck,
+**921 tests dans 78 fichiers**, build Vite.
+
+**Checkpoint téléphone :** Réglages → « Sauvegarder l'historique (CSV) » : la feuille de
+partage doit proposer d'enregistrer le fichier (Drive, Fichiers…). Le rouvrir dans un
+tableur pour vérifier les accents. Puis Historique → Importer : l'écran doit demander de
+vider d'abord. Vider par Réglages → Diagnostic, revenir, choisir le fichier téléchargé, et
+retrouver ses séances, ses routines — et le dossier « Archivé » s'il reste des routines
+qu'on ne fait plus.
+
+**Mise à jour précédente :** 2026-08-01 (**les graphiques passent dans la teinte du thème :
 jeton `--accent-data`**). Rapporté du téléphone comme « le orange ne s'applique pas, mais
 seulement en mode sombre » sur le volume et sur la progression d'exercice.
 
