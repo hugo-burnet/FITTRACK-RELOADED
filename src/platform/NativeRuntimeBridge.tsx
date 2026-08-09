@@ -2,18 +2,25 @@ import { useEffect, useRef } from 'react';
 import { App } from '@capacitor/app';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import { useRestTimer } from '@/stores/restTimer';
+import { androidBackDecision } from './androidBack';
+import { isNativeAndroid } from './nativeEnvironment';
 import { nativeNotifications } from './nativeNotifications';
 
 export function NativeRuntimeBridge() {
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const rest = useRestTimer();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const activeRef = useRef(active);
   const restRef = useRef(rest);
+  const pathnameRef = useRef(pathname);
 
   activeRef.current = active;
   restRef.current = rest;
+  pathnameRef.current = pathname;
 
   useEffect(() => {
     if (active === undefined) return;
@@ -50,6 +57,27 @@ export function NativeRuntimeBridge() {
       void handle?.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!isNativeAndroid()) return;
+    let handle: PluginListenerHandle | undefined;
+    let disposed = false;
+
+    void App.addListener('backButton', ({ canGoBack }) => {
+      const decision = androidBackDecision(pathnameRef.current, canGoBack);
+      if (decision.kind === 'history') navigate(-1);
+      else if (decision.kind === 'navigate') navigate(decision.to, { replace: true });
+      else void App.exitApp();
+    }).then((registered) => {
+      if (disposed) void registered.remove();
+      else handle = registered;
+    });
+
+    return () => {
+      disposed = true;
+      void handle?.remove();
+    };
+  }, [navigate]);
 
   return null;
 }
