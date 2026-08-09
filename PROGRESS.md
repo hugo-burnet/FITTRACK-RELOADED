@@ -1,8 +1,34 @@
 # État d'avancement — FitTrack
 
-> Mis à jour à la fin de chaque session Claude Code. C'est la mémoire du projet entre les sessions.
+> Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-02 (**Lot 9 — PWA : l'app s'installe et démarre sans
+**Dernière mise à jour :** 2026-08-09 (**Lot 10 — application Android Capacitor**).
+
+Le projet Android Capacitor 8 est versionné avec l'identifiant `com.fittrack.app`. Le build
+Android utilise des chemins relatifs et aucun service worker, tandis que GitHub Pages conserve
+son préfixe et sa PWA. Les barres système suivent le thème, les zones sûres Android sont prises
+en charge et le bouton Retour suit la pile ou un parent de route déterministe.
+
+Une notification silencieuse reste affichée pendant la séance. Le minuteur programme une
+notification Android exacte avec `allowWhileIdle`; la sonnerie Web reste le secours si la
+programmation native échoue. Les remplacements et annulations sont sérialisés pour éviter une
+ancienne alarme après une nouvelle série.
+
+`.github/workflows/android.yml` vérifie lint, typecheck, tests et sync Capacitor, puis produit un
+APK signé avec une clé externe stable. Un tag `v*` crée automatiquement la GitHub Release et y
+joint l'APK installable. La procédure de sauvegarde de la clé, de téléchargement, d'installation
+et de mise à jour est dans `docs/ANDROID.md`. La clé locale vit sous `.secrets/`, hors Git, et doit
+être sauvegardée séparément.
+
+Le nettoyage demandé avant compilation a retiré ou raccourci 938 lignes de commentaires sans
+changer les instructions exécutables. Portes finales locales : lint, typecheck, **1000 tests dans
+86 fichiers**, build PWA et build/sync Android à 0.
+
+**Checkpoint téléphone :** installer l'APK de la release, autoriser notifications et alarmes,
+démarrer une séance, verrouiller l'écran pendant un repos, vérifier la sonnerie à l'échéance,
+puis installer l'APK suivant par-dessus sans désinstaller et confirmer que l'historique reste.
+
+**Mise à jour précédente :** 2026-08-02 (**Lot 9 — PWA : l'app s'installe et démarre sans
 réseau**). Le jalon V1. La ligne 3 du README promettait « hors-ligne » depuis le Lot 0 ;
 elle est vraie depuis ce lot et pas avant.
 
@@ -3394,7 +3420,7 @@ ci-dessus fait foi.
 | 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
 | 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
 | 9 | PWA & installation | ✅ terminé | 2026-08-02 | ⬜ **à vérifier sur le téléphone** |
-| 10 | Android (Capacitor) | ⬜ à faire | — | ⬜ |
+| 10 | Android (Capacitor) | ✅ terminé | 2026-08-09 | ⬜ **à vérifier sur le téléphone** |
 | 11 | Mesures & photos | ⬜ à faire | — | ⬜ |
 | 12 | Statistiques | ⬜ à faire | — | ⬜ |
 | 13 | Records & notifications | ⬜ à faire | — | ⬜ |

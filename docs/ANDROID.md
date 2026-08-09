@@ -34,11 +34,11 @@ Dans le dépôt GitHub, ouvre **Settings → Secrets and variables → Actions**
 - `FITTRACK_ANDROID_KEY_ALIAS` : `fittrack` ;
 - `FITTRACK_ANDROID_KEY_PASSWORD` : le mot de passe de la clé.
 
-Chaque push sur `master`, ou lancement manuel du workflow **Android APK**, vérifie le projet puis produit un APK signé.
+Chaque push sur `master`, ou lancement manuel du workflow **Android APK**, vérifie le projet puis produit un APK signé. Un tag `v*` publie aussi automatiquement cet APK dans une GitHub Release.
 
 ## 4. Télécharger l’APK
 
-Dans GitHub, ouvre **Actions → Android APK**, sélectionne une exécution réussie, puis télécharge l’artefact **fittrack-android-debug**. Décompresse le ZIP pour obtenir `app-debug.apk`.
+Ouvre la page **Releases** du dépôt et télécharge directement `FitTrack-vX.Y.Z.apk`. L’artefact **fittrack-android-debug** de l’exécution **Actions → Android APK** reste disponible pendant 30 jours comme solution de secours ; il faut alors décompresser le ZIP pour obtenir `app-debug.apk`.
 
 ## 5. Autoriser l’installation
 
@@ -63,7 +63,7 @@ Ces autorisations permettent d’afficher la séance active et de sonner à la f
 
 ## Checkpoint sur le téléphone
 
-1. Télécharge et installe l’APK GitHub Actions.
+1. Télécharge et installe l’APK de la dernière GitHub Release.
 2. Vérifie l’icône FitTrack et l’écran de démarrage.
 3. Démarre une séance et vérifie sa notification persistante.
 4. Valide une série, verrouille l’écran et vérifie que le repos sonne à l’heure prévue.
