@@ -346,6 +346,16 @@ const fr = {
     platesAria: 'De chaque côté : {plates}',
   },
 
+  androidNotification: {
+    workoutChannel: 'Séance en cours',
+    workoutChannelDescription: 'Affiche la séance active dans les notifications.',
+    restChannel: 'Minuteur de repos',
+    restChannelDescription: 'Sonne quand le temps de repos est terminé.',
+    workoutBody: 'Touche pour revenir à la séance.',
+    restTitle: 'Repos terminé',
+    restBody: 'La prochaine série peut commencer.',
+  },
+
   /** L'écran de fin : ce que la séance a produit, avant de l'enregistrer. */
   finish: {
     title: 'Fin de séance',
@@ -667,8 +677,7 @@ const fr = {
     importChooseBody:
       'Sélectionne workout_data.csv (Hevy) ou une sauvegarde FitTrack. Le fichier reste sur cet appareil.',
     importChooseFile: 'Choisir le CSV',
-    importWrongFile:
-      'Choisis workout_data.csv (Hevy) ou un fichier fittrack-….csv.',
+    importWrongFile: 'Choisis workout_data.csv (Hevy) ou un fichier fittrack-….csv.',
     /**
      * Restaurer par-dessus des données existantes n'a pas de sens : les séances
      * sont dédoublonnées, mais les routines reviendraient en double. L'écran
@@ -700,8 +709,7 @@ const fr = {
     importExerciseCount: '{count} exercices',
     importSetCount: '{count} séries',
     importMappingTitle: 'Associer les exercices',
-    importMappingBody:
-      'Vérifie les détections sûres, et choisis toi-même le reste.',
+    importMappingBody: 'Vérifie les détections sûres, et choisis toi-même le reste.',
     /**
      * Plus « Proposition » : l'app ne propose plus rien quand elle n'est pas
      * sûre. Un nom affiché dans cette colonne se lit comme une décision déjà
@@ -722,8 +730,7 @@ const fr = {
     importWillSkipOne: '1 séance déjà présente sera ignorée.',
     importCustomCount: '{count} exercices personnels seront créés.',
     importCustomCountOne: '1 exercice personnel sera créé.',
-    importRoutineFolder:
-      'Le dossier « {folder} » sera créé avec : {names}.',
+    importRoutineFolder: 'Le dossier « {folder} » sera créé avec : {names}.',
     /**
      * Les routines qu'on ne fait plus depuis un mois sont rangées à part : un
      * historique un peu long en ramène toujours, et la liste qu'on ouvre avant
@@ -736,13 +743,11 @@ const fr = {
     importWorking: 'Import en cours…',
     importSuccessTitle: 'Import terminé',
     importSuccessBody: '{imported} séances importées, {skipped} ignorées.',
-    importRoutineCount:
-      '{count} routines créées dans « {folder} ».',
+    importRoutineCount: '{count} routines créées dans « {folder} ».',
     importRoutineCountOne: '1 routine créée dans « {folder} ».',
     importBackToHistory: 'Voir l’historique',
     importFailed: 'Aucune donnée n’a été écrite. Réessaie.',
-    importedNotice:
-      'Les séances Hevy importées sont maintenant dans ton historique.',
+    importedNotice: 'Les séances Hevy importées sont maintenant dans ton historique.',
     importExerciseSearch: 'Chercher un exercice',
     importNoExercise: 'Aucun exercice ne correspond.',
     importEvidenceOneSetOne: '1 séance · 1 série',
@@ -758,8 +763,7 @@ const fr = {
     importConflictMissing: 'L’exercice associé est introuvable',
     importConflictDeleted: 'L’exercice associé a été supprimé',
     importConflictMeasurement: 'Le type de mesure a changé',
-    importConflictMultipleTargets:
-      'Plusieurs exercices sont associés à cette source',
+    importConflictMultipleTargets: 'Plusieurs exercices sont associés à cette source',
     importNewConfirmationOne: '{count} nouvelle association',
     importNewConfirmation: '{count} nouvelles associations',
     importReusedConfirmationOne: '{count} association confirmée réutilisée',
@@ -1145,10 +1149,8 @@ const fr = {
     weeksSection: 'Semaines',
     scaleZero: '0',
     emptyPeriod: 'Aucune séance sur cette période.',
-    zeroTonnage:
-      'Ces séances ne contiennent aucune charge externe comptée dans le tonnage.',
-    singleWeek:
-      'Une seule semaine sur cette période : une tendance demande plusieurs semaines.',
+    zeroTonnage: 'Ces séances ne contiennent aucune charge externe comptée dans le tonnage.',
+    singleWeek: 'Une seule semaine sur cette période : une tendance demande plusieurs semaines.',
     /**
      * Pourquoi aucune colonne ne ressort ici, alors que le graphique des séances
      * en met une en avant. Un aplat uniforme sans explication se lit comme une
@@ -1190,8 +1192,7 @@ const fr = {
      * `metricHint` sous une courbe. Le muscle principal seul est une
      * approximation : elle s'écrit, elle ne se cache pas.
      */
-    footnote:
-      'Comptées sur le muscle principal de chaque exercice. Échauffements exclus.',
+    footnote: 'Comptées sur le muscle principal de chaque exercice. Échauffements exclus.',
 
     /** Les groupes sans région anatomique, quand ils portent quelque chose. */
     unscopedSection: 'Hors répartition',
