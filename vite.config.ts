@@ -78,6 +78,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    maxWorkers: 2,
     setupFiles: ['./src/test/setup.ts'],
     // Les worktrees d'agent sous `.claude/worktrees/` sont des copies complètes
     // du projet, tests compris. Sans cette exclusion, vitest les exécute tous —
