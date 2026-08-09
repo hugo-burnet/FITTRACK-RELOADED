@@ -18,9 +18,17 @@ export function NativeRuntimeBridge() {
   const restRef = useRef(rest);
   const pathnameRef = useRef(pathname);
 
-  activeRef.current = active;
-  restRef.current = rest;
-  pathnameRef.current = pathname;
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  useEffect(() => {
+    restRef.current = rest;
+  }, [rest]);
+
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
 
   useEffect(() => {
     if (active === undefined) return;
