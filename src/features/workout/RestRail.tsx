@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { t } from '@/i18n/fr';
 import { formatRest, restProgress } from '@/lib/rest';
-import { buzzRestOver, playChime } from './restChime';
+import { signalRestFinishedOnCurrentPlatform } from './restAlert';
 
 /** How long the full bar stays before the row goes back to normal. */
 const GRACE_MS = 4000;
@@ -66,10 +66,7 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
   useEffect(() => {
     const delay = endsAt - Date.now();
     if (delay <= 0) return;
-    const id = setTimeout(() => {
-      playChime();
-      buzzRestOver();
-    }, delay);
+    const id = setTimeout(signalRestFinishedOnCurrentPlatform, delay);
     return () => clearTimeout(id);
   }, [endsAt]);
 

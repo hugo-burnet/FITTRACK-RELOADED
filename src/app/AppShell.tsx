@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { NativeRuntimeBridge } from '@/platform/NativeRuntimeBridge';
 import { ActiveWorkoutBar } from './ActiveWorkoutBar';
 import { BottomNav } from './BottomNav';
 
@@ -13,6 +14,7 @@ import { BottomNav } from './BottomNav';
 export function AppShell() {
   return (
     <div className="flex h-full flex-col bg-[var(--surface-0)]">
+      <NativeRuntimeBridge />
       {/* Le défilement est descendu dans `Screen`, entre son en-tête et sa barre
           d'action : c'est ce qui permet à cette barre d'être un frère flex comme
           la navigation, au lieu d'une superposition qui tranche le contenu. */}
