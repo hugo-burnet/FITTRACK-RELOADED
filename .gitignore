@@ -11,9 +11,12 @@ coverage
 .env.*
 !.env.example
 
-# Plateformes natives générées par Capacitor (Lot 10)
-android/
+# Plateforme iOS non générée à ce stade
 ios/
+
+# Clé de signature Android locale
+.secrets/
+*.jks
 
 # Configuration locale de l'agent : réinstallable, sans valeur pour le projet
 .claude/
