@@ -1,19 +1,11 @@
 @import 'tailwindcss';
 
-/* ---------------------------------------------------------------------------
-   Design tokens.
-   Read at arm's length, in a dark room, out of breath: one accent, no gradient,
-   no decorative shadow. The interface disappears behind the numbers.
-   --------------------------------------------------------------------------- */
+/* Design tokens */
 
 @theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Single accent: primary actions, completed sets, records. Nothing else.
-     The accent is now THEME-DEPENDENT (green in light, orange in dark), and
-     @theme is a single static scope: it therefore only FORWARDS the value.
-     The three public names are unchanged, so no component had to move, and
-     `bg-accent`-style utilities still generate and still follow the theme. */
+  /* Forward theme-dependent accent values into Tailwind utilities. */
   --color-accent: var(--accent-fill);
   --color-accent-dim: var(--accent-fill-pressed);
   --color-accent-fg: var(--accent-on-fill);
@@ -30,74 +22,28 @@
   --border: #3a352f;
   --text-1: #f5f3f0; /* primary text — 17,0:1 on --surface-0 */
   --text-2: #b9b1a8; /* secondary text AND every engraved micro-label — 8,9:1 */
-  /* RETIRÉ DE L'USAGE AU LOT 5, et le jeton reste ici uniquement pour que
-     personne ne le réintroduise sans lire ceci.
-
-     Le Lot 1 le réservait à « la valeur précédente du Lot 5 », en la supposant
-     décorative — un écho de donnée. Elle ne l'est pas : dans la grille de la
-     séance, la valeur grisée est **ce que la coche enregistre**. Mesuré sur
-     l'écran réel : 3,44:1 en sombre, 2,02:1 en clair. Un appui y écrivait un
-     nombre que personne ne pouvait lire.
-
-     Ce qui est proposé se distingue donc de ce qui est saisi par la **graisse**
-     (`font-normal` contre `font-semibold`) sur --text-2 — le couple que
-     `NumberInput` appliquait déjà à ses placeholders depuis le Lot 1. */
+  /* Reserved: too low-contrast for recordable workout values. */
   --text-3: #7e766d;
 
-  /* The accent as a FILL: a shape that carries --accent-on-fill on top of it.
-     Primary buttons, engaged chips, the validated-set mark. */
+  /* Accent fill carries --accent-on-fill; accent ink sits on surfaces. */
   --accent-fill: #ff8a3d;
   --accent-fill-pressed: #ffa15f; /* pressed / hover state of that fill */
   --accent-on-fill: #21130a; /* 7,7:1 on the fill */
 
-  /* Accent as INK: anything that must be legible AGAINST a surface — text, icons,
-     the active-tab mark, the focus ring. The distinction is not cosmetic: an ink
-     is measured on --surface-0/1/2, a fill is measured against the text it
-     carries. Here the orange clears both, so ink and fill share one value;
-     in the light theme they do not (see below). */
   --accent-ink: #ff8a3d; /* 8,0:1 on --surface-0, 6,8:1 on --surface-2 */
 
-  /* The accent as a SOFT WASH: a tinted background that stays a background —
-     it never carries --accent-on-fill, it carries --text-1/--text-2 as usual.
-     Reserved for a state the accent ink already points at. */
   --accent-soft: #3a2115; /* --text-2 reads 7,0:1 on it */
 
-  /* The accent as DATA INK: the mark a chart draws for an ordinary observation —
-     a column, a curve, a point. Its own token because it has its own job, found
-     the same way the others were: on the phone, the two column charts and the
-     curve read as **grey drawings in a coloured app**, and only in dark. The
-     cause is that they were drawn in --text-2, which is chosen for text: in the
-     light theme legibility pushes it to #5c675e, dark and still visibly green;
-     in the dark theme it pushes it to #b9b1a8, so light that the hue is gone and
-     a bar reads white. A colour tuned for a paragraph cannot also be the app's
-     data ink.
-     Two intensities of ONE hue, never a hue against a grey: the muted tone is
-     the ordinary observation, --accent-ink is the one that means something —
-     "goal reached" on the sessions chart, "record" on the curve. The cards say
-     so in a sentence, because two intensities without a legend are decoration.
-     Measured as a graphical object (3:1 floor), and the two tones are kept apart
-     by more than 2:1 so the distinction survives a bright gym. */
+  /* Ordinary chart data; accent ink remains the emphasized series. */
   --accent-data: #a85a20; /* 3,5:1 on a card, 3,7:1 on the page, 2,2:1 vs the ink */
 
-  /* The one rule a chart draws, and the stub a bucket at zero gets.
-     Neither --border nor --text-2: --border is tuned for a card edge and
-     measures 1,35:1 on a light card — invisible under a bar; --text-2 is text
-     and drew a baseline heavier than the data standing on it. Its own job, its
-     own floor: 3:1, the graphical-object threshold. */
+  /* Chart baseline, kept above the 3:1 graphical-object threshold. */
   --axis: #756e64; /* 3,5:1 on a card, 3,9:1 on the page */
 
-  /* Danger, same fill/ink split — and for the same reason, found the same way.
-     Every destructive control in the app is red TEXT on a surface, and #ff5c5c
-     measured 3.03:1 on white, 2.75:1 on a card and 2.39:1 on a pressed row. The
-     light theme therefore darkens the ink; --color-danger stays the fill, for
-     the day something needs a solid red block. */
   --danger-ink: #ff5c5c; /* 5,8:1 on --surface-1 */
 
-  /* The floor under a bottom sheet. Same veil in both themes: it exists to put
-     the screen behind out of reach, not to tint it. */
   --scrim: rgb(0 0 0 / 0.6);
 
-  /* Motion: mechanical, never elastic. One curve, two durations, used twice. */
   --ease-mech: cubic-bezier(0.2, 0, 0, 1);
   --dur-1: 120ms;
   --dur-2: 220ms;
@@ -117,16 +63,11 @@
   --accent-fill-pressed: #166534;
   --accent-on-fill: #ffffff; /* 5,0:1 on the fill */
 
-  /* Here the fill is NOT a usable ink: #15803d measures 4,33:1 on --surface-2,
-     under the 4.5 floor, and the accent ink lands on pressed rows and on 11px
-     labels. The ink is therefore the darker green of the same palette — the
-     same move the acid green forced before it, for the same measured reason. */
+  /* The fill misses text contrast on light surfaces; use the darker ink. */
   --accent-ink: #166534; /* 7,1:1 on a card, 6,3:1 on --surface-2 */
 
   --accent-soft: #dcfce7;
 
-  /* Same job, mirrored: here the muted tone is LIGHTER than the ink, because on
-     a white card that is the direction away from the background. */
   --accent-data: #4d9c72; /* 3,3:1 on a card, 3,1:1 on the page, 2,1:1 vs the ink */
 
   --axis: #869087; /* 3,3:1 on a card, 3,1:1 on the page */
@@ -134,26 +75,18 @@
   --danger-ink: #b91c1c; /* 6.47:1 on white, 5.89 on a card, 5.10 on a pressed row */
 }
 
-/* ---------------------------------------------------------------------------
-   Utilities. Declared with @utility so they land in Tailwind's utilities layer
-   and lose to nothing they shouldn't: a plain `.safe-bottom` rule would be
-   unlayered and silently beat every `pb-*` it is combined with.
-   --------------------------------------------------------------------------- */
+/* Utilities stay in Tailwind's layer so component padding can override them. */
 
-/* Any figure that can change. Without it "100 → 97,5" shifts the layout. */
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
 
-/* Large readings (32px and up): tabular and tightened. The number is the interface. */
 @utility metric {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
 }
 
-/* Engraved register: units, column heads, section names. Annotates, never narrates.
-   Always pair with --text-2, never --text-3: at 11px this is content, and #a1a1aa
-   on white is 2.3:1. */
+/* Small labels must use --text-2, never the low-contrast --text-3. */
 @utility label-xs {
   font-size: 0.6875rem;
   line-height: 1;
@@ -166,10 +99,7 @@
   padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
 }
 
-/* The floor of a bottom sheet: a real gap *plus* the gesture bar, added — not a
-   bare `safe-bottom pb-*`, where two padding-bottom utilities collide and the
-   inset (0 on a plain screen) silently wins, leaving the primary action jammed
-   against the bottom edge. One declaration, one source of truth. */
+/* Add sheet spacing and the gesture inset in one declaration. */
 @utility sheet-bottom {
   padding-bottom: calc(var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)) + 1.75rem);
 }
@@ -185,8 +115,7 @@
     height: 100%;
   }
 
-  /* 100dvh, not 100%: with 100% the collapsing browser URL bar leaves the bottom
-     navigation hidden under the chrome on first paint. */
+  /* Dynamic viewport height accounts for collapsing browser chrome. */
   #root {
     height: 100dvh;
   }
@@ -204,8 +133,7 @@
     touch-action: manipulation; /* no double-tap zoom; iOS ignores the meta tag */
   }
 
-  /* Keyboard focus always visible. :where() keeps specificity at 0 so a component
-     can still override it. */
+  /* :where() keeps the global focus style overridable. */
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {
     outline: 2px solid var(--accent-ink);
     outline-offset: 2px;

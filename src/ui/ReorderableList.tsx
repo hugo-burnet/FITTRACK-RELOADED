@@ -2,14 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { edgeScrollDelta } from './edgeScroll';
 
-/**
- * Spread onto whatever the user takes hold of. Nothing else may carry it — the
- * `touch-action` below is what keeps the rest of the row scrolling the page.
- *
- * Move and release ride on the handle too, not on the list or the window:
- * `setPointerCapture` redirects every later event of the gesture to the element
- * that captured it, so a listener anywhere else would simply never fire.
- */
+/** Pointer handlers applied only to the drag handle so the row can still scroll. */
 export type DragHandleProps = {
   onPointerDown: (event: PointerEvent<HTMLElement>) => void;
   onPointerMove: (event: PointerEvent<HTMLElement>) => void;
@@ -26,7 +19,6 @@ export type ItemState = {
 
 type Props<T> = {
   items: readonly T[];
-  /** Stable key per item, so a reorder moves the DOM node and keeps its focus. */
   keyOf: (item: T) => string;
   onReorder: (from: number, to: number) => void;
   renderItem: (item: T, index: number, state: ItemState) => ReactNode;
@@ -43,17 +35,10 @@ type DragState = {
   startScrollTop: number;
   dy: number;
   rects: Rect[];
-  /** What a displaced row moves by: the dragged row's height plus the gap. */
   span: number;
 };
 
-/**
- * The nearest scrolling ancestor.
- *
- * Walked generically rather than reaching for the app's `<main>`: a `ui/`
- * component that knows about the app shell is the backwards dependency §7 of the
- * architecture forbids, and the same one Lot 3 fixed by moving the icons here.
- */
+/** Finds the nearest scrolling ancestor without coupling to the app shell. */
 function scrollParent(node: HTMLElement | null): HTMLElement | null {
   for (let element = node?.parentElement ?? null; element; element = element.parentElement) {
     const overflow = getComputedStyle(element).overflowY;
@@ -63,7 +48,6 @@ function scrollParent(node: HTMLElement | null): HTMLElement | null {
   return null;
 }
 
-/** The row the dragged one has travelled past, by centre crossing. */
 function targetIndex(rects: Rect[], from: number, dy: number): number {
   const center = (rects[from]?.center ?? 0) + dy;
   let to = from;
@@ -77,26 +61,7 @@ function targetIndex(rects: Rect[], from: number, dy: number): number {
   return to;
 }
 
-/**
- * Drag-to-reorder built on Pointer Events.
- *
- * **Not** the HTML5 drag-and-drop API, which Chrome on Android never fires from
- * a touch: a list built on it works only on the developer's desktop, and this
- * lot's checkpoint is explicitly "au doigt sur ton téléphone". Pointer Events
- * are one implementation for mouse and finger alike, so there is one behaviour
- * to test rather than two.
- *
- * Three things make it usable rather than merely functional:
- *
- * - `touch-action: none` rides on `handleProps` and therefore on the handle
- *   alone. Touch the row anywhere else and the page scrolls exactly as before —
- *   put it on the row or the list and the whole screen stops scrolling.
- * - The list follows the finger near either edge of the scrolling ancestor. Six
- *   exercises are two screens tall, and without this the last one can never
- *   reach the first position.
- * - The rectangles are measured once, at pick-up. Measuring inside `pointermove`
- *   would force a layout on every frame of the drag.
- */
+/** Touch-compatible reordering with edge auto-scroll and keyboard controls. */
 export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, className }: Props<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLElement | null>(null);
@@ -105,11 +70,7 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
 
   const dragging = drag !== null;
 
-  /**
-   * Recomputes from the live pointer position and the live scroll offset. Written
-   * as a state updater so it closes over nothing: the auto-scroll frame loop and
-   * the pointer handler both call it, and neither can go stale.
-   */
+  // A state updater keeps both pointer and auto-scroll callers free of stale state.
   const follow = useCallback(() => {
     setDrag((current) => {
       if (current === null) return current;
@@ -129,8 +90,7 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
 
       if (delta !== 0) {
         scroller.scrollTop += delta;
-        // The rows were measured in viewport space at pick-up, so scrolling has
-        // to be folded back into the offset or the held row would drift.
+        // Account for scrolling after the initial viewport-space measurement.
         follow();
       }
 
@@ -146,8 +106,6 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
     const own = boxes[index];
     if (own === undefined) return;
 
-    // The gap comes from the layout rather than a prop: a displaced row has to
-    // move by exactly one slot, whatever CSS spacing the caller chose.
     const next = boxes[index + 1];
     const previous = boxes[index - 1];
     const gap =
@@ -160,8 +118,6 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
     scrollerRef.current = scrollParent(containerRef.current);
     pointerY.current = event.clientY;
     event.currentTarget.setPointerCapture(event.pointerId);
-    // A short tick confirms the pick-up on a row that is under the thumb and
-    // therefore invisible. No-op wherever the API is absent.
     navigator.vibrate?.(10);
 
     setDrag({
@@ -184,8 +140,7 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
 
   const endDrag = (commit: boolean) => (event: PointerEvent<HTMLElement>) => {
     if (drag === null || event.pointerId !== drag.pointerId) return;
-    // `pointercancel` means the gesture was taken away mid-flight, so it is not
-    // an instruction to move anything.
+    // A browser-cancelled gesture must not reorder.
     if (commit && drag.to !== drag.from) onReorder(drag.from, drag.to);
     setDrag(null);
   };
@@ -198,7 +153,6 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
     if (to >= 0 && to < items.length) onReorder(index, to);
   };
 
-  /** Where a row sits while another one is being dragged over it. */
   const offsetOf = (index: number): number => {
     if (drag === null) return 0;
     if (index === drag.from) return drag.dy;
@@ -216,7 +170,6 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
             key={keyOf(item)}
             style={{
               transform: `translateY(${offsetOf(index)}px)`,
-              // The held row tracks the finger, so it must not lag behind it.
               transition: held ? 'none' : 'transform var(--dur-2) var(--ease-mech)',
               zIndex: held ? 30 : undefined,
               position: held ? 'relative' : undefined,

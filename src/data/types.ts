@@ -1,15 +1,5 @@
-/**
- * The data contract every later lot consumes. Mirrors §4 of
- * `docs/plans/01-ARCHITECTURE.md` — including the entities of later lots, which
- * cost nothing to declare now and would cost a migration later.
- *
- * Two typing rules come straight from IndexedDB (§3) and are not stylistic:
- * an indexed field is never a boolean (`0 | 1`) and never `null` (`0` / `''`).
- * A `null` in an index makes the row vanish from that index: it exists, but no
- * query finds it.
- */
+/** Persisted data contract. Indexed fields use `0 | 1` and sentinels, never null. */
 
-/** Fields carried by every persisted entity. */
 export interface Syncable {
   id: string; // crypto.randomUUID()
   createdAt: number; // epoch ms
@@ -17,13 +7,7 @@ export interface Syncable {
   deletedAt: number; // 0 = alive, otherwise epoch ms of the soft delete
 }
 
-/**
- * The three catalogue vocabularies are declared as const arrays, not bare
- * unions: the filter chips of Lot 3 need to enumerate them, and the seed test
- * checks every catalogue row against them. One source of truth, so a typo in
- * `exercises.json` fails the suite instead of producing an exercise no filter
- * can ever find.
- */
+/** Enumerable catalogue vocabulary shared by filters and seed validation. */
 export const MUSCLE_GROUPS = [
   'chest',
   'lats',
@@ -36,10 +20,6 @@ export const MUSCLE_GROUPS = [
   'quads',
   'hamstrings',
   'glutes',
-  // Added after milestone G3 read the catalogue back: hip adduction was filed
-  // under `glutes`, which is the muscle the *opposite* movement trains. The
-  // vocabulary simply had no box for the inner thigh, so six sets a week were
-  // landing on the wrong bar.
   'adductors',
   'calves',
   'abs',
@@ -67,7 +47,6 @@ export const EQUIPMENT = [
 
 export type Equipment = (typeof EQUIPMENT)[number];
 
-/** Decides which input fields the live workout screen shows. */
 export const MEASUREMENT_TYPES = [
   'weight_reps', // bench press: weight + reps
   'reps_only', // bodyweight pull-ups
@@ -79,10 +58,6 @@ export const MEASUREMENT_TYPES = [
 
 export type MeasurementType = (typeof MEASUREMENT_TYPES)[number];
 
-/**
- * A const array for the same reason as the three above: Lot 4's set sheet has to
- * enumerate them, and Lot 6 will add the behaviour behind each one.
- */
 export const SET_TYPES = ['normal', 'warmup', 'dropset', 'failure'] as const;
 
 export type SetType = (typeof SET_TYPES)[number];
@@ -97,11 +72,7 @@ export interface Exercise extends Syncable {
   measurementType: MeasurementType;
   isCustom: 0 | 1; // 1 = created by the user (RF-08)
   isUnilateral: 0 | 1; // audit recommendation M2
-  /**
-   * Stable catalogue key, absent on user-created exercises. It is the seed's
-   * idempotency key: without it a re-run cannot tell "new exercise" from
-   * "already there" and duplicates the whole catalogue. Not indexed.
-   */
+  /** Stable seed idempotency key; absent on custom exercises. */
   slug?: string;
   imageUrl?: string;
   instructions?: string;
@@ -129,12 +100,6 @@ export interface RoutineFolder extends Syncable {
 
 export interface Routine extends Syncable {
   name: string;
-  /**
-   * One quiet line under the name. Added in Lot 4 after real use: without it a
-   * routine you want to describe ("Poussée lourde barre + accessoires épaules")
-   * becomes a title that wraps to three lines and reads as a paragraph. Not
-   * indexed, so it needs no schema version.
-   */
   subtitle?: string;
   folderId: string; // '' when at the root
   order: number;
@@ -152,20 +117,14 @@ export interface RoutineExercise extends Syncable {
   notes?: string;
 }
 
-/** One row = one planned set. Allows a 5x5 at varying loads and planned warm-ups. */
 export interface RoutineSet extends Syncable {
   routineExerciseId: string;
   order: number;
   setType: SetType;
   targetReps?: number;
   targetRepsMax?: number; // range 8-12 → targetReps=8, targetRepsMax=12
-  /**
-   * Kilograms — but of three different kinds, decided by the exercise's
-   * `measurementType`: a load, a belt added to bodyweight, or the assistance a
-   * machine takes off. `lib/measurement.ts` owns that reading.
-   */
+  /** Load, added weight, or assistance as defined by `measurementType`. */
   targetWeight?: number;
-  /** Planks, carries, rows. Added in Lot 4 after use: without it a timed exercise had no target at all. */
   targetDurationSeconds?: number;
   targetDistanceMeters?: number;
   targetRpe?: number;
@@ -181,23 +140,11 @@ export interface Workout extends Syncable {
   endedAt: number; // 0 until finished
   durationSeconds: number; // real time excluding pauses, computed on close
   notes?: string;
-  /** Applied once to remaining live-workout loads; absent when no deload was applied. */
   deloadPercent?: number;
   importSource?: 'hevy_csv';
   importKey?: string;
 
-  /**
-   * Minutes to ADD to UTC to get the local clock where the session happened —
-   * `+120` for Paris in summer, i.e. the sign opposite to `getTimezoneOffset()`.
-   *
-   * Stored rather than recomputed because a session's civil day must not move.
-   * Grouping by the phone's *current* offset makes a 23:30 session change day,
-   * and therefore week, after a flight — the totals of a past week would then
-   * depend on where you are standing when you look at them.
-   *
-   * Worth exactly nothing until the first trip, and impossible to reconstruct
-   * afterwards. Not indexed: nothing queries by offset.
-   */
+  /** Minutes added to UTC at workout time; preserves the historical civil day. */
   startedTimezoneOffsetMinutes?: number;
 }
 
@@ -208,40 +155,10 @@ export interface WorkoutExercise extends Syncable {
   supersetGroup: number;
   notes?: string;
 
-  /**
-   * How long to rest after a set of this exercise, in seconds. DENORMALISED on
-   * purpose, like everything else in this table — cf. architecture §5.
-   *
-   * Resolved once, when the exercise enters the session: the routine can be
-   * edited or deleted mid-session, and a free session has no routine at all.
-   * Always a real duration, never `0` — unlike `RoutineExercise.restSeconds`,
-   * where `0` means "use the exercise's default". Cf. `resolveRestSeconds`.
-   */
+  /** Resolved once on session entry; always positive and independent of later edits. */
   restSeconds: number;
 
-  /**
-   * The exercise **as it was** when this row entered the session. DENORMALISED
-   * on purpose, exactly like `restSeconds` above and for the same reason: the
-   * library can be edited afterwards, and a past session must not change.
-   *
-   * Without them, renaming an exercise renamed every session that ever used it,
-   * changing its `measurementType` reinterpreted values already recorded, and
-   * changing its `primaryMuscle` moved months of volume onto another muscle —
-   * retroactively, and silently. An export run today would then disagree with
-   * an export of the same session run tomorrow.
-   *
-   * **Written when `exerciseId` is written, never refreshed.** A row whose
-   * exercise is corrected in the archive editor gets a new snapshot; a library
-   * edit gets nothing. That asymmetry is the whole point.
-   *
-   * Optional because rows predating this field exist. Absence is the only
-   * quality signal there is, and it is enough: fall back to the library, which
-   * still holds the row — `deleteExercise` soft-deletes, so an exercise is
-   * never actually gone. Neither `secondaryMuscles` nor `isUnilateral` is
-   * copied: nothing reads them from history, and the library still has them.
-   *
-   * None of the four is indexed, so they cost no index migration.
-   */
+  /** Immutable exercise snapshot; optional for rows created before snapshots existed. */
   exerciseName?: string;
   exerciseMeasurementType?: MeasurementType;
   exercisePrimaryMuscle?: MuscleGroup;
@@ -256,28 +173,14 @@ export interface WorkoutSet extends Syncable {
   setType: SetType;
   side: Side;
 
-  /**
-   * What was actually performed. Empty until typed — **nothing here is ever
-   * filled in on the user's behalf**, which is what lets the live screen show a
-   * value you entered in a different colour from one it is proposing.
-   */
+  /** Performed values stay empty until explicitly entered or validated. */
   weight?: number; // always stored in KG (cf. §6)
   reps?: number;
   durationSeconds?: number;
   distanceMeters?: number;
   rpe?: number; // RF-30: 6 to 10 in steps of 0.5
 
-  /**
-   * What the session was asked to do, copied from the routine when it started.
-   * Added in Lot 5 — none of them is indexed, so no migration.
-   *
-   * The session carries its own prescription rather than reading it back
-   * through `routineId`: editing the routine next week must not rewrite what
-   * last week's session says it set out to do. Without these fields a rep range
-   * had nowhere to live and **vanished from the screen entirely** — a routine
-   * prescribing 8 – 12 showed an empty box. Lot 18 reads them too: whether you
-   * hit the top of the range is the whole input of auto-progression.
-   */
+  /** Routine targets copied at start so later routine edits cannot rewrite history. */
   targetReps?: number;
   targetRepsMax?: number;
   targetWeight?: number;

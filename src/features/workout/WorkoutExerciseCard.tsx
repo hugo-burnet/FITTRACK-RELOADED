@@ -19,31 +19,22 @@ import { WorkoutSetRow } from './WorkoutSetRow';
 import type { WorkoutFoldCommand } from './workoutFold';
 import { setReading } from './summary';
 
-/** A set that has just gone, and the slot it is still allowed to come back to. */
 type DeletedSet = { setId: string; rank: number; reading: string };
 
-/** The rest this card owns, or null — passed only to the card whose set rests. */
 export type CardRest = { setId: string; startedAt: number; endsAt: number; onDone: () => void };
 
 type Props = {
   line: WorkoutExerciseDetail;
   superset?: SupersetPlace;
-  /** Non-null while one of this exercise's sets is resting. */
   rest: CardRest | null;
-  /**
-   * RF-23 — which sets of the session hold a record right now, by set id. The
-   * card only ever looks up its own. Re-derived on every render from each
-   * exercise's whole validated history, never stored: cf. `recordsBeatenBy`.
-   */
+  /** Records are derived, never persisted. */
   records: Map<string, RecordKind>;
   state: ItemState;
   foldCommand: WorkoutFoldCommand;
   onMenu: () => void;
-  /** Opens the plate calculator. Absent when the exercise has no bar to load. */
   onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
   onWrite: (setId: string, values: Partial<SetValues>) => void;
-  /** The set itself comes back up: only it knows whether a rest is owed. */
   onComplete: (setId: string, values: Partial<SetValues>, set: WorkoutSet) => void;
   onUncomplete: (setId: string) => void;
   onDeleteSet: (setId: string) => void;
@@ -51,26 +42,11 @@ type Props = {
   onAddSet: () => void;
 };
 
-/** A, B, C — the order you alternate in, which is what a superset is. */
 const alternationMark = (index: number): string => String.fromCharCode(65 + index);
 
-/** Same widths as the row, so the headings sit over the fields they name. */
 const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
 
-/**
- * One exercise of the session in progress: its identity, its grid, and the way
- * into everything else about it.
- *
- * The headings row is what lets the "précédent" cell drop its units: the figures
- * below it sit in the same columns as the fields, so "102,5 × 5" reads against
- * "kg" and "reps" once, at the top, instead of on every line. On 375 px that is
- * the difference between a grid and a wall of text.
- *
- * The superset rule and marks are the Lot 4 ones, unchanged — the accent rule
- * bridged across the gap plus an A / B / C on each member, because an accent
- * alone cannot carry meaning in sunlight or to an eye that does not separate it
- * from the surface.
- */
+/** Live-workout exercise card with set entry, records, rest, and supersets. */
 export function WorkoutExerciseCard({
   line,
   superset,
@@ -98,16 +74,7 @@ export function WorkoutExerciseCard({
 
   const allDone = sets.length > 0 && sets.every((set) => set.isCompleted === 1);
 
-  /**
-   * The card folds when the last set is ticked and unfolds when one is un-ticked
-   * or added — the collapse follows completion, so a finished exercise stops
-   * taking room on the board and re-opens on its own the moment it is no longer
-   * done. A tap on the header overrides this until completion next changes.
-   *
-   * Adjusted during render, not in an effect, per the Lot 1 note (the
-   * `NumberInput` pattern): an effect would paint one frame in the stale state.
-   * The guard makes it converge — after the write `allDone === wasAllDone`.
-   */
+  // Convergent render-time adjustment prevents one stale expanded frame.
   const [expanded, setExpanded] = useState(!allDone);
   const [wasAllDone, setWasAllDone] = useState(allDone);
   const [seenFoldVersion, setSeenFoldVersion] = useState(
@@ -122,28 +89,12 @@ export function WorkoutExerciseCard({
     setExpanded(!allDone);
   }
 
-  // What a folded card shows in place of the subtitle: the last set, as figures,
-  // so a glance at a closed exercise still says what was done.
   const lastSet = sets.length > 0 ? sets[sets.length - 1] : undefined;
   const doneReading = lastSet !== undefined ? setReading(lastSet, columns) : '';
 
-  /**
-   * RF-23 on a folded card — and it is not a nice-to-have.
-   *
-   * Ticking the **last** set folds the exercise, and the last set is usually the
-   * top one: without a mark up here, the strip under it would appear and be shut
-   * away in the same frame, so the one record you most wanted to see would be the
-   * one you never see. The header says *that* there is one, unfolding says which
-   * set and which record — the same disclosure the fold already applies to the
-   * figures, and the reason it is drawn only while folded.
-   */
+  // Preserve record feedback when completing a set folds the card.
   const hasRecord = sets.some((set) => records.has(set.id));
 
-  /**
-   * One slot at a time. Swiping a second row closes the first offer — the
-   * deletion is written either way, so what expires is the shortcut back, not
-   * the data.
-   */
   const [deleted, setDeleted] = useState<DeletedSet | null>(null);
 
   const undoRow = deleted === null ? null : (
@@ -162,14 +113,9 @@ export function WorkoutExerciseCard({
       {superset !== undefined && (
         <span
           aria-hidden="true"
-          // INK, not fill: this rule has to be legible against the surface, it does
-          // not carry --color-accent-fg on top of it. The fill is only ever measured
-          // against the text it carries, never against the page. cf. index.css.
           className={`absolute top-0 left-0 w-[3px] bg-[var(--accent-ink)]
             ${first ? 'rounded-t-full' : ''} ${last ? 'rounded-b-full' : ''}`}
-          // Runs into the gap on every member but the last, so the bracket is
-          // continuous rather than a stack of dashes. -0.75rem is the `gap-3` of
-          // the list in WorkoutScreen — the two have to agree.
+          // Extend through the list gap to keep the superset bracket continuous.
           style={{ bottom: last ? 0 : '-0.75rem' }}
         />
       )}
@@ -198,18 +144,12 @@ export function WorkoutExerciseCard({
             <GripIcon />
           </button>
 
-          {/* Le header EST le bouton de repli : un exo terminé se replie seul et
-              se rouvre d'un appui ici. La poignée et le menu restent des frères,
-              jamais imbriqués dedans — deux boutons dans un bouton est du HTML
-              invalide. */}
           <button
             type="button"
             aria-expanded={expanded}
             onClick={() => setExpanded((open) => !open)}
             className="flex min-w-0 flex-1 items-center gap-2 py-3 pr-1 text-left"
           >
-            {/* La coche verte dit « fini » ; avec la surface grisée, c'est le
-                gris-et-vert d'un exo clos. Seulement une fois replié. */}
             {!expanded && allDone && <CheckIcon className="shrink-0 text-[var(--accent-ink)]" />}
             <span className="flex min-w-0 flex-1 flex-col justify-center gap-1">
               <span className="flex min-w-0 items-baseline gap-2">
@@ -225,11 +165,6 @@ export function WorkoutExerciseCard({
                 >
                   {name}
                 </span>
-                {/* Replié seulement, comme la coche et le relevé de la dernière
-                    série : déplié, le bandeau sous la ligne le dit mieux — il dit
-                    laquelle. `role="img"` plutôt qu'`aria-hidden` : c'est la seule
-                    trace du record quand la carte est fermée, donc elle doit
-                    entrer dans le nom du bouton. */}
                 {!expanded && hasRecord && (
                   <StarIcon
                     width={16}
@@ -241,9 +176,6 @@ export function WorkoutExerciseCard({
                   />
                 )}
               </span>
-              {/* Le repos prend la place du sous-titre le temps qu'il coule :
-                  un repos est le statut du moment, pas un 3ᵉ élément. Sinon,
-                  déplié = sous-titre, replié = la dernière série en relevé. */}
               {rest !== null ? (
                 <RestStatus endsAt={rest.endsAt} />
               ) : expanded ? (
@@ -260,18 +192,12 @@ export function WorkoutExerciseCard({
                 )
               )}
             </span>
-            {/* ▶ replié, ▼ déplié — le mouvement de divulgation le plus courant. */}
             <ChevronDownIcon
               className={`shrink-0 text-[var(--text-2)] transition-transform
                 duration-[var(--dur-1)] ${expanded ? '' : '-rotate-90'}`}
             />
           </button>
 
-          {/* Les plaques à charger, sur la carte de l'exo plutôt que dans le
-              menu : chercher « qu'est-ce que je charge » va à l'exercice, pas à
-              une série, et l'icône dit ce que le menu cachait. Rendu seulement
-              quand l'exo charge une barre (`onPlates` fourni). Frère du menu,
-              jamais imbriqué. */}
           {onPlates !== undefined && (
             <button
               type="button"
@@ -294,11 +220,6 @@ export function WorkoutExerciseCard({
             <MoreIcon />
           </button>
 
-          {/* Le filet vit sur le séparateur header/corps — le bas du header. Une
-              série cochée referme l'exo, et le bas du header devient alors le bas
-              de la carte : le filet reste donc visible replié, sans jamais tomber
-              sous « Ajouter une série » quand la carte est ouverte. Keyé sur la
-              série pour repartir du départ, jamais du reliquat du précédent. */}
           {rest !== null && (
             <RestRail
               key={rest.setId}
@@ -318,8 +239,6 @@ export function WorkoutExerciseCard({
               </p>
             )}
 
-            {/* The headings. Engraved register, except on SI symbols: it is "kg",
-                never "KG" (Lot 1 rule). */}
             <div className="flex items-center gap-1.5 px-2 pt-2 pb-1">
               <span className="w-12 shrink-0" />
               <span className="label-xs min-w-0 flex-1 text-center font-semibold text-[var(--text-2)]">
@@ -344,8 +263,6 @@ export function WorkoutExerciseCard({
               const record = records.get(set.id);
               return (
               <Fragment key={set.id}>
-                {/* Le bandeau reprend le rang de la disparue : celle qui occupait
-                    cette place est maintenant ici, donc le bandeau passe devant. */}
                 {deleted?.rank === index && undoRow}
                 <SwipeToDelete
                   label={t('workout.swipeDelete')}
@@ -370,17 +287,12 @@ export function WorkoutExerciseCard({
                     onUncomplete={() => onUncomplete(set.id)}
                     onMenu={() => onSetMenu(set, index + 1)}
                   />
-                  {/* Dans le bloc qui balaye, pas à côté : la félicitation est le
-                      bas de cette ligne, donc elle part avec elle et découvre le
-                      même « Supprimer ». */}
                   {record !== undefined && <RecordNote kind={record} />}
                 </SwipeToDelete>
               </Fragment>
               );
             })}
 
-            {/* La dernière série n'a personne derrière qui la remplace : son
-                bandeau tombe en pied de grille, la place qu'elle occupait. */}
             {deleted !== null && deleted.rank >= sets.length && undoRow}
 
             <AddRow label={t('workout.addSet')} onClick={onAddSet} />

@@ -10,24 +10,13 @@ import { BoltIcon, CheckIcon, DropsetIcon, FlameIcon } from '@/ui/icons';
 import { SetValueCell } from './SetValueCell';
 import { setReading } from './summary';
 
-/**
- * RF-20 — what a set that is not a plain working set shows in place of its rank.
- *
- * A mark, not a word: "ÉCH." (échauffement) and "ÉCHEC" do not separate at arm's
- * length, one-handed, out of breath — and that is the only distance this screen
- * is ever read at. The shape carries it; the accent is a second channel, never
- * the only one (Lot 4 rule: sunlight, colour blindness).
- *
- * `normal` is absent on purpose: a normal set keeps its number, which is the
- * reading that says where you are in the exercise.
- */
+/** Non-normal sets replace their rank with a distinct, non-color-only mark. */
 const TYPE_MARK: Partial<Record<SetType, ComponentType<SVGProps<SVGSVGElement>>>> = {
   warmup: FlameIcon,
   dropset: DropsetIcon,
   failure: BoltIcon,
 };
 
-/** Which field of a stored set each entry column writes into. */
 const FIELD_KEY = {
   weight: 'weight',
   reps: 'reps',
@@ -35,7 +24,6 @@ const FIELD_KEY = {
   distance: 'distanceMeters',
 } as const satisfies Record<TargetField, keyof SetValues>;
 
-/** And where the session keeps what it was asked to do. */
 const TARGET_KEY = {
   weight: 'targetWeight',
   reps: 'targetReps',
@@ -43,22 +31,14 @@ const TARGET_KEY = {
   distance: 'targetDistanceMeters',
 } as const satisfies Record<TargetField, keyof WorkoutSet>;
 
-/**
- * Column widths, fixed in pixels rather than proportions.
- *
- * The grid has to hold at 375 px with a 48 px tick, and a proportional layout
- * would shrink the load field — the one that has to fit "102,5" — first.
- * "Précédent" takes what is left, because it is the only cell that may truncate
- * without losing anything you cannot read one row up.
- */
+/** Fixed widths preserve numeric entry at the 375 px minimum viewport. */
 const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
 
 type Props = {
   set: WorkoutSet;
-  /** Position in the exercise, 1-based. */
   number: number;
   columns: EntryColumn[];
-  /** The same rank, last session. Strictly by index — cf. `previousValue`. */
+  /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
   onWrite: (values: Partial<SetValues>) => void;
   onComplete: (values: Partial<SetValues>) => void;
@@ -66,22 +46,7 @@ type Props = {
   onMenu: () => void;
 };
 
-/**
- * One set: what you did last time, what you are doing now, and the tick.
- *
- * The tick is the whole screen. Pressed on an untouched row it records the grey
- * figures, so a set identical to last time costs **one tap** — the shape the
- * roadmap puts a number on. Pressed again it un-ticks: a mis-tap is the most
- * likely error here, and it must cost as little as the tap did.
- *
- * A validated row changes surface and its tick fills with the accent: the state
- * of a set has to read at arm's length, without glasses.
- *
- * And it goes dim when there is nothing to record — a set prescribed as a range
- * that you have never done before. `isSetRecordable` holds that rule; the row
- * only asks. The dim tick is the honest state: the figure is missing, and the
- * empty field under its own target line is where it goes.
- */
+/** Previous values, current entry, and one-tap validation for a workout set. */
 export function WorkoutSetRow({
   set,
   number,
@@ -95,53 +60,29 @@ export function WorkoutSetRow({
   const done = set.isCompleted === 1;
   const Mark = TYPE_MARK[set.setType];
 
-  /**
-   * Strictly the set of the same rank, never a fallback onto the last one of the
-   * block. The grey figure is not decoration — the tick records it — so
-   * borrowing set 4's load for set 5 would write a number nobody performed.
-   */
+  // Never borrow another rank: proposed values may be recorded with one tap.
   const previousValue = (field: TargetField): number | undefined =>
     previous?.[FIELD_KEY[field]];
 
   const valueOf = (field: TargetField): number | undefined => set[FIELD_KEY[field]];
 
-  /**
-   * What the tick records when nothing was typed: **today's prescription
-   * first**, and failing that what you lifted last time.
-   *
-   * That order is the point. The routine is the plan for today; last week is
-   * beside it in the "précédent" column, where you can compare without either
-   * one overwriting the other.
-   */
+  // Today's prescription takes precedence over the previous session.
   const ghostOf = (field: TargetField): number | undefined =>
     set[TARGET_KEY[field]] ?? previousValue(field);
 
-  /**
-   * The one prescription that is **not** a value: a rep range. It reads on its
-   * own line above the field rather than inside it — cf. `SetValueCell.target`.
-   */
   const targetOf = (field: TargetField): string | undefined =>
     field === 'reps' && isRepRange(set) ? repsReading(set)?.value : undefined;
 
-  /**
-   * What the field proposes, which is always a figure ✓ can record.
-   *
-   * On a ranged set the range is skipped and **last session's count takes the
-   * slot**. It used to leave the slot empty, which threw away the one number the
-   * tick could legitimately have recorded: you were shown "8 – 12", the 10 you
-   * did last week was hidden, and ✓ validated a set with no reps at all.
-   */
+  // A range is guidance, not a recordable value; reuse the previous count.
   const ghostNumberOf = (field: TargetField): number | undefined =>
     targetOf(field) === undefined ? ghostOf(field) : previousValue(field);
 
-  /** Every column's figure as ✓ would write it: what was typed, or what is proposed. */
   const resolved: ResolvedValues = {};
   for (const column of columns) {
     const value = valueOf(column.field) ?? ghostNumberOf(column.field);
     if (value !== undefined) resolved[column.field] = value;
   }
 
-  /** One value per column of this exercise, and no key it does not measure. */
   const collect = (pick: (field: TargetField) => number | undefined): Partial<SetValues> => {
     const values: Partial<SetValues> = {};
     for (const column of columns) values[FIELD_KEY[column.field]] = pick(column.field);
@@ -158,23 +99,13 @@ export function WorkoutSetRow({
 
   return (
     <div
-      // 60 px and a bottom padding, kept from Lot 5 when the rest bar still lived
-      // in this row's lower channel. The bar has since moved to the exercise
-      // card's own bottom edge (`RestRail`), where it stays in view even once the
-      // finished exercise folds; the row keeps its rhythm rather than being
-      // re-tuned to reclaim the four pixels.
       className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
     >
-      {/* The rank, and the way to anything else about this set — including the
-          set type (RF-20), which is what this button was kept for since Lot 5.
-          The mark replaces the number rather than crowding beside it: 48 px does
-          not hold two glyphs that both have to read without looking. */}
       <button
         type="button"
-        // The type is said, never left to the drawing: the mark is aria-hidden
-        // like every other icon here, so a screen reader gets the word.
+        // The accessible name carries the set type hidden by the icon.
         aria-label={
           Mark === undefined
             ? t('workout.setNumber', { number })
@@ -191,9 +122,6 @@ export function WorkoutSetRow({
         )}
       </button>
 
-      {/* RF-19. Tapping it writes last session's figures into the fields — the
-          gesture that matters when a routine prescribes one thing and last week
-          says another. */}
       <button
         type="button"
         disabled={previousReading === ''}
@@ -213,13 +141,11 @@ export function WorkoutSetRow({
             value={valueOf(column.field)}
             ghost={formatNumber(ghostNumberOf(column.field))}
             target={target}
-            // A hold is entered in whole seconds, never a decimal: "1:30" typed
-            // as "1,3" must not slip through as 1.3 s (cf. the rest timer, Lot 6).
+            // Durations are stored as whole seconds.
             integer={column.field === 'duration'}
             onChange={(next) => onWrite(single(column.field, next))}
             width={index === 0 ? WIDTH.first : WIDTH.second}
-            // The target line is drawn aria-hidden and said here instead, so a
-            // screen reader gets the prescription once, with the field it belongs to.
+            // Pair the visually hidden target with its input for screen readers.
             aria-label={[
               t('workout.setNumber', { number }),
               unitLabel(column.unit),
@@ -240,20 +166,13 @@ export function WorkoutSetRow({
             ? t('workout.uncomplete', { number })
             : t('workout.complete', { number })
         }
-        // What is typed, and failing that what is greyed: an untouched row
-        // identical to what is proposed costs one tap, which is the whole point.
         onClick={() =>
           done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))
         }
-        // La **zone de touche** reste à 48 px : c'est la cible tactile non
-        // négociable de la charte, et cet écran se lit une main en sueur.
-        // Seule la pastille rétrécit, à l'intérieur.
         className="flex size-12 shrink-0 items-center justify-center
           transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)]
           active:scale-[0.92] disabled:pointer-events-none disabled:opacity-40"
       >
-        {/* 34 px, soit 30 % de moins que la zone qui la porte. La coche suit la
-            même réduction (20 → 14 px) pour garder sa respiration dedans. */}
         <span
           className={`flex size-[2.125rem] items-center justify-center rounded-lg
             transition-colors duration-[var(--dur-1)]

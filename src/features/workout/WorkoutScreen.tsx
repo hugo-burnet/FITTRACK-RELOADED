@@ -80,15 +80,13 @@ type SheetState =
   | { kind: 'setType'; setId: string; number: number }
   | { kind: 'plates' };
 
-/** RF-20 — the four types, each with the sentence `fr.ts` already gives it. */
 const SET_TYPE_OPTIONS = SET_TYPES.map((value) => ({
   value,
   label: setTypeLabel(value),
   hint: setTypeHint(value),
 }));
 
-/** The bar loads a plate sheet reads, kept out of `SheetState` so its close
- *  animation still has valid numbers after the card's menu is gone. */
+/** Plate data must survive the menu's closing animation. */
 type PlatesView = {
   rowId: string;
   loads: number[];
@@ -97,16 +95,7 @@ type PlatesView = {
   barWeightAdjustable: boolean;
 };
 
-/**
- * The most important screen of the application — the one read sixty times a
- * session, out of breath, one-handed.
- *
- * It holds no session id of its own: the active session **is** the query
- * (`getActiveWorkout`), which is what makes RF-25 free. Killing the app and
- * reopening it lands back here with everything in place, because there was never
- * anything in memory to lose — every keystroke is already in the database
- * (`updateSetValues`), and validation only adds a timestamp.
- */
+/** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
@@ -115,16 +104,10 @@ export function WorkoutScreen() {
     INITIAL_WORKOUT_FOLD_COMMAND,
   );
   const willExpandAll = !foldCommand.expanded;
-  /**
-   * RF-31 is deliberately session-screen state, keyed by workout exercise.
-   * Closing the sheet keeps today's bar choice; leaving/reloading the screen
-   * drops it. Lot 8 will own persistent defaults and equipment inventory.
-   */
   const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
   const rest = useRestTimer();
 
-  // `null` is "no session", `undefined` is "not answered yet". Blurring them
-  // makes the screen flash its empty state on every open (Lot 3 lesson).
+  // Keep loading (`undefined`) distinct from no active workout (`null`).
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const detail = useLiveQuery(
     async () => (active == null ? null : await getWorkoutDetail(active.id)),
@@ -132,31 +115,11 @@ export function WorkoutScreen() {
   );
   const availablePlateWeightsKg = useLiveQuery(getAvailablePlateWeightsKg);
 
-  /**
-   * RF-23 — the scoreboard every set of this session is judged against: each
-   * exercise's whole validated history, **today's ticked sets included**.
-   *
-   * A second query rather than a field of `getWorkoutDetail`, because it answers a
-   * different question than the "précédent" column does — that one exists to keep
-   * the current session *out* (`excludeWorkoutId`), this one to let it in.
-   *
-   * Re-read live, and that is the point: nothing about a record is stored, so
-   * un-ticking a set, deleting it or turning it into a warm-up mid-session
-   * un-makes its record with no invalidation code at all. Keyed on the exercise
-   * ids, so adding an exercise re-subscribes and nothing else does.
-   */
+  // Records are derived live, so edits and deletions need no invalidation state.
   const exerciseIds = detail?.exercises.map((line) => line.row.exerciseId) ?? [];
   const recordSets = useLiveQuery(() => listRecordSets(exerciseIds), [exerciseIds.join()]);
 
-  /**
-   * The gesture that lets the timer make a noise two minutes from now.
-   *
-   * A mobile browser refuses to start audio outside a user gesture, and the
-   * `setTimeout` that ends a rest has none — it would fail *silently*, which is
-   * the worst failure available to a feature whose job is to be heard. On the
-   * document rather than on a wrapper: the tick that starts a rest can land on
-   * any control of this screen.
-   */
+  // Mobile browsers require a user gesture before later timer-driven audio.
   useEffect(() => {
     document.addEventListener('pointerdown', unlockChime);
     return () => document.removeEventListener('pointerdown', unlockChime);
@@ -165,11 +128,7 @@ export function WorkoutScreen() {
   const stopRest = useRestTimer((state) => state.stop);
   const restingSetId = rest.setId;
 
-  /**
-   * The safety net for a rest whose set is gone — deleted, or carried off with
-   * its exercise. Without it the store keeps a dead id and the session line
-   * reads "Repos 1:30" for the rest of the workout.
-   */
+  // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
     if (restingSetId === null || detail == null) return;
     const alive = detail.exercises.some((line) =>
@@ -188,7 +147,6 @@ export function WorkoutScreen() {
   }
 
   if (active === null) {
-    // No session to show. The home screen is where one is started.
     return (
       <Screen title={t('workout.notFound')} onBack={() => void navigate('/')}>
         <span />
@@ -221,19 +179,10 @@ export function WorkoutScreen() {
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const plans = restPlans(exercises.map(({ row }) => row));
 
-  /**
-   * Validating a set is what starts its rest. A rest ends three ways: it runs
-   * out, its exercise leaves the session, or the set is un-ticked (`onUncomplete`
-   * below). Un-ticking stops it because a set you un-tick is one you are no
-   * longer resting on — and fixing a typo is not a reason to un-tick, since the
-   * figures stay editable while the set is ticked (`SetValueCell`). Nothing
-   * fires for a warm-up or between two members of a superset (`isRestTriggering`).
-   */
+  // Warm-ups, supersets, and chained drop sets do not trigger a rest.
   const startRest = (line: WorkoutExerciseDetail, setId: string, setType: SetType): void => {
     const plan = plans.get(line.row.id);
     if (plan === undefined) return;
-    // The set that follows, in this exercise's own grid: a drop set is chained to
-    // the one before it, so that one hands over with no rest (`isRestTriggering`).
     const index = line.sets.findIndex((set) => set.id === setId);
     const next = index === -1 ? undefined : line.sets[index + 1];
     if (
@@ -276,11 +225,7 @@ export function WorkoutScreen() {
       : workoutExerciseIdentityOf(line).name ?? t('workout.deletedExercise');
   };
 
-  /**
-   * The type of one set, by id. Falls back to `normal` rather than throwing: the
-   * sheet keeps rendering through its closing animation, by which point the set
-   * it was opened on may already be deleted.
-   */
+  // Sheets outlive deleted rows during their closing animation.
   const setOf = (setId: string): WorkoutSet | undefined => {
     for (const line of exercises) {
       const found = line.sets.find((set) => set.id === setId);
@@ -291,12 +236,7 @@ export function WorkoutScreen() {
 
   const typeOf = (setId: string): SetType => setOf(setId)?.setType ?? 'normal';
 
-  /**
-   * The distinct loads to size plates for — every weight the bar is set to across
-   * the exercise's sets, in order, de-duplicated. Warm-ups are included: you load
-   * the bar for those too. A back-off set at 55 and a top set at 100 each get
-   * their own diagram, rather than one figure standing in for both.
-   */
+  // Preserve ordered distinct loads, including warm-ups and back-off sets.
   const exerciseLoads = (line: WorkoutExerciseDetail): number[] => {
     const seen = new Set<number>();
     const loads: number[] = [];
@@ -314,28 +254,8 @@ export function WorkoutScreen() {
     <Screen
       title={workout.name === '' ? t('workout.emptyName') : workout.name}
       onBack={() => void navigate('/')}
-      /* Une icône, comme sur tous les autres écrans. Le chronomètre occupait
-         cette place et **rien ne disait que c'était un menu** : un relevé qui
-         cache l'unique accès à « Renommer » et « Notes », sur l'écran le plus
-         important de l'app. Il descend au-dessus de la liste, là où le Lot 4 a
-         mis les relevés. */
       action={
         <div className="flex items-center gap-2">
-          {/* Le chrono global, épinglé au header : c'est un fait de séance, pas
-              d'exercice, donc il ne descend jamais dans une card ni ne part au
-              défilement. À droite du titre, à gauche du menu — l'avancement
-              descend au-dessus de la liste, le repos vit sur la card. Le bandeau
-              `WorkoutMeter` est dissous : chaque relevé va où vit son sens.
-
-              **Le relevé passe devant les commandes.** Il était posé entre le
-              deload et le menu, donc encadré de deux boutons : il se lisait comme
-              un troisième bouton qui refuse de répondre. Reporté du téléphone. La
-              lecture d'abord, les commandes groupées contre le bord — le même
-              ordre que l'en-tête des routines, où le compte précède le `+`.
-
-              Le deload a quitté cette rangée : un carré `80%` allumé ne disait
-              pas s'il était *actif* ou simplement *tapé*. Il est descendu sur la
-              barre d'avancement, en interrupteur (`Toggle`). */}
           <ElapsedTime
             startedAt={workout.startedAt}
             className="text-base font-semibold text-[var(--text-2)]"
@@ -349,20 +269,12 @@ export function WorkoutScreen() {
           </HeaderAction>
         </div>
       }
-      /* L'avancement, épinglé sous l'en-tête, hors du défilement : « il faut que
-         ça reste visible tout le temps » — reporté du téléphone, où le relevé
-         posé au-dessus de la liste partait au premier scroll. Sur sa propre
-         ligne, jamais à côté du titre (leçon du Lot 4). Rien tant que la séance
-         est vide : l'état vide dit déjà « 0 ». */
       sub={
         exercises.length > 0 ? (
           <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
             <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
               {workoutProgressLine(completedSets, totalSets)}
             </p>
-            {/* Le deload, à gauche du plier/déplier et séparé de lui : deux
-                commandes voisines qui se touchent, sur un écran qu'on manipule
-                d'une main en sueur, c'est un appui pour l'autre. */}
             <Toggle
               label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
               mark={t('workout.deloadMark')}
@@ -399,17 +311,12 @@ export function WorkoutScreen() {
           <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
         ) : (
           <>
-            {/* L'avancement ne vit plus ici : il est épinglé sous l'en-tête
-                (prop `sub`), pour rester visible même une fois la liste
-                défilée. */}
             <ReorderableList
               className="flex flex-col gap-3"
               items={exercises}
               keyOf={(line) => line.row.id}
               onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
               renderItem={(line, _index, state) => {
-                // The bar's setup and every distinct load it takes across the
-                // exercise's sets. Absent config or no load → no plate icon.
                 const config =
                   line.exercise !== undefined ? platesConfigFor(line.exercise) : null;
                 const loads = config !== null ? exerciseLoads(line) : [];
@@ -417,7 +324,6 @@ export function WorkoutScreen() {
                 <WorkoutExerciseCard
                   line={line}
                   superset={places.get(line.row.id)}
-                  // The rest belongs to the exercise whose set is counting down.
                   rest={
                     rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
                       ? {
@@ -454,9 +360,7 @@ export function WorkoutScreen() {
                   }}
                   onUncomplete={(setId) => {
                     void uncompleteSet(setId);
-                    // The rest this set started ends with it. `stop(setId)` only
-                    // touches the rest that belongs to this set, so un-ticking an
-                    // older set never cancels a rest a newer one is running.
+                    // Only stop the rest owned by this set.
                     stopRest(setId);
                   }}
                   onDeleteSet={(setId) => void deleteSet(setId)}
@@ -469,12 +373,6 @@ export function WorkoutScreen() {
           </>
         )}
 
-        {/* Toujours au pied de la liste, identique que la séance soit vide ou
-            non : une séance démarrée à vide depuis l'accueil doit pouvoir
-            accueillir son premier exercice — c'était le seul écran où ce geste
-            disparaissait quand la liste était vide. Même carte que l'éditeur de
-            routine, même geste que les cartes emploient pour leurs séries.
-            « Terminer » garde la barre collante. */}
         <Card>
           <AddRow
             label={t('workout.addExercise')}
@@ -669,11 +567,7 @@ export function WorkoutScreen() {
   );
 }
 
-/**
- * Per-exercise notes, in their own component for one reason: the draft has to be
- * keyed on the row, and a draft living in the parent would be re-seeded on every
- * keystroke of the grid above it.
- */
+/** Keeps the notes draft keyed to its workout-exercise row. */
 function ExerciseNotesSheet({
   open,
   onClose,

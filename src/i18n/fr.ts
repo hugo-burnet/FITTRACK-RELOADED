@@ -1,25 +1,9 @@
-/**
- * Every string the interface shows lives here — never inside a component.
- * ADR-007: no i18n library at V1, but the strings are already centralised so
- * adding English later is mechanical.
- *
- * Voice: second person singular, factual, no filler. The app is an instrument
- * used out of breath between two sets, not a companion.
- */
+/** Centralized French UI copy. */
 const fr = {
   app: {
     name: 'FitTrack',
   },
 
-  /**
-   * Le bandeau de mise à jour. Il paraît quand une nouvelle version attend
-   * derrière celle qui tourne, et il ne part que sur décision.
-   *
-   * « Recharger » et pas « Mettre à jour » : le mot doit annoncer ce qui va se
-   * passer à l'écran — la page se recharge — plutôt que le résultat abstrait.
-   * Quelqu'un au milieu d'une séance doit pouvoir lire le bouton et comprendre
-   * qu'il vaut mieux attendre la fin.
-   */
   update: {
     available: 'Une nouvelle version est disponible.',
     reload: 'Recharger',
@@ -29,17 +13,11 @@ const fr = {
   common: {
     yes: 'Oui',
     no: 'Non',
-    /** Screen-reader names for the two controls that are drawn, never written. */
     back: 'Retour',
     close: 'Fermer',
     decrease: 'Diminuer',
     increase: 'Augmenter',
-    /** Le chemin du retour, après une suppression qui n'a rien demandé. */
     undo: 'Annuler',
-    /**
-     * Le même mot pour un lecteur d'écran, avec ce qu'il rétablit — le bandeau
-     * dit sa place à l'œil, pas à l'oreille.
-     */
     undoDelete: 'Annuler la suppression de {reading}',
   },
 
@@ -48,11 +26,6 @@ const fr = {
     home: 'Accueil',
     routines: 'Routines',
     history: 'Historique',
-    /**
-     * A remplacé Réglages dans la barre : on regarde ses courbes bien plus
-     * souvent qu'on ne change une préférence, et les Réglages restent à une
-     * icône de là, dans l'en-tête de l'accueil.
-     */
     progress: 'Progression',
     exercises: 'Exercices',
     settings: 'Réglages',
@@ -75,20 +48,12 @@ const fr = {
     hours: 'h',
   },
 
-  /** The rest picker, shared by the exercise sheet and the routine sheet. */
   rest: {
-    /** The −/+ are drawn as glyphs; these name them for the ear. */
     decrease: 'Diminuer le repos',
     increase: 'Augmenter le repos',
-    /** The empty reading, and the clear chip, when there is nothing to inherit. */
     none: 'Aucun',
   },
 
-  /**
-   * The catalogue's three vocabularies, in the words of a French gym. Keyed by
-   * the stored value, so adding a group to MUSCLE_GROUPS without its label
-   * fails the typecheck instead of shipping "lower_back" to the screen.
-   */
   muscle: {
     chest: 'Pectoraux',
     lats: 'Grand dorsal',
@@ -188,21 +153,10 @@ const fr = {
     progressMuscles: 'Muscles',
   },
 
-  /**
-   * L'écran de séance en direct. Le vocabulaire y est le plus court possible :
-   * c'est le seul écran lu essoufflé, entre deux séries.
-   */
   workout: {
     emptyName: 'Séance libre',
-    /**
-     * Le minuteur de repos n'a **aucune commande** : le filet dit où on en est,
-     * et ce relevé dit combien dure la pause. Le format est celui du Lot 4
-     * (`1:30 min · 20 kg`) — un seul format de durée dans l'app.
-     */
     restLabel: 'Repos {duration}',
-    /** Interrogeable à la demande par un lecteur d'écran, jamais annoncé à la seconde. */
     restRemaining: 'Repos, {time} restantes',
-    /** Nom lisible par un lecteur d'écran ; à l'écran c'est une coche dessinée. */
     complete: 'Valider la série {number}',
     uncomplete: 'Annuler la série {number}',
     previous: 'Précédent',
@@ -211,38 +165,14 @@ const fr = {
     addExercise: 'Ajouter un exercice',
     finish: 'Terminer la séance',
     setNumber: 'Série {number}',
-    /**
-     * La consigne au-dessus du champ, pour un lecteur d'écran. À l'écran c'est
-     * la fourchette seule — « 8 – 12 » sous « REPS » n'a pas besoin du mot.
-     */
     target: 'objectif {value}',
-    /**
-     * RF-20 — le type de série se change **en séance**, au menu du rang.
-     *
-     * Une routine ne peut prescrire que « normale » et « échauffement » : qu'une
-     * série devienne dégressive ou parte à l'échec se décide la barre en main.
-     * L'entrée du menu porte le type courant en sous-titre, sinon il faudrait
-     * ouvrir la feuille pour savoir ce qu'on est en train de changer.
-     */
     setTypeAction: 'Type de série',
-    /**
-     * RF-30 — volontairement dans la feuille de série, jamais dans la grille.
-     * L’entrée reste visible pour que le RPE soit découvrable ; seule l’échelle
-     * se déplie, à la demande.
-     */
     rpeLabel: 'Effort perçu (RPE)',
     rpeEmpty: 'Non renseigné',
     rpeValue: '{value} / 10',
     rpeOption: 'RPE {value} sur 10',
     rpeClear: 'Effacer le RPE',
     exerciseMenu: 'Options de {name}',
-    /**
-     * Le relevé au-dessus de la liste : où j'en suis, en un coup d'œil.
-     *
-     * À zéro c'est « 0 série sur 7 », pas « aucune » : règle du Lot 1, un état
-     * vide est un relevé à zéro et pas un échec — et c'est l'état qu'on lit en
-     * premier à chaque séance.
-     */
     progress: '{done} séries sur {total}',
     progressOne: '1 série sur {total}',
     progressNone: '0 série sur {total}',
@@ -250,36 +180,18 @@ const fr = {
     expandAll: 'Tout déplier',
     deletedExercise: 'Exercice supprimé',
     notFound: 'Cette séance n’existe plus',
-    /** Menu ⋯ d'un exercice de la séance. */
     addSetAction: 'Ajouter une série',
     removeExercise: 'Retirer de la séance',
     removeExerciseConfirm:
       'Ses séries seront perdues, y compris celles déjà validées. Les autres exercices ne bougent pas.',
     deleteSet: 'Supprimer la série',
-    /**
-     * Le mot gravé sous la ligne, découvert par le balayage — et le seuil
-     * lui-même : la suppression part quand le mot est entièrement lisible.
-     * Un seul mot, donc : « Supprimer la série » demanderait un geste deux fois
-     * plus long que le pouce ne peut en faire d'une main.
-     */
     swipeDelete: 'Supprimer',
-    /** Ce que le bandeau d'annulation barre quand la série était vide. */
     emptySetReading: 'Série {number}',
     notesLabel: 'Notes de l’exercice',
     notesPlaceholder: 'Réglage, sensation, douleur…',
-    /**
-     * RF-23 — la félicitation, sur la ligne qui a battu le record et pas dans un
-     * toast en pied d'écran : un bandeau ne peut pas dire *laquelle* des vingt
-     * lignes a battu quoi. Le nom du record vient de `record.*`, le même que la
-     * fiche exercice. La série battue n'est pas répétée ici : la colonne
-     * « précédent » de cette ligne l'affiche déjà, deux centimètres au-dessus.
-     */
     recordBeaten: 'Record · {record}',
-    /** La marque de l'exo replié : il y a un record dedans, ouvre pour voir lequel. */
     recordFolded: 'Record',
-    /** Menu ⋯ de la séance. */
     workoutMenu: 'Options de la séance',
-    /** Le chrono du header : sans lui un lecteur d'écran annonce « 0:02 » seul. */
     elapsedLabel: 'Séance en cours depuis {time}',
     deloadAction: 'Activer le deload à 80 %',
     deloadActive: 'Deload actif à 80 %',
@@ -294,7 +206,6 @@ const fr = {
     workoutNotesLabel: 'Notes de la séance',
     empty: 'Aucun exercice',
     emptyBody: 'Ajoute ton premier exercice — tu peux aussi en ajouter en cours de route.',
-    /** RF-29 — a configurable ramp inserted before the working sets. */
     warmupAction: 'Calculer l’échauffement',
     warmupTitle: 'Échauffement',
     warmupTarget: 'Charge de travail',
@@ -313,36 +224,21 @@ const fr = {
     warmupNoSuggestion: 'Aucune charge d’approche inférieure n’est disponible avec ce pas.',
     warmupInsertError: 'Les séries n’ont pas été insérées. Réessaie.',
     warmupPreviewEmpty: '—',
-    /**
-     * Le calculateur de plaques (RF-28), accroché au menu ⋯ d'une série. N'apparaît
-     * que sur une vraie charge de barre (barbell, Smith, machine à plaques) : sur
-     * une machine à broche ou un haltère fixe, il n'y a rien à charger.
-     */
     plates: 'Plaques à charger',
     platesTitle: 'Plaques à charger',
-    /** Le repère sous le schéma : le compte vaut pour un seul côté, l'autre est identique. */
     platesPerSide: 'De chaque côté',
-    /** La charge totale visée, en gros, au-dessus du schéma. */
     platesTotalReading: '{weight} kg',
-    /** Le seul réglage local du calculateur : la barre utilisée aujourd’hui. */
     platesBarWeight: 'Poids de la barre',
-    /** Le matériel global de la salle, configuré là où il sert. */
     platesAvailable: 'Plaques disponibles',
     platesAvailableCount: '{selected} sur {total}',
     platesAvailableOption: '{weight} kg',
     platesAvailableEmpty: 'Aucune plaque sélectionnée.',
     platesAvailableSaveError: 'Impossible d’enregistrer les plaques disponibles.',
-    /** Une machine à plaques n’a pas de barre réglable dans ce lot. */
     platesMachineBase: 'Charge à vide {weight} kg',
-    /** Un côté sans aucune plaque : la charge visée est celle de la barre seule. */
     platesEmpty: 'Barre nue, aucune plaque à ajouter.',
-    /** La liste des plaques d'un côté, séparées par des points médians. */
     platesReadingPlate: '{count} × {weight}',
-    /** Une charge que le rack ne peut pas composer exactement. */
     platesRemainder: 'Il manque {weight} kg pour la charge exacte.',
-    /** Une charge plus légère que la barre seule : il n'y a rien à charger. */
     platesBelowBar: 'Plus léger que la barre seule ({weight} kg).',
-    /** Lecture du schéma pour un lecteur d'écran ; le dessin lui est masqué. */
     platesAria: 'De chaque côté : {plates}',
   },
 
@@ -356,7 +252,6 @@ const fr = {
     restBody: 'La prochaine série peut commencer.',
   },
 
-  /** L'écran de fin : ce que la séance a produit, avant de l'enregistrer. */
   finish: {
     title: 'Fin de séance',
     duration: 'Durée',
@@ -372,15 +267,10 @@ const fr = {
     discardBodyOne: '1 série validée sera perdue. C’est sans retour.',
     discardBodyNone: 'Aucune série n’a été validée : il n’y a rien à perdre.',
     discardConfirm: 'Abandonner',
-    /**
-     * Le tonnage ne compte que les kilos qui sont vraiment la charge : un lest
-     * ou une assistance ne disent rien du poids réellement déplacé.
-     */
     tonnageHint: 'Le tonnage ne compte que les charges soulevées, ni les lests ni les assistances.',
     nothingDone: 'Aucune série validée. Rien ne sera enregistré.',
   },
 
-  /** Set types. Warm-ups are excluded from volume and records (RF-20). */
   setType: {
     normal: 'Normale',
     warmup: 'Échauffement',
@@ -388,22 +278,11 @@ const fr = {
     failure: 'Jusqu’à l’échec',
   },
 
-  /**
-   * Un côté n'est nommé que lorsqu'il y en a un : `both` n'a pas de mot, parce
-   * qu'écrire « Les deux » sur chaque série d'un développé couché serait du
-   * bruit sur la seule information qui n'en est pas une.
-   */
   side: {
     left: 'Gauche',
     right: 'Droite',
   },
 
-  /**
-   * Les trois records d'un exercice, nommés **une fois** pour toute l'app : la
-   * fiche exercice les liste, la séance en direct les fête (RF-23), et un même
-   * fait ne peut pas avoir deux noms. Clés = `RecordKind` de `lib/records`, donc
-   * un quatrième record sans nom français ne passe pas le typecheck.
-   */
   record: {
     heaviest: 'Charge max',
     mostReps: 'Reps max',
