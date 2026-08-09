@@ -1,10 +1,15 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { applyTheme, loadTheme, THEME_STORAGE_KEY } from './theme';
+
+const syncSystemBars = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+
+vi.mock('@/platform/systemBars', () => ({ syncSystemBars }));
 
 describe('theme', () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.removeAttribute('data-theme');
+    vi.clearAllMocks();
   });
 
   it('utilise le thème sombre par défaut', () => {
@@ -34,5 +39,13 @@ describe('theme', () => {
     expect(meta.content).toBe('#12110f');
 
     meta.remove();
+  });
+
+  it('synchronise le thème avec les barres système natives', () => {
+    applyTheme('light');
+    applyTheme('dark');
+
+    expect(syncSystemBars).toHaveBeenNthCalledWith(1, 'light');
+    expect(syncSystemBars).toHaveBeenNthCalledWith(2, 'dark');
   });
 });

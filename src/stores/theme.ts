@@ -1,3 +1,5 @@
+import { syncSystemBars } from '@/platform/systemBars';
+
 export type Theme = 'dark' | 'light';
 
 export const THEME_STORAGE_KEY = 'fittrack:theme';
@@ -20,4 +22,5 @@ export function applyTheme(theme: Theme): void {
   // app reads as a web page with a mismatched header.
   const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
   if (meta) meta.content = SYSTEM_BAR_COLOR[theme];
+  void syncSystemBars(theme);
 }
