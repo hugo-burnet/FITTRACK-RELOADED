@@ -5,7 +5,7 @@ Application personnelle de suivi de musculation. Local-first, hors-ligne, sans c
 **En ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
 
 **Sur ton téléphone :** l'app s'installe depuis le navigateur et fonctionne en mode avion —
-`docs/INSTALLATION.md`.
+[guide PWA](docs/INSTALLATION.md) ou [APK Android](docs/ANDROID.md).
 
 ## Développement
 
@@ -14,13 +14,13 @@ npm install
 npm run dev
 ```
 
-| Commande | Rôle |
-|---|---|
-| `npm run dev` | Serveur de développement |
-| `npm run build` | Build de production (typecheck inclus) |
-| `npm run test:run` | Tests unitaires, une passe |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run lint` | ESLint |
+| Commande            | Rôle                                   |
+| ------------------- | -------------------------------------- |
+| `npm run dev`       | Serveur de développement               |
+| `npm run build`     | Build de production (typecheck inclus) |
+| `npm run test:run`  | Tests unitaires, une passe             |
+| `npm run typecheck` | `tsc --noEmit`                         |
+| `npm run lint`      | ESLint                                 |
 
 > Le serveur de dev sert l'app sous `/FITTRACK-RELOADED/` (le `base` de `vite.config.ts`
 > correspond au nom du dépôt GitHub). Ouvre http://localhost:5173/FITTRACK-RELOADED/.

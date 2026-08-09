@@ -1,0 +1,62 @@
+name: Android APK
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:run
+      - run: npm run android:sync
+      - name: Validate signing secrets and decode the keystore
+        shell: bash
+        env:
+          FITTRACK_ANDROID_KEYSTORE_BASE64: ${{ secrets.FITTRACK_ANDROID_KEYSTORE_BASE64 }}
+          FITTRACK_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEYSTORE_PASSWORD }}
+          FITTRACK_ANDROID_KEY_ALIAS: ${{ secrets.FITTRACK_ANDROID_KEY_ALIAS }}
+          FITTRACK_ANDROID_KEY_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for name in FITTRACK_ANDROID_KEYSTORE_BASE64 FITTRACK_ANDROID_KEYSTORE_PASSWORD FITTRACK_ANDROID_KEY_ALIAS FITTRACK_ANDROID_KEY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing required Android signing secret: $name"
+              exit 1
+            fi
+          done
+          printf '%s' "$FITTRACK_ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/fittrack.jks"
+      - name: Build signed debug APK
+        env:
+          FITTRACK_KEYSTORE_FILE: ${{ runner.temp }}/fittrack.jks
+          FITTRACK_KEYSTORE_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEYSTORE_PASSWORD }}
+          FITTRACK_KEY_ALIAS: ${{ secrets.FITTRACK_ANDROID_KEY_ALIAS }}
+          FITTRACK_KEY_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x android/gradlew
+          android/gradlew assembleDebug \
+            -PfittrackVersionCode="${{ github.run_number }}" \
+            -PfittrackVersionName="$(node -p "require('./package.json').version")"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fittrack-android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+          if-no-files-found: error
