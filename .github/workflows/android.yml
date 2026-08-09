@@ -52,7 +52,7 @@ jobs:
           FITTRACK_KEY_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEY_PASSWORD }}
         run: |
           chmod +x android/gradlew
-          android/gradlew assembleDebug \
+          android/gradlew -p android assembleDebug \
             -PfittrackVersionCode="${{ github.run_number }}" \
             -PfittrackVersionName="$(node -p "require('./package.json').version")"
       - uses: actions/upload-artifact@v4
