@@ -9,6 +9,7 @@ import type {
 import { day } from '@/test/factories';
 import { resetDb } from '@/test/resetDb';
 import { newEntity } from './base';
+import { saveBodyWeight } from './bodyMeasurements';
 import { listHistoricalWorkouts } from './historicalWorkouts';
 
 async function seedExercise(
@@ -133,6 +134,44 @@ async function seed(input: {
 
 describe('listHistoricalWorkouts', () => {
   beforeEach(resetDb);
+
+  it('projects the body weight at each session and keeps the snapshotted load factor', async () => {
+    const pushUp = await seedExercise({
+      measurementType: 'reps_only',
+      bodyweightLoadFactor: 0.9,
+    });
+    const workouts = await Promise.all(
+      [day(1), day(5), day(9)].map((startedAt) =>
+        seed({
+          startedAt,
+          exercises: [
+            { exerciseId: pushUp.id, sets: [{ order: 0, reps: 8 }] },
+          ],
+        }),
+      ),
+    );
+    const rows = await db.workoutExercises.toArray();
+    await db.workoutExercises.bulkPut(
+      rows.map((row) => ({
+        ...row,
+        exerciseMeasurementType: 'reps_only' as const,
+        exerciseBodyweightLoadFactor: 0.7,
+      })),
+    );
+    await db.exercises.update(pushUp.id, { bodyweightLoadFactor: 0.5 });
+    await saveBodyWeight(82, day(3));
+    await saveBodyWeight(80, day(7));
+
+    const sources = await listHistoricalWorkouts({ kind: 'all-history' });
+
+    expect(sources.map((source) => source.workoutId)).toEqual(
+      workouts.map((workout) => workout.id),
+    );
+    expect(sources.map((source) => source.bodyWeightKg)).toEqual([82, 82, 80]);
+    expect(
+      sources.map((source) => source.exercises[0]?.bodyweightLoadFactor),
+    ).toEqual([0.7, 0.7, 0.7]);
+  });
 
   it('round-trips notes and historical set fields into the canonical projection', async () => {
     const bench = await seedExercise();

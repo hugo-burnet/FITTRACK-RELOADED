@@ -69,8 +69,14 @@ const OFFERED: Record<MeasurementType, MetricKey[]> = {
   weight_reps: ['topWeight', 'bestSetVolume', 'sessionTonnage', 'totalReps', 'workingSets'],
   weight_time: ['topWeight', 'totalDuration', 'topDuration', 'workingSets'],
   // Bodyweight: the belt is progress too, but repetitions are the headline.
-  reps_only: ['topReps', 'totalReps', 'workingSets'],
-  assisted_weight_reps: ['lowestAssist', 'topReps', 'totalReps', 'workingSets'],
+  reps_only: ['topReps', 'sessionTonnage', 'totalReps', 'workingSets'],
+  assisted_weight_reps: [
+    'lowestAssist',
+    'sessionTonnage',
+    'topReps',
+    'totalReps',
+    'workingSets',
+  ],
   time_only: ['topDuration', 'totalDuration', 'workingSets'],
   distance_time: ['topDistance', 'totalDistance', 'totalDuration', 'workingSets'],
 };
@@ -96,6 +102,8 @@ export interface AnalyticsSession {
   startedAt: number;
   /** From the snapshot, falling back to the library. May be absent. */
   measurementType?: MeasurementType;
+  bodyWeightKg?: number;
+  bodyweightLoadFactor?: number;
   sets: HistoricalSet[];
 }
 
@@ -149,7 +157,14 @@ function valueOf(key: MetricKey, session: AnalyticsSession): number | undefined 
   if (sets.length === 0) return undefined;
 
   const totals = () =>
-    sessionTotals(sets.map((set) => ({ set, weightRole: measurementShape(type).weightRole })));
+    sessionTotals(
+      sets.map((set) => ({
+        set,
+        weightRole: measurementShape(type).weightRole,
+        bodyweightLoadFactor: session.bodyweightLoadFactor,
+      })),
+      session.bodyWeightKg,
+    );
 
   switch (key) {
     case 'topWeight':

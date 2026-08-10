@@ -30,6 +30,8 @@ interface SourceValues {
   startedAt: number;
   durationSeconds?: number;
   timezoneOffsetMinutes?: number;
+  bodyWeightKg?: number;
+  bodyweightLoadFactor?: number;
   measurementType?: MeasurementType;
   sets?: Array<Partial<HistoricalSet>>;
 }
@@ -38,6 +40,8 @@ const source = ({
   startedAt,
   durationSeconds = 3_600,
   timezoneOffsetMinutes,
+  bodyWeightKg,
+  bodyweightLoadFactor,
   measurementType = 'weight_reps',
   sets = [{}],
 }: SourceValues) =>
@@ -47,9 +51,13 @@ const source = ({
     ...(timezoneOffsetMinutes === undefined
       ? {}
       : { timezoneOffsetMinutes }),
+    ...(bodyWeightKg === undefined ? {} : { bodyWeightKg }),
     exercises: [
       historicalExercise({
         measurementType,
+        ...(bodyweightLoadFactor === undefined
+          ? {}
+          : { bodyweightLoadFactor }),
         sets: sets.map((values) => historicalSet(values)),
       }),
     ],
@@ -92,11 +100,15 @@ describe('weeklyVolumeBuckets', () => {
     const sources = [
       source({
         startedAt: at,
+        bodyWeightKg: 80,
+        bodyweightLoadFactor: 1,
         measurementType: 'assisted_weight_reps',
         sets: [{ weight: 20, reps: 8 }],
       }),
       source({
         startedAt: at,
+        bodyWeightKg: 80,
+        bodyweightLoadFactor: 0.7,
         measurementType: 'reps_only',
         sets: [{ weight: 10, reps: 8 }],
       }),
@@ -115,7 +127,21 @@ describe('weeklyVolumeBuckets', () => {
 
     expect(
       weeklyVolumeBuckets(sources, bounds, true)[2]!.tonnage,
-    ).toBe(250);
+    ).toBe(1_258);
+  });
+
+  it('counts an eight-rep push-up set from body weight and its historical factor', () => {
+    const pushUps = source({
+      startedAt: new Date(2026, 6, 21, 18).getTime(),
+      bodyWeightKg: 80,
+      bodyweightLoadFactor: 0.7,
+      measurementType: 'reps_only',
+      sets: [{ weight: undefined, reps: 8 }],
+    });
+
+    expect(
+      weeklyVolumeBuckets([pushUps], bounds, true)[2]!.tonnage,
+    ).toBe(448);
   });
 
   it('uses session duration, never set duration', () => {

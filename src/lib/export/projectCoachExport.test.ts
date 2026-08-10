@@ -12,6 +12,11 @@ import {
   historicalSet,
   historicalWorkout,
 } from '@/test/historicalWorkout';
+import { periodBounds } from '@/lib/analytics/periods';
+import {
+  weeklyVolumeBuckets,
+  weeklyVolumeTotal,
+} from '@/lib/analytics/volume';
 import { projectCoachExport } from './projectCoachExport';
 import { DEFAULT_EXPORT_OPTIONS } from './types';
 
@@ -116,6 +121,30 @@ describe('projectCoachExport — envelope', () => {
 });
 
 describe('projectCoachExport — totals', () => {
+  it('matches the weekly total for bodyweight exercises', () => {
+    const pushUps = source({
+      bodyWeightKg: 80,
+      exercises: [
+        historicalExercise({
+          measurementType: 'reps_only',
+          bodyweightLoadFactor: 0.7,
+          sets: [historicalSet({ weight: undefined, reps: 8 })],
+        }),
+      ],
+    });
+    const weeklyTotal = weeklyVolumeTotal(
+      weeklyVolumeBuckets(
+        [pushUps],
+        periodBounds('all', STARTED_AT),
+      ),
+      'tonnage',
+    );
+    const exportedTotal = project([pushUps]).workouts[0]?.totals.tonnage;
+
+    expect(weeklyTotal).toBe(448);
+    expect(exportedTotal).toBe(weeklyTotal);
+  });
+
   it('counts tonnage only where weight is the load', () => {
     const data = project([
       source({

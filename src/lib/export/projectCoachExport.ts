@@ -128,8 +128,10 @@ function projectWorkout(
         return exercise.sets.map((set) => ({
           set,
           weightRole,
+          bodyweightLoadFactor: exercise.bodyweightLoadFactor,
         }));
       }),
+      source.bodyWeightKg,
     ),
     exercises: source.exercises.map((exercise) =>
       projectExercise(exercise, options),

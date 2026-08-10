@@ -17,6 +17,15 @@ export function toAnalyticsSessions(
       ...(measurementType === undefined
         ? {}
         : { measurementType }),
+      ...(workout.bodyWeightKg === undefined
+        ? {}
+        : { bodyWeightKg: workout.bodyWeightKg }),
+      ...(workout.exercises[0]?.bodyweightLoadFactor === undefined
+        ? {}
+        : {
+            bodyweightLoadFactor:
+              workout.exercises[0].bodyweightLoadFactor,
+          }),
       sets,
     };
   });

@@ -13,6 +13,7 @@ import type {
   HistoricalWorkout,
 } from '@/lib/historyProjection';
 import { alive } from './base';
+import { resolveBodyWeightsAt } from './bodyMeasurements';
 
 const byOrder = <T extends { order: number }>(
   left: T,
@@ -155,6 +156,9 @@ export async function listHistoricalWorkouts(
   if (workouts.length === 0) return [];
 
   const workoutIds = workouts.map((workout) => workout.id);
+  const bodyWeights = await resolveBodyWeightsAt(
+    workouts.map(({ startedAt }) => startedAt),
+  );
   const { rows: allRows, sets: allSets } =
     await loadWorkoutGraph(workoutIds);
 
@@ -215,6 +219,9 @@ export async function listHistoricalWorkouts(
               workout.startedTimezoneOffsetMinutes,
           }),
       durationSeconds: workout.durationSeconds,
+      ...(bodyWeights.has(workout.startedAt)
+        ? { bodyWeightKg: bodyWeights.get(workout.startedAt)! }
+        : {}),
       exercises: (rowsPerWorkout.get(workout.id) ?? [])
         .sort(byOrder)
         .map((row) =>

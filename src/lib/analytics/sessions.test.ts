@@ -4,9 +4,31 @@ import {
   historicalSet,
   historicalWorkout,
 } from '@/test/historicalWorkout';
+import { metricSeries } from './metrics';
 import { toAnalyticsSessions } from './sessions';
 
 describe('toAnalyticsSessions', () => {
+  it('carries the body weight and historical load factor needed for tonnage', () => {
+    const sessions = toAnalyticsSessions([
+      historicalWorkout({
+        bodyWeightKg: 80,
+        exercises: [
+          historicalExercise({
+            measurementType: 'reps_only',
+            bodyweightLoadFactor: 0.7,
+            sets: [historicalSet({ weight: undefined, reps: 8 })],
+          }),
+        ],
+      }),
+    ]);
+
+    expect(sessions[0]).toMatchObject({
+      bodyWeightKg: 80,
+      bodyweightLoadFactor: 0.7,
+    });
+    expect(metricSeries('sessionTonnage', sessions)[0]?.value).toBe(448);
+  });
+
   it('dates a session by its start, not its first set', () => {
     const sources = [
       historicalWorkout({

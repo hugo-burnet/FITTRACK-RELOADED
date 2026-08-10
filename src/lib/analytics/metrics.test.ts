@@ -30,11 +30,13 @@ const session = (
   startedAt: number,
   measurementType: MeasurementType | undefined,
   sets: Partial<WorkoutSet>[],
+  overrides: Partial<AnalyticsSession> = {},
 ): AnalyticsSession => ({
   workoutId: `w-${startedAt}`,
   startedAt,
   measurementType,
   sets: sets.map(aSet),
+  ...overrides,
 });
 
 const values = (points: { value: number }[]): number[] => points.map((point) => point.value);
@@ -48,7 +50,7 @@ describe('availableMetrics', () => {
     expect(keys('time_only')).not.toContain('topWeight');
     expect(keys('time_only')).toContain('topDuration');
     expect(keys('distance_time')).toContain('topDistance');
-    expect(keys('reps_only')).not.toContain('sessionTonnage');
+    expect(keys('reps_only')).toContain('sessionTonnage');
   });
 
   it('offre l’assistance minimale, et elle seule, sur une machine assistée', () => {
@@ -57,7 +59,7 @@ describe('availableMetrics', () => {
     // Le poids d’une machine assistée n’est pas une charge : « charge max »
     // féliciterait la séance la plus aidée.
     expect(keys).not.toContain('topWeight');
-    expect(keys).not.toContain('sessionTonnage');
+    expect(keys).toContain('sessionTonnage');
   });
 
   it('n’offre rien quand le type de mesure est inconnu', () => {
@@ -152,6 +154,19 @@ describe('metricSeries', () => {
     ]);
 
     expect(values(points)).toEqual([1000]);
+  });
+
+  it('compte le poids corporel effectif pour les répétitions seules', () => {
+    const points = metricSeries('sessionTonnage', [
+      session(
+        1,
+        'reps_only',
+        [{ weight: undefined, reps: 8 }],
+        { bodyWeightKg: 80, bodyweightLoadFactor: 0.7 },
+      ),
+    ]);
+
+    expect(values(points)).toEqual([448]);
   });
 
   it('prend l’assistance la plus faible, zéro compris', () => {

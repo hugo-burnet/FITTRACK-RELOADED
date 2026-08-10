@@ -19,8 +19,13 @@ function sourceTonnage(workout: HistoricalWorkout): number {
         exercise.measurementType === undefined
           ? undefined
           : measurementShape(exercise.measurementType).weightRole;
-      return exercise.sets.map((set) => ({ set, weightRole }));
+      return exercise.sets.map((set) => ({
+        set,
+        weightRole,
+        bodyweightLoadFactor: exercise.bodyweightLoadFactor,
+      }));
     }),
+    workout.bodyWeightKg,
   ).tonnage;
 }
 

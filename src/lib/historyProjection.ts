@@ -28,6 +28,7 @@ export interface HistoricalExercise {
   measurementType?: MeasurementType;
   primaryMuscle?: MuscleGroup;
   equipment?: Equipment;
+  bodyweightLoadFactor?: number;
   notes?: string;
   sets: HistoricalSet[];
 }
@@ -39,5 +40,6 @@ export interface HistoricalWorkout {
   startedAt: number;
   timezoneOffsetMinutes?: number;
   durationSeconds: number;
+  bodyWeightKg?: number;
   exercises: HistoricalExercise[];
 }
