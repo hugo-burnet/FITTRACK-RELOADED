@@ -7,7 +7,7 @@ import { EQUIPMENT, MEASUREMENT_TYPES, MUSCLE_GROUPS } from '@/data/types';
 import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { equipmentLabel, measurementHint, measurementLabel, muscleLabel } from '@/i18n/labels';
-import { Button, Card, Input, ListRow, OptionSheet } from '@/ui';
+import { Button, Card, Input, ListRow, NumberInput, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 
@@ -17,6 +17,7 @@ type Draft = {
   equipment: Equipment;
   measurementType: MeasurementType;
   isUnilateral: 0 | 1;
+  bodyweightLoadFactor?: number;
 };
 
 /** Bench press. The four fields after the name are adjustments, not questions. */
@@ -90,20 +91,44 @@ export function ExerciseFormScreen() {
       equipment: existing.equipment,
       measurementType: existing.measurementType,
       isUnilateral: existing.isUnilateral,
+      bodyweightLoadFactor: existing.bodyweightLoadFactor,
     });
   }
 
   const name = draft.name.trim();
+  const supportsBodyweightFactor =
+    draft.measurementType === 'reps_only' || draft.measurementType === 'assisted_weight_reps';
+  const factorPercent =
+    draft.bodyweightLoadFactor === undefined
+      ? undefined
+      : Number((draft.bodyweightLoadFactor * 100).toFixed(2));
+  const factorInvalid =
+    factorPercent !== undefined && (factorPercent <= 0 || factorPercent > 100);
 
   const submit = () => {
-    if (name === '') return;
+    if (name === '' || factorInvalid) return;
+
+    const base = {
+      name,
+      primaryMuscle: draft.primaryMuscle,
+      equipment: draft.equipment,
+      measurementType: draft.measurementType,
+      isUnilateral: draft.isUnilateral,
+    };
+    const withFactor =
+      supportsBodyweightFactor && draft.bodyweightLoadFactor !== undefined
+        ? { ...base, bodyweightLoadFactor: draft.bodyweightLoadFactor }
+        : base;
 
     if (editing && existing != null) {
-      void updateExercise(existing.id, { ...draft, name }).then(() => navigate(-1));
+      void updateExercise(existing.id, {
+        ...withFactor,
+        ...(supportsBodyweightFactor ? {} : { bodyweightLoadFactor: undefined }),
+      }).then(() => navigate(-1));
       return;
     }
 
-    void createCustomExercise({ ...draft, name, secondaryMuscles: [] }).then((created) =>
+    void createCustomExercise({ ...withFactor, secondaryMuscles: [] }).then((created) =>
       // `replace`: going back from the new exercise returns to the library, not
       // to a form that would create a second copy.
       navigate(`/exercises/${created.id}`, { replace: true }),
@@ -126,6 +151,41 @@ export function ExerciseFormScreen() {
             onChange={(event) => setDraft({ ...draft, name: event.target.value })}
           />
         </Card>
+
+        {supportsBodyweightFactor && (
+          <Card padded>
+            <p className="mb-2 text-base font-medium text-[var(--text-1)]">
+              {t('exerciseForm.bodyweightFactorLabel')}
+            </p>
+            <NumberInput
+              aria-label={t('exerciseForm.bodyweightFactorLabel')}
+              value={factorPercent}
+              onChange={(value) =>
+                setDraft({
+                  ...draft,
+                  bodyweightLoadFactor: value === undefined ? undefined : value / 100,
+                })
+              }
+              step={5}
+              min={0.1}
+              max={100}
+              suffix={t('units.percent')}
+              placeholder={
+                draft.measurementType === 'assisted_weight_reps'
+                  ? t('exerciseForm.bodyweightFactorDefault')
+                  : undefined
+              }
+            />
+            <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+              {t('exerciseForm.bodyweightFactorHint')}
+            </p>
+            {factorInvalid && (
+              <p role="alert" className="mt-1 text-sm text-[var(--danger-ink)]">
+                {t('exerciseForm.bodyweightFactorError')}
+              </p>
+            )}
+          </Card>
+        )}
 
         <Card>
           <PickerRow
@@ -181,7 +241,13 @@ export function ExerciseFormScreen() {
         </Card>
 
         {/* Thumb zone: the primary action sits at the bottom of the screen. */}
-        <Button variant="primary" size="lg" fullWidth disabled={name === ''} onClick={submit}>
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          disabled={name === '' || factorInvalid}
+          onClick={submit}
+        >
           {editing ? t('exerciseForm.submitSave') : t('exerciseForm.submitCreate')}
         </Button>
       </div>
@@ -210,7 +276,20 @@ export function ExerciseFormScreen() {
         title={t('exerciseForm.measurementLabel')}
         options={MEASUREMENT_OPTIONS}
         value={draft.measurementType}
-        onSelect={(measurementType) => setDraft({ ...draft, measurementType })}
+        onSelect={(measurementType) => {
+          const supportsFactor =
+            measurementType === 'reps_only' || measurementType === 'assisted_weight_reps';
+          setDraft({
+            ...draft,
+            measurementType,
+            bodyweightLoadFactor:
+              measurementType === 'assisted_weight_reps'
+                ? 1
+                : supportsFactor
+                  ? draft.bodyweightLoadFactor
+                  : undefined,
+          });
+        }}
       />
     </Screen>
   );

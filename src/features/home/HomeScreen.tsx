@@ -5,6 +5,7 @@ import { getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { ActionBand, Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
+import { HomeBodyWeightCard } from './HomeBodyWeightCard';
 import { HomeProgressLinks } from './HomeProgressLinks';
 import { HomeRecentWorkouts } from './HomeRecentWorkouts';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
@@ -55,22 +56,27 @@ export function HomeScreen() {
           // sursaute pas quand les données arrivent.
           <div aria-hidden="true" className="space-y-7">
             <div className="h-24 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+            <div className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
             <div className="h-44 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
             <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
           </div>
         )}
 
         {state.status === 'error' && (
-          <div role="status">
-            <Card padded>
-              <p className="text-sm leading-relaxed text-[var(--text-1)]">{t('home.readError')}</p>
-            </Card>
-          </div>
+          <>
+            <HomeBodyWeightCard />
+            <div role="status">
+              <Card padded>
+                <p className="text-sm leading-relaxed text-[var(--text-1)]">{t('home.readError')}</p>
+              </Card>
+            </div>
+          </>
         )}
 
         {state.status === 'ready' && (
           <>
             <HomeWeekCard regularity={state.regularity} />
+            <HomeBodyWeightCard />
             <HomeSuggestionCard
               suggestion={state.data.suggestedRoutine}
               routineCount={state.data.routineCount}

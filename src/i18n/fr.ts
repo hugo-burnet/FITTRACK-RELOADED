@@ -42,6 +42,7 @@ const fr = {
     set: 'série',
     streakDays: 'jours d’affilée',
     kg: 'kg',
+    percent: '%',
     seconds: 's',
     minutes: 'min',
     meters: 'm',
@@ -153,6 +154,16 @@ const fr = {
     progressPace: 'Rythme',
     progressVolume: 'Volume',
     progressMuscles: 'Muscles',
+    bodyWeightSection: 'Poids du jour',
+    bodyWeightLabel: 'Poids du corps',
+    bodyWeightSave: 'Enregistrer',
+    bodyWeightPlaceholder: '80',
+    bodyWeightSaving: 'Enregistrement\u2026',
+    bodyWeightHint: 'Renseigne ton poids pour compter les exercices au poids du corps.',
+    bodyWeightLatest: 'Derni\u00e8re mesure : {date}',
+    bodyWeightSaved: 'Poids enregistr\u00e9.',
+    bodyWeightUpdated: 'Poids mis \u00e0 jour.',
+    bodyWeightError: 'Le poids n\u2019a pas pu \u00eatre enregistr\u00e9. R\u00e9essaie.',
   },
 
   workout: {
@@ -269,7 +280,8 @@ const fr = {
     discardBodyOne: '1 série validée sera perdue. C’est sans retour.',
     discardBodyNone: 'Aucune série n’a été validée : il n’y a rien à perdre.',
     discardConfirm: 'Abandonner',
-    tonnageHint: 'Le tonnage ne compte que les charges soulevées, ni les lests ni les assistances.',
+    tonnageHint:
+      'Charge externe et poids du corps effectif estim\u00e9. Assistance soustraite, \u00e9chauffements exclus.',
     nothingDone: 'Aucune série validée. Rien ne sera enregistré.',
   },
 
@@ -739,6 +751,10 @@ const fr = {
     muscleLabel: 'Muscle principal',
     equipmentLabel: 'Matériel',
     measurementLabel: 'Ce que tu saisis',
+    bodyweightFactorLabel: 'Part du poids du corps',
+    bodyweightFactorHint: 'Optionnel. 70 % pour des pompes, 100 % pour des tractions.',
+    bodyweightFactorError: 'Plus de 0 et jusqu\u2019\u00e0 100 %.',
+    bodyweightFactorDefault: '100',
     unilateralLabel: 'Unilatéral',
     unilateralHint: 'Un côté à la fois : presse unilatérale, curl marteau alterné.',
 
@@ -874,7 +890,7 @@ const fr = {
     workingSetCount: 'Séries de travail : {count}',
     /** L'unique chiffre agrégé du document dit lui-même ce qu'il ne compte pas. */
     tonnageNote:
-      'Le tonnage ne compte que la charge externe réellement soulevée : ni assistance, ni poids du corps, échauffements exclus.',
+      'Le tonnage additionne la charge externe et le poids du corps effectif estim\u00e9, assistance soustraite et \u00e9chauffements exclus.',
     workoutHeading: '{name} — {date}',
     duration: 'Durée : {value}',
     tonnage: 'Tonnage : {value}',
@@ -1030,7 +1046,8 @@ const fr = {
     weeksSection: 'Semaines',
     scaleZero: '0',
     emptyPeriod: 'Aucune séance sur cette période.',
-    zeroTonnage: 'Ces séances ne contiennent aucune charge externe comptée dans le tonnage.',
+    zeroTonnage:
+      'Aucune charge compt\u00e9e. Renseigne ton poids sur l\u2019accueil pour inclure les exercices au poids du corps.',
     singleWeek: 'Une seule semaine sur cette période : une tendance demande plusieurs semaines.',
     /**
      * Pourquoi aucune colonne ne ressort ici, alors que le graphique des séances
@@ -1041,7 +1058,7 @@ const fr = {
     chartLegend:
       'Toutes les semaines ont la même couleur : le volume n’a pas d’objectif à atteindre.',
     tonnageHint:
-      'Charges externes soulevées. Assistance, lest, poids du corps et échauffements exclus.',
+      'Charge externe et poids du corps effectif estim\u00e9. Assistance soustraite, \u00e9chauffements exclus.',
     durationHint: 'Somme des durées complètes des séances.',
     chartSummary:
       '{metric} sur {count} semaines, du {first} au {last}. Minimum {min}, maximum {max}, moyenne {average}.',
@@ -1106,7 +1123,7 @@ const fr = {
     topWeight: 'La série de travail la plus lourde de la séance.',
     bestSetVolume: 'La meilleure série de la séance, charge × répétitions.',
     sessionTonnage:
-      'Charge × répétitions, additionné sur la séance. Ne compte ni l’assistance ni le poids du corps.',
+      'Charge externe et poids du corps effectif estim\u00e9 \u00d7 r\u00e9p\u00e9titions. Assistance soustraite, \u00e9chauffements exclus.',
     topReps: 'La série de travail la plus longue en répétitions.',
     totalReps: 'Toutes les répétitions de travail de la séance.',
     workingSets: 'Les séries de la séance, échauffement exclu.',

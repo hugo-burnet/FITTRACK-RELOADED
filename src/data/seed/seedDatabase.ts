@@ -98,7 +98,8 @@ async function reconcileShippedMetadata(rows: readonly Exercise[]): Promise<void
     };
 
     if (entry.bodyweightLoadFactor === undefined) {
-      const { bodyweightLoadFactor: _removedFactor, ...withoutFactor } = row;
+      const withoutFactor = { ...row };
+      delete withoutFactor.bodyweightLoadFactor;
       return [touch(withoutFactor, changes)];
     }
 

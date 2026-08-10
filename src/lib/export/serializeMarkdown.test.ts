@@ -88,7 +88,8 @@ describe('serializeMarkdown — document', () => {
   });
 
   it('explains the one aggregated figure it prints', () => {
-    expect(write()).toContain('Le tonnage ne compte que la charge externe');
+    expect(write()).toContain('poids du corps effectif estim\u00e9');
+    expect(write()).not.toContain('ni poids du corps');
   });
 
   it('says nothing about tonnage when there is none to say', () => {
