@@ -133,4 +133,10 @@ describe('sessionTotals', () => {
       { set: aSet({ weight: 10, reps: 8 }), weightRole: 'added', bodyweightLoadFactor: 1 },
     ]).tonnage).toBe(80);
   });
+
+  it('ignore le poids corporel connu quand son coefficient manque', () => {
+    expect(sessionTotals([
+      { set: aSet({ weight: 10, reps: 8 }), weightRole: 'added' },
+    ], 80).tonnage).toBe(80);
+  });
 });

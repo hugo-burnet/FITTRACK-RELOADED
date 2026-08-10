@@ -16,7 +16,7 @@ export interface SessionTotals {
   /** Sets excluding warm-ups. */
   workingSets: number;
   totalReps: number;
-  /** Kilograms, counted **only** where the weight really is the load. */
+  /** Kilograms moved from external loads and effective bodyweight loads. */
   tonnage: number;
   durationSeconds: number;
   distanceMeters: number;
