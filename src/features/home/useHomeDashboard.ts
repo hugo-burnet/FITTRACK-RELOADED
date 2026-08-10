@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { getHomeDashboard, type HomeDashboardData } from '@/data/repositories/home';
 import { calculateWeeklyRegularity, type WeeklyRegularity } from '@/lib/history';
@@ -19,6 +19,11 @@ export type HomeDashboardState =
  * La régularité est calculée ici avec la fonction de l'Historique, à partir des
  * mêmes dates et du même historique d'objectifs : une seule implémentation de la
  * série hebdomadaire dans l'app, deux écrans qui l'affichent.
+ *
+ * Elle est **mémoïsée** : elle range tout l'historique par semaine, donc son
+ * coût suit le nombre de séances, alors que ses trois entrées ne changent qu'à
+ * une écriture en base. Hors mémo elle se rejouait à chaque rendu de l'accueil —
+ * y compris ceux qui ne doivent rien à ces données.
  */
 export function useHomeDashboard(): HomeDashboardState {
   // Figé à l'ouverture, comme l'Historique : la semaine courante ne doit pas
@@ -33,16 +38,27 @@ export function useHomeDashboard(): HomeDashboardState {
     }
   }, []);
 
-  if (result === undefined) return { status: 'loading' };
-  if (result.data === null) return { status: 'error' };
+  const data = result?.data ?? null;
 
-  return {
-    status: 'ready',
-    data: result.data,
-    regularity: calculateWeeklyRegularity(
-      result.data.completedWorkoutTimestamps,
-      result.data.weeklyGoalHistory,
-      openedAt,
-    ),
-  };
+  // Avant les retours anticipés : un hook ne se saute pas.
+  const ready = useMemo<HomeDashboardState | null>(
+    () =>
+      data === null
+        ? null
+        : {
+          status: 'ready',
+          data,
+          regularity: calculateWeeklyRegularity(
+            data.completedWorkoutTimestamps,
+            data.weeklyGoalHistory,
+            openedAt,
+          ),
+        },
+    [data, openedAt],
+  );
+
+  if (result === undefined) return { status: 'loading' };
+  if (ready === null) return { status: 'error' };
+
+  return ready;
 }
