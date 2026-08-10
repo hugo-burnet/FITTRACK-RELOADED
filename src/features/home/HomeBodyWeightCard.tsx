@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { getLatestBodyWeight, saveBodyWeight } from '@/data/repositories/bodyMeasurements';
 import { t } from '@/i18n/fr';
@@ -22,13 +22,27 @@ function isSameLocalDay(left: number, right: number): boolean {
   );
 }
 
+function millisecondsUntilNextLocalDay(timestamp: number): number {
+  const nextDay = new Date(timestamp);
+  nextDay.setHours(24, 0, 0, 0);
+  return Math.max(1, nextDay.getTime() - timestamp);
+}
+
 /** One-thumb, local-first entry point for the weight used by bodyweight tonnage. */
 export function HomeBodyWeightCard() {
   const latest = useLiveQuery(async () => (await getLatestBodyWeight()) ?? null);
   const [draft, setDraft] = useState<number | undefined>();
   const [loadedMeasurement, setLoadedMeasurement] = useState<number | null | undefined>();
   const [saveState, setSaveState] = useState<SaveState>('idle');
-  const [renderedAt] = useState(() => Date.now());
+  const [dayReferenceAt, setDayReferenceAt] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setDayReferenceAt(Date.now()),
+      millisecondsUntilNextLocalDay(dayReferenceAt),
+    );
+    return () => window.clearTimeout(timer);
+  }, [dayReferenceAt]);
 
   const measurementKey = latest === undefined ? undefined : latest?.measuredAt ?? null;
   if (measurementKey !== loadedMeasurement) {
@@ -39,7 +53,7 @@ export function HomeBodyWeightCard() {
   const valid = draft !== undefined && Number.isFinite(draft) && draft > 0;
   const unchangedToday =
     latest != null &&
-    isSameLocalDay(latest.measuredAt, renderedAt) &&
+    isSameLocalDay(latest.measuredAt, dayReferenceAt) &&
     draft === latest.valueKg;
   const disabled = !valid || unchangedToday || saveState === 'saving';
 
@@ -81,7 +95,6 @@ export function HomeBodyWeightCard() {
               }}
               step={0.1}
               min={0.1}
-              max={500}
               suffix={t('units.kg')}
               placeholder={t('home.bodyWeightPlaceholder')}
             />

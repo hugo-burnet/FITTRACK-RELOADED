@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import * as bodyMeasurements from '@/data/repositories/bodyMeasurements';
 import { resetDb } from '@/test/resetDb';
@@ -8,6 +8,10 @@ import { HomeBodyWeightCard } from './HomeBodyWeightCard';
 
 describe('HomeBodyWeightCard', () => {
   beforeEach(resetDb);
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
 
   it('shows an empty French quick-entry state before the first measurement', async () => {
     render(<HomeBodyWeightCard />);
@@ -74,8 +78,42 @@ describe('HomeBodyWeightCard', () => {
     expect(action).toBeEnabled();
     await user.click(action);
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Poids enregistr\u00e9.');
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent('Poids enregistr\u00e9.'),
+    );
     expect(await db.bodyMeasurements.count()).toBe(2);
+  });
+
+  it('re-enables the same value when local midnight passes while mounted', async () => {
+    vi.useFakeTimers({ toFake: ['Date', 'setTimeout', 'clearTimeout'] });
+    const clearTimeout = vi.spyOn(window, 'clearTimeout');
+    const beforeMidnight = new Date(2026, 7, 11, 23, 59, 59, 900);
+    vi.setSystemTime(beforeMidnight);
+    await bodyMeasurements.saveBodyWeight(80, beforeMidnight.getTime());
+    const { unmount } = render(<HomeBodyWeightCard />);
+
+    await vi.waitFor(() => expect(screen.getByLabelText('Poids du corps')).toHaveValue('80'));
+    const action = screen.getByRole('button', { name: 'Enregistrer' });
+    expect(action).toBeDisabled();
+
+    await act(async () => vi.advanceTimersByTimeAsync(100));
+
+    expect(action).toBeEnabled();
+    const cleanupCallsBeforeUnmount = clearTimeout.mock.calls.length;
+    unmount();
+    expect(clearTimeout.mock.calls.length).toBeGreaterThan(cleanupCallsBeforeUnmount);
+    clearTimeout.mockRestore();
+  });
+
+  it('does not impose an artificial 500 kg ceiling', async () => {
+    const user = userEvent.setup();
+    await bodyMeasurements.saveBodyWeight(500, Date.now());
+    render(<HomeBodyWeightCard />);
+
+    const input = await screen.findByLabelText('Poids du corps');
+    await waitFor(() => expect(input).toHaveValue('500'));
+    await user.click(screen.getByRole('button', { name: 'Augmenter' }));
+    expect(input).toHaveValue('500,1');
   });
 
   it('keeps the edited value and allows retry after a rejected write', async () => {

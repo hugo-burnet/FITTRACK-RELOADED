@@ -65,7 +65,10 @@ export async function saveBodyWeight(
     const existing = sameDay.find((row) => row.deletedAt === 0);
 
     if (existing !== undefined) {
-      const replacement = touch(existing, { value: valueKg, unit: 'kg', measuredAt });
+      // A correction changes the day's value, not the instant from which that value applies.
+      // Moving an 08:00 reading to the 20:00 correction time would retroactively make a 09:00
+      // workout fall back to yesterday's weight.
+      const replacement = touch(existing, { value: valueKg, unit: 'kg' });
       await db.bodyMeasurements.put(replacement);
       return asReading(replacement);
     }

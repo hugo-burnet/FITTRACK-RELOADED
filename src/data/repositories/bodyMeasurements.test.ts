@@ -39,8 +39,16 @@ describe('body weight measurements', () => {
 
     const rows = await db.bodyMeasurements.toArray();
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ value: 81.9, measuredAt: at(3, 20) });
-    expect(replacement).toEqual({ valueKg: 81.9, measuredAt: at(3, 20) });
+    expect(rows[0]).toMatchObject({ value: 81.9, measuredAt: at(3, 8) });
+    expect(replacement).toEqual({ valueKg: 81.9, measuredAt: at(3, 8) });
+  });
+
+  it('keeps a corrected daily weight effective from its original measurement time', async () => {
+    await saveBodyWeight(83, at(2, 20));
+    await saveBodyWeight(80, at(3, 8));
+    await saveBodyWeight(81, at(3, 20));
+
+    expect(await resolveBodyWeightsAt([at(3, 9)])).toEqual(new Map([[at(3, 9), 81]]));
   });
 
   it('inserts an independent measurement for another local day', async () => {
