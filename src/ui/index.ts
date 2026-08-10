@@ -12,6 +12,7 @@ export { HeaderAction } from './HeaderAction';
 export { Input } from './Input';
 export { ListRow } from './ListRow';
 export { NumberInput } from './NumberInput';
+export { OrderLockButton } from './OrderLockButton';
 export { OptionSheet } from './OptionSheet';
 export type { Option } from './OptionSheet';
 export { ReorderableList } from './ReorderableList';

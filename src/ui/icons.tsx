@@ -186,6 +186,26 @@ export function GripIcon(props: IconProps) {
   );
 }
 
+/** Exercise order is protected from accidental movement. */
+export function LockIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <rect x="5" y="10" width="14" height="11" rx="2.5" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </Icon>
+  );
+}
+
+/** Exercise order can be changed until the user closes the shackle again. */
+export function UnlockIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <rect x="5" y="10" width="14" height="11" rx="2.5" />
+      <path d="M16 10V7a4 4 0 0 0-7.4-2.1" />
+    </Icon>
+  );
+}
+
 /** "There is more to do with this row than open it." */
 export function MoreIcon(props: IconProps) {
   return (

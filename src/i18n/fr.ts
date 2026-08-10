@@ -19,6 +19,8 @@ const fr = {
     increase: 'Augmenter',
     undo: 'Annuler',
     undoDelete: 'Annuler la suppression de {reading}',
+    unlockExerciseOrder: 'Déverrouiller l’ordre des exercices',
+    lockExerciseOrder: 'Verrouiller l’ordre des exercices',
   },
 
   nav: {
