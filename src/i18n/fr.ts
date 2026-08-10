@@ -158,12 +158,12 @@ const fr = {
     bodyWeightLabel: 'Poids du corps',
     bodyWeightSave: 'Enregistrer',
     bodyWeightPlaceholder: '80',
-    bodyWeightSaving: 'Enregistrement\u2026',
+    bodyWeightSaving: 'Enregistrement…',
     bodyWeightHint: 'Renseigne ton poids pour compter les exercices au poids du corps.',
-    bodyWeightLatest: 'Derni\u00e8re mesure : {date}',
-    bodyWeightSaved: 'Poids enregistr\u00e9.',
-    bodyWeightUpdated: 'Poids mis \u00e0 jour.',
-    bodyWeightError: 'Le poids n\u2019a pas pu \u00eatre enregistr\u00e9. R\u00e9essaie.',
+    bodyWeightLatest: 'Dernière mesure : {date}',
+    bodyWeightSaved: 'Poids enregistré.',
+    bodyWeightUpdated: 'Poids mis à jour.',
+    bodyWeightError: 'Le poids n’a pas pu être enregistré. Réessaie.',
   },
 
   workout: {
@@ -281,7 +281,7 @@ const fr = {
     discardBodyNone: 'Aucune série n’a été validée : il n’y a rien à perdre.',
     discardConfirm: 'Abandonner',
     tonnageHint:
-      'Charge externe et poids du corps effectif estim\u00e9. Assistance soustraite, \u00e9chauffements exclus.',
+      'Charge externe et poids du corps effectif estimé. Assistance soustraite, échauffements exclus.',
     nothingDone: 'Aucune série validée. Rien ne sera enregistré.',
   },
 
@@ -753,7 +753,7 @@ const fr = {
     measurementLabel: 'Ce que tu saisis',
     bodyweightFactorLabel: 'Part du poids du corps',
     bodyweightFactorHint: 'Optionnel. 70 % pour des pompes, 100 % pour des tractions.',
-    bodyweightFactorError: 'Plus de 0 et jusqu\u2019\u00e0 100 %.',
+    bodyweightFactorError: 'Plus de 0 et jusqu’à 100 %.',
     bodyweightFactorDefault: '100',
     unilateralLabel: 'Unilatéral',
     unilateralHint: 'Un côté à la fois : presse unilatérale, curl marteau alterné.',
@@ -890,7 +890,7 @@ const fr = {
     workingSetCount: 'Séries de travail : {count}',
     /** L'unique chiffre agrégé du document dit lui-même ce qu'il ne compte pas. */
     tonnageNote:
-      'Le tonnage additionne la charge externe et le poids du corps effectif estim\u00e9, assistance soustraite et \u00e9chauffements exclus.',
+      'Le tonnage additionne la charge externe et le poids du corps effectif estimé, assistance soustraite et échauffements exclus.',
     workoutHeading: '{name} — {date}',
     duration: 'Durée : {value}',
     tonnage: 'Tonnage : {value}',
@@ -1047,7 +1047,7 @@ const fr = {
     scaleZero: '0',
     emptyPeriod: 'Aucune séance sur cette période.',
     zeroTonnage:
-      'Aucune charge compt\u00e9e. Renseigne ton poids sur l\u2019accueil pour inclure les exercices au poids du corps.',
+      'Aucune charge comptée. Renseigne ton poids sur l’accueil pour inclure les exercices au poids du corps.',
     singleWeek: 'Une seule semaine sur cette période : une tendance demande plusieurs semaines.',
     /**
      * Pourquoi aucune colonne ne ressort ici, alors que le graphique des séances
@@ -1058,7 +1058,7 @@ const fr = {
     chartLegend:
       'Toutes les semaines ont la même couleur : le volume n’a pas d’objectif à atteindre.',
     tonnageHint:
-      'Charge externe et poids du corps effectif estim\u00e9. Assistance soustraite, \u00e9chauffements exclus.',
+      'Charge externe et poids du corps effectif estimé. Assistance soustraite, échauffements exclus.',
     durationHint: 'Somme des durées complètes des séances.',
     chartSummary:
       '{metric} sur {count} semaines, du {first} au {last}. Minimum {min}, maximum {max}, moyenne {average}.',
@@ -1123,7 +1123,7 @@ const fr = {
     topWeight: 'La série de travail la plus lourde de la séance.',
     bestSetVolume: 'La meilleure série de la séance, charge × répétitions.',
     sessionTonnage:
-      'Charge externe et poids du corps effectif estim\u00e9 \u00d7 r\u00e9p\u00e9titions. Assistance soustraite, \u00e9chauffements exclus.',
+      'Charge externe et poids du corps effectif estimé × répétitions. Assistance soustraite, échauffements exclus.',
     topReps: 'La série de travail la plus longue en répétitions.',
     totalReps: 'Toutes les répétitions de travail de la séance.',
     workingSets: 'Les séries de la séance, échauffement exclu.',

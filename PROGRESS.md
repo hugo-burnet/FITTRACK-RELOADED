@@ -2,7 +2,34 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-10 (**Verrouillage de l’ordre des exercices**).
+**Dernière mise à jour :** 2026-08-11 (**Tonnage au poids du corps et préparation
+Android v0.1.2**).
+
+Le poids du jour se renseigne directement depuis l'accueil et reste local dans les mesures
+datées. Pour une séance historique, FitTrack prend la dernière mesure connue à sa date ;
+si la séance précède toutes les mesures, la première mesure disponible sert de repli.
+Une correction le même jour remplace la valeur au lieu d'ajouter un doublon.
+
+Le tonnage effectif estimé suit `(poids du corps × coefficient + lest) × reps`, ou
+`max(poids du corps × coefficient - assistance, 0) × reps`. Les tractions, dips et
+variantes comparables utilisent 100 %, les pompes et mouvements comparables 70 %, les squats,
+pistols, mollets et burpees 90 %. Les exercices segmentaires ou isométriques restent exclus :
+ce total est une approximation biomécanique, pas une mesure de travail physique absolue.
+Les exercices personnalisés en répétitions ou avec assistance acceptent leur propre
+coefficient, strictement supérieur à 0 et jusqu’à 100 % ; les instantanés de séance
+conservent le coefficient utilisé.
+
+Fin de séance, historique, volume hebdomadaire, courbes et exports utilisent désormais le
+même calcul. La version applicative est `0.1.2`. Portes locales finales : lint, typecheck,
+**1061 tests dans 94 fichiers**, build PWA, build Android Web et synchronisation Capacitor à 0.
+
+**Checkpoint téléphone :** installer `FitTrack-v0.1.2.apk` par-dessus l'app existante
+sans la désinstaller. Enregistrer le poids sur l'accueil, puis terminer des pompes, squats,
+tractions, séries lestées et assistées. Comparer les totaux Fin/Historique/Volume
+hebdomadaire, corriger le poids du même jour, forcer l'arrêt et relancer hors ligne pour
+confirmer la persistance.
+
+**Mise à jour précédente :** 2026-08-10 (**Verrouillage de l'ordre des exercices**).
 
 L’éditeur de routine et la séance en cours démarrent avec leur ordre verrouillé. Deux cadenas
 indépendants, conservés uniquement pendant la session de l’application, masquent ou rendent les
