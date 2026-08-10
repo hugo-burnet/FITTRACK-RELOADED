@@ -23,6 +23,7 @@ type Props<T> = {
   onReorder: (from: number, to: number) => void;
   renderItem: (item: T, index: number, state: ItemState) => ReactNode;
   className?: string;
+  disabled?: boolean;
 };
 
 type Rect = { center: number };
@@ -62,13 +63,24 @@ function targetIndex(rects: Rect[], from: number, dy: number): number {
 }
 
 /** Touch-compatible reordering with edge auto-scroll and keyboard controls. */
-export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, className }: Props<T>) {
+export function ReorderableList<T>({
+  items,
+  keyOf,
+  onReorder,
+  renderItem,
+  className,
+  disabled = false,
+}: Props<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLElement | null>(null);
   const pointerY = useRef(0);
   const [drag, setDrag] = useState<DragState | null>(null);
 
   const dragging = drag !== null;
+
+  useEffect(() => {
+    if (disabled) setDrag(null);
+  }, [disabled]);
 
   // A state updater keeps both pointer and auto-scroll callers free of stale state.
   const follow = useCallback(() => {
@@ -101,6 +113,7 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
   }, [dragging, follow]);
 
   const startDrag = (index: number) => (event: PointerEvent<HTMLElement>) => {
+    if (disabled) return;
     const rows = [...(containerRef.current?.children ?? [])];
     const boxes = rows.map((row) => row.getBoundingClientRect());
     const own = boxes[index];
@@ -146,6 +159,7 @@ export function ReorderableList<T>({ items, keyOf, onReorder, renderItem, classN
   };
 
   const moveByKey = (index: number) => (event: KeyboardEvent<HTMLElement>) => {
+    if (disabled) return;
     const step = event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0;
     if (step === 0) return;
     event.preventDefault();
