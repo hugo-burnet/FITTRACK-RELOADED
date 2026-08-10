@@ -30,6 +30,7 @@ type Props = {
   /** Records are derived, never persisted. */
   records: Map<string, RecordKind>;
   state: ItemState;
+  reorderEnabled: boolean;
   foldCommand: WorkoutFoldCommand;
   onMenu: () => void;
   onPlates?: () => void;
@@ -53,6 +54,7 @@ export function WorkoutExerciseCard({
   rest,
   records,
   state,
+  reorderEnabled,
   foldCommand,
   onMenu,
   onPlates,
@@ -134,15 +136,17 @@ export function WorkoutExerciseCard({
           className={`relative flex items-stretch
             ${expanded ? 'border-b border-[var(--border)]' : ''}`}
         >
-          <button
-            type="button"
-            aria-label={t('routines.dragHandle', { name })}
-            className="flex w-11 shrink-0 cursor-grab items-center justify-center
-              text-[var(--text-2)] active:cursor-grabbing"
-            {...state.handleProps}
-          >
-            <GripIcon />
-          </button>
+          {reorderEnabled && (
+            <button
+              type="button"
+              aria-label={t('routines.dragHandle', { name })}
+              className="flex w-11 shrink-0 cursor-grab items-center justify-center
+                text-[var(--text-2)] active:cursor-grabbing"
+              {...state.handleProps}
+            >
+              <GripIcon />
+            </button>
+          )}
 
           <button
             type="button"

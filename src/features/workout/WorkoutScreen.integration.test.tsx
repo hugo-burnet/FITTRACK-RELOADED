@@ -11,6 +11,7 @@ import {
 } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { useRestTimer } from '@/stores/restTimer';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutScreen } from './WorkoutScreen';
@@ -49,6 +50,7 @@ function renderWorkout() {
 describe('WorkoutScreen — persistance', () => {
   beforeEach(async () => {
     useRestTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
     await resetDb();
   });
 
@@ -147,5 +149,34 @@ describe('WorkoutScreen — persistance', () => {
       'placeholder',
       '100',
     );
+  });
+
+  it('garde le cadenas de séance pendant la session', async () => {
+    await seedActiveWorkout();
+    const user = userEvent.setup();
+    const mounted = renderWorkout();
+
+    await screen.findByText('Développé couché');
+    expect(
+      screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }),
+    );
+    expect(screen.getByRole('button', { name: 'Déplacer Développé couché' })).toBeVisible();
+
+    mounted.unmount();
+    renderWorkout();
+    expect(
+      await screen.findByRole('button', { name: 'Déplacer Développé couché' }),
+    ).toBeVisible();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }),
+    );
+    expect(
+      screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
+    ).not.toBeInTheDocument();
   });
 });

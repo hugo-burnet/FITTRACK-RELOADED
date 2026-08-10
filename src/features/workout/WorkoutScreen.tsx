@@ -35,6 +35,7 @@ import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { workoutRecordKinds } from '@/lib/records';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
+import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { useRestTimer } from '@/stores/restTimer';
 import {
   ActionBand,
@@ -46,6 +47,7 @@ import {
   HeaderAction,
   Input,
   OptionSheet,
+  OrderLockButton,
   ReorderableList,
   Sheet,
   Textarea,
@@ -99,6 +101,8 @@ type PlatesView = {
 export function WorkoutScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
+  const toggleReorder = useExerciseOrderLock((state) => state.toggle);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   const [foldCommand, setFoldCommand] = useState(
     INITIAL_WORKOUT_FOLD_COMMAND,
@@ -282,7 +286,10 @@ export function WorkoutScreen() {
               disabled={deloadActive || !canDeload}
               onChange={() => setSheet({ kind: 'deload' })}
             />
-            <span className="w-4 shrink-0" />
+            <OrderLockButton
+              unlocked={reorderUnlocked}
+              onToggle={() => toggleReorder('workout')}
+            />
             <button
               type="button"
               aria-label={t(
@@ -315,6 +322,7 @@ export function WorkoutScreen() {
               className="flex flex-col gap-3"
               items={exercises}
               keyOf={(line) => line.row.id}
+              disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
               renderItem={(line, _index, state) => {
                 const config =
@@ -336,6 +344,7 @@ export function WorkoutScreen() {
                   }
                   records={records}
                   state={state}
+                  reorderEnabled={reorderUnlocked}
                   foldCommand={foldCommand}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onPlates={
