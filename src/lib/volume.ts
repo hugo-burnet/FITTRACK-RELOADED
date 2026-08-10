@@ -1,6 +1,6 @@
 import type { SetType } from '@/data/types';
 import type { WeightRole } from './measurement';
-import { isWorkingSet, setVolume } from './records';
+import { isWorkingSet } from './records';
 
 /**
  * What a finished session adds up to.
@@ -37,6 +37,7 @@ export interface VolumeSet {
 export interface VolumeEntry {
   set: VolumeSet;
   weightRole?: WeightRole;
+  bodyweightLoadFactor?: number;
 }
 
 const EMPTY: SessionTotals = {
@@ -47,20 +48,32 @@ const EMPTY: SessionTotals = {
   distanceMeters: 0,
 };
 
+function effectiveLoadKg(entry: VolumeEntry, bodyWeightKg?: number): number {
+  const { set, weightRole, bodyweightLoadFactor } = entry;
+  if (weightRole === 'load') return set.weight ?? 0;
+
+  const bodyLoad =
+    bodyWeightKg !== undefined && bodyweightLoadFactor !== undefined
+      ? bodyWeightKg * bodyweightLoadFactor
+      : 0;
+
+  if (weightRole === 'added') return bodyLoad + (set.weight ?? 0);
+  if (weightRole === 'assist') {
+    return bodyLoad === 0 ? 0 : Math.max(bodyLoad - (set.weight ?? 0), 0);
+  }
+  return 0;
+}
+
 /**
- * Tonnage counts a set only when its weight **is** the load.
- *
- * A 10 kg belt on a pull-up and a 20 kg assistance on a machine are both stored
- * in the same field as a 100 kg bench press, and adding the three together
- * produces a number that is simply false: the app does not know the user's
- * bodyweight, and an assistance is weight taken *off*. A bodyweight session
- * therefore shows a tonnage of zero — which is why the finish screen shows three
- * figures (sets · reps · tonnage) and not that one alone.
+ * Tonnage uses each exercise's effective load. A bodyweight coefficient and the
+ * user's bodyweight make bodyweight, added-weight, and assisted movements
+ * comparable with conventional loaded exercises.
  */
-export function sessionTotals(entries: VolumeEntry[]): SessionTotals {
+export function sessionTotals(entries: VolumeEntry[], bodyWeightKg?: number): SessionTotals {
   const totals = { ...EMPTY };
 
-  for (const { set, weightRole } of entries) {
+  for (const entry of entries) {
+    const { set } = entry;
     // RF-20. The rule lives in `isWorkingSet` and is not restated here: whatever
     // counts sets has to agree with whatever scores them.
     if (!isWorkingSet(set)) continue;
@@ -69,7 +82,7 @@ export function sessionTotals(entries: VolumeEntry[]): SessionTotals {
     totals.totalReps += set.reps ?? 0;
     totals.durationSeconds += set.durationSeconds ?? 0;
     totals.distanceMeters += set.distanceMeters ?? 0;
-    if (weightRole === 'load') totals.tonnage += setVolume(set);
+    totals.tonnage += effectiveLoadKg(entry, bodyWeightKg) * (set.reps ?? 0);
   }
 
   // Floating point: 102,5 × 3 lands on 307.50000000000006 without this, and a

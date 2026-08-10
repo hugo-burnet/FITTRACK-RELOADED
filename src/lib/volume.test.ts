@@ -66,14 +66,13 @@ describe('sessionTotals', () => {
   });
 
   /**
-   * Le cœur de ce module. Le même nombre de kilos est une charge, un lest ou une
-   * assistance ; un tonnage qui additionne les trois est faux. Un lest de 10 kg
-   * sur une traction ne dit rien du poids réellement déplacé — le poids de corps
-   * n'est pas connu de l'app — et une assistance de 20 kg est du poids **retiré**.
+   * Sans coefficient, le poids de corps ne peut pas contribuer au tonnage.
+   * Le lest reste une charge déplacée, mais l'assistance ne peut jamais être
+   * comptée comme une charge positive.
    */
-  it('ne compte en tonnage que les kilos qui sont vraiment la charge', () => {
+  it('ne compte que le lest lorsque le coefficient de poids de corps manque', () => {
     const lest = sessionTotals([entry({ weight: 10, reps: 8 }, 'added')]);
-    expect(lest.tonnage).toBe(0);
+    expect(lest.tonnage).toBe(80);
     expect(lest.totalReps).toBe(8);
     expect(lest.workingSets).toBe(1);
 
@@ -109,5 +108,29 @@ describe('sessionTotals', () => {
 
   it('garde les décimales justes sur une charge à la demi-plaque', () => {
     expect(sessionTotals([entry({ weight: 102.5, reps: 3 }, 'load')]).tonnage).toBe(307.5);
+  });
+
+  it.each([
+    ['traction', 'added', undefined, 1, 80, 8, 640],
+    ['traction lestée', 'added', 10, 1, 80, 8, 720],
+    ['traction assistée', 'assist', 20, 1, 80, 8, 480],
+    ['pompes', 'added', undefined, 0.7, 80, 8, 448],
+    ['squats', 'added', undefined, 0.9, 80, 10, 720],
+  ] as const)('%s produit son tonnage effectif', (_name, weightRole, weight, factor, bodyWeight, reps, expected) => {
+    expect(sessionTotals([
+      { set: aSet({ weight, reps }), weightRole, bodyweightLoadFactor: factor },
+    ], bodyWeight).tonnage).toBe(expected);
+  });
+
+  it('borne une assistance supérieure au poids effectif à zéro', () => {
+    expect(sessionTotals([
+      { set: aSet({ weight: 90, reps: 8 }), weightRole: 'assist', bodyweightLoadFactor: 1 },
+    ], 80).tonnage).toBe(0);
+  });
+
+  it('compte seulement le lest quand le poids corporel manque', () => {
+    expect(sessionTotals([
+      { set: aSet({ weight: 10, reps: 8 }), weightRole: 'added', bodyweightLoadFactor: 1 },
+    ]).tonnage).toBe(80);
   });
 });
