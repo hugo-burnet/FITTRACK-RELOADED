@@ -28,6 +28,7 @@ export function HomeBodyWeightCard() {
   const [draft, setDraft] = useState<number | undefined>();
   const [loadedMeasurement, setLoadedMeasurement] = useState<number | null | undefined>();
   const [saveState, setSaveState] = useState<SaveState>('idle');
+  const [renderedAt] = useState(() => Date.now());
 
   const measurementKey = latest === undefined ? undefined : latest?.measuredAt ?? null;
   if (measurementKey !== loadedMeasurement) {
@@ -36,8 +37,11 @@ export function HomeBodyWeightCard() {
   }
 
   const valid = draft !== undefined && Number.isFinite(draft) && draft > 0;
-  const unchanged = latest != null && draft === latest.valueKg;
-  const disabled = !valid || unchanged || saveState === 'saving';
+  const unchangedToday =
+    latest != null &&
+    isSameLocalDay(latest.measuredAt, renderedAt) &&
+    draft === latest.valueKg;
+  const disabled = !valid || unchangedToday || saveState === 'saving';
 
   const submit = async () => {
     if (!valid || disabled) return;

@@ -20,13 +20,13 @@ describe('HomeBodyWeightCard', () => {
   });
 
   it('prefills the latest value and date and disables an unchanged save', async () => {
-    const measuredAt = new Date(2026, 7, 8, 12).getTime();
+    const measuredAt = Date.now();
     await bodyMeasurements.saveBodyWeight(82.4, measuredAt);
 
     render(<HomeBodyWeightCard />);
 
     await waitFor(() => expect(screen.getByLabelText('Poids du corps')).toHaveValue('82,4'));
-    expect(screen.getByText(/Derni\u00e8re mesure : 8 ao\u00fbt 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/Derni\u00e8re mesure :/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Enregistrer' })).toBeDisabled();
   });
 
@@ -59,6 +59,23 @@ describe('HomeBodyWeightCard', () => {
     );
     expect(await db.bodyMeasurements.count()).toBe(1);
     expect(await bodyMeasurements.getLatestBodyWeight()).toMatchObject({ valueKg: 79.6 });
+  });
+
+  it('allows the same value on a later day and creates a dated measurement', async () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    await bodyMeasurements.saveBodyWeight(80, yesterday.getTime());
+    const user = userEvent.setup();
+    render(<HomeBodyWeightCard />);
+
+    const input = await screen.findByLabelText('Poids du corps');
+    await waitFor(() => expect(input).toHaveValue('80'));
+    const action = screen.getByRole('button', { name: 'Enregistrer' });
+    expect(action).toBeEnabled();
+    await user.click(action);
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Poids enregistr\u00e9.');
+    expect(await db.bodyMeasurements.count()).toBe(2);
   });
 
   it('keeps the edited value and allows retry after a rejected write', async () => {
