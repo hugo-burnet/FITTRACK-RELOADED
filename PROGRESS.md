@@ -20,8 +20,9 @@ coefficient, strictement supérieur à 0 et jusqu’à 100 % ; les instantanés 
 conservent le coefficient utilisé.
 
 Fin de séance, historique, volume hebdomadaire, courbes et exports utilisent désormais le
-même calcul. La version applicative est `0.1.2`. Portes locales finales : lint, typecheck,
-**1061 tests dans 94 fichiers**, build PWA, build Android Web et synchronisation Capacitor à 0.
+même calcul. La version applicative est `0.1.2`. Portes locales finales sur le merge incluant
+le correctif d'accueil de Claude : lint, typecheck, **1064 tests dans 94 fichiers**, build PWA,
+build Android Web et synchronisation Capacitor à 0.
 
 **Checkpoint téléphone :** installer `FitTrack-v0.1.2.apk` par-dessus l'app existante
 sans la désinstaller. Enregistrer le poids sur l'accueil, puis terminer des pompes, squats,
