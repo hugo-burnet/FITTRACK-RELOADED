@@ -7,7 +7,7 @@ describe('OrderLockButton', () => {
     render(<OrderLockButton unlocked={false} onToggle={vi.fn()} />);
     expect(
       screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }),
-    ).toHaveAttribute('aria-pressed', 'false');
+    ).not.toHaveAttribute('aria-pressed');
   });
 
   it('annonce le verrouillage et appelle la bascule quand le cadenas est ouvert', () => {
@@ -15,7 +15,7 @@ describe('OrderLockButton', () => {
     render(<OrderLockButton unlocked onToggle={onToggle} />);
 
     const button = screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' });
-    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(button).not.toHaveAttribute('aria-pressed');
     fireEvent.click(button);
     expect(onToggle).toHaveBeenCalledOnce();
   });

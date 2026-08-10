@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -6,6 +6,7 @@ import { db } from '@/data/db';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import {
+  addWorkoutExercise,
   getWorkoutDetail,
   startWorkoutFromRoutine,
 } from '@/data/repositories/workouts';
@@ -151,12 +152,26 @@ describe('WorkoutScreen — persistance', () => {
     );
   });
 
-  it('garde le cadenas de séance pendant la session', async () => {
-    await seedActiveWorkout();
+  it('persiste le réordonnancement autorisé pendant la session', async () => {
+    const workoutId = await seedActiveWorkout();
+    const second = await createCustomExercise({
+      name: 'Tirage horizontal',
+      primaryMuscle: 'upper_back',
+      secondaryMuscles: [],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    await addWorkoutExercise(workoutId, second.id);
+    act(() => useExerciseOrderLock.getState().toggle('routine'));
     const user = userEvent.setup();
     const mounted = renderWorkout();
 
     await screen.findByText('Développé couché');
+    expect(useExerciseOrderLock.getState().unlocked).toEqual({
+      routine: true,
+      workout: false,
+    });
     expect(
       screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
     ).not.toBeInTheDocument();
@@ -164,19 +179,32 @@ describe('WorkoutScreen — persistance', () => {
     await user.click(
       screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }),
     );
-    expect(screen.getByRole('button', { name: 'Déplacer Développé couché' })).toBeVisible();
+    const firstHandle = screen.getByRole('button', { name: 'Déplacer Développé couché' });
+    expect(useExerciseOrderLock.getState().unlocked).toEqual({
+      routine: true,
+      workout: true,
+    });
+    fireEvent.keyDown(firstHandle, { key: 'ArrowDown' });
+
+    await waitFor(async () => {
+      expect((await getWorkoutDetail(workoutId))?.exercises[0]?.exercise?.id).toBe(second.id);
+    });
 
     mounted.unmount();
     renderWorkout();
     expect(
-      await screen.findByRole('button', { name: 'Déplacer Développé couché' }),
+      await screen.findByRole('button', { name: `Déplacer ${second.name}` }),
     ).toBeVisible();
 
     await user.click(
       screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }),
     );
+    expect(useExerciseOrderLock.getState().unlocked).toEqual({
+      routine: true,
+      workout: false,
+    });
     expect(
-      screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
+      screen.queryByRole('button', { name: `Déplacer ${second.name}` }),
     ).not.toBeInTheDocument();
   });
 });
