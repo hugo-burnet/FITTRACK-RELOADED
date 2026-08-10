@@ -2,7 +2,22 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-09 (**Lot 10 — application Android Capacitor**).
+**Dernière mise à jour :** 2026-08-10 (**Verrouillage de l’ordre des exercices**).
+
+L’éditeur de routine et la séance en cours démarrent avec leur ordre verrouillé. Deux cadenas
+indépendants, conservés uniquement pendant la session de l’application, masquent ou rendent les
+poignées et bloquent réellement le pointeur comme le clavier. Le cadenas de séance se trouve après
+« 80 % » ; celui de routine accompagne le résumé de la liste.
+
+La version `0.1.1` est prête pour la release Android. Les portes locales lint, typecheck, tests,
+build PWA et synchronisation Capacitor sortent à 0.
+
+**Checkpoint téléphone :** installer `FitTrack-v0.1.1.apk` par-dessus l’application existante sans
+la désinstaller. Dans une routine puis une séance, vérifier que les poignées sont absentes par
+défaut, que les cadenas fermé/ouvert permettent le déplacement séparément, puis forcer l’arrêt et
+relancer l’app pour confirmer le retour des deux cadenas fermés sans perte de données.
+
+**Mise à jour précédente :** 2026-08-09 (**Lot 10 — application Android Capacitor**).
 
 Le projet Android Capacitor 8 est versionné avec l'identifiant `com.fittrack.app`. Le build
 Android utilise des chemins relatifs et aucun service worker, tandis que GitHub Pages conserve
