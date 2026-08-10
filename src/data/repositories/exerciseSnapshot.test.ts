@@ -21,13 +21,14 @@ describe('loadExerciseSnapshots', () => {
   beforeEach(resetDb);
 
   it('associe chaque identifiant à son instantané', async () => {
-    const bench = exercise();
+    const bench = exercise({ bodyweightLoadFactor: 0.7 });
     const squat = exercise({ name: 'Squat', primaryMuscle: 'quads' });
     await db.exercises.bulkAdd([bench, squat]);
 
     const snapshots = await loadExerciseSnapshots([bench.id, squat.id]);
 
     expect(snapshots.get(bench.id)?.exerciseName).toBe('Développé couché');
+    expect(snapshots.get(bench.id)?.exerciseBodyweightLoadFactor).toBe(0.7);
     expect(snapshots.get(squat.id)?.exercisePrimaryMuscle).toBe('quads');
   });
 

@@ -71,6 +71,20 @@ describe('seedDatabase', () => {
     const custom = await db.exercises.where('isCustom').equals(1).count();
     expect(custom).toBe(0);
   });
+
+  it('attribue seulement les coefficients de tonnage approuvés', async () => {
+    await seedDatabase();
+    const exercisesBySlug = new Map(
+      (await db.exercises.toArray()).flatMap((exercise) =>
+        exercise.slug === undefined ? [] : [[exercise.slug, exercise] as const],
+      ),
+    );
+
+    expect(exercisesBySlug.get('push-up')?.bodyweightLoadFactor).toBe(0.7);
+    expect(exercisesBySlug.get('bodyweight-squat')?.bodyweightLoadFactor).toBe(0.9);
+    expect(exercisesBySlug.get('pull-up')?.bodyweightLoadFactor).toBe(1);
+    expect(exercisesBySlug.get('crunch')?.bodyweightLoadFactor).toBeUndefined();
+  });
 });
 
 describe('catalogue exercises.json', () => {
@@ -93,6 +107,11 @@ describe('catalogue exercises.json', () => {
       expect(EQUIPMENT, entry.slug).toContain(entry.equipment);
       expect(MEASUREMENT_TYPES, entry.slug).toContain(entry.measurementType);
       expect([0, 1], entry.slug).toContain(entry.isUnilateral);
+      if (entry.bodyweightLoadFactor !== undefined) {
+        expect(Number.isFinite(entry.bodyweightLoadFactor), entry.slug).toBe(true);
+        expect(entry.bodyweightLoadFactor, entry.slug).toBeGreaterThan(0);
+        expect(entry.bodyweightLoadFactor, entry.slug).toBeLessThanOrEqual(1);
+      }
       for (const muscle of entry.secondaryMuscles) {
         expect(MUSCLE_GROUPS, entry.slug).toContain(muscle);
       }
@@ -165,12 +184,30 @@ describe('réconciliation de la classification', () => {
       measurementType: 'weight_reps',
       isCustom: 1,
       isUnilateral: 0,
+      bodyweightLoadFactor: 0.25,
     });
     await db.exercises.add(mine);
 
     await seedDatabase();
 
     expect((await db.exercises.get(mine.id))!.primaryMuscle).toBe('chest');
+    expect((await db.exercises.get(mine.id))!.bodyweightLoadFactor).toBe(0.25);
+  });
+
+  it('réaligne les coefficients livrés et efface ceux retirés du catalogue', async () => {
+    await seedDatabase();
+    const rows = await db.exercises.toArray();
+    const pushUp = rows.find((exercise) => exercise.slug === 'push-up');
+    const crunch = rows.find((exercise) => exercise.slug === 'crunch');
+    await db.exercises.update(pushUp!.id, { bodyweightLoadFactor: 0.2, updatedAt: 1 });
+    await db.exercises.update(crunch!.id, { bodyweightLoadFactor: 0.5, updatedAt: 1 });
+
+    await seedDatabase();
+
+    expect((await db.exercises.get(pushUp!.id))!.bodyweightLoadFactor).toBe(0.7);
+    const cleanedCrunch = (await db.exercises.get(crunch!.id))!;
+    expect(cleanedCrunch.bodyweightLoadFactor).toBeUndefined();
+    expect(Object.hasOwn(cleanedCrunch, 'bodyweightLoadFactor')).toBe(false);
   });
 
   it('n’écrit rien quand tout est déjà d’accord', async () => {

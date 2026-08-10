@@ -46,6 +46,12 @@ describe('snapshotOf', () => {
     });
   });
 
+  it('fige le coefficient de charge au poids du corps', () => {
+    expect(snapshotOf(exercise({ bodyweightLoadFactor: 1 }))).toMatchObject({
+      exerciseBodyweightLoadFactor: 1,
+    });
+  });
+
   it('ne copie ni les muscles secondaires ni le caractère unilatéral', () => {
     const snapshot = snapshotOf(exercise({ isUnilateral: 1 }));
 
@@ -116,6 +122,15 @@ describe('resolveExerciseIdentity', () => {
       name: 'Squat avant',
       measurementType: 'weight_reps',
     });
+  });
+
+  it("préfère le coefficient de l'instantané à celui de la bibliothèque", () => {
+    expect(
+      resolveExerciseIdentity(
+        row({ exerciseBodyweightLoadFactor: 0.7 }),
+        exercise({ bodyweightLoadFactor: 1 }),
+      ).bodyweightLoadFactor,
+    ).toBe(0.7);
   });
 
   it("n'invente rien quand ni la ligne ni la bibliothèque ne savent", () => {

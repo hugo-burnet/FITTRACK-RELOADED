@@ -18,7 +18,11 @@ import type {
 /** The snapshot fields of `WorkoutExercise`, on their own. */
 export type ExerciseSnapshot = Pick<
   WorkoutExercise,
-  'exerciseName' | 'exerciseMeasurementType' | 'exercisePrimaryMuscle' | 'exerciseEquipment'
+  | 'exerciseName'
+  | 'exerciseMeasurementType'
+  | 'exercisePrimaryMuscle'
+  | 'exerciseEquipment'
+  | 'exerciseBodyweightLoadFactor'
 >;
 
 /**
@@ -37,6 +41,9 @@ export function snapshotOf(exercise: Exercise | undefined): ExerciseSnapshot {
     exerciseMeasurementType: exercise.measurementType,
     exercisePrimaryMuscle: exercise.primaryMuscle,
     exerciseEquipment: exercise.equipment,
+    ...(exercise.bodyweightLoadFactor === undefined
+      ? {}
+      : { exerciseBodyweightLoadFactor: exercise.bodyweightLoadFactor }),
   };
 }
 
@@ -57,6 +64,9 @@ export function exerciseSnapshotOfRow(row: WorkoutExercise): ExerciseSnapshot {
       ? {}
       : { exercisePrimaryMuscle: row.exercisePrimaryMuscle }),
     ...(row.exerciseEquipment === undefined ? {} : { exerciseEquipment: row.exerciseEquipment }),
+    ...(row.exerciseBodyweightLoadFactor === undefined
+      ? {}
+      : { exerciseBodyweightLoadFactor: row.exerciseBodyweightLoadFactor }),
   };
 }
 
@@ -71,6 +81,7 @@ export interface ExerciseIdentity {
   measurementType?: MeasurementType;
   primaryMuscle?: MuscleGroup;
   equipment?: Equipment;
+  bodyweightLoadFactor?: number;
 }
 
 /** A live workout must always have a grid shape, even for a truly missing exercise. */
@@ -102,12 +113,15 @@ export function resolveExerciseIdentity(
   const measurementType = row.exerciseMeasurementType ?? exercise?.measurementType;
   const primaryMuscle = row.exercisePrimaryMuscle ?? exercise?.primaryMuscle;
   const equipment = row.exerciseEquipment ?? exercise?.equipment;
+  const bodyweightLoadFactor =
+    row.exerciseBodyweightLoadFactor ?? exercise?.bodyweightLoadFactor;
 
   return {
     ...(name === undefined ? {} : { name }),
     ...(measurementType === undefined ? {} : { measurementType }),
     ...(primaryMuscle === undefined ? {} : { primaryMuscle }),
     ...(equipment === undefined ? {} : { equipment }),
+    ...(bodyweightLoadFactor === undefined ? {} : { bodyweightLoadFactor }),
   };
 }
 

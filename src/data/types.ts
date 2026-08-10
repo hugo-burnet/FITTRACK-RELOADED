@@ -78,6 +78,8 @@ export interface Exercise extends Syncable {
   instructions?: string;
   userNotes?: string; // RF-09: machine settings, bench height…
   defaultRestSeconds?: number; // RF-27: per-exercise rest
+  /** Catalogue coefficient for effective bodyweight tonnage, when applicable. */
+  bodyweightLoadFactor?: number;
 }
 
 export type ExternalExerciseSource = 'hevy_csv';
@@ -163,6 +165,7 @@ export interface WorkoutExercise extends Syncable {
   exerciseMeasurementType?: MeasurementType;
   exercisePrimaryMuscle?: MuscleGroup;
   exerciseEquipment?: Equipment;
+  exerciseBodyweightLoadFactor?: number;
 }
 
 export interface WorkoutSet extends Syncable {
