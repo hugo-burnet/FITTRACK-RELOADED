@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { createCustomExercise, updateExercise } from '@/data/repositories/exercises';
+import { saveBodyWeight } from '@/data/repositories/bodyMeasurements';
 import type { MuscleGroup, WorkoutExercise } from '@/data/types';
 import { bestSets } from '@/lib/records';
 import {
@@ -28,6 +29,30 @@ import {
 
 describe('history repository', () => {
   beforeEach(resetDb);
+
+  it('résout le poids du corps au début de la séance archivée', async () => {
+    const pushUp = await createCustomExercise({
+      name: 'Pompes',
+      primaryMuscle: 'chest',
+      secondaryMuscles: ['triceps'],
+      equipment: 'bodyweight',
+      measurementType: 'reps_only',
+      isUnilateral: 0,
+      bodyweightLoadFactor: 0.7,
+    });
+    const workout = await seedWorkout({
+      exerciseId: pushUp.id,
+      performedAt: day(5),
+      sets: [[0, 8]],
+    });
+    await saveBodyWeight(80, day(4));
+    await saveBodyWeight(95, day(6));
+
+    const detail = await getArchivedWorkoutDetail(workout.id);
+
+    expect(detail?.bodyWeightKg).toBe(80);
+    expect(detail?.exercises[0]?.identity?.bodyweightLoadFactor).toBe(0.7);
+  });
 
   it('rend uniquement les séances terminées vivantes, récentes en premier', async () => {
     const older = await seedWorkout({

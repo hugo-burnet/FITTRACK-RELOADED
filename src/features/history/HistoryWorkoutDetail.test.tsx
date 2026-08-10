@@ -55,7 +55,13 @@ const set = (over: Partial<WorkoutSet> = {}): WorkoutSet => ({
 });
 
 function detail(
-  line: Partial<{ row: WorkoutExercise; exercise: Exercise | undefined; sets: WorkoutSet[] }>,
+  line: Partial<{
+    row: WorkoutExercise;
+    exercise: Exercise | undefined;
+    identity: WorkoutDetail['exercises'][number]['identity'];
+    sets: WorkoutSet[];
+  }>,
+  bodyWeightKg?: number,
 ): WorkoutDetail {
   return {
     workout: {
@@ -72,10 +78,12 @@ function detail(
       {
         row: line.row ?? row(),
         exercise: 'exercise' in line ? line.exercise : library(),
+        ...(line.identity === undefined ? {} : { identity: line.identity }),
         sets: line.sets ?? [set({ weight: 80, reps: 10 })],
         previous: [],
       },
     ],
+    ...(bodyWeightKg === undefined ? {} : { bodyWeightKg }),
   };
 }
 
@@ -143,6 +151,53 @@ describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
     );
 
     expect(screen.getByText('800 kg')).toBeInTheDocument();
+  });
+
+  it('compte le poids du corps effectif dans le tonnage archivé', () => {
+    render(
+      <HistoryWorkoutDetail
+        detail={detail(
+          {
+            row: row({
+              exerciseName: 'Pompes',
+              exerciseMeasurementType: 'reps_only',
+              exerciseBodyweightLoadFactor: 0.7,
+            }),
+            exercise: library({
+              name: 'Pompes renommées',
+              measurementType: 'reps_only',
+              bodyweightLoadFactor: 0.2,
+            }),
+            sets: [set({ reps: 8 })],
+          },
+          80,
+        )}
+      />,
+    );
+
+    expect(screen.getByText('448 kg')).toBeInTheDocument();
+  });
+
+  it("garde le tonnage d'une ancienne ligne dont l'exercice est supprimé", () => {
+    render(
+      <HistoryWorkoutDetail
+        detail={detail(
+          {
+            row: row(),
+            exercise: undefined,
+            identity: {
+              name: 'Pompes supprimées',
+              measurementType: 'reps_only',
+              bodyweightLoadFactor: 0.7,
+            },
+            sets: [set({ reps: 8 })],
+          },
+          80,
+        )}
+      />,
+    );
+
+    expect(screen.getByText('448 kg')).toBeInTheDocument();
   });
 
   it('conserve toutes les figures stockées quand le type de mesure est perdu', () => {

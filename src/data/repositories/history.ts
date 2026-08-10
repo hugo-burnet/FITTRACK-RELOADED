@@ -190,6 +190,8 @@ export async function listHistoryExerciseOptions(): Promise<
 export async function getArchivedWorkoutDetail(
   workoutId: string,
 ): Promise<WorkoutDetail | null> {
+  // Keep archive totals on the same resolved detail contract as the live
+  // workout, including the body weight effective at the workout timestamp.
   const detail = await getWorkoutDetail(workoutId);
   return detail?.workout.status === 'completed' ? detail : null;
 }

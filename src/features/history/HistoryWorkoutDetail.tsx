@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
-import type { WorkoutDetail } from '@/data/repositories/workouts';
+import {
+  workoutExerciseIdentityOf,
+  type WorkoutDetail,
+} from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatDuration, setTypeLabel, unitLabel } from '@/i18n/labels';
-import { resolveExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
@@ -68,19 +70,20 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
   // from it can agree after the exercise has been renamed or re-typed.
   const completed = exercises.map((line) => ({
     line,
-    identity: resolveExerciseIdentity(line.row, line.exercise),
+    identity: workoutExerciseIdentityOf(line),
+    // The live grid fallback is deliberately not historical evidence. When
+    // both stored sources are gone, keep rendering every persisted figure.
+    measurementType: line.row.exerciseMeasurementType ?? line.exercise?.measurementType,
     sets: line.sets.filter((set) => set.isCompleted === 1),
   }));
   const entries: VolumeEntry[] = completed.flatMap(({ identity, sets }) =>
     sets.map((set) => ({
       set,
-      weightRole:
-        identity.measurementType === undefined
-          ? undefined
-          : measurementShape(identity.measurementType).weightRole,
+      weightRole: measurementShape(identity.measurementType).weightRole,
+      bodyweightLoadFactor: identity.bodyweightLoadFactor,
     })),
   );
-  const totals = sessionTotals(entries);
+  const totals = sessionTotals(entries, detail.bodyWeightKg);
   const distancePart = performedParts('distance_time', {
     distanceMeters: totals.distanceMeters,
   }).at(0);
@@ -160,7 +163,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
         <div className="space-y-4">
           {completed
             .filter(({ sets }) => sets.length > 0)
-            .map(({ line, identity, sets }) => (
+            .map(({ line, identity, measurementType, sets }) => (
               <Card key={line.row.id}>
                 <div className="border-b border-[var(--border)] px-4 py-3">
                   <h3 className="text-base font-semibold text-[var(--text-1)]">
@@ -174,7 +177,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
                 </div>
 
                 {sets.map((set) => {
-                  const parts = performedReadings(set, identity.measurementType);
+                  const parts = performedReadings(set, measurementType);
                   const readings = [
                     ...parts.map(readingPart),
                     setTypeLabel(set.setType),

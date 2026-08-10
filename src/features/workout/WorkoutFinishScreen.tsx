@@ -9,6 +9,7 @@ import {
   getActiveWorkout,
   getWorkoutDetail,
   updateWorkout,
+  workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { unitLabel } from '@/i18n/labels';
@@ -73,16 +74,20 @@ export function WorkoutFinishScreen() {
   const entries: VolumeEntry[] = exercises.flatMap((line) =>
     line.sets
       .filter((set) => set.isCompleted === 1)
-      .map((set) => ({
-        set,
-        weightRole:
-          line.exercise === undefined
-            ? undefined
-            : measurementShape(line.exercise.measurementType).weightRole,
-      })),
+      .map((set) => {
+        const identity = workoutExerciseIdentityOf(line);
+        return {
+          set,
+          weightRole:
+            identity.measurementType === undefined
+              ? undefined
+              : measurementShape(identity.measurementType).weightRole,
+          bodyweightLoadFactor: identity.bodyweightLoadFactor,
+        };
+      }),
   );
 
-  const totals = sessionTotals(entries);
+  const totals = sessionTotals(entries, detail.bodyWeightKg);
   const validated = exercises.reduce(
     (count, line) => count + line.sets.filter((set) => set.isCompleted === 1).length,
     0,

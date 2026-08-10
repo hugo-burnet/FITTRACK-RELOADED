@@ -5,6 +5,7 @@ import {
   type WorkoutExerciseIdentity,
 } from '@/lib/exerciseSnapshot';
 import { alive } from './base';
+import { resolveBodyWeightsAt } from './bodyMeasurements';
 import { getLastPerformance } from './workoutHistory';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
@@ -23,6 +24,7 @@ export interface WorkoutExerciseDetail {
 export interface WorkoutDetail {
   workout: Workout;
   exercises: WorkoutExerciseDetail[];
+  bodyWeightKg?: number;
 }
 
 /**
@@ -50,12 +52,13 @@ export async function getWorkoutDetail(workoutId: string): Promise<WorkoutDetail
     byOrder,
   );
 
-  const [sets, found] = await Promise.all([
+  const [sets, found, bodyWeights] = await Promise.all([
     db.workoutSets
       .where('workoutExerciseId')
       .anyOf(rows.map((row) => row.id))
       .toArray(),
     db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]),
+    resolveBodyWeightsAt([workout.startedAt]),
   ]);
 
   const library = new Map<string, Exercise>();
@@ -84,6 +87,9 @@ export async function getWorkoutDetail(workoutId: string): Promise<WorkoutDetail
 
   return {
     workout,
+    ...(bodyWeights.get(workout.startedAt) === undefined
+      ? {}
+      : { bodyWeightKg: bodyWeights.get(workout.startedAt) }),
     exercises: rows.map((row) => ({
       row,
       exercise: activeLibrary.get(row.exerciseId),

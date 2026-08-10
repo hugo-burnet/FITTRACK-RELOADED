@@ -5,6 +5,7 @@ import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { day, seedWorkout } from '@/test/factories';
 import { newEntity } from './base';
+import { saveBodyWeight } from './bodyMeasurements';
 import { createCustomExercise, updateExercise } from './exercises';
 import { addExercisesToRoutine, addRoutineSet, createRoutine, updateRoutineSet } from './routines';
 import { getLastPerformance, listRecordSets, listSessionsForExercise } from './workoutHistory';
@@ -1009,6 +1010,30 @@ describe('getWorkoutDetail', () => {
   /** `undefined` = pas encore répondu, `null` = absente. Piège du Lot 3. */
   it('rend null et non undefined pour une séance absente', async () => {
     expect(await getWorkoutDetail('inexistante')).toBeNull();
+  });
+
+  it('résout le poids du corps au début de la séance', async () => {
+    const pushUp = await createCustomExercise({
+      name: 'Pompes',
+      primaryMuscle: 'chest',
+      secondaryMuscles: ['triceps'],
+      equipment: 'bodyweight',
+      measurementType: 'reps_only',
+      isUnilateral: 0,
+      bodyweightLoadFactor: 0.7,
+    });
+    const workout = await startWorkout('', 'Poids du corps');
+    await saveBodyWeight(80, workout.startedAt - 86_400_000);
+    await saveBodyWeight(95, workout.startedAt + 86_400_000);
+    await addWorkoutExercise(workout.id, pushUp.id);
+    const initial = at(at((await getWorkoutDetail(workout.id))!.exercises, 0).sets, 0);
+    await completeSet(initial.id, { reps: 8 });
+
+    const detail = await getWorkoutDetail(workout.id);
+
+    expect(detail?.bodyWeightKg).toBe(80);
+    expect(at(detail!.exercises, 0).identity?.bodyweightLoadFactor).toBe(0.7);
+    expect(at(at(detail!.exercises, 0).sets, 0).reps).toBe(8);
   });
 
   it('porte la valeur précédente de chaque exercice, hors séance en cours', async () => {
