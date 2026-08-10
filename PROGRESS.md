@@ -2,7 +2,68 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-09 (**Lot 10 — application Android Capacitor**).
+**Dernière mise à jour :** 2026-08-10 (**mesure de l'accueil + mémoïsation de la régularité**).
+Branche `perf/home-dashboard-reads`, hors lot.
+
+**Point de départ :** l'accueil charge **toutes** les séances terminées pour en afficher trois
+(`listCompletedWorkouts` dans `getHomeDashboard`), relit les trois tables de routines en entier,
+et rejouait `calculateWeeklyRegularity` à **chaque rendu** — la fonction était appelée dans le
+corps de `useHomeDashboard`, ni dans le `useLiveQuery` ni sous mémo. Elle est désormais sous
+`useMemo`, avant les retours anticipés, et rend l'objet d'état complet : identité stable en
+prime.
+
+**L'écran le plus souvent ouvert était le seul que le banc grande base ne regardait pas.**
+`history.bench.ts` mesurait la pagination et l'export ; `home.bench.ts` (`npm run bench:home`)
+comble le trou. Les routines et l'objectif hebdomadaire y sont semés **exprès** : sans routines
+`pickSuggestedRoutine` sort sur `candidates.length === 0`, sans objectif la régularité rend zéro
+sans dérouler sa boucle — le banc aurait mesuré un accueil au repos et annoncé une bonne
+nouvelle. Les séances sont rattachées aux routines **à tour de rôle**, c'est-à-dire dans le cas
+le plus favorable à un futur arrêt anticipé : une fixture complaisante donne raison à la
+correction qu'on avait envie d'écrire.
+
+**Les chiffres, sur 2 000 séances / 64 000 séries** (~71 ms au total pour l'accueil) :
+
+| | ms | part |
+|---|---|---|
+| Lecture non bornée des séances | 40,5 | 57 % |
+| Compteurs des **3** lignes affichées | 17,7 | 25 % |
+| Résumés de routines (3 tables entières) | 2,2 | 3 % |
+| Régularité hebdomadaire | 1,3 | 2 % |
+| Suggestion de routine | 0,076 | 0,1 % |
+
+**Trois corrections « évidentes » que la mesure a annulées.** Avant de mesurer, la suggestion
+était annoncée comme le morceau difficile, avec un `lastPerformedAt` dénormalisé sur `Routine`,
+ses quatre points de synchronisation et son bouton « réparer » : elle coûte **76 microsecondes**.
+La série hebdomadaire était annoncée comme une décision produit — la borner à 52 semaines pour
+éviter un parcours sans fin : le banc a déroulé **428 semaines en 1,3 ms**. Et la mémoïsation,
+présentée comme l'évidence à faire en premier, est la **plus petite ligne du tableau** ; elle a
+été faite parce qu'elle était gratuite, pas parce qu'elle était urgente. **Le coût est dans la
+sortie des lignes d'IndexedDB, jamais dans ce qu'on en calcule** — un raisonnement sur la
+complexité algorithmique désignait à chaque fois le mauvais coupable.
+
+**Et ça fusionne deux corrections qu'on croyait séparables.** Comme la suggestion a besoin de
+tout l'historique, borner la lecture **impose** le parcours arrière avec arrêt anticipé, donc
+l'index composé `[status+startedAt]` et sa migration `version(4)`. Une seule décision, pas deux.
+Piège noté au passage : `deletedAt === 0` n'est pas dans cet index, il faudra sur-lire et couper
+après, sinon trois séances supprimées d'affilée rendent une liste vide.
+
+**À creuser avant d'y toucher :** `buildWorkoutSummaries` pour **3 lignes** coûte 17,7 ms, un
+quart de l'écran. Un `anyOf` sur trois identifiants indexés ne devrait pas coûter ça — probable
+artefact de `fake-indexeddb`, à confirmer sur le vrai moteur avant d'en tirer quoi que ce soit.
+
+**Ce que ces chiffres ne sont pas :** des millisecondes de téléphone. C'est Node + jsdom +
+`fake-indexeddb`, une implémentation JS en mémoire. D'un lancement à l'autre le total a varié de
+**71 à 130 ms** sur la même machine — **seules les proportions se lisent**. À 3 échantillons la
+marge d'erreur dépassait 60 %, d'où les 15 itérations du banc.
+
+**Décision : on n'en fait pas plus.** À 71 ms pour une base deux ordres de grandeur au-dessus de
+l'usage réel, la migration de schéma ne vaut pas son risque. Le banc reste, il tournera quand ça
+comptera.
+
+**Checkpoint téléphone :** aucun. Le `useMemo` ne change rien de visible — si l'accueil affiche
+autre chose qu'avant, c'est une régression.
+
+**Mise à jour précédente :** 2026-08-09 (**Lot 10 — application Android Capacitor**).
 
 Le projet Android Capacitor 8 est versionné avec l'identifiant `com.fittrack.app`. Le build
 Android utilise des chemins relatifs et aucun service worker, tandis que GitHub Pages conserve
@@ -3733,6 +3794,14 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 ## Dette technique assumée
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
+
+- **Assumée le 2026-08-10 — l'accueil lit tout l'historique pour afficher trois lignes.**
+  `getHomeDashboard` charge toutes les séances terminées et relit les trois tables de routines
+  en entier, à chaque écriture dans l'une des six tables observées. Mesurée à ~71 ms sur
+  2 000 séances (`npm run bench:home`), dont 57 % pour la seule lecture non bornée. **Sous le
+  seuil d'action** : le remboursement demande l'index `[status+startedAt]`, un parcours arrière
+  avec arrêt anticipé et une migration `version(4)`. À rouvrir si le banc dépasse la centaine de
+  millisecondes **sur un vrai téléphone**, pas sur `fake-indexeddb`.
 
 - **Remboursée le 2026-07-27 — les deux repositories dépassaient la règle des ~300 lignes.**
   `workouts.ts` avait atteint 682 lignes et `routines.ts` 504 avant la reprise de l’édition
