@@ -201,7 +201,13 @@ export function RoutineExerciseCard({
             </button>
           )}
 
-          <span className="flex min-w-0 flex-1 flex-col justify-center gap-1 py-3">
+          {/* The handle is what insets this header while reordering is on; once
+              the order is locked it is gone and the title would sit against the
+              rounded edge, so the inset is carried here instead. */}
+          <span
+            className={`flex min-w-0 flex-1 flex-col justify-center gap-1 py-3
+              ${reorderEnabled ? '' : 'pl-4'}`}
+          >
             <span className="flex min-w-0 items-baseline gap-2">
               {superset !== undefined && (
                 <span className="label-xs shrink-0 font-semibold text-[var(--accent-ink)]">

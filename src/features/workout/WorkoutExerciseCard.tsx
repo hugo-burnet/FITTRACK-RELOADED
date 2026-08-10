@@ -152,7 +152,10 @@ export function WorkoutExerciseCard({
             type="button"
             aria-expanded={expanded}
             onClick={() => setExpanded((open) => !open)}
-            className="flex min-w-0 flex-1 items-center gap-2 py-3 pr-1 text-left"
+            // Same as the routine card: locked order removes the handle that was
+            // insetting this header, so the inset moves onto the header itself.
+            className={`flex min-w-0 flex-1 items-center gap-2 py-3 pr-1 text-left
+              ${reorderEnabled ? '' : 'pl-4'}`}
           >
             {!expanded && allDone && <CheckIcon className="shrink-0 text-[var(--accent-ink)]" />}
             <span className="flex min-w-0 flex-1 flex-col justify-center gap-1">
