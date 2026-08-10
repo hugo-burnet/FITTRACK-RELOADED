@@ -2,7 +2,26 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Tonnage au poids du corps et préparation
+**Dernière mise à jour :** 2026-08-11 (**Marge des cartes à l'ordre verrouillé et
+préparation Android v0.1.3**).
+
+Quand l'ordre des exercices est verrouillé, la poignée de déplacement disparaît : c'était elle
+qui écartait le titre du bord arrondi de la carte, et son retrait collait le nom et son
+sous-titre contre la bordure. L'en-tête porte désormais lui-même une marge de 16 px, mais
+seulement à l'état verrouillé — déverrouillé, la poignée reste le premier élément de la ligne et
+la mise en page ne change pas. Même règle dans l'éditeur de routine et dans la séance en cours.
+Mesuré dans l'app : 16 px verrouillé, 44 px déverrouillé (la largeur de la poignée) sur les
+deux écrans.
+
+La version applicative est `0.1.3`. Portes locales finales : lint, typecheck, **1068 tests dans
+96 fichiers**, build PWA.
+
+**Checkpoint téléphone :** installer `FitTrack-v0.1.3.apk` par-dessus l'app existante sans la
+désinstaller. Ouvrir une routine et une séance en cours : verrouillé, le titre de chaque
+exercice doit respirer par rapport au bord de la carte ; déverrouillé, la poignée doit reprendre
+sa place sans que rien d'autre ne bouge.
+
+**Mise à jour précédente :** 2026-08-11 (**Tonnage au poids du corps et préparation
 Android v0.1.2**).
 
 Le poids du jour se renseigne directement depuis l'accueil et reste local dans les mesures
