@@ -96,6 +96,10 @@ export function availableMetrics(type: MeasurementType | undefined): MetricDefin
 }
 
 /** One session's rows, with the identity **that session** was recorded under. */
+export interface AnalyticsSet extends HistoricalSet {
+  bodyweightLoadFactor?: number;
+}
+
 export interface AnalyticsSession {
   workoutId: string;
   /** `workout.startedAt` — never a set's `performedAt`, cf. spec §2.2. */
@@ -103,8 +107,7 @@ export interface AnalyticsSession {
   /** From the snapshot, falling back to the library. May be absent. */
   measurementType?: MeasurementType;
   bodyWeightKg?: number;
-  bodyweightLoadFactor?: number;
-  sets: HistoricalSet[];
+  sets: AnalyticsSet[];
 }
 
 export interface MetricPoint {
@@ -161,7 +164,7 @@ function valueOf(key: MetricKey, session: AnalyticsSession): number | undefined 
       sets.map((set) => ({
         set,
         weightRole: measurementShape(type).weightRole,
-        bodyweightLoadFactor: session.bodyweightLoadFactor,
+        bodyweightLoadFactor: set.bodyweightLoadFactor,
       })),
       session.bodyWeightKg,
     );

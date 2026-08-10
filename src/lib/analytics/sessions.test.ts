@@ -24,7 +24,7 @@ describe('toAnalyticsSessions', () => {
 
     expect(sessions[0]).toMatchObject({
       bodyWeightKg: 80,
-      bodyweightLoadFactor: 0.7,
+      sets: [{ bodyweightLoadFactor: 0.7 }],
     });
     expect(metricSeries('sessionTonnage', sessions)[0]?.value).toBe(448);
   });
@@ -65,6 +65,28 @@ describe('toAnalyticsSessions', () => {
     const sessions = toAnalyticsSessions(sources);
     expect(sessions).toHaveLength(1);
     expect(sessions[0]!.sets).toHaveLength(2);
+  });
+
+  it('keeps each occurrence load factor when an exercise appears twice', () => {
+    const sessions = toAnalyticsSessions([
+      historicalWorkout({
+        bodyWeightKg: 80,
+        exercises: [
+          historicalExercise({
+            measurementType: 'reps_only',
+            bodyweightLoadFactor: 0.7,
+            sets: [historicalSet({ weight: undefined, reps: 8 })],
+          }),
+          historicalExercise({
+            measurementType: 'reps_only',
+            bodyweightLoadFactor: 1,
+            sets: [historicalSet({ weight: undefined, reps: 8 })],
+          }),
+        ],
+      }),
+    ]);
+
+    expect(metricSeries('sessionTonnage', sessions)[0]?.value).toBe(1_088);
   });
 
   it('keeps chronological order and a session without sets', () => {

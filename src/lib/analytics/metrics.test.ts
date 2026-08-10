@@ -5,6 +5,7 @@ import {
   bestPointIndex,
   metricDefinition,
   metricSeries,
+  type AnalyticsSet,
   type AnalyticsSession,
 } from './metrics';
 
@@ -29,7 +30,9 @@ const aSet = (values: Partial<WorkoutSet>): WorkoutSet => ({
 const session = (
   startedAt: number,
   measurementType: MeasurementType | undefined,
-  sets: Partial<WorkoutSet>[],
+  sets: Array<
+    Partial<WorkoutSet> & Pick<Partial<AnalyticsSet>, 'bodyweightLoadFactor'>
+  >,
   overrides: Partial<AnalyticsSession> = {},
 ): AnalyticsSession => ({
   workoutId: `w-${startedAt}`,
@@ -161,8 +164,12 @@ describe('metricSeries', () => {
       session(
         1,
         'reps_only',
-        [{ weight: undefined, reps: 8 }],
-        { bodyWeightKg: 80, bodyweightLoadFactor: 0.7 },
+        [{
+          weight: undefined,
+          reps: 8,
+          bodyweightLoadFactor: 0.7,
+        }],
+        { bodyWeightKg: 80 },
       ),
     ]);
 
