@@ -22,6 +22,7 @@
 - TDD is mandatory: witness RED before production changes, then GREEN, then the focused regression set.
 - REQUIRED SUB-SKILL for Tasks 5 and 6: apply `frontend-design` before HTML/CSS changes.
 - Preserve Claude's independent `perf/home-dashboard-reads` worktree and do not edit `useHomeDashboard.ts`.
+- Before publishing, merge `perf/home-dashboard-reads` into the release result and re-run every gate on the combined tree; no APK is tagged from either branch alone.
 
 ---
 
@@ -499,6 +500,6 @@ git commit -m "chore: prepare Android release v0.1.2"
 
 - [ ] **Step 9: Finish the branch and publish**
 
-Use `finishing-a-development-branch`: merge locally to `master`, re-run the merged test suite, clean the owned worktree, push `master`, create/push annotated tag `v0.1.2`, monitor `.github/workflows/android.yml`, and verify `FitTrack-v0.1.2.apk` exists in the GitHub Release.
+Use `finishing-a-development-branch`: merge this branch locally to `master`, merge Claude's `perf/home-dashboard-reads` branch, resolve conflicts without discarding either feature, re-run lint/typecheck/the complete test suite/PWA build/Android build and sync on the combined tree, clean the owned worktree, push `master`, create/push annotated tag `v0.1.2`, monitor `.github/workflows/android.yml`, and verify `FitTrack-v0.1.2.apk` exists in the GitHub Release.
 
 **Phone checkpoint:** Install `FitTrack-v0.1.2.apk` over the existing app without uninstalling. Save body weight on Home, complete push-ups/squats/pull-ups/weighted/assisted work, compare Finish/History/Weekly Volume, correct the same-day weight, relaunch offline, and confirm data persists.
