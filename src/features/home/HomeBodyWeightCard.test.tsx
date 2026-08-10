@@ -105,15 +105,15 @@ describe('HomeBodyWeightCard', () => {
     clearTimeout.mockRestore();
   });
 
-  it('does not impose an artificial 500 kg ceiling', async () => {
+  it('does not inherit the NumberInput 9999 ceiling', async () => {
     const user = userEvent.setup();
-    await bodyMeasurements.saveBodyWeight(500, Date.now());
+    await bodyMeasurements.saveBodyWeight(9999, Date.now());
     render(<HomeBodyWeightCard />);
 
     const input = await screen.findByLabelText('Poids du corps');
-    await waitFor(() => expect(input).toHaveValue('500'));
+    await waitFor(() => expect(input).toHaveValue('9999'));
     await user.click(screen.getByRole('button', { name: 'Augmenter' }));
-    expect(input).toHaveValue('500,1');
+    expect(input).toHaveValue('9999,1');
   });
 
   it('keeps the edited value and allows retry after a rejected write', async () => {

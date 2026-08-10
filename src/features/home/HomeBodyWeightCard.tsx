@@ -95,6 +95,7 @@ export function HomeBodyWeightCard() {
               }}
               step={0.1}
               min={0.1}
+              max={Number.POSITIVE_INFINITY}
               suffix={t('units.kg')}
               placeholder={t('home.bodyWeightPlaceholder')}
             />
