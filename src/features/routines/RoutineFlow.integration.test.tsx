@@ -1,9 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createCustomExercise } from '@/data/repositories/exercises';
-import { getRoutineDetail, listRoutineSummaries } from '@/data/repositories/routines';
+import {
+  addExercisesToRoutine,
+  createRoutine,
+  getRoutineDetail,
+  listRoutineSummaries,
+} from '@/data/repositories/routines';
+import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { resetDb } from '@/test/resetDb';
 import { ExercisePickerScreen } from './ExercisePickerScreen';
 import { RoutineEditorScreen } from './RoutineEditorScreen';
@@ -22,7 +28,10 @@ function renderRoutineFlow(initialEntry = '/routines') {
 }
 
 describe('parcours de composition d’une routine', () => {
-  beforeEach(resetDb);
+  beforeEach(async () => {
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
 
   it('persiste la routine complète après un remontage de la liste', async () => {
     const exercise = await createCustomExercise({
@@ -73,5 +82,56 @@ describe('parcours de composition d’une routine', () => {
 
     expect(await screen.findByText('Épaules force')).toBeVisible();
     expect(screen.getByText('1 exercice · 2 séries')).toBeVisible();
+  });
+
+  it('verrouille l’ordre par défaut et garde le choix pendant la session', async () => {
+    const first = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const second = await createCustomExercise({
+      name: 'Tirage horizontal',
+      primaryMuscle: 'upper_back',
+      secondaryMuscles: [],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Haut du corps');
+    await addExercisesToRoutine(routine.id, [first.id, second.id]);
+    const user = userEvent.setup();
+    const mounted = renderRoutineFlow(`/routines/${routine.id}`);
+
+    await screen.findByText(first.name);
+    expect(
+      screen.queryByRole('button', { name: `Déplacer ${first.name}` }),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }),
+    );
+    const firstHandle = screen.getByRole('button', { name: `Déplacer ${first.name}` });
+    fireEvent.keyDown(firstHandle, { key: 'ArrowDown' });
+
+    await waitFor(async () => {
+      expect((await getRoutineDetail(routine.id))?.exercises[0]?.exercise?.id).toBe(second.id);
+    });
+
+    mounted.unmount();
+    renderRoutineFlow(`/routines/${routine.id}`);
+    expect(
+      await screen.findByRole('button', { name: `Déplacer ${second.name}` }),
+    ).toBeVisible();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }),
+    );
+    expect(
+      screen.queryByRole('button', { name: `Déplacer ${second.name}` }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -13,6 +13,7 @@ type Props = {
   line: RoutineExerciseDetail;
   superset?: SupersetPlace;
   state: ItemState;
+  reorderEnabled: boolean;
   onMenu: () => void;
   onOpenSet: (set: RoutineSet) => void;
   onDeleteSet: (set: RoutineSet) => void;
@@ -137,6 +138,7 @@ export function RoutineExerciseCard({
   line,
   superset,
   state,
+  reorderEnabled,
   onMenu,
   onOpenSet,
   onDeleteSet,
@@ -187,15 +189,17 @@ export function RoutineExerciseCard({
           }`}
       >
         <div className="flex items-stretch border-b border-[var(--border)]">
-          <button
-            type="button"
-            aria-label={t('routine.dragHandle', { name })}
-            className="flex w-11 shrink-0 cursor-grab items-center justify-center
-              text-[var(--text-2)] active:cursor-grabbing"
-            {...state.handleProps}
-          >
-            <GripIcon />
-          </button>
+          {reorderEnabled && (
+            <button
+              type="button"
+              aria-label={t('routine.dragHandle', { name })}
+              className="flex w-11 shrink-0 cursor-grab items-center justify-center
+                text-[var(--text-2)] active:cursor-grabbing"
+              {...state.handleProps}
+            >
+              <GripIcon />
+            </button>
+          )}
 
           <span className="flex min-w-0 flex-1 flex-col justify-center gap-1 py-3">
             <span className="flex min-w-0 items-baseline gap-2">

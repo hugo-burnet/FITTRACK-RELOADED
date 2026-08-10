@@ -21,6 +21,7 @@ import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/w
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { supersetPlaces } from '@/lib/routineOrder';
+import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import {
   ActionBand,
   AddRow,
@@ -29,6 +30,7 @@ import {
   Input,
   ListRow,
   OptionSheet,
+  OrderLockButton,
   ReorderableList,
 } from '@/ui';
 import type { Option } from '@/ui';
@@ -56,6 +58,8 @@ export function RoutineEditorScreen() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.routine);
+  const toggleReorder = useExerciseOrderLock((state) => state.toggle);
 
   // `null` is "gone", `undefined` is "not answered yet" — without the
   // distinction the screen flashes "cette routine n'existe plus" on every open.
@@ -220,19 +224,27 @@ export function RoutineEditorScreen() {
                 reorderable list on purpose: that component maps its children to
                 item indices one for one, so a stray child would misalign every
                 drag. */}
-            <p className="label-xs px-1 font-semibold text-[var(--text-2)]">
-              {routineSummaryLine(exercises.length, setCount)}
-            </p>
+            <div className="flex min-h-12 items-center pl-1">
+              <p className="label-xs min-w-0 flex-1 font-semibold text-[var(--text-2)]">
+                {routineSummaryLine(exercises.length, setCount)}
+              </p>
+              <OrderLockButton
+                unlocked={reorderUnlocked}
+                onToggle={() => toggleReorder('routine')}
+              />
+            </div>
             <ReorderableList
               className="flex flex-col gap-3"
               items={exercises}
               keyOf={(line) => line.row.id}
+              disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderRoutineExercises(routine.id, from, to)}
               renderItem={(line, _index, state) => (
                 <RoutineExerciseCard
                   line={line}
                   superset={places.get(line.row.id)}
                   state={state}
+                  reorderEnabled={reorderUnlocked}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onOpenSet={(set) =>
                     setSheet({
