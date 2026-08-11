@@ -274,8 +274,16 @@ export interface RecordTimelineEntry {
   record: PersonalRecord;
   exerciseName: string;
   workoutStatus: 'active' | 'completed';
+  previousValue?: number;
+  triggerWorkoutSetId?: string;
 }
 ```
+
+`previousValue` distingue la marque initiale d'une vraie amélioration et alimente le gain affiché.
+`triggerWorkoutSetId` est un champ de lecture, jamais persisté : il vaut la série source pour un
+record de série et la dernière série contributrice pour un record de tonnage de séance. La note
+en direct peut ainsi apparaître sous la bonne série sans faire entrer cette série dans l'identité
+métier du record de séance.
 
 ---
 
