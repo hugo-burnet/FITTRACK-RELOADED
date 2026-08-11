@@ -24,8 +24,8 @@ import {
 } from '@/ui';
 import { hasDrawableMuscles } from '@/ui/bodyMap';
 import { ChevronRightIcon } from '@/ui/icons';
-import { formatNumber } from '@/ui/numberField';
-import { coachSignalMessage, recommendationAsSignal } from '@/features/workout/coachCopy';
+import { CoachCard } from '@/features/workout/CoachCard';
+import { recommendationAsSignal } from '@/features/workout/coachCopy';
 import { ExerciseMusclesCard } from './ExerciseMusclesCard';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
@@ -43,29 +43,6 @@ function coachStatusLabel(status: CoachRecommendation['status']): string {
     case 'dismissed':
       return t('coach.statusDismissed');
   }
-}
-
-function CoachHistoryRow({ row }: { row: CoachRecommendation }) {
-  return (
-    <div className="border-b border-[var(--border)] p-4 last:border-b-0">
-      <div className="flex items-start justify-between gap-3">
-        <p className="label-xs font-semibold text-[var(--text-2)]">
-          {longDate(row.recommendedAt)}
-        </p>
-        <p className="label-xs font-semibold text-[var(--text-2)]">
-          {coachStatusLabel(row.status)}
-        </p>
-      </div>
-      <p className="mt-1 text-sm leading-snug text-[var(--text-1)]">
-        {coachSignalMessage(recommendationAsSignal(row))}
-      </p>
-      {row.nextLoadKg !== undefined && (
-        <p className="metric mt-1 text-sm font-semibold text-[var(--text-1)]">
-          {t('coach.nextLoad', { weight: formatNumber(row.nextLoadKg) })}
-        </p>
-      )}
-    </div>
-  );
 }
 
 /**
@@ -315,7 +292,16 @@ export function ExerciseDetailScreen() {
                 {t('coach.historyEmpty')}
               </p>
             ) : (
-              coachHistory.map((row) => <CoachHistoryRow key={row.id} row={row} />)
+              coachHistory.map((row) => (
+                <CoachCard
+                  key={row.id}
+                  signal={recommendationAsSignal(row)}
+                  tone={row.status === 'pending' ? 'objective' : 'signal'}
+                  variant="row"
+                  dateLabel={longDate(row.recommendedAt)}
+                  statusLabel={coachStatusLabel(row.status)}
+                />
+              ))
             )}
           </Card>
         </section>

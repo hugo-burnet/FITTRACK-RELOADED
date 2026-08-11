@@ -288,10 +288,11 @@ export function WorkoutExerciseCard({
             )}
 
             {coachObjective !== undefined && (
-              <div className="border-b border-[var(--border)] px-3 py-2">
+              <div className="border-b border-[var(--border)]">
                 <CoachCard
                   signal={recommendationAsSignal(coachObjective)}
                   tone="objective"
+                  variant="strip"
                   onDismiss={onDismissCoach}
                 />
               </div>

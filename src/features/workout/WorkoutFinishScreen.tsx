@@ -177,16 +177,31 @@ export function WorkoutFinishScreen() {
         )}
 
         {coachSignals !== undefined && coachSignals.length > 0 && (
-          <section className="flex flex-col gap-2">
+          <section>
             <SectionTitle>{t('finish.coachSection')}</SectionTitle>
-            <div className="flex flex-col gap-2">
-              {coachSignals.map((signal) => (
-                <CoachCard
-                  key={`${signal.exerciseId}-${signal.code}`}
-                  signal={signal}
-                />
-              ))}
-            </div>
+            {/*
+              One Card, stacked readings — same rhythm as records / history lists.
+              Nested islands of rounded borders would fight the body map above.
+            */}
+            <Card>
+              {coachSignals.map((signal) => {
+                const line = exercises.find(
+                  (item) => item.row.exerciseId === signal.exerciseId,
+                );
+                const name =
+                  line === undefined
+                    ? undefined
+                    : (workoutExerciseIdentityOf(line).name ?? t('workout.deletedExercise'));
+                return (
+                  <CoachCard
+                    key={`${signal.exerciseId}-${signal.code}`}
+                    signal={signal}
+                    exerciseName={name}
+                    variant="row"
+                  />
+                );
+              })}
+            </Card>
           </section>
         )}
 
