@@ -6,6 +6,9 @@
 
 Plan suivi scrupuleusement : `docs/plans/lot-18-coach-deterministe.md`.
 
+**Release Android v0.3.0 :** version applicative alignée sur le tag de publication. Le push de
+`master` déploie la PWA et construit l’APK ; le tag `v0.3.0` publie l’APK dans GitHub Releases.
+
 **Tranche 0 — mesure RPE avant toute règle de fatigue.** Source :
 `%USERPROFILE%\Downloads\workout_data.csv` (export Hevy/FitTrack, 136 séries de travail).
 Séries avec RPE : **0**. Taux : **0 %** (seuil ~50 %). **Décision figée :** les détections
