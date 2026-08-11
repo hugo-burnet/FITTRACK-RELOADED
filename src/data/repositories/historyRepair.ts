@@ -1,7 +1,10 @@
+
 import { db } from '@/data/db';
 import type { Exercise, WorkoutExercise } from '@/data/types';
 import { snapshotOf } from '@/lib/exerciseSnapshot';
 import { touch } from './base';
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { getOneRepMaxFormula } from './settings';
 
 /**
  * Replays the exercise snapshot of the whole history from today's library.
@@ -31,34 +34,57 @@ function differs(row: WorkoutExercise, exercise: Exercise): boolean {
     row.exerciseName !== exercise.name ||
     row.exerciseMeasurementType !== exercise.measurementType ||
     row.exercisePrimaryMuscle !== exercise.primaryMuscle ||
-    row.exerciseEquipment !== exercise.equipment
+    row.exerciseEquipment !== exercise.equipment ||
+    row.exerciseBodyweightLoadFactor !== exercise.bodyweightLoadFactor
   );
 }
-
 export async function resnapshotHistory(): Promise<HistoryRepairResult> {
-  return db.transaction('rw', db.exercises, db.workoutExercises, async () => {
-    // Soft-deleted exercises included: `deleteExercise` never really removes
-    // one, and a deleted exercise is still the exercise that was performed.
-    const exercises = await db.exercises.toArray();
-    const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+  return db.transaction(
+    'rw',
+    [
+      db.settings,
+      db.exercises,
+      db.workouts,
+      db.workoutExercises,
+      db.workoutSets,
+      db.bodyMeasurements,
+      db.personalRecords,
+    ],
+    async () => {
+      // Soft-deleted exercises included: `deleteExercise` never really removes
+      // one, and a deleted exercise is still the exercise that was performed.
+      const exercises = await db.exercises.toArray();
+      const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
 
-    let repaired = 0;
-    let kept = 0;
+      let repaired = 0;
+      let kept = 0;
+      const affectedExerciseIds = new Set<string>();
 
-    await db.workoutExercises.toCollection().modify((row) => {
-      const exercise = byId.get(row.exerciseId);
-      // The guard that keeps this a repair rather than a loss: `snapshotOf`
-      // returns `{}` for an unknown exercise, and writing that would erase the
-      // only surviving record of what the row was.
-      if (exercise === undefined || !differs(row, exercise)) {
-        kept += 1;
-        return;
-      }
+      await db.workoutExercises.toCollection().modify((row) => {
+        const exercise = byId.get(row.exerciseId);
+        // The guard that keeps this a repair rather than a loss: `snapshotOf`
+        // returns `{}` for an unknown exercise, and writing that would erase the
+        // only surviving record of what the row was.
+        if (exercise === undefined || !differs(row, exercise)) {
+          kept += 1;
+          return;
+        }
 
-      Object.assign(row, touch(row, snapshotOf(exercise)));
-      repaired += 1;
-    });
+        const snapshot = snapshotOf(exercise);
+        if (snapshot.exerciseBodyweightLoadFactor === undefined) {
+          delete row.exerciseBodyweightLoadFactor;
+        }
+        Object.assign(row, touch(row, snapshot));
+        affectedExerciseIds.add(row.exerciseId);
+        repaired += 1;
+      });
 
-    return { repaired, kept };
-  });
+      await reconcileRecordsForExercises(
+        [...affectedExerciseIds],
+        await getOneRepMaxFormula(),
+      );
+
+      return { repaired, kept };
+    },
+  );
 }

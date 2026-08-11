@@ -1,9 +1,10 @@
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { createCustomExercise, updateExercise } from '@/data/repositories/exercises';
 import { saveBodyWeight } from '@/data/repositories/bodyMeasurements';
-import type { MuscleGroup, WorkoutExercise } from '@/data/types';
-import { bestSets } from '@/lib/records';
+import type { MuscleGroup, PersonalRecord, WorkoutExercise } from '@/data/types';
+import { projectRecordTimeline, type RecordEventDraft } from '@/lib/records';
 import {
   addWorkoutExercise,
   addSet,
@@ -12,7 +13,6 @@ import {
 } from '@/data/repositories/workouts';
 import {
   getLastPerformance,
-  listRecordSets,
 } from '@/data/repositories/workoutHistory';
 import { day, seedWorkout } from '@/test/factories';
 import { resetDb } from '@/test/resetDb';
@@ -26,6 +26,43 @@ import {
   listHistoryPage,
   saveArchivedWorkout,
 } from './history';
+
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { listRecordSourcesForExercises } from './recordSources';
+
+function recordContent(record: PersonalRecord): RecordEventDraft {
+  return {
+    exerciseId: record.exerciseId,
+    type: record.type,
+    value: record.value,
+    achievedAt: record.achievedAt,
+    workoutId: record.workoutId,
+    ...(record.workoutSetId === undefined ? {} : { workoutSetId: record.workoutSetId }),
+    ...(record.weight === undefined ? {} : { weight: record.weight }),
+    ...(record.reps === undefined ? {} : { reps: record.reps }),
+    ...(record.durationSeconds === undefined ? {} : { durationSeconds: record.durationSeconds }),
+    ...(record.distanceMeters === undefined ? {} : { distanceMeters: record.distanceMeters }),
+    ...(record.formula === undefined ? {} : { formula: record.formula }),
+  };
+}
+
+async function expectExactRecordProjection(exerciseIds: readonly string[]): Promise<void> {
+  const expected = projectRecordTimeline(
+    await listRecordSourcesForExercises(exerciseIds),
+    'epley',
+  );
+  const active = (await db.personalRecords.toArray()).filter(
+    (record) => record.deletedAt === 0 && exerciseIds.includes(record.exerciseId),
+  );
+  const key = (
+    record: Pick<PersonalRecord, 'exerciseId' | 'type' | 'workoutId' | 'workoutSetId'>,
+  ) => [record.exerciseId, record.type, record.workoutId, record.workoutSetId ?? ''].join('|');
+  const byKey = new Map(active.map((record) => [key(record), record]));
+
+  expect(byKey.size).toBe(active.length);
+  expect([...byKey.keys()].sort()).toEqual(expected.map(key).sort());
+  expect(expected.map((draft) => recordContent(byKey.get(key(draft))!))).toStrictEqual(expected);
+}
 
 describe('history repository', () => {
   beforeEach(resetDb);
@@ -206,7 +243,6 @@ describe('history repository', () => {
     expect((await listHistoryPage({}, 0, 20)).items[0]?.completedSetCount).toBe(1);
   });
 });
-
 describe('archived workout mutations', () => {
   beforeEach(resetDb);
 
@@ -740,7 +776,7 @@ describe('archived workout mutations', () => {
     { label: 'une charge abaissée', setType: 'normal' as const, weight: 90 },
     { label: 'une série requalifiée en échauffement', setType: 'warmup' as const, weight: 110 },
   ])('recalcule le record après $label', async ({ setType, weight }) => {
-    const incumbent = await seedWorkout({
+    await seedWorkout({
       exerciseId: 'bench',
       performedAt: day(1),
       sets: [[100, 5]],
@@ -750,9 +786,9 @@ describe('archived workout mutations', () => {
       performedAt: day(2),
       sets: [[110, 5]],
     });
-    const incumbentSet = await db.workoutSets.where('workoutId').equals(incumbent.id).first();
     const detail = await getArchivedWorkoutDetail(corrected.id);
     const row = detail!.exercises[0]!;
+    await reconcileRecordsForExercises(['bench'], 'epley');
 
     await saveArchivedWorkout({
       workoutId: corrected.id,
@@ -774,9 +810,7 @@ describe('archived workout mutations', () => {
       }],
     });
 
-    const recordSets = (await listRecordSets(['bench'])).get('bench')!;
-    expect(bestSets(recordSets).heaviest?.id).toBe(incumbentSet!.id);
-    expect(await db.personalRecords.count()).toBe(0);
+    await expectExactRecordProjection(['bench']);
   });
 
   it('retire une archive supprimée de la dernière performance et des records', async () => {
@@ -791,15 +825,14 @@ describe('archived workout mutations', () => {
       sets: [[110, 5]],
     });
     const previousSet = await db.workoutSets.where('workoutId').equals(previous.id).first();
+    await reconcileRecordsForExercises(['bench'], 'epley');
 
     await deleteArchivedWorkout(removed.id);
 
     expect((await getLastPerformance('bench')).map((set) => set.id)).toEqual([
       previousSet!.id,
     ]);
-    const recordSets = (await listRecordSets(['bench'])).get('bench')!;
-    expect(recordSets.map((set) => set.id)).toEqual([previousSet!.id]);
-    expect(await db.personalRecords.count()).toBe(0);
+    await expectExactRecordProjection(['bench']);
   });
 });
 
