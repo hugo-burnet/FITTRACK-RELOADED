@@ -234,6 +234,36 @@ export interface PersonalRecord extends Syncable {
   formula?: OneRepMaxFormula;
 }
 
+/**
+ * Lot 18 — journal of coach signals the user saw.
+ *
+ * `status` is how we learn whether the engine is useful: pending → followed or
+ * dismissed, and optionally what the next session actually did.
+ */
+export type CoachSignalCode =
+  | 'range_completed'
+  | 'intra_session_drop'
+  | 'plateau'
+  | 'long_rest';
+
+export type CoachRecommendationStatus = 'pending' | 'followed' | 'dismissed';
+
+export interface CoachRecommendation extends Syncable {
+  exerciseId: string;
+  code: CoachSignalCode;
+  /** Epoch ms when the signal was produced (usually end of a workout). */
+  recommendedAt: number;
+  nextLoadKg?: number;
+  /** Machine keys + numbers — UI localises labels, never stores French. */
+  evidence: { label: string; value: number }[];
+  status: CoachRecommendationStatus;
+  sourceWorkoutId?: string;
+  /** Workout that resolved follow/dismiss, when known. */
+  outcomeWorkoutId?: string;
+  outcomeLoadKg?: number;
+  resolvedAt?: number;
+}
+
 export interface BodyMeasurement extends Syncable {
   type: string; // 'body_weight' | 'body_fat' | 'waist' | … | custom field
   value: number;

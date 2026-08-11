@@ -1,12 +1,12 @@
-import type { Equipment, MeasurementType, SetType } from '@/data/types';
+import type {
+  CoachSignalCode,
+  Equipment,
+  MeasurementType,
+  SetType,
+} from '@/data/types';
 import type { OneRepMaxFormula } from '@/lib/oneRepMax';
 
-/** Signal codes — UI maps each to French copy in `fr.ts`. Never store sentences. */
-export type CoachSignalCode =
-  | 'range_completed'
-  | 'intra_session_drop'
-  | 'plateau'
-  | 'long_rest';
+export type { CoachSignalCode };
 
 export interface CoachEvidence {
   /** Stable machine key the UI localises, e.g. `target_reps_max`. */

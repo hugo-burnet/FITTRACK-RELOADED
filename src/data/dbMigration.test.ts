@@ -136,7 +136,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(4);
+    expect(db.verno).toBe(5);
     expect(db.tables.map((table) => table.name)).toContain('externalExerciseBindings');
     expect(await db.exercises.get('bench')).toBeDefined();
     expect(await db.workouts.get('winter')).toBeDefined();

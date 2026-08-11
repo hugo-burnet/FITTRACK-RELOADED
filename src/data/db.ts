@@ -3,6 +3,7 @@ import { snapshotOf } from '@/lib/exerciseSnapshot';
 import { localOffsetMinutes } from '@/lib/timezone';
 import type {
   BodyMeasurement,
+  CoachRecommendation,
   Exercise,
   ExternalExerciseBinding,
   PersonalRecord,
@@ -34,6 +35,7 @@ export class FitTrackDB extends Dexie {
   workoutExercises!: EntityTable<WorkoutExercise, 'id'>;
   workoutSets!: EntityTable<WorkoutSet, 'id'>;
   personalRecords!: EntityTable<PersonalRecord, 'id'>;
+  coachRecommendations!: EntityTable<CoachRecommendation, 'id'>;
   bodyMeasurements!: EntityTable<BodyMeasurement, 'id'>;
   progressPhotos!: EntityTable<ProgressPhoto, 'id'>;
   photoBlobs!: EntityTable<PhotoBlob, 'key'>;
@@ -143,6 +145,13 @@ export class FitTrackDB extends Dexie {
           const secondaries = byId.get(row.exerciseId)?.secondaryMuscles ?? [];
           if (secondaries.length > 0) row.exerciseSecondaryMuscles = [...secondaries];
         });
+    });
+
+    // Lot 18 — journal of coach recommendations (signals the user saw).
+    // Incremental stores declaration: only the new table is listed.
+    this.version(5).stores({
+      coachRecommendations:
+        'id, exerciseId, status, [exerciseId+status], recommendedAt, deletedAt',
     });
   }
 }
