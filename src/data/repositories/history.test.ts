@@ -504,6 +504,33 @@ describe('archived workout mutations', () => {
     });
   });
 
+  it('préserve les métadonnées de provenance, deload et fuseau pendant une édition', async () => {
+    const workout = await seedWorkout({
+      exerciseId: 'bench',
+      performedAt: day(1),
+      sets: [[100, 5]],
+    });
+    await db.workouts.update(workout.id, {
+      deloadPercent: 80,
+      importSource: 'hevy_csv',
+      importKey: 'hevy:upper-a',
+      startedTimezoneOffsetMinutes: 120,
+    });
+
+    await saveArchivedWorkout({
+      ...draftFor(workout.id),
+      name: 'Séance renommée',
+    });
+
+    expect(await db.workouts.get(workout.id)).toMatchObject({
+      name: 'Séance renommée',
+      deloadPercent: 80,
+      importSource: 'hevy_csv',
+      importKey: 'hevy:upper-a',
+      startedTimezoneOffsetMinutes: 120,
+    });
+  });
+
   it('retire réellement les résultats optionnels absents du brouillon', async () => {
     const workout = await seedWorkout({
       exerciseId: 'bench',

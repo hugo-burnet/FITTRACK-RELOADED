@@ -14,6 +14,7 @@ import {
   deleteWorkout,
   discardWorkout,
   removeWorkoutExercise,
+  reorderWorkoutExercises,
   startWorkout,
 } from './workouts';
 
@@ -130,6 +131,26 @@ describe('record projection after source mutations', () => {
     expect((await db.personalRecords.toArray()).some((record) => record.deletedAt === 0)).toBe(
       true,
     );
+  });
+
+  it('reconciles canonical winners after reordering equal-timestamp occurrences', async () => {
+    await db.exercises.put(exercise('bench'));
+    const workout = await startWorkout('', 'Ordre canonique');
+    const firstRow = await addWorkoutExercise(workout.id, 'bench');
+    const secondRow = await addWorkoutExercise(workout.id, 'bench');
+    const firstSet = await db.workoutSets.where('workoutExerciseId').equals(firstRow.id).first();
+    const secondSet = await db.workoutSets.where('workoutExerciseId').equals(secondRow.id).first();
+    const now = vi.spyOn(Date, 'now').mockReturnValue(day(2));
+    try {
+      await completeSet(firstSet!.id, { weight: 100, reps: 5 });
+      await completeSet(secondSet!.id, { weight: 110, reps: 5 });
+    } finally {
+      now.mockRestore();
+    }
+
+    await reorderWorkoutExercises(workout.id, 0, 1);
+
+    await expectExactProjection(['bench']);
   });
 
   it('rolls back lifecycle sources and records when reconciliation fails', async () => {

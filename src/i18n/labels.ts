@@ -48,11 +48,11 @@ export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setTyp
  */
 export const recordLabel = (type: PersonalRecordType): string => t(`record.${type}`);
 
-const recordNumber = (value: number): string =>
-  (Math.round(value * 100) / 100).toLocaleString('fr-FR');
+const recordNumber = (value: number, precision = 100): string =>
+  (Math.round(value * precision) / precision).toLocaleString('fr-FR');
 
-const recordKilograms = (value: number): string =>
-  `${recordNumber(value)} ${unitLabel('kg')}`;
+const recordKilograms = (value: number, precision?: number): string =>
+  `${recordNumber(value, precision)} ${unitLabel('kg')}`;
 
 export function recordValue(record: PersonalRecord): string {
   switch (record.type) {
@@ -64,6 +64,8 @@ export function recordValue(record: PersonalRecord): string {
       return metricReading(record.value, 'meters');
     case 'min_assistance':
       return t('record.assistanceValue', { value: recordKilograms(record.value) });
+    case 'best_1rm':
+      return recordKilograms(record.value, 10);
     default:
       return recordKilograms(record.value);
   }
@@ -137,6 +139,8 @@ export function recordGain(
         return formatDuration(delta);
       case 'max_distance':
         return metricReading(delta, 'meters');
+      case 'best_1rm':
+        return recordKilograms(delta, 10);
       default:
         return recordKilograms(delta);
     }

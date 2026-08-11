@@ -110,6 +110,43 @@ describe('RecordsScreen', () => {
     vi.restoreAllMocks();
   });
 
+  it('réutilise la timeline complète quand aucun filtre n’est actif', async () => {
+    const bench = exercise('bench', 'Développé couché');
+    const session = workout('workout-1', 'completed', day(1));
+    await seedTimeline({
+      exercises: [bench],
+      workouts: [session],
+      records: [record('record-1', bench.id, session.id, 80, day(1))],
+    });
+    const listTimeline = vi.spyOn(personalRecordsRepository, 'listRecordTimeline');
+
+    renderRoute();
+
+    expect(await screen.findByText('80 kg')).toBeVisible();
+    expect(listTimeline).toHaveBeenCalledTimes(1);
+  });
+
+  it('limite les catégories de record à l’exercice sélectionné', async () => {
+    const bench = exercise('bench', 'Développé couché');
+    const squat = exercise('squat', 'Hack squat');
+    const session = workout('workout-1', 'completed', day(1));
+    await seedTimeline({
+      exercises: [bench, squat],
+      workouts: [session],
+      records: [
+        record('bench-weight', bench.id, session.id, 100, day(2)),
+        record('squat-reps', squat.id, session.id, 14, day(3), 'max_reps'),
+      ],
+    });
+
+    renderRoute('/analytics/records?exerciseId=bench');
+    expect(await screen.findByText('100 kg')).toBeVisible();
+    await userEvent.click(await screen.findByRole('button', { name: 'Tous les records' }));
+
+    expect(screen.getByRole('radio', { name: 'Charge max' })).toBeVisible();
+    expect(screen.queryByRole('radio', { name: 'Répétitions max' })).toBeNull();
+  });
+
   it('fait du record le plus récent la tête du rail puis montre tous les jalons antérieurs', async () => {
     const bench = exercise('bench', 'Développé couché');
     const session = workout('workout-1', 'completed', day(1));
@@ -222,7 +259,7 @@ describe('RecordsScreen', () => {
     expect(await screen.findByText('Séance en cours')).toBeVisible();
   });
 
-  it('distingue une combinaison de filtres sans résultat d’un historique vide', async () => {
+  it('évite une combinaison de filtres impossible pour l’exercice choisi', async () => {
     const bench = exercise('bench', 'Développé couché');
     const squat = exercise('squat', 'Hack squat');
     const session = workout('workout-1', 'completed', day(1));
@@ -239,13 +276,9 @@ describe('RecordsScreen', () => {
     renderRoute('/analytics/records?exerciseId=bench');
     expect(await screen.findByText('100 kg')).toBeVisible();
     await user.click(await screen.findByRole('button', { name: 'Tous les records' }));
-    await user.click(screen.getByRole('radio', { name: 'Répétitions max' }));
 
-    expect(await screen.findByText('Aucun record avec ces filtres')).toBeVisible();
-    expect(screen.queryByText('Ton premier record commencera ici')).toBeNull();
-    await user.click(screen.getByRole('button', { name: 'Effacer les filtres' }));
-    expect(await screen.findByText('100 kg')).toBeVisible();
-    expect(screen.getByLabelText('URL courante')).toHaveTextContent('/analytics/records');
+    expect(screen.getByRole('radio', { name: 'Charge max' })).toBeVisible();
+    expect(screen.queryByRole('radio', { name: 'Répétitions max' })).toBeNull();
   });
 
   it('nomme et permet d’effacer un exercice de deep link indisponible', async () => {
@@ -284,7 +317,7 @@ describe('RecordsScreen', () => {
     expect(screen.getByText('d’assistance')).toBeVisible();
   });
 
-  it('dimensionne une grande valeur depuis la largeur disponible sans la tronquer', async () => {
+  it('laisse une grande valeur suivre le zoom texte et revenir à la ligne sans overflow', async () => {
     const press = exercise('press', 'Presse à cuisses');
     const session = workout('workout-1', 'completed', day(1));
     await seedTimeline({
@@ -295,10 +328,12 @@ describe('RecordsScreen', () => {
 
     renderRoute();
 
-    const value = await screen.findByText(/9.999 kg/);
-    expect(value).toHaveTextContent(/9.999 kg/);
-    expect(value.getAttribute('style')).toMatch(/cqi/);
-    expect(value.closest('button')).toHaveClass('[container-type:inline-size]');
+    const value = await screen.findByText(/9\s999/, { selector: '.record-figure' });
+    const unit = screen.getByText('kg');
+    expect(value).toHaveClass('text-[2.5rem]', 'break-all');
+    expect(value).not.toHaveAttribute('style');
+    expect(unit).toHaveClass('text-base');
+    expect(value.parentElement).toHaveClass('flex', 'flex-wrap');
   });
 
   it('ouvre le détail historique depuis un jalon terminé', async () => {

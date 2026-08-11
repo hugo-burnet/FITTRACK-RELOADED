@@ -236,7 +236,7 @@ function assertArchivedDraft(draft: ArchivedWorkoutDraft): void {
 export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<void> {
   assertArchivedDraft(draft);
 
-  // Read outside the transaction, which is scoped to the three session tables.
+  // Read outside the transaction, which spans the record projection tables.
   // Only rows whose exercise is new or corrected consume this — the rest keep
   // the snapshot they were created with.
   const snapshots = await loadExerciseSnapshots(
@@ -391,22 +391,14 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
     const deletedSets = sets
       .filter((set) => !keptSetIds.has(set.id))
       .map((set) => touch(set, { deletedAt }));
-    const updatedWorkout = touch<Workout>(
-      {
-        id: workout.id,
-        createdAt: workout.createdAt,
-        updatedAt: workout.updatedAt,
-        deletedAt: 0,
-        routineId: workout.routineId,
-        name: draft.name,
-        status: 'completed',
-        startedAt: draft.startedAt,
-        endedAt: draft.startedAt + draft.durationSeconds * 1000,
-        durationSeconds: draft.durationSeconds,
-        ...(draft.notes === undefined ? {} : { notes: draft.notes }),
-      },
-      {},
-    );
+    const updatedWorkout = touch(workout, {
+      name: draft.name,
+      status: 'completed',
+      startedAt: draft.startedAt,
+      endedAt: draft.startedAt + draft.durationSeconds * 1000,
+      durationSeconds: draft.durationSeconds,
+      notes: draft.notes,
+    });
 
     await db.workouts.put(updatedWorkout);
     await db.workoutExercises.bulkPut([...nextRows, ...deletedRows]);

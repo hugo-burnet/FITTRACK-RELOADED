@@ -55,6 +55,7 @@ interface SessionSeed {
   reps: number;
   weight?: number;
   snapshotMeasurementType?: MeasurementType;
+  legacyWithoutSnapshot?: boolean;
 }
 
 function sessionEntities(seed: SessionSeed): {
@@ -62,8 +63,9 @@ function sessionEntities(seed: SessionSeed): {
   row: WorkoutExercise;
   set: WorkoutSet;
 } {
-  const snapshotMeasurementType =
-    seed.snapshotMeasurementType ?? seed.exercise.measurementType;
+  const snapshotMeasurementType = seed.legacyWithoutSnapshot
+    ? undefined
+    : (seed.snapshotMeasurementType ?? seed.exercise.measurementType);
   const workout = {
     ...newEntity<Workout>({
       routineId: '',
@@ -82,10 +84,14 @@ function sessionEntities(seed: SessionSeed): {
       order: 0,
       supersetGroup: 0,
       restSeconds: 120,
-      exerciseName: seed.exercise.name,
-      exerciseMeasurementType: snapshotMeasurementType,
-      exercisePrimaryMuscle: seed.exercise.primaryMuscle,
-      exerciseEquipment: seed.exercise.equipment,
+      ...(snapshotMeasurementType === undefined
+        ? {}
+        : {
+            exerciseName: seed.exercise.name,
+            exerciseMeasurementType: snapshotMeasurementType,
+            exercisePrimaryMuscle: seed.exercise.primaryMuscle,
+            exerciseEquipment: seed.exercise.equipment,
+          }),
       ...(seed.exercise.bodyweightLoadFactor === undefined ||
         snapshotMeasurementType === 'weight_reps'
         ? {}
@@ -329,6 +335,33 @@ describe('body weight measurements', () => {
     await saveBodyWeight(85, at(5, 20));
 
     expect(sessionRecord(await liveRecords(), 'workout-before-first')).toMatchObject({
+      id: original.id,
+      value: 170,
+    });
+  });
+
+  it('reconciles a legacy row from its soft-deleted library exercise identity', async () => {
+    const pullUp = { ...movement('pull-up', 'reps_only', 1), deletedAt: at(1) };
+    await seedHistory(
+      [pullUp],
+      [{
+        id: 'legacy',
+        exercise: pullUp,
+        startedAt: at(6),
+        reps: 2,
+        legacyWithoutSnapshot: true,
+      }],
+    );
+    await db.bodyMeasurements.bulkAdd([
+      bodyWeight(80, at(5, 8)),
+      bodyWeight(90, at(8, 8)),
+    ]);
+    await rebuildAllRecords();
+    const original = sessionRecord(await liveRecords(), 'workout-legacy');
+
+    await saveBodyWeight(85, at(5, 20));
+
+    expect(sessionRecord(await liveRecords(), 'workout-legacy')).toMatchObject({
       id: original.id,
       value: 170,
     });

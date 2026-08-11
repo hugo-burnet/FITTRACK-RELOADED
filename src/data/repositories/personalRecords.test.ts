@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import type {
   Exercise,
@@ -139,6 +139,7 @@ async function seedHistory(): Promise<void> {
 
 describe('personal record reconciliation', () => {
   beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
 
   it('rebuilds exact history and preserves surviving IDs while soft-deleting obsolete events', async () => {
     await seedHistory();
@@ -315,6 +316,41 @@ describe('personal record reconciliation', () => {
       ]),
     );
     expect(timeline.every(({ record }) => record.workoutId !== 'workout-discarded')).toBe(true);
+  });
+
+  it('bounds an exercise timeline to the records and joins it actually references', async () => {
+    await seedHistory();
+    await rebuildAllRecords();
+    const fullTableReads = [
+      vi.spyOn(db.personalRecords, 'toArray'),
+      vi.spyOn(db.workouts, 'toArray'),
+      vi.spyOn(db.workoutExercises, 'toArray'),
+      vi.spyOn(db.exercises, 'toArray'),
+      vi.spyOn(db.workoutSets, 'toArray'),
+    ];
+
+    const timeline = await listRecordTimeline({ exerciseId: 'bench' });
+
+    expect(timeline.length).toBeGreaterThan(0);
+    for (const read of fullTableReads) expect(read).not.toHaveBeenCalled();
+  });
+
+  it('reads an active workout through its exercise scope instead of the global timeline', async () => {
+    await seedHistory();
+    await rebuildAllRecords();
+    const fullTableReads = [
+      vi.spyOn(db.personalRecords, 'toArray'),
+      vi.spyOn(db.workouts, 'toArray'),
+      vi.spyOn(db.workoutExercises, 'toArray'),
+      vi.spyOn(db.exercises, 'toArray'),
+      vi.spyOn(db.workoutSets, 'toArray'),
+    ];
+
+    const timeline = await listRecordsForWorkout('workout-2');
+
+    expect(timeline).not.toHaveLength(0);
+    expect(timeline.every(({ record }) => record.workoutId === 'workout-2')).toBe(true);
+    for (const read of fullTableReads) expect(read).not.toHaveBeenCalled();
   });
 
   it('uses the snapshot of the row that owns the triggering set', async () => {

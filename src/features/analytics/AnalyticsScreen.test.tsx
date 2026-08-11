@@ -31,6 +31,7 @@ describe('AnalyticsScreen', () => {
 
     const overview = (await screen.findByText('Vue d’ensemble')).parentElement;
     expect(overview).not.toBeNull();
+    await screen.findByRole('button', { name: /Séances par semaine/ });
     const rows = within(overview!).getAllByRole('button');
     expect(rows.map((row) => row.querySelector('span > span')?.textContent)).toEqual([
       'Records',
@@ -47,4 +48,33 @@ describe('AnalyticsScreen', () => {
     );
     expect(screen.getAllByRole('button')).toHaveLength(3);
   });
+
+  it.each(['empty', 'active-only'] as const)(
+    'affiche Records sans les anciennes analyses quand l’historique est %s',
+    async (state) => {
+      if (state === 'active-only') {
+        await db.workouts.add(
+          newEntity<Workout>({
+            routineId: '',
+            name: 'En cours',
+            status: 'active',
+            startedAt: Date.UTC(2026, 6, 11),
+            endedAt: 0,
+            durationSeconds: 0,
+          }),
+        );
+      }
+
+      render(
+        <MemoryRouter>
+          <AnalyticsScreen />
+        </MemoryRouter>,
+      );
+
+      expect(await screen.findByRole('button', { name: /Records/ })).toBeVisible();
+      expect(screen.queryByRole('button', { name: /Séances par semaine/ })).toBeNull();
+      expect(screen.queryByRole('button', { name: /Volume d’entraînement/ })).toBeNull();
+      expect(screen.queryByRole('button', { name: /Séries par muscle/ })).toBeNull();
+    },
+  );
 });

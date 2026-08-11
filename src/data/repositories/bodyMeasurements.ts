@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 import { db } from '@/data/db';
 import { newEntity, touch } from '@/data/repositories/base';
+import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
 import type {
   BodyMeasurement,
   MeasurementType,
@@ -113,14 +114,24 @@ async function bodyweightExerciseIdsIn(
     .where('workoutId')
     .anyOf([...workouts.keys()])
     .toArray();
+  const exercises = await db.exercises.bulkGet([
+    ...new Set(rows.map((row) => row.exerciseId)),
+  ]);
+  const exerciseById = new Map(
+    exercises.flatMap((exercise) =>
+      exercise === undefined ? [] : [[exercise.id, exercise] as const],
+    ),
+  );
   return [
     ...new Set(
       rows
         .filter(
           (row) =>
             row.deletedAt === 0 &&
-            row.exerciseMeasurementType !== undefined &&
-            BODYWEIGHT_MEASUREMENTS.has(row.exerciseMeasurementType),
+            BODYWEIGHT_MEASUREMENTS.has(
+              resolveWorkoutExerciseIdentity(row, exerciseById.get(row.exerciseId))
+                .measurementType,
+            ),
         )
         .map((row) => row.exerciseId),
     ),

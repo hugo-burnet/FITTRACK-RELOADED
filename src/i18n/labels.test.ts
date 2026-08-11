@@ -81,6 +81,14 @@ describe('personal record labels', () => {
     expect(oneRepMaxFormulaLabel('lombardi')).toBe('Lombardi');
   });
 
+  it('rounds estimated 1RM values and gains to the graph precision', () => {
+    const estimate = record('best_1rm', 116.66666666666667);
+
+    expect(recordValue(estimate)).toBe('116,7 kg');
+    expect(recordGain(estimate, 110)).toBe('+6,7 kg');
+    expect(estimate.value).toBe(116.66666666666667);
+  });
+
   it('reads strict gains and leaves an initial mark without a gain', () => {
     expect(recordGain(record('max_weight', 105), 100)).toBe('+5 kg');
     expect(recordGain(record('max_reps', 12), 10)).toBe('+2 reps');

@@ -33,7 +33,7 @@ async function rewriteOrder(
   workoutId: string,
   transform: (rows: WorkoutExercise[]) => WorkoutExercise[],
 ): Promise<void> {
-  await db.transaction('rw', db.workoutExercises, async () => {
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
     const rows = alive(
       await db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
     ).sort(byOrder);
@@ -48,7 +48,25 @@ async function rewriteOrder(
       );
     });
 
-    if (changed.length > 0) await db.workoutExercises.bulkPut(changed.map((row) => touch(row, {})));
+    if (changed.length === 0) return;
+
+    await db.workoutExercises.bulkPut(changed.map((row) => touch(row, {})));
+    const changedRowIds = new Set(changed.map((row) => row.id));
+    const completedSets = (
+      await db.workoutSets.where('workoutId').equals(workoutId).toArray()
+    ).filter(
+      (set) =>
+        set.deletedAt === 0 &&
+        set.isCompleted === 1 &&
+        changedRowIds.has(set.workoutExerciseId),
+    );
+    const affectedExerciseIds = [...new Set(completedSets.map((set) => set.exerciseId))];
+    if (affectedExerciseIds.length > 0) {
+      await reconcileRecordsForExercises(
+        affectedExerciseIds,
+        await getOneRepMaxFormula(),
+      );
+    }
   });
 }
 

@@ -93,10 +93,6 @@
   letter-spacing: -0.035em;
 }
 
-@utility record-fit {
-  font-size: min(var(--record-max-size), var(--record-fit-size));
-}
-
 /* Small labels must use --text-2, never the low-contrast --text-3. */
 @utility label-xs {
   font-size: 0.6875rem;

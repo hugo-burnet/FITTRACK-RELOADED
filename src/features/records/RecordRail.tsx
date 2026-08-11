@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { useEffect, useRef } from 'react';
 import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import { t } from '@/i18n/fr';
 import { recordContext, recordGain, recordLabel, recordValue } from '@/i18n/labels';
@@ -17,18 +17,12 @@ const longDate = (at: number): string =>
     year: 'numeric',
   });
 
-// Monospace glyphs are about 0.6em wide. A slightly conservative 0.65 factor
-// keeps the complete, non-wrapping reading inside its query container even
-// when page zoom leaves only a very narrow CSS viewport.
-type RecordFitStyle = CSSProperties & {
-  '--record-fit-size': string;
-  '--record-max-size': string;
-};
-
-const fittedValueStyle = (value: string, maximumRem: number): RecordFitStyle => ({
-  '--record-fit-size': `${100 / (Math.max(value.length, 1) * 0.65)}cqi`,
-  '--record-max-size': `${maximumRem}rem`,
-});
+function readingParts(value: string): { figure: string; unit?: string } {
+  const separator = value.lastIndexOf(' ');
+  return separator < 0
+    ? { figure: value }
+    : { figure: value.slice(0, separator), unit: value.slice(separator + 1) };
+}
 
 /**
  * A personal-record timeline drawn as the notched guide of a weight stack.
@@ -96,6 +90,7 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
           assistanceQualifier === undefined
             ? value
             : value.replace(` ${assistanceQualifier}`, '');
+        const reading = readingParts(compactValue);
         const date = longDate(entry.record.achievedAt);
         const progress = gain ??
           (entry.previousValue === undefined ? t('records.firstMark') : undefined);
@@ -139,11 +134,12 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
               })}
               aria-describedby={descriptionIds}
               onClick={() => onOpen(entry)}
-              className={`min-w-0 rounded-xl text-left [container-type:inline-size]
+              className={`min-w-0 rounded-xl text-left
                 transition-colors duration-[var(--dur-1)]
                 ease-[var(--ease-mech)] active:bg-[var(--surface-1)]
                 ${current ? 'min-h-32 px-1 pt-1 pb-3' : 'min-h-14 px-1 py-3'}`}
             >
+              <span aria-hidden="true" className="sr-only">{compactValue}</span>
               {current ? (
                 <>
                   <span className="label-xs block font-semibold text-[var(--accent-ink)]">
@@ -155,15 +151,17 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                   <span className="mt-1 block text-sm text-[var(--text-2)]">
                     {recordLabel(entry.record.type)} · {date}
                   </span>
-                  <span className="mt-4 block max-w-full">
-                    <span
-                      className="record-figure record-fit block leading-none font-semibold whitespace-nowrap"
-                      style={fittedValueStyle(compactValue, 2.5)}
-                    >
-                      {compactValue}
+                  <span className="mt-4 flex max-w-full flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <span className="record-figure min-w-0 break-all text-[2.5rem] leading-none font-semibold">
+                      {reading.figure}
                     </span>
+                    {reading.unit && (
+                      <span className="text-base font-semibold text-[var(--text-2)]">
+                        {reading.unit}
+                      </span>
+                    )}
                     {assistanceQualifier && (
-                      <span className="mt-1 block text-sm font-semibold text-[var(--text-2)]">
+                      <span className="basis-full text-sm font-semibold text-[var(--text-2)]">
                         {assistanceQualifier}
                       </span>
                     )}
@@ -212,15 +210,13 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                       </span>
                     )}
                   </span>
-                  <span className="text-[var(--text-2)] min-[360px]:text-right">
-                    <span
-                      className="record-figure record-fit block leading-none font-semibold whitespace-nowrap"
-                      style={fittedValueStyle(compactValue, 1.25)}
-                    >
-                      {compactValue}
+                  <span className="flex min-w-0 flex-wrap items-baseline gap-x-1 text-[var(--text-2)] min-[360px]:justify-end min-[360px]:text-right">
+                    <span className="record-figure min-w-0 break-all text-xl leading-none font-semibold">
+                      {reading.figure}
                     </span>
+                    {reading.unit && <span className="text-sm font-semibold">{reading.unit}</span>}
                     {assistanceQualifier && (
-                      <span className="mt-1 block text-sm leading-tight font-semibold">
+                      <span className="basis-full text-sm leading-tight font-semibold">
                         {assistanceQualifier}
                       </span>
                     )}

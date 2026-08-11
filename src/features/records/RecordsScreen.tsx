@@ -24,17 +24,21 @@ export function RecordsScreen() {
   const [typeOpen, setTypeOpen] = useState(false);
   const [repairing, setRepairing] = useState(false);
   const [repairFailed, setRepairFailed] = useState(false);
+  const hasFilters = exerciseId !== ALL || type !== ALL;
 
   const projectionCurrent = useLiveQuery(isRecordProjectionCurrent, []);
   const allEntries = useLiveQuery(() => listRecordTimeline(), []);
-  const entries = useLiveQuery(
+  const filteredEntries = useLiveQuery(
     () =>
-      listRecordTimeline({
-        ...(exerciseId === ALL ? {} : { exerciseId }),
-        ...(type === ALL ? {} : { type }),
-      }),
+      hasFilters
+        ? listRecordTimeline({
+            ...(exerciseId === ALL ? {} : { exerciseId }),
+            ...(type === ALL ? {} : { type }),
+          })
+        : Promise.resolve(null),
     [exerciseId, type],
   );
+  const entries = hasFilters ? (filteredEntries ?? undefined) : allEntries;
 
   const exerciseOptions: Option<string>[] = [
     { value: ALL, label: t('records.allExercises') },
@@ -42,7 +46,11 @@ export function RecordsScreen() {
       .sort((left, right) => left[1].localeCompare(right[1], 'fr'))
       .map(([value, label]) => ({ value, label })),
   ];
-  const availableTypes = new Set((allEntries ?? []).map((entry) => entry.record.type));
+  const availableTypes = new Set(
+    (allEntries ?? [])
+      .filter((entry) => exerciseId === ALL || entry.record.exerciseId === exerciseId)
+      .map((entry) => entry.record.type),
+  );
   const typeOptions: Option<PersonalRecordType | typeof ALL>[] = [
     { value: ALL, label: t('records.allTypes') },
     ...([...availableTypes]
@@ -50,7 +58,6 @@ export function RecordsScreen() {
       .map((value) => ({ value, label: recordLabel(value) })) as Option<PersonalRecordType>[]),
   ];
   const selectedExercise = exerciseOptions.find((option) => option.value === exerciseId);
-  const hasFilters = exerciseId !== ALL || type !== ALL;
   const visibleKnownRecordIds = (allEntries ?? [])
     .filter(
       (entry) =>
@@ -60,6 +67,15 @@ export function RecordsScreen() {
     .map((entry) => entry.record.id);
 
   const selectExercise = (next: string) => {
+    if (
+      next !== ALL &&
+      type !== ALL &&
+      !(allEntries ?? []).some(
+        (entry) => entry.record.exerciseId === next && entry.record.type === type,
+      )
+    ) {
+      setType(ALL);
+    }
     const nextParams = new URLSearchParams(searchParams);
     if (next === ALL) nextParams.delete('exerciseId');
     else nextParams.set('exerciseId', next);
