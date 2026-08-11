@@ -2,7 +2,32 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Marge des cartes à l'ordre verrouillé et
+**Dernière mise à jour :** 2026-08-11 (**Poids de la barre : un champ vidé reste vide**).
+
+Dans la feuille « Plaques à charger », effacer le poids de la barre y réécrivait aussitôt
+« 0 » : le champ renvoyait `undefined` au parent, qui le ramenait à 0 (`value ?? 0`), et
+`NumberInput` resynchronise son texte sur la valeur pendant le rendu. Le zéro revenait donc
+dans le champ qu'on venait de vider, et chaque frappe suivante se posait derrière lui — taper
+22,5 donnait « 022,5 ». Mesuré dans le navigateur à 375 px.
+
+Le champ garde maintenant son propre brouillon, autorisé à être vide, et ne transmet qu'un
+nombre réel : `barWeight` reste un `number` pour l'appelant, et les diagrammes continuent de
+calculer sur le dernier poids réellement saisi au lieu de sauter à la barre nue en pleine
+frappe. Le champ est remonté à chaque ouverture de la feuille, pour qu'un champ laissé vide ne
+revienne pas vide au-dessus d'une barre qui vaut toujours 20 kg.
+
+Portes locales : lint, typecheck, build PWA, **1069 tests passants sur 1070**. L'échec restant,
+`HomeBodyWeightCard` « keeps the edited value and allows retry after a rejected write », est
+intermittent et **antérieur à ce correctif** : le `role="status"` est toujours présent dans le
+DOM (il affiche une espace insécable au repos), donc `findByRole` le trouve immédiatement et
+l'assertion court contre l'écriture asynchrone. Le test passe ou échoue au hasard sur le même
+arbre de travail — c'est le test qui est à corriger, pas l'app.
+
+**Checkpoint téléphone :** dans une séance en cours, ouvrir « Plaques à charger » sur un
+exercice à la barre, effacer le poids de la barre — le champ doit rester vide, pas afficher
+« 0 » — puis taper 22,5 : le champ doit lire exactement « 22,5 ».
+
+**Mise à jour précédente :** 2026-08-11 (**Marge des cartes à l'ordre verrouillé et
 préparation Android v0.1.3**).
 
 Quand l'ordre des exercices est verrouillé, la poignée de déplacement disparaît : c'était elle
