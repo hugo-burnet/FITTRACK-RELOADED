@@ -99,6 +99,25 @@ describe('projectRecordTimeline', () => {
     expect(values(events, 'min_assistance')).toEqual([35, 30]);
   });
 
+  it('treats zero assistance as a strict improvement', () => {
+    const events = projectRecordTimeline(
+      [
+        assistedSource({
+          workoutSetId: 's1',
+          set: aSet({ id: 's1', weight: 20, reps: 8 }),
+        }),
+        assistedSource({
+          workoutSetId: 's2',
+          set: aSet({ id: 's2', weight: 0, reps: 8 }),
+          achievedAt: 2,
+        }),
+      ],
+      'epley',
+    );
+
+    expect(values(events, 'min_assistance')).toEqual([20, 0]);
+  });
+
   it('orders sources by timestamps, exercise and set order, then their stable ID', () => {
     const events = projectRecordTimeline(
       [

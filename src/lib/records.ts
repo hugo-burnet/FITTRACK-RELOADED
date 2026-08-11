@@ -106,6 +106,9 @@ const TONNAGE_MEASUREMENTS: ReadonlySet<MeasurementType> = new Set([
 const isPositiveFinite = (value: number | undefined): value is number =>
   value !== undefined && Number.isFinite(value) && value > 0;
 
+const isNonNegativeFinite = (value: number | undefined): value is number =>
+  value !== undefined && Number.isFinite(value) && value >= 0;
+
 function isEligibleSet(set: WorkoutSet): boolean {
   return set.isCompleted === 1 && set.deletedAt === 0 && isWorkingSet(set);
 }
@@ -189,7 +192,7 @@ function candidatesFor(source: RecordSource, formula: OneRepMaxFormula): RecordE
         }
         break;
       case 'assisted_weight_reps':
-        if (isPositiveFinite(set.weight)) {
+        if (isNonNegativeFinite(set.weight)) {
           candidates.push(setCandidate(source, 'min_assistance', set.weight));
         }
         if (isPositiveFinite(set.reps)) {
