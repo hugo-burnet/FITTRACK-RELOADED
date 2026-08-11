@@ -88,25 +88,46 @@ function Silhouette({
        of an 812 px screen and pushed the records off it. Height fixed, width
        derived from the viewBox. */
     <svg viewBox={viewBox} className="h-64 w-auto" aria-hidden>
-      {/* Outlined in `--axis`, not `--border`, and at three times the width.
-          Measured on the card: the surface fill sits at 1,11:1 against it and
-          `--border` at 1,45:1 — both invisible — and 0.1 in a 35-wide viewBox
-          renders as 0,28 px. The body was a ghost and only the lit muscles
-          showed, which reads as white patches rather than as an anatomy.
-          `--axis` is the charte's line ink, 3,5:1 on a card, and it makes this
-          a line drawing: an unlit muscle is told from its neighbour by its
-          outline, which is what an anatomical plate does anyway. */}
-      <g fill="var(--surface-2)" stroke="var(--axis)" strokeWidth={0.3}>
+      {/* The body, filled flat. */}
+      <g fill="var(--surface-2)" stroke="none">
         {regions.map((region) => (
           <path key={region.id} d={region.path} />
         ))}
       </g>
+
+      {/* The worked muscles, over it. */}
       <g fill="var(--text-1)" stroke="none">
         {regions.map((region) => {
           const intensity = lit.get(region.id);
           if (intensity === undefined) return null;
           return <path key={region.id} d={region.path} fillOpacity={intensity} />;
         })}
+      </g>
+
+      {/* Every outline, **above both fills** — and that ordering is the whole
+          point of splitting the stroke off its own fill. Drawn together, a lit
+          muscle's fill covered its own edge: measured at 4× scale, not one lit
+          pixel touched a stroke pixel, so a fully worked muscle read as a flat
+          blob with no border. It also closes the hairline seams where two
+          neighbouring regions share an edge, since the line now sits on the
+          join instead of under it.
+
+          `--axis` rather than `--border`: the surface fill sits at 1,11:1
+          against the card and `--border` at 1,45:1, both invisible. `--axis` is
+          the charte's line ink, 3,5:1 on a card, already used by the charts.
+
+          Round joins because the geometry is polygonal and its vertices are
+          coarse — a mitre turns each one into a visible spike. */}
+      <g
+        fill="none"
+        stroke="var(--axis)"
+        strokeWidth={0.3}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        {regions.map((region) => (
+          <path key={region.id} d={region.path} />
+        ))}
       </g>
     </svg>
   );
