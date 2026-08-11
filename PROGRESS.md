@@ -2,7 +2,56 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Lot 5bis — schéma musculaire sur la fiche exercice**).
+**Dernière mise à jour :** 2026-08-11 (**Lot 5bis — schéma musculaire, quatre écrans, et les
+muscles secondaires figés dans l'instantané**).
+
+Le schéma est posé sur **quatre écrans** : la fiche exercice (ce qu'un mouvement travaille),
+la fin de séance et le détail d'une séance au Journal (ce que cette séance a travaillé), et
+« Séries par muscle » (tout ce que tu as travaillé). Un seul composant, une seule prop
+`highlight`, trois façons de la calculer.
+
+**Les muscles secondaires sont désormais figés dans l'instantané — `version(4)`.** Sans eux, un
+développé couché allumait les pectoraux et laissait les triceps éteints : le dessin était faux
+par rapport à ce qu'on sent. J'avais d'abord annoncé que corriger ça imposait de rouvrir la
+décision 08B ; **c'était faux, et c'est la correction la plus utile de cette session.** 08B
+interdit de lire la bibliothèque *au moment de l'affichage* pour interpréter une séance passée
+— c'est ainsi que la même séance a eu deux noms sur un même écran. Écrire la bibliothèque
+d'aujourd'hui **une fois** dans l'instantané est le mouvement inverse : à partir de là, la ligne
+répond d'elle-même et cesse de dépendre du catalogue. C'est le marché que `version(2)` avait
+déjà fait et documenté — la meilleure information disponible, et la seule.
+
+Deux garde-fous à ne pas perdre de vue :
+
+- `resolveExerciseIdentity` ne retombe sur la bibliothèque pour les secondaires **que si la
+  ligne n'a aucun instantané du tout**. Une ligne instantanée sans secondaires est soit
+  antérieure au champ, soit celle d'un exercice qui n'en a réellement aucun — emprunter ceux
+  d'aujourd'hui dans le second cas serait exactement la réécriture que 08B interdit. Un test
+  garde ce cas.
+- `snapshotOf` **copie** le tableau au lieu de le référencer. Le partager ferait qu'éditer un
+  exercice réécrirait silencieusement les séances passées. Un test le vérifie en mutant la
+  source.
+
+**Les chiffres restent des comptes, seul le dessin est pondéré.** `muscleBalance` continue de
+ne compter que le muscle principal, et son argument tient : « 48 » doit rester un nombre de
+séries qu'on peut recompter dans l'historique. Un dessin n'a pas ce devoir — il ne se lit pas,
+il se regarde. Donc `sessionMuscleInvolvement` pondère (1 pour le muscle visé, 0,4 pour chaque
+muscle sollicité, les deux chiffres que la fiche exercice affiche déjà) et son champ s'appelle
+`value`, jamais `sets`.
+
+**Les quatre dessins suivent la même règle**, y compris l'agrégat. `HistoricalExercise` diffuse
+déjà l'identité entière, donc les secondaires y arrivaient gratuitement : il a suffi de les
+déclarer et de les faire porter par `MuscleRow`. L'écran « Séries par muscle » calcule donc
+maintenant son dessin par `muscleInvolvement(rows)` et **non** par ses propres comptes — un
+corps, une règle. Le module s'appelle `lib/analytics/involvement.ts` (renommé depuis
+`sessionMuscles.ts`, qui ne décrivait plus que la moitié de son usage).
+
+Vérifié après migration sur la base du preview : le backfill a bien écrit
+`['triceps','shoulders']` sur les lignes de développé couché ; une séance passe de 18 à 28
+régions allumées avec une rampe à six niveaux, arithmétiquement conforme ; et sur l'écran
+d'équilibre, le dessin est pondéré pendant que la liste continue d'afficher des séries entières
+(30, 24, 18, 18, 0, 0).
+
+**Mise à jour précédente :** 2026-08-11 (**Lot 5bis — schéma musculaire sur la fiche exercice**).
 
 RF-06 réclamait « image ou démonstration animée » depuis le Lot 2 et le champ `imageUrl` n'a
 jamais été rempli. La moitié à notre portée est livrée : la fiche d'un exercice montre
@@ -3724,6 +3773,33 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
 
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
+
+### 2026-08-11 — Les muscles secondaires entrent dans l'instantané (`version(4)`)
+
+**Ce qui change.** `WorkoutExercise` gagne `exerciseSecondaryMuscles?: MuscleGroup[]`, écrit par
+`snapshotOf` et rattrapé par une migration `version(4)` sans `.stores()` — le champ n'est pas
+indexé, donc le schéma est inchangé, exactement comme `version(2)`.
+
+**Pourquoi ça ne rouvre pas 08B, contrairement à ce que j'avais annoncé.** 08B interdit de lire
+la bibliothèque **au moment de l'affichage** pour interpréter une séance passée : c'est ainsi
+que la même séance s'est retrouvée avec deux noms sur un même écran, l'export lisant
+l'instantané et l'historique la bibliothèque. Écrire la bibliothèque d'aujourd'hui **une fois**
+dans l'instantané fait l'inverse : à partir de là, la ligne répond d'elle-même et ne dépend plus
+du catalogue. C'est le marché que `version(2)` a déjà fait et documenté.
+
+**Le seul cas ambigu, et comment il est tranché.** Une ligne instantanée qui ne porte aucun
+secondaire est soit antérieure au champ, soit celle d'un exercice qui n'en a réellement aucun.
+Impossible de distinguer les deux. `resolveExerciseIdentity` ne retombe donc sur la bibliothèque
+que si la ligne **n'a aucun instantané du tout** — emprunter les secondaires d'aujourd'hui à une
+ligne déjà instantanée serait la réécriture que 08B interdit. Un test garde ce comportement.
+
+**Ce qui ne change pas : les chiffres.** `muscleBalance` continue de ne compter que le muscle
+principal. Son argument tient et n'est pas rouvert : « 48 » doit rester un nombre de séries
+qu'on peut recompter dans l'historique, et une attribution pondérée en ferait un score qu'on ne
+peut que croire. Seul le **dessin** est pondéré — il ne se lit pas, il se regarde, et un
+développé couché qui laisse les triceps éteints est faux à ce qu'on a senti. D'où deux
+vocabulaires distincts : `MuscleCount.sets` pour ce qui se compte, `MuscleInvolvement.value`
+pour ce qui se dessine.
 
 ### 2026-08-11 — Les photos de progression sont reportées, pas abandonnées
 

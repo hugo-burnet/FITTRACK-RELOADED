@@ -27,6 +27,8 @@ export interface HistoricalExercise {
   name?: string;
   measurementType?: MeasurementType;
   primaryMuscle?: MuscleGroup;
+  /** Read by the body map only; every count in the app stays on the primary. */
+  secondaryMuscles?: MuscleGroup[];
   equipment?: Equipment;
   bodyweightLoadFactor?: number;
   notes?: string;

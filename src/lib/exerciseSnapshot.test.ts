@@ -37,13 +37,31 @@ const row = (over: Partial<WorkoutExercise> = {}): WorkoutExercise => ({
 });
 
 describe('snapshotOf', () => {
-  it('copie les quatre métadonnées lues par les exports et les graphiques', () => {
+  it('copie les métadonnées lues par les exports et les graphiques', () => {
     expect(snapshotOf(exercise())).toEqual({
       exerciseName: 'Développé couché',
       exerciseMeasurementType: 'weight_reps',
       exercisePrimaryMuscle: 'chest',
+      exerciseSecondaryMuscles: ['triceps'],
       exerciseEquipment: 'barbell',
     });
+  });
+
+  it('copie le tableau des secondaires au lieu de le partager', () => {
+    const source = exercise();
+    const snapshot = snapshotOf(source);
+
+    source.secondaryMuscles.push('shoulders');
+
+    // Partager la référence ferait qu'éditer l'exercice réécrirait la séance —
+    // exactement ce que l'instantané existe pour empêcher.
+    expect(snapshot.exerciseSecondaryMuscles).toEqual(['triceps']);
+  });
+
+  it("omet la clé pour un exercice qui n'a aucun secondaire", () => {
+    expect(snapshotOf(exercise({ secondaryMuscles: [] }))).not.toHaveProperty(
+      'exerciseSecondaryMuscles',
+    );
   });
 
   it('fige le coefficient de charge au poids du corps', () => {
@@ -52,11 +70,14 @@ describe('snapshotOf', () => {
     });
   });
 
-  it('ne copie ni les muscles secondaires ni le caractère unilatéral', () => {
-    const snapshot = snapshotOf(exercise({ isUnilateral: 1 }));
-
-    expect(snapshot).not.toHaveProperty('secondaryMuscles');
-    expect(snapshot).not.toHaveProperty('isUnilateral');
+  /**
+   * Les secondaires étaient volontairement exclus jusqu'au Lot 5bis : rien ne
+   * les lisait. Le schéma musculaire les lit, donc ils sont figés comme les
+   * autres — un développé couché qui laisse les triceps éteints est faux.
+   * L'unilatéral, lui, reste dehors : toujours aucun lecteur.
+   */
+  it('ne copie pas le caractère unilatéral', () => {
+    expect(snapshotOf(exercise({ isUnilateral: 1 }))).not.toHaveProperty('isUnilateral');
   });
 
   it("n'invente rien quand l'exercice est absent", () => {
@@ -91,6 +112,7 @@ describe('resolveExerciseIdentity', () => {
         name: 'Développé couché (barre)',
         measurementType: 'reps_only',
         primaryMuscle: 'shoulders',
+        secondaryMuscles: ['lats'],
         equipment: 'dumbbell',
       }),
     );
@@ -99,6 +121,7 @@ describe('resolveExerciseIdentity', () => {
       name: 'Développé couché',
       measurementType: 'weight_reps',
       primaryMuscle: 'chest',
+      secondaryMuscles: ['triceps'],
       equipment: 'barbell',
     });
   });
@@ -108,8 +131,25 @@ describe('resolveExerciseIdentity', () => {
       name: 'Développé couché',
       measurementType: 'weight_reps',
       primaryMuscle: 'chest',
+      secondaryMuscles: ['triceps'],
       equipment: 'barbell',
     });
+  });
+
+  /**
+   * Le cas que le champ par champ ne doit **pas** attraper. Une ligne
+   * instantanée qui ne porte aucun secondaire est soit antérieure au champ, soit
+   * celle d'un exercice qui n'en a réellement aucun. Retomber sur la
+   * bibliothèque d'aujourd'hui dans le second cas réécrirait la séance passée —
+   * c'est précisément ce que 08B interdit.
+   */
+  it("n'emprunte pas les secondaires d'aujourd'hui à une ligne déjà instantanée", () => {
+    const identity = resolveExerciseIdentity(
+      row({ exercisePrimaryMuscle: 'chest', exerciseName: 'Développé couché' }),
+      exercise({ secondaryMuscles: ['triceps', 'shoulders'] }),
+    );
+
+    expect(identity).not.toHaveProperty('secondaryMuscles');
   });
 
   it('arbitre champ par champ, pas en bloc', () => {

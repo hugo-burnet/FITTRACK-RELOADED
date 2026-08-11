@@ -81,6 +81,12 @@ export type RegionMuscle = {
 export interface MuscleRow {
   /** Resolved by the historical repository: snapshot, then library. */
   primaryMuscle?: MuscleGroup;
+  /**
+   * Carried through but **never counted here** — `muscleBalance` ignores it on
+   * purpose, for the reason argued at the top of this file. It exists so the
+   * body map can weight the same rows without a second read of the history.
+   */
+  secondaryMuscles?: MuscleGroup[];
   sets: HistoricalSet[];
 }
 
@@ -166,6 +172,9 @@ export function toMuscleRows(workouts: readonly HistoricalWorkout[]): MuscleRow[
   return workouts.flatMap((workout) =>
     workout.exercises.map((exercise) => ({
       ...(exercise.primaryMuscle === undefined ? {} : { primaryMuscle: exercise.primaryMuscle }),
+      ...(exercise.secondaryMuscles === undefined
+        ? {}
+        : { secondaryMuscles: exercise.secondaryMuscles }),
       sets: exercise.sets,
     })),
   );

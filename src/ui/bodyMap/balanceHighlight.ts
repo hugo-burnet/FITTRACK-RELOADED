@@ -2,10 +2,16 @@ import type { MuscleGroup } from '@/data/types';
 import type { MuscleHighlight } from './BodyMap';
 import { isDrawable } from './regionsByMuscle';
 
-/** A count per muscle — `MuscleBalance.ranked`, reduced to what a drawing needs. */
-export interface MuscleCountLike {
+/**
+ * How much a muscle was worked, in whatever unit the caller counts in.
+ *
+ * `value` and not `sets`: the balance screen passes a number of working sets,
+ * a session passes a weighted involvement. The ramp only ever compares values
+ * with each other, so it does not need to know which.
+ */
+export interface MuscleWeight {
   muscle: MuscleGroup | undefined;
-  sets: number;
+  value: number;
 }
 
 /**
@@ -34,18 +40,18 @@ export const WORKED_FLOOR = 0.25;
  * screen exists to report, and which its sixteen rows make you read one by one.
  * The accent is still never spent: this is the same value ramp as everywhere.
  */
-export function balanceHighlight(counts: readonly MuscleCountLike[]): MuscleHighlight {
-  const worked = counts.filter(
-    (entry) => entry.muscle !== undefined && entry.sets > 0 && isDrawable(entry.muscle),
+export function balanceHighlight(weights: readonly MuscleWeight[]): MuscleHighlight {
+  const worked = weights.filter(
+    (entry) => entry.muscle !== undefined && entry.value > 0 && isDrawable(entry.muscle),
   );
 
-  const busiest = Math.max(0, ...worked.map((entry) => entry.sets));
+  const busiest = Math.max(0, ...worked.map((entry) => entry.value));
   if (busiest === 0) return {};
 
   return Object.fromEntries(
     worked.map((entry) => [
       entry.muscle,
-      WORKED_FLOOR + (1 - WORKED_FLOOR) * (entry.sets / busiest),
+      WORKED_FLOOR + (1 - WORKED_FLOOR) * (entry.value / busiest),
     ]),
   );
 }

@@ -108,6 +108,42 @@ export class FitTrackDB extends Dexie {
       photoBlobs: 'key',
       settings: 'key',
     });
+
+    /**
+     * Backfills the snapshot's secondary muscles.
+     *
+     * No `.stores()`, for the same reason as version 2: the field is not
+     * indexed, so the schema itself is unchanged and version 3's declaration
+     * carries over.
+     *
+     * **This does not reopen the rule that snapshots exist to enforce.** That
+     * rule forbids *reading today's library at display time* to interpret a past
+     * session — which is how the same session once had two names on one screen.
+     * Writing today's library into the snapshot **once**, now, is the opposite
+     * move: from here on the row answers for itself and stops depending on the
+     * catalogue at all. It is the same trade version 2 already made and
+     * documented — the best information available, and the only one there is. A
+     * row whose exercise gained or lost a secondary muscle before this ran
+     * records today's list; undetectable, and no worse than the nothing it
+     * replaces.
+     *
+     * Only rows that were already snapshotted are touched. A row with no
+     * snapshot at all keeps falling through to the library as a whole, which is
+     * what `resolveExerciseIdentity` expects of it.
+     */
+    this.version(4).upgrade(async (tx) => {
+      const exercises = await tx.table<Exercise>('exercises').toArray();
+      const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+
+      await tx
+        .table<WorkoutExercise>('workoutExercises')
+        .toCollection()
+        .modify((row) => {
+          if (row.exercisePrimaryMuscle === undefined) return;
+          const secondaries = byId.get(row.exerciseId)?.secondaryMuscles ?? [];
+          if (secondaries.length > 0) row.exerciseSecondaryMuscles = [...secondaries];
+        });
+    });
   }
 }
 

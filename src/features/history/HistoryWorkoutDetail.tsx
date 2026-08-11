@@ -6,7 +6,7 @@ import {
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatDuration, setTypeLabel, unitLabel } from '@/i18n/labels';
-import { sessionMuscleCounts } from '@/lib/analytics/sessionMuscles';
+import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
@@ -88,8 +88,14 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
   const totals = sessionTotals(entries, detail.bodyWeightKg);
   /** Built from `completed`, so the drawing counts exactly what the totals count. */
   const sessionHighlight = balanceHighlight(
-    sessionMuscleCounts(
-      completed.map(({ identity, sets }) => ({ primaryMuscle: identity.primaryMuscle, sets })),
+    muscleInvolvement(
+      completed.map(({ identity, sets }) => ({
+        primaryMuscle: identity.primaryMuscle,
+        ...(identity.secondaryMuscles === undefined
+          ? {}
+          : { secondaryMuscles: identity.secondaryMuscles }),
+        sets,
+      })),
     ),
   );
   const distancePart = performedParts('distance_time', {

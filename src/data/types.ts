@@ -164,6 +164,12 @@ export interface WorkoutExercise extends Syncable {
   exerciseName?: string;
   exerciseMeasurementType?: MeasurementType;
   exercisePrimaryMuscle?: MuscleGroup;
+  /**
+   * Added after the four above, so a row may carry them and not this one.
+   * Read by the body map only: every *count* in the app stays on the primary
+   * muscle, because a count has to be checkable against the session.
+   */
+  exerciseSecondaryMuscles?: MuscleGroup[];
   exerciseEquipment?: Equipment;
   exerciseBodyweightLoadFactor?: number;
 }

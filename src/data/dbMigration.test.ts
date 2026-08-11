@@ -92,15 +92,39 @@ async function seedVersion1(): Promise<void> {
   ]);
 
   await legacy.table<WorkoutExercise>('workoutExercises').bulkAdd([
-    { ...stamps, id: 'row-bench', workoutId: 'winter', exerciseId: 'bench', order: 0, supersetGroup: 0, restSeconds: 120 },
-    { ...stamps, id: 'row-retired', workoutId: 'winter', exerciseId: 'retired', order: 1, supersetGroup: 0, restSeconds: 90 },
-    { ...stamps, id: 'row-orphan', workoutId: 'summer', exerciseId: 'disparu', order: 0, supersetGroup: 0, restSeconds: 90 },
+    {
+      ...stamps,
+      id: 'row-bench',
+      workoutId: 'winter',
+      exerciseId: 'bench',
+      order: 0,
+      supersetGroup: 0,
+      restSeconds: 120,
+    },
+    {
+      ...stamps,
+      id: 'row-retired',
+      workoutId: 'winter',
+      exerciseId: 'retired',
+      order: 1,
+      supersetGroup: 0,
+      restSeconds: 90,
+    },
+    {
+      ...stamps,
+      id: 'row-orphan',
+      workoutId: 'summer',
+      exerciseId: 'disparu',
+      order: 0,
+      supersetGroup: 0,
+      restSeconds: 90,
+    },
   ]);
 
   legacy.close();
 }
 
-describe('migration vers la version 3', () => {
+describe('migration depuis la version 1', () => {
   afterEach(async () => {
     const { db } = await import('./db');
     await db.delete();
@@ -112,7 +136,7 @@ describe('migration vers la version 3', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(3);
+    expect(db.verno).toBe(4);
     expect(db.tables.map((table) => table.name)).toContain('externalExerciseBindings');
     expect(await db.exercises.get('bench')).toBeDefined();
     expect(await db.workouts.get('winter')).toBeDefined();
@@ -136,6 +160,18 @@ describe('migration vers la version 3', () => {
     const orphan = await db.workoutExercises.get('row-orphan');
     expect(orphan?.exerciseName).toBeUndefined();
     expect(orphan?.exerciseEquipment).toBeUndefined();
+    // La version 4 ne rattrape pas non plus une ligne sans instantané : elle
+    // retombe sur la bibliothèque en bloc, ce qui reste le comportement voulu.
+    expect(orphan?.exerciseSecondaryMuscles).toBeUndefined();
+
+    // Version 4 — les secondaires arrivent sur les lignes déjà instantanées par
+    // la version 2, dans la même ouverture de base.
+    expect(bench?.exerciseSecondaryMuscles).toEqual(['triceps']);
+    // « Machine retirée » n'a aucun secondaire : la clé reste absente plutôt
+    // que d'être écrite à vide.
+    expect(await db.workoutExercises.get('row-retired')).not.toHaveProperty(
+      'exerciseSecondaryMuscles',
+    );
 
     // Chaque séance reçoit l'offset de SA date, pas celui du jour de la
     // migration : en zone à heure d'été les deux diffèrent, ailleurs ils

@@ -21,6 +21,7 @@ export type ExerciseSnapshot = Pick<
   | 'exerciseName'
   | 'exerciseMeasurementType'
   | 'exercisePrimaryMuscle'
+  | 'exerciseSecondaryMuscles'
   | 'exerciseEquipment'
   | 'exerciseBodyweightLoadFactor'
 >;
@@ -40,6 +41,11 @@ export function snapshotOf(exercise: Exercise | undefined): ExerciseSnapshot {
     exerciseName: exercise.name,
     exerciseMeasurementType: exercise.measurementType,
     exercisePrimaryMuscle: exercise.primaryMuscle,
+    // Copied, never referenced: the catalogue's array must not be shared with a
+    // stored row, or editing the exercise would silently rewrite the session.
+    ...(exercise.secondaryMuscles.length === 0
+      ? {}
+      : { exerciseSecondaryMuscles: [...exercise.secondaryMuscles] }),
     exerciseEquipment: exercise.equipment,
     ...(exercise.bodyweightLoadFactor === undefined
       ? {}
@@ -63,6 +69,9 @@ export function exerciseSnapshotOfRow(row: WorkoutExercise): ExerciseSnapshot {
     ...(row.exercisePrimaryMuscle === undefined
       ? {}
       : { exercisePrimaryMuscle: row.exercisePrimaryMuscle }),
+    ...(row.exerciseSecondaryMuscles === undefined
+      ? {}
+      : { exerciseSecondaryMuscles: [...row.exerciseSecondaryMuscles] }),
     ...(row.exerciseEquipment === undefined ? {} : { exerciseEquipment: row.exerciseEquipment }),
     ...(row.exerciseBodyweightLoadFactor === undefined
       ? {}
@@ -80,6 +89,8 @@ export interface ExerciseIdentity {
   name?: string;
   measurementType?: MeasurementType;
   primaryMuscle?: MuscleGroup;
+  /** Absent on a row snapshotted before this field existed, and on an exercise that names none. */
+  secondaryMuscles?: MuscleGroup[];
   equipment?: Equipment;
   bodyweightLoadFactor?: number;
 }
@@ -112,14 +123,26 @@ export function resolveExerciseIdentity(
   const name = row.exerciseName ?? exercise?.name;
   const measurementType = row.exerciseMeasurementType ?? exercise?.measurementType;
   const primaryMuscle = row.exercisePrimaryMuscle ?? exercise?.primaryMuscle;
+  /**
+   * The library is read here **only when the row was never snapshotted at all**,
+   * not merely when it lists no secondary muscle. A row that carries a name but
+   * no secondaries is either older than this field or belongs to an exercise
+   * that genuinely has none — and falling through to today's library in the
+   * second case is exactly the rewriting of history that 08B forbade.
+   */
+  const secondaryMuscles =
+    row.exerciseSecondaryMuscles ??
+    (row.exercisePrimaryMuscle === undefined ? exercise?.secondaryMuscles : undefined);
   const equipment = row.exerciseEquipment ?? exercise?.equipment;
-  const bodyweightLoadFactor =
-    row.exerciseBodyweightLoadFactor ?? exercise?.bodyweightLoadFactor;
+  const bodyweightLoadFactor = row.exerciseBodyweightLoadFactor ?? exercise?.bodyweightLoadFactor;
 
   return {
     ...(name === undefined ? {} : { name }),
     ...(measurementType === undefined ? {} : { measurementType }),
     ...(primaryMuscle === undefined ? {} : { primaryMuscle }),
+    ...(secondaryMuscles === undefined || secondaryMuscles.length === 0
+      ? {}
+      : { secondaryMuscles: [...secondaryMuscles] }),
     ...(equipment === undefined ? {} : { equipment }),
     ...(bodyweightLoadFactor === undefined ? {} : { bodyweightLoadFactor }),
   };

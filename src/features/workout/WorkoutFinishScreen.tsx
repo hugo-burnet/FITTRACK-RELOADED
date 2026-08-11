@@ -13,7 +13,7 @@ import {
 } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { unitLabel } from '@/i18n/labels';
-import { sessionMuscleCounts } from '@/lib/analytics/sessionMuscles';
+import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
@@ -97,11 +97,17 @@ export function WorkoutFinishScreen() {
    * resolves here exactly as it does two cards below.
    */
   const sessionHighlight = balanceHighlight(
-    sessionMuscleCounts(
-      exercises.map((line) => ({
-        primaryMuscle: workoutExerciseIdentityOf(line).primaryMuscle,
-        sets: line.sets,
-      })),
+    muscleInvolvement(
+      exercises.map((line) => {
+        const identity = workoutExerciseIdentityOf(line);
+        return {
+          primaryMuscle: identity.primaryMuscle,
+          ...(identity.secondaryMuscles === undefined
+            ? {}
+            : { secondaryMuscles: identity.secondaryMuscles }),
+          sets: line.sets,
+        };
+      }),
     ),
   );
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { muscleLabel, muscleSetsReading, periodLabel } from '@/i18n/labels';
+import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { muscleBalance, toMuscleRows } from '@/lib/analytics/muscles';
 import { PERIOD_KEYS, type PeriodKey } from '@/lib/analytics/periods';
 import { weeklySessionCounts } from '@/lib/analytics/weeks';
@@ -56,7 +57,8 @@ export function MuscleBalanceScreen() {
           data.hasEarlierHistory,
         ).length;
 
-  const balance = muscleBalance(toMuscleRows(workouts));
+  const rows = toMuscleRows(workouts);
+  const balance = muscleBalance(rows);
   const rankedTotal = balance.ranked.reduce((sum, entry) => sum + entry.sets, 0);
 
   return (
@@ -98,7 +100,12 @@ export function MuscleBalanceScreen() {
                 the holes" in one look; the rows answer "how many sets exactly",
                 which no silhouette can. Neither replaces the other. */}
             <Card padded>
-              <BodyMap highlight={balanceHighlight(balance.ranked)} />
+              {/* Weighted from the same rows the list counts, not from the
+                  counts themselves: the drawing credits a share to the muscles
+                  each exercise merely involves, exactly as the two session
+                  recaps do. The rows below stay a count of working sets — one
+                  body, one rule, and a number that can still be recounted. */}
+              <BodyMap highlight={balanceHighlight(muscleInvolvement(rows))} />
             </Card>
             <MuscleBalanceCard balance={balance} weeks={weeks} stale={historicalPeriod.stale} />
           </>
