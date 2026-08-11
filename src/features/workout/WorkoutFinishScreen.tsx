@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
+  evaluateCoachForWorkout,
+  finalizeCoachForWorkout,
+} from '@/data/repositories/coachEvaluate';
+import {
   discardWorkout,
   finishWorkout,
   getActiveWorkout,
@@ -20,6 +24,7 @@ import type { VolumeEntry } from '@/lib/volume';
 import { ActionBand, Button, Card, ConfirmSheet, SectionTitle, Textarea } from '@/ui';
 import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
 import { formatNumber } from '@/ui/numberField';
+import { CoachCard } from './CoachCard';
 import { ElapsedTime } from './ElapsedTime';
 
 /** One figure and what it counts. The reading register of Lot 1. */
@@ -48,6 +53,10 @@ export function WorkoutFinishScreen() {
   const detail = useLiveQuery(
     async () => (active == null ? null : await getWorkoutDetail(active.id)),
     [active?.id],
+  );
+  const coachSignals = useLiveQuery(
+    async () => (active == null ? [] : await evaluateCoachForWorkout(active.id)),
+    [active?.id, detail?.workout.updatedAt],
   );
 
   const [draft, setDraft] = useState<{ id: string; notes: string } | null>(null);
@@ -116,7 +125,9 @@ export function WorkoutFinishScreen() {
     0,
   );
   const save = () => {
-    void finishWorkout(workout.id).then(() => navigate('/', { replace: true }));
+    void finishWorkout(workout.id)
+      .then(() => finalizeCoachForWorkout(workout.id))
+      .then(() => navigate('/', { replace: true }));
   };
 
   const discard = () => {
@@ -163,6 +174,20 @@ export function WorkoutFinishScreen() {
           <Card padded>
             <BodyMap highlight={sessionHighlight} />
           </Card>
+        )}
+
+        {coachSignals !== undefined && coachSignals.length > 0 && (
+          <section className="flex flex-col gap-2">
+            <SectionTitle>{t('finish.coachSection')}</SectionTitle>
+            <div className="flex flex-col gap-2">
+              {coachSignals.map((signal) => (
+                <CoachCard
+                  key={`${signal.exerciseId}-${signal.code}`}
+                  signal={signal}
+                />
+              ))}
+            </div>
+          </section>
         )}
 
         {validated === 0 ? (

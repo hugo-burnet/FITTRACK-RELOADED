@@ -25,6 +25,10 @@ import {
   setAvailablePlateWeightsKg,
 } from '@/data/repositories/settings';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
+import {
+  dismissRecommendation,
+  listPendingRecommendations,
+} from '@/data/repositories/coachRecommendations';
 import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
@@ -126,6 +130,12 @@ export function WorkoutScreen() {
     [active?.id],
   );
 
+  const pendingCoach = useLiveQuery(async () => {
+    if (detail == null) return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
+    const ids = detail.exercises.map((line) => line.row.exerciseId);
+    return listPendingRecommendations(ids);
+  }, [detail?.workout.id, detail?.exercises.map((line) => line.row.exerciseId).join('|')]);
+
   // Mobile browsers require a user gesture before later timer-driven audio.
   useEffect(() => {
     document.addEventListener('pointerdown', unlockChime);
@@ -185,6 +195,9 @@ export function WorkoutScreen() {
   );
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const plans = restPlans(exercises.map(({ row }) => row));
+  const coachByExercise = new Map(
+    (pendingCoach ?? []).map((row) => [row.exerciseId, row] as const),
+  );
 
   // Warm-ups, supersets, and chained drop sets do not trigger a rest.
   const startRest = (line: WorkoutExerciseDetail, setId: string, setType: SetType): void => {
@@ -375,6 +388,15 @@ export function WorkoutScreen() {
                   onDeleteSet={(setId) => void deleteSet(setId)}
                   onRestoreSet={(setId) => void restoreSet(setId)}
                   onAddSet={() => void duplicateLastSet(line.row.id)}
+                  coachObjective={coachByExercise.get(line.row.exerciseId)}
+                  onDismissCoach={
+                    coachByExercise.get(line.row.exerciseId) === undefined
+                      ? undefined
+                      : () =>
+                          void dismissRecommendation(
+                            coachByExercise.get(line.row.exerciseId)!.id,
+                          )
+                  }
                 />
                 );
               }}

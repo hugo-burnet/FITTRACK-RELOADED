@@ -5,7 +5,7 @@ import {
   type SetValues,
 } from '@/data/repositories/workouts';
 import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
-import type { PersonalRecordType, WorkoutSet } from '@/data/types';
+import type { CoachRecommendation, PersonalRecordType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
@@ -13,6 +13,8 @@ import type { SupersetPlace } from '@/lib/routineOrder';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
 import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon, StarIcon } from '@/ui/icons';
+import { CoachCard } from './CoachCard';
+import { recommendationAsSignal } from './coachCopy';
 import { RecordNote } from './RecordNote';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
@@ -75,6 +77,9 @@ type Props = {
   onDeleteSet: (setId: string) => void;
   onRestoreSet: (setId: string) => void;
   onAddSet: () => void;
+  /** Pending coach objective from a previous session — display only, never pre-fills. */
+  coachObjective?: CoachRecommendation;
+  onDismissCoach?: () => void;
 };
 
 const alternationMark = (index: number): string => String.fromCharCode(65 + index);
@@ -99,6 +104,8 @@ export function WorkoutExerciseCard({
   onDeleteSet,
   onRestoreSet,
   onAddSet,
+  coachObjective,
+  onDismissCoach,
 }: Props) {
   const { row, exercise, sets, previous } = line;
   const identity = workoutExerciseIdentityOf(line);
@@ -278,6 +285,16 @@ export function WorkoutExerciseCard({
                 text-[var(--text-2)]">
                 {row.notes}
               </p>
+            )}
+
+            {coachObjective !== undefined && (
+              <div className="border-b border-[var(--border)] px-3 py-2">
+                <CoachCard
+                  signal={recommendationAsSignal(coachObjective)}
+                  tone="objective"
+                  onDismiss={onDismissCoach}
+                />
+              </div>
             )}
 
             <div className="flex items-center gap-1.5 px-2 pt-2 pb-1">

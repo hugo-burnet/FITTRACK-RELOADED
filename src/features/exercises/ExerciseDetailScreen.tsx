@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
+import { listRecommendationsForExercise } from '@/data/repositories/coachRecommendations';
 import { deleteExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
 import { listCurrentRecordsForExercise } from '@/data/repositories/personalRecords';
 import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
-import type { WorkoutSet } from '@/data/types';
+import type { CoachRecommendation, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, recordContext, recordLabel, recordValue } from '@/i18n/labels';
 import { defaultLoadIncrementKg } from '@/lib/loadIncrement';
@@ -23,6 +24,8 @@ import {
 } from '@/ui';
 import { hasDrawableMuscles } from '@/ui/bodyMap';
 import { ChevronRightIcon } from '@/ui/icons';
+import { formatNumber } from '@/ui/numberField';
+import { coachSignalMessage, recommendationAsSignal } from '@/features/workout/coachCopy';
 import { ExerciseMusclesCard } from './ExerciseMusclesCard';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
@@ -30,6 +33,40 @@ const longDate = (epochMs: number): string =>
   new Date(epochMs).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
 const decimal = (value: number): string => value.toLocaleString('fr-FR');
+
+function coachStatusLabel(status: CoachRecommendation['status']): string {
+  switch (status) {
+    case 'pending':
+      return t('coach.statusPending');
+    case 'followed':
+      return t('coach.statusFollowed');
+    case 'dismissed':
+      return t('coach.statusDismissed');
+  }
+}
+
+function CoachHistoryRow({ row }: { row: CoachRecommendation }) {
+  return (
+    <div className="border-b border-[var(--border)] p-4 last:border-b-0">
+      <div className="flex items-start justify-between gap-3">
+        <p className="label-xs font-semibold text-[var(--text-2)]">
+          {longDate(row.recommendedAt)}
+        </p>
+        <p className="label-xs font-semibold text-[var(--text-2)]">
+          {coachStatusLabel(row.status)}
+        </p>
+      </div>
+      <p className="mt-1 text-sm leading-snug text-[var(--text-1)]">
+        {coachSignalMessage(recommendationAsSignal(row))}
+      </p>
+      {row.nextLoadKg !== undefined && (
+        <p className="metric mt-1 text-sm font-semibold text-[var(--text-1)]">
+          {t('coach.nextLoad', { weight: formatNumber(row.nextLoadKg) })}
+        </p>
+      )}
+    </div>
+  );
+}
 
 /**
  * The best set of a run, in one line. Falls back from load to repetitions, so a
@@ -86,6 +123,7 @@ export function ExerciseDetailScreen() {
   const exercise = useLiveQuery(async () => (await getExercise(id)) ?? null, [id]);
   const sessions = useLiveQuery(() => listSessionsForExercise(id), [id]);
   const records = useLiveQuery(() => listCurrentRecordsForExercise(id), [id]);
+  const coachHistory = useLiveQuery(() => listRecommendationsForExercise(id), [id]);
 
   /**
    * Notes, rest and load increment are typed here and written straight through
@@ -130,7 +168,13 @@ export function ExerciseDetailScreen() {
     );
   }
 
-  if (exercise === undefined || draft === null || sessions === undefined || records === undefined) {
+  if (
+    exercise === undefined ||
+    draft === null ||
+    sessions === undefined ||
+    records === undefined ||
+    coachHistory === undefined
+  ) {
     return (
       <Screen title="" onBack={goBack}>
         <span />
@@ -259,6 +303,19 @@ export function ExerciseDetailScreen() {
                   />
                 );
               })
+            )}
+          </Card>
+        </section>
+
+        <section>
+          <SectionTitle>{t('coach.historySection')}</SectionTitle>
+          <Card>
+            {coachHistory.length === 0 ? (
+              <p className="p-4 text-sm leading-relaxed text-[var(--text-2)]">
+                {t('coach.historyEmpty')}
+              </p>
+            ) : (
+              coachHistory.map((row) => <CoachHistoryRow key={row.id} row={row} />)
             )}
           </Card>
         </section>

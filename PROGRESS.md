@@ -2,7 +2,50 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Release Android v0.2.0 — records persistés, 1RM
+**Dernière mise à jour :** 2026-08-11 (**Lot 18 — coach déterministe, RF-48, sans IA**).
+
+Plan suivi scrupuleusement : `docs/plans/lot-18-coach-deterministe.md`.
+
+**Tranche 0 — mesure RPE avant toute règle de fatigue.** Source :
+`%USERPROFILE%\Downloads\workout_data.csv` (export Hevy/FitTrack, 136 séries de travail).
+Séries avec RPE : **0**. Taux : **0 %** (seuil ~50 %). **Décision figée :** les détections
+qui exigent un RPE (charge trop lourde, signes de deload) restent hors V1. Les quatre règles
+du plan (fourchette, chute intra-séance, plateau, repos long corrélé) n'utilisent pas le RPE
+et sont livrées telles quelles. Ne pas contourner ce résultat.
+
+**Tranche 1 — incrément de charge.** `Exercise.loadIncrementKg?` (non indexé, pas de
+migration de backfill — défauts calculés), table `DEFAULT_LOAD_INCREMENT_KG` typée
+`Record<Equipment, number>`, `nextLoad` qui inverse l'assistance, saisie dans « Tes réglages »
+à côté du repos.
+
+**Tranche 2 — moteur pur `src/lib/coach/`.** Signaux typés, jamais de phrases. Quatre règles,
+comparateur un signal par exercice. Deload exclu des comparaisons ; imports Hevy sans
+fourchette muets pour la double progression ; deux lignes du même exercice dans une séance
+recollées.
+
+**Tranche 3 — journal `coachRecommendations` (`version(5)`).** Statut pending / followed /
+dismissed. Un refus à la même charge + même code ne revient pas. Réinjection : objectif
+proposé en séance, **sans pré-remplir** la série.
+
+**Tranche 4 — UX.** Carte Coach en séance (objectif + Ignorer), signaux en fin de séance sous
+le corps, historique sur la fiche exercice. Accent interdit sur la carte (charte). Chaque
+reco affiche le chiffre qui l'a produite.
+
+Portes locales : lint, typecheck, **1290 tests dans 117 fichiers**, build PWA.
+
+**Checkpoint téléphone :**
+- [ ] Exercice barre / haltères / machine assistée : incrément crédible et modifiable.
+- [ ] Valider toute une fourchette : fin de séance propose la charge suivante **avec**
+      l'explication ; à la séance d'après l'objectif apparaît sans pré-remplir.
+- [ ] Séance en deload : pas de faux plateau.
+- [ ] Ignorer une reco : elle ne revient pas à la charge identique.
+- [ ] Migration `version(5)` au premier lancement : l'app s'ouvre, le journal Coach est vide
+      tant qu'aucune séance n'a produit de signal.
+
+**La vraie mesure vient après 3–4 semaines d'usage** — le « terminé » du lot sera long à
+prononcer, et c'est normal.
+
+**Mise à jour précédente :** 2026-08-11 (**Release Android v0.2.0 — records persistés, 1RM
 estimé et schéma musculaire**).
 
 Deux chantiers menés en parallèle, fusionnés pour cette release. Les deux entrées qui suivent

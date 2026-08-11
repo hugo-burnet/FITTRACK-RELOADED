@@ -284,6 +284,27 @@ const fr = {
     tonnageHint:
       'Charge externe et poids du corps effectif estimé. Assistance soustraite, échauffements exclus.',
     nothingDone: 'Aucune série validée. Rien ne sera enregistré.',
+    coachSection: 'Coach',
+  },
+
+  coach: {
+    title: 'Coach',
+    dismiss: 'Ignorer',
+    objective: 'Objectif proposé',
+    nextLoad: 'Prochaine charge : {weight} kg',
+    range_completed:
+      '+{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_completed_assist:
+      'Assistance → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    intra_session_drop:
+      'Chute en séance : {first} → {low} reps (−{drop}).',
+    plateau: 'Plateau : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
+    long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
+    historySection: 'Recommandations',
+    historyEmpty: 'Aucune recommandation pour le moment.',
+    statusPending: 'En attente',
+    statusFollowed: 'Suivie',
+    statusDismissed: 'Ignorée',
   },
 
   setType: {
