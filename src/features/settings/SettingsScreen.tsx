@@ -23,7 +23,7 @@ import { buildCsvExport, csvExportFileName } from '@/data/repositories/csvExport
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { resnapshotHistory } from '@/data/repositories/historyRepair';
-import { ConfirmSheet, ListRow, NumberInput, SectionTitle } from '@/ui';
+import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
 
 const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
@@ -41,7 +41,6 @@ const INSTALL_MESSAGE = {
 export function SettingsScreen() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme>(loadTheme);
-  const [demoWeight, setDemoWeight] = useState<number | undefined>(100);
   const [repairOpen, setRepairOpen] = useState(false);
   const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
   /** Ce que la sauvegarde CSV a donné, dit une fois sous la liste. */
@@ -109,8 +108,7 @@ export function SettingsScreen() {
    * qui a maintenant une vraie invite disponible. Le message se retire de
    * lui-même plutôt que de survivre à sa raison d'être.
    */
-  const shownOutcome =
-    installOutcome === 'unavailable' && installAvailable ? null : installOutcome;
+  const shownOutcome = installOutcome === 'unavailable' && installAvailable ? null : installOutcome;
 
   /**
    * La sauvegarde réimportable. Le fichier est fabriqué au clic et pas tenu à
@@ -220,36 +218,6 @@ export function SettingsScreen() {
               {t('settings.themeHint')}
             </p>
           </div>
-        </section>
-
-        <section>
-          <SectionTitle>{t('settings.inputSection')}</SectionTitle>
-          <div className="rounded-2xl bg-[var(--surface-1)] p-4">
-            <p className="text-base text-[var(--text-1)]">{t('settings.demoTitle')}</p>
-            <p className="mt-1 mb-4 text-sm leading-relaxed text-[var(--text-2)]">
-              {t('settings.demoHint')}
-            </p>
-
-            <NumberInput
-              value={demoWeight}
-              onChange={setDemoWeight}
-              step={2.5}
-              suffix={t('units.kg')}
-              aria-label={t('settings.demoLabel')}
-            />
-
-            <div className="mt-4 flex items-baseline justify-between border-t border-[var(--border)] pt-4">
-              <span className="label-xs font-semibold text-[var(--text-2)]">
-                {t('settings.demoReadingLabel')}
-              </span>
-              <span className="metric text-3xl leading-none font-semibold text-[var(--text-1)]">
-                {demoWeight === undefined
-                  ? t('settings.demoEmpty')
-                  : `${demoWeight.toLocaleString('fr-FR')} ${t('units.kg')}`}
-              </span>
-            </div>
-          </div>
-          <p className="mt-3 px-1 text-sm text-[var(--text-2)]">{t('settings.demoNote')}</p>
         </section>
 
         <section>

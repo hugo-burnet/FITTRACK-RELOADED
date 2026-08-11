@@ -807,14 +807,6 @@ const fr = {
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
 
-    inputSection: 'Saisie',
-    demoTitle: 'Champ de charge',
-    demoHint: 'Le champ utilisé pour chaque série. La virgule passe : essaie 102,5.',
-    demoLabel: 'Poids d’essai',
-    demoReadingLabel: 'valeur retenue',
-    demoEmpty: '—',
-    demoNote: 'Démonstration : rien n’est enregistré.',
-
     dataSection: 'Données',
     exportHistoryLink: 'Exporter tout l’historique',
     exportHistoryHint: 'Partage toutes tes séances dans un document texte lisible.',
