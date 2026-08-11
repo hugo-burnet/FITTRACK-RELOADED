@@ -1,8 +1,5 @@
 import { MUSCLE_GROUPS, type MuscleGroup } from '@/data/types';
-import type {
-  HistoricalSet,
-  HistoricalWorkout,
-} from '@/lib/historyProjection';
+import type { HistoricalSet, HistoricalWorkout } from '@/lib/historyProjection';
 import { isWorkingSet } from '@/lib/records';
 
 /**
@@ -45,7 +42,7 @@ export type MuscleScope =
  * case: deciding which muscles deserve a row would be the app deciding what its
  * user is allowed to neglect.
  */
-export const MUSCLE_SCOPE: Record<MuscleGroup, MuscleScope> = {
+export const MUSCLE_SCOPE = {
   chest: 'region',
   lats: 'region',
   upper_back: 'region',
@@ -65,7 +62,20 @@ export const MUSCLE_SCOPE: Record<MuscleGroup, MuscleScope> = {
   full_body: 'unscoped',
   cardio: 'unscoped',
   other: 'unscoped',
-};
+} satisfies Record<MuscleGroup, MuscleScope>;
+
+/**
+ * The groups that have somewhere to be drawn — `MUSCLE_SCOPE` read as a type.
+ *
+ * `satisfies` rather than an annotation is what makes this possible: an
+ * annotation widens every value to `MuscleScope` and the distinction is lost at
+ * the type level, while `satisfies` checks exhaustiveness **and** keeps the
+ * literals. Anything keyed on this type is then exhaustive by construction —
+ * the body map cannot forget a muscle, it can only fail to compile.
+ */
+export type RegionMuscle = {
+  [K in MuscleGroup]: (typeof MUSCLE_SCOPE)[K] extends 'region' ? K : never;
+}[MuscleGroup];
 
 /** One session row, reduced to what a count per muscle needs. */
 export interface MuscleRow {
@@ -152,14 +162,10 @@ export function muscleBalance(rows: readonly MuscleRow[]): MuscleBalance {
  * Identity resolution belongs to the repository seam; this pure projection
  * only reduces the canonical DTO to the fields the balance needs.
  */
-export function toMuscleRows(
-  workouts: readonly HistoricalWorkout[],
-): MuscleRow[] {
+export function toMuscleRows(workouts: readonly HistoricalWorkout[]): MuscleRow[] {
   return workouts.flatMap((workout) =>
     workout.exercises.map((exercise) => ({
-      ...(exercise.primaryMuscle === undefined
-        ? {}
-        : { primaryMuscle: exercise.primaryMuscle }),
+      ...(exercise.primaryMuscle === undefined ? {} : { primaryMuscle: exercise.primaryMuscle }),
       sets: exercise.sets,
     })),
   );
