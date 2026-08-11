@@ -1,6 +1,18 @@
 import type { MuscleGroup } from '@/data/types';
 import { REGIONS_BY_MUSCLE, isDrawable } from './regionsByMuscle';
+import { roundPath } from './roundPath';
 import { BACK_REGIONS, BODY_VIEW_BOX, FRONT_REGIONS, type BodyRegion } from './vendorPaths';
+
+/**
+ * The drawn geometry, corners rounded — computed once for the module, never per
+ * render. The vendored file stays verbatim, as the licence copy it is; the
+ * softening is derived from it here.
+ */
+const SOFTENED = new Map<string, string>(
+  [...FRONT_REGIONS, ...BACK_REGIONS].map((region) => [region.id, roundPath(region.path)]),
+);
+
+const shapeOf = (region: BodyRegion): string => SOFTENED.get(region.id) ?? region.path;
 
 /**
  * Which muscles are lit, and how much. 0 to 1; anything absent stays unlit.
@@ -91,7 +103,7 @@ function Silhouette({
       {/* The body, filled flat. */}
       <g fill="var(--surface-2)" stroke="none">
         {regions.map((region) => (
-          <path key={region.id} d={region.path} />
+          <path key={region.id} d={shapeOf(region)} />
         ))}
       </g>
 
@@ -100,7 +112,7 @@ function Silhouette({
         {regions.map((region) => {
           const intensity = lit.get(region.id);
           if (intensity === undefined) return null;
-          return <path key={region.id} d={region.path} fillOpacity={intensity} />;
+          return <path key={region.id} d={shapeOf(region)} fillOpacity={intensity} />;
         })}
       </g>
 
@@ -126,7 +138,7 @@ function Silhouette({
         strokeLinecap="round"
       >
         {regions.map((region) => (
-          <path key={region.id} d={region.path} />
+          <path key={region.id} d={shapeOf(region)} />
         ))}
       </g>
     </svg>
