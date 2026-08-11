@@ -2,7 +2,30 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Poids de la barre : un champ vidé reste vide**).
+**Dernière mise à jour :** 2026-08-11 (**Test instable du poids du corps et préparation
+Android v0.1.4**).
+
+Le test intermittent signalé dans la note précédente est corrigé, et c'était bien le test, pas
+l'app. Le paragraphe `role="status"` de `HomeBodyWeightCard` est rendu en permanence — il porte
+une espace insécable au repos — donc `findByRole('status')` renvoyait aussitôt l'élément vide et
+l'assertion de texte courait contre l'écriture asynchrone : au hasard de l'ordonnancement, elle
+lisait la chaîne vide. Les deux assertions de succès attendent maintenant le texte lui-même
+(`findByText`), pas le rôle. Le second cas, « saves a first value and announces success », avait
+le même défaut sans l'avoir encore montré : son `waitFor` sur le compteur Dexie est satisfait
+*à l'intérieur* de `saveBodyWeight`, avant que React n'ait re-rendu l'état `saved`. L'assertion
+sur `findByRole('alert')` est laissée telle quelle — le rôle `alert` n'existe que dans l'état
+d'erreur, donc la requête est sa propre attente. Aucun texte attendu n'a été touché.
+
+La version applicative est `0.1.4`. Elle embarque aussi le correctif du champ « poids de la
+barre » décrit plus bas, qui n'avait pas encore été publié. Portes locales : lint, typecheck,
+**1070 tests dans 96 fichiers**, build PWA — et le fichier instable rejoué 8 fois de suite,
+vert à chaque passe.
+
+**Checkpoint téléphone :** installer `FitTrack-v0.1.4.apk` par-dessus l'app existante sans la
+désinstaller, puis refaire le checkpoint « poids de la barre » ci-dessous : c'est le seul
+changement visible de cette version, le reste est du test.
+
+**Mise à jour précédente :** 2026-08-11 (**Poids de la barre : un champ vidé reste vide**).
 
 Dans la feuille « Plaques à charger », effacer le poids de la barre y réécrivait aussitôt
 « 0 » : le champ renvoyait `undefined` au parent, qui le ramenait à 0 (`value ?? 0`), et
