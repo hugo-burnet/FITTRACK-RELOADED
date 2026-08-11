@@ -3859,8 +3859,8 @@ ci-dessus fait foi.
 | 9 | PWA & installation | ✅ terminé | 2026-08-02 | ⬜ **à vérifier sur le téléphone** |
 | 10 | Android (Capacitor) | ✅ terminé | 2026-08-09 | ⬜ **à vérifier sur le téléphone** |
 | 11 | Mesures & photos | 🟨 en cours | — | ⬜ |
-| 12 | Statistiques | 🟨 en cours | — | ⬜ **à confirmer** |
-| 13 | Records & notifications | 🟨 en cours | — | ⬜ |
+| 12 | Statistiques | 🟨 en cours | 2026-08-11 | ⬜ **à confirmer** |
+| 13 | Records & notifications | 🟨 en cours | 2026-08-11 | ⬜ **à vérifier sur le téléphone** |
 | 14 | Sync cloud (optionnel) | ⬜ à faire | — | ⬜ |
 | 15 | Health Connect | ⬜ à faire | — | ⬜ |
 | 16 | Widgets | ⬜ à faire | — | ⬜ |
@@ -3886,17 +3886,17 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
   une chaîne libre qui les accepte déjà, et **les photos de progression** — `progressPhotos` et
   `photoBlobs` sont dans le schéma depuis le Lot 2 et **aucun code ne les écrit**.
 - **Lot 12 — Statistiques.** Livré : progression par exercice (RF-41), volume hebdomadaire et
-  répartition des séries par groupe musculaire (RF-42), séances par semaine, avec leurs écrans
-  de détail. Manquant, vérifié dans le code : le **1RM estimé (RF-46)** — `PersonalRecordType`
-  déclare `best_1rm` et **aucune ligne ne le produit** ; la **carte de chaleur corporelle
-  (RF-43)** — `MuscleBalanceCard` est une liste de barres classées, pas un schéma de corps, et
-  c'est un choix documenté dans le fichier, pas un manque accidentel ; le **rapport mensuel
-  (RF-44)** — `PERIOD_KEYS` ne connaît que des fenêtres en semaines ; et l'**export PNG d'un
-  graphique** — aucun `toBlob`/`toDataURL` dans `features/analytics/`.
-- **Lot 13 — Records & notifications.** Livré : les règles ([`lib/records.ts`](src/lib/records.ts))
-  et la détection en direct du Lot 6, qui lit ces règles depuis l'historique. Manquant : la table
-  **`personalRecords` n'est jamais écrite** — pas de recalcul complet, pas de notification
-  « nouveau record », et donc aucun record consultable hors de l'écran qui vient de le détecter.
+  répartition des séries par groupe musculaire (RF-42), séances par semaine, le **1RM estimé
+  (RF-46)** — formule configurable en réglages, traçable comme métrique et filtrable dans le rail
+  des records — et la **carte de chaleur musculaire (RF-43)**, rendue par le schéma du Lot 5bis
+  sur l'écran d'équilibre. Manquant, vérifié dans le code : le **rapport mensuel (RF-44)** —
+  `PERIOD_KEYS` ne connaît que des fenêtres en semaines — et l'**export PNG d'un graphique**.
+- **Lot 13 — Records & notifications.** Livré le 2026-08-11 : les records sont **persistés**
+  dans `personalRecords`, écrits dans la même transaction que la série, réconciliés à chaque
+  mutation, avec une page « mes records » filtrable par exercice et par type, un rail de
+  progression, et une réparation manuelle idempotente. Manquant : les **rappels d'entraînement
+  programmables (RF-53)** — `nativeNotifications` ne planifie que la fin du repos — et la
+  **notification système quand un record tombe**, la détection restant à l'écran.
 
 ## Décisions prises en cours de route
 
