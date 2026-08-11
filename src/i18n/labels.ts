@@ -13,7 +13,6 @@ import type { PeriodKey } from '@/lib/analytics/periods';
 import type { WeeklyVolumeMetric } from '@/lib/analytics/volume';
 import type { TargetUnit } from '@/lib/measurement';
 import type { OneRepMaxFormula } from '@/lib/oneRepMax';
-import type { RecordKind } from '@/lib/records';
 import { t } from './fr';
 
 /**
@@ -47,17 +46,7 @@ export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setTyp
  * The exercise sheet lists the three, the live session congratulates them
  * (RF-23): naming them twice is how the same fact ends up with two names.
  */
-export const recordLabel = (type: PersonalRecordType | RecordKind): string => {
-  const persistedType: PersonalRecordType =
-    type === 'heaviest'
-      ? 'max_weight'
-      : type === 'mostReps'
-        ? 'max_reps'
-        : type === 'bestVolume'
-          ? 'max_volume_set'
-          : type;
-  return t(`record.${persistedType}`);
-};
+export const recordLabel = (type: PersonalRecordType): string => t(`record.${type}`);
 
 const recordNumber = (value: number): string =>
   (Math.round(value * 100) / 100).toLocaleString('fr-FR');
@@ -238,10 +227,11 @@ export function weeklyVolumeScaleReading(value: number, metric: WeeklyVolumeMetr
  * plank reads the same length on the chart, in the session, and in the export —
  * the reason that function was moved here in the first place.
  */
-export function metricReading(value: number, unit: MetricUnit): string {
+export function metricReading(value: number, unit: MetricUnit, key?: MetricKey): string {
   if (unit === 'seconds') return formatDuration(value);
 
-  const rounded = Math.round(value * 100) / 100;
+  const precision = key === 'estimatedOneRepMax' ? 10 : 100;
+  const rounded = Math.round(value * precision) / precision;
   const figure = rounded.toLocaleString('fr-FR');
 
   if (unit === 'sets') return `${figure} ${t(rounded === 1 ? 'units.set' : 'units.sets')}`;

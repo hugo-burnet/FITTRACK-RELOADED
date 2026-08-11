@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { MeasurementType, PersonalRecordType, WorkoutSet } from '@/data/types';
 import {
-  bestSets,
   isWorkingSet,
   projectRecordTimeline,
   setVolume,
@@ -51,18 +50,16 @@ const assistedSource = (values: Partial<RecordSource> = {}): RecordSource =>
 const values = (events: RecordEventDraft[], type: PersonalRecordType): number[] =>
   events.filter((event) => event.type === type).map((event) => event.value);
 
-describe('legacy record helpers', () => {
+describe('record primitives', () => {
   it('calculates a set volume only when weight and reps are present', () => {
     expect(setVolume(aSet({ weight: 100, reps: 5 }))).toBe(500);
     expect(setVolume(aSet({ weight: 20, durationSeconds: 60 }))).toBe(0);
   });
 
-  it('excludes warm-ups from working sets and best-set selection', () => {
-    const working = aSet({ weight: 100, reps: 5 });
+  it('identifies warm-ups separately from working sets', () => {
     expect(isWorkingSet(aSet({ setType: 'warmup' }))).toBe(false);
-    expect(bestSets([aSet({ weight: 200, reps: 1, setType: 'warmup' }), working]).heaviest).toBe(
-      working,
-    );
+    expect(isWorkingSet(aSet({ setType: 'normal' }))).toBe(true);
+    expect(isWorkingSet(aSet({ setType: 'dropset' }))).toBe(true);
   });
 });
 

@@ -1,6 +1,7 @@
 import type { MeasurementType } from '@/data/types';
 import type { HistoricalSet } from '@/lib/historyProjection';
 import { measurementShape } from '@/lib/measurement';
+import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import { isWorkingSet, setVolume } from '@/lib/records';
 import { sessionTotals } from '@/lib/volume';
 
@@ -22,6 +23,7 @@ export type MetricUnit = 'kg' | 'reps' | 'seconds' | 'meters' | 'sets';
 
 export type MetricKey =
   | 'topWeight'
+  | 'estimatedOneRepMax'
   | 'bestSetVolume'
   | 'sessionTonnage'
   | 'topReps'
@@ -49,6 +51,7 @@ export interface MetricDefinition {
 
 const DEFINITIONS: Record<MetricKey, MetricDefinition> = {
   topWeight: { key: 'topWeight', unit: 'kg', betterWhen: 'higher' },
+  estimatedOneRepMax: { key: 'estimatedOneRepMax', unit: 'kg', betterWhen: 'higher' },
   bestSetVolume: { key: 'bestSetVolume', unit: 'kg', betterWhen: 'higher' },
   sessionTonnage: { key: 'sessionTonnage', unit: 'kg', betterWhen: 'higher' },
   topReps: { key: 'topReps', unit: 'reps', betterWhen: 'higher' },
@@ -66,7 +69,14 @@ const DEFINITIONS: Record<MetricKey, MetricDefinition> = {
  * opens on it, so the order is the default answer to "how am I doing on this".
  */
 const OFFERED: Record<MeasurementType, MetricKey[]> = {
-  weight_reps: ['topWeight', 'bestSetVolume', 'sessionTonnage', 'totalReps', 'workingSets'],
+  weight_reps: [
+    'topWeight',
+    'estimatedOneRepMax',
+    'bestSetVolume',
+    'sessionTonnage',
+    'totalReps',
+    'workingSets',
+  ],
   weight_time: ['topWeight', 'totalDuration', 'topDuration', 'workingSets'],
   // Bodyweight: the belt is progress too, but repetitions are the headline.
   reps_only: ['topReps', 'sessionTonnage', 'totalReps', 'workingSets'],
@@ -144,7 +154,11 @@ const smaller = (a: number, b: number) => Math.min(a, b);
  * to the floor because an exercise was retyped is a lie the reader cannot see
  * through.
  */
-function valueOf(key: MetricKey, session: AnalyticsSession): number | undefined {
+function valueOf(
+  key: MetricKey,
+  session: AnalyticsSession,
+  formula: OneRepMaxFormula,
+): number | undefined {
   const type = session.measurementType;
   if (type === undefined) return undefined;
 
@@ -172,6 +186,12 @@ function valueOf(key: MetricKey, session: AnalyticsSession): number | undefined 
   switch (key) {
     case 'topWeight':
       return best(sets, (set) => set.weight, larger);
+    case 'estimatedOneRepMax':
+      return best(
+        sets,
+        (set) => estimateOneRepMax(set.weight ?? 0, set.reps ?? 0, formula),
+        larger,
+      );
     case 'lowestAssist':
       // Zero included: an unassisted repetition is the best possible reading,
       // and dropping it would hide the very session that got there.
@@ -198,9 +218,13 @@ function valueOf(key: MetricKey, session: AnalyticsSession): number | undefined 
 }
 
 /** The curve: one point per session that has a figure, oldest first. */
-export function metricSeries(key: MetricKey, sessions: AnalyticsSession[]): MetricPoint[] {
+export function metricSeries(
+  key: MetricKey,
+  sessions: readonly AnalyticsSession[],
+  formula: OneRepMaxFormula = 'epley',
+): MetricPoint[] {
   return sessions.flatMap((session) => {
-    const value = valueOf(key, session);
+    const value = valueOf(key, session, formula);
     if (value === undefined) return [];
     return [{ workoutId: session.workoutId, timestamp: session.startedAt, value }];
   });

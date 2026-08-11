@@ -3,11 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { deleteExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
+import { listCurrentRecordsForExercise } from '@/data/repositories/personalRecords';
 import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle, recordLabel } from '@/i18n/labels';
-import { bestSets, isWorkingSet } from '@/lib/records';
+import { exerciseSubtitle, recordContext, recordLabel, recordValue } from '@/i18n/labels';
+import { isWorkingSet } from '@/lib/records';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import {
   ActionBand,
@@ -32,7 +33,15 @@ const decimal = (value: number): string => value.toLocaleString('fr-FR');
  * covered without naming any of them.
  */
 function topSetLabel(sets: WorkoutSet[]): string | undefined {
-  const { heaviest, mostReps } = bestSets(sets);
+  const workingSets = sets.filter(isWorkingSet);
+  const heaviest = workingSets.reduce<WorkoutSet | undefined>((best, candidate) => {
+    if (candidate.weight === undefined || candidate.weight <= 0) return best;
+    return best === undefined || candidate.weight > best.weight! ? candidate : best;
+  }, undefined);
+  const mostReps = workingSets.reduce<WorkoutSet | undefined>((best, candidate) => {
+    if (candidate.reps === undefined || candidate.reps <= 0) return best;
+    return best === undefined || candidate.reps > best.reps! ? candidate : best;
+  }, undefined);
 
   if (heaviest?.weight !== undefined) {
     return heaviest.reps === undefined
@@ -48,12 +57,17 @@ function topSetLabel(sets: WorkoutSet[]): string | undefined {
 }
 
 /** Engraved label, tabular figure — the readout shape of the diagnostic screen. */
-function Reading({ label, value }: { label: string; value: string }) {
+function Reading({ label, value, context }: { label: string; value: string; context?: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-[var(--border)] p-4 last:border-b-0">
+    <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] p-4 last:border-b-0">
       <span className="label-xs font-semibold text-[var(--text-2)]">{label}</span>
-      <span className="metric text-2xl leading-none font-semibold text-[var(--text-1)]">
-        {value}
+      <span className="min-w-0 text-right">
+        <span className="metric block text-2xl leading-none font-semibold text-[var(--text-1)]">
+          {value}
+        </span>
+        {context && (
+          <span className="mt-1.5 block text-sm leading-snug text-[var(--text-2)]">{context}</span>
+        )}
       </span>
     </div>
   );
@@ -67,6 +81,7 @@ export function ExerciseDetailScreen() {
   // distinction a freshly opened screen flashes "cet exercice n'existe plus".
   const exercise = useLiveQuery(async () => (await getExercise(id)) ?? null, [id]);
   const sessions = useLiveQuery(() => listSessionsForExercise(id), [id]);
+  const records = useLiveQuery(() => listCurrentRecordsForExercise(id), [id]);
 
   /**
    * Notes and rest are typed here and written straight through to the database,
@@ -105,20 +120,13 @@ export function ExerciseDetailScreen() {
     );
   }
 
-  if (exercise === undefined || draft === null || sessions === undefined) {
+  if (exercise === undefined || draft === null || sessions === undefined || records === undefined) {
     return (
       <Screen title="" onBack={goBack}>
         <span />
       </Screen>
     );
   }
-
-  const allSets = sessions.flatMap((session) => session.sets);
-  const { heaviest, mostReps, bestVolume } = bestSets(allSets);
-  // Repetitions are only a record where there is no load to beat: on a bench
-  // press the rep maximum is a light set, and reading it as a record is a lie.
-  const showReps = heaviest === undefined && mostReps !== undefined;
-  const showVolume = bestVolume !== undefined && bestVolume.id !== heaviest?.id;
 
   const writeNotes = (notes: string) => {
     setDraft({ ...draft, notes });
@@ -156,22 +164,25 @@ export function ExerciseDetailScreen() {
 
         {/* No records section at all rather than a column of em-dashes: an
             exercise you have never done has nothing to report. */}
-        {heaviest !== undefined || showReps ? (
+        {records.length > 0 ? (
           <section>
             <SectionTitle>{t('exercise.recordsSection')}</SectionTitle>
             <Card>
-              {heaviest !== undefined && (
-                <Reading label={recordLabel('heaviest')} value={topSetLabel([heaviest])!} />
-              )}
-              {showReps && (
+              {records.map(({ record }) => (
                 <Reading
-                  label={recordLabel('mostReps')}
-                  value={t('exercise.recordReps', { reps: mostReps.reps! })}
+                  key={record.id}
+                  label={recordLabel(record.type)}
+                  value={recordValue(record)}
+                  context={recordContext(record)}
                 />
-              )}
-              {showVolume && (
-                <Reading label={recordLabel('bestVolume')} value={topSetLabel([bestVolume])!} />
-              )}
+              ))}
+              <ListRow
+                title={t('exercise.recordsLink')}
+                onClick={() =>
+                  void navigate(`/analytics/records?exerciseId=${encodeURIComponent(exercise.id)}`)
+                }
+                trailing={<ChevronRightIcon />}
+              />
             </Card>
           </section>
         ) : null}

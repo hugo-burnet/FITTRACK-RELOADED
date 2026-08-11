@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { t } from './fr';
 import {
   oneRepMaxFormulaLabel,
+  metricLabel,
+  metricReading,
   recordContext,
   recordGain,
   recordLabel,
@@ -85,6 +88,20 @@ describe('personal record labels', () => {
     expect(recordGain(record('max_distance', 1_250), 1_000)).toBe('+250 m');
     expect(recordGain(record('min_assistance', 25), 30)).toBe('−5 kg d’assistance');
     expect(recordGain(record('max_weight', 105))).toBeUndefined();
+  });
+});
+
+describe('estimated 1RM analytics labels', () => {
+  it('names the metric and rounds its kilogram display to one decimal', () => {
+    expect(metricLabel('estimatedOneRepMax')).toBe('1RM estimé');
+    expect(metricReading(116.66666666666667, 'kg', 'estimatedOneRepMax')).toBe('116,7 kg');
+  });
+
+  it('describes the selected-formula estimate without claiming an exact maximum', () => {
+    expect(oneRepMaxFormulaLabel('brzycki')).toBe('Brzycki');
+    expect(t('settings.oneRepMaxBrzyckiHint')).toBe(
+      'Une estimation fondée sur la charge et le nombre de répétitions.',
+    );
   });
 });
 

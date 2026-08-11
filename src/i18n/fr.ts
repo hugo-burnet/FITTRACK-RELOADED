@@ -762,6 +762,7 @@ const fr = {
     notFound: 'Cet exercice n’existe plus.',
 
     recordsSection: 'Records',
+    recordsLink: 'Voir tous les records',
     recordWeightReps: '{weight} kg × {reps}',
     recordWeight: '{weight} kg',
     recordReps: '{reps} reps',
@@ -860,7 +861,7 @@ const fr = {
     oneRepMaxEpley: 'Epley',
     oneRepMaxEpleyHint: 'Un repère équilibré, couramment utilisé.',
     oneRepMaxBrzycki: 'Brzycki',
-    oneRepMaxBrzyckiHint: 'Une estimation plus prudente sur les séries longues.',
+    oneRepMaxBrzyckiHint: 'Une estimation fondée sur la charge et le nombre de répétitions.',
     oneRepMaxLombardi: 'Lombardi',
     oneRepMaxLombardiHint: 'Une estimation qui progresse régulièrement avec les répétitions.',
     oneRepMaxExample: '100 kg × 5 → {value} kg',
@@ -1183,6 +1184,7 @@ const fr = {
   /** Le nom de chaque métrique. Il porte l'unité quand elle ne va pas de soi. */
   metric: {
     topWeight: 'Charge max',
+    estimatedOneRepMax: '1RM estimé',
     bestSetVolume: 'Meilleure série',
     sessionTonnage: 'Tonnage de la séance',
     topReps: 'Répétitions max',
@@ -1198,6 +1200,8 @@ const fr = {
   /** Ce que chaque métrique compte vraiment, sous la courbe. Une phrase. */
   metricHint: {
     topWeight: 'La série de travail la plus lourde de la séance.',
+    estimatedOneRepMax:
+      'La meilleure estimation de la séance selon la formule choisie dans les réglages.',
     bestSetVolume: 'La meilleure série de la séance, charge × répétitions.',
     sessionTonnage:
       'Charge externe et poids du corps effectif estimé × répétitions. Assistance soustraite, échauffements exclus.',
