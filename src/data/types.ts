@@ -80,6 +80,13 @@ export interface Exercise extends Syncable {
   instructions?: string;
   userNotes?: string; // RF-09: machine settings, bench height…
   defaultRestSeconds?: number; // RF-27: per-exercise rest
+  /**
+   * Smallest load jump for this exercise, in kilograms (Lot 18).
+   * Not indexed — optional override; absent falls back to the equipment table
+   * in `lib/loadIncrement.ts`. Same Dexie pattern as other optional fields:
+   * no `.stores()` change is required.
+   */
+  loadIncrementKg?: number;
   /** Catalogue coefficient for effective bodyweight tonnage, when applicable. */
   bodyweightLoadFactor?: number;
 }

@@ -790,9 +790,14 @@ const fr = {
     notesHint: 'Enregistré au fur et à mesure de la frappe.',
     restLabel: 'Repos entre les séries',
     restHint: 'Servira de durée par défaut au minuteur de repos.',
+    loadIncrementLabel: 'Incrément de charge',
+    loadIncrementHint:
+      'Plus petit saut de charge pour cet exercice. Vide = défaut selon le matériel ({value} kg).',
+    loadIncrementAssistHint:
+      'Sur une machine assistée, progresser baisse l’assistance de ce pas. Vide = défaut ({value} kg).',
 
     catalogueNote:
-      'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes et ton repos, si.',
+      'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes, ton repos et ton incrément, si.',
     /** Not "Enregistrer": there is nothing left to save, only somewhere to go. */
     done: 'Terminé',
     edit: 'Modifier',

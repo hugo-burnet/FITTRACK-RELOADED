@@ -8,6 +8,7 @@ import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, recordContext, recordLabel, recordValue } from '@/i18n/labels';
+import { defaultLoadIncrementKg } from '@/lib/loadIncrement';
 import { isWorkingSet } from '@/lib/records';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
 import {
@@ -15,6 +16,7 @@ import {
   Card,
   ConfirmAction,
   ListRow,
+  NumberInput,
   RestPicker,
   SectionTitle,
   Textarea,
@@ -86,17 +88,23 @@ export function ExerciseDetailScreen() {
   const records = useLiveQuery(() => listCurrentRecordsForExercise(id), [id]);
 
   /**
-   * Notes and rest are typed here and written straight through to the database,
-   * so the draft only exists to keep `useLiveQuery` from echoing each write back
-   * into the field and moving the caret. Keyed on the exercise id so walking
-   * from one exercise to another re-reads.
+   * Notes, rest and load increment are typed here and written straight through
+   * to the database, so the draft only exists to keep `useLiveQuery` from
+   * echoing each write back into the field and moving the caret. Keyed on the
+   * exercise id so walking from one exercise to another re-reads.
    */
-  const [draft, setDraft] = useState<{ id: string; notes: string; rest?: number } | null>(null);
+  const [draft, setDraft] = useState<{
+    id: string;
+    notes: string;
+    rest?: number;
+    loadIncrementKg?: number;
+  } | null>(null);
   if (exercise != null && draft?.id !== exercise.id) {
     setDraft({
       id: exercise.id,
       notes: exercise.userNotes ?? '',
       rest: exercise.defaultRestSeconds,
+      loadIncrementKg: exercise.loadIncrementKg,
     });
   }
 
@@ -139,6 +147,21 @@ export function ExerciseDetailScreen() {
     setDraft({ ...draft, rest });
     void updateExercise(exercise.id, { defaultRestSeconds: rest });
   };
+
+  const writeLoadIncrement = (loadIncrementKg: number | undefined) => {
+    setDraft({ ...draft, loadIncrementKg });
+    void updateExercise(exercise.id, { loadIncrementKg });
+  };
+
+  const equipmentDefaultIncrement = defaultLoadIncrementKg(exercise.equipment);
+  const loadIncrementHint =
+    exercise.measurementType === 'assisted_weight_reps'
+      ? t('exercise.loadIncrementAssistHint', {
+          value: equipmentDefaultIncrement.toLocaleString('fr-FR'),
+        })
+      : t('exercise.loadIncrementHint', {
+          value: equipmentDefaultIncrement.toLocaleString('fr-FR'),
+        });
 
   return (
     <Screen
@@ -265,6 +288,25 @@ export function ExerciseDetailScreen() {
               />
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
                 {t('exercise.restHint')}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
+                {t('exercise.loadIncrementLabel')}
+              </p>
+              <NumberInput
+                aria-label={t('exercise.loadIncrementLabel')}
+                value={draft.loadIncrementKg}
+                onChange={writeLoadIncrement}
+                step={0.25}
+                min={0.25}
+                max={50}
+                suffix={t('units.kg')}
+                placeholder={equipmentDefaultIncrement.toLocaleString('fr-FR')}
+              />
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+                {loadIncrementHint}
               </p>
             </div>
           </Card>

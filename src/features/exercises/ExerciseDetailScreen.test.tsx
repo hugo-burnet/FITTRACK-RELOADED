@@ -157,3 +157,26 @@ describe('ExerciseDetailScreen persisted records', () => {
     );
   });
 });
+
+describe('ExerciseDetailScreen load increment', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add(exercise);
+  });
+
+  it('persists a custom load increment next to rest settings', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    const field = await screen.findByRole('textbox', { name: 'Incrément de charge' });
+    expect(field).toHaveAttribute('placeholder', '2,5');
+
+    await user.clear(field);
+    await user.type(field, '1,25');
+
+    await waitFor(async () => {
+      const stored = await db.exercises.get('bench');
+      expect(stored?.loadIncrementKg).toBe(1.25);
+    });
+  });
+});
