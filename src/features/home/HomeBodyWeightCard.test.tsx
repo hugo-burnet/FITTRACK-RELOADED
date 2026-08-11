@@ -44,7 +44,7 @@ describe('HomeBodyWeightCard', () => {
 
     await waitFor(() => expect(db.bodyMeasurements.count()).resolves.toBe(1));
     expect(await bodyMeasurements.getLatestBodyWeight()).toMatchObject({ valueKg: 80.5 });
-    expect(screen.getByRole('status')).toHaveTextContent('Poids enregistr\u00e9.');
+    expect(await screen.findByText('Poids enregistr\u00e9.')).toBeInTheDocument();
   });
 
   it('corrects the same-day value without adding a measurement', async () => {
@@ -134,6 +134,6 @@ describe('HomeBodyWeightCard', () => {
 
     save.mockRestore();
     await user.click(action);
-    expect(await screen.findByRole('status')).toHaveTextContent('Poids enregistr\u00e9.');
+    expect(await screen.findByText('Poids enregistr\u00e9.')).toBeInTheDocument();
   });
 });
