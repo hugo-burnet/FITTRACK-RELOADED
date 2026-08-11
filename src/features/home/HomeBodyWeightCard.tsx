@@ -84,23 +84,27 @@ export function HomeBodyWeightCard() {
     <section>
       <SectionTitle>{t('home.bodyWeightSection')}</SectionTitle>
       <Card padded>
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
-          <div className="min-w-0">
-            <NumberInput
-              aria-label={t('home.bodyWeightLabel')}
-              value={draft}
-              onChange={(value) => {
-                setDraft(value);
-                setSaveState('idle');
-              }}
-              step={0.1}
-              min={0.1}
-              max={Number.POSITIVE_INFINITY}
-              suffix={t('units.kg')}
-              placeholder={t('home.bodyWeightPlaceholder')}
-            />
-          </div>
-          <Button variant="primary" disabled={disabled} onClick={() => void submit()}>
+        {/* Le champ prend la ligne entière, l'action passe dessous — la même
+            disposition que la feuille d'objectif hebdomadaire. Côte à côte, sur
+            un écran de 375 px, il ne restait que 13 px de texte entre les deux
+            pas de 48 px et le « kg » : « 80,5 » débordait et la décimale était
+            rognée à l'affichage. Une pesée s'écrit au clavier ; c'est le champ,
+            pas le bouton, qui a besoin de la largeur. */}
+        <div className="space-y-3">
+          <NumberInput
+            aria-label={t('home.bodyWeightLabel')}
+            value={draft}
+            onChange={(value) => {
+              setDraft(value);
+              setSaveState('idle');
+            }}
+            step={0.1}
+            min={0.1}
+            max={Number.POSITIVE_INFINITY}
+            suffix={t('units.kg')}
+            placeholder={t('home.bodyWeightPlaceholder')}
+          />
+          <Button variant="primary" fullWidth disabled={disabled} onClick={() => void submit()}>
             {saveState === 'saving' ? t('home.bodyWeightSaving') : t('home.bodyWeightSave')}
           </Button>
         </div>
