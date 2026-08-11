@@ -18,7 +18,9 @@ import {
   SectionTitle,
   Textarea,
 } from '@/ui';
+import { hasDrawableMuscles } from '@/ui/bodyMap';
 import { ChevronRightIcon } from '@/ui/icons';
+import { ExerciseMusclesCard } from './ExerciseMusclesCard';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
 const longDate = (epochMs: number): string =>
@@ -153,6 +155,10 @@ export function ExerciseDetailScreen() {
             </span>
           )}
         </p>
+
+        {/* Nothing at all for a stretching routine: a mute grey body would be
+            worse than no body, and it is the roadmap's own checkpoint here. */}
+        {hasDrawableMuscles(exercise) && <ExerciseMusclesCard exercise={exercise} />}
 
         {/* No records section at all rather than a column of em-dashes: an
             exercise you have never done has nothing to report. */}

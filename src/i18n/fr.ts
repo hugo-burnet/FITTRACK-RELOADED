@@ -712,6 +712,15 @@ const fr = {
   exercise: {
     notFound: 'Cet exercice n’existe plus.',
 
+    /**
+     * The drawing is `aria-hidden`, so these two lines are what the muscles
+     * actually *are* for a screen reader — and for anyone reading rather than
+     * looking. They are not a caption.
+     */
+    musclesSection: 'Muscles travaillés',
+    musclesPrimary: 'Principal',
+    musclesSecondary: 'Aussi sollicités',
+
     recordsSection: 'Records',
     recordWeightReps: '{weight} kg × {reps}',
     recordWeight: '{weight} kg',

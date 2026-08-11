@@ -2,7 +2,61 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Champ du poids sur toute la ligne et préparation
+**Dernière mise à jour :** 2026-08-11 (**Lot 5bis — schéma musculaire sur la fiche exercice**).
+
+RF-06 réclamait « image ou démonstration animée » depuis le Lot 2 et le champ `imageUrl` n'a
+jamais été rempli. La moitié à notre portée est livrée : la fiche d'un exercice montre
+désormais une silhouette de face et de dos, avec les muscles travaillés allumés.
+
+**La géométrie est reprise, pas dessinée.** 89 régions SVG de
+[`vulovix/body-muscles`](https://github.com/vulovix/body-muscles) au commit `15c8085`, sous
+Apache-2.0, avec le texte de la licence et le NOTICE dans `licenses/body-muscles/`. Seuls les
+tracés sont repris — ni le composant amont, ni sa rampe de couleurs : le §8 exclut les
+composants tiers, et réutiliser des coordonnées n'est pas en dépendre. Zéro dépendance ajoutée
+au `package.json`. **Réserve consignée :** la provenance du dessin n'est pas documentée en
+amont, le NOTICE revendique la paternité sans citer de source antérieure. On s'appuie sur cette
+déclaration, comme pour tout actif open source — c'est une déclaration, pas une preuve, et le
+dépôt est public.
+
+**Une rampe de valeur, pas une couleur.** La charte réserve l'accent aux actions principales,
+aux séries validées et aux records ; `MuscleBalanceCard` le documente et tous les écrans
+d'analytics s'y tiennent. Un muscle allumé est donc la même encre que le texte, posée sur la
+surface du corps à l'intensité travaillée. Deux couches plutôt qu'une, pour n'avoir aucune
+couleur à interpoler et pour qu'un muscle allumé ne passe jamais derrière une région dessinée
+après lui.
+
+**Le piège annoncé par le roadmap était déjà désamorcé.** `MUSCLE_SCOPE` (Lot 12) classait déjà
+les 19 groupes en `region` / `unscoped`. Il passe d'une annotation à `satisfies` — une
+annotation élargit les valeurs et la distinction disparaît au niveau du type — ce qui permet
+d'en dériver `RegionMuscle` et de typer la table de correspondance dessus. Classer un nouveau
+groupe en `region` sans lui donner d'endroit où être dessiné **casse le typecheck**.
+
+**Trois arbitrages, tous commentés sur place :** les trois bandes du trapèze sont réparties
+comme les mouvements le font (haussement → `traps`, tirage → `upper_back`) ; le grand dentelé
+reste éteint plutôt que replié dans `abs` ; et un exercice dont le muscle principal n'a pas de
+région — 18 entrées du catalogue, dont le stepper — **promeut ses secondaires à pleine
+intensité**, parce que 0,4 ne veut dire quelque chose que par rapport à un principal.
+
+Portes locales : lint, typecheck, build PWA, **1089 tests dans 98 fichiers**. Vérifié dans le
+navigateur à 375 px : 96 × 256 px par silhouette, section de 417 px (comparable aux 480 px de
+« Tes réglages »), aucun débordement horizontal, 14 régions allumées sur le développé couché
+(pectoraux à 1, triceps et épaules à 0,4), 12 à pleine intensité sur le stepper, et **aucune
+section** sur « Mobilité », qui n'a rien à montrer.
+
+⚠️ **Le rendu lui-même n'a pas été regardé** : le panneau navigateur n'était pas affiché, donc
+aucune capture n'était possible. Tout ci-dessus est mesuré au DOM, pas vu. **C'est le premier
+point du checkpoint.**
+
+**Checkpoint téléphone :**
+- [ ] Ouvrir « Développé couché (barre) » : les pectoraux sont allumés, les triceps et les
+      épaules en second, et ça correspond à ce que tu sens le lendemain.
+- [ ] Ouvrir « Escalier (stepper) » : les jambes sont allumées, et « Cardio » reste écrit sous
+      « Principal » sans rien allumer.
+- [ ] Ouvrir « Mobilité » : aucune silhouette, pas un corps gris et muet.
+- [ ] Vérifier que la silhouette ne mange pas l'écran au point de rendre les records pénibles à
+      atteindre.
+
+**Mise à jour précédente :** 2026-08-11 (**Champ du poids sur toute la ligne et préparation
 Android v0.1.5**).
 
 Rattrapage : la branche `claude/locked-exercise-card-padding-296653` portait un correctif jamais
@@ -3608,7 +3662,7 @@ ci-dessus fait foi.
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
 | 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
-| 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
+| 5bis | Schéma musculaire | ✅ terminé | 2026-08-11 | ⬜ **à vérifier sur le téléphone** |
 | 6 | Outils de séance | ✅ terminé | 6–7 | ✅ **en salle** |
 | 7 | Historique & calendrier | ✅ terminé | 07A–07C | ⬜ **à confirmer** |
 | 8 | Réglages & export/import | ✅ terminé | — | ⬜ **à confirmer** |
