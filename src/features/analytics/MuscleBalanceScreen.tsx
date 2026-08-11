@@ -7,6 +7,7 @@ import { muscleBalance, toMuscleRows } from '@/lib/analytics/muscles';
 import { PERIOD_KEYS, type PeriodKey } from '@/lib/analytics/periods';
 import { weeklySessionCounts } from '@/lib/analytics/weeks';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
+import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
 import { MuscleBalanceCard } from './MuscleBalanceCard';
 import { useHistoricalPeriod } from './useHistoricalPeriod';
 
@@ -47,8 +48,7 @@ export function MuscleBalanceScreen() {
             ...(workout.timezoneOffsetMinutes === undefined
               ? {}
               : {
-                  timezoneOffsetMinutes:
-                    workout.timezoneOffsetMinutes,
+                  timezoneOffsetMinutes: workout.timezoneOffsetMinutes,
                 }),
           })),
           data.bounds,
@@ -93,11 +93,15 @@ export function MuscleBalanceScreen() {
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('muscles.noRegion')}</p>
           </Card>
         ) : (
-          <MuscleBalanceCard
-            balance={balance}
-            weeks={weeks}
-            stale={historicalPeriod.stale}
-          />
+          <>
+            {/* Above the list, not instead of it. The drawing answers "where are
+                the holes" in one look; the rows answer "how many sets exactly",
+                which no silhouette can. Neither replaces the other. */}
+            <Card padded>
+              <BodyMap highlight={balanceHighlight(balance.ranked)} />
+            </Card>
+            <MuscleBalanceCard balance={balance} weeks={weeks} stale={historicalPeriod.stale} />
+          </>
         )}
 
         {/* The three groups with no anatomical region, and the rows whose muscle
