@@ -2,7 +2,64 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Champ du poids sur toute la ligne et préparation
+**Dernière mise à jour :** 2026-08-11 (**Records persistés, 1RM estimé et préparation
+Android v0.2.0**).
+
+Les records ne sont plus recalculés à l'affichage : ils sont **persistés** dans la table
+`personalRecords` et rejoués comme une projection. Chaque série validée écrit ses records dans
+la **même transaction** que la série — un crash entre les deux est impossible, conformément à
+la règle « pas de perte de données ». Les catégories couvertes sont la charge max, le nombre max
+de répétitions, la durée max, la distance max, l'assistance minimale, la meilleure série
+(tonnage), le tonnage de séance et le **1RM estimé**. La formule d'estimation se choisit dans
+Réglages → Entraînement (Epley par défaut, Brzycki, Lombardi) ; la changer ne touche **que** les
+records `best_1rm`. Les valeurs brutes sont stockées en pleine précision, l'affichage arrondit —
+au centième en général, au dixième de kg pour le 1RM, la précision du graphique.
+
+La projection porte un numéro de version (`PERSONAL_RECORDS_PROJECTION_VERSION`). Au démarrage,
+si la version enregistrée diffère, l'historique existant est reconstruit une fois en tâche de
+fond — c'est ce qui rattrape les séances antérieures à cette version sans bloquer l'app. Toute
+mutation qui peut déplacer un record le réconcilie : fin de séance, suppression, dévalidation
+d'une série, édition ou suppression d'une séance passée, import Hevy, et correction d'une pesée
+datée (qui ne rejoue que l'intervalle concerné, pour les exercices au poids du corps). Un
+« Réparer les records » manuel reste disponible dans Réglages, et il est idempotent.
+
+Nouvel écran **Records** (Progression → Records, ou depuis une fiche d'exercice, filtré) : un
+rail chronologique des jalons, filtrable par exercice et par catégorie.
+
+Portes locales : lint, typecheck, **1191 tests dans 108 fichiers**, build PWA, `android:sync`.
+
+Une assertion périmée traînait dans `ExerciseDetailScreen.test.tsx` : elle attendait encore
+`137,34 kg` alors que l'affichage du 1RM arrondit désormais au dixième. C'est le test qui avait
+tort — la valeur brute persistée reste bien 137,34 —, l'assertion attend maintenant `137,3 kg`.
+
+Benchmark `npm run bench:records` (fake-indexeddb, Node sous Windows, 2 000 séances × 8
+exercices × 4 séries = 64 000 séries) : reconstruction complète initiale **3,85 s**,
+reconstruction complète idempotente **5,71 s** (moyenne), reconstruction ciblée sur un exercice
+**560 ms**, lecture du rail (les plus récents d'abord) **7,1 ms**. La lecture quotidienne est
+donc ~80× plus rapide que la moindre reconstruction : la reconstruction complète reste réservée
+au rattrapage de version et au bouton de réparation, jamais au chemin d'écriture. Dette assumée,
+inchangée : pas d'index supplémentaire tant qu'un vrai téléphone ne dépasse pas 100 ms sur une
+lecture de rail — un chiffre de `fake-indexeddb` ne justifie pas une migration de schéma.
+
+Scénario local-first rejoué au navigateur à 375 px sur le serveur de dev, à travers les
+dépôts et l'UI : première série validée → aucun message de félicitations mais un « Premier
+jalon » sur Records ; amélioration stricte → la mention « 3 records » apparaît sous la bonne
+série et le rail s'ouvre dessus ; égalité → aucun doublon ; édition à la baisse de l'ancien
+record dans l'historique → le jalon précédent redevient courant (105 kg ramené à 95 kg, le
+record retombe à 100 kg) ; bascule Epley → Brzycki → seul le 1RM change (116,7 → 112,5 kg) ;
+rechargement complet → tout survit ; réparation manuelle → 0 créé, 0 modifié, 0 supprimé.
+Aucune requête réseau hors du serveur de dev pendant tout le scénario.
+
+**Checkpoint téléphone :** installer `FitTrack-v0.2.0.apk` par-dessus l'app existante **sans la
+désinstaller** — c'est tout l'intérêt, le premier lancement doit rattraper l'historique existant
+sans bloquer l'usage. À vérifier : le rail Records s'ouvre depuis Progression et reste fluide
+sur l'historique complet ; une amélioration en séance apparaît tout de suite et survit à un
+force-stop ; noms d'exercices longs, grandes valeurs, filtres et texte à 200 % restent lisibles ;
+changer de formule met à jour les 1RM et le graphique ; une édition, une suppression, un import
+ou une correction de pesée déplace bien les jalons concernés ; « Réparer les records » ne perd
+aucune séance.
+
+**Mise à jour précédente :** 2026-08-11 (**Champ du poids sur toute la ligne et préparation
 Android v0.1.5**).
 
 Rattrapage : la branche `claude/locked-exercise-card-padding-296653` portait un correctif jamais

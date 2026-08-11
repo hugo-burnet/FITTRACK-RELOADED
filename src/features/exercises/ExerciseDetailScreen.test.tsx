@@ -131,7 +131,8 @@ describe('ExerciseDetailScreen persisted records', () => {
     expect(within(section!).getByText('Charge max')).toBeVisible();
     expect(within(section!).getByText('122,5 kg')).toBeVisible();
     expect(within(section!).getByText('1RM estimé')).toBeVisible();
-    expect(within(section!).getByText('137,34 kg')).toBeVisible();
+    // Raw value persisted at full precision, read back rounded to the graph's 0.1 kg.
+    expect(within(section!).getByText('137,3 kg')).toBeVisible();
     expect(within(section!).getByText('120 kg × 5 · Epley')).toBeVisible();
     expect(within(section!).queryByText('100 kg × 5')).toBeNull();
   });
