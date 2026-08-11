@@ -8,11 +8,13 @@ import { PlateLoadSheet } from './PlateLoadSheet';
 type HarnessProps = {
   initialAvailablePlateWeightsKg?: readonly number[];
   onAvailablePlateWeightsChange?: (weights: number[]) => void | Promise<void>;
+  open?: boolean;
 };
 
 function AdjustableHarness({
   initialAvailablePlateWeightsKg = DEFAULT_PLATES_KG,
   onAvailablePlateWeightsChange,
+  open = true,
 }: HarnessProps = {}) {
   const [barWeight, setBarWeight] = useState(20);
   const [availablePlateWeightsKg, setAvailablePlateWeightsKg] = useState<number[]>([
@@ -21,7 +23,7 @@ function AdjustableHarness({
 
   return (
     <PlateLoadSheet
-      open
+      open={open}
       onClose={vi.fn()}
       loads={[100]}
       barWeight={barWeight}
@@ -53,13 +55,35 @@ describe('PlateLoadSheet', () => {
     expect(screen.getByText('25 · 15 · 2,5')).toBeInTheDocument();
   });
 
-  it('rend zéro visible au lieu de calculer silencieusement depuis un champ vide', async () => {
+  it('laisse le champ de la barre vide et garde la dernière barre valide', async () => {
     render(<AdjustableHarness />);
 
     await userEvent.clear(screen.getByLabelText('Poids de la barre'));
 
-    expect(screen.getByLabelText('Poids de la barre')).toHaveValue('0');
-    expect(screen.getByText('2 × 25')).toBeInTheDocument();
+    expect(screen.getByLabelText('Poids de la barre')).toHaveValue('');
+    // Le diagramme ne saute pas à la barre nue le temps de la ressaisie.
+    expect(screen.getByText('25 · 15')).toBeInTheDocument();
+  });
+
+  it('ressaisit 22,5 sur un champ vidé sans zéro résiduel devant', async () => {
+    render(<AdjustableHarness />);
+    const field = screen.getByLabelText('Poids de la barre');
+
+    await userEvent.clear(field);
+    await userEvent.type(field, '22,5');
+
+    expect(field).toHaveValue('22,5');
+    expect(screen.getByText('25 · 10 · 2,5 · 1,25')).toBeInTheDocument();
+  });
+
+  it('rouvre la feuille sur la barre enregistrée après un champ laissé vide', async () => {
+    const { rerender } = render(<AdjustableHarness />);
+
+    await userEvent.clear(screen.getByLabelText('Poids de la barre'));
+    rerender(<AdjustableHarness open={false} />);
+    rerender(<AdjustableHarness open />);
+
+    expect(screen.getByLabelText('Poids de la barre')).toHaveValue('20');
   });
 
   it('ne présente pas de réglage de barre à une machine à plaques', () => {

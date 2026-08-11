@@ -108,15 +108,15 @@ export function PlateLoadSheet({
             <span className="label-xs font-semibold text-[var(--text-2)]">
               {t('workout.platesBarWeight')}
             </span>
-            <NumberInput
-              value={barWeight}
-              onChange={(value) => onBarWeightChange(value ?? 0)}
-              min={0}
-              max={Number.MAX_SAFE_INTEGER}
-              step={2.5}
-              suffix={t('units.kg')}
-              focusTone="neutral"
-              aria-label={t('workout.platesBarWeight')}
+            {/* Keyed on `open` so every opening starts from the stored weight: a
+                field left empty must not come back empty over a bar that is
+                still 20 kg. `Sheet` does drop its children, but only once the
+                closing transition has run — not a guarantee to hang the field's
+                correctness on. */}
+            <BarWeightField
+              key={String(open)}
+              weight={barWeight}
+              onChange={onBarWeightChange}
             />
           </div>
         )}
@@ -211,6 +211,54 @@ export function PlateLoadSheet({
         )}
       </div>
     </Sheet>
+  );
+}
+
+/**
+ * The bar weight field, holding a draft that is allowed to be empty.
+ *
+ * The weight kept outside is a `number` — it is stored — so an emptied field has
+ * nothing to hand it. Sending 0 in its place was the previous answer, and it
+ * made the field impossible to retype: `NumberInput` resynchronises its text
+ * from `value` during render, so the 0 landed straight back in the field that
+ * had just been cleared and every following keystroke fell in behind that zero
+ * — "22,5" typed as "022,5", measured at 375 px. The draft carries the empty
+ * state instead, and only a real number is forwarded: the stored weight — and
+ * the diagrams below, which are drawn from it — stay on the last value the
+ * lifter actually entered until they finish typing the next one.
+ */
+function BarWeightField({
+  weight,
+  onChange,
+}: {
+  weight: number;
+  onChange: (barWeight: number) => void;
+}) {
+  const [draft, setDraft] = useState<number | undefined>(weight);
+  const [lastWeight, setLastWeight] = useState(weight);
+
+  // A weight arriving from outside replaces the draft. Adjusted during render
+  // rather than in an effect, for the same reason as `NumberInput`: an effect
+  // would paint one frame of the previous bar first.
+  if (weight !== lastWeight) {
+    setLastWeight(weight);
+    setDraft(weight);
+  }
+
+  return (
+    <NumberInput
+      value={draft}
+      onChange={(value) => {
+        setDraft(value);
+        if (value !== undefined) onChange(value);
+      }}
+      min={0}
+      max={Number.MAX_SAFE_INTEGER}
+      step={2.5}
+      suffix={t('units.kg')}
+      focusTone="neutral"
+      aria-label={t('workout.platesBarWeight')}
+    />
   );
 }
 
