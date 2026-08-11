@@ -515,6 +515,8 @@ const fr = {
     detailDuration: 'Durée',
     detailNotes: 'Notes',
     detailTotals: 'Totaux',
+    /** Past tense: the recap says what this session did, not what it targets. */
+    detailMuscles: 'Muscles travaillés',
     detailExercises: 'Exercices',
     detailSets: 'Séries de travail',
     detailReps: 'Répétitions',

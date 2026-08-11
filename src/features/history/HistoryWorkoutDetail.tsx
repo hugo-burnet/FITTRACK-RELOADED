@@ -6,11 +6,13 @@ import {
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatDuration, setTypeLabel, unitLabel } from '@/i18n/labels';
+import { sessionMuscleCounts } from '@/lib/analytics/sessionMuscles';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
 import { Card, SectionTitle } from '@/ui';
+import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
 import { formatNumber } from '@/ui/numberField';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
@@ -84,6 +86,12 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
     })),
   );
   const totals = sessionTotals(entries, detail.bodyWeightKg);
+  /** Built from `completed`, so the drawing counts exactly what the totals count. */
+  const sessionHighlight = balanceHighlight(
+    sessionMuscleCounts(
+      completed.map(({ identity, sets }) => ({ primaryMuscle: identity.primaryMuscle, sets })),
+    ),
+  );
   const distancePart = performedParts('distance_time', {
     distanceMeters: totals.distanceMeters,
   }).at(0);
@@ -157,6 +165,20 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
           </div>
         </Card>
       </section>
+
+      {/* The same drawing as the end-of-session recap, from the same figures:
+          reopening a session in the Journal must show what closing it showed.
+          `balanceHighlight` returning nothing covers both empty cases — a
+          session with no recorded set, and one made only of exercises that have
+          no region. */}
+      {Object.keys(sessionHighlight).length > 0 && (
+        <section>
+          <SectionTitle>{t('history.detailMuscles')}</SectionTitle>
+          <Card padded>
+            <BodyMap highlight={sessionHighlight} />
+          </Card>
+        </section>
+      )}
 
       <section>
         <SectionTitle>{t('history.detailExercises')}</SectionTitle>

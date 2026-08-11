@@ -13,10 +13,12 @@ import {
 } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { unitLabel } from '@/i18n/labels';
+import { sessionMuscleCounts } from '@/lib/analytics/sessionMuscles';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
 import { ActionBand, Button, Card, ConfirmSheet, SectionTitle, Textarea } from '@/ui';
+import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
 import { formatNumber } from '@/ui/numberField';
 import { ElapsedTime } from './ElapsedTime';
 
@@ -88,6 +90,21 @@ export function WorkoutFinishScreen() {
   );
 
   const totals = sessionTotals(entries, detail.bodyWeightKg);
+
+  /**
+   * The muscles this session touched. Read through `workoutExerciseIdentityOf`
+   * like every other reading of a session, so a renamed or deleted exercise
+   * resolves here exactly as it does two cards below.
+   */
+  const sessionHighlight = balanceHighlight(
+    sessionMuscleCounts(
+      exercises.map((line) => ({
+        primaryMuscle: workoutExerciseIdentityOf(line).primaryMuscle,
+        sets: line.sets,
+      })),
+    ),
+  );
+
   const validated = exercises.reduce(
     (count, line) => count + line.sets.filter((set) => set.isCompleted === 1).length,
     0,
@@ -132,6 +149,16 @@ export function WorkoutFinishScreen() {
           )}
         </Card>
 
+        {/* Nothing to draw before the first set is recorded — and nothing to
+            draw either for a session made entirely of exercises with no region.
+            `balanceHighlight` returning an empty object is the test, so the two
+            cases need no special handling here. */}
+        {Object.keys(sessionHighlight).length > 0 && (
+          <Card padded>
+            <BodyMap highlight={sessionHighlight} />
+          </Card>
+        )}
+
         {validated === 0 ? (
           <p className="px-1 text-base leading-relaxed text-[var(--text-2)]">
             {t('finish.nothingDone')}
@@ -153,7 +180,9 @@ export function WorkoutFinishScreen() {
                     best === undefined
                       ? ''
                       : performedParts(type, best)
-                          .map((part) => `${part.prefix ?? ''}${part.value} ${unitLabel(part.unit)}`)
+                          .map(
+                            (part) => `${part.prefix ?? ''}${part.value} ${unitLabel(part.unit)}`,
+                          )
                           .join(' · ');
 
                   return (
