@@ -76,6 +76,46 @@ describe('coachRecommendations repository', () => {
     expect(pending.map((row) => row.exerciseId).sort()).toEqual(['bench', 'squat']);
   });
 
+  /**
+   * A replaced objective is not a refusal. Writing `dismissed` here would both
+   * lie to the journal — the only dataset that can say whether the engine is
+   * useful — and block the same proposal from ever coming back.
+   */
+  it('supersedes a replaced objective instead of calling it dismissed', async () => {
+    await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 102.5 })],
+      { recommendedAt: 1_000 },
+    );
+    await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 105 })],
+      { recommendedAt: 2_000 },
+    );
+
+    const history = await listRecommendationsForExercise('bench');
+    expect(history.map((row) => ({ load: row.nextLoadKg, status: row.status }))).toEqual([
+      { load: 105, status: 'pending' },
+      { load: 102.5, status: 'superseded' },
+    ]);
+  });
+
+  it('lets a superseded proposal come back — only a refusal is final', async () => {
+    await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 102.5 })],
+      { recommendedAt: 1_000 },
+    );
+    await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 105 })],
+      { recommendedAt: 2_000 },
+    );
+
+    const back = await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 102.5 })],
+      { recommendedAt: 3_000 },
+    );
+    expect(back).toHaveLength(1);
+    expect((await listPendingRecommendations(['bench']))[0]!.nextLoadKg).toBe(102.5);
+  });
+
   it('marks a pending recommendation followed when the next load is used', async () => {
     await recordCoachSignals(
       [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 102.5 })],

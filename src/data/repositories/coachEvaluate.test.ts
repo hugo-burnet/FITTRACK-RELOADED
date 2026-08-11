@@ -134,6 +134,42 @@ describe('evaluateCoachForWorkout', () => {
     ]);
   });
 
+  /**
+   * The case the journal exists for: the advice was taken. It must be written
+   * `followed` before the new objective replaces it, or the only measure of
+   * whether the engine works records every success as a refusal.
+   */
+  it('marks the previous objective followed when the next session used that load', async () => {
+    await seedSession('w1', Date.UTC(2026, 7, 1), 12, 100);
+    await finalizeCoachForWorkout('w1');
+    expect((await listRecommendationsForExercise('bench'))[0]!.nextLoadKg).toBe(102.5);
+
+    await seedSession('w2', Date.UTC(2026, 7, 4), 12, 102.5);
+    // A cool-down warm-up set must not be read as the session's working load.
+    await db.workoutSets.add({
+      ...newEntity<WorkoutSet>({
+        workoutExerciseId: 'w2-row',
+        exerciseId: exercise.id,
+        workoutId: 'w2',
+        order: 3,
+        setType: 'warmup',
+        side: 'both',
+        weight: 40,
+        reps: 10,
+        isCompleted: 1,
+        performedAt: Date.UTC(2026, 7, 4) + 600_000,
+      }),
+      id: 'w2-warmup',
+    });
+    await finalizeCoachForWorkout('w2');
+
+    const history = await listRecommendationsForExercise('bench');
+    expect(history.map((row) => ({ load: row.nextLoadKg, status: row.status }))).toEqual([
+      { load: 105, status: 'pending' },
+      { load: 102.5, status: 'followed' },
+    ]);
+  });
+
   it('persists recommendations on finalize and skips a deload plateau false positive', async () => {
     await seedSession('w1', Date.UTC(2026, 7, 1), 5, 100);
     await seedSession('w2', Date.UTC(2026, 7, 4), 5, 100);

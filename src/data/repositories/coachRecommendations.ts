@@ -1,7 +1,7 @@
 import { db } from '@/data/db';
 import type { CoachRecommendation, CoachRecommendationStatus } from '@/data/types';
 import type { CoachSignal } from '@/lib/coach';
-import { alive, newEntity, softDelete, touch } from './base';
+import { alive, newEntity, touch } from './base';
 
 function sameProposal(a: CoachRecommendation, signal: CoachSignal): boolean {
   if (a.exerciseId !== signal.exerciseId || a.code !== signal.code) return false;
@@ -23,13 +23,19 @@ export async function listRecommendationsForExercise(
 export async function listPendingRecommendations(
   exerciseIds?: readonly string[],
 ): Promise<CoachRecommendation[]> {
-  const rows = alive(await db.coachRecommendations.where('status').equals('pending').toArray());
-  const pending = rows.filter((row) => row.status === 'pending');
   if (exerciseIds === undefined) {
-    return newestPerExercise(pending);
+    return newestPerExercise(
+      alive(await db.coachRecommendations.where('status').equals('pending').toArray()),
+    );
   }
-  const wanted = new Set(exerciseIds);
-  return newestPerExercise(pending.filter((row) => wanted.has(row.exerciseId)));
+  if (exerciseIds.length === 0) return [];
+
+  // `[exerciseId+status]` — the session screen only ever asks about the
+  // exercises on today's card, never about the whole journal.
+  const keys = [...new Set(exerciseIds)].map((id) => [id, 'pending']);
+  return newestPerExercise(
+    alive(await db.coachRecommendations.where('[exerciseId+status]').anyOf(keys).toArray()),
+  );
 }
 
 function newestPerExercise(rows: CoachRecommendation[]): CoachRecommendation[] {
@@ -73,6 +79,7 @@ export async function recordCoachSignals(
       if (dismissed) continue;
 
       // Replace prior pending for this exercise — one live objective at a time.
+      // `superseded`, never `dismissed`: the user did not answer this one.
       const priorPending = existing.filter(
         (row) =>
           row.exerciseId === signal.exerciseId &&
@@ -80,12 +87,13 @@ export async function recordCoachSignals(
           row.deletedAt === 0,
       );
       for (const prior of priorPending) {
-        await db.coachRecommendations.put(
-          touch(prior, {
-            status: 'dismissed' as CoachRecommendationStatus,
-            resolvedAt: recommendedAt,
-          }),
-        );
+        const replaced = touch(prior, {
+          status: 'superseded' as CoachRecommendationStatus,
+          resolvedAt: recommendedAt,
+        });
+        await db.coachRecommendations.put(replaced);
+        prior.status = replaced.status;
+        prior.resolvedAt = replaced.resolvedAt;
       }
 
       const row = newEntity<CoachRecommendation>({
@@ -115,23 +123,6 @@ export async function dismissRecommendation(id: string): Promise<void> {
   );
 }
 
-export async function markRecommendationFollowed(
-  id: string,
-  outcome: { workoutId?: string; loadKg?: number } = {},
-): Promise<void> {
-  const row = await db.coachRecommendations.get(id);
-  if (row === undefined || row.deletedAt !== 0) return;
-  if (row.status !== 'pending') return;
-  await db.coachRecommendations.put(
-    touch(row, {
-      status: 'followed',
-      resolvedAt: Date.now(),
-      outcomeWorkoutId: outcome.workoutId,
-      outcomeLoadKg: outcome.loadKg,
-    }),
-  );
-}
-
 /**
  * After a session, if the working load matched a pending nextLoad, mark followed.
  * Does not invent follow without a numeric proposal.
@@ -158,8 +149,4 @@ export async function reconcileFollowedLoads(
       );
     }
   });
-}
-
-export async function deleteRecommendation(id: string): Promise<void> {
-  await softDelete(db.coachRecommendations, id);
 }

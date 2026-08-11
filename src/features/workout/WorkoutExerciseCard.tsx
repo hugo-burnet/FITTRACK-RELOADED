@@ -291,7 +291,9 @@ export function WorkoutExerciseCard({
               <div className="border-b border-[var(--border)]">
                 <CoachCard
                   signal={recommendationAsSignal(coachObjective)}
-                  tone="objective"
+                  // An observation with no load to put on the bar — a plateau,
+                  // a long rest — is not an objective. Only a figure is.
+                  tone={coachObjective.nextLoadKg === undefined ? 'signal' : 'objective'}
                   variant="strip"
                   onDismiss={onDismissCoach}
                 />

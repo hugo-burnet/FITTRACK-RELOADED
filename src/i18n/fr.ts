@@ -291,7 +291,6 @@ const fr = {
     title: 'Coach',
     dismiss: 'Ignorer',
     objective: 'Objectif proposé',
-    nextLoad: 'Prochaine charge : {weight} kg',
     range_completed:
       '+{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_assist:
@@ -301,10 +300,11 @@ const fr = {
     plateau: 'Plateau : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     historySection: 'Recommandations',
-    historyEmpty: 'Aucune recommandation pour le moment.',
     statusPending: 'En attente',
     statusFollowed: 'Suivie',
     statusDismissed: 'Ignorée',
+    /** Replaced by a newer signal — pas un refus, et ça se lit. */
+    statusSuperseded: 'Remplacée',
   },
 
   setType: {

@@ -239,6 +239,10 @@ export interface PersonalRecord extends Syncable {
  *
  * `status` is how we learn whether the engine is useful: pending → followed or
  * dismissed, and optionally what the next session actually did.
+ *
+ * `superseded` is not a refusal. A newer signal replaces the live objective
+ * without the user ever answering it, and conflating the two would both flatter
+ * the refusal count and forbid the replaced proposal from ever coming back.
  */
 export type CoachSignalCode =
   | 'range_completed'
@@ -246,7 +250,11 @@ export type CoachSignalCode =
   | 'plateau'
   | 'long_rest';
 
-export type CoachRecommendationStatus = 'pending' | 'followed' | 'dismissed';
+export type CoachRecommendationStatus =
+  | 'pending'
+  | 'followed'
+  | 'dismissed'
+  | 'superseded';
 
 export interface CoachRecommendation extends Syncable {
   exerciseId: string;
