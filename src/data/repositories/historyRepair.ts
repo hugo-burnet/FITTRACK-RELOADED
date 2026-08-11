@@ -25,12 +25,38 @@ export interface HistoryRepairResult {
   kept: number;
 }
 
-/** Whether today's library says something different from what the row carries. */
+/**
+ * Same list, same order, or the row is out of date.
+ *
+ * The secondaries are the one snapshot field that is an array, so it cannot be
+ * compared with `!==` — two identical lists are two different objects. Order is
+ * treated as significant rather than sorted away: `snapshotOf` copies the
+ * catalogue's order verbatim, so a row that matches the library matches it
+ * exactly, and a difference in order is a difference in what was written.
+ */
+function sameSecondaries(row: WorkoutExercise, exercise: Exercise): boolean {
+  const stored = row.exerciseSecondaryMuscles ?? [];
+  const current = exercise.secondaryMuscles;
+  return stored.length === current.length && stored.every((muscle, i) => muscle === current[i]);
+}
+
+/**
+ * Whether today's library says something different from what the row carries.
+ *
+ * **The secondaries joined this list when they joined the snapshot**, and
+ * leaving them out was a silent half-repair: fixing an exercise's secondary
+ * muscles alone left every past row untouched — the action reported "kept" and
+ * changed nothing — while fixing them *alongside* a rename repaired them as a
+ * side effect, since `snapshotOf` rewrites the whole snapshot at once. Repaired
+ * or not depending on what else you happened to change is worse than never
+ * repaired.
+ */
 function differs(row: WorkoutExercise, exercise: Exercise): boolean {
   return (
     row.exerciseName !== exercise.name ||
     row.exerciseMeasurementType !== exercise.measurementType ||
     row.exercisePrimaryMuscle !== exercise.primaryMuscle ||
+    !sameSecondaries(row, exercise) ||
     row.exerciseEquipment !== exercise.equipment
   );
 }

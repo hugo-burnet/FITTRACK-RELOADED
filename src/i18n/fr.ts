@@ -842,8 +842,9 @@ const fr = {
      * et la phrase de confirmation dit le prix plutôt que « es-tu sûr ? ».
      */
     repairLink: 'Réparer les muscles de l’historique',
+    /** Au pluriel depuis que l’instantané fige aussi les muscles secondaires. */
     repairHint:
-      'À utiliser après avoir corrigé un exercice mal classé : les séances passées gardent sinon l’ancien muscle.',
+      'À utiliser après avoir corrigé un exercice mal classé : les séances passées gardent sinon les anciens muscles, principal et secondaires.',
     repairConfirmTitle: 'Réparer l’historique',
     repairConfirmBody:
       'Chaque séance passée reprendra le nom, le muscle, le matériel et le type de mesure que ses exercices ont AUJOURD’HUI dans la bibliothèque. Un exercice renommé depuis prendra donc son nouveau nom. Rien n’est supprimé, et les charges et répétitions ne bougent pas.',

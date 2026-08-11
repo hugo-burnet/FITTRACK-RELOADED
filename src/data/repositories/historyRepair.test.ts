@@ -119,6 +119,53 @@ describe('resnapshotHistory', () => {
     expect(updated!.updatedAt).toBeGreaterThan(1);
   });
 
+  /**
+   * Le cas que la comparaison a laissé passer quand les secondaires sont entrés
+   * dans l’instantané : rien d’autre ne change, donc `differs` répondait « non »
+   * et l’action rendait « conservé » sans rien réparer. Corriger les secondaires
+   * d’un exercice est pourtant exactement ce pour quoi ce bouton existe.
+   */
+  it('répare des muscles secondaires même quand rien d’autre ne bouge', async () => {
+    const bench = exercise({ secondaryMuscles: ['triceps', 'shoulders'] });
+    const session = workout();
+    await db.exercises.add(bench);
+    await db.workouts.add(session);
+    await db.workoutExercises.add(
+      row(session.id, bench.id, {
+        exerciseName: bench.name,
+        exercisePrimaryMuscle: bench.primaryMuscle,
+        exerciseMeasurementType: bench.measurementType,
+        exerciseEquipment: bench.equipment,
+        exerciseSecondaryMuscles: ['lats'],
+      }),
+    );
+
+    const result = await resnapshotHistory();
+
+    const [updated] = await db.workoutExercises.toArray();
+    expect(updated!.exerciseSecondaryMuscles).toEqual(['triceps', 'shoulders']);
+    expect(result).toEqual({ repaired: 1, kept: 0 });
+  });
+
+  // Une ligne antérieure au champ ne porte rien ; la bibliothèque non plus. Les
+  // deux disent « aucun secondaire » et il n’y a rien à réparer.
+  it('ne voit pas de différence entre une clé absente et une liste vide', async () => {
+    const bench = exercise({ secondaryMuscles: [] });
+    const session = workout();
+    await db.exercises.add(bench);
+    await db.workouts.add(session);
+    await db.workoutExercises.add(
+      row(session.id, bench.id, {
+        exerciseName: bench.name,
+        exercisePrimaryMuscle: bench.primaryMuscle,
+        exerciseMeasurementType: bench.measurementType,
+        exerciseEquipment: bench.equipment,
+      }),
+    );
+
+    expect(await resnapshotHistory()).toEqual({ repaired: 0, kept: 1 });
+  });
+
   it('ne touche pas une ligne déjà juste', async () => {
     const bench = exercise();
     const session = workout();
