@@ -1,8 +1,18 @@
-import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType, Side } from '@/data/types';
+import type {
+  Equipment,
+  Exercise,
+  MeasurementType,
+  MuscleGroup,
+  PersonalRecord,
+  PersonalRecordType,
+  SetType,
+  Side,
+} from '@/data/types';
 import type { MetricKey, MetricUnit } from '@/lib/analytics/metrics';
 import type { PeriodKey } from '@/lib/analytics/periods';
 import type { WeeklyVolumeMetric } from '@/lib/analytics/volume';
 import type { TargetUnit } from '@/lib/measurement';
+import type { OneRepMaxFormula } from '@/lib/oneRepMax';
 import type { RecordKind } from '@/lib/records';
 import { t } from './fr';
 
@@ -37,7 +47,116 @@ export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setTyp
  * The exercise sheet lists the three, the live session congratulates them
  * (RF-23): naming them twice is how the same fact ends up with two names.
  */
-export const recordLabel = (kind: RecordKind): string => t(`record.${kind}`);
+export const recordLabel = (type: PersonalRecordType | RecordKind): string => {
+  const persistedType: PersonalRecordType =
+    type === 'heaviest'
+      ? 'max_weight'
+      : type === 'mostReps'
+        ? 'max_reps'
+        : type === 'bestVolume'
+          ? 'max_volume_set'
+          : type;
+  return t(`record.${persistedType}`);
+};
+
+const recordNumber = (value: number): string =>
+  (Math.round(value * 100) / 100).toLocaleString('fr-FR');
+
+const recordKilograms = (value: number): string =>
+  `${recordNumber(value)} ${unitLabel('kg')}`;
+
+export function recordValue(record: PersonalRecord): string {
+  switch (record.type) {
+    case 'max_reps':
+      return `${recordNumber(record.value)} ${unitLabel('reps')}`;
+    case 'max_duration':
+      return formatDuration(record.value);
+    case 'max_distance':
+      return metricReading(record.value, 'meters');
+    case 'min_assistance':
+      return t('record.assistanceValue', { value: recordKilograms(record.value) });
+    default:
+      return recordKilograms(record.value);
+  }
+}
+
+export const oneRepMaxFormulaLabel = (formula: OneRepMaxFormula): string =>
+  t(
+    formula === 'epley'
+      ? 'record.formulaEpley'
+      : formula === 'brzycki'
+        ? 'record.formulaBrzycki'
+        : 'record.formulaLombardi',
+  );
+
+export function recordContext(record: PersonalRecord): string {
+  if (record.type === 'max_volume_session') return t('record.sessionTonnageContext');
+
+  const weightReps =
+    record.weight !== undefined && record.reps !== undefined
+      ? t('record.weightRepsContext', {
+          weight: recordKilograms(record.weight),
+          reps: recordNumber(record.reps),
+        })
+      : undefined;
+
+  if (record.type === 'best_1rm' && weightReps !== undefined && record.formula !== undefined) {
+    return t('record.formulaContext', {
+      context: weightReps,
+      formula: oneRepMaxFormulaLabel(record.formula),
+    });
+  }
+  if (record.type === 'max_volume_set') return weightReps ?? '';
+  // `max_reps` is shared by added-load and assisted movements. The persisted
+  // event does not carry that weight role, so omitting it is safer than calling
+  // assistance a positive added load.
+  if (record.type === 'max_reps') return '';
+  if (record.type === 'min_assistance' && record.weight !== undefined) {
+    return t('record.assistanceContext', { weight: recordKilograms(record.weight) });
+  }
+  if (
+    (record.type === 'max_distance' || record.type === 'max_duration') &&
+    record.distanceMeters !== undefined &&
+    record.durationSeconds !== undefined
+  ) {
+    return t('record.distanceDurationContext', {
+      distance: metricReading(record.distanceMeters, 'meters'),
+      duration: formatDuration(record.durationSeconds),
+    });
+  }
+  return record.reps === undefined
+    ? ''
+    : t('record.repsContext', { count: recordNumber(record.reps) });
+}
+
+export function recordGain(
+  record: PersonalRecord,
+  previousValue?: number,
+): string | undefined {
+  if (previousValue === undefined) return undefined;
+  const delta =
+    record.type === 'min_assistance'
+      ? previousValue - record.value
+      : record.value - previousValue;
+  if (!(delta > 0)) return undefined;
+
+  const value = (() => {
+    switch (record.type) {
+      case 'max_reps':
+        return `${recordNumber(delta)} ${unitLabel('reps')}`;
+      case 'max_duration':
+        return formatDuration(delta);
+      case 'max_distance':
+        return metricReading(delta, 'meters');
+      default:
+        return recordKilograms(delta);
+    }
+  })();
+
+  return record.type === 'min_assistance'
+    ? t('record.gainLessAssistance', { value })
+    : t('record.gain', { value });
+}
 
 /** "Pectoraux · Barre" — the one line under every exercise name in the app. */
 export const exerciseSubtitle = (exercise: Exercise): string =>
