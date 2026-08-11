@@ -182,6 +182,31 @@ export async function persistRecordsForCompletedSet(
     .where('exerciseId')
     .equals(sourceSet.exerciseId)
     .toArray();
+  const writtenKeys = new Set(drafts.map(businessKey));
+  const latestActiveAchievedAt = persisted.reduce<number | undefined>(
+    (latest, record) =>
+      record.deletedAt !== 0 || (latest !== undefined && latest >= record.achievedAt)
+        ? latest
+        : record.achievedAt,
+    undefined,
+  );
+
+  // Incremental persistence is equivalent to the canonical timeline only for
+  // a strict append. Equal timestamps still have row/set/id tie-breakers, and
+  // a clock moving backwards can insert anywhere in history; both require the
+  // targeted rebuild to remove events that are no longer improvements.
+  if (
+    latestActiveAchievedAt !== undefined &&
+    sourceSet.achievedAt <= latestActiveAchievedAt
+  ) {
+    await reconcileRecordsForExercises([sourceSet.exerciseId], formula);
+    return db.personalRecords
+      .where('exerciseId')
+      .equals(sourceSet.exerciseId)
+      .filter((record) => record.deletedAt === 0 && writtenKeys.has(businessKey(record)))
+      .toArray();
+  }
+
   const writes: PersonalRecord[] = [];
 
   for (const draft of drafts) {
@@ -213,7 +238,6 @@ export async function persistRecordsForCompletedSet(
   }
 
   if (writes.length > 0) await db.personalRecords.bulkPut(writes);
-  const writtenKeys = new Set(drafts.map(businessKey));
   return persisted.filter(
     (record) => record.deletedAt === 0 && writtenKeys.has(businessKey(record)),
   );

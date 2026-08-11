@@ -69,6 +69,16 @@ function idsByType(records: readonly PersonalRecord[]): Map<string, string> {
   return new Map(records.map((record) => [record.type, record.id]));
 }
 
+function activeRecordValues(records: readonly PersonalRecord[]): string[] {
+  return records
+    .filter((record) => record.deletedAt === 0)
+    .map(
+      (record) =>
+        `${record.exerciseId}|${record.type}|${record.workoutId}|${record.workoutSetId ?? ''}=${record.value}`,
+    )
+    .sort();
+}
+
 describe('live workout record writes', () => {
   beforeEach(async () => {
     vi.restoreAllMocks();
@@ -105,6 +115,22 @@ describe('live workout record writes', () => {
         .map((record) => record.type)
         .sort(),
     ).toEqual(['best_1rm', 'max_volume_set', 'max_weight']);
+  });
+
+  it('matches a canonical rebuild when equal-timestamp sets complete in reverse order', async () => {
+    const { exercise, firstSet, workoutExerciseId } = await startMovement();
+    const secondSet = await addSet(workoutExerciseId);
+    vi.spyOn(Date, 'now').mockReturnValue(Date.UTC(2026, 7, 11, 12));
+
+    await completeSet(secondSet.id, { weight: 50, reps: 5 });
+    await completeSet(firstSet.id, { weight: 60, reps: 5 });
+    const incremental = activeRecordValues(await aliveRecords(exercise.id));
+
+    await establishRecords(exercise.id);
+    const canonical = activeRecordValues(await aliveRecords(exercise.id));
+
+    expect(incremental).toEqual(canonical);
+    expect(canonical.some((entry) => entry.includes(`|${secondSet.id}=`))).toBe(false);
   });
 
   it('does not add an event when a set only ties the incumbent', async () => {
