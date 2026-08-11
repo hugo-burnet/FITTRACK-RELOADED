@@ -2,7 +2,31 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Test instable du poids du corps et préparation
+**Dernière mise à jour :** 2026-08-11 (**Champ du poids sur toute la ligne et préparation
+Android v0.1.5**).
+
+Rattrapage : la branche `claude/locked-exercise-card-padding-296653` portait un correctif jamais
+fusionné, découvert en inventoriant les branches après coup — il n'était donc pas dans la v0.1.4.
+Sur l'accueil, le champ du poids partageait sa ligne avec le bouton « Enregistrer » : il ne
+mesurait que 85 px, dont 36 px de chaque côté pour les pas et le « kg », soit 13 px de texte.
+« 80,5 » débordait et sa décimale était rognée — la pesée avait l'air tronquée. Le champ prend
+maintenant la ligne entière et l'action passe dessous, la même disposition que la feuille
+d'objectif hebdomadaire. Mesures relevées dans l'app par la session d'origine : 207 px de champ
+à 375 px de large, 152 px à 320 px, rien de rogné jusqu'à « 1000,5 ».
+
+Le commentaire introduit par ce correctif était rédigé en français ; il est repassé en anglais,
+conformément à la règle « code et commentaires en anglais, interface en français ».
+
+La version applicative est `0.1.5`. Portes locales : lint, typecheck, **1070 tests dans 96
+fichiers**, build PWA — et `HomeBodyWeightCard.test.tsx` rejoué 5 fois après la fusion, vert à
+chaque passe : le correctif d'attente tient malgré le changement de disposition.
+
+**Checkpoint téléphone :** installer `FitTrack-v0.1.5.apk` par-dessus l'app existante sans la
+désinstaller. Sur l'accueil, taper « 80,5 » dans le poids du jour : la décimale doit rester
+lisible, le champ occuper toute la ligne et le bouton tenir dessous. La disposition n'a **pas**
+été revérifiée au navigateur pendant cette session — c'est le point à regarder en premier.
+
+**Mise à jour précédente :** 2026-08-11 (**Test instable du poids du corps et préparation
 Android v0.1.4**).
 
 Le test intermittent signalé dans la note précédente est corrigé, et c'était bien le test, pas
