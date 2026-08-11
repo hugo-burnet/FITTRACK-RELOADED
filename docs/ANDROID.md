@@ -36,6 +36,20 @@ Dans le dépôt GitHub, ouvre **Settings → Secrets and variables → Actions**
 
 Chaque push sur `master`, ou lancement manuel du workflow **Android APK**, vérifie le projet puis produit un APK signé. Un tag `v*` publie aussi automatiquement cet APK dans une GitHub Release.
 
+### Publier une release : deux gestes, pas un
+
+Le push et le tag ne font pas la même chose, et pousser `master` seul ne publie **rien** dans Releases — l’APK n’existe alors que comme artefact de workflow, effacé au bout de 30 jours. Piège vécu à la v0.2.0 : les deux workflows passent au vert, la page Releases reste vide, et tout a l’air cassé alors que rien ne l’est.
+
+```bash
+git push origin master
+```
+
+```bash
+git tag -a v0.2.0 -m "FitTrack Android v0.2.0" && git push origin v0.2.0
+```
+
+Le premier déploie la PWA sur GitHub Pages et construit l’APK. Le second le publie. Le numéro du tag doit correspondre au champ `version` de `package.json`, que le workflow lit pour nommer le fichier.
+
 ## 4. Télécharger l’APK
 
 Ouvre la page **Releases** du dépôt et télécharge directement `FitTrack-vX.Y.Z.apk`. L’artefact **fittrack-android-debug** de l’exécution **Actions → Android APK** reste disponible pendant 30 jours comme solution de secours ; il faut alors décompresser le ZIP pour obtenir `app-debug.apk`.
