@@ -137,6 +137,29 @@ describe('RecordsScreen', () => {
     expect(within(marks[2]!).getByText('Premier jalon')).toBeVisible();
   });
 
+  it('expose le contexte, le gain et le premier jalon aux technologies d’assistance', async () => {
+    const bench = exercise('bench', 'Développé couché');
+    const session = workout('workout-1', 'completed', day(1));
+    await seedTimeline({
+      exercises: [bench],
+      workouts: [session],
+      records: [
+        { ...record('record-1', bench.id, session.id, 60, day(1)), reps: 8 },
+        { ...record('record-2', bench.id, session.id, 70, day(2)), reps: 6 },
+      ],
+    });
+
+    renderRoute();
+
+    const [currentMark, firstMark] = await screen.findAllByRole('listitem');
+    const currentButton = within(currentMark!).getByRole('button');
+    const firstButton = within(firstMark!).getByRole('button');
+    expect(currentButton).toHaveAccessibleName(/Développé couché.*70 kg/);
+    expect(currentButton).toHaveAccessibleDescription(/6 reps.*\+10 kg/);
+    expect(firstButton).toHaveAccessibleName(/Développé couché.*60 kg/);
+    expect(firstButton).toHaveAccessibleDescription(/8 reps.*Premier jalon/);
+  });
+
   it('synchronise le filtre exercice avec l’URL et garde les options issues de la vue complète', async () => {
     const bench = exercise('bench', 'Développé couché');
     const squat = exercise('squat', 'Hack squat très longue amplitude contrôlée');

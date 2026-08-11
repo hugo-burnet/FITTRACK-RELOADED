@@ -97,6 +97,11 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
             ? value
             : value.replace(` ${assistanceQualifier}`, '');
         const date = longDate(entry.record.achievedAt);
+        const progress = gain ??
+          (entry.previousValue === undefined ? t('records.firstMark') : undefined);
+        const contextId = context ? `record-context-${entry.record.id}` : undefined;
+        const progressId = progress ? `record-progress-${entry.record.id}` : undefined;
+        const descriptionIds = [contextId, progressId].filter(Boolean).join(' ') || undefined;
         return (
           <li
             key={entry.record.id}
@@ -132,6 +137,7 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                 value,
                 date,
               })}
+              aria-describedby={descriptionIds}
               onClick={() => onOpen(entry)}
               className={`min-w-0 rounded-xl text-left [container-type:inline-size]
                 transition-colors duration-[var(--dur-1)]
@@ -162,16 +168,21 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                       </span>
                     )}
                   </span>
-                  {(context || gain || entry.previousValue === undefined) && (
+                  {(context || progress) && (
                     <span className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
-                      {context && <span className="text-[var(--text-2)]">{context}</span>}
-                      {gain ? (
-                        <span className="font-semibold text-[var(--accent-ink)]">{gain}</span>
-                      ) : entry.previousValue === undefined ? (
-                        <span className="font-semibold text-[var(--text-1)]">
-                          {t('records.firstMark')}
+                      {context && (
+                        <span id={contextId} className="text-[var(--text-2)]">
+                          {context}
                         </span>
-                      ) : null}
+                      )}
+                      {progress && (
+                        <span
+                          id={progressId}
+                          className={`font-semibold ${gain ? 'text-[var(--accent-ink)]' : 'text-[var(--text-1)]'}`}
+                        >
+                          {progress}
+                        </span>
+                      )}
                     </span>
                   )}
                 </>
@@ -185,19 +196,21 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                       {recordLabel(entry.record.type)} · {date}
                     </span>
                     {context && (
-                      <span className="mt-1 block text-sm leading-snug text-[var(--text-2)]">
+                      <span
+                        id={contextId}
+                        className="mt-1 block text-sm leading-snug text-[var(--text-2)]"
+                      >
                         {context}
                       </span>
                     )}
-                    {gain ? (
-                      <span className="mt-1 block text-sm font-semibold text-[var(--text-1)]">
-                        {gain}
+                    {progress && (
+                      <span
+                        id={progressId}
+                        className="mt-1 block text-sm font-semibold text-[var(--text-1)]"
+                      >
+                        {progress}
                       </span>
-                    ) : entry.previousValue === undefined ? (
-                      <span className="mt-1 block text-sm font-semibold text-[var(--text-1)]">
-                        {t('records.firstMark')}
-                      </span>
-                    ) : null}
+                    )}
                   </span>
                   <span className="text-[var(--text-2)] min-[360px]:text-right">
                     <span
