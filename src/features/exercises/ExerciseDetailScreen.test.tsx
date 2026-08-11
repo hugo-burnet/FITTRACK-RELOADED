@@ -132,11 +132,13 @@ describe('ExerciseDetailScreen persisted records', () => {
     expect(within(section!).getByText('122,5 kg')).toBeVisible();
     expect(within(section!).getByText('1RM estimé')).toBeVisible();
     /**
-     * Une décimale, pas deux, et c'est voulu côté code : `recordNumber` arrondit
-     * au centième par défaut, mais `recordValue` passe explicitement `10` pour
-     * `best_1rm`. Un 1RM est une estimation — deux décimales y seraient une
-     * fausse précision. Le test attendait le format par défaut et échouait donc
-     * sur `master` avant toute fusion ; c'est lui qui était périmé, pas l'app.
+     * Valeur brute persistée en pleine précision, relue au 0,1 kg du graphique.
+     *
+     * Une décimale et pas deux, et c'est explicite côté code : `recordNumber`
+     * arrondit au centième par défaut, mais `recordValue` passe `10` pour
+     * `best_1rm` seul. Un 1RM est une estimation — deux décimales y seraient une
+     * fausse précision. Les deux branches ont trouvé cette assertion périmée
+     * chacune de leur côté et l'ont corrigée à la même valeur.
      */
     expect(within(section!).getByText('137,3 kg')).toBeVisible();
     expect(within(section!).getByText('120 kg × 5 · Epley')).toBeVisible();
