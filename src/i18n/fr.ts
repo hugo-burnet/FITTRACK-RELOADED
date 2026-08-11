@@ -823,6 +823,34 @@ const fr = {
     demoEmpty: '—',
     demoNote: 'Démonstration : rien n’est enregistré.',
 
+    trainingSection: 'Entraînement',
+    oneRepMaxTitle: 'Estimation du 1RM',
+    oneRepMaxSheetTitle: 'Formule d’estimation du 1RM',
+    oneRepMaxLoading: 'Chargement…',
+    oneRepMaxEpley: 'Epley',
+    oneRepMaxEpleyHint: 'Un repère équilibré, couramment utilisé.',
+    oneRepMaxBrzycki: 'Brzycki',
+    oneRepMaxBrzyckiHint: 'Une estimation plus prudente sur les séries longues.',
+    oneRepMaxLombardi: 'Lombardi',
+    oneRepMaxLombardiHint: 'Une estimation qui progresse régulièrement avec les répétitions.',
+    oneRepMaxExample: '100 kg × 5 → {value} kg',
+    oneRepMaxFailed:
+      'La formule n’a pas pu être enregistrée. La formule précédente reste utilisée.',
+
+    recordsSection: 'Records',
+    recordRepairTitle: 'Recalculer les records personnels',
+    recordRepairHint:
+      'Reconstruit les records depuis tes séances. Aucune séance ni série n’est modifiée.',
+    recordRepairAction: 'Réparer les records',
+    recordRepairWorking: 'Réparation en cours…',
+    recordRepairConfirmTitle: 'Reconstruire les records',
+    recordRepairConfirmBody:
+      'Tous les records seront recalculés depuis les séances enregistrées. Tes séances et tes séries restent intactes.',
+    recordRepairConfirmAction: 'Lancer la réparation',
+    recordRepairDone:
+      'Records réparés · créations : {created} · mises à jour : {updated} · suppressions : {deleted}.',
+    recordRepairFailed: 'Les records n’ont pas pu être réparés. Tu peux réessayer.',
+
     dataSection: 'Données',
     exportHistoryLink: 'Exporter tout l’historique',
     exportHistoryHint: 'Partage toutes tes séances dans un document texte lisible.',

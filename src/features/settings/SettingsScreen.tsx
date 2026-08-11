@@ -24,6 +24,8 @@ import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { resnapshotHistory } from '@/data/repositories/historyRepair';
 import { ConfirmSheet, ListRow, NumberInput, SectionTitle } from '@/ui';
+import { OneRepMaxSettings } from './OneRepMaxSettings';
+import { RecordRepairAction } from './RecordRepairAction';
 
 const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
@@ -251,6 +253,10 @@ export function SettingsScreen() {
           </div>
           <p className="mt-3 px-1 text-sm text-[var(--text-2)]">{t('settings.demoNote')}</p>
         </section>
+
+        <OneRepMaxSettings />
+
+        <RecordRepairAction />
 
         <section>
           <SectionTitle>{t('settings.dataSection')}</SectionTitle>

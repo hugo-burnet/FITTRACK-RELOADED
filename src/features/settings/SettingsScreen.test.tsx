@@ -207,3 +207,18 @@ describe('SettingsScreen — installation', () => {
     expect(await screen.findByText('Copie hors-ligne en cours de préparation.')).toBeVisible();
   });
 });
+
+describe('SettingsScreen — records personnels', () => {
+  beforeEach(resetDb);
+
+  it('keeps formula choice and record repair separate from history repair', async () => {
+    renderSettings();
+
+    expect(await screen.findByRole('heading', { name: 'Entraînement' })).toBeVisible();
+    expect(
+      await screen.findByRole('button', { name: /Estimation du 1RM.*Epley/ }),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Réparer les records' })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Réparer les muscles de l’historique/ })).toBeVisible();
+  });
+});
