@@ -5,6 +5,26 @@
 **Dernière mise à jour :** 2026-08-11 (**Lot 5bis — schéma musculaire, quatre écrans, et les
 muscles secondaires figés dans l'instantané**).
 
+> ⚠️ **À LIRE AVANT DE FUSIONNER `claude/lot-5bis-body-map`.**
+>
+> Cette branche ajoute **`this.version(4)`** dans `data/db.ts` (backfill des muscles
+> secondaires). Une session parallèle travaille sur les records persistés et le 1RM estimé
+> (design et plan déjà sur `master`), et persister `personalRecords` avec un recalcul complet
+> demandera probablement **sa propre migration**.
+>
+> Deux `version(4)` fusionnées donnent soit une erreur Dexie, soit **pire et en silence** : un
+> numéro déjà consommé sur le téléphone, et l'upgrade de l'autre branche qui ne s'exécute
+> jamais. Aucune des deux sessions ne peut détecter ça seule — chacune ignore la migration de
+> l'autre.
+>
+> **La règle : celui qui fusionne en second renumérote en `version(5)`.** Et l'ordre compte —
+> un recalcul qui lit les instantanés doit passer **après** le backfill des secondaires, jamais
+> avant. Vérifier ensuite `db.verno` dans `dbMigration.test.ts`, qui assère le numéro courant.
+>
+> Le reste ne se recoupe pas : `lib/records.ts` n'a pas été touché ici, et `best_1rm` était
+> déjà déclaré dans `PersonalRecordType` avant les deux branches. Un conflit sur ce fichier est
+> attendu et se règle à la main.
+
 Le schéma est posé sur **quatre écrans** : la fiche exercice (ce qu'un mouvement travaille),
 la fin de séance et le détail d'une séance au Journal (ce que cette séance a travaillé), et
 « Séries par muscle » (tout ce que tu as travaillé). Un seul composant, une seule prop
