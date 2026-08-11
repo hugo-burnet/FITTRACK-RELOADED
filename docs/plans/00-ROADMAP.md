@@ -44,6 +44,7 @@ d'être lu — le code réel aura divergé. Le cadrage (périmètre, fichiers, D
 figé ici ; le détail est produit au dernier moment, à partir du code qui existe vraiment.
 
 **À la fin de chaque session**, l'agent doit avoir :
+
 1. fait passer `npm run typecheck && npm run test:run && npm run build`,
 2. commité,
 3. mis à jour `PROGRESS.md`,
@@ -70,18 +71,19 @@ Lis CLAUDE.md et PROGRESS.md. Reprends là où on s'est arrêté.
 
 ## 2. Vue d'ensemble
 
-| Phase | Lots | Résultat |
-|---|---|---|
-| **Phase 0 — Fondations** | 0 → 2 | Un site déployé, une charte visuelle, une base de données. |
-| **Phase 1 — MVP (V1)** | 3 → 9 | **App utilisable en salle**, installable sur le téléphone. |
-| **Phase 2 — Android** | 10 | **APK installé**, minuteur fiable écran éteint. |
-| **Phase 3 — V2** | 11 → 16 | Mesures, statistiques, sync, santé. |
-| **Phase 4 — V3** | 17 → 20 | Périodisation, auto-progression, IA, accessibilité. |
+| Phase                    | Lots    | Résultat                                                   |
+| ------------------------ | ------- | ---------------------------------------------------------- |
+| **Phase 0 — Fondations** | 0 → 2   | Un site déployé, une charte visuelle, une base de données. |
+| **Phase 1 — MVP (V1)**   | 3 → 9   | **App utilisable en salle**, installable sur le téléphone. |
+| **Phase 2 — Android**    | 10      | **APK installé**, minuteur fiable écran éteint.            |
+| **Phase 3 — V2**         | 11 → 16 | Mesures, statistiques, sync, santé.                        |
+| **Phase 4 — V3**         | 17 → 20 | Périodisation, auto-progression, IA, accessibilité.        |
 
 Budget indicatif : **~30 à 38 sessions** au total, dont **~14 pour arriver au V1 utilisable**
 (fin du Lot 9) et **~16 pour l'APK Android** (fin du Lot 10).
 
 Les deux moments où le projet devient réellement utile :
+
 - **Fin du Lot 9** → tu peux logger tes séances sur ton téléphone.
 - **Fin du Lot 10** → c'est une vraie app Android, sans navigateur.
 
@@ -106,10 +108,12 @@ livraison casse, autant le découvrir sur un « Hello » que sur 5 000 lignes.
 Actions de déploiement, `base` Vite configurée sur le nom du dépôt.
 
 **Definition of Done :**
+
 - `npm run build` passe, `npm run test:run` passe (1 test de fumée).
 - Un push sur `master` déclenche le workflow et met le site à jour.
 
 **✅ Checkpoint :**
+
 - [ ] `https://<ton-pseudo>.github.io/fittrack/` s'ouvre **depuis ton téléphone** et affiche
       l'écran d'accueil.
 - [ ] Tu modifies un texte, tu pushes, et le changement est visible en ligne 2 minutes plus tard.
@@ -132,6 +136,7 @@ EmptyState, ListRow), barre de navigation basse à 5 onglets, routeur hash avec 
 `src/i18n/fr.ts`.
 
 **Contraintes de conception :**
+
 - Thème **sombre par défaut** (salle de sport, écran lumineux la nuit).
 - Cibles tactiles **≥ 48 px**. Les boutons de l'écran de séance seront utilisés avec les mains
   moites, une seule main, sans regarder.
@@ -140,6 +145,7 @@ EmptyState, ListRow), barre de navigation basse à 5 onglets, routeur hash avec 
 - Zone de pouce : les actions primaires en bas d'écran, jamais en haut.
 
 **✅ Checkpoint :**
+
 - [ ] Sur ton téléphone, tu navigues entre les 5 onglets, l'app **ressemble à une app** (pas à
       une page web) : pas de zoom au double-tap, pas de barre d'adresse qui saute, transitions nettes.
 - [ ] La bascule clair/sombre fonctionne et est mémorisée après rechargement.
@@ -161,6 +167,7 @@ delete, seed idempotent d'un catalogue d'exercices, tests unitaires sur `fake-in
 de debug listant le contenu des tables.
 
 **Point d'attention — le catalogue d'exercices :** deux options.
+
 1. Réutiliser un jeu de données libre (p. ex. `yuhonas/free-exercise-db`, ~800 exercices avec
    images). **Vérifier la licence avant de l'intégrer** et consigner le résultat dans `PROGRESS.md`.
 2. Repli : générer ~150 exercices couvrant tous les groupes musculaires et tous les équipements.
@@ -169,6 +176,7 @@ de debug listant le contenu des tables.
 sur la quête du catalogue parfait, l'utilisateur peut créer les siens (RF-08).
 
 **✅ Checkpoint :**
+
 - [ ] `npm run test:run` : les tests de repositories passent (création, lecture, soft delete,
       « la dernière performance sur cet exercice »).
 - [ ] Sur l'écran de debug, tu vois la liste des exercices chargés.
@@ -188,6 +196,7 @@ RF-09 (notes), RF-10 (historique et record par exercice).
 **Budget :** 1 à 2 sessions.
 
 **Livrables :**
+
 - Liste virtualisée avec recherche instantanée (insensible aux accents : « developpe » doit
   trouver « Développé »).
 - Filtres par groupe musculaire et par équipement.
@@ -195,6 +204,7 @@ RF-09 (notes), RF-10 (historique et record par exercice).
 - Création/édition d'exercice personnalisé, avec le champ **unilatéral** (recommandation audit M2).
 
 **✅ Checkpoint :**
+
 - [ ] Tu cherches « squat », tu trouves. Tu filtres sur « haltères », la liste se réduit.
 - [ ] Tu crées un exercice à toi, il apparaît dans la liste et survit à un rechargement.
 - [ ] Tu écris une note sur une machine (« siège position 4 »), tu la retrouves.
@@ -211,6 +221,7 @@ suppression), RF-14 (supersets), RF-15 (routines prêtes à l'emploi).
 **Budget :** 2 sessions.
 
 **Livrables :**
+
 - Éditeur de routine : ajout d'exercices via un sélecteur, séries prévues (avec fourchette de
   reps et poids cible), repos par exercice, notes.
 - Réorganisation par glisser-déposer — utiliser l'API HTML5 native ou `dnd-kit` ; **tester au
@@ -220,6 +231,7 @@ suppression), RF-14 (supersets), RF-15 (routines prêtes à l'emploi).
 - 3 à 4 routines prêtes à l'emploi (Push/Pull/Legs, Full-body 3j, 5×5).
 
 **✅ Checkpoint :**
+
 - [ ] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.
 - [ ] Tu réordonnes les exercices **au doigt sur ton téléphone**, ça marche sans frustration.
 - [ ] Tu dupliques une routine et tu la modifies sans altérer l'originale.
@@ -238,6 +250,7 @@ après interruption).
 **Budget :** 3 sessions. **C'est le lot le plus lourd du projet.**
 
 **Livrables :**
+
 - Démarrage d'une séance vide ou depuis une routine.
 - Grille de saisie : une ligne par série (n°, précédent, kg, reps, ✓).
 - Affichage de la valeur précédente en gris clair, **tapable pour pré-remplir** — le geste le plus
@@ -254,6 +267,7 @@ Une saisie de série doit demander **au maximum 2 appuis** quand les valeurs son
 fois précédente.
 
 **✅ Checkpoint (le plus important du projet) :**
+
 - [ ] **Tu fais une vraie séance complète en salle avec l'app.**
 - [ ] En pleine séance : tu tues l'app depuis le gestionnaire de tâches, tu la rouvres → la séance
       reprend exactement où elle en était, aucune série perdue.
@@ -282,6 +296,7 @@ complet. Ce lot répare la moitié qui est à notre portée.
 **Budget :** 1 session.
 
 **Livrables :**
+
 - `ui/BodyMap.tsx` : silhouette de face et de dos en SVG. **La géométrie est reprise d'une source
   sous licence permissive, pas dessinée à la main** — une anatomie crédible ne s'improvise pas, et
   un tracé maladroit se voit immédiatement. Candidats vérifiés à l'API GitHub le 2026-07-22 :
@@ -305,6 +320,7 @@ plutôt que de laisser trois groupes silencieusement invisibles sur le dessin. C
 piège du champ indexé à `null` du Lot 2, transposé au graphisme : ça existe, mais rien ne le montre.
 
 **✅ Checkpoint :**
+
 - [ ] Tu ouvres « Développé couché » : les pectoraux sont allumés, les triceps et les épaules en
       second, et ça correspond à ce que tu sens le lendemain.
 - [ ] Tu ouvres un exercice de cardio : l'app n'affiche pas une silhouette vide et muette.
@@ -322,6 +338,7 @@ piège du champ indexé à `null` du Lot 2, transposé au graphisme : ça existe
 **Budget :** 2 sessions.
 
 **Livrables :**
+
 - **Minuteur de repos** : déclenché à la validation d'une série, durée par exercice, son + vibration,
   ajustement ±15 s, visible en haut de l'écran de séance. ⚠️ En PWA il ne sonnera pas de façon
   fiable écran éteint — c'est attendu, le Lot 10 le corrige.
@@ -335,6 +352,7 @@ piège du champ indexé à `null` du Lot 2, transposé au graphisme : ça existe
 - Types de séries : normale, échauffement (exclue du volume et des records), dégressive, échec.
 
 **✅ Checkpoint :**
+
 - [ ] Tu valides une série → le minuteur démarre seul et sonne à la fin (app au premier plan).
 - [ ] Tu tapes « 102,5 kg » → l'app affiche les plaques à mettre de chaque côté.
 - [ ] Tu bats un record → l'app te le dit **pendant** la séance.
@@ -359,6 +377,7 @@ couché » — recommandation audit M6).
 **Règle importante :** modifier une séance passée doit **recalculer les records** concernés.
 
 **✅ Checkpoint :**
+
 - [ ] Tes séances réelles apparaissent dans le calendrier.
 - [ ] Tu corriges une faute de frappe sur une séance d'il y a 3 jours, le total se met à jour.
 - [ ] Tu filtres l'historique sur un exercice et tu vois toutes les séances concernées.
@@ -376,6 +395,7 @@ centralisés), RF-66 (export CSV), RF-67 (import), export JSON (recommandation t
 **Budget :** 1 à 2 sessions.
 
 **Livrables :**
+
 - Écran de réglages **unique et structuré** — l'audit reproche explicitement à Hevy de les
   disperser (recommandation audit M10).
 - Unités kg/lb, poids de barre par défaut, plaques disponibles, incréments, comportement du
@@ -387,6 +407,7 @@ centralisés), RF-66 (export CSV), RF-67 (import), export JSON (recommandation t
 - Bouton « réparer les records » (recalcul complet).
 
 **✅ Checkpoint :**
+
 - [ ] Tu exportes un JSON, tu le récupères sur ton PC, tu l'ouvres : tes données sont lisibles.
 - [ ] Tu vides la base (bouton de debug), tu réimportes le JSON → tout est revenu à l'identique.
 - [ ] Tu passes en lb : tous les écrans affichent des livres, l'historique reste cohérent.
@@ -411,12 +432,14 @@ configuré sert indéfiniment une version périmée. Utiliser `registerType: 'pr
 explicitement « une mise à jour est disponible ».
 
 **✅ Checkpoint :**
+
 - [ ] Sur ton téléphone : « Ajouter à l'écran d'accueil » → l'icône apparaît sur le bureau.
 - [ ] Tu lances depuis l'icône : **pas de barre d'adresse**, ça ressemble à une app native.
 - [ ] **Mode avion, tu lances l'app : elle démarre et fonctionne entièrement.**
 - [ ] Tu pushes une nouvelle version → l'app te propose de recharger.
 
 > ### 🏁 JALON MAJEUR — V1
+>
 > À ce stade, l'application est **réellement utilisable au quotidien**. Utilise-la 2 à 3 semaines
 > avant d'attaquer le Lot 10. Note ce qui t'agace : cette liste vaut plus que la suite de ce plan.
 
@@ -434,6 +457,7 @@ chose qu'une PWA ne sait pas faire correctement.
 **Budget :** 1 à 2 sessions.
 
 **Livrables :**
+
 - Capacitor installé, plateforme Android ajoutée, `capacitor.config.ts` pointant sur `dist/`.
 - `@capacitor/local-notifications` : le minuteur devient une notification programmée, elle sonne
   même écran verrouillé ou app en arrière-plan.
@@ -448,12 +472,14 @@ pour un usage personnel. Le Play Store n'est **pas** nécessaire et impose des f
 contraintes sans contrepartie ici.
 
 **✅ Checkpoint :**
+
 - [ ] L'APK produit par GitHub Actions s'installe sur ton téléphone.
 - [ ] L'app apparaît dans le tiroir d'applications, avec son icône.
 - [ ] **Tu valides une série, tu verrouilles l'écran, tu poses le téléphone : le minuteur sonne.**
 - [ ] Le bouton retour Android navigue correctement au lieu de fermer l'app.
 
 > ### 🏁 JALON MAJEUR — Application Android
+>
 > Le produit est complet pour un usage personnel. Tout ce qui suit est optionnel.
 
 ---
@@ -477,6 +503,7 @@ jamais l'appareil, ne sont pas incluses dans l'export JSON par défaut (case à 
 sont redimensionnées avant stockage pour ne pas saturer le quota.
 
 **✅ Checkpoint :**
+
 - [ ] Tu saisis ton poids sur 5 dates, le graphique se dessine.
 - [ ] Tu ajoutes 2 photos et tu les compares côte à côte.
 - [ ] La section photos demande ton empreinte/code avant de s'ouvrir.
@@ -497,6 +524,7 @@ répartition des séries par groupe musculaire, carte de chaleur corporelle, rap
 export PNG d'un graphique.
 
 **✅ Checkpoint :**
+
 - [ ] Tu ouvres un exercice que tu pratiques depuis des semaines : la courbe monte (ou pas, mais
       elle est juste).
 - [ ] La répartition par groupe musculaire révèle un déséquilibre réel et vérifiable.
@@ -513,6 +541,7 @@ export PNG d'un graphique.
 page « mes records », historique d'un record dans le temps, rappels d'entraînement programmables.
 
 **✅ Checkpoint :**
+
 - [ ] La page records affiche des valeurs cohérentes avec ton historique réel.
 - [ ] Le recalcul complet donne exactement le même résultat que le calcul incrémental.
 
@@ -538,6 +567,7 @@ hors-ligne, résolution de conflits « dernière écriture gagne » **avec journ
 export automatique proposé avant toute suppression de compte (recommandation audit M1).
 
 **✅ Checkpoint :**
+
 - [ ] Tu logges une séance sur le téléphone en mode avion, tu réactives le réseau, elle apparaît
       sur ton PC.
 - [ ] Tu modifies la même séance sur deux appareils hors-ligne, tu reconnectes : la règle de
@@ -557,6 +587,7 @@ et de la fréquence cardiaque), calories estimées, écran expliquant que **la c
 Google Fit n'existe plus** et que Health Connect est obligatoire (recommandation audit M11).
 
 **✅ Checkpoint :**
+
 - [ ] Une séance terminée dans FitTrack apparaît dans Health Connect.
 - [ ] Ton poids saisi dans une autre app remonte dans FitTrack.
 
@@ -572,6 +603,7 @@ Google Fit n'existe plus** et que Health Connect est obligatoire (recommandation
 enrichie pendant la séance avec l'exercice en cours.
 
 **✅ Checkpoint :**
+
 - [ ] Le widget est posé sur ton écran d'accueil et affiche des données à jour.
 
 ---
@@ -592,6 +624,7 @@ variation de charge (% du 1RM ou RPE cible), semaines de décharge, vue « où j
 bloc », démarrage d'une séance depuis la semaine courante du programme.
 
 **✅ Checkpoint :**
+
 - [ ] Tu crées un bloc de 8 semaines avec une décharge en semaine 5.
 - [ ] L'app te propose la bonne séance, avec les bonnes charges, au bon jour.
 
@@ -601,8 +634,11 @@ bloc », démarrage d'une séance depuis la semaine courante du programme.
 
 **RF couverts :** RF-48 (ajustement automatique des charges), + **transparence de l'algorithme**
 (recommandation transverse n°2).
-**Dépend de :** Lot 17.
-**Budget :** 2 sessions.
+**Dépend de :** ~~Lot 17~~ — **dépendance levée le 2026-08-11.** Aucune règle du plan détaillé ne
+lit un bloc ni une semaine planifiée. Ce dont ce lot dépend vraiment — records persistés et 1RM
+estimé — est livré depuis la v0.2.0.
+**Budget :** ~~2 sessions~~ → **3 à 4**, en quatre tranches livrables séparément.
+**Plan détaillé :** `lot-18-coach-deterministe.md`.
 
 **Livrables :** moteur de règles explicite en TDD (`lib/progression.ts`) : si toutes les séries de
 travail atteignent le haut de la fourchette de reps → charge suivante augmentée d'un incrément ;
@@ -615,6 +651,7 @@ Suggestion de décharge après X semaines de progression continue (recommandatio
 surtout **explicable** — ce que l'audit reproche justement à la boîte noire de Hevy.
 
 **✅ Checkpoint :**
+
 - [ ] L'app te propose une charge pour ta prochaine séance **et t'explique pourquoi**.
 - [ ] Tu peux refuser la proposition et saisir ta propre charge.
 
@@ -635,6 +672,7 @@ garde-fous explicites (rappel qu'il ne remplace pas un coach, alerte en cas de p
 irréaliste — recommandation audit M9).
 
 **✅ Checkpoint :**
+
 - [ ] Tu poses une question sur ta séance et la réponse tient compte de ton historique réel.
 - [ ] La clé d'API est introuvable dans le bundle et dans l'APK.
 
@@ -654,6 +692,7 @@ complet TalkBack ; mode contraste renforcé ; tailles de police ajustables ; cib
 agrandies.
 
 **✅ Checkpoint :**
+
 - [ ] Tu dictes une série sans toucher le téléphone, elle est correctement enregistrée.
 - [ ] Tu navigues dans l'app avec TalkBack activé, les yeux fermés, et tu peux logger une série.
 
@@ -661,28 +700,28 @@ agrandies.
 
 ## 3. Hors périmètre (assumé)
 
-| Écarté | Raison |
-|---|---|
+| Écarté                                                 | Raison                                                                                                                                                                                        |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Illustration animée du mouvement** (moitié de RF-06) | **Décision du 2026-07-22 : pas d'achat.** Ce n'est pas introuvable, c'est **vendu** — cf. l'encadré ci-dessous. Le **muscle ciblé**, lui, est traité au Lot 5bis à partir d'une source libre. |
-| Toutes les fonctionnalités sociales | Exclues du cahier des charges dès l'origine. |
-| M13 — Montres connectées / Wear OS | Projet Android natif séparé, pairing, sync Bluetooth. Coût sans commune mesure avec le gain pour un usage personnel. |
-| iOS / App Store | 99 $/an, un Mac obligatoire pour compiler. À rouvrir seulement si tu changes de téléphone. |
-| Publication sur le Play Store | 25 $, revue, politique de confidentialité, conformité. Le sideload suffit pour soi. |
-| RF-05, RF-55, RF-61 à RF-65 | Liés au compte multi-utilisateur, au social ou à la montre. |
+| Toutes les fonctionnalités sociales                    | Exclues du cahier des charges dès l'origine.                                                                                                                                                  |
+| M13 — Montres connectées / Wear OS                     | Projet Android natif séparé, pairing, sync Bluetooth. Coût sans commune mesure avec le gain pour un usage personnel.                                                                          |
+| iOS / App Store                                        | 99 $/an, un Mac obligatoire pour compiler. À rouvrir seulement si tu changes de téléphone.                                                                                                    |
+| Publication sur le Play Store                          | 25 $, revue, politique de confidentialité, conformité. Le sideload suffit pour soi.                                                                                                           |
+| RF-05, RF-55, RF-61 à RF-65                            | Liés au compte multi-utilisateur, au social ou à la montre.                                                                                                                                   |
 
 ### L'enquête sur les illustrations d'exercices — 2026-07-22
 
 Menée parce que la question « des schémas comme dans Hevy, c'est prévu ? » n'avait pas de réponse
 écrite. Résultat : **le jeu d'images que tout le monde reconnaît est un produit commercial.**
 
-| Source | Licence vérifiée | Verdict |
-|---|---|---|
+| Source                                                                                                                                     | Licence vérifiée                                                           | Verdict                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`hasaneyldrm/exercises-dataset`](https://github.com/hasaneyldrm/exercises-dataset) — 1 324 exos, GIFs animés, 10 langues dont le français | MIT sur les **données**, images **© [Gym Visual](https://gymvisual.com/)** | ❌ Le MIT ne couvre pas `images/`. Le dépôt les redistribue « avec permission » — une permission qui ne s'étend pas à nous : « obtain your own license there before reusing the media ». |
-| [Gym Visual](https://gymvisual.com/) — le vendeur d'origine, ciblant explicitement les développeurs d'apps | Commerciale, à l'unité | 💰 ~0,90 $ le GIF animé, <0,75 $ l'illustration au-delà de 10 articles. **~150 $ pour nos 168 exercices.** Remise « Pack » à négocier. |
-| [`ExerciseDB`](https://github.com/ExerciseDB/exercisedb-api) — 11 000 exos | **AGPL-3.0** | ❌ Virale, **et** c'est une API donc du réseau : disqualifiée deux fois. |
-| [`yuhonas/free-exercise-db`](https://github.com/yuhonas/free-exercise-db) | Unlicense **sur le dépôt** | ⚠️ La provenance des images **n'est pas documentée** dans le README. Cf. la mise en garde de `PROGRESS.md`. |
-| [`vulovix/body-muscles`](https://github.com/vulovix/body-muscles) — carte musculaire SVG, 70+ régions, zéro dépendance | **Apache-2.0** | ✅ Retenue pour le Lot 5bis. |
-| [`soroojshehryar/react-muscle-highlighter`](https://github.com/soroojshehryar/react-muscle-highlighter) | **MIT** | ✅ Repli équivalent. |
+| [Gym Visual](https://gymvisual.com/) — le vendeur d'origine, ciblant explicitement les développeurs d'apps                                 | Commerciale, à l'unité                                                     | 💰 ~0,90 $ le GIF animé, <0,75 $ l'illustration au-delà de 10 articles. **~150 $ pour nos 168 exercices.** Remise « Pack » à négocier.                                                   |
+| [`ExerciseDB`](https://github.com/ExerciseDB/exercisedb-api) — 11 000 exos                                                                 | **AGPL-3.0**                                                               | ❌ Virale, **et** c'est une API donc du réseau : disqualifiée deux fois.                                                                                                                 |
+| [`yuhonas/free-exercise-db`](https://github.com/yuhonas/free-exercise-db)                                                                  | Unlicense **sur le dépôt**                                                 | ⚠️ La provenance des images **n'est pas documentée** dans le README. Cf. la mise en garde de `PROGRESS.md`.                                                                              |
+| [`vulovix/body-muscles`](https://github.com/vulovix/body-muscles) — carte musculaire SVG, 70+ régions, zéro dépendance                     | **Apache-2.0**                                                             | ✅ Retenue pour le Lot 5bis.                                                                                                                                                             |
+| [`soroojshehryar/react-muscle-highlighter`](https://github.com/soroojshehryar/react-muscle-highlighter)                                    | **MIT**                                                                    | ✅ Repli équivalent.                                                                                                                                                                     |
 
 **Pourquoi « c'est juste pour moi » ne dispense de rien :** le dépôt est **public**
 (`"visibility": "public"`, vérifié) et le site répond **HTTP 200 à n'importe qui**. Tout ce qui est
@@ -698,19 +737,19 @@ que la correspondance avec les 168 slugs.
 
 ## 4. Récapitulatif de la couverture du cahier des charges
 
-| Module | Lots | Couverture |
-|---|---|---|
-| M1 Compte | 14 | Optionnel, tardif — sans objet en mono-appareil |
-| M2 Exercices | 2, 3, **5bis** | Sans limite de nombre. RF-06 n'est **pas** complet avant le Lot 5bis : le champ `imageUrl` existe mais rien ne le remplit, et l'illustration du **mouvement** reste hors périmètre (cf. Lot 5bis). |
-| M3 Routines | 4, 17 | Complète + périodisation (au-delà de Hevy) |
-| M4 Séance | 5, 6 | Complète + réorganisation en séance |
-| M5 Outils | 6 | Complète + plaques élargies aux haltères/machines |
-| M6 Historique | 7 | Complète, sans limite de durée, + filtre par exercice |
-| M7 Mesures & photos | 11 | Complète + verrouillage biométrique |
-| M8 Statistiques | 12, 13 | Complète hors charge aiguë/chronique |
-| M9 Coaching | 18, 19 | Complète, avec transparence des règles |
-| M10 Réglages | 1, 8, 20 | Complète, centralisés + accessibilité |
-| M11 Santé | 15 | Complète (Android) |
-| M12 Widgets | 16 | Widget + notification |
-| M13 Montres | — | **Hors périmètre** |
-| M14 Export/Import | 8, 14 | Complète (JSON + CSV), sync optionnelle |
+| Module              | Lots           | Couverture                                                                                                                                                                                         |
+| ------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M1 Compte           | 14             | Optionnel, tardif — sans objet en mono-appareil                                                                                                                                                    |
+| M2 Exercices        | 2, 3, **5bis** | Sans limite de nombre. RF-06 n'est **pas** complet avant le Lot 5bis : le champ `imageUrl` existe mais rien ne le remplit, et l'illustration du **mouvement** reste hors périmètre (cf. Lot 5bis). |
+| M3 Routines         | 4, 17          | Complète + périodisation (au-delà de Hevy)                                                                                                                                                         |
+| M4 Séance           | 5, 6           | Complète + réorganisation en séance                                                                                                                                                                |
+| M5 Outils           | 6              | Complète + plaques élargies aux haltères/machines                                                                                                                                                  |
+| M6 Historique       | 7              | Complète, sans limite de durée, + filtre par exercice                                                                                                                                              |
+| M7 Mesures & photos | 11             | Complète + verrouillage biométrique                                                                                                                                                                |
+| M8 Statistiques     | 12, 13         | Complète hors charge aiguë/chronique                                                                                                                                                               |
+| M9 Coaching         | 18, 19         | Complète, avec transparence des règles                                                                                                                                                             |
+| M10 Réglages        | 1, 8, 20       | Complète, centralisés + accessibilité                                                                                                                                                              |
+| M11 Santé           | 15             | Complète (Android)                                                                                                                                                                                 |
+| M12 Widgets         | 16             | Widget + notification                                                                                                                                                                              |
+| M13 Montres         | —              | **Hors périmètre**                                                                                                                                                                                 |
+| M14 Export/Import   | 8, 14          | Complète (JSON + CSV), sync optionnelle                                                                                                                                                            |
