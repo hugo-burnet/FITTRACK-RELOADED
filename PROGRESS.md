@@ -92,6 +92,34 @@ navigateur à 375 px : 96 × 256 px par silhouette, section de 417 px (comparabl
 (pectoraux à 1, triceps et épaules à 0,4), 12 à pleine intensité sur le stepper, et **aucune
 section** sur « Mobilité », qui n'a rien à montrer.
 
+**Trois défauts de rendu corrigés, tous remontés par l'utilisateur et tous mesurés avant
+correction** — c'est la leçon transverse de la session : chacun était invisible aux tests et
+aux mesures au DOM.
+
+1. **Le corps était invisible.** Remplissage à 1,11:1 contre la carte, contour à 1,45:1, trait
+   rendu à 0,28 px. Corrigé en `--axis` à 0,3.
+2. **Les muscles allumés avaient perdu leur contour.** Le remplissage clair recouvrait le trait
+   de sa propre région — mesuré en rasterisant à 4× : *pas un pixel allumé ne touchait un pixel
+   de trait*. Le trait est passé en troisième couche, au-dessus des deux remplissages. Ça
+   referme aussi les coutures d'un pixel entre régions voisines.
+3. **« C'est anguleux. »** Vérifié : **836 sommets pour 8 commandes de courbe**, soit 0,9 %. La
+   géométrie est polygonale par construction. `roundPath` coupe chaque sommet et le franchit
+   par une quadratique passant par le sommet d'origine — le seul lissage qui ne peut pas
+   inventer de forme, la courbe restant dans le triangle du coin. Part de courbes portée à
+   48,7 %, surface dessinée perdue : 0,9 %. Le module est **conservateur par défaut** : un
+   tracé portant déjà une courbe, un triangle (souvent un doigt), ou une coupe qui mordrait
+   plus d'un tiers d'une arête reviennent intacts.
+
+**Ce qu'aucun correctif ne règlera : le registre.** Les tracés du fournisseur restent des
+approximations grossières. Enquête faite : toute la famille `react-body-highlighter` est de
+même nature, et le seul candidat au dessin plus fin n'a **aucune provenance documentée** —
+motif d'exclusion déjà retenu pour `free-exercise-db`. Une planche de stock coûte quelques
+dizaines d'euros mais ses conditions interdisent de redistribuer le fichier source, ce qu'un
+SVG commité dans un dépôt **public** fait par définition. **La vraie question n'est donc pas le
+prix, c'est de savoir si le dépôt passe en privé** — auquel cas la planche anatomique *et* les
+168 illustrations d'exercices (~150 $) se débloquent d'un seul coup. Décision de l'utilisateur
+le 2026-08-11 : **on en reste là pour le moment.**
+
 **Le corps était invisible, et les mesures au DOM ne l'ont pas vu.** Remonté par l'utilisateur
 (« je ne vois absolument aucun schéma ») après une première passe déclarée vérifiée. Le
 remplissage `--surface-2` du corps mesure **1,11:1** contre la carte et le contour `--border`
@@ -109,13 +137,21 @@ muscle allumé, et **10,7 % du raster à 3:1 ou mieux** contre 2 % avant. C'est 
 qui marche sans capture d'écran, donc sans panneau navigateur affiché.
 
 **Checkpoint téléphone :**
-- [ ] Ouvrir « Développé couché (barre) » : les pectoraux sont allumés, les triceps et les
-      épaules en second, et ça correspond à ce que tu sens le lendemain.
+- [ ] Ouvrir « Développé couché (barre) » : les pectoraux sont allumés à fond, les triceps et
+      les épaules en second, et ça correspond à ce que tu sens le lendemain.
 - [ ] Ouvrir « Escalier (stepper) » : les jambes sont allumées, et « Cardio » reste écrit sous
       « Principal » sans rien allumer.
 - [ ] Ouvrir « Mobilité » : aucune silhouette, pas un corps gris et muet.
+- [ ] Terminer une séance : le corps de l'écran de fin ne montre que ce qui est enregistré,
+      échauffements exclus — puis rouvrir la même séance au Journal et retrouver **le même
+      dessin**.
+- [ ] Analytics → Séries par muscle : les muscles jamais travaillés restent sombres, et la
+      liste dessous affiche toujours des séries entières.
 - [ ] Vérifier que la silhouette ne mange pas l'écran au point de rendre les records pénibles à
       atteindre.
+- [ ] **La migration `version(4)` s'exécute sur ta vraie base au premier lancement.** Vérifier
+      qu'un développé couché du passé allume bien ses triceps, et qu'aucune séance ancienne n'a
+      changé de chiffre.
 
 **Mise à jour précédente :** 2026-08-11 (**Champ du poids sur toute la ligne et préparation
 Android v0.1.5**).
