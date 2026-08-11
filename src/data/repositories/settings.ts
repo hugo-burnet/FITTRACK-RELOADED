@@ -1,4 +1,6 @@
 import { db } from '@/data/db';
+import type { OneRepMaxFormula } from '@/lib/oneRepMax';
+import { reconcileAllRecords } from './recordReconciliation';
 import {
   startOfLocalWeek,
   type WeeklyTrainingGoal,
@@ -7,7 +9,13 @@ import { DEFAULT_PLATES_KG } from '@/lib/plates';
 
 const AVAILABLE_PLATE_WEIGHTS_KEY = 'availablePlateWeightsKg';
 const WEEKLY_TRAINING_GOAL_HISTORY_KEY = 'weeklyTrainingGoalHistory';
+const ONE_REP_MAX_FORMULA_KEY = 'oneRepMaxFormula';
 const CANONICAL_PLATE_WEIGHTS = new Set<number>(DEFAULT_PLATES_KG);
+const ONE_REP_MAX_FORMULAS: ReadonlySet<OneRepMaxFormula> = new Set([
+  'epley',
+  'brzycki',
+  'lombardi',
+]);
 
 function defaultPlateWeights(): number[] {
   return [...DEFAULT_PLATES_KG];
@@ -111,4 +119,38 @@ export async function setWeeklyTrainingGoal(
 
     return next;
   });
+}
+
+export async function getOneRepMaxFormula(): Promise<OneRepMaxFormula> {
+  const value = (await db.settings.get(ONE_REP_MAX_FORMULA_KEY))?.value;
+  return typeof value === 'string' && ONE_REP_MAX_FORMULAS.has(value as OneRepMaxFormula)
+    ? (value as OneRepMaxFormula)
+    : 'epley';
+}
+
+export async function setOneRepMaxFormula(formula: OneRepMaxFormula): Promise<void> {
+  if (!ONE_REP_MAX_FORMULAS.has(formula)) {
+    throw new RangeError('Unsupported one-rep-max formula');
+  }
+
+  await db.transaction(
+    'rw',
+    [
+      db.settings,
+      db.exercises,
+      db.workouts,
+      db.workoutExercises,
+      db.workoutSets,
+      db.bodyMeasurements,
+      db.personalRecords,
+    ],
+    async () => {
+      await reconcileAllRecords(formula, new Set(['best_1rm']));
+      await db.settings.put({
+        key: ONE_REP_MAX_FORMULA_KEY,
+        value: formula,
+        updatedAt: Date.now(),
+      });
+    },
+  );
 }

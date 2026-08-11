@@ -1,13 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
+import { estimateOneRepMax } from '@/lib/oneRepMax';
 import { resetDb } from '@/test/resetDb';
 import {
   getAvailablePlateWeightsKg,
+  getOneRepMaxFormula,
   getWeeklyTrainingGoalHistory,
   setAvailablePlateWeightsKg,
+  setOneRepMaxFormula,
   setWeeklyTrainingGoal,
 } from './settings';
+import { rebuildAllRecords } from './personalRecords';
+import { newEntity } from './base';
+import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 
 const WITHOUT_25_KG = DEFAULT_PLATES_KG.filter((weight) => weight !== 25);
 
@@ -150,5 +156,114 @@ describe('weekly training goal history setting', () => {
       { effectiveFromWeek: 0, sessions: 4 },
       { effectiveFromWeek: augustMonday, sessions: 3 },
     ]);
+  });
+});
+
+describe('one-rep-max formula setting', () => {
+  beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
+
+  it.each([undefined, null, 'unknown', 42])(
+    'normalizes a missing or invalid persisted value to Epley: %s',
+    async (value) => {
+      if (value !== undefined) {
+        await db.settings.put({ key: 'oneRepMaxFormula', value, updatedAt: 1 });
+      }
+
+      expect(await getOneRepMaxFormula()).toBe('epley');
+    },
+  );
+
+  it('rebuilds only best-1RM records and writes the new formula last', async () => {
+    const movement = newEntity<Exercise>({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isCustom: 1,
+      isUnilateral: 0,
+    });
+    const workout = newEntity<Workout>({
+      routineId: '',
+      name: 'Séance',
+      status: 'completed',
+      startedAt: 1_700_000_000_000,
+      endedAt: 1_700_003_600_000,
+      durationSeconds: 3600,
+    });
+    const row = newEntity<WorkoutExercise>({
+      workoutId: workout.id,
+      exerciseId: movement.id,
+      order: 0,
+      supersetGroup: 0,
+      restSeconds: 120,
+      exerciseName: movement.name,
+      exerciseMeasurementType: movement.measurementType,
+      exercisePrimaryMuscle: movement.primaryMuscle,
+      exerciseEquipment: movement.equipment,
+    });
+    const completedSet = newEntity<WorkoutSet>({
+      workoutExerciseId: row.id,
+      exerciseId: movement.id,
+      workoutId: workout.id,
+      order: 0,
+      setType: 'normal',
+      side: 'both',
+      weight: 100,
+      reps: 10,
+      isCompleted: 1,
+      performedAt: workout.startedAt + 60_000,
+    });
+    await db.transaction('rw', db.exercises, db.workouts, db.workoutExercises, db.workoutSets, async () => {
+      await db.exercises.add(movement);
+      await db.workouts.add(workout);
+      await db.workoutExercises.add(row);
+      await db.workoutSets.add(completedSet);
+    });
+    await rebuildAllRecords();
+    const nonFormulaBefore = await db.personalRecords.filter((record) => record.type !== 'best_1rm').toArray();
+
+    await setOneRepMaxFormula('brzycki');
+
+    expect(await getOneRepMaxFormula()).toBe('brzycki');
+    expect(await db.personalRecords.filter((record) => record.type !== 'best_1rm').toArray()).toEqual(
+      nonFormulaBefore,
+    );
+    const currentOneRepMax = await db.personalRecords
+      .where('[exerciseId+type]')
+      .equals([movement.id, 'best_1rm'])
+      .filter((record) => record.deletedAt === 0)
+      .first();
+    expect(currentOneRepMax).toMatchObject({
+      formula: 'brzycki',
+      value: estimateOneRepMax(100, 10, 'brzycki'),
+    });
+  });
+
+  it('rolls back both records and setting if formula reconciliation fails', async () => {
+    const oldRecord = newEntity<import('@/data/types').PersonalRecord>({
+      exerciseId: 'exercise',
+      type: 'best_1rm',
+      value: 120,
+      achievedAt: 10,
+      workoutId: 'workout',
+      workoutSetId: 'set',
+      formula: 'epley',
+    });
+    await db.personalRecords.add(oldRecord);
+    await db.settings.put({ key: 'oneRepMaxFormula', value: 'epley', updatedAt: 1 });
+    vi.spyOn(db.personalRecords, 'bulkPut').mockRejectedValueOnce(new Error('reconciliation failed'));
+
+    await expect(setOneRepMaxFormula('brzycki')).rejects.toThrow('reconciliation failed');
+
+    expect(await getOneRepMaxFormula()).toBe('epley');
+    expect(await db.personalRecords.toArray()).toEqual([oldRecord]);
+  });
+
+  it.each(['invalid', '', null])('rejects an unsupported formula: %s', async (formula) => {
+    await expect(
+      setOneRepMaxFormula(formula as import('@/lib/oneRepMax').OneRepMaxFormula),
+    ).rejects.toThrow(RangeError);
   });
 });
