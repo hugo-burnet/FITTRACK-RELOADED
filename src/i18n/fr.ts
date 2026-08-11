@@ -322,6 +322,36 @@ const fr = {
     formulaLombardi: 'Lombardi',
   },
 
+  records: {
+    title: 'Records',
+    link: 'Records',
+    subtitle: 'Tous tes jalons personnels',
+    allExercises: 'Tous les exercices',
+    allTypes: 'Tous les records',
+    unknownExercise: 'Exercice indisponible',
+    exerciseSheetTitle: 'Exercice',
+    typeSheetTitle: 'Type de record',
+    railLabel: 'Progression des records',
+    currentMark: 'Record actuel',
+    firstMark: 'Premier jalon',
+    openMark: '{exercise}, {category}, {value}, le {date}',
+    loading: 'Chargement des records',
+    emptyTitle: 'Ton premier record commencera ici',
+    emptyBody:
+      'Valide une série pendant une séance : chaque nouveau meilleur résultat ajoutera un jalon à ce rail.',
+    noResultsTitle: 'Aucun record avec ces filtres',
+    noResultsBody: 'Change un filtre ou efface-les pour retrouver tous tes jalons.',
+    clearFilters: 'Effacer les filtres',
+    assistanceQualifier: 'd’assistance',
+    staleTitle: 'Tes records doivent être reconstruits',
+    staleBody:
+      'Tes séances sont intactes. Reconstruis les records depuis ton historique pour afficher le rail.',
+    repair: 'Réparer les records',
+    repairing: 'Réparation en cours…',
+    retryRepair: 'Réessayer',
+    repairFailed: 'La réparation n’a pas abouti. Tes séances sont intactes, tu peux réessayer.',
+  },
+
   setTypeHint: {
     normal: 'Une série de travail. Elle compte dans le volume et les records.',
     warmup: 'Ne compte ni dans le volume ni dans les records.',

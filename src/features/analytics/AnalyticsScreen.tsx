@@ -36,6 +36,11 @@ export function AnalyticsScreen() {
             <SectionTitle>{t('analytics.overviewSection')}</SectionTitle>
             <Card>
               <ListRow
+                title={t('records.link')}
+                subtitle={t('records.subtitle')}
+                onClick={() => void navigate('/analytics/records')}
+              />
+              <ListRow
                 title={t('weekly.link')}
                 subtitle={t('weekly.subtitle')}
                 onClick={() => void navigate('/analytics/weekly')}
