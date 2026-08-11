@@ -1763,7 +1763,7 @@ passes vertes, 242 tests. Il ne reste que le **checkpoint en salle** de la refon
 (`614e523`), refonte de l'écran de séance complète (briques 2+3), vitest ne ramasse plus les
 worktrees d'agent (`b7dda06`).)
 
-## Lot en cours — Lot 07
+## Lot 07 — journal de session (instantané historique ; le lot est terminé)
 
 ### Jalon 07C — import CSV Hevy hors ligne
 
@@ -3610,13 +3610,13 @@ ci-dessus fait foi.
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
 | 5bis | Schéma musculaire | ⬜ à faire | — | ⬜ |
 | 6 | Outils de séance | ✅ terminé | 6–7 | ✅ **en salle** |
-| 7 | Historique & calendrier | ⬜ à faire | — | ⬜ |
-| 8 | Réglages & export/import | ⬜ à faire | — | ⬜ |
+| 7 | Historique & calendrier | ✅ terminé | 07A–07C | ⬜ **à confirmer** |
+| 8 | Réglages & export/import | ✅ terminé | — | ⬜ **à confirmer** |
 | 9 | PWA & installation | ✅ terminé | 2026-08-02 | ⬜ **à vérifier sur le téléphone** |
 | 10 | Android (Capacitor) | ✅ terminé | 2026-08-09 | ⬜ **à vérifier sur le téléphone** |
-| 11 | Mesures & photos | ⬜ à faire | — | ⬜ |
-| 12 | Statistiques | ⬜ à faire | — | ⬜ |
-| 13 | Records & notifications | ⬜ à faire | — | ⬜ |
+| 11 | Mesures & photos | 🟨 en cours | — | ⬜ |
+| 12 | Statistiques | 🟨 en cours | — | ⬜ **à confirmer** |
+| 13 | Records & notifications | 🟨 en cours | — | ⬜ |
 | 14 | Sync cloud (optionnel) | ⬜ à faire | — | ⬜ |
 | 15 | Health Connect | ⬜ à faire | — | ⬜ |
 | 16 | Widgets | ⬜ à faire | — | ⬜ |
@@ -3627,18 +3627,61 @@ ci-dessus fait foi.
 
 Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
 
-> ⚠️ **Les lignes 7 et 8 sont en retard sur la réalité.** Le récit en tête de ce fichier
-> décrit l'historique, le calendrier, les réglages et l'export/import comme livrés, et le code
-> les contient (`src/features/history/`, `src/features/settings/`, `csvRoundTrip.test.ts`) —
-> mais leurs lignes disent encore « à faire », et le §« Lot en cours » plus bas est resté figé
-> sur le Lot 07. Laissé tel quel volontairement au Lot 9 : **seul l'utilisateur valide un
-> checkpoint**, et deviner à sa place lesquels sont passés produirait un tableau faux mais
-> d'apparence fiable, ce qui est pire que celui-ci. À reprendre d'un coup, en confirmant.
+> **Reprise du 2026-08-11.** Le tableau était en retard de trois lots entiers : 7, 8 et 12
+> étaient marqués « à faire » alors que le code les contient. La colonne **État** est désormais
+> établie à la lecture du code ; la colonne **Checkpoint** ne l'est pas et ne peut pas l'être —
+> **seul l'utilisateur valide un checkpoint**, donc les lots dont le code est là mais dont la
+> validation n'a jamais été consignée portent « à confirmer » plutôt qu'un ✅ deviné. C'est le
+> raisonnement posé au Lot 9, appliqué cette fois sans laisser l'État en souffrance avec.
+
+### Les trois lots partiels, et ce qui leur manque exactement
+
+- **Lot 11 — Mesures & photos.** Livré : le poids de corps (`bodyMeasurements`,
+  `HomeBodyWeightCard`, `resolveBodyWeightsAt` pour la tonnage au poids de corps). Manquant :
+  **toute autre mesure** (tour de taille, masse grasse…) alors que `BodyMeasurement.type` est
+  une chaîne libre qui les accepte déjà, et **les photos de progression** — `progressPhotos` et
+  `photoBlobs` sont dans le schéma depuis le Lot 2 et **aucun code ne les écrit**.
+- **Lot 12 — Statistiques.** Livré : progression par exercice (RF-41), volume hebdomadaire et
+  répartition des séries par groupe musculaire (RF-42), séances par semaine, avec leurs écrans
+  de détail. Manquant, vérifié dans le code : le **1RM estimé (RF-46)** — `PersonalRecordType`
+  déclare `best_1rm` et **aucune ligne ne le produit** ; la **carte de chaleur corporelle
+  (RF-43)** — `MuscleBalanceCard` est une liste de barres classées, pas un schéma de corps, et
+  c'est un choix documenté dans le fichier, pas un manque accidentel ; le **rapport mensuel
+  (RF-44)** — `PERIOD_KEYS` ne connaît que des fenêtres en semaines ; et l'**export PNG d'un
+  graphique** — aucun `toBlob`/`toDataURL` dans `features/analytics/`.
+- **Lot 13 — Records & notifications.** Livré : les règles ([`lib/records.ts`](src/lib/records.ts))
+  et la détection en direct du Lot 6, qui lit ces règles depuis l'historique. Manquant : la table
+  **`personalRecords` n'est jamais écrite** — pas de recalcul complet, pas de notification
+  « nouveau record », et donc aucun record consultable hors de l'écran qui vient de le détecter.
 
 ## Décisions prises en cours de route
 
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
+
+### 2026-08-11 — Les photos de progression sont reportées, pas abandonnées
+
+**Décision de l'utilisateur.** Le Lot 11 est scindé : les **mesures corporelles** restent au
+programme, les **photos** sortent du périmètre courant. Le verrouillage biométrique de la section
+sort avec elles — il n'existe que pour les protéger.
+
+**Pourquoi elles étaient le mauvais candidat au regroupement.** Les trois autres chantiers courts
+(records persistés, 1RM estimé, mesures corporelles) sont dans du code déjà construit : les règles,
+le schéma et les repositories existent, il manque du câblage. Les photos, non — elles ouvrent trois
+fronts neufs à elles seules :
+
+1. **une dépendance native** — `@capacitor/camera` n'est pas installé ; permissions Android,
+   manifeste, rebuild de l'APK, et un checkpoint qui ne peut être validé **que** sur le téléphone ;
+2. **du binaire en base** — blobs, vignettes, visionneuse, pression mémoire : aucun code partagé
+   avec le reste du lot ;
+3. **la réouverture du format d'export du Lot 8** — l'export JSON ne contient aujourd'hui aucun
+   binaire. Avec des photos, soit il gonfle de plusieurs mégaoctets, soit on les exclut et l'export
+   cesse d'être complet. Le roadmap avait déjà tranché (« pas dans l'export par défaut, case à
+   cocher séparée »), mais c'est du travail de conception, pas une ligne de code.
+
+**À rouvrir** quand le besoin se fait sentir, ou avec le Lot 15 (Health Connect) qui rouvre de
+toute façon les permissions Android. Rien n'est à défaire d'ici là : `progressPhotos` et
+`photoBlobs` restent dans le schéma, inutilisées, comme depuis le Lot 2.
 
 ### 2026-07-22 — RF-06 n'était pas complet, et le roadmap prétendait le contraire
 
