@@ -1,19 +1,30 @@
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { Card, SectionTitle } from '@/ui';
 
 /**
- * Les trois analyses, en trois cases.
+ * Le corps travaillé, puis les trois analyses en trois cases.
  *
- * Aucun graphique n'est dessiné ici : ces écrans sont chargés à la demande
- * (`features/analytics/routes.tsx`), et en rendre un sur l'accueil ferait payer
- * leur JavaScript à chaque ouverture de l'app — exactement ce que le
- * `lazy` d'origine évite. Un raccourci n'est qu'un lien.
+ * **Un dessin est désormais rendu ici, et c'est un revirement assumé.** Ce
+ * fichier disait qu'aucun graphique ne devait l'être, pour que l'ouverture de
+ * l'app ne paie jamais le JavaScript des écrans d'analyse. Le reproche qui a
+ * renversé la règle est juste : rien sur l'accueil ne laissait deviner qu'un
+ * schéma musculaire existait, donc la fonctionnalité était invisible pour la
+ * seule personne qui utilise l'app.
+ *
+ * **La raison de la règle est gardée même si sa lettre ne l'est plus** : le
+ * corps est dans un module `lazy`, donc ses 23 ko de géométrie restent hors du
+ * bundle de démarrage et arrivent après le premier rendu. L'accueil s'affiche
+ * exactement aussi vite qu'avant ; le dessin se remplit ensuite.
  *
  * Le mot court est pour l'œil, sur trois colonnes de 375 px ; le nom complet de
  * l'écran est donné à l'oreille, et c'est le même que dans l'écran Analyses.
  */
+const HomeMuscleMap = lazy(() =>
+  import('./HomeMuscleMap').then((module) => ({ default: module.HomeMuscleMap })),
+);
 const LINKS: Array<{ to: string; labelKey: TranslationKey; nameKey: TranslationKey }> = [
   { to: '/analytics/weekly', labelKey: 'home.progressPace', nameKey: 'weekly.link' },
   { to: '/analytics/volume', labelKey: 'home.progressVolume', nameKey: 'volume.link' },
@@ -28,6 +39,13 @@ export function HomeProgressLinks() {
       <SectionTitle>{t('home.progressSection')}</SectionTitle>
 
       <Card>
+        {/* Une trame vide à la hauteur du dessin, jamais un spinner : le chunk
+            arrive en une frame ou deux, et réserver la place empêche les trois
+            boutons de sauter sous le pouce au moment où il se remplit. */}
+        <Suspense fallback={<div className="h-64" aria-hidden />}>
+          <HomeMuscleMap />
+        </Suspense>
+
         <div className="grid grid-cols-3">
           {LINKS.map(({ to, labelKey, nameKey }) => (
             <button
