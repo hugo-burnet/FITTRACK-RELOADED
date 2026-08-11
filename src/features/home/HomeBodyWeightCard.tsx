@@ -84,12 +84,11 @@ export function HomeBodyWeightCard() {
     <section>
       <SectionTitle>{t('home.bodyWeightSection')}</SectionTitle>
       <Card padded>
-        {/* Le champ prend la ligne entière, l'action passe dessous — la même
-            disposition que la feuille d'objectif hebdomadaire. Côte à côte, sur
-            un écran de 375 px, il ne restait que 13 px de texte entre les deux
-            pas de 48 px et le « kg » : « 80,5 » débordait et la décimale était
-            rognée à l'affichage. Une pesée s'écrit au clavier ; c'est le champ,
-            pas le bouton, qui a besoin de la largeur. */}
+        {/* The field takes the whole row and the action sits below it, the same
+            shape as the weekly goal sheet. Side by side on a 375 px screen only
+            13 px of text were left between the two 48 px steppers and the "kg"
+            suffix: "80,5" overflowed and its decimal was clipped. A weigh-in is
+            typed, so the width belongs to the field, not to the button. */}
         <div className="space-y-3">
           <NumberInput
             aria-label={t('home.bodyWeightLabel')}
