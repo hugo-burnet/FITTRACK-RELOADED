@@ -1,9 +1,18 @@
-import type { Equipment, Exercise, MeasurementType, MuscleGroup, SetType, Side } from '@/data/types';
+import type {
+  Equipment,
+  Exercise,
+  MeasurementType,
+  MuscleGroup,
+  PersonalRecord,
+  PersonalRecordType,
+  SetType,
+  Side,
+} from '@/data/types';
 import type { MetricKey, MetricUnit } from '@/lib/analytics/metrics';
 import type { PeriodKey } from '@/lib/analytics/periods';
 import type { WeeklyVolumeMetric } from '@/lib/analytics/volume';
 import type { TargetUnit } from '@/lib/measurement';
-import type { RecordKind } from '@/lib/records';
+import type { OneRepMaxFormula } from '@/lib/oneRepMax';
 import { t } from './fr';
 
 /**
@@ -37,7 +46,110 @@ export const setTypeHint = (setType: SetType): string => t(`setTypeHint.${setTyp
  * The exercise sheet lists the three, the live session congratulates them
  * (RF-23): naming them twice is how the same fact ends up with two names.
  */
-export const recordLabel = (kind: RecordKind): string => t(`record.${kind}`);
+export const recordLabel = (type: PersonalRecordType): string => t(`record.${type}`);
+
+const recordNumber = (value: number, precision = 100): string =>
+  (Math.round(value * precision) / precision).toLocaleString('fr-FR');
+
+const recordKilograms = (value: number, precision?: number): string =>
+  `${recordNumber(value, precision)} ${unitLabel('kg')}`;
+
+export function recordValue(record: PersonalRecord): string {
+  switch (record.type) {
+    case 'max_reps':
+      return `${recordNumber(record.value)} ${unitLabel('reps')}`;
+    case 'max_duration':
+      return formatDuration(record.value);
+    case 'max_distance':
+      return metricReading(record.value, 'meters');
+    case 'min_assistance':
+      return t('record.assistanceValue', { value: recordKilograms(record.value) });
+    case 'best_1rm':
+      return recordKilograms(record.value, 10);
+    default:
+      return recordKilograms(record.value);
+  }
+}
+
+export const oneRepMaxFormulaLabel = (formula: OneRepMaxFormula): string =>
+  t(
+    formula === 'epley'
+      ? 'record.formulaEpley'
+      : formula === 'brzycki'
+        ? 'record.formulaBrzycki'
+        : 'record.formulaLombardi',
+  );
+
+export function recordContext(record: PersonalRecord): string {
+  if (record.type === 'max_volume_session') return t('record.sessionTonnageContext');
+
+  const weightReps =
+    record.weight !== undefined && record.reps !== undefined
+      ? t('record.weightRepsContext', {
+          weight: recordKilograms(record.weight),
+          reps: recordNumber(record.reps),
+        })
+      : undefined;
+
+  if (record.type === 'best_1rm' && weightReps !== undefined && record.formula !== undefined) {
+    return t('record.formulaContext', {
+      context: weightReps,
+      formula: oneRepMaxFormulaLabel(record.formula),
+    });
+  }
+  if (record.type === 'max_volume_set') return weightReps ?? '';
+  // `max_reps` is shared by added-load and assisted movements. The persisted
+  // event does not carry that weight role, so omitting it is safer than calling
+  // assistance a positive added load.
+  if (record.type === 'max_reps') return '';
+  if (record.type === 'min_assistance' && record.weight !== undefined) {
+    return t('record.assistanceContext', { weight: recordKilograms(record.weight) });
+  }
+  if (
+    (record.type === 'max_distance' || record.type === 'max_duration') &&
+    record.distanceMeters !== undefined &&
+    record.durationSeconds !== undefined
+  ) {
+    return t('record.distanceDurationContext', {
+      distance: metricReading(record.distanceMeters, 'meters'),
+      duration: formatDuration(record.durationSeconds),
+    });
+  }
+  return record.reps === undefined
+    ? ''
+    : t('record.repsContext', { count: recordNumber(record.reps) });
+}
+
+export function recordGain(
+  record: PersonalRecord,
+  previousValue?: number,
+): string | undefined {
+  if (previousValue === undefined) return undefined;
+  const delta =
+    record.type === 'min_assistance'
+      ? previousValue - record.value
+      : record.value - previousValue;
+  if (!(delta > 0)) return undefined;
+
+  const value = (() => {
+    switch (record.type) {
+      case 'max_reps':
+        return `${recordNumber(delta)} ${unitLabel('reps')}`;
+      case 'max_duration':
+        return formatDuration(delta);
+      case 'max_distance':
+        return metricReading(delta, 'meters');
+      case 'best_1rm':
+        return recordKilograms(delta, 10);
+      default:
+        return recordKilograms(delta);
+    }
+  })();
+
+  return record.type === 'min_assistance'
+    ? t('record.gainLessAssistance', { value })
+    : t('record.gain', { value });
+}
 
 /** "Pectoraux · Barre" — the one line under every exercise name in the app. */
 export const exerciseSubtitle = (exercise: Exercise): string =>
@@ -119,10 +231,11 @@ export function weeklyVolumeScaleReading(value: number, metric: WeeklyVolumeMetr
  * plank reads the same length on the chart, in the session, and in the export —
  * the reason that function was moved here in the first place.
  */
-export function metricReading(value: number, unit: MetricUnit): string {
+export function metricReading(value: number, unit: MetricUnit, key?: MetricKey): string {
   if (unit === 'seconds') return formatDuration(value);
 
-  const rounded = Math.round(value * 100) / 100;
+  const precision = key === 'estimatedOneRepMax' ? 10 : 100;
+  const rounded = Math.round(value * precision) / precision;
   const figure = rounded.toLocaleString('fr-FR');
 
   if (unit === 'sets') return `${figure} ${t(rounded === 1 ? 'units.set' : 'units.sets')}`;

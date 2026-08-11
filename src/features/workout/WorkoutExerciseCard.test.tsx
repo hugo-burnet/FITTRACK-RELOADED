@@ -1,9 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import type { Exercise, WorkoutExercise } from '@/data/types';
+import type { Exercise, PersonalRecord, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import type { ItemState } from '@/ui';
-import { WorkoutExerciseCard } from './WorkoutExerciseCard';
+import {
+  WorkoutExerciseCard,
+  type WorkoutRecordNotice,
+  workoutRecordNotices,
+} from './WorkoutExerciseCard';
 import { INITIAL_WORKOUT_FOLD_COMMAND } from './workoutFold';
 
 const stamps = { createdAt: 1, updatedAt: 1, deletedAt: 0 };
@@ -46,12 +51,16 @@ const state: ItemState = {
   },
 };
 
-function renderCard(reorderEnabled: boolean) {
+function renderCard(
+  reorderEnabled: boolean,
+  currentLine = line,
+  records: Map<string, WorkoutRecordNotice> = new Map(),
+) {
   render(
     <WorkoutExerciseCard
-      line={line}
+      line={currentLine}
       rest={null}
-      records={new Map()}
+      records={records}
       state={state}
       reorderEnabled={reorderEnabled}
       foldCommand={INITIAL_WORKOUT_FOLD_COMMAND}
@@ -82,5 +91,116 @@ describe('WorkoutExerciseCard', () => {
     renderCard(true);
 
     expect(headerContent()).not.toHaveClass('pl-4');
+  });
+
+  const completedSet: WorkoutSet = {
+    ...stamps,
+    id: 'set-record',
+    workoutExerciseId: row.id,
+    exerciseId: exercise.id,
+    workoutId: row.workoutId,
+    order: 0,
+    setType: 'normal',
+    side: 'both',
+    weight: 105,
+    reps: 5,
+    isCompleted: 1,
+    performedAt: 2,
+  };
+
+  const draftSet: WorkoutSet = {
+    ...completedSet,
+    id: 'set-draft',
+    order: 1,
+    weight: undefined,
+    reps: undefined,
+    isCompleted: 0,
+    performedAt: 0,
+  };
+
+  function entry(
+    type: PersonalRecord['type'],
+    value: number,
+    previousValue: number,
+  ): RecordTimelineEntry {
+    return {
+      record: {
+        ...stamps,
+        id: `record-${type}`,
+        exerciseId: exercise.id,
+        type,
+        value,
+        achievedAt: 2,
+        workoutId: row.workoutId,
+        workoutSetId: completedSet.id,
+        weight: completedSet.weight,
+        reps: completedSet.reps,
+      },
+      exerciseName: NAME,
+      workoutStatus: 'active',
+      previousValue,
+      triggerWorkoutSetId: completedSet.id,
+    };
+  }
+
+  it('reads one persisted record with its value and gain under the source set', () => {
+    const maxWeight = entry('max_weight', 105, 100);
+    renderCard(
+      false,
+      { ...line, sets: [completedSet, draftSet] },
+      new Map([
+        [completedSet.id, { types: ['max_weight'], entries: [maxWeight] }],
+      ]),
+    );
+
+    expect(screen.getByText('Record · Charge max · 105 kg · +5 kg')).toBeVisible();
+    expect(screen.getByRole('status')).toHaveTextContent('Record · Charge max · 105 kg · +5 kg');
+  });
+
+  it('summarises every persisted category won by the same set', () => {
+    const maxWeight = entry('max_weight', 105, 100);
+    const oneRepMax = entry('best_1rm', 122.5, 116.7);
+    const sessionTonnage = entry('max_volume_session', 1_025, 900);
+    renderCard(
+      false,
+      { ...line, sets: [completedSet, draftSet] },
+      new Map([
+        [
+          completedSet.id,
+          {
+            types: ['max_weight', 'best_1rm', 'max_volume_session'],
+            entries: [maxWeight, oneRepMax, sessionTonnage],
+          },
+        ],
+      ]),
+    );
+
+    expect(
+      screen.getByText('3 records · Charge max, 1RM estimé et Tonnage séance'),
+    ).toBeVisible();
+  });
+
+  it('groups every improvement by its trigger and excludes initial marks', () => {
+    const initial = { ...entry('max_weight', 100, 0), previousValue: undefined };
+    const setRecord = {
+      ...entry('max_weight', 105, 100),
+      triggerWorkoutSetId: undefined,
+    };
+    const sessionRecord = {
+      ...entry('max_volume_session', 1_025, 900),
+      record: {
+        ...entry('max_volume_session', 1_025, 900).record,
+        workoutSetId: undefined,
+      },
+    };
+
+    const notices = workoutRecordNotices([initial, setRecord, sessionRecord]);
+
+    expect([...notices.keys()]).toEqual([completedSet.id]);
+    expect(notices.get(completedSet.id)?.types).toEqual([
+      'max_weight',
+      'max_volume_session',
+    ]);
+    expect(notices.get(completedSet.id)?.entries).toEqual([setRecord, sessionRecord]);
   });
 });

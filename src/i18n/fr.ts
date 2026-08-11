@@ -202,7 +202,8 @@ const fr = {
     emptySetReading: 'Série {number}',
     notesLabel: 'Notes de l’exercice',
     notesPlaceholder: 'Réglage, sensation, douleur…',
-    recordBeaten: 'Record · {record}',
+    recordBeaten: 'Record · {record} · {value} · {gain}',
+    recordsBeaten: '{count} records · {records}',
     recordFolded: 'Record',
     workoutMenu: 'Options de la séance',
     elapsedLabel: 'Séance en cours depuis {time}',
@@ -298,9 +299,57 @@ const fr = {
   },
 
   record: {
-    heaviest: 'Charge max',
-    mostReps: 'Reps max',
-    bestVolume: 'Meilleure série',
+    max_weight: 'Charge max',
+    max_added_weight: 'Lest max',
+    min_assistance: 'Assistance minimale',
+    max_reps: 'Répétitions max',
+    best_1rm: '1RM estimé',
+    max_volume_set: 'Meilleure série',
+    max_volume_session: 'Tonnage séance',
+    max_duration: 'Durée max',
+    max_distance: 'Distance max',
+    assistanceValue: '{value} d’assistance',
+    sessionTonnageContext: 'Tonnage de la séance',
+    repsContext: '{count} reps',
+    weightRepsContext: '{weight} × {reps}',
+    formulaContext: '{context} · {formula}',
+    assistanceContext: '{weight} d’assistance',
+    distanceDurationContext: '{distance} · {duration}',
+    gain: '+{value}',
+    gainLessAssistance: '−{value} d’assistance',
+    formulaEpley: 'Epley',
+    formulaBrzycki: 'Brzycki',
+    formulaLombardi: 'Lombardi',
+  },
+
+  records: {
+    title: 'Records',
+    link: 'Records',
+    subtitle: 'Tous tes jalons personnels',
+    allExercises: 'Tous les exercices',
+    allTypes: 'Tous les records',
+    unknownExercise: 'Exercice indisponible',
+    exerciseSheetTitle: 'Exercice',
+    typeSheetTitle: 'Type de record',
+    railLabel: 'Progression des records',
+    currentMark: 'Record actuel',
+    firstMark: 'Premier jalon',
+    openMark: '{exercise}, {category}, {value}, le {date}',
+    loading: 'Chargement des records',
+    emptyTitle: 'Ton premier record commencera ici',
+    emptyBody:
+      'Valide une série pendant une séance : chaque nouveau meilleur résultat ajoutera un jalon à ce rail.',
+    noResultsTitle: 'Aucun record avec ces filtres',
+    noResultsBody: 'Change un filtre ou efface-les pour retrouver tous tes jalons.',
+    clearFilters: 'Effacer les filtres',
+    assistanceQualifier: 'd’assistance',
+    staleTitle: 'Tes records doivent être reconstruits',
+    staleBody:
+      'Tes séances sont intactes. Reconstruis les records depuis ton historique pour afficher le rail.',
+    repair: 'Réparer les records',
+    repairing: 'Réparation en cours…',
+    retryRepair: 'Réessayer',
+    repairFailed: 'La réparation n’a pas abouti. Tes séances sont intactes, tu peux réessayer.',
   },
 
   setTypeHint: {
@@ -724,6 +773,7 @@ const fr = {
     musclesSecondary: 'Aussi sollicités',
 
     recordsSection: 'Records',
+    recordsLink: 'Voir tous les records',
     recordWeightReps: '{weight} kg × {reps}',
     recordWeight: '{weight} kg',
     recordReps: '{reps} reps',
@@ -806,6 +856,34 @@ const fr = {
     themeLight: 'Clair',
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
+
+    trainingSection: 'Entraînement',
+    oneRepMaxTitle: 'Estimation du 1RM',
+    oneRepMaxSheetTitle: 'Formule d’estimation du 1RM',
+    oneRepMaxLoading: 'Chargement…',
+    oneRepMaxEpley: 'Epley',
+    oneRepMaxEpleyHint: 'Un repère équilibré, couramment utilisé.',
+    oneRepMaxBrzycki: 'Brzycki',
+    oneRepMaxBrzyckiHint: 'Une estimation fondée sur la charge et le nombre de répétitions.',
+    oneRepMaxLombardi: 'Lombardi',
+    oneRepMaxLombardiHint: 'Une estimation qui progresse régulièrement avec les répétitions.',
+    oneRepMaxExample: '100 kg × 5 → {value} kg',
+    oneRepMaxFailed:
+      'La formule n’a pas pu être enregistrée. La formule précédente reste utilisée.',
+
+    recordsSection: 'Records',
+    recordRepairTitle: 'Recalculer les records personnels',
+    recordRepairHint:
+      'Reconstruit les records depuis tes séances. Aucune séance ni série n’est modifiée.',
+    recordRepairAction: 'Réparer les records',
+    recordRepairWorking: 'Réparation en cours…',
+    recordRepairConfirmTitle: 'Reconstruire les records',
+    recordRepairConfirmBody:
+      'Tous les records seront recalculés depuis les séances enregistrées. Tes séances et tes séries restent intactes.',
+    recordRepairConfirmAction: 'Lancer la réparation',
+    recordRepairDone:
+      'Records réparés · créations : {created} · mises à jour : {updated} · suppressions : {deleted}.',
+    recordRepairFailed: 'Les records n’ont pas pu être réparés. Tu peux réessayer.',
 
     dataSection: 'Données',
     exportHistoryLink: 'Exporter tout l’historique',
@@ -1110,6 +1188,7 @@ const fr = {
   /** Le nom de chaque métrique. Il porte l'unité quand elle ne va pas de soi. */
   metric: {
     topWeight: 'Charge max',
+    estimatedOneRepMax: '1RM estimé',
     bestSetVolume: 'Meilleure série',
     sessionTonnage: 'Tonnage de la séance',
     topReps: 'Répétitions max',
@@ -1125,6 +1204,8 @@ const fr = {
   /** Ce que chaque métrique compte vraiment, sous la courbe. Une phrase. */
   metricHint: {
     topWeight: 'La série de travail la plus lourde de la séance.',
+    estimatedOneRepMax:
+      'La meilleure estimation de la séance selon la formule choisie dans les réglages.',
     bestSetVolume: 'La meilleure série de la séance, charge × répétitions.',
     sessionTonnage:
       'Charge externe et poids du corps effectif estimé × répétitions. Assistance soustraite, échauffements exclus.',

@@ -48,7 +48,7 @@ const EMPTY: SessionTotals = {
   distanceMeters: 0,
 };
 
-function effectiveLoadKg(entry: VolumeEntry, bodyWeightKg?: number): number {
+export function effectiveLoadKg(entry: VolumeEntry, bodyWeightKg?: number): number {
   const { set, weightRole, bodyweightLoadFactor } = entry;
   if (weightRole === 'load') return set.weight ?? 0;
 

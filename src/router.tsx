@@ -4,6 +4,7 @@ import {
   AnalyticsRoute,
   ExerciseAnalyticsRoute,
   MuscleBalanceRoute,
+  RecordsRoute,
   WeeklySessionsRoute,
   WeeklyVolumeRoute,
 } from './features/analytics/routes';
@@ -50,6 +51,7 @@ export const router = createHashRouter([
       // Pas de sixième onglet (§12.1) : la barre en compte cinq depuis le Lot 1.
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
+      { path: 'analytics/records', element: <RecordsRoute /> },
       { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
       { path: 'analytics/volume', element: <WeeklyVolumeRoute /> },
       { path: 'analytics/muscles', element: <MuscleBalanceRoute /> },

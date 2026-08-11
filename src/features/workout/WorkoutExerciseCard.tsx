@@ -4,11 +4,11 @@ import {
   type WorkoutExerciseDetail,
   type SetValues,
 } from '@/data/repositories/workouts';
-import type { WorkoutSet } from '@/data/types';
+import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
+import type { PersonalRecordType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
-import type { RecordKind } from '@/lib/records';
 import type { SupersetPlace } from '@/lib/routineOrder';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
@@ -21,14 +21,48 @@ import { setReading } from './summary';
 
 type DeletedSet = { setId: string; rank: number; reading: string };
 
+export interface WorkoutRecordNotice {
+  types: PersonalRecordType[];
+  entries: RecordTimelineEntry[];
+}
+
+export type WorkoutRecordNotices = Map<string, WorkoutRecordNotice>;
+
+// Exported for the view-model contract tests; it remains colocated with the
+// prop contract consumed by this card.
+// eslint-disable-next-line react-refresh/only-export-components
+export function workoutRecordNotices(
+  entries: readonly RecordTimelineEntry[],
+): WorkoutRecordNotices {
+  const notices: WorkoutRecordNotices = new Map();
+
+  for (const entry of entries) {
+    if (entry.previousValue === undefined) continue;
+    const sourceSetId = entry.triggerWorkoutSetId ?? entry.record.workoutSetId;
+    if (sourceSetId === undefined) continue;
+    const notice = notices.get(sourceSetId);
+    if (notice === undefined) {
+      notices.set(sourceSetId, {
+        types: [entry.record.type],
+        entries: [entry],
+      });
+    } else {
+      notice.types.push(entry.record.type);
+      notice.entries.push(entry);
+    }
+  }
+
+  return notices;
+}
+
 export type CardRest = { setId: string; startedAt: number; endsAt: number; onDone: () => void };
 
 type Props = {
   line: WorkoutExerciseDetail;
   superset?: SupersetPlace;
   rest: CardRest | null;
-  /** Records are derived, never persisted. */
-  records: Map<string, RecordKind>;
+  /** Persisted improvements keyed by the set that triggered them. */
+  records: WorkoutRecordNotices;
   state: ItemState;
   reorderEnabled: boolean;
   foldCommand: WorkoutFoldCommand;
@@ -294,7 +328,7 @@ export function WorkoutExerciseCard({
                     onUncomplete={() => onUncomplete(set.id)}
                     onMenu={() => onSetMenu(set, index + 1)}
                   />
-                  {record !== undefined && <RecordNote kind={record} />}
+                  {record !== undefined && <RecordNote notice={record} />}
                 </SwipeToDelete>
               </Fragment>
               );

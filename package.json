@@ -17,6 +17,7 @@
     "test:run": "vitest run",
     "bench:history": "vitest bench src/data/repositories/history.bench.ts --run",
     "bench:home": "vitest bench src/data/repositories/home.bench.ts --run",
+    "bench:records": "vitest bench src/data/repositories/personalRecords.bench.ts --run",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

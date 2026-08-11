@@ -31,10 +31,16 @@ export function AnalyticsScreen() {
     // L'Historique, d'où on entrait, est l'onglet juste à gauche.
     <Screen title={t('analytics.title')}>
       <div className="space-y-7">
-        {hasHistory && (
-          <section>
-            <SectionTitle>{t('analytics.overviewSection')}</SectionTitle>
-            <Card>
+        <section>
+          <SectionTitle>{t('analytics.overviewSection')}</SectionTitle>
+          <Card>
+            <ListRow
+              title={t('records.link')}
+              subtitle={t('records.subtitle')}
+              onClick={() => void navigate('/analytics/records')}
+            />
+            {hasHistory && (
+              <>
               <ListRow
                 title={t('weekly.link')}
                 subtitle={t('weekly.subtitle')}
@@ -50,9 +56,10 @@ export function AnalyticsScreen() {
                 subtitle={t('muscles.subtitle')}
                 onClick={() => void navigate('/analytics/muscles')}
               />
-            </Card>
-          </section>
-        )}
+              </>
+            )}
+          </Card>
+        </section>
 
         <section>
           <SectionTitle>{t('analytics.exercisesSection')}</SectionTitle>

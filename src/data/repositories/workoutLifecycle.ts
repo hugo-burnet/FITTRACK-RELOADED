@@ -4,8 +4,20 @@ import { resolveRestSeconds } from '@/lib/rest';
 import { localOffsetMinutes } from '@/lib/timezone';
 import { alive, newEntity, softDelete, touch } from './base';
 import { snapshotOf } from '@/lib/exerciseSnapshot';
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { getOneRepMaxFormula } from './settings';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
+
+const RECORD_PROJECTION_TABLES = [
+  db.settings,
+  db.exercises,
+  db.workouts,
+  db.workoutExercises,
+  db.workoutSets,
+  db.bodyMeasurements,
+  db.personalRecords,
+] as const;
 
 // ---------------------------------------------------------------------------
 // Starting and closing a session (RF-17, RF-24, RF-25)
@@ -198,11 +210,19 @@ export async function finishWorkout(workoutId: string): Promise<void> {
  * row survives for the trash and for the Lot 14 sync; nothing reads it.
  */
 export async function discardWorkout(workoutId: string): Promise<void> {
-  const workout = await db.workouts.get(workoutId);
-  if (workout === undefined) return;
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+    const workout = await db.workouts.get(workoutId);
+    if (workout === undefined) return;
+    const [rows, sets] = await Promise.all([
+      db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
+      db.workoutSets.where('workoutId').equals(workoutId).toArray(),
+    ]);
+    const affectedExerciseIds = new Set([
+      ...rows.map((row) => row.exerciseId),
+      ...sets.map((set) => set.exerciseId),
+    ]);
+    const now = Date.now();
 
-  const now = Date.now();
-  await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
     await db.workoutSets
       .where('workoutId')
       .equals(workoutId)
@@ -212,6 +232,7 @@ export async function discardWorkout(workoutId: string): Promise<void> {
       .equals(workoutId)
       .modify({ deletedAt: now, updatedAt: now });
     await db.workouts.put(touch(workout, { status: 'discarded', deletedAt: now }));
+    await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
   });
 }
 
@@ -222,11 +243,20 @@ export async function discardWorkout(workoutId: string): Promise<void> {
  * and the records: a ghost row that is very hard to diagnose weeks later.
  */
 export async function deleteWorkout(workoutId: string): Promise<void> {
-  const deleted = { deletedAt: Date.now(), updatedAt: Date.now() };
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+    const [rows, sets] = await Promise.all([
+      db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
+      db.workoutSets.where('workoutId').equals(workoutId).toArray(),
+    ]);
+    const affectedExerciseIds = new Set([
+      ...rows.map((row) => row.exerciseId),
+      ...sets.map((set) => set.exerciseId),
+    ]);
+    const deleted = { deletedAt: Date.now(), updatedAt: Date.now() };
 
-  await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
     await db.workoutSets.where('workoutId').equals(workoutId).modify(deleted);
     await db.workoutExercises.where('workoutId').equals(workoutId).modify(deleted);
     await softDelete(db.workouts, workoutId);
+    await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
   });
 }

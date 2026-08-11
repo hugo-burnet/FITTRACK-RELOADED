@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { WorkoutSet } from '@/data/types';
 import type { WeightRole } from './measurement';
-import { sessionTotals } from './volume';
+import { effectiveLoadKg, sessionTotals } from './volume';
 
 let sequence = 0;
 
@@ -28,6 +28,17 @@ const entry = (values: Partial<WorkoutSet>, weightRole?: WeightRole) => ({
 });
 
 describe('sessionTotals', () => {
+  it('expose la charge effective que les records de volume par série peuvent réutiliser', () => {
+    const set = aSet({ weight: 10, reps: 8 });
+    const load = effectiveLoadKg(
+      { set, weightRole: 'added', bodyweightLoadFactor: 0.75 },
+      80,
+    );
+
+    expect(load).toBe(70);
+    expect(load * (set.reps ?? 0)).toBe(560);
+  });
+
   it('ne compte rien sur une séance vide', () => {
     expect(sessionTotals([])).toEqual({
       workingSets: 0,

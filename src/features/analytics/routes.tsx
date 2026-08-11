@@ -41,6 +41,10 @@ const MuscleBalanceScreen = lazy(() =>
   })),
 );
 
+const RecordsScreen = lazy(() =>
+  import('../records/RecordsScreen').then((module) => ({ default: module.RecordsScreen })),
+);
+
 /**
  * An empty frame, not a spinner: the chunk arrives from the cache in a frame or
  * two, and a spinner shown for 30 ms is a flash of anxiety, not information.
@@ -81,6 +85,14 @@ export function MuscleBalanceRoute() {
   return (
     <Suspense fallback={<span />}>
       <MuscleBalanceScreen />
+    </Suspense>
+  );
+}
+
+export function RecordsRoute() {
+  return (
+    <Suspense fallback={<span />}>
+      <RecordsScreen />
     </Suspense>
   );
 }

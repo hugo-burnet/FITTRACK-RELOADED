@@ -4,8 +4,20 @@ import { resolveRestSeconds } from '@/lib/rest';
 import { moveItem, normalizeSupersets } from '@/lib/routineOrder';
 import { alive, newEntity, softDelete, touch } from './base';
 import { snapshotOf } from '@/lib/exerciseSnapshot';
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { getOneRepMaxFormula } from './settings';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
+
+const RECORD_PROJECTION_TABLES = [
+  db.settings,
+  db.exercises,
+  db.workouts,
+  db.workoutExercises,
+  db.workoutSets,
+  db.bodyMeasurements,
+  db.personalRecords,
+] as const;
 
 // ---------------------------------------------------------------------------
 // Exercises of the session in progress (RF-21)
@@ -21,20 +33,40 @@ async function rewriteOrder(
   workoutId: string,
   transform: (rows: WorkoutExercise[]) => WorkoutExercise[],
 ): Promise<void> {
-  await db.transaction('rw', db.workoutExercises, async () => {
-    const rows = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray()).sort(
-      byOrder,
-    );
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+    const rows = alive(
+      await db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
+    ).sort(byOrder);
 
     const next = normalizeSupersets(transform(rows)).map((row, order) => ({ ...row, order }));
     const before = new Map(rows.map((row) => [row.id, row]));
 
     const changed = next.filter((row) => {
       const was = before.get(row.id);
-      return was === undefined || was.order !== row.order || was.supersetGroup !== row.supersetGroup;
+      return (
+        was === undefined || was.order !== row.order || was.supersetGroup !== row.supersetGroup
+      );
     });
 
-    if (changed.length > 0) await db.workoutExercises.bulkPut(changed.map((row) => touch(row, {})));
+    if (changed.length === 0) return;
+
+    await db.workoutExercises.bulkPut(changed.map((row) => touch(row, {})));
+    const changedRowIds = new Set(changed.map((row) => row.id));
+    const completedSets = (
+      await db.workoutSets.where('workoutId').equals(workoutId).toArray()
+    ).filter(
+      (set) =>
+        set.deletedAt === 0 &&
+        set.isCompleted === 1 &&
+        changedRowIds.has(set.workoutExerciseId),
+    );
+    const affectedExerciseIds = [...new Set(completedSets.map((set) => set.exerciseId))];
+    if (affectedExerciseIds.length > 0) {
+      await reconcileRecordsForExercises(
+        affectedExerciseIds,
+        await getOneRepMaxFormula(),
+      );
+    }
   });
 }
 
@@ -57,8 +89,9 @@ export async function addWorkoutExercise(
   const exercise = await db.exercises.get(exerciseId);
 
   return db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {
-    const count = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray())
-      .length;
+    const count = alive(
+      await db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
+    ).length;
 
     const row = newEntity<WorkoutExercise>({
       workoutId,
@@ -97,9 +130,14 @@ export async function updateWorkoutExercise(
 }
 
 export async function removeWorkoutExercise(workoutExerciseId: string): Promise<void> {
-  await db.transaction('rw', db.workoutExercises, db.workoutSets, async () => {
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
     const row = await db.workoutExercises.get(workoutExerciseId);
     if (row === undefined) return;
+    const sets = await db.workoutSets
+      .where('workoutExerciseId')
+      .equals(workoutExerciseId)
+      .toArray();
+    const affectedExerciseIds = new Set([row.exerciseId, ...sets.map((set) => set.exerciseId)]);
 
     const now = Date.now();
     await db.workoutSets
@@ -109,6 +147,7 @@ export async function removeWorkoutExercise(workoutExerciseId: string): Promise<
     await softDelete(db.workoutExercises, workoutExerciseId);
 
     await rewriteOrder(row.workoutId, (rows) => rows);
+    await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
   });
 }
 

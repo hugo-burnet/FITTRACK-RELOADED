@@ -1,3 +1,4 @@
+
 import { db } from '@/data/db';
 import type {
   Exercise,
@@ -11,6 +12,18 @@ import { newEntity, touch } from './base';
 import { exerciseSnapshotOfRow } from '@/lib/exerciseSnapshot';
 import { loadExerciseSnapshots } from './exerciseSnapshot';
 import { getWorkoutDetail, type WorkoutDetail } from './workouts';
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { getOneRepMaxFormula } from './settings';
+
+const RECORD_PROJECTION_TABLES = [
+  db.settings,
+  db.exercises,
+  db.workouts,
+  db.workoutExercises,
+  db.workoutSets,
+  db.bodyMeasurements,
+  db.personalRecords,
+] as const;
 
 export interface HistoryFilters {
   exerciseId?: string;
@@ -223,14 +236,14 @@ function assertArchivedDraft(draft: ArchivedWorkoutDraft): void {
 export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<void> {
   assertArchivedDraft(draft);
 
-  // Read outside the transaction, which is scoped to the three session tables.
+  // Read outside the transaction, which spans the record projection tables.
   // Only rows whose exercise is new or corrected consume this — the rest keep
   // the snapshot they were created with.
   const snapshots = await loadExerciseSnapshots(
     draft.exercises.map((row) => row.exerciseId),
   );
 
-  await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
     const workout = await db.workouts.get(draft.workoutId);
     if (
       workout === undefined ||
@@ -251,6 +264,10 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
     const sets = (
       await db.workoutSets.where('workoutId').equals(draft.workoutId).toArray()
     ).filter((set) => set.deletedAt === 0);
+    const affectedExerciseIds = new Set([
+      ...rows.map((row) => row.exerciseId),
+      ...sets.map((set) => set.exerciseId),
+    ]);
     const setIds = new Set(sets.map((set) => set.id));
     if (
       draft.exercises.some((row) =>
@@ -374,31 +391,28 @@ export async function saveArchivedWorkout(draft: ArchivedWorkoutDraft): Promise<
     const deletedSets = sets
       .filter((set) => !keptSetIds.has(set.id))
       .map((set) => touch(set, { deletedAt }));
-    const updatedWorkout = touch<Workout>(
-      {
-        id: workout.id,
-        createdAt: workout.createdAt,
-        updatedAt: workout.updatedAt,
-        deletedAt: 0,
-        routineId: workout.routineId,
-        name: draft.name,
-        status: 'completed',
-        startedAt: draft.startedAt,
-        endedAt: draft.startedAt + draft.durationSeconds * 1000,
-        durationSeconds: draft.durationSeconds,
-        ...(draft.notes === undefined ? {} : { notes: draft.notes }),
-      },
-      {},
-    );
+    const updatedWorkout = touch(workout, {
+      name: draft.name,
+      status: 'completed',
+      startedAt: draft.startedAt,
+      endedAt: draft.startedAt + draft.durationSeconds * 1000,
+      durationSeconds: draft.durationSeconds,
+      notes: draft.notes,
+    });
 
     await db.workouts.put(updatedWorkout);
     await db.workoutExercises.bulkPut([...nextRows, ...deletedRows]);
     await db.workoutSets.bulkPut([...nextSets, ...deletedSets]);
+    for (const row of nextRows) affectedExerciseIds.add(row.exerciseId);
+    for (const set of nextSets) affectedExerciseIds.add(set.exerciseId);
+    await reconcileRecordsForExercises(
+      [...affectedExerciseIds],
+      await getOneRepMaxFormula(),
+    );
   });
 }
-
 export async function deleteArchivedWorkout(workoutId: string): Promise<void> {
-  await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
     const workout = await db.workouts.get(workoutId);
     if (
       workout === undefined ||
@@ -412,11 +426,19 @@ export async function deleteArchivedWorkout(workoutId: string): Promise<void> {
       db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
       db.workoutSets.where('workoutId').equals(workoutId).toArray(),
     ]);
+    const affectedExerciseIds = new Set([
+      ...rows.map((row) => row.exerciseId),
+      ...sets.map((set) => set.exerciseId),
+    ]);
     const now = Date.now();
     const deleted = { deletedAt: now, updatedAt: now };
 
     await db.workouts.put({ ...workout, ...deleted });
     await db.workoutExercises.bulkPut(rows.map((row) => ({ ...row, ...deleted })));
     await db.workoutSets.bulkPut(sets.map((set) => ({ ...set, ...deleted })));
+    await reconcileRecordsForExercises(
+      [...affectedExerciseIds],
+      await getOneRepMaxFormula(),
+    );
   });
 }

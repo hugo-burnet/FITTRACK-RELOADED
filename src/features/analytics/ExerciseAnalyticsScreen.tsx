@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { getExercise } from '@/data/repositories/exercises';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
+import { getOneRepMaxFormula } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { metricLabel, metricReading, periodLabel } from '@/i18n/labels';
 import {
@@ -63,6 +64,7 @@ export function ExerciseAnalyticsScreen() {
     setView((current) => ({ ...current, selectedIndex: index }));
 
   const exercise = useLiveQuery(async () => (await getExercise(exerciseId)) ?? null, [exerciseId]);
+  const formula = useLiveQuery(() => getOneRepMaxFormula(), []);
   const sources = useLiveQuery(() => {
     const { from, to } = periodBounds(period, openedAt);
     return listHistoricalWorkouts({
@@ -95,7 +97,9 @@ export function ExerciseAnalyticsScreen() {
 
   const metrics = availableMetrics(type);
   const metric = metrics.find((candidate) => candidate.key === metricKey) ?? metrics[0];
-  const points = metric === undefined ? [] : metricSeries(metric.key, sessions);
+  const loading = exercise === undefined || sources === undefined || formula === undefined;
+  const points =
+    metric === undefined || formula === undefined ? [] : metricSeries(metric.key, sessions, formula);
   const selected = Math.min(selectedIndex ?? points.length - 1, points.length - 1);
 
   // The selection belongs to a point that may not exist in the new slice.
@@ -104,7 +108,7 @@ export function ExerciseAnalyticsScreen() {
 
   return (
     <Screen title={exercise?.name ?? ''} onBack={() => void navigate(-1)}>
-      <div className="space-y-7">
+      <div className="space-y-7" aria-busy={loading}>
         {/* One filter row, above everything it scopes — never inside the chart
             card, where a control reads as part of the drawing. */}
         <div className="flex gap-2 overflow-x-auto pb-1">
@@ -122,7 +126,7 @@ export function ExerciseAnalyticsScreen() {
           />
         </div>
 
-        {metric === undefined ? (
+        {loading ? null : metric === undefined ? (
           <Card padded>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('analytics.noMetric')}</p>
           </Card>
@@ -171,7 +175,7 @@ export function ExerciseAnalyticsScreen() {
                           index === selected ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'
                         }`}
                       >
-                        {metricReading(point.value, metric.unit)}
+                        {metricReading(point.value, metric.unit, metric.key)}
                       </span>
                     }
                   />

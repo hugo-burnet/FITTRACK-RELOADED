@@ -1,9 +1,20 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
-import type { Exercise, Syncable, Workout, WorkoutExercise } from '@/data/types';
+import type {
+  BodyMeasurement,
+  Exercise,
+  PersonalRecord,
+  Syncable,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
+import { projectRecordTimeline, type RecordEventDraft } from '@/lib/records';
 import { resetDb } from '@/test/resetDb';
 import { newEntity } from './base';
 import { resnapshotHistory } from './historyRepair';
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { listRecordSourcesForExercises } from './recordSources';
 
 const exercise = (over: Partial<Omit<Exercise, keyof Syncable>> = {}): Exercise =>
   newEntity<Exercise>({
@@ -40,6 +51,138 @@ const row = (
     restSeconds: 120,
     ...over,
   });
+
+function recordContent(record: PersonalRecord): RecordEventDraft {
+  return {
+    exerciseId: record.exerciseId,
+    type: record.type,
+    value: record.value,
+    achievedAt: record.achievedAt,
+    workoutId: record.workoutId,
+    ...(record.workoutSetId === undefined ? {} : { workoutSetId: record.workoutSetId }),
+    ...(record.weight === undefined ? {} : { weight: record.weight }),
+    ...(record.reps === undefined ? {} : { reps: record.reps }),
+    ...(record.durationSeconds === undefined ? {} : { durationSeconds: record.durationSeconds }),
+    ...(record.distanceMeters === undefined ? {} : { distanceMeters: record.distanceMeters }),
+    ...(record.formula === undefined ? {} : { formula: record.formula }),
+  };
+}
+
+async function expectExactRecordProjection(exerciseId: string): Promise<void> {
+  const expected = projectRecordTimeline(
+    await listRecordSourcesForExercises([exerciseId]),
+    'epley',
+  );
+  const active = (await db.personalRecords.where('exerciseId').equals(exerciseId).toArray()).filter(
+    (record) => record.deletedAt === 0,
+  );
+  const key = (
+    record: Pick<PersonalRecord, 'exerciseId' | 'type' | 'workoutId' | 'workoutSetId'>,
+  ) => [record.exerciseId, record.type, record.workoutId, record.workoutSetId ?? ''].join('|');
+  const byKey = new Map(active.map((record) => [key(record), record]));
+
+  expect(byKey.size).toBe(active.length);
+  expect([...byKey.keys()].sort()).toEqual(expected.map(key).sort());
+  expect(expected.map((draft) => recordContent(byKey.get(key(draft))!))).toStrictEqual(expected);
+}
+
+async function seedRecordBearingSnapshotMismatch(): Promise<{
+  bench: Exercise;
+  session: Workout;
+  historicalRow: WorkoutExercise;
+}> {
+  const bench = exercise({ measurementType: 'weight_reps' });
+  const session = workout();
+  const historicalRow = row(session.id, bench.id, {
+    exerciseName: bench.name,
+    exerciseMeasurementType: 'time_only',
+    exercisePrimaryMuscle: bench.primaryMuscle,
+    exerciseEquipment: bench.equipment,
+  });
+  const performed = newEntity<WorkoutSet>({
+    workoutExerciseId: historicalRow.id,
+    exerciseId: bench.id,
+    workoutId: session.id,
+    order: 0,
+    setType: 'normal',
+    side: 'both',
+    weight: 100,
+    reps: 5,
+    durationSeconds: 45,
+    isCompleted: 1,
+    performedAt: 1_500,
+  });
+
+  await db.transaction(
+    'rw',
+    db.exercises,
+    db.workouts,
+    db.workoutExercises,
+    db.workoutSets,
+    async () => {
+      await db.exercises.add(bench);
+      await db.workouts.add(session);
+      await db.workoutExercises.add(historicalRow);
+      await db.workoutSets.add(performed);
+    },
+  );
+  await reconcileRecordsForExercises([bench.id], 'epley');
+  return { bench, session, historicalRow };
+}
+
+async function seedBodyweightFactorMismatch(
+  storedFactor: number | undefined,
+  libraryFactor: number | undefined,
+): Promise<{ bench: Exercise; historicalRow: WorkoutExercise }> {
+  const bench = exercise({
+    equipment: 'bodyweight',
+    measurementType: 'reps_only',
+    ...(libraryFactor === undefined ? {} : { bodyweightLoadFactor: libraryFactor }),
+  });
+  const session = workout();
+  const historicalRow = row(session.id, bench.id, {
+    exerciseName: bench.name,
+    exerciseMeasurementType: bench.measurementType,
+    exercisePrimaryMuscle: bench.primaryMuscle,
+    exerciseEquipment: bench.equipment,
+    ...(storedFactor === undefined ? {} : { exerciseBodyweightLoadFactor: storedFactor }),
+  });
+  const performed = newEntity<WorkoutSet>({
+    workoutExerciseId: historicalRow.id,
+    exerciseId: bench.id,
+    workoutId: session.id,
+    order: 0,
+    setType: 'normal',
+    side: 'both',
+    reps: 10,
+    isCompleted: 1,
+    performedAt: 1_500,
+  });
+  const bodyWeight = newEntity<BodyMeasurement>({
+    type: 'body_weight',
+    value: 80,
+    unit: 'kg',
+    measuredAt: 500,
+  });
+
+  await db.transaction(
+    'rw',
+    db.exercises,
+    db.workouts,
+    db.workoutExercises,
+    db.workoutSets,
+    db.bodyMeasurements,
+    async () => {
+      await db.exercises.add(bench);
+      await db.workouts.add(session);
+      await db.workoutExercises.add(historicalRow);
+      await db.workoutSets.add(performed);
+      await db.bodyMeasurements.add(bodyWeight);
+    },
+  );
+  await reconcileRecordsForExercises([bench.id], 'epley');
+  return { bench, historicalRow };
+}
 
 describe('resnapshotHistory', () => {
   beforeEach(resetDb);
@@ -184,5 +327,51 @@ describe('resnapshotHistory', () => {
     const [untouched] = await db.workoutExercises.toArray();
     expect(untouched!.updatedAt).toBe(42);
     expect(result).toEqual({ repaired: 0, kept: 1 });
+  });
+
+  it('reconciles records when a repaired snapshot changes the measurement type', async () => {
+    const { bench } = await seedRecordBearingSnapshotMismatch();
+
+    await resnapshotHistory();
+
+    await expectExactRecordProjection(bench.id);
+  });
+
+  it.each([
+    { label: 'adds', stored: undefined, library: 0.7 },
+    { label: 'changes', stored: 0.5, library: 0.7 },
+    { label: 'removes', stored: 0.7, library: undefined },
+  ])('$label a bodyweight factor and reconciles session tonnage', async ({ stored, library }) => {
+    const { bench, historicalRow } = await seedBodyweightFactorMismatch(stored, library);
+
+    await resnapshotHistory();
+
+    expect((await db.workoutExercises.get(historicalRow.id))?.exerciseBodyweightLoadFactor).toBe(
+      library,
+    );
+    await expectExactRecordProjection(bench.id);
+  });
+
+  it('rolls back repaired snapshots and records when reconciliation fails', async () => {
+    const { bench, historicalRow } = await seedRecordBearingSnapshotMismatch();
+    const beforeRow = await db.workoutExercises.get(historicalRow.id);
+    const beforeRecords = (await db.personalRecords.toArray()).sort((left, right) =>
+      left.id.localeCompare(right.id),
+    );
+    const failure = vi
+      .spyOn(db.personalRecords, 'bulkPut')
+      .mockRejectedValueOnce(new Error('injected repair reconciliation failure'));
+
+    try {
+      await expect(resnapshotHistory()).rejects.toThrow('injected repair reconciliation failure');
+    } finally {
+      failure.mockRestore();
+    }
+
+    expect(await db.workoutExercises.get(historicalRow.id)).toStrictEqual(beforeRow);
+    expect(
+      (await db.personalRecords.toArray()).sort((left, right) => left.id.localeCompare(right.id)),
+    ).toStrictEqual(beforeRecords);
+    await expectExactRecordProjection(bench.id);
   });
 });

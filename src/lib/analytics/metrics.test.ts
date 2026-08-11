@@ -56,6 +56,23 @@ describe('availableMetrics', () => {
     expect(keys('reps_only')).toContain('sessionTonnage');
   });
 
+  it('place le 1RM estimé après la charge max et seulement pour poids-répétitions', () => {
+    const weighted = availableMetrics('weight_reps').map((metric) => metric.key);
+
+    expect(weighted.slice(0, 2)).toEqual(['topWeight', 'estimatedOneRepMax']);
+    for (const type of [
+      'reps_only',
+      'weight_time',
+      'time_only',
+      'distance_time',
+      'assisted_weight_reps',
+    ] as const) {
+      expect(availableMetrics(type).map((metric) => metric.key)).not.toContain(
+        'estimatedOneRepMax',
+      );
+    }
+  });
+
   it('offre l’assistance minimale, et elle seule, sur une machine assistée', () => {
     const keys = availableMetrics('assisted_weight_reps').map((metric) => metric.key);
     expect(keys).toContain('lowestAssist');
@@ -99,6 +116,47 @@ describe('metricDefinition', () => {
 });
 
 describe('metricSeries', () => {
+  it('garde le meilleur 1RM éligible de chaque séance avec la formule choisie', () => {
+    const sessions = [
+      session(1, 'weight_reps', [
+        { weight: 100, reps: 5 },
+        { weight: 105, reps: 3 },
+        { weight: 140, reps: 1, setType: 'warmup' },
+      ]),
+    ];
+
+    expect(values(metricSeries('estimatedOneRepMax', sessions))).toEqual([100 * (1 + 5 / 30)]);
+    expect(values(metricSeries('estimatedOneRepMax', sessions, 'brzycki'))).toEqual([
+      (100 * 36) / (37 - 5),
+    ]);
+  });
+
+  it('omet les charges et répétitions invalides ainsi que les séances sans estimation', () => {
+    const points = metricSeries('estimatedOneRepMax', [
+      session(1, 'weight_reps', [
+        { weight: 120, reps: 13 },
+        { weight: 0, reps: 5 },
+        { weight: Number.NaN, reps: 5 },
+        { weight: 100, reps: 2.5 },
+      ]),
+      session(2, 'weight_reps', [{ weight: 97.5, reps: 8 }]),
+      session(3, 'time_only', [{ durationSeconds: 60 }]),
+    ]);
+
+    expect(points).toEqual([
+      { workoutId: 'w-2', timestamp: 2, value: 97.5 * (1 + 8 / 30) },
+    ]);
+  });
+
+  it('conserve la valeur 1RM brute sans arrondi dans le point', () => {
+    const [point] = metricSeries('estimatedOneRepMax', [
+      session(1, 'weight_reps', [{ weight: 100, reps: 5 }]),
+    ]);
+
+    expect(point?.value).toBe(100 * (1 + 5 / 30));
+    expect(point?.value).not.toBe(Math.round(point!.value * 10) / 10);
+  });
+
   it('rend un point par séance, dans l’ordre du temps', () => {
     const points = metricSeries('topWeight', [
       session(1, 'weight_reps', [{ weight: 80, reps: 5 }]),

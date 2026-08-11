@@ -3,6 +3,7 @@ import { db } from '@/data/db';
 import type {
   Exercise,
   ExternalExerciseBinding,
+  PersonalRecord,
   RoutineFolder,
   Workout,
 } from '@/data/types';
@@ -32,7 +33,6 @@ import {
 } from './hevyImport';
 import {
   getLastPerformance,
-  listRecordSets,
 } from './workoutHistory';
 
 type HevyExerciseResolutions = Record<
@@ -137,6 +137,55 @@ const partiallyDuplicatedData: HevyImportData = {
   workoutCount: 2,
 };
 
+const tiedRecordData: HevyImportData = {
+  ...benchOnlyData,
+  workouts: [
+    {
+      ...benchOnlyData.workouts[0]!,
+      title: 'Charge basse',
+      endedAt: 3_000,
+      importKey: 'hevy:record-low',
+      exercises: [
+        {
+          ...benchOnlyData.workouts[0]!.exercises[0]!,
+          sets: [
+            {
+              sourceLine: 2,
+              order: 0,
+              setType: 'normal',
+              weight: 50,
+              reps: 1,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      ...benchOnlyData.workouts[0]!,
+      title: 'Charge haute',
+      endedAt: 3_000,
+      importKey: 'hevy:record-high',
+      exercises: [
+        {
+          ...benchOnlyData.workouts[0]!.exercises[0]!,
+          sets: [
+            {
+              sourceLine: 3,
+              order: 0,
+              setType: 'normal',
+              weight: 60,
+              reps: 1,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  workoutCount: 2,
+  exerciseCount: 1,
+  setCount: 2,
+};
+
 function customExercise(
   name: string,
   measurementType: Exercise['measurementType'] = 'weight_reps',
@@ -229,7 +278,17 @@ async function counts() {
     routines: await db.routines.count(),
     routineExercises: await db.routineExercises.count(),
     routineSets: await db.routineSets.count(),
+    personalRecords: await db.personalRecords.count(),
   };
+}
+
+function recordBusinessKey(record: PersonalRecord): string {
+  return [
+    record.exerciseId,
+    record.type,
+    record.workoutId,
+    record.workoutSetId ?? '',
+  ].join('|');
 }
 
 const pallofSourceTitle = 'Développé Debout Poulie Centrée';
@@ -777,6 +836,7 @@ describe('Hevy import repository', () => {
       routines: 0,
       routineExercises: 0,
       routineSets: 0,
+      personalRecords: 0,
     });
   });
 
@@ -1038,17 +1098,146 @@ describe('Hevy import repository', () => {
     expect(await counts()).toEqual(before);
   });
 
-  it('feeds derived history without persisting personal records', async () => {
+  it('feeds history and persists the exact projected records', async () => {
     const bench = await createCustomExercise(
       customExercise('Développé couché'),
     );
     await importWithDecisions(data, resolutions(bench.id));
 
     expect(await getLastPerformance(bench.id)).toHaveLength(2);
-    expect((await listRecordSets([bench.id])).get(bench.id)).toHaveLength(
-      2,
+    const plank = (await db.exercises.toArray()).find(
+      (exercise) => exercise.name === 'Planche',
+    )!;
+    const workout = (await db.workouts.toArray())[0]!;
+    const sets = await db.workoutSets.where('workoutId').equals(workout.id).toArray();
+    const benchSet = sets.find(
+      (set) => set.exerciseId === bench.id && set.setType === 'normal',
+    )!;
+    const plankSet = sets.find((set) => set.exerciseId === plank.id)!;
+    const records = (await db.personalRecords.toArray())
+      .filter((record) => record.deletedAt === 0)
+      .map((record) => ({
+        exerciseId: record.exerciseId,
+        type: record.type,
+        value: record.value,
+        workoutId: record.workoutId,
+        workoutSetId: record.workoutSetId,
+      }))
+      .sort((left, right) => left.type.localeCompare(right.type));
+
+    expect(records).toEqual([
+      {
+        exerciseId: bench.id,
+        type: 'best_1rm',
+        value: 101.33333333333333,
+        workoutId: workout.id,
+        workoutSetId: benchSet.id,
+      },
+      {
+        exerciseId: plank.id,
+        type: 'max_duration',
+        value: 60,
+        workoutId: workout.id,
+        workoutSetId: plankSet.id,
+      },
+      {
+        exerciseId: bench.id,
+        type: 'max_volume_session',
+        value: 640,
+        workoutId: workout.id,
+        workoutSetId: undefined,
+      },
+      {
+        exerciseId: bench.id,
+        type: 'max_volume_set',
+        value: 640,
+        workoutId: workout.id,
+        workoutSetId: benchSet.id,
+      },
+      {
+        exerciseId: bench.id,
+        type: 'max_weight',
+        value: 80,
+        workoutId: workout.id,
+        workoutSetId: benchSet.id,
+      },
+    ]);
+  });
+
+  it('projects a multi-workout import canonically at tied timestamps and re-imports without new IDs', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
     );
-    expect(await db.personalRecords.count()).toBe(0);
+    const decisions = resolutions(bench.id);
+
+    await importWithDecisions(tiedRecordData, decisions, 20_000);
+
+    const workouts = await db.workouts.toArray();
+    const workoutById = new Map(workouts.map((workout) => [workout.id, workout]));
+    const sets = await db.workoutSets.toArray();
+    const setByWorkoutName = new Map(
+      sets.map((set) => [workoutById.get(set.workoutId)!.name, set]),
+    );
+    const lowSet = setByWorkoutName.get('Charge basse')!;
+    const highSet = setByWorkoutName.get('Charge haute')!;
+    const firstSet = [lowSet, highSet].sort((left, right) => left.id.localeCompare(right.id))[0]!;
+    const secondSet = firstSet.id === lowSet.id ? highSet : lowSet;
+    const expectedSetValues =
+      firstSet.weight! < secondSet.weight!
+        ? [firstSet.weight, secondSet.weight]
+        : [firstSet.weight];
+    const lowWorkout = workoutById.get(lowSet.workoutId)!;
+    const highWorkout = workoutById.get(highSet.workoutId)!;
+    const firstWorkout = [lowWorkout, highWorkout]
+      .sort((left, right) => left.id.localeCompare(right.id))[0]!;
+    const expectedSessionValues =
+      firstWorkout.name === 'Charge basse' ? [50, 60] : [60];
+    const active = (await db.personalRecords.toArray()).filter(
+      (record) => record.deletedAt === 0,
+    );
+
+    for (const type of ['max_weight', 'max_volume_set', 'best_1rm'] as const) {
+      expect(
+        active
+          .filter((record) => record.type === type)
+          .sort((left, right) => left.workoutSetId!.localeCompare(right.workoutSetId!))
+          .map((record) => record.value),
+      ).toEqual(expectedSetValues);
+    }
+    expect(
+      active
+        .filter((record) => record.type === 'max_volume_session')
+        .sort((left, right) => left.workoutId.localeCompare(right.workoutId))
+        .map((record) => record.value),
+    ).toEqual(expectedSessionValues);
+    expect(new Set(active.map((record) => record.achievedAt))).toEqual(new Set([2_000]));
+
+    const idsBefore = new Map(active.map((record) => [recordBusinessKey(record), record.id]));
+    const second = await importWithDecisions(tiedRecordData, decisions, 20_000);
+    const after = await db.personalRecords.toArray();
+    expect(second).toMatchObject({ importedWorkouts: 0, skippedWorkouts: 2 });
+    expect(new Map(after.map((record) => [recordBusinessKey(record), record.id])))
+      .toEqual(idsBefore);
+  });
+
+  it('rolls back the complete import when record reconciliation fails', async () => {
+    const bench = await createCustomExercise(
+      customExercise('Développé couché'),
+    );
+    const before = await counts();
+    const fail = vi
+      .spyOn(db.personalRecords, 'bulkPut')
+      .mockRejectedValueOnce(new Error('record reconciliation failed'));
+
+    try {
+      await expect(
+        importWithDecisions(data, resolutions(bench.id), 20_000),
+      ).rejects.toThrow('record reconciliation failed');
+    } finally {
+      fail.mockRestore();
+    }
+
+    expect(await counts()).toEqual(before);
   });
 
   it('creates one dated folder and representative routines atomically', async () => {

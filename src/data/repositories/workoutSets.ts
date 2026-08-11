@@ -2,6 +2,11 @@ import { db } from '@/data/db';
 import type { SetType, Syncable, WorkoutSet } from '@/data/types';
 import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { alive, newEntity, softDelete, touch } from './base';
+import {
+  persistRecordsForCompletedSet,
+  reconcileRecordsForExercises,
+} from './recordReconciliation';
+import { getOneRepMaxFormula } from './settings';
 
 /** What a caller may set on a new set. The identity fields are derived, never passed. */
 export type NewSetValues = Partial<
@@ -14,22 +19,53 @@ export type SetValues = Pick<
   'weight' | 'reps' | 'durationSeconds' | 'distanceMeters' | 'rpe'
 >;
 
-/**
- * Reads and replaces one set under the same IndexedDB write transaction.
- *
- * IndexedDB serializes overlapping read-write transactions that touch this
- * object store. The callback therefore derives its replacement from the state
- * left by the transaction ordered before it, rather than publishing a stale
- * whole-row snapshot after another repository operation has committed.
- */
-async function mutateSet(
+const RECORD_PROJECTION_TABLES = [
+  db.settings,
+  db.exercises,
+  db.workouts,
+  db.workoutExercises,
+  db.workoutSets,
+  db.bodyMeasurements,
+  db.personalRecords,
+] as const;
+
+class CompletedSetNeedsReconciliation extends Error {}
+
+type SetMutation = (set: WorkoutSet) => Promise<boolean>;
+
+async function mutateWithRecordsIfCompleted(
+  setId: string,
+  mutate: SetMutation,
+): Promise<void> {
+  try {
+    await db.transaction('rw', db.workoutSets, async () => {
+      const set = await db.workoutSets.get(setId);
+      if (set === undefined) return;
+      if (set.isCompleted === 1) throw new CompletedSetNeedsReconciliation();
+      await mutate(set);
+    });
+    return;
+  } catch (error) {
+    if (!(error instanceof CompletedSetNeedsReconciliation)) throw error;
+  }
+
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+    const set = await db.workoutSets.get(setId);
+    if (set === undefined) return;
+    const changed = await mutate(set);
+    if (changed) {
+      await reconcileRecordsForExercises([set.exerciseId], await getOneRepMaxFormula());
+    }
+  });
+}
+
+async function reconcileCompletedSetMutation(
   setId: string,
   changes: (set: WorkoutSet) => Partial<WorkoutSet>,
 ): Promise<void> {
-  await db.transaction('rw', db.workoutSets, async () => {
-    const set = await db.workoutSets.get(setId);
-    if (set === undefined) return;
+  await mutateWithRecordsIfCompleted(setId, async (set) => {
     await db.workoutSets.put(touch(set, changes(set)));
+    return true;
   });
 }
 
@@ -192,7 +228,7 @@ export async function insertWarmupSets(
  * the old one under a blank cell.
  */
 export async function updateSetValues(setId: string, values: Partial<SetValues>): Promise<void> {
-  await mutateSet(setId, () => values);
+  await reconcileCompletedSetMutation(setId, () => values);
 }
 
 /**
@@ -205,7 +241,7 @@ export async function updateSetValues(setId: string, values: Partial<SetValues>)
  * towards volume and records (`isWorkingSet`).
  */
 export async function updateSetType(setId: string, setType: SetType): Promise<void> {
-  await mutateSet(setId, () => ({ setType }));
+  await reconcileCompletedSetMutation(setId, () => ({ setType }));
 }
 
 /**
@@ -217,7 +253,23 @@ export async function completeSet(
   setId: string,
   values: Partial<SetValues> = {},
 ): Promise<void> {
-  await mutateSet(setId, () => ({ ...values, isCompleted: 1, performedAt: Date.now() }));
+  await db.transaction('rw', RECORD_PROJECTION_TABLES, async () => {
+    const set = await db.workoutSets.get(setId);
+    if (set === undefined) return;
+
+    const newlyCompleted = set.isCompleted === 0;
+    await db.workoutSets.put(
+      touch(set, {
+        ...values,
+        isCompleted: 1,
+        performedAt: newlyCompleted ? Date.now() : set.performedAt,
+      }),
+    );
+
+    const formula = await getOneRepMaxFormula();
+    if (newlyCompleted) await persistRecordsForCompletedSet(setId, formula);
+    else await reconcileRecordsForExercises([set.exerciseId], formula);
+  });
 }
 
 /**
@@ -228,14 +280,13 @@ export async function completeSet(
  * the history and out of the previous-value column.
  */
 export async function uncompleteSet(setId: string): Promise<void> {
-  await mutateSet(setId, () => ({ isCompleted: 0, performedAt: 0 }));
+  await reconcileCompletedSetMutation(setId, () => ({ isCompleted: 0, performedAt: 0 }));
 }
 
 /** Renumbers what is left: "série 1, série 3" is a hole you can read on screen. */
 export async function deleteSet(setId: string): Promise<void> {
-  await db.transaction('rw', db.workoutSets, async () => {
-    const set = await db.workoutSets.get(setId);
-    if (set === undefined) return;
+  await mutateWithRecordsIfCompleted(setId, async (set) => {
+    if (set.deletedAt !== 0) return false;
     await softDelete(db.workoutSets, setId);
 
     const renumbered = (await liveSetsOf(set.workoutExerciseId))
@@ -244,6 +295,7 @@ export async function deleteSet(setId: string): Promise<void> {
       .map(({ row, order }) => touch(row, { order }));
 
     if (renumbered.length > 0) await db.workoutSets.bulkPut(renumbered);
+    return true;
   });
 }
 
@@ -260,9 +312,8 @@ export async function deleteSet(setId: string): Promise<void> {
  * D'où le tri à deux clés : l'ordre, puis la rescapée d'abord à égalité.
  */
 export async function restoreSet(setId: string): Promise<void> {
-  await db.transaction('rw', db.workoutSets, async () => {
-    const set = await db.workoutSets.get(setId);
-    if (set === undefined || set.deletedAt === 0) return;
+  await mutateWithRecordsIfCompleted(setId, async (set) => {
+    if (set.deletedAt === 0) return false;
 
     await db.workoutSets.put(touch(set, { deletedAt: 0 }));
 
@@ -273,5 +324,6 @@ export async function restoreSet(setId: string): Promise<void> {
       .map(({ row, order }) => touch(row, { order }));
 
     if (renumbered.length > 0) await db.workoutSets.bulkPut(renumbered);
+    return true;
   });
 }

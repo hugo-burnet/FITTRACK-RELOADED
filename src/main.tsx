@@ -4,7 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import { BootScreen, SeedErrorBanner } from './app/Boot';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
-import { seedDatabase } from './data/seed/seedDatabase';
+import { initializePersistentData } from './data/initialize';
 import { watchAppUpdate } from './platform/appUpdate';
 import { watchInstall } from './platform/install';
 import { router } from './router';
@@ -15,7 +15,7 @@ import './index.css';
 // re-applies it from the single source of truth so the two cannot drift.
 applyTheme(loadTheme());
 
-// Both before `createRoot`, and both deliberately outside the seed's promise:
+// Both before `createRoot`, and both deliberately outside initialization:
 // `beforeinstallprompt` can fire before the first render and is lost if nothing
 // is listening, and registering the worker is what makes the *next* cold start
 // work offline — neither has any reason to wait on the exercise catalogue.
@@ -39,11 +39,11 @@ function mount(seedFailed: boolean) {
   );
 }
 
-// The catalogue has to be in place before the first screen queries it, so the
-// boot screen holds until the seed resolves.
+// Persistent projections have to be ready before the first screen queries
+// them, so the boot screen holds until initialization resolves.
 root.render(<BootScreen />);
 
-void seedDatabase().then(
+void initializePersistentData().then(
   () => mount(false),
   (error: unknown) => {
     // A failed seed must never leave a blank screen. The app starts anyway and

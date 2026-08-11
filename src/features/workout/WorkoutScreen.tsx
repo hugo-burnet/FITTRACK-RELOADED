@@ -25,14 +25,13 @@ import {
   setAvailablePlateWeightsKg,
 } from '@/data/repositories/settings';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
-import { listRecordSets } from '@/data/repositories/workoutHistory';
+import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { isDeloadEligibleMeasurement } from '@/lib/deload';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
-import { workoutRecordKinds } from '@/lib/records';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
@@ -61,7 +60,10 @@ import { platesConfigFor } from './plateConfig';
 import { unlockChime } from './restChime';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
-import { WorkoutExerciseCard } from './WorkoutExerciseCard';
+import {
+  WorkoutExerciseCard,
+  workoutRecordNotices,
+} from './WorkoutExerciseCard';
 import {
   INITIAL_WORKOUT_FOLD_COMMAND,
   nextWorkoutFoldCommand,
@@ -119,9 +121,10 @@ export function WorkoutScreen() {
   );
   const availablePlateWeightsKg = useLiveQuery(getAvailablePlateWeightsKg);
 
-  // Records are derived live, so edits and deletions need no invalidation state.
-  const exerciseIds = detail?.exercises.map((line) => line.row.exerciseId) ?? [];
-  const recordSets = useLiveQuery(() => listRecordSets(exerciseIds), [exerciseIds.join()]);
+  const recordEntries = useLiveQuery(
+    async () => (active == null ? [] : listRecordsForWorkout(active.id)),
+    [active?.id],
+  );
 
   // Mobile browsers require a user gesture before later timer-driven audio.
   useEffect(() => {
@@ -200,10 +203,7 @@ export function WorkoutScreen() {
     rest.start(setId, plan.seconds);
   };
 
-  const records = workoutRecordKinds(
-    exercises.map(({ row, sets }) => ({ exerciseId: row.exerciseId, sets })),
-    recordSets,
-  );
+  const records = workoutRecordNotices(recordEntries ?? []);
 
   const totalSets = exercises.reduce((count, line) => count + line.sets.length, 0);
   const completedSets = exercises.reduce(

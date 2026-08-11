@@ -1,3 +1,5 @@
+import type { OneRepMaxFormula } from '@/lib/oneRepMax';
+
 /** Persisted data contract. Indexed fields use `0 | 1` and sentinels, never null. */
 
 export interface Syncable {
@@ -201,16 +203,28 @@ export interface WorkoutSet extends Syncable {
 }
 
 export type PersonalRecordType =
-  'max_weight' | 'max_reps' | 'best_1rm' | 'max_volume_set' | 'max_volume_session';
+  | 'max_weight'
+  | 'max_added_weight'
+  | 'min_assistance'
+  | 'max_reps'
+  | 'best_1rm'
+  | 'max_volume_set'
+  | 'max_volume_session'
+  | 'max_duration'
+  | 'max_distance';
 
 export interface PersonalRecord extends Syncable {
   exerciseId: string;
   type: PersonalRecordType;
   value: number;
+  achievedAt: number;
+  workoutId: string;
   reps?: number; // context: 100 kg × 5 reps
   weight?: number;
-  workoutSetId: string;
-  achievedAt: number;
+  workoutSetId?: string;
+  durationSeconds?: number;
+  distanceMeters?: number;
+  formula?: OneRepMaxFormula;
 }
 
 export interface BodyMeasurement extends Syncable {

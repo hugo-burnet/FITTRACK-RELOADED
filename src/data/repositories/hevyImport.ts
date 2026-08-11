@@ -26,6 +26,8 @@ import {
   nextHevyImportFolderName,
 } from './hevyRoutineImport';
 import { buildHevyWorkoutEntities } from './hevyWorkoutEntities';
+import { reconcileRecordsForExercises } from './recordReconciliation';
+import { getOneRepMaxFormula } from './settings';
 
 export type HevyExerciseResolution =
   | { kind: 'existing'; exerciseId: string }
@@ -332,6 +334,9 @@ export async function importHevyWorkouts(
       db.workouts,
       db.workoutExercises,
       db.workoutSets,
+      db.personalRecords,
+      db.bodyMeasurements,
+      db.settings,
       db.routineFolders,
       db.routines,
       db.routineExercises,
@@ -455,6 +460,12 @@ export async function importHevyWorkouts(
       await db.routines.bulkAdd(created.flatMap((group) => group.routines));
       await db.routineExercises.bulkAdd(created.flatMap((group) => group.rows));
       await db.routineSets.bulkAdd(created.flatMap((group) => group.sets));
+
+      const importedExerciseIds = [...new Set(entities.rows.map((row) => row.exerciseId))];
+      await reconcileRecordsForExercises(
+        importedExerciseIds,
+        await getOneRepMaxFormula(),
+      );
 
       return {
         importedWorkouts: entities.workouts.length,

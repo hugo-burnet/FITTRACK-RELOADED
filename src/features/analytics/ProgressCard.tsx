@@ -41,7 +41,7 @@ export function ProgressCard({ metric, points, selectedIndex, onSelect, stale }:
   const { min, max } = plotBounds(values);
   const best = bestPointIndex(points, metric.betterWhen);
   const selected = points[selectedIndex] ?? last;
-  const reading = (value: number) => metricReading(value, metric.unit);
+  const reading = (value: number) => metricReading(value, metric.unit, metric.key);
 
   const summary =
     points.length === 1
