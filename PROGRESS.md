@@ -43,9 +43,21 @@ navigateur à 375 px : 96 × 256 px par silhouette, section de 417 px (comparabl
 (pectoraux à 1, triceps et épaules à 0,4), 12 à pleine intensité sur le stepper, et **aucune
 section** sur « Mobilité », qui n'a rien à montrer.
 
-⚠️ **Le rendu lui-même n'a pas été regardé** : le panneau navigateur n'était pas affiché, donc
-aucune capture n'était possible. Tout ci-dessus est mesuré au DOM, pas vu. **C'est le premier
-point du checkpoint.**
+**Le corps était invisible, et les mesures au DOM ne l'ont pas vu.** Remonté par l'utilisateur
+(« je ne vois absolument aucun schéma ») après une première passe déclarée vérifiée. Le
+remplissage `--surface-2` du corps mesure **1,11:1** contre la carte et le contour `--border`
+**1,45:1** ; en prime, `stroke-width` à 0,1 dans un viewBox large de 35 se rend à **0,28 px**.
+Le corps était un fantôme et seuls les muscles allumés ressortaient — des taches blanches
+flottantes, pas une anatomie. Contour repassé en `--axis` (l'encre de trait de la charte,
+3,5:1 sur une carte) à `stroke-width` 0,3, soit 0,82 px.
+
+**La leçon, et elle vaut au-delà de ce lot :** géométrie mesurée ≠ chose visible. Compter des
+nœuds, des tailles et des `fill-opacity` au DOM prouve que le dessin *existe*, jamais qu'on le
+*voit*. La contre-mesure est de rasteriser : le SVG est sérialisé avec ses variables résolues,
+dessiné sur un canvas par-dessus la couleur de la carte, et les pixels sont comptés. Après
+correction : 62 488 px de fond, **14 474 px de corps**, **4 170 px de contour**, 2 065 px de
+muscle allumé, et **10,7 % du raster à 3:1 ou mieux** contre 2 % avant. C'est une vérification
+qui marche sans capture d'écran, donc sans panneau navigateur affiché.
 
 **Checkpoint téléphone :**
 - [ ] Ouvrir « Développé couché (barre) » : les pectoraux sont allumés, les triceps et les

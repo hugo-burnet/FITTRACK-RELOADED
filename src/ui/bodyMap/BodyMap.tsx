@@ -88,7 +88,15 @@ function Silhouette({
        of an 812 px screen and pushed the records off it. Height fixed, width
        derived from the viewBox. */
     <svg viewBox={viewBox} className="h-64 w-auto" aria-hidden>
-      <g fill="var(--surface-2)" stroke="var(--border)" strokeWidth={0.1}>
+      {/* Outlined in `--axis`, not `--border`, and at three times the width.
+          Measured on the card: the surface fill sits at 1,11:1 against it and
+          `--border` at 1,45:1 — both invisible — and 0.1 in a 35-wide viewBox
+          renders as 0,28 px. The body was a ghost and only the lit muscles
+          showed, which reads as white patches rather than as an anatomy.
+          `--axis` is the charte's line ink, 3,5:1 on a card, and it makes this
+          a line drawing: an unlit muscle is told from its neighbour by its
+          outline, which is what an anatomical plate does anyway. */}
+      <g fill="var(--surface-2)" stroke="var(--axis)" strokeWidth={0.3}>
         {regions.map((region) => (
           <path key={region.id} d={region.path} />
         ))}
