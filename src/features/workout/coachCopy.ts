@@ -19,14 +19,27 @@ export function coachSignalMessage(signal: SignalLike): string {
       const sets = evidenceValue(signal, 'working_sets') ?? 0;
       const reps = evidenceValue(signal, 'target_reps_max') ?? 0;
       const current = evidenceValue(signal, 'current_load_kg');
-      const assist = current !== undefined && weight < current;
+      // `47,5 → 50`, never `+50`: the figure on the card is the load to put on
+      // the bar, so a `+` in front of it reads as an increment of fifty kilos.
+      // The step is the distance between the two numbers, and it shows itself.
+      if (current === undefined) {
+        return t('coach.range_completed_plain', {
+          weight: formatNumber(weight),
+          sets,
+          reps,
+        });
+      }
+      // Assistance gets lighter as you get stronger: same arrow, number down.
+      const assist = weight < current;
       return assist
         ? t('coach.range_completed_assist', {
+            current: formatNumber(current),
             weight: formatNumber(weight),
             sets,
             reps,
           })
         : t('coach.range_completed', {
+            current: formatNumber(current),
             weight: formatNumber(weight),
             sets,
             reps,

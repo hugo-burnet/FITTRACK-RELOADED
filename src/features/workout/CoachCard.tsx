@@ -11,6 +11,12 @@ type Props = {
   signal: SignalLike;
   /** Optional dismiss for live pending recommendations. */
   onDismiss?: () => void;
+  /**
+   * Optional apply for a live objective that carries a load. Tapping the card
+   * body writes it onto the sets left to do — the plan's "never pre-fill" rule
+   * is about the app deciding alone, not about the user asking for it.
+   */
+  onApply?: () => void;
   /** Visual register: objective (next session) vs observation (finish / live). */
   tone?: 'objective' | 'signal';
   /**
@@ -42,6 +48,7 @@ type Props = {
 export function CoachCard({
   signal,
   onDismiss,
+  onApply,
   tone = 'signal',
   exerciseName,
   variant = 'row',
@@ -49,6 +56,9 @@ export function CoachCard({
   dateLabel,
 }: Props) {
   const hasLoad = signal.nextLoadKg !== undefined;
+  // Nothing to apply without a load: an observation (plateau, long rest) has no
+  // figure to write into the grid.
+  const applicable = hasLoad && onApply !== undefined;
   const role =
     tone === 'objective' ? t('coach.objective') : t('coach.title');
   const reason = coachSignalMessage(signal);
@@ -60,6 +70,55 @@ export function CoachCard({
       : // One engraved reading in a Card — hairline only, no rounded island on island.
         'w-full border-b border-[var(--border)] px-4 py-4 last:border-b-0';
 
+  const body = (
+    <>
+      {/* Meta row: role + optional journal chrome. Engraved, never a kicker parade. */}
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <p className="label-xs font-semibold text-[var(--text-2)]">{role}</p>
+        {dateLabel !== undefined && <p className="text-sm text-[var(--text-2)]">{dateLabel}</p>}
+        {statusLabel !== undefined && (
+          <p className="label-xs font-semibold text-[var(--text-2)]">{statusLabel}</p>
+        )}
+      </div>
+
+      {exerciseName !== undefined && exerciseName !== '' && (
+        <p className="mt-1.5 truncate text-base font-medium text-[var(--text-1)]">
+          {exerciseName}
+        </p>
+      )}
+
+      {/*
+        The plate stamp: only when the rule proposes a load.
+        Observations (drop, plateau, rest) lead with prose — a fake hero
+        metric would invent precision the signal does not have.
+      */}
+      {hasLoad ? (
+        <p className="record-figure mt-2 text-[1.75rem] leading-none font-semibold tracking-tight text-[var(--text-1)]">
+          {formatNumber(signal.nextLoadKg!)}
+          <span className="ml-1.5 text-base font-semibold tracking-normal text-[var(--text-2)]">
+            {t('units.kg')}
+          </span>
+        </p>
+      ) : null}
+
+      <p
+        className={`text-sm leading-snug text-pretty text-[var(--text-1)] ${
+          hasLoad || exerciseName ? 'mt-2' : 'mt-1.5'
+        }`}
+      >
+        {reason}
+      </p>
+
+      {/* The gesture has to be written down: a tap target nothing announces is
+          a tap target nobody finds, least of all mid-set. */}
+      {applicable && (
+        <p className="label-xs mt-2 font-semibold text-[var(--text-2)]">
+          {t('coach.applyHint')}
+        </p>
+      )}
+    </>
+  );
+
   return (
     <article
       className={shell}
@@ -68,46 +127,22 @@ export function CoachCard({
       aria-label={role}
     >
       <div className="flex items-start gap-3">
-        <div className="min-w-0 flex-1">
-          {/* Meta row: role + optional journal chrome. Engraved, never a kicker parade. */}
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="label-xs font-semibold text-[var(--text-2)]">{role}</p>
-            {dateLabel !== undefined && (
-              <p className="text-sm text-[var(--text-2)]">{dateLabel}</p>
-            )}
-            {statusLabel !== undefined && (
-              <p className="label-xs font-semibold text-[var(--text-2)]">{statusLabel}</p>
-            )}
-          </div>
-
-          {exerciseName !== undefined && exerciseName !== '' && (
-            <p className="mt-1.5 truncate text-base font-medium text-[var(--text-1)]">
-              {exerciseName}
-            </p>
-          )}
-
-          {/*
-            The plate stamp: only when the rule proposes a load.
-            Observations (drop, plateau, rest) lead with prose — a fake hero
-            metric would invent precision the signal does not have.
-          */}
-          {hasLoad ? (
-            <p className="record-figure mt-2 text-[1.75rem] leading-none font-semibold tracking-tight text-[var(--text-1)]">
-              {formatNumber(signal.nextLoadKg!)}
-              <span className="ml-1.5 text-base font-semibold tracking-normal text-[var(--text-2)]">
-                {t('units.kg')}
-              </span>
-            </p>
-          ) : null}
-
-          <p
-            className={`text-sm leading-snug text-pretty text-[var(--text-1)] ${
-              hasLoad || exerciseName ? 'mt-2' : 'mt-1.5'
-            }`}
+        {applicable ? (
+          // The whole reading is the button — one big target, thumb-sized by
+          // construction. `-m*/p*` keeps the text where it was while the
+          // pressable area covers the band.
+          <button
+            type="button"
+            onClick={onApply}
+            aria-label={t('coach.applyAction', { weight: formatNumber(signal.nextLoadKg!) })}
+            className="-m-2 min-w-0 flex-1 rounded-xl p-2 text-left
+              transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
           >
-            {reason}
-          </p>
-        </div>
+            {body}
+          </button>
+        ) : (
+          <div className="min-w-0 flex-1">{body}</div>
+        )}
 
         {onDismiss !== undefined && (
           <button

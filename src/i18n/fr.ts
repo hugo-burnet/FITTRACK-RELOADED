@@ -291,11 +291,15 @@ const fr = {
     title: 'Coach',
     dismiss: 'Ignorer',
     objective: 'Objectif proposé',
+    applyHint: 'Appuyer pour appliquer aux séries restantes',
+    applyAction: 'Appliquer {weight} kg aux séries restantes',
     nextLoad: 'Prochaine charge : {weight} kg',
     range_completed:
-      '+{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+      '{current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_assist:
-      'Assistance → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+      'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_completed_plain:
+      '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     intra_session_drop:
       'Chute en séance : {first} → {low} reps (−{drop}).',
     plateau: 'Plateau : {sessions} séances sans progrès du 1RM estimé ({value} kg).',

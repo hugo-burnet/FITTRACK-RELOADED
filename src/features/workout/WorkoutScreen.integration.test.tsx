@@ -14,6 +14,7 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { useRestTimer } from '@/stores/restTimer';
+import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutScreen } from './WorkoutScreen';
 
@@ -206,5 +207,82 @@ describe('WorkoutScreen — persistance', () => {
     expect(
       screen.queryByRole('button', { name: `Déplacer ${second.name}` }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('WorkoutScreen — objectif du coach', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  afterEach(() => useRestTimer.getState().stop());
+
+  it('applique la charge proposée aux séries restantes quand on appuie dessus', async () => {
+    const workoutId = await seedActiveWorkout();
+    const detail = await getWorkoutDetail(workoutId);
+    const exerciseId = detail?.exercises[0]?.row.exerciseId ?? '';
+
+    await recordCoachSignals([
+      {
+        exerciseId,
+        code: 'range_completed',
+        severity: 1,
+        nextLoadKg: 50,
+        evidence: [
+          { label: 'working_sets', value: 3 },
+          { label: 'target_reps_max', value: 12 },
+          { label: 'current_load_kg', value: 47.5 },
+          { label: 'next_load_kg', value: 50 },
+        ],
+      },
+    ]);
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    // La carte porte le chiffre et la phrase qui l'explique, sans « + » trompeur.
+    expect(await screen.findByText('47,5 → 50 kg car 3 × 12 a atteint le haut de la fourchette.'))
+      .toBeVisible();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Appliquer 50 kg aux séries restantes' }),
+    );
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ targetWeight: 50, isCompleted: 0 });
+    });
+  });
+
+  it('laisse refuser sans rien écrire dans la grille', async () => {
+    const workoutId = await seedActiveWorkout();
+    const detail = await getWorkoutDetail(workoutId);
+    const exerciseId = detail?.exercises[0]?.row.exerciseId ?? '';
+
+    await recordCoachSignals([
+      {
+        exerciseId,
+        code: 'range_completed',
+        severity: 1,
+        nextLoadKg: 50,
+        evidence: [
+          { label: 'working_sets', value: 3 },
+          { label: 'target_reps_max', value: 12 },
+          { label: 'current_load_kg', value: 47.5 },
+          { label: 'next_load_kg', value: 50 },
+        ],
+      },
+    ]);
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await user.click(await screen.findByRole('button', { name: t('coach.dismiss') }));
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ targetWeight: undefined });
+    });
+    expect(screen.queryByText(/haut de la fourchette/)).not.toBeInTheDocument();
   });
 });

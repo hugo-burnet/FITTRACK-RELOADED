@@ -25,6 +25,7 @@ import {
   setAvailablePlateWeightsKg,
 } from '@/data/repositories/settings';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
+import { applyCoachObjective } from '@/data/repositories/coachApply';
 import {
   dismissRecommendation,
   listPendingRecommendations,
@@ -395,6 +396,17 @@ export function WorkoutScreen() {
                       : () =>
                           void dismissRecommendation(
                             coachByExercise.get(line.row.exerciseId)!.id,
+                          )
+                  }
+                  onApplyCoach={
+                    // Left undefined without a load: an observation has nothing
+                    // to write, and a dead tap target is worse than none.
+                    coachByExercise.get(line.row.exerciseId)?.nextLoadKg === undefined
+                      ? undefined
+                      : () =>
+                          void applyCoachObjective(
+                            line.row.id,
+                            coachByExercise.get(line.row.exerciseId)!.nextLoadKg!,
                           )
                   }
                 />

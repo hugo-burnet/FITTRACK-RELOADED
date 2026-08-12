@@ -80,6 +80,8 @@ type Props = {
   /** Pending coach objective from a previous session — display only, never pre-fills. */
   coachObjective?: CoachRecommendation;
   onDismissCoach?: () => void;
+  /** Tap on the objective writes its load onto the sets left to do. */
+  onApplyCoach?: () => void;
 };
 
 const alternationMark = (index: number): string => String.fromCharCode(65 + index);
@@ -106,6 +108,7 @@ export function WorkoutExerciseCard({
   onAddSet,
   coachObjective,
   onDismissCoach,
+  onApplyCoach,
 }: Props) {
   const { row, exercise, sets, previous } = line;
   const identity = workoutExerciseIdentityOf(line);
@@ -294,6 +297,7 @@ export function WorkoutExerciseCard({
                   tone="objective"
                   variant="strip"
                   onDismiss={onDismissCoach}
+                  onApply={onApplyCoach}
                 />
               </div>
             )}
