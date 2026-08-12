@@ -2,7 +2,53 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-12 (**Release v0.3.1 — le coach s'applique d'un appui, et le
+**Dernière mise à jour :** 2026-08-12 (**Release v0.3.2 — le coach arrête de crier au loup, et un
+refus ne l'éteint plus**).
+
+Deuxième retour de terrain de la journée, quatre corrections. Trois d'entre elles sont des défauts
+que seule une vraie séance pouvait révéler.
+
+**1. La règle de chute de reps criait au loup.** Signalé : `80×12, 12, 12, 10` sur une fourchette
+8–12 déclenchait « chute en séance ». Or 10 est **dans la prescription** — la fourchette dit 8 à
+12, et finir à 10 c'est la respecter. `intraSessionDropSignal` ignore désormais une série qui
+reste au-dessus du bas de fourchette ; seule une série qui **passe sous le plancher** est une
+nouvelle. Un coach qu'on apprend à ignorer est un coach qu'on n'écoutera plus le jour où il a
+raison. Deux tests gardent les deux côtés (silence à 10, signal à 7).
+
+**2. La flèche voulait dire deux choses opposées.** La carte d'objectif dit `47,5 → 50 kg`
+(« fais ça ») et l'observation disait `12 → 10 reps` (« j'ai vu ça ») — même grammaire visuelle,
+sens inverses, introduits le même jour. L'observation devient « Baisse de reps observée : 12 puis
+10 (−2). » La flèche reste réservée à ce qui se fait.
+
+**3. Un refus éteignait la règle à vie.** `sameProposal` traitait « même exercice + même code +
+pas de charge » comme la même proposition : refuser une fois « chute de reps » suffisait à ne
+plus jamais la revoir sur cet exercice. Or refuser porte sur un **chiffre** (« non, pas 50 kg »),
+pas sur une règle. Un signal sans charge n'est donc plus jamais mis en sourdine durablement — son
+refus finit avec sa séance. Une règle qu'un seul appui peut tuer est une règle sur laquelle on ne
+peut plus compter.
+
+**4. L'appui : un chevron, pas une phrase.** « Appuyer pour appliquer aux séries restantes »
+disparaît au profit du `ChevronRightIcon` déjà utilisé par `ListRow` pour « cette ligne fait
+quelque chose ». Une phrase qui explique qu'une carte est tapable se lit une fois et s'enjambe
+ensuite pour toujours. Et **la carte se ferme dès qu'on a appuyé** : appliquer, c'est accepter,
+donc la reco passe en `followed` et sort de la file d'attente. Elle se ferme parce qu'elle quitte
+`pending`, pas par un drapeau local qu'un remontage oublierait (règle n°4).
+
+**Compromis assumé du point 4 :** si tu appliques puis que tu changes la charge en cours de
+série, le journal dira « suivie » à la charge proposée. Marquer l'intention est plus juste que de
+ne rien marquer, et `reconcileFollowedLoads` continue de rattraper le cas inverse — suivre la
+proposition sans avoir appuyé.
+
+**Ce qui reste ouvert : la baisse de charge.** Aucune des quatre règles ne propose de
+**descendre**. Le roadmap la promet pourtant (« si échec deux séances de suite → maintien puis
+diminution », [00-ROADMAP.md](docs/plans/00-ROADMAP.md)) et le plan détaillé du lot ne l'a jamais
+retenue — sans que l'abandon soit consigné nulle part. C'est le motif exact du trou de RF-06
+attrapé en juillet. Le câblage est prêt : `applyCoachObjective` se moque du sens, un test applique
+déjà 50 → 45 kg sur une machine assistée. Il ne manque que la règle.
+
+Portes locales : lint, typecheck, **1305 tests dans 119 fichiers**, build PWA.
+
+**Mise à jour précédente :** 2026-08-12 (**Release v0.3.1 — le coach s'applique d'un appui, et le
 « +50 kg » qui voulait dire « passe à 50 »**).
 
 Première session de terrain du Lot 18. Trois retours, dont un vrai bug, une fausse alerte et une
