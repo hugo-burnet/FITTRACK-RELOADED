@@ -45,6 +45,21 @@ export function coachSignalMessage(signal: SignalLike): string {
             reps,
           });
     }
+    case 'range_missed': {
+      const weight = signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg') ?? 0;
+      const current = evidenceValue(signal, 'current_load_kg') ?? 0;
+      const params = {
+        current: formatNumber(current),
+        weight: formatNumber(weight),
+        floor: evidenceValue(signal, 'target_reps') ?? 0,
+        low: evidenceValue(signal, 'low_reps') ?? 0,
+        sessions: evidenceValue(signal, 'sessions') ?? 0,
+      };
+      // Assistance again: backing off means *more* weight on the machine.
+      return weight > current
+        ? t('coach.range_missed_assist', params)
+        : t('coach.range_missed', params);
+    }
     case 'intra_session_drop':
       return t('coach.intra_session_drop', {
         first: evidenceValue(signal, 'first_reps') ?? 0,

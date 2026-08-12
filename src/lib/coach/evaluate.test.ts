@@ -162,6 +162,98 @@ describe('range_completed', () => {
   });
 });
 
+describe('range_missed', () => {
+  const missedSession = (workoutId: string, startedAt: number, weight: number) =>
+    line({
+      exerciseId: 'bench',
+      workoutId,
+      workoutStartedAt: startedAt,
+      sets: [
+        set({ order: 0, reps: 7, weight, performedAt: startedAt }),
+        set({ order: 1, reps: 6, weight, performedAt: startedAt + 120_000 }),
+      ],
+    });
+
+  it('backs off one increment after two sessions under the floor at the same load', () => {
+    const signals = evaluateCoach([
+      missedSession('w1', t0, 80),
+      missedSession('w2', t0 + 3 * 86_400_000, 80),
+    ]);
+
+    expect(signals).toEqual([
+      expect.objectContaining({ code: 'range_missed', exerciseId: 'bench', nextLoadKg: 77.5 }),
+    ]);
+    expect(signals[0]!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'sessions', value: 2 },
+        { label: 'target_reps', value: 8 },
+        { label: 'current_load_kg', value: 80 },
+        { label: 'next_load_kg', value: 77.5 },
+      ]),
+    );
+  });
+
+  it('stays silent after a single bad day', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        workoutStartedAt: t0,
+        sets: [set({ order: 0, reps: 10, weight: 80, performedAt: t0 })],
+      }),
+      missedSession('w2', t0 + 3 * 86_400_000, 80),
+    ]);
+    expect(signals.filter((s) => s.code === 'range_missed')).toEqual([]);
+  });
+
+  it('stays silent when the two misses are not at the same load', () => {
+    const signals = evaluateCoach([
+      missedSession('w1', t0, 85),
+      missedSession('w2', t0 + 3 * 86_400_000, 80),
+    ]);
+    expect(signals.filter((s) => s.code === 'range_missed')).toEqual([]);
+  });
+
+  it('does not read a deload session as a failure', () => {
+    const signals = evaluateCoach([
+      missedSession('w1', t0, 80),
+      { ...missedSession('w2', t0 + 3 * 86_400_000, 64), deloadPercent: 80 },
+    ]);
+    expect(signals.filter((s) => s.code === 'range_missed')).toEqual([]);
+  });
+
+  it('adds assistance instead of removing it on an assisted machine', () => {
+    const assisted = (workoutId: string, startedAt: number) => ({
+      ...missedSession(workoutId, startedAt, 40),
+      measurementType: 'assisted_weight_reps' as const,
+      equipment: 'machine' as const,
+    });
+
+    const signals = evaluateCoach([
+      assisted('w1', t0),
+      assisted('w2', t0 + 3 * 86_400_000),
+    ]);
+    expect(signals[0]).toMatchObject({ code: 'range_missed', nextLoadKg: 45 });
+  });
+
+  it('outranks the rep drop it necessarily comes with', () => {
+    const signals = evaluateCoach([
+      missedSession('w1', t0, 80),
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w2',
+        workoutStartedAt: t0 + 3 * 86_400_000,
+        sets: [
+          set({ order: 0, reps: 12, weight: 80, performedAt: t0 + 3 * 86_400_000 }),
+          set({ order: 1, reps: 5, weight: 80, performedAt: t0 + 3 * 86_400_000 + 120_000 }),
+        ],
+      }),
+    ]);
+    // One signal per exercise, and it is the actionable one.
+    expect(signals.map((s) => s.code)).toEqual(['range_missed']);
+  });
+});
+
 describe('intra_session_drop', () => {
   it('reports a rep collapse from the first working set', () => {
     const signals = evaluateCoach([
@@ -286,8 +378,12 @@ describe('plateau', () => {
       workoutId,
       workoutStartedAt: t0 + day * 86_400_000,
       sets: [
-        set({ order: 0, reps, weight, targetRepsMax: 12 }),
-        set({ order: 1, reps, weight, targetRepsMax: 12 }),
+        // Plancher explicite à 5 : ces séances font des séries de 5, et le
+        // défaut du helper (8) en ferait des échecs répétés — donc un signal
+        // `range_missed`, plus fort que le plateau, qui masquerait ce que ce
+        // bloc teste. La fourchette doit correspondre à ce qui est soulevé.
+        set({ order: 0, reps, weight, targetReps: 5, targetRepsMax: 12 }),
+        set({ order: 1, reps, weight, targetReps: 5, targetRepsMax: 12 }),
       ],
       ...extra,
     });

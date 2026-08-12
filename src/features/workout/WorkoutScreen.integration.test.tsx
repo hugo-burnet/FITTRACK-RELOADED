@@ -291,3 +291,47 @@ describe('WorkoutScreen — objectif du coach', () => {
     expect(screen.queryByText(/haut de la fourchette/)).not.toBeInTheDocument();
   });
 });
+
+describe('WorkoutScreen — baisse de charge', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  afterEach(() => useRestTimer.getState().stop());
+
+  it('applique une charge plus basse aussi bien qu’une plus haute', async () => {
+    const workoutId = await seedActiveWorkout();
+    const detail = await getWorkoutDetail(workoutId);
+    const exerciseId = detail?.exercises[0]?.row.exerciseId ?? '';
+
+    await recordCoachSignals([
+      {
+        exerciseId,
+        code: 'range_missed',
+        severity: 50,
+        nextLoadKg: 77.5,
+        evidence: [
+          { label: 'sessions', value: 2 },
+          { label: 'target_reps', value: 8 },
+          { label: 'low_reps', value: 6 },
+          { label: 'current_load_kg', value: 80 },
+          { label: 'next_load_kg', value: 77.5 },
+        ],
+      },
+    ]);
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    expect(await screen.findByText(/80 → 77,5 kg/)).toBeVisible();
+    await user.click(
+      screen.getByRole('button', { name: 'Appliquer 77,5 kg aux séries restantes' }),
+    );
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ targetWeight: 77.5 });
+    });
+  });
+});

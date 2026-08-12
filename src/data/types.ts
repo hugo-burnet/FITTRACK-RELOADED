@@ -242,6 +242,7 @@ export interface PersonalRecord extends Syncable {
  */
 export type CoachSignalCode =
   | 'range_completed'
+  | 'range_missed'
   | 'intra_session_drop'
   | 'plateau'
   | 'long_rest';

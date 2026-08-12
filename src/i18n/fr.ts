@@ -299,6 +299,10 @@ const fr = {
       'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_plain:
       '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_missed:
+      '{current} → {weight} kg car le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}).',
+    range_missed_assist:
+      'Assistance {current} → {weight} kg car le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}).',
     // Pas de flèche ici : « → » veut dire « fais ça » sur la carte d'objectif,
     // et une observation ne demande rien.
     intra_session_drop:

@@ -4,6 +4,7 @@ import {
   DEFAULT_LOAD_INCREMENT_KG,
   defaultLoadIncrementKg,
   nextLoad,
+  previousLoad,
   resolveLoadIncrementKg,
 } from './loadIncrement';
 
@@ -113,5 +114,35 @@ describe('equipment defaults are gym-credible', () => {
 
   it.each(EQUIPMENT)('%s', (equipment) => {
     expect(DEFAULT_LOAD_INCREMENT_KG[equipment]).toBe(expected[equipment]);
+  });
+});
+
+describe('previousLoad', () => {
+  it('steps one increment down on a loaded bar', () => {
+    expect(previousLoad(100, 2.5, 'weight_reps')).toBe(97.5);
+  });
+
+  it('adds assistance instead of removing it, because more help is easier', () => {
+    expect(previousLoad(40, 5, 'assisted_weight_reps')).toBe(45);
+  });
+
+  it('never goes under zero on added load', () => {
+    expect(previousLoad(2.5, 5, 'reps_only')).toBe(0);
+  });
+
+  it('rounds back onto the increment grid like its twin', () => {
+    expect(previousLoad(100.4, 2.5, 'weight_reps')).toBe(97.5);
+  });
+
+  it('leaves a type with no weight field alone', () => {
+    expect(previousLoad(60, 2.5, 'time_only')).toBe(60);
+  });
+
+  it('is the exact inverse of nextLoad on the grid', () => {
+    const start = 80;
+    expect(previousLoad(nextLoad(start, 2.5, 'weight_reps'), 2.5, 'weight_reps')).toBe(start);
+    expect(
+      previousLoad(nextLoad(start, 5, 'assisted_weight_reps'), 5, 'assisted_weight_reps'),
+    ).toBe(start);
   });
 });

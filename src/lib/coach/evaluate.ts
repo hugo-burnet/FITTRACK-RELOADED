@@ -1,6 +1,6 @@
 import { isWorkingSet } from '@/lib/records';
 import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
-import { nextLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
+import { nextLoad, previousLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
 import type {
   CoachEvaluateOptions,
   CoachEvidence,
@@ -13,9 +13,15 @@ import type {
 const DEFAULT_PLATEAU_SESSIONS = 3;
 const DEFAULT_DROP_REPS = 2;
 const DEFAULT_LONG_REST_MS = 180_000;
+/** Consecutive sessions under the floor, at the same load, before backing off. */
+const MISSED_SESSIONS = 2;
 
 /** Severity ladder — UI keeps one signal per exercise; higher wins. */
 const SEVERITY: Record<CoachSignalCode, number> = {
+  // Above `range_completed`: failing twice is more urgent than succeeding once,
+  // and the two can never fire together anyway — one needs every set at the top
+  // of the range, the other a set under its floor.
+  range_missed: 50,
   range_completed: 40,
   plateau: 30,
   intra_session_drop: 20,
@@ -23,6 +29,7 @@ const SEVERITY: Record<CoachSignalCode, number> = {
 };
 
 const CODE_ORDER: CoachSignalCode[] = [
+  'range_missed',
   'range_completed',
   'plateau',
   'intra_session_drop',
@@ -111,6 +118,80 @@ function rangeCompletedSignal(line: CoachExerciseLine): CoachSignal | undefined 
     nextLoadKg: proposed,
     evidence,
     severity: SEVERITY.range_completed,
+  };
+}
+
+/**
+ * What one session says about the floor of its range: the load worked, and the
+ * worst set under the prescribed minimum. `undefined` means "this session did
+ * not miss", which includes every session the engine cannot read (no range, no
+ * reps, no weight) — silence is the only honest answer there.
+ */
+function floorMiss(
+  line: CoachExerciseLine,
+): { loadKg: number; lowReps: number; floor: number } | undefined {
+  const working = completedWorkingSets(line.sets);
+  if (working.length === 0) return undefined;
+
+  let worst: { reps: number; floor: number } | undefined;
+  for (const set of working) {
+    if (set.targetReps === undefined || set.reps === undefined) return undefined;
+    if (set.reps >= set.targetReps) continue;
+    if (worst === undefined || set.reps < worst.reps) {
+      worst = { reps: set.reps, floor: set.targetReps };
+    }
+  }
+  if (worst === undefined) return undefined;
+
+  const loadKg = [...working].reverse().find((set) => set.weight !== undefined)?.weight;
+  if (loadKg === undefined) return undefined;
+
+  return { loadKg, lowReps: worst.reps, floor: worst.floor };
+}
+
+/**
+ * The other half of double progression, promised by the roadmap: a range missed
+ * twice in a row at the same load earns one increment back down.
+ *
+ * **Two sessions, not one.** A single miss is a bad day — bad sleep, a late
+ * meal, a busy rack. Backing off on one is how a coach teaches you to stop
+ * reading it. And the roadmap's "hold, then decrease" needs no signal for the
+ * hold: saying nothing *is* holding, which is already what the app does.
+ *
+ * **Same load in both**, otherwise the two sessions are not the same attempt
+ * and there is nothing to conclude. Deload sessions are skipped, like
+ * everywhere else — the charges drop on purpose there.
+ */
+function rangeMissedSignal(
+  historyNewestFirst: readonly CoachExerciseLine[],
+): CoachSignal | undefined {
+  const comparable = historyNewestFirst.filter((line) => !isDeloadLine(line));
+  if (comparable.length < MISSED_SESSIONS) return undefined;
+
+  const window = comparable.slice(0, MISSED_SESSIONS);
+  const misses = window.map(floorMiss);
+  if (misses.some((miss) => miss === undefined)) return undefined;
+
+  const [latest, ...earlier] = misses as { loadKg: number; lowReps: number; floor: number }[];
+  if (earlier.some((miss) => miss.loadKg !== latest!.loadKg)) return undefined;
+
+  const line = window[0]!;
+  const increment = resolveLoadIncrementKg(line);
+  const proposed = previousLoad(latest!.loadKg, increment, line.measurementType);
+  if (proposed === latest!.loadKg) return undefined;
+
+  return {
+    code: 'range_missed',
+    exerciseId: line.exerciseId,
+    nextLoadKg: proposed,
+    evidence: [
+      { label: 'sessions', value: MISSED_SESSIONS },
+      { label: 'target_reps', value: latest!.floor },
+      { label: 'low_reps', value: latest!.lowReps },
+      { label: 'current_load_kg', value: latest!.loadKg },
+      { label: 'next_load_kg', value: proposed },
+    ],
+    severity: SEVERITY.range_missed,
   };
 }
 
@@ -294,6 +375,9 @@ export function collectCoachSignals(
 
     const range = rangeCompletedSignal(latest);
     if (range) signals.push(range);
+
+    const missed = rangeMissedSignal(newestFirst);
+    if (missed) signals.push(missed);
 
     const drop = intraSessionDropSignal(latest, dropReps);
     if (drop) signals.push(drop);

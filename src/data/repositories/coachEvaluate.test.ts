@@ -55,7 +55,10 @@ function seedSession(id: string, startedAt: number, reps: number, weight: number
       side: 'both',
       weight,
       reps,
-      targetReps: 8,
+      // Plancher à 5 : ces séances sont des séries de 5. Le laisser à 8 en
+      // ferait deux échecs consécutifs à la même charge, donc un signal
+      // `range_missed` légitime — mais ce n'est pas ce que ce test observe.
+      targetReps: 5,
       targetRepsMax: 12,
       isCompleted: 1,
       performedAt: startedAt + order * 120_000,
