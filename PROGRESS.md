@@ -2,7 +2,43 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-12 (**Release v0.3.2 — le coach arrête de crier au loup, et un
+**Dernière mise à jour :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
+
+La cinquième règle, `range_missed` : **deux séances de suite sous le bas de fourchette, à la même
+charge → un incrément en moins.** C'est la moitié de RF-48 que le roadmap promettait depuis le
+début et que le plan détaillé n'avait jamais retenue, sans que l'abandon soit consigné.
+
+**Le « maintien » n'est volontairement pas un signal.** Le roadmap dit « maintien puis
+diminution ». Mais un signal qui parle dès le premier bas de fourchette manqué parlerait presque
+chaque séance — le « crier au loup » corrigé quelques heures plus tôt, refait à l'identique.
+L'absence de reco **est** le maintien : c'est déjà ce que l'app dit quand elle se tait. Une seule
+mauvaise séance, c'est du sommeil, un repas tardif ou un rack occupé, pas un programme à corriger.
+
+**Deux garde-fous dans la règle :**
+- **La même charge dans les deux séances**, sinon ce ne sont pas deux tentatives de la même chose
+  et il n'y a rien à conclure.
+- **Les séances de deload sont exclues**, comme partout ailleurs : les charges y baissent exprès.
+
+**`previousLoad` est le miroir exact de `nextLoad`**, même grille, même arrondi, deux inversions
+de signe pour l'assistance — reculer sur une machine assistée, c'est **remettre** du poids
+dessus. Un test vérifie l'aller-retour : `previousLoad(nextLoad(x)) === x`, charge libre comme
+assistée.
+
+**Sévérité 50, au-dessus de `range_completed`** : échouer deux fois est plus urgent que réussir
+une fois. Les deux ne peuvent de toute façon jamais coexister — l'une exige toutes les séries au
+sommet de la fourchette, l'autre une série sous son plancher. En revanche `range_missed` masque
+bien la « baisse de reps » qui l'accompagne forcément, et c'est voulu : entre une observation et
+une charge à appliquer, c'est la charge qui vaut la place.
+
+**Deux tests ont dû changer, et ce ne sont pas les assertions qui étaient en cause.** Les
+fixtures de `plateau` et du deload de `coachEvaluate` prescrivaient une fourchette 8–12 puis
+faisaient des séries de 5, deux séances d'affilée à la même charge : exactement la nouvelle règle.
+Le moteur avait raison, la donnée de test était incohérente. Les fourchettes ont été alignées sur
+ce qui est soulevé, pas les attentes sur ce qui sortait.
+
+Portes locales : lint, typecheck, **1320 tests dans 119 fichiers**, build PWA.
+
+**Mise à jour précédente :** 2026-08-12 (**Release v0.3.2 — le coach arrête de crier au loup, et un
 refus ne l'éteint plus**).
 
 Deuxième retour de terrain de la journée, quatre corrections. Trois d'entre elles sont des défauts
@@ -39,12 +75,8 @@ série, le journal dira « suivie » à la charge proposée. Marquer l'intention
 ne rien marquer, et `reconcileFollowedLoads` continue de rattraper le cas inverse — suivre la
 proposition sans avoir appuyé.
 
-**Ce qui reste ouvert : la baisse de charge.** Aucune des quatre règles ne propose de
-**descendre**. Le roadmap la promet pourtant (« si échec deux séances de suite → maintien puis
-diminution », [00-ROADMAP.md](docs/plans/00-ROADMAP.md)) et le plan détaillé du lot ne l'a jamais
-retenue — sans que l'abandon soit consigné nulle part. C'est le motif exact du trou de RF-06
-attrapé en juillet. Le câblage est prêt : `applyCoachObjective` se moque du sens, un test applique
-déjà 50 → 45 kg sur une machine assistée. Il ne manque que la règle.
+**Ce qui restait ouvert : la baisse de charge.** — **livrée le jour même en v0.3.3**, cf. l'entrée
+en tête de fichier.
 
 Portes locales : lint, typecheck, **1305 tests dans 119 fichiers**, build PWA.
 
