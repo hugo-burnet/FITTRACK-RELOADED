@@ -2,7 +2,52 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-11 (**Lot 18 — coach déterministe, RF-48, sans IA**).
+**Dernière mise à jour :** 2026-08-12 (**Release v0.3.1 — le coach s'applique d'un appui, et le
+« +50 kg » qui voulait dire « passe à 50 »**).
+
+Première session de terrain du Lot 18. Trois retours, dont un vrai bug, une fausse alerte et une
+demande.
+
+**1. Le libellé disait l'inverse de ce qu'il voulait dire.** La carte affiche déjà la charge à
+mettre sur la barre en gros — `50 kg` — et la phrase en dessous reprenait la **même** valeur
+derrière un `+` : « +50 kg car 3 × 12… », pour dire « passe à 50 ». Lu en salle, ça se comprend
+comme « ajoute cinquante kilos ». Le libellé est maintenant un pas entre deux nombres :
+`47,5 → 50 kg car 3 × 12 a atteint le haut de la fourchette.` La variante assistance garde la
+même flèche avec le chiffre qui descend. `coachCopy.test.ts` verrouille les trois cas, dont un
+`not.toContain('+')` explicite.
+
+**2. « Aucune carte Coach en séance » n'était pas un bug.** Vérifié en rejouant la séquence en
+base : une séance terminée en haut de fourchette laisse bien une reco en attente pour la
+suivante. La cause est structurelle et attendue — `version(5)` crée le journal **vide**, sans
+rattrapage, et une reco n'est écrite qu'à l'**enregistrement** d'une séance sous 0.3.0. Il faut
+donc une séance sauvegardée avant que la carte ait quoi que ce soit à montrer. L'historique
+antérieur n'est pas perdu pour autant : le moteur le lit à chaque évaluation (le plateau en a
+besoin). Rien à corriger, mais à savoir avant de conclure à une panne.
+
+**3. Un appui sur la carte applique l'objectif** (`applyCoachObjective`, demande utilisateur).
+Ça ne rouvre pas la décision « ne jamais pré-remplir » de la tranche 3 : ce qui était interdit,
+c'est que l'app décide seule — un chiffre qui apparaît tout seul est un chiffre qu'on arrête de
+lire. Là c'est un geste explicite, et rien n'est verrouillé après. Les règles d'écriture sont
+calquées sur `applyWorkoutDeload`, volontairement : une série déjà validée n'est **jamais**
+réécrite, une série vierge reçoit une **cible** (le champ reste à remplir), une série déjà
+saisie voit sa valeur remplacée. Le statut de la reco n'est pas touché à l'appui — c'est
+`reconcileFollowedLoads` qui tranche en fin de séance sur ce qui a réellement été soulevé,
+et non sur une intention.
+
+Le geste est écrit sur la carte (« Appuyer pour appliquer aux séries restantes ») : une cible
+tactile que rien n'annonce est une cible que personne ne trouve, encore moins entre deux séries.
+« Ignorer » reste un bouton distinct à côté, à 48 px.
+
+Portes locales : lint, typecheck, **1301 tests dans 119 fichiers**, build PWA.
+
+**Checkpoints validés par l'utilisateur le 2026-08-12 :** Lots **5bis, 7, 8, 9, 10, 12, 13**.
+Le Lot 18 reste partiel — l'incrément par exercice et la proposition de fin de séance sont
+vérifiés en salle, la carte en séance et « Ignorer » attendent la prochaine séance (voir le
+point 2 ci-dessus). Le deload est invérifiable à la main sans semaine de décharge : il est
+couvert par `coachEvaluate.test.ts` (« pas de faux plateau en deload ») et validé par le code,
+pas par l'usage. La courbe de progression attend d'avoir assez d'historique.
+
+**Mise à jour précédente :** 2026-08-11 (**Lot 18 — coach déterministe, RF-48, sans IA**).
 
 Plan suivi scrupuleusement : `docs/plans/lot-18-coach-deterministe.md`.
 
@@ -3898,20 +3943,20 @@ ci-dessus fait foi.
 | 3 | Bibliothèque d'exercices | ✅ terminé | 4 | ✅ |
 | 4 | Routines | ✅ terminé | 5 | ✅ |
 | 5 | Séance en direct (cœur) | ✅ terminé | 6 | ✅ **en salle** |
-| 5bis | Schéma musculaire | ✅ terminé | 2026-08-11 | ⬜ **à vérifier sur le téléphone** |
+| 5bis | Schéma musculaire | ✅ terminé | 2026-08-11 | ✅ 2026-08-12 |
 | 6 | Outils de séance | ✅ terminé | 6–7 | ✅ **en salle** |
-| 7 | Historique & calendrier | ✅ terminé | 07A–07C | ⬜ **à confirmer** |
-| 8 | Réglages & export/import | ✅ terminé | — | ⬜ **à confirmer** |
-| 9 | PWA & installation | ✅ terminé | 2026-08-02 | ⬜ **à vérifier sur le téléphone** |
-| 10 | Android (Capacitor) | ✅ terminé | 2026-08-09 | ⬜ **à vérifier sur le téléphone** |
+| 7 | Historique & calendrier | ✅ terminé | 07A–07C | ✅ 2026-08-12 |
+| 8 | Réglages & export/import | ✅ terminé | — | ✅ 2026-08-12 |
+| 9 | PWA & installation | ✅ terminé | 2026-08-02 | ✅ 2026-08-12 |
+| 10 | Android (Capacitor) | ✅ terminé | 2026-08-09 | ✅ 2026-08-12 |
 | 11 | Mesures & photos | 🟨 en cours | — | ⬜ |
-| 12 | Statistiques | 🟨 en cours | 2026-08-11 | ⬜ **à confirmer** |
-| 13 | Records & notifications | 🟨 en cours | 2026-08-11 | ⬜ **à vérifier sur le téléphone** |
+| 12 | Statistiques | 🟨 en cours | 2026-08-11 | ✅ 2026-08-12 (courbe en attente d'historique) |
+| 13 | Records & notifications | 🟨 en cours | 2026-08-11 | ✅ 2026-08-12 |
 | 14 | Sync cloud (optionnel) | ⬜ à faire | — | ⬜ |
 | 15 | Health Connect | ⬜ à faire | — | ⬜ |
 | 16 | Widgets | ⬜ à faire | — | ⬜ |
 | 17 | Périodisation | ⬜ à faire | — | ⬜ |
-| 18 | Auto-progression | ⬜ à faire | — | ⬜ |
+| 18 | Auto-progression | 🟨 en cours | 2026-08-11 → 08-12 | 🟨 **partiel** (carte en séance à revoir) |
 | 19 | Assistant IA | ⬜ à faire | — | ⬜ |
 | 20 | Voix & accessibilité | ⬜ à faire | — | ⬜ |
 
