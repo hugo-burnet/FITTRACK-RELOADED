@@ -126,12 +126,18 @@ function intraSessionDropSignal(
 
   let worst: { set: CoachSetInput; drop: number } | undefined;
   for (let i = 1; i < working.length; i++) {
-    const reps = working[i]!.reps;
+    const set = working[i]!;
+    const reps = set.reps;
     if (reps === undefined) continue;
     const drop = firstReps - reps;
     if (drop < dropReps) continue;
+    // A set that lands inside its own prescription is not a defect. `12, 12, 12,
+    // 10` on an 8–12 range is the range being respected, and calling it a drop
+    // is noise the user has to learn to ignore — which is how a coach stops
+    // being read at all. Only a set that falls *through the floor* is news.
+    if (set.targetReps !== undefined && reps >= set.targetReps) continue;
     if (worst === undefined || drop > worst.drop) {
-      worst = { set: working[i]!, drop };
+      worst = { set, drop };
     }
   }
   if (worst === undefined) return undefined;

@@ -186,6 +186,39 @@ describe('intra_session_drop', () => {
     );
   });
 
+  it('stays silent when the fading set is still inside the prescribed range', () => {
+    // Terrain, 2026-08-12 : 80×12, 12, 12, 10 sur une fourchette 8–12. Rien
+    // n'est tombé sous la prescription — la séance est simplement à maintenir.
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 12, weight: 80 }),
+          set({ order: 1, reps: 12, weight: 80 }),
+          set({ order: 2, reps: 12, weight: 80 }),
+          set({ order: 3, reps: 10, weight: 80 }),
+        ],
+      }),
+    ]);
+    expect(signals).toEqual([]);
+  });
+
+  it('still reports a set that falls through the floor of the range', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 12, weight: 80 }),
+          set({ order: 1, reps: 12, weight: 80 }),
+          set({ order: 2, reps: 7, weight: 80 }),
+        ],
+      }),
+    ]);
+    expect(signals.map((s) => s.code)).toEqual(['intra_session_drop']);
+  });
+
   it('stays silent for a gentle one-rep fade', () => {
     const signals = evaluateCoach([
       line({

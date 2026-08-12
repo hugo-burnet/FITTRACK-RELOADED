@@ -90,3 +90,43 @@ describe('coachRecommendations repository', () => {
     expect(await listPendingRecommendations(['bench'])).toEqual([]);
   });
 });
+
+describe('un refus ne tue que la proposition, pas la règle', () => {
+  beforeEach(resetDb);
+
+  it('laisse une observation revenir à la séance suivante', async () => {
+    const drop: CoachSignal = {
+      exerciseId: 'bench',
+      code: 'intra_session_drop',
+      severity: 20,
+      evidence: [{ label: 'drop_reps', value: 4 }],
+    };
+
+    const [first] = await recordCoachSignals([drop], { recommendedAt: 1_000 });
+    await dismissRecommendation(first!.id);
+
+    // Terrain, 2026-08-12 : refuser une fois éteignait la règle définitivement.
+    await recordCoachSignals([drop], { recommendedAt: 2_000 });
+    expect(await listPendingRecommendations(['bench'])).toHaveLength(1);
+  });
+
+  it('garde une charge refusée hors de la route', async () => {
+    const proposal: CoachSignal = {
+      exerciseId: 'bench',
+      code: 'range_completed',
+      severity: 40,
+      nextLoadKg: 50,
+      evidence: [{ label: 'next_load_kg', value: 50 }],
+    };
+
+    const [first] = await recordCoachSignals([proposal], { recommendedAt: 1_000 });
+    await dismissRecommendation(first!.id);
+
+    await recordCoachSignals([proposal], { recommendedAt: 2_000 });
+    expect(await listPendingRecommendations(['bench'])).toEqual([]);
+
+    // Une autre charge, en revanche, est une autre proposition.
+    await recordCoachSignals([{ ...proposal, nextLoadKg: 52.5 }], { recommendedAt: 3_000 });
+    expect(await listPendingRecommendations(['bench'])).toHaveLength(1);
+  });
+});

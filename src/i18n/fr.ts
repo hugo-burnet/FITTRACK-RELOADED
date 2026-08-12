@@ -291,7 +291,6 @@ const fr = {
     title: 'Coach',
     dismiss: 'Ignorer',
     objective: 'Objectif proposé',
-    applyHint: 'Appuyer pour appliquer aux séries restantes',
     applyAction: 'Appliquer {weight} kg aux séries restantes',
     nextLoad: 'Prochaine charge : {weight} kg',
     range_completed:
@@ -300,8 +299,10 @@ const fr = {
       'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_plain:
       '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    // Pas de flèche ici : « → » veut dire « fais ça » sur la carte d'objectif,
+    // et une observation ne demande rien.
     intra_session_drop:
-      'Chute en séance : {first} → {low} reps (−{drop}).',
+      'Baisse de reps observée : {first} puis {low} (−{drop}).',
     plateau: 'Plateau : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     historySection: 'Recommandations',

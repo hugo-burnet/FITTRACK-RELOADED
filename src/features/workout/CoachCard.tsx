@@ -1,5 +1,6 @@
 import type { CoachSignal } from '@/lib/coach';
 import { t } from '@/i18n/fr';
+import { ChevronRightIcon } from '@/ui/icons';
 import { formatNumber } from '@/ui/numberField';
 import { coachSignalMessage } from './coachCopy';
 
@@ -109,13 +110,6 @@ export function CoachCard({
         {reason}
       </p>
 
-      {/* The gesture has to be written down: a tap target nothing announces is
-          a tap target nobody finds, least of all mid-set. */}
-      {applicable && (
-        <p className="label-xs mt-2 font-semibold text-[var(--text-2)]">
-          {t('coach.applyHint')}
-        </p>
-      )}
     </>
   );
 
@@ -130,15 +124,18 @@ export function CoachCard({
         {applicable ? (
           // The whole reading is the button — one big target, thumb-sized by
           // construction. `-m*/p*` keeps the text where it was while the
-          // pressable area covers the band.
+          // pressable area covers the band. The chevron carries the affordance:
+          // a sentence explaining that a card is tappable is a sentence you read
+          // once and then have to skip forever.
           <button
             type="button"
             onClick={onApply}
             aria-label={t('coach.applyAction', { weight: formatNumber(signal.nextLoadKg!) })}
-            className="-m-2 min-w-0 flex-1 rounded-xl p-2 text-left
+            className="-m-2 flex min-w-0 flex-1 items-center gap-2 rounded-xl p-2 text-left
               transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
           >
-            {body}
+            <span className="min-w-0 flex-1">{body}</span>
+            <ChevronRightIcon className="shrink-0 text-[var(--text-2)]" />
           </button>
         ) : (
           <div className="min-w-0 flex-1">{body}</div>

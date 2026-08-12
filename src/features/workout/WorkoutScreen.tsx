@@ -29,6 +29,7 @@ import { applyCoachObjective } from '@/data/repositories/coachApply';
 import {
   dismissRecommendation,
   listPendingRecommendations,
+  markRecommendationFollowed,
 } from '@/data/repositories/coachRecommendations';
 import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import { SET_TYPES } from '@/data/types';
@@ -403,11 +404,19 @@ export function WorkoutScreen() {
                     // to write, and a dead tap target is worse than none.
                     coachByExercise.get(line.row.exerciseId)?.nextLoadKg === undefined
                       ? undefined
-                      : () =>
-                          void applyCoachObjective(
-                            line.row.id,
-                            coachByExercise.get(line.row.exerciseId)!.nextLoadKg!,
-                          )
+                      : () => {
+                          const objective = coachByExercise.get(line.row.exerciseId)!;
+                          // Applying *is* accepting: the card closes on the spot
+                          // because it leaves `pending`, not by a local flag a
+                          // remount would forget.
+                          void applyCoachObjective(line.row.id, objective.nextLoadKg!).then(
+                            () =>
+                              markRecommendationFollowed(objective.id, {
+                                workoutId: workout.id,
+                                loadKg: objective.nextLoadKg,
+                              }),
+                          );
+                        }
                   }
                 />
                 );

@@ -253,6 +253,11 @@ describe('WorkoutScreen — objectif du coach', () => {
     await waitFor(async () => {
       expect(await firstSet(workoutId)).toMatchObject({ targetWeight: 50, isCompleted: 0 });
     });
+
+    // Appliquer, c'est accepter : la carte se ferme d'elle-même.
+    await waitFor(() => {
+      expect(screen.queryByText(/haut de la fourchette/)).not.toBeInTheDocument();
+    });
   });
 
   it('laisse refuser sans rien écrire dans la grille', async () => {

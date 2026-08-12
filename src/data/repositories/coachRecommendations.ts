@@ -3,9 +3,18 @@ import type { CoachRecommendation, CoachRecommendationStatus } from '@/data/type
 import type { CoachSignal } from '@/lib/coach';
 import { alive, newEntity, softDelete, touch } from './base';
 
+/**
+ * A refusal silences *that proposal*, not the rule that produced it.
+ *
+ * Only a signal carrying a load can be refused durably: "no, not 50 kg" is a
+ * statement about a number, and the number is what comes back. An observation
+ * has no number — dismissing "reps dropped" once would otherwise mute the rule
+ * on that exercise for good, and a rule that can be killed by one tap is a rule
+ * you cannot trust to warn you later. Its dismissal ends with its session.
+ */
 function sameProposal(a: CoachRecommendation, signal: CoachSignal): boolean {
+  if (signal.nextLoadKg === undefined) return false;
   if (a.exerciseId !== signal.exerciseId || a.code !== signal.code) return false;
-  if (a.nextLoadKg === undefined && signal.nextLoadKg === undefined) return true;
   return a.nextLoadKg === signal.nextLoadKg;
 }
 
