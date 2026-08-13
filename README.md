@@ -1,11 +1,58 @@
 # FitTrack
 
-Application personnelle de suivi de musculation. Local-first, hors-ligne, sans compte.
+[![Version](https://img.shields.io/github/v/tag/hugo-burnet/FITTRACK-RELOADED?label=tag&color=2f6f4e)](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases)
+[![Pages](https://img.shields.io/badge/PWA-GitHub%20Pages-12110f)](https://hugo-burnet.github.io/FITTRACK-RELOADED/)
+[![Android](https://img.shields.io/badge/Android-APK-3DDC84)](docs/ANDROID.md)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-43853d)](package.json)
 
-**En ligne :** https://hugo-burnet.github.io/FITTRACK-RELOADED/
+Suivi de musculation personnel. Local-first, hors-ligne, sans compte, sans fil social.
 
-**Sur ton téléphone :** l'app s'installe depuis le navigateur et fonctionne en mode avion —
-[guide PWA](docs/INSTALLATION.md) ou [APK Android](docs/ANDROID.md).
+Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol sans 4G, pas un réseau social.
+
+**En ligne :** [hugo-burnet.github.io/FITTRACK-RELOADED](https://hugo-burnet.github.io/FITTRACK-RELOADED/)  
+**Dernier tag :** [`v0.6.0`](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v0.6.0)
+
+---
+
+## Ce que c’est
+
+- **Séance en direct** — saisie une main, écriture en base à chaque série validée.
+- **Routines** — modèles, dossiers, pas de quota.
+- **Blocs** — périodisation par intention (`loadIndex` + phase). La routine reste le 100 %. Le Coach tranche sur les perfs, il n’invente pas de permissions.
+- **Historique & records** — 1RM, volume, import CSV Hevy, export CSV / Markdown.
+- **PWA et APK** — même code. Capacitor pour Android.
+
+## Ce que ce n’est pas
+
+Pas de compte, pas de cloud obligatoire, pas de likes. Une clé d’API n’a rien à faire dans le bundle (`VITE_*` public = public).
+
+Les données vivent dans IndexedDB (Dexie). Désinstaller l’app les efface. Mettre à jour : installer par-dessus, **sans** désinstaller.
+
+---
+
+## Installer
+
+| Canal | Pour qui | Guide |
+| --- | --- | --- |
+| PWA | Chrome (Android) / Safari (iOS) | [docs/INSTALLATION.md](docs/INSTALLATION.md) |
+| APK signé | Android, hors navigateur | [docs/ANDROID.md](docs/ANDROID.md) |
+
+Un tag `v*` publie l’APK dans une GitHub Release. Pousser `master` seul met à jour Pages, pas la page Releases.
+
+```bash
+git push origin master
+git tag -a v0.6.0 -m "FitTrack v0.6.0" && git push origin v0.6.0
+```
+
+---
+
+## Stack
+
+Vite · React 19 · TypeScript strict · Tailwind v4 · Dexie (IndexedDB) · Zustand (état éphémère uniquement) · React Router **hash** · Vitest · Capacitor 8.
+
+Décisions : [docs/plans/01-ARCHITECTURE.md](docs/plans/01-ARCHITECTURE.md).
+
+---
 
 ## Développement
 
@@ -14,27 +61,36 @@ npm install
 npm run dev
 ```
 
-| Commande            | Rôle                                   |
-| ------------------- | -------------------------------------- |
-| `npm run dev`       | Serveur de développement               |
-| `npm run build`     | Build de production (typecheck inclus) |
-| `npm run test:run`  | Tests unitaires, une passe             |
-| `npm run typecheck` | `tsc --noEmit`                         |
-| `npm run lint`      | ESLint                                 |
+Le `base` Vite suit le nom du dépôt. En local : [http://localhost:5173/FITTRACK-RELOADED/](http://localhost:5173/FITTRACK-RELOADED/).
 
-> Le serveur de dev sert l'app sous `/FITTRACK-RELOADED/` (le `base` de `vite.config.ts`
-> correspond au nom du dépôt GitHub). Ouvre http://localhost:5173/FITTRACK-RELOADED/.
+| Commande | Rôle |
+| --- | --- |
+| `npm run dev` | Serveur de dev (pas de service worker) |
+| `npm run build` | Production (`tsc -b` + Vite) |
+| `npm run preview` | Build local, SW inclus |
+| `npm run test:run` | Tests, une passe |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run android:sync` | Build web Android + `cap sync` |
 
-> Le service worker n'est **pas** actif en développement : `npm run dev` ne l'enregistre pas, et
-> le bandeau de mise à jour ne peut donc pas s'y déclencher. Pour tester le hors-ligne ou une
-> bascule de version, il faut un vrai build : `npm run build && npm run preview`.
+Un push sur `master` lance typecheck, tests, build, puis GitHub Pages. Un échec bloque la mise en ligne.
 
-## Déploiement
+---
 
-Chaque push sur `master` déclenche `.github/workflows/deploy.yml` : typecheck, tests, build,
-puis publication sur GitHub Pages. Un typecheck ou un test en échec bloque la mise en ligne.
+## Documentation
 
-- Conventions : `CLAUDE.md`
-- Feuille de route : `docs/plans/00-ROADMAP.md`
-- Architecture : `docs/plans/01-ARCHITECTURE.md`
-- Avancement : `PROGRESS.md`
+| Document | Contenu |
+| --- | --- |
+| [AGENTS.md](AGENTS.md) | Règles non négociables (agents et humains) |
+| [docs/plans/00-ROADMAP.md](docs/plans/00-ROADMAP.md) | Lots |
+| [docs/plans/01-ARCHITECTURE.md](docs/plans/01-ARCHITECTURE.md) | ADR, modèle |
+| [PROGRESS.md](PROGRESS.md) | État réel |
+| [audit-hevy-cahier-des-charges.md](audit-hevy-cahier-des-charges.md) | Cahier des charges source (`RF-xx`) |
+
+---
+
+## Licence
+
+Usage personnel. Le dépôt n’est pas publié sous une licence open source.
+
+La carte musculaire reprend [Z-Anatomy](licenses/z-anatomy/) (attribution dans ce dossier). La base d’exercices s’appuie sur des jeux de données du domaine public, documentés dans `PROGRESS.md`.
