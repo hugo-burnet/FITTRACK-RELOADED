@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
+import { getActiveProgramDetail } from '@/data/repositories/programs';
 import {
   countRoutinesInFolder,
   createFolder,
@@ -21,12 +22,14 @@ import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
 import {
   ActionSheet,
+  Card,
   ConfirmSheet,
   HeaderAction,
+  ListRow,
   OptionSheet,
 } from '@/ui';
 import type { Option } from '@/ui';
-import { PlusIcon } from '@/ui/icons';
+import { ChevronRightIcon, PlusIcon, ProgramIcon } from '@/ui/icons';
 import { FolderFormSheet } from './FolderFormSheet';
 import { RoutineCollection } from './RoutineCollection';
 import type { RoutineCollectionIntent } from './RoutineCollection';
@@ -46,6 +49,7 @@ export function RoutinesScreen() {
   const navigate = useNavigate();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);
+  const activeProgram = useLiveQuery(() => getActiveProgramDetail(Date.now()));
   const [sheet, setSheet] = useState<SheetState | null>(null);
 
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);
@@ -74,6 +78,15 @@ export function RoutinesScreen() {
   // `undefined` is "not answered yet" — rendering the empty state on it flashes
   // "0 routines" on every load.
   const loaded = summaries !== undefined && folders !== undefined;
+  const programHint =
+    activeProgram === undefined
+      ? t('program.loading')
+      : activeProgram?.position.phase === 'active'
+      ? t('routines.programCurrentWeek', {
+          current: activeProgram.position.weekIndex + 1,
+          total: activeProgram.program.durationWeeks,
+        })
+      : t('routines.programNoneActive');
   const handleCollectionIntent = (intent: RoutineCollectionIntent) => {
     switch (intent.kind) {
       case 'createBlank':
@@ -121,13 +134,25 @@ export function RoutinesScreen() {
         </div>
       }
     >
-      {loaded && (
-        <RoutineCollection
-          summaries={summaries}
-          folders={folders}
-          onIntent={handleCollectionIntent}
-        />
-      )}
+      <div className="flex flex-col gap-6">
+        <Card>
+          <ListRow
+            title={t('routines.programs')}
+            subtitle={programHint}
+            leading={<ProgramIcon />}
+            trailing={<ChevronRightIcon />}
+            onClick={() => void navigate('/programs')}
+          />
+        </Card>
+
+        {loaded && (
+          <RoutineCollection
+            summaries={summaries}
+            folders={folders}
+            onIntent={handleCollectionIntent}
+          />
+        )}
+      </div>
 
       <ActionSheet
         open={sheet?.kind === 'create'}

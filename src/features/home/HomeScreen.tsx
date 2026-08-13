@@ -7,6 +7,7 @@ import { ActionBand, Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
 import { HomeBodyWeightCard } from './HomeBodyWeightCard';
 import { HomeProgressLinks } from './HomeProgressLinks';
+import { HomeProgramCard } from './HomeProgramCard';
 import { HomeRecentWorkouts } from './HomeRecentWorkouts';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
 import { HomeWeekCard } from './HomeWeekCard';
@@ -77,11 +78,15 @@ export function HomeScreen() {
           <>
             <HomeWeekCard regularity={state.regularity} />
             <HomeBodyWeightCard />
-            <HomeSuggestionCard
-              suggestion={state.data.suggestedRoutine}
-              routineCount={state.data.routineCount}
-              disabled={active != null}
-            />
+            {state.data.activeProgram !== null ? (
+              <HomeProgramCard program={state.data.activeProgram} disabled={active != null} />
+            ) : (
+              <HomeSuggestionCard
+                suggestion={state.data.suggestedRoutine}
+                routineCount={state.data.routineCount}
+                disabled={active != null}
+              />
+            )}
             <HomeRecentWorkouts items={state.data.recentWorkouts} />
           </>
         )}

@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
+import { getActiveProgramDetail } from '@/data/repositories/programs';
 import {
   addRoutineSet,
   applyToAllSets,
+  createRoutineVersionDraft,
   deleteRoutineSet,
   getRoutineDetail,
   groupWithPrevious,
+  isRoutineSealed,
   listFolders,
+  listRoutineLineage,
+  publishRoutineVersion,
   removeRoutineExercise,
   reorderRoutineExercises,
   ungroupSuperset,
@@ -20,6 +25,8 @@ import type { RoutineExerciseDetail, RoutineSetTargets } from '@/data/repositori
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
+import { targetParts } from '@/lib/measurement';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import {
@@ -43,7 +50,50 @@ import { routineSummaryLine } from './summary';
 type SheetState =
   | { kind: 'folder' }
   | { kind: 'exercise'; rowId: string }
-  | { kind: 'set'; setId: string; rowId: string; number: number };
+  | { kind: 'set'; setId: string; rowId: string; number: number }
+  | { kind: 'effectiveWeek' };
+
+function ReadOnlyExercise({ line }: { line: RoutineExerciseDetail }) {
+  const name = line.exercise?.name ?? t('routine.deletedExercise');
+
+  return (
+    <Card>
+      <div className="border-b border-[var(--border)] px-4 py-3">
+        <p className="text-base text-[var(--text-1)]">{name}</p>
+        <p className="mt-0.5 text-sm text-[var(--text-2)]">
+          {line.exercise === undefined
+            ? t('routine.deletedExerciseHint')
+            : exerciseSubtitle(line.exercise)}
+        </p>
+      </div>
+      {line.sets.map((set, index) => {
+        const parts = targetParts(line.exercise?.measurementType ?? 'weight_reps', set);
+        const reading =
+          parts.length === 0
+            ? t('routine.setFree')
+            : parts
+                .map((part) => `${part.prefix}${part.value} ${unitLabel(part.unit)}`)
+                .join(' · ');
+        return (
+          <div
+            key={set.id}
+            className="flex min-h-12 items-center gap-3 border-b border-[var(--border)] px-4 py-2 last:border-b-0"
+          >
+            <span className="tabular w-5 shrink-0 text-sm text-[var(--text-2)]">{index + 1}</span>
+            {set.setType === 'warmup' && (
+              <span className="label-xs font-semibold text-[var(--text-2)]">
+                {t('routine.warmupShort')}
+              </span>
+            )}
+            <span className="ml-auto text-right text-sm font-semibold text-[var(--text-1)]">
+              {reading}
+            </span>
+          </div>
+        );
+      })}
+    </Card>
+  );
+}
 
 /**
  * A routine's screen **is** its editor.
@@ -58,6 +108,7 @@ export function RoutineEditorScreen() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const [actionError, setActionError] = useState(false);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.routine);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
 
@@ -66,6 +117,12 @@ export function RoutineEditorScreen() {
   const detail = useLiveQuery(() => getRoutineDetail(id), [id]);
   const folders = useLiveQuery(listFolders);
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
+  const sealed = useLiveQuery(() => isRoutineSealed(id), [id]);
+  const lineage = useLiveQuery(() => listRoutineLineage(id), [id]);
+  const activeProgram = useLiveQuery(
+    async () => getActiveProgramDetail(Date.now()).catch(() => null),
+    [id],
+  );
 
   /**
    * `null` = aucune séance, `undefined` = pas encore répondu. Tant qu'une
@@ -111,7 +168,14 @@ export function RoutineEditorScreen() {
     );
   }
 
-  if (detail === undefined || draft === null) {
+  if (
+    detail === undefined ||
+    (detail !== null && detail.routine.id !== id) ||
+    draft === null ||
+    sealed === undefined ||
+    lineage === undefined ||
+    activeProgram === undefined
+  ) {
     return (
       <Screen title="" onBack={goBack}>
         <span />
@@ -120,8 +184,61 @@ export function RoutineEditorScreen() {
   }
 
   const { routine, exercises } = detail;
+  const isReadOnly = routine.versionState === 'published' && sealed;
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const setCount = exercises.reduce((total, line) => total + line.sets.length, 0);
+  const lineageIds = new Set(lineage.map((candidate) => candidate.id));
+  const activeProgramUsesLineage =
+    activeProgram !== null &&
+    activeProgram.revisions.some(({ entries }) =>
+      entries.some((entry) => lineageIds.has(entry.routineId)),
+    );
+  const firstEffectiveWeek =
+    activeProgram === null || !activeProgramUsesLineage
+      ? null
+      : activeProgram.position.phase === 'before'
+        ? 0
+        : activeProgram.position.phase === 'active' &&
+            activeProgram.position.weekIndex + 1 < activeProgram.program.durationWeeks
+          ? activeProgram.position.weekIndex + 1
+          : null;
+  const effectiveWeekOptions: Option<string>[] =
+    activeProgram === null || firstEffectiveWeek === null
+      ? []
+      : Array.from(
+          { length: activeProgram.program.durationWeeks - firstEffectiveWeek },
+          (_, offset) => {
+            const weekIndex = firstEffectiveWeek + offset;
+            return {
+              value: String(weekIndex),
+              label: t('program.week', { number: weekIndex + 1 }),
+            };
+          },
+        );
+
+  const createVersion = async () => {
+    setActionError(false);
+    try {
+      const created = await createRoutineVersionDraft(routine.id);
+      void navigate(`/routines/${created.id}`, { replace: true });
+    } catch {
+      setActionError(true);
+    }
+  };
+
+  const publishFromWeek = async (weekIndex: number) => {
+    if (activeProgram === null) return;
+    setActionError(false);
+    try {
+      await publishRoutineVersion({
+        draftRoutineId: routine.id,
+        programId: activeProgram.program.id,
+        effectiveFromWeekIndex: weekIndex,
+      });
+    } catch {
+      setActionError(true);
+    }
+  };
 
   const lineOf = (rowId: string): RoutineExerciseDetail | null =>
     exercises.find((line) => line.row.id === rowId) ?? null;
@@ -159,7 +276,19 @@ export function RoutineEditorScreen() {
          là, en permanence, et les deux étaient du même vert, de la même
          hauteur, à 32 px l'une de l'autre. */
       footer={
-        running ? undefined : (
+        running ? undefined : isReadOnly ? (
+          <ActionBand
+            label={t('routine.createVersion')}
+            onClick={() => void createVersion()}
+          />
+        ) : routine.versionState === 'draft' ? (
+          firstEffectiveWeek === null ? undefined : (
+            <ActionBand
+              label={t('routine.useFromWeek', { number: firstEffectiveWeek + 1 })}
+              onClick={() => setSheet({ kind: 'effectiveWeek' })}
+            />
+          )
+        ) : (
           <ActionBand
             label={t('routine.start')}
             // Une routine sans exercice démarrerait une séance vide sous un nom
@@ -171,6 +300,69 @@ export function RoutineEditorScreen() {
       }
     >
       <div className="flex flex-col gap-6">
+        <Card padded>
+          <p className="label-xs font-semibold text-[var(--text-2)]">
+            {routine.versionState === 'draft'
+              ? t('routine.versionDraft', { version: routine.version })
+              : t('routine.versionPublished', { version: routine.version })}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
+            {isReadOnly
+              ? t('routine.sealedHint')
+              : routine.versionState === 'draft'
+                ? t('routine.draftHint')
+                : t('routine.publishedEditableHint')}
+          </p>
+        </Card>
+
+        {actionError && (
+          <p role="alert" className="text-sm text-[var(--danger-ink)]">
+            {t('routine.versionActionError')}
+          </p>
+        )}
+
+        {routine.versionState === 'draft' && firstEffectiveWeek === null && (
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('routine.noEffectiveWeek')}
+          </p>
+        )}
+
+        {isReadOnly ? (
+          <>
+            {(routine.subtitle ?? '') !== '' && (
+              <Card padded>
+                <p className="text-base leading-relaxed text-[var(--text-1)]">
+                  {routine.subtitle}
+                </p>
+              </Card>
+            )}
+
+            <Card>
+              <ListRow
+                title={t('routine.folderLabel')}
+                trailing={<span className="text-base text-[var(--text-1)]">{folderName}</span>}
+              />
+            </Card>
+
+            {exercises.length === 0 ? (
+              <EmptyState
+                reading="0"
+                unit={t('routine.emptyUnit')}
+                body={t('routine.sealedEmptyBody')}
+              />
+            ) : (
+              <div className="flex flex-col gap-3">
+                <p className="label-xs px-1 font-semibold text-[var(--text-2)]">
+                  {routineSummaryLine(exercises.length, setCount)}
+                </p>
+                {exercises.map((line) => (
+                  <ReadOnlyExercise key={line.row.id} line={line} />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
         <Card padded>
           <div className="flex flex-col gap-5">
             <Input
@@ -272,6 +464,8 @@ export function RoutineEditorScreen() {
             onClick={() => void navigate(`/routines/${routine.id}/add`)}
           />
         </Card>
+          </>
+        )}
       </div>
 
       <OptionSheet<string>
@@ -324,6 +518,15 @@ export function RoutineEditorScreen() {
         onDelete={() => {
           if (sheet?.kind === 'set') void deleteRoutineSet(sheet.setId);
         }}
+      />
+
+      <OptionSheet<string>
+        open={sheet?.kind === 'effectiveWeek'}
+        onClose={() => setSheet(null)}
+        title={t('routine.effectiveWeekTitle')}
+        options={effectiveWeekOptions}
+        value={firstEffectiveWeek === null ? '' : String(firstEffectiveWeek)}
+        onSelect={(value) => void publishFromWeek(Number(value))}
       />
     </Screen>
   );
