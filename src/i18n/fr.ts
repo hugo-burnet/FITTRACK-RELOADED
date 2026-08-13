@@ -485,6 +485,13 @@ const fr = {
     sessionToday: 'Aujourd’hui',
     sessionMissed: 'Manquée',
     sessionUpcoming: 'À venir',
+    warningTitle: 'Cibles conservées',
+    warningIntro:
+      'Le programme ne peut pas calculer certaines charges. Les cibles écrites dans la routine seront conservées pour ces exercices.',
+    warningMissingOneRepMax: '{name} : aucun 1RM utilisable.',
+    warningUnsupportedMeasurement: '{name} : ce type de mesure ne se projette pas en pourcentage.',
+    warningAssistanceNotSupported: '{name} : une assistance ne se calcule pas depuis un 1RM.',
+    warningConfirm: 'Démarrer quand même',
     activeWorkoutCollision: 'Une séance est déjà en cours.',
     missingRoutine: 'Routine indisponible',
     missingRoutineHint: 'Cette séance doit être réparée dans le split.',
@@ -497,10 +504,12 @@ const fr = {
     editFuture: 'Modifier à partir de…',
     editFutureHint: 'Préparer le split d’une semaine future.',
     shiftAction: 'Décaler le bloc',
-    shiftActionHint: 'Déplacer le calendrier en jours civils entiers.',
+    shiftActionHint: 'Déplacer le calendrier par semaines entières.',
     shiftTitle: 'Décaler le bloc',
     shiftDaysLabel: 'Nombre de jours',
     shiftDaysHint: 'Positif pour repousser, négatif pour avancer.',
+    shiftWeeksLabel: 'Nombre de semaines',
+    shiftWeeksHint: 'Positif pour repousser, négatif pour avancer. Le bloc reste calé au lundi.',
     shiftStartedWarning:
       'Le bloc a déjà commencé. Les séances passées ne bougeront pas.',
     shiftConfirm: 'Confirmer le décalage',
@@ -528,6 +537,10 @@ const fr = {
     continue: 'Continuer',
     activate: 'Activer le bloc',
     saveRevision: 'Enregistrer la révision',
+    saveRevisionWeek: 'Utiliser à partir de la semaine {number}',
+    effectiveWeekLabel: 'Semaine d’entrée en vigueur',
+    effectiveWeekHint:
+      'La semaine courante apparaît seulement si aucune séance du bloc n’y est enregistrée.',
     splitIntro: 'Ce rythme se répète chaque semaine du bloc.',
     session: 'Séance {number}',
     sessionDayLabel: 'Jour de la séance {number}',
@@ -536,6 +549,8 @@ const fr = {
     addSession: 'Ajouter une séance',
     removeSession: 'Retirer la séance {number}',
     routinesLoading: 'Chargement des routines…',
+    routinesReadError:
+      'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
     noRoutines: 'Crée d’abord une routine publiée, puis reviens composer le split.',
     weekday1: 'Lundi',
     weekday2: 'Mardi',
@@ -547,6 +562,7 @@ const fr = {
     weeksIntro: 'Règle l’intensité de chaque semaine et marque les décharges prévues.',
     week: 'Semaine {number}',
     editWeek: 'Modifier la semaine {number}',
+    editWeekReading: 'Modifier la semaine {number}, {prescription}{deload}',
     deload: 'Décharge',
     editWeekTitle: 'Semaine {number}',
     prescriptionKind: 'Type de prescription',
@@ -565,6 +581,10 @@ const fr = {
     errorAnotherActive: 'Un autre bloc est actif. Termine-le avant d’activer celui-ci.',
     errorRoutineMissing: 'Une routine du split n’est plus disponible. Choisis-en une autre.',
     errorNoFutureRevision: 'Ce bloc n’a plus de semaine future à modifier.',
+    replaceActiveTitle: 'Remplacer le bloc actif',
+    replaceActiveBody:
+      'Le bloc actif sera terminé avec tout son historique, puis ce nouveau bloc prendra sa place.',
+    replaceActiveConfirm: 'Remplacer et activer',
   },
 
   routine: {

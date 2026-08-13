@@ -157,7 +157,7 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
   });
 
   const detail = await getWorkoutDetail(workoutId);
-  if (detail !== null) {
+  if (detail !== null && detail.workout.programId === undefined) {
     const outcomes = detail.exercises
       .map((line) => {
         const working = line.sets.filter(

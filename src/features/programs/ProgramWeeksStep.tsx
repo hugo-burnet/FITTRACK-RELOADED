@@ -47,11 +47,16 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
         <div className="divide-y divide-[var(--border)]">
           {weeks.map((week, index) => {
             const number = index + 1;
+            const prescription = prescriptionLabel(week);
             return (
               <button
                 key={week.weekIndex}
                 type="button"
-                aria-label={t('program.editWeek', { number })}
+                aria-label={t('program.editWeekReading', {
+                  number,
+                  prescription,
+                  deload: week.isDeload === 1 ? `, ${t('program.deload')}` : '',
+                })}
                 onClick={() => setEditor({ index, week: { ...week } })}
                 className="grid min-h-14 w-full grid-cols-[3rem_minmax(0,1fr)_auto] items-center
                   gap-3 px-4 text-left active:bg-[var(--surface-2)]"
@@ -60,7 +65,7 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
                   {String(number).padStart(2, '0')}
                 </span>
                 <span className="record-figure truncate text-base text-[var(--text-1)]">
-                  {prescriptionLabel(week)}
+                  {prescription}
                 </span>
                 <span className="label-xs font-semibold text-[var(--accent-ink)]">
                   {week.isDeload === 1 ? t('program.deload') : ''}

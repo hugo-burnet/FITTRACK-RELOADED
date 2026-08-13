@@ -4,7 +4,10 @@ import { newEntity } from '@/data/repositories/base';
 import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { evaluateCoachForWorkout, finalizeCoachForWorkout } from './coachEvaluate';
-import { listRecommendationsForExercise } from './coachRecommendations';
+import {
+  listRecommendationsForExercise,
+  recordCoachSignals,
+} from './coachRecommendations';
 import { finishWorkout } from './workoutLifecycle';
 
 const exercise: Exercise = {
@@ -187,6 +190,74 @@ describe('evaluateCoachForWorkout', () => {
     );
 
     expect(await evaluateCoachForWorkout(workout.id)).toEqual([]);
+  });
+
+  it('ne marque pas suivie une ancienne charge Coach reprise par un programme', async () => {
+    const startedAt = Date.UTC(2026, 7, 10, 10);
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: '',
+        name: 'Programmed',
+        status: 'active',
+        startedAt,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: 'program',
+      }),
+      id: 'programmed-stale-load',
+    };
+    const row: WorkoutExercise = {
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 'programmed-stale-load-row',
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add(row);
+    await db.workoutSets.add({
+      ...newEntity<WorkoutSet>({
+        workoutExerciseId: row.id,
+        exerciseId: exercise.id,
+        workoutId: workout.id,
+        order: 0,
+        setType: 'normal',
+        side: 'both',
+        weight: 102.5,
+        reps: 8,
+        targetReps: 8,
+        targetRepsMax: 12,
+        isCompleted: 1,
+        performedAt: startedAt,
+      }),
+      id: 'programmed-stale-load-set',
+    });
+    await recordCoachSignals(
+      [
+        {
+          exerciseId: exercise.id,
+          code: 'range_completed',
+          severity: 1,
+          nextLoadKg: 102.5,
+          evidence: [{ label: 'next_load_kg', value: 102.5 }],
+        },
+      ],
+      { recommendedAt: startedAt - 1 },
+    );
+
+    await finishWorkout(workout.id);
+    await finalizeCoachForWorkout(workout.id);
+
+    expect((await listRecommendationsForExercise(exercise.id))[0]).toMatchObject({
+      status: 'pending',
+      nextLoadKg: 102.5,
+    });
   });
 
   it('keeps a rep-drop observation when a stronger program-owned signal also fires', async () => {

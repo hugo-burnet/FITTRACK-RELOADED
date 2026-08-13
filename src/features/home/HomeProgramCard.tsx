@@ -1,9 +1,16 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { HomeProgramProjection } from '@/data/repositories/home';
-import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
+import {
+  ProgramWorkoutWarningAcknowledgementError,
+  preflightProgramWorkout,
+  startWorkoutFromProgram,
+  type ProgramWorkoutPreflight,
+  type ProgramWorkoutWarningAcknowledgement,
+} from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card, SectionTitle } from '@/ui';
+import { ProgramWorkoutWarningSheet } from '@/features/programs/ProgramSessionList';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
@@ -45,9 +52,35 @@ export function HomeProgramCard({ program, disabled }: Props) {
   const navigate = useNavigate();
   const [failed, setFailed] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [warningPreflight, setWarningPreflight] = useState<ProgramWorkoutPreflight | null>(null);
   const startingRef = useRef(false);
   const prescription = prescriptionLabel(program);
   const pick = program.pick;
+
+  const releaseStart = () => {
+    startingRef.current = false;
+    setStarting(false);
+  };
+
+  const persistStart = async (
+    warningAcknowledgement?: ProgramWorkoutWarningAcknowledgement,
+  ) => {
+    try {
+      await startWorkoutFromProgram({
+        programId: program.programId,
+        programScheduleEntryId: pick.kind === 'session' ? pick.programScheduleEntryId : '',
+        ...(warningAcknowledgement === undefined ? {} : { warningAcknowledgement }),
+      });
+      void navigate('/workout');
+    } catch (error) {
+      if (error instanceof ProgramWorkoutWarningAcknowledgementError) {
+        setWarningPreflight(error.preflight);
+      } else {
+        setFailed(true);
+      }
+      releaseStart();
+    }
+  };
 
   const start = async () => {
     if (pick.kind !== 'session' || pick.routineName === null || startingRef.current) return;
@@ -55,22 +88,37 @@ export function HomeProgramCard({ program, disabled }: Props) {
     setStarting(true);
     setFailed(false);
     try {
-      await startWorkoutFromProgram({
+      const preflight = await preflightProgramWorkout({
         programId: program.programId,
         programScheduleEntryId: pick.programScheduleEntryId,
       });
-      void navigate('/workout');
+      if (preflight.warningAcknowledgement !== null) {
+        setWarningPreflight(preflight);
+        releaseStart();
+        return;
+      }
+      await persistStart();
     } catch {
       setFailed(true);
-      startingRef.current = false;
-      setStarting(false);
+      releaseStart();
     }
   };
 
+  const confirmWarnings = () => {
+    const acknowledgement = warningPreflight?.warningAcknowledgement;
+    if (acknowledgement === null || acknowledgement === undefined || startingRef.current) return;
+    startingRef.current = true;
+    setStarting(true);
+    setFailed(false);
+    setWarningPreflight(null);
+    void persistStart(acknowledgement);
+  };
+
   return (
-    <section>
-      <SectionTitle>{t('home.programSection')}</SectionTitle>
-      <Card padded>
+    <>
+      <section>
+        <SectionTitle>{t('home.programSection')}</SectionTitle>
+        <Card padded>
         <div className="space-y-4">
           <div>
             <p className="label-xs font-semibold text-[var(--text-2)]">
@@ -123,7 +171,14 @@ export function HomeProgramCard({ program, disabled }: Props) {
             </p>
           )}
         </div>
-      </Card>
-    </section>
+        </Card>
+      </section>
+      <ProgramWorkoutWarningSheet
+        preflight={warningPreflight}
+        working={starting}
+        onClose={() => setWarningPreflight(null)}
+        onConfirm={confirmWarnings}
+      />
+    </>
   );
 }
