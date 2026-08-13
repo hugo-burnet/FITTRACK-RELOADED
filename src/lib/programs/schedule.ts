@@ -3,6 +3,7 @@ import type { ProgramPosition } from './calendar';
 export interface ProgramScheduleRevisionInput {
   id: string;
   effectiveFromWeekIndex: number;
+  createdAt: number;
 }
 
 export interface ProgramScheduleEntryInput {
@@ -49,7 +50,9 @@ export function resolveSchedule<
       applicableRevision === undefined ||
       revision.effectiveFromWeekIndex > applicableRevision.effectiveFromWeekIndex ||
       (revision.effectiveFromWeekIndex === applicableRevision.effectiveFromWeekIndex &&
-        revision.id.localeCompare(applicableRevision.id) > 0)
+        (revision.createdAt > applicableRevision.createdAt ||
+          (revision.createdAt === applicableRevision.createdAt &&
+            revision.id.localeCompare(applicableRevision.id) > 0)))
     ) {
       applicableRevision = revision;
     }

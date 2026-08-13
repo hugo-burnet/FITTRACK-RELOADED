@@ -4,9 +4,9 @@ import { programPosition } from './calendar';
 import { pickProgramSession, resolveSchedule, type ProgramSessionCandidate } from './schedule';
 
 const revisions = [
-  { id: 'revision-0', effectiveFromWeekIndex: 0 },
-  { id: 'revision-2', effectiveFromWeekIndex: 2 },
-  { id: 'revision-4', effectiveFromWeekIndex: 4 },
+  { id: 'revision-0', effectiveFromWeekIndex: 0, createdAt: 10 },
+  { id: 'revision-2', effectiveFromWeekIndex: 2, createdAt: 20 },
+  { id: 'revision-4', effectiveFromWeekIndex: 4, createdAt: 30 },
 ];
 
 describe('resolveSchedule', () => {
@@ -55,7 +55,69 @@ describe('resolveSchedule', () => {
   });
 
   it('returns no entries before the first effective revision', () => {
-    expect(resolveSchedule([{ id: 'revision-1', effectiveFromWeekIndex: 1 }], [], 0)).toEqual([]);
+    expect(
+      resolveSchedule([{ id: 'revision-1', effectiveFromWeekIndex: 1, createdAt: 10 }], [], 0),
+    ).toEqual([]);
+  });
+
+  it('prefers the newest revision created for the same effective week', () => {
+    const entries = [
+      {
+        id: 'older-entry',
+        revisionId: 'z-older',
+        routineId: 'routine-old',
+        dayOfWeek: 1,
+        order: 1,
+      },
+      {
+        id: 'newer-entry',
+        revisionId: 'a-newer',
+        routineId: 'routine-new',
+        dayOfWeek: 1,
+        order: 1,
+      },
+    ];
+
+    expect(
+      resolveSchedule(
+        [
+          { id: 'z-older', effectiveFromWeekIndex: 2, createdAt: 100 },
+          { id: 'a-newer', effectiveFromWeekIndex: 2, createdAt: 200 },
+        ],
+        entries,
+        2,
+      ).map((entry) => entry.id),
+    ).toEqual(['newer-entry']);
+  });
+
+  it('uses the greatest id only when effective week and creation time are equal', () => {
+    const entries = [
+      {
+        id: 'a-entry',
+        revisionId: 'a-revision',
+        routineId: 'routine-a',
+        dayOfWeek: 1,
+        order: 1,
+      },
+      {
+        id: 'z-entry',
+        revisionId: 'z-revision',
+        routineId: 'routine-z',
+        dayOfWeek: 1,
+        order: 1,
+      },
+    ];
+
+    expect(
+      resolveSchedule(
+        [
+          { id: 'a-revision', effectiveFromWeekIndex: 2, createdAt: 100 },
+          { id: 'z-revision', effectiveFromWeekIndex: 2, createdAt: 100 },
+        ],
+        entries,
+        2,
+      ).map((entry) => entry.id),
+    ).toEqual(['z-entry']);
   });
 });
 

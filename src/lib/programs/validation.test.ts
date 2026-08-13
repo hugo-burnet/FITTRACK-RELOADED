@@ -52,6 +52,29 @@ describe('validateProgramDraft', () => {
     ).toEqual(['duration_out_of_range']);
   });
 
+  it('accepts the duration boundaries of 4 and 12 weeks', () => {
+    expect(validateProgramDraft(draft(), new Set(['routine-a']))).toEqual([]);
+    expect(
+      validateProgramDraft(
+        draft({
+          durationWeeks: 12,
+          weeks: Array.from({ length: 12 }, (_, weekIndex) => ({
+            weekIndex,
+            prescriptionKind: 'percent_1rm',
+            prescriptionValue: 75,
+          })),
+        }),
+        new Set(['routine-a']),
+      ),
+    ).toEqual([]);
+  });
+
+  it('rejects a non-integer duration without treating its complete declared weeks as missing', () => {
+    expect(validateProgramDraft(draft({ durationWeeks: 4.5 }), new Set(['routine-a']))).toEqual([
+      'duration_out_of_range',
+    ]);
+  });
+
   it('rejects percent prescriptions outside 1 through 100', () => {
     expect(
       validateProgramDraft(
@@ -66,6 +89,22 @@ describe('validateProgramDraft', () => {
         new Set(['routine-a']),
       ),
     ).toEqual(['invalid_percent_1rm']);
+  });
+
+  it('accepts percent prescriptions at 1 and 100', () => {
+    expect(
+      validateProgramDraft(
+        draft({
+          weeks: [
+            { weekIndex: 0, prescriptionKind: 'percent_1rm', prescriptionValue: 1 },
+            { weekIndex: 1, prescriptionKind: 'percent_1rm', prescriptionValue: 100 },
+            { weekIndex: 2, prescriptionKind: 'percent_1rm', prescriptionValue: 75 },
+            { weekIndex: 3, prescriptionKind: 'percent_1rm', prescriptionValue: 75 },
+          ],
+        }),
+        new Set(['routine-a']),
+      ),
+    ).toEqual([]);
   });
 
   it('accepts RPE steps from 6 through 10 and rejects values between those steps', () => {

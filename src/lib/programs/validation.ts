@@ -58,12 +58,15 @@ export function validateProgramDraft(
 
   const weekIndices = new Set(draft.weeks.map((week) => week.weekIndex));
   const expectedWeekCount =
-    Number.isInteger(draft.durationWeeks) && draft.durationWeeks >= 0 ? draft.durationWeeks : 0;
+    Number.isInteger(draft.durationWeeks) && draft.durationWeeks >= 0
+      ? draft.durationWeeks
+      : undefined;
   if (
-    draft.weeks.length !== expectedWeekCount ||
-    Array.from({ length: expectedWeekCount }, (_, weekIndex) => weekIndex).some(
-      (weekIndex) => !weekIndices.has(weekIndex),
-    )
+    expectedWeekCount !== undefined &&
+    (draft.weeks.length !== expectedWeekCount ||
+      Array.from({ length: expectedWeekCount }, (_, weekIndex) => weekIndex).some(
+        (weekIndex) => !weekIndices.has(weekIndex),
+      ))
   ) {
     issues.add('missing_week');
   }
