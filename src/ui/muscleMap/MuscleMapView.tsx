@@ -21,10 +21,17 @@ const VIEW_BOX_RATIO = '815 / 2048';
  * charte's two tokens keeps a lit muscle the same ink as body text over the body's
  * own surface, and both themes follow without a second palette.
  *
- * Mixed `in srgb` on purpose. It reproduces exactly what the previous body map
- * obtained by compositing `--text-1` at `fill-opacity` over a `--surface-2` base;
- * `in oklab` would be perceptually smoother but would shift every intensity off
- * the value the charte was contrast-checked at.
+ * **Mixed `in oklab`, and that is what buys the gradations.** `in srgb` came
+ * first, to reproduce exactly what the previous body map got by compositing
+ * `--text-1` at `fill-opacity`. But sRGB interpolates encoded values, and the
+ * encoding already carries a gamma: a muscle at 40 % of the ramp landed most of
+ * the way to white, so every worked muscle piled into the top of the range and
+ * the body read as two tones, lit and unlit. Reported from the phone as a want of
+ * nuance, which is exactly what it was.
+ *
+ * oklab interpolates perceived lightness instead, so equal steps of intensity look
+ * like equal steps. The mid-range opens up and a muscle worked twice as much as
+ * another finally looks it.
  */
 
 /**
@@ -36,17 +43,16 @@ const VIEW_BOX_RATIO = '815 / 2048';
  * `--axis` outlines carrying the whole shape while every fill vanished into the
  * card. Reported from the phone in exactly those terms.
  *
- * So an unworked muscle is lifted to a fifth of the way up the ramp, which puts
- * it near 2:1 against the card — a mass one can see, still unmistakably off.
+ * So an unworked muscle is lifted off the base — enough to read as a mass against
+ * the card, never enough to read as worked.
  *
- * **Not higher, and this is the constraint that fixes the number.** A dark region
- * is what this drawing exists to report: `balanceHighlight` argues the eye must go
- * to the *gaps*, and a bright unworked body is precisely how that reading is lost.
- * 2:1 is the most the floor can take before the finding starts to fade; the
- * outline keeps carrying the form at its own 3,5:1, well past the 3:1 that
- * graphical objects owe.
+ * **The ceiling is not a matter of taste.** A dark region is what this drawing
+ * exists to report: `balanceHighlight` argues the eye must go to the *gaps*, and a
+ * bright unworked body is precisely how that reading is lost. Raising this number
+ * buys visibility and spends the finding, so it stays as low as the card allows —
+ * the outline carries the form anyway, at its own 3,5:1.
  */
-const UNWORKED_FLOOR = 20;
+const UNWORKED_FLOOR = 24;
 
 /**
  * The silhouette — head, hands, feet, everything that is not a muscle.
@@ -57,10 +63,10 @@ const UNWORKED_FLOOR = 20;
  * lightest thing on an untrained figure — which is the right hierarchy for a
  * drawing about muscles.
  */
-const SILHOUETTE_FLOOR = 9;
+const SILHOUETTE_FLOOR = 10;
 
 const ink = (percent: number) =>
-  `color-mix(in srgb, var(--text-1) ${Math.round(percent)}%, var(--surface-2))`;
+  `color-mix(in oklab, var(--text-1) ${Math.round(percent)}%, var(--surface-2))`;
 
 const RAMP = {
   silhouetteColor: ink(SILHOUETTE_FLOOR),
@@ -96,8 +102,16 @@ interface Props {
  */
 export function MuscleMap({ highlight, label }: Props) {
   return (
+    /* Sized by the width available, not by a fixed height.
+     *
+     * A fixed `h-64` was inherited from the previous body map, whose blocky
+     * regions read fine that small. This drawing carries twenty-six real muscles
+     * in the same box, and the small ones — the cuff, the rhomboids — closed up.
+     * The two figures now take the card's width between them, so the phone that
+     * has room gives it. `max-w` keeps a wide screen from turning the pair into a
+     * poster, and `basis-0 grow` splits the room evenly whatever the gap. */
     <div
-      className="flex items-start justify-center gap-2"
+      className="mx-auto flex w-full max-w-sm items-start justify-center gap-3"
       {...(label === undefined ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label })}
     >
       <MuscleMapView view="front" highlight={highlight} />
@@ -151,5 +165,7 @@ function MuscleMapView({ view, highlight }: { view: MuscleView; highlight: Muscl
     map.setIntensities(intensities);
   });
 
-  return <div ref={hostRef} className="h-64 shrink-0" style={{ aspectRatio: VIEW_BOX_RATIO }} />;
+  return (
+    <div ref={hostRef} className="min-w-0 grow basis-0" style={{ aspectRatio: VIEW_BOX_RATIO }} />
+  );
 }
