@@ -1,9 +1,16 @@
 import type { ProgramPhase } from '@/data/types';
+import type { ProgramRecipeId } from '@/lib/programs';
 import { t, type TranslationKey } from '@/i18n/fr';
 
 // The suggestion table lives in `lib/programs` so recipes can read it without
 // a feature importing another feature. Re-exported here for the editor.
 export { LOAD_INDEX_PRESETS, SUGGESTED_LOAD_INDEX } from '@/lib/programs';
+
+export const RECIPE_LABEL_KEYS: Record<ProgramRecipeId, TranslationKey> = {
+  hypertrophy: 'program.recipe.hypertrophy',
+  strength: 'program.recipe.strength',
+  return: 'program.recipe.return',
+};
 
 export const PHASE_LABEL_KEYS: Record<ProgramPhase, TranslationKey> = {
   construction: 'program.phase.construction',

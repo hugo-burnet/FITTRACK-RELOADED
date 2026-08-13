@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { PROGRAM_PHASES, type ProgramPhase } from '@/data/types';
-import { MAX_LOAD_INDEX, MIN_LOAD_INDEX } from '@/lib/programs';
+import {
+  MAX_LOAD_INDEX,
+  MIN_LOAD_INDEX,
+  PROGRAM_RECIPE_IDS,
+  applyProgramRecipe,
+  type ProgramRecipeId,
+} from '@/lib/programs';
 import { t } from '@/i18n/fr';
 import { Button, ListRow, NumberInput, Sheet } from '@/ui';
 import {
   LOAD_INDEX_PRESETS,
   PHASE_LABEL_KEYS,
+  RECIPE_LABEL_KEYS,
   SUGGESTED_LOAD_INDEX,
   phaseIntention,
   phaseLabel,
@@ -21,6 +28,8 @@ export interface ProgramWeekDraft {
 interface Props {
   weeks: ProgramWeekDraft[];
   onChange: (weeks: ProgramWeekDraft[]) => void;
+  /** First week a recipe may rewrite. Anything before it is sealed and read-only. */
+  effectiveFromWeekIndex?: number;
 }
 
 interface WeekEditor {
@@ -28,8 +37,11 @@ interface WeekEditor {
   week: ProgramWeekDraft;
 }
 
-export function ProgramWeeksStep({ weeks, onChange }: Props) {
+export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }: Props) {
   const [editor, setEditor] = useState<WeekEditor | null>(null);
+  // No persisted "active recipe": it is a trajectory you just laid down, and the
+  // first manual touch means the weeks are no longer the recipe's own.
+  const [recipe, setRecipe] = useState<ProgramRecipeId | null>(null);
 
   const updateEditor = (changes: Partial<ProgramWeekDraft>) => {
     setEditor((current) =>
@@ -41,40 +53,101 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
     updateEditor({ phase, loadIndex: SUGGESTED_LOAD_INDEX[phase] });
   };
 
+  const applyRecipe = (id: ProgramRecipeId) => {
+    setRecipe(id);
+    onChange(
+      applyProgramRecipe(id, weeks.length, {
+        existing: weeks,
+        effectiveFromWeekIndex,
+      }),
+    );
+  };
+
   const saveEditor = () => {
     if (editor === null) return;
     onChange(weeks.map((week, index) => (index === editor.index ? editor.week : week)));
+    setRecipe(null);
     setEditor(null);
   };
 
   return (
     <div className="flex flex-col gap-5">
       <p className="text-base leading-relaxed text-[var(--text-2)]">{t('program.weeksIntro')}</p>
+
+      <div className="flex flex-col gap-2">
+        <span className="label-xs font-semibold text-[var(--text-2)]">
+          {t('program.recipeIntro')}
+        </span>
+        {/*
+          Pas de FilterChip : son chevron promet un sélecteur, or ces boutons
+          appliquent. Même traitement plein/creux que les niveaux de la feuille.
+        */}
+        <div className="flex gap-2">
+          {PROGRAM_RECIPE_IDS.map((id) => {
+            const label = t(RECIPE_LABEL_KEYS[id]);
+            const active = recipe === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={active}
+                aria-label={t('program.recipeApply', { name: label })}
+                onClick={() => applyRecipe(id)}
+                className={`min-h-12 flex-1 rounded-xl px-2 text-sm font-semibold
+                  transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
+                  ${
+                    active
+                      ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                      : 'bg-[var(--surface-2)] text-[var(--text-1)]'
+                  }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
       {/*
         La phase est ce qu'on cherche du regard, donc c'est le titre. Le numéro
         passe en tête de ligne, discret, et le niveau finit à droite comme toute
         lecture chiffrée de l'app. Une Décharge se signale sur ce chiffre, pas
         en repeignant le mot.
+
+        Pas de phrase d'intention ici : une recette la met sur presque chaque
+        ligne et la liste ne se scanne plus. Elle vit dans la feuille, au moment
+        où on choisit la phase.
       */}
       <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
         {weeks.map((week, index) => {
           const number = index + 1;
           const deload = week.phase === 'deload';
+          // Le passé se lit, il ne s'ouvre pas : une semaine scellée n'est pas
+          // un bouton désactivé, c'est une ligne.
+          const sealed = week.weekIndex < effectiveFromWeekIndex;
           return (
             <ListRow
               key={week.weekIndex}
               // À l'oreille, trois colonnes valent moins qu'une phrase : on garde
               // la lecture compacte `05 — 60 % · Décharge` comme nom prononcé.
-              ariaLabel={t('program.editWeekReading', { number, line: weekLine(week) })}
+              {...(sealed
+                ? {}
+                : {
+                    ariaLabel: t('program.editWeekReading', {
+                      number,
+                      line: weekLine(week),
+                    }),
+                    onClick: () => setEditor({ index, week: { ...week } }),
+                  })}
               leading={
-                <span className="record-figure text-sm font-semibold">
+                <span
+                  className={`record-figure text-sm font-semibold ${
+                    sealed ? 'opacity-50' : ''
+                  }`}
+                >
                   {String(number).padStart(2, '0')}
                 </span>
               }
               title={phaseLabel(week.phase)}
-              {...(phaseIntention(week.phase) === null
-                ? {}
-                : { subtitle: phaseIntention(week.phase)! })}
               trailing={
                 <span
                   className={`record-figure text-sm ${
@@ -84,7 +157,6 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
                   {t('program.loadIndexPreset', { value: week.loadIndex })}
                 </span>
               }
-              onClick={() => setEditor({ index, week: { ...week } })}
             />
           );
         })}

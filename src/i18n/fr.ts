@@ -601,6 +601,15 @@ const fr = {
       return: 'Retour à la prescription, sans forcer.',
       test: 'Tentative contrôlée, seulement si déjà autorisée.',
     },
+    // Une recette pose un trajet, elle ne le verrouille pas : chaque semaine
+    // reste modifiable juste en dessous.
+    recipeIntro: 'Poser un trajet, puis le retoucher.',
+    recipeApply: 'Appliquer la recette {name}',
+    recipe: {
+      hypertrophy: 'Hypertrophie',
+      strength: 'Force',
+      return: 'Reprise',
+    },
     saveWeek: 'Enregistrer la semaine',
     errorBasics: 'Renseigne un nom, un lundi de départ et une durée de 4 à 12 semaines.',
     errorSplit: 'Choisis un jour et une routine pour chaque séance.',

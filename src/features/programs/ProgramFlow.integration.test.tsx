@@ -99,9 +99,22 @@ describe('parcours de création d’un programme', () => {
     expect(screen.queryByRole('button', { name: 'Split' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Semaines' })).not.toBeInTheDocument();
 
+    // Une recette pose le trajet — puis la semaine 5 le corrige à la main, ce
+    // qui relâche la recette : elle n'est pas un état, juste un point de départ.
+    await user.click(screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }));
+    expect(
+      screen.getByRole('button', { name: 'Modifier la semaine 4, 04 — 60 % · Décharge' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+
     await user.click(await screen.findByRole('button', { name: /Modifier la semaine 5/ }));
     await user.selectOptions(screen.getByRole('combobox', { name: 'Phase' }), 'deload');
     await user.click(screen.getByRole('button', { name: 'Enregistrer la semaine' }));
+    expect(
+      screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    ).toHaveAttribute('aria-pressed', 'false');
     expect(
       screen.getByRole('button', {
         name: 'Modifier la semaine 5, 05 — 60 % · Décharge',
