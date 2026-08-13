@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   collectCoachSignals,
   evaluateCoach,
+  evaluatePerformance,
   mergeLinesForWorkout,
   pickSignals,
 } from './evaluate';
@@ -35,6 +36,17 @@ function line(
   };
 }
 
+/** 3×8–12 helper for the exclusive range partition contracts (spec §10). */
+function line3x8to12(reps: number[]): CoachExerciseLine {
+  return line({
+    exerciseId: 'bench',
+    workoutId: 'w1',
+    sets: reps.map((value, order) =>
+      set({ order, reps: value, weight: 100, targetReps: 8, targetRepsMax: 12 }),
+    ),
+  });
+}
+
 describe('mergeLinesForWorkout', () => {
   it('glues two lines of the same exercise in one workout', () => {
     const a = line({
@@ -53,8 +65,68 @@ describe('mergeLinesForWorkout', () => {
   });
 });
 
-describe('range_completed', () => {
-  it('proposes nextLoad when every working set hits targetRepsMax', () => {
+describe('evaluatePerformance — exclusive range partition + allowedActions', () => {
+  it('12/12/10 is satisfied only', () => {
+    const ev = evaluatePerformance(line3x8to12([12, 12, 10]));
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_satisfied']);
+    expect(ev.allowedActions.sort()).toEqual(['increase_reps', 'maintain'].sort());
+  });
+
+  it('12/12/12 is ceiling only', () => {
+    const ev = evaluatePerformance(line3x8to12([12, 12, 12]));
+    expect(ev.signals.map((s) => s.code)).toContain('range_ceiling_reached');
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_satisfied');
+    expect(ev.allowedActions).toContain('increase_load');
+    expect(ev.allowedActions).not.toContain('increase_reps');
+  });
+
+  it('10/10/9 is satisfied only (mid-range, exclusive)', () => {
+    const ev = evaluatePerformance(line3x8to12([10, 10, 9]));
+    expect(ev.signals.map((s) => s.code)).toEqual(['range_satisfied']);
+    expect(ev.allowedActions).not.toContain('increase_load');
+  });
+
+  it('12/12/7 emits neither range signal', () => {
+    const ev = evaluatePerformance(line3x8to12([12, 12, 7]));
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_satisfied');
+    expect(ev.signals.map((s) => s.code)).not.toContain('range_ceiling_reached');
+  });
+
+  it('plateau strips add_set as well as increase_*', () => {
+    const ceilingSession = (workoutId: string, day: number): CoachExerciseLine =>
+      line({
+        exerciseId: 'bench',
+        workoutId,
+        workoutStartedAt: t0 + day * 86_400_000,
+        sets: [
+          set({ order: 0, reps: 12, weight: 100, performedAt: t0 + day * 86_400_000 }),
+          set({
+            order: 1,
+            reps: 12,
+            weight: 100,
+            performedAt: t0 + day * 86_400_000 + 120_000,
+          }),
+          set({
+            order: 2,
+            reps: 12,
+            weight: 100,
+            performedAt: t0 + day * 86_400_000 + 240_000,
+          }),
+        ],
+      });
+
+    const latest = ceilingSession('w3', 14);
+    const history = [ceilingSession('w2', 7), ceilingSession('w1', 0)];
+    const ev = evaluatePerformance(latest, history);
+
+    expect(ev.signals.some((s) => s.code === 'plateau')).toBe(true);
+    expect(ev.signals.some((s) => s.code === 'range_ceiling_reached')).toBe(true);
+    expect(ev.allowedActions).toEqual(['maintain']);
+  });
+});
+
+describe('range_ceiling_reached (was range_completed)', () => {
+  it('proposes nextLoad when every working set hits the ceiling', () => {
     const signals = evaluateCoach([
       line({
         exerciseId: 'bench',
@@ -69,7 +141,7 @@ describe('range_completed', () => {
 
     expect(signals).toEqual([
       expect.objectContaining({
-        code: 'range_completed',
+        code: 'range_ceiling_reached',
         exerciseId: 'bench',
         nextLoadKg: 102.5,
       }),
@@ -82,7 +154,7 @@ describe('range_completed', () => {
     );
   });
 
-  it('stays silent when one working set misses the top of the range', () => {
+  it('emits range_satisfied (not ceiling) when one set is under the top', () => {
     const signals = evaluateCoach([
       line({
         exerciseId: 'bench',
@@ -94,7 +166,24 @@ describe('range_completed', () => {
         ],
       }),
     ]);
+    expect(signals.filter((s) => s.code === 'range_ceiling_reached')).toEqual([]);
     expect(signals.filter((s) => s.code === 'range_completed')).toEqual([]);
+    expect(signals.map((s) => s.code)).toEqual(['range_satisfied']);
+  });
+
+  it('treats a single-target hit as ceiling (no open range)', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 8, targetReps: 8, targetRepsMax: undefined }),
+          set({ order: 1, reps: 8, targetReps: 8, targetRepsMax: undefined }),
+        ],
+      }),
+    ]);
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached' });
+    expect(signals.map((s) => s.code)).not.toContain('range_satisfied');
   });
 
   it('stays silent without a prescribed range (Hevy imports)', () => {
@@ -109,7 +198,8 @@ describe('range_completed', () => {
         ],
       }),
     ]);
-    expect(signals.filter((s) => s.code === 'range_completed')).toEqual([]);
+    expect(signals.filter((s) => s.code === 'range_ceiling_reached')).toEqual([]);
+    expect(signals.filter((s) => s.code === 'range_satisfied')).toEqual([]);
   });
 
   it('ignores warm-ups when judging the range', () => {
@@ -124,7 +214,7 @@ describe('range_completed', () => {
         ],
       }),
     ]);
-    expect(signals[0]).toMatchObject({ code: 'range_completed', nextLoadKg: 102.5 });
+    expect(signals[0]).toMatchObject({ code: 'range_ceiling_reached', nextLoadKg: 102.5 });
   });
 
   it('lowers assistance on assisted machines', () => {
@@ -141,7 +231,7 @@ describe('range_completed', () => {
       }),
     ]);
     expect(signals[0]).toMatchObject({
-      code: 'range_completed',
+      code: 'range_ceiling_reached',
       nextLoadKg: 35,
     });
   });
@@ -158,7 +248,8 @@ describe('range_completed', () => {
         ],
       }),
     ]);
-    expect(signals.filter((s) => s.code === 'range_completed')).toEqual([]);
+    expect(signals.filter((s) => s.code === 'range_ceiling_reached')).toEqual([]);
+    expect(signals.filter((s) => s.code === 'range_satisfied')).toEqual([]);
   });
 
   it('treats a programmed deload as authoritative without a manual percentage', () => {
@@ -173,7 +264,7 @@ describe('range_completed', () => {
         ],
       }),
     ]);
-    expect(signals.filter((s) => s.code === 'range_completed')).toEqual([]);
+    expect(signals.filter((s) => s.code === 'range_ceiling_reached')).toEqual([]);
   });
 });
 
@@ -293,9 +384,9 @@ describe('intra_session_drop', () => {
     );
   });
 
-  it('stays silent when the fading set is still inside the prescribed range', () => {
+  it('stays silent on drop when the fading set is still inside the range', () => {
     // Terrain, 2026-08-12 : 80×12, 12, 12, 10 sur une fourchette 8–12. Rien
-    // n'est tombé sous la prescription — la séance est simplement à maintenir.
+    // n'est tombé sous la prescription — pas de chute, mais range_satisfied oui.
     const signals = evaluateCoach([
       line({
         exerciseId: 'bench',
@@ -308,7 +399,8 @@ describe('intra_session_drop', () => {
         ],
       }),
     ]);
-    expect(signals).toEqual([]);
+    expect(signals.filter((s) => s.code === 'intra_session_drop')).toEqual([]);
+    expect(signals.map((s) => s.code)).toEqual(['range_satisfied']);
   });
 
   it('still reports a set that falls through the floor of the range', () => {
@@ -393,12 +485,24 @@ describe('plateau', () => {
       workoutId,
       workoutStartedAt: t0 + day * 86_400_000,
       sets: [
-        // Plancher explicite à 5 : ces séances font des séries de 5, et le
-        // défaut du helper (8) en ferait des échecs répétés — donc un signal
-        // `range_missed`, plus fort que le plateau, qui masquerait ce que ce
-        // bloc teste. La fourchette doit correspondre à ce qui est soulevé.
-        set({ order: 0, reps, weight, targetReps: 5, targetRepsMax: 12 }),
-        set({ order: 1, reps, weight, targetReps: 5, targetRepsMax: 12 }),
+        // No prescribed range: plateau is a 1RM reading. An open 8–12 contract
+        // at 5+ reps would now emit `range_satisfied` (severity 35) and hide
+        // plateau (30) under pickSignals — which is correct ranking, but not
+        // what this block is testing.
+        set({
+          order: 0,
+          reps,
+          weight,
+          targetReps: undefined,
+          targetRepsMax: undefined,
+        }),
+        set({
+          order: 1,
+          reps,
+          weight,
+          targetReps: undefined,
+          targetRepsMax: undefined,
+        }),
       ],
       ...extra,
     });
@@ -457,7 +561,7 @@ describe('pickSignals', () => {
         severity: 10,
       },
       {
-        code: 'range_completed',
+        code: 'range_ceiling_reached',
         exerciseId: 'bench',
         nextLoadKg: 102.5,
         evidence: [],
@@ -473,17 +577,18 @@ describe('pickSignals', () => {
     const picked = pickSignals(signals);
     expect(picked).toHaveLength(2);
     expect(picked.map((s) => s.exerciseId).sort()).toEqual(['bench', 'squat']);
-    expect(picked.find((s) => s.exerciseId === 'bench')!.code).toBe('range_completed');
+    expect(picked.find((s) => s.exerciseId === 'bench')!.code).toBe('range_ceiling_reached');
   });
 });
 
 describe('mute cases', () => {
-  it('stays fully silent on a single incomplete history line with no range hit', () => {
+  it('stays fully silent when the floor is missed once and nothing else fires', () => {
+    // One set under the floor: not satisfied, not ceiling, single miss ≠ range_missed.
     const signals = evaluateCoach([
       line({
         exerciseId: 'bench',
         workoutId: 'w1',
-        sets: [set({ order: 0, reps: 8, targetRepsMax: 12 })],
+        sets: [set({ order: 0, reps: 6, targetReps: 8, targetRepsMax: 12 })],
       }),
     ]);
     expect(signals).toEqual([]);

@@ -133,7 +133,7 @@ describe('evaluateCoachForWorkout', () => {
     const signals = await evaluateCoachForWorkout(workout.id);
     expect(signals).toEqual([
       expect.objectContaining({
-        code: 'range_completed',
+        code: 'range_ceiling_reached',
         exerciseId: 'bench',
         nextLoadKg: 102.5,
       }),

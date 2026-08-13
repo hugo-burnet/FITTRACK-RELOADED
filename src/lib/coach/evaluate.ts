@@ -2,7 +2,9 @@ import { isWorkingSet } from '@/lib/records';
 import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import { nextLoad, previousLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
 import type {
+  CoachAction,
   CoachEvaluateOptions,
+  CoachEvaluation,
   CoachEvidence,
   CoachExerciseLine,
   CoachSetInput,
@@ -91,41 +93,128 @@ function bestSessionOneRepMax(
   return best;
 }
 
-function rangeCompletedSignal(line: CoachExerciseLine): CoachSignal | undefined {
+/** Ceiling of the prescribed rep contract: open top of a range, or the single target. */
+function effectiveCeiling(set: CoachSetInput): number | undefined {
+  return set.targetRepsMax ?? set.targetReps;
+}
+
+/**
+ * Exclusive partition of the rep contract (spec §4.1).
+ * Never both `ceiling` and `satisfied`; single-target hit is ceiling only.
+ */
+function rangeFlags(working: CoachSetInput[]): {
+  ceiling: boolean;
+  satisfied: boolean;
+} {
+  if (working.length === 0) return { ceiling: false, satisfied: false };
+  if (working.some((set) => effectiveCeiling(set) === undefined)) {
+    return { ceiling: false, satisfied: false };
+  }
+  const ceiling = working.every(
+    (set) => set.reps !== undefined && set.reps >= effectiveCeiling(set)!,
+  );
+  const hasRange = working.every(
+    (set) =>
+      set.targetReps !== undefined &&
+      set.targetRepsMax !== undefined &&
+      set.targetRepsMax > set.targetReps,
+  );
+  const satisfied =
+    hasRange &&
+    !ceiling &&
+    working.every((set) => set.reps !== undefined && set.reps >= set.targetReps!);
+  return { ceiling, satisfied };
+}
+
+/**
+ * One of `range_ceiling_reached` | `range_satisfied`, never both, never on deload.
+ * `range_completed` is not written — journal rows keep it as a read alias only.
+ */
+function rangePartitionSignal(line: CoachExerciseLine): CoachSignal | undefined {
   if (isDeloadLine(line)) return undefined;
 
   const working = completedWorkingSets(line.sets);
-  if (working.length === 0) return undefined;
+  const { ceiling, satisfied } = rangeFlags(working);
+  if (!ceiling && !satisfied) return undefined;
 
-  // Every working set must carry a max target and hit it. Imports without a
-  // prescribed range stay silent — they feed plateau/1RM, never double progression.
-  if (working.some((set) => set.targetRepsMax === undefined)) return undefined;
-  if (working.some((set) => set.reps === undefined || set.reps < set.targetRepsMax!)) {
-    return undefined;
+  if (satisfied) {
+    const floor = working[0]!.targetReps!;
+    const max = working[0]!.targetRepsMax!;
+    return {
+      code: 'range_satisfied',
+      exerciseId: line.exerciseId,
+      evidence: [
+        { label: 'working_sets', value: working.length },
+        { label: 'target_reps', value: floor },
+        { label: 'target_reps_max', value: max },
+      ],
+      severity: SEVERITY.range_satisfied,
+    };
   }
 
-  const targetRepsMax = working[0]!.targetRepsMax!;
+  // ceiling
+  const ceilingReps = effectiveCeiling(working[0]!)!;
   const lastWeight = [...working].reverse().find((set) => set.weight !== undefined)?.weight;
-  if (lastWeight === undefined) return undefined;
-
-  const increment = resolveLoadIncrementKg(line);
-  const proposed = nextLoad(lastWeight, increment, line.measurementType);
-  if (proposed === lastWeight) return undefined;
-
   const evidence: CoachEvidence[] = [
     { label: 'working_sets', value: working.length },
-    { label: 'target_reps_max', value: targetRepsMax },
-    { label: 'current_load_kg', value: lastWeight },
-    { label: 'next_load_kg', value: proposed },
+    { label: 'target_reps_max', value: ceilingReps },
   ];
 
+  let nextLoadKg: number | undefined;
+  if (lastWeight !== undefined) {
+    evidence.push({ label: 'current_load_kg', value: lastWeight });
+    const increment = resolveLoadIncrementKg(line);
+    const proposed = nextLoad(lastWeight, increment, line.measurementType);
+    if (proposed !== lastWeight) {
+      nextLoadKg = proposed;
+      evidence.push({ label: 'next_load_kg', value: proposed });
+    }
+  }
+
   return {
-    code: 'range_completed',
+    code: 'range_ceiling_reached',
     exerciseId: line.exerciseId,
-    nextLoadKg: proposed,
+    nextLoadKg,
     evidence,
-    severity: SEVERITY.range_completed,
+    severity: SEVERITY.range_ceiling_reached,
   };
+}
+
+/**
+ * Build the action set from performance signals only (phase does not touch this).
+ * Plateau strips every prescription escalation, including `add_set`.
+ */
+function buildAllowedActions(signals: readonly CoachSignal[]): CoachAction[] {
+  const allowed = new Set<CoachAction>(['maintain']);
+  const codes = new Set(signals.map((signal) => signal.code));
+
+  if (codes.has('range_satisfied')) {
+    allowed.add('increase_reps');
+  }
+  if (codes.has('range_ceiling_reached') || codes.has('range_completed')) {
+    allowed.add('increase_load');
+    allowed.add('add_set');
+  }
+  if (codes.has('range_missed')) {
+    allowed.add('reduce_load');
+  }
+
+  if (codes.has('plateau')) {
+    for (const action of ['increase_reps', 'increase_load', 'add_set'] as const) {
+      allowed.delete(action);
+    }
+  }
+
+  return [...allowed];
+}
+
+function sortNewestFirst(lines: readonly CoachExerciseLine[]): CoachExerciseLine[] {
+  return lines
+    .slice()
+    .sort(
+      (a, b) =>
+        b.workoutStartedAt - a.workoutStartedAt || b.workoutId.localeCompare(a.workoutId),
+    );
 }
 
 /**
@@ -347,6 +436,51 @@ export function pickSignals(signals: readonly CoachSignal[]): CoachSignal[] {
 }
 
 /**
+ * Performance engine for one exercise: exclusive range partition, history
+ * rules, and the independent `allowedActions` set (spec §4).
+ *
+ * `history` is prior sessions of the same exercise (any order). `line` is the
+ * session under review; when history contains a newer session, the true latest
+ * still wins for intra-session / range reads.
+ */
+export function evaluatePerformance(
+  line: CoachExerciseLine,
+  history: readonly CoachExerciseLine[] = [],
+  options: CoachEvaluateOptions = {},
+): CoachEvaluation {
+  const formula = options.formula ?? 'epley';
+  const plateauSessions = options.plateauSessions ?? DEFAULT_PLATEAU_SESSIONS;
+  const dropReps = options.dropReps ?? DEFAULT_DROP_REPS;
+  const longRestMs = options.longRestMs ?? DEFAULT_LONG_REST_MS;
+
+  const sameExercise = history.filter((entry) => entry.exerciseId === line.exerciseId);
+  const newestFirst = sortNewestFirst([line, ...sameExercise]);
+  const latest = newestFirst[0]!;
+
+  const signals: CoachSignal[] = [];
+
+  const range = rangePartitionSignal(latest);
+  if (range) signals.push(range);
+
+  const missed = rangeMissedSignal(newestFirst);
+  if (missed) signals.push(missed);
+
+  const drop = intraSessionDropSignal(latest, dropReps);
+  if (drop) signals.push(drop);
+
+  const rest = longRestSignal(latest, drop, longRestMs);
+  if (rest) signals.push(rest);
+
+  const plateau = plateauSignal(newestFirst, formula, plateauSessions);
+  if (plateau) signals.push(plateau);
+
+  return {
+    signals,
+    allowedActions: buildAllowedActions(signals),
+  };
+}
+
+/**
  * Every signal the rules produce, before the one-per-exercise comparator.
  * Tests use this to prove correlation (e.g. long_rest only with a drop).
  */
@@ -354,46 +488,22 @@ export function collectCoachSignals(
   lines: readonly CoachExerciseLine[],
   options: CoachEvaluateOptions = {},
 ): CoachSignal[] {
-  const formula = options.formula ?? 'epley';
-  const plateauSessions = options.plateauSessions ?? DEFAULT_PLATEAU_SESSIONS;
-  const dropReps = options.dropReps ?? DEFAULT_DROP_REPS;
-  const longRestMs = options.longRestMs ?? DEFAULT_LONG_REST_MS;
-
   const merged = mergeLinesForWorkout(lines);
   const byExercise = new Map<string, CoachExerciseLine[]>();
-  for (const line of merged) {
-    const list = byExercise.get(line.exerciseId) ?? [];
-    list.push(line);
-    byExercise.set(line.exerciseId, list);
+  for (const entry of merged) {
+    const list = byExercise.get(entry.exerciseId) ?? [];
+    list.push(entry);
+    byExercise.set(entry.exerciseId, list);
   }
 
   const signals: CoachSignal[] = [];
 
   for (const [, exerciseLines] of byExercise) {
-    const newestFirst = exerciseLines
-      .slice()
-      .sort(
-        (a, b) =>
-          b.workoutStartedAt - a.workoutStartedAt || b.workoutId.localeCompare(a.workoutId),
-      );
-
+    const newestFirst = sortNewestFirst(exerciseLines);
     const latest = newestFirst[0];
     if (latest === undefined) continue;
-
-    const range = rangeCompletedSignal(latest);
-    if (range) signals.push(range);
-
-    const missed = rangeMissedSignal(newestFirst);
-    if (missed) signals.push(missed);
-
-    const drop = intraSessionDropSignal(latest, dropReps);
-    if (drop) signals.push(drop);
-
-    const rest = longRestSignal(latest, drop, longRestMs);
-    if (rest) signals.push(rest);
-
-    const plateau = plateauSignal(newestFirst, formula, plateauSessions);
-    if (plateau) signals.push(plateau);
+    const evaluation = evaluatePerformance(latest, newestFirst.slice(1), options);
+    signals.push(...evaluation.signals);
   }
 
   return signals;

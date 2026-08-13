@@ -14,8 +14,13 @@ function evidenceValue(signal: SignalLike, label: string): number | undefined {
 /** French explanation with the numbers that produced the signal — never a bare tip. */
 export function coachSignalMessage(signal: SignalLike): string {
   switch (signal.code) {
-    // Task 6 specialises copy; until then ceiling/satisfied share the legacy wording.
-    case 'range_satisfied':
+    case 'range_satisfied': {
+      const sets = evidenceValue(signal, 'working_sets') ?? 0;
+      const reps = evidenceValue(signal, 'target_reps') ?? 0;
+      const max = evidenceValue(signal, 'target_reps_max') ?? 0;
+      return t('coach.range_satisfied', { sets, reps, max });
+    }
+    // Stored `range_completed` journal rows read as ceiling (spec §4.1).
     case 'range_ceiling_reached':
     case 'range_completed': {
       const weight = signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg') ?? 0;
@@ -26,7 +31,7 @@ export function coachSignalMessage(signal: SignalLike): string {
       // the bar, so a `+` in front of it reads as an increment of fifty kilos.
       // The step is the distance between the two numbers, and it shows itself.
       if (current === undefined) {
-        return t('coach.range_completed_plain', {
+        return t('coach.range_ceiling_reached_plain', {
           weight: formatNumber(weight),
           sets,
           reps,
@@ -35,13 +40,13 @@ export function coachSignalMessage(signal: SignalLike): string {
       // Assistance gets lighter as you get stronger: same arrow, number down.
       const assist = weight < current;
       return assist
-        ? t('coach.range_completed_assist', {
+        ? t('coach.range_ceiling_reached_assist', {
             current: formatNumber(current),
             weight: formatNumber(weight),
             sets,
             reps,
           })
-        : t('coach.range_completed', {
+        : t('coach.range_ceiling_reached', {
             current: formatNumber(current),
             weight: formatNumber(weight),
             sets,

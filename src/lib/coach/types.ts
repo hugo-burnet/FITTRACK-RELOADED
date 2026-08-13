@@ -17,7 +17,7 @@ export interface CoachEvidence {
 export interface CoachSignal {
   code: CoachSignalCode;
   exerciseId: string;
-  /** Proposed next load when the rule has one (range_completed only in V1). */
+  /** Proposed next load when the rule has one (`range_ceiling_reached` / `range_missed`). */
   nextLoadKg?: number;
   evidence: CoachEvidence[];
   severity: number;
@@ -62,4 +62,21 @@ export interface CoachEvaluateOptions {
   dropReps?: number;
   /** Rest gap (ms) considered long when a drop is also present (default 180_000). */
   longRestMs?: number;
+}
+
+/** Concrete prescription moves the performance engine may authorize. */
+export type CoachAction =
+  | 'increase_load'
+  | 'increase_reps'
+  | 'add_set'
+  | 'maintain'
+  | 'reduce_load';
+
+/**
+ * Performance reading for one exercise: independent signal list + action set.
+ * Phase selection (Task 3+) only ranks / filters `allowedActions`.
+ */
+export interface CoachEvaluation {
+  signals: CoachSignal[];
+  allowedActions: CoachAction[];
 }

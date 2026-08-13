@@ -307,12 +307,21 @@ const fr = {
     objective: 'Objectif proposé',
     applyAction: 'Appliquer {weight} kg aux séries restantes',
     nextLoad: 'Prochaine charge : {weight} kg',
+    range_ceiling_reached:
+      '{current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_ceiling_reached_assist:
+      'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_ceiling_reached_plain:
+      '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    /** @deprecated Read alias — same wording as range_ceiling_reached. */
     range_completed:
       '{current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_assist:
       'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_plain:
       '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_satisfied:
+      'Fourchette respectée ({sets} séries ≥ {reps}, sans atteindre le plafond {max}).',
     range_missed:
       '{current} → {weight} kg car le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}).',
     range_missed_assist:
