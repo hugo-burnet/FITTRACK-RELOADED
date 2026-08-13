@@ -173,11 +173,10 @@ export async function resolveTargetProgramContext(
     const currentEntryId = workout.programScheduleEntryId;
     if (resolvedEntries.some((entry) => entry.id === currentEntryId)) {
       const completedThisWeek = new Set(
-        alive(await db.workouts.toArray())
+        alive(await db.workouts.where('status').equals('completed').toArray())
           .filter(
             (row) =>
               row.id !== workout.id &&
-              row.status === 'completed' &&
               row.programId === programId &&
               row.programWeekIndex === weekIndex &&
               row.programScheduleEntryId !== undefined &&
