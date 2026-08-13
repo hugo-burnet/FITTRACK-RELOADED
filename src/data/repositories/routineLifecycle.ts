@@ -4,9 +4,12 @@ import type {
   Routine,
   RoutineExercise,
   RoutineSet,
-  Syncable,
 } from '@/data/types';
 import { alive, newEntity, softDelete, touch } from './base';
+import {
+  RoutineReferencedError,
+  hasLiveScheduleReference,
+} from './routineVersions';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
 
@@ -47,7 +50,24 @@ export async function listRoutineSummaries(): Promise<RoutineSummary[]> {
     stats.set(row.routineId, stat);
   }
 
-  return alive(routines)
+  const latestPublishedByLineage = new Map<string, Routine>();
+  for (const routine of alive(routines)) {
+    if (routine.versionState !== 'published') continue;
+    const rootId = routine.originRoutineId ?? routine.id;
+    const current = latestPublishedByLineage.get(rootId);
+    if (
+      current === undefined ||
+      routine.version > current.version ||
+      (routine.version === current.version && routine.updatedAt > current.updatedAt) ||
+      (routine.version === current.version &&
+        routine.updatedAt === current.updatedAt &&
+        routine.id.localeCompare(current.id) > 0)
+    ) {
+      latestPublishedByLineage.set(rootId, routine);
+    }
+  }
+
+  return [...latestPublishedByLineage.values()]
     .sort(byOrder)
     .map((routine) => ({
       routine,
@@ -126,13 +146,29 @@ export async function createRoutine(name: string, folderId = ''): Promise<Routin
   return routine;
 }
 
-export async function updateRoutine(
-  id: string,
-  changes: Partial<Omit<Routine, keyof Syncable>>,
-): Promise<void> {
-  const routine = await db.routines.get(id);
-  if (routine === undefined) return;
-  await db.routines.put(touch(routine, changes));
+export type RoutineChanges = Partial<
+  Pick<Routine, 'name' | 'subtitle' | 'folderId' | 'order' | 'notes'>
+>;
+
+function editableRoutineChanges(changes: RoutineChanges): RoutineChanges {
+  const editable: RoutineChanges = {};
+  if ('name' in changes) editable.name = changes.name;
+  if ('subtitle' in changes) editable.subtitle = changes.subtitle;
+  if ('folderId' in changes) editable.folderId = changes.folderId;
+  if ('order' in changes) editable.order = changes.order;
+  if ('notes' in changes) editable.notes = changes.notes;
+  return editable;
+}
+
+export async function updateRoutine(id: string, changes: RoutineChanges): Promise<void> {
+  await db.transaction('rw', [db.routines, db.programScheduleEntries], async () => {
+    const routine = await db.routines.get(id);
+    if (routine === undefined || routine.deletedAt !== 0) return;
+    if (routine.versionState === 'published' && (await hasLiveScheduleReference(id))) {
+      throw new RoutineReferencedError(id);
+    }
+    await db.routines.put(touch(routine, editableRoutineChanges(changes)));
+  });
 }
 
 /**
@@ -226,20 +262,25 @@ export async function reorderRoutines(
 
 /** Soft-deletes the routine AND its exercise rows AND their sets, in one transaction. */
 export async function deleteRoutine(id: string): Promise<void> {
-  await db.transaction('rw', db.routines, db.routineExercises, db.routineSets, async () => {
-    const now = Date.now();
-    const rowIds = (await db.routineExercises.where('routineId').equals(id).toArray()).map(
-      (row) => row.id,
-    );
+  await db.transaction(
+    'rw',
+    [db.routines, db.routineExercises, db.routineSets, db.programScheduleEntries],
+    async () => {
+      if (await hasLiveScheduleReference(id)) throw new RoutineReferencedError(id);
+      const now = Date.now();
+      const rowIds = (await db.routineExercises.where('routineId').equals(id).toArray()).map(
+        (row) => row.id,
+      );
 
-    await db.routineSets
-      .where('routineExerciseId')
-      .anyOf(rowIds)
-      .modify({ deletedAt: now, updatedAt: now });
-    await db.routineExercises
-      .where('routineId')
-      .equals(id)
-      .modify({ deletedAt: now, updatedAt: now });
-    await softDelete(db.routines, id);
-  });
+      await db.routineSets
+        .where('routineExerciseId')
+        .anyOf(rowIds)
+        .modify({ deletedAt: now, updatedAt: now });
+      await db.routineExercises
+        .where('routineId')
+        .equals(id)
+        .modify({ deletedAt: now, updatedAt: now });
+      await softDelete(db.routines, id);
+    },
+  );
 }

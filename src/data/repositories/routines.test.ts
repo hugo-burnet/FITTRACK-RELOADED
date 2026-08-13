@@ -1,29 +1,41 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { createCustomExercise, deleteExercise } from './exercises';
 import {
+  RoutineReferencedError,
   addExercisesToRoutine,
   addRoutineSet,
   applyToAllSets,
   countRoutinesInFolder,
   createFolder,
   createRoutine,
+  createRoutineVersionDraft,
   deleteFolder,
   deleteRoutine,
   deleteRoutineSet,
   duplicateRoutine,
   getRoutineDetail,
   groupWithPrevious,
+  isRoutineSealed,
   listFolders,
+  listRoutineLineage,
   listRoutineSummaries,
+  listRoutineVersionDrafts,
+  publishRoutineVersion,
   removeRoutineExercise,
   reorderRoutineExercises,
   reorderRoutines,
   ungroupSuperset,
   updateRoutine,
+  updateRoutineExercise,
   updateRoutineSet,
 } from './routines';
+import {
+  createProgramDraft,
+  createScheduleRevision,
+  getProgramDetail,
+} from './programs';
 import type { RoutineDetail, RoutineExerciseDetail } from './routines';
 import type { Exercise } from '@/data/types';
 
@@ -241,6 +253,281 @@ describe('duplicateRoutine', () => {
   });
 });
 
+describe('routine versions', () => {
+  it('creates a deep draft copy with a fresh identity and the root lineage', async () => {
+    const { routine } = await routineWith('Poussée', ['Développé', 'Écarté']);
+    await updateRoutine(routine.id, { subtitle: 'Force', notes: 'Pause en bas' });
+    const sourceLine = await line(routine.id, 0);
+    await updateRoutineSet(at(sourceLine.sets, 0).id, { targetWeight: 80, targetReps: 5 });
+    await addRoutineSet(sourceLine.row.id);
+
+    const draft = await createRoutineVersionDraft(routine.id);
+    const source = await detail(routine.id);
+    const copied = await detail(draft.id);
+
+    expect(draft).toMatchObject({
+      name: 'Poussée',
+      subtitle: 'Force',
+      notes: 'Pause en bas',
+      version: 2,
+      originRoutineId: routine.id,
+      versionState: 'draft',
+    });
+    expect(copied.exercises.map((item) => item.exercise?.name)).toEqual([
+      'Développé',
+      'Écarté',
+    ]);
+    expect(at(copied.exercises, 0).sets).toHaveLength(2);
+    expect(at(at(copied.exercises, 0).sets, 0)).toMatchObject({
+      targetWeight: 80,
+      targetReps: 5,
+    });
+
+    const sourceIds = [
+      source.routine.id,
+      ...source.exercises.flatMap((item) => [item.row.id, ...item.sets.map((set) => set.id)]),
+    ];
+    const copiedIds = [
+      copied.routine.id,
+      ...copied.exercises.flatMap((item) => [item.row.id, ...item.sets.map((set) => set.id)]),
+    ];
+    expect(copiedIds.filter((id) => sourceIds.includes(id))).toEqual([]);
+  });
+
+  it('numbers every draft sequentially from the root lineage', async () => {
+    const source = await createRoutine('Poussée');
+    const second = await createRoutineVersionDraft(source.id);
+    const third = await createRoutineVersionDraft(source.id);
+
+    expect([second.version, third.version]).toEqual([2, 3]);
+    expect((await listRoutineLineage(third.id)).map((routine) => routine.id)).toEqual([
+      source.id,
+      second.id,
+      third.id,
+    ]);
+  });
+
+  it('keeps drafts out of normal summaries and exposes them separately', async () => {
+    const source = await createRoutine('Poussée');
+    const draft = await createRoutineVersionDraft(source.id);
+
+    expect((await listRoutineSummaries()).map((summary) => summary.routine.id)).toEqual([
+      source.id,
+    ]);
+    expect((await listRoutineVersionDrafts(source.id)).map((routine) => routine.id)).toEqual([
+      draft.id,
+    ]);
+  });
+
+  it('publishes a complete effective split and replaces every source-lineage occurrence', async () => {
+    const source = await createRoutine('Poussée');
+    const other = await createRoutine('Tirage');
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    const initialRevision = await createScheduleRevision(program.id, 0, [
+      { routineId: source.id, dayOfWeek: 1, order: 0 },
+      { routineId: other.id, dayOfWeek: 3, order: 1 },
+      { routineId: source.id, dayOfWeek: 5, order: 2 },
+    ]);
+    const initialEntries = await db.programScheduleEntries
+      .where('revisionId')
+      .equals(initialRevision.id)
+      .toArray();
+    const draft = await createRoutineVersionDraft(source.id);
+
+    const published = await publishRoutineVersion({
+      draftRoutineId: draft.id,
+      programId: program.id,
+      effectiveFromWeekIndex: 2,
+    });
+
+    expect(published.versionState).toBe('published');
+    const programDetail = await getProgramDetail(program.id);
+    expect(programDetail?.revisions).toHaveLength(2);
+    expect(programDetail?.revisions[0]?.revision.id).toBe(initialRevision.id);
+    expect(programDetail?.revisions[0]?.entries.map((entry) => entry.routineId)).toEqual(
+      initialEntries
+        .slice()
+        .sort((left, right) => left.dayOfWeek - right.dayOfWeek || left.order - right.order)
+        .map((entry) => entry.routineId),
+    );
+    expect(programDetail?.revisions[0]?.entries.every((entry) => entry.deletedAt === 0)).toBe(true);
+    expect(programDetail?.revisions[1]?.revision.effectiveFromWeekIndex).toBe(2);
+    expect(programDetail?.revisions[1]?.entries.map((entry) => entry.routineId)).toEqual([
+      draft.id,
+      other.id,
+      draft.id,
+    ]);
+    expect((await listRoutineSummaries()).map((summary) => summary.routine.id)).toEqual([
+      draft.id,
+      other.id,
+    ]);
+  });
+
+  it('rolls back publication when no source-lineage entry exists in the effective split', async () => {
+    const source = await createRoutine('Poussée');
+    const other = await createRoutine('Tirage');
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: other.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const draft = await createRoutineVersionDraft(source.id);
+
+    await expect(
+      publishRoutineVersion({
+        draftRoutineId: draft.id,
+        programId: program.id,
+        effectiveFromWeekIndex: 2,
+      }),
+    ).rejects.toThrow();
+
+    expect((await db.routines.get(draft.id))?.versionState).toBe('draft');
+    expect((await getProgramDetail(program.id))?.revisions).toHaveLength(1);
+  });
+
+  it('rolls back both publication and schedule supersession after a storage failure', async () => {
+    const source = await createRoutine('Poussée');
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    const initialRevision = await createScheduleRevision(program.id, 0, [
+      { routineId: source.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const draft = await createRoutineVersionDraft(source.id);
+    const uuid = vi
+      .spyOn(crypto, 'randomUUID')
+      .mockImplementationOnce(() => initialRevision.id as ReturnType<typeof crypto.randomUUID>);
+
+    try {
+      await expect(
+        publishRoutineVersion({
+          draftRoutineId: draft.id,
+          programId: program.id,
+          effectiveFromWeekIndex: 0,
+        }),
+      ).rejects.toThrow();
+    } finally {
+      uuid.mockRestore();
+    }
+
+    expect((await db.routines.get(draft.id))?.versionState).toBe('draft');
+    expect((await db.programScheduleRevisions.get(initialRevision.id))?.deletedAt).toBe(0);
+    expect(
+      (
+        await db.programScheduleEntries
+          .where('revisionId')
+          .equals(initialRevision.id)
+          .toArray()
+      ).every((entry) => entry.deletedAt === 0),
+    ).toBe(true);
+  });
+
+  it('seals a referenced published routine while leaving its draft editable', async () => {
+    const { routine: source } = await routineWith('Poussée', ['Développé']);
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: source.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const draft = await createRoutineVersionDraft(source.id);
+
+    expect(await isRoutineSealed(source.id)).toBe(true);
+    expect(await isRoutineSealed(draft.id)).toBe(false);
+    await expect(updateRoutine(source.id, { name: 'Mutée' })).rejects.toBeInstanceOf(
+      RoutineReferencedError,
+    );
+    await updateRoutine(draft.id, { name: 'Version future' });
+    expect((await getRoutineDetail(draft.id))?.routine.name).toBe('Version future');
+  });
+
+  it('rejects every content mutation through the repository facade when sealed', async () => {
+    const { routine: source } = await routineWith('Poussée', ['Développé', 'Écarté']);
+    const editableLine = await line(source.id, 0);
+    await addRoutineSet(editableLine.row.id);
+    const extra = await exercise('Écarté');
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: source.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const sourceLine = await line(source.id, 0);
+
+    await expect(addExercisesToRoutine(source.id, [extra.id])).rejects.toBeInstanceOf(
+      RoutineReferencedError,
+    );
+    await expect(
+      updateRoutineExercise(sourceLine.row.id, { notes: 'Mutation' }),
+    ).rejects.toBeInstanceOf(RoutineReferencedError);
+    await expect(removeRoutineExercise(sourceLine.row.id)).rejects.toBeInstanceOf(
+      RoutineReferencedError,
+    );
+    await expect(reorderRoutineExercises(source.id, 0, 1)).rejects.toBeInstanceOf(
+      RoutineReferencedError,
+    );
+    await expect(
+      groupWithPrevious(source.id, (await line(source.id, 1)).row.id),
+    ).rejects.toBeInstanceOf(RoutineReferencedError);
+    await expect(
+      ungroupSuperset(source.id, sourceLine.row.id),
+    ).rejects.toBeInstanceOf(RoutineReferencedError);
+    await expect(addRoutineSet(sourceLine.row.id)).rejects.toBeInstanceOf(
+      RoutineReferencedError,
+    );
+    await expect(
+      updateRoutineSet(at(sourceLine.sets, 0).id, { targetWeight: 100 }),
+    ).rejects.toBeInstanceOf(RoutineReferencedError);
+    await expect(
+      applyToAllSets(sourceLine.row.id, { targetWeight: 100 }),
+    ).rejects.toBeInstanceOf(RoutineReferencedError);
+    await expect(deleteRoutineSet(at(sourceLine.sets, 0).id)).rejects.toBeInstanceOf(
+      RoutineReferencedError,
+    );
+
+    const unchanged = await line(source.id, 0);
+    expect(await names(source.id)).toEqual(['Développé', 'Écarté']);
+    expect(unchanged.row.notes).toBeUndefined();
+    expect(unchanged.sets).toHaveLength(2);
+    expect(at(unchanged.sets, 0).targetWeight).toBeUndefined();
+  });
+
+  it('does not let updateRoutine alter lineage or publication metadata', async () => {
+    const source = await createRoutine('Poussée');
+    const draft = await createRoutineVersionDraft(source.id);
+
+    await updateRoutine(
+      draft.id,
+      {
+        name: 'Version future',
+        version: 99,
+        versionState: 'published',
+        originRoutineId: 'other-lineage',
+      } as unknown as Parameters<typeof updateRoutine>[1],
+    );
+
+    expect((await getRoutineDetail(draft.id))?.routine).toMatchObject({
+      name: 'Version future',
+      version: 2,
+      versionState: 'draft',
+      originRoutineId: source.id,
+    });
+  });
+});
+
 describe('deleteRoutine', () => {
   it('supprime en cascade les exercices et les séries', async () => {
     const { routine } = await routineWith('Poussée', ['Développé', 'Écarté']);
@@ -255,6 +542,21 @@ describe('deleteRoutine', () => {
     expect(rows.every((row) => row.deletedAt !== 0)).toBe(true);
     const sets = await db.routineSets.toArray();
     expect(sets.every((set) => set.deletedAt !== 0)).toBe(true);
+  });
+
+  it('refuses to delete a routine referenced by a living schedule entry', async () => {
+    const routine = await createRoutine('Poussée');
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+
+    await expect(deleteRoutine(routine.id)).rejects.toBeInstanceOf(RoutineReferencedError);
+    expect((await db.routines.get(routine.id))?.deletedAt).toBe(0);
   });
 });
 
