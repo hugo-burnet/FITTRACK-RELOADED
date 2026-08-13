@@ -30,6 +30,20 @@ export async function createProgramDraft(input: CreateProgramDraftInput): Promis
   return program;
 }
 
+export async function updateProgramDraft(
+  programId: string,
+  input: CreateProgramDraftInput,
+): Promise<void> {
+  await db.transaction('rw', db.programs, async () => {
+    const program = await db.programs.get(programId);
+    if (program === undefined || program.deletedAt !== 0) {
+      throw new ProgramRepositoryError('program_not_found');
+    }
+    if (program.status !== 'draft') throw new ProgramRepositoryError('program_invalid');
+    await db.programs.put(touch(program, input));
+  });
+}
+
 export async function activateProgram(programId: string): Promise<void> {
   await db.transaction(
     'rw',

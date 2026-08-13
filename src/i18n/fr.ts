@@ -470,6 +470,7 @@ const fr = {
     existingBasicsHint: 'Le cadre de ce brouillon est déjà enregistré.',
     continue: 'Continuer',
     activate: 'Activer le bloc',
+    saveRevision: 'Enregistrer la révision',
     splitIntro: 'Ce rythme se répète chaque semaine du bloc.',
     session: 'Séance {number}',
     sessionDayLabel: 'Jour de la séance {number}',
@@ -506,6 +507,7 @@ const fr = {
     errorSave: 'Cette étape n’a pas pu être enregistrée. Réessaie.',
     errorAnotherActive: 'Un autre bloc est actif. Termine-le avant d’activer celui-ci.',
     errorRoutineMissing: 'Une routine du split n’est plus disponible. Choisis-en une autre.',
+    errorNoFutureRevision: 'Ce bloc n’a plus de semaine future à modifier.',
   },
 
   routine: {

@@ -9,10 +9,13 @@ import {
   createScheduleRevision,
   getProgramDetail,
   replaceProgramWeeks,
+  updateProgramDraft,
 } from '@/data/repositories/programs';
+import type { ProgramDetail } from '@/data/repositories/programs';
 import { listRoutineSummaries } from '@/data/repositories/routines';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
+import { programPosition, resolveSchedule } from '@/lib/programs';
 import { ActionBand } from '@/ui';
 import { ProgramBasicsStep } from './ProgramBasicsStep';
 import type { ProgramBasicsDraft } from './ProgramBasicsStep';
@@ -22,6 +25,11 @@ import { ProgramWeeksStep } from './ProgramWeeksStep';
 import type { ProgramWeekDraft } from './ProgramWeeksStep';
 
 type ProgramEditorStep = 'basics' | 'split' | 'weeks';
+type ExistingProgramQuery =
+  | { status: 'not_requested' }
+  | { status: 'found'; detail: ProgramDetail }
+  | { status: 'not_found' }
+  | { status: 'error' };
 
 const STEP_NUMBER: Record<ProgramEditorStep, number> = { basics: 1, split: 2, weeks: 3 };
 const STEP_NAME: Record<ProgramEditorStep, TranslationKey> = {
@@ -82,6 +90,7 @@ function repositoryErrorKey(error: unknown): TranslationKey {
 export function ProgramEditorScreen() {
   const { id: routeProgramId } = useParams();
   const navigate = useNavigate();
+  const [editorOpenedAt] = useState(() => Date.now());
   const [step, setStep] = useState<ProgramEditorStep>('basics');
   const [basics, setBasics] = useState<ProgramBasicsDraft>({
     name: '',
@@ -93,49 +102,81 @@ export function ProgramEditorScreen() {
   const [weeks, setWeeks] = useState<ProgramWeekDraft[]>(() => defaultWeeks(8));
   const [programId, setProgramId] = useState(routeProgramId ?? '');
   const [hydratedId, setHydratedId] = useState('');
+  const [hasPersistedWeeks, setHasPersistedWeeks] = useState(false);
   const [errorKey, setErrorKey] = useState<TranslationKey | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const existing = useLiveQuery(
-    () => (routeProgramId === undefined ? Promise.resolve(null) : getProgramDetail(routeProgramId)),
+  const existing = useLiveQuery<ExistingProgramQuery>(
+    async () => {
+      if (routeProgramId === undefined) return { status: 'not_requested' };
+      try {
+        const detail = await getProgramDetail(routeProgramId);
+        return detail === null ? { status: 'not_found' } : { status: 'found', detail };
+      } catch {
+        return { status: 'error' };
+      }
+    },
     [routeProgramId],
   );
   const routines = useLiveQuery(listRoutineSummaries);
 
-  if (routeProgramId !== undefined && existing !== undefined && existing !== null && hydratedId !== routeProgramId) {
-    const initialRevision = existing.revisions[0];
+  if (routeProgramId !== undefined && existing?.status === 'found' && hydratedId !== routeProgramId) {
+    const { detail } = existing;
+    const position = programPosition(
+      detail.program.startsAt,
+      detail.program.durationWeeks,
+      editorOpenedAt,
+    );
+    const hydrateWeekIndex =
+      position.phase === 'active'
+        ? position.weekIndex
+        : position.phase === 'before'
+          ? 0
+          : detail.program.durationWeeks - 1;
+    const revisions = detail.revisions.map(({ revision }) => revision);
+    const revisionEntries = detail.revisions.flatMap(({ entries }) => entries);
+    const effectiveEntries = resolveSchedule(revisions, revisionEntries, hydrateWeekIndex);
     setBasics({
-      name: existing.program.name,
-      startsAt: existing.program.startsAt,
-      durationWeeks: existing.program.durationWeeks,
+      name: detail.program.name,
+      startsAt: detail.program.startsAt,
+      durationWeeks: detail.program.durationWeeks,
     });
-    setDateValue(formatLocalDate(existing.program.startsAt));
+    setDateValue(formatLocalDate(detail.program.startsAt));
     setSplit(
-      initialRevision === undefined
+      effectiveEntries.length === 0
         ? emptySplit()
-        : initialRevision.entries.map(({ routineId, dayOfWeek, order }) => ({
+        : effectiveEntries.map(({ routineId, dayOfWeek, order }) => ({
             routineId,
             dayOfWeek,
             order,
           })),
     );
     setWeeks(
-      existing.weeks.length === existing.program.durationWeeks
-        ? existing.weeks.map(({ weekIndex, prescriptionKind, prescriptionValue, isDeload }) => ({
+      detail.weeks.length === detail.program.durationWeeks
+        ? detail.weeks.map(({ weekIndex, prescriptionKind, prescriptionValue, isDeload }) => ({
             weekIndex,
             prescriptionKind,
             prescriptionValue,
             isDeload,
           }))
-        : defaultWeeks(existing.program.durationWeeks),
+        : defaultWeeks(detail.program.durationWeeks),
     );
+    setHasPersistedWeeks(detail.weeks.length > 0);
     setProgramId(routeProgramId);
+    if (detail.program.status === 'active') setStep('split');
     setHydratedId(routeProgramId);
   }
 
+  const existingDetail = existing?.status === 'found' ? existing.detail : null;
+  const activeEdit = existingDetail?.program.status === 'active';
+
   const goBack = () => {
     setErrorKey(null);
-    if (step === 'weeks') setStep('split');
+    if (activeEdit) {
+      const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+      if (index > 0) void navigate(-1);
+      else void navigate(`/programs/${programId}`);
+    } else if (step === 'weeks') setStep('split');
     else if (step === 'split') setStep('basics');
     else {
       const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
@@ -185,19 +226,49 @@ export function ProgramEditorScreen() {
     setSaving(true);
     try {
       if (step === 'basics') {
-        let nextProgramId = programId;
-        if (nextProgramId === '') {
+        if (programId === '') {
           const program = await createProgramDraft({ ...basics, name: basics.name.trim() });
-          nextProgramId = program.id;
           setProgramId(program.id);
+        } else {
+          await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
         }
-        if (weeks.length !== basics.durationWeeks) setWeeks(defaultWeeks(basics.durationWeeks));
+        if (weeks.length !== basics.durationWeeks) {
+          const resizedWeeks = Array.from(
+            { length: basics.durationWeeks },
+            (_, weekIndex) => weeks[weekIndex] ?? defaultWeeks(basics.durationWeeks)[weekIndex]!,
+          );
+          if (hasPersistedWeeks) await replaceProgramWeeks(programId, resizedWeeks);
+          setWeeks(resizedWeeks);
+        }
         setStep('split');
       } else if (step === 'split') {
-        await createScheduleRevision(programId, 0, orderedSplit(split));
-        setStep('weeks');
+        if (activeEdit && existingDetail !== null) {
+          const position = programPosition(
+            existingDetail.program.startsAt,
+            existingDetail.program.durationWeeks,
+            Date.now(),
+          );
+          const latestRevisionWeek = existingDetail.revisions.reduce(
+            (latest, { revision }) => Math.max(latest, revision.effectiveFromWeekIndex),
+            -1,
+          );
+          const effectiveFromWeekIndex = Math.max(
+            position.phase === 'active' ? position.weekIndex + 1 : 0,
+            latestRevisionWeek + 1,
+          );
+          if (effectiveFromWeekIndex >= existingDetail.program.durationWeeks) {
+            setErrorKey('program.errorNoFutureRevision');
+            return;
+          }
+          await createScheduleRevision(programId, effectiveFromWeekIndex, orderedSplit(split));
+          void navigate(`/programs/${programId}`);
+        } else {
+          await createScheduleRevision(programId, 0, orderedSplit(split));
+          setStep('weeks');
+        }
       } else {
         await replaceProgramWeeks(programId, weeks);
+        setHasPersistedWeeks(true);
         await activateProgram(programId);
         void navigate(`/programs/${programId}`);
       }
@@ -208,7 +279,15 @@ export function ProgramEditorScreen() {
     }
   };
 
-  if (routeProgramId !== undefined && existing === null) {
+  if (routeProgramId !== undefined && existing?.status === 'error') {
+    return (
+      <Screen title={t('program.editTitle')} onBack={goBack}>
+        <p className="text-[var(--text-2)]">{t('program.errorRead')}</p>
+      </Screen>
+    );
+  }
+
+  if (routeProgramId !== undefined && existing?.status === 'not_found') {
     return (
       <Screen title={t('program.notFound')} onBack={goBack}>
         <span />
@@ -230,14 +309,20 @@ export function ProgramEditorScreen() {
       onBack={goBack}
       footer={
         <ActionBand
-          label={step === 'weeks' ? t('program.activate') : t('program.continue')}
+          label={
+            activeEdit
+              ? t('program.saveRevision')
+              : step === 'weeks'
+                ? t('program.activate')
+                : t('program.continue')
+          }
           disabled={saving || (step === 'split' && routines?.length === 0)}
           onClick={() => void completeStep()}
         />
       }
     >
       <div className="flex flex-col gap-6">
-        <nav aria-label={t('program.stepProgress', { current: STEP_NUMBER[step], name: t(STEP_NAME[step]) })}>
+        {!activeEdit && <nav aria-label={t('program.stepProgress', { current: STEP_NUMBER[step], name: t(STEP_NAME[step]) })}>
           <ol className="grid grid-cols-3 border-b border-[var(--border)]">
             {(['basics', 'split', 'weeks'] as const).map((candidate) => (
               <li
@@ -254,7 +339,7 @@ export function ProgramEditorScreen() {
               </li>
             ))}
           </ol>
-        </nav>
+        </nav>}
 
         {errorKey && (
           <p role="alert" className="rounded-xl bg-[var(--surface-1)] p-4 text-sm leading-relaxed text-[var(--danger-ink)]">
@@ -266,7 +351,6 @@ export function ProgramEditorScreen() {
           <ProgramBasicsStep
             value={basics}
             dateValue={dateValue}
-            locked={routeProgramId !== undefined}
             onChange={setBasics}
             onDateChange={(value) => {
               setDateValue(value);

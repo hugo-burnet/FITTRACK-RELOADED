@@ -20,6 +20,7 @@ export {
   createProgramDraft,
   deleteProgram,
   shiftProgram,
+  updateProgramDraft,
 } from './programLifecycle';
 export type {
   CreateProgramDraftInput,

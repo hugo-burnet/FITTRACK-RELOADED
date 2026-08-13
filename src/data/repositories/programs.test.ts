@@ -18,6 +18,7 @@ import {
   listPrograms,
   replaceProgramWeeks,
   shiftProgram,
+  updateProgramDraft,
 } from './programs';
 
 const MONDAY = new Date(2026, 7, 10, 0, 0, 0, 0).getTime();
@@ -70,6 +71,34 @@ describe('program lifecycle repository', () => {
 
   it('returns null, not undefined, when program detail is absent', async () => {
     expect(await getProgramDetail('missing')).toBeNull();
+  });
+
+  it('updates persisted basics only while the program is a draft', async () => {
+    const draft = await createProgramDraft({ name: 'Force', startsAt: MONDAY, durationWeeks: 8 });
+    const nextMonday = new Date(2026, 7, 17).getTime();
+
+    await updateProgramDraft(draft.id, {
+      name: 'Force durable',
+      startsAt: nextMonday,
+      durationWeeks: 10,
+    });
+
+    expect((await getProgramDetail(draft.id))?.program).toMatchObject({
+      name: 'Force durable',
+      startsAt: nextMonday,
+      durationWeeks: 10,
+      status: 'draft',
+    });
+
+    const ready = await createReadyProgram('Active');
+    await activateProgram(ready.program.id);
+    await expect(
+      updateProgramDraft(ready.program.id, {
+        name: 'Rewritten',
+        startsAt: nextMonday,
+        durationWeeks: 6,
+      }),
+    ).rejects.toMatchObject({ code: 'program_invalid' });
   });
 
   it('rejects activation outside the four-to-twelve-week range', async () => {
