@@ -160,9 +160,8 @@ describe('parcours de composition d’une routine', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'percent_1rm' as const,
-        prescriptionValue: 75,
-        isDeload: 0 as const,
+        loadIndex: 75,
+        phase: 'construction' as const,
       })),
     );
     await createScheduleRevision(program.id, 0, [
@@ -206,9 +205,8 @@ describe('parcours de composition d’une routine', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'target_rpe' as const,
-        prescriptionValue: 7,
-        isDeload: 0 as const,
+        loadIndex: 100,
+        phase: 'construction' as const,
       })),
     );
     await createScheduleRevision(program.id, 0, [
@@ -244,7 +242,7 @@ describe('parcours de composition d’une routine', () => {
       name: 'Bloc stable', startsAt: new Date(2026, 7, 10).getTime(), durationWeeks: 4,
     });
     await replaceProgramWeeks(program.id, Array.from({ length: 4 }, (_, weekIndex) => ({
-      weekIndex, prescriptionKind: 'target_rpe' as const, prescriptionValue: 7, isDeload: 0 as const,
+      weekIndex, loadIndex: 100, phase: 'construction' as const,
     })));
     await createScheduleRevision(program.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
     await activateProgram(program.id);

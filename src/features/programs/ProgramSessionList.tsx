@@ -93,9 +93,7 @@ export function ProgramWorkoutWarningSheet({
 }
 
 function programPrescriptionReading(week: ProgramWeek): string {
-  return week.prescriptionKind === 'percent_1rm'
-    ? t('program.percentReading', { value: week.prescriptionValue })
-    : t('program.rpeReading', { value: week.prescriptionValue });
+  return t('program.percentReading', { value: week.loadIndex });
 }
 
 export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
@@ -111,7 +109,7 @@ export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
               border-[var(--border)] py-3 last:border-b-0"
           >
             <span className="text-base text-[var(--text-1)]">
-              {week.isDeload === 1
+              {week.phase === 'deload'
                 ? t('program.upcomingDeload', { number: week.weekIndex + 1 })
                 : t('program.week', { number: week.weekIndex + 1 })}
             </span>

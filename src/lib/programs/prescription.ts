@@ -1,5 +1,4 @@
 import type { Exercise, ProgramWeek, RoutineSet } from '@/data/types';
-import { resolveLoadIncrementKg, roundLoadToIncrement } from '@/lib/loadIncrement';
 
 export type ProgramPrescriptionWarningCode =
   | 'missing_one_rep_max'
@@ -31,7 +30,8 @@ export interface ProgramPrescriptionProjection {
   warnings: ProgramPrescriptionWarning[];
 }
 
-type ProgramWeekPrescription = Pick<ProgramWeek, 'prescriptionKind' | 'prescriptionValue'>;
+/** Week fields read by the projection; loadIndex is intentionally unused. */
+type ProgramWeekPrescription = Pick<ProgramWeek, 'loadIndex' | 'phase'>;
 
 const orderedSets = (sets: readonly RoutineSet[]): RoutineSet[] =>
   [...sets].sort((left, right) => left.order - right.order || left.id.localeCompare(right.id));
@@ -52,72 +52,24 @@ function routineTargets(set: RoutineSet): ProjectedProgramSet {
   };
 }
 
-const isWorkingSet = (set: RoutineSet): boolean => set.setType !== 'warmup';
-
-const isUsableOneRepMax = (value: number | undefined): value is number =>
-  value !== undefined && Number.isFinite(value) && value > 0;
-
 /**
- * Applies a program week's shared prescription to routine targets without ever
- * creating performed values. The caller owns storage and uses `routineSetId`
- * to copy these target-only rows into a fresh workout.
+ * Projects program-week intention onto routine targets without inventing performed
+ * values. Non-deload weeks are identity (routine is the source of truth). Deload
+ * recipe lands in Task 4; until then deload also returns routine targets.
+ *
+ * `loadIndex` is never applied as a multiplier.
  */
 export function projectProgramPrescription(input: {
   week: ProgramWeekPrescription;
   exercises: readonly ProgramPrescriptionExerciseInput[];
   oneRepMaxByExerciseId: ReadonlyMap<string, number>;
 }): ProgramPrescriptionProjection {
+  void input.week;
+  void input.oneRepMaxByExerciseId;
+
   const sets: ProjectedProgramSet[] = [];
-  const warnings: ProgramPrescriptionWarning[] = [];
-  const warned = new Set<string>();
-
-  const warn = (code: ProgramPrescriptionWarningCode, exerciseId: string): void => {
-    const key = `${exerciseId}:${code}`;
-    if (warned.has(key)) return;
-    warned.add(key);
-    warnings.push({ code, exerciseId });
-  };
-
-  for (const { exercise, sets: routineSets } of input.exercises) {
-    const exerciseSets = orderedSets(routineSets);
-    const targets = exerciseSets.map(routineTargets);
-    const workingIndexes = exerciseSets.flatMap((set, index) =>
-      isWorkingSet(set) ? [index] : [],
-    );
-
-    if (workingIndexes.length > 0 && input.week.prescriptionKind === 'target_rpe') {
-      for (const index of workingIndexes) {
-        const target = targets[index];
-        if (target !== undefined) target.targetRpe = input.week.prescriptionValue;
-      }
-    } else if (workingIndexes.length > 0) {
-      if (exercise.measurementType === 'assisted_weight_reps') {
-        warn('assistance_not_supported', exercise.id);
-      } else if (exercise.measurementType !== 'weight_reps') {
-        warn('unsupported_measurement', exercise.id);
-      } else {
-        const oneRepMax = input.oneRepMaxByExerciseId.get(exercise.id);
-        if (!isUsableOneRepMax(oneRepMax)) {
-          warn('missing_one_rep_max', exercise.id);
-        } else {
-          const proposedWeight = roundLoadToIncrement(
-            (oneRepMax * input.week.prescriptionValue) / 100,
-            resolveLoadIncrementKg(exercise),
-          );
-          if (proposedWeight === undefined) {
-            warn('missing_one_rep_max', exercise.id);
-          } else {
-            for (const index of workingIndexes) {
-              const target = targets[index];
-              if (target !== undefined) target.targetWeight = proposedWeight;
-            }
-          }
-        }
-      }
-    }
-
-    sets.push(...targets);
+  for (const { sets: routineSets } of input.exercises) {
+    sets.push(...orderedSets(routineSets).map(routineTargets));
   }
-
-  return { sets, warnings };
+  return { sets, warnings: [] };
 }

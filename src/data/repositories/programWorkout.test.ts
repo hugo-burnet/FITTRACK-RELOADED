@@ -40,13 +40,12 @@ function at<T>(items: readonly T[], index: number): T {
 }
 
 const programWeeks = (
-  overrides: Partial<Pick<ProgramWeek, 'prescriptionKind' | 'prescriptionValue' | 'isDeload'>> = {},
+  overrides: Partial<Pick<ProgramWeek, 'loadIndex' | 'phase'>> = {},
 ) =>
   Array.from({ length: 4 }, (_, weekIndex) => ({
     weekIndex,
-    prescriptionKind: overrides.prescriptionKind ?? ('percent_1rm' as const),
-    prescriptionValue: overrides.prescriptionValue ?? 75,
-    isDeload: overrides.isDeload ?? (0 as const),
+    loadIndex: overrides.loadIndex ?? 100,
+    phase: overrides.phase ?? ('construction' as const),
   }));
 
 async function exercise(name: string, overrides: Partial<Exercise> = {}): Promise<Exercise> {
@@ -306,9 +305,8 @@ describe('startWorkoutFromProgram', () => {
     const work = await addRoutineSet(row.id);
     await updateRoutineSet(work.id, { setType: 'normal', targetRpe: 7, targetWeight: 80 });
     const weeks = programWeeks({
-      prescriptionKind: 'target_rpe',
-      prescriptionValue: 8.5,
-      isDeload: 1,
+      loadIndex: 60,
+      phase: 'deload',
     });
     const { program, entry } = await readyProgram({ routineId: routine.id, weeks });
     await activateProgram(program.id);
@@ -420,7 +418,7 @@ describe('startWorkoutFromProgram', () => {
     await updateRoutineSet(set.id, { targetWeight: 80, targetReps: 8 });
     const { program, entry } = await readyProgram({
       routineId: routine.id,
-      weeks: programWeeks({ prescriptionKind: 'target_rpe', prescriptionValue: 8 }),
+      weeks: programWeeks({ loadIndex: 100, phase: 'construction' }),
     });
     await activateProgram(program.id);
     const { workout } = await startWorkoutFromProgram({
@@ -455,7 +453,7 @@ describe('séance programmée en direct', () => {
     const { routine } = await routineWithExercise('Décharge', bench);
     const { program, entry } = await readyProgram({
       routineId: routine.id,
-      weeks: programWeeks({ prescriptionKind: 'target_rpe', prescriptionValue: 8, isDeload: 1 }),
+      weeks: programWeeks({ loadIndex: 60, phase: 'deload' }),
     });
     await activateProgram(program.id);
     await startWorkoutFromProgram({

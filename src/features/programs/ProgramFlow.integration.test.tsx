@@ -114,7 +114,7 @@ describe('parcours de création d’un programme', () => {
       status: 'active',
     });
     expect(detail?.weeks).toHaveLength(8);
-    expect(detail?.weeks[4]?.isDeload).toBe(1);
+    expect(detail?.weeks[4]?.phase).toBe('deload');
     expect(detail?.revisions[0]?.entries).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ routineId: mondayRoutine.id, dayOfWeek: 1, order: 0 }),
@@ -163,9 +163,8 @@ describe('parcours de création d’un programme', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'percent_1rm' as const,
-        prescriptionValue: 70,
-        isDeload: 0 as const,
+        loadIndex: 70,
+        phase: 'construction' as const,
       })),
     );
     await activateProgram(program.id);
@@ -208,9 +207,8 @@ describe('parcours de création d’un programme', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'target_rpe' as const,
-        prescriptionValue: 8,
-        isDeload: 0 as const,
+        loadIndex: 100,
+        phase: 'construction' as const,
       })),
     );
     const revision = await createScheduleRevision(program.id, 0, [
@@ -253,9 +251,8 @@ describe('parcours de création d’un programme', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'target_rpe' as const,
-        prescriptionValue: 8,
-        isDeload: 0 as const,
+        loadIndex: 100,
+        phase: 'construction' as const,
       })),
     );
     await createScheduleRevision(program.id, 0, [
@@ -339,9 +336,8 @@ async function createTrackingProgram(name = 'Bloc suivi') {
     program.id,
     Array.from({ length: 4 }, (_, weekIndex) => ({
       weekIndex,
-      prescriptionKind: 'percent_1rm' as const,
-      prescriptionValue: 70 + weekIndex * 5,
-      isDeload: weekIndex === 3 ? (1 as const) : (0 as const),
+      loadIndex: 70 + weekIndex * 5,
+      phase: weekIndex === 3 ? ('deload' as const) : ('construction' as const),
     })),
   );
   await createScheduleRevision(
@@ -473,9 +469,8 @@ describe('suivi du bloc courant', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'percent_1rm' as const,
-        prescriptionValue: 75,
-        isDeload: 0 as const,
+        loadIndex: 75,
+        phase: 'construction' as const,
       })),
     );
     await createScheduleRevision(program.id, 0, [
@@ -511,8 +506,8 @@ describe('suivi du bloc courant', () => {
         programScheduleEntryId: selected.id,
         routineId: selected.routineId,
         routineName: 'Poussée du jour',
-        prescriptionKind: 'percent_1rm',
-        prescriptionValue: 75,
+        phase: 'construction',
+        loadIndex: 100,
         programIsDeload: 0,
       },
       warnings: [],
@@ -646,9 +641,8 @@ describe('liste des blocs', () => {
         program.id,
         Array.from({ length: 4 }, (_, weekIndex) => ({
           weekIndex,
-          prescriptionKind: 'target_rpe' as const,
-          prescriptionValue: 8,
-          isDeload: 0 as const,
+          loadIndex: 100,
+          phase: 'construction' as const,
         })),
       );
       await createScheduleRevision(program.id, 0, [
@@ -666,9 +660,8 @@ describe('liste des blocs', () => {
       active.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'target_rpe' as const,
-        prescriptionValue: 8,
-        isDeload: 0 as const,
+        loadIndex: 100,
+        phase: 'construction' as const,
       })),
     );
     await createScheduleRevision(active.id, 0, [

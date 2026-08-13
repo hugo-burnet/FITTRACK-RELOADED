@@ -9,7 +9,7 @@ import { getRoutineDetail, listRoutineSummaries } from './routines';
 import { pickSuggestedRoutine } from '@/lib/home';
 import { pickProgramSession } from '@/lib/programs';
 import type { WeeklyTrainingGoal } from '@/lib/history';
-import type { ProgramPrescriptionKind } from '@/data/types';
+import type { ProgramLoadIndex, ProgramPhase } from '@/data/types';
 
 /**
  * Tout ce que l'accueil affiche, en une lecture.
@@ -33,9 +33,8 @@ export interface SuggestedRoutine {
 
 export interface HomeProgramWeek {
   weekIndex: number;
-  prescriptionKind: ProgramPrescriptionKind;
-  prescriptionValue: number;
-  isDeload: 0 | 1;
+  loadIndex: ProgramLoadIndex;
+  phase: ProgramPhase;
 }
 
 export type HomeProgramPick =
@@ -101,9 +100,8 @@ async function readHomeProgramProjection(at: number): Promise<HomeProgramProject
           ? null
           : {
               weekIndex: week.weekIndex,
-              prescriptionKind: week.prescriptionKind,
-              prescriptionValue: week.prescriptionValue,
-              isDeload: week.isDeload,
+              loadIndex: week.loadIndex,
+              phase: week.phase,
             },
     };
 
@@ -168,9 +166,8 @@ async function readHomeProgramProjection(at: number): Promise<HomeProgramProject
             ? null
             : {
                 weekIndex: nextWeek.weekIndex,
-                prescriptionKind: nextWeek.prescriptionKind,
-                prescriptionValue: nextWeek.prescriptionValue,
-                isDeload: nextWeek.isDeload,
+                loadIndex: nextWeek.loadIndex,
+                phase: nextWeek.phase,
               },
         pick: {
           kind: 'announcement',

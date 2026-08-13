@@ -57,9 +57,7 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 });
 
 function prescriptionReading(week: ProgramWeek): string {
-  return week.prescriptionKind === 'percent_1rm'
-    ? t('program.percentReading', { value: week.prescriptionValue })
-    : t('program.rpeReading', { value: week.prescriptionValue });
+  return t('program.percentReading', { value: week.loadIndex });
 }
 
 function ProgramProgressReading({ program, position }: { program: Program; position: ProgramPosition }) {
@@ -94,7 +92,7 @@ function CurrentPrescription({ week }: { week: ProgramWeek }) {
         <p className="text-xl font-semibold text-[var(--text-1)]">
           {prescriptionReading(week)}
         </p>
-        {week.isDeload === 1 && (
+        {week.phase === 'deload' && (
           <p className="text-sm font-semibold text-[var(--text-2)]">
             {t('program.prescriptionDeload')}
           </p>

@@ -25,9 +25,9 @@ const routineSet = (overrides: Partial<RoutineSet> = {}): RoutineSet => ({
   ...overrides,
 });
 
-const week = (overrides: Partial<Pick<ProgramWeek, 'prescriptionKind' | 'prescriptionValue'>> = {}) => ({
-  prescriptionKind: 'percent_1rm' as const,
-  prescriptionValue: 77,
+const week = (overrides: Partial<Pick<ProgramWeek, 'loadIndex' | 'phase'>> = {}) => ({
+  loadIndex: 100,
+  phase: 'construction' as const,
   ...overrides,
 });
 
@@ -155,7 +155,7 @@ describe('projectProgramPrescription', () => {
 
   it('writes programmed RPE into targets only and leaves every other target untouched', () => {
     const result = projectProgramPrescription({
-      week: week({ prescriptionKind: 'target_rpe', prescriptionValue: 8.5 }),
+      week: week({ loadIndex: 100, phase: 'construction' }),
       exercises: [
         {
           exercise: exercise({ id: 'squat' }),

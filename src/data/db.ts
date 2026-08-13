@@ -174,6 +174,26 @@ export class FitTrackDB extends Dexie {
           routine.versionState = 'published';
         });
       });
+
+    // Lot 17 — week intention: loadIndex + phase replace %1RM / RPE / isDeload.
+    // No `.stores()`: none of the new fields is indexed.
+    this.version(7).upgrade(async (tx) => {
+      await tx.table('programWeeks').toCollection().modify((week: Record<string, unknown>) => {
+        const kind = week.prescriptionKind;
+        const value = week.prescriptionValue;
+        const deload = week.isDeload === 1;
+        if (kind === 'target_rpe') {
+          week.loadIndex = 100;
+          week.phase = 'construction';
+        } else {
+          week.loadIndex = typeof value === 'number' ? value : 100;
+          week.phase = deload ? 'deload' : 'construction';
+        }
+        delete week.prescriptionKind;
+        delete week.prescriptionValue;
+        delete week.isDeload;
+      });
+    });
   }
 }
 

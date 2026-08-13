@@ -13,9 +13,8 @@ import { ProgramRepositoryError } from './programLifecycle';
 
 export interface ProgramWeekInput {
   weekIndex: number;
-  prescriptionKind: ProgramWeek['prescriptionKind'];
-  prescriptionValue: number;
-  isDeload: 0 | 1;
+  loadIndex: ProgramWeek['loadIndex'];
+  phase: ProgramWeek['phase'];
   notes?: string;
 }
 

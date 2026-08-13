@@ -371,9 +371,8 @@ describe('aller-retour export CSV → import', () => {
       program.id,
       Array.from({ length: 4 }, (_, weekIndex) => ({
         weekIndex,
-        prescriptionKind: 'target_rpe' as const,
-        prescriptionValue: 8,
-        isDeload: 0 as const,
+        loadIndex: 100,
+        phase: 'construction' as const,
       })),
     );
     const revision = await createScheduleRevision(program.id, 0, [

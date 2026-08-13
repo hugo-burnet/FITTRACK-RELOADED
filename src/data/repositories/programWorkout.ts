@@ -1,7 +1,8 @@
 import { db } from '@/data/db';
 import type {
   PersonalRecord,
-  ProgramPrescriptionKind,
+  ProgramLoadIndex,
+  ProgramPhase,
   RoutineSet,
   Workout,
 } from '@/data/types';
@@ -46,8 +47,8 @@ export interface ProgramWorkoutPreflightContext {
   programScheduleEntryId: string;
   routineId: string;
   routineName: string;
-  prescriptionKind: ProgramPrescriptionKind;
-  prescriptionValue: number;
+  phase: ProgramPhase;
+  loadIndex: ProgramLoadIndex;
   programIsDeload: 0 | 1;
 }
 
@@ -79,7 +80,8 @@ interface ProgramWorkoutPlan {
   source: WorkoutRoutineSource;
   context: ProgramWorkoutPreflightContext;
   week: {
-    isDeload: 0 | 1;
+    phase: ProgramPhase;
+    loadIndex: ProgramLoadIndex;
   };
   targetsByRoutineSetId: Map<string, WorkoutTargetSnapshot>;
   projectionWarnings: ProgramPrescriptionWarning[];
@@ -208,9 +210,9 @@ async function resolveProgramWorkoutPlan(
     programScheduleEntryId: effectiveEntry.id,
     routineId: source.routine.id,
     routineName: source.routine.name,
-    prescriptionKind: week.prescriptionKind,
-    prescriptionValue: week.prescriptionValue,
-    programIsDeload: week.isDeload,
+    phase: week.phase,
+    loadIndex: week.loadIndex,
+    programIsDeload: week.phase === 'deload' ? 1 : 0,
   };
   const warnings = projection.warnings
     .map((warning) => ({
@@ -297,7 +299,9 @@ export async function startWorkoutFromProgram(
           programId: plan.context.programId,
           programWeekIndex: plan.context.programWeekIndex,
           programScheduleEntryId: plan.context.programScheduleEntryId,
-          programIsDeload: plan.week.isDeload,
+          programPhase: plan.week.phase,
+          programLoadIndex: plan.week.loadIndex,
+          programIsDeload: plan.week.phase === 'deload' ? 1 : 0,
         },
         targetsByRoutineSetId: plan.targetsByRoutineSetId,
       });

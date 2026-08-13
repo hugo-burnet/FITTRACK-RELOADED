@@ -24,12 +24,11 @@ import {
 
 const MONDAY = new Date(2026, 7, 10, 0, 0, 0, 0).getTime();
 
-function week(weekIndex: number, prescriptionValue = 75) {
+function week(weekIndex: number, loadIndex = 100, phase: 'construction' | 'deload' = 'construction') {
   return {
     weekIndex,
-    prescriptionKind: 'percent_1rm' as const,
-    prescriptionValue,
-    isDeload: 0 as const,
+    loadIndex,
+    phase,
   };
 }
 
@@ -283,17 +282,17 @@ describe('program weeks and schedules', () => {
 
     await replaceProgramWeeks(program.id, [
       week(3, 65),
-      week(1, 77.5),
-      week(0, 72.5),
-      { ...week(2, 60), isDeload: 1 },
+      week(1, 105),
+      week(0, 72),
+      week(2, 60, 'deload'),
     ]);
 
     const detail = await getProgramDetail(program.id);
-    expect(detail?.weeks.map((row) => [row.weekIndex, row.prescriptionValue, row.isDeload])).toEqual([
-      [0, 72.5, 0],
-      [1, 77.5, 0],
-      [2, 60, 1],
-      [3, 65, 0],
+    expect(detail?.weeks.map((row) => [row.weekIndex, row.loadIndex, row.phase])).toEqual([
+      [0, 72, 'construction'],
+      [1, 105, 'construction'],
+      [2, 60, 'deload'],
+      [3, 65, 'construction'],
     ]);
     const stored = await db.programWeeks.where('programId').equals(program.id).toArray();
     expect(stored.filter((row) => row.deletedAt === 0)).toHaveLength(4);
@@ -309,11 +308,11 @@ describe('program weeks and schedules', () => {
     ).rejects.toMatchObject({ code: 'program_invalid' } satisfies Partial<ProgramRepositoryError>);
 
     const detail = await getProgramDetail(program.id);
-    expect(detail?.weeks.map((row) => [row.weekIndex, row.prescriptionValue])).toEqual([
-      [0, 75],
-      [1, 75],
-      [2, 75],
-      [3, 75],
+    expect(detail?.weeks.map((row) => [row.weekIndex, row.loadIndex])).toEqual([
+      [0, 100],
+      [1, 100],
+      [2, 100],
+      [3, 100],
     ]);
   });
 

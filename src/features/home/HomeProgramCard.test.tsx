@@ -13,9 +13,8 @@ const projection: HomeProgramProjection = {
   durationWeeks: 4,
   week: {
     weekIndex: 0,
-    prescriptionKind: 'percent_1rm',
-    prescriptionValue: 72.5,
-    isDeload: 0,
+    loadIndex: 100,
+    phase: 'construction',
   },
   pick: {
     kind: 'session',
@@ -35,8 +34,8 @@ const clearPreflight: programWorkoutRepository.ProgramWorkoutPreflight = {
     programScheduleEntryId: 'entry-persisted',
     routineId: 'routine-1',
     routineName: 'Force A',
-    prescriptionKind: 'percent_1rm',
-    prescriptionValue: 72.5,
+    phase: 'construction',
+    loadIndex: 100,
     programIsDeload: 0,
   },
   warnings: [],

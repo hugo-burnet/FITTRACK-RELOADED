@@ -19,9 +19,7 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
 
 function prescriptionLabel(program: HomeProgramProjection): string | null {
   if (program.week === null) return null;
-  return program.week.prescriptionKind === 'percent_1rm'
-    ? t('program.percentReading', { value: program.week.prescriptionValue })
-    : t('program.rpeReading', { value: program.week.prescriptionValue });
+  return t('program.percentReading', { value: program.week.loadIndex });
 }
 
 function ruleLabel(program: HomeProgramProjection): string {
@@ -137,7 +135,7 @@ export function HomeProgramCard({ program, disabled }: Props) {
             {prescription !== null && (
               <p className="mt-1 text-sm font-semibold text-[var(--text-2)]">
                 {prescription}
-                {program.week?.isDeload === 1 ? ` · ${t('program.prescriptionDeload')}` : ''}
+                {program.week?.phase === 'deload' ? ` · ${t('program.prescriptionDeload')}` : ''}
               </p>
             )}
           </div>

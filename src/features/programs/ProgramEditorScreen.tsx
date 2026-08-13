@@ -52,9 +52,8 @@ const emptySplit = (): ProgramSplitDraftEntry[] => [
 const defaultWeeks = (durationWeeks: number): ProgramWeekDraft[] =>
   Array.from({ length: durationWeeks }, (_, weekIndex) => ({
     weekIndex,
-    prescriptionKind: 'percent_1rm',
-    prescriptionValue: 70,
-    isDeload: 0,
+    loadIndex: 100,
+    phase: 'construction',
   }));
 
 function formatLocalDate(timestamp: number): string {
@@ -208,11 +207,10 @@ export function ProgramEditorScreen() {
     setSplit(splitForWeek(detail, initialEffectiveWeekIndex ?? hydrateWeekIndex));
     setWeeks(
       detail.weeks.length === detail.program.durationWeeks
-        ? detail.weeks.map(({ weekIndex, prescriptionKind, prescriptionValue, isDeload }) => ({
+        ? detail.weeks.map(({ weekIndex, loadIndex, phase }) => ({
             weekIndex,
-            prescriptionKind,
-            prescriptionValue,
-            isDeload,
+            loadIndex,
+            phase,
           }))
         : defaultWeeks(detail.program.durationWeeks),
     );
@@ -278,10 +276,8 @@ export function ProgramEditorScreen() {
         return;
       }
     } else {
-      const invalidWeek = weeks.some((week) =>
-        week.prescriptionKind === 'percent_1rm'
-          ? week.prescriptionValue <= 0 || week.prescriptionValue > 100
-          : week.prescriptionValue < 6 || week.prescriptionValue > 10,
+      const invalidWeek = weeks.some(
+        (week) => !Number.isFinite(week.loadIndex) || !Number.isInteger(week.loadIndex),
       );
       if (weeks.length !== basics.durationWeeks || invalidWeek) {
         setErrorKey('program.errorWeeks');

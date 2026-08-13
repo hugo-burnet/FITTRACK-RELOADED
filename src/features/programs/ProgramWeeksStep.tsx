@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import type { ProgramPrescriptionKind } from '@/data/types';
+import type { ProgramPhase } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { Button, Card, NumberInput, Sheet, Toggle } from '@/ui';
 
 export interface ProgramWeekDraft {
   weekIndex: number;
-  prescriptionKind: ProgramPrescriptionKind;
-  prescriptionValue: number;
-  isDeload: 0 | 1;
+  loadIndex: number;
+  phase: ProgramPhase;
 }
 
 interface Props {
@@ -20,10 +19,8 @@ interface WeekEditor {
   week: ProgramWeekDraft;
 }
 
-const prescriptionLabel = (week: ProgramWeekDraft) =>
-  week.prescriptionKind === 'percent_1rm'
-    ? t('program.percentReading', { value: week.prescriptionValue })
-    : t('program.rpeReading', { value: week.prescriptionValue });
+const intentionLabel = (week: ProgramWeekDraft) =>
+  t('program.percentReading', { value: week.loadIndex });
 
 export function ProgramWeeksStep({ weeks, onChange }: Props) {
   const [editor, setEditor] = useState<WeekEditor | null>(null);
@@ -47,7 +44,7 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
         <div className="divide-y divide-[var(--border)]">
           {weeks.map((week, index) => {
             const number = index + 1;
-            const prescription = prescriptionLabel(week);
+            const prescription = intentionLabel(week);
             return (
               <button
                 key={week.weekIndex}
@@ -55,7 +52,7 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
                 aria-label={t('program.editWeekReading', {
                   number,
                   prescription,
-                  deload: week.isDeload === 1 ? `, ${t('program.deload')}` : '',
+                  deload: week.phase === 'deload' ? `, ${t('program.deload')}` : '',
                 })}
                 onClick={() => setEditor({ index, week: { ...week } })}
                 className="grid min-h-14 w-full grid-cols-[3rem_minmax(0,1fr)_auto] items-center
@@ -68,7 +65,7 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
                   {prescription}
                 </span>
                 <span className="label-xs font-semibold text-[var(--accent-ink)]">
-                  {week.isDeload === 1 ? t('program.deload') : ''}
+                  {week.phase === 'deload' ? t('program.deload') : ''}
                 </span>
               </button>
             );
@@ -83,41 +80,16 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
       >
         {editor && (
           <div className="flex flex-col gap-6 pb-5">
-            <label className="flex flex-col gap-2">
-              <span className="label-xs font-semibold text-[var(--text-2)]">
-                {t('program.prescriptionKind')}
-              </span>
-              <select
-                aria-label={t('program.prescriptionKind')}
-                value={editor.week.prescriptionKind}
-                onChange={(event) => {
-                  const prescriptionKind = event.target.value as ProgramPrescriptionKind;
-                  updateEditor({
-                    prescriptionKind,
-                    prescriptionValue: prescriptionKind === 'percent_1rm' ? 70 : 8,
-                  });
-                }}
-                className="min-h-12 rounded-lg bg-[var(--surface-2)] px-4 text-base
-                  text-[var(--text-1)] outline-none focus:ring-2 focus:ring-[var(--accent-ink)]"
-              >
-                <option value="percent_1rm">{t('program.percentOneRm')}</option>
-                <option value="target_rpe">{t('program.targetRpe')}</option>
-              </select>
-            </label>
             <div className="flex flex-col gap-2">
               <span className="label-xs font-semibold text-[var(--text-2)]">
                 {t('program.prescriptionValue')}
               </span>
               <NumberInput
                 aria-label={t('program.prescriptionValue')}
-                value={editor.week.prescriptionValue}
-                onChange={(prescriptionValue) =>
-                  updateEditor({ prescriptionValue: prescriptionValue ?? 0 })
-                }
-                step={editor.week.prescriptionKind === 'percent_1rm' ? 1 : 0.5}
-                min={editor.week.prescriptionKind === 'percent_1rm' ? 1 : 6}
-                max={editor.week.prescriptionKind === 'percent_1rm' ? 100 : 10}
-                suffix={editor.week.prescriptionKind === 'percent_1rm' ? '%' : undefined}
+                value={editor.week.loadIndex}
+                onChange={(loadIndex) => updateEditor({ loadIndex: loadIndex ?? 100 })}
+                step={1}
+                suffix="%"
               />
             </div>
             <div className="flex min-h-12 items-center justify-between gap-4">
@@ -125,8 +97,12 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
               <Toggle
                 label={t('program.deloadToggle')}
                 mark={t('program.deload')}
-                checked={editor.week.isDeload === 1}
-                onChange={() => updateEditor({ isDeload: editor.week.isDeload === 1 ? 0 : 1 })}
+                checked={editor.week.phase === 'deload'}
+                onChange={() =>
+                  updateEditor({
+                    phase: editor.week.phase === 'deload' ? 'construction' : 'deload',
+                  })
+                }
               />
             </div>
             <Button type="button" variant="primary" fullWidth onClick={saveEditor}>

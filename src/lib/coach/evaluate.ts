@@ -18,11 +18,13 @@ const MISSED_SESSIONS = 2;
 
 /** Severity ladder — UI keeps one signal per exercise; higher wins. */
 const SEVERITY: Record<CoachSignalCode, number> = {
-  // Above `range_completed`: failing twice is more urgent than succeeding once,
-  // and the two can never fire together anyway — one needs every set at the top
-  // of the range, the other a set under its floor.
+  // Above range success: failing twice is more urgent than succeeding once,
+  // and range_satisfied / range_ceiling_reached never fire together.
   range_missed: 50,
+  range_ceiling_reached: 40,
+  /** Read alias for legacy journal rows; same weight as ceiling. */
   range_completed: 40,
+  range_satisfied: 35,
   plateau: 30,
   intra_session_drop: 20,
   long_rest: 10,
@@ -30,7 +32,9 @@ const SEVERITY: Record<CoachSignalCode, number> = {
 
 const CODE_ORDER: CoachSignalCode[] = [
   'range_missed',
+  'range_ceiling_reached',
   'range_completed',
+  'range_satisfied',
   'plateau',
   'intra_session_drop',
   'long_rest',

@@ -14,6 +14,9 @@ function evidenceValue(signal: SignalLike, label: string): number | undefined {
 /** French explanation with the numbers that produced the signal — never a bare tip. */
 export function coachSignalMessage(signal: SignalLike): string {
   switch (signal.code) {
+    // Task 6 specialises copy; until then ceiling/satisfied share the legacy wording.
+    case 'range_satisfied':
+    case 'range_ceiling_reached':
     case 'range_completed': {
       const weight = signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg') ?? 0;
       const sets = evidenceValue(signal, 'working_sets') ?? 0;

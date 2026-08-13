@@ -82,7 +82,12 @@ export interface WorkoutRoutineSource {
 
 type WorkoutProgramContext = Pick<
   Workout,
-  'programId' | 'programWeekIndex' | 'programScheduleEntryId' | 'programIsDeload'
+  | 'programId'
+  | 'programWeekIndex'
+  | 'programScheduleEntryId'
+  | 'programPhase'
+  | 'programLoadIndex'
+  | 'programIsDeload'
 >;
 
 export type WorkoutTargetSnapshot = Pick<

@@ -18,9 +18,8 @@ const MONDAY = new Date(2026, 7, 10, 0, 0, 0, 0).getTime();
 
 const programWeeks = Array.from({ length: 4 }, (_, weekIndex) => ({
   weekIndex,
-  prescriptionKind: 'percent_1rm' as const,
-  prescriptionValue: 72.5,
-  isDeload: 0 as const,
+  loadIndex: 100,
+  phase: 'construction' as const,
 }));
 
 async function seedProgram(startsAt = MONDAY): Promise<{
@@ -107,8 +106,8 @@ describe('getHomeDashboard', () => {
       durationWeeks: 4,
       week: {
         weekIndex: 0,
-        prescriptionKind: 'percent_1rm',
-        prescriptionValue: 72.5,
+        loadIndex: 100,
+        phase: 'construction',
       },
       pick: {
         kind: 'session',

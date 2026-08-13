@@ -122,7 +122,24 @@ export interface Routine extends Syncable {
 
 export type RoutineVersionState = 'draft' | 'published';
 export type ProgramStatus = 'draft' | 'active' | 'completed';
-export type ProgramPrescriptionKind = 'percent_1rm' | 'target_rpe';
+
+/**
+ * Relative programming level for a block week. Non-dimensional and
+ * non-multiplicative: 105 is not "times 1.05". The UI may print it as
+ * "105 %" — that glyph is decoration, never an operator.
+ */
+export type ProgramLoadIndex = number;
+
+export const PROGRAM_PHASES = [
+  'construction',
+  'progression',
+  'overload',
+  'deload',
+  'return',
+  'test',
+] as const;
+
+export type ProgramPhase = (typeof PROGRAM_PHASES)[number];
 
 export interface Program extends Syncable {
   name: string;
@@ -134,9 +151,8 @@ export interface Program extends Syncable {
 export interface ProgramWeek extends Syncable {
   programId: string;
   weekIndex: number;
-  prescriptionKind: ProgramPrescriptionKind;
-  prescriptionValue: number;
-  isDeload: 0 | 1;
+  loadIndex: ProgramLoadIndex;
+  phase: ProgramPhase;
   notes?: string;
 }
 
@@ -188,6 +204,11 @@ export interface Workout extends Syncable {
   programId?: string;
   programWeekIndex?: number;
   programScheduleEntryId?: string;
+  /** Snapshot of the block week's phase at session creation; absent on legacy rows. */
+  programPhase?: ProgramPhase;
+  /** Snapshot of the block week's loadIndex at session creation; absent on legacy rows. */
+  programLoadIndex?: ProgramLoadIndex;
+  /** Derived from programPhase === 'deload' when snapshotted; kept for Coach/analytics. */
   programIsDeload?: 0 | 1;
   importSource?: 'hevy_csv';
   importKey?: string;
@@ -279,6 +300,9 @@ export interface PersonalRecord extends Syncable {
  * dismissed, and optionally what the next session actually did.
  */
 export type CoachSignalCode =
+  | 'range_satisfied'
+  | 'range_ceiling_reached'
+  /** @deprecated Read alias for `range_ceiling_reached`; kept so old journal rows typecheck. */
   | 'range_completed'
   | 'range_missed'
   | 'intra_session_drop'

@@ -32,6 +32,11 @@ const V1_STORES = {
   settings: 'key',
 };
 
+const V3_STORES = {
+  ...V1_STORES,
+  externalExerciseBindings: 'id, [source+identityKey], exerciseId, updatedAt, deletedAt',
+};
+
 const stamps = { createdAt: 0, updatedAt: 0, deletedAt: 0 };
 type LegacyRoutine = Omit<Routine, 'versionState'>;
 
@@ -134,6 +139,65 @@ async function seedVersion1(): Promise<void> {
   legacy.close();
 }
 
+/**
+ * Opens a real version-6 database (pre-loadIndex) with three legacy week shapes
+ * so version(7) can rewrite them in place.
+ */
+async function seedVersion6WithLegacyWeeks(): Promise<void> {
+  const legacy = new Dexie('fittrack');
+  legacy.version(1).stores(V1_STORES);
+  legacy.version(2).upgrade(() => {
+    /* match FitTrackDB: no store change */
+  });
+  legacy.version(3).stores(V3_STORES);
+  legacy.version(4).upgrade(() => {
+    /* match FitTrackDB: no store change */
+  });
+  legacy.version(5).stores({
+    coachRecommendations:
+      'id, exerciseId, status, [exerciseId+status], recommendedAt, deletedAt',
+  });
+  legacy.version(6).stores({
+    programs: 'id, status, startsAt, updatedAt, deletedAt',
+    programWeeks: 'id, programId, [programId+weekIndex], deletedAt',
+    programScheduleRevisions: 'id, programId, [programId+effectiveFromWeekIndex], deletedAt',
+    programScheduleEntries: 'id, revisionId, [revisionId+order], routineId, deletedAt',
+  });
+  await legacy.open();
+
+  await legacy.table('programWeeks').bulkAdd([
+    {
+      ...stamps,
+      id: 'legacy-week',
+      programId: 'prog',
+      weekIndex: 0,
+      prescriptionKind: 'percent_1rm',
+      prescriptionValue: 75,
+      isDeload: 0,
+    },
+    {
+      ...stamps,
+      id: 'legacy-rpe-week',
+      programId: 'prog',
+      weekIndex: 1,
+      prescriptionKind: 'target_rpe',
+      prescriptionValue: 8,
+      isDeload: 0,
+    },
+    {
+      ...stamps,
+      id: 'legacy-deload-week',
+      programId: 'prog',
+      weekIndex: 2,
+      prescriptionKind: 'percent_1rm',
+      prescriptionValue: 60,
+      isDeload: 1,
+    },
+  ]);
+
+  legacy.close();
+}
+
 describe('migration depuis la version 1', () => {
   afterEach(async () => {
     const { db } = await import('./db');
@@ -146,7 +210,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(6);
+    expect(db.verno).toBe(7);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -203,5 +267,35 @@ describe('migration depuis la version 1', () => {
     expect((await db.workouts.get('summer'))?.startedTimezoneOffsetMinutes).toBe(
       -new Date(JULY).getTimezoneOffset(),
     );
+  });
+});
+
+describe('migration version 6 → 7 (intention de semaine)', () => {
+  afterEach(async () => {
+    const { db } = await import('./db');
+    await db.delete();
+  });
+
+  it('rewrites prescriptionKind/value/isDeload into loadIndex + phase', async () => {
+    await seedVersion6WithLegacyWeeks();
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect(db.verno).toBe(7);
+
+    const week = await db.programWeeks.get('legacy-week');
+    expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });
+    expect(week).not.toHaveProperty('prescriptionKind');
+    expect(week).not.toHaveProperty('prescriptionValue');
+    expect(week).not.toHaveProperty('isDeload');
+
+    const rpeWeek = await db.programWeeks.get('legacy-rpe-week');
+    expect(rpeWeek).toMatchObject({ loadIndex: 100, phase: 'construction' });
+    expect(rpeWeek).not.toHaveProperty('prescriptionKind');
+
+    const deloadWeek = await db.programWeeks.get('legacy-deload-week');
+    expect(deloadWeek).toMatchObject({ loadIndex: 60, phase: 'deload' });
+    expect(deloadWeek).not.toHaveProperty('isDeload');
   });
 });
