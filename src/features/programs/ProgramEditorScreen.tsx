@@ -17,6 +17,7 @@ import { listRoutineSummaries } from '@/data/repositories/routines';
 import type { RoutineSummary } from '@/data/repositories/routines';
 import { listCompletedWorkouts } from '@/data/repositories/history';
 import { getActiveWorkout } from '@/data/repositories/workouts';
+import { PROGRAM_PHASES } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { programPosition, resolveSchedule } from '@/lib/programs';
@@ -276,8 +277,12 @@ export function ProgramEditorScreen() {
         return;
       }
     } else {
+      const phaseSet = new Set<string>(PROGRAM_PHASES);
       const invalidWeek = weeks.some(
-        (week) => !Number.isFinite(week.loadIndex) || !Number.isInteger(week.loadIndex),
+        (week) =>
+          !Number.isFinite(week.loadIndex) ||
+          !Number.isInteger(week.loadIndex) ||
+          !phaseSet.has(week.phase),
       );
       if (weeks.length !== basics.durationWeeks || invalidWeek) {
         setErrorKey('program.errorWeeks');
@@ -399,24 +404,36 @@ export function ProgramEditorScreen() {
       }
     >
       <div className="flex flex-col gap-6">
-        {!activeEdit && <nav aria-label={t('program.stepProgress', { current: STEP_NUMBER[step], name: t(STEP_NAME[step]) })}>
-          <ol className="grid grid-cols-3 border-b border-[var(--border)]">
-            {(['basics', 'split', 'weeks'] as const).map((candidate) => (
-              <li
-                key={candidate}
-                aria-current={candidate === step ? 'step' : undefined}
-                className={`label-xs flex min-h-12 items-center justify-center border-b-2 px-1
-                  font-semibold ${
-                    candidate === step
-                      ? 'border-[var(--accent-ink)] text-[var(--accent-ink)]'
-                      : 'border-transparent text-[var(--text-2)]'
-                  }`}
-              >
-                {t(STEP_NAME[candidate])}
-              </li>
-            ))}
-          </ol>
-        </nav>}
+        {!activeEdit && (
+          <nav
+            aria-label={t('program.stepProgress', {
+              current: STEP_NUMBER[step],
+              name: t(STEP_NAME[step]),
+            })}
+          >
+            <p className="text-sm font-semibold text-[var(--text-1)]">
+              {t('program.stepProgress', {
+                current: STEP_NUMBER[step],
+                name: t(STEP_NAME[step]),
+              })}
+            </p>
+            <ol className="mt-3 flex gap-4">
+              {([1, 2, 3] as const).map((n) => (
+                <li
+                  key={n}
+                  aria-current={n === STEP_NUMBER[step] ? 'step' : undefined}
+                  className={
+                    n === STEP_NUMBER[step]
+                      ? 'text-[var(--text-1)]'
+                      : 'text-[var(--text-2)]'
+                  }
+                >
+                  {n}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
 
         {errorKey && (
           <p role="alert" className="rounded-xl bg-[var(--surface-1)] p-4 text-sm leading-relaxed text-[var(--danger-ink)]">

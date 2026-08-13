@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import type { ProgramPhase } from '@/data/types';
+import { PROGRAM_PHASES, type ProgramPhase } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { Button, Card, NumberInput, Sheet, Toggle } from '@/ui';
+import { Button, Card, NumberInput, Sheet } from '@/ui';
+import {
+  LOAD_INDEX_PRESETS,
+  PHASE_LABEL_KEYS,
+  SUGGESTED_LOAD_INDEX,
+  phaseIntention,
+  weekLine,
+} from './weekReading';
 
 export interface ProgramWeekDraft {
   weekIndex: number;
@@ -19,9 +26,6 @@ interface WeekEditor {
   week: ProgramWeekDraft;
 }
 
-const intentionLabel = (week: ProgramWeekDraft) =>
-  t('program.percentReading', { value: week.loadIndex });
-
 export function ProgramWeeksStep({ weeks, onChange }: Props) {
   const [editor, setEditor] = useState<WeekEditor | null>(null);
 
@@ -29,6 +33,10 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
     setEditor((current) =>
       current === null ? null : { ...current, week: { ...current.week, ...changes } },
     );
+  };
+
+  const setPhase = (phase: ProgramPhase) => {
+    updateEditor({ phase, loadIndex: SUGGESTED_LOAD_INDEX[phase] });
   };
 
   const saveEditor = () => {
@@ -44,28 +52,25 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
         <div className="divide-y divide-[var(--border)]">
           {weeks.map((week, index) => {
             const number = index + 1;
-            const prescription = intentionLabel(week);
+            const line = weekLine(week);
+            const deload = week.phase === 'deload';
             return (
               <button
                 key={week.weekIndex}
                 type="button"
-                aria-label={t('program.editWeekReading', {
-                  number,
-                  prescription,
-                  deload: week.phase === 'deload' ? `, ${t('program.deload')}` : '',
-                })}
+                aria-label={t('program.editWeekReading', { number, line })}
                 onClick={() => setEditor({ index, week: { ...week } })}
-                className="grid min-h-14 w-full grid-cols-[3rem_minmax(0,1fr)_auto] items-center
+                className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto] items-center
                   gap-3 px-4 text-left active:bg-[var(--surface-2)]"
               >
-                <span className="record-figure text-sm font-semibold text-[var(--text-2)]">
-                  {String(number).padStart(2, '0')}
-                </span>
-                <span className="record-figure truncate text-base text-[var(--text-1)]">
-                  {prescription}
-                </span>
-                <span className="label-xs font-semibold text-[var(--accent-ink)]">
-                  {week.phase === 'deload' ? t('program.deload') : ''}
+                <span
+                  className={`record-figure truncate text-base ${
+                    deload
+                      ? 'font-semibold text-[var(--accent-ink)]'
+                      : 'text-[var(--text-1)]'
+                  }`}
+                >
+                  {line}
                 </span>
               </button>
             );
@@ -80,31 +85,67 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
       >
         {editor && (
           <div className="flex flex-col gap-6 pb-5">
+            <label className="flex flex-col gap-2">
+              <span className="label-xs font-semibold text-[var(--text-2)]">
+                {t('program.phaseLabel')}
+              </span>
+              <select
+                aria-label={t('program.phaseLabel')}
+                value={editor.week.phase}
+                onChange={(event) => setPhase(event.target.value as ProgramPhase)}
+                className="min-h-12 rounded-lg bg-[var(--surface-2)] px-4 text-base
+                  text-[var(--text-1)] outline-none focus:ring-2 focus:ring-[var(--accent-ink)]"
+              >
+                {PROGRAM_PHASES.map((phase) => (
+                  <option key={phase} value={phase}>
+                    {t(PHASE_LABEL_KEYS[phase])}
+                  </option>
+                ))}
+              </select>
+            </label>
+
             <div className="flex flex-col gap-2">
               <span className="label-xs font-semibold text-[var(--text-2)]">
-                {t('program.prescriptionValue')}
+                {t('program.loadIndexLabel')}
               </span>
+              <div className="grid grid-cols-5 gap-2">
+                {LOAD_INDEX_PRESETS.map((value) => {
+                  const active = editor.week.loadIndex === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={active}
+                      aria-label={t('program.loadIndexPreset', { value })}
+                      onClick={() => updateEditor({ loadIndex: value })}
+                      className={`record-figure min-h-12 rounded-xl text-sm font-semibold
+                        transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
+                        ${
+                          active
+                            ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                            : 'bg-[var(--surface-2)] text-[var(--text-1)]'
+                        }`}
+                    >
+                      {value}
+                    </button>
+                  );
+                })}
+              </div>
               <NumberInput
-                aria-label={t('program.prescriptionValue')}
+                aria-label={t('program.loadIndexLabel')}
                 value={editor.week.loadIndex}
                 onChange={(loadIndex) => updateEditor({ loadIndex: loadIndex ?? 100 })}
                 step={1}
                 suffix="%"
               />
             </div>
-            <div className="flex min-h-12 items-center justify-between gap-4">
-              <span className="text-base text-[var(--text-1)]">{t('program.deloadToggle')}</span>
-              <Toggle
-                label={t('program.deloadToggle')}
-                mark={t('program.deload')}
-                checked={editor.week.phase === 'deload'}
-                onChange={() =>
-                  updateEditor({
-                    phase: editor.week.phase === 'deload' ? 'construction' : 'deload',
-                  })
-                }
-              />
-            </div>
+
+            {phaseIntention(editor.week.phase) !== null && (
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {phaseIntention(editor.week.phase)}
+              </p>
+            )}
+
             <Button type="button" variant="primary" fullWidth onClick={saveEditor}>
               {t('program.saveWeek')}
             </Button>

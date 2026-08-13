@@ -32,6 +32,7 @@ import {
   UpcomingWeeks,
 } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
+import { phaseIntention, weekLine } from './weekReading';
 
 interface DetailProjection {
   detail: ProgramDetail;
@@ -56,10 +57,6 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric', month: 'long', year: 'numeric',
 });
 
-function prescriptionReading(week: ProgramWeek): string {
-  return t('program.percentReading', { value: week.loadIndex });
-}
-
 function ProgramProgressReading({ program, position }: { program: Program; position: ProgramPosition }) {
   return (
     <section className="px-1 pt-1">
@@ -82,22 +79,23 @@ function ProgramProgressReading({ program, position }: { program: Program; posit
   );
 }
 
-function CurrentPrescription({ week }: { week: ProgramWeek }) {
+function CurrentIntention({ week }: { week: ProgramWeek }) {
+  const intention = phaseIntention(week.phase);
   return (
     <section className="border-y border-[var(--border)] py-4">
       <p className="label-xs font-semibold text-[var(--text-2)]">
-        {t('program.prescriptionTitle')}
+        {t('program.intentionTitle')}
       </p>
-      <div className="mt-2 flex items-baseline justify-between gap-4">
-        <p className="text-xl font-semibold text-[var(--text-1)]">
-          {prescriptionReading(week)}
-        </p>
-        {week.phase === 'deload' && (
-          <p className="text-sm font-semibold text-[var(--text-2)]">
-            {t('program.prescriptionDeload')}
-          </p>
-        )}
-      </div>
+      <p
+        className={`mt-2 text-xl font-semibold ${
+          week.phase === 'deload' ? 'text-[var(--accent-ink)]' : 'text-[var(--text-1)]'
+        }`}
+      >
+        {weekLine(week)}
+      </p>
+      {intention !== null && (
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{intention}</p>
+      )}
       {week.notes && <p className="mt-2 text-sm text-[var(--text-2)]">{week.notes}</p>}
     </section>
   );
@@ -327,7 +325,7 @@ export function ProgramDetailScreen() {
     >
       <div className="flex flex-col gap-7">
         <ProgramProgressReading program={detail.program} position={position} />
-        {week !== null && <CurrentPrescription week={week} />}
+        {week !== null && <CurrentIntention week={week} />}
         {activeWorkoutExists && detail.program.status === 'active' && (
           <p className="text-sm font-semibold text-[var(--text-2)]">
             {t('program.activeWorkoutCollision')}

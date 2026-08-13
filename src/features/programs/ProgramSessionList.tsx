@@ -6,6 +6,7 @@ import type {
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { Button, SectionTitle, Sheet } from '@/ui';
+import { weekLine } from './weekReading';
 
 export type ProgramSessionState = 'completed' | 'today' | 'missed' | 'upcoming';
 
@@ -92,10 +93,6 @@ export function ProgramWorkoutWarningSheet({
   );
 }
 
-function programPrescriptionReading(week: ProgramWeek): string {
-  return t('program.percentReading', { value: week.loadIndex });
-}
-
 export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
   if (weeks.length === 0) return null;
   return (
@@ -105,16 +102,17 @@ export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
         {weeks.map((week) => (
           <div
             key={week.id}
-            className="flex min-h-14 items-center justify-between gap-4 border-b
-              border-[var(--border)] py-3 last:border-b-0"
+            className="flex min-h-14 items-center border-b border-[var(--border)] py-3
+              last:border-b-0"
           >
-            <span className="text-base text-[var(--text-1)]">
-              {week.phase === 'deload'
-                ? t('program.upcomingDeload', { number: week.weekIndex + 1 })
-                : t('program.week', { number: week.weekIndex + 1 })}
-            </span>
-            <span className="text-sm text-[var(--text-2)]">
-              {programPrescriptionReading(week)}
+            <span
+              className={`text-base ${
+                week.phase === 'deload'
+                  ? 'font-semibold text-[var(--accent-ink)]'
+                  : 'text-[var(--text-1)]'
+              }`}
+            >
+              {weekLine(week)}
             </span>
           </div>
         ))}

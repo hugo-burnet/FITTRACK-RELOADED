@@ -11,15 +11,16 @@ import {
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
 import { ProgramWorkoutWarningSheet } from '@/features/programs/ProgramSessionList';
+import { weekPhaseReading } from '@/features/programs/weekReading';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
   month: 'long',
 });
 
-function prescriptionLabel(program: HomeProgramProjection): string | null {
+function intentionLabel(program: HomeProgramProjection): string | null {
   if (program.week === null) return null;
-  return t('program.percentReading', { value: program.week.loadIndex });
+  return weekPhaseReading(program.week);
 }
 
 function ruleLabel(program: HomeProgramProjection): string {
@@ -52,7 +53,7 @@ export function HomeProgramCard({ program, disabled }: Props) {
   const [starting, setStarting] = useState(false);
   const [warningPreflight, setWarningPreflight] = useState<ProgramWorkoutPreflight | null>(null);
   const startingRef = useRef(false);
-  const prescription = prescriptionLabel(program);
+  const intention = intentionLabel(program);
   const pick = program.pick;
 
   const releaseStart = () => {
@@ -132,10 +133,15 @@ export function HomeProgramCard({ program, disabled }: Props) {
                 ? (pick.routineName ?? t('program.missingRoutine'))
                 : program.programName}
             </h3>
-            {prescription !== null && (
-              <p className="mt-1 text-sm font-semibold text-[var(--text-2)]">
-                {prescription}
-                {program.week?.phase === 'deload' ? ` · ${t('program.prescriptionDeload')}` : ''}
+            {intention !== null && (
+              <p
+                className={`mt-1 text-sm font-semibold ${
+                  program.week?.phase === 'deload'
+                    ? 'text-[var(--accent-ink)]'
+                    : 'text-[var(--text-2)]'
+                }`}
+              >
+                {intention}
               </p>
             )}
           </div>

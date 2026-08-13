@@ -89,12 +89,17 @@ describe('parcours de création d’un programme', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
+    expect(await screen.findByText('Étape 3 sur 3 · Semaines')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Cadre' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Split' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Semaines' })).not.toBeInTheDocument();
+
     await user.click(await screen.findByRole('button', { name: /Modifier la semaine 5/ }));
-    await user.click(screen.getByRole('switch', { name: 'Semaine de décharge' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Phase' }), 'deload');
     await user.click(screen.getByRole('button', { name: 'Enregistrer la semaine' }));
     expect(
       screen.getByRole('button', {
-        name: 'Modifier la semaine 5, 70 % du 1RM, Décharge',
+        name: 'Modifier la semaine 5, 05 — 60 % · Décharge',
       }),
     ).toBeVisible();
     await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
@@ -114,7 +119,7 @@ describe('parcours de création d’un programme', () => {
       status: 'active',
     });
     expect(detail?.weeks).toHaveLength(8);
-    expect(detail?.weeks[4]?.phase).toBe('deload');
+    expect(detail?.weeks[4]).toMatchObject({ phase: 'deload', loadIndex: 60 });
     expect(detail?.revisions[0]?.entries).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ routineId: mondayRoutine.id, dayOfWeek: 1, order: 0 }),
@@ -376,7 +381,7 @@ describe('suivi du bloc courant', () => {
     renderProgramFlow(`/programs/${program.id}`);
 
     expect(await screen.findByText('Semaine 2 / 4')).toBeVisible();
-    expect(screen.getByText('75 % du 1RM')).toBeVisible();
+    expect(screen.getByText('02 — 75 % · Construction')).toBeVisible();
     expect(screen.getByText('Force terminée')).toBeVisible();
     expect(screen.getByText('Terminée')).toBeVisible();
     expect(screen.getByText('Jambes en retard')).toBeVisible();
@@ -385,8 +390,8 @@ describe('suivi du bloc courant', () => {
     expect(screen.getByText('Aujourd’hui')).toBeVisible();
     expect(screen.getByText('Tirage à venir')).toBeVisible();
     expect(screen.getByText('À venir')).toBeVisible();
-    expect(screen.getByText('Semaine 3')).toBeVisible();
-    expect(screen.getByText('Semaine 4 · Décharge')).toBeVisible();
+    expect(screen.getByText('03 — 80 % · Construction')).toBeVisible();
+    expect(screen.getByText('04 — 85 % · Décharge')).toBeVisible();
   });
 
   it('démarre la séance choisie via le programme puis ouvre la séance en direct', async () => {
@@ -449,7 +454,7 @@ describe('suivi du bloc courant', () => {
     ).toBeDisabled();
   });
 
-  it('confirme les replis de prescription avant toute insertion depuis le détail', async () => {
+  it('démarre sans repli 1RM : identity copie les cibles de la routine', async () => {
     const movement = await createCustomExercise({
       name: 'Squat sans record',
       primaryMuscle: 'quads',
@@ -484,10 +489,7 @@ describe('suivi du bloc courant', () => {
     await user.click(await screen.findByRole('button', { name: 'Force avertie, Aujourd’hui' }));
     await user.click(screen.getByRole('button', { name: 'Démarrer Force avertie' }));
 
-    expect(await screen.findByRole('dialog', { name: 'Cibles conservées' })).toBeVisible();
-    expect(await getActiveWorkout()).toBeUndefined();
-
-    await user.click(screen.getByRole('button', { name: 'Démarrer quand même' }));
+    expect(screen.queryByRole('dialog', { name: 'Cibles conservées' })).not.toBeInTheDocument();
     await waitFor(async () => {
       expect(await getActiveWorkout()).toMatchObject({
         programScheduleEntryId: entry.id,
