@@ -48,8 +48,14 @@ export function roundLoadToIncrement(load: number, increment: number): number | 
     return undefined;
   }
 
-  const rounded = Math.round(load / increment) * increment;
-  return Math.round(rounded * 1000) / 1000;
+  const ratio = load / increment;
+  // A mathematical half step can arrive just below .5 (8.6 / 0.4 is
+  // 21.499999999999996), so scale the smallest representable nudge with the
+  // quotient before applying the ordinary nearest-grid rule.
+  const nearest = Math.round(ratio + Number.EPSILON * Math.max(1, Math.abs(ratio)));
+  const rounded = nearest * increment;
+  // Keep the result readable without assuming a fixed catalogue of increments.
+  return Number.parseFloat(rounded.toPrecision(15));
 }
 
 function shiftLoad(

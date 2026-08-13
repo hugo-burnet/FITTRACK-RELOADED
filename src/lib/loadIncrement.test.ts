@@ -56,6 +56,7 @@ describe('roundLoadToIncrement', () => {
     expect(roundLoadToIncrement(76.2, 2.5)).toBe(75);
     expect(roundLoadToIncrement(77, 2.5)).toBe(77.5);
     expect(roundLoadToIncrement(41, 2)).toBe(42);
+    expect(roundLoadToIncrement(8.6, 0.4)).toBe(8.8);
   });
 
   it('refuses a non-finite load or invalid increment', () => {
