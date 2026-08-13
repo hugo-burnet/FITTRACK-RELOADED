@@ -332,6 +332,13 @@ const fr = {
       'Baisse de reps observée : {first} puis {low} (−{drop}).',
     plateau: 'Plateau : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
+    /** Progression phase chose maintain — no increase_* was authorized. */
+    progressionDeferred: 'Maintien — progression différée',
+    /**
+     * Test phase requalifies an already-authorized increase_load.
+     * `{reason}` is the normal ceiling constat (numbers + floor).
+     */
+    controlledAttempt: 'Tentative contrôlée — {reason}',
     historySection: 'Recommandations',
     historyEmpty: 'Aucune recommandation pour le moment.',
     statusPending: 'En attente',

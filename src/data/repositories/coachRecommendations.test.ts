@@ -21,8 +21,8 @@ const signal = (partial: Partial<CoachSignal> & Pick<CoachSignal, 'exerciseId' |
 describe('coachRecommendations repository', () => {
   beforeEach(resetDb);
 
-  it('opens at schema version 6 with the coach journal table', async () => {
-    expect(db.verno).toBe(6);
+  it('opens at schema version 7 with the coach journal table', async () => {
+    expect(db.verno).toBe(7);
     expect(db.tables.map((table) => table.name)).toContain('coachRecommendations');
   });
 

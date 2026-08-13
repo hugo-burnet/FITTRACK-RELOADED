@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { CoachSignal } from '@/lib/coach';
+import { t } from '@/i18n/fr';
 import { coachSignalMessage } from './coachCopy';
 
 function rangeCeiling(
   currentKg: number | undefined,
   nextKg: number,
   code: 'range_ceiling_reached' | 'range_completed' = 'range_ceiling_reached',
+  extraEvidence: { label: string; value: number }[] = [],
 ): CoachSignal {
   return {
     exerciseId: 'bench',
@@ -17,6 +19,7 @@ function rangeCeiling(
       { label: 'target_reps_max', value: 12 },
       ...(currentKg === undefined ? [] : [{ label: 'current_load_kg', value: currentKg }]),
       { label: 'next_load_kg', value: nextKg },
+      ...extraEvidence,
     ],
   };
 }
@@ -90,5 +93,35 @@ describe('coachSignalMessage — range missed', () => {
 
   it('reads as more assistance when the number goes up', () => {
     expect(coachSignalMessage(rangeMissed(40, 45))).toContain('Assistance 40 → 45 kg');
+  });
+});
+
+describe('coachSignalMessage — phase intention copy', () => {
+  it('progression without increase_* reads as deferred maintain', () => {
+    // Load proposal stripped by shaping; flag stamped for UI.
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'current_load_kg', value: 100 },
+        { label: 'progression_deferred', value: 1 },
+      ],
+    });
+    expect(message).toBe(t('coach.progressionDeferred'));
+    expect(message).toBe('Maintien — progression différée');
+    expect(message).not.toContain('→');
+  });
+
+  it('test + authorized increase_load keeps the step and marks a controlled attempt', () => {
+    const signal = rangeCeiling(47.5, 50, 'range_ceiling_reached', [
+      { label: 'controlled_attempt', value: 1 },
+    ]);
+    const message = coachSignalMessage(signal);
+    expect(message).toContain('Tentative contrôlée');
+    expect(message).toContain('47,5 → 50 kg');
+    expect(message).toContain('haut de la fourchette');
+    // Same nextLoadKg the card figure will show — copy must not invent another.
+    expect(signal.nextLoadKg).toBe(50);
   });
 });

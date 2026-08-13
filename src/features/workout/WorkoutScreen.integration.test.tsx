@@ -227,7 +227,7 @@ describe('WorkoutScreen — objectif du coach', () => {
     await recordCoachSignals([
       {
         exerciseId,
-        code: 'range_completed',
+        code: 'range_ceiling_reached',
         severity: 1,
         nextLoadKg: 50,
         evidence: [
@@ -268,7 +268,7 @@ describe('WorkoutScreen — objectif du coach', () => {
     await recordCoachSignals([
       {
         exerciseId,
-        code: 'range_completed',
+        code: 'range_ceiling_reached',
         severity: 1,
         nextLoadKg: 50,
         evidence: [

@@ -40,22 +40,69 @@ function stripLoadProposal(signal: CoachSignal): CoachSignal {
 }
 
 /**
+ * Machine flags the UI localises (coachCopy). Value `1` = present.
+ * Kept as evidence so stored recommendations re-read correctly without
+ * re-resolving the target week.
+ */
+const FLAG_PROGRESSION_DEFERRED = 'progression_deferred';
+const FLAG_CONTROLLED_ATTEMPT = 'controlled_attempt';
+
+function withPhaseCopyFlags(
+  signal: CoachSignal,
+  selected: CoachAction,
+  target: ProgramCoachContext | undefined,
+): CoachSignal {
+  const phase = target?.phase;
+  const flags: { label: string; value: number }[] = [];
+
+  // Progression chose maintain because no increase_* was authorized (or ranked).
+  // range_missed is a back-off story, not a deferred progression.
+  if (
+    phase === 'progression' &&
+    selected === 'maintain' &&
+    signal.code !== 'range_missed'
+  ) {
+    flags.push({ label: FLAG_PROGRESSION_DEFERRED, value: 1 });
+  }
+
+  // Test does not invent permissions: it requalifies an authorized increase_load.
+  if (phase === 'test' && selected === 'increase_load') {
+    flags.push({ label: FLAG_CONTROLLED_ATTEMPT, value: 1 });
+  }
+
+  if (flags.length === 0) return signal;
+  return {
+    ...signal,
+    evidence: [...signal.evidence, ...flags],
+  };
+}
+
+/**
  * Phase ranking chooses among escalations; it does not invent permissions.
  * - `increase_load` proposals (`range_ceiling_reached.nextLoadKg`) stay only
  *   when the selected action is `increase_load` (so overload→add_set and
  *   deload→maintain never push a heavier bar).
  * - `reduce_load` proposals stay: RANK does not list them, but the engine still
  *   authorizes back-off and the finish screen must surface the figure.
+ * - Phase copy flags (progression deferred / controlled attempt) are stamped here.
  */
 function shapeSignalsForSelectedAction(
   signals: readonly CoachSignal[],
   selected: CoachAction,
+  target: ProgramCoachContext | undefined,
 ): CoachSignal[] {
   return signals.map((signal) => {
-    if (signal.nextLoadKg === undefined) return cloneSignal(signal);
-    if (signal.code === 'range_missed') return cloneSignal(signal);
-    if (selected === 'increase_load') return cloneSignal(signal);
-    return stripLoadProposal(signal);
+    let shaped: CoachSignal;
+    if (signal.nextLoadKg === undefined) {
+      shaped = cloneSignal(signal);
+    } else if (signal.code === 'range_missed') {
+      shaped = cloneSignal(signal);
+    } else if (selected === 'increase_load') {
+      shaped = cloneSignal(signal);
+    } else {
+      shaped = stripLoadProposal(signal);
+    }
+    return withPhaseCopyFlags(shaped, selected, target);
   });
 }
 
@@ -315,7 +362,7 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
 
     const evaluation = evaluatePerformance(latest, newestFirst.slice(1), { formula });
     const selected = selectProgramAction(evaluation.allowedActions, target);
-    signals.push(...shapeSignalsForSelectedAction(evaluation.signals, selected));
+    signals.push(...shapeSignalsForSelectedAction(evaluation.signals, selected, target));
   }
 
   return pickSignals(signals);

@@ -7,12 +7,20 @@ type SignalLike = Pick<CoachSignal, 'code' | 'nextLoadKg' | 'evidence'> & {
   id?: string;
 };
 
+/** Machine flags written by phase shaping — never stored as French prose. */
+const FLAG_PROGRESSION_DEFERRED = 'progression_deferred';
+const FLAG_CONTROLLED_ATTEMPT = 'controlled_attempt';
+
 function evidenceValue(signal: SignalLike, label: string): number | undefined {
   return signal.evidence.find((item) => item.label === label)?.value;
 }
 
-/** French explanation with the numbers that produced the signal — never a bare tip. */
-export function coachSignalMessage(signal: SignalLike): string {
+function hasFlag(signal: SignalLike, label: string): boolean {
+  return evidenceValue(signal, label) === 1;
+}
+
+/** Constat from the signal code alone (no phase requalification). */
+function baseSignalMessage(signal: SignalLike): string {
   switch (signal.code) {
     case 'range_satisfied': {
       const sets = evidenceValue(signal, 'working_sets') ?? 0;
@@ -84,6 +92,28 @@ export function coachSignalMessage(signal: SignalLike): string {
         seconds: evidenceValue(signal, 'max_rest_seconds') ?? 0,
       });
   }
+}
+
+/**
+ * French explanation with the numbers that produced the signal — never a bare tip.
+ * Phase shaping may stamp machine flags on evidence (spec §6 / §7):
+ * - `progression_deferred` → maintain when Progression had no increase_*
+ * - `controlled_attempt` → Test requalifies an authorized increase_load
+ */
+export function coachSignalMessage(signal: SignalLike): string {
+  // Progression without an authorized increase: the card is the hold, not a load step.
+  if (hasFlag(signal, FLAG_PROGRESSION_DEFERRED)) {
+    return t('coach.progressionDeferred');
+  }
+
+  const reason = baseSignalMessage(signal);
+
+  // Test phase: same nextLoadKg figure, wording marks a controlled attempt.
+  if (hasFlag(signal, FLAG_CONTROLLED_ATTEMPT)) {
+    return t('coach.controlledAttempt', { reason });
+  }
+
+  return reason;
 }
 
 export function recommendationAsSignal(row: CoachRecommendation): SignalLike {
