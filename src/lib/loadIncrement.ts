@@ -37,6 +37,21 @@ export function resolveLoadIncrementKg(exercise: {
   return defaultLoadIncrementKg(exercise.equipment);
 }
 
+/**
+ * Rounds a proposed load to the nearest available gym increment.
+ *
+ * This is deliberately independent of measurement type: callers that may put
+ * a load on the bar have already established that the movement supports one.
+ */
+export function roundLoadToIncrement(load: number, increment: number): number | undefined {
+  if (!Number.isFinite(load) || !Number.isFinite(increment) || increment <= 0) {
+    return undefined;
+  }
+
+  const rounded = Math.round(load / increment) * increment;
+  return Math.round(rounded * 1000) / 1000;
+}
+
 function shiftLoad(
   current: number,
   increment: number,

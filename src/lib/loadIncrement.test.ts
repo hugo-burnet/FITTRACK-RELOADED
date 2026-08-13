@@ -5,6 +5,7 @@ import {
   defaultLoadIncrementKg,
   nextLoad,
   previousLoad,
+  roundLoadToIncrement,
   resolveLoadIncrementKg,
 } from './loadIncrement';
 
@@ -47,6 +48,19 @@ describe('resolveLoadIncrementKg', () => {
     expect(
       resolveLoadIncrementKg({ equipment: 'machine', loadIncrementKg: Number.NaN }),
     ).toBe(DEFAULT_LOAD_INCREMENT_KG.machine);
+  });
+});
+
+describe('roundLoadToIncrement', () => {
+  it('rounds finite loads to their closest grid value', () => {
+    expect(roundLoadToIncrement(76.2, 2.5)).toBe(75);
+    expect(roundLoadToIncrement(77, 2.5)).toBe(77.5);
+    expect(roundLoadToIncrement(41, 2)).toBe(42);
+  });
+
+  it('refuses a non-finite load or invalid increment', () => {
+    expect(roundLoadToIncrement(Number.NaN, 2.5)).toBeUndefined();
+    expect(roundLoadToIncrement(50, 0)).toBeUndefined();
   });
 });
 

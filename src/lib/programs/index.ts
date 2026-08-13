@@ -14,3 +14,11 @@ export {
   type ProgramDraftWeek,
   type ProgramValidationCode,
 } from './validation';
+export {
+  projectProgramPrescription,
+  type ProgramPrescriptionExerciseInput,
+  type ProgramPrescriptionProjection,
+  type ProgramPrescriptionWarning,
+  type ProgramPrescriptionWarningCode,
+  type ProjectedProgramSet,
+} from './prescription';
