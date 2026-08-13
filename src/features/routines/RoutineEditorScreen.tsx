@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -32,6 +32,7 @@ import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import {
   ActionBand,
   AddRow,
+  Button,
   Card,
   EmptyState,
   Input,
@@ -109,6 +110,9 @@ export function RoutineEditorScreen() {
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const [actionError, setActionError] = useState(false);
+  const [creatingVersion, setCreatingVersion] = useState(false);
+  const [programReload, setProgramReload] = useState(0);
+  const creatingVersionRef = useRef(false);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.routine);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
 
@@ -119,10 +123,13 @@ export function RoutineEditorScreen() {
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const sealed = useLiveQuery(() => isRoutineSealed(id), [id]);
   const lineage = useLiveQuery(() => listRoutineLineage(id), [id]);
-  const activeProgram = useLiveQuery(
-    async () => getActiveProgramDetail(Date.now()).catch(() => null),
-    [id],
-  );
+  const activeProgramQuery = useLiveQuery(async () => {
+    try {
+      return { status: 'ready' as const, value: await getActiveProgramDetail(Date.now()) };
+    } catch {
+      return { status: 'error' as const };
+    }
+  }, [id, programReload]);
 
   /**
    * `null` = aucune séance, `undefined` = pas encore répondu. Tant qu'une
@@ -174,7 +181,7 @@ export function RoutineEditorScreen() {
     draft === null ||
     sealed === undefined ||
     lineage === undefined ||
-    activeProgram === undefined
+    activeProgramQuery === undefined
   ) {
     return (
       <Screen title="" onBack={goBack}>
@@ -184,6 +191,7 @@ export function RoutineEditorScreen() {
   }
 
   const { routine, exercises } = detail;
+  const activeProgram = activeProgramQuery.status === 'ready' ? activeProgramQuery.value : null;
   const isReadOnly = routine.versionState === 'published' && sealed;
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const setCount = exercises.reduce((total, line) => total + line.sets.length, 0);
@@ -217,12 +225,24 @@ export function RoutineEditorScreen() {
         );
 
   const createVersion = async () => {
+    if (creatingVersionRef.current) return;
+    const resumable = lineage
+      .filter((candidate) => candidate.versionState === 'draft')
+      .sort((left, right) => right.version - left.version)[0];
+    if (resumable !== undefined) {
+      void navigate(`/routines/${resumable.id}`, { replace: true });
+      return;
+    }
+    creatingVersionRef.current = true;
+    setCreatingVersion(true);
     setActionError(false);
     try {
       const created = await createRoutineVersionDraft(routine.id);
       void navigate(`/routines/${created.id}`, { replace: true });
     } catch {
       setActionError(true);
+      creatingVersionRef.current = false;
+      setCreatingVersion(false);
     }
   };
 
@@ -279,6 +299,7 @@ export function RoutineEditorScreen() {
         running ? undefined : isReadOnly ? (
           <ActionBand
             label={t('routine.createVersion')}
+            disabled={creatingVersion}
             onClick={() => void createVersion()}
           />
         ) : routine.versionState === 'draft' ? (
@@ -321,7 +342,25 @@ export function RoutineEditorScreen() {
           </p>
         )}
 
-        {routine.versionState === 'draft' && firstEffectiveWeek === null && (
+        {activeProgramQuery.status === 'error' && (
+          <Card padded>
+            <p role="alert" className="text-sm leading-relaxed text-[var(--danger-ink)]">
+              {t('routine.programReadError')}
+            </p>
+            <div className="mt-3">
+              <Button
+                variant="secondary"
+                fullWidth
+                onClick={() => setProgramReload((value) => value + 1)}
+              >
+                {t('routine.programRetry')}
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {activeProgramQuery.status === 'ready' &&
+          routine.versionState === 'draft' && firstEffectiveWeek === null && (
           <p className="text-sm leading-relaxed text-[var(--text-2)]">
             {t('routine.noEffectiveWeek')}
           </p>

@@ -86,7 +86,6 @@ function programDayTimestamp(startsAt: number, weekIndex: number, dayOfWeek = 1)
 }
 
 async function readHomeProgramProjection(at: number): Promise<HomeProgramProjection | null> {
-  try {
     const detail = await getActiveProgramDetail(at);
     if (detail === null || detail.position.phase === 'after') return null;
 
@@ -183,10 +182,6 @@ async function readHomeProgramProjection(at: number): Promise<HomeProgramProject
     }
 
     return { ...base, pick: { kind: 'none' } };
-  } catch {
-    // A damaged program row must not hide history, regularity, or the fallback.
-    return null;
-  }
 }
 
 export async function getHomeDashboard(): Promise<HomeDashboardData> {

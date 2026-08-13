@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { HomeProgramProjection } from '@/data/repositories/home';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
@@ -44,11 +44,15 @@ interface Props {
 export function HomeProgramCard({ program, disabled }: Props) {
   const navigate = useNavigate();
   const [failed, setFailed] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const startingRef = useRef(false);
   const prescription = prescriptionLabel(program);
   const pick = program.pick;
 
   const start = async () => {
-    if (pick.kind !== 'session' || pick.routineName === null) return;
+    if (pick.kind !== 'session' || pick.routineName === null || startingRef.current) return;
+    startingRef.current = true;
+    setStarting(true);
     setFailed(false);
     try {
       await startWorkoutFromProgram({
@@ -58,6 +62,8 @@ export function HomeProgramCard({ program, disabled }: Props) {
       void navigate('/workout');
     } catch {
       setFailed(true);
+      startingRef.current = false;
+      setStarting(false);
     }
   };
 
@@ -91,7 +97,7 @@ export function HomeProgramCard({ program, disabled }: Props) {
               variant="primary"
               size="lg"
               fullWidth
-              disabled={disabled}
+              disabled={disabled || starting}
               aria-label={t('home.startRoutine', { name: pick.routineName })}
               onClick={() => void start()}
             >

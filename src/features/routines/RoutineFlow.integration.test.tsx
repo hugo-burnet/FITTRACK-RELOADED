@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCustomExercise } from '@/data/repositories/exercises';
+import { db } from '@/data/db';
 import {
   activateProgram,
   createProgramDraft,
@@ -235,5 +236,24 @@ describe('parcours de composition d’une routine', () => {
       expect(detail?.revisions.at(-1)?.revision.effectiveFromWeekIndex).toBe(2);
       expect(detail?.revisions.at(-1)?.entries[0]?.routineId).not.toBe(routine.id);
     });
+  });
+
+  it('ne crée qu’un brouillon sous un double appui sur Créer une version', async () => {
+    const routine = await createRoutine('Stable');
+    const program = await createProgramDraft({
+      name: 'Bloc stable', startsAt: new Date(2026, 7, 10).getTime(), durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, Array.from({ length: 4 }, (_, weekIndex) => ({
+      weekIndex, prescriptionKind: 'target_rpe' as const, prescriptionValue: 7, isDeload: 0 as const,
+    })));
+    await createScheduleRevision(program.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
+    await activateProgram(program.id);
+    const user = userEvent.setup();
+    renderRoutineFlow(`/routines/${routine.id}`);
+
+    await user.dblClick(await screen.findByRole('button', { name: 'Créer une version' }));
+
+    await screen.findByText('Version 2 · Brouillon');
+    expect((await db.routines.toArray()).filter((candidate) => candidate.versionState === 'draft')).toHaveLength(1);
   });
 });

@@ -22,6 +22,7 @@ import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
 import {
   ActionSheet,
+  Button,
   Card,
   ConfirmSheet,
   HeaderAction,
@@ -49,7 +50,14 @@ export function RoutinesScreen() {
   const navigate = useNavigate();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);
-  const activeProgram = useLiveQuery(() => getActiveProgramDetail(Date.now()));
+  const [programReload, setProgramReload] = useState(0);
+  const activeProgramQuery = useLiveQuery(async () => {
+    try {
+      return { status: 'ready' as const, value: await getActiveProgramDetail(Date.now()) };
+    } catch {
+      return { status: 'error' as const };
+    }
+  }, [programReload]);
   const [sheet, setSheet] = useState<SheetState | null>(null);
 
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);
@@ -79,12 +87,14 @@ export function RoutinesScreen() {
   // "0 routines" on every load.
   const loaded = summaries !== undefined && folders !== undefined;
   const programHint =
-    activeProgram === undefined
+    activeProgramQuery === undefined
       ? t('program.loading')
-      : activeProgram?.position.phase === 'active'
+      : activeProgramQuery.status === 'error'
+        ? t('routines.programReadError')
+      : activeProgramQuery.value?.position.phase === 'active'
       ? t('routines.programCurrentWeek', {
-          current: activeProgram.position.weekIndex + 1,
-          total: activeProgram.program.durationWeeks,
+          current: activeProgramQuery.value.position.weekIndex + 1,
+          total: activeProgramQuery.value.program.durationWeeks,
         })
       : t('routines.programNoneActive');
   const handleCollectionIntent = (intent: RoutineCollectionIntent) => {
@@ -143,6 +153,17 @@ export function RoutinesScreen() {
             trailing={<ChevronRightIcon />}
             onClick={() => void navigate('/programs')}
           />
+          {activeProgramQuery?.status === 'error' && (
+            <div className="p-3">
+              <Button
+                variant="secondary"
+                fullWidth
+                onClick={() => setProgramReload((value) => value + 1)}
+              >
+                {t('routines.programRetry')}
+              </Button>
+            </div>
+          )}
         </Card>
 
         {loaded && (

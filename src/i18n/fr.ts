@@ -407,6 +407,8 @@ const fr = {
     programs: 'Programmes',
     programCurrentWeek: 'Semaine {current} sur {total}',
     programNoneActive: 'Aucun bloc actif',
+    programReadError: 'Le bloc actif n’a pas pu être lu.',
+    programRetry: 'Réessayer la lecture',
     emptyBody:
       'Une routine, c’est ta séance type : les exercices, les séries et les charges visées.',
     countUnit: 'routines',
@@ -603,6 +605,8 @@ const fr = {
     effectiveWeekTitle: 'Semaine d’entrée en vigueur',
     noEffectiveWeek: 'Aucune semaine future d’un bloc actif ne peut encore utiliser ce brouillon.',
     versionActionError: 'La version n’a pas pu être enregistrée. Réessaie.',
+    programReadError: 'Le bloc actif n’a pas pu être lu. Les versions restent intactes.',
+    programRetry: 'Réessayer la lecture',
     sealedEmptyBody: 'Cette version publiée ne contient aucun exercice.',
 
     deletedExercise: 'Exercice supprimé',

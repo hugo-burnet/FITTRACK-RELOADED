@@ -58,6 +58,23 @@ describe('HomeProgramCard', () => {
     expect(await screen.findByText('Séance ouverte')).toBeVisible();
   });
 
+  it('ignore un second appui pendant le démarrage transactionnel', async () => {
+    let release!: (value: Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>) => void;
+    const pending = new Promise<Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>>(
+      (resolve) => { release = resolve; },
+    );
+    const start = vi.spyOn(programWorkoutRepository, 'startWorkoutFromProgram').mockReturnValue(pending);
+    const user = userEvent.setup();
+    renderCard();
+    const button = screen.getByRole('button', { name: 'Démarrer Force A' });
+
+    await user.dblClick(button);
+
+    expect(start).toHaveBeenCalledTimes(1);
+    expect(button).toBeDisabled();
+    release({ workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'], warnings: [] });
+  });
+
   it('annonce un bloc futur sans afficher de commande de démarrage', () => {
     renderCard({
       ...projection,
