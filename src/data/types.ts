@@ -116,7 +116,40 @@ export interface Routine extends Syncable {
   order: number;
   notes?: string;
   version: number; // audit recommendation M3: versioning
+  versionState: RoutineVersionState;
   originRoutineId?: string; // points at v1 when versioned-duplicated
+}
+
+export type RoutineVersionState = 'draft' | 'published';
+export type ProgramStatus = 'draft' | 'active' | 'completed';
+export type ProgramPrescriptionKind = 'percent_1rm' | 'target_rpe';
+
+export interface Program extends Syncable {
+  name: string;
+  startsAt: number;
+  durationWeeks: number;
+  status: ProgramStatus;
+}
+
+export interface ProgramWeek extends Syncable {
+  programId: string;
+  weekIndex: number;
+  prescriptionKind: ProgramPrescriptionKind;
+  prescriptionValue: number;
+  isDeload: 0 | 1;
+  notes?: string;
+}
+
+export interface ProgramScheduleRevision extends Syncable {
+  programId: string;
+  effectiveFromWeekIndex: number;
+}
+
+export interface ProgramScheduleEntry extends Syncable {
+  revisionId: string;
+  routineId: string;
+  dayOfWeek: number;
+  order: number;
 }
 
 export interface RoutineExercise extends Syncable {
@@ -152,6 +185,10 @@ export interface Workout extends Syncable {
   durationSeconds: number; // real time excluding pauses, computed on close
   notes?: string;
   deloadPercent?: number;
+  programId?: string;
+  programWeekIndex?: number;
+  programScheduleEntryId?: string;
+  programIsDeload?: 0 | 1;
   importSource?: 'hevy_csv';
   importKey?: string;
 
@@ -204,6 +241,7 @@ export interface WorkoutSet extends Syncable {
   targetWeight?: number;
   targetDurationSeconds?: number;
   targetDistanceMeters?: number;
+  targetRpe?: number;
 
   isCompleted: 0 | 1;
   performedAt: number; // 0 until validated
@@ -247,7 +285,7 @@ export type CoachSignalCode =
   | 'plateau'
   | 'long_rest';
 
-export type CoachRecommendationStatus = 'pending' | 'followed' | 'dismissed';
+export type CoachRecommendationStatus = 'pending' | 'followed' | 'dismissed' | 'superseded';
 
 export interface CoachRecommendation extends Syncable {
   exerciseId: string;

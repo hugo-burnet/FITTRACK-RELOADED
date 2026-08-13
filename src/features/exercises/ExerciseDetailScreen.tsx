@@ -42,6 +42,8 @@ function coachStatusLabel(status: CoachRecommendation['status']): string {
       return t('coach.statusFollowed');
     case 'dismissed':
       return t('coach.statusDismissed');
+    case 'superseded':
+      return t('coach.statusSuperseded');
   }
 }
 

@@ -146,6 +146,7 @@ export async function instantiateTemplate(template: RoutineTemplate): Promise<Ro
         folderId: '',
         order,
         version: 1,
+        versionState: 'published',
       });
 
       const entries = template.exercises.flatMap((entry) => {

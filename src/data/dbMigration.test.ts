@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { Exercise, Workout, WorkoutExercise } from './types';
+import type { Exercise, Routine, Workout, WorkoutExercise } from './types';
 
 /**
  * The version 2 upgrade, run against a real version 1 database.
@@ -33,6 +33,7 @@ const V1_STORES = {
 };
 
 const stamps = { createdAt: 0, updatedAt: 0, deletedAt: 0 };
+type LegacyRoutine = Omit<Routine, 'versionState'>;
 
 const JANUARY = Date.UTC(2026, 0, 15, 18, 0, 0);
 const JULY = Date.UTC(2026, 6, 15, 18, 0, 0);
@@ -121,6 +122,15 @@ async function seedVersion1(): Promise<void> {
     },
   ]);
 
+  await legacy.table<LegacyRoutine>('routines').add({
+    ...stamps,
+    id: 'legacy-routine',
+    name: 'Routine historique',
+    folderId: '',
+    order: 0,
+    version: 1,
+  });
+
   legacy.close();
 }
 
@@ -136,7 +146,18 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(5);
+    expect(db.verno).toBe(6);
+    expect(db.tables.map((table) => table.name)).toEqual(
+      expect.arrayContaining([
+        'programs',
+        'programWeeks',
+        'programScheduleRevisions',
+        'programScheduleEntries',
+      ]),
+    );
+    expect(await db.routines.get('legacy-routine')).toMatchObject({
+      versionState: 'published',
+    });
     expect(db.tables.map((table) => table.name)).toContain('externalExerciseBindings');
     expect(await db.exercises.get('bench')).toBeDefined();
     expect(await db.workouts.get('winter')).toBeDefined();

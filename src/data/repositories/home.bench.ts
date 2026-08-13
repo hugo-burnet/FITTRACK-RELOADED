@@ -74,6 +74,7 @@ async function seedRoutines(at: number): Promise<void> {
       folderId: '',
       order: routineIndex,
       version: 1,
+      versionState: 'published',
     });
 
     for (let rowIndex = 0; rowIndex < EXERCISES_PER_ROUTINE; rowIndex += 1) {

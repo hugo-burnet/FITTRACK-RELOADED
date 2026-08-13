@@ -108,6 +108,7 @@ async function seedHistory(): Promise<void> {
     folderId: '',
     order: 0,
     version: 1,
+    versionState: 'published',
   });
   await db.routines.add(routine);
   await db.routineExercises.bulkAdd([

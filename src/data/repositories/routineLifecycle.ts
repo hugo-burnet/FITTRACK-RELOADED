@@ -115,7 +115,13 @@ export async function getRoutineDetail(id: string): Promise<RoutineDetail | null
 
 export async function createRoutine(name: string, folderId = ''): Promise<Routine> {
   const order = alive(await db.routines.toArray()).length;
-  const routine = newEntity<Routine>({ name, folderId, order, version: 1 });
+  const routine = newEntity<Routine>({
+    name,
+    folderId,
+    order,
+    version: 1,
+    versionState: 'published',
+  });
   await db.routines.add(routine);
   return routine;
 }
@@ -157,6 +163,7 @@ export async function duplicateRoutine(id: string, name: string): Promise<Routin
       order,
       notes: source.notes,
       version: 1,
+      versionState: 'published',
     });
 
     const rows = alive(await db.routineExercises.where('routineId').equals(id).toArray()).sort(

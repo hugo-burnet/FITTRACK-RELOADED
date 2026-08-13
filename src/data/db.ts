@@ -8,6 +8,10 @@ import type {
   ExternalExerciseBinding,
   PersonalRecord,
   ProgressPhoto,
+  Program,
+  ProgramScheduleEntry,
+  ProgramScheduleRevision,
+  ProgramWeek,
   Routine,
   RoutineExercise,
   RoutineFolder,
@@ -40,6 +44,10 @@ export class FitTrackDB extends Dexie {
   progressPhotos!: EntityTable<ProgressPhoto, 'id'>;
   photoBlobs!: EntityTable<PhotoBlob, 'key'>;
   settings!: EntityTable<Setting, 'key'>;
+  programs!: EntityTable<Program, 'id'>;
+  programWeeks!: EntityTable<ProgramWeek, 'id'>;
+  programScheduleRevisions!: EntityTable<ProgramScheduleRevision, 'id'>;
+  programScheduleEntries!: EntityTable<ProgramScheduleEntry, 'id'>;
 
   constructor() {
     super('fittrack');
@@ -153,6 +161,19 @@ export class FitTrackDB extends Dexie {
       coachRecommendations:
         'id, exerciseId, status, [exerciseId+status], recommendedAt, deletedAt',
     });
+
+    this.version(6)
+      .stores({
+        programs: 'id, status, startsAt, updatedAt, deletedAt',
+        programWeeks: 'id, programId, [programId+weekIndex], deletedAt',
+        programScheduleRevisions: 'id, programId, [programId+effectiveFromWeekIndex], deletedAt',
+        programScheduleEntries: 'id, revisionId, [revisionId+order], routineId, deletedAt',
+      })
+      .upgrade(async (tx) => {
+        await tx.table<Routine>('routines').toCollection().modify((routine) => {
+          routine.versionState = 'published';
+        });
+      });
   }
 }
 

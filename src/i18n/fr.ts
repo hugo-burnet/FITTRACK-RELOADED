@@ -314,6 +314,7 @@ const fr = {
     statusPending: 'En attente',
     statusFollowed: 'Suivie',
     statusDismissed: 'Ignorée',
+    statusSuperseded: 'Remplacée par le programme',
   },
 
   setType: {
