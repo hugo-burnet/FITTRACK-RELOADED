@@ -9,7 +9,7 @@ import {
   type ProgramWorkoutWarningAcknowledgement,
 } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
-import { Button, Card, SectionTitle } from '@/ui';
+import { Button, Card } from '@/ui';
 import { ProgramWorkoutWarningSheet } from '@/features/programs/ProgramSessionList';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -116,8 +116,10 @@ export function HomeProgramCard({ program, disabled }: Props) {
 
   return (
     <>
+      {/* Pas de titre de section : le sur-titre « Semaine 2 sur 8 » dit déjà
+          qu'on est dans un bloc, et l'accueil a besoin de ses 32 px pour garder
+          le bouton « Lancer » au-dessus de la ligne de flottaison. */}
       <section>
-        <SectionTitle>{t('home.programSection')}</SectionTitle>
         <Card padded>
         <div className="space-y-4">
           <div>

@@ -2,47 +2,51 @@ import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { Card, SectionTitle } from '@/ui';
+import { Card } from '@/ui';
 
 /**
- * Le corps travaillé, puis les trois analyses en trois cases.
+ * Le corps travaillé, en tête d'écran, et les trois analyses à son pied.
  *
- * **Un dessin est désormais rendu ici, et c'est un revirement assumé.** Ce
- * fichier disait qu'aucun graphique ne devait l'être, pour que l'ouverture de
- * l'app ne paie jamais le JavaScript des écrans d'analyse. Le reproche qui a
- * renversé la règle est juste : rien sur l'accueil ne laissait deviner qu'un
- * schéma musculaire existait, donc la fonctionnalité était invisible pour la
- * seule personne qui utilise l'app.
+ * **C'est désormais la première chose de l'accueil, et c'est le sujet de l'app.**
+ * Le dessin vivait tout en bas, sous une carte de semaine, une pesée, la séance
+ * à lancer et l'historique récent : cinq blocs à franchir pour voir la seule
+ * image qui répond à *qu'est-ce que je travaille, et qu'est-ce que je laisse de
+ * côté*. Il ouvre maintenant l'écran, et la séance à lancer le suit
+ * immédiatement — regarder, puis partir.
  *
- * **La raison de la règle est gardée même si sa lettre ne l'est plus** : le
- * corps est dans un module `lazy`, donc ses 23 ko de géométrie restent hors du
- * bundle de démarrage et arrivent après le premier rendu. L'accueil s'affiche
- * exactement aussi vite qu'avant ; le dessin se remplit ensuite.
+ * **Le dessin porte enfin un nom.** Il était `aria-hidden` parce que les écrans
+ * qui l'affichaient nommaient les muscles en toutes lettres à côté ; ici il n'y
+ * a pas de liste, donc il n'y a plus de doublon à taire.
  *
- * Le mot court est pour l'œil, sur trois colonnes de 375 px ; le nom complet de
- * l'écran est donné à l'oreille, et c'est le même que dans l'écran Analyses.
+ * **Le chunk reste `lazy`.** Les 23 ko de géométrie n'entrent pas dans le bundle
+ * de démarrage : l'accueil s'affiche aussi vite qu'avant, le dessin se remplit
+ * ensuite. Ce que la règle du Lot 12 protégeait est gardé ; ce qu'elle
+ * interdisait — un graphique sur l'accueil — est assumé depuis le Lot 18.
+ *
+ * Pas de titre de section au-dessus : un corps humain n'a pas besoin qu'on
+ * annonce que c'en est un, et c'est un intertitre de moins sur un écran dont le
+ * défaut était d'en avoir cinq.
  */
 const HomeMuscleMap = lazy(() =>
   import('./HomeMuscleMap').then((module) => ({ default: module.HomeMuscleMap })),
 );
+
 const LINKS: Array<{ to: string; labelKey: TranslationKey; nameKey: TranslationKey }> = [
   { to: '/analytics/weekly', labelKey: 'home.progressPace', nameKey: 'weekly.link' },
   { to: '/analytics/volume', labelKey: 'home.progressVolume', nameKey: 'volume.link' },
   { to: '/analytics/muscles', labelKey: 'home.progressMuscles', nameKey: 'muscles.link' },
 ];
 
-export function HomeProgressLinks() {
+export function HomeBodyCard() {
   const navigate = useNavigate();
 
   return (
     <section>
-      <SectionTitle>{t('home.progressSection')}</SectionTitle>
-
       <Card>
         {/* Une trame vide à la hauteur du dessin, jamais un spinner : le chunk
             arrive en une frame ou deux, et réserver la place empêche les trois
             boutons de sauter sous le pouce au moment où il se remplit. */}
-        <Suspense fallback={<div className="h-64" aria-hidden />}>
+        <Suspense fallback={<div className="h-72" aria-hidden />}>
           <HomeMuscleMap />
         </Suspense>
 

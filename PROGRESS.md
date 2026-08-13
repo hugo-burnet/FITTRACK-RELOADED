@@ -2,7 +2,39 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Release v0.4.0 — les programmes et une vraie anatomie**).
+**Dernière mise à jour :** 2026-08-13 (**Accueil — le corps en tête, le reste en dessous**).
+
+L'accueil posait cinq questions en cinq blocs et cinq intertitres, avec le dessin du corps tout en
+bas. Il en pose deux : **qu'est-ce que je travaille** (le corps, en tête d'écran) et **qu'est-ce
+que je lance** (juste dessous). Les deux chiffres personnels — séances de la semaine, poids du jour
+— tiennent une bande de deux tuiles sous la carte de séance ; l'historique récent ferme l'écran.
+
+Ce qui part : la **série de semaines d'affilée** (un compteur qu'on lit une fois et qu'on perd en
+se blessant — l'écran Rythme la garde), les **± de la pesée** (`NumberInput` prend un
+`steppers={false}` : un poids se lit sur une balance et se tape, il ne s'ajuste pas par pas de
+100 g), et **trois intertitres** — « À lancer » et « Semaine 2 sur 8 » sont passés en sur-titre
+*dans* leur carte.
+
+La pesée était une carte permanente de 200 px pour un geste quotidien au mieux : elle est
+maintenant une feuille (`HomeBodyWeightSheet`) derrière la tuile, qui se ferme d'elle-même sur une
+écriture réussie — la tuile affichant la nouvelle valeur dit « c'est enregistré » mieux qu'une
+ligne de texte.
+
+**Le seul nombre à régler est dans `HomeMuscleMap` : `max-w-[15rem]`.** Le dessin est calé sur sa
+largeur (deux figures deux fois et demie plus hautes que larges), donc c'est la largeur qui décide
+de la hauteur, et la hauteur décide si le bouton « Lancer » passe au-dessus de la ligne de
+flottaison. Mesuré sur 375 × 812 : carte du corps 96 → 463 px, carte de séance 487 → 697 px,
+bouton à 586 → 642 px, barre d'action fixe à 699 px. Tout tient, à deux pixels près. Monter à
+17rem donne un corps de 327 px et fait glisser le bas de la carte de séance sous la barre.
+
+Prochaine étape évoquée : rendre les muscles cliquables pour ouvrir la liste des exercices qui les
+travaillent. La géométrie est déjà nommée muscle par muscle (`musclesByGroup.ts`), donc c'est un
+gestionnaire de clic et un écran, pas un nouveau dessin.
+
+Checkpoint téléphone : ouvrir l'accueil et vérifier que le bouton de la séance à lancer est
+visible sans faire défiler ; taper la tuile du poids et vérifier que le clavier suffit.
+
+**Mise à jour précédente :** 2026-08-13 (**Release v0.4.0 — les programmes et une vraie anatomie**).
 
 Deux gros morceaux dans la même version, écrits en parallèle sans se marcher dessus : le **Lot 17**
 (périodisation, programmes multi-semaines, split hebdomadaire versionné) et le **remplacement de la

@@ -17,6 +17,16 @@ type Props = {
    * load and the distance keep their decimal; only the seconds field sets this.
    */
   integer?: boolean;
+  /**
+   * Drop the ± buttons and give the field the whole row.
+   *
+   * They earn their 96 px on a value you *adjust* by known steps — a bar load
+   * goes up 2,5 kg at a time, and the thumb is already on the plate. They cost
+   * without paying on a value you *state*: a body weight is read off a scale and
+   * typed once, so the two buttons only push the digits into a third of the row.
+   * The phone has a keyboard; this field asks for it.
+   */
+  steppers?: boolean;
   'aria-label': string;
 };
 
@@ -30,6 +40,7 @@ export function NumberInput({
   placeholder,
   focusTone = 'accent',
   integer,
+  steppers = true,
   ...aria
 }: Props) {
   const pattern = integer ? INTEGER : NUMERIC;
@@ -67,14 +78,16 @@ export function NumberInput({
 
   return (
     <div className="flex items-stretch gap-1">
-      <button
-        type="button"
-        aria-label={t('common.decrease')}
-        onClick={() => bump(-step)}
-        className={stepper}
-      >
-        −
-      </button>
+      {steppers && (
+        <button
+          type="button"
+          aria-label={t('common.decrease')}
+          onClick={() => bump(-step)}
+          className={stepper}
+        >
+          −
+        </button>
+      )}
 
       <div className="relative flex w-full">
         <input
@@ -119,14 +132,16 @@ export function NumberInput({
         )}
       </div>
 
-      <button
-        type="button"
-        aria-label={t('common.increase')}
-        onClick={() => bump(step)}
-        className={stepper}
-      >
-        +
-      </button>
+      {steppers && (
+        <button
+          type="button"
+          aria-label={t('common.increase')}
+          onClick={() => bump(step)}
+          className={stepper}
+        >
+          +
+        </button>
+      )}
     </div>
   );
 }

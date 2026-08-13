@@ -4,6 +4,7 @@ import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { toMuscleRows } from '@/lib/analytics/muscles';
 import { periodBounds } from '@/lib/analytics/periods';
+import { t } from '@/i18n/fr';
 import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
 
 /**
@@ -46,7 +47,7 @@ export function HomeMuscleMap() {
 
   // Not answered yet: hold the drawing's own height, so the three buttons do not
   // jump under the thumb when it fills in.
-  if (workouts === undefined) return <div className="h-64" aria-hidden />;
+  if (workouts === undefined) return <div className="h-72" aria-hidden />;
 
   const highlight = balanceHighlight(muscleInvolvement(toMuscleRows(workouts)));
 
@@ -61,9 +62,22 @@ export function HomeMuscleMap() {
   // The separator belongs to the drawing, not to the buttons below it: hung on
   // the button row instead, it would still be drawn on a card that has no body
   // — a stray line across the top of an otherwise plain row of links.
+  // La largeur est bridée ici, et pas dans `MuscleMap`.
+  //
+  // Le dessin est calé sur sa largeur (aspect-ratio 815/2048, soit deux figures
+  // deux fois et demie plus hautes que larges) : laissé libre sur un téléphone
+  // de 375 px, la paire fait 375 px de haut à elle seule. L'accueil est le seul
+  // écran qui ait à arbitrer entre le corps et un bouton — 240 px de large, donc
+  // 287 px de haut, est ce qui laisse « Lancer » au-dessus de la ligne de
+  // flottaison d'un 375 × 812. Les écrans d'analyse, eux, gardent toute la
+  // largeur : ils n'ont rien à faire tenir en dessous.
+  //
+  // C'est un arbitrage, et il se règle ici en un nombre.
   return (
     <div className="border-b border-[var(--border)] px-4 pt-4 pb-2">
-      <MuscleMap highlight={highlight} />
+      <div className="mx-auto max-w-[15rem]">
+        <MuscleMap highlight={highlight} label={t('home.bodyLabel')} />
+      </div>
     </div>
   );
 }

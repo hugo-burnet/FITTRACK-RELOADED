@@ -3,7 +3,7 @@ import type { SuggestedRoutine } from '@/data/repositories/home';
 import { startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { routineSummaryLine } from '@/features/routines/summary';
-import { Button, Card, SectionTitle } from '@/ui';
+import { Button, Card } from '@/ui';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
 
@@ -59,12 +59,17 @@ export function HomeSuggestionCard({ suggestion, routineCount, disabled }: Props
   };
 
   return (
+    /* Le nom de la section est passé *dans* la carte, en sur-titre.
+       Au-dessus, il coûtait ses 32 px et laissait le bouton « Lancer » sous la
+       ligne de flottaison une fois le corps installé en tête d'écran ; dedans,
+       il se lit exactement pareil et la carte redevient un seul objet. */
     <section>
-      <SectionTitle>{t('home.suggestionSection')}</SectionTitle>
-
       <Card padded>
         {suggestion === null || routineCount === 0 ? (
           <div className="space-y-4">
+            <p className="label-xs font-semibold text-[var(--text-2)]">
+              {t('home.suggestionSection')}
+            </p>
             <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('home.noRoutines')}</p>
             <Button variant="secondary" fullWidth onClick={() => void navigate('/routines')}>
               {t('home.createRoutine')}
@@ -73,13 +78,17 @@ export function HomeSuggestionCard({ suggestion, routineCount, disabled }: Props
         ) : (
           <div className="space-y-4">
             <div>
-              <h3 className="truncate text-lg font-semibold text-[var(--text-1)]">
+              <p className="label-xs font-semibold text-[var(--text-2)]">
+                {t('home.suggestionSection')}
+              </p>
+              <h3 className="mt-1 truncate text-lg font-semibold text-[var(--text-1)]">
                 {suggestion.name}
               </h3>
+              {/* Le contenu et l'ancienneté sur une ligne : deux fragments de
+                  quatre mots, qui tenaient deux lignes pleines chacun. */}
               <p className="mt-1 text-sm text-[var(--text-2)]">
                 {routineSummaryLine(suggestion.exerciseCount, suggestion.setCount)}
-              </p>
-              <p className="mt-1 text-sm text-[var(--text-2)]">
+                {' · '}
                 {lastPerformedLabel(suggestion.lastPerformedAt)}
               </p>
             </div>

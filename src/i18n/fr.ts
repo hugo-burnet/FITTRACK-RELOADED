@@ -119,18 +119,22 @@ const fr = {
     resumeTitle: 'Séance en cours',
     resume: 'Reprendre',
 
-    /** La lecture de la semaine. Toute la carte mène aux séances par semaine. */
-    weekSection: 'Cette semaine',
+    /**
+     * L'îlot de chiffres : deux tuiles, deux mots, pas de phrase.
+     *
+     * La série hebdomadaire n'y est plus. « 3 semaines d'affilée » ne se lit
+     * qu'une fois — après, c'est un compteur qu'on ne consulte pas et qu'on perd
+     * en se blessant. L'écran Rythme la garde, à un tap d'ici.
+     */
+    islandWeek: 'cette semaine',
+    islandWeight: 'poids du jour',
     weekLink: 'Voir les séances par semaine',
-    weekSessions: 'séances cette semaine',
-    weekSessionsOne: 'séance cette semaine',
-    streakLabel: 'semaines d’affilée',
-    streakLabelOne: 'semaine d’affilée',
+    weightLink: 'Renseigner le poids du jour',
 
     /** La carte principale : quelle routine lancer aujourd'hui. */
     suggestionSection: 'À lancer',
     /** La règle, écrite : une suggestion qu'on ne peut pas expliquer s'ignore. */
-    suggestionRule: 'La routine que tu as faite il y a le plus longtemps.',
+    suggestionRule: 'La plus ancienne de tes routines.',
     neverPerformed: 'Jamais réalisée',
     lastToday: 'Réalisée aujourd’hui',
     lastYesterday: 'Réalisée hier',
@@ -159,7 +163,7 @@ const fr = {
      * Les trois raccourcis. Les mots courts sont pour l'œil, sur trois colonnes
      * de 375 px ; le nom complet de chaque analyse est donné à l'oreille.
      */
-    progressSection: 'Progression',
+    bodyLabel: 'Les muscles travaillés sur les douze dernières semaines',
     progressPace: 'Rythme',
     progressVolume: 'Volume',
     progressMuscles: 'Muscles',
@@ -170,8 +174,6 @@ const fr = {
     bodyWeightSaving: 'Enregistrement…',
     bodyWeightHint: 'Renseigne ton poids pour compter les exercices au poids du corps.',
     bodyWeightLatest: 'Dernière mesure : {date}',
-    bodyWeightSaved: 'Poids enregistré.',
-    bodyWeightUpdated: 'Poids mis à jour.',
     bodyWeightError: 'Le poids n’a pas pu être enregistré. Réessaie.',
   },
 

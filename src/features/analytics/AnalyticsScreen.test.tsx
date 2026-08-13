@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
 import type { Workout } from '@/data/types';
-import { HomeProgressLinks } from '@/features/home/HomeProgressLinks';
+import { HomeBodyCard } from '@/features/home/HomeBodyCard';
 import { resetDb } from '@/test/resetDb';
 import { AnalyticsScreen } from './AnalyticsScreen';
 
@@ -43,7 +43,7 @@ describe('AnalyticsScreen', () => {
     unmount();
     render(
       <MemoryRouter>
-        <HomeProgressLinks />
+        <HomeBodyCard />
       </MemoryRouter>,
     );
     expect(screen.getAllByRole('button')).toHaveLength(3);

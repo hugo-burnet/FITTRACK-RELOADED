@@ -5,25 +5,34 @@ import { getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { ActionBand, Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
-import { HomeBodyWeightCard } from './HomeBodyWeightCard';
-import { HomeProgressLinks } from './HomeProgressLinks';
+import { HomeBodyCard } from './HomeBodyCard';
 import { HomeProgramCard } from './HomeProgramCard';
 import { HomeRecentWorkouts } from './HomeRecentWorkouts';
+import { HomeStatsIsland } from './HomeStatsIsland';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
-import { HomeWeekCard } from './HomeWeekCard';
 import { useHomeDashboard } from './useHomeDashboard';
 
 /**
  * Où une séance commence — RF-17, les deux entrées.
  *
- * L'écran répond à quatre questions dans cet ordre : où j'en suis cette semaine,
- * quoi lancer, ce que j'ai fait dernièrement, où sont les courbes. Rien n'est
- * calculé ici : tout vient de `useHomeDashboard`, et la seule décision de l'app
- * — quelle routine proposer — est une fonction pure testée à part.
+ * **L'ordre a changé, et c'est le sujet de l'écran qui a changé avec lui.**
+ * L'accueil posait quatre questions dans l'ordre du tableau de bord : où j'en
+ * suis cette semaine, combien je pèse, quoi lancer, ce que j'ai fait, où sont
+ * les courbes. Cinq blocs, cinq intertitres, et le dessin du corps tout en bas.
  *
- * Les Réglages sont passés de la barre du bas à l'en-tête : on les ouvre trois
- * fois par an, on regarde ses courbes toutes les semaines, et la barre n'a que
- * cinq places (§12.1).
+ * Il en pose deux, dans l'ordre de la salle : **qu'est-ce que je travaille** —
+ * le corps, en grand, en tête — et **qu'est-ce que je lance**, juste dessous.
+ * Le reste descend d'un cran : les deux chiffres personnels tiennent une bande
+ * de tuiles, l'historique récent ferme l'écran.
+ *
+ * Ce qui est parti : la série de semaines d'affilée (un compteur qu'on lit une
+ * fois et qu'on perd en se blessant), les ± de la pesée (le téléphone a un
+ * clavier), et trois intertitres.
+ *
+ * Rien n'est calculé ici : tout vient de `useHomeDashboard`, et la seule
+ * décision de l'app — quelle routine proposer — est une fonction pure testée à
+ * part. Les Réglages sont dans l'en-tête : on les ouvre trois fois par an, et la
+ * barre du bas n'a que cinq places (§12.1).
  */
 export function HomeScreen() {
   const navigate = useNavigate();
@@ -51,33 +60,31 @@ export function HomeScreen() {
         ) : undefined
       }
     >
-      <div className="space-y-7">
+      <div className="space-y-6">
+        {/* Le corps ne dépend pas du tableau de bord — il lit son propre
+            historique — donc il est rendu tout de suite, y compris pendant que
+            le reste charge et y compris si la lecture échoue. */}
+        <HomeBodyCard />
+
         {state.status === 'loading' && (
-          // Trois blocs de la hauteur de ce qu'ils remplacent : l'écran ne
+          // Deux blocs de la hauteur de ce qu'ils remplacent : l'écran ne
           // sursaute pas quand les données arrivent.
-          <div aria-hidden="true" className="space-y-7">
-            <div className="h-24 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-            <div className="h-40 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+          <div aria-hidden="true" className="space-y-6">
             <div className="h-44 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-            <div className="h-28 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+            <div className="h-20 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
           </div>
         )}
 
         {state.status === 'error' && (
-          <>
-            <HomeBodyWeightCard />
-            <div role="status">
-              <Card padded>
-                <p className="text-sm leading-relaxed text-[var(--text-1)]">{t('home.readError')}</p>
-              </Card>
-            </div>
-          </>
+          <div role="status">
+            <Card padded>
+              <p className="text-sm leading-relaxed text-[var(--text-1)]">{t('home.readError')}</p>
+            </Card>
+          </div>
         )}
 
         {state.status === 'ready' && (
           <>
-            <HomeWeekCard regularity={state.regularity} />
-            <HomeBodyWeightCard />
             {state.data.activeProgram !== null ? (
               <HomeProgramCard program={state.data.activeProgram} disabled={active != null} />
             ) : (
@@ -87,13 +94,10 @@ export function HomeScreen() {
                 disabled={active != null}
               />
             )}
+            <HomeStatsIsland regularity={state.regularity} />
             <HomeRecentWorkouts items={state.data.recentWorkouts} />
           </>
         )}
-
-        {/* Toujours là : ces trois liens ne dépendent d'aucune lecture, et une
-            erreur de base ne doit pas fermer la porte des analyses. */}
-        <HomeProgressLinks />
       </div>
     </Screen>
   );
