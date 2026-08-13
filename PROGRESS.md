@@ -2,67 +2,45 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Bug — l'export CSV affiche un échec**).
+**Dernière mise à jour :** 2026-08-13 (**Bug — « Sauvegarde téléchargée » sans fichier**).
 
-## Rapport d'investigation
+## Rapport d'investigation (corrigé)
 
-Signalé : « Sauvegarder l'historique (CSV) » ne fonctionne plus, soupçon sur le Lot 17.
+Signalé : l'export CSV ne fonctionne plus, soupçon sur le Lot 17. Premier diagnostic
+faux : ce n'était **pas** un échec affiché. Le téléphone disait « Sauvegarde
+téléchargée » (lu « sauvegarde effectuée ») et aucun fichier n'arrivait.
 
 ### Ce que le Lot 17 n'a pas cassé
 
-Le sérialiseur (`buildCsvExport` / `serializeWorkoutsCsv`) n'a **pas été touché** depuis le
-Lot 8. Les 51 tests historiques (aller-retour, parseur, écriture RFC 4180) restent verts.
+Le sérialiseur n'a pas bougé depuis le Lot 8. Une séance née d'un programme s'écrit
+et se relit. Les champs de bloc ne traversent pas le CSV : Hevy décrit des séances,
+pas un programme. Ce n'est pas une régression.
 
-Un test neuf rejoue le cas Lot 17 — bloc actif, séance démarrée depuis le programme, série
-validée, séance close — puis exporte et relit le fichier : une ligne, le nom de routine, la
-série. Les champs `programId` / semaine / décharge ne traversent pas le CSV, et c'est assumé
-depuis le jour où le format a été choisi : Hevy décrit des séances, pas un bloc. Ce n'est
-pas une régression, c'est le contrat.
+### La vraie cause
 
-L'écran Réglages, lui aussi, câble encore le bouton : avec une séance terminée il s'active,
-appelle `saveTextFile`, et affiche le message de succès. Trois tests le verrouillent, ils
-n'existaient pas.
+Dans la WebView Capacitor, `canShare({ files })` renvoie `false`. `saveTextFile`
+tombait alors sur `<a download>` + `click()`. En JS, le clic **réussit**. Android
+n'écrit rien. Réglages traduit `downloaded` par « Sauvegarde téléchargée. » — un
+succès pour une opération qui n'a pas eu lieu.
 
-### La cause, un étage plus bas
+C'est pour ça que le premier correctif (`canShare` qui lève) ne pouvait pas
+expliquer le symptôme : une exception aurait montré le bandeau rouge. Ici le
+bandeau était vert.
 
-`saveCsv` avale toute exception et affiche « La sauvegarde n'a pas pu être enregistrée. »
-Le trou est dans `saveTextFile` :
-
-```ts
-navigator.canShare?.({ files: [file] }) === true
-```
-
-L'enchaînement optionnel protège un `canShare` **absent**. Il ne protège pas un `canShare`
-**présent qui lève**. C'est le comportement documenté de plusieurs WebView Android : plutôt
-que de renvoyer `false` pour un type de fichier, l'appel jette un `TypeError`. L'exception
-sort de `saveTextFile`, le `catch` des Réglages se déclenche, l'utilisateur lit un échec.
-
-Le Lot 17 n'a rien changé à ce fichier. Il a changé **quand on s'en sert** : un bloc de
-huit semaines, c'est exactement le moment où l'on veut une sauvegarde. Le bouton a l'air
-cassé par les programmes ; il l'est par un filet trop étroit autour de l'API de partage.
-
-Le même trou existait avant. Il était invisible tant que `canShare` renvoyait un booléen —
-Chrome bureau, et une partie des WebView. Sur le téléphone, dès que la WebView se met à
-lever, la sauvegarde disparaît d'un coup.
-
-### Ce qui n'est pas la cause
-
-- Schéma Dexie `version(6)`, `versionState`, champs programme sur `Workout` : l'export ne
-  les lit pas.
-- `useLiveQuery` du Markdown d'historique : un échec là désactiverait « Exporter tout
-  l'historique », pas la ligne CSV, qui a son propre compteur.
-- Le téléchargement `<a download>` : c'est le filet **après** un partage refusé proprement.
-  On n'y arrive jamais si `canShare` a déjà levé.
+Le Lot 17 n'a rien changé à ce fichier. Il a changé le moment où on s'en sert.
 
 ### Correctif
 
-`canShareFile` entoure l'appel. Une levée vaut « ce navigateur ne partage pas de
-fichier » et retombe sur le téléchargement, comme un `false`. Le test qui a désigné
-le coupable est vert.
+Sur l'APK, plus de faux téléchargement. Le CSV est écrit dans le cache natif
+(`@capacitor/filesystem`) puis passé à la feuille de partage Android
+(`@capacitor/share`). Fermer la feuille n'est pas un échec. Une écriture refusée
+l'est vraiment, et on le dit. Le navigateur de bureau garde `<a download>`, qui
+y fonctionne.
 
-**Checkpoint téléphone :** Réglages → « Sauvegarder l'historique (CSV) ». La feuille de
-partage doit s'ouvrir, ou à défaut le fichier doit se télécharger, **sans** le bandeau
-rouge. Rouvrir le CSV dans un tableur : les accents tiennent, les séances du bloc aussi.
+**Checkpoint téléphone :** installer l'APK par-dessus l'app, **sans la désinstaller**.
+Réglages → « Sauvegarder l'historique (CSV) » : la feuille Android doit s'ouvrir
+(Drive, Fichiers, Gmail…). **Plus** de « Sauvegarde téléchargée » sans fichier.
+Enregistrer, rouvrir : les accents et les séances du bloc sont là.
 
 **Mise à jour précédente :** 2026-08-13 (**Accueil — le corps en tête, le reste en dessous**).
 

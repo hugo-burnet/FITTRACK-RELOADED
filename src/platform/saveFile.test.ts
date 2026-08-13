@@ -88,6 +88,56 @@ describe('saveTextFile', () => {
     expect(URL.createObjectURL).toHaveBeenCalled();
   });
 
+  it('sur Android natif, écrit le fichier et ouvre la feuille plutôt que de simuler un téléchargement', async () => {
+    install({ share: undefined, canShare: undefined });
+    const writeCache = vi.fn().mockResolvedValue('file:///cache/fittrack-2026-08-02.csv');
+    const share = vi.fn().mockResolvedValue(undefined);
+
+    expect(
+      await saveTextFile(PAYLOAD, {
+        isNative: () => true,
+        native: { writeCache, share },
+      }),
+    ).toBe('shared');
+
+    expect(writeCache).toHaveBeenCalledWith(
+      PAYLOAD.name,
+      `\uFEFF${PAYLOAD.text}`,
+    );
+    expect(share).toHaveBeenCalledWith(
+      PAYLOAD.title,
+      'file:///cache/fittrack-2026-08-02.csv',
+    );
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+  });
+
+  it('sur Android natif, une annulation de la feuille n’est pas un échec', async () => {
+    const writeCache = vi.fn().mockResolvedValue('file:///cache/fittrack.csv');
+    const share = vi.fn().mockRejectedValue(new Error('Share canceled'));
+
+    expect(
+      await saveTextFile(PAYLOAD, {
+        isNative: () => true,
+        native: { writeCache, share },
+      }),
+    ).toBe('cancelled');
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+  });
+
+  it('sur Android natif, une écriture refusée est un vrai échec, pas un téléchargement', async () => {
+    const writeCache = vi.fn().mockRejectedValue(new Error('write failed'));
+    const share = vi.fn();
+
+    expect(
+      await saveTextFile(PAYLOAD, {
+        isNative: () => true,
+        native: { writeCache, share },
+      }),
+    ).toBe('failed');
+    expect(share).not.toHaveBeenCalled();
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+  });
+
   it('préfixe le contenu d’un BOM pour qu’Excel lise les accents', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
     install({ share, canShare: () => true });

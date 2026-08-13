@@ -2,19 +2,24 @@
  * Getting a *file* out of the app — the sibling of `share.ts`, which gets text
  * out.
  *
- * Two ways down, in this order:
+ * Three ways down, in this order:
  *
- * 1. **The system share sheet, with the file attached.** On the phone this is
- *    the only route that reaches Drive, Files, or a message — a download on
- *    Android lands in `Downloads` and the user has to go dig it out. A backup
- *    you cannot put where you want is barely a backup.
- * 2. **A plain download**, for the browser that cannot share files — every
- *    desktop one, at the time of writing.
+ * 1. **The Web Share sheet, with the file attached.** Chrome on a real browser
+ *    tab can do this. The Capacitor WebView usually cannot.
+ * 2. **The native Android share sheet.** The WebView's `<a download>` click
+ *    reports success and writes nothing — that is how "Sauvegarde téléchargée"
+ *    appeared with no file. Filesystem + Share is the route that actually
+ *    reaches Drive or Fichiers.
+ * 3. **A plain download**, for the desktop browser that cannot share files.
  *
  * The BOM is deliberate: without it Excel reads `Développé couché` as mojibake,
  * and the CSV's first destination after the phone is a spreadsheet. Every CSV
  * reader in the app strips it (`readCsvRows`).
  */
+
+import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { isNativeAndroid } from './nativeEnvironment';
 
 export type SaveOutcome =
   | 'shared'
@@ -29,6 +34,17 @@ export interface SaveFilePayload {
   type: string;
   /** Shown by the share sheet above the file. */
   title: string;
+}
+
+/** Android-only file write + share. Injected in tests so jsdom never loads the plugins. */
+export interface NativeFileSave {
+  writeCache: (name: string, text: string) => Promise<string>;
+  share: (title: string, fileUri: string) => Promise<void>;
+}
+
+export interface SaveFileOptions {
+  isNative?: () => boolean;
+  native?: NativeFileSave;
 }
 
 const BOM = '\uFEFF';
@@ -60,8 +76,52 @@ function canShareFile(file: File): boolean {
   }
 }
 
-export async function saveTextFile(payload: SaveFilePayload): Promise<SaveOutcome> {
+function isShareCancelled(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  if (error.name === 'AbortError') return true;
+  const message = error.message.toLowerCase();
+  return message.includes('cancel') || message.includes('abort');
+}
+
+export const capacitorFileSave: NativeFileSave = {
+  async writeCache(name, text) {
+    const written = await Filesystem.writeFile({
+      path: name,
+      data: text,
+      directory: Directory.Cache,
+      encoding: Encoding.UTF8,
+    });
+    return written.uri;
+  },
+  async share(title, fileUri) {
+    await Share.share({ title, files: [fileUri], dialogTitle: title });
+  },
+};
+
+async function shareNatively(
+  payload: SaveFilePayload,
+  native: NativeFileSave,
+): Promise<SaveOutcome> {
+  let uri: string;
+  try {
+    uri = await native.writeCache(payload.name, BOM + payload.text);
+  } catch {
+    return 'failed';
+  }
+  try {
+    await native.share(payload.title, uri);
+    return 'shared';
+  } catch (error) {
+    return isShareCancelled(error) ? 'cancelled' : 'failed';
+  }
+}
+
+export async function saveTextFile(
+  payload: SaveFilePayload,
+  options: SaveFileOptions = {},
+): Promise<SaveOutcome> {
   const file = new File([BOM + payload.text], payload.name, { type: payload.type });
+  const native = options.isNative ?? isNativeAndroid;
 
   // `canShare` and not `share` alone: Chrome exposes `share` on desktop but
   // refuses files, and the refusal is a rejected promise mid-flight rather than
@@ -71,10 +131,15 @@ export async function saveTextFile(payload: SaveFilePayload): Promise<SaveOutcom
       await navigator.share({ files: [file], title: payload.title });
       return 'shared';
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') return 'cancelled';
+      if (isShareCancelled(error)) return 'cancelled';
+      if (native()) return shareNatively(payload, options.native ?? capacitorFileSave);
       return download(file);
     }
   }
+
+  // The WebView download click is a lie: it returns success and writes nothing.
+  // On the APK the share sheet is the only way a backup actually leaves the app.
+  if (native()) return shareNatively(payload, options.native ?? capacitorFileSave);
 
   return download(file);
 }
