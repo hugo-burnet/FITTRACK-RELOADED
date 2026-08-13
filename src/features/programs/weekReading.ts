@@ -1,17 +1,9 @@
 import type { ProgramPhase } from '@/data/types';
 import { t, type TranslationKey } from '@/i18n/fr';
 
-/** Editor-only defaults when the user explicitly changes phase. Never used in repositories. */
-export const SUGGESTED_LOAD_INDEX: Record<ProgramPhase, number> = {
-  construction: 100,
-  progression: 105,
-  overload: 110,
-  deload: 60,
-  return: 100,
-  test: 110,
-};
-
-export const LOAD_INDEX_PRESETS = [60, 90, 100, 105, 110] as const;
+// The suggestion table lives in `lib/programs` so recipes can read it without
+// a feature importing another feature. Re-exported here for the editor.
+export { LOAD_INDEX_PRESETS, SUGGESTED_LOAD_INDEX } from '@/lib/programs';
 
 export const PHASE_LABEL_KEYS: Record<ProgramPhase, TranslationKey> = {
   construction: 'program.phase.construction',
