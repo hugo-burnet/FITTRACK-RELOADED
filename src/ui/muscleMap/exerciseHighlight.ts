@@ -1,6 +1,5 @@
 import type { MuscleGroup } from '@/data/types';
-import type { MuscleHighlight } from './BodyMap';
-import { isDrawable } from './regionsByMuscle';
+import { isDrawable, type MuscleHighlight } from './musclesByGroup';
 
 /** What the catalogue says a movement involves, and nothing more. */
 export interface HighlightedExercise {

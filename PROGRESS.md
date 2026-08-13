@@ -2,7 +2,41 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines**).
+**Dernière mise à jour :** 2026-08-13 (**Carte musculaire Z-Anatomy — remplacement du body map**).
+
+Les cinq écrans qui dessinaient un corps (accueil, bilan musculaire, fiche exercice, détail de
+séance, fin de séance) passent d'une géométrie de 89 régions à 26 muscles anatomiques réels,
+dérivés de Z-Anatomy. Le contrat `MuscleHighlight` n'a pas bougé d'un caractère : `BodyMap.tsx`
+avait prévu ce remplacement par écrit, et aucun appelant n'a été réécrit.
+
+**La couture est `src/ui/muscleMap/musclesByGroup.ts`, et nulle part ailleurs.** 16 groupes
+dessinables → 23 muscles, plus 3 orphelins assumés (`hip_flexors`, `serratus_anterior`,
+`tibialis_anterior`) : dessinés pour que le corps soit entier, jamais allumés faute d'un
+`MuscleGroup` capable de les nommer. Exhaustif par construction via `satisfies`, et un test tient
+la complémentarité 23 + 3 = 26.
+
+`rotator_cuff` **est** allumé, avec `shoulders` — la coiffe stabilise l'épaule dans tout
+mouvement, donc un développé qui l'allume dit vrai. C'est ce qui la sépare du serratus, qu'un
+crunch ne travaille pas et qu'on refuse toujours de replier dans `abs`.
+
+**Rampe de valeur, pas de couleur** : `color-mix(in srgb, var(--text-1) N%, var(--surface-2))`,
+ce qui reproduit exactement l'ancien compositing en `fill-opacity` et garde l'accent réservé aux
+actions principales. Deux instances côte à côte plutôt qu'un basculement de vue : la lecture
+utile est *où sont les trous*, elle a besoin des deux moitiés dans l'œil en même temps.
+
+**Nouvel écran `/settings/about`.** CC BY-SA 4.0 §3(a) exige que l'attribution accompagne l'œuvre
+« par tout moyen raisonnable au vu du support » : un fichier dans le dépôt couvre qui clone, pas
+qui installe la PWA. L'ancien NOTICE Apache-2.0 de `body-muscles` avait le même trou — il part
+avec la géométrie qu'il couvrait.
+
+L'ancien code vit sur la branche `archive/body-map-vendor`, poussée avant toute suppression.
+`Z-Anatomy.zip` (102 Mo) est désormais ignoré : au-delà de la limite dure de GitHub, et c'est une
+source, pas un produit.
+
+Checkpoint téléphone : ouvrir une fiche d'exercice et le bilan musculaire, vérifier que le dessin
+reste lisible à cette taille — il est bien plus détaillé que l'ancien pour la même hauteur.
+
+**Mise à jour précédente :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines**).
 
 Livré : blocs de 4 à 12 semaines, split hebdomadaire versionné, prescriptions %1RM ou RPE,
 décharges planifiées, démarrage depuis l’accueil et autorité explicite face au Coach du Lot 18.
@@ -10,7 +44,7 @@ décharges planifiées, démarrage depuis l’accueil et autorité explicite fac
 Checkpoint téléphone restant : bloc de 8 semaines, décharge semaine 5, version effective d’une
 routine, décalage du bloc et reprise complète en mode avion.
 
-**Mise à jour précédente :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
+**Avant cela :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
 
 La cinquième règle, `range_missed` : **deux séances de suite sous le bas de fourchette, à la même
 charge → un incrément en moins.** C'est la moitié de RF-48 que le roadmap promettait depuis le

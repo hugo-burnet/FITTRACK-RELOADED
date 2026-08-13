@@ -22,7 +22,7 @@ import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
 import { ActionBand, Button, Card, ConfirmSheet, SectionTitle, Textarea } from '@/ui';
-import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
+import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
 import { formatNumber } from '@/ui/numberField';
 import { CoachCard } from './CoachCard';
 import { ElapsedTime } from './ElapsedTime';
@@ -172,7 +172,7 @@ export function WorkoutFinishScreen() {
             cases need no special handling here. */}
         {Object.keys(sessionHighlight).length > 0 && (
           <Card padded>
-            <BodyMap highlight={sessionHighlight} />
+            <MuscleMap highlight={sessionHighlight} />
           </Card>
         )}
 

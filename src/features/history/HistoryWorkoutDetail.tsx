@@ -12,7 +12,7 @@ import type { TargetPart } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
 import { Card, SectionTitle } from '@/ui';
-import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
+import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
 import { formatNumber } from '@/ui/numberField';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
@@ -181,7 +181,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
         <section>
           <SectionTitle>{t('history.detailMuscles')}</SectionTitle>
           <Card padded>
-            <BodyMap highlight={sessionHighlight} />
+            <MuscleMap highlight={sessionHighlight} />
           </Card>
         </section>
       )}

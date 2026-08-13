@@ -252,6 +252,12 @@ export function SettingsScreen() {
               trailing={<ChevronRightIcon />}
               onClick={() => void navigate('/settings/debug')}
             />
+            <ListRow
+              title={t('settings.creditsLink')}
+              subtitle={t('settings.creditsHint')}
+              trailing={<ChevronRightIcon />}
+              onClick={() => void navigate('/settings/about')}
+            />
           </div>
           {csvMessage !== undefined && (
             <p

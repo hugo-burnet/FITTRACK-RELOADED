@@ -22,7 +22,7 @@ import {
   SectionTitle,
   Textarea,
 } from '@/ui';
-import { hasDrawableMuscles } from '@/ui/bodyMap';
+import { hasDrawableMuscles } from '@/ui/muscleMap';
 import { ChevronRightIcon } from '@/ui/icons';
 import { CoachCard } from '@/features/workout/CoachCard';
 import { recommendationAsSignal } from '@/features/workout/coachCopy';

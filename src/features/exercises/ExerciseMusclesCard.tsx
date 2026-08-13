@@ -2,7 +2,7 @@ import type { Exercise } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { muscleLabel } from '@/i18n/labels';
 import { Card, SectionTitle } from '@/ui';
-import { BodyMap, exerciseHighlight } from '@/ui/bodyMap';
+import { MuscleMap, exerciseHighlight } from '@/ui/muscleMap';
 
 /**
  * What an exercise works — RF-06's missing half, on the sheet that was missing it.
@@ -27,7 +27,7 @@ export function ExerciseMusclesCard({ exercise }: { exercise: Exercise }) {
       <SectionTitle>{t('exercise.musclesSection')}</SectionTitle>
       <Card>
         <div className="px-4 pt-4 pb-2">
-          <BodyMap highlight={exerciseHighlight(exercise)} />
+          <MuscleMap highlight={exerciseHighlight(exercise)} />
         </div>
         <Line label={t('exercise.musclesPrimary')} value={muscleLabel(exercise.primaryMuscle)} />
         {secondaries.length > 0 && (

@@ -32,3 +32,19 @@ AGENTS.md
 # Artefacts locaux de conception et d'analyse Codex
 .superpowers/
 .tmp/
+
+# Sources de la carte musculaire : le projet Blender Z-Anatomy et tout ce qui a
+# servi à en extraire le dessin (masques rendus, planches de contrôle).
+#
+# Trois raisons, dans cet ordre. Le zip pèse 102 Mo et porte un `Startup.blend`
+# de 306 Mo : GitHub refuse tout fichier au-delà de 100 Mo, donc le versionner
+# casserait le push, pas seulement le poids du clone. C'est ensuite une source,
+# pas un produit — le livrable est `src/ui/muscleMap/muscle-map.svg`, et il
+# suffit à faire tourner l'application. C'est enfin du tiers sous CC BY-SA 4.0
+# que ce dépôt PUBLIC redistribuerait, avec les obligations qui vont avec, alors
+# que l'amont le distribue déjà lui-même.
+#
+# L'attribution du dessin qui en descend, elle, reste versionnée :
+# `licenses/z-anatomy/`.
+Z-Anatomy.zip
+Z-Anatomy/

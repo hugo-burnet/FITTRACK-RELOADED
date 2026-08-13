@@ -1074,6 +1074,15 @@ const fr = {
     debugHint: 'Contenu de la base, stockage utilisé, réinitialisation.',
 
     /**
+     * Les crédits. Ce n'est pas une politesse : la carte musculaire est une
+     * œuvre dérivée sous CC BY-SA 4.0, dont l'article 3(a) exige que
+     * l'attribution reste accessible à qui reçoit l'application — pas seulement
+     * dans le dépôt. Le lien est donc une obligation, pas une décoration.
+     */
+    creditsLink: 'À propos et crédits',
+    creditsHint: 'Origine de la carte musculaire et licences des travaux réutilisés.',
+
+    /**
      * La réparation de l'instantané. Elle **repeint le passé**, ce que le jalon
      * 08A existe pour empêcher — donc jamais automatique, jamais silencieuse,
      * et la phrase de confirmation dit le prix plutôt que « es-tu sûr ? ».
@@ -1089,6 +1098,39 @@ const fr = {
     repairDone: '{repaired} exercices de séance corrigés.',
     repairDoneOne: '1 exercice de séance corrigé.',
     repairDoneNone: 'Rien à corriger : l’historique est déjà d’accord avec la bibliothèque.',
+  },
+
+  /**
+   * Les crédits des travaux réutilisés.
+   *
+   * Écran obligatoire, pas informatif : CC BY-SA 4.0 §3(a) demande que
+   * l'attribution accompagne l'œuvre « par tout moyen raisonnable au vu du
+   * support ». Un fichier dans le dépôt couvre le code source ; il ne couvre pas
+   * quelqu'un qui installe la PWA ou l'APK. Cet écran est ce moyen.
+   *
+   * Les noms d'auteurs ne sont pas traduits et le nom de la licence est laissé
+   * dans sa forme canonique : c'est ce qui rend l'attribution vérifiable.
+   */
+  credits: {
+    title: 'À propos et crédits',
+    intro:
+      'FitTrack réutilise des travaux publiés par d’autres. Voici lesquels, et sous quelles conditions.',
+
+    muscleMapTitle: 'Carte musculaire',
+    muscleMapWork: 'Z-Anatomy',
+    muscleMapLicence: 'CC BY-SA 4.0',
+    muscleMapAuthors: 'Kousaku Okubo (BodyParts3D) · Gauthier Kervyn · Marcin Zielinski',
+    /**
+     * Dire que le dessin est modifié n'est pas une précaution : §3(a)(1)(B)
+     * l'exige dès qu'on publie une œuvre dérivée.
+     */
+    muscleMapNotice:
+      'Le dessin est une œuvre dérivée : la géométrie a été extraite des maillages puis vectorisée. Il reste distribué sous la même licence, comme tout rendu qui en descend.',
+    muscleMapLink: 'creativecommons.org/licenses/by-sa/4.0',
+
+    appTitle: 'Application',
+    appNotice:
+      'Le reste de FitTrack n’est pas une œuvre dérivée de la carte et ne relève pas de sa licence.',
   },
 
   debug: {

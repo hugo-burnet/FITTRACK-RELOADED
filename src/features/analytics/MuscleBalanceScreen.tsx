@@ -8,7 +8,7 @@ import { muscleBalance, toMuscleRows } from '@/lib/analytics/muscles';
 import { PERIOD_KEYS, type PeriodKey } from '@/lib/analytics/periods';
 import { weeklySessionCounts } from '@/lib/analytics/weeks';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
-import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
+import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
 import { MuscleBalanceCard } from './MuscleBalanceCard';
 import { useHistoricalPeriod } from './useHistoricalPeriod';
 
@@ -105,7 +105,7 @@ export function MuscleBalanceScreen() {
                   each exercise merely involves, exactly as the two session
                   recaps do. The rows below stay a count of working sets — one
                   body, one rule, and a number that can still be recounted. */}
-              <BodyMap highlight={balanceHighlight(muscleInvolvement(rows))} />
+              <MuscleMap highlight={balanceHighlight(muscleInvolvement(rows))} />
             </Card>
             <MuscleBalanceCard balance={balance} weeks={weeks} stale={historicalPeriod.stale} />
           </>

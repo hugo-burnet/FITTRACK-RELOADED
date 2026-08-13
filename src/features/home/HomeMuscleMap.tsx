@@ -4,7 +4,7 @@ import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { toMuscleRows } from '@/lib/analytics/muscles';
 import { periodBounds } from '@/lib/analytics/periods';
-import { BodyMap, balanceHighlight } from '@/ui/bodyMap';
+import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
 
 /**
  * The body at the top of the home screen's Progression section.
@@ -63,7 +63,7 @@ export function HomeMuscleMap() {
   // — a stray line across the top of an otherwise plain row of links.
   return (
     <div className="border-b border-[var(--border)] px-4 pt-4 pb-2">
-      <BodyMap highlight={highlight} />
+      <MuscleMap highlight={highlight} />
     </div>
   );
 }

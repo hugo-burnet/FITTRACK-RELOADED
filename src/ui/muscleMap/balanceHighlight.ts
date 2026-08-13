@@ -1,6 +1,5 @@
 import type { MuscleGroup } from '@/data/types';
-import type { MuscleHighlight } from './BodyMap';
-import { isDrawable } from './regionsByMuscle';
+import { isDrawable, type MuscleHighlight } from './musclesByGroup';
 
 /**
  * How much a muscle was worked, in whatever unit the caller counts in.

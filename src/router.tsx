@@ -22,6 +22,7 @@ import { ProgramListScreen } from './features/programs/ProgramListScreen';
 import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
 import { RoutineEditorScreen } from './features/routines/RoutineEditorScreen';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
+import { CreditsScreen } from './features/settings/CreditsScreen';
 import { DebugScreen } from './features/settings/DebugScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { WorkoutAddExerciseScreen } from './features/workout/WorkoutAddExerciseScreen';
@@ -71,6 +72,7 @@ export const router = createHashRouter([
       { path: 'exercises/:id/edit', element: <ExerciseFormScreen /> },
       { path: 'settings', element: <SettingsScreen /> },
       { path: 'settings/debug', element: <DebugScreen /> },
+      { path: 'settings/about', element: <CreditsScreen /> },
     ],
   },
 ]);
