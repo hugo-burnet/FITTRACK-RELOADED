@@ -2,7 +2,38 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Release Android v0.7.0 — front Programmes : recettes, suppression, éditeur empilé**).
+**Dernière mise à jour :** 2026-08-13 (**Release Android v0.7.1 — front Programmes + revue du Coach**).
+
+## v0.7.1 — les branches en attente sont rentrées
+
+Deux branches parallèles fusionnées dans master, cinq conflits, tous nés du
+renommage `range_completed` → `range_ceiling_reached` fait par le Lot 17 **après**
+le départ de ces branches.
+
+- **Revue du Coach (Lot 18)** : plateau qui se taisait mal sur machine assistée
+  (l'assistance était inversée dans `nextLoad` mais pas dans la règle du plateau),
+  journal qui passait la reco vivante à `dismissed` — suivre le conseil effaçait la
+  preuve —, et drop sets volontaires lus comme un effondrement intra-séance.
+- **Résolutions à retenir** : `rangePartitionSignal` lit maintenant la partition
+  plafond/fourchette du Lot 17 **sur `progressionSets`** du Lot 18 (ni échauffement,
+  ni drop set, ni série allégée à dessein). `statusSuperseded` devient « Remplacée »
+  tout court : deux causes écrivent ce statut désormais (activation d'un bloc,
+  signal plus récent), « par le programme » mentait sur la seconde.
+- **`markRecommendationFollowed` restaurée** : la branche l'avait supprimée alors que
+  son appelant est né après elle. Sans elle la carte d'objectif ne quitte plus
+  `pending` et reste affichée en pleine séance. Elle ne concurrence pas
+  `reconcileFollowedLoads` — les deux ne touchent qu'une ligne `pending`.
+- Un test de la branche attendait l'ancien nom du signal. Comportement bon
+  (2 séries jugées, drop set écarté) : **l'assertion est renommée, pas affaiblie**.
+
+Plus le nettoyage de clôture du Lot 17 : `editWeek` et `shiftDays*` supprimées,
+vérifiées sans lecteur.
+
+1513 tests / 131 fichiers.
+
+---
+
+**Précédent :** 2026-08-13 (**Release Android v0.7.0 — front Programmes : recettes, suppression, éditeur empilé**).
 
 ## Front Programmes (v0.7.0)
 
