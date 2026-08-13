@@ -4,10 +4,9 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
-import type { Exercise, PersonalRecord, ProgramWeek, Workout, WorkoutSet } from '@/data/types';
+import type { Exercise, ProgramWeek, Workout, WorkoutSet } from '@/data/types';
 import { WorkoutScreen } from '@/features/workout/WorkoutScreen';
 import { resetDb } from '@/test/resetDb';
-import { seedWorkout } from '@/test/factories';
 import { newEntity } from './base';
 import { recordCoachSignals } from './coachRecommendations';
 import { createCustomExercise, updateExercise } from './exercises';
@@ -83,23 +82,10 @@ async function readyProgram(input: {
   return { program, revision, entry };
 }
 
-async function addBestOneRepMax(exerciseId: string, value: number, achievedAt: number) {
-  const source = await seedWorkout({ exerciseId, performedAt: achievedAt, sets: [[value, 1]] });
-  await db.personalRecords.add(
-    newEntity<PersonalRecord>({
-      exerciseId,
-      type: 'best_1rm',
-      value,
-      achievedAt,
-      workoutId: source.id,
-    }),
-  );
-}
-
 describe('startWorkoutFromProgram', () => {
   beforeEach(resetDb);
 
-  it('préflight sans insertion : identity n’émet pas de replis 1RM et démarre sans acquittement', async () => {
+  it('préflight sans insertion : identity copie les cibles et démarre', async () => {
     const squat = await exercise('Squat');
     const { routine } = await routineWithExercise('Force', squat);
     const { program, entry } = await readyProgram({ routineId: routine.id });
@@ -119,9 +105,9 @@ describe('startWorkoutFromProgram', () => {
         routineId: routine.id,
         routineName: 'Force',
       },
-      warnings: [],
-      warningAcknowledgement: null,
     });
+    expect(preflight).not.toHaveProperty('warnings');
+    expect(preflight).not.toHaveProperty('warningAcknowledgement');
     expect(await db.workouts.count()).toBe(0);
     expect(await db.workoutExercises.count()).toBe(0);
     expect(await db.workoutSets.count()).toBe(0);
@@ -134,24 +120,15 @@ describe('startWorkoutFromProgram', () => {
     expect(await db.workouts.count()).toBe(1);
   });
 
-  it('ne produit aucun avertissement d’assistance ou de 1RM manquant (identity)', async () => {
+  it('démarre une assistance et un exercice sans 1RM avec les cibles de routine', async () => {
     const bench = await exercise('D\u00e9velopp\u00e9 couch\u00e9');
     const squat = await exercise('Squat');
     const routine = await createRoutine('Force');
     await addExercisesToRoutine(routine.id, [bench.id, squat.id]);
-    await addBestOneRepMax(bench.id, 100, MONDAY - WEEK);
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
 
     await updateExercise(bench.id, { measurementType: 'assisted_weight_reps' });
-
-    const preflight = await preflightProgramWorkout({
-      programId: program.id,
-      programScheduleEntryId: entry.id,
-      at: MONDAY,
-    });
-    expect(preflight.warnings).toEqual([]);
-    expect(preflight.warningAcknowledgement).toBeNull();
 
     const { workout } = await startWorkoutFromProgram({
       programId: program.id,
@@ -188,16 +165,10 @@ describe('startWorkoutFromProgram', () => {
       }),
     ).rejects.toMatchObject({ code: 'program_invalid' });
 
-    const preflight = await preflightProgramWorkout({
-      programId: program.id,
-      programScheduleEntryId: secondEntry.id,
-      at: MONDAY + WEEK,
-    });
     const { workout } = await startWorkoutFromProgram({
       programId: program.id,
       programScheduleEntryId: secondEntry.id,
       at: MONDAY + WEEK,
-      warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
     });
     const detail = await getWorkoutDetail(workout.id);
 
@@ -237,8 +208,6 @@ describe('startWorkoutFromProgram', () => {
       0,
     );
     await updateRoutineSet(squatWork.id, { targetWeight: 60, targetReps: 6 });
-    await addBestOneRepMax(bench.id, 100, MONDAY - WEEK * 2);
-    await addBestOneRepMax(bench.id, 123, MONDAY - WEEK);
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
 
@@ -253,7 +222,7 @@ describe('startWorkoutFromProgram', () => {
 
     expect(benchSets.map(({ targetWeight }) => targetWeight)).toEqual([40, 100]);
     expect(squatSet.targetWeight).toBe(60);
-    expect(result.warnings).toEqual([]);
+    expect(result).not.toHaveProperty('warnings');
     expect([...benchSets, squatSet].every((set) => set.weight === undefined)).toBe(true);
   });
 
@@ -410,15 +379,9 @@ describe('startWorkoutFromProgram', () => {
       programScheduleEntryId: entry.id,
       at: MONDAY,
     };
-    const preflight = await preflightProgramWorkout(input);
-    const acknowledgedInput = {
-      ...input,
-      warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
-    };
-
     const results = await Promise.allSettled([
-      startWorkoutFromProgram(acknowledgedInput),
-      startWorkoutFromProgram(acknowledgedInput),
+      startWorkoutFromProgram(input),
+      startWorkoutFromProgram(input),
     ]);
 
     expect(results.map(({ status }) => status).sort()).toEqual(['fulfilled', 'rejected']);
@@ -432,18 +395,11 @@ describe('startWorkoutFromProgram', () => {
     const { routine } = await routineWithExercise('Force', bench);
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
-    const preflight = await preflightProgramWorkout({
-      programId: program.id,
-      programScheduleEntryId: entry.id,
-      at: MONDAY,
-    });
-
     const results = await Promise.allSettled([
       startWorkoutFromProgram({
         programId: program.id,
         programScheduleEntryId: entry.id,
         at: MONDAY,
-        warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
       }),
       startWorkoutFromRoutine(routine.id),
     ]);

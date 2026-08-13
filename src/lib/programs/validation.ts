@@ -2,6 +2,10 @@ import { PROGRAM_PHASES, type ProgramPhase } from '@/data/types';
 
 import { isoDayOfWeek } from './calendar';
 
+/** Display bounds for loadIndex — narrative, not a load operator. */
+export const MIN_LOAD_INDEX = 1;
+export const MAX_LOAD_INDEX = 200;
+
 export type ProgramValidationCode =
   | 'duration_out_of_range'
   | 'start_not_monday'
@@ -71,7 +75,11 @@ export function validateProgramDraft(
 
   if (
     draft.weeks.some(
-      (week) => !Number.isFinite(week.loadIndex) || !Number.isInteger(week.loadIndex),
+      (week) =>
+        !Number.isFinite(week.loadIndex) ||
+        !Number.isInteger(week.loadIndex) ||
+        week.loadIndex < MIN_LOAD_INDEX ||
+        week.loadIndex > MAX_LOAD_INDEX,
     )
   ) {
     issues.add('invalid_load_index');

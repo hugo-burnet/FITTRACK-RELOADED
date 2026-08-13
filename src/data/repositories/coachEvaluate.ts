@@ -29,7 +29,8 @@ function cloneSignal(signal: CoachSignal): CoachSignal {
 }
 
 function stripLoadProposal(signal: CoachSignal): CoachSignal {
-  const { nextLoadKg: _removed, ...rest } = signal;
+  const rest = { ...signal };
+  delete rest.nextLoadKg;
   return {
     ...rest,
     evidence: signal.evidence
@@ -139,7 +140,7 @@ function contextFromWeek(
 export async function resolveTargetProgramContext(
   workout: Pick<
     Workout,
-    'programId' | 'programWeekIndex' | 'programScheduleEntryId' | 'endedAt' | 'startedAt'
+    'id' | 'programId' | 'programWeekIndex' | 'programScheduleEntryId' | 'endedAt' | 'startedAt'
   >,
   at?: number,
 ): Promise<ProgramCoachContext | undefined> {
@@ -161,21 +162,33 @@ export async function resolveTargetProgramContext(
       ? []
       : alive(await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray());
 
-  // Primary path: walk forward from the closed session's week definition.
+  // Primary path: remaining *unfinished* slots this week, not split order.
+  // Finishing Friday first must not jump to next week while Monday is open.
   if (
     workout.programWeekIndex !== undefined &&
     workout.programScheduleEntryId !== undefined
   ) {
     const weekIndex = workout.programWeekIndex;
     const resolvedEntries = resolveSchedule(livingRevisions, livingEntries, weekIndex);
-    const currentIdx = resolvedEntries.findIndex(
-      (entry) => entry.id === workout.programScheduleEntryId,
-    );
-    if (currentIdx >= 0) {
-      if (currentIdx < resolvedEntries.length - 1) {
-        // Another slot remains this week — same week intention.
-        return contextFromWeek(livingWeeks, weekIndex);
-      }
+    const currentEntryId = workout.programScheduleEntryId;
+    if (resolvedEntries.some((entry) => entry.id === currentEntryId)) {
+      const completedThisWeek = new Set(
+        alive(await db.workouts.toArray())
+          .filter(
+            (row) =>
+              row.id !== workout.id &&
+              row.status === 'completed' &&
+              row.programId === programId &&
+              row.programWeekIndex === weekIndex &&
+              row.programScheduleEntryId !== undefined &&
+              row.programScheduleEntryId !== currentEntryId,
+          )
+          .map((row) => row.programScheduleEntryId as string),
+      );
+      const stillOpen = resolvedEntries.some(
+        (entry) => entry.id !== currentEntryId && !completedThisWeek.has(entry.id),
+      );
+      if (stillOpen) return contextFromWeek(livingWeeks, weekIndex);
       const nextWeekIndex = weekIndex + 1;
       if (nextWeekIndex < program.durationWeeks) {
         return contextFromWeek(livingWeeks, nextWeekIndex);

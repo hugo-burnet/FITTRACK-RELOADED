@@ -8,6 +8,8 @@ export {
   type ProgramSessionPick,
 } from './schedule';
 export {
+  MAX_LOAD_INDEX,
+  MIN_LOAD_INDEX,
   validateProgramDraft,
   type ProgramDraft,
   type ProgramDraftScheduleEntry,
@@ -18,8 +20,6 @@ export {
   projectProgramPrescription,
   type ProgramPrescriptionExerciseInput,
   type ProgramPrescriptionProjection,
-  type ProgramPrescriptionWarning,
-  type ProgramPrescriptionWarningCode,
   type ProjectedProgramSet,
 } from './prescription';
 export { createDeloadTargets } from './deloadTargets';

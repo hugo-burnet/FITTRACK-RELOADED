@@ -9,13 +9,7 @@ import {
 } from '@/data/repositories/programs';
 import type { ProgramDetail } from '@/data/repositories/programs';
 import { listCompletedWorkouts } from '@/data/repositories/history';
-import {
-  ProgramWorkoutWarningAcknowledgementError,
-  preflightProgramWorkout,
-  startWorkoutFromProgram,
-  type ProgramWorkoutPreflight,
-  type ProgramWorkoutWarningAcknowledgement,
-} from '@/data/repositories/programWorkout';
+import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { getRoutineDetail } from '@/data/repositories/routines';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import type { Program, ProgramWeek } from '@/data/types';
@@ -26,11 +20,7 @@ import type { ProgramPosition } from '@/lib/programs';
 import { ActionBand, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
-import {
-  ProgramSessionList,
-  ProgramWorkoutWarningSheet,
-  UpcomingWeeks,
-} from './ProgramSessionList';
+import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
 import { phaseIntention, weekLine } from './weekReading';
 
@@ -171,7 +161,6 @@ export function ProgramDetailScreen() {
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [actionError, setActionError] = useState(false);
   const [starting, setStarting] = useState(false);
-  const [warningPreflight, setWarningPreflight] = useState<ProgramWorkoutPreflight | null>(null);
   const startingRef = useRef(false);
   const query = useLiveQuery(() => readProjection(id), [id]);
 
@@ -247,61 +236,21 @@ export function ProgramDetailScreen() {
     setStarting(false);
   };
 
-  const persistStart = async (
-    entryId: string,
-    warningAcknowledgement?: ProgramWorkoutWarningAcknowledgement,
-  ) => {
-    try {
-      await startWorkoutFromProgram({
-        programId: detail.program.id,
-        programScheduleEntryId: entryId,
-        ...(warningAcknowledgement === undefined ? {} : { warningAcknowledgement }),
-      });
-      void navigate('/workout');
-    } catch (error) {
-      if (error instanceof ProgramWorkoutWarningAcknowledgementError) {
-        setWarningPreflight(error.preflight);
-      } else {
-        setActionError(true);
-      }
-      releaseStart();
-    }
-  };
-
   const beginStart = async () => {
     if (!canStart || effectiveSelected === null || startingRef.current) return;
     startingRef.current = true;
     setStarting(true);
     setActionError(false);
     try {
-      const preflight = await preflightProgramWorkout({
+      await startWorkoutFromProgram({
         programId: detail.program.id,
         programScheduleEntryId: effectiveSelected.entryId,
       });
-      if (preflight.warningAcknowledgement !== null) {
-        setWarningPreflight(preflight);
-        releaseStart();
-        return;
-      }
-      await persistStart(effectiveSelected.entryId);
-    } catch (error) {
-      if (error instanceof ProgramWorkoutWarningAcknowledgementError) {
-        setWarningPreflight(error.preflight);
-      } else {
-        setActionError(true);
-      }
+      void navigate('/workout');
+    } catch {
+      setActionError(true);
       releaseStart();
     }
-  };
-
-  const confirmWarnings = () => {
-    const acknowledgement = warningPreflight?.warningAcknowledgement;
-    if (acknowledgement === null || acknowledgement === undefined || startingRef.current) return;
-    startingRef.current = true;
-    setStarting(true);
-    setActionError(false);
-    setWarningPreflight(null);
-    void persistStart(acknowledgement.context.programScheduleEntryId, acknowledgement);
   };
 
   return (
@@ -359,12 +308,6 @@ export function ProgramDetailScreen() {
           onComplete={() => runAction(() => completeProgram(detail.program.id))}
         />
       )}
-      <ProgramWorkoutWarningSheet
-        preflight={warningPreflight}
-        working={starting}
-        onClose={() => setWarningPreflight(null)}
-        onConfirm={confirmWarnings}
-      />
     </Screen>
   );
 }

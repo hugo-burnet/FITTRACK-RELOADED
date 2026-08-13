@@ -498,23 +498,7 @@ describe('suivi du bloc courant', () => {
   });
 
   it('ignore un double appui pendant le démarrage depuis le détail', async () => {
-    const { program, entries } = await createTrackingProgram();
-    const selected = entries[2]!;
-    vi.spyOn(programWorkoutRepository, 'preflightProgramWorkout').mockResolvedValue({
-      context: {
-        programId: program.id,
-        programWeekIndex: 1,
-        programScheduleRevisionId: selected.revisionId,
-        programScheduleEntryId: selected.id,
-        routineId: selected.routineId,
-        routineName: 'Poussée du jour',
-        phase: 'construction',
-        loadIndex: 100,
-        programIsDeload: 0,
-      },
-      warnings: [],
-      warningAcknowledgement: null,
-    });
+    const { program } = await createTrackingProgram();
     let release!: (
       value: Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>,
     ) => void;
@@ -538,7 +522,6 @@ describe('suivi du bloc courant', () => {
       workout: {} as Awaited<
         ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>
       >['workout'],
-      warnings: [],
     });
   });
 

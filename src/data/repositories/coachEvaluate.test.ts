@@ -323,6 +323,131 @@ describe('evaluateCoachForWorkout', () => {
     ).toBe(true);
   });
 
+  it('keeps this week when a later slot is finished first', async () => {
+    const programStart = new Date(2026, 7, 10, 12).getTime();
+    const friday = new Date(2026, 7, 14, 12).getTime();
+    const program = await createProgramDraft({
+      name: 'Split',
+      startsAt: programStart,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, [
+      { weekIndex: 0, loadIndex: 100, phase: 'construction' },
+      { weekIndex: 1, loadIndex: 105, phase: 'progression' },
+      { weekIndex: 2, loadIndex: 105, phase: 'progression' },
+      { weekIndex: 3, loadIndex: 60, phase: 'deload' },
+    ]);
+    const mondayRoutine = await createRoutine('Lundi');
+    const fridayRoutine = await createRoutine('Vendredi');
+    await addExercisesToRoutine(mondayRoutine.id, [exercise.id]);
+    await addExercisesToRoutine(fridayRoutine.id, [exercise.id]);
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: mondayRoutine.id, dayOfWeek: 1, order: 0 },
+      { routineId: fridayRoutine.id, dayOfWeek: 5, order: 0 },
+    ]);
+    const entries = (
+      await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray()
+    ).sort((left, right) => left.dayOfWeek - right.dayOfWeek);
+    const mondayEntry = entries[0]!;
+    const fridayEntry = entries[1]!;
+    await activateProgram(program.id);
+
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: fridayRoutine.id,
+        name: 'Vendredi d’avance',
+        status: 'active',
+        startedAt: friday,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: fridayEntry.id,
+        programPhase: 'construction',
+        programLoadIndex: 100,
+      }),
+      id: 'friday-first',
+    };
+    await db.workouts.add(workout);
+
+    expect(mondayEntry.id).not.toBe(fridayEntry.id);
+    expect(await resolveTargetProgramContext(workout, friday)).toEqual({
+      phase: 'construction',
+      loadIndex: 100,
+    });
+  });
+
+  it('advances to next week when the last remaining slot is finished', async () => {
+    const programStart = new Date(2026, 7, 10, 12).getTime();
+    const monday = new Date(2026, 7, 10, 12).getTime();
+    const friday = new Date(2026, 7, 14, 12).getTime();
+    const program = await createProgramDraft({
+      name: 'Split',
+      startsAt: programStart,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, [
+      { weekIndex: 0, loadIndex: 100, phase: 'construction' },
+      { weekIndex: 1, loadIndex: 105, phase: 'progression' },
+      { weekIndex: 2, loadIndex: 105, phase: 'progression' },
+      { weekIndex: 3, loadIndex: 60, phase: 'deload' },
+    ]);
+    const mondayRoutine = await createRoutine('Lundi');
+    const fridayRoutine = await createRoutine('Vendredi');
+    await addExercisesToRoutine(mondayRoutine.id, [exercise.id]);
+    await addExercisesToRoutine(fridayRoutine.id, [exercise.id]);
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: mondayRoutine.id, dayOfWeek: 1, order: 0 },
+      { routineId: fridayRoutine.id, dayOfWeek: 5, order: 0 },
+    ]);
+    const entries = (
+      await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray()
+    ).sort((left, right) => left.dayOfWeek - right.dayOfWeek);
+    const mondayEntry = entries[0]!;
+    const fridayEntry = entries[1]!;
+    await activateProgram(program.id);
+
+    await db.workouts.add({
+      ...newEntity<Workout>({
+        routineId: mondayRoutine.id,
+        name: 'Lundi fait',
+        status: 'completed',
+        startedAt: monday,
+        endedAt: monday + 3_600_000,
+        durationSeconds: 3_600,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: mondayEntry.id,
+        programPhase: 'construction',
+        programLoadIndex: 100,
+      }),
+      id: 'monday-done',
+    });
+
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: fridayRoutine.id,
+        name: 'Vendredi dernier',
+        status: 'active',
+        startedAt: friday,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: fridayEntry.id,
+        programPhase: 'construction',
+        programLoadIndex: 100,
+      }),
+      id: 'friday-last',
+    };
+    await db.workouts.add(workout);
+
+    expect(await resolveTargetProgramContext(workout, friday)).toEqual({
+      phase: 'progression',
+      loadIndex: 105,
+    });
+  });
+
   it('ne marque pas suivie une ancienne charge Coach reprise par un programme', async () => {
     const startedAt = Date.UTC(2026, 7, 10, 10);
     const workout: Workout = {

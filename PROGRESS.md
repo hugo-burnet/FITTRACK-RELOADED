@@ -21,13 +21,21 @@ UI : `05 — 60 % · Décharge`, accueil `Semaine 3 · Progression`, wizard
 `Étape 2 sur 3 · Split` + 1 2 3 (plus de faux onglets). Carte Coach : plus de
 « 100 → 0 kg » ; Progression sans incrément = « Maintien — progression différée ».
 
-Pas de bump ni de tag : le code est sur `master` local, 11 commits devant
+Revue des 12 commits : lint (`_removed`), bornes `loadIndex` 1–200, prochaine
+séance = slots encore ouverts (pas l’ordre du split), et retrait du flux
+d’avertissements 1RM (feuille + acquittement, devenus inatteignables).
+`evaluateCoach` reste le moteur pur du lib ; l’écran de fin passe par
+`evaluateCoachForWorkout`.
+
+Pas de bump ni de tag : le code est sur `master` local, 13 commits devant
 `origin` après la v0.5.1. Un push + tag plus tard publiera l’APK.
 
 Checkpoint téléphone (après prochain APK) : créer un bloc 8 semaines, poser une
 Décharge en S5, terminer une séance au plafond juste avant : la feuille Coach
 ne doit pas proposer d’ajouter du volume. En S6 Reprise, la grille est celle
-de la routine, pas celle de la Décharge.
+de la routine, pas celle de la Décharge. Wizard : les trois chiffres 1 2 3
+sont lisibles d’une main. Vendredi avancé, lundi encore ouvert : le Coach
+reste sur la semaine en cours.
 
 **Mise à jour précédente :** 2026-08-13 (**Release Android v0.5.1 — le CSV ouvre enfin la feuille**).
 

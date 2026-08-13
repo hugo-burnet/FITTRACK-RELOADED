@@ -95,5 +95,5 @@ export function createDeloadTargets(input: {
     }
   }
 
-  return { sets, warnings: [] };
+  return { sets };
 }

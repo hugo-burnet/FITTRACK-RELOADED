@@ -1,16 +1,9 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { HomeProgramProjection } from '@/data/repositories/home';
-import {
-  ProgramWorkoutWarningAcknowledgementError,
-  preflightProgramWorkout,
-  startWorkoutFromProgram,
-  type ProgramWorkoutPreflight,
-  type ProgramWorkoutWarningAcknowledgement,
-} from '@/data/repositories/programWorkout';
+import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
-import { ProgramWorkoutWarningSheet } from '@/features/programs/ProgramSessionList';
 import { weekPhaseReading } from '@/features/programs/weekReading';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -51,7 +44,6 @@ export function HomeProgramCard({ program, disabled }: Props) {
   const navigate = useNavigate();
   const [failed, setFailed] = useState(false);
   const [starting, setStarting] = useState(false);
-  const [warningPreflight, setWarningPreflight] = useState<ProgramWorkoutPreflight | null>(null);
   const startingRef = useRef(false);
   const intention = intentionLabel(program);
   const pick = program.pick;
@@ -61,65 +53,29 @@ export function HomeProgramCard({ program, disabled }: Props) {
     setStarting(false);
   };
 
-  const persistStart = async (
-    warningAcknowledgement?: ProgramWorkoutWarningAcknowledgement,
-  ) => {
-    try {
-      await startWorkoutFromProgram({
-        programId: program.programId,
-        programScheduleEntryId: pick.kind === 'session' ? pick.programScheduleEntryId : '',
-        ...(warningAcknowledgement === undefined ? {} : { warningAcknowledgement }),
-      });
-      void navigate('/workout');
-    } catch (error) {
-      if (error instanceof ProgramWorkoutWarningAcknowledgementError) {
-        setWarningPreflight(error.preflight);
-      } else {
-        setFailed(true);
-      }
-      releaseStart();
-    }
-  };
-
   const start = async () => {
     if (pick.kind !== 'session' || pick.routineName === null || startingRef.current) return;
     startingRef.current = true;
     setStarting(true);
     setFailed(false);
     try {
-      const preflight = await preflightProgramWorkout({
+      await startWorkoutFromProgram({
         programId: program.programId,
         programScheduleEntryId: pick.programScheduleEntryId,
       });
-      if (preflight.warningAcknowledgement !== null) {
-        setWarningPreflight(preflight);
-        releaseStart();
-        return;
-      }
-      await persistStart();
+      void navigate('/workout');
     } catch {
       setFailed(true);
       releaseStart();
     }
   };
 
-  const confirmWarnings = () => {
-    const acknowledgement = warningPreflight?.warningAcknowledgement;
-    if (acknowledgement === null || acknowledgement === undefined || startingRef.current) return;
-    startingRef.current = true;
-    setStarting(true);
-    setFailed(false);
-    setWarningPreflight(null);
-    void persistStart(acknowledgement);
-  };
-
   return (
-    <>
-      {/* Pas de titre de section : le sur-titre « Semaine 2 sur 8 » dit déjà
-          qu'on est dans un bloc, et l'accueil a besoin de ses 32 px pour garder
-          le bouton « Lancer » au-dessus de la ligne de flottaison. */}
-      <section>
-        <Card padded>
+    // Pas de titre de section : le sur-titre « Semaine 2 sur 8 » dit déjà
+    // qu'on est dans un bloc, et l'accueil a besoin de ses 32 px pour garder
+    // le bouton « Lancer » au-dessus de la ligne de flottaison.
+    <section>
+      <Card padded>
         <div className="space-y-4">
           <div>
             <p className="label-xs font-semibold text-[var(--text-2)]">
@@ -177,14 +133,7 @@ export function HomeProgramCard({ program, disabled }: Props) {
             </p>
           )}
         </div>
-        </Card>
-      </section>
-      <ProgramWorkoutWarningSheet
-        preflight={warningPreflight}
-        working={starting}
-        onClose={() => setWarningPreflight(null)}
-        onConfirm={confirmWarnings}
-      />
-    </>
+      </Card>
+    </section>
   );
 }

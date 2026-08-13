@@ -52,7 +52,7 @@
 - Produces: `ProgramPhase`, `ProgramLoadIndex`, `ProgramWeek.{loadIndex,phase}`, `Workout.{programPhase?,programLoadIndex?}`
 - Removes from write path: `ProgramPrescriptionKind` on weeks, `prescriptionKind`, `prescriptionValue`, `ProgramWeek.isDeload`
 
-- [ ] **Step 1: Write the failing migration assertions**
+- [x] **Step 1: Write the failing migration assertions**
 
 In `dbMigration.test.ts`, after the existing v6 checks, add a v6-shaped week then open current `db` and assert:
 
@@ -66,9 +66,9 @@ expect(week).not.toHaveProperty('prescriptionKind');
 Seed a second week with `prescriptionKind: 'target_rpe'` → expect `loadIndex: 100`, `phase: 'construction'`.
 Seed a third with `isDeload: 1` → `phase: 'deload'`, `loadIndex` recopié.
 
-- [ ] **Step 2: Run the migration test — expect FAIL** (`verno` still 6, fields missing)
+- [x] **Step 2: Run the migration test — expect FAIL** (`verno` still 6, fields missing)
 
-- [ ] **Step 3: Types**
+- [x] **Step 3: Types**
 
 Replace week prescription types in `src/data/types.ts` with the block from spec §3.1. Add on `Workout`:
 
@@ -81,7 +81,7 @@ Keep `programIsDeload`. Add `'range_satisfied' | 'range_ceiling_reached'` to `Co
 
 Comment on `ProgramLoadIndex` **exactly** as in the spec (non-dimensional, non-multiplicative).
 
-- [ ] **Step 4: `version(7)`**
+- [x] **Step 4: `version(7)`**
 
 Append after v6, no `.stores()`:
 
@@ -105,13 +105,13 @@ this.version(7).upgrade(async (tx) => {
 });
 ```
 
-- [ ] **Step 5: Update `validateProgramDraft` weeks** — require `loadIndex` integer finite, `phase` in the enum. Drop `% 1RM` 1–100 / RPE 6–10 checks.
+- [x] **Step 5: Update `validateProgramDraft` weeks** — require `loadIndex` integer finite, `phase` in the enum. Drop `% 1RM` 1–100 / RPE 6–10 checks.
 
-- [ ] **Step 6: Update every week fixture** to `{ weekIndex, loadIndex: 100, phase: 'construction' }` (deload weeks: `phase: 'deload'`).
+- [x] **Step 6: Update every week fixture** to `{ weekIndex, loadIndex: 100, phase: 'construction' }` (deload weeks: `phase: 'deload'`).
 
-- [ ] **Step 7: `npm run test:run -- src/data/dbMigration.test.ts src/lib/programs/validation.test.ts` + typecheck until green**
+- [x] **Step 7: `npm run test:run -- src/data/dbMigration.test.ts src/lib/programs/validation.test.ts` + typecheck until green**
 
-- [ ] **Step 8: Commit** `feat(lot-17): loadIndex et phase sur les semaines de bloc`
+- [x] **Step 8: Commit** `feat(lot-17): loadIndex et phase sur les semaines de bloc`
 
 ---
 
@@ -142,7 +142,7 @@ export interface CoachEvaluation {
 
 `collectCoachSignals` / `evaluateCoach` must expose `allowedActions` (either change return type or add `evaluateCoachPerformance(line, history): CoachEvaluation`). Prefer a new `evaluatePerformance(line, history, options): CoachEvaluation` used by `evaluateCoach` so the rest of the app can still get `CoachSignal[]` during the transition.
 
-- [ ] **Step 1: Failing tests** in `evaluate.test.ts` — copy the four contracts from spec §10:
+- [x] **Step 1: Failing tests** in `evaluate.test.ts` — copy the four contracts from spec §10:
 
 ```ts
 it('12/12/10 is satisfied only', () => {
@@ -168,9 +168,9 @@ it('plateau strips add_set as well as increase_*', () => {
 
 Keep existing `range_completed` tests but assert they now emit `range_ceiling_reached` (same evidence / `nextLoadKg`).
 
-- [ ] **Step 2: Run — FAIL** (`evaluatePerformance` missing)
+- [x] **Step 2: Run — FAIL** (`evaluatePerformance` missing)
 
-- [ ] **Step 3: Implement partition** in `evaluate.ts`:
+- [x] **Step 3: Implement partition** in `evaluate.ts`:
 
 ```ts
 function effectiveCeiling(set: CoachSetInput): number | undefined {
@@ -212,9 +212,9 @@ for (const action of ['increase_reps', 'increase_load', 'add_set'] as const) {
 }
 ```
 
-- [ ] **Step 4: Tests green.** Update `coachCopy.ts` + tests: new keys `coach.range_ceiling_reached*` ; reading a stored `range_completed` uses the same copy.
+- [x] **Step 4: Tests green.** Update `coachCopy.ts` + tests: new keys `coach.range_ceiling_reached*` ; reading a stored `range_completed` uses the same copy.
 
-- [ ] **Step 5: Commit** `feat(lot-17): range_satisfied et actions autorisées`
+- [x] **Step 5: Commit** `feat(lot-17): range_satisfied et actions autorisées`
 
 ---
 
@@ -259,7 +259,7 @@ const RANK: Record<ProgramPhase, CoachAction[]> = {
 
 `selectProgramAction` = first entry of `RANK[phase]` that is in `allowed`, else `maintain`.
 
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
 
 ```ts
 expect(selectProgramAction(['maintain', 'increase_load', 'add_set'], { phase: 'construction', loadIndex: 100 })).toBe('increase_load');
@@ -270,13 +270,13 @@ expect(selectProgramAction(['maintain'], { phase: 'progression', loadIndex: 105 
 
 Plus un test d’intégration coachEvaluate : S4 close (`overload` snapshot) + S5 cible `deload` → pas d’`add_set` dans la reco.
 
-- [ ] **Step 2: Implement `selectProgramAction`. Wire `coachEvaluate` :**
+- [x] **Step 2: Implement `selectProgramAction`. Wire `coachEvaluate` :**
 
 Resolve next programmed session via existing `pickProgramSession` / schedule + `programPosition` at `now` (or `endedAt` of the workout just finished). If that session’s week is known, pass `{ phase, loadIndex }` from the **week definition** (cible), not from the closed workout snapshot.
 
 Signals recorded on the closed workout still use the snapshot for display (`sourceProgramContext`).
 
-- [ ] **Step 3: Tests green. Commit** `feat(lot-17): le Coach choisit selon la semaine cible`
+- [x] **Step 3: Tests green. Commit** `feat(lot-17): le Coach choisit selon la semaine cible`
 
 ---
 
@@ -300,7 +300,7 @@ export function createDeloadTargets(input: {
 
 Recipe (spec §6.1): `previousLoad` twice on working-set `targetWeight` ; drop one working set (keep ≥ 1) ; reps → `targetReps` (floor) ; warmups untouched. **`loadIndex` unused.**
 
-- [ ] **Step 1: Failing tests**
+- [x] **Step 1: Failing tests**
 
 ```ts
 expect(createDeloadTargets({ week: { phase: 'deload', loadIndex: 60 }, exercises }))
@@ -309,9 +309,9 @@ expect(createDeloadTargets({ week: { phase: 'deload', loadIndex: 60 }, exercises
 
 Plus : 3 working sets 80×8–12 → 2 working sets, weight `previousLoad(previousLoad(80))`, reps 8.
 
-- [ ] **Step 2: Implement. `projectProgramPrescription` :** if `week.phase !== 'deload'`, return `routineTargets` for every set (no %1RM). If deload, `createDeloadTargets`.
+- [x] **Step 2: Implement. `projectProgramPrescription` :** if `week.phase !== 'deload'`, return `routineTargets` for every set (no %1RM). If deload, `createDeloadTargets`.
 
-- [ ] **Step 3: On workout insert**, set:
+- [x] **Step 3: On workout insert**, set:
 
 ```ts
 programPhase: week.phase,
@@ -321,7 +321,7 @@ programIsDeload: week.phase === 'deload' ? 1 : 0,
 
 Test : create S3 progression/105, then edit week 3 to deload/60 → stored workout still progression/105.
 
-- [ ] **Step 4: Commit** `feat(lot-17): snapshot de phase et recette Décharge`
+- [x] **Step 4: Commit** `feat(lot-17): snapshot de phase et recette Décharge`
 
 ---
 
@@ -377,13 +377,13 @@ No `button`. No full-width `border-b`.
 
 Delete i18n keys that claim `% du 1RM` as a calculation (`percentOneRm`, `percentReading`, week-level `targetRpe`). Add `program.phase.*`, `program.weekLine`, intention strings from spec §7.
 
-- [ ] **Step 1: Update integration tests** that look for « % du 1RM » or `isDeload` / `prescriptionKind` — they fail first.
+- [x] **Step 1: Update integration tests** that look for « % du 1RM » or `isDeload` / `prescriptionKind` — they fail first.
 
-- [ ] **Step 2: Implement UI + i18n.**
+- [x] **Step 2: Implement UI + i18n.**
 
-- [ ] **Step 3: `npm run test:run -- src/features/programs src/features/home/HomeProgramCard.test.tsx src/i18n` + typecheck**
+- [x] **Step 3: `npm run test:run -- src/features/programs src/features/home/HomeProgramCard.test.tsx src/i18n` + typecheck**
 
-- [ ] **Step 4: Commit** `feat(lot-17): semaines en intention et wizard lisible`
+- [x] **Step 4: Commit** `feat(lot-17): semaines en intention et wizard lisible`
 
 ---
 
@@ -394,10 +394,10 @@ Delete i18n keys that claim `% du 1RM` as a calculation (`percentOneRm`, `percen
 - Modify: `src/features/workout/WorkoutScreen.integration.test.tsx` (`range_completed` → ceiling)
 - Modify: `src/data/repositories/coachEvaluate.test.ts` if it filters program codes
 
-- [ ] **Step 1:** Progression without `increase_*` → copy **Maintien — progression différée** (`coach.progressionDeferred`).
-- [ ] **Step 2:** Test phase + authorized `increase_load` → wording « tentative contrôlée », même `nextLoadKg`.
-- [ ] **Step 3:** Full `npm run typecheck && npm run test:run && npm run build`
-- [ ] **Step 4: Commit** `feat(lot-17): le Coach parle en intention de bloc`
+- [x] **Step 1:** Progression without `increase_*` → copy **Maintien — progression différée** (`coach.progressionDeferred`).
+- [x] **Step 2:** Test phase + authorized `increase_load` → wording « tentative contrôlée », même `nextLoadKg`.
+- [x] **Step 3:** Full `npm run typecheck && npm run test:run && npm run build`
+- [x] **Step 4: Commit** `feat(lot-17): le Coach parle en intention de bloc`
 
 ---
 

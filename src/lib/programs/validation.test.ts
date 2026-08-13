@@ -75,7 +75,7 @@ describe('validateProgramDraft', () => {
     ]);
   });
 
-  it('rejects non-integer or non-finite loadIndex', () => {
+  it('rejects non-integer, non-finite, or out-of-bounds loadIndex', () => {
     expect(
       validateProgramDraft(
         draft({
@@ -103,9 +103,51 @@ describe('validateProgramDraft', () => {
         new Set(['routine-a']),
       ),
     ).toEqual(['invalid_load_index']);
+
+    expect(
+      validateProgramDraft(
+        draft({
+          weeks: [
+            { weekIndex: 0, loadIndex: 0, phase: 'construction' },
+            { weekIndex: 1, loadIndex: 100, phase: 'construction' },
+            { weekIndex: 2, loadIndex: 100, phase: 'construction' },
+            { weekIndex: 3, loadIndex: 100, phase: 'construction' },
+          ],
+        }),
+        new Set(['routine-a']),
+      ),
+    ).toEqual(['invalid_load_index']);
+
+    expect(
+      validateProgramDraft(
+        draft({
+          weeks: [
+            { weekIndex: 0, loadIndex: -30, phase: 'construction' },
+            { weekIndex: 1, loadIndex: 100, phase: 'construction' },
+            { weekIndex: 2, loadIndex: 100, phase: 'construction' },
+            { weekIndex: 3, loadIndex: 100, phase: 'construction' },
+          ],
+        }),
+        new Set(['routine-a']),
+      ),
+    ).toEqual(['invalid_load_index']);
+
+    expect(
+      validateProgramDraft(
+        draft({
+          weeks: [
+            { weekIndex: 0, loadIndex: 201, phase: 'construction' },
+            { weekIndex: 1, loadIndex: 100, phase: 'construction' },
+            { weekIndex: 2, loadIndex: 100, phase: 'construction' },
+            { weekIndex: 3, loadIndex: 100, phase: 'construction' },
+          ],
+        }),
+        new Set(['routine-a']),
+      ),
+    ).toEqual(['invalid_load_index']);
   });
 
-  it('accepts any integer loadIndex including above 100 and deload phases', () => {
+  it('accepts integer loadIndex from 1 through 200 including above 100 and deload phases', () => {
     expect(
       validateProgramDraft(
         draft({

@@ -510,13 +510,6 @@ const fr = {
     sessionToday: 'Aujourd’hui',
     sessionMissed: 'Manquée',
     sessionUpcoming: 'À venir',
-    warningTitle: 'Cibles conservées',
-    warningIntro:
-      'Le programme ne peut pas calculer certaines charges. Les cibles écrites dans la routine seront conservées pour ces exercices.',
-    warningMissingOneRepMax: '{name} : aucun 1RM utilisable.',
-    warningUnsupportedMeasurement: '{name} : ce type de mesure ne se projette pas en pourcentage.',
-    warningAssistanceNotSupported: '{name} : une assistance ne se calcule pas depuis un 1RM.',
-    warningConfirm: 'Démarrer quand même',
     activeWorkoutCollision: 'Une séance est déjà en cours.',
     missingRoutine: 'Routine indisponible',
     missingRoutineHint: 'Cette séance doit être réparée dans le split.',

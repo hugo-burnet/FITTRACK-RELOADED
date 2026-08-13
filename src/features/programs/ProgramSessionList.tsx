@@ -1,11 +1,7 @@
 import type { ProgramWeek } from '@/data/types';
-import type {
-  ProgramWorkoutPreflight,
-  ProgramWorkoutPreflightWarning,
-} from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { Button, SectionTitle, Sheet } from '@/ui';
+import { Button, SectionTitle } from '@/ui';
 import { weekLine } from './weekReading';
 
 export type ProgramSessionState = 'completed' | 'today' | 'missed' | 'upcoming';
@@ -42,56 +38,6 @@ const DAY_KEYS: TranslationKey[] = [
   'program.weekday6',
   'program.weekday7',
 ];
-
-const WARNING_KEYS: Record<ProgramWorkoutPreflightWarning['code'], TranslationKey> = {
-  missing_one_rep_max: 'program.warningMissingOneRepMax',
-  unsupported_measurement: 'program.warningUnsupportedMeasurement',
-  assistance_not_supported: 'program.warningAssistanceNotSupported',
-};
-
-export function ProgramWorkoutWarningSheet({
-  preflight,
-  working,
-  onClose,
-  onConfirm,
-}: {
-  preflight: ProgramWorkoutPreflight | null;
-  working: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <Sheet
-      open={preflight !== null}
-      onClose={onClose}
-      title={t('program.warningTitle')}
-    >
-      <div className="flex flex-col gap-5 pb-2">
-        <p className="text-base leading-relaxed text-[var(--text-2)]">
-          {t('program.warningIntro')}
-        </p>
-        <ul className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
-          {(preflight?.warnings ?? []).map((warning) => (
-            <li
-              key={`${warning.exerciseId}:${warning.code}`}
-              className="py-3 text-sm leading-relaxed text-[var(--text-1)]"
-            >
-              {t(WARNING_KEYS[warning.code], { name: warning.exerciseName })}
-            </li>
-          ))}
-        </ul>
-        <div className="flex gap-2">
-          <Button variant="secondary" size="lg" fullWidth onClick={onClose} disabled={working}>
-            {t('exercise.cancel')}
-          </Button>
-          <Button variant="primary" size="lg" fullWidth onClick={onConfirm} disabled={working}>
-            {t('program.warningConfirm')}
-          </Button>
-        </div>
-      </div>
-    </Sheet>
-  );
-}
 
 export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
   if (weeks.length === 0) return null;

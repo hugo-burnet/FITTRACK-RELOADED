@@ -26,22 +26,6 @@ const projection: HomeProgramProjection = {
   },
 };
 
-const clearPreflight: programWorkoutRepository.ProgramWorkoutPreflight = {
-  context: {
-    programId: 'program-1',
-    programWeekIndex: 0,
-    programScheduleRevisionId: 'revision-1',
-    programScheduleEntryId: 'entry-persisted',
-    routineId: 'routine-1',
-    routineName: 'Force A',
-    phase: 'construction',
-    loadIndex: 100,
-    programIsDeload: 0,
-  },
-  warnings: [],
-  warningAcknowledgement: null,
-};
-
 function renderCard(value: HomeProgramProjection = projection) {
   return render(
     <MemoryRouter initialEntries={['/']}>
@@ -57,22 +41,14 @@ describe('HomeProgramCard', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('démarre l’entrée persistée sans reclasser les séances dans le composant', async () => {
-    const preflight = vi
-      .spyOn(programWorkoutRepository, 'preflightProgramWorkout')
-      .mockResolvedValue(clearPreflight);
     const start = vi.spyOn(programWorkoutRepository, 'startWorkoutFromProgram').mockResolvedValue({
       workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'],
-      warnings: [],
     });
     const user = userEvent.setup();
     renderCard();
 
     await user.click(screen.getByRole('button', { name: 'Démarrer Force A' }));
 
-    expect(preflight).toHaveBeenCalledWith({
-      programId: 'program-1',
-      programScheduleEntryId: 'entry-persisted',
-    });
     expect(start).toHaveBeenCalledWith({
       programId: 'program-1',
       programScheduleEntryId: 'entry-persisted',
@@ -81,7 +57,6 @@ describe('HomeProgramCard', () => {
   });
 
   it('ignore un second appui pendant le démarrage transactionnel', async () => {
-    vi.spyOn(programWorkoutRepository, 'preflightProgramWorkout').mockResolvedValue(clearPreflight);
     let release!: (value: Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>) => void;
     const pending = new Promise<Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>>(
       (resolve) => { release = resolve; },
@@ -95,44 +70,7 @@ describe('HomeProgramCard', () => {
 
     expect(start).toHaveBeenCalledTimes(1);
     expect(button).toBeDisabled();
-    release({ workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'], warnings: [] });
-  });
-
-  it('montre les replis avant de créer la séance puis transmet l’acquittement', async () => {
-    const acknowledgement: programWorkoutRepository.ProgramWorkoutWarningAcknowledgement = {
-      context: clearPreflight.context,
-      warnings: [
-        {
-          code: 'missing_one_rep_max',
-          exerciseId: 'bench',
-          exerciseName: 'Développé couché',
-        },
-      ],
-    };
-    vi.spyOn(programWorkoutRepository, 'preflightProgramWorkout').mockResolvedValue({
-      ...clearPreflight,
-      warnings: acknowledgement.warnings,
-      warningAcknowledgement: acknowledgement,
-    });
-    const start = vi.spyOn(programWorkoutRepository, 'startWorkoutFromProgram').mockResolvedValue({
-      workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'],
-      warnings: [],
-    });
-    const user = userEvent.setup();
-    renderCard();
-
-    await user.click(screen.getByRole('button', { name: 'Démarrer Force A' }));
-
-    expect(await screen.findByRole('dialog', { name: 'Cibles conservées' })).toBeVisible();
-    expect(screen.getByText(/Développé couché.*aucun 1RM/i)).toBeVisible();
-    expect(start).not.toHaveBeenCalled();
-
-    await user.click(screen.getByRole('button', { name: 'Démarrer quand même' }));
-    expect(start).toHaveBeenCalledWith({
-      programId: 'program-1',
-      programScheduleEntryId: 'entry-persisted',
-      warningAcknowledgement: acknowledgement,
-    });
+    release({ workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'] });
   });
 
   it('annonce un bloc futur sans afficher de commande de démarrage', () => {

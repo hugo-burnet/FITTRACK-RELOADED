@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PROGRAM_PHASES, type ProgramPhase } from '@/data/types';
+import { MAX_LOAD_INDEX, MIN_LOAD_INDEX } from '@/lib/programs';
 import { t } from '@/i18n/fr';
 import { Button, Card, NumberInput, Sheet } from '@/ui';
 import {
@@ -136,6 +137,9 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
                 value={editor.week.loadIndex}
                 onChange={(loadIndex) => updateEditor({ loadIndex: loadIndex ?? 100 })}
                 step={1}
+                min={MIN_LOAD_INDEX}
+                max={MAX_LOAD_INDEX}
+                integer
                 suffix="%"
               />
             </div>

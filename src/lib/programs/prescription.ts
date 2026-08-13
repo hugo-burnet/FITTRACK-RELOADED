@@ -1,16 +1,6 @@
 import type { Exercise, ProgramWeek, RoutineSet } from '@/data/types';
 import { createDeloadTargets } from './deloadTargets';
 
-export type ProgramPrescriptionWarningCode =
-  | 'missing_one_rep_max'
-  | 'unsupported_measurement'
-  | 'assistance_not_supported';
-
-export interface ProgramPrescriptionWarning {
-  code: ProgramPrescriptionWarningCode;
-  exerciseId: string;
-}
-
 export interface ProgramPrescriptionExerciseInput {
   exercise: Pick<Exercise, 'id' | 'equipment' | 'measurementType' | 'loadIncrementKg'>;
   sets: readonly RoutineSet[];
@@ -28,7 +18,6 @@ export interface ProjectedProgramSet {
 
 export interface ProgramPrescriptionProjection {
   sets: ProjectedProgramSet[];
-  warnings: ProgramPrescriptionWarning[];
 }
 
 /** Week fields read by the projection; loadIndex is intentionally unused. */
@@ -63,10 +52,7 @@ function routineTargets(set: RoutineSet): ProjectedProgramSet {
 export function projectProgramPrescription(input: {
   week: ProgramWeekPrescription;
   exercises: readonly ProgramPrescriptionExerciseInput[];
-  oneRepMaxByExerciseId: ReadonlyMap<string, number>;
 }): ProgramPrescriptionProjection {
-  void input.oneRepMaxByExerciseId;
-
   if (input.week.phase === 'deload') {
     return createDeloadTargets({
       week: input.week,
@@ -78,5 +64,5 @@ export function projectProgramPrescription(input: {
   for (const { sets: routineSets } of input.exercises) {
     sets.push(...orderedSets(routineSets).map(routineTargets));
   }
-  return { sets, warnings: [] };
+  return { sets };
 }

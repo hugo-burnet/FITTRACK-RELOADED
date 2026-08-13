@@ -20,7 +20,12 @@ import { getActiveWorkout } from '@/data/repositories/workouts';
 import { PROGRAM_PHASES } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import { programPosition, resolveSchedule } from '@/lib/programs';
+import {
+  MAX_LOAD_INDEX,
+  MIN_LOAD_INDEX,
+  programPosition,
+  resolveSchedule,
+} from '@/lib/programs';
 import { ActionBand, ConfirmSheet } from '@/ui';
 import { ProgramBasicsStep } from './ProgramBasicsStep';
 import type { ProgramBasicsDraft } from './ProgramBasicsStep';
@@ -282,6 +287,8 @@ export function ProgramEditorScreen() {
         (week) =>
           !Number.isFinite(week.loadIndex) ||
           !Number.isInteger(week.loadIndex) ||
+          week.loadIndex < MIN_LOAD_INDEX ||
+          week.loadIndex > MAX_LOAD_INDEX ||
           !phaseSet.has(week.phase),
       );
       if (weeks.length !== basics.durationWeeks || invalidWeek) {

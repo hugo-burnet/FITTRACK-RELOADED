@@ -87,7 +87,6 @@ describe('createDeloadTargets', () => {
       ],
     });
 
-    expect(result.warnings).toEqual([]);
     expect(result.sets).toEqual([
       { routineSetId: 'w1', targetWeight: deloadWeight, targetReps: 8 },
       { routineSetId: 'w2', targetWeight: deloadWeight, targetReps: 8 },

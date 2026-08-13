@@ -41,7 +41,6 @@ describe('projectProgramPrescription', () => {
           sets: [routineSet({ targetWeight: 70, targetReps: 5 })],
         },
       ],
-      oneRepMaxByExerciseId: new Map([['bench', 100]]),
     });
 
     expect(result).toEqual({
@@ -52,7 +51,6 @@ describe('projectProgramPrescription', () => {
           targetReps: 5,
         },
       ],
-      warnings: [],
     });
   });
 
@@ -70,7 +68,6 @@ describe('projectProgramPrescription', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [{ exercise: exercise(), sets: [warmup] }],
-      oneRepMaxByExerciseId: new Map([['bench', 100]]),
     });
 
     expect(result.sets).toEqual([
@@ -84,10 +81,9 @@ describe('projectProgramPrescription', () => {
         targetRpe: 6,
       },
     ]);
-    expect(result.warnings).toEqual([]);
   });
 
-  it('copies non-weight measurement targets in order without inventing warnings', () => {
+  it('copies non-weight measurement targets in order', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -99,17 +95,15 @@ describe('projectProgramPrescription', () => {
           ],
         },
       ],
-      oneRepMaxByExerciseId: new Map(),
     });
 
     expect(result.sets).toEqual([
       { routineSetId: 'first', targetDurationSeconds: 30 },
       { routineSetId: 'later', targetDurationSeconds: 45 },
     ]);
-    expect(result.warnings).toEqual([]);
   });
 
-  it('copies assisted-exercise targets as-is without assistance warnings', () => {
+  it('copies assisted-exercise targets as-is', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -121,17 +115,15 @@ describe('projectProgramPrescription', () => {
           ],
         },
       ],
-      oneRepMaxByExerciseId: new Map([['assisted-pull-up', 100]]),
     });
 
     expect(result.sets).toEqual([
       { routineSetId: 'first', targetWeight: 40 },
       { routineSetId: 'second', targetWeight: 35 },
     ]);
-    expect(result.warnings).toEqual([]);
   });
 
-  it('copies routine targets even when no 1RM exists and emits no missing-1RM warning', () => {
+  it('copies routine targets even when no 1RM exists', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -140,14 +132,12 @@ describe('projectProgramPrescription', () => {
           sets: [routineSet({ id: 'first', targetWeight: 70 }), routineSet({ id: 'second', order: 1 })],
         },
       ],
-      oneRepMaxByExerciseId: new Map(),
     });
 
     expect(result.sets).toEqual([
       { routineSetId: 'first', targetWeight: 70 },
       { routineSetId: 'second' },
     ]);
-    expect(result.warnings).toEqual([]);
   });
 
   it('copies routine RPE targets as-is and does not stamp week-level RPE', () => {
@@ -162,7 +152,6 @@ describe('projectProgramPrescription', () => {
           ],
         },
       ],
-      oneRepMaxByExerciseId: new Map(),
     });
 
     expect(result).toEqual({
@@ -170,7 +159,6 @@ describe('projectProgramPrescription', () => {
         { routineSetId: 'warmup', targetWeight: 40, targetRpe: 5 },
         { routineSetId: 'work', targetWeight: 100, targetReps: 5, targetRpe: 7 },
       ],
-      warnings: [],
     });
   });
 
@@ -198,7 +186,6 @@ describe('projectProgramPrescription', () => {
           ],
         },
       ],
-      oneRepMaxByExerciseId: new Map(),
     });
 
     expect(result.sets).toEqual([
