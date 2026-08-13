@@ -11,6 +11,7 @@ export type ProgramSessionState = 'completed' | 'today' | 'missed' | 'upcoming';
 
 export interface ProgramSessionReading {
   entryId: string;
+  routineId: string;
   routineName: string | null;
   dayOfWeek: number;
   order: number;

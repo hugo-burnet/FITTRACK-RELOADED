@@ -141,6 +141,7 @@ async function readProjection(programId: string): Promise<DetailQuery> {
     const currentDay = position.phase === 'active' ? position.dayOfWeek : 0;
     const sessions: ProgramSessionReading[] = entries.map((entry, index) => ({
       entryId: entry.id,
+      routineId: entry.routineId,
       routineName: routines[index]?.routine.name ?? null,
       dayOfWeek: entry.dayOfWeek,
       order: entry.order,
@@ -214,7 +215,7 @@ export function ProgramDetailScreen() {
     .filter((session) => session.routineName !== null)
     .map((session) => ({
       entryId: session.entryId,
-      routineId: session.entryId,
+      routineId: session.routineId,
       weekIndex: position.phase === 'active' ? position.weekIndex : 0,
       dayOfWeek: session.dayOfWeek,
       order: session.order,
