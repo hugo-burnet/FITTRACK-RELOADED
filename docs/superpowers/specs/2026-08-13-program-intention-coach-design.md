@@ -1,7 +1,7 @@
 # Intention de bloc et Coach
 
 **Date :** 2026-08-13
-**Statut :** conception validée, en attente de relecture
+**Statut :** conception validée
 **Remplace, dans le Lot 17 :** la prescription hebdomadaire `% 1RM` / RPE de semaine, le drapeau `isDeload` comme vérité parallèle, et la règle « dans une séance programmée le Coach n’observe que ».
 **Ne remplace pas :** calendrier civil, un seul bloc actif, split versionné, routines scellées, décalage explicite, local-first.
 
@@ -67,7 +67,7 @@ export interface ProgramWeek extends Syncable {
 - `isDeload` disparaît. Une décharge **est** `phase === 'deload'`.
 - `prescriptionKind` et `prescriptionValue` disparaissent.
 
-Les couples « étranges » (`105` + `construction`) sont **légaux**. L’éditeur suggère un `loadIndex` au changement de phase ; il ne l’impose jamais. Changer le `loadIndex` ne change pas la phase.
+Les couples « étranges » (`105` + `construction`) sont **légaux**. Un changement **explicite de phase dans l’éditeur** remplace momentanément le `loadIndex` par la suggestion associée (voir §7). Cette écriture est une aide d’éditeur uniquement, immédiatement modifiable, jamais appliquée hors de cette interaction (pas en migration, pas au démarrage d’une séance, pas au recalcul). Changer le `loadIndex` ne change pas la phase.
 
 ### 3.2 Snapshot de séance
 
@@ -105,12 +105,38 @@ Deux constats **distincts**, pas deux intensités du même état.
 
 ### 4.1 Signaux
 
+Les deux constats de fourchette forment une **partition exclusive** :
+
+```
+effectiveCeiling = targetRepsMax ?? targetReps
+
+range_ceiling_reached =
+  hasTarget &&
+  everyWorkSet(reps >= effectiveCeiling)
+
+range_satisfied =
+  hasRange &&                    // targetReps et targetRepsMax, et max > min
+  everyWorkSet(reps >= targetReps) &&
+  !range_ceiling_reached
+```
+
+`hasRange` est faux s’il n’y a qu’une cible unique : atteindre cette cible est uniquement le plafond.
+
+| Exemple (3×8–12) | Signal |
+|---|---|
+| 12 / 12 / 12 | `range_ceiling_reached` seulement |
+| 12 / 12 / 10 | `range_satisfied` seulement |
+| 10 / 10 / 9 | `range_satisfied` seulement |
+| 12 / 12 / 7 | aucun des deux |
+
+On ne journalise jamais les deux sur la même observation.
+
 | Signal | Définition |
 |---|---|
-| `range_satisfied` | Toutes les séries de travail validées ont `reps >= targetReps`. Toutes n’ont **pas** atteint le plafond. |
-| `range_ceiling_reached` | Toutes les séries de travail validées ont `reps >= targetRepsMax`. |
+| `range_satisfied` | Voir partition ci-dessus. |
+| `range_ceiling_reached` | Voir partition ci-dessus. |
 | `range_missed` | Inchangé : deux séances de suite sous le plancher, **à la même charge**, hors décharge. |
-| `plateau` | Inchangé. N’autorise **aucun** `increase_*`. |
+| `plateau` | Inchangé comme constat. Interdit **toute escalade** (voir 4.2). |
 | `intra_session_drop`, `long_rest` | Inchangés. Constats seulement. |
 
 Règles de silence, inchangées dans l’esprit du Lot 18 :
@@ -131,13 +157,22 @@ Le moteur sort **deux listes indépendantes** :
 
 | État | Actions autorisées |
 |---|---|
-| `range_satisfied` (pas le plafond) | `{ maintain, increase_reps }` |
+| `range_satisfied` | `{ maintain, increase_reps }` |
 | `range_ceiling_reached` | `{ maintain, increase_load, add_set }` |
 | rien de notable | `{ maintain }` |
 | `range_missed` | `{ reduce_load, maintain }` |
-| `plateau` présent | retire tout `increase_*` ; reste `{ maintain }` (et `reduce_load` si `range_missed` coexiste) |
 
-Le plateau est un **critère de performance**, pas un habillage. Il interdit l’incrément **avant** que la phase ne choisisse. Progression ne peut pas le réintroduire.
+Puis, si le signal `plateau` est présent, **toute escalade de prescription** est retirée — y compris `add_set`, qui n’est pas un `increase_*` :
+
+```
+allowedActions.delete('increase_reps')
+allowedActions.delete('increase_load')
+allowedActions.delete('add_set')
+```
+
+Il reste `{ maintain }`, et `reduce_load` si `range_missed` coexiste.
+
+Le plateau est un **critère de performance**, pas un habillage. Il s’applique **avant** que la phase ne choisisse. Une Surcharge ne peut pas répondre à un plateau en ajoutant encore du volume.
 
 Invariant de double progression :
 
@@ -203,7 +238,7 @@ Grille de départ (sauf Décharge) = prescription de la **routine**, jamais la d
 
 | Phase | Grille à l’ouverture | Choix parmi les actions autorisées |
 |---|---|---|
-| `construction` | Routine | Double progression **complète** (le moteur, pas un biais) : `increase_reps` si *satisfied* ; `increase_load` au plafond. Hors bloc = le même ordre. |
+| `construction` | Routine | Double progression **complète**, déterministe : `increase_load` > `increase_reps` > `maintain`. **`add_set` n’est jamais sélectionné.** Grâce à la partition du moteur, `increase_load` n’existe qu’au plafond et `increase_reps` que sur *satisfied* — ce n’est pas un biais de Progression. Hors bloc = le même ordre. |
 | `progression` | Routine | `increase_load` > `increase_reps` > `maintain`. Pas de `add_set`. Si aucun `increase_*` : `maintain` + « progression différée ». |
 | `overload` | Routine (pas de 4ᵉ série magique) | `add_set` > `increase_reps` > `increase_load` > `maintain`. |
 | `deload` | **Transformée** (voir 6.1) | Hors sélection d’augmentation. Le Coach observe seulement. |
@@ -223,6 +258,8 @@ Le bloc ne demande pas au Coach s’il « mérite » de réduire. Recette, **pas
 
 `programIsDeload` est posé à la création (3.2). Les signaux de fourchette / plateau restent exclus sur cette séance, comme aujourd’hui.
 
+`loadIndex` n’entre **pas** dans cette recette. `createDeloadTargets(routine, 60)` === `createDeloadTargets(routine, 90)` à routine et phase Décharge identiques. « 60 % » est une notation narrative.
+
 ## 7. Affichage et création des semaines
 
 Grammaire unique (wizard, fiche, accueil, semaines suivantes) :
@@ -237,7 +274,7 @@ Accueil : `Semaine 3 · Progression`. Plus aucune chaîne du type « 80 % du 1RM
 
 Bloc neuf : **toutes** les semaines à `100` / `construction`. Aucune périodisation inventée.
 
-Au changement de phase, le champ niveau est **prérempli** avec une suggestion (Décharge → 60, Progression → 105, Surcharge → 110, Reprise → 100, Test → 110, Construction → 100). L’utilisateur peut l’écraser tout de suite ; rien n’est verrouillé. Changer le niveau ne change pas la phase.
+Un **changement explicite de phase** dans l’éditeur remplace momentanément le `loadIndex` par la suggestion (Décharge → 60, Progression → 105, Surcharge → 110, Reprise → 100, Test → 110, Construction → 100). Exemple : `105 / Construction` → l’utilisateur choisit Décharge → le champ passe à `60` ; il peut immédiatement retaper `105`. Cette écriture n’existe que dans cette interaction. Elle n’est ni une règle métier, ni une migration, ni un recalcul automatique. Changer le niveau ne change pas la phase.
 
 Pastilles de niveau : 60 / 90 / 100 / 105 / 110, plus entier libre. Phase : liste des six. Plus de checkbox Décharge.
 
@@ -277,9 +314,14 @@ Toutes les chaînes vivent dans `src/i18n/fr.ts`. Disparaissent les libellés qu
 - `loadIndex` n’apparaît dans aucun chemin `nextLoad` / 1RM (mutant : une multiplication par `loadIndex / 100` casse un test).
 - `increase_load` absent si seulement `range_satisfied`.
 - `increase_reps` absent si `range_ceiling_reached`.
-- Phase Progression + plafond + signal plateau : actions = `{ maintain }` ; reco = maintien ; le signal plateau est toujours affiché.
+- 3×8–12, 12/12/10 → `range_satisfied`, pas de plafond ; `increase_reps` autorisé ; `increase_load` interdit.
+- 3×8–12, 12/12/12 → plafond, pas de `range_satisfied` ; `increase_load` autorisé ; `increase_reps` interdit.
+- Plafond + plateau + phase `overload` → `add_set` interdit ; action = `maintain` ; signal plateau affiché.
+- Phase Progression + plafond + plateau → `{ maintain }` ; reco = maintien ; signal plateau affiché.
 - `targetProgramContext` = décharge alors que la séance close était surcharge : pas de `add_set`.
-- Décharge : cibles réduites avant séance ; `programIsDeload === 1` ; pas d’`increase_*` proposés pour une *cible* encore en décharge.
+- Décharge : cibles réduites avant séance ; `programIsDeload === 1` ; pas d’escalade proposée pour une *cible* encore en décharge.
+- `createDeloadTargets(routine, 60)` === `createDeloadTargets(routine, 90)`.
+- Création séance S3 `progression` / 105, puis édition de S3 en `deload` / 60 → la séance existante reste `progression` / 105.
 - Migration : `percent_1rm` 75 → `loadIndex` 75 ; `target_rpe` → 100 / construction ; séances existantes intactes.
 - Wizard : le `nav` annonce l’étape ; les trois items ne sont pas des boutons.
 
@@ -295,3 +337,7 @@ Toutes les chaînes vivent dans `src/i18n/fr.ts`. Disparaissent les libellés qu
 8. `programIsDeload = programPhase === 'deload'` à la création seulement.
 9. RIR futur : modificateur, jamais une dépendance.
 10. Pas de roman automatique à la création du bloc.
+11. `range_satisfied` et `range_ceiling_reached` sont exclusifs.
+12. Plateau interdit `increase_reps`, `increase_load` **et** `add_set`.
+13. Construction ne sélectionne jamais `add_set`.
+14. Suggestion de `loadIndex` = aide d’éditeur au changement de phase, rien d’autre.
