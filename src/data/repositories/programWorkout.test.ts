@@ -24,11 +24,7 @@ import {
   updateRoutineSet,
 } from './routines';
 import { getWorkoutDetail, startWorkoutFromRoutine } from './workouts';
-import {
-  ProgramWorkoutWarningAcknowledgementError,
-  preflightProgramWorkout,
-  startWorkoutFromProgram,
-} from './programWorkout';
+import { preflightProgramWorkout, startWorkoutFromProgram } from './programWorkout';
 
 const MONDAY = new Date(2026, 7, 10, 12).getTime();
 const WEEK = 7 * 86_400_000;
@@ -103,7 +99,7 @@ async function addBestOneRepMax(exerciseId: string, value: number, achievedAt: n
 describe('startWorkoutFromProgram', () => {
   beforeEach(resetDb);
 
-  it('annonce les replis sans aucune insertion puis exige leur acquittement exact', async () => {
+  it('préflight sans insertion : identity n’émet pas de replis 1RM et démarre sans acquittement', async () => {
     const squat = await exercise('Squat');
     const { routine } = await routineWithExercise('Force', squat);
     const { program, entry } = await readyProgram({ routineId: routine.id });
@@ -123,26 +119,9 @@ describe('startWorkoutFromProgram', () => {
         routineId: routine.id,
         routineName: 'Force',
       },
-      warnings: [
-        {
-          code: 'missing_one_rep_max',
-          exerciseId: squat.id,
-          exerciseName: 'Squat',
-        },
-      ],
+      warnings: [],
+      warningAcknowledgement: null,
     });
-    expect(preflight.warningAcknowledgement).not.toBeNull();
-    expect(await db.workouts.count()).toBe(0);
-    expect(await db.workoutExercises.count()).toBe(0);
-    expect(await db.workoutSets.count()).toBe(0);
-
-    await expect(
-      startWorkoutFromProgram({
-        programId: program.id,
-        programScheduleEntryId: entry.id,
-        at: MONDAY,
-      }),
-    ).rejects.toBeInstanceOf(ProgramWorkoutWarningAcknowledgementError);
     expect(await db.workouts.count()).toBe(0);
     expect(await db.workoutExercises.count()).toBe(0);
     expect(await db.workoutSets.count()).toBe(0);
@@ -151,12 +130,11 @@ describe('startWorkoutFromProgram', () => {
       programId: program.id,
       programScheduleEntryId: entry.id,
       at: MONDAY,
-      warningAcknowledgement: preflight.warningAcknowledgement!,
     });
     expect(await db.workouts.count()).toBe(1);
   });
 
-  it('refuse un acquittement devenu p\u00e9rim\u00e9 si le contexte produit un nouvel avertissement', async () => {
+  it('ne produit aucun avertissement d’assistance ou de 1RM manquant (identity)', async () => {
     const bench = await exercise('D\u00e9velopp\u00e9 couch\u00e9');
     const squat = await exercise('Squat');
     const routine = await createRoutine('Force');
@@ -164,40 +142,27 @@ describe('startWorkoutFromProgram', () => {
     await addBestOneRepMax(bench.id, 100, MONDAY - WEEK);
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
+
+    await updateExercise(bench.id, { measurementType: 'assisted_weight_reps' });
+
     const preflight = await preflightProgramWorkout({
       programId: program.id,
       programScheduleEntryId: entry.id,
       at: MONDAY,
     });
-    expect(preflight.warnings.map((warning) => warning.exerciseId)).toEqual([squat.id]);
-    const countsBefore = await Promise.all([
-      db.workouts.count(),
-      db.workoutExercises.count(),
-      db.workoutSets.count(),
-    ]);
+    expect(preflight.warnings).toEqual([]);
+    expect(preflight.warningAcknowledgement).toBeNull();
 
-    await updateExercise(bench.id, { measurementType: 'assisted_weight_reps' });
-
-    const attempt = startWorkoutFromProgram({
+    const { workout } = await startWorkoutFromProgram({
       programId: program.id,
       programScheduleEntryId: entry.id,
       at: MONDAY,
-      warningAcknowledgement: preflight.warningAcknowledgement!,
     });
-    await expect(attempt).rejects.toMatchObject({
-      code: 'warning_acknowledgement_required',
-      preflight: {
-        warnings: expect.arrayContaining([
-          expect.objectContaining({
-            code: 'assistance_not_supported',
-            exerciseId: bench.id,
-          }),
-        ]),
-      },
+    expect(workout).toMatchObject({
+      status: 'active',
+      programId: program.id,
+      routineId: routine.id,
     });
-    expect(
-      await Promise.all([db.workouts.count(), db.workoutExercises.count(), db.workoutSets.count()]),
-    ).toEqual(countsBefore);
   });
 
   it('recalcule la semaine et utilise uniquement l’entrée de la révision effective', async () => {
@@ -246,7 +211,7 @@ describe('startWorkoutFromProgram', () => {
     expect(detail?.exercises[0]?.row.exerciseId).toBe(secondMovement.id);
   });
 
-  it('projette le meilleur 1RM courant, avertit les replis et préserve les échauffements', async () => {
+  it('copie les cibles de routine telles quelles et préserve les échauffements (identity)', async () => {
     const bench = await exercise('Développé couché');
     const squat = await exercise('Squat');
     const routine = await createRoutine('Force A');
@@ -277,28 +242,22 @@ describe('startWorkoutFromProgram', () => {
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
 
-    const preflight = await preflightProgramWorkout({
-      programId: program.id,
-      programScheduleEntryId: entry.id,
-      at: MONDAY,
-    });
     const result = await startWorkoutFromProgram({
       programId: program.id,
       programScheduleEntryId: entry.id,
       at: MONDAY,
-      warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
     });
     const detail = await getWorkoutDetail(result.workout.id);
     const benchSets = at(detail!.exercises, 0).sets;
     const squatSet = at(at(detail!.exercises, 1).sets, 0);
 
-    expect(benchSets.map(({ targetWeight }) => targetWeight)).toEqual([40, 92.5]);
+    expect(benchSets.map(({ targetWeight }) => targetWeight)).toEqual([40, 100]);
     expect(squatSet.targetWeight).toBe(60);
-    expect(result.warnings).toEqual([{ code: 'missing_one_rep_max', exerciseId: squat.id }]);
+    expect(result.warnings).toEqual([]);
     expect([...benchSets, squatSet].every((set) => set.weight === undefined)).toBe(true);
   });
 
-  it('fige le RPE cible sans préremplir le RPE réalisé et marque la décharge', async () => {
+  it('copie le RPE de routine sans le tamponner, sans préremplir le réalisé, et marque la décharge', async () => {
     const bench = await exercise('Développé couché');
     const { routine, row, set: warmup } = await routineWithExercise('Décharge', bench);
     await updateRoutineSet(warmup.id, { setType: 'warmup', targetRpe: 5, targetWeight: 40 });
@@ -319,7 +278,7 @@ describe('startWorkoutFromProgram', () => {
     const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
 
     expect(workout.programIsDeload).toBe(1);
-    expect(sets.map(({ targetRpe }) => targetRpe)).toEqual([5, 8.5]);
+    expect(sets.map(({ targetRpe }) => targetRpe)).toEqual([5, 7]);
     expect(sets.every((set) => set.rpe === undefined)).toBe(true);
     expect(sets.map(({ targetWeight }) => targetWeight)).toEqual([40, 80]);
   });
@@ -440,17 +399,18 @@ describe('startWorkoutFromProgram', () => {
     expect(detail?.exercises[0]?.sets[0]).toMatchObject({
       targetWeight: 80,
       targetReps: 8,
-      targetRpe: 8,
     } satisfies Partial<WorkoutSet>);
+    expect(detail?.exercises[0]?.sets[0]?.targetRpe).toBeUndefined();
   });
 });
 
 describe('séance programmée en direct', () => {
   beforeEach(resetDb);
 
-  it('montre le contexte et la cible RPE sans laisser le Coach proposer une charge', async () => {
+  it('montre le contexte et la cible RPE de routine sans laisser le Coach proposer une charge', async () => {
     const bench = await exercise('Développé couché');
-    const { routine } = await routineWithExercise('Décharge', bench);
+    const { routine, set } = await routineWithExercise('Décharge', bench);
+    await updateRoutineSet(set.id, { targetRpe: 8 });
     const { program, entry } = await readyProgram({
       routineId: routine.id,
       weeks: programWeeks({ loadIndex: 60, phase: 'deload' }),

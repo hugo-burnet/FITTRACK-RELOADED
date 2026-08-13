@@ -32,9 +32,9 @@ const week = (overrides: Partial<Pick<ProgramWeek, 'loadIndex' | 'phase'>> = {})
 });
 
 describe('projectProgramPrescription', () => {
-  it('projects compatible working sets from the exercise 1RM onto its own load grid', () => {
+  it('copies working-set routine targets as-is (identity; loadIndex is not a multiplier)', () => {
     const result = projectProgramPrescription({
-      week: week(),
+      week: week({ loadIndex: 75 }),
       exercises: [
         {
           exercise: exercise({ loadIncrementKg: 1.25 }),
@@ -48,7 +48,7 @@ describe('projectProgramPrescription', () => {
       sets: [
         {
           routineSetId: 'routine-set',
-          targetWeight: 77.5,
+          targetWeight: 70,
           targetReps: 5,
         },
       ],
@@ -56,7 +56,7 @@ describe('projectProgramPrescription', () => {
     });
   });
 
-  it('keeps all warm-up targets untouched under a percentage prescription', () => {
+  it('keeps all warm-up targets untouched', () => {
     const warmup = routineSet({
       setType: 'warmup',
       targetWeight: 20,
@@ -84,9 +84,10 @@ describe('projectProgramPrescription', () => {
         targetRpe: 6,
       },
     ]);
+    expect(result.warnings).toEqual([]);
   });
 
-  it('falls back to routine targets and deduplicates unsupported warnings per exercise', () => {
+  it('copies non-weight measurement targets in order without inventing warnings', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -105,12 +106,10 @@ describe('projectProgramPrescription', () => {
       { routineSetId: 'first', targetDurationSeconds: 30 },
       { routineSetId: 'later', targetDurationSeconds: 45 },
     ]);
-    expect(result.warnings).toEqual([
-      { code: 'unsupported_measurement', exerciseId: 'plank' },
-    ]);
+    expect(result.warnings).toEqual([]);
   });
 
-  it('falls back to routine targets and warns once when an assisted exercise cannot be projected', () => {
+  it('copies assisted-exercise targets as-is without assistance warnings', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -129,12 +128,10 @@ describe('projectProgramPrescription', () => {
       { routineSetId: 'first', targetWeight: 40 },
       { routineSetId: 'second', targetWeight: 35 },
     ]);
-    expect(result.warnings).toEqual([
-      { code: 'assistance_not_supported', exerciseId: 'assisted-pull-up' },
-    ]);
+    expect(result.warnings).toEqual([]);
   });
 
-  it('falls back to routine targets and warns once when a compatible exercise has no 1RM', () => {
+  it('copies routine targets even when no 1RM exists and emits no missing-1RM warning', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -150,10 +147,10 @@ describe('projectProgramPrescription', () => {
       { routineSetId: 'first', targetWeight: 70 },
       { routineSetId: 'second' },
     ]);
-    expect(result.warnings).toEqual([{ code: 'missing_one_rep_max', exerciseId: 'bench' }]);
+    expect(result.warnings).toEqual([]);
   });
 
-  it('writes programmed RPE into targets only and leaves every other target untouched', () => {
+  it('copies routine RPE targets as-is and does not stamp week-level RPE', () => {
     const result = projectProgramPrescription({
       week: week({ loadIndex: 100, phase: 'construction' }),
       exercises: [
@@ -171,7 +168,7 @@ describe('projectProgramPrescription', () => {
     expect(result).toEqual({
       sets: [
         { routineSetId: 'warmup', targetWeight: 40, targetRpe: 5 },
-        { routineSetId: 'work', targetWeight: 100, targetReps: 5, targetRpe: 8.5 },
+        { routineSetId: 'work', targetWeight: 100, targetReps: 5, targetRpe: 7 },
       ],
       warnings: [],
     });
