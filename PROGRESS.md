@@ -2,7 +2,15 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
+**Dernière mise à jour :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines**).
+
+Livré : blocs de 4 à 12 semaines, split hebdomadaire versionné, prescriptions %1RM ou RPE,
+décharges planifiées, démarrage depuis l’accueil et autorité explicite face au Coach du Lot 18.
+
+Checkpoint téléphone restant : bloc de 8 semaines, décharge semaine 5, version effective d’une
+routine, décalage du bloc et reprise complète en mode avion.
+
+**Mise à jour précédente :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
 
 La cinquième règle, `range_missed` : **deux séances de suite sous le bas de fourchette, à la même
 charge → un incrément en moins.** C'est la moitié de RF-48 que le roadmap promettait depuis le
@@ -4033,7 +4041,7 @@ ci-dessus fait foi.
 | 14 | Sync cloud (optionnel) | ⬜ à faire | — | ⬜ |
 | 15 | Health Connect | ⬜ à faire | — | ⬜ |
 | 16 | Widgets | ⬜ à faire | — | ⬜ |
-| 17 | Périodisation | ⬜ à faire | — | ⬜ |
+| 17 | Périodisation | 🟨 en cours | 2026-08-13 | 🟨 checkpoint téléphone |
 | 18 | Auto-progression | 🟨 en cours | 2026-08-11 → 08-12 | 🟨 **partiel** (carte en séance à revoir) |
 | 19 | Assistant IA | ⬜ à faire | — | ⬜ |
 | 20 | Voix & accessibilité | ⬜ à faire | — | ⬜ |

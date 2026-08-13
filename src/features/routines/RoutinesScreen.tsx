@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
+import { getActiveProgramDetail } from '@/data/repositories/programs';
 import {
   countRoutinesInFolder,
   createFolder,
@@ -21,12 +22,15 @@ import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
 import {
   ActionSheet,
+  Button,
+  Card,
   ConfirmSheet,
   HeaderAction,
+  ListRow,
   OptionSheet,
 } from '@/ui';
 import type { Option } from '@/ui';
-import { PlusIcon } from '@/ui/icons';
+import { ChevronRightIcon, PlusIcon, ProgramIcon } from '@/ui/icons';
 import { FolderFormSheet } from './FolderFormSheet';
 import { RoutineCollection } from './RoutineCollection';
 import type { RoutineCollectionIntent } from './RoutineCollection';
@@ -46,6 +50,14 @@ export function RoutinesScreen() {
   const navigate = useNavigate();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);
+  const [programReload, setProgramReload] = useState(0);
+  const activeProgramQuery = useLiveQuery(async () => {
+    try {
+      return { status: 'ready' as const, value: await getActiveProgramDetail(Date.now()) };
+    } catch {
+      return { status: 'error' as const };
+    }
+  }, [programReload]);
   const [sheet, setSheet] = useState<SheetState | null>(null);
 
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);
@@ -74,6 +86,17 @@ export function RoutinesScreen() {
   // `undefined` is "not answered yet" — rendering the empty state on it flashes
   // "0 routines" on every load.
   const loaded = summaries !== undefined && folders !== undefined;
+  const programHint =
+    activeProgramQuery === undefined
+      ? t('program.loading')
+      : activeProgramQuery.status === 'error'
+        ? t('routines.programReadError')
+      : activeProgramQuery.value?.position.phase === 'active'
+      ? t('routines.programCurrentWeek', {
+          current: activeProgramQuery.value.position.weekIndex + 1,
+          total: activeProgramQuery.value.program.durationWeeks,
+        })
+      : t('routines.programNoneActive');
   const handleCollectionIntent = (intent: RoutineCollectionIntent) => {
     switch (intent.kind) {
       case 'createBlank':
@@ -121,13 +144,36 @@ export function RoutinesScreen() {
         </div>
       }
     >
-      {loaded && (
-        <RoutineCollection
-          summaries={summaries}
-          folders={folders}
-          onIntent={handleCollectionIntent}
-        />
-      )}
+      <div className="flex flex-col gap-6">
+        <Card>
+          <ListRow
+            title={t('routines.programs')}
+            subtitle={programHint}
+            leading={<ProgramIcon />}
+            trailing={<ChevronRightIcon />}
+            onClick={() => void navigate('/programs')}
+          />
+          {activeProgramQuery?.status === 'error' && (
+            <div className="p-3">
+              <Button
+                variant="secondary"
+                fullWidth
+                onClick={() => setProgramReload((value) => value + 1)}
+              >
+                {t('routines.programRetry')}
+              </Button>
+            </div>
+          )}
+        </Card>
+
+        {loaded && (
+          <RoutineCollection
+            summaries={summaries}
+            folders={folders}
+            onIntent={handleCollectionIntent}
+          />
+        )}
+      </div>
 
       <ActionSheet
         open={sheet?.kind === 'create'}

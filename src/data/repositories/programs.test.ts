@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import type { Program, Workout } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
@@ -16,6 +16,7 @@ import {
   getActiveProgramDetail,
   getProgramDetail,
   listPrograms,
+  replaceActiveProgram,
   replaceProgramWeeks,
   shiftProgram,
   updateProgramDraft,
@@ -128,6 +129,73 @@ describe('program lifecycle repository', () => {
       code: 'another_program_active',
     } satisfies Partial<ProgramRepositoryError>);
     expect((await db.programs.get(second.program.id))?.status).toBe('draft');
+  });
+
+  it('atomically completes the current program and activates a confirmed draft replacement', async () => {
+    const first = await createReadyProgram('First');
+    const second = await createReadyProgram('Second');
+    await activateProgram(first.program.id);
+
+    await replaceActiveProgram(second.program.id);
+
+    expect((await db.programs.get(first.program.id))?.status).toBe('completed');
+    expect((await db.programs.get(second.program.id))?.status).toBe('active');
+    expect(
+      (await db.programs.where('status').equals('active').toArray()).filter(
+        (program) => program.deletedAt === 0,
+      ),
+    ).toHaveLength(1);
+  });
+
+  it('rolls back active replacement when Coach supersession cannot be persisted', async () => {
+    const first = await createReadyProgram('First');
+    const replacementExercise = await createCustomExercise({
+      name: 'Replacement bench',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const secondRoutine = await createRoutine('Second routine');
+    await addExercisesToRoutine(secondRoutine.id, [replacementExercise.id]);
+    const secondProgram = await createProgramDraft({
+      name: 'Second',
+      startsAt: MONDAY,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(secondProgram.id, [week(0), week(1), week(2), week(3)]);
+    await createScheduleRevision(secondProgram.id, 0, [
+      { routineId: secondRoutine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await activateProgram(first.program.id);
+    const [recommendation] = await recordCoachSignals(
+      [
+        {
+          exerciseId: replacementExercise.id,
+          code: 'range_completed' as const,
+          severity: 40,
+          nextLoadKg: 100,
+          evidence: [],
+        },
+      ],
+      { recommendedAt: 1_000 },
+    );
+    const writeRecommendations = vi
+      .spyOn(db.coachRecommendations, 'bulkPut')
+      .mockRejectedValueOnce(new Error('coach write failed'));
+
+    try {
+      await expect(replaceActiveProgram(secondProgram.id)).rejects.toThrow(
+        'coach write failed',
+      );
+    } finally {
+      writeRecommendations.mockRestore();
+    }
+
+    expect((await db.programs.get(first.program.id))?.status).toBe('active');
+    expect((await db.programs.get(secondProgram.id))?.status).toBe('draft');
+    expect((await db.coachRecommendations.get(recommendation!.id))?.status).toBe('pending');
   });
 
   it('reports a missing routine and leaves the program draft', async () => {
@@ -336,6 +404,209 @@ describe('program weeks and schedules', () => {
 
     expect((await getProgramDetail(program.id))?.revisions).toHaveLength(1);
   });
+
+  it('rejects a revision inserted into the persisted range of a program workout after a shift', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(new Date(2026, 7, 12, 12).getTime());
+    try {
+      const { program, routineId, entryId } = await createReadyProgram('Historical range');
+      await activateProgram(program.id);
+      await db.workouts.add(
+        newEntity<Workout>({
+          routineId,
+          name: 'Persisted week two',
+          status: 'completed',
+          startedAt: MONDAY + 7 * 86_400_000,
+          endedAt: MONDAY + 7 * 86_400_000 + 1_000,
+          durationSeconds: 1,
+          programId: program.id,
+          programWeekIndex: 1,
+          programScheduleEntryId: entryId,
+        }),
+      );
+      await shiftProgram(program.id, 7);
+
+      await expect(
+        createScheduleRevision(program.id, 1, [
+          { routineId, dayOfWeek: 2, order: 0 },
+        ]),
+      ).rejects.toMatchObject({
+        code: 'retroactive_revision',
+      } satisfies Partial<ProgramRepositoryError>);
+
+      const detail = await getProgramDetail(program.id);
+      expect(detail?.revisions).toHaveLength(1);
+      expect(detail?.revisions[0]?.entries.some((entry) => entry.id === entryId)).toBe(true);
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('preserves live revision and entry ids referenced by a program workout after a shift', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(new Date(2026, 7, 12, 12).getTime());
+    try {
+      const { program, routineId, entryId } = await createReadyProgram('Historical ids');
+      const originalRevision = (await getProgramDetail(program.id))?.revisions[0]?.revision;
+      if (originalRevision === undefined) throw new Error('schedule revision fixture missing');
+      await activateProgram(program.id);
+      await db.workouts.add(
+        newEntity<Workout>({
+          routineId,
+          name: 'Persisted week one',
+          status: 'completed',
+          startedAt: MONDAY,
+          endedAt: MONDAY + 1_000,
+          durationSeconds: 1,
+          programId: program.id,
+          programWeekIndex: 0,
+          programScheduleEntryId: entryId,
+        }),
+      );
+      await shiftProgram(program.id, 7);
+
+      await expect(
+        createScheduleRevision(program.id, 0, [
+          { routineId, dayOfWeek: 2, order: 0 },
+        ]),
+      ).rejects.toMatchObject({
+        code: 'retroactive_revision',
+      } satisfies Partial<ProgramRepositoryError>);
+
+      expect((await db.programScheduleRevisions.get(originalRevision.id))?.deletedAt).toBe(0);
+      expect((await db.programScheduleEntries.get(entryId))?.deletedAt).toBe(0);
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('supersedes only load proposals for exercises introduced by a generic future split', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(new Date(2026, 7, 12, 12).getTime());
+    try {
+      const existingExercise = await createCustomExercise({
+        name: 'Existing bench',
+        primaryMuscle: 'chest',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isUnilateral: 0,
+      });
+      const introducedExercise = await createCustomExercise({
+        name: 'Introduced row',
+        primaryMuscle: 'lats',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isUnilateral: 0,
+      });
+      const unrelatedExercise = await createCustomExercise({
+        name: 'Unrelated squat',
+        primaryMuscle: 'quads',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isUnilateral: 0,
+      });
+      const initialRoutine = await createRoutine('Initial split');
+      await addExercisesToRoutine(initialRoutine.id, [existingExercise.id]);
+      const futureRoutine = await createRoutine('Future split');
+      await addExercisesToRoutine(futureRoutine.id, [
+        existingExercise.id,
+        introducedExercise.id,
+      ]);
+      const program = await createProgramDraft({
+        name: 'Coach split authority',
+        startsAt: MONDAY,
+        durationWeeks: 4,
+      });
+      await replaceProgramWeeks(program.id, [week(0), week(1), week(2), week(3)]);
+      await createScheduleRevision(program.id, 0, [
+        { routineId: initialRoutine.id, dayOfWeek: 1, order: 0 },
+      ]);
+      await activateProgram(program.id);
+      await recordCoachSignals(
+        [existingExercise, introducedExercise, unrelatedExercise].map((exercise, index) => ({
+          exerciseId: exercise.id,
+          code: 'range_completed' as const,
+          severity: 40,
+          nextLoadKg: 100 + index * 10,
+          evidence: [],
+        })),
+        { recommendedAt: 1_000 },
+      );
+
+      await createScheduleRevision(program.id, 1, [
+        { routineId: futureRoutine.id, dayOfWeek: 2, order: 0 },
+      ]);
+
+      const statusByExercise = new Map(
+        (await db.coachRecommendations.toArray()).map((row) => [row.exerciseId, row.status]),
+      );
+      expect(statusByExercise.get(existingExercise.id)).toBe('pending');
+      expect(statusByExercise.get(introducedExercise.id)).toBe('superseded');
+      expect(statusByExercise.get(unrelatedExercise.id)).toBe('pending');
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('rolls back a generic future split when Coach supersession fails', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(new Date(2026, 7, 12, 12).getTime());
+    try {
+      const exercise = await createCustomExercise({
+        name: 'Atomic row',
+        primaryMuscle: 'lats',
+        secondaryMuscles: [],
+        equipment: 'barbell',
+        measurementType: 'weight_reps',
+        isUnilateral: 0,
+      });
+      const initialRoutine = await createRoutine('Atomic initial');
+      const futureRoutine = await createRoutine('Atomic future');
+      await addExercisesToRoutine(futureRoutine.id, [exercise.id]);
+      const program = await createProgramDraft({
+        name: 'Atomic split',
+        startsAt: MONDAY,
+        durationWeeks: 4,
+      });
+      await replaceProgramWeeks(program.id, [week(0), week(1), week(2), week(3)]);
+      const initialRevision = await createScheduleRevision(program.id, 0, [
+        { routineId: initialRoutine.id, dayOfWeek: 1, order: 0 },
+      ]);
+      await activateProgram(program.id);
+      const [recommendation] = await recordCoachSignals(
+        [
+          {
+            exerciseId: exercise.id,
+            code: 'range_completed' as const,
+            severity: 40,
+            nextLoadKg: 100,
+            evidence: [],
+          },
+        ],
+        { recommendedAt: 1_000 },
+      );
+      const writeRecommendations = vi
+        .spyOn(db.coachRecommendations, 'bulkPut')
+        .mockRejectedValueOnce(new Error('coach write failed'));
+
+      try {
+        await expect(
+          createScheduleRevision(program.id, 1, [
+            { routineId: futureRoutine.id, dayOfWeek: 2, order: 0 },
+          ]),
+        ).rejects.toThrow('coach write failed');
+      } finally {
+        writeRecommendations.mockRestore();
+      }
+
+      const detail = await getProgramDetail(program.id);
+      expect(detail?.revisions.map(({ revision }) => revision.id)).toEqual([
+        initialRevision.id,
+      ]);
+      expect((await db.coachRecommendations.get(recommendation!.id))?.status).toBe('pending');
+    } finally {
+      now.mockRestore();
+    }
+  });
 });
 
 describe('program projections and deletion', () => {
@@ -364,6 +635,7 @@ describe('program projections and deletion', () => {
 
   it('shifts only the program civil start date and never rewrites workouts', async () => {
     const { program, routineId, entryId } = await createReadyProgram('Shifted');
+    await activateProgram(program.id);
     const historical = newEntity<Workout>({
       routineId,
       name: 'Already done',
@@ -383,6 +655,24 @@ describe('program projections and deletion', () => {
       new Date(2026, 7, 17, 0, 0, 0, 0).getTime(),
     );
     expect(await db.workouts.get(historical.id)).toEqual(historical);
+  });
+
+  it('allows shifts only for active programs and only when the resulting start stays Monday', async () => {
+    const draft = await createReadyProgram('Draft shift');
+    await expect(shiftProgram(draft.program.id, 7)).rejects.toMatchObject({
+      code: 'program_invalid',
+    } satisfies Partial<ProgramRepositoryError>);
+
+    await activateProgram(draft.program.id);
+    await expect(shiftProgram(draft.program.id, 1)).rejects.toMatchObject({
+      code: 'program_invalid',
+    } satisfies Partial<ProgramRepositoryError>);
+    expect((await db.programs.get(draft.program.id))?.startsAt).toBe(MONDAY);
+
+    await completeProgram(draft.program.id);
+    await expect(shiftProgram(draft.program.id, 7)).rejects.toMatchObject({
+      code: 'program_invalid',
+    } satisfies Partial<ProgramRepositoryError>);
   });
 
   it('soft-deletes only the program graph, preserving routines and workouts', async () => {

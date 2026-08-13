@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
+import { newEntity } from './base';
 import { createCustomExercise, deleteExercise } from './exercises';
 import { recordCoachSignals } from './coachRecommendations';
 import {
@@ -38,7 +39,7 @@ import {
   getProgramDetail,
 } from './programs';
 import type { RoutineDetail, RoutineExerciseDetail } from './routines';
-import type { Exercise } from '@/data/types';
+import type { Exercise, Workout } from '@/data/types';
 
 /**
  * Nth element, loudly. `noUncheckedIndexedAccess` is on, and answering it with
@@ -467,6 +468,49 @@ describe('routine versions', () => {
           .toArray()
       ).every((entry) => entry.deletedAt === 0),
     ).toBe(true);
+  });
+
+  it('preserves live historical schedule ids when routine publication would rewrite a program workout', async () => {
+    const source = await createRoutine('Poussée');
+    const program = await createProgramDraft({
+      name: 'Force historique',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    const initialRevision = await createScheduleRevision(program.id, 0, [
+      { routineId: source.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const initialEntry = await db.programScheduleEntries
+      .where('revisionId')
+      .equals(initialRevision.id)
+      .first();
+    if (initialEntry === undefined) throw new Error('schedule entry fixture missing');
+    await db.workouts.add(
+      newEntity<Workout>({
+        routineId: source.id,
+        name: 'Séance historique',
+        status: 'completed',
+        startedAt: new Date(2026, 7, 10, 12).getTime(),
+        endedAt: new Date(2026, 7, 10, 13).getTime(),
+        durationSeconds: 3_600,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: initialEntry.id,
+      }),
+    );
+    const draft = await createRoutineVersionDraft(source.id);
+
+    await expect(
+      publishRoutineVersion({
+        draftRoutineId: draft.id,
+        programId: program.id,
+        effectiveFromWeekIndex: 0,
+      }),
+    ).rejects.toMatchObject({ code: 'retroactive_revision' });
+
+    expect((await db.routines.get(draft.id))?.versionState).toBe('draft');
+    expect((await db.programScheduleRevisions.get(initialRevision.id))?.deletedAt).toBe(0);
+    expect((await db.programScheduleEntries.get(initialEntry.id))?.deletedAt).toBe(0);
   });
 
   it('seals a referenced published routine while leaving its draft editable', async () => {

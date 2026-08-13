@@ -1,15 +1,13 @@
 import { db } from '@/data/db';
 import type {
-  ProgramScheduleEntry,
-  ProgramScheduleRevision,
   Routine,
   RoutineExercise,
   RoutineSet,
 } from '@/data/types';
-import { programPosition, resolveSchedule } from '@/lib/programs';
+import { resolveSchedule } from '@/lib/programs';
 import { alive, newEntity, touch } from './base';
-import { supersedePendingLoadRecommendations } from './coachRecommendations';
 import { ProgramRepositoryError } from './programLifecycle';
+import { writeScheduleRevisionInTransaction } from './programSchedules';
 
 const byVersion = (left: Routine, right: Routine): number =>
   left.version - right.version ||
@@ -140,47 +138,6 @@ export interface PublishRoutineVersionInput {
   effectiveFromWeekIndex: number;
 }
 
-interface CompleteScheduleEntry {
-  routineId: string;
-  dayOfWeek: number;
-  order: number;
-}
-
-/** Writes inside the caller's Dexie transaction; never opens a nested transaction. */
-async function writeCompleteScheduleRevision(
-  programId: string,
-  effectiveFromWeekIndex: number,
-  entries: readonly CompleteScheduleEntry[],
-  revisions: readonly ProgramScheduleRevision[],
-): Promise<void> {
-  const superseded = revisions.filter(
-    (revision) => revision.effectiveFromWeekIndex === effectiveFromWeekIndex,
-  );
-  const supersededIds = superseded.map((revision) => revision.id);
-  const now = Date.now();
-  if (supersededIds.length > 0) {
-    const oldEntries = alive(
-      await db.programScheduleEntries.where('revisionId').anyOf(supersededIds).toArray(),
-    );
-    await db.programScheduleEntries.bulkPut(
-      oldEntries.map((entry) => touch(entry, { deletedAt: now })),
-    );
-    await db.programScheduleRevisions.bulkPut(
-      superseded.map((revision) => touch(revision, { deletedAt: now })),
-    );
-  }
-
-  const revision = newEntity<ProgramScheduleRevision>({
-    programId,
-    effectiveFromWeekIndex,
-  });
-  const scheduleEntries = entries.map((entry) =>
-    newEntity<ProgramScheduleEntry>({ ...entry, revisionId: revision.id }),
-  );
-  await db.programScheduleRevisions.add(revision);
-  await db.programScheduleEntries.bulkAdd(scheduleEntries);
-}
-
 /** Publishes the draft and its complete effective split revision atomically. */
 export async function publishRoutineVersion(
   input: PublishRoutineVersionInput,
@@ -219,35 +176,6 @@ export async function publishRoutineVersion(
       const revisions = alive(
         await db.programScheduleRevisions.where('programId').equals(input.programId).toArray(),
       );
-      const latestEffectiveWeek = revisions.reduce(
-        (latest, revision) => Math.max(latest, revision.effectiveFromWeekIndex),
-        -1,
-      );
-      if (input.effectiveFromWeekIndex < latestEffectiveWeek) {
-        throw new ProgramRepositoryError('retroactive_revision');
-      }
-
-      if (program.status === 'active') {
-        const position = programPosition(program.startsAt, program.durationWeeks, Date.now());
-        if (position.phase === 'after') {
-          throw new ProgramRepositoryError('retroactive_revision');
-        }
-        if (position.phase === 'active') {
-          if (input.effectiveFromWeekIndex < position.weekIndex) {
-            throw new ProgramRepositoryError('retroactive_revision');
-          }
-          if (input.effectiveFromWeekIndex === position.weekIndex) {
-            const hasWorkoutThisWeek = alive(await db.workouts.toArray()).some(
-              (workout) =>
-                workout.programId === input.programId &&
-                workout.programWeekIndex === position.weekIndex,
-            );
-            if (hasWorkoutThisWeek) {
-              throw new ProgramRepositoryError('retroactive_revision');
-            }
-          }
-        }
-      }
 
       const revisionIds = revisions.map((revision) => revision.id);
       const allEntries =
@@ -288,28 +216,13 @@ export async function publishRoutineVersion(
         throw new ProgramRepositoryError('routine_missing');
       }
 
-      const previousRoutineIds = [...new Set(effectiveEntries.map((entry) => entry.routineId))];
-      const nextRoutineIds = [...new Set(replacementEntries.map((entry) => entry.routineId))];
-      const [previousExerciseRows, nextExerciseRows] = await Promise.all([
-        db.routineExercises.where('routineId').anyOf(previousRoutineIds).toArray(),
-        db.routineExercises.where('routineId').anyOf(nextRoutineIds).toArray(),
-      ]);
-      const previousExerciseIds = new Set(
-        alive(previousExerciseRows).map((row) => row.exerciseId),
-      );
-      const introducedExerciseIds = alive(nextExerciseRows)
-        .map((row) => row.exerciseId)
-        .filter((exerciseId) => !previousExerciseIds.has(exerciseId));
-
       const published = touch(draft, { versionState: 'published' });
       await db.routines.put(published);
-      await writeCompleteScheduleRevision(
+      await writeScheduleRevisionInTransaction(
         input.programId,
         input.effectiveFromWeekIndex,
         replacementEntries,
-        revisions,
       );
-      await supersedePendingLoadRecommendations(introducedExerciseIds);
       return published;
     },
   );

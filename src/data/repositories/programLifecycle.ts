@@ -1,6 +1,11 @@
 import { db } from '@/data/db';
 import type { Program } from '@/data/types';
-import { resolveSchedule, shiftLocalDate, validateProgramDraft } from '@/lib/programs';
+import {
+  isoDayOfWeek,
+  resolveSchedule,
+  shiftLocalDate,
+  validateProgramDraft,
+} from '@/lib/programs';
 import { alive, newEntity, touch } from './base';
 import { supersedePendingLoadRecommendations } from './coachRecommendations';
 
@@ -44,71 +49,105 @@ export async function updateProgramDraft(
   });
 }
 
-export async function activateProgram(programId: string): Promise<void> {
-  await db.transaction(
-    'rw',
-    [
-      db.programs,
-      db.programWeeks,
-      db.programScheduleRevisions,
-      db.programScheduleEntries,
-      db.routines,
-      db.routineExercises,
-      db.coachRecommendations,
-    ],
-    async () => {
-      const program = await db.programs.get(programId);
-      if (program === undefined || program.deletedAt !== 0) {
-        throw new ProgramRepositoryError('program_not_found');
-      }
-      if (program.status === 'completed') {
-        throw new ProgramRepositoryError('program_invalid');
-      }
+interface PreparedProgramActivation {
+  program: Program;
+  initialExerciseIds: string[];
+}
 
-      const anotherActive = alive(await db.programs.where('status').equals('active').toArray()).some(
-        (candidate) => candidate.id !== programId,
-      );
-      if (anotherActive) throw new ProgramRepositoryError('another_program_active');
+/** Reads and validates an activation candidate inside the caller's transaction. */
+async function prepareProgramActivation(programId: string): Promise<PreparedProgramActivation> {
+  const program = await db.programs.get(programId);
+  if (program === undefined || program.deletedAt !== 0) {
+    throw new ProgramRepositoryError('program_not_found');
+  }
+  if (program.status !== 'draft') {
+    throw new ProgramRepositoryError('program_invalid');
+  }
 
-      const weeks = alive(await db.programWeeks.where('programId').equals(programId).toArray());
-      const revisions = alive(
-        await db.programScheduleRevisions.where('programId').equals(programId).toArray(),
-      );
-      const revisionIds = revisions.map((revision) => revision.id);
-      const entries =
-        revisionIds.length === 0
-          ? []
-          : alive(
-              await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray(),
-            );
-      const routines = alive(await db.routines.toArray()).filter(
-        (routine) => routine.versionState === 'published',
-      );
-      const availableRoutineIds = new Set(routines.map((routine) => routine.id));
-      const initialSchedule = resolveSchedule(revisions, entries, 0);
-      const issues = validateProgramDraft(
-        {
-          startsAt: program.startsAt,
-          durationWeeks: program.durationWeeks,
-          weeks,
-          scheduleEntries: initialSchedule,
-        },
-        availableRoutineIds,
-      );
-
-      if (issues.includes('missing_routine')) {
-        throw new ProgramRepositoryError('routine_missing');
-      }
-      if (issues.length > 0) throw new ProgramRepositoryError('program_invalid');
-
-      const initialRoutineIds = [...new Set(initialSchedule.map((entry) => entry.routineId))];
-      const initialExerciseIds = alive(
-        await db.routineExercises.where('routineId').anyOf(initialRoutineIds).toArray(),
-      ).map((row) => row.exerciseId);
-      await supersedePendingLoadRecommendations(initialExerciseIds);
-      await db.programs.put(touch(program, { status: 'active' }));
-    },
+  const weeks = alive(await db.programWeeks.where('programId').equals(programId).toArray());
+  const revisions = alive(
+    await db.programScheduleRevisions.where('programId').equals(programId).toArray(),
   );
+  const revisionIds = revisions.map((revision) => revision.id);
+  const entries =
+    revisionIds.length === 0
+      ? []
+      : alive(
+          await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray(),
+        );
+  const routines = alive(await db.routines.toArray()).filter(
+    (routine) => routine.versionState === 'published',
+  );
+  const availableRoutineIds = new Set(routines.map((routine) => routine.id));
+  const initialSchedule = resolveSchedule(revisions, entries, 0);
+  const issues = validateProgramDraft(
+    {
+      startsAt: program.startsAt,
+      durationWeeks: program.durationWeeks,
+      weeks,
+      scheduleEntries: initialSchedule,
+    },
+    availableRoutineIds,
+  );
+
+  if (issues.includes('missing_routine')) {
+    throw new ProgramRepositoryError('routine_missing');
+  }
+  if (issues.length > 0) throw new ProgramRepositoryError('program_invalid');
+
+  const initialRoutineIds = [...new Set(initialSchedule.map((entry) => entry.routineId))];
+  const initialExerciseIds = alive(
+    await db.routineExercises.where('routineId').anyOf(initialRoutineIds).toArray(),
+  ).map((row) => row.exerciseId);
+  return { program, initialExerciseIds };
+}
+
+const activationTables = [
+  db.programs,
+  db.programWeeks,
+  db.programScheduleRevisions,
+  db.programScheduleEntries,
+  db.routines,
+  db.routineExercises,
+  db.coachRecommendations,
+] as const;
+
+export async function activateProgram(programId: string): Promise<void> {
+  await db.transaction('rw', activationTables, async () => {
+    const prepared = await prepareProgramActivation(programId);
+    const anotherActive = alive(
+      await db.programs.where('status').equals('active').toArray(),
+    ).some((candidate) => candidate.id !== programId);
+    if (anotherActive) throw new ProgramRepositoryError('another_program_active');
+
+    await supersedePendingLoadRecommendations(prepared.initialExerciseIds);
+    await db.programs.put(touch(prepared.program, { status: 'active' }));
+  });
+}
+
+/**
+ * Confirmation seam: validates the draft, then completes the one current block
+ * and activates its replacement in the same transaction.
+ */
+export async function replaceActiveProgram(programId: string): Promise<void> {
+  await db.transaction('rw', activationTables, async () => {
+    const prepared = await prepareProgramActivation(programId);
+    const currentActive = alive(
+      await db.programs.where('status').equals('active').toArray(),
+    ).filter((candidate) => candidate.id !== programId);
+    if (currentActive.length === 0) {
+      throw new ProgramRepositoryError('program_invalid');
+    }
+    if (currentActive.length > 1) {
+      throw new ProgramRepositoryError('another_program_active');
+    }
+
+    await supersedePendingLoadRecommendations(prepared.initialExerciseIds);
+    await db.programs.bulkPut([
+      touch(currentActive[0]!, { status: 'completed' }),
+      touch(prepared.program, { status: 'active' }),
+    ]);
+  });
 }
 
 export async function completeProgram(programId: string): Promise<void> {
@@ -130,7 +169,12 @@ export async function shiftProgram(programId: string, days: number): Promise<voi
     if (program === undefined || program.deletedAt !== 0) {
       throw new ProgramRepositoryError('program_not_found');
     }
-    await db.programs.put(touch(program, { startsAt: shiftLocalDate(program.startsAt, days) }));
+    if (program.status !== 'active') throw new ProgramRepositoryError('program_invalid');
+    const startsAt = shiftLocalDate(program.startsAt, days);
+    if (isoDayOfWeek(startsAt) !== 1) {
+      throw new ProgramRepositoryError('program_invalid');
+    }
+    await db.programs.put(touch(program, { startsAt }));
   });
 }
 

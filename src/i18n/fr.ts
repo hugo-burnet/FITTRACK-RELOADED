@@ -139,6 +139,15 @@ const fr = {
     startRoutine: 'Démarrer {name}',
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
+    programSection: 'Bloc en cours',
+    programWeek: 'Semaine {current} sur {total}',
+    programStarts: 'Le bloc commence le {date}. Aucune séance ne démarre avant.',
+    programNextWeek: 'La semaine {week} commence le {date}.',
+    programWeekComplete: 'Toutes les séances prévues cette semaine sont terminées.',
+    programTodayRule: 'Prévue aujourd’hui dans ton bloc.',
+    programMissedRule: 'Prévue le {date} et encore à faire.',
+    programUpcomingRule: 'Prochaine séance du bloc, prévue le {date}.',
+    programStartError: 'La séance n’a pas pu démarrer. Vérifie le bloc puis réessaie.',
     /** La lecture a échoué — pas la base : rien n'est perdu, seulement illisible. */
     readError: 'Ces données n’ont pas pu être lues. Tes séances sont intactes sur l’appareil.',
 
@@ -395,6 +404,11 @@ const fr = {
 
   routines: {
     title: 'Routines',
+    programs: 'Programmes',
+    programCurrentWeek: 'Semaine {current} sur {total}',
+    programNoneActive: 'Aucun bloc actif',
+    programReadError: 'Le bloc actif n’a pas pu être lu.',
+    programRetry: 'Réessayer la lecture',
     emptyBody:
       'Une routine, c’est ta séance type : les exercices, les séries et les charges visées.',
     countUnit: 'routines',
@@ -581,6 +595,19 @@ const fr = {
      * était un second nom pour la même chose — et il passait à la ligne.
      */
     start: 'Démarrer',
+    versionPublished: 'Version {version} · Publiée',
+    versionDraft: 'Version {version} · Brouillon',
+    sealedHint: 'Cette version reste intacte parce qu’un bloc la référence.',
+    draftHint: 'Chaque modification est enregistrée dans ce brouillon.',
+    publishedEditableHint: 'Cette version n’est utilisée par aucun bloc et reste modifiable.',
+    createVersion: 'Créer une version',
+    useFromWeek: 'Utiliser à partir de la semaine {number}',
+    effectiveWeekTitle: 'Semaine d’entrée en vigueur',
+    noEffectiveWeek: 'Aucune semaine future d’un bloc actif ne peut encore utiliser ce brouillon.',
+    versionActionError: 'La version n’a pas pu être enregistrée. Réessaie.',
+    programReadError: 'Le bloc actif n’a pas pu être lu. Les versions restent intactes.',
+    programRetry: 'Réessayer la lecture',
+    sealedEmptyBody: 'Cette version publiée ne contient aucun exercice.',
 
     deletedExercise: 'Exercice supprimé',
     deletedExerciseHint: 'Il ne fait plus partie de ta bibliothèque.',

@@ -19,6 +19,7 @@ export {
   completeProgram,
   createProgramDraft,
   deleteProgram,
+  replaceActiveProgram,
   shiftProgram,
   updateProgramDraft,
 } from './programLifecycle';

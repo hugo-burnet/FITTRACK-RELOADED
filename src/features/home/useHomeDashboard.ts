@@ -9,7 +9,9 @@ export type HomeDashboardState =
   | { status: 'ready'; data: HomeDashboardData; regularity: WeeklyRegularity };
 
 /**
- * Ce que l'accueil lit, et rien d'autre.
+ * Ce que l'accueil lit, et rien d'autre. La priorité éventuelle du programme
+ * est déjà résolue dans `HomeDashboardData` : ce hook ne re-classe aucune
+ * séance et se contente de dériver la régularité commune à l'Historique.
  *
  * L'erreur est **attrapée ici** plutôt que laissée remonter : une lecture
  * IndexedDB qui échoue (base bloquée par un autre onglet, quota, navigation
