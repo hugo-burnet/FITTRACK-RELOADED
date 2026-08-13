@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -90,6 +90,11 @@ describe('parcours de création d’un programme', () => {
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
     expect(await screen.findByText('Étape 3 sur 3 · Semaines')).toBeVisible();
+    // L'étape se lit une fois : la phrase la nomme, le rail la situe. Pas de
+    // seconde liste de noms à relire, et rien de cliquable.
+    const stepper = screen.getByRole('navigation', { name: 'Étape 3 sur 3 · Semaines' });
+    expect(within(stepper).queryAllByRole('listitem')).toHaveLength(0);
+    expect(within(stepper).getByText('Étape 3 sur 3 · Semaines')).toBeVisible();
     expect(screen.queryByRole('button', { name: 'Cadre' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Split' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Semaines' })).not.toBeInTheDocument();

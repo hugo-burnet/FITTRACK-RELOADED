@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { PROGRAM_PHASES, type ProgramPhase } from '@/data/types';
 import { MAX_LOAD_INDEX, MIN_LOAD_INDEX } from '@/lib/programs';
 import { t } from '@/i18n/fr';
-import { Button, Card, NumberInput, Sheet } from '@/ui';
+import { Button, ListRow, NumberInput, Sheet } from '@/ui';
 import {
   LOAD_INDEX_PRESETS,
   PHASE_LABEL_KEYS,
   SUGGESTED_LOAD_INDEX,
   phaseIntention,
+  phaseLabel,
   weekLine,
 } from './weekReading';
 
@@ -49,35 +50,45 @@ export function ProgramWeeksStep({ weeks, onChange }: Props) {
   return (
     <div className="flex flex-col gap-5">
       <p className="text-base leading-relaxed text-[var(--text-2)]">{t('program.weeksIntro')}</p>
-      <Card>
-        <div className="divide-y divide-[var(--border)]">
-          {weeks.map((week, index) => {
-            const number = index + 1;
-            const line = weekLine(week);
-            const deload = week.phase === 'deload';
-            return (
-              <button
-                key={week.weekIndex}
-                type="button"
-                aria-label={t('program.editWeekReading', { number, line })}
-                onClick={() => setEditor({ index, week: { ...week } })}
-                className="grid min-h-14 w-full grid-cols-[minmax(0,1fr)_auto] items-center
-                  gap-3 px-4 text-left active:bg-[var(--surface-2)]"
-              >
+      {/*
+        La phase est ce qu'on cherche du regard, donc c'est le titre. Le numéro
+        passe en tête de ligne, discret, et le niveau finit à droite comme toute
+        lecture chiffrée de l'app. Une Décharge se signale sur ce chiffre, pas
+        en repeignant le mot.
+      */}
+      <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
+        {weeks.map((week, index) => {
+          const number = index + 1;
+          const deload = week.phase === 'deload';
+          return (
+            <ListRow
+              key={week.weekIndex}
+              // À l'oreille, trois colonnes valent moins qu'une phrase : on garde
+              // la lecture compacte `05 — 60 % · Décharge` comme nom prononcé.
+              ariaLabel={t('program.editWeekReading', { number, line: weekLine(week) })}
+              leading={
+                <span className="record-figure text-sm font-semibold">
+                  {String(number).padStart(2, '0')}
+                </span>
+              }
+              title={phaseLabel(week.phase)}
+              {...(phaseIntention(week.phase) === null
+                ? {}
+                : { subtitle: phaseIntention(week.phase)! })}
+              trailing={
                 <span
-                  className={`record-figure truncate text-base ${
-                    deload
-                      ? 'font-semibold text-[var(--accent-ink)]'
-                      : 'text-[var(--text-1)]'
+                  className={`record-figure text-sm ${
+                    deload ? 'font-semibold text-[var(--accent-ink)]' : ''
                   }`}
                 >
-                  {line}
+                  {t('program.loadIndexPreset', { value: week.loadIndex })}
                 </span>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
+              }
+              onClick={() => setEditor({ index, week: { ...week } })}
+            />
+          );
+        })}
+      </div>
 
       <Sheet
         open={editor !== null}
