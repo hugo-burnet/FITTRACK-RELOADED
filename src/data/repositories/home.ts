@@ -139,7 +139,7 @@ async function readHomeProgramProjection(at: number): Promise<HomeProgramProject
     );
 
     if ('session' in picked) {
-      const routine = await getRoutineDetail(picked.session.routineId).catch(() => null);
+      const routine = await getRoutineDetail(picked.session.routineId);
       return {
         ...base,
         pick: {
