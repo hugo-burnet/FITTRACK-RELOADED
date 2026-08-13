@@ -57,6 +57,32 @@ function newestPerExercise(rows: CoachRecommendation[]): CoachRecommendation[] {
 }
 
 /**
+ * Resolves numeric program-owned objectives inside the caller's Dexie transaction.
+ * Observations stay pending, and `superseded` is deliberately not a dismissal.
+ */
+export async function supersedePendingLoadRecommendations(
+  exerciseIds: readonly string[],
+  resolvedAt = Date.now(),
+): Promise<void> {
+  const uniqueIds = [...new Set(exerciseIds)];
+  if (uniqueIds.length === 0) return;
+
+  const pendingLoads = alive(
+    await db.coachRecommendations.where('exerciseId').anyOf(uniqueIds).toArray(),
+  ).filter((row) => row.status === 'pending' && row.nextLoadKg !== undefined);
+  if (pendingLoads.length === 0) return;
+
+  await db.coachRecommendations.bulkPut(
+    pendingLoads.map((row) =>
+      touch(row, {
+        status: 'superseded' as CoachRecommendationStatus,
+        resolvedAt,
+      }),
+    ),
+  );
+}
+
+/**
  * Persist signals the user will see. Skips a proposal already dismissed with the
  * same exercise + code + next load so a refused tip does not come back.
  */

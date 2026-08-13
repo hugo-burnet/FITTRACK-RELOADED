@@ -160,6 +160,21 @@ describe('range_completed', () => {
     ]);
     expect(signals.filter((s) => s.code === 'range_completed')).toEqual([]);
   });
+
+  it('treats a programmed deload as authoritative without a manual percentage', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        programIsDeload: 1,
+        sets: [
+          set({ order: 0, reps: 12, weight: 80 }),
+          set({ order: 1, reps: 12, weight: 80 }),
+        ],
+      }),
+    ]);
+    expect(signals.filter((s) => s.code === 'range_completed')).toEqual([]);
+  });
 });
 
 describe('range_missed', () => {

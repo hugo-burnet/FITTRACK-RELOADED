@@ -8,6 +8,7 @@ import {
   listRecommendationsForExercise,
   recordCoachSignals,
   reconcileFollowedLoads,
+  supersedePendingLoadRecommendations,
 } from './coachRecommendations';
 
 const signal = (partial: Partial<CoachSignal> & Pick<CoachSignal, 'exerciseId' | 'code'>): CoachSignal => ({
@@ -20,8 +21,8 @@ const signal = (partial: Partial<CoachSignal> & Pick<CoachSignal, 'exerciseId' |
 describe('coachRecommendations repository', () => {
   beforeEach(resetDb);
 
-  it('opens at schema version 5 with the coach journal table', async () => {
-    expect(db.verno).toBe(5);
+  it('opens at schema version 6 with the coach journal table', async () => {
+    expect(db.verno).toBe(6);
     expect(db.tables.map((table) => table.name)).toContain('coachRecommendations');
   });
 
@@ -88,6 +89,56 @@ describe('coachRecommendations repository', () => {
     expect(history[0]!.status).toBe('followed');
     expect(history[0]!.outcomeLoadKg).toBe(102.5);
     expect(await listPendingRecommendations(['bench'])).toEqual([]);
+  });
+
+  it('supersedes only pending numeric recommendations for the selected exercises', async () => {
+    await recordCoachSignals(
+      [signal({ exerciseId: 'bench', code: 'range_completed', nextLoadKg: 102.5 })],
+      { recommendedAt: 1_000 },
+    );
+    await recordCoachSignals(
+      [signal({ exerciseId: 'row', code: 'intra_session_drop', nextLoadKg: undefined })],
+      { recommendedAt: 1_100 },
+    );
+    await recordCoachSignals(
+      [signal({ exerciseId: 'squat', code: 'range_completed', nextLoadKg: 140 })],
+      { recommendedAt: 1_200 },
+    );
+    await reconcileFollowedLoads([{ exerciseId: 'squat', loadKg: 140 }]);
+    await recordCoachSignals(
+      [signal({ exerciseId: 'deadlift', code: 'range_completed', nextLoadKg: 180 })],
+      { recommendedAt: 1_300 },
+    );
+
+    await supersedePendingLoadRecommendations(['bench', 'row', 'squat'], 2_000);
+
+    expect((await listRecommendationsForExercise('bench'))[0]).toMatchObject({
+      status: 'superseded',
+      resolvedAt: 2_000,
+    });
+    const observation = (await listRecommendationsForExercise('row'))[0];
+    expect(observation?.status).toBe('pending');
+    expect(observation?.resolvedAt).toBeUndefined();
+    expect((await listRecommendationsForExercise('squat'))[0]?.status).toBe('followed');
+    expect((await listRecommendationsForExercise('deadlift'))[0]?.status).toBe('pending');
+  });
+
+  it('allows an identical proposal after program supersession', async () => {
+    const proposal = signal({
+      exerciseId: 'bench',
+      code: 'range_completed',
+      nextLoadKg: 102.5,
+    });
+    await recordCoachSignals([proposal], { recommendedAt: 1_000 });
+    await supersedePendingLoadRecommendations(['bench'], 1_500);
+
+    const created = await recordCoachSignals([proposal], { recommendedAt: 2_000 });
+
+    expect(created).toHaveLength(1);
+    expect((await listRecommendationsForExercise('bench')).map((row) => row.status)).toEqual([
+      'pending',
+      'superseded',
+    ]);
   });
 });
 

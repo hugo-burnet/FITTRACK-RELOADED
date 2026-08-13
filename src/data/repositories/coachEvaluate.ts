@@ -1,11 +1,23 @@
 import { db } from '@/data/db';
 import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
-import { evaluateCoach, type CoachExerciseLine, type CoachSignal } from '@/lib/coach';
+import {
+  collectCoachSignals,
+  evaluateCoach,
+  pickSignals,
+  type CoachExerciseLine,
+  type CoachSignal,
+  type CoachSignalCode,
+} from '@/lib/coach';
 import { coachLineFromSource } from '@/lib/coach/fromWorkout';
 import { alive } from './base';
 import { recordCoachSignals, reconcileFollowedLoads } from './coachRecommendations';
 import { getOneRepMaxFormula } from './settings';
 import { getWorkoutDetail, workoutExerciseIdentityOf } from './workoutDetail';
+
+const PROGRAM_ALLOWED_CODES = new Set<CoachSignalCode>([
+  'intra_session_drop',
+  'long_rest',
+]);
 
 /**
  * Build coach history lines for the given exercise ids (completed sets only).
@@ -121,7 +133,16 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
     );
   }
 
-  return evaluateCoach([...history, ...current], { formula });
+  const lines = [...history, ...current];
+  if (detail.workout.programId === undefined) {
+    return evaluateCoach(lines, { formula });
+  }
+
+  return pickSignals(
+    collectCoachSignals(lines, { formula }).filter((signal) =>
+      PROGRAM_ALLOWED_CODES.has(signal.code),
+    ),
+  );
 }
 
 /**

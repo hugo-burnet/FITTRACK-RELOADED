@@ -2,6 +2,7 @@ import { db } from '@/data/db';
 import type { Program } from '@/data/types';
 import { resolveSchedule, shiftLocalDate, validateProgramDraft } from '@/lib/programs';
 import { alive, newEntity, touch } from './base';
+import { supersedePendingLoadRecommendations } from './coachRecommendations';
 
 export type ProgramRepositoryErrorCode =
   | 'program_not_found'
@@ -38,6 +39,8 @@ export async function activateProgram(programId: string): Promise<void> {
       db.programScheduleRevisions,
       db.programScheduleEntries,
       db.routines,
+      db.routineExercises,
+      db.coachRecommendations,
     ],
     async () => {
       const program = await db.programs.get(programId);
@@ -84,6 +87,11 @@ export async function activateProgram(programId: string): Promise<void> {
       }
       if (issues.length > 0) throw new ProgramRepositoryError('program_invalid');
 
+      const initialRoutineIds = [...new Set(initialSchedule.map((entry) => entry.routineId))];
+      const initialExerciseIds = alive(
+        await db.routineExercises.where('routineId').anyOf(initialRoutineIds).toArray(),
+      ).map((row) => row.exerciseId);
+      await supersedePendingLoadRecommendations(initialExerciseIds);
       await db.programs.put(touch(program, { status: 'active' }));
     },
   );

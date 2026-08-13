@@ -3,7 +3,9 @@ import { db } from '@/data/db';
 import type { Program, Workout } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { newEntity } from './base';
-import { createRoutine } from './routines';
+import { createCustomExercise } from './exercises';
+import { recordCoachSignals } from './coachRecommendations';
+import { addExercisesToRoutine, createRoutine } from './routines';
 import {
   ProgramRepositoryError,
   activateProgram,
@@ -131,6 +133,49 @@ describe('program lifecycle repository', () => {
     await expect(activateProgram(program.id)).rejects.toMatchObject({
       code: 'program_invalid',
     } satisfies Partial<ProgramRepositoryError>);
+  });
+
+  it('supersedes pending load proposals for every exercise in the initial split', async () => {
+    const exercises = await Promise.all(
+      ['Bench', 'Row'].map((name) =>
+        createCustomExercise({
+          name,
+          primaryMuscle: 'chest',
+          secondaryMuscles: [],
+          equipment: 'barbell',
+          measurementType: 'weight_reps',
+          isUnilateral: 0,
+        }),
+      ),
+    );
+    const routine = await createRoutine('Coach authority routine');
+    await addExercisesToRoutine(routine.id, exercises.map((exercise) => exercise.id));
+    const program = await createProgramDraft({
+      name: 'Coach authority',
+      startsAt: MONDAY,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, [week(0), week(1), week(2), week(3)]);
+    await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await recordCoachSignals(
+      exercises.map((exercise, index) => ({
+        exerciseId: exercise.id,
+        code: 'range_completed' as const,
+        severity: 40,
+        nextLoadKg: 100 + index * 10,
+        evidence: [],
+      })),
+      { recommendedAt: 1_000 },
+    );
+
+    await activateProgram(program.id);
+
+    const rows = await db.coachRecommendations.toArray();
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => row.status === 'superseded')).toBe(true);
+    expect(rows.every((row) => row.resolvedAt !== undefined)).toBe(true);
   });
 });
 

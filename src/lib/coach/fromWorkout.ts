@@ -15,7 +15,15 @@ function toCoachSet(set: WorkoutSet): CoachSetInput {
 }
 
 export interface CoachLineSource {
-  workout: Pick<Workout, 'id' | 'startedAt' | 'deloadPercent' | 'importSource'>;
+  workout: Pick<
+    Workout,
+    | 'id'
+    | 'startedAt'
+    | 'programId'
+    | 'programIsDeload'
+    | 'deloadPercent'
+    | 'importSource'
+  >;
   exerciseId: string;
   measurementType: MeasurementType;
   equipment: Exercise['equipment'];
@@ -29,6 +37,8 @@ export function coachLineFromSource(source: CoachLineSource): CoachExerciseLine 
     exerciseId: source.exerciseId,
     workoutId: source.workout.id,
     workoutStartedAt: source.workout.startedAt,
+    programId: source.workout.programId,
+    programIsDeload: source.workout.programIsDeload,
     deloadPercent: source.workout.deloadPercent,
     importSource: source.workout.importSource,
     measurementType: source.measurementType,

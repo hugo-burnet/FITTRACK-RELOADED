@@ -137,6 +137,142 @@ describe('evaluateCoachForWorkout', () => {
     ]);
   });
 
+  it('does not emit a numeric proposal for a programmed workout', async () => {
+    const startedAt = Date.UTC(2026, 7, 10, 10);
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: '',
+        name: 'Programmed',
+        status: 'active',
+        startedAt,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: 'program',
+      }),
+      id: 'programmed',
+    };
+    const row: WorkoutExercise = {
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 'programmed-row',
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add(row);
+    await db.workoutSets.bulkAdd(
+      [0, 1, 2].map((order) => ({
+        ...newEntity<WorkoutSet>({
+          workoutExerciseId: row.id,
+          exerciseId: exercise.id,
+          workoutId: workout.id,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight: 100,
+          reps: 12,
+          targetReps: 8,
+          targetRepsMax: 12,
+          isCompleted: 1,
+          performedAt: startedAt + order * 90_000,
+        }),
+        id: `programmed-set-${order}`,
+      })),
+    );
+
+    expect(await evaluateCoachForWorkout(workout.id)).toEqual([]);
+  });
+
+  it('keeps a rep-drop observation when a stronger program-owned signal also fires', async () => {
+    const previousAt = Date.UTC(2026, 7, 4, 10);
+    const currentAt = Date.UTC(2026, 7, 8, 10);
+    const previous: Workout = {
+      ...newEntity<Workout>({
+        routineId: '',
+        name: 'Previous',
+        status: 'completed',
+        startedAt: previousAt,
+        endedAt: previousAt + 3_600_000,
+        durationSeconds: 3_600,
+      }),
+      id: 'previous-miss',
+    };
+    const current: Workout = {
+      ...newEntity<Workout>({
+        routineId: '',
+        name: 'Programmed',
+        status: 'active',
+        startedAt: currentAt,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: 'program',
+      }),
+      id: 'programmed-drop',
+    };
+    const rows: WorkoutExercise[] = [previous, current].map((workout) => ({
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: `${workout.id}-row`,
+    }));
+    const previousSets: WorkoutSet[] = [0, 1].map((order) => ({
+      ...newEntity<WorkoutSet>({
+        workoutExerciseId: rows[0]!.id,
+        exerciseId: exercise.id,
+        workoutId: previous.id,
+        order,
+        setType: 'normal',
+        side: 'both',
+        weight: 100,
+        reps: 6,
+        targetReps: 8,
+        targetRepsMax: 12,
+        isCompleted: 1,
+        performedAt: previousAt + order * 90_000,
+      }),
+      id: `previous-miss-set-${order}`,
+    }));
+    const currentSets: WorkoutSet[] = [12, 5].map((reps, order) => ({
+      ...newEntity<WorkoutSet>({
+        workoutExerciseId: rows[1]!.id,
+        exerciseId: exercise.id,
+        workoutId: current.id,
+        order,
+        setType: 'normal',
+        side: 'both',
+        weight: 100,
+        reps,
+        targetReps: 8,
+        targetRepsMax: 12,
+        isCompleted: 1,
+        performedAt: currentAt + order * 240_000,
+      }),
+      id: `programmed-drop-set-${order}`,
+    }));
+    await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
+      await db.workouts.bulkAdd([previous, current]);
+      await db.workoutExercises.bulkAdd(rows);
+      await db.workoutSets.bulkAdd([...previousSets, ...currentSets]);
+    });
+
+    expect(await evaluateCoachForWorkout(current.id)).toEqual([
+      expect.objectContaining({ code: 'intra_session_drop', exerciseId: exercise.id }),
+    ]);
+  });
+
   it('persists recommendations on finalize and skips a deload plateau false positive', async () => {
     await seedSession('w1', Date.UTC(2026, 7, 1), 5, 100);
     await seedSession('w2', Date.UTC(2026, 7, 4), 5, 100);
@@ -150,7 +286,7 @@ describe('evaluateCoachForWorkout', () => {
         startedAt,
         endedAt: 0,
         durationSeconds: 0,
-        deloadPercent: 80,
+        programIsDeload: 1,
       }),
       id: 'deload',
     };

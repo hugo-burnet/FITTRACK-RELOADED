@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { resetDb } from '@/test/resetDb';
 import { createCustomExercise, deleteExercise } from './exercises';
+import { recordCoachSignals } from './coachRecommendations';
 import {
   RoutineReferencedError,
   addExercisesToRoutine,
@@ -365,6 +366,43 @@ describe('routine versions', () => {
       draft.id,
       other.id,
     ]);
+  });
+
+  it('supersedes load proposals only for exercises introduced by the published version', async () => {
+    const { routine: source, exercises: existing } = await routineWith('PoussÃ©e', ['DÃ©veloppÃ©']);
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: new Date(2026, 7, 10).getTime(),
+      durationWeeks: 4,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: source.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const draft = await createRoutineVersionDraft(source.id);
+    const introduced = await exercise('Ã‰cartÃ©');
+    await addExercisesToRoutine(draft.id, [introduced.id]);
+    await recordCoachSignals(
+      [existing[0]!, introduced].map((item, index) => ({
+        exerciseId: item.id,
+        code: 'range_completed' as const,
+        severity: 40,
+        nextLoadKg: 100 + index * 10,
+        evidence: [],
+      })),
+      { recommendedAt: 1_000 },
+    );
+
+    await publishRoutineVersion({
+      draftRoutineId: draft.id,
+      programId: program.id,
+      effectiveFromWeekIndex: 2,
+    });
+
+    const byExercise = new Map(
+      (await db.coachRecommendations.toArray()).map((row) => [row.exerciseId, row]),
+    );
+    expect(byExercise.get(existing[0]!.id)?.status).toBe('pending');
+    expect(byExercise.get(introduced.id)?.status).toBe('superseded');
   });
 
   it('rolls back publication when no source-lineage entry exists in the effective split', async () => {

@@ -44,6 +44,8 @@ export interface CoachExerciseLine {
   workoutId: string;
   /** Session start (or any stable workout clock) for ordering history. */
   workoutStartedAt: number;
+  programId?: string;
+  programIsDeload?: 0 | 1;
   deloadPercent?: number;
   importSource?: string;
   measurementType: MeasurementType;

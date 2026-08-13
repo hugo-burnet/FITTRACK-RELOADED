@@ -8,6 +8,7 @@ import type {
 } from '@/data/types';
 import { programPosition, resolveSchedule } from '@/lib/programs';
 import { alive, newEntity, touch } from './base';
+import { supersedePendingLoadRecommendations } from './coachRecommendations';
 import { ProgramRepositoryError } from './programLifecycle';
 
 const byVersion = (left: Routine, right: Routine): number =>
@@ -192,6 +193,8 @@ export async function publishRoutineVersion(
       db.programScheduleRevisions,
       db.programScheduleEntries,
       db.workouts,
+      db.routineExercises,
+      db.coachRecommendations,
     ],
     async () => {
       const [draft, program] = await Promise.all([
@@ -285,6 +288,19 @@ export async function publishRoutineVersion(
         throw new ProgramRepositoryError('routine_missing');
       }
 
+      const previousRoutineIds = [...new Set(effectiveEntries.map((entry) => entry.routineId))];
+      const nextRoutineIds = [...new Set(replacementEntries.map((entry) => entry.routineId))];
+      const [previousExerciseRows, nextExerciseRows] = await Promise.all([
+        db.routineExercises.where('routineId').anyOf(previousRoutineIds).toArray(),
+        db.routineExercises.where('routineId').anyOf(nextRoutineIds).toArray(),
+      ]);
+      const previousExerciseIds = new Set(
+        alive(previousExerciseRows).map((row) => row.exerciseId),
+      );
+      const introducedExerciseIds = alive(nextExerciseRows)
+        .map((row) => row.exerciseId)
+        .filter((exerciseId) => !previousExerciseIds.has(exerciseId));
+
       const published = touch(draft, { versionState: 'published' });
       await db.routines.put(published);
       await writeCompleteScheduleRevision(
@@ -293,6 +309,7 @@ export async function publishRoutineVersion(
         replacementEntries,
         revisions,
       );
+      await supersedePendingLoadRecommendations(introducedExerciseIds);
       return published;
     },
   );

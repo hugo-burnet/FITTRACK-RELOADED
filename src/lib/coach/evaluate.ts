@@ -44,7 +44,10 @@ function completedWorkingSets(sets: readonly CoachSetInput[]): CoachSetInput[] {
 }
 
 function isDeloadLine(line: CoachExerciseLine): boolean {
-  return typeof line.deloadPercent === 'number' && line.deloadPercent > 0 && line.deloadPercent < 100;
+  return line.programIsDeload === 1 ||
+    (typeof line.deloadPercent === 'number' &&
+      line.deloadPercent > 0 &&
+      line.deloadPercent < 100);
 }
 
 /**
