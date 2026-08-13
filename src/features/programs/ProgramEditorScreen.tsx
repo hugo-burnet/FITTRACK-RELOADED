@@ -418,25 +418,28 @@ export function ProgramEditorScreen() {
               name: t(STEP_NAME[step]),
             })}
           >
-            <p className="text-sm font-semibold text-[var(--text-1)]">
+            {/*
+              La phrase nomme déjà l'étape courante : répéter les trois noms en
+              dessous, c'est écrire « Semaines » deux fois. La progression se
+              montre, elle ne se relit pas — d'où le rail, le même trait d'accent
+              que la liste des séances de la semaine.
+            */}
+            <p aria-current="step" className="text-sm font-semibold text-[var(--text-1)]">
               {t('program.stepProgress', {
                 current: STEP_NUMBER[step],
                 name: t(STEP_NAME[step]),
               })}
             </p>
-            <ol className="mt-3 flex gap-4">
+            <ol aria-hidden="true" className="mt-2 flex gap-1.5">
               {([1, 2, 3] as const).map((n) => (
                 <li
                   key={n}
-                  aria-current={n === STEP_NUMBER[step] ? 'step' : undefined}
-                  className={
-                    n === STEP_NUMBER[step]
-                      ? 'text-[var(--text-1)]'
-                      : 'text-[var(--text-2)]'
-                  }
-                >
-                  {n}
-                </li>
+                  className={`h-0.5 flex-1 rounded-full ${
+                    n <= STEP_NUMBER[step]
+                      ? 'bg-[var(--color-accent)]'
+                      : 'bg-[var(--border)]'
+                  }`}
+                />
               ))}
             </ol>
           </nav>

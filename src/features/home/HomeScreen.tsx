@@ -6,7 +6,7 @@ import { t } from '@/i18n/fr';
 import { ActionBand, Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
 import { HomeBodyCard } from './HomeBodyCard';
-import { HomeProgramCard } from './HomeProgramCard';
+import { ProgramHeroCard } from '@/features/programs/ProgramHeroCard';
 import { HomeRecentWorkouts } from './HomeRecentWorkouts';
 import { HomeStatsIsland } from './HomeStatsIsland';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
@@ -86,7 +86,7 @@ export function HomeScreen() {
         {state.status === 'ready' && (
           <>
             {state.data.activeProgram !== null ? (
-              <HomeProgramCard program={state.data.activeProgram} disabled={active != null} />
+              <ProgramHeroCard program={state.data.activeProgram} disabled={active != null} />
             ) : (
               <HomeSuggestionCard
                 suggestion={state.data.suggestedRoutine}

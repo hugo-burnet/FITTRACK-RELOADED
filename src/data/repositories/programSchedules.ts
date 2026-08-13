@@ -63,6 +63,72 @@ export async function replaceProgramWeeks(
   });
 }
 
+/**
+ * Rewrite the weeks of a block from `effectiveFromWeekIndex` onwards, sealing
+ * everything before it. Same boundary as a schedule revision: the past is not
+ * rewritten, it is kept — the rows before the index are not even touched, so a
+ * sealed week keeps its identity and its `updatedAt`.
+ *
+ * Accepts a draft (index 0 rewrites everything, like `replaceProgramWeeks`) and
+ * an **active** block, which is the whole point: falling ill in week 3 must let
+ * you turn week 4 into a Décharge. Sessions already created snapshot their own
+ * `programPhase` / `programLoadIndex`, so reclassifying a week never rewrites
+ * history — and a week that already carries a workout is closed anyway.
+ *
+ * `weeks` must describe the **entire** block; entries before the index are read
+ * for nothing and may be passed unchanged.
+ */
+export async function replaceProgramWeeksFrom(
+  programId: string,
+  effectiveFromWeekIndex: number,
+  weeks: readonly ProgramWeekInput[],
+): Promise<void> {
+  await db.transaction('rw', [db.programs, db.programWeeks, db.workouts], async () => {
+    const program = await db.programs.get(programId);
+    if (program === undefined || program.deletedAt !== 0) {
+      throw new ProgramRepositoryError('program_not_found');
+    }
+    if (program.status === 'completed') throw new ProgramRepositoryError('program_invalid');
+
+    const isValidIndex =
+      Number.isInteger(effectiveFromWeekIndex) &&
+      effectiveFromWeekIndex >= 0 &&
+      effectiveFromWeekIndex < program.durationWeeks;
+    if (!isValidIndex) throw new ProgramRepositoryError('program_invalid');
+
+    const indices = new Set(weeks.map((week) => week.weekIndex));
+    const describesWholeBlock =
+      weeks.length === program.durationWeeks &&
+      indices.size === weeks.length &&
+      Array.from({ length: program.durationWeeks }, (_, weekIndex) => weekIndex).every(
+        (weekIndex) => indices.has(weekIndex),
+      );
+    if (!describesWholeBlock) throw new ProgramRepositoryError('program_invalid');
+
+    // A week that already trained is closed, whatever the caller asks.
+    const trainedWeeks = new Set(
+      alive(await db.workouts.toArray())
+        .filter((workout) => workout.programId === programId)
+        .map((workout) => workout.programWeekIndex)
+        .filter((weekIndex): weekIndex is number => weekIndex !== undefined),
+    );
+    const rewriting = weeks.filter((week) => week.weekIndex >= effectiveFromWeekIndex);
+    if (rewriting.some((week) => trainedWeeks.has(week.weekIndex))) {
+      throw new ProgramRepositoryError('program_invalid');
+    }
+
+    const existing = alive(await db.programWeeks.where('programId').equals(programId).toArray());
+    const now = Date.now();
+    const replaced = existing.filter((row) => row.weekIndex >= effectiveFromWeekIndex);
+    if (replaced.length > 0) {
+      await db.programWeeks.bulkPut(replaced.map((row) => touch(row, { deletedAt: now })));
+    }
+    await db.programWeeks.bulkAdd(
+      rewriting.map((week) => newEntity<ProgramWeek>({ ...week, programId })),
+    );
+  });
+}
+
 function validateScheduleInput(
   effectiveFromWeekIndex: number,
   durationWeeks: number,

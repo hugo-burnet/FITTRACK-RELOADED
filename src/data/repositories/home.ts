@@ -181,6 +181,17 @@ async function readHomeProgramProjection(at: number): Promise<HomeProgramProject
     return { ...base, pick: { kind: 'none' } };
 }
 
+/**
+ * The active block, already ranked. Exported so the Programmes list can show the
+ * same hero as home without re-running `pickProgramSession` on its own — two
+ * screens ranking the same schedule is two chances to disagree.
+ */
+export async function getActiveProgramProjection(
+  at = Date.now(),
+): Promise<HomeProgramProjection | null> {
+  return readHomeProgramProjection(at);
+}
+
 export async function getHomeDashboard(): Promise<HomeDashboardData> {
   const [completed, routines, weeklyGoalHistory, activeProgram] = await Promise.all([
     listCompletedWorkouts(),

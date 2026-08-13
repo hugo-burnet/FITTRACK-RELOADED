@@ -534,6 +534,13 @@ const fr = {
     completeHint: 'Arrêter les prochaines séances sans effacer les données.',
     completeTitle: 'Terminer le bloc',
     completeBody: 'Les semaines, le split et les séances restent dans ton historique.',
+    // Terminer ≠ supprimer : l'un arrête le bloc, l'autre l'efface. Le corps
+    // dit ce qui reste, parce que c'est la seule question qu'on se pose ici.
+    deleteAction: 'Supprimer le bloc',
+    deleteHint: 'Effacer le bloc. Les séances déjà faites ne bougent pas.',
+    deleteTitle: 'Supprimer le bloc',
+    deleteBody:
+      'Les séances déjà faites restent dans ton historique. Le split et les semaines de ce bloc disparaissent.',
     detailReadError: 'Le suivi n’a pas pu être lu. Tes données restent sur cet appareil.',
     actionError: 'L’action n’a pas pu être enregistrée. Réessaie.',
     newTitle: 'Nouveau bloc',
@@ -600,6 +607,15 @@ const fr = {
       deload: 'Charge et volume réduits.',
       return: 'Retour à la prescription, sans forcer.',
       test: 'Tentative contrôlée, seulement si déjà autorisée.',
+    },
+    // Une recette pose un trajet, elle ne le verrouille pas : chaque semaine
+    // reste modifiable juste en dessous.
+    recipeIntro: 'Poser un trajet, puis le retoucher.',
+    recipeApply: 'Appliquer la recette {name}',
+    recipe: {
+      hypertrophy: 'Hypertrophie',
+      strength: 'Force',
+      return: 'Reprise',
     },
     saveWeek: 'Enregistrer la semaine',
     errorBasics: 'Renseigne un nom, un lundi de départ et une durée de 4 à 12 semaines.',
