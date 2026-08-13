@@ -6,23 +6,29 @@ interface Props {
   open: boolean;
   hasStarted: boolean;
   canComplete: boolean;
+  /** A completed block is read-only: neither its split nor its dates move again. */
+  canEdit: boolean;
   onClose: () => void;
   onEditFuture: () => void;
   onShift: (days: number) => Promise<void>;
   onComplete: () => Promise<void>;
+  onDelete: () => Promise<void>;
 }
 
 export function ProgramActionsSheet({
   open,
   hasStarted,
   canComplete,
+  canEdit,
   onClose,
   onEditFuture,
   onShift,
   onComplete,
+  onDelete,
 }: Props) {
   const [shiftOpen, setShiftOpen] = useState(false);
   const [completeOpen, setCompleteOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [weeks, setWeeks] = useState('');
   const [working, setWorking] = useState(false);
 
@@ -36,16 +42,20 @@ export function ProgramActionsSheet({
         onClose={onClose}
         title={t('program.actionsTitle')}
         actions={[
-          {
-            label: t('program.editFuture'),
-            hint: t('program.editFutureHint'),
-            onSelect: onEditFuture,
-          },
-          {
-            label: t('program.shiftAction'),
-            hint: t('program.shiftActionHint'),
-            onSelect: () => setShiftOpen(true),
-          },
+          ...(canEdit
+            ? [
+                {
+                  label: t('program.editFuture'),
+                  hint: t('program.editFutureHint'),
+                  onSelect: onEditFuture,
+                },
+                {
+                  label: t('program.shiftAction'),
+                  hint: t('program.shiftActionHint'),
+                  onSelect: () => setShiftOpen(true),
+                },
+              ]
+            : []),
           ...(canComplete
             ? [
                 {
@@ -56,6 +66,14 @@ export function ProgramActionsSheet({
                 },
               ]
             : []),
+          // Toujours proposée, y compris sur un bloc terminé : c'est le seul
+          // moyen de faire le ménage, et l'historique n'y perd rien.
+          {
+            label: t('program.deleteAction'),
+            hint: t('program.deleteHint'),
+            danger: true,
+            onSelect: () => setDeleteOpen(true),
+          },
         ]}
       />
 
@@ -103,6 +121,16 @@ export function ProgramActionsSheet({
         confirmLabel={t('program.completeAction')}
         danger
         onConfirm={() => void onComplete()}
+      />
+
+      <ConfirmSheet
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        title={t('program.deleteTitle')}
+        body={t('program.deleteBody')}
+        confirmLabel={t('program.deleteAction')}
+        danger
+        onConfirm={() => void onDelete()}
       />
     </>
   );

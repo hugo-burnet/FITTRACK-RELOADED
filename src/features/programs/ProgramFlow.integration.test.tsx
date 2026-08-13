@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -58,6 +58,42 @@ function renderProgramFlow(initialEntry = '/programs/new') {
   );
 }
 
+/** Monday of the civil week `weeksBack` weeks ago, at local midnight. */
+function mondayWeeksAgo(weeksBack: number): number {
+  const today = new Date();
+  const isoDay = today.getDay() === 0 ? 7 : today.getDay();
+  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  monday.setDate(monday.getDate() - (isoDay - 1) - weeksBack * 7);
+  return monday.getTime();
+}
+
+/**
+ * An eight-week block already in its fifth week: the editor seals S1–S4 and
+ * offers S5 as the first effective week. Levels are unique per week so a row
+ * can be recognised by its own number.
+ */
+async function createEditableActiveProgram() {
+  const routine = await createRoutine('Force en cours');
+  const program = await createProgramDraft({
+    name: 'Bloc en cours',
+    startsAt: mondayWeeksAgo(4),
+    durationWeeks: 8,
+  });
+  await createScheduleRevision(program.id, 0, [
+    { routineId: routine.id, dayOfWeek: 1, order: 0 },
+  ]);
+  await replaceProgramWeeks(
+    program.id,
+    Array.from({ length: 8 }, (_, weekIndex) => ({
+      weekIndex,
+      loadIndex: 70 + weekIndex * 5,
+      phase: 'construction' as const,
+    })),
+  );
+  await activateProgram(program.id);
+  return { program, routine };
+}
+
 describe('parcours de création d’un programme', () => {
   beforeEach(resetDb);
   afterEach(() => vi.restoreAllMocks());
@@ -90,13 +126,31 @@ describe('parcours de création d’un programme', () => {
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
     expect(await screen.findByText('Étape 3 sur 3 · Semaines')).toBeVisible();
+    // L'étape se lit une fois : la phrase la nomme, le rail la situe. Pas de
+    // seconde liste de noms à relire, et rien de cliquable.
+    const stepper = screen.getByRole('navigation', { name: 'Étape 3 sur 3 · Semaines' });
+    expect(within(stepper).queryAllByRole('listitem')).toHaveLength(0);
+    expect(within(stepper).getByText('Étape 3 sur 3 · Semaines')).toBeVisible();
     expect(screen.queryByRole('button', { name: 'Cadre' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Split' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Semaines' })).not.toBeInTheDocument();
 
+    // Une recette pose le trajet — puis la semaine 5 le corrige à la main, ce
+    // qui relâche la recette : elle n'est pas un état, juste un point de départ.
+    await user.click(screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }));
+    expect(
+      screen.getByRole('button', { name: 'Modifier la semaine 4, 04 — 60 % · Décharge' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+
     await user.click(await screen.findByRole('button', { name: /Modifier la semaine 5/ }));
     await user.selectOptions(screen.getByRole('combobox', { name: 'Phase' }), 'deload');
     await user.click(screen.getByRole('button', { name: 'Enregistrer la semaine' }));
+    expect(
+      screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    ).toHaveAttribute('aria-pressed', 'false');
     expect(
       screen.getByRole('button', {
         name: 'Modifier la semaine 5, 05 — 60 % · Décharge',
@@ -288,6 +342,103 @@ describe('parcours de création d’un programme', () => {
     expect(detail?.revisions[1]?.entries[0]?.routineId).toBe(replacement.id);
   });
 
+  it('édite un actif par sections empilées, sans nav d’étapes', async () => {
+    const { program } = await createEditableActiveProgram();
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    // Modifier n'est pas créer : les trois sections sont déjà là, il n'y a plus
+    // d'étape à compter. Le rail et la phrase « Étape n sur 3 » restent sur
+    // /programs/new.
+    expect(
+      await screen.findByRole('combobox', { name: 'Semaine d’entrée en vigueur' }),
+    ).toBeVisible();
+    expect(screen.queryByRole('navigation', { name: /^Étape/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/^Étape \d sur 3/)).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Split' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Semaines' })).toBeVisible();
+    // Le cadre d'un actif est posé : son nom et sa durée ne se rejouent pas ici.
+    expect(screen.queryByRole('textbox', { name: 'Nom du bloc' })).not.toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 5' })).toBeVisible();
+  });
+
+  it('applique une recette à partir de la semaine 5 sans toucher aux quatre premières', async () => {
+    const { program } = await createEditableActiveProgram();
+    const before = await getProgramDetail(program.id);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    );
+
+    // À l'écran : les semaines scellées gardent leur niveau et ne s'ouvrent pas.
+    for (const [index, level] of ['70 %', '75 %', '80 %', '85 %'].entries()) {
+      expect(screen.getByText(level)).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: new RegExp(`Modifier la semaine ${index + 1},`) }),
+      ).not.toBeInTheDocument();
+    }
+    // Le motif est ancré au bloc, pas à la retouche : S5 reprend au début du
+    // motif de quatre semaines, S8 est la Décharge.
+    expect(
+      screen.getByRole('button', { name: 'Modifier la semaine 5, 05 — 100 % · Construction' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Modifier la semaine 8, 08 — 60 % · Décharge' }),
+    ).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 5' }));
+    expect(await screen.findByRole('status', { name: 'route actuelle' })).toHaveTextContent(
+      `/programs/${program.id}`,
+    );
+
+    // En base : les lignes des quatre premières semaines ne sont même pas
+    // réécrites — mêmes identités, mêmes valeurs.
+    const after = await getProgramDetail(program.id);
+    expect(after?.weeks).toHaveLength(8);
+    expect(after?.weeks.slice(0, 4)).toEqual(before?.weeks.slice(0, 4));
+    expect(after?.weeks.slice(4).map(({ phase, loadIndex }) => ({ phase, loadIndex }))).toEqual([
+      { phase: 'construction', loadIndex: 100 },
+      { phase: 'progression', loadIndex: 105 },
+      { phase: 'overload', loadIndex: 110 },
+      { phase: 'deload', loadIndex: 60 },
+    ]);
+  });
+
+  it('enregistre le brouillon sans l’activer, puis l’active depuis la fiche', async () => {
+    const routine = await createRoutine('Force brouillon');
+    const program = await createProgramDraft({
+      name: 'Bloc à finir',
+      startsAt: mondayWeeksAgo(-1),
+      durationWeeks: 4,
+    });
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    // Sans split ni semaines, le brouillon ne s'active pas : il se termine.
+    await user.click(await screen.findByRole('button', { name: 'Continuer la création' }));
+    await user.selectOptions(
+      await screen.findByRole('combobox', { name: 'Routine de la séance 1' }),
+      routine.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Appliquer la recette Force' }));
+    await user.click(screen.getByRole('button', { name: 'Enregistrer le brouillon' }));
+
+    await waitFor(async () => {
+      const saved = await getProgramDetail(program.id);
+      expect(saved?.program.status).toBe('draft');
+      expect(saved?.weeks).toHaveLength(4);
+      expect(saved?.revisions[0]?.entries[0]?.routineId).toBe(routine.id);
+    });
+
+    // L'activation vit sur la fiche, là où l'on voit ce qu'on lance.
+    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+    await waitFor(async () => {
+      expect((await getProgramDetail(program.id))?.program.status).toBe('active');
+    });
+  });
+
   it('distingue une erreur de lecture de l’absence et du chargement', async () => {
     const read = vi.spyOn(programsRepository, 'getProgramDetail').mockRejectedValueOnce(
       new Error('read failed'),
@@ -454,6 +605,36 @@ describe('suivi du bloc courant', () => {
     ).toBeDisabled();
   });
 
+  it('supprime le bloc depuis la fiche sans toucher aux séances de l’historique', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const { workout } = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_NOW,
+    });
+    await finishWorkout(workout.id);
+
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: /Supprimer le bloc/ }));
+    // La feuille de confirmation dit ce qui reste avant de demander de confirmer.
+    expect(
+      await screen.findByText(/Les séances déjà faites restent dans ton historique/),
+    ).toBeVisible();
+    const sheet = await screen.findByRole('dialog', { name: 'Supprimer le bloc' });
+    await user.click(within(sheet).getByRole('button', { name: 'Supprimer le bloc' }));
+
+    await waitFor(async () => {
+      expect(await listPrograms()).toHaveLength(0);
+    });
+    const stored = await db.workouts.get(workout.id);
+    expect(stored).toMatchObject({ id: workout.id, deletedAt: 0, programId: program.id });
+    // Retour à la liste, désormais vide — la fiche du bloc n'existe plus.
+    expect(await screen.findByText(/Aucun bloc pour l’instant/)).toBeVisible();
+  });
+
   it('démarre sans repli 1RM : identity copie les cibles de la routine', async () => {
     const movement = await createCustomExercise({
       name: 'Squat sans record',
@@ -592,7 +773,12 @@ describe('suivi du bloc courant', () => {
       expect(after?.revisions).toEqual(before?.revisions);
     });
     expect(await screen.findByText('Terminé')).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Options du bloc' })).not.toBeInTheDocument();
+    // Le menu reste, mais il ne propose plus qu'une chose : un bloc terminé ne
+    // se modifie ni ne se décale, il se supprime.
+    await user.click(screen.getByRole('button', { name: 'Options du bloc' }));
+    expect(await screen.findByRole('button', { name: /Supprimer le bloc/ })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Modifier à partir de/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Décaler le bloc/ })).not.toBeInTheDocument();
   });
 
   it('isole une routine manquante à sa ligne et garde les autres séances disponibles', async () => {
@@ -657,10 +843,18 @@ describe('liste des blocs', () => {
 
     renderProgramFlow('/programs');
 
-    expect(await screen.findByText('Bloc brouillon')).toBeVisible();
+    // Le bloc actif est le héros : il se nomme et dit sa semaine, sans étiquette
+    // de statut — il est le seul à porter un bouton. Les autres restent des
+    // rangées, avec la leur.
+    expect(await screen.findByText('Bloc actif')).toBeVisible();
+    expect(screen.getByText(/^Semaine \d+ sur 4$/)).toBeVisible();
+    expect(screen.queryByText('Actif')).not.toBeInTheDocument();
+    // Aucune séance en cours : le bouton doit être vivant. `getActiveWorkout`
+    // renvoie `undefined`, et le comparer à `null` le grisait pour toujours.
+    expect(screen.getByRole('button', { name: /^Démarrer/ })).toBeEnabled();
+
+    expect(screen.getByText('Bloc brouillon')).toBeVisible();
     expect(screen.getByText('Brouillon')).toBeVisible();
-    expect(screen.getByText('Bloc actif')).toBeVisible();
-    expect(screen.getByText('Actif')).toBeVisible();
     expect(screen.getByText('Bloc terminé')).toBeVisible();
     expect(screen.getByText('Terminé')).toBeVisible();
   });

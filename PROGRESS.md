@@ -2,7 +2,52 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Release Android v0.6.0 — intention de bloc, le Coach tranche**).
+**Dernière mise à jour :** 2026-08-13 (**Release Android v0.7.0 — front Programmes : recettes, suppression, éditeur empilé**).
+
+## Front Programmes (v0.7.0)
+
+L’actif est le héros de la liste (`ProgramHeroCard`, `leadWith`), les autres blocs
+restent des rangées. Suppression d’un bloc depuis le menu ⋯ sur les trois statuts,
+avec confirmation : les séances déjà faites ne bougent pas de l’historique.
+
+Trois recettes (Hypertrophie / Force / Reprise) posent le trajet des semaines :
+motif de 4 semaines répété puis tronqué, **ancré au `weekIndex`** du bloc, niveaux
+lus dans `SUGGESTED_LOAD_INDEX`. Rien n’est persisté : une recette est un point de
+départ, pas un état — retoucher une semaine relâche la chip.
+
+**L’édition n’est plus un wizard.** Le wizard (`Étape n sur 3 · Nom` + rail) reste
+sur `/programs/new` seulement. `/programs/:id/edit` est un défilement de sections :
+
+- Brouillon : Cadre, Split, Semaines éditables → « Enregistrer le brouillon ».
+  L’activation a quitté l’éditeur : elle vit sur la fiche.
+- Actif : le sélecteur de semaine d’entrée en vigueur gouverne **aussi** les
+  semaines — `< effectiveFromWeekIndex` s’affiche en lecture seule (une rangée,
+  pas un bouton grisé). « Utiliser à partir de la semaine {n} » écrit
+  `createScheduleRevision` + `replaceProgramWeeksFrom` : les lignes scellées ne
+  sont pas réécrites, elles gardent leur identité. Une seule règle de bornage,
+  lue deux fois, plutôt que deux règles qui divergent.
+- Terminé : pas d’entrée éditeur.
+
+Fiche : brouillon incomplet → « Continuer la création » ; complet → « Activer le
+bloc », avec la feuille « Remplacer le bloc actif » si un autre tourne déjà.
+
+Pas d’arc de `loadIndex` au-dessus de la liste : il dupliquait la liste. L’arc se
+lit dans la colonne des niveaux. `loadIndex` n’est toujours un multiplicateur
+nulle part.
+
+Piège consigné : `getActiveWorkout()` renvoie `undefined`, pas `null` — comparer
+à `null` passe le typecheck et grise le bouton pour toujours.
+
+`ProgramEditorScreen` est passé de 517 à 359 lignes (`programEditorModel.ts`,
+`useProgramEditorData.ts`, `ProgramStepNav`, `ProgramEffectiveWeekSelect`).
+Reste au-dessus des ~300 de la convention : le découper plus loin demanderait un
+sac de 12 props, ce qui coûterait plus que ça ne rapporte.
+
+1504 tests / 131 fichiers.
+
+---
+
+**Précédent :** 2026-08-13 (Release Android v0.6.0 — intention de bloc, le Coach tranche).
 
 Le % 1RM de semaine est mort. Une semaine porte `loadIndex` + `phase`. « 105 % »
 n’est plus une multiplication : c’est un niveau affiché. La routine reste le 100 %.

@@ -9,6 +9,11 @@ type Props = {
   onClick?: () => void;
   disabled?: boolean;
   /**
+   * Spoken name when the visible columns read well to the eye but poorly to the
+   * ear — a row split into number / phase / level says more as one sentence.
+   */
+  ariaLabel?: string;
+  /**
    * Turns the row into a checkbox. Left undefined it stays a plain button — a
    * row that is not selectable must not announce a checked state.
    */
@@ -28,6 +33,7 @@ export function ListRow({
   onClick,
   disabled,
   checked,
+  ariaLabel,
 }: Props) {
   const Element = onClick ? 'button' : 'div';
 
@@ -36,6 +42,7 @@ export function ListRow({
       type={onClick ? 'button' : undefined}
       role={checked === undefined ? undefined : 'checkbox'}
       aria-checked={checked}
+      aria-label={ariaLabel}
       onClick={onClick}
       disabled={onClick ? disabled : undefined}
       className={`flex min-h-14 w-full items-center gap-3 border-b border-[var(--border)]

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import {
@@ -7,131 +6,39 @@ import {
   activateProgram,
   createProgramDraft,
   createScheduleRevision,
-  getProgramDetail,
   replaceActiveProgram,
   replaceProgramWeeks,
+  replaceProgramWeeksFrom,
   updateProgramDraft,
 } from '@/data/repositories/programs';
-import type { ProgramDetail } from '@/data/repositories/programs';
-import { listRoutineSummaries } from '@/data/repositories/routines';
-import type { RoutineSummary } from '@/data/repositories/routines';
-import { listCompletedWorkouts } from '@/data/repositories/history';
-import { getActiveWorkout } from '@/data/repositories/workouts';
-import { PROGRAM_PHASES } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
-import {
-  MAX_LOAD_INDEX,
-  MIN_LOAD_INDEX,
-  programPosition,
-  resolveSchedule,
-} from '@/lib/programs';
-import { ActionBand, ConfirmSheet } from '@/ui';
+import { ActionBand, ConfirmSheet, SectionTitle } from '@/ui';
 import { ProgramBasicsStep } from './ProgramBasicsStep';
 import type { ProgramBasicsDraft } from './ProgramBasicsStep';
+import { ProgramEffectiveWeekSelect } from './ProgramEffectiveWeekSelect';
 import { ProgramSplitStep } from './ProgramSplitStep';
 import type { ProgramSplitDraftEntry } from './ProgramSplitStep';
+import { ProgramStepNav } from './ProgramStepNav';
+import type { ProgramEditorStep } from './ProgramStepNav';
 import { ProgramWeeksStep } from './ProgramWeeksStep';
 import type { ProgramWeekDraft } from './ProgramWeeksStep';
-
-type ProgramEditorStep = 'basics' | 'split' | 'weeks';
-type ExistingProgramQuery =
-  | { status: 'not_requested' }
-  | { status: 'found'; detail: ProgramDetail; programWorkoutWeekIndexes: number[] }
-  | { status: 'not_found' }
-  | { status: 'error' };
-type RoutinesQuery =
-  | { status: 'ready'; routines: RoutineSummary[] }
-  | { status: 'error' };
-
-const STEP_NUMBER: Record<ProgramEditorStep, number> = { basics: 1, split: 2, weeks: 3 };
-const STEP_NAME: Record<ProgramEditorStep, TranslationKey> = {
-  basics: 'program.stepBasics',
-  split: 'program.stepSplit',
-  weeks: 'program.stepWeeks',
-};
-
-const emptySplit = (): ProgramSplitDraftEntry[] => [
-  { routineId: '', dayOfWeek: 1, order: 0 },
-];
-
-const defaultWeeks = (durationWeeks: number): ProgramWeekDraft[] =>
-  Array.from({ length: durationWeeks }, (_, weekIndex) => ({
-    weekIndex,
-    loadIndex: 100,
-    phase: 'construction',
-  }));
-
-function formatLocalDate(timestamp: number): string {
-  if (timestamp <= 0) return '';
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function parseLocalDate(value: string): number {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (match === null) return 0;
-  const year = Number(match[1]);
-  const month = Number(match[2]) - 1;
-  const day = Number(match[3]);
-  const date = new Date(year, month, day);
-  if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return 0;
-  return date.getTime();
-}
-
-function orderedSplit(entries: ProgramSplitDraftEntry[]): ProgramSplitDraftEntry[] {
-  const orders = new Map<number, number>();
-  return entries.map((entry) => {
-    const order = orders.get(entry.dayOfWeek) ?? 0;
-    orders.set(entry.dayOfWeek, order + 1);
-    return { ...entry, order };
-  });
-}
-
-function splitForWeek(detail: ProgramDetail, weekIndex: number): ProgramSplitDraftEntry[] {
-  const entries = resolveSchedule(
-    detail.revisions.map(({ revision }) => revision),
-    detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
-    weekIndex,
-  );
-  return entries.length === 0
-    ? emptySplit()
-    : entries.map(({ routineId, dayOfWeek, order }) => ({ routineId, dayOfWeek, order }));
-}
-
-function effectiveWeekOptions(
-  detail: ProgramDetail,
-  programWorkoutWeekIndexes: readonly number[],
-  at: number,
-): number[] {
-  const latestRevisionWeek = detail.revisions.reduce(
-    (latest, { revision }) => Math.max(latest, revision.effectiveFromWeekIndex),
-    -1,
-  );
-  const position = programPosition(detail.program.startsAt, detail.program.durationWeeks, at);
-  if (position.phase === 'after') return [];
-  const workoutWeeks = new Set(programWorkoutWeekIndexes);
-
-  return Array.from({ length: detail.program.durationWeeks }, (_, weekIndex) => weekIndex).filter(
-    (weekIndex) => {
-      if (weekIndex < latestRevisionWeek) return false;
-      if (position.phase !== 'active') return true;
-      if (weekIndex < position.weekIndex) return false;
-      return weekIndex !== position.weekIndex || !workoutWeeks.has(weekIndex);
-    },
-  );
-}
-
-function repositoryErrorKey(error: unknown): TranslationKey {
-  if (error instanceof ProgramRepositoryError) {
-    if (error.code === 'another_program_active') return 'program.errorAnotherActive';
-    if (error.code === 'routine_missing') return 'program.errorRoutineMissing';
-  }
-  return 'program.errorSave';
-}
+import {
+  basicsIssue,
+  defaultWeeks,
+  effectiveWeekOptions,
+  emptySplit,
+  formatLocalDate,
+  orderedSplit,
+  parseLocalDate,
+  repositoryErrorKey,
+  resizeWeeks,
+  splitForWeek,
+  splitIssue,
+  weeksForBlock,
+  weeksIssue,
+} from './programEditorModel';
+import { useProgramEditorData } from './useProgramEditorData';
 
 export function ProgramEditorScreen() {
   const { id: routeProgramId } = useParams();
@@ -148,60 +55,21 @@ export function ProgramEditorScreen() {
   const [weeks, setWeeks] = useState<ProgramWeekDraft[]>(() => defaultWeeks(8));
   const [programId, setProgramId] = useState(routeProgramId ?? '');
   const [hydratedId, setHydratedId] = useState('');
-  const [hasPersistedWeeks, setHasPersistedWeeks] = useState(false);
   const [errorKey, setErrorKey] = useState<TranslationKey | null>(null);
   const [saving, setSaving] = useState(false);
   const [effectiveFromWeekIndex, setEffectiveFromWeekIndex] = useState<number | null>(null);
   const [replacementOpen, setReplacementOpen] = useState(false);
 
-  const existing = useLiveQuery<ExistingProgramQuery>(
-    async () => {
-      if (routeProgramId === undefined) return { status: 'not_requested' };
-      try {
-        const detail = await getProgramDetail(routeProgramId);
-        if (detail === null) return { status: 'not_found' };
-        const [completedWorkouts, activeWorkout] = await Promise.all([
-          listCompletedWorkouts(),
-          getActiveWorkout(),
-        ]);
-        const programWorkoutWeekIndexes = [
-          ...completedWorkouts,
-          ...(activeWorkout === undefined ? [] : [activeWorkout]),
-        ].flatMap((workout) =>
-          workout.programId === detail.program.id && workout.programWeekIndex !== undefined
-            ? [workout.programWeekIndex]
-            : [],
-        );
-        return { status: 'found', detail, programWorkoutWeekIndexes };
-      } catch {
-        return { status: 'error' };
-      }
-    },
-    [routeProgramId],
-  );
-  const routinesQuery = useLiveQuery<RoutinesQuery>(async () => {
-    try {
-      return { status: 'ready', routines: await listRoutineSummaries() };
-    } catch {
-      return { status: 'error' };
-    }
-  });
-  const routines = routinesQuery?.status === 'ready' ? routinesQuery.routines : undefined;
-  const routinesReadFailed = routinesQuery?.status === 'error';
+  // Éditer un bloc existant, c'est un défilement : les trois sections sont là,
+  // on répare celle qu'on veut. Le wizard ne sert qu'à la création, où l'ordre
+  // des questions est la seule chose qui rende le formulaire tenable.
+  const stacked = routeProgramId !== undefined;
+
+  const { existing, routines, routinesReadFailed, splitBlocked } =
+    useProgramEditorData(routeProgramId);
 
   if (routeProgramId !== undefined && existing?.status === 'found' && hydratedId !== routeProgramId) {
     const { detail, programWorkoutWeekIndexes } = existing;
-    const position = programPosition(
-      detail.program.startsAt,
-      detail.program.durationWeeks,
-      editorOpenedAt,
-    );
-    const hydrateWeekIndex =
-      position.phase === 'active'
-        ? position.weekIndex
-        : position.phase === 'before'
-          ? 0
-          : detail.program.durationWeeks - 1;
     const options = effectiveWeekOptions(detail, programWorkoutWeekIndexes, editorOpenedAt);
     const initialEffectiveWeekIndex = options[0] ?? null;
     setBasics({
@@ -210,22 +78,10 @@ export function ProgramEditorScreen() {
       durationWeeks: detail.program.durationWeeks,
     });
     setDateValue(formatLocalDate(detail.program.startsAt));
-    setSplit(splitForWeek(detail, initialEffectiveWeekIndex ?? hydrateWeekIndex));
-    setWeeks(
-      detail.weeks.length === detail.program.durationWeeks
-        ? detail.weeks.map(({ weekIndex, loadIndex, phase }) => ({
-            weekIndex,
-            loadIndex,
-            phase,
-          }))
-        : defaultWeeks(detail.program.durationWeeks),
-    );
-    setHasPersistedWeeks(detail.weeks.length > 0);
+    setSplit(splitForWeek(detail, initialEffectiveWeekIndex ?? 0));
+    setWeeks(weeksForBlock(detail));
     setProgramId(routeProgramId);
-    if (detail.program.status === 'active') {
-      setEffectiveFromWeekIndex(initialEffectiveWeekIndex);
-      setStep('split');
-    }
+    if (detail.program.status === 'active') setEffectiveFromWeekIndex(initialEffectiveWeekIndex);
     setHydratedId(routeProgramId);
   }
 
@@ -233,109 +89,46 @@ export function ProgramEditorScreen() {
   const activeEdit = existingDetail?.program.status === 'active';
   const availableEffectiveWeeks =
     activeEdit && existing?.status === 'found'
-      ? effectiveWeekOptions(
-          existing.detail,
-          existing.programWorkoutWeekIndexes,
-          editorOpenedAt,
-        )
+      ? effectiveWeekOptions(existing.detail, existing.programWorkoutWeekIndexes, editorOpenedAt)
       : [];
+  // Le passé scellé est la même semaine pour le split et pour les semaines.
+  const sealedBefore = activeEdit ? (effectiveFromWeekIndex ?? 0) : 0;
+
+  const leaveEditor = () => {
+    const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (index > 0) void navigate(-1);
+    else void navigate(stacked ? `/programs/${programId}` : '/programs');
+  };
 
   const goBack = () => {
     setErrorKey(null);
-    if (activeEdit) {
-      const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-      if (index > 0) void navigate(-1);
-      else void navigate(`/programs/${programId}`);
-    } else if (step === 'weeks') setStep('split');
+    if (stacked) leaveEditor();
+    else if (step === 'weeks') setStep('split');
     else if (step === 'split') setStep('basics');
-    else {
-      const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-      if (index > 0) void navigate(-1);
-      else void navigate('/programs');
-    }
+    else leaveEditor();
   };
 
-  const completeStep = async () => {
-    if (saving) return;
-    setErrorKey(null);
-
-    if (step === 'basics') {
-      const valid =
-        basics.name.trim().length > 0 &&
-        basics.startsAt > 0 &&
-        new Date(basics.startsAt).getDay() === 1 &&
-        Number.isInteger(basics.durationWeeks) &&
-        basics.durationWeeks >= 4 &&
-        basics.durationWeeks <= 12;
-      if (!valid) {
-        setErrorKey('program.errorBasics');
-        return;
-      }
-    } else if (step === 'split') {
-      if (
-        split.length === 0 ||
-        split.some(
-          (entry) => entry.routineId === '' || entry.dayOfWeek < 1 || entry.dayOfWeek > 7,
-        )
-      ) {
-        setErrorKey('program.errorSplit');
-        return;
-      }
-    } else {
-      const phaseSet = new Set<string>(PROGRAM_PHASES);
-      const invalidWeek = weeks.some(
-        (week) =>
-          !Number.isFinite(week.loadIndex) ||
-          !Number.isInteger(week.loadIndex) ||
-          week.loadIndex < MIN_LOAD_INDEX ||
-          week.loadIndex > MAX_LOAD_INDEX ||
-          !phaseSet.has(week.phase),
-      );
-      if (weeks.length !== basics.durationWeeks || invalidWeek) {
-        setErrorKey('program.errorWeeks');
-        return;
-      }
+  const changeBasics = (next: ProgramBasicsDraft) => {
+    if (next.durationWeeks !== basics.durationWeeks) {
+      setWeeks((current) => resizeWeeks(current, next.durationWeeks));
     }
+    setBasics(next);
+  };
 
+  // Changer la semaine d'entrée en vigueur rejoue l'état persisté : ce qu'on
+  // voit est exactement ce qui sera écrit à partir de cette semaine.
+  const changeEffectiveWeek = (weekIndex: number) => {
+    if (existingDetail === null) return;
+    setEffectiveFromWeekIndex(weekIndex);
+    setSplit(splitForWeek(existingDetail, weekIndex));
+    setWeeks(weeksForBlock(existingDetail));
+  };
+
+  const runSave = async (write: () => Promise<void>) => {
+    if (saving) return;
     setSaving(true);
     try {
-      if (step === 'basics') {
-        if (programId === '') {
-          const program = await createProgramDraft({ ...basics, name: basics.name.trim() });
-          setProgramId(program.id);
-        } else {
-          await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
-        }
-        if (weeks.length !== basics.durationWeeks) {
-          const resizedWeeks = Array.from(
-            { length: basics.durationWeeks },
-            (_, weekIndex) => weeks[weekIndex] ?? defaultWeeks(basics.durationWeeks)[weekIndex]!,
-          );
-          if (hasPersistedWeeks) await replaceProgramWeeks(programId, resizedWeeks);
-          setWeeks(resizedWeeks);
-        }
-        setStep('split');
-      } else if (step === 'split') {
-        if (activeEdit && existingDetail !== null) {
-          if (
-            effectiveFromWeekIndex === null ||
-            !availableEffectiveWeeks.includes(effectiveFromWeekIndex)
-          ) {
-            setErrorKey('program.errorNoFutureRevision');
-            return;
-          }
-          await createScheduleRevision(programId, effectiveFromWeekIndex, orderedSplit(split));
-          void navigate(`/programs/${programId}`);
-        } else {
-          await createScheduleRevision(programId, 0, orderedSplit(split));
-          setStep('weeks');
-        }
-      } else {
-        await replaceProgramWeeks(programId, weeks);
-        setHasPersistedWeeks(true);
-        await activateProgram(programId);
-        void navigate(`/programs/${programId}`);
-      }
+      await write();
     } catch (error) {
       if (error instanceof ProgramRepositoryError && error.code === 'another_program_active') {
         setReplacementOpen(true);
@@ -347,18 +140,83 @@ export function ProgramEditorScreen() {
     }
   };
 
-  const confirmReplacement = async () => {
-    if (saving || programId === '') return;
-    setSaving(true);
+  const saveDraft = async () => {
     setErrorKey(null);
-    try {
+    const issue =
+      basicsIssue(basics) ?? splitIssue(split) ?? weeksIssue(weeks, basics.durationWeeks);
+    if (issue !== null) {
+      setErrorKey(issue);
+      return;
+    }
+    await runSave(async () => {
+      await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
+      await createScheduleRevision(programId, 0, orderedSplit(split));
+      await replaceProgramWeeks(programId, weeks);
+      void navigate(`/programs/${programId}`);
+    });
+  };
+
+  const saveRevision = async () => {
+    setErrorKey(null);
+    if (
+      effectiveFromWeekIndex === null ||
+      !availableEffectiveWeeks.includes(effectiveFromWeekIndex)
+    ) {
+      setErrorKey('program.errorNoFutureRevision');
+      return;
+    }
+    const issue = splitIssue(split) ?? weeksIssue(weeks, basics.durationWeeks);
+    if (issue !== null) {
+      setErrorKey(issue);
+      return;
+    }
+    await runSave(async () => {
+      await createScheduleRevision(programId, effectiveFromWeekIndex, orderedSplit(split));
+      await replaceProgramWeeksFrom(programId, effectiveFromWeekIndex, weeks);
+      void navigate(`/programs/${programId}`);
+    });
+  };
+
+  const completeStep = async () => {
+    setErrorKey(null);
+    const issue =
+      step === 'basics'
+        ? basicsIssue(basics)
+        : step === 'split'
+          ? splitIssue(split)
+          : weeksIssue(weeks, basics.durationWeeks);
+    if (issue !== null) {
+      setErrorKey(issue);
+      return;
+    }
+
+    await runSave(async () => {
+      if (step === 'basics') {
+        if (programId === '') {
+          const program = await createProgramDraft({ ...basics, name: basics.name.trim() });
+          setProgramId(program.id);
+        } else {
+          await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
+        }
+        setStep('split');
+      } else if (step === 'split') {
+        await createScheduleRevision(programId, 0, orderedSplit(split));
+        setStep('weeks');
+      } else {
+        await replaceProgramWeeks(programId, weeks);
+        await activateProgram(programId);
+        void navigate(`/programs/${programId}`);
+      }
+    });
+  };
+
+  const confirmReplacement = async () => {
+    if (programId === '') return;
+    setErrorKey(null);
+    await runSave(async () => {
       await replaceActiveProgram(programId);
       void navigate(`/programs/${programId}`);
-    } catch (error) {
-      setErrorKey(repositoryErrorKey(error));
-    } finally {
-      setSaving(false);
-    }
+    });
   };
 
   if (routeProgramId !== undefined && existing?.status === 'error') {
@@ -385,9 +243,17 @@ export function ProgramEditorScreen() {
     );
   }
 
+  const splitSection = routinesReadFailed ? (
+    <p role="alert" className="text-sm leading-relaxed text-[var(--danger-ink)]">
+      {t('program.routinesReadError')}
+    </p>
+  ) : (
+    <ProgramSplitStep entries={split} routines={routines} onChange={setSplit} />
+  );
+
   return (
     <Screen
-      title={routeProgramId === undefined ? t('program.newTitle') : t('program.editTitle')}
+      title={stacked ? t('program.editTitle') : t('program.newTitle')}
       onBack={goBack}
       footer={
         <ActionBand
@@ -396,51 +262,25 @@ export function ProgramEditorScreen() {
               ? effectiveFromWeekIndex === null
                 ? t('program.saveRevision')
                 : t('program.saveRevisionWeek', { number: effectiveFromWeekIndex + 1 })
-              : step === 'weeks'
-                ? t('program.activate')
-                : t('program.continue')
+              : stacked
+                ? t('program.saveDraft')
+                : step === 'weeks'
+                  ? t('program.activate')
+                  : t('program.continue')
           }
           disabled={
             saving ||
-            (step === 'split' &&
-              (routinesQuery === undefined || routinesReadFailed || routines?.length === 0)) ||
+            ((stacked || step === 'split') && splitBlocked) ||
             (activeEdit && effectiveFromWeekIndex === null)
           }
-          onClick={() => void completeStep()}
+          onClick={() =>
+            void (activeEdit ? saveRevision() : stacked ? saveDraft() : completeStep())
+          }
         />
       }
     >
       <div className="flex flex-col gap-6">
-        {!activeEdit && (
-          <nav
-            aria-label={t('program.stepProgress', {
-              current: STEP_NUMBER[step],
-              name: t(STEP_NAME[step]),
-            })}
-          >
-            <p className="text-sm font-semibold text-[var(--text-1)]">
-              {t('program.stepProgress', {
-                current: STEP_NUMBER[step],
-                name: t(STEP_NAME[step]),
-              })}
-            </p>
-            <ol className="mt-3 flex gap-4">
-              {([1, 2, 3] as const).map((n) => (
-                <li
-                  key={n}
-                  aria-current={n === STEP_NUMBER[step] ? 'step' : undefined}
-                  className={
-                    n === STEP_NUMBER[step]
-                      ? 'text-[var(--text-1)]'
-                      : 'text-[var(--text-2)]'
-                  }
-                >
-                  {n}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )}
+        {!stacked && <ProgramStepNav step={step} />}
 
         {errorKey && (
           <p role="alert" className="rounded-xl bg-[var(--surface-1)] p-4 text-sm leading-relaxed text-[var(--danger-ink)]">
@@ -448,58 +288,63 @@ export function ProgramEditorScreen() {
           </p>
         )}
 
-        {step === 'basics' && (
-          <ProgramBasicsStep
-            value={basics}
-            dateValue={dateValue}
-            onChange={setBasics}
-            onDateChange={(value) => {
-              setDateValue(value);
-              setBasics((current) => ({ ...current, startsAt: parseLocalDate(value) }));
-            }}
-          />
-        )}
-        {step === 'split' && (
+        {stacked ? (
           <>
-            {activeEdit && (
-              <label className="flex flex-col gap-2">
-                <span className="label-xs font-semibold text-[var(--text-2)]">
-                  {t('program.effectiveWeekLabel')}
-                </span>
-                <select
-                  aria-label={t('program.effectiveWeekLabel')}
-                  value={effectiveFromWeekIndex ?? ''}
-                  disabled={availableEffectiveWeeks.length === 0}
-                  onChange={(event) => {
-                    if (existingDetail === null) return;
-                    const weekIndex = Number(event.target.value);
-                    setEffectiveFromWeekIndex(weekIndex);
-                    setSplit(splitForWeek(existingDetail, weekIndex));
-                  }}
-                  className="min-h-12 rounded-lg bg-[var(--surface-2)] px-4 text-base
-                    text-[var(--text-1)] outline-none focus:ring-2 focus:ring-[var(--accent-ink)]"
-                >
-                  {availableEffectiveWeeks.map((weekIndex) => (
-                    <option key={weekIndex} value={weekIndex}>
-                      {t('program.week', { number: weekIndex + 1 })}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-sm leading-relaxed text-[var(--text-2)]">
-                  {t('program.effectiveWeekHint')}
-                </span>
-              </label>
-            )}
-            {routinesReadFailed ? (
-              <p role="alert" className="text-sm leading-relaxed text-[var(--danger-ink)]">
-                {t('program.routinesReadError')}
-              </p>
+            {/*
+              Un bloc actif n'a plus de cadre à régler : son nom et sa durée sont
+              posés, sa date se décale depuis la fiche. Ce qui reste à corriger,
+              c'est la suite — d'où le sélecteur en tête.
+            */}
+            {activeEdit ? (
+              <ProgramEffectiveWeekSelect
+                weeks={availableEffectiveWeeks}
+                value={effectiveFromWeekIndex}
+                onChange={changeEffectiveWeek}
+              />
             ) : (
-              <ProgramSplitStep entries={split} routines={routines} onChange={setSplit} />
+              <section>
+                <SectionTitle>{t('program.stepBasics')}</SectionTitle>
+                <ProgramBasicsStep
+                  value={basics}
+                  dateValue={dateValue}
+                  onChange={changeBasics}
+                  onDateChange={(value) => {
+                    setDateValue(value);
+                    changeBasics({ ...basics, startsAt: parseLocalDate(value) });
+                  }}
+                />
+              </section>
             )}
+            <section>
+              <SectionTitle>{t('program.stepSplit')}</SectionTitle>
+              {splitSection}
+            </section>
+            <section>
+              <SectionTitle>{t('program.stepWeeks')}</SectionTitle>
+              <ProgramWeeksStep
+                weeks={weeks}
+                onChange={setWeeks}
+                effectiveFromWeekIndex={sealedBefore}
+              />
+            </section>
+          </>
+        ) : (
+          <>
+            {step === 'basics' && (
+              <ProgramBasicsStep
+                value={basics}
+                dateValue={dateValue}
+                onChange={changeBasics}
+                onDateChange={(value) => {
+                  setDateValue(value);
+                  changeBasics({ ...basics, startsAt: parseLocalDate(value) });
+                }}
+              />
+            )}
+            {step === 'split' && splitSection}
+            {step === 'weeks' && <ProgramWeeksStep weeks={weeks} onChange={setWeeks} />}
           </>
         )}
-        {step === 'weeks' && <ProgramWeeksStep weeks={weeks} onChange={setWeeks} />}
       </div>
       <ConfirmSheet
         open={replacementOpen}

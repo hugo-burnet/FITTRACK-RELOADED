@@ -1,7 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
+import { getActiveProgramProjection } from '@/data/repositories/home';
+import type { HomeProgramProjection } from '@/data/repositories/home';
 import { listPrograms } from '@/data/repositories/programs';
+import { getActiveWorkout } from '@/data/repositories/workouts';
+import { ProgramHeroCard } from './ProgramHeroCard';
 import type { ProgramStatus } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
@@ -9,7 +13,12 @@ import { Button, EmptyState, HeaderAction, ListRow } from '@/ui';
 import { ChevronRightIcon, PlusIcon } from '@/ui/icons';
 
 type ProgramsQuery =
-  | { status: 'ready'; programs: Awaited<ReturnType<typeof listPrograms>> }
+  | {
+      status: 'ready';
+      programs: Awaited<ReturnType<typeof listPrograms>>;
+      hero: HomeProgramProjection | null;
+      activeWorkoutExists: boolean;
+    }
   | { status: 'error' };
 
 const STATUS_KEYS: Record<ProgramStatus, TranslationKey> = {
@@ -24,11 +33,23 @@ const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   year: 'numeric',
 });
 
+/** Everything the hero is not: drafts, finished blocks, and any active one it could not read. */
+function otherPrograms(query: Extract<ProgramsQuery, { status: 'ready' }>) {
+  return query.programs.filter(({ program }) => program.id !== query.hero?.programId);
+}
+
 export function ProgramListScreen() {
   const navigate = useNavigate();
   const query = useLiveQuery<ProgramsQuery>(async () => {
     try {
-      return { status: 'ready', programs: await listPrograms() };
+      const [programs, hero, active] = await Promise.all([
+        listPrograms(),
+        getActiveProgramProjection(),
+        getActiveWorkout(),
+      ]);
+      // `getActiveWorkout` renvoie `undefined`, pas `null` : comparer à `null`
+      // désactive « Démarrer » en permanence, sans que le type ne bronche.
+      return { status: 'ready', programs, hero, activeWorkoutExists: active !== undefined };
     } catch {
       return { status: 'error' };
     }
@@ -68,9 +89,24 @@ export function ProgramListScreen() {
           }
         />
       )}
-      {query?.status === 'ready' && query.programs.length > 0 && (
+      {/*
+        Le bloc actif est le héros : c'est la seule ligne de cet écran qui
+        demande une action aujourd'hui. Même carte que l'accueil, même
+        projection — deux écrans qui classeraient le split chacun de leur côté,
+        ce sont deux occasions de ne pas dire la même chose.
+      */}
+      {query?.status === 'ready' && query.hero !== null && (
+        <div className="mb-6">
+          <ProgramHeroCard
+            program={query.hero}
+            disabled={query.activeWorkoutExists}
+            leadWith="block"
+          />
+        </div>
+      )}
+      {query?.status === 'ready' && otherPrograms(query).length > 0 && (
         <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
-          {query.programs.map(({ program }) => (
+          {otherPrograms(query).map(({ program }) => (
             <ListRow
               key={program.id}
               title={program.name}

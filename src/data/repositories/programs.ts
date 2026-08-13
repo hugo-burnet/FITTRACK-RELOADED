@@ -27,7 +27,11 @@ export type {
   CreateProgramDraftInput,
   ProgramRepositoryErrorCode,
 } from './programLifecycle';
-export { createScheduleRevision, replaceProgramWeeks } from './programSchedules';
+export {
+  createScheduleRevision,
+  replaceProgramWeeks,
+  replaceProgramWeeksFrom,
+} from './programSchedules';
 export type { ProgramScheduleEntryDraft, ProgramWeekInput } from './programSchedules';
 
 export interface ProgramScheduleRevisionDetail {

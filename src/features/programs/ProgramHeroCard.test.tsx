@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as programWorkoutRepository from '@/data/repositories/programWorkout';
 import type { HomeProgramProjection } from '@/data/repositories/home';
-import { HomeProgramCard } from './HomeProgramCard';
+import { ProgramHeroCard } from './ProgramHeroCard';
 
 const projection: HomeProgramProjection = {
   programId: 'program-1',
@@ -30,14 +30,14 @@ function renderCard(value: HomeProgramProjection = projection) {
   return render(
     <MemoryRouter initialEntries={['/']}>
       <Routes>
-        <Route path="/" element={<HomeProgramCard program={value} disabled={false} />} />
+        <Route path="/" element={<ProgramHeroCard program={value} disabled={false} />} />
         <Route path="/workout" element={<p>Séance ouverte</p>} />
       </Routes>
     </MemoryRouter>,
   );
 }
 
-describe('HomeProgramCard', () => {
+describe('ProgramHeroCard', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('démarre l’entrée persistée sans reclasser les séances dans le composant', async () => {
