@@ -29,12 +29,13 @@ function cloneSignal(signal: CoachSignal): CoachSignal {
 }
 
 function stripLoadProposal(signal: CoachSignal): CoachSignal {
-  if (signal.nextLoadKg === undefined) return cloneSignal(signal);
   const { nextLoadKg: _removed, ...rest } = signal;
   return {
     ...rest,
     evidence: signal.evidence
-      .filter((item) => item.label !== 'next_load_kg')
+      .filter(
+        (item) => item.label !== 'next_load_kg' && item.label !== 'current_load_kg',
+      )
       .map((item) => ({ ...item })),
   };
 }
@@ -46,6 +47,7 @@ function stripLoadProposal(signal: CoachSignal): CoachSignal {
  */
 const FLAG_PROGRESSION_DEFERRED = 'progression_deferred';
 const FLAG_CONTROLLED_ATTEMPT = 'controlled_attempt';
+const FLAG_ADD_SET = 'add_set';
 
 function withPhaseCopyFlags(
   signal: CoachSignal,
@@ -57,17 +59,27 @@ function withPhaseCopyFlags(
 
   // Progression chose maintain because no increase_* was authorized (or ranked).
   // range_missed is a back-off story, not a deferred progression.
+  // Never stamp on plateau: that row must stay « Plateau détecté » (spec §5.2).
   if (
     phase === 'progression' &&
     selected === 'maintain' &&
-    signal.code !== 'range_missed'
+    signal.code !== 'range_missed' &&
+    signal.code !== 'plateau'
   ) {
     flags.push({ label: FLAG_PROGRESSION_DEFERRED, value: 1 });
   }
 
-  // Test does not invent permissions: it requalifies an authorized increase_load.
-  if (phase === 'test' && selected === 'increase_load') {
+  // Test does not invent permissions: it requalifies an authorized increase_*.
+  if (phase === 'test' && (selected === 'increase_load' || selected === 'increase_reps')) {
     flags.push({ label: FLAG_CONTROLLED_ATTEMPT, value: 1 });
+  }
+
+  // Overload chose volume: the ceiling card must say add a set, not go silent.
+  if (
+    selected === 'add_set' &&
+    (signal.code === 'range_ceiling_reached' || signal.code === 'range_completed')
+  ) {
+    flags.push({ label: FLAG_ADD_SET, value: 1 });
   }
 
   if (flags.length === 0) return signal;
@@ -84,7 +96,7 @@ function withPhaseCopyFlags(
  *   deload→maintain never push a heavier bar).
  * - `reduce_load` proposals stay: RANK does not list them, but the engine still
  *   authorizes back-off and the finish screen must surface the figure.
- * - Phase copy flags (progression deferred / controlled attempt) are stamped here.
+ * - Phase copy flags (progression deferred / controlled attempt / add_set) are stamped here.
  */
 function shapeSignalsForSelectedAction(
   signals: readonly CoachSignal[],

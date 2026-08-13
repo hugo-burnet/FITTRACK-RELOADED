@@ -10,6 +10,7 @@ type SignalLike = Pick<CoachSignal, 'code' | 'nextLoadKg' | 'evidence'> & {
 /** Machine flags written by phase shaping — never stored as French prose. */
 const FLAG_PROGRESSION_DEFERRED = 'progression_deferred';
 const FLAG_CONTROLLED_ATTEMPT = 'controlled_attempt';
+const FLAG_ADD_SET = 'add_set';
 
 function evidenceValue(signal: SignalLike, label: string): number | undefined {
   return signal.evidence.find((item) => item.label === label)?.value;
@@ -17,6 +18,10 @@ function evidenceValue(signal: SignalLike, label: string): number | undefined {
 
 function hasFlag(signal: SignalLike, label: string): boolean {
   return evidenceValue(signal, label) === 1;
+}
+
+function resolvedNextLoadKg(signal: SignalLike): number | undefined {
+  return signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg');
 }
 
 /** Constat from the signal code alone (no phase requalification). */
@@ -31,10 +36,14 @@ function baseSignalMessage(signal: SignalLike): string {
     // Stored `range_completed` journal rows read as ceiling (spec §4.1).
     case 'range_ceiling_reached':
     case 'range_completed': {
-      const weight = signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg') ?? 0;
+      const weight = resolvedNextLoadKg(signal);
       const sets = evidenceValue(signal, 'working_sets') ?? 0;
       const reps = evidenceValue(signal, 'target_reps_max') ?? 0;
       const current = evidenceValue(signal, 'current_load_kg');
+      // No next load (stripped escalate): constat only — never `100 → 0 kg`.
+      if (weight === undefined) {
+        return t('coach.range_ceiling_reached_constat', { sets, reps });
+      }
       // `47,5 → 50`, never `+50`: the figure on the card is the load to put on
       // the bar, so a `+` in front of it reads as an increment of fifty kilos.
       // The step is the distance between the two numbers, and it shows itself.
@@ -98,9 +107,22 @@ function baseSignalMessage(signal: SignalLike): string {
  * French explanation with the numbers that produced the signal — never a bare tip.
  * Phase shaping may stamp machine flags on evidence (spec §6 / §7):
  * - `progression_deferred` → maintain when Progression had no increase_*
- * - `controlled_attempt` → Test requalifies an authorized increase_load
+ * - `controlled_attempt` → Test requalifies an authorized increase_*
+ * - `add_set` → Overload chose volume over a heavier bar
  */
 export function coachSignalMessage(signal: SignalLike): string {
+  // Spec §5.2: Progression must not erase « Plateau détecté ».
+  if (signal.code === 'plateau') {
+    return baseSignalMessage(signal);
+  }
+
+  if (hasFlag(signal, FLAG_ADD_SET)) {
+    return t('coach.addSet', {
+      sets: evidenceValue(signal, 'working_sets') ?? 0,
+      reps: evidenceValue(signal, 'target_reps_max') ?? 0,
+    });
+  }
+
   // Progression without an authorized increase: the card is the hold, not a load step.
   if (hasFlag(signal, FLAG_PROGRESSION_DEFERRED)) {
     return t('coach.progressionDeferred');
@@ -108,7 +130,7 @@ export function coachSignalMessage(signal: SignalLike): string {
 
   const reason = baseSignalMessage(signal);
 
-  // Test phase: same nextLoadKg figure, wording marks a controlled attempt.
+  // Test phase: same numbers, wording marks a controlled attempt.
   if (hasFlag(signal, FLAG_CONTROLLED_ATTEMPT)) {
     return t('coach.controlledAttempt', { reason });
   }

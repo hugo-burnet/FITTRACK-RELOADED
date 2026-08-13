@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { CoachSignal } from '@/lib/coach';
 import { t } from '@/i18n/fr';
+import { formatNumber } from '@/ui/numberField';
 import { coachSignalMessage } from './coachCopy';
 
 function rangeCeiling(
@@ -104,13 +105,61 @@ describe('coachSignalMessage — phase intention copy', () => {
       evidence: [
         { label: 'working_sets', value: 3 },
         { label: 'target_reps_max', value: 12 },
-        { label: 'current_load_kg', value: 100 },
         { label: 'progression_deferred', value: 1 },
       ],
     });
     expect(message).toBe(t('coach.progressionDeferred'));
     expect(message).toBe('Maintien — progression différée');
     expect(message).not.toContain('→');
+  });
+
+  it('shaped ceiling without next load is constat-only — no arrow, no 0 kg', () => {
+    // Overload / return / plateau+construction: nextLoadKg stripped, leftover
+    // current_load_kg must not invent « 100 → 0 kg ».
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'current_load_kg', value: 100 },
+      ],
+    });
+    expect(message).toBe(t('coach.range_ceiling_reached_constat', { sets: 3, reps: 12 }));
+    expect(message).toContain('3 × 12');
+    expect(message).toContain('haut de la fourchette');
+    expect(message).not.toContain('→');
+    expect(message).not.toContain('0 kg');
+  });
+
+  it('does not let progression_deferred erase plateau prose', () => {
+    const message = coachSignalMessage({
+      code: 'plateau',
+      evidence: [
+        { label: 'sessions', value: 3 },
+        { label: 'best_1rm_kg', value: 116.7 },
+        { label: 'progression_deferred', value: 1 },
+      ],
+    });
+    expect(message).toBe(
+      t('coach.plateau', { sessions: 3, value: formatNumber(116.7) }),
+    );
+    expect(message).toContain('Plateau détecté');
+    expect(message).not.toBe(t('coach.progressionDeferred'));
+  });
+
+  it('overload add_set reads as a volume constat, not a stripped ceiling', () => {
+    const message = coachSignalMessage({
+      code: 'range_ceiling_reached',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'add_set', value: 1 },
+      ],
+    });
+    expect(message).toBe(t('coach.addSet', { sets: 3, reps: 12 }));
+    expect(message).toContain('Ajouter une série');
+    expect(message).not.toContain('→');
+    expect(message).not.toContain('0 kg');
   });
 
   it('test + authorized increase_load keeps the step and marks a controlled attempt', () => {
@@ -123,5 +172,19 @@ describe('coachSignalMessage — phase intention copy', () => {
     expect(message).toContain('haut de la fourchette');
     // Same nextLoadKg the card figure will show — copy must not invent another.
     expect(signal.nextLoadKg).toBe(50);
+  });
+
+  it('test + authorized increase_reps marks a controlled attempt on the satisfied constat', () => {
+    const message = coachSignalMessage({
+      code: 'range_satisfied',
+      evidence: [
+        { label: 'working_sets', value: 3 },
+        { label: 'target_reps', value: 8 },
+        { label: 'target_reps_max', value: 12 },
+        { label: 'controlled_attempt', value: 1 },
+      ],
+    });
+    expect(message).toContain('Tentative contrôlée');
+    expect(message).toContain('Fourchette respectée');
   });
 });

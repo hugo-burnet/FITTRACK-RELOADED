@@ -311,8 +311,16 @@ describe('evaluateCoachForWorkout', () => {
       }),
     ]);
     expect(signals[0]?.nextLoadKg).toBeUndefined();
-    // No escalate reco stored as a load figure.
+    // No escalate reco stored as a load figure — nor a leftover current load
+    // that copy would turn into « 100 → 0 kg ».
     expect(signals.every((signal) => signal.nextLoadKg === undefined)).toBe(true);
+    expect(
+      signals.every((signal) =>
+        signal.evidence.every(
+          (item) => item.label !== 'next_load_kg' && item.label !== 'current_load_kg',
+        ),
+      ),
+    ).toBe(true);
   });
 
   it('ne marque pas suivie une ancienne charge Coach reprise par un programme', async () => {
@@ -527,7 +535,7 @@ describe('evaluateCoachForWorkout', () => {
     expect(await listRecommendationsForExercise('bench')).toEqual([]);
   });
 
-  it('progression target without increase_*: stamps progression_deferred, strips load', async () => {
+  it('progression target + plateau: shows plateau, strips load, no deferred stamp', async () => {
     // Three identical ceiling sessions → plateau strips escalations → maintain.
     const programStart = new Date(2026, 7, 10, 12).getTime();
     const closeAt = new Date(2026, 7, 17, 12).getTime(); // week 0 done; next week = progression
@@ -653,11 +661,15 @@ describe('evaluateCoachForWorkout', () => {
     expect(target?.phase).toBe('progression');
 
     const signals = await evaluateCoachForWorkout(workout.id);
-    expect(signals.length).toBeGreaterThan(0);
-    expect(signals.every((s) => s.nextLoadKg === undefined)).toBe(true);
-    expect(
-      signals.some((s) => s.evidence.some((e) => e.label === 'progression_deferred' && e.value === 1)),
-    ).toBe(true);
+    expect(signals).toEqual([
+      expect.objectContaining({
+        code: 'plateau',
+        exerciseId: 'bench',
+      }),
+    ]);
+    expect(signals[0]!.nextLoadKg).toBeUndefined();
+    // Shown row is the plateau constat — do not stamp deferred over it.
+    expect(signals[0]!.evidence.some((e) => e.label === 'progression_deferred')).toBe(false);
     expect(
       signals.every((s) => !s.evidence.some((e) => e.label === 'controlled_attempt')),
     ).toBe(true);
@@ -753,5 +765,189 @@ describe('evaluateCoachForWorkout', () => {
       ]),
     );
     expect(signals[0]!.evidence.some((e) => e.label === 'progression_deferred')).toBe(false);
+  });
+
+  it('test target + authorized increase_reps: controlled_attempt on the satisfied constat', async () => {
+    const programStart = new Date(2026, 7, 10, 12).getTime();
+    const closeAt = new Date(2026, 7, 17, 12).getTime();
+    const program = await createProgramDraft({
+      name: 'Test reps',
+      startsAt: programStart,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, [
+      { weekIndex: 0, loadIndex: 100, phase: 'construction' },
+      { weekIndex: 1, loadIndex: 110, phase: 'test' },
+      { weekIndex: 2, loadIndex: 100, phase: 'return' },
+      { weekIndex: 3, loadIndex: 100, phase: 'construction' },
+    ]);
+    const routine = await createRoutine('Upper');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const entry = (await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray())[0]!;
+    await activateProgram(program.id);
+
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: routine.id,
+        name: 'Pre-test mid-range',
+        status: 'active',
+        startedAt: closeAt,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: entry.id,
+        programPhase: 'construction',
+        programLoadIndex: 100,
+      }),
+      id: 'test-reps-close',
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add({
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 'test-reps-close-row',
+    });
+    await db.workoutSets.bulkAdd(
+      [12, 12, 10].map((reps, order) => ({
+        ...newEntity<WorkoutSet>({
+          workoutExerciseId: 'test-reps-close-row',
+          exerciseId: exercise.id,
+          workoutId: workout.id,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight: 100,
+          reps,
+          targetReps: 8,
+          targetRepsMax: 12,
+          isCompleted: 1,
+          performedAt: closeAt + order * 90_000,
+        }),
+        id: `test-reps-close-set-${order}`,
+      })),
+    );
+
+    const target = await resolveTargetProgramContext(workout, closeAt);
+    expect(target).toEqual({ phase: 'test', loadIndex: 110 });
+
+    const signals = await evaluateCoachForWorkout(workout.id);
+    expect(signals).toEqual([
+      expect.objectContaining({
+        code: 'range_satisfied',
+        exerciseId: 'bench',
+      }),
+    ]);
+    expect(signals[0]!.nextLoadKg).toBeUndefined();
+    expect(signals[0]!.evidence).toEqual(
+      expect.arrayContaining([{ label: 'controlled_attempt', value: 1 }]),
+    );
+  });
+
+  it('overload target + ceiling: stamps add_set, strips the load figure', async () => {
+    const programStart = new Date(2026, 7, 10, 12).getTime();
+    const closeAt = new Date(2026, 7, 17, 12).getTime();
+    const program = await createProgramDraft({
+      name: 'Overload block',
+      startsAt: programStart,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, [
+      { weekIndex: 0, loadIndex: 100, phase: 'construction' },
+      { weekIndex: 1, loadIndex: 110, phase: 'overload' },
+      { weekIndex: 2, loadIndex: 60, phase: 'deload' },
+      { weekIndex: 3, loadIndex: 100, phase: 'return' },
+    ]);
+    const routine = await createRoutine('Upper');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const entry = (await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray())[0]!;
+    await activateProgram(program.id);
+
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: routine.id,
+        name: 'Pre-overload',
+        status: 'active',
+        startedAt: closeAt,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: entry.id,
+        programPhase: 'construction',
+        programLoadIndex: 100,
+      }),
+      id: 'overload-close',
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add({
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 'overload-close-row',
+    });
+    await db.workoutSets.bulkAdd(
+      [0, 1, 2].map((order) => ({
+        ...newEntity<WorkoutSet>({
+          workoutExerciseId: 'overload-close-row',
+          exerciseId: exercise.id,
+          workoutId: workout.id,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight: 100,
+          reps: 12,
+          targetReps: 8,
+          targetRepsMax: 12,
+          isCompleted: 1,
+          performedAt: closeAt + order * 90_000,
+        }),
+        id: `overload-close-set-${order}`,
+      })),
+    );
+
+    const target = await resolveTargetProgramContext(workout, closeAt);
+    expect(target).toEqual({ phase: 'overload', loadIndex: 110 });
+    expect(
+      selectProgramAction(['maintain', 'increase_load', 'add_set'], target),
+    ).toBe('add_set');
+
+    const signals = await evaluateCoachForWorkout(workout.id);
+    expect(signals).toEqual([
+      expect.objectContaining({
+        code: 'range_ceiling_reached',
+        exerciseId: 'bench',
+      }),
+    ]);
+    expect(signals[0]!.nextLoadKg).toBeUndefined();
+    expect(signals[0]!.evidence).toEqual(
+      expect.arrayContaining([{ label: 'add_set', value: 1 }]),
+    );
+    expect(
+      signals[0]!.evidence.every(
+        (item) => item.label !== 'next_load_kg' && item.label !== 'current_load_kg',
+      ),
+    ).toBe(true);
   });
 });

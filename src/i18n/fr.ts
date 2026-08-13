@@ -313,6 +313,9 @@ const fr = {
       'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_ceiling_reached_plain:
       '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    /** Ceiling constat with no next load (stripped escalate, overload add_set sibling). */
+    range_ceiling_reached_constat:
+      '{sets} × {reps} a atteint le haut de la fourchette.',
     /** @deprecated Read alias — same wording as range_ceiling_reached. */
     range_completed:
       '{current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
@@ -330,13 +333,18 @@ const fr = {
     // et une observation ne demande rien.
     intra_session_drop:
       'Baisse de reps observée : {first} puis {low} (−{drop}).',
-    plateau: 'Plateau : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
+    plateau:
+      'Plateau détecté : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',
     /**
-     * Test phase requalifies an already-authorized increase_load.
-     * `{reason}` is the normal ceiling constat (numbers + floor).
+     * Overload selected add_set — volume constat, not a stripped load arrow.
+     */
+    addSet: 'Ajouter une série — {sets} × {reps} a atteint le haut de la fourchette.',
+    /**
+     * Test phase requalifies an already-authorized increase_* .
+     * `{reason}` is the normal constat (ceiling step or satisfied range).
      */
     controlledAttempt: 'Tentative contrôlée — {reason}',
     historySection: 'Recommandations',

@@ -410,6 +410,22 @@ function plateauSignal(
   };
 }
 
+function isLoadlessCeiling(signal: CoachSignal): boolean {
+  return (
+    (signal.code === 'range_ceiling_reached' || signal.code === 'range_completed') &&
+    signal.nextLoadKg === undefined
+  );
+}
+
+/** A shaped escalate / deferred hold must not erase the plateau constat (spec §5.2). */
+function hidesPlateau(signal: CoachSignal): boolean {
+  if (signal.code === 'plateau') return false;
+  if (isLoadlessCeiling(signal)) return true;
+  return signal.evidence.some(
+    (item) => item.label === 'progression_deferred' && item.value === 1,
+  );
+}
+
 /** Rank signals and keep the single strongest per exercise. */
 export function pickSignals(signals: readonly CoachSignal[]): CoachSignal[] {
   const best = new Map<string, CoachSignal>();
@@ -418,6 +434,13 @@ export function pickSignals(signals: readonly CoachSignal[]): CoachSignal[] {
     const current = best.get(signal.exerciseId);
     if (current === undefined) {
       best.set(signal.exerciseId, signal);
+      continue;
+    }
+    if (signal.code === 'plateau' && hidesPlateau(current)) {
+      best.set(signal.exerciseId, signal);
+      continue;
+    }
+    if (current.code === 'plateau' && hidesPlateau(signal)) {
       continue;
     }
     if (signal.severity > current.severity) {

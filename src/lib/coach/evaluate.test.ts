@@ -579,6 +579,62 @@ describe('pickSignals', () => {
     expect(picked.map((s) => s.exerciseId).sort()).toEqual(['bench', 'squat']);
     expect(picked.find((s) => s.exerciseId === 'bench')!.code).toBe('range_ceiling_reached');
   });
+
+  it('prefers plateau over a loadless ceiling so the constat is not erased', () => {
+    const picked = pickSignals([
+      {
+        code: 'range_ceiling_reached',
+        exerciseId: 'bench',
+        evidence: [{ label: 'working_sets', value: 3 }],
+        severity: 40,
+      },
+      {
+        code: 'plateau',
+        exerciseId: 'bench',
+        evidence: [{ label: 'sessions', value: 3 }],
+        severity: 30,
+      },
+    ]);
+    expect(picked).toHaveLength(1);
+    expect(picked[0]!.code).toBe('plateau');
+  });
+
+  it('keeps a ceiling that still carries a next load over plateau', () => {
+    const picked = pickSignals([
+      {
+        code: 'range_ceiling_reached',
+        exerciseId: 'bench',
+        nextLoadKg: 102.5,
+        evidence: [],
+        severity: 40,
+      },
+      {
+        code: 'plateau',
+        exerciseId: 'bench',
+        evidence: [],
+        severity: 30,
+      },
+    ]);
+    expect(picked[0]!.code).toBe('range_ceiling_reached');
+  });
+
+  it('prefers plateau over a deferred hold so Progression does not hide it', () => {
+    const picked = pickSignals([
+      {
+        code: 'range_satisfied',
+        exerciseId: 'bench',
+        evidence: [{ label: 'progression_deferred', value: 1 }],
+        severity: 35,
+      },
+      {
+        code: 'plateau',
+        exerciseId: 'bench',
+        evidence: [{ label: 'sessions', value: 3 }],
+        severity: 30,
+      },
+    ]);
+    expect(picked[0]!.code).toBe('plateau');
+  });
 });
 
 describe('mute cases', () => {
