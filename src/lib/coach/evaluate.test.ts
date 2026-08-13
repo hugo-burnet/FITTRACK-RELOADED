@@ -360,6 +360,29 @@ describe('range_missed', () => {
   });
 });
 
+// Le signal s'appelle `range_ceiling_reached` depuis le Lot 17 ; `range_completed`
+// n'est plus qu'un alias de lecture pour les lignes de journal déjà écrites. Ce
+// test vient d'une branche antérieure au renommage : c'est le nom qui a bougé,
+// pas le comportement — les deux séries prescrites sont jugées, le drop set non.
+describe('range_ceiling_reached — drop sets', () => {
+  it('judges the range on the prescribed sets, not on a trailing drop set', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 12, weight: 100 }),
+          set({ order: 1, reps: 12, weight: 100 }),
+          set({ order: 2, reps: 8, weight: 70, setType: 'dropset' }),
+        ],
+      }),
+    ]);
+    expect(signals).toEqual([
+      expect.objectContaining({ code: 'range_ceiling_reached', nextLoadKg: 102.5 }),
+    ]);
+  });
+});
+
 describe('intra_session_drop', () => {
   it('reports a rep collapse from the first working set', () => {
     const signals = evaluateCoach([
@@ -430,6 +453,49 @@ describe('intra_session_drop', () => {
       }),
     ]);
     expect(signals.filter((s) => s.code === 'intra_session_drop')).toEqual([]);
+  });
+
+  it('ignores a deliberate drop set — fewer reps at a lighter load is the point', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'curl',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 10, weight: 40, targetRepsMax: 12 }),
+          set({ order: 1, reps: 10, weight: 40, targetRepsMax: 12 }),
+          set({ order: 2, reps: 6, weight: 25, setType: 'dropset', targetRepsMax: 12 }),
+        ],
+      }),
+    ]);
+    expect(signals.filter((s) => s.code === 'intra_session_drop')).toEqual([]);
+  });
+
+  it('ignores a back-off set typed normal but loaded lighter', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'squat',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 5, weight: 120, targetRepsMax: 12 }),
+          set({ order: 1, reps: 3, weight: 90, targetRepsMax: 12 }),
+        ],
+      }),
+    ]);
+    expect(signals.filter((s) => s.code === 'intra_session_drop')).toEqual([]);
+  });
+
+  it('still reports a collapse at the same load', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 10, weight: 100, targetRepsMax: 12 }),
+          set({ order: 1, reps: 6, weight: 100, targetRepsMax: 12 }),
+        ],
+      }),
+    ]);
+    expect(signals.some((s) => s.code === 'intra_session_drop')).toBe(true);
   });
 });
 
@@ -548,6 +614,42 @@ describe('plateau', () => {
     ]);
     // Deload skipped → comparable are 110 and 100 (progress) — not enough for N=3.
     expect(onlyDeloadNewest.filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
+  /**
+   * On an assisted machine the figure goes *down* as you get stronger, and the
+   * estimated 1RM of an assistance load is not a strength. Without a bodyweight
+   * to subtract there is nothing honest to compare, so the rule says nothing.
+   */
+  it('stays silent on assisted machines, where progress lowers the number', () => {
+    const assisted = [30, 25, 20].map((assistKg, index) =>
+      line({
+        exerciseId: 'pullup',
+        workoutId: `w${index}`,
+        workoutStartedAt: t0 + index * 86_400_000,
+        measurementType: 'assisted_weight_reps',
+        equipment: 'machine',
+        sets: [
+          set({ order: 0, reps: 8, weight: assistKg, targetRepsMax: undefined }),
+          set({ order: 1, reps: 8, weight: assistKg, targetRepsMax: undefined }),
+        ],
+      }),
+    );
+    expect(evaluateCoach(assisted).filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
+  it('stays silent on assisted machines even when the assistance is flat', () => {
+    const stuck = [20, 20, 20].map((assistKg, index) =>
+      line({
+        exerciseId: 'pullup',
+        workoutId: `w${index}`,
+        workoutStartedAt: t0 + index * 86_400_000,
+        measurementType: 'assisted_weight_reps',
+        equipment: 'machine',
+        sets: [set({ order: 0, reps: 8, weight: assistKg, targetRepsMax: undefined })],
+      }),
+    );
+    expect(evaluateCoach(stuck).filter((s) => s.code === 'plateau')).toEqual([]);
   });
 });
 

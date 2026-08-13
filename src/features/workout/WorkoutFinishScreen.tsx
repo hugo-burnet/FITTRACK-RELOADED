@@ -126,7 +126,9 @@ export function WorkoutFinishScreen() {
   );
   const save = () => {
     void finishWorkout(workout.id)
-      .then(() => finalizeCoachForWorkout(workout.id))
+      // The coach is never a gate. The session is already saved; a failed
+      // evaluation must not strand you on this screen with nowhere to go.
+      .then(() => finalizeCoachForWorkout(workout.id).catch(() => undefined))
       .then(() => navigate('/', { replace: true }));
   };
 

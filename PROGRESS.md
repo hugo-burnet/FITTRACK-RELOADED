@@ -381,13 +381,40 @@ proposé en séance, **sans pré-remplir** la série.
 le corps, historique sur la fiche exercice. Accent interdit sur la carte (charte). Chaque
 reco affiche le chiffre qui l'a produite.
 
-Portes locales : lint, typecheck, **1290 tests dans 117 fichiers**, build PWA.
+**Revue des quatre tranches — trois corrections, toutes couvertes par des tests.** Les trois
+bugs touchaient des pièges que le plan avait pourtant écrits :
+
+- **Plateau sur machine assistée.** `nextLoad` inversait l'assistance, `plateauSignal` non :
+  trois séances passant de 30 à 20 kg d'aide — de la vraie progression — sortaient un
+  `plateau`. La règle est désormais **muette sur `weightRole === 'assist'`** : sans le poids
+  du corps à soustraire, il n'y a rien d'honnête à comparer, et le moteur se tait plutôt que
+  de lire un progrès comme une stagnation. C'est une limite assumée, pas un oubli.
+- **Le journal enregistrait les succès comme des refus.** `recordCoachSignals` tournait avant
+  `reconcileFollowedLoads` et passait la reco vivante à `dismissed` ; suivre le conseil *et*
+  re-valider la fourchette effaçait donc la preuve. Ordre inversé, et nouveau statut
+  **`superseded`** distinct de `dismissed` — un remplacement n'est pas un refus, et il ne doit
+  pas interdire à cette charge de revenir.
+- **Les drop sets déclenchaient « chute intra-séance ».** `isWorkingSet` n'exclut que
+  l'échauffement. Nouveau `progressionSets` : séries de travail au sommet de la charge du
+  jour, drop sets et séries de délestage exclus (avec l'inversion assist). Corrige aussi
+  `range_completed`, qui proposait la charge suivante à partir du poids du drop set.
+
+Plus : le coach ne bloque plus la fin de séance s'il jette, les échauffements ne comptent plus
+comme charge de travail suivie, l'index `[exerciseId+status]` sert enfin, une observation sans
+chiffre n'est plus étiquetée « Objectif proposé », et la fiche exercice n'affiche plus de carte
+« Recommandations » vide.
+
+Portes locales : lint, typecheck, **1299 tests dans 117 fichiers**, build PWA.
 
 **Checkpoint téléphone :**
 - [ ] Exercice barre / haltères / machine assistée : incrément crédible et modifiable.
 - [ ] Valider toute une fourchette : fin de séance propose la charge suivante **avec**
       l'explication ; à la séance d'après l'objectif apparaît sans pré-remplir.
 - [ ] Séance en deload : pas de faux plateau.
+- [ ] **Machine assistée sur 3 séances : aucun plateau annoncé** (règle volontairement muette).
+- [ ] **Séance avec drop set : aucune « chute en séance » signalée.**
+- [ ] **Suivre une reco puis re-valider la fourchette : la fiche exercice affiche « Suivie »**,
+      pas « Ignorée ».
 - [ ] Ignorer une reco : elle ne revient pas à la charge identique.
 - [ ] Migration `version(5)` au premier lancement : l'app s'ouvre, le journal Coach est vide
       tant qu'aucune séance n'a produit de signal.

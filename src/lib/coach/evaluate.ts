@@ -1,4 +1,5 @@
 import { isWorkingSet } from '@/lib/records';
+import { measurementShape, type WeightRole } from '@/lib/measurement';
 import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import { nextLoad, previousLoad, resolveLoadIncrementKg } from '@/lib/loadIncrement';
 import type {
@@ -47,6 +48,28 @@ function completedWorkingSets(sets: readonly CoachSetInput[]): CoachSetInput[] {
     .filter((set) => set.isCompleted === 1 && isWorkingSet(set) && set.performedAt > 0)
     .slice()
     .sort((a, b) => a.order - b.order || a.performedAt - b.performedAt);
+}
+
+/** Is `weight` an easier set than `reference`? Assistance reads the other way. */
+function isEasierLoad(weight: number, reference: number, role: WeightRole): boolean {
+  return role === 'assist' ? weight > reference : weight < reference;
+}
+
+/**
+ * The sets a progression rule may judge: working sets at the session's top load.
+ *
+ * A drop set and a back-off set are lighter *on purpose* — reading their reps as
+ * a collapse, or their load as the one to beat next time, turns a deliberate
+ * choice into a diagnosis. `isWorkingSet` only knows about warm-ups.
+ */
+function progressionSets(line: CoachExerciseLine): CoachSetInput[] {
+  const working = completedWorkingSets(line.sets).filter((set) => set.setType !== 'dropset');
+  const role = measurementShape(line.measurementType).weightRole;
+  const reference = working.find((set) => set.weight !== undefined)?.weight;
+  if (role === undefined || reference === undefined) return working;
+  return working.filter(
+    (set) => set.weight === undefined || !isEasierLoad(set.weight, reference, role),
+  );
 }
 
 function isDeloadLine(line: CoachExerciseLine): boolean {
@@ -133,7 +156,11 @@ function rangeFlags(working: CoachSetInput[]): {
 function rangePartitionSignal(line: CoachExerciseLine): CoachSignal | undefined {
   if (isDeloadLine(line)) return undefined;
 
-  const working = completedWorkingSets(line.sets);
+  // Les deux revues se rejoignent ici : la partition plafond/fourchette du
+  // Lot 17 se lit sur les séries que le Lot 18 juge progressables — ni
+  // échauffement, ni drop set, ni série allégée à dessein.
+  const working = progressionSets(line);
+  if (working.length === 0) return undefined;
   const { ceiling, satisfied } = rangeFlags(working);
   if (!ceiling && !satisfied) return undefined;
 
@@ -295,7 +322,7 @@ function intraSessionDropSignal(
   line: CoachExerciseLine,
   dropReps: number,
 ): CoachSignal | undefined {
-  const working = completedWorkingSets(line.sets);
+  const working = progressionSets(line);
   if (working.length < 2) return undefined;
 
   const firstReps = working[0]!.reps;
@@ -368,6 +395,12 @@ function longRestSignal(
 /**
  * Plateau: N consecutive non-deload sessions with no improvement on best estimated 1RM.
  * Deload sessions are skipped so a planned cut never looks like stagnation.
+ *
+ * Assisted machines are out of scope: the figure recorded is the help you took,
+ * so it *falls* as you get stronger, and the 1RM of an assistance load is not a
+ * strength. Comparing sessions would need the bodyweight to subtract, which the
+ * engine is not given — so the rule says nothing rather than reading progress
+ * as stagnation.
  */
 function plateauSignal(
   historyNewestFirst: readonly CoachExerciseLine[],
@@ -376,6 +409,7 @@ function plateauSignal(
 ): CoachSignal | undefined {
   const comparable = historyNewestFirst.filter((line) => !isDeloadLine(line));
   if (comparable.length < plateauSessions) return undefined;
+  if (measurementShape(comparable[0]!.measurementType).weightRole === 'assist') return undefined;
 
   const window = comparable.slice(0, plateauSessions);
   const estimates = window.map((line) => bestSessionOneRepMax(line.sets, formula));

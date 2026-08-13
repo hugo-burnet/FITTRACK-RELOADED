@@ -348,11 +348,13 @@ const fr = {
      */
     controlledAttempt: 'Tentative contrôlée — {reason}',
     historySection: 'Recommandations',
-    historyEmpty: 'Aucune recommandation pour le moment.',
     statusPending: 'En attente',
     statusFollowed: 'Suivie',
     statusDismissed: 'Ignorée',
-    statusSuperseded: 'Remplacée par le programme',
+    // Deux causes désormais : l'activation d'un bloc et un signal plus récent.
+    // « Remplacée par le programme » mentirait sur la seconde. Ce n'est jamais
+    // un refus — d'où un mot neutre.
+    statusSuperseded: 'Remplacée',
   },
 
   setType: {

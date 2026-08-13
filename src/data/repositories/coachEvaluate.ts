@@ -16,6 +16,7 @@ import {
   programPosition,
   resolveSchedule,
 } from '@/lib/programs';
+import { isWorkingSet } from '@/lib/records';
 import { alive } from './base';
 import { recordCoachSignals, reconcileFollowedLoads } from './coachRecommendations';
 import { getOneRepMaxFormula } from './settings';
@@ -398,17 +399,17 @@ export async function evaluateCoachForWorkout(workoutId: string): Promise<CoachS
  */
 export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachSignal[]> {
   const signals = await evaluateCoachForWorkout(workoutId);
-  await recordCoachSignals(signals, {
-    workoutId,
-    recommendedAt: Date.now(),
-  });
 
+  // Resolve what this session answered *before* recording new signals: a fresh
+  // objective supersedes the live one, and a superseded row can no longer be
+  // marked followed. Reversing these two lines records every success as a miss.
   const detail = await getWorkoutDetail(workoutId);
   if (detail !== null && detail.workout.programId === undefined) {
     const outcomes = detail.exercises
       .map((line) => {
+        // Warm-ups are not the load you followed the advice with.
         const working = line.sets.filter(
-          (set) => set.isCompleted === 1 && set.weight !== undefined,
+          (set) => set.isCompleted === 1 && set.weight !== undefined && isWorkingSet(set),
         );
         const last = working[working.length - 1];
         return {
@@ -421,6 +422,11 @@ export async function finalizeCoachForWorkout(workoutId: string): Promise<CoachS
 
     await reconcileFollowedLoads(outcomes);
   }
+
+  await recordCoachSignals(signals, {
+    workoutId,
+    recommendedAt: Date.now(),
+  });
 
   return signals;
 }

@@ -286,27 +286,29 @@ export function ExerciseDetailScreen() {
           </Card>
         </section>
 
-        <section>
-          <SectionTitle>{t('coach.historySection')}</SectionTitle>
-          <Card>
-            {coachHistory.length === 0 ? (
-              <p className="p-4 text-sm leading-relaxed text-[var(--text-2)]">
-                {t('coach.historyEmpty')}
-              </p>
-            ) : (
-              coachHistory.map((row) => (
+        {/* No empty state: an exercise the coach has never spoken about should
+            not carry a permanently blank card while the engine warms up. */}
+        {coachHistory.length > 0 && (
+          <section>
+            <SectionTitle>{t('coach.historySection')}</SectionTitle>
+            <Card>
+              {coachHistory.map((row) => (
                 <CoachCard
                   key={row.id}
                   signal={recommendationAsSignal(row)}
-                  tone={row.status === 'pending' ? 'objective' : 'signal'}
+                  tone={
+                    row.status === 'pending' && row.nextLoadKg !== undefined
+                      ? 'objective'
+                      : 'signal'
+                  }
                   variant="row"
                   dateLabel={longDate(row.recommendedAt)}
                   statusLabel={coachStatusLabel(row.status)}
                 />
-              ))
-            )}
-          </Card>
-        </section>
+              ))}
+            </Card>
+          </section>
+        )}
 
         <section>
           <SectionTitle>{t('exercise.yoursSection')}</SectionTitle>
