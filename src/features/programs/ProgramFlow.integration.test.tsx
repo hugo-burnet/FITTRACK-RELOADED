@@ -58,6 +58,42 @@ function renderProgramFlow(initialEntry = '/programs/new') {
   );
 }
 
+/** Monday of the civil week `weeksBack` weeks ago, at local midnight. */
+function mondayWeeksAgo(weeksBack: number): number {
+  const today = new Date();
+  const isoDay = today.getDay() === 0 ? 7 : today.getDay();
+  const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  monday.setDate(monday.getDate() - (isoDay - 1) - weeksBack * 7);
+  return monday.getTime();
+}
+
+/**
+ * An eight-week block already in its fifth week: the editor seals S1–S4 and
+ * offers S5 as the first effective week. Levels are unique per week so a row
+ * can be recognised by its own number.
+ */
+async function createEditableActiveProgram() {
+  const routine = await createRoutine('Force en cours');
+  const program = await createProgramDraft({
+    name: 'Bloc en cours',
+    startsAt: mondayWeeksAgo(4),
+    durationWeeks: 8,
+  });
+  await createScheduleRevision(program.id, 0, [
+    { routineId: routine.id, dayOfWeek: 1, order: 0 },
+  ]);
+  await replaceProgramWeeks(
+    program.id,
+    Array.from({ length: 8 }, (_, weekIndex) => ({
+      weekIndex,
+      loadIndex: 70 + weekIndex * 5,
+      phase: 'construction' as const,
+    })),
+  );
+  await activateProgram(program.id);
+  return { program, routine };
+}
+
 describe('parcours de création d’un programme', () => {
   beforeEach(resetDb);
   afterEach(() => vi.restoreAllMocks());
@@ -304,6 +340,103 @@ describe('parcours de création d’un programme', () => {
     expect(detail?.revisions).toHaveLength(2);
     expect(detail?.revisions[1]?.revision.effectiveFromWeekIndex).toBe(2);
     expect(detail?.revisions[1]?.entries[0]?.routineId).toBe(replacement.id);
+  });
+
+  it('édite un actif par sections empilées, sans nav d’étapes', async () => {
+    const { program } = await createEditableActiveProgram();
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    // Modifier n'est pas créer : les trois sections sont déjà là, il n'y a plus
+    // d'étape à compter. Le rail et la phrase « Étape n sur 3 » restent sur
+    // /programs/new.
+    expect(
+      await screen.findByRole('combobox', { name: 'Semaine d’entrée en vigueur' }),
+    ).toBeVisible();
+    expect(screen.queryByRole('navigation', { name: /^Étape/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/^Étape \d sur 3/)).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Split' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Semaines' })).toBeVisible();
+    // Le cadre d'un actif est posé : son nom et sa durée ne se rejouent pas ici.
+    expect(screen.queryByRole('textbox', { name: 'Nom du bloc' })).not.toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 5' })).toBeVisible();
+  });
+
+  it('applique une recette à partir de la semaine 5 sans toucher aux quatre premières', async () => {
+    const { program } = await createEditableActiveProgram();
+    const before = await getProgramDetail(program.id);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    );
+
+    // À l'écran : les semaines scellées gardent leur niveau et ne s'ouvrent pas.
+    for (const [index, level] of ['70 %', '75 %', '80 %', '85 %'].entries()) {
+      expect(screen.getByText(level)).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: new RegExp(`Modifier la semaine ${index + 1},`) }),
+      ).not.toBeInTheDocument();
+    }
+    // Le motif est ancré au bloc, pas à la retouche : S5 reprend au début du
+    // motif de quatre semaines, S8 est la Décharge.
+    expect(
+      screen.getByRole('button', { name: 'Modifier la semaine 5, 05 — 100 % · Construction' }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Modifier la semaine 8, 08 — 60 % · Décharge' }),
+    ).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 5' }));
+    expect(await screen.findByRole('status', { name: 'route actuelle' })).toHaveTextContent(
+      `/programs/${program.id}`,
+    );
+
+    // En base : les lignes des quatre premières semaines ne sont même pas
+    // réécrites — mêmes identités, mêmes valeurs.
+    const after = await getProgramDetail(program.id);
+    expect(after?.weeks).toHaveLength(8);
+    expect(after?.weeks.slice(0, 4)).toEqual(before?.weeks.slice(0, 4));
+    expect(after?.weeks.slice(4).map(({ phase, loadIndex }) => ({ phase, loadIndex }))).toEqual([
+      { phase: 'construction', loadIndex: 100 },
+      { phase: 'progression', loadIndex: 105 },
+      { phase: 'overload', loadIndex: 110 },
+      { phase: 'deload', loadIndex: 60 },
+    ]);
+  });
+
+  it('enregistre le brouillon sans l’activer, puis l’active depuis la fiche', async () => {
+    const routine = await createRoutine('Force brouillon');
+    const program = await createProgramDraft({
+      name: 'Bloc à finir',
+      startsAt: mondayWeeksAgo(-1),
+      durationWeeks: 4,
+    });
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    // Sans split ni semaines, le brouillon ne s'active pas : il se termine.
+    await user.click(await screen.findByRole('button', { name: 'Continuer la création' }));
+    await user.selectOptions(
+      await screen.findByRole('combobox', { name: 'Routine de la séance 1' }),
+      routine.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Appliquer la recette Force' }));
+    await user.click(screen.getByRole('button', { name: 'Enregistrer le brouillon' }));
+
+    await waitFor(async () => {
+      const saved = await getProgramDetail(program.id);
+      expect(saved?.program.status).toBe('draft');
+      expect(saved?.weeks).toHaveLength(4);
+      expect(saved?.revisions[0]?.entries[0]?.routineId).toBe(routine.id);
+    });
+
+    // L'activation vit sur la fiche, là où l'on voit ce qu'on lance.
+    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
+    await waitFor(async () => {
+      expect((await getProgramDetail(program.id))?.program.status).toBe('active');
+    });
   });
 
   it('distingue une erreur de lecture de l’absence et du chargement', async () => {

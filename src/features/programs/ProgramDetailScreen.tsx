@@ -3,9 +3,12 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import {
+  ProgramRepositoryError,
+  activateProgram,
   completeProgram,
   deleteProgram,
   getProgramDetail,
+  replaceActiveProgram,
   shiftProgram,
 } from '@/data/repositories/programs';
 import type { ProgramDetail } from '@/data/repositories/programs';
@@ -18,9 +21,10 @@ import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { pickProgramSession, programPosition, resolveSchedule } from '@/lib/programs';
 import type { ProgramPosition } from '@/lib/programs';
-import { ActionBand, HeaderAction } from '@/ui';
+import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
+import { repositoryErrorKey } from './programEditorModel';
 import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
 import { phaseIntention, weekLine } from './weekReading';
@@ -31,6 +35,8 @@ interface DetailProjection {
   week: ProgramWeek | null;
   sessions: ProgramSessionReading[];
   activeWorkoutExists: boolean;
+  /** A draft is only activable once it has a split to run and a week for each. */
+  draftReady: boolean;
 }
 
 type DetailQuery =
@@ -140,6 +146,14 @@ async function readProjection(programId: string): Promise<DetailQuery> {
             : 'upcoming',
     }));
 
+    // Le brouillon se juge sur la semaine 1 : c'est celle par laquelle le bloc
+    // démarrera, quelle que soit la date du jour.
+    const initialSchedule = resolveSchedule(
+      detail.revisions.map(({ revision }) => revision),
+      detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
+      0,
+    );
+
     return {
       status: 'ready',
       value: {
@@ -148,6 +162,9 @@ async function readProjection(programId: string): Promise<DetailQuery> {
         week: detail.weeks.find((candidate) => candidate.weekIndex === weekIndex) ?? null,
         sessions,
         activeWorkoutExists: activeWorkout !== undefined,
+        draftReady:
+          initialSchedule.length > 0 &&
+          detail.weeks.length === detail.program.durationWeeks,
       },
     };
   } catch {
@@ -160,7 +177,8 @@ export function ProgramDetailScreen() {
   const navigate = useNavigate();
   const [actionsOpen, setActionsOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-  const [actionError, setActionError] = useState(false);
+  const [actionErrorKey, setActionErrorKey] = useState<TranslationKey | null>(null);
+  const [replacementOpen, setReplacementOpen] = useState(false);
   const [starting, setStarting] = useState(false);
   const startingRef = useRef(false);
   const query = useLiveQuery(() => readProjection(id), [id]);
@@ -195,7 +213,8 @@ export function ProgramDetailScreen() {
     );
   }
 
-  const { detail, position, week, sessions, activeWorkoutExists } = query.value;
+  const { detail, position, week, sessions, activeWorkoutExists, draftReady } = query.value;
+  const isDraft = detail.program.status === 'draft';
   const candidates = sessions
     .filter((session) => session.routineName !== null)
     .map((session) => ({
@@ -224,11 +243,37 @@ export function ProgramDetailScreen() {
       : detail.weeks;
 
   const runAction = async (action: () => Promise<void>) => {
-    setActionError(false);
+    setActionErrorKey(null);
     try {
       await action();
     } catch {
-      setActionError(true);
+      setActionErrorKey('program.actionError');
+    }
+  };
+
+  // Activer depuis la fiche : c'est ici qu'on voit le split et les semaines
+  // qu'on lance. Un autre bloc actif n'est pas une erreur, c'est une question —
+  // la même que celle posée à la fin de la création.
+  const activate = async () => {
+    setActionErrorKey(null);
+    try {
+      await activateProgram(detail.program.id);
+    } catch (error) {
+      if (error instanceof ProgramRepositoryError && error.code === 'another_program_active') {
+        setReplacementOpen(true);
+      } else {
+        setActionErrorKey(repositoryErrorKey(error));
+      }
+    }
+  };
+
+  // `ConfirmSheet` referme la feuille lui-même : ici on n'écrit que le résultat.
+  const confirmReplacement = async () => {
+    setActionErrorKey(null);
+    try {
+      await replaceActiveProgram(detail.program.id);
+    } catch (error) {
+      setActionErrorKey(repositoryErrorKey(error));
     }
   };
 
@@ -241,7 +286,7 @@ export function ProgramDetailScreen() {
     if (!canStart || effectiveSelected === null || startingRef.current) return;
     startingRef.current = true;
     setStarting(true);
-    setActionError(false);
+    setActionErrorKey(null);
     try {
       await startWorkoutFromProgram({
         programId: detail.program.id,
@@ -249,7 +294,7 @@ export function ProgramDetailScreen() {
       });
       void navigate('/workout');
     } catch {
-      setActionError(true);
+      setActionErrorKey('program.actionError');
       releaseStart();
     }
   };
@@ -271,6 +316,15 @@ export function ProgramDetailScreen() {
             disabled={starting}
             onClick={() => void beginStart()}
           />
+        ) : isDraft ? (
+          <ActionBand
+            label={draftReady ? t('program.activate') : t('program.continueCreation')}
+            onClick={() =>
+              draftReady
+                ? void activate()
+                : void navigate(`/programs/${detail.program.id}/edit`)
+            }
+          />
         ) : undefined
       }
     >
@@ -282,9 +336,9 @@ export function ProgramDetailScreen() {
             {t('program.activeWorkoutCollision')}
           </p>
         )}
-        {actionError && (
+        {actionErrorKey !== null && (
           <p role="alert" className="text-sm text-[var(--danger-ink)]">
-            {t('program.actionError')}
+            {t(actionErrorKey)}
           </p>
         )}
         {(position.phase === 'active' || detail.program.status === 'completed') && (
@@ -314,6 +368,15 @@ export function ProgramDetailScreen() {
             void navigate('/programs');
           })
         }
+      />
+
+      <ConfirmSheet
+        open={replacementOpen}
+        onClose={() => setReplacementOpen(false)}
+        title={t('program.replaceActiveTitle')}
+        body={t('program.replaceActiveBody')}
+        confirmLabel={t('program.replaceActiveConfirm')}
+        onConfirm={() => void confirmReplacement()}
       />
     </Screen>
   );

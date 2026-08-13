@@ -560,6 +560,11 @@ const fr = {
     existingBasicsHint: 'Le cadre de ce brouillon est déjà enregistré.',
     continue: 'Continuer',
     activate: 'Activer le bloc',
+    // Un brouillon s'enregistre, il ne s'active pas depuis l'éditeur : mettre
+    // le bloc en route est une décision qui se prend sur la fiche, où l'on voit
+    // ce qu'on lance.
+    saveDraft: 'Enregistrer le brouillon',
+    continueCreation: 'Continuer la création',
     saveRevision: 'Enregistrer la révision',
     saveRevisionWeek: 'Utiliser à partir de la semaine {number}',
     effectiveWeekLabel: 'Semaine d’entrée en vigueur',
