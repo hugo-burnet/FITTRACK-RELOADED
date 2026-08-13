@@ -28,6 +28,13 @@ export {
 } from './workoutSets';
 export type { NewSetValues, SetValues } from './workoutSets';
 
+export { ProgramWorkoutError, startWorkoutFromProgram } from './programWorkout';
+export type {
+  ProgramWorkoutErrorCode,
+  StartWorkoutFromProgramInput,
+  StartWorkoutFromProgramResult,
+} from './programWorkout';
+
 export { getWorkoutDetail, workoutExerciseIdentityOf } from './workoutDetail';
 export type { WorkoutDetail, WorkoutExerciseDetail } from './workoutDetail';
 

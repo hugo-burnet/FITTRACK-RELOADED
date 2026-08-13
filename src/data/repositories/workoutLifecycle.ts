@@ -1,5 +1,13 @@
 import { db } from '@/data/db';
-import type { Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type {
+  Exercise,
+  Routine,
+  RoutineExercise,
+  RoutineSet,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
 import { resolveRestSeconds } from '@/lib/rest';
 import { localOffsetMinutes } from '@/lib/timezone';
 import { alive, newEntity, softDelete, touch } from './base';
@@ -47,6 +55,131 @@ export async function startWorkout(routineId: string, name: string): Promise<Wor
   return workout;
 }
 
+export interface WorkoutRoutineSource {
+  routine: Routine;
+  rows: RoutineExercise[];
+  plannedSets: RoutineSet[];
+  exercisesById: ReadonlyMap<string, Exercise>;
+}
+
+type WorkoutProgramContext = Pick<
+  Workout,
+  'programId' | 'programWeekIndex' | 'programScheduleEntryId' | 'programIsDeload'
+>;
+
+export type WorkoutTargetSnapshot = Pick<
+  RoutineSet,
+  | 'targetReps'
+  | 'targetRepsMax'
+  | 'targetWeight'
+  | 'targetDurationSeconds'
+  | 'targetDistanceMeters'
+  | 'targetRpe'
+>;
+
+export interface WorkoutEntityGraph {
+  workout: Workout;
+  exercises: WorkoutExercise[];
+  sets: WorkoutSet[];
+}
+
+/** Reads the complete routine graph used by both regular and programmed starts. */
+export async function readWorkoutRoutineSource(
+  routineId: string,
+): Promise<WorkoutRoutineSource | null> {
+  const routine = await db.routines.get(routineId);
+  if (routine === undefined || routine.deletedAt !== 0) return null;
+
+  const rows = alive(
+    await db.routineExercises.where('routineId').equals(routineId).toArray(),
+  ).sort(byOrder);
+  const rowIds = rows.map((row) => row.id);
+  const plannedSets = (
+    rowIds.length === 0
+      ? []
+      : alive(await db.routineSets.where('routineExerciseId').anyOf(rowIds).toArray())
+  ).sort(byOrder);
+  const library = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
+  const exercisesById = new Map(
+    library.filter((exercise) => exercise !== undefined).map((exercise) => [exercise.id, exercise]),
+  );
+
+  return { routine, rows, plannedSets, exercisesById };
+}
+
+/** Builds immutable workout snapshots without writing, so callers own transaction scope. */
+export function buildWorkoutEntities(input: {
+  source: WorkoutRoutineSource;
+  startedAt: number;
+  programContext?: WorkoutProgramContext;
+  targetsByRoutineSetId?: ReadonlyMap<string, WorkoutTargetSnapshot>;
+}): WorkoutEntityGraph {
+  const { source, startedAt } = input;
+  const workout = newEntity<Workout>({
+    routineId: source.routine.id,
+    name: source.routine.name,
+    status: 'active',
+    startedAt,
+    endedAt: 0,
+    durationSeconds: 0,
+    startedTimezoneOffsetMinutes: localOffsetMinutes(startedAt),
+    ...input.programContext,
+  });
+
+  // Resolve rest and exercise identity once: later routine/library edits must
+  // never reinterpret a session that is already running.
+  const exercises = source.rows.map((row) =>
+    newEntity<WorkoutExercise>({
+      workoutId: workout.id,
+      exerciseId: row.exerciseId,
+      order: row.order,
+      supersetGroup: row.supersetGroup,
+      notes: row.notes,
+      restSeconds: resolveRestSeconds(
+        row.restSeconds,
+        source.exercisesById.get(row.exerciseId)?.defaultRestSeconds,
+      ),
+      ...snapshotOf(source.exercisesById.get(row.exerciseId)),
+    }),
+  );
+
+  const rowIndex = new Map(source.rows.map((row, index) => [row.id, index]));
+  const sets = source.plannedSets.flatMap((plan) => {
+    const index = rowIndex.get(plan.routineExerciseId);
+    const parent = index === undefined ? undefined : exercises[index];
+    if (parent === undefined) return [];
+    const targets = input.targetsByRoutineSetId?.get(plan.id) ?? plan;
+
+    return [
+      newEntity<WorkoutSet>({
+        workoutExerciseId: parent.id,
+        exerciseId: parent.exerciseId,
+        workoutId: workout.id,
+        order: plan.order,
+        setType: plan.setType,
+        side: 'both',
+        targetReps: targets.targetReps,
+        targetRepsMax: targets.targetRepsMax,
+        targetWeight: targets.targetWeight,
+        targetDurationSeconds: targets.targetDurationSeconds,
+        targetDistanceMeters: targets.targetDistanceMeters,
+        targetRpe: targets.targetRpe,
+        isCompleted: 0,
+        performedAt: 0,
+      }),
+    ];
+  });
+
+  return { workout, exercises, sets };
+}
+
+/** Inserts a prebuilt graph in the caller's transaction. */
+export async function insertWorkoutEntities(graph: WorkoutEntityGraph): Promise<void> {
+  await db.workouts.add(graph.workout);
+  if (graph.exercises.length > 0) await db.workoutExercises.bulkAdd(graph.exercises);
+  if (graph.sets.length > 0) await db.workoutSets.bulkAdd(graph.sets);
+}
+
 /**
  * RF-17 — a session laid out from a routine: its exercises, their order, their
  * superset groups, their notes and their planned sets.
@@ -62,89 +195,17 @@ export async function startWorkout(routineId: string, name: string): Promise<Wor
  * screen showed an empty box where the routine had a prescription.
  */
 export async function startWorkoutFromRoutine(routineId: string): Promise<Workout> {
-  const routine = await db.routines.get(routineId);
-  if (routine === undefined || routine.deletedAt !== 0) {
+  const source = await readWorkoutRoutineSource(routineId);
+  if (source === null) {
     throw new Error(`Routine introuvable : ${routineId}`);
   }
-
-  const rows = alive(await db.routineExercises.where('routineId').equals(routineId).toArray()).sort(
-    byOrder,
-  );
-  const planned = alive(
-    await db.routineSets
-      .where('routineExerciseId')
-      .anyOf(rows.map((row) => row.id))
-      .toArray(),
-  ).sort(byOrder);
-
-  const startedAt = Date.now();
-  const workout = newEntity<Workout>({
-    routineId,
-    name: routine.name,
-    status: 'active',
-    startedAt,
-    endedAt: 0,
-    durationSeconds: 0,
-    startedTimezoneOffsetMinutes: localOffsetMinutes(startedAt),
-  });
-
-  // The rest is resolved **here**, once, and copied in: the routine may be
-  // edited or deleted while the session runs, and `0` on a routine row means
-  // "use the exercise's default", which only the library can answer. The same
-  // read now also freezes each exercise's identity onto its row — one lookup,
-  // two denormalisations, both for the same reason.
-  const library = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
-  const byId = new Map(
-    library.filter((exercise) => exercise !== undefined).map((exercise) => [exercise.id, exercise]),
-  );
-
-  const exercises = rows.map((row) =>
-    newEntity<WorkoutExercise>({
-      workoutId: workout.id,
-      exerciseId: row.exerciseId,
-      order: row.order,
-      supersetGroup: row.supersetGroup,
-      notes: row.notes,
-      restSeconds: resolveRestSeconds(
-        row.restSeconds,
-        byId.get(row.exerciseId)?.defaultRestSeconds,
-      ),
-      ...snapshotOf(byId.get(row.exerciseId)),
-    }),
-  );
-
-  const rowIndex = new Map(rows.map((row, index) => [row.id, index]));
-  const sets = planned.flatMap((plan) => {
-    const index = rowIndex.get(plan.routineExerciseId);
-    const parent = index === undefined ? undefined : exercises[index];
-    if (parent === undefined) return [];
-
-    return [
-      newEntity<WorkoutSet>({
-        workoutExerciseId: parent.id,
-        exerciseId: parent.exerciseId,
-        workoutId: workout.id,
-        order: plan.order,
-        setType: plan.setType,
-        side: 'both',
-        targetReps: plan.targetReps,
-        targetRepsMax: plan.targetRepsMax,
-        targetWeight: plan.targetWeight,
-        targetDurationSeconds: plan.targetDurationSeconds,
-        targetDistanceMeters: plan.targetDistanceMeters,
-        isCompleted: 0,
-        performedAt: 0,
-      }),
-    ];
-  });
+  const graph = buildWorkoutEntities({ source, startedAt: Date.now() });
 
   await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
-    await db.workouts.add(workout);
-    await db.workoutExercises.bulkAdd(exercises);
-    await db.workoutSets.bulkAdd(sets);
+    await insertWorkoutEntities(graph);
   });
 
-  return workout;
+  return graph.workout;
 }
 
 export async function updateWorkout(

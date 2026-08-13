@@ -135,7 +135,10 @@ export function WorkoutScreen() {
   const pendingCoach = useLiveQuery(async () => {
     if (detail == null) return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
     const ids = detail.exercises.map((line) => line.row.exerciseId);
-    return listPendingRecommendations(ids);
+    const pending = await listPendingRecommendations(ids);
+    return detail.workout.programId === undefined
+      ? pending
+      : pending.filter((recommendation) => recommendation.nextLoadKg === undefined);
   }, [detail?.workout.id, detail?.exercises.map((line) => line.row.exerciseId).join('|')]);
 
   // Mobile browsers require a user gesture before later timer-driven audio.
@@ -329,6 +332,20 @@ export function WorkoutScreen() {
       }
     >
       <div className="flex flex-col gap-2">
+        {workout.programId !== undefined && workout.programWeekIndex !== undefined && (
+          <Card padded>
+            <div className="flex min-h-12 items-center justify-between gap-3">
+              <p className="label-xs font-semibold text-[var(--text-2)]">
+                {t('workout.programContext', { week: workout.programWeekIndex + 1 })}
+              </p>
+              {workout.programIsDeload === 1 && (
+                <p className="text-sm font-semibold text-[var(--accent-ink)]">
+                  {t('workout.programDeload')}
+                </p>
+              )}
+            </div>
+          </Card>
+        )}
         {exercises.length === 0 ? (
           <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('workout.emptyBody')} />
         ) : (
@@ -582,6 +599,7 @@ export function WorkoutScreen() {
         {sheet?.kind === 'set' && (
           <WorkoutRpeField
             value={setOf(sheet.setId)?.rpe}
+            targetValue={setOf(sheet.setId)?.targetRpe}
             onChange={(rpe) => void updateSetValues(sheet.setId, { rpe })}
           />
         )}

@@ -7,6 +7,7 @@ const RPE_VALUES = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10] as const;
 
 type Props = {
   value: number | undefined;
+  targetValue?: number;
   onChange: (value: number | undefined) => void;
 };
 
@@ -18,17 +19,18 @@ type Props = {
  * sheet; the value itself belongs to the set and is written through by the
  * parent.
  */
-export function WorkoutRpeField({ value, onChange }: Props) {
+export function WorkoutRpeField({ value, targetValue, onChange }: Props) {
   const [expanded, setExpanded] = useState(false);
   const labelId = useId();
   const valueId = useId();
+  const targetId = useId();
 
   return (
     <div className="-mx-5 border-b border-[var(--border)]">
       <button
         type="button"
         aria-labelledby={labelId}
-        aria-describedby={valueId}
+        aria-describedby={`${valueId}${targetValue === undefined ? '' : ` ${targetId}`}`}
         aria-expanded={expanded}
         onClick={() => setExpanded((open) => !open)}
         className="flex min-h-14 w-full items-center gap-3 px-5 py-3 text-left
@@ -44,6 +46,11 @@ export function WorkoutRpeField({ value, onChange }: Props) {
               ? t('workout.rpeEmpty')
               : t('workout.rpeValue', { value: formatNumber(value) })}
           </span>
+          {targetValue !== undefined && (
+            <span id={targetId} className="metric text-sm font-semibold text-[var(--accent-ink)]">
+              {t('workout.rpeProgramTarget', { value: formatNumber(targetValue) })}
+            </span>
+          )}
         </span>
         <ChevronDownIcon
           aria-hidden="true"
