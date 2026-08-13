@@ -16,7 +16,9 @@ import { HistoryEditScreen } from './features/history/HistoryEditScreen';
 import { HevyImportScreen } from './features/history/HevyImportScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
+import { ProgramDetailScreen } from './features/programs/ProgramDetailScreen';
 import { ProgramEditorScreen } from './features/programs/ProgramEditorScreen';
+import { ProgramListScreen } from './features/programs/ProgramListScreen';
 import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
 import { RoutineEditorScreen } from './features/routines/RoutineEditorScreen';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
@@ -35,7 +37,9 @@ export const router = createHashRouter([
     children: [
       { index: true, element: <HomeScreen /> },
       { path: 'routines', element: <RoutinesScreen /> },
+      { path: 'programs', element: <ProgramListScreen /> },
       { path: 'programs/new', element: <ProgramEditorScreen /> },
+      { path: 'programs/:id', element: <ProgramDetailScreen /> },
       { path: 'programs/:id/edit', element: <ProgramEditorScreen /> },
       // A routine's screen is its editor: everything is written as it is typed,
       // so there is no read-only view to separate from it.
