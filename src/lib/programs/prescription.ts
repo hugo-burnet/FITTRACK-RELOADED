@@ -1,4 +1,5 @@
 import type { Exercise, ProgramWeek, RoutineSet } from '@/data/types';
+import { createDeloadTargets } from './deloadTargets';
 
 export type ProgramPrescriptionWarningCode =
   | 'missing_one_rep_max'
@@ -55,7 +56,7 @@ function routineTargets(set: RoutineSet): ProjectedProgramSet {
 /**
  * Projects program-week intention onto routine targets without inventing performed
  * values. Non-deload weeks are identity (routine is the source of truth). Deload
- * recipe lands in Task 4; until then deload also returns routine targets.
+ * weeks use the deterministic recipe in `createDeloadTargets`.
  *
  * `loadIndex` is never applied as a multiplier.
  */
@@ -64,8 +65,14 @@ export function projectProgramPrescription(input: {
   exercises: readonly ProgramPrescriptionExerciseInput[];
   oneRepMaxByExerciseId: ReadonlyMap<string, number>;
 }): ProgramPrescriptionProjection {
-  void input.week;
   void input.oneRepMaxByExerciseId;
+
+  if (input.week.phase === 'deload') {
+    return createDeloadTargets({
+      week: input.week,
+      exercises: input.exercises,
+    });
+  }
 
   const sets: ProjectedProgramSet[] = [];
   for (const { sets: routineSets } of input.exercises) {

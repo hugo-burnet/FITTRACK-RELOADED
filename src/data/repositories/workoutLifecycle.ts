@@ -171,7 +171,13 @@ export function buildWorkoutEntities(input: {
     const index = rowIndex.get(plan.routineExerciseId);
     const parent = index === undefined ? undefined : exercises[index];
     if (parent === undefined) return [];
-    const targets = input.targetsByRoutineSetId?.get(plan.id) ?? plan;
+    // When a program projection map is supplied, only sets present in it are
+    // materialised (deload drops one working set). Absent map = full routine.
+    const projected = input.targetsByRoutineSetId?.get(plan.id);
+    if (input.targetsByRoutineSetId !== undefined && projected === undefined) {
+      return [];
+    }
+    const targets = projected ?? plan;
 
     return [
       newEntity<WorkoutSet>({

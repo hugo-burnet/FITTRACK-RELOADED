@@ -173,4 +173,36 @@ describe('projectProgramPrescription', () => {
       warnings: [],
     });
   });
+
+  it('delegates deload weeks to the deload recipe (not identity)', () => {
+    const result = projectProgramPrescription({
+      week: week({ loadIndex: 60, phase: 'deload' }),
+      exercises: [
+        {
+          exercise: exercise(),
+          sets: [
+            routineSet({
+              id: 'a',
+              order: 0,
+              targetWeight: 80,
+              targetReps: 8,
+              targetRepsMax: 12,
+            }),
+            routineSet({
+              id: 'b',
+              order: 1,
+              targetWeight: 80,
+              targetReps: 8,
+              targetRepsMax: 12,
+            }),
+          ],
+        },
+      ],
+      oneRepMaxByExerciseId: new Map(),
+    });
+
+    expect(result.sets).toEqual([
+      { routineSetId: 'a', targetWeight: 75, targetReps: 8 },
+    ]);
+  });
 });

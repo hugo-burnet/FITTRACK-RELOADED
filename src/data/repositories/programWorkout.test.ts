@@ -257,12 +257,34 @@ describe('startWorkoutFromProgram', () => {
     expect([...benchSets, squatSet].every((set) => set.weight === undefined)).toBe(true);
   });
 
-  it('copie le RPE de routine sans le tamponner, sans préremplir le réalisé, et marque la décharge', async () => {
+  it('applique la recette Décharge : charges réduites, volume −1, snapshot de phase', async () => {
     const bench = await exercise('Développé couché');
     const { routine, row, set: warmup } = await routineWithExercise('Décharge', bench);
     await updateRoutineSet(warmup.id, { setType: 'warmup', targetRpe: 5, targetWeight: 40 });
-    const work = await addRoutineSet(row.id);
-    await updateRoutineSet(work.id, { setType: 'normal', targetRpe: 7, targetWeight: 80 });
+    const workA = await addRoutineSet(row.id);
+    await updateRoutineSet(workA.id, {
+      setType: 'normal',
+      targetRpe: 7,
+      targetWeight: 80,
+      targetReps: 8,
+      targetRepsMax: 12,
+    });
+    const workB = await addRoutineSet(row.id);
+    await updateRoutineSet(workB.id, {
+      setType: 'normal',
+      targetWeight: 80,
+      targetReps: 8,
+      targetRepsMax: 12,
+      targetRpe: undefined,
+    });
+    const workC = await addRoutineSet(row.id);
+    await updateRoutineSet(workC.id, {
+      setType: 'normal',
+      targetWeight: 80,
+      targetReps: 8,
+      targetRepsMax: 12,
+      targetRpe: undefined,
+    });
     const weeks = programWeeks({
       loadIndex: 60,
       phase: 'deload',
@@ -277,10 +299,71 @@ describe('startWorkoutFromProgram', () => {
     });
     const sets = at((await getWorkoutDetail(workout.id))!.exercises, 0).sets;
 
-    expect(workout.programIsDeload).toBe(1);
-    expect(sets.map(({ targetRpe }) => targetRpe)).toEqual([5, 7]);
-    expect(sets.every((set) => set.rpe === undefined)).toBe(true);
-    expect(sets.map(({ targetWeight }) => targetWeight)).toEqual([40, 80]);
+    expect(workout).toMatchObject({
+      programPhase: 'deload',
+      programLoadIndex: 60,
+      programIsDeload: 1,
+    });
+    // warm-up untouched + 2 working sets (third dropped); 80 → previousLoad×2 = 75
+    expect(sets).toHaveLength(3);
+    expect(sets.map(({ targetWeight, targetReps, targetRepsMax, targetRpe }) => ({
+      targetWeight,
+      targetReps,
+      targetRepsMax,
+      targetRpe,
+    }))).toEqual([
+      { targetWeight: 40, targetReps: undefined, targetRepsMax: undefined, targetRpe: 5 },
+      { targetWeight: 75, targetReps: 8, targetRepsMax: undefined, targetRpe: 7 },
+      { targetWeight: 75, targetReps: 8, targetRepsMax: undefined, targetRpe: undefined },
+    ]);
+    expect(sets.every((set) => set.rpe === undefined && set.weight === undefined)).toBe(true);
+  });
+
+  it('fige phase/loadIndex à la création même si la semaine est reclassée ensuite', async () => {
+    const bench = await exercise('Développé couché');
+    const { routine } = await routineWithExercise('Force', bench);
+    const weeks = Array.from({ length: 4 }, (_, weekIndex) => ({
+      weekIndex,
+      loadIndex: weekIndex === 2 ? 105 : 100,
+      phase: weekIndex === 2 ? ('progression' as const) : ('construction' as const),
+    }));
+    const { program, entry } = await readyProgram({ routineId: routine.id, weeks });
+    await activateProgram(program.id);
+
+    // Week index 2 starts on Monday + 14 days.
+    const week3At = MONDAY + 2 * WEEK;
+    const { workout } = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: week3At,
+    });
+
+    expect(workout).toMatchObject({
+      programWeekIndex: 2,
+      programPhase: 'progression',
+      programLoadIndex: 105,
+      programIsDeload: 0,
+    });
+
+    // Active programs cannot call replaceProgramWeeks; reclassify the week row
+    // directly to prove the session snapshot is not re-read.
+    const weekRow = at(
+      await db.programWeeks.where('[programId+weekIndex]').equals([program.id, 2]).toArray(),
+      0,
+    );
+    await db.programWeeks.put({
+      ...weekRow,
+      loadIndex: 60,
+      phase: 'deload',
+      updatedAt: Date.now(),
+    });
+
+    const stored = await db.workouts.get(workout.id);
+    expect(stored).toMatchObject({
+      programPhase: 'progression',
+      programLoadIndex: 105,
+      programIsDeload: 0,
+    });
   });
 
   it('refuse atomiquement une collision avec une séance active', async () => {

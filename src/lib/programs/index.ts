@@ -22,3 +22,4 @@ export {
   type ProgramPrescriptionWarningCode,
   type ProjectedProgramSet,
 } from './prescription';
+export { createDeloadTargets } from './deloadTargets';
