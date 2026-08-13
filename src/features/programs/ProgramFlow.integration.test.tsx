@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
+import { createCustomExercise } from '@/data/repositories/exercises';
 import * as programsRepository from '@/data/repositories/programs';
 import {
   activateProgram,
@@ -12,8 +13,10 @@ import {
   listPrograms,
   replaceProgramWeeks,
 } from '@/data/repositories/programs';
-import { createRoutine } from '@/data/repositories/routines';
+import * as routinesRepository from '@/data/repositories/routines';
+import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import { finishWorkout, getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
+import * as programWorkoutRepository from '@/data/repositories/programWorkout';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { resetDb } from '@/test/resetDb';
 import { ProgramDetailScreen } from './ProgramDetailScreen';
@@ -57,6 +60,7 @@ function renderProgramFlow(initialEntry = '/programs/new') {
 
 describe('parcours de création d’un programme', () => {
   beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
 
   it('active un bloc de huit semaines avec un split lundi/jeudi et une décharge en semaine 5', async () => {
     const mondayRoutine = await createRoutine('Force A');
@@ -85,10 +89,15 @@ describe('parcours de création d’un programme', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
-    await user.click(await screen.findByRole('button', { name: 'Modifier la semaine 5' }));
+    await user.click(await screen.findByRole('button', { name: /Modifier la semaine 5/ }));
     await user.click(screen.getByRole('switch', { name: 'Semaine de décharge' }));
     await user.click(screen.getByRole('button', { name: 'Enregistrer la semaine' }));
-    await user.click(screen.getByRole('button', { name: 'Activer le bloc' }));
+    expect(
+      screen.getByRole('button', {
+        name: 'Modifier la semaine 5, 70 % du 1RM, Décharge',
+      }),
+    ).toBeVisible();
+    await user.click(await screen.findByRole('button', { name: 'Activer le bloc' }));
 
     const programs = await waitFor(async () => {
       const stored = await listPrograms();
@@ -163,19 +172,118 @@ describe('parcours de création d’un programme', () => {
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}/edit`);
 
+    const effectiveWeek = await screen.findByRole('combobox', {
+      name: 'Semaine d’entrée en vigueur',
+    });
+    expect(effectiveWeek).toHaveValue('0');
+    expect(screen.getByRole('option', { name: 'Semaine 1' })).toBeVisible();
+
     await user.selectOptions(
-      await screen.findByRole('combobox', { name: 'Routine de la séance 1' }),
+      screen.getByRole('combobox', { name: 'Routine de la séance 1' }),
       replacement.id,
     );
-    await user.click(screen.getByRole('button', { name: 'Enregistrer la révision' }));
+    await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 1' }));
     expect(await screen.findByRole('status', { name: 'route actuelle' })).toHaveTextContent(
       `/programs/${program.id}`,
     );
     const detail = await getProgramDetail(program.id);
-    expect(detail?.revisions).toHaveLength(2);
-    expect(detail?.revisions[1]?.revision.effectiveFromWeekIndex).toBe(1);
-    expect(detail?.revisions[1]?.entries[0]?.routineId).toBe(replacement.id);
+    expect(detail?.revisions).toHaveLength(1);
+    expect(detail?.revisions[0]?.revision.effectiveFromWeekIndex).toBe(0);
+    expect(detail?.revisions[0]?.entries[0]?.routineId).toBe(replacement.id);
     expect(detail?.weeks).toHaveLength(4);
+  });
+
+  it('exclut la semaine courante déjà enregistrée des choix effectifs', async () => {
+    const routine = await createRoutine('Force active');
+    const today = new Date();
+    const isoDay = today.getDay() === 0 ? 7 : today.getDay();
+    const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    monday.setDate(monday.getDate() - (isoDay - 1));
+    const program = await createProgramDraft({
+      name: 'Bloc enregistré',
+      startsAt: monday.getTime(),
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 4 }, (_, weekIndex) => ({
+        weekIndex,
+        prescriptionKind: 'target_rpe' as const,
+        prescriptionValue: 8,
+        isDeload: 0 as const,
+      })),
+    );
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await activateProgram(program.id);
+    const entry = (await getProgramDetail(program.id))!.revisions.find(
+      ({ revision: candidate }) => candidate.id === revision.id,
+    )!.entries[0]!;
+    const workout = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+    });
+    await finishWorkout(workout.workout.id);
+
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    const effectiveWeek = await screen.findByRole('combobox', {
+      name: 'Semaine d’entrée en vigueur',
+    });
+    expect(effectiveWeek).toHaveValue('1');
+    expect(screen.queryByRole('option', { name: 'Semaine 1' })).not.toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Semaine 2' })).toBeVisible();
+  });
+
+  it('permet de remplacer explicitement une révision future existante', async () => {
+    const initial = await createRoutine('Force initiale');
+    const future = await createRoutine('Force future');
+    const replacement = await createRoutine('Force future corrigée');
+    const today = new Date();
+    const isoDay = today.getDay() === 0 ? 7 : today.getDay();
+    const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    monday.setDate(monday.getDate() - (isoDay - 1));
+    const program = await createProgramDraft({
+      name: 'Bloc futur',
+      startsAt: monday.getTime(),
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 4 }, (_, weekIndex) => ({
+        weekIndex,
+        prescriptionKind: 'target_rpe' as const,
+        prescriptionValue: 8,
+        isDeload: 0 as const,
+      })),
+    );
+    await createScheduleRevision(program.id, 0, [
+      { routineId: initial.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await createScheduleRevision(program.id, 2, [
+      { routineId: future.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await activateProgram(program.id);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}/edit`);
+
+    const effectiveWeek = await screen.findByRole('combobox', {
+      name: 'Semaine d’entrée en vigueur',
+    });
+    expect(effectiveWeek).toHaveValue('2');
+    expect(screen.queryByRole('option', { name: 'Semaine 1' })).not.toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Semaine 3' })).toBeVisible();
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Routine de la séance 1' }),
+      replacement.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 3' }));
+
+    const detail = await getProgramDetail(program.id);
+    expect(detail?.revisions).toHaveLength(2);
+    expect(detail?.revisions[1]?.revision.effectiveFromWeekIndex).toBe(2);
+    expect(detail?.revisions[1]?.entries[0]?.routineId).toBe(replacement.id);
   });
 
   it('distingue une erreur de lecture de l’absence et du chargement', async () => {
@@ -190,6 +298,26 @@ describe('parcours de création d’un programme', () => {
     ).toBeVisible();
     read.mockRestore();
   });
+
+  it('distingue une erreur de lecture des routines de leur chargement et de leur absence', async () => {
+    vi.spyOn(routinesRepository, 'listRoutineSummaries').mockRejectedValue(
+      new Error('routine read failed'),
+    );
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Bloc cassé');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    expect(
+      await screen.findByText(
+        'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
+      ),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Continuer' })).toBeDisabled();
+  });
+
 });
 
 const TRACKING_NOW = new Date(2026, 7, 13, 12).getTime();
@@ -282,6 +410,141 @@ describe('suivi du bloc courant', () => {
     });
   });
 
+  it('laisse une séance terminée sélectionnable pour la refaire', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const first = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_NOW,
+    });
+    await finishWorkout(first.workout.id);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    const completed = await screen.findByRole('button', {
+      name: 'Force terminée, Terminée',
+    });
+    expect(completed).toBeEnabled();
+    await user.click(completed);
+    await user.click(screen.getByRole('button', { name: 'Démarrer Force terminée' }));
+
+    await waitFor(async () => {
+      expect(await getActiveWorkout()).toMatchObject({
+        programId: program.id,
+        programScheduleEntryId: entries[0]!.id,
+      });
+    });
+  });
+
+  it('affiche l’historique par contexte sur le détail d’un bloc terminé', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const completed = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_NOW,
+    });
+    await finishWorkout(completed.workout.id);
+    await programsRepository.completeProgram(program.id);
+
+    renderProgramFlow(`/programs/${program.id}`);
+
+    expect(
+      await screen.findByRole('button', { name: 'Force terminée, Terminée' }),
+    ).toBeDisabled();
+  });
+
+  it('confirme les replis de prescription avant toute insertion depuis le détail', async () => {
+    const movement = await createCustomExercise({
+      name: 'Squat sans record',
+      primaryMuscle: 'quads',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Force avertie');
+    await addExercisesToRoutine(routine.id, [movement.id]);
+    const program = await createProgramDraft({
+      name: 'Bloc averti',
+      startsAt: TRACKING_START,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 4 }, (_, weekIndex) => ({
+        weekIndex,
+        prescriptionKind: 'percent_1rm' as const,
+        prescriptionValue: 75,
+        isDeload: 0 as const,
+      })),
+    );
+    await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 4, order: 0 },
+    ]);
+    await activateProgram(program.id);
+    const entry = (await getProgramDetail(program.id))!.revisions[0]!.entries[0]!;
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    await user.click(await screen.findByRole('button', { name: 'Force avertie, Aujourd’hui' }));
+    await user.click(screen.getByRole('button', { name: 'Démarrer Force avertie' }));
+
+    expect(await screen.findByRole('dialog', { name: 'Cibles conservées' })).toBeVisible();
+    expect(await getActiveWorkout()).toBeUndefined();
+
+    await user.click(screen.getByRole('button', { name: 'Démarrer quand même' }));
+    await waitFor(async () => {
+      expect(await getActiveWorkout()).toMatchObject({
+        programScheduleEntryId: entry.id,
+      });
+    });
+  });
+
+  it('ignore un double appui pendant le démarrage depuis le détail', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const selected = entries[2]!;
+    vi.spyOn(programWorkoutRepository, 'preflightProgramWorkout').mockResolvedValue({
+      context: {
+        programId: program.id,
+        programWeekIndex: 1,
+        programScheduleRevisionId: selected.revisionId,
+        programScheduleEntryId: selected.id,
+        routineId: selected.routineId,
+        routineName: 'Poussée du jour',
+        prescriptionKind: 'percent_1rm',
+        prescriptionValue: 75,
+        programIsDeload: 0,
+      },
+      warnings: [],
+      warningAcknowledgement: null,
+    });
+    let release!: (
+      value: Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>,
+    ) => void;
+    const pending = new Promise<
+      Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>
+    >((resolve) => {
+      release = resolve;
+    });
+    const start = vi
+      .spyOn(programWorkoutRepository, 'startWorkoutFromProgram')
+      .mockReturnValue(pending);
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+    const action = await screen.findByRole('button', { name: 'Démarrer Poussée du jour' });
+
+    await user.dblClick(action);
+
+    expect(start).toHaveBeenCalledTimes(1);
+    expect(action).toBeDisabled();
+    release({
+      workout: {} as Awaited<
+        ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>
+      >['workout'],
+      warnings: [],
+    });
+  });
+
   it('propose d’abord la première séance ordonnée lorsque deux séances tombent aujourd’hui', async () => {
     const { program, entries, routines } = await createTrackingProgram();
     const todayEntries = [entries[2]!, entries[3]!];
@@ -308,7 +571,7 @@ describe('suivi du bloc courant', () => {
     expect(screen.queryByRole('button', { name: 'Démarrer Poussée du jour' })).not.toBeInTheDocument();
   });
 
-  it('confirme un décalage en jours civils entiers et avertit lorsque le bloc a commencé', async () => {
+  it('confirme un décalage en semaines entières et avertit lorsque le bloc a commencé', async () => {
     const { program } = await createTrackingProgram();
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
@@ -316,17 +579,17 @@ describe('suivi du bloc courant', () => {
     await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
     await user.click(screen.getByRole('button', { name: /^Décaler le bloc/ }));
     expect(screen.getByText('Le bloc a déjà commencé. Les séances passées ne bougeront pas.')).toBeVisible();
-    const days = screen.getByRole('spinbutton', { name: 'Nombre de jours' });
-    await user.clear(days);
-    await user.type(days, '2.5');
+    const weeks = screen.getByRole('spinbutton', { name: 'Nombre de semaines' });
+    await user.clear(weeks);
+    await user.type(weeks, '2.5');
     expect(screen.getByRole('button', { name: 'Confirmer le décalage' })).toBeDisabled();
-    await user.clear(days);
-    await user.type(days, '2');
+    await user.clear(weeks);
+    await user.type(weeks, '1');
     await user.click(screen.getByRole('button', { name: 'Confirmer le décalage' }));
 
     await waitFor(async () => {
       expect((await getProgramDetail(program.id))?.program.startsAt).toBe(
-        new Date(2026, 7, 5, 0).getTime(),
+        new Date(2026, 7, 10, 0).getTime(),
       );
     });
   });

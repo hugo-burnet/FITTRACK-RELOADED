@@ -23,11 +23,11 @@ export function ProgramActionsSheet({
 }: Props) {
   const [shiftOpen, setShiftOpen] = useState(false);
   const [completeOpen, setCompleteOpen] = useState(false);
-  const [days, setDays] = useState('');
+  const [weeks, setWeeks] = useState('');
   const [working, setWorking] = useState(false);
 
-  const parsedDays = Number(days);
-  const validDays = days.trim() !== '' && Number.isInteger(parsedDays) && parsedDays !== 0;
+  const parsedWeeks = Number(weeks);
+  const validWeeks = weeks.trim() !== '' && Number.isInteger(parsedWeeks) && parsedWeeks !== 0;
 
   return (
     <>
@@ -70,23 +70,23 @@ export function ProgramActionsSheet({
             type="number"
             step="1"
             inputMode="numeric"
-            label={t('program.shiftDaysLabel')}
-            hint={t('program.shiftDaysHint')}
-            value={days}
-            onChange={(event) => setDays(event.target.value)}
+            label={t('program.shiftWeeksLabel')}
+            hint={t('program.shiftWeeksHint')}
+            value={weeks}
+            onChange={(event) => setWeeks(event.target.value)}
           />
           <Button
             variant="primary"
             size="lg"
             fullWidth
-            disabled={!validDays || working}
+            disabled={!validWeeks || working}
             onClick={() => {
-              if (!validDays || working) return;
+              if (!validWeeks || working) return;
               setWorking(true);
-              void onShift(parsedDays).finally(() => {
+              void onShift(parsedWeeks * 7).finally(() => {
                 setWorking(false);
                 setShiftOpen(false);
-                setDays('');
+                setWeeks('');
               });
             }}
           >

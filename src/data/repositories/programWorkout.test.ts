@@ -24,7 +24,11 @@ import {
   updateRoutineSet,
 } from './routines';
 import { getWorkoutDetail, startWorkoutFromRoutine } from './workouts';
-import { startWorkoutFromProgram } from './programWorkout';
+import {
+  ProgramWorkoutWarningAcknowledgementError,
+  preflightProgramWorkout,
+  startWorkoutFromProgram,
+} from './programWorkout';
 
 const MONDAY = new Date(2026, 7, 10, 12).getTime();
 const WEEK = 7 * 86_400_000;
@@ -100,6 +104,103 @@ async function addBestOneRepMax(exerciseId: string, value: number, achievedAt: n
 describe('startWorkoutFromProgram', () => {
   beforeEach(resetDb);
 
+  it('annonce les replis sans aucune insertion puis exige leur acquittement exact', async () => {
+    const squat = await exercise('Squat');
+    const { routine } = await routineWithExercise('Force', squat);
+    const { program, entry } = await readyProgram({ routineId: routine.id });
+    await activateProgram(program.id);
+
+    const preflight = await preflightProgramWorkout({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+    });
+
+    expect(preflight).toMatchObject({
+      context: {
+        programId: program.id,
+        programWeekIndex: 0,
+        programScheduleEntryId: entry.id,
+        routineId: routine.id,
+        routineName: 'Force',
+      },
+      warnings: [
+        {
+          code: 'missing_one_rep_max',
+          exerciseId: squat.id,
+          exerciseName: 'Squat',
+        },
+      ],
+    });
+    expect(preflight.warningAcknowledgement).not.toBeNull();
+    expect(await db.workouts.count()).toBe(0);
+    expect(await db.workoutExercises.count()).toBe(0);
+    expect(await db.workoutSets.count()).toBe(0);
+
+    await expect(
+      startWorkoutFromProgram({
+        programId: program.id,
+        programScheduleEntryId: entry.id,
+        at: MONDAY,
+      }),
+    ).rejects.toBeInstanceOf(ProgramWorkoutWarningAcknowledgementError);
+    expect(await db.workouts.count()).toBe(0);
+    expect(await db.workoutExercises.count()).toBe(0);
+    expect(await db.workoutSets.count()).toBe(0);
+
+    await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+      warningAcknowledgement: preflight.warningAcknowledgement!,
+    });
+    expect(await db.workouts.count()).toBe(1);
+  });
+
+  it('refuse un acquittement devenu p\u00e9rim\u00e9 si le contexte produit un nouvel avertissement', async () => {
+    const bench = await exercise('D\u00e9velopp\u00e9 couch\u00e9');
+    const squat = await exercise('Squat');
+    const routine = await createRoutine('Force');
+    await addExercisesToRoutine(routine.id, [bench.id, squat.id]);
+    await addBestOneRepMax(bench.id, 100, MONDAY - WEEK);
+    const { program, entry } = await readyProgram({ routineId: routine.id });
+    await activateProgram(program.id);
+    const preflight = await preflightProgramWorkout({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+    });
+    expect(preflight.warnings.map((warning) => warning.exerciseId)).toEqual([squat.id]);
+    const countsBefore = await Promise.all([
+      db.workouts.count(),
+      db.workoutExercises.count(),
+      db.workoutSets.count(),
+    ]);
+
+    await updateExercise(bench.id, { measurementType: 'assisted_weight_reps' });
+
+    const attempt = startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+      warningAcknowledgement: preflight.warningAcknowledgement!,
+    });
+    await expect(attempt).rejects.toMatchObject({
+      code: 'warning_acknowledgement_required',
+      preflight: {
+        warnings: expect.arrayContaining([
+          expect.objectContaining({
+            code: 'assistance_not_supported',
+            exerciseId: bench.id,
+          }),
+        ]),
+      },
+    });
+    expect(
+      await Promise.all([db.workouts.count(), db.workoutExercises.count(), db.workoutSets.count()]),
+    ).toEqual(countsBefore);
+  });
+
   it('recalcule la semaine et utilise uniquement l’entrée de la révision effective', async () => {
     const firstMovement = await exercise('Développé couché');
     const secondMovement = await exercise('Développé incliné');
@@ -123,10 +224,16 @@ describe('startWorkoutFromProgram', () => {
       }),
     ).rejects.toMatchObject({ code: 'program_invalid' });
 
+    const preflight = await preflightProgramWorkout({
+      programId: program.id,
+      programScheduleEntryId: secondEntry.id,
+      at: MONDAY + WEEK,
+    });
     const { workout } = await startWorkoutFromProgram({
       programId: program.id,
       programScheduleEntryId: secondEntry.id,
       at: MONDAY + WEEK,
+      warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
     });
     const detail = await getWorkoutDetail(workout.id);
 
@@ -171,10 +278,16 @@ describe('startWorkoutFromProgram', () => {
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
 
+    const preflight = await preflightProgramWorkout({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+    });
     const result = await startWorkoutFromProgram({
       programId: program.id,
       programScheduleEntryId: entry.id,
       at: MONDAY,
+      warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
     });
     const detail = await getWorkoutDetail(result.workout.id);
     const benchSets = at(detail!.exercises, 0).sets;
@@ -257,10 +370,15 @@ describe('startWorkoutFromProgram', () => {
       programScheduleEntryId: entry.id,
       at: MONDAY,
     };
+    const preflight = await preflightProgramWorkout(input);
+    const acknowledgedInput = {
+      ...input,
+      warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
+    };
 
     const results = await Promise.allSettled([
-      startWorkoutFromProgram(input),
-      startWorkoutFromProgram(input),
+      startWorkoutFromProgram(acknowledgedInput),
+      startWorkoutFromProgram(acknowledgedInput),
     ]);
 
     expect(results.map(({ status }) => status).sort()).toEqual(['fulfilled', 'rejected']);
@@ -274,12 +392,18 @@ describe('startWorkoutFromProgram', () => {
     const { routine } = await routineWithExercise('Force', bench);
     const { program, entry } = await readyProgram({ routineId: routine.id });
     await activateProgram(program.id);
+    const preflight = await preflightProgramWorkout({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+    });
 
     const results = await Promise.allSettled([
       startWorkoutFromProgram({
         programId: program.id,
         programScheduleEntryId: entry.id,
         at: MONDAY,
+        warningAcknowledgement: preflight.warningAcknowledgement ?? undefined,
       }),
       startWorkoutFromRoutine(routine.id),
     ]);

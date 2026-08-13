@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import {
   completeProgram,
-  getActiveProgramDetail,
   getProgramDetail,
   shiftProgram,
 } from '@/data/repositories/programs';
 import type { ProgramDetail } from '@/data/repositories/programs';
-import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
+import { listCompletedWorkouts } from '@/data/repositories/history';
+import {
+  ProgramWorkoutWarningAcknowledgementError,
+  preflightProgramWorkout,
+  startWorkoutFromProgram,
+  type ProgramWorkoutPreflight,
+  type ProgramWorkoutWarningAcknowledgement,
+} from '@/data/repositories/programWorkout';
 import { getRoutineDetail } from '@/data/repositories/routines';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import type { Program, ProgramWeek } from '@/data/types';
@@ -20,7 +26,11 @@ import type { ProgramPosition } from '@/lib/programs';
 import { ActionBand, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
-import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
+import {
+  ProgramSessionList,
+  ProgramWorkoutWarningSheet,
+  UpcomingWeeks,
+} from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
 
 interface DetailProjection {
@@ -113,17 +123,20 @@ async function readProjection(programId: string): Promise<DetailQuery> {
       detail.revisions.flatMap(({ entries: revisionEntries }) => revisionEntries),
       weekIndex,
     );
-    const [activeProgram, activeWorkout, routines] = await Promise.all([
-      detail.program.status === 'active' ? getActiveProgramDetail(now) : Promise.resolve(null),
+    const [completedWorkouts, activeWorkout, routines] = await Promise.all([
+      listCompletedWorkouts(),
       getActiveWorkout(),
       Promise.all(entries.map((entry) => getRoutineDetail(entry.routineId))),
     ]);
     const completedEntries = new Set(
-      activeProgram?.program.id === detail.program.id
-        ? activeProgram.completedWorkouts
-            .filter((workout) => workout.programWeekIndex === weekIndex)
-            .map((workout) => workout.programScheduleEntryId)
-        : [],
+      completedWorkouts
+        .filter(
+          (workout) =>
+            workout.programId === detail.program.id &&
+            workout.programWeekIndex === weekIndex &&
+            workout.programScheduleEntryId !== undefined,
+        )
+        .map((workout) => workout.programScheduleEntryId),
     );
     const currentDay = position.phase === 'active' ? position.dayOfWeek : 0;
     const sessions: ProgramSessionReading[] = entries.map((entry, index) => ({
@@ -161,6 +174,9 @@ export function ProgramDetailScreen() {
   const [actionsOpen, setActionsOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [actionError, setActionError] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const [warningPreflight, setWarningPreflight] = useState<ProgramWorkoutPreflight | null>(null);
+  const startingRef = useRef(false);
   const query = useLiveQuery(() => readProjection(id), [id]);
 
   const goBack = () => {
@@ -206,9 +222,7 @@ export function ProgramDetailScreen() {
     }));
   const suggested = pickProgramSession(candidates, position, detail.program.durationWeeks);
   const suggestedEntryId = 'session' in suggested ? suggested.session.entryId : null;
-  const selectable = sessions.filter(
-    (session) => session.routineName !== null && session.state !== 'completed',
-  );
+  const selectable = sessions.filter((session) => session.routineName !== null);
   const effectiveSelected =
     selectable.find((session) => session.entryId === selectedEntryId) ??
     selectable.find((session) => session.entryId === suggestedEntryId) ??
@@ -232,6 +246,68 @@ export function ProgramDetailScreen() {
     }
   };
 
+  const releaseStart = () => {
+    startingRef.current = false;
+    setStarting(false);
+  };
+
+  const persistStart = async (
+    entryId: string,
+    warningAcknowledgement?: ProgramWorkoutWarningAcknowledgement,
+  ) => {
+    try {
+      await startWorkoutFromProgram({
+        programId: detail.program.id,
+        programScheduleEntryId: entryId,
+        ...(warningAcknowledgement === undefined ? {} : { warningAcknowledgement }),
+      });
+      void navigate('/workout');
+    } catch (error) {
+      if (error instanceof ProgramWorkoutWarningAcknowledgementError) {
+        setWarningPreflight(error.preflight);
+      } else {
+        setActionError(true);
+      }
+      releaseStart();
+    }
+  };
+
+  const beginStart = async () => {
+    if (!canStart || effectiveSelected === null || startingRef.current) return;
+    startingRef.current = true;
+    setStarting(true);
+    setActionError(false);
+    try {
+      const preflight = await preflightProgramWorkout({
+        programId: detail.program.id,
+        programScheduleEntryId: effectiveSelected.entryId,
+      });
+      if (preflight.warningAcknowledgement !== null) {
+        setWarningPreflight(preflight);
+        releaseStart();
+        return;
+      }
+      await persistStart(effectiveSelected.entryId);
+    } catch (error) {
+      if (error instanceof ProgramWorkoutWarningAcknowledgementError) {
+        setWarningPreflight(error.preflight);
+      } else {
+        setActionError(true);
+      }
+      releaseStart();
+    }
+  };
+
+  const confirmWarnings = () => {
+    const acknowledgement = warningPreflight?.warningAcknowledgement;
+    if (acknowledgement === null || acknowledgement === undefined || startingRef.current) return;
+    startingRef.current = true;
+    setStarting(true);
+    setActionError(false);
+    setWarningPreflight(null);
+    void persistStart(acknowledgement.context.programScheduleEntryId, acknowledgement);
+  };
+
   return (
     <Screen
       title={detail.program.name}
@@ -245,16 +321,8 @@ export function ProgramDetailScreen() {
         canStart ? (
           <ActionBand
             label={t('program.startSession', { name: effectiveSelected.routineName! })}
-            onClick={() => {
-              void runAction(async () => {
-                await startWorkoutFromProgram({
-                  programId: detail.program.id,
-                  programScheduleEntryId: effectiveSelected.entryId,
-                  at: Date.now(),
-                });
-                void navigate('/workout');
-              });
-            }}
+            disabled={starting}
+            onClick={() => void beginStart()}
           />
         ) : undefined
       }
@@ -272,7 +340,7 @@ export function ProgramDetailScreen() {
             {t('program.actionError')}
           </p>
         )}
-        {position.phase === 'active' && (
+        {(position.phase === 'active' || detail.program.status === 'completed') && (
           <ProgramSessionList
             sessions={sessions}
             selectedEntryId={effectiveSelected?.entryId ?? null}
@@ -295,6 +363,12 @@ export function ProgramDetailScreen() {
           onComplete={() => runAction(() => completeProgram(detail.program.id))}
         />
       )}
+      <ProgramWorkoutWarningSheet
+        preflight={warningPreflight}
+        working={starting}
+        onClose={() => setWarningPreflight(null)}
+        onConfirm={confirmWarnings}
+      />
     </Screen>
   );
 }
