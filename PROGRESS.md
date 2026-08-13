@@ -2,7 +2,16 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Bug — « Sauvegarde téléchargée » sans fichier**).
+**Dernière mise à jour :** 2026-08-13 (**Release Android v0.5.1 — le CSV ouvre enfin la feuille**).
+
+Le téléphone disait « Sauvegarde téléchargée » et aucun fichier n'arrivait. Dans la
+WebView, `<a download>` réussit en JS et n'écrit rien. L'APK écrit désormais le CSV
+dans le cache natif et l'envoie à la feuille Android.
+
+Bump de rustine : `0.5.0` → `0.5.1`. `versionName` vient de `package.json`,
+`versionCode` du run GitHub. Installer par-dessus, **sans désinstaller**.
+
+**Mise à jour précédente :** 2026-08-13 (**Bug — « Sauvegarde téléchargée » sans fichier**).
 
 ## Rapport d'investigation (corrigé)
 
