@@ -218,13 +218,65 @@ trop clair efface le trou, qui est précisément ce que ce dessin sert à montre
 Checkpoint téléphone : ouvrir une fiche d'exercice et le bilan musculaire, vérifier que le dessin
 reste lisible à cette taille — il est bien plus détaillé que l'ancien pour la même hauteur.
 
-**Avant cela :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines**).
+**Avant cela :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines : l'app sait
+enfin où tu en es dans le bloc**).
 
-Livré : blocs de 4 à 12 semaines, split hebdomadaire versionné, prescriptions %1RM ou RPE,
-décharges planifiées, démarrage depuis l’accueil et autorité explicite face au Coach du Lot 18.
+Le lot que l'audit désignait comme **la** valeur ajoutée face à Hevy est livré : un bloc de 4 à
+12 semaines, un split hebdomadaire versionné, une prescription par semaine (% du 1RM ou RPE
+cible), des décharges planifiées, et un démarrage de séance depuis l'accueil — la bonne séance,
+avec les bonnes charges, au bon jour.
 
-Checkpoint téléphone restant : bloc de 8 semaines, décharge semaine 5, version effective d’une
-routine, décalage du bloc et reprise complète en mode avion.
+**Six décisions valent d'être retenues, parce qu'aucune ne se relit dans le code.**
+
+**1. Le bloc se décale en semaines entières, jamais en jours.** Le champ demandait un nombre de
+jours ; décaler de 3 jours désalignait le bloc du lundi et faisait tomber la « semaine 5 » à
+cheval sur deux semaines civiles. Le décalage se saisit maintenant en semaines (positif pour
+repousser, négatif pour avancer) et le calage au lundi est un invariant, pas une intention. Le
+champ reste **une saisie clavier bridée**, pas un sélecteur de préréglages.
+
+**2. Une révision de split n'est jamais rétroactive.** On peut préparer le split d'une semaine
+future, jamais réécrire une semaine déjà vécue. Et la semaine courante **disparaît du choix dès
+qu'une séance du bloc y est enregistrée** : sinon la séance d'hier se retrouverait rattachée à un
+split qui n'existait pas quand elle a été faite. La règle vivait en double — une fois dans la
+publication de version de routine, une fois dans l'éditeur de programme ; elle est désormais
+écrite une seule fois dans `programSchedules.ts`, parce que deux copies d'une règle finissent
+toujours par diverger.
+
+**3. Les replis de prescription se confirment, ils ne se subissent pas.** Un % du 1RM ne se
+projette pas toujours : pas de 1RM utilisable, mesure qui ne se convertit pas en pourcentage,
+exercice en assistance (où « 70 % » n'a aucun sens). Dans ces cas la cible écrite dans la routine
+est conservée — mais **une feuille le dit, exercice par exercice, avant la moindre écriture en
+base**, et il faut « Démarrer quand même ». Une séance qui démarre avec des charges silencieusement
+différentes de la prescription, c'est pire que pas de programme du tout.
+
+**4. Le programme a autorité sur le Coach du Lot 18.** `finalizeCoachForWorkout` n'émet plus de
+recommandation de charge en fin de séance **programmée**. Les deux avaient raison chacun de leur
+côté et se contredisaient à l'écran : le bloc dit « semaine 5, décharge à 60 % », le coach dit
+« +2,5 kg car 3×12 atteint ». Quand un bloc pilote la charge, c'est le bloc qui parle.
+
+**5. Un seul bloc actif, et le remplacer se demande explicitement.** Activer un deuxième bloc ne
+« désactive » pas silencieusement le premier : une confirmation annonce que le bloc actif sera
+**terminé avec tout son historique**, puis le nouveau prend sa place.
+
+**6. Une routine supprimée n'invalide qu'une ligne.** Si une routine du split disparaît, sa
+séance affiche « Routine indisponible » avec un bouton de réparation vers l'éditeur ; les autres
+séances de la semaine restent démarrables. Un split n'est pas tout ou rien.
+
+**Ménage de fin de lot :** trois clés i18n mortes supprimées (`shiftDaysLabel`, `shiftDaysHint`
+restées du décalage en jours, `editWeek` remplacée par sa version lue à voix haute), et le détail
+d'un bloc passait l'`entryId` dans le champ `routineId` des candidats — sans effet aujourd'hui
+puisque `pickProgramSession` ne lit pas ce champ, mais c'était une mine posée pour le prochain qui
+le lirait.
+
+**Ce qui n'est pas fait :** rien dans le périmètre du lot. La version applicative n'est pas
+montée — le lot est terminé, la release ne l'est pas.
+
+Portes locales : lint, typecheck, **1434 tests dans 127 fichiers**, build PWA.
+
+**Checkpoint téléphone à valider** (aucun ✅ ne sera coché sans lui) : créer un bloc de 8 semaines
+avec une décharge en semaine 5, vérifier que l'accueil propose la bonne séance le bon jour avec la
+prescription de la semaine, publier une nouvelle version d'une routine du split à partir d'une
+semaine future, décaler le bloc d'une semaine, et refaire le tout **en mode avion**.
 
 **Puis :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
 
@@ -4284,7 +4336,7 @@ ci-dessus fait foi.
 | 14 | Sync cloud (optionnel) | ⬜ à faire | — | ⬜ |
 | 15 | Health Connect | ⬜ à faire | — | ⬜ |
 | 16 | Widgets | ⬜ à faire | — | ⬜ |
-| 17 | Périodisation | 🟨 en cours | 2026-08-13 | 🟨 checkpoint téléphone |
+| 17 | Périodisation | ✅ terminé | 2026-08-13 | 🟨 à valider sur le téléphone |
 | 18 | Auto-progression | 🟨 en cours | 2026-08-11 → 08-12 | 🟨 **partiel** (carte en séance à revoir) |
 | 19 | Assistant IA | ⬜ à faire | — | ⬜ |
 | 20 | Voix & accessibilité | ⬜ à faire | — | ⬜ |

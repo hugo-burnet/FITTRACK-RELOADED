@@ -525,8 +525,6 @@ const fr = {
     shiftAction: 'Décaler le bloc',
     shiftActionHint: 'Déplacer le calendrier par semaines entières.',
     shiftTitle: 'Décaler le bloc',
-    shiftDaysLabel: 'Nombre de jours',
-    shiftDaysHint: 'Positif pour repousser, négatif pour avancer.',
     shiftWeeksLabel: 'Nombre de semaines',
     shiftWeeksHint: 'Positif pour repousser, négatif pour avancer. Le bloc reste calé au lundi.',
     shiftStartedWarning:
@@ -592,7 +590,6 @@ const fr = {
     weekday7: 'Dimanche',
     weeksIntro: 'Règle l’intention de chaque semaine : phase et niveau.',
     week: 'Semaine {number}',
-    editWeek: 'Modifier la semaine {number}',
     editWeekReading: 'Modifier la semaine {number}, {line}',
     editWeekTitle: 'Semaine {number}',
     phaseLabel: 'Phase',
