@@ -26,14 +26,49 @@ const VIEW_BOX_RATIO = '815 / 2048';
  * `in oklab` would be perceptually smoother but would shift every intensity off
  * the value the charte was contrast-checked at.
  */
+
+/**
+ * Where the ramp starts, and why it does not start at zero.
+ *
+ * `--surface-2` on a `--surface-1` card is **1,11:1** — the pairing is the
+ * charte's own, but the charte only ever uses it under a border, for inputs. Used
+ * as a fill it left the body invisible: the drawing read as a wireframe, its
+ * `--axis` outlines carrying the whole shape while every fill vanished into the
+ * card. Reported from the phone in exactly those terms.
+ *
+ * So an unworked muscle is lifted to a fifth of the way up the ramp, which puts
+ * it near 2:1 against the card — a mass one can see, still unmistakably off.
+ *
+ * **Not higher, and this is the constraint that fixes the number.** A dark region
+ * is what this drawing exists to report: `balanceHighlight` argues the eye must go
+ * to the *gaps*, and a bright unworked body is precisely how that reading is lost.
+ * 2:1 is the most the floor can take before the finding starts to fade; the
+ * outline keeps carrying the form at its own 3,5:1, well past the 3:1 that
+ * graphical objects owe.
+ */
+const UNWORKED_FLOOR = 20;
+
+/**
+ * The silhouette — head, hands, feet, everything that is not a muscle.
+ *
+ * Kept **below** the floor rather than at `--surface-2`: it has no outline of its
+ * own, so at the card's own value it disappeared entirely. Under the unworked
+ * muscles it reads as the body's own ground, and the muscle mass stays the
+ * lightest thing on an untrained figure — which is the right hierarchy for a
+ * drawing about muscles.
+ */
+const SILHOUETTE_FLOOR = 9;
+
+const ink = (percent: number) =>
+  `color-mix(in srgb, var(--text-1) ${Math.round(percent)}%, var(--surface-2))`;
+
 const RAMP = {
-  silhouetteColor: 'var(--surface-2)',
+  silhouetteColor: ink(SILHOUETTE_FLOOR),
   // The charte's line ink, already used by the charts. `--border` sits at 1,45:1
   // on a card and would be invisible between two unlit muscles.
   outlineColor: 'var(--axis)',
   outlineWidth: 1,
-  colorScale: (intensity: number) =>
-    `color-mix(in srgb, var(--text-1) ${Math.round(intensity * 100)}%, var(--surface-2))`,
+  colorScale: (intensity: number) => ink(UNWORKED_FLOOR + (100 - UNWORKED_FLOOR) * intensity),
 } satisfies Partial<MuscleMapOptions>;
 
 interface Props {

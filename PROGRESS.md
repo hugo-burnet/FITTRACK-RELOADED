@@ -33,6 +33,13 @@ L'ancien code vit sur la branche `archive/body-map-vendor`, poussée avant toute
 `Z-Anatomy.zip` (102 Mo) est désormais ignoré : au-delà de la limite dure de GitHub, et c'est une
 source, pas un produit.
 
+**La rampe ne part pas de zéro, et c'est un correctif du téléphone.** Posée sur `--surface-2`,
+la masse éteinte donnait **1,11:1** sur une carte `--surface-1` : le corps disparaissait et le
+dessin se lisait en fil de fer, ses contours portant seuls la forme. Le muscle non travaillé
+démarre donc à un cinquième de la rampe (2,05:1 en sombre, 1,71:1 en clair), et la silhouette —
+tête, mains, pieds, sans contour propre — passe juste en dessous. Pas plus haut : un corps éteint
+trop clair efface le trou, qui est précisément ce que ce dessin sert à montrer.
+
 Checkpoint téléphone : ouvrir une fiche d'exercice et le bilan musculaire, vérifier que le dessin
 reste lisible à cette taille — il est bien plus détaillé que l'ancien pour la même hauteur.
 
