@@ -23,7 +23,7 @@ import {
   createRoutine,
   updateRoutineSet,
 } from './routines';
-import { getWorkoutDetail } from './workouts';
+import { getWorkoutDetail, startWorkoutFromRoutine } from './workouts';
 import { startWorkoutFromProgram } from './programWorkout';
 
 const MONDAY = new Date(2026, 7, 10, 12).getTime();
@@ -245,6 +245,49 @@ describe('startWorkoutFromProgram', () => {
     expect(
       await Promise.all([db.workouts.count(), db.workoutExercises.count(), db.workoutSets.count()]),
     ).toEqual(countsBefore);
+  });
+
+  it('ne crée qu’un graphe pour deux démarrages programmés concurrents', async () => {
+    const bench = await exercise('Développé couché');
+    const { routine } = await routineWithExercise('Force', bench);
+    const { program, entry } = await readyProgram({ routineId: routine.id });
+    await activateProgram(program.id);
+    const input = {
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: MONDAY,
+    };
+
+    const results = await Promise.allSettled([
+      startWorkoutFromProgram(input),
+      startWorkoutFromProgram(input),
+    ]);
+
+    expect(results.map(({ status }) => status).sort()).toEqual(['fulfilled', 'rejected']);
+    expect(await db.workouts.where('status').equals('active').count()).toBe(1);
+    expect(await db.workoutExercises.count()).toBe(1);
+    expect(await db.workoutSets.count()).toBe(1);
+  });
+
+  it('ne crée qu’un graphe entre démarrages programme et routine concurrents', async () => {
+    const bench = await exercise('Développé couché');
+    const { routine } = await routineWithExercise('Force', bench);
+    const { program, entry } = await readyProgram({ routineId: routine.id });
+    await activateProgram(program.id);
+
+    const results = await Promise.allSettled([
+      startWorkoutFromProgram({
+        programId: program.id,
+        programScheduleEntryId: entry.id,
+        at: MONDAY,
+      }),
+      startWorkoutFromRoutine(routine.id),
+    ]);
+
+    expect(results.map(({ status }) => status).sort()).toEqual(['fulfilled', 'rejected']);
+    expect(await db.workouts.where('status').equals('active').count()).toBe(1);
+    expect(await db.workoutExercises.count()).toBe(1);
+    expect(await db.workoutSets.count()).toBe(1);
   });
 
   it('conserve ses snapshots après les modifications de la routine et de l’exercice', async () => {

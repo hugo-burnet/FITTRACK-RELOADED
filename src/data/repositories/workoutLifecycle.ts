@@ -40,6 +40,21 @@ export async function getActiveWorkout(): Promise<Workout | undefined> {
 }
 
 /** RF-17. `routineId` is '' for an empty workout — never null, cf. architecture §3. */
+export type ProgramWorkoutErrorCode = 'active_workout_exists';
+
+export class ProgramWorkoutError extends Error {
+  constructor(readonly code: ProgramWorkoutErrorCode) {
+    super(code);
+    this.name = 'ProgramWorkoutError';
+  }
+}
+
+/** Must run inside the same `rw` transaction that inserts a new workout. */
+export async function assertNoActiveWorkout(): Promise<void> {
+  const activeWorkout = alive(await db.workouts.where('status').equals('active').toArray())[0];
+  if (activeWorkout !== undefined) throw new ProgramWorkoutError('active_workout_exists');
+}
+
 export async function startWorkout(routineId: string, name: string): Promise<Workout> {
   const startedAt = Date.now();
   const workout = newEntity<Workout>({
@@ -51,7 +66,10 @@ export async function startWorkout(routineId: string, name: string): Promise<Wor
     durationSeconds: 0,
     startedTimezoneOffsetMinutes: localOffsetMinutes(startedAt),
   });
-  await db.workouts.add(workout);
+  await db.transaction('rw', db.workouts, async () => {
+    await assertNoActiveWorkout();
+    await db.workouts.add(workout);
+  });
   return workout;
 }
 
@@ -202,6 +220,7 @@ export async function startWorkoutFromRoutine(routineId: string): Promise<Workou
   const graph = buildWorkoutEntities({ source, startedAt: Date.now() });
 
   await db.transaction('rw', db.workouts, db.workoutExercises, db.workoutSets, async () => {
+    await assertNoActiveWorkout();
     await insertWorkoutEntities(graph);
   });
 

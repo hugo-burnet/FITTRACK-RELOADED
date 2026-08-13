@@ -9,20 +9,17 @@ import {
 import { alive } from './base';
 import { ProgramRepositoryError } from './programLifecycle';
 import {
+  assertNoActiveWorkout,
   buildWorkoutEntities,
   insertWorkoutEntities,
+  ProgramWorkoutError,
   readWorkoutRoutineSource,
+  type ProgramWorkoutErrorCode,
   type WorkoutTargetSnapshot,
 } from './workoutLifecycle';
 
-export type ProgramWorkoutErrorCode = 'active_workout_exists';
-
-export class ProgramWorkoutError extends Error {
-  constructor(readonly code: ProgramWorkoutErrorCode) {
-    super(code);
-    this.name = 'ProgramWorkoutError';
-  }
-}
+export { ProgramWorkoutError };
+export type { ProgramWorkoutErrorCode };
 
 export interface StartWorkoutFromProgramInput {
   programId: string;
@@ -75,10 +72,7 @@ export async function startWorkoutFromProgram(
       db.workoutSets,
     ],
     async () => {
-      const activeWorkout = alive(
-        await db.workouts.where('status').equals('active').toArray(),
-      )[0];
-      if (activeWorkout !== undefined) throw new ProgramWorkoutError('active_workout_exists');
+      await assertNoActiveWorkout();
 
       const program = await db.programs.get(input.programId);
       if (program === undefined || program.deletedAt !== 0) {
