@@ -76,6 +76,18 @@ describe('saveTextFile', () => {
     expect(await saveTextFile(PAYLOAD)).toBe('downloaded');
   });
 
+  it('retombe sur le téléchargement si canShare refuse le fichier en levant une erreur', async () => {
+    install({
+      share: vi.fn(),
+      canShare: () => {
+        throw new TypeError('Cannot share this file type');
+      },
+    });
+
+    expect(await saveTextFile(PAYLOAD)).toBe('downloaded');
+    expect(URL.createObjectURL).toHaveBeenCalled();
+  });
+
   it('préfixe le contenu d’un BOM pour qu’Excel lise les accents', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
     install({ share, canShare: () => true });

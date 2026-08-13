@@ -7,6 +7,7 @@ import { newEntity } from '@/data/repositories/base';
 import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
 import { watchInstall } from '@/platform/install';
+import * as saveFile from '@/platform/saveFile';
 import { SettingsScreen } from './SettingsScreen';
 
 async function seedCompletedWorkout(name: string, startedAt: number): Promise<void> {
@@ -146,6 +147,49 @@ describe('SettingsScreen — export de l’historique', () => {
 
     expect(await screen.findByRole('status')).toHaveTextContent(
       'L’historique n’a pas pu être partagé ni copié.',
+    );
+  });
+});
+
+const csvAction = () => screen.findByRole('button', { name: /Sauvegarder l’historique \(CSV\)/ });
+
+describe('SettingsScreen — sauvegarde CSV', () => {
+  beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
+
+  it('enregistre le fichier quand il y a au moins une séance terminée', async () => {
+    const save = vi.spyOn(saveFile, 'saveTextFile').mockResolvedValue('downloaded');
+    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
+    renderSettings();
+
+    const action = await csvAction();
+    await waitFor(() => expect(action).toBeEnabled());
+    await userEvent.click(action);
+
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
+    const payload = save.mock.calls[0]?.[0];
+    expect(payload?.name).toMatch(/^fittrack-\d{4}-\d{2}-\d{2}\.csv$/);
+    expect(payload?.text).toContain('Upper A');
+    expect(await screen.findByRole('status')).toHaveTextContent('Sauvegarde téléchargée.');
+  });
+
+  it('désactive l’action quand l’historique est vide', async () => {
+    renderSettings();
+
+    expect(await csvAction()).toBeDisabled();
+  });
+
+  it('annonce l’échec si l’écriture du fichier est refusée', async () => {
+    vi.spyOn(saveFile, 'saveTextFile').mockResolvedValue('failed');
+    await seedCompletedWorkout('Upper A', Date.UTC(2026, 6, 27, 16));
+    renderSettings();
+
+    const action = await csvAction();
+    await waitFor(() => expect(action).toBeEnabled());
+    await userEvent.click(action);
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'La sauvegarde n’a pas pu être enregistrée.',
     );
   });
 });

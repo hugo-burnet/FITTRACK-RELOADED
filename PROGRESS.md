@@ -2,7 +2,69 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Accueil — le corps en tête, le reste en dessous**).
+**Dernière mise à jour :** 2026-08-13 (**Bug — l'export CSV affiche un échec**).
+
+## Rapport d'investigation
+
+Signalé : « Sauvegarder l'historique (CSV) » ne fonctionne plus, soupçon sur le Lot 17.
+
+### Ce que le Lot 17 n'a pas cassé
+
+Le sérialiseur (`buildCsvExport` / `serializeWorkoutsCsv`) n'a **pas été touché** depuis le
+Lot 8. Les 51 tests historiques (aller-retour, parseur, écriture RFC 4180) restent verts.
+
+Un test neuf rejoue le cas Lot 17 — bloc actif, séance démarrée depuis le programme, série
+validée, séance close — puis exporte et relit le fichier : une ligne, le nom de routine, la
+série. Les champs `programId` / semaine / décharge ne traversent pas le CSV, et c'est assumé
+depuis le jour où le format a été choisi : Hevy décrit des séances, pas un bloc. Ce n'est
+pas une régression, c'est le contrat.
+
+L'écran Réglages, lui aussi, câble encore le bouton : avec une séance terminée il s'active,
+appelle `saveTextFile`, et affiche le message de succès. Trois tests le verrouillent, ils
+n'existaient pas.
+
+### La cause, un étage plus bas
+
+`saveCsv` avale toute exception et affiche « La sauvegarde n'a pas pu être enregistrée. »
+Le trou est dans `saveTextFile` :
+
+```ts
+navigator.canShare?.({ files: [file] }) === true
+```
+
+L'enchaînement optionnel protège un `canShare` **absent**. Il ne protège pas un `canShare`
+**présent qui lève**. C'est le comportement documenté de plusieurs WebView Android : plutôt
+que de renvoyer `false` pour un type de fichier, l'appel jette un `TypeError`. L'exception
+sort de `saveTextFile`, le `catch` des Réglages se déclenche, l'utilisateur lit un échec.
+
+Le Lot 17 n'a rien changé à ce fichier. Il a changé **quand on s'en sert** : un bloc de
+huit semaines, c'est exactement le moment où l'on veut une sauvegarde. Le bouton a l'air
+cassé par les programmes ; il l'est par un filet trop étroit autour de l'API de partage.
+
+Le même trou existait avant. Il était invisible tant que `canShare` renvoyait un booléen —
+Chrome bureau, et une partie des WebView. Sur le téléphone, dès que la WebView se met à
+lever, la sauvegarde disparaît d'un coup.
+
+### Ce qui n'est pas la cause
+
+- Schéma Dexie `version(6)`, `versionState`, champs programme sur `Workout` : l'export ne
+  les lit pas.
+- `useLiveQuery` du Markdown d'historique : un échec là désactiverait « Exporter tout
+  l'historique », pas la ligne CSV, qui a son propre compteur.
+- Le téléchargement `<a download>` : c'est le filet **après** un partage refusé proprement.
+  On n'y arrive jamais si `canShare` a déjà levé.
+
+### Correctif
+
+`canShareFile` entoure l'appel. Une levée vaut « ce navigateur ne partage pas de
+fichier » et retombe sur le téléchargement, comme un `false`. Le test qui a désigné
+le coupable est vert.
+
+**Checkpoint téléphone :** Réglages → « Sauvegarder l'historique (CSV) ». La feuille de
+partage doit s'ouvrir, ou à défaut le fichier doit se télécharger, **sans** le bandeau
+rouge. Rouvrir le CSV dans un tableur : les accents tiennent, les séances du bloc aussi.
+
+**Mise à jour précédente :** 2026-08-13 (**Accueil — le corps en tête, le reste en dessous**).
 
 L'accueil posait cinq questions en cinq blocs et cinq intertitres, avec le dessin du corps tout en
 bas. Il en pose deux : **qu'est-ce que je travaille** (le corps, en tête d'écran) et **qu'est-ce

@@ -49,16 +49,24 @@ function download(file: File): SaveOutcome {
   }
 }
 
+function canShareFile(file: File): boolean {
+  if (typeof navigator.share !== 'function') return false;
+  try {
+    return navigator.canShare?.({ files: [file] }) === true;
+  } catch {
+    // Some Android WebViews throw TypeError instead of returning false. A throw
+    // is the same answer as false: this browser will not share a file.
+    return false;
+  }
+}
+
 export async function saveTextFile(payload: SaveFilePayload): Promise<SaveOutcome> {
   const file = new File([BOM + payload.text], payload.name, { type: payload.type });
 
   // `canShare` and not `share` alone: Chrome exposes `share` on desktop but
   // refuses files, and the refusal is a rejected promise mid-flight rather than
   // something we can catch before the user has watched a dialog fail.
-  if (
-    typeof navigator.share === 'function' &&
-    navigator.canShare?.({ files: [file] }) === true
-  ) {
+  if (canShareFile(file)) {
     try {
       await navigator.share({ files: [file], title: payload.title });
       return 'shared';

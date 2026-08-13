@@ -20,6 +20,20 @@ import { buildCsvExport } from './csvExport';
 import { createCustomExercise } from './exercises';
 import { getHomeDashboard } from './home';
 import { importHevyWorkouts } from './hevyImport';
+import {
+  activateProgram,
+  createProgramDraft,
+  createScheduleRevision,
+  replaceProgramWeeks,
+} from './programs';
+import {
+  addExercisesToRoutine,
+  createRoutine,
+  updateRoutineSet,
+} from './routines';
+import { completeSet } from './workoutSets';
+import { finishWorkout } from './workoutLifecycle';
+import { startWorkoutFromProgram } from './programWorkout';
 
 /**
  * L'aller-retour : ce que l'app écrit, l'app le relit.
@@ -330,5 +344,64 @@ describe('aller-retour export CSV → import', () => {
     const parsed = parseHevyCsv(csv);
     expect(parsed.ok).toBe(true);
     expect(parsed.ok && parsed.data.workoutCount).toBe(0);
+  });
+
+  it('exporte une séance née d’un programme du lot 17 et la relit', async () => {
+    const press = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Force');
+    await addExercisesToRoutine(routine.id, [press.id]);
+    const row = (await db.routineExercises.where('routineId').equals(routine.id).toArray())[0]!;
+    const planned = (await db.routineSets.where('routineExerciseId').equals(row.id).toArray())[0]!;
+    await updateRoutineSet(planned.id, { targetWeight: 80, targetReps: 5, targetRepsMax: 8 });
+
+    const monday = new Date(2026, 7, 10, 12).getTime();
+    const program = await createProgramDraft({
+      name: 'Bloc force',
+      startsAt: monday,
+      durationWeeks: 4,
+    });
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 4 }, (_, weekIndex) => ({
+        weekIndex,
+        prescriptionKind: 'target_rpe' as const,
+        prescriptionValue: 8,
+        isDeload: 0 as const,
+      })),
+    );
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const entry = (
+      await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray()
+    )[0]!;
+    await activateProgram(program.id);
+
+    const started = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entry.id,
+      at: monday,
+    });
+    const set = (await db.workoutSets.where('workoutId').equals(started.workout.id).toArray())[0]!;
+    await completeSet(set.id, { weight: 80, reps: 5 });
+    await finishWorkout(started.workout.id);
+
+    const csv = await buildCsvExport();
+    const parsed = parseHevyCsv(csv);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.data.workoutCount).toBe(1);
+    expect(parsed.data.workouts[0]).toMatchObject({
+      title: 'Force',
+      routineName: 'Force',
+    });
+    expect(parsed.data.workouts[0]?.exercises[0]?.sets).toHaveLength(1);
   });
 });
