@@ -2,7 +2,7 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Intention de bloc — le Coach tranche, le calendrier raconte**).
+**Dernière mise à jour :** 2026-08-13 (**Release Android v0.6.0 — intention de bloc, le Coach tranche**).
 
 Le % 1RM de semaine est mort. Une semaine porte `loadIndex` + `phase`. « 105 % »
 n’est plus une multiplication : c’est un niveau affiché. La routine reste le 100 %.
@@ -27,8 +27,11 @@ d’avertissements 1RM (feuille + acquittement, devenus inatteignables).
 `evaluateCoach` reste le moteur pur du lib ; l’écran de fin passe par
 `evaluateCoachForWorkout`.
 
-Pas de bump ni de tag : le code est sur `master` local, 13 commits devant
-`origin` après la v0.5.1. Un push + tag plus tard publiera l’APK.
+Bump mineur : `0.5.1` → `0.6.0`. Le modèle de données change (migration Dexie
+`version(7)` : les semaines perdent `prescriptionKind` / `prescriptionValue` /
+`isDeload` au profit de `loadIndex` + `phase`). `versionName` vient de
+`package.json`, `versionCode` du run GitHub. Installer par-dessus,
+**sans désinstaller** — la migration doit tourner sur la base existante.
 
 Checkpoint téléphone (après prochain APK) : créer un bloc 8 semaines, poser une
 Décharge en S5, terminer une séance au plafond juste avant : la feuille Coach
