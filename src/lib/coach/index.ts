@@ -5,6 +5,7 @@ export {
   mergeLinesForWorkout,
   pickSignals,
 } from './evaluate';
+export { selectProgramAction } from './selectAction';
 export type {
   CoachAction,
   CoachEvaluateOptions,
@@ -14,4 +15,5 @@ export type {
   CoachSetInput,
   CoachSignal,
   CoachSignalCode,
+  ProgramCoachContext,
 } from './types';

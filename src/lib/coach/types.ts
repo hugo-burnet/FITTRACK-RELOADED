@@ -2,6 +2,7 @@ import type {
   CoachSignalCode,
   Equipment,
   MeasurementType,
+  ProgramPhase,
   SetType,
 } from '@/data/types';
 import type { OneRepMaxFormula } from '@/lib/oneRepMax';
@@ -79,4 +80,14 @@ export type CoachAction =
 export interface CoachEvaluation {
   signals: CoachSignal[];
   allowedActions: CoachAction[];
+}
+
+/**
+ * Block-week context for Coach phase ranking.
+ * `targetProgramContext` = next known programmed session's week definition.
+ * `sourceProgramContext` = snapshot of the closed workout (display / history only).
+ */
+export interface ProgramCoachContext {
+  phase: ProgramPhase;
+  loadIndex: number;
 }

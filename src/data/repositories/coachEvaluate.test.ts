@@ -1,13 +1,31 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
-import type { Exercise, Workout, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type {
+  Exercise,
+  ProgramPhase,
+  Workout,
+  WorkoutExercise,
+  WorkoutSet,
+} from '@/data/types';
+import { selectProgramAction } from '@/lib/coach';
 import { resetDb } from '@/test/resetDb';
-import { evaluateCoachForWorkout, finalizeCoachForWorkout } from './coachEvaluate';
+import {
+  evaluateCoachForWorkout,
+  finalizeCoachForWorkout,
+  resolveTargetProgramContext,
+} from './coachEvaluate';
 import {
   listRecommendationsForExercise,
   recordCoachSignals,
 } from './coachRecommendations';
+import {
+  activateProgram,
+  createProgramDraft,
+  createScheduleRevision,
+  replaceProgramWeeks,
+} from './programs';
+import { addExercisesToRoutine, createRoutine } from './routines';
 import { finishWorkout } from './workoutLifecycle';
 
 const exercise: Exercise = {
@@ -140,7 +158,8 @@ describe('evaluateCoachForWorkout', () => {
     ]);
   });
 
-  it('does not emit a numeric proposal for a programmed workout', async () => {
+  it('emits a load proposal on a programmed ceiling when target phase ranks increase_load', async () => {
+    // No resolvable next week → hors bloc = construction → increase_load.
     const startedAt = Date.UTC(2026, 7, 10, 10);
     const workout: Workout = {
       ...newEntity<Workout>({
@@ -151,6 +170,8 @@ describe('evaluateCoachForWorkout', () => {
         endedAt: 0,
         durationSeconds: 0,
         programId: 'program',
+        programPhase: 'construction',
+        programLoadIndex: 100,
       }),
       id: 'programmed',
     };
@@ -189,7 +210,109 @@ describe('evaluateCoachForWorkout', () => {
       })),
     );
 
-    expect(await evaluateCoachForWorkout(workout.id)).toEqual([]);
+    expect(await evaluateCoachForWorkout(workout.id)).toEqual([
+      expect.objectContaining({
+        code: 'range_ceiling_reached',
+        exerciseId: 'bench',
+        nextLoadKg: 102.5,
+      }),
+    ]);
+  });
+
+  it('S4 overload close + S5 deload target: no add_set / no load escalate in reco', async () => {
+    // Civil calendar: Mon 2026-08-10 = week 0. Week 3 (S4) starts Mon 2026-08-31.
+    const programStart = new Date(2026, 7, 10, 12).getTime(); // Monday
+    const s4Monday = new Date(2026, 7, 31, 12).getTime(); // weekIndex 3
+    const program = await createProgramDraft({
+      name: 'Force',
+      startsAt: programStart,
+      durationWeeks: 5,
+    });
+    const weeks: { weekIndex: number; loadIndex: number; phase: ProgramPhase }[] = [
+      { weekIndex: 0, loadIndex: 100, phase: 'construction' },
+      { weekIndex: 1, loadIndex: 105, phase: 'progression' },
+      { weekIndex: 2, loadIndex: 105, phase: 'progression' },
+      { weekIndex: 3, loadIndex: 110, phase: 'overload' },
+      { weekIndex: 4, loadIndex: 60, phase: 'deload' },
+    ];
+    await replaceProgramWeeks(program.id, weeks);
+    const routine = await createRoutine('Upper');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    const entry = (await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray())[0]!;
+    await activateProgram(program.id);
+
+    const workout: Workout = {
+      ...newEntity<Workout>({
+        routineId: routine.id,
+        name: 'S4 Surcharge',
+        status: 'active',
+        startedAt: s4Monday,
+        endedAt: 0,
+        durationSeconds: 0,
+        programId: program.id,
+        programWeekIndex: 3,
+        programScheduleEntryId: entry.id,
+        programPhase: 'overload',
+        programLoadIndex: 110,
+      }),
+      id: 's4-overload',
+    };
+    const row: WorkoutExercise = {
+      ...newEntity<WorkoutExercise>({
+        workoutId: workout.id,
+        exerciseId: exercise.id,
+        order: 0,
+        supersetGroup: 0,
+        restSeconds: 90,
+        exerciseName: exercise.name,
+        exerciseMeasurementType: exercise.measurementType,
+        exerciseEquipment: exercise.equipment,
+      }),
+      id: 's4-row',
+    };
+    await db.workouts.add(workout);
+    await db.workoutExercises.add(row);
+    await db.workoutSets.bulkAdd(
+      [0, 1, 2].map((order) => ({
+        ...newEntity<WorkoutSet>({
+          workoutExerciseId: row.id,
+          exerciseId: exercise.id,
+          workoutId: workout.id,
+          order,
+          setType: 'normal',
+          side: 'both',
+          weight: 100,
+          reps: 12,
+          targetReps: 8,
+          targetRepsMax: 12,
+          isCompleted: 1,
+          performedAt: s4Monday + order * 90_000,
+        }),
+        id: `s4-set-${order}`,
+      })),
+    );
+
+    const target = await resolveTargetProgramContext(workout, s4Monday);
+    expect(target).toEqual({ phase: 'deload', loadIndex: 60 });
+
+    // Engine would allow add_set on ceiling + overload *source*, but target is deload.
+    expect(
+      selectProgramAction(['maintain', 'increase_load', 'add_set'], target),
+    ).toBe('maintain');
+
+    const signals = await evaluateCoachForWorkout(workout.id);
+    expect(signals).toEqual([
+      expect.objectContaining({
+        code: 'range_ceiling_reached',
+        exerciseId: 'bench',
+      }),
+    ]);
+    expect(signals[0]?.nextLoadKg).toBeUndefined();
+    // No escalate reco stored as a load figure.
+    expect(signals.every((signal) => signal.nextLoadKg === undefined)).toBe(true);
   });
 
   it('ne marque pas suivie une ancienne charge Coach reprise par un programme', async () => {
@@ -221,6 +344,8 @@ describe('evaluateCoachForWorkout', () => {
     };
     await db.workouts.add(workout);
     await db.workoutExercises.add(row);
+    // Under the floor so the engine emits no range escalate — the pending load
+    // proposal must not be marked followed just because the program reused 102.5.
     await db.workoutSets.add({
       ...newEntity<WorkoutSet>({
         workoutExerciseId: row.id,
@@ -230,7 +355,7 @@ describe('evaluateCoachForWorkout', () => {
         setType: 'normal',
         side: 'both',
         weight: 102.5,
-        reps: 8,
+        reps: 6,
         targetReps: 8,
         targetRepsMax: 12,
         isCompleted: 1,
@@ -260,7 +385,8 @@ describe('evaluateCoachForWorkout', () => {
     });
   });
 
-  it('keeps a rep-drop observation when a stronger program-owned signal also fires', async () => {
+  it('keeps a rep-drop observation on a programmed session (constats still surface)', async () => {
+    // Previous hit the range so range_missed does not fire; only the drop does.
     const previousAt = Date.UTC(2026, 7, 4, 10);
     const currentAt = Date.UTC(2026, 7, 8, 10);
     const previous: Workout = {
@@ -272,7 +398,7 @@ describe('evaluateCoachForWorkout', () => {
         endedAt: previousAt + 3_600_000,
         durationSeconds: 3_600,
       }),
-      id: 'previous-miss',
+      id: 'previous-ok',
     };
     const current: Workout = {
       ...newEntity<Workout>({
@@ -308,13 +434,13 @@ describe('evaluateCoachForWorkout', () => {
         setType: 'normal',
         side: 'both',
         weight: 100,
-        reps: 6,
+        reps: 10,
         targetReps: 8,
         targetRepsMax: 12,
         isCompleted: 1,
         performedAt: previousAt + order * 90_000,
       }),
-      id: `previous-miss-set-${order}`,
+      id: `previous-ok-set-${order}`,
     }));
     const currentSets: WorkoutSet[] = [12, 5].map((reps, order) => ({
       ...newEntity<WorkoutSet>({
