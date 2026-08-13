@@ -710,10 +710,18 @@ describe('liste des blocs', () => {
 
     renderProgramFlow('/programs');
 
-    expect(await screen.findByText('Bloc brouillon')).toBeVisible();
+    // Le bloc actif est le héros : il se nomme et dit sa semaine, sans étiquette
+    // de statut — il est le seul à porter un bouton. Les autres restent des
+    // rangées, avec la leur.
+    expect(await screen.findByText('Bloc actif')).toBeVisible();
+    expect(screen.getByText(/^Semaine \d+ sur 4$/)).toBeVisible();
+    expect(screen.queryByText('Actif')).not.toBeInTheDocument();
+    // Aucune séance en cours : le bouton doit être vivant. `getActiveWorkout`
+    // renvoie `undefined`, et le comparer à `null` le grisait pour toujours.
+    expect(screen.getByRole('button', { name: /^Démarrer/ })).toBeEnabled();
+
+    expect(screen.getByText('Bloc brouillon')).toBeVisible();
     expect(screen.getByText('Brouillon')).toBeVisible();
-    expect(screen.getByText('Bloc actif')).toBeVisible();
-    expect(screen.getByText('Actif')).toBeVisible();
     expect(screen.getByText('Bloc terminé')).toBeVisible();
     expect(screen.getByText('Terminé')).toBeVisible();
   });

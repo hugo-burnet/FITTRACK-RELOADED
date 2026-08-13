@@ -4,7 +4,7 @@ import type { HomeProgramProjection } from '@/data/repositories/home';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
-import { weekPhaseReading } from '@/features/programs/weekReading';
+import { weekPhaseReading } from './weekReading';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
@@ -37,10 +37,16 @@ function ruleLabel(program: HomeProgramProjection): string {
 interface Props {
   program: HomeProgramProjection;
   disabled: boolean;
+  /**
+   * Which name the card leads with. Home answers « what do I do now », so it
+   * leads with the session. The Programmes list answers « which block », so it
+   * leads with the block — the routine still names the button either way.
+   */
+  leadWith?: 'session' | 'block';
 }
 
 /** Displays the repository's exact pick; ranking stays out of the component. */
-export function HomeProgramCard({ program, disabled }: Props) {
+export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Props) {
   const navigate = useNavigate();
   const [failed, setFailed] = useState(false);
   const [starting, setStarting] = useState(false);
@@ -85,7 +91,7 @@ export function HomeProgramCard({ program, disabled }: Props) {
               })}
             </p>
             <h3 className="mt-1 truncate text-lg font-semibold text-[var(--text-1)]">
-              {pick.kind === 'session'
+              {leadWith === 'session' && pick.kind === 'session'
                 ? (pick.routineName ?? t('program.missingRoutine'))
                 : program.programName}
             </h3>
