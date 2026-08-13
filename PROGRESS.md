@@ -2,7 +2,34 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Release Android v0.5.1 — le CSV ouvre enfin la feuille**).
+**Dernière mise à jour :** 2026-08-13 (**Intention de bloc — le Coach tranche, le calendrier raconte**).
+
+Le % 1RM de semaine est mort. Une semaine porte `loadIndex` + `phase`. « 105 % »
+n’est plus une multiplication : c’est un niveau affiché. La routine reste le 100 %.
+
+Le moteur distingue `range_satisfied` (dans la fourchette) et `range_ceiling_reached`
+(plafond). On n’ajoute jamais de charge tant que la plage n’est pas saturée. Un
+plateau retire toute escalade, y compris `add_set`. La phase de la **prochaine**
+séance choisit parmi les actions déjà autorisées ; elle n’en invente aucune.
+
+La Décharge transforme les cibles avant la séance (deux incréments en moins, une
+série en moins). `loadIndex` 60 ou 90 donne la même recette. La séance snapshot
+`programPhase` / `programLoadIndex` : reclasse la semaine plus tard, l’historique
+ne ment pas.
+
+UI : `05 — 60 % · Décharge`, accueil `Semaine 3 · Progression`, wizard
+`Étape 2 sur 3 · Split` + 1 2 3 (plus de faux onglets). Carte Coach : plus de
+« 100 → 0 kg » ; Progression sans incrément = « Maintien — progression différée ».
+
+Pas de bump ni de tag : le code est sur `master` local, 11 commits devant
+`origin` après la v0.5.1. Un push + tag plus tard publiera l’APK.
+
+Checkpoint téléphone (après prochain APK) : créer un bloc 8 semaines, poser une
+Décharge en S5, terminer une séance au plafond juste avant : la feuille Coach
+ne doit pas proposer d’ajouter du volume. En S6 Reprise, la grille est celle
+de la routine, pas celle de la Décharge.
+
+**Mise à jour précédente :** 2026-08-13 (**Release Android v0.5.1 — le CSV ouvre enfin la feuille**).
 
 Le téléphone disait « Sauvegarde téléchargée » et aucun fichier n'arrivait. Dans la
 WebView, `<a download>` réussit en JS et n'écrit rien. L'APK écrit désormais le CSV
