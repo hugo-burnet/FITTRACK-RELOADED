@@ -472,6 +472,36 @@ describe('suivi du bloc courant', () => {
     ).toBeDisabled();
   });
 
+  it('supprime le bloc depuis la fiche sans toucher aux séances de l’historique', async () => {
+    const { program, entries } = await createTrackingProgram();
+    const { workout } = await startWorkoutFromProgram({
+      programId: program.id,
+      programScheduleEntryId: entries[0]!.id,
+      at: TRACKING_NOW,
+    });
+    await finishWorkout(workout.id);
+
+    const user = userEvent.setup();
+    renderProgramFlow(`/programs/${program.id}`);
+
+    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: /Supprimer le bloc/ }));
+    // La feuille de confirmation dit ce qui reste avant de demander de confirmer.
+    expect(
+      await screen.findByText(/Les séances déjà faites restent dans ton historique/),
+    ).toBeVisible();
+    const sheet = await screen.findByRole('dialog', { name: 'Supprimer le bloc' });
+    await user.click(within(sheet).getByRole('button', { name: 'Supprimer le bloc' }));
+
+    await waitFor(async () => {
+      expect(await listPrograms()).toHaveLength(0);
+    });
+    const stored = await db.workouts.get(workout.id);
+    expect(stored).toMatchObject({ id: workout.id, deletedAt: 0, programId: program.id });
+    // Retour à la liste, désormais vide — la fiche du bloc n'existe plus.
+    expect(await screen.findByText(/Aucun bloc pour l’instant/)).toBeVisible();
+  });
+
   it('démarre sans repli 1RM : identity copie les cibles de la routine', async () => {
     const movement = await createCustomExercise({
       name: 'Squat sans record',
@@ -610,7 +640,12 @@ describe('suivi du bloc courant', () => {
       expect(after?.revisions).toEqual(before?.revisions);
     });
     expect(await screen.findByText('Terminé')).toBeVisible();
-    expect(screen.queryByRole('button', { name: 'Options du bloc' })).not.toBeInTheDocument();
+    // Le menu reste, mais il ne propose plus qu'une chose : un bloc terminé ne
+    // se modifie ni ne se décale, il se supprime.
+    await user.click(screen.getByRole('button', { name: 'Options du bloc' }));
+    expect(await screen.findByRole('button', { name: /Supprimer le bloc/ })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Modifier à partir de/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Décaler le bloc/ })).not.toBeInTheDocument();
   });
 
   it('isole une routine manquante à sa ligne et garde les autres séances disponibles', async () => {

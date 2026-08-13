@@ -534,6 +534,13 @@ const fr = {
     completeHint: 'Arrêter les prochaines séances sans effacer les données.',
     completeTitle: 'Terminer le bloc',
     completeBody: 'Les semaines, le split et les séances restent dans ton historique.',
+    // Terminer ≠ supprimer : l'un arrête le bloc, l'autre l'efface. Le corps
+    // dit ce qui reste, parce que c'est la seule question qu'on se pose ici.
+    deleteAction: 'Supprimer le bloc',
+    deleteHint: 'Effacer le bloc. Les séances déjà faites ne bougent pas.',
+    deleteTitle: 'Supprimer le bloc',
+    deleteBody:
+      'Les séances déjà faites restent dans ton historique. Le split et les semaines de ce bloc disparaissent.',
     detailReadError: 'Le suivi n’a pas pu être lu. Tes données restent sur cet appareil.',
     actionError: 'L’action n’a pas pu être enregistrée. Réessaie.',
     newTitle: 'Nouveau bloc',

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import {
   completeProgram,
+  deleteProgram,
   getProgramDetail,
   shiftProgram,
 } from '@/data/repositories/programs';
@@ -257,11 +258,12 @@ export function ProgramDetailScreen() {
     <Screen
       title={detail.program.name}
       onBack={goBack}
-      action={detail.program.status !== 'completed' ? (
+      action={
+        // Même un bloc terminé garde son menu : il reste à supprimer.
         <HeaderAction label={t('program.actionsLabel')} onClick={() => setActionsOpen(true)}>
           <MoreIcon />
         </HeaderAction>
-      ) : undefined}
+      }
       footer={
         canStart ? (
           <ActionBand
@@ -297,17 +299,22 @@ export function ProgramDetailScreen() {
         <UpcomingWeeks weeks={upcomingWeeks} />
       </div>
 
-      {detail.program.status !== 'completed' && (
-        <ProgramActionsSheet
-          open={actionsOpen}
-          hasStarted={position.phase !== 'before'}
-          canComplete={detail.program.status === 'active'}
-          onClose={() => setActionsOpen(false)}
-          onEditFuture={() => void navigate(`/programs/${detail.program.id}/edit`)}
-          onShift={(days) => runAction(() => shiftProgram(detail.program.id, days))}
-          onComplete={() => runAction(() => completeProgram(detail.program.id))}
-        />
-      )}
+      <ProgramActionsSheet
+        open={actionsOpen}
+        hasStarted={position.phase !== 'before'}
+        canComplete={detail.program.status === 'active'}
+        canEdit={detail.program.status !== 'completed'}
+        onClose={() => setActionsOpen(false)}
+        onEditFuture={() => void navigate(`/programs/${detail.program.id}/edit`)}
+        onShift={(days) => runAction(() => shiftProgram(detail.program.id, days))}
+        onComplete={() => runAction(() => completeProgram(detail.program.id))}
+        onDelete={() =>
+          runAction(async () => {
+            await deleteProgram(detail.program.id);
+            void navigate('/programs');
+          })
+        }
+      />
     </Screen>
   );
 }
