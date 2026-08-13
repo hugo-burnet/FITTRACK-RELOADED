@@ -2,7 +2,18 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Carte musculaire Z-Anatomy — remplacement du body map**).
+**Dernière mise à jour :** 2026-08-13 (**Release v0.4.0 — les programmes et une vraie anatomie**).
+
+Deux gros morceaux dans la même version, écrits en parallèle sans se marcher dessus : le **Lot 17**
+(périodisation, programmes multi-semaines, split hebdomadaire versionné) et le **remplacement de la
+carte musculaire** par une géométrie dérivée de Z-Anatomy. Zéro fichier en commun entre les deux —
+le recouvrement s'est limité à `src/i18n/fr.ts` et `PROGRESS.md`, tous deux fusionnés sans conflit.
+
+Bump mineur : `versionName` vient de `package.json`, `versionCode` du numéro de run GitHub. Le tag
+`v0.4.0` est ce qui publie la release et y attache l'APK ; un simple push sur `master` ne produit
+qu'un artefact de 30 jours.
+
+**Mise à jour précédente :** 2026-08-13 (**Carte musculaire Z-Anatomy — remplacement du body map**).
 
 Les cinq écrans qui dessinaient un corps (accueil, bilan musculaire, fiche exercice, détail de
 séance, fin de séance) passent d'une géométrie de 89 régions à 26 muscles anatomiques réels,
@@ -43,7 +54,7 @@ trop clair efface le trou, qui est précisément ce que ce dessin sert à montre
 Checkpoint téléphone : ouvrir une fiche d'exercice et le bilan musculaire, vérifier que le dessin
 reste lisible à cette taille — il est bien plus détaillé que l'ancien pour la même hauteur.
 
-**Mise à jour précédente :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines**).
+**Avant cela :** 2026-08-13 (**Lot 17 — périodisation et programmes multi-semaines**).
 
 Livré : blocs de 4 à 12 semaines, split hebdomadaire versionné, prescriptions %1RM ou RPE,
 décharges planifiées, démarrage depuis l’accueil et autorité explicite face au Coach du Lot 18.
@@ -51,7 +62,7 @@ décharges planifiées, démarrage depuis l’accueil et autorité explicite fac
 Checkpoint téléphone restant : bloc de 8 semaines, décharge semaine 5, version effective d’une
 routine, décalage du bloc et reprise complète en mode avion.
 
-**Avant cela :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
+**Puis :** 2026-08-12 (**Release v0.3.3 — le coach sait enfin redescendre**).
 
 La cinquième règle, `range_missed` : **deux séances de suite sous le bas de fourchette, à la même
 charge → un incrément en moins.** C'est la moitié de RF-48 que le roadmap promettait depuis le
