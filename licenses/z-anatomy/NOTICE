@@ -1,0 +1,14 @@
+Z-Anatomy
+Copyright Gauthier Kervyn, Marcin Zielinski
+Copyright Kousaku Okubo — BodyParts3D
+
+Ce produit inclut une œuvre dérivée de Z-Anatomy, atlas anatomique 3D libre,
+distribuée sous Creative Commons Attribution-ShareAlike 4.0 International
+(CC BY-SA 4.0).
+https://www.z-anatomy.com/
+https://lifesciencedb.jp/bp3d/
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Œuvre dérivée concernée : src/ui/muscleMap/muscle-map.svg — géométrie extraite
+des maillages puis vectorisée. Elle reste sous CC BY-SA 4.0, comme tout rendu
+qui en descend. Voir ATTRIBUTION.md.
