@@ -2,7 +2,31 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-15 (**Release Android v0.7.2 — deux corrections vues sur le téléphone**).
+**Dernière mise à jour :** 2026-08-15 (**Release Android v0.7.3 — un bloc pas encore commencé était injoignable**).
+
+## v0.7.3 — le bloc du 17 août n'avait aucune porte
+
+Signalé depuis l'app : impossible de modifier ni de supprimer un bloc actif dont
+la date de départ est encore devant.
+
+- **La cause, à trois étages** : la liste retire le bloc actif de ses rangées
+  puisqu'il est déjà en tête ; la carte du héros n'affiche un bouton que s'il y
+  a une séance à démarrer ou un split à réparer ; avant la date de départ il n'y
+  a ni l'un ni l'autre. La fiche du bloc — seule porte vers *modifier / décaler /
+  supprimer* — n'était donc atteignable par aucun chemin.
+- **Le correctif** : l'en-tête de la carte ouvre la fiche, chevron à l'appui, sur
+  l'accueil comme sur la liste. Assise inchangée (ni marge ni retrait ajoutés),
+  l'appui se dit en opacité comme les autres surfaces qui ne se peignent pas de
+  fond.
+- **Reste ouvert** : le nom et la durée d'un bloc *actif* ne sont pas modifiables,
+  même quand il n'a pas commencé — `updateProgramDraft` et `replaceProgramWeeks`
+  sont réservées aux brouillons. La date, elle, se rattrape par « Décaler ».
+
+1515 tests / 131 fichiers. Aucun changement de schéma.
+
+---
+
+**Précédent :** 2026-08-15 (**Release Android v0.7.2 — deux corrections vues sur le téléphone**).
 
 ## v0.7.2 — « undefined » sur une version publiée
 
