@@ -11,7 +11,7 @@ import type {
 import type { MetricKey, MetricUnit } from '@/lib/analytics/metrics';
 import type { PeriodKey } from '@/lib/analytics/periods';
 import type { WeeklyVolumeMetric } from '@/lib/analytics/volume';
-import type { TargetUnit } from '@/lib/measurement';
+import type { TargetPart, TargetUnit } from '@/lib/measurement';
 import type { OneRepMaxFormula } from '@/lib/oneRepMax';
 import { t } from './fr';
 
@@ -160,6 +160,17 @@ export const exerciseSubtitle = (exercise: Exercise): string =>
  * and the live grid must not spell them out twice and drift apart.
  */
 export const unitLabel = (unit: TargetUnit): string => t(`units.${unit}`);
+
+/**
+ * « 15 – 18 reps », « +3,5 kg », « 1:30 min » — one reading of `targetParts`.
+ *
+ * The prefix is optional on purpose (only added load and assistance carry one),
+ * and every screen that inlined this interpolation had to remember the `?? ''`.
+ * One of them didn't, and printed « undefined15 – 18 reps » on a published
+ * routine. It is spelled once here, next to `unitLabel`, for the same reason.
+ */
+export const partReading = (part: TargetPart): string =>
+  `${part.prefix ?? ''}${part.value} ${unitLabel(part.unit)}`;
 
 /** « Gauche » / « Droite ». `both` has no word: it is the unremarkable case. */
 export const sideLabel = (side: Side): string =>

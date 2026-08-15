@@ -25,7 +25,7 @@ import type { RoutineExerciseDetail, RoutineSetTargets } from '@/data/repositori
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
+import { exerciseSubtitle, partReading } from '@/i18n/labels';
 import { targetParts } from '@/lib/measurement';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
@@ -72,9 +72,7 @@ function ReadOnlyExercise({ line }: { line: RoutineExerciseDetail }) {
         const reading =
           parts.length === 0
             ? t('routine.setFree')
-            : parts
-                .map((part) => `${part.prefix}${part.value} ${unitLabel(part.unit)}`)
-                .join(' · ');
+            : parts.map(partReading).join(' · ');
         return (
           <div
             key={set.id}

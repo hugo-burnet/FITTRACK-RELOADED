@@ -16,7 +16,7 @@ import {
   workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
-import { unitLabel } from '@/i18n/labels';
+import { partReading, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
@@ -227,11 +227,7 @@ export function WorkoutFinishScreen() {
                   const reading =
                     best === undefined
                       ? ''
-                      : performedParts(type, best)
-                          .map(
-                            (part) => `${part.prefix ?? ''}${part.value} ${unitLabel(part.unit)}`,
-                          )
-                          .join(' · ');
+                      : performedParts(type, best).map(partReading).join(' · ');
 
                   return (
                     <div

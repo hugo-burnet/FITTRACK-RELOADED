@@ -94,6 +94,20 @@ export function ProgramEditorScreen() {
   // Le passé scellé est la même semaine pour le split et pour les semaines.
   const sealedBefore = activeEdit ? (effectiveFromWeekIndex ?? 0) : 0;
 
+  /**
+   * Sortir de l'éditeur par la fiche du bloc, **en remplaçant l'éditeur** dans
+   * l'historique.
+   *
+   * Un formulaire déjà écrit n'a rien à faire derrière la fiche : la flèche ←
+   * y revenait, sur un wizard rejouable dont chaque étape réécrit une révision,
+   * et il fallait deux retours pour retrouver la liste des blocs. La fiche
+   * termine la création — on en repart vers la liste, pas vers le brouillon
+   * qu'on vient de valider.
+   */
+  const settleOnProgram = (id: string) => {
+    void navigate(`/programs/${id}`, { replace: true });
+  };
+
   const leaveEditor = () => {
     const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (index > 0) void navigate(-1);
@@ -152,7 +166,7 @@ export function ProgramEditorScreen() {
       await updateProgramDraft(programId, { ...basics, name: basics.name.trim() });
       await createScheduleRevision(programId, 0, orderedSplit(split));
       await replaceProgramWeeks(programId, weeks);
-      void navigate(`/programs/${programId}`);
+      settleOnProgram(programId);
     });
   };
 
@@ -173,7 +187,7 @@ export function ProgramEditorScreen() {
     await runSave(async () => {
       await createScheduleRevision(programId, effectiveFromWeekIndex, orderedSplit(split));
       await replaceProgramWeeksFrom(programId, effectiveFromWeekIndex, weeks);
-      void navigate(`/programs/${programId}`);
+      settleOnProgram(programId);
     });
   };
 
@@ -205,7 +219,7 @@ export function ProgramEditorScreen() {
       } else {
         await replaceProgramWeeks(programId, weeks);
         await activateProgram(programId);
-        void navigate(`/programs/${programId}`);
+        settleOnProgram(programId);
       }
     });
   };
@@ -215,7 +229,7 @@ export function ProgramEditorScreen() {
     setErrorKey(null);
     await runSave(async () => {
       await replaceActiveProgram(programId);
-      void navigate(`/programs/${programId}`);
+      settleOnProgram(programId);
     });
   };
 
