@@ -503,6 +503,13 @@ const fr = {
     statusActive: 'Actif',
     statusCompleted: 'Terminé',
     detailTitle: 'Suivi du bloc',
+    /**
+     * La carte du bloc actif mène à sa fiche — la seule porte vers ses options
+     * (modifier, décaler, supprimer). Sans elle, un bloc qui n'a pas encore
+     * commencé n'a aucun bouton : la liste le retire de ses lignes puisqu'il est
+     * déjà en tête, et il n'était plus atteignable du tout.
+     */
+    openBlock: 'Ouvrir le bloc {name}',
     progressWeek: 'Semaine {current} / {total}',
     progressBefore: 'Le bloc commence le {date}.',
     progressAfter: 'Les {count} semaines sont terminées.',

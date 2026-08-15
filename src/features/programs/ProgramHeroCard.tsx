@@ -4,6 +4,7 @@ import type { HomeProgramProjection } from '@/data/repositories/home';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
+import { ChevronRightIcon } from '@/ui/icons';
 import { weekPhaseReading } from './weekReading';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -83,30 +84,54 @@ export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Pro
     <section>
       <Card padded>
         <div className="space-y-4">
-          <div>
-            <p className="label-xs font-semibold text-[var(--text-2)]">
-              {t('home.programWeek', {
-                current: (program.week?.weekIndex ?? 0) + 1,
-                total: program.durationWeeks,
-              })}
-            </p>
-            <h3 className="mt-1 truncate text-lg font-semibold text-[var(--text-1)]">
-              {leadWith === 'session' && pick.kind === 'session'
-                ? (pick.routineName ?? t('program.missingRoutine'))
-                : program.programName}
-            </h3>
-            {intention !== null && (
-              <p
-                className={`mt-1 text-sm font-semibold ${
-                  program.week?.phase === 'deload'
-                    ? 'text-[var(--accent-ink)]'
-                    : 'text-[var(--text-2)]'
-                }`}
-              >
-                {intention}
-              </p>
-            )}
-          </div>
+          {/*
+            L'en-tête ouvre la fiche du bloc. C'est la seule porte vers ses
+            options — modifier, décaler, supprimer — et un bloc qui n'a pas
+            encore commencé n'affiche aucun autre bouton : ni « Démarrer »
+            (aucune séance avant la date de départ), ni « Réparer le split ».
+            Il était alors parfaitement inatteignable, la liste le retirant de
+            ses lignes puisqu'il est déjà en tête. Le titre reste celui que
+            l'écran a demandé ; c'est le bloc qu'on ouvre dans les deux cas,
+            d'où le nom du bloc dans l'étiquette.
+          */}
+          <button
+            type="button"
+            aria-label={t('program.openBlock', { name: program.programName })}
+            onClick={() => void navigate(`/programs/${program.programId}`)}
+            // Aucune marge, aucun retrait : l'en-tête garde exactement l'assise
+            // qu'il avait quand c'était un `<div>`. L'appui se dit en opacité,
+            // comme les autres surfaces qui ne peuvent pas se peindre un fond.
+            className="flex w-full items-center gap-3 text-left transition-opacity
+              duration-[var(--dur-1)] active:opacity-70"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="label-xs block font-semibold text-[var(--text-2)]">
+                {t('home.programWeek', {
+                  current: (program.week?.weekIndex ?? 0) + 1,
+                  total: program.durationWeeks,
+                })}
+              </span>
+              <span className="mt-1 block truncate text-lg font-semibold text-[var(--text-1)]">
+                {leadWith === 'session' && pick.kind === 'session'
+                  ? (pick.routineName ?? t('program.missingRoutine'))
+                  : program.programName}
+              </span>
+              {intention !== null && (
+                <span
+                  className={`mt-1 block text-sm font-semibold ${
+                    program.week?.phase === 'deload'
+                      ? 'text-[var(--accent-ink)]'
+                      : 'text-[var(--text-2)]'
+                  }`}
+                >
+                  {intention}
+                </span>
+              )}
+            </span>
+            <span className="shrink-0 text-[var(--text-2)]">
+              <ChevronRightIcon />
+            </span>
+          </button>
 
           {pick.kind === 'session' && pick.routineName !== null && (
             <Button

@@ -807,6 +807,57 @@ describe('suivi du bloc courant', () => {
 
 describe('liste des blocs', () => {
   beforeEach(resetDb);
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('ouvre un bloc qui n’a pas encore commencé, et le supprime depuis sa fiche', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(TRACKING_NOW);
+    const routine = await createRoutine('Force à venir');
+    const program = await createProgramDraft({
+      name: 'Fin d’été',
+      startsAt: new Date(2026, 7, 17).getTime(),
+      durationWeeks: 6,
+    });
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 6 }, (_, weekIndex) => ({
+        weekIndex,
+        loadIndex: 100,
+        phase: 'construction' as const,
+      })),
+    );
+    await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await activateProgram(program.id);
+    const user = userEvent.setup();
+    renderProgramFlow('/programs');
+
+    // Rien à démarrer avant le 17, rien à réparer : la carte du héros n'a aucun
+    // bouton, et la liste ne le remet pas en rangée puisqu'il est déjà en tête.
+    // Sans porte sur l'en-tête, le bloc n'était atteignable par rien — donc ni
+    // modifiable, ni décalable, ni supprimable.
+    expect(
+      await screen.findByText('Le bloc commence le 17 août. Aucune séance ne démarre avant.'),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: /^Démarrer/ })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Ouvrir le bloc Fin d’été' }));
+    await expectRoute(`/programs/${program.id}`);
+
+    await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
+    await user.click(await screen.findByRole('button', { name: /^Supprimer le bloc/ }));
+    await user.click(
+      within(await screen.findByRole('dialog', { name: 'Supprimer le bloc' })).getByRole('button', {
+        name: 'Supprimer le bloc',
+      }),
+    );
+
+    await waitFor(async () => {
+      expect(await listPrograms()).toHaveLength(0);
+    });
+  });
 
   it('affiche les statuts brouillon, actif et terminé sans transformer la liste en tableau de bord', async () => {
     const completed = await createProgramDraft({
