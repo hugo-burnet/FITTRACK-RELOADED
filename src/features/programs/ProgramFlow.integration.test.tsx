@@ -846,6 +846,16 @@ describe('liste des blocs', () => {
     await user.click(screen.getByRole('button', { name: 'Ouvrir le bloc Fin d’été' }));
     await expectRoute(`/programs/${program.id}`);
 
+    // La semaine se lit en entier, repos compris, avant même le départ : c'est
+    // le seul moment où le split peut encore être corrigé sans rien perdre.
+    expect(await screen.findByText('La semaine')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Force à venir, À venir' })).toBeVisible();
+    expect(screen.getByText('Lundi')).toBeVisible();
+    expect(screen.getAllByText('Repos')).toHaveLength(6);
+    for (const day of ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']) {
+      expect(screen.getByText(day)).toBeVisible();
+    }
+
     await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
     await user.click(await screen.findByRole('button', { name: /^Supprimer le bloc/ }));
     await user.click(
