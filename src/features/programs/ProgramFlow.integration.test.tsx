@@ -28,6 +28,22 @@ function LocationProbe() {
   return <output aria-label="route actuelle">{location.pathname}</output>;
 }
 
+/**
+ * Attendre la route, **exactement**.
+ *
+ * `toHaveTextContent` cherche une sous-chaîne : `/programs/<id>` est contenu
+ * dans `/programs/<id>/edit`, donc l'attente rendait la main immédiatement,
+ * encore sur l'éditeur. Le test lisait alors la base avant que l'écriture
+ * déclenchée par le bouton ne soit terminée — et comparait l'état d'avant.
+ */
+const expectRoute = async (pathname: string): Promise<void> => {
+  await waitFor(() =>
+    expect(screen.getByRole('status', { name: 'route actuelle' })).toHaveTextContent(
+      new RegExp(`^${pathname}$`),
+    ),
+  );
+};
+
 function renderProgramFlow(initialEntry = '/programs/new') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -180,9 +196,7 @@ describe('parcours de création d’un programme', () => {
         expect.objectContaining({ routineId: thursdayRoutine.id, dayOfWeek: 4, order: 0 }),
       ]),
     );
-    expect(screen.getByRole('status', { name: 'route actuelle' })).toHaveTextContent(
-      `/programs/${programId}`,
-    );
+    await expectRoute(`/programs/${programId}`);
   });
 
   it('repersiste le cadre après un retour depuis le split', async () => {
@@ -241,9 +255,7 @@ describe('parcours de création d’un programme', () => {
       replacement.id,
     );
     await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 1' }));
-    expect(await screen.findByRole('status', { name: 'route actuelle' })).toHaveTextContent(
-      `/programs/${program.id}`,
-    );
+    await expectRoute(`/programs/${program.id}`);
     const detail = await getProgramDetail(program.id);
     expect(detail?.revisions).toHaveLength(1);
     expect(detail?.revisions[0]?.revision.effectiveFromWeekIndex).toBe(0);
@@ -389,9 +401,7 @@ describe('parcours de création d’un programme', () => {
     ).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 5' }));
-    expect(await screen.findByRole('status', { name: 'route actuelle' })).toHaveTextContent(
-      `/programs/${program.id}`,
-    );
+    await expectRoute(`/programs/${program.id}`);
 
     // En base : les lignes des quatre premières semaines ne sont même pas
     // réécrites — mêmes identités, mêmes valeurs.
@@ -791,9 +801,7 @@ describe('suivi du bloc courant', () => {
     expect(screen.getByText('Cette séance doit être réparée dans le split.')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Poussée du jour, Aujourd’hui' })).toBeEnabled();
     await user.click(screen.getByRole('button', { name: 'Réparer le split' }));
-    expect(await screen.findByRole('status', { name: 'route actuelle' })).toHaveTextContent(
-      `/programs/${program.id}/edit`,
-    );
+    await expectRoute(`/programs/${program.id}/edit`);
   });
 });
 

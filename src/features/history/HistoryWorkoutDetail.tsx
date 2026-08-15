@@ -5,7 +5,7 @@ import {
 } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { formatDuration, setTypeLabel, unitLabel } from '@/i18n/labels';
+import { formatDuration, partReading, setTypeLabel, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
@@ -25,10 +25,6 @@ const startTime = new Intl.DateTimeFormat('fr-FR', {
   hour: '2-digit',
   minute: '2-digit',
 });
-
-function readingPart(part: TargetPart): string {
-  return `${part.prefix ?? ''}${part.value} ${unitLabel(part.unit)}`;
-}
 
 function performedReadings(
   set: WorkoutSet,
@@ -124,7 +120,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
     },
     {
       label: t('history.detailDistance'),
-      value: distancePart === undefined ? '' : readingPart(distancePart),
+      value: distancePart === undefined ? '' : partReading(distancePart),
       visible: totals.distanceMeters > 0,
     },
   ].filter((reading) => reading.visible);
@@ -207,7 +203,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
                 {sets.map((set) => {
                   const parts = performedReadings(set, measurementType);
                   const readings = [
-                    ...parts.map(readingPart),
+                    ...parts.map(partReading),
                     setTypeLabel(set.setType),
                     ...(set.rpe === undefined
                       ? []

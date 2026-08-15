@@ -16,6 +16,7 @@ import {
   createRoutine,
   getRoutineDetail,
   listRoutineSummaries,
+  updateRoutineSet,
 } from '@/data/repositories/routines';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { resetDb } from '@/test/resetDb';
@@ -234,6 +235,35 @@ describe('parcours de composition d’une routine', () => {
       expect(detail?.revisions.at(-1)?.revision.effectiveFromWeekIndex).toBe(2);
       expect(detail?.revisions.at(-1)?.entries[0]?.routineId).not.toBe(routine.id);
     });
+  });
+
+  it('lit les séries d’une version scellée sans préfixe fantôme', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Rotation externe',
+      primaryMuscle: 'shoulders',
+      secondaryMuscles: [],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Upper A');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const setId = (await getRoutineDetail(routine.id))?.exercises[0]?.sets[0]?.id;
+    await updateRoutineSet(setId!, { targetReps: 15, targetRepsMax: 18, targetWeight: 3.5 });
+    const program = await createProgramDraft({
+      name: 'Bloc haut', startsAt: new Date(2026, 7, 10).getTime(), durationWeeks: 4,
+    });
+    await replaceProgramWeeks(program.id, Array.from({ length: 4 }, (_, weekIndex) => ({
+      weekIndex, loadIndex: 100, phase: 'construction' as const,
+    })));
+    await createScheduleRevision(program.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
+    await activateProgram(program.id);
+    renderRoutineFlow(`/routines/${routine.id}`);
+
+    // Le poids n'a pas de préfixe : seules l'assistance et la charge ajoutée en
+    // portent un. L'écrire quand même imprimait « undefined3,5 kg » sur la
+    // version publiée — celle qu'on lit en salle et qu'on ne peut plus corriger.
+    expect(await screen.findByText('15 – 18 reps · 3,5 kg')).toBeVisible();
   });
 
   it('ne crée qu’un brouillon sous un double appui sur Créer une version', async () => {
