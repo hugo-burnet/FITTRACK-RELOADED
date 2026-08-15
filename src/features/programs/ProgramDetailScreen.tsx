@@ -342,7 +342,14 @@ export function ProgramDetailScreen() {
             {t(actionErrorKey)}
           </p>
         )}
-        {(position.phase === 'active' || detail.program.status === 'completed') && (
+        {/*
+          La semaine se lit dès que le bloc en a une, même avant sa date de
+          départ : c'est là qu'on vérifie qu'on a bien posé lundi et jeudi, et
+          c'est le seul moment où l'on peut encore corriger sans rien perdre.
+          La condition d'avant — bloc commencé ou terminé — laissait un bloc à
+          venir sans aucun split à l'écran.
+        */}
+        {sessions.length > 0 && (
           <ProgramSessionList
             sessions={sessions}
             selectedEntryId={effectiveSelected?.entryId ?? null}

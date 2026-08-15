@@ -514,7 +514,13 @@ const fr = {
     progressBefore: 'Le bloc commence le {date}.',
     progressAfter: 'Les {count} semaines sont terminées.',
     intentionTitle: 'Intention de la semaine',
-    sessionsTitle: 'Séances de la semaine',
+    /**
+     * La section liste les sept jours, pas seulement ceux qui portent une
+     * séance : un bloc se lit autant à ses jours de repos qu'à ses séances.
+     * « Séances de la semaine » mentait sur ce qu'on y trouve.
+     */
+    sessionsTitle: 'La semaine',
+    restDay: 'Repos',
     sessionCompleted: 'Terminée',
     sessionToday: 'Aujourd’hui',
     sessionMissed: 'Manquée',
