@@ -2,7 +2,28 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-15 (**Release Android v0.7.3 — un bloc pas encore commencé était injoignable**).
+**Dernière mise à jour :** 2026-08-15 (**Release Android v0.7.4 — la semaine entière sur la fiche du bloc**).
+
+## v0.7.4 — les jours de repos sont la moitié de l'information
+
+La section « Séances de la semaine » ne listait que les jours travaillés : on
+voyait deux séances sans voir si elles étaient collées ni combien de jours les
+séparaient.
+
+- Les **sept jours** sont là, du lundi au dimanche ; un jour sans séance dit
+  « Repos », en texte secondaire et sous le même gabarit (barre de sélection
+  transparente comprise, pour que les colonnes restent alignées).
+- La section apparaît **aussi avant la date de départ**. L'ancienne condition
+  (bloc commencé ou terminé) laissait un bloc à venir sans aucun split à
+  l'écran — or c'est le seul moment où le corriger ne coûte rien.
+- Titre : « Séances de la semaine » → « **La semaine** ». Il mentait sur ce
+  qu'on y trouve désormais.
+
+1515 tests / 131 fichiers. Aucun changement de schéma.
+
+---
+
+**Précédent :** 2026-08-15 (**Release Android v0.7.3 — un bloc pas encore commencé était injoignable**).
 
 ## v0.7.3 — le bloc du 17 août n'avait aucune porte
 
