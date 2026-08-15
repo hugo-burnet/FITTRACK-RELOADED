@@ -2,7 +2,31 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-13 (**Release Android v0.7.1 — front Programmes + revue du Coach**).
+**Dernière mise à jour :** 2026-08-15 (**Release Android v0.7.2 — deux corrections vues sur le téléphone**).
+
+## v0.7.2 — « undefined » sur une version publiée
+
+Signalé depuis l'app, capture à l'appui : une routine scellée par un bloc actif
+lisait « undefined15 – 18 reps · undefined3,5 kg ».
+
+- **La cause** : la fiche en lecture seule interpolait `part.prefix` sans garde.
+  Seules l'assistance (`−`) et la charge ajoutée (`+`) en portent un ; sur une
+  charge normale il vaut `undefined`, et le gabarit l'écrivait. Trois écrans
+  recopiaient la même formule, deux avaient le `?? ''`. Elle vit maintenant une
+  seule fois, `partReading` dans `i18n/labels`.
+- **Sortie de l'éditeur de bloc** : après « Activer le bloc », la flèche ←
+  revenait sur le wizard qu'on venait de valider — deux retours pour retrouver la
+  liste. La fiche remplace l'éditeur dans l'historique.
+- **Piège de test rencontré** : `toHaveTextContent` cherche une sous-chaîne, donc
+  attendre `/programs/<id>` était déjà satisfait sur `/programs/<id>/edit`.
+  L'attente rendait la main avant la navigation et le test lisait la base avant
+  l'écriture — un échec qui accusait le code alors que le code était bon.
+
+1514 tests / 131 fichiers. Aucun changement de schéma. Installer par-dessus.
+
+---
+
+**Précédent :** 2026-08-13 (**Release Android v0.7.1 — front Programmes + revue du Coach**).
 
 ## v0.7.1 — les branches en attente sont rentrées
 
