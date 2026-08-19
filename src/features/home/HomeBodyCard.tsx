@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
@@ -26,6 +26,13 @@ import { Card } from '@/ui';
  * Pas de titre de section au-dessus : un corps humain n'a pas besoin qu'on
  * annonce que c'en est un, et c'est un intertitre de moins sur un écran dont le
  * défaut était d'en avoir cinq.
+ *
+ * **Sans dessin, pas de carte.** Le corps ne dessine rien quand rien n'a été
+ * travaillé sur douze semaines — installation neuve, ou douze semaines
+ * silencieuses. Il restait alors 56 px de trois boutons collés sous le titre de
+ * l'écran : une barre d'onglets égarée, qui menait à trois analyses vides et
+ * que plus rien ne nommait. La carte s'en va avec le dessin ; Rythme, Volume et
+ * Muscles se retrouvent depuis l'Historique et depuis la fiche d'un exercice.
  */
 const HomeMuscleMap = lazy(() =>
   import('./HomeMuscleMap').then((module) => ({ default: module.HomeMuscleMap })),
@@ -39,6 +46,11 @@ const LINKS: Array<{ to: string; labelKey: TranslationKey; nameKey: TranslationK
 
 export function HomeBodyCard() {
   const navigate = useNavigate();
+  // `null` tant que le dessin n'a pas répondu : la carte tient sa place pendant
+  // ce temps-là plutôt que d'apparaître après coup sous le pouce.
+  const [drawn, setDrawn] = useState<boolean | null>(null);
+
+  if (drawn === false) return null;
 
   return (
     <section>
@@ -47,7 +59,7 @@ export function HomeBodyCard() {
             arrive en une frame ou deux, et réserver la place empêche les trois
             boutons de sauter sous le pouce au moment où il se remplit. */}
         <Suspense fallback={<div className="h-72" aria-hidden />}>
-          <HomeMuscleMap />
+          <HomeMuscleMap onResolved={setDrawn} />
         </Suspense>
 
         <div className="grid grid-cols-3">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
@@ -31,7 +31,16 @@ import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
  */
 const PERIOD = '12w';
 
-export function HomeMuscleMap() {
+interface Props {
+  /**
+   * Dit à la carte hôte si le dessin a quelque chose à montrer. Elle disparaît
+   * entièrement quand la réponse est non : ses trois liens n'ont plus rien à
+   * accompagner, et ils mèneraient à trois écrans vides.
+   */
+  onResolved: (drawn: boolean) => void;
+}
+
+export function HomeMuscleMap({ onResolved }: Props) {
   // Frozen on open, like every other historical window in the app: the bounds
   // must not slide under the reader at midnight.
   const [openedAt] = useState(() => Date.now());
@@ -45,19 +54,31 @@ export function HomeMuscleMap() {
     [from, to],
   );
 
+  const highlight =
+    workouts === undefined
+      ? null
+      : balanceHighlight(muscleInvolvement(toMuscleRows(workouts)));
+  const drawn = highlight === null ? null : Object.keys(highlight).length > 0;
+
+  // Après le rendu, jamais pendant : prévenir la carte hôte au fil du rendu
+  // reviendrait à écrire dans l'état d'un composant en train d'en rendre un
+  // autre.
+  useEffect(() => {
+    if (drawn !== null) onResolved(drawn);
+  }, [drawn, onResolved]);
+
   // Not answered yet: hold the drawing's own height, so the three buttons do not
   // jump under the thumb when it fills in.
-  if (workouts === undefined) return <div className="h-72" aria-hidden />;
-
-  const highlight = balanceHighlight(muscleInvolvement(toMuscleRows(workouts)));
+  if (highlight === null) return <div className="h-72" aria-hidden />;
 
   // Answered, and there is nothing to draw — a fresh install, or twelve quiet
   // weeks. **No body at all rather than a dark one.** An all-unlit silhouette
   // says "you have trained nothing", which is both bleak and a claim the app has
   // no business making on its home screen; and reserving 256 px of emptiness for
   // it is worse than the missing drawing. Same rule as the records section on
-  // the exercise sheet: nothing to report, so no section.
-  if (Object.keys(highlight).length === 0) return null;
+  // the exercise sheet: nothing to report, so no section — et depuis que la
+  // carte hôte le sait, elle s'en va avec, ses trois liens compris.
+  if (!drawn) return null;
 
   // The separator belongs to the drawing, not to the buttons below it: hung on
   // the button row instead, it would still be drawn on a card that has no body

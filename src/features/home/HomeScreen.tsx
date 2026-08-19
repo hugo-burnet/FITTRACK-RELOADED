@@ -62,17 +62,13 @@ export function HomeScreen() {
       }
     >
       <div className="space-y-6">
-        {/* Le corps ne dépend pas du tableau de bord — il lit son propre
-            historique — donc il est rendu tout de suite, y compris pendant que
-            le reste charge et y compris si la lecture échoue. */}
-        <HomeBodyCard />
-
         {state.status === 'loading' && (
-          // Deux blocs de la hauteur de ce qu'ils remplacent : l'écran ne
-          // sursaute pas quand les données arrivent.
+          // Deux blocs de la hauteur de ce qu'ils remplacent — la carte du jour
+          // et la ligne des blocs : l'écran ne sursaute pas quand les données
+          // arrivent, et le corps en dessous ne descend pas d'un cran.
           <div aria-hidden="true" className="space-y-6">
             <div className="h-44 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
-            <div className="h-20 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
+            <div className="h-16 animate-pulse rounded-2xl bg-[var(--surface-1)]" />
           </div>
         )}
 
@@ -98,6 +94,18 @@ export function HomeScreen() {
             {/* Sous la carte du jour : ce qu'elle propose vient d'un plan, et
                 c'est ici qu'on ouvre le plan. */}
             <HomeProgramsRow program={state.data.activeProgram} />
+          </>
+        )}
+
+        {/* Le corps ne dépend pas du tableau de bord — il lit son propre
+            historique — donc il est rendu quoi qu'il arrive, y compris pendant
+            que le reste charge et y compris si la lecture échoue. Il ne dessine
+            rien du tout quand rien n'a été travaillé sur douze semaines, et il
+            emporte alors ses trois liens avec lui. */}
+        <HomeBodyCard />
+
+        {state.status === 'ready' && (
+          <>
             <HomeStatsIsland regularity={state.regularity} />
             <HomeRecentWorkouts items={state.data.recentWorkouts} />
           </>

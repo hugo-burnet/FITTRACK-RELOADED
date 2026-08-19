@@ -26,16 +26,20 @@ export function HomeProgramsRow({ program }: Props) {
   const navigate = useNavigate();
 
   return (
-    <Card>
-      <ListRow
-        title={t('program.listTitle')}
-        // Le nom du bloc, pas sa semaine : le sur-titre de la carte au-dessus
-        // porte déjà « Semaine 2 sur 8 ».
-        subtitle={program === null ? t('home.programsNone') : program.programName}
-        leading={<ProgramIcon />}
-        trailing={<ChevronRightIcon />}
-        onClick={() => void navigate('/programs')}
-      />
-    </Card>
+    // `section` comme tous les blocs de cet écran : ils forment un rythme, et
+    // celui-ci s'y insère au lieu de flotter entre deux.
+    <section>
+      <Card>
+        <ListRow
+          title={t('program.listTitle')}
+          // Le nom du bloc, pas sa semaine : le sur-titre de la carte au-dessus
+          // porte déjà « Semaine 2 sur 8 ».
+          subtitle={program === null ? t('home.programsNone') : program.programName}
+          leading={<ProgramIcon />}
+          trailing={<ChevronRightIcon />}
+          onClick={() => void navigate('/programs')}
+        />
+      </Card>
+    </section>
   );
 }
