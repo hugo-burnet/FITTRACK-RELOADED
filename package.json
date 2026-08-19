@@ -19,7 +19,8 @@
     "bench:home": "vitest bench src/data/repositories/home.bench.ts --run",
     "bench:records": "vitest bench src/data/repositories/personalRecords.bench.ts --run",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "voice:generate": "node scripts/generate-voice.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",
