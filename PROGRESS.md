@@ -2,9 +2,9 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-19 (**Le bloc prescrit enfin quelque chose**).
+**Dernière mise à jour :** 2026-08-19 (**Release Android v0.8.0 — le bloc prescrit enfin quelque chose**).
 
-## Trois défauts du programme, trouvés en parcourant l'app
+## v0.8.0 — trois défauts du programme, trouvés en parcourant l'app
 
 Parcours complet dans le navigateur : accueil → Programmes → cadre → split →
 semaines → activation → fiche. Trois défauts majeurs, tous corrigés.
@@ -42,7 +42,12 @@ redemandait le nom et la durée pour une date au mercredi), la règle du lundi e
 séance. C'est la décision du v0.7.4 — les jours de repos sont la moitié de
 l'information d'un bloc — et rien dans ce parcours ne l'a contredite.
 
-1523 tests / 134 fichiers. Aucun changement de schéma.
+1523 tests / 134 fichiers.
+
+⚠️ **Changement de schéma : `version(8)`.** La migration retire `version`,
+`versionState` et `originRoutineId` des routines — aucun n'était indexé, et un
+brouillon de version devient une routine ordinaire de la bibliothèque. Rien
+n'est supprimé. Installer par-dessus, sans désinstaller.
 
 ---
 
