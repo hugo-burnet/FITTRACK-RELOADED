@@ -32,9 +32,12 @@ export function HomeProgramsRow({ program }: Props) {
       <Card>
         <ListRow
           title={t('program.listTitle')}
-          // Le nom du bloc, pas sa semaine : le sur-titre de la carte au-dessus
-          // porte déjà « Semaine 2 sur 8 ».
-          subtitle={program === null ? t('home.programsNone') : program.programName}
+          // Rien du tout quand un bloc tourne : la carte juste au-dessus le nomme
+          // déjà, et deux fois le même nom à 16 px d'écart se lit comme une
+          // erreur d'affichage. Cette ligne n'a plus qu'un rôle — ouvrir la
+          // liste — et un seul état à annoncer : celui où il n'y a rien à
+          // ouvrir.
+          subtitle={program === null ? t('home.programsNone') : undefined}
           leading={<ProgramIcon />}
           trailing={<ChevronRightIcon />}
           onClick={() => void navigate('/programs')}

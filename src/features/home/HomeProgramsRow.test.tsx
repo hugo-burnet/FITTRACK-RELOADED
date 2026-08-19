@@ -27,14 +27,15 @@ function renderRow(program: HomeProgramProjection | null) {
 }
 
 describe('HomeProgramsRow', () => {
-  it('nomme le bloc actif sans répéter sa semaine', async () => {
+  it('ne répète pas le bloc que la carte du dessus nomme déjà', async () => {
     renderRow(projection());
 
     expect(await screen.findByText('Programmes')).toBeVisible();
-    expect(screen.getByText('Bloc force')).toBeVisible();
-    // « Semaine 2 sur 8 » appartient à la carte du dessus : deux relevés du
-    // même bloc sur un écran finissent par diverger.
+    // Le nom du bloc et sa semaine appartiennent à la carte juste au-dessus.
+    // Deux fois le même nom à 16 px d'écart se lit comme une erreur.
+    expect(screen.queryByText('Bloc force')).not.toBeInTheDocument();
     expect(screen.queryByText(/Semaine \d+ sur \d+/)).not.toBeInTheDocument();
+    expect(screen.queryByText('Aucun bloc actif')).not.toBeInTheDocument();
   });
 
   it('reste là quand aucun bloc ne tourne', async () => {
