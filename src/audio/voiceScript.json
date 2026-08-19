@@ -1,0 +1,217 @@
+{
+  "$comment": "Le script parlé de l'annonceuse. Source unique : l'app lit ce fichier pour savoir quels clips existent, et scripts/generate-voice.mjs le lit pour les fabriquer. Un texte modifié ici est un fichier .mp3 à régénérer. Ce n'est pas de la copie d'interface au sens de src/i18n/fr.ts — rien de tout ceci ne s'affiche à l'écran ; c'est le script d'enregistrement d'une voix, et il vit avec les réglages qui l'ont produite.",
+  "voice": {
+    "character": "Administratrice. Vouvoiement, impersonnel, aucune chaleur. Elle constate, elle n'encourage pas. Débit posé, jamais pressé — c'est le contraste avec l'effort qui fait l'effet.",
+    "format": "mp3, mono, 44.1 kHz, 64 kbps. Un silence de tête inférieur à 60 ms : un clip qui met un quart de seconde à démarrer arrive en retard sur le décompte.",
+    "counting": "Les décomptes de repos (rest-*) et de répétitions (rep-*) disent les mêmes mots et sont pourtant des clips distincts : l'un s'adresse à quelqu'un debout qui attend, l'autre à quelqu'un sous une barre. Enregistre-les séparément, l'intonation n'est pas la même. Et « Une » au féminin pour une répétition, « Un » pour une seconde."
+  },
+  "lines": [
+    {
+      "id": "workout-started-1",
+      "cue": "workout-started",
+      "text": "La séance commence.",
+      "settings": {
+        "stability": 0.75,
+        "style": 0.1
+      }
+    },
+    {
+      "id": "workout-started-2",
+      "cue": "workout-started",
+      "text": "Séance ouverte. Bonne chance.",
+      "settings": {
+        "stability": 0.75,
+        "style": 0.1
+      }
+    },
+    {
+      "id": "last-set-ahead-1",
+      "cue": "last-set-ahead",
+      "text": "Dernière série.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "last-set-ahead-2",
+      "cue": "last-set-ahead",
+      "text": "Il vous reste une série.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "exercise-cleared-1",
+      "cue": "exercise-cleared",
+      "text": "Exercice terminé.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "exercise-cleared-2",
+      "cue": "exercise-cleared",
+      "text": "Exercice validé. Passez au suivant.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "record-beaten-1",
+      "cue": "record-beaten",
+      "text": "Nouveau record. Enregistré.",
+      "settings": {
+        "stability": 0.7,
+        "style": 0.2
+      }
+    },
+    {
+      "id": "record-beaten-2",
+      "cue": "record-beaten",
+      "text": "Record battu.",
+      "settings": {
+        "stability": 0.7,
+        "style": 0.2
+      }
+    },
+    {
+      "id": "rest-3-1",
+      "cue": "rest-3",
+      "text": "Trois.",
+      "settings": {
+        "stability": 0.9,
+        "style": 0
+      }
+    },
+    {
+      "id": "rest-2-1",
+      "cue": "rest-2",
+      "text": "Deux.",
+      "settings": {
+        "stability": 0.9,
+        "style": 0
+      }
+    },
+    {
+      "id": "rest-1-1",
+      "cue": "rest-1",
+      "text": "Un.",
+      "settings": {
+        "stability": 0.9,
+        "style": 0
+      }
+    },
+    {
+      "id": "rest-over-1",
+      "cue": "rest-over",
+      "text": "Repos terminé. Retournez à la barre.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "rest-over-2",
+      "cue": "rest-over",
+      "text": "Fin du repos.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "rest-over-3",
+      "cue": "rest-over",
+      "text": "Repos terminé. Reprenez.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "rest-extended-1",
+      "cue": "rest-extended",
+      "text": "Repos prolongé.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "rest-extended-2",
+      "cue": "rest-extended",
+      "text": "Repos prolongé. Vous en aurez besoin.",
+      "settings": {
+        "stability": 0.8,
+        "style": 0.1
+      }
+    },
+    {
+      "id": "rep-3-1",
+      "cue": "rep-3",
+      "text": "Trois.",
+      "settings": {
+        "stability": 0.9,
+        "style": 0
+      }
+    },
+    {
+      "id": "rep-2-1",
+      "cue": "rep-2",
+      "text": "Deux.",
+      "settings": {
+        "stability": 0.9,
+        "style": 0
+      }
+    },
+    {
+      "id": "rep-1-1",
+      "cue": "rep-1",
+      "text": "Une.",
+      "settings": {
+        "stability": 0.9,
+        "style": 0
+      }
+    },
+    {
+      "id": "set-done-1",
+      "cue": "set-done",
+      "text": "Validé.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "set-done-2",
+      "cue": "set-done",
+      "text": "Série terminée.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "workout-finished-1",
+      "cue": "workout-finished",
+      "text": "Séance terminée. Vous pouvez disposer.",
+      "settings": {
+        "stability": 0.75,
+        "style": 0.1
+      }
+    },
+    {
+      "id": "workout-finished-2",
+      "cue": "workout-finished",
+      "text": "Séance terminée. Vos résultats sont enregistrés.",
+      "settings": {
+        "stability": 0.75,
+        "style": 0.1
+      }
+    }
+  ]
+}

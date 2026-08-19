@@ -63,7 +63,7 @@ import { ElapsedTime } from './ElapsedTime';
 import { DeloadSheet } from './DeloadSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
-import { unlockChime } from './restChime';
+import { primeAnnouncer } from '@/audio/announce';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
 import {
@@ -143,8 +143,8 @@ export function WorkoutScreen() {
 
   // Mobile browsers require a user gesture before later timer-driven audio.
   useEffect(() => {
-    document.addEventListener('pointerdown', unlockChime);
-    return () => document.removeEventListener('pointerdown', unlockChime);
+    document.addEventListener('pointerdown', primeAnnouncer);
+    return () => document.removeEventListener('pointerdown', primeAnnouncer);
   }, []);
 
   const stopRest = useRestTimer((state) => state.stop);

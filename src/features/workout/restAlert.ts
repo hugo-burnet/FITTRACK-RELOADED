@@ -1,5 +1,6 @@
+import { announce } from '@/audio/announce';
+import { buzzRestOver } from '@/audio/haptics';
 import { nativeNotifications } from '@/platform/nativeNotifications';
-import { buzzRestOver, playChime } from './restChime';
 
 export function signalRestFinished(
   isNativeArmed: () => boolean,
@@ -12,5 +13,9 @@ export function signalRestFinished(
 }
 
 export function signalRestFinishedOnCurrentPlatform(): void {
-  signalRestFinished(nativeNotifications.isRestAlertArmed, playChime, buzzRestOver);
+  signalRestFinished(
+    nativeNotifications.isRestAlertArmed,
+    () => void announce('rest-over'),
+    buzzRestOver,
+  );
 }
