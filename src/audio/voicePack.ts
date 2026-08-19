@@ -70,7 +70,9 @@ export function createVoicePack(load: ClipLoader): VoicePack {
       try {
         const source = bus.context.createBufferSource();
         source.buffer = buffer;
-        source.connect(bus.master);
+        // The announcement bus, never the master: a voice that skips the
+        // loudspeaker colouring is a voice memo played in a gym.
+        source.connect(bus.voice);
         source.start(bus.context.currentTime + Math.max(0, when));
         return true;
       } catch {

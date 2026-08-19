@@ -4,8 +4,13 @@ import type { AnnouncerMode } from '@/audio/announcer';
 import { allClips } from '@/audio/cues';
 import { probeVoicePack } from '@/audio/voicePack';
 import { t, type TranslationKey } from '@/i18n/fr';
-import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
-import { SectionTitle } from '@/ui';
+import {
+  applyAnnouncerEcho,
+  applyAnnouncerMode,
+  loadAnnouncerEcho,
+  loadAnnouncerMode,
+} from '@/stores/announcer';
+import { ListRow, SectionTitle, Toggle } from '@/ui';
 
 /** One clip answers for the folder — the pack is written in one run. */
 const [PROBE_CLIP] = allClips();
@@ -47,10 +52,21 @@ export function AnnouncerSettings() {
     };
   }, []);
 
+  const [echo, setEcho] = useState(loadAnnouncerEcho);
+
   const choose = (next: AnnouncerMode) => {
     setMode(next);
     applyAnnouncerMode(next);
     if (next !== 'silence') void previewAnnouncer('rest-over');
+  };
+
+  const toggleEcho = () => {
+    const next = !echo;
+    setEcho(next);
+    applyAnnouncerEcho(next);
+    // Heard immediately, and on the phrase the switch is about: the difference
+    // between a voice memo and an announcement is not describable in a label.
+    if (mode !== 'silence') void previewAnnouncer('rest-over');
   };
 
   const voiceNote =
@@ -98,6 +114,23 @@ export function AnnouncerSettings() {
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>
         )}
       </div>
+
+      {mode !== 'silence' && (
+        <div className="mt-3 overflow-hidden rounded-2xl bg-[var(--surface-1)]">
+          <ListRow
+            title={t('settings.announcerEcho')}
+            subtitle={t('settings.announcerEchoHint')}
+            trailing={
+              <Toggle
+                label={t('settings.announcerEcho')}
+                mark={t(echo ? 'settings.effortPromptOn' : 'settings.effortPromptOff')}
+                checked={echo}
+                onChange={toggleEcho}
+              />
+            }
+          />
+        </div>
+      )}
     </section>
   );
 }

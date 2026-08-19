@@ -22,6 +22,22 @@ interface Partial_ {
   type?: OscillatorType;
 }
 
+/**
+ * Which tones are *announcements* and go through the loudspeaker colouring.
+ *
+ * Only the chime. It is the two-note bell that introduces a sentence — an
+ * airport, a station, a corridor — so it belongs to the same room as the words
+ * that follow it, and hearing them in two different acoustics is worse than
+ * hearing neither. Everything else stays dry: a tick smeared by a hall stops
+ * being a beat, and the whole point of the countdown is that its beats land.
+ */
+const ANNOUNCED: Record<ToneId, boolean> = {
+  tick: false,
+  chime: true,
+  validate: false,
+  record: false,
+};
+
 const TONES: Record<ToneId, readonly Partial_[]> = {
   /** The cadence of the last three seconds. Dry, short, unmistakably a count. */
   tick: [{ frequency: 1046.5, delay: 0, duration: 0.06, gain: 0.22, type: 'square' }],
@@ -55,13 +71,14 @@ const TONES: Record<ToneId, readonly Partial_[]> = {
 export function playTone(bus: AudioBus, tone: ToneId, when = 0): void {
   try {
     const start = bus.context.currentTime + Math.max(0, when);
-    for (const partial of TONES[tone]) voice(bus, partial, start);
+    const destination = ANNOUNCED[tone] ? bus.voice : bus.master;
+    for (const partial of TONES[tone]) voice(bus, destination, partial, start);
   } catch {
     // A tone that will not start is a degraded timer, never a broken screen.
   }
 }
 
-function voice(bus: AudioBus, partial: Partial_, base: number): void {
+function voice(bus: AudioBus, destination: AudioNode, partial: Partial_, base: number): void {
   const start = base + partial.delay;
   const oscillator = bus.context.createOscillator();
   const gain = bus.context.createGain();
@@ -73,7 +90,7 @@ function voice(bus: AudioBus, partial: Partial_, base: number): void {
   gain.gain.exponentialRampToValueAtTime(partial.gain, start + 0.02);
   gain.gain.exponentialRampToValueAtTime(0.0001, start + partial.duration);
 
-  oscillator.connect(gain).connect(bus.master);
+  oscillator.connect(gain).connect(destination);
   oscillator.start(start);
   oscillator.stop(start + partial.duration + 0.04);
 }

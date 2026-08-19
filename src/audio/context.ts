@@ -15,18 +15,30 @@
  * feature whose entire job is to make a noise. So the context is created and
  * resumed on the first touch of the session, and reused from then on.
  */
+import { createPublicAddress, type PublicAddress } from './publicAddress';
 
 export interface AudioBus {
   context: AudioContext;
-  /** Every source connects here, so one gain controls the whole announcer. */
+  /** Everything ends up here, so one gain controls the whole announcer. */
   master: GainNode;
+  /**
+   * Where announcements go: the voice clips and the chime that introduces
+   * them, coloured by `publicAddress` on their way to the master.
+   *
+   * The countdown ticks deliberately do **not** pass through it. A tick is a
+   * beat, and a beat smeared by half a second of hall stops being one — the
+   * cadence has to stay dry to stay a cadence.
+   */
+  voice: GainNode;
 }
 
 /** Chrome ships it prefixed on older Android WebViews. */
 type AudioContextCtor = typeof AudioContext;
 
 let bus: AudioBus | null = null;
+let publicAddress: PublicAddress | null = null;
 let volume = 1;
+let echo = true;
 
 function constructor(): AudioContextCtor | undefined {
   const scope = window as typeof window & { webkitAudioContext?: AudioContextCtor };
@@ -52,7 +64,9 @@ export function unlockAudio(): void {
       const master = context.createGain();
       master.gain.value = volume;
       master.connect(context.destination);
-      bus = { context, master };
+      publicAddress = createPublicAddress(context, master);
+      publicAddress.setEnabled(echo);
+      bus = { context, master, voice: publicAddress.input };
     }
     if (bus.context.state === 'suspended') void bus.context.resume();
   } catch {
@@ -75,4 +89,13 @@ export function audioBus(): AudioBus | null {
 export function setAudioVolume(next: number): void {
   volume = Math.min(1, Math.max(0, next));
   if (bus !== null) bus.master.gain.value = volume;
+}
+
+/**
+ * The loudspeaker colouring, on or off. Remembered for a context not yet
+ * created — the setting is read before the first touch of the session.
+ */
+export function setAudioEcho(next: boolean): void {
+  echo = next;
+  publicAddress?.setEnabled(next);
 }

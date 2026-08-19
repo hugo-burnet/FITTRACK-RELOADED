@@ -1,6 +1,6 @@
-import { loadAnnouncerMode } from '@/stores/announcer';
+import { loadAnnouncerEcho, loadAnnouncerMode } from '@/stores/announcer';
 import { EMPTY_MEMORY, pickAtRandom, planCue, type AnnouncerMemory } from './announcer';
-import { audioBus, unlockAudio } from './context';
+import { audioBus, setAudioEcho, unlockAudio } from './context';
 import { CUES, allClips, clipsFor, type CueId } from './cues';
 import { playTone } from './tones';
 import { voicePack } from './voicePack';
@@ -24,16 +24,15 @@ let warmed = false;
 export function primeAnnouncer(): void {
   unlockAudio();
   const bus = audioBus();
-  if (bus === null || warmed) return;
+  if (bus === null) return;
+  // The chain is built with the context, before anything has read the stored
+  // preference — this is the first moment both exist, so it is where they meet.
+  setAudioEcho(loadAnnouncerEcho());
+  if (warmed) return;
   warmed = true;
   void voicePack.warmUp(bus, allClips());
 }
 
-/**
- * Fires a cue, `when` seconds from now on the audio clock. Returns whether
- * anything was actually played — the rest countdown reads that answer to
- * decide whether it may stand the Android notification down.
- */
 /**
  * Plays a cue on demand, outside the cadence rules — the settings screen only.
  *
@@ -57,6 +56,11 @@ export async function previewAnnouncer(cue: CueId): Promise<void> {
   if (clip !== '') voicePack.play(bus, clip);
 }
 
+/**
+ * Fires a cue, `when` seconds from now on the audio clock. Returns whether
+ * anything was actually played — the rest countdown reads that answer to
+ * decide whether it may stand the Android notification down.
+ */
 export function announce(cue: CueId, when = 0): boolean {
   const bus = audioBus();
   if (bus === null) return false;

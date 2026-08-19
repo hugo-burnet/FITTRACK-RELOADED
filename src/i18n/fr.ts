@@ -1131,6 +1131,11 @@ const fr = {
       'Aucune voix installée : seuls les sons se déclenchent. Les clips se fabriquent avec ' +
       'npm run voice:generate, puis se déposent dans public/voice.',
     announcerVoiceChecking: 'Vérification de la voix…',
+    announcerEcho: 'Écho de haut-parleur',
+    announcerEchoHint:
+      'Les annonces sont diffusées comme dans une sono de hall : bande passante de haut-parleur, ' +
+      'un écho de mur, une courte réverbération. C’est là qu’est le personnage — sans ça, ' +
+      'c’est un mémo vocal. Les tics du décompte, eux, restent secs.',
 
     trainingSection: 'Entraînement',
     effortSection: 'Effort et fatigue',
