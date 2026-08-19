@@ -590,7 +590,7 @@ const fr = {
     routinesLoading: 'Chargement des routines…',
     routinesReadError:
       'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
-    noRoutines: 'Crée d’abord une routine publiée, puis reviens composer le split.',
+    noRoutines: 'Crée d’abord une routine, puis reviens composer le split.',
     weekday1: 'Lundi',
     weekday2: 'Mardi',
     weekday3: 'Mercredi',
