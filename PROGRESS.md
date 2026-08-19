@@ -2,7 +2,58 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-19 (**Release Android v0.8.1 — « Jamais réalisée » sur une routine faite le matin même**).
+**Dernière mise à jour :** 2026-08-19 (**Lot 21 — l'annonceuse : sons, voix, cadence, fatigue**).
+
+## Lot 21 — l'annonceuse (non commité, en attente du dépôt de test)
+
+Demandé en cours de session : « des sons de notification et des phrases avec une voix féminine ia,
+un peu à la squid game, une sorte d'admin ». Puis, deux précisions qui ont tout cadré :
+**« l'intonation fait tout »** — donc des clips enregistrés, pas le TTS de l'appareil — et
+**« faut pas que le son de la musique sur le côté baisse »** — donc Web Audio partout, jamais
+`<audio>`, parce qu'un `HTMLAudioElement` demande le focus audio à Android et qu'Android
+l'accorde en baissant Spotify.
+
+**Ce qui existait déjà et a servi de socle :** `restChime.ts` (Lot 6) avait résolu le problème
+difficile — le déblocage de l'`AudioContext` sur le premier geste. Ce fichier a été démonté dans
+`src/audio/`, sa vibration part dans `haptics.ts`, son raisonnement dans `context.ts`.
+
+**Le vrai travail n'est pas de jouer un son, c'est de décider de ne pas en jouer un.** `planCue`
+tient le silence : un son part toujours, une *phrase* doit trouver du silence devant elle, une
+priorité plus haute coupe la parole, chaque cue a un temps de repos, et jamais deux fois la même
+variante d'affilée. Piège tranché en test : une cue **muette** ne doit pas consommer de silence —
+`set-validated` sonne trente fois par séance, et s'il ouvrait un délai de grâce il ferait taire
+toutes les phrases de la séance.
+
+**La fatigue, en trois endroits.** Le tempo du métronome de série s'allonge (+0,25 s par série
+faite, +0,5 s sur la dernière, +0,5 s après 45 min, plafond 5 s) ; la bande « Effort ? » sous la
+série validée écrit un RPE en une touche et ajoute 0/15/30/45 s de repos ; le repos prolongé
+s'annonce. La bande s'efface seule au bout de 20 s — l'ignorer est une réponse valide, la série
+est déjà écrite et le repos déjà lancé.
+
+**Le geste dont je suis le plus content :** un tic réellement sorti prouve que l'app est au premier
+plan, audible et non muette. Elle annule alors la notification Android de fin de repos
+(`standDownRest`) — sinon deux alertes à une seconde d'écart, et c'est la notification, pas le
+Web Audio, qui fait baisser la musique. Annulée à T−3 s et pas au début du repos : au pire on perd
+trois secondes de filet de sécurité.
+
+**Ce qui manque, et c'est tout ce qui manque : les 23 clips.** Le dépôt porte le script
+(`src/audio/voiceScript.json`), pas les enregistrements — une clé d'API n'entre pas dans un bundle
+public (règle n°3). `npm run voice:generate` avec `VOICE_API_KEY` dans le shell les fabrique. Sans
+eux l'app sonne et ne parle pas, ce qui est exactement le comportement voulu : un clip absent est
+un silence, jamais une erreur.
+
+**Piège à retenir.** Un `<audio>` et un `BufferSource` jouent le même mp3 et ne coûtent pas la même
+chose : le premier demande le focus audio au système, le second se contente de mixer. Sur un
+téléphone qui joue de la musique, c'est toute la différence entre une annonce et une interruption.
+
+1596 tests / 144 fichiers (+72). Aucun changement de schéma. **Rien n'est commité** : l'utilisateur
+prévoit un dépôt de test.
+
+Détail complet : `docs/plans/lot-21-annonces-vocales.md`.
+
+---
+
+**Précédent :** 2026-08-19 (**Release Android v0.8.1 — « Jamais réalisée » sur une routine faite le matin même**).
 
 ## v0.8.1 — le jumeau qui passait devant
 

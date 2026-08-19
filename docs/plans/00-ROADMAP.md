@@ -698,6 +698,28 @@ agrandies.
 
 ---
 
+## Lot 21 — L'annonceuse (sons, voix, cadence, fatigue)
+
+**RF couverts :** aucun du cahier des charges — demande directe de l'utilisateur, 2026-08-19.
+À ne pas confondre avec le Lot 20, qui est la saisie *vocale* : ici l'app parle, elle n'écoute
+jamais. Aucun micro, aucune permission.
+
+**Dépend de :** Lot 6 (le minuteur et son déblocage audio), Lot 10 (les notifications Android).
+**Budget :** 1 session. **Fait.**
+
+**Livrables :** sons synthétisés (validation, décompte, carillon, record) ; pack de voix optionnel
+et pré-généré, à la « Squid Game » ; règles de cadence qui rationnent la parole ; décompte des
+trois dernières secondes de repos ; métronome de série au tempo qui s'allonge avec la fatigue ;
+bande « Effort ? » en une touche qui allonge le repos ; réglages Annonces et Effort.
+
+**Contrainte structurante :** tout passe par Web Audio, jamais par `<audio>` — la musique de
+l'utilisateur ne doit pas baisser. Aucune clé d'API dans le bundle : les clips sont fabriqués à la
+main par `npm run voice:generate` et commités.
+
+**✅ Checkpoint :** cf. `lot-21-annonces-vocales.md`.
+
+---
+
 ## 3. Hors périmètre (assumé)
 
 | Écarté                                                 | Raison                                                                                                                                                                                        |
