@@ -60,6 +60,8 @@ function renderCard(
     <WorkoutExerciseCard
       line={currentLine}
       rest={null}
+      pace={null}
+      effort={null}
       records={records}
       state={state}
       reorderEnabled={reorderEnabled}

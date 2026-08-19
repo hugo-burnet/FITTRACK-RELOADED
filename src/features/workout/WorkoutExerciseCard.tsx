@@ -10,12 +10,23 @@ import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns } from '@/lib/measurement';
 import type { SupersetPlace } from '@/lib/routineOrder';
+import type { RepPacer } from '@/stores/repPacer';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
-import { CheckIcon, ChevronDownIcon, GripIcon, MoreIcon, PlateIcon, StarIcon } from '@/ui/icons';
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  GripIcon,
+  MetronomeIcon,
+  MoreIcon,
+  PlateIcon,
+  StarIcon,
+} from '@/ui/icons';
 import { CoachCard } from './CoachCard';
+import { EffortStrip } from './EffortStrip';
 import { recommendationAsSignal } from './coachCopy';
 import { RecordNote } from './RecordNote';
+import { RepPaceRail } from './RepPaceRail';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
 import type { WorkoutFoldCommand } from './workoutFold';
@@ -59,16 +70,31 @@ export function workoutRecordNotices(
 
 export type CardRest = { setId: string; startedAt: number; endsAt: number; onDone: () => void };
 
+export type CardPace = RepPacer & { setId: string; onFinished: () => void };
+
+/** The effort question waiting under one validated set. */
+export type CardEffort = {
+  setId: string;
+  onAnswer: (rpe: number) => void;
+  onExpire: () => void;
+};
+
 type Props = {
   line: WorkoutExerciseDetail;
   superset?: SupersetPlace;
   rest: CardRest | null;
+  /** The metronome running on this card's next set, if any. */
+  pace: CardPace | null;
+  /** The effort strip, when the set it belongs to is on this card. */
+  effort: CardEffort | null;
   /** Persisted improvements keyed by the set that triggered them. */
   records: WorkoutRecordNotices;
   state: ItemState;
   reorderEnabled: boolean;
   foldCommand: WorkoutFoldCommand;
   onMenu: () => void;
+  /** Absent when there is nothing to pace: no working set left, or no target. */
+  onPace?: () => void;
   onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
   onWrite: (setId: string, values: Partial<SetValues>) => void;
@@ -93,11 +119,14 @@ export function WorkoutExerciseCard({
   line,
   superset,
   rest,
+  pace,
+  effort,
   records,
   state,
   reorderEnabled,
   foldCommand,
   onMenu,
+  onPace,
   onPlates,
   onSetMenu,
   onWrite,
@@ -229,6 +258,8 @@ export function WorkoutExerciseCard({
               </span>
               {rest !== null ? (
                 <RestStatus endsAt={rest.endsAt} />
+              ) : pace !== null ? (
+                <RepPaceRail pacer={pace} onFinished={pace.onFinished} />
               ) : expanded ? (
                 exercise !== undefined && (
                   <span className="truncate text-sm text-[var(--text-2)]">
@@ -248,6 +279,20 @@ export function WorkoutExerciseCard({
                 duration-[var(--dur-1)] ${expanded ? '' : '-rotate-90'}`}
             />
           </button>
+
+          {onPace !== undefined && (
+            <button
+              type="button"
+              aria-label={t(pace !== null ? 'workout.paceStop' : 'workout.pace')}
+              aria-pressed={pace !== null}
+              onClick={onPace}
+              className={`flex w-11 shrink-0 items-center justify-center
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
+                ${pace !== null ? 'text-[var(--accent-ink)]' : 'text-[var(--text-2)]'}`}
+            >
+              <MetronomeIcon width={20} height={20} />
+            </button>
+          )}
 
           {onPlates !== undefined && (
             <button
@@ -354,6 +399,9 @@ export function WorkoutExerciseCard({
                   />
                   {record !== undefined && <RecordNote notice={record} />}
                 </SwipeToDelete>
+                {effort?.setId === set.id && (
+                  <EffortStrip onAnswer={effort.onAnswer} onExpire={effort.onExpire} />
+                )}
               </Fragment>
               );
             })}

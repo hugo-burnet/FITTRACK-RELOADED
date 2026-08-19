@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -7,12 +7,15 @@ import { createCustomExercise } from '@/data/repositories/exercises';
 import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import {
   addWorkoutExercise,
+  duplicateLastSet,
   getWorkoutDetail,
   startWorkoutFromRoutine,
 } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
+import { applyEffortPrompt } from '@/stores/effortPrompt';
+import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
 import { resetDb } from '@/test/resetDb';
@@ -333,5 +336,96 @@ describe('WorkoutScreen — baisse de charge', () => {
     await waitFor(async () => {
       expect(await firstSet(workoutId)).toMatchObject({ targetWeight: 77.5 });
     });
+  });
+});
+
+/**
+ * Une séance à deux séries de travail, avec une cible de répétitions : c'est le
+ * minimum pour que le repos se déclenche (il faut une série *suivante*) et pour
+ * que la cadence ait de quoi décompter.
+ */
+async function seedTwoSetWorkout(): Promise<string> {
+  const workoutId = await seedActiveWorkout();
+  const detail = await getWorkoutDetail(workoutId);
+  const row = detail?.exercises[0]?.row;
+  if (row === undefined) throw new Error('ligne d’exercice absente');
+  await duplicateLastSet(row.id);
+  const sets = (await getWorkoutDetail(workoutId))?.exercises[0]?.sets ?? [];
+  for (const set of sets) await db.workoutSets.update(set.id, { targetReps: 8 });
+  return workoutId;
+}
+
+describe('WorkoutScreen — effort et fatigue', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    localStorage.clear();
+    await resetDb();
+  });
+
+  afterEach(() => useRestTimer.getState().stop());
+
+  it('demande l’effort sous la série validée, et allonge le repos', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '80');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '10');
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    const strip = await screen.findByRole('group', { name: t('workout.effortQuestion') });
+    const rest = useRestTimer.getState();
+    expect(rest.setId).not.toBeNull();
+
+    await user.click(
+      within(strip).getByRole('button', {
+        name: t('workout.effortOption', { label: t('workout.effortHard'), value: '9' }),
+      }),
+    );
+
+    // Trente secondes de plus, comptées depuis l'échéance en cours : les
+    // secondes déjà écoulées restent du repos.
+    expect(useRestTimer.getState().endsAt).toBe(rest.endsAt + 30_000);
+    expect(useRestTimer.getState().seconds).toBe(rest.seconds + 30);
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ rpe: 9, isCompleted: 1 });
+    });
+  });
+
+  it('ne demande rien quand le réglage est éteint', async () => {
+    await seedTwoSetWorkout();
+    applyEffortPrompt(false);
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '10');
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    await waitFor(() => {
+      expect(useRestTimer.getState().setId).not.toBeNull();
+    });
+    expect(
+      screen.queryByRole('group', { name: t('workout.effortQuestion') }),
+    ).not.toBeInTheDocument();
+    applyEffortPrompt(true);
+  });
+
+  it('propose la cadence, et l’arrête quand on la retape', async () => {
+    await seedTwoSetWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    const start = await screen.findByRole('button', { name: t('workout.pace') });
+
+    await user.click(start);
+    expect(useRepPacer.getState().setId).not.toBeNull();
+
+    await user.click(screen.getByRole('button', { name: t('workout.paceStop') }));
+    expect(useRepPacer.getState().setId).toBeNull();
   });
 });

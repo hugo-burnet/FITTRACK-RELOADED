@@ -15,6 +15,7 @@ import {
   updateWorkout,
   workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
+import { announce } from '@/audio/announce';
 import { t } from '@/i18n/fr';
 import { partReading, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
@@ -125,6 +126,9 @@ export function WorkoutFinishScreen() {
     0,
   );
   const save = () => {
+    // Said on the tap, not after the write: the announcement belongs to the
+    // gesture that ended the session, and the screen is gone a beat later.
+    announce('workout-finished');
     void finishWorkout(workout.id)
       // The coach is never a gate. The session is already saved; a failed
       // evaluation must not strand you on this screen with nowhere to go.

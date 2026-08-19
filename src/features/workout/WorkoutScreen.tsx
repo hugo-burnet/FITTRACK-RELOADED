@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -41,6 +41,8 @@ import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
+import { loadEffortPrompt } from '@/stores/effortPrompt';
+import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import {
   ActionBand,
@@ -63,7 +65,10 @@ import { ElapsedTime } from './ElapsedTime';
 import { DeloadSheet } from './DeloadSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
-import { primeAnnouncer } from '@/audio/announce';
+import { announce, primeAnnouncer } from '@/audio/announce';
+import { restBonusSecondsFor } from '@/lib/restBonus';
+import { nextPaceTarget } from './paceTarget';
+import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
 import {
@@ -112,12 +117,15 @@ export function WorkoutScreen() {
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
+  /** The one set currently being asked how hard it was. */
+  const [effortSetId, setEffortSetId] = useState<string | null>(null);
   const [foldCommand, setFoldCommand] = useState(
     INITIAL_WORKOUT_FOLD_COMMAND,
   );
   const willExpandAll = !foldCommand.expanded;
   const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
   const rest = useRestTimer();
+  const pacer = useRepPacer();
 
   // Keep loading (`undefined`) distinct from no active workout (`null`).
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
@@ -147,7 +155,54 @@ export function WorkoutScreen() {
     return () => document.removeEventListener('pointerdown', primeAnnouncer);
   }, []);
 
+  const workoutId = detail?.workout.id;
+  const openedSets =
+    detail?.exercises.reduce(
+      (count, line) => count + line.sets.filter((set) => set.isCompleted === 1).length,
+      0,
+    ) ?? 0;
+
+  // Runs again at every validated set, and says nothing: the greeting is
+  // claimed once per workout id, and a session with a set behind it is not
+  // one to greet. The guard lives in `claimWorkoutGreeting`, not in the deps.
+  useEffect(() => {
+    if (workoutId === undefined) return;
+    // The tap that started the session happened on another screen, so this one
+    // opens with no gesture of its own — but the document has one, and that is
+    // what the browser actually requires.
+    primeAnnouncer();
+    if (claimWorkoutGreeting(workoutId, openedSets)) announce('workout-started');
+  }, [workoutId, openedSets]);
+
+  /**
+   * Records arrive from the database a beat after the set that took them, so
+   * the announcement watches the list rather than the validation. The first
+   * reading of a session is the *past* and is never announced: reopening a
+   * workout that already broke three records is not breaking them again.
+   */
+  const seenRecords = useRef<{ workoutId: string; keys: Set<string> } | null>(null);
+  useEffect(() => {
+    if (workoutId === undefined || recordEntries === undefined) return;
+    const keys = new Set(
+      recordEntries
+        .filter((entry) => entry.previousValue !== undefined)
+        .map((entry) => `${entry.record.id}:${String(entry.record.value)}`),
+    );
+    const seen = seenRecords.current;
+    seenRecords.current = { workoutId, keys };
+    if (seen === null || seen.workoutId !== workoutId) return;
+    for (const key of keys) {
+      if (!seen.keys.has(key)) {
+        announce('record-beaten');
+        return;
+      }
+    }
+  }, [workoutId, recordEntries]);
+
   const stopRest = useRestTimer((state) => state.stop);
+  const extendRest = useRestTimer((state) => state.extend);
+  const startPace = useRepPacer((state) => state.start);
+  const stopPace = useRepPacer((state) => state.stop);
   const restingSetId = rest.setId;
 
   // Stop rests whose set was deleted with its row or exercise.
@@ -364,6 +419,37 @@ export function WorkoutScreen() {
                 <WorkoutExerciseCard
                   line={line}
                   superset={places.get(line.row.id)}
+                  pace={
+                    pacer.setId !== null && pacer.rowId === line.row.id
+                      ? { ...pacer, setId: pacer.setId, onFinished: () => stopPace() }
+                      : null
+                  }
+                  onPace={
+                    // Hidden when there is nothing to pace — never shown greyed:
+                    // a disabled metronome invites a tap that explains nothing.
+                    nextPaceTarget(line.sets, 0) === null && pacer.rowId !== line.row.id
+                      ? undefined
+                      : () => {
+                          if (pacer.rowId === line.row.id && pacer.setId !== null) {
+                            stopPace();
+                            return;
+                          }
+                          // Read at the tap, never at render: the tempo is a
+                          // function of how long you have been in the gym.
+                          const target = nextPaceTarget(
+                            line.sets,
+                            Date.now() - workout.startedAt,
+                          );
+                          if (target === null) return;
+                          primeAnnouncer();
+                          startPace(
+                            line.row.id,
+                            target.setId,
+                            target.reps,
+                            target.repSeconds,
+                          );
+                        }
+                  }
                   rest={
                     rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
                       ? {
@@ -371,6 +457,26 @@ export function WorkoutScreen() {
                           startedAt: rest.startedAt,
                           endsAt: rest.endsAt,
                           onDone: () => rest.stop(),
+                        }
+                      : null
+                  }
+                  effort={
+                    effortSetId !== null && line.sets.some((set) => set.id === effortSetId)
+                      ? {
+                          setId: effortSetId,
+                          onExpire: () =>
+                            setEffortSetId((current) =>
+                              current === effortSetId ? null : current,
+                            ),
+                          onAnswer: (rpe) => {
+                            void updateSetValues(effortSetId, { rpe });
+                            const bonus = restBonusSecondsFor(rpe);
+                            if (bonus > 0) {
+                              extendRest(effortSetId, bonus);
+                              announce('rest-extended');
+                            }
+                            setEffortSetId(null);
+                          },
                         }
                       : null
                   }
@@ -397,10 +503,20 @@ export function WorkoutScreen() {
                   onWrite={(setId, values) => void updateSetValues(setId, values)}
                   onComplete={(setId, values, set) => {
                     void completeSet(setId, values);
+                    // The metronome paced this set; the set is over.
+                    stopPace(setId);
                     startRest(line, setId, set.setType);
+                    announce(setValidationCue(line.sets, setId));
+                    // A warm-up is not an effort to report, and one strip at a
+                    // time: the previous question dies with the set that
+                    // replaces it rather than stacking up down the card.
+                    setEffortSetId(
+                      set.setType !== 'warmup' && loadEffortPrompt() ? setId : null,
+                    );
                   }}
                   onUncomplete={(setId) => {
                     void uncompleteSet(setId);
+                    setEffortSetId((current) => (current === setId ? null : current));
                     // Only stop the rest owned by this set.
                     stopRest(setId);
                   }}
