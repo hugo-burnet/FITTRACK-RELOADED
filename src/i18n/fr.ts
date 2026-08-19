@@ -145,6 +145,8 @@ const fr = {
     createRoutine: 'Créer une routine',
     programSection: 'Bloc en cours',
     programWeek: 'Semaine {current} sur {total}',
+    /** La ligne « Programmes » quand aucun bloc ne tourne. */
+    programsNone: 'Aucun bloc actif',
     programStarts: 'Le bloc commence le {date}. Aucune séance ne démarre avant.',
     programNextWeek: 'La semaine {week} commence le {date}.',
     programWeekComplete: 'Toutes les séances prévues cette semaine sont terminées.',
@@ -432,11 +434,6 @@ const fr = {
 
   routines: {
     title: 'Routines',
-    programs: 'Programmes',
-    programCurrentWeek: 'Semaine {current} sur {total}',
-    programNoneActive: 'Aucun bloc actif',
-    programReadError: 'Le bloc actif n’a pas pu être lu.',
-    programRetry: 'Réessayer la lecture',
     emptyBody:
       'Une routine, c’est ta séance type : les exercices, les séries et les charges visées.',
     countUnit: 'routines',

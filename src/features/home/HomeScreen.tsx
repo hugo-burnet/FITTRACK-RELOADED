@@ -7,6 +7,7 @@ import { ActionBand, Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
 import { HomeBodyCard } from './HomeBodyCard';
 import { ProgramHeroCard } from '@/features/programs/ProgramHeroCard';
+import { HomeProgramsRow } from './HomeProgramsRow';
 import { HomeRecentWorkouts } from './HomeRecentWorkouts';
 import { HomeStatsIsland } from './HomeStatsIsland';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
@@ -94,6 +95,9 @@ export function HomeScreen() {
                 disabled={active != null}
               />
             )}
+            {/* Sous la carte du jour : ce qu'elle propose vient d'un plan, et
+                c'est ici qu'on ouvre le plan. */}
+            <HomeProgramsRow program={state.data.activeProgram} />
             <HomeStatsIsland regularity={state.regularity} />
             <HomeRecentWorkouts items={state.data.recentWorkouts} />
           </>

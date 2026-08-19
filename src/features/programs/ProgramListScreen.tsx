@@ -58,7 +58,7 @@ export function ProgramListScreen() {
   const goBack = () => {
     const index = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (index > 0) void navigate(-1);
-    else void navigate('/routines');
+    else void navigate('/');
   };
 
   return (

@@ -148,42 +148,6 @@ describe('parcours de composition d’une routine', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('ouvre les programmes depuis une entrée pleine largeur et lit la semaine active', async () => {
-    const routine = await createRoutine('Force A');
-    const program = await createProgramDraft({
-      name: 'Bloc force',
-      startsAt: new Date(2026, 7, 10).getTime(),
-      durationWeeks: 4,
-    });
-    await replaceProgramWeeks(
-      program.id,
-      Array.from({ length: 4 }, (_, weekIndex) => ({
-        weekIndex,
-        loadIndex: 75,
-        phase: 'construction' as const,
-      })),
-    );
-    await createScheduleRevision(program.id, 0, [
-      { routineId: routine.id, dayOfWeek: 1, order: 0 },
-    ]);
-    await activateProgram(program.id);
-    const user = userEvent.setup();
-    renderRoutineFlow();
-
-    const programs = await screen.findByRole('button', { name: /Programmes/ });
-    expect(programs).toHaveClass('w-full');
-    expect(await screen.findByText('Semaine 1 sur 4')).toBeVisible();
-    await user.click(programs);
-
-    expect(await screen.findByText('Liste des programmes')).toBeVisible();
-  });
-
-  it('affiche aucun bloc actif quand aucune semaine de programme ne gouverne les routines', async () => {
-    renderRoutineFlow();
-
-    expect(await screen.findByText('Aucun bloc actif')).toBeVisible();
-  });
-
   it('laisse modifier une routine que le bloc actif programme', async () => {
     const exercise = await createCustomExercise({
       name: 'Squat',
