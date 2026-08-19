@@ -677,19 +677,6 @@ const fr = {
      * était un second nom pour la même chose — et il passait à la ligne.
      */
     start: 'Démarrer',
-    versionPublished: 'Version {version} · Publiée',
-    versionDraft: 'Version {version} · Brouillon',
-    sealedHint: 'Cette version reste intacte parce qu’un bloc la référence.',
-    draftHint: 'Chaque modification est enregistrée dans ce brouillon.',
-    publishedEditableHint: 'Cette version n’est utilisée par aucun bloc et reste modifiable.',
-    createVersion: 'Créer une version',
-    useFromWeek: 'Utiliser à partir de la semaine {number}',
-    effectiveWeekTitle: 'Semaine d’entrée en vigueur',
-    noEffectiveWeek: 'Aucune semaine future d’un bloc actif ne peut encore utiliser ce brouillon.',
-    versionActionError: 'La version n’a pas pu être enregistrée. Réessaie.',
-    programReadError: 'Le bloc actif n’a pas pu être lu. Les versions restent intactes.',
-    programRetry: 'Réessayer la lecture',
-    sealedEmptyBody: 'Cette version publiée ne contient aucun exercice.',
 
     deletedExercise: 'Exercice supprimé',
     deletedExerciseHint: 'Il ne fait plus partie de ta bibliothèque.',

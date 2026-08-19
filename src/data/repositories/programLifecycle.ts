@@ -75,10 +75,9 @@ async function prepareProgramActivation(programId: string): Promise<PreparedProg
       : alive(
           await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray(),
         );
-  const routines = alive(await db.routines.toArray()).filter(
-    (routine) => routine.versionState === 'published',
+  const availableRoutineIds = new Set(
+    alive(await db.routines.toArray()).map((routine) => routine.id),
   );
-  const availableRoutineIds = new Set(routines.map((routine) => routine.id));
   const initialSchedule = resolveSchedule(revisions, entries, 0);
   const issues = validateProgramDraft(
     {

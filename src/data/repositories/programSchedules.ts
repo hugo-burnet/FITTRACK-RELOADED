@@ -244,14 +244,7 @@ export async function writeScheduleRevisionInTransaction(
   const routines = await db.routines.bulkGet([
     ...new Set(entries.map((entry) => entry.routineId)),
   ]);
-  if (
-    routines.some(
-      (routine) =>
-        routine === undefined ||
-        routine.deletedAt !== 0 ||
-        routine.versionState !== 'published',
-    )
-  ) {
+  if (routines.some((routine) => routine === undefined || routine.deletedAt !== 0)) {
     throw new ProgramRepositoryError('routine_missing');
   }
 

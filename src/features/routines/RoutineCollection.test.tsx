@@ -18,8 +18,6 @@ function routine(id: string, name: string, folderId = '', order = 0): Routine {
     name,
     folderId,
     order,
-    version: 1,
-    versionState: 'published',
   };
 }
 

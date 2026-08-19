@@ -120,7 +120,6 @@ describe('Hevy routine entities', () => {
       name: 'UPPER A',
       folderId: entities.folder.id,
       order: 4,
-      version: 1,
     });
     expect(
       entities.rows.map((row) => ({

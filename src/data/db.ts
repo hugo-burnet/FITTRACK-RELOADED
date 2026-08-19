@@ -170,9 +170,14 @@ export class FitTrackDB extends Dexie {
         programScheduleEntries: 'id, revisionId, [revisionId+order], routineId, deletedAt',
       })
       .upgrade(async (tx) => {
-        await tx.table<Routine>('routines').toCollection().modify((routine) => {
-          routine.versionState = 'published';
-        });
+        // The field this stamps is dropped again by version(8); the write is kept
+        // as it shipped, because editing a version a device already ran corrupts it.
+        await tx
+          .table('routines')
+          .toCollection()
+          .modify((routine: Record<string, unknown>) => {
+            routine.versionState = 'published';
+          });
       });
 
     // Lot 17 — week intention: loadIndex + phase replace %1RM / RPE / isDeload.
@@ -193,6 +198,23 @@ export class FitTrackDB extends Dexie {
         delete week.prescriptionValue;
         delete week.isDeload;
       });
+    });
+
+    // Blocks no longer govern routines: a block points at a routine and nothing
+    // points back. Versioning, sealing and publication went with the cycle —
+    // what they protected (the targets of a past session) is already frozen by
+    // the workout snapshot. Any draft left behind becomes a plain routine of
+    // the library rather than being dropped: no data loss.
+    // No `.stores()`: none of the three fields was indexed.
+    this.version(8).upgrade(async (tx) => {
+      await tx
+        .table('routines')
+        .toCollection()
+        .modify((routine: Record<string, unknown>) => {
+          delete routine.version;
+          delete routine.versionState;
+          delete routine.originRoutineId;
+        });
     });
   }
 }

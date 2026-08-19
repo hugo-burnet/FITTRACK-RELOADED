@@ -117,13 +117,7 @@ async function seedHistory(): Promise<void> {
     isUnilateral: 0,
   });
 
-  const routine = newEntity<Routine>({
-    name: 'LOWER A',
-    folderId: '',
-    order: 0,
-    version: 1,
-    versionState: 'published',
-  });
+  const routine = newEntity<Routine>({ name: 'LOWER A', folderId: '', order: 0 });
   await db.routines.add(routine);
   await db.routineExercises.bulkAdd([
     newEntity<RoutineExercise>({

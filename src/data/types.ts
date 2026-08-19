@@ -115,12 +115,8 @@ export interface Routine extends Syncable {
   folderId: string; // '' when at the root
   order: number;
   notes?: string;
-  version: number; // audit recommendation M3: versioning
-  versionState: RoutineVersionState;
-  originRoutineId?: string; // points at v1 when versioned-duplicated
 }
 
-export type RoutineVersionState = 'draft' | 'published';
 export type ProgramStatus = 'draft' | 'active' | 'completed';
 
 /**

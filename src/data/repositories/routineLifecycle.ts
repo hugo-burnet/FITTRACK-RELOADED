@@ -6,10 +6,6 @@ import type {
   RoutineSet,
 } from '@/data/types';
 import { alive, newEntity, softDelete, touch } from './base';
-import {
-  RoutineReferencedError,
-  hasLiveScheduleReference,
-} from './routineVersions';
 
 const byOrder = <T extends { order: number }>(a: T, b: T): number => a.order - b.order;
 
@@ -50,24 +46,7 @@ export async function listRoutineSummaries(): Promise<RoutineSummary[]> {
     stats.set(row.routineId, stat);
   }
 
-  const latestPublishedByLineage = new Map<string, Routine>();
-  for (const routine of alive(routines)) {
-    if (routine.versionState !== 'published') continue;
-    const rootId = routine.originRoutineId ?? routine.id;
-    const current = latestPublishedByLineage.get(rootId);
-    if (
-      current === undefined ||
-      routine.version > current.version ||
-      (routine.version === current.version && routine.updatedAt > current.updatedAt) ||
-      (routine.version === current.version &&
-        routine.updatedAt === current.updatedAt &&
-        routine.id.localeCompare(current.id) > 0)
-    ) {
-      latestPublishedByLineage.set(rootId, routine);
-    }
-  }
-
-  return [...latestPublishedByLineage.values()]
+  return alive(routines)
     .sort(byOrder)
     .map((routine) => ({
       routine,
@@ -135,13 +114,7 @@ export async function getRoutineDetail(id: string): Promise<RoutineDetail | null
 
 export async function createRoutine(name: string, folderId = ''): Promise<Routine> {
   const order = alive(await db.routines.toArray()).length;
-  const routine = newEntity<Routine>({
-    name,
-    folderId,
-    order,
-    version: 1,
-    versionState: 'published',
-  });
+  const routine = newEntity<Routine>({ name, folderId, order });
   await db.routines.add(routine);
   return routine;
 }
@@ -161,12 +134,9 @@ function editableRoutineChanges(changes: RoutineChanges): RoutineChanges {
 }
 
 export async function updateRoutine(id: string, changes: RoutineChanges): Promise<void> {
-  await db.transaction('rw', [db.routines, db.programScheduleEntries], async () => {
+  await db.transaction('rw', db.routines, async () => {
     const routine = await db.routines.get(id);
     if (routine === undefined || routine.deletedAt !== 0) return;
-    if (routine.versionState === 'published' && (await hasLiveScheduleReference(id))) {
-      throw new RoutineReferencedError(id);
-    }
     await db.routines.put(touch(routine, editableRoutineChanges(changes)));
   });
 }
@@ -182,10 +152,7 @@ export async function updateRoutine(id: string, changes: RoutineChanges): Promis
  * the spread, so no source id can survive even if a field is added to the
  * entity later.
  *
- * `originRoutineId` is deliberately left unset: a copy is not a version. The
- * field describes a lineage no screen reads yet, and versioning belongs to the
- * periodisation of Lot 17. The name comes from the caller — UI text does not
- * belong in the data layer.
+ * The name comes from the caller — UI text does not belong in the data layer.
  */
 export async function duplicateRoutine(id: string, name: string): Promise<Routine | undefined> {
   return db.transaction('rw', db.routines, db.routineExercises, db.routineSets, async () => {
@@ -198,8 +165,6 @@ export async function duplicateRoutine(id: string, name: string): Promise<Routin
       folderId: source.folderId,
       order,
       notes: source.notes,
-      version: 1,
-      versionState: 'published',
     });
 
     const rows = alive(await db.routineExercises.where('routineId').equals(id).toArray()).sort(
@@ -260,13 +225,19 @@ export async function reorderRoutines(
   });
 }
 
-/** Soft-deletes the routine AND its exercise rows AND their sets, in one transaction. */
+/**
+ * Soft-deletes the routine AND its exercise rows AND their sets, in one transaction.
+ *
+ * A block scheduling this routine is not consulted: it points at the routine,
+ * the routine knows nothing of it. Its session then reads « séance à repointer »
+ * and offers to repair the split — a decision that belongs to the block's own
+ * screen, not a refusal thrown at someone tidying their library.
+ */
 export async function deleteRoutine(id: string): Promise<void> {
   await db.transaction(
     'rw',
-    [db.routines, db.routineExercises, db.routineSets, db.programScheduleEntries],
+    [db.routines, db.routineExercises, db.routineSets],
     async () => {
-      if (await hasLiveScheduleReference(id)) throw new RoutineReferencedError(id);
       const now = Date.now();
       const rowIds = (await db.routineExercises.where('routineId').equals(id).toArray()).map(
         (row) => row.id,

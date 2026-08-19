@@ -38,7 +38,7 @@ const V3_STORES = {
 };
 
 const stamps = { createdAt: 0, updatedAt: 0, deletedAt: 0 };
-type LegacyRoutine = Omit<Routine, 'versionState'>;
+type LegacyRoutine = Routine & { version: number };
 
 const JANUARY = Date.UTC(2026, 0, 15, 18, 0, 0);
 const JULY = Date.UTC(2026, 6, 15, 18, 0, 0);
@@ -210,7 +210,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(7);
+    expect(db.verno).toBe(8);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -219,9 +219,13 @@ describe('migration depuis la version 1', () => {
         'programScheduleEntries',
       ]),
     );
-    expect(await db.routines.get('legacy-routine')).toMatchObject({
-      versionState: 'published',
-    });
+    // Version 6 stamped `versionState` on every routine; version 8 dropped the
+    // three versioning fields with the cycle they served.
+    const legacyRoutine = await db.routines.get('legacy-routine');
+    expect(legacyRoutine).toMatchObject({ name: 'Routine historique' });
+    expect(legacyRoutine).not.toHaveProperty('version');
+    expect(legacyRoutine).not.toHaveProperty('versionState');
+    expect(legacyRoutine).not.toHaveProperty('originRoutineId');
     expect(db.tables.map((table) => table.name)).toContain('externalExerciseBindings');
     expect(await db.exercises.get('bench')).toBeDefined();
     expect(await db.workouts.get('winter')).toBeDefined();
@@ -282,7 +286,7 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(7);
+    expect(db.verno).toBe(8);
 
     const week = await db.programWeeks.get('legacy-week');
     expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });

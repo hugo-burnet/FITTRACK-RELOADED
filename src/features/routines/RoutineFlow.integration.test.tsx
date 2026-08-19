@@ -8,7 +8,6 @@ import {
   activateProgram,
   createProgramDraft,
   createScheduleRevision,
-  getProgramDetail,
   replaceProgramWeeks,
 } from '@/data/repositories/programs';
 import {
@@ -16,7 +15,6 @@ import {
   createRoutine,
   getRoutineDetail,
   listRoutineSummaries,
-  updateRoutineSet,
 } from '@/data/repositories/routines';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { resetDb } from '@/test/resetDb';
@@ -186,7 +184,7 @@ describe('parcours de composition d’une routine', () => {
     expect(await screen.findByText('Aucun bloc actif')).toBeVisible();
   });
 
-  it('scelle une version publiée puis publie son brouillon à partir d’une semaine choisie', async () => {
+  it('laisse modifier une routine que le bloc actif programme', async () => {
     const exercise = await createCustomExercise({
       name: 'Squat',
       primaryMuscle: 'quads',
@@ -217,71 +215,16 @@ describe('parcours de composition d’une routine', () => {
     const user = userEvent.setup();
     renderRoutineFlow(`/routines/${routine.id}`);
 
-    expect(await screen.findByText('Version 1 · Publiée')).toBeVisible();
-    expect(screen.queryByRole('textbox', { name: 'Nom de la routine' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Ajouter un exercice' })).not.toBeInTheDocument();
+    // Ni version, ni sceau, ni semaine d'entrée en vigueur : l'écran est
+    // l'éditeur, exactement comme pour une routine qu'aucun bloc ne programme.
+    const name = await screen.findByRole('textbox', { name: 'Nom de la routine' });
+    expect(screen.getByRole('button', { name: 'Ajouter un exercice' })).toBeVisible();
 
-    await user.click(screen.getByRole('button', { name: 'Créer une version' }));
-
-    expect(await screen.findByRole('textbox', { name: 'Nom de la routine' })).toBeVisible();
-    expect(screen.getByText('Version 2 · Brouillon')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Utiliser à partir de la semaine 2' }));
-
-    expect(await screen.findByRole('radiogroup', { name: 'Semaine d’entrée en vigueur' })).toBeVisible();
-    await user.click(screen.getByRole('radio', { name: 'Semaine 3' }));
+    await user.clear(name);
+    await user.type(name, 'Jambes lourdes');
 
     await waitFor(async () => {
-      const detail = await getProgramDetail(program.id);
-      expect(detail?.revisions.at(-1)?.revision.effectiveFromWeekIndex).toBe(2);
-      expect(detail?.revisions.at(-1)?.entries[0]?.routineId).not.toBe(routine.id);
+      expect((await db.routines.get(routine.id))?.name).toBe('Jambes lourdes');
     });
-  });
-
-  it('lit les séries d’une version scellée sans préfixe fantôme', async () => {
-    const exercise = await createCustomExercise({
-      name: 'Rotation externe',
-      primaryMuscle: 'shoulders',
-      secondaryMuscles: [],
-      equipment: 'cable',
-      measurementType: 'weight_reps',
-      isUnilateral: 0,
-    });
-    const routine = await createRoutine('Upper A');
-    await addExercisesToRoutine(routine.id, [exercise.id]);
-    const setId = (await getRoutineDetail(routine.id))?.exercises[0]?.sets[0]?.id;
-    await updateRoutineSet(setId!, { targetReps: 15, targetRepsMax: 18, targetWeight: 3.5 });
-    const program = await createProgramDraft({
-      name: 'Bloc haut', startsAt: new Date(2026, 7, 10).getTime(), durationWeeks: 4,
-    });
-    await replaceProgramWeeks(program.id, Array.from({ length: 4 }, (_, weekIndex) => ({
-      weekIndex, loadIndex: 100, phase: 'construction' as const,
-    })));
-    await createScheduleRevision(program.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
-    await activateProgram(program.id);
-    renderRoutineFlow(`/routines/${routine.id}`);
-
-    // Le poids n'a pas de préfixe : seules l'assistance et la charge ajoutée en
-    // portent un. L'écrire quand même imprimait « undefined3,5 kg » sur la
-    // version publiée — celle qu'on lit en salle et qu'on ne peut plus corriger.
-    expect(await screen.findByText('15 – 18 reps · 3,5 kg')).toBeVisible();
-  });
-
-  it('ne crée qu’un brouillon sous un double appui sur Créer une version', async () => {
-    const routine = await createRoutine('Stable');
-    const program = await createProgramDraft({
-      name: 'Bloc stable', startsAt: new Date(2026, 7, 10).getTime(), durationWeeks: 4,
-    });
-    await replaceProgramWeeks(program.id, Array.from({ length: 4 }, (_, weekIndex) => ({
-      weekIndex, loadIndex: 100, phase: 'construction' as const,
-    })));
-    await createScheduleRevision(program.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
-    await activateProgram(program.id);
-    const user = userEvent.setup();
-    renderRoutineFlow(`/routines/${routine.id}`);
-
-    await user.dblClick(await screen.findByRole('button', { name: 'Créer une version' }));
-
-    await screen.findByText('Version 2 · Brouillon');
-    expect((await db.routines.toArray()).filter((candidate) => candidate.versionState === 'draft')).toHaveLength(1);
   });
 });

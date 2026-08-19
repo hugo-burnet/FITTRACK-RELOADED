@@ -80,8 +80,6 @@ export function buildHevyRoutineEntities(
       name: source.name,
       folderId: folder.id,
       order: firstRoutineOrder + routineIndex,
-      version: 1,
-      versionState: 'published',
     });
     routines.push(routine);
 
