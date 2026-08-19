@@ -72,6 +72,21 @@ export function CalendarIcon(props: IconProps) {
   );
 }
 
+/**
+ * The rep metronome. A pendulum's body and its swinging rod — the one piece of
+ * gym-adjacent hardware here that is not gym hardware, kept because no arrow,
+ * clock, or waveform says "tempo" as fast as this silhouette does.
+ */
+export function MetronomeIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M9.5 3.5h5l4 17h-13z" />
+      <path d="M12 19.5 15.5 7.5" />
+      <circle cx="14.6" cy="10.5" r="1.3" fill="currentColor" stroke="none" />
+    </Icon>
+  );
+}
+
 /** Exercices — a weight plate seen face-on. */
 export function PlateIcon(props: IconProps) {
   return (

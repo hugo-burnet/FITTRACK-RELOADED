@@ -183,6 +183,16 @@ const fr = {
     emptyName: 'Séance libre',
     restLabel: 'Repos {duration}',
     restRemaining: 'Repos, {time} restantes',
+    pace: 'Donner la cadence',
+    effortQuestion: 'Effort ?',
+    effortEasy: 'Facile',
+    effortOk: 'Correct',
+    effortHard: 'Dur',
+    effortMax: 'Limite',
+    effortOption: '{label}, RPE {value}',
+    effortBonus: '+{seconds} s de repos',
+    paceStop: 'Arrêter la cadence',
+    paceStatus: 'Rép. {current}/{total} · {tempo} s',
     complete: 'Valider la série {number}',
     uncomplete: 'Annuler la série {number}',
     previous: 'Précédent',
@@ -1106,7 +1116,34 @@ const fr = {
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
 
+    announcerSection: 'Annonces',
+    announcer: 'Annonces sonores',
+    announcerSilence: 'Silence',
+    announcerSounds: 'Sons',
+    announcerVoice: 'Sons + voix',
+    announcerHint:
+      'Un son à chaque série validée, un décompte sur les trois dernières secondes de repos, ' +
+      'et une voix qui annonce la dernière série, un record, la fin de la séance.',
+    announcerMusicHint:
+      'Rien ne baisse le son de ta musique : les annonces se mélangent, elles ne prennent pas la main.',
+    announcerVoiceReady: 'Voix installée : les annonces sont dites, pas seulement sonnées.',
+    announcerVoiceMissing:
+      'Aucune voix installée : seuls les sons se déclenchent. Les clips se fabriquent avec ' +
+      'npm run voice:generate, puis se déposent dans public/voice.',
+    announcerVoiceChecking: 'Vérification de la voix…',
+
     trainingSection: 'Entraînement',
+    effortSection: 'Effort et fatigue',
+    effortPromptTitle: 'Demander l’effort après chaque série',
+    effortPromptHint:
+      'Une bande de quatre touches sous la série validée. Elle allonge le repos quand ça ' +
+      'a été dur — 15, 30 ou 45 secondes de plus. L’ignorer ne coûte rien : elle s’efface seule.',
+    effortPromptOn: 'Oui',
+    effortPromptOff: 'Non',
+    effortTempoHint:
+      'La cadence de série s’allonge d’elle-même avec la fatigue : un quart de seconde par ' +
+      'série déjà faite, une demi-seconde sur la dernière, une demi-seconde après trois ' +
+      'quarts d’heure de séance — 5 secondes par répétition au maximum.',
     oneRepMaxTitle: 'Estimation du 1RM',
     oneRepMaxSheetTitle: 'Formule d’estimation du 1RM',
     oneRepMaxLoading: 'Chargement…',
