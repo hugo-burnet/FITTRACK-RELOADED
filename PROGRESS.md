@@ -2,7 +2,46 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-19 (**Release Android v0.8.0 — le bloc prescrit enfin quelque chose**).
+**Dernière mise à jour :** 2026-08-19 (**Release Android v0.8.1 — « Jamais réalisée » sur une routine faite le matin même**).
+
+## v0.8.1 — le jumeau qui passait devant
+
+Signalé depuis le téléphone, capture à l'appui : l'accueil proposait « UPPER A ·
+9 exercices · 28 séries · **Jamais réalisée** » alors que la même UPPER A, mêmes
+compteurs, figurait dans les dernières séances à la date du jour.
+
+**La cause, en deux temps.** La migration `version(8)` de la v0.8.0 a retiré le
+versionnage des routines — et, ce faisant, a rendu visibles des lignes que
+`listRoutineSummaries` masquait : anciennes versions publiées et brouillons de
+version, chacun copie conforme de son original (même nom, même contenu). La
+séance du matin porte le `routineId` de l'une ; l'autre, jamais lancée, passait
+devant toutes les autres routines sous le même nom.
+
+**Le correctif.** `pickSuggestedRoutine` rattachait une séance à **une seule**
+routine : son `routineId` si elle en avait un, sinon celle qui portait son nom —
+et rien du tout quand deux routines partageaient ce nom, pour ne pas deviner. Ce
+refus coûtait plus cher que l'erreur qu'il évitait. Une séance compte désormais
+pour **toutes** les routines qui portent son nom, en plus de celle dont
+l'identifiant correspond : si tu as fait UPPER A, tu as fait ce que toutes tes
+UPPER A décrivent.
+
+**Ce que le correctif ne fait pas** : les doublons restent dans la bibliothèque.
+Les champs de lignée (`originRoutineId`) ayant été supprimés par la migration,
+plus rien ne permet de reconnaître à coup sûr une copie de version d'une
+duplication volontaire. Ils se suppriment à la main depuis l'onglet Routines —
+ce que la v0.8.0 autorise enfin.
+
+**Piège à retenir.** Une migration qui *retire* un filtre est une migration qui
+*ajoute* des lignes à l'écran. `version(8)` a été relue comme une suppression de
+champs — elle était aussi un changement de ce que la liste affiche, et rien dans
+les 1523 tests ne montait une base contenant une lignée de versions. **Quand une
+migration supprime un champ, chercher qui filtrait dessus.**
+
+1524 tests / 134 fichiers. Aucun changement de schéma.
+
+---
+
+**Précédent :** 2026-08-19 (**Release Android v0.8.0 — le bloc prescrit enfin quelque chose**).
 
 ## v0.8.0 — trois défauts du programme, trouvés en parcourant l'app
 

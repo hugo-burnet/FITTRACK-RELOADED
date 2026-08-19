@@ -138,15 +138,36 @@ describe('pickSuggestedRoutine', () => {
     ).toEqual({ routineId: 'legs', lastPerformedAt: at(2026, 6, 25) });
   });
 
-  it('ne rattache rien quand deux routines portent le même nom', () => {
-    // On ne devine pas laquelle des deux a été faite : aucune des deux ne
-    // compte, plutôt qu'un tirage au sort qui change d'un chargement à l'autre.
+  it('compte pour les deux quand deux routines portent le même nom', () => {
+    // Ne rattacher à aucune des deux était pire que de les compter toutes :
+    // « LOWER A » réalisée hier laissait deux « LOWER A » en « jamais
+    // réalisée », et l'accueil en proposait une le lendemain matin.
     const twin: SuggestionCandidate = { routineId: 'legs-bis', name: 'lower a', order: 3 };
 
     expect(pickSuggestedRoutine([legs, twin], [imported('LOWER A', at(2026, 6, 25))])).toEqual({
       routineId: 'legs',
-      lastPerformedAt: null,
+      lastPerformedAt: at(2026, 6, 25),
     });
+  });
+
+  it('ne laisse pas le jumeau d’une routine faite ce matin passer pour jamais réalisée', () => {
+    // Le cas vu sur le téléphone : la migration v8 a rendu visibles les copies
+    // de version que la liste masquait. La séance du matin porte le
+    // `routineId` de l'une ; l'autre, identique et jamais lancée, passait
+    // devant tout le monde sous le même nom.
+    const upper: SuggestionCandidate = { routineId: 'upper-a', name: 'UPPER A', order: 0 };
+    const copy: SuggestionCandidate = { routineId: 'upper-a-copie', name: 'UPPER A', order: 1 };
+    const lower: SuggestionCandidate = { routineId: 'lower-b', name: 'LOWER B', order: 2 };
+
+    expect(
+      pickSuggestedRoutine(
+        [upper, copy, lower],
+        [
+          { routineId: 'upper-a', name: 'UPPER A', startedAt: at(2026, 7, 19) },
+          { routineId: 'lower-b', name: 'LOWER B', startedAt: at(2026, 7, 16) },
+        ],
+      ),
+    ).toEqual({ routineId: 'lower-b', lastPerformedAt: at(2026, 7, 16) });
   });
 
   it('rattache par le nom une séance dont la routine a été supprimée puis recréée', () => {

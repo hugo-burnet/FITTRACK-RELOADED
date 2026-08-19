@@ -40,33 +40,37 @@ export interface SuggestedPick {
 }
 
 /**
- * Les routines candidates indexées par nom, pour rattacher les séances qui n'ont
- * pas de `routineId`.
+ * Les routines candidates indexées par nom, **toutes** celles qui le portent.
  *
- * Un nom porté par deux routines vaut `null` : on ne devine pas laquelle a été
- * faite, et un tirage au sort qui change d'un chargement à l'autre serait pire
- * que de ne rien rattacher.
+ * Un nom partagé valait `null` : on refusait de deviner laquelle avait été
+ * faite. Le refus coûtait plus cher que l'erreur qu'il évitait — deux routines
+ * nommées « UPPER A », une séance « UPPER A » ce matin, et les deux restaient
+ * « jamais réalisée » ; l'accueil en proposait une le lendemain. Si tu as fait
+ * UPPER A, tu as fait ce que toutes tes UPPER A décrivent.
  */
 function candidatesByName(
   candidates: readonly SuggestionCandidate[],
-): Map<string, string | null> {
-  const byName = new Map<string, string | null>();
+): Map<string, string[]> {
+  const byName = new Map<string, string[]>();
 
   for (const candidate of candidates) {
     const key = normalizeRoutineName(candidate.name);
     if (key === '') continue;
-    byName.set(key, byName.has(key) ? null : candidate.routineId);
+    const sharing = byName.get(key);
+    if (sharing === undefined) byName.set(key, [candidate.routineId]);
+    else sharing.push(candidate.routineId);
   }
 
   return byName;
 }
 
 /**
- * La routine à laquelle une séance compte, ou `null` si aucune.
+ * Les routines auxquelles une séance compte ; vide quand aucune ne la réclame.
  *
- * `routineId` d'abord, le nom ensuite. Le rattrapage par le nom n'est pas un
- * confort : l'import Hevy écrit ses séances **sans** `routineId` tout en
- * fabriquant les routines à partir de ces mêmes séances groupées par titre.
+ * `routineId` **et** le nom, pas l'un ou l'autre. Le rattrapage par le nom
+ * n'est pas un confort : l'import Hevy écrit ses séances **sans** `routineId`
+ * tout en fabriquant les routines à partir de ces mêmes séances groupées par
+ * titre.
  * Sans lui, une bibliothèque importée reste « jamais réalisée » pour toujours,
  * et l'accueil propose sa routine dans un ordre qui n'a aucun sens.
  *
@@ -74,13 +78,20 @@ function candidatesByName(
  * supprimée : elle n'est pas candidate, donc elle n'est proposable par aucun
  * chemin.
  */
-function attributedRoutineId(
+function attributedRoutineIds(
   workout: SuggestionWorkout,
   known: ReadonlySet<string>,
-  byName: ReadonlyMap<string, string | null>,
-): string | null {
-  if (known.has(workout.routineId)) return workout.routineId;
-  return byName.get(normalizeRoutineName(workout.name)) ?? null;
+  byName: ReadonlyMap<string, readonly string[]>,
+): string[] {
+  const attributed = new Set<string>();
+  if (known.has(workout.routineId)) attributed.add(workout.routineId);
+
+  // Le nom en plus de l'identifiant, jamais à sa place : une séance lancée
+  // depuis une copie compte aussi pour l'original, et réciproquement.
+  const key = normalizeRoutineName(workout.name);
+  if (key !== '') for (const routineId of byName.get(key) ?? []) attributed.add(routineId);
+
+  return [...attributed];
 }
 
 /** Date de la dernière réalisation de chaque routine **connue**. */
@@ -93,11 +104,11 @@ function lastPerformedByRoutine(
   const lastPerformed = new Map<string, number>();
 
   for (const workout of workouts) {
-    const routineId = attributedRoutineId(workout, known, byName);
-    if (routineId === null) continue;
-    const current = lastPerformed.get(routineId);
-    if (current === undefined || workout.startedAt > current) {
-      lastPerformed.set(routineId, workout.startedAt);
+    for (const routineId of attributedRoutineIds(workout, known, byName)) {
+      const current = lastPerformed.get(routineId);
+      if (current === undefined || workout.startedAt > current) {
+        lastPerformed.set(routineId, workout.startedAt);
+      }
     }
   }
 
