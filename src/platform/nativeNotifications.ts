@@ -22,6 +22,12 @@ export const REST_CHANNEL_ID = 'fittrack-rest';
 interface NativeNotificationGateway {
   reconcileWorkout: (name: string | null) => Promise<void>;
   reconcileRest: (rest: RestTimer) => Promise<void>;
+  /**
+   * Hands one rest back to the app: the in-app countdown proved it is audible,
+   * so the scheduled alert would only be a second bell one beat behind — and,
+   * on Android, the one bell that ducks the music instead of mixing with it.
+   */
+  standDownRest: (endsAt: number) => Promise<void>;
   clearAll: () => Promise<void>;
   isRestAlertArmed: () => boolean;
 }
@@ -37,6 +43,8 @@ export function createNativeNotificationGateway(
   let lastWorkoutName: string | null = null;
   let lastRestEndsAt = 0;
   let restAlertArmed = false;
+  /** The one deadline the app has taken over. Never re-armed behind its back. */
+  let standDownEndsAt = 0;
 
   async function initialize(): Promise<boolean> {
     try {
@@ -141,9 +149,13 @@ export function createNativeNotificationGateway(
           if (lastRestEndsAt > Date.now()) await cancel([REST_NOTIFICATION_ID]);
           lastRestEndsAt = 0;
           restAlertArmed = false;
+          standDownEndsAt = 0;
           return;
         }
 
+        // A re-render must not resurrect the notification the countdown just
+        // cancelled: the deadline it stood down for stays stood down.
+        if (rest.endsAt === standDownEndsAt) return;
         if (rest.endsAt === lastRestEndsAt && restAlertArmed) return;
         if (!(await ensureReady())) {
           restAlertArmed = false;
@@ -170,6 +182,17 @@ export function createNativeNotificationGateway(
       });
     },
 
+    standDownRest(endsAt) {
+      return enqueue(async () => {
+        standDownEndsAt = endsAt;
+        restAlertArmed = false;
+        if (!isAndroid()) return;
+        if (lastRestEndsAt !== endsAt) return;
+        lastRestEndsAt = 0;
+        await cancel([REST_NOTIFICATION_ID]);
+      });
+    },
+
     clearAll() {
       return enqueue(async () => {
         if (!isAndroid()) return;
@@ -177,6 +200,7 @@ export function createNativeNotificationGateway(
         lastWorkoutName = null;
         lastRestEndsAt = 0;
         restAlertArmed = false;
+        standDownEndsAt = 0;
       });
     },
 

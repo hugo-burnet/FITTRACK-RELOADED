@@ -263,4 +263,46 @@ describe('native notification gateway', () => {
 
     expect(gateway.isRestAlertArmed()).toBe(false);
   });
+  it('cancels the rest alert the in-app countdown took over', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    const endsAt = Date.now() + 90_000;
+
+    await gateway.reconcileRest(activeRest(endsAt));
+    vi.mocked(plugin.cancel).mockClear();
+    await gateway.standDownRest(endsAt);
+
+    expect(plugin.cancel).toHaveBeenCalledWith({
+      notifications: [{ id: REST_NOTIFICATION_ID }],
+    });
+    expect(gateway.isRestAlertArmed()).toBe(false);
+  });
+
+  it('does not re-arm a rest it stood down', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    const endsAt = Date.now() + 90_000;
+
+    await gateway.reconcileRest(activeRest(endsAt));
+    await gateway.standDownRest(endsAt);
+    vi.mocked(plugin.schedule).mockClear();
+    await gateway.reconcileRest(activeRest(endsAt));
+
+    expect(plugin.schedule).not.toHaveBeenCalled();
+  });
+
+  it('arms the next rest normally after a stand-down', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    const endsAt = Date.now() + 90_000;
+
+    await gateway.reconcileRest(activeRest(endsAt));
+    await gateway.standDownRest(endsAt);
+    await gateway.reconcileRest(idleRest);
+    vi.mocked(plugin.schedule).mockClear();
+    await gateway.reconcileRest(activeRest(endsAt + 120_000, 'set-2'));
+
+    expect(plugin.schedule).toHaveBeenCalledOnce();
+    expect(gateway.isRestAlertArmed()).toBe(true);
+  });
 });

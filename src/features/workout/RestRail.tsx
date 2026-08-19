@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { t } from '@/i18n/fr';
 import { formatRest, restProgress } from '@/lib/rest';
 import { signalRestFinishedOnCurrentPlatform } from './restAlert';
+import { armRestCountdown } from './restCountdown';
 
 const GRACE_MS = 4000;
 
@@ -32,6 +33,9 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     const id = setTimeout(signalRestFinishedOnCurrentPlatform, delay);
     return () => clearTimeout(id);
   }, [endsAt]);
+
+  // The three ticks before the deadline, cancelled with the rest they count.
+  useEffect(() => armRestCountdown(endsAt), [endsAt]);
 
   useEffect(() => {
     // transitionend is unreliable in backgrounded tabs.
