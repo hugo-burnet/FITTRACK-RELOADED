@@ -24,6 +24,8 @@ import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { resnapshotHistory } from '@/data/repositories/historyRepair';
 import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
+import { AnnouncerSettings } from './AnnouncerSettings';
+import { EffortPromptSettings } from './EffortPromptSettings';
 import { OneRepMaxSettings } from './OneRepMaxSettings';
 import { RecordRepairAction } from './RecordRepairAction';
 
@@ -222,7 +224,11 @@ export function SettingsScreen() {
           </div>
         </section>
 
+        <AnnouncerSettings />
+
         <OneRepMaxSettings />
+
+        <EffortPromptSettings />
 
         <RecordRepairAction />
 
