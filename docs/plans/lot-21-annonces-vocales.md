@@ -39,6 +39,10 @@ n'encourage pas — c'est le contraste avec l'effort qui fait l'effet.
 - **Les clips sont optionnels.** Le dépôt porte le *script* (`src/audio/voiceScript.json`), pas
   forcément les enregistrements. Un clip absent = silence, jamais une erreur, et jamais redemandé.
   « Sons + voix » sans pack se comporte exactement comme « Sons ».
+- **L'écho est ajouté à la lecture, jamais enregistré.** Le personnage n'est pas dans le timbre,
+  il est dans le haut-parleur et dans la salle. Une réverbération gravée dans les fichiers ne
+  s'annule pas et s'additionne à celle de l'app ; elle fige aussi une décision sur vingt-trois
+  fichiers, là qu'elle tient en trois constantes.
 - **Aucune clé dans le bundle** (règle n°3). `npm run voice:generate` tourne sur la machine de
   l'utilisateur, lit `VOICE_API_KEY` dans l'environnement, écrit des `.mp3` qui sont commités.
 - **Un mot en retard est pire que pas de mot.** `voicePack.play` ne joue que ce qui est déjà
@@ -61,6 +65,38 @@ Jouer un son est trivial. Décider de **ne pas** en jouer un est la fonctionnali
 | Chaque cue a un **temps de repos** (`cooldownMs`) | Sinon la même phrase revient trois fois en dix secondes. |
 | Jamais **deux fois de suite la même variante** | Deux phrases identiques d'affilée : c'est là qu'une voix enregistrée devient une machine. |
 | Une cue **muette** ne consomme pas de silence | `set-validated` sonne trente fois par séance ; s'il ouvrait un délai de grâce, il ferait taire toutes les phrases de la séance. |
+
+## La voix : le personnage, la salle, et ce qui produit quoi
+
+Trois choses différentes, souvent confondues, et qui ne se règlent pas au même endroit.
+
+**1. Le texte** — `voiceScript.json`, champ `text`. Vouvoiement, phrases courtes, aucun
+encouragement. C'est le seul étage qui change ce qui est *dit*.
+
+**2. L'intonation** — champ `direction` (pour un humain au micro) et champ `settings` (pour le
+moteur TTS). La consigne générale : débit posé, volume constant, **les phrases retombent** — une
+intonation montante fait d'un constat une question, et elle n'en pose pas. `stability` haut
+partout, au maximum sur les décomptes dont les trois mots doivent être interchangeables ; `style`
+proche de zéro sauf une pointe sur le record. Le déadpan est la consigne, y compris — surtout — sur
+« Vous en aurez besoin ».
+
+**3. La salle** — `src/audio/publicAddress.ts`, appliquée en direct, identique quelle que soit
+l'origine des clips :
+
+| Étage | Réglage | Rôle |
+|---|---|---|
+| Passe-haut | 170 Hz | Vide la voix de son corps. Un haut-parleur de sono ne descend pas plus bas. |
+| Présence | +5 dB à 2,6 kHz | Les consonnes. C'est ce qui garde les mots lisibles par-dessus la musique. |
+| Passe-bas | 5,2 kHz | Le haut qu'un petit transducteur ne reproduit pas. |
+| Écho de mur | 110 ms, réinjection 17 % | Un mur en face. Deux ou trois retours, pas un canyon. |
+| Hall | ~1,4 s, mix 30 % | La pièce. Bruit décroissant synthétique, aucun fichier d'impulsion à embarquer, licencier et précacher. |
+
+Le **carillon** d'annonce traverse la même chaîne : c'est la cloche qui précède la phrase, elle doit
+venir de la même pièce. Les **tics du décompte restent secs** — un battement noyé dans une salle
+cesse d'être un battement, et le décompte n'a qu'un seul travail.
+
+Le mélange humide reste sous un tiers : ça s'écoute dans une salle de sport par-dessus de la
+musique, et l'intelligibilité passe avant l'atmosphère. Coupable dans Réglages → Annonces.
 
 ## La fatigue, en trois endroits
 
@@ -92,6 +128,7 @@ T−3 s : au pire on perd trois secondes de filet, pas deux minutes.
 | `src/audio/context.ts` | Le seul `AudioContext`, son déblocage, son volume. |
 | `src/audio/tones.ts` | Les quatre sons synthétisés. |
 | `src/audio/voicePack.ts` | Chargement, décodage, cache — et le cache des absences. |
+| `src/audio/publicAddress.ts` | La salle : haut-parleur, écho de mur, hall. |
 | `src/audio/voiceScript.json` | **Source unique** : ce que l'app peut dire, ce que le générateur doit fabriquer. |
 | `src/audio/cues.ts` | Le vocabulaire d'événements et leurs règles. |
 | `src/audio/announcer.ts` | La décision. Pur, testé. |
@@ -110,6 +147,7 @@ T−3 s : au pire on perd trois secondes de filet, pas deux minutes.
   un blanc en tête de clip retarde tout le décompte.
 - **Le silence de tête et la régularité** sont les deux seuls critères qui comptent à
   l'enregistrement ; « Trois », « Deux », « Un » doivent durer pareil.
+- **À sec**, sans réverbération : celle de l'app s'ajouterait par-dessus.
 
 ## ✅ Checkpoint manuel (téléphone)
 
@@ -121,3 +159,5 @@ T−3 s : au pire on perd trois secondes de filet, pas deux minutes.
 - [ ] Bande « Effort ? » sous la série validée ; « Dur » ajoute 30 s à la ligne de repos.
 - [ ] Bouton métronome sur une carte : le tempo affiché passe de 3 s à 3,5 s sur la dernière série.
 - [ ] Réglages → Annonces → « Silence » : plus rien ne sort, immédiatement.
+- [ ] « Écho de haut-parleur » : le carillon change de pièce en une touche, les tics du décompte
+      ne bougent pas.

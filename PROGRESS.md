@@ -36,6 +36,25 @@ plan, audible et non muette. Elle annule alors la notification Android de fin de
 Web Audio, qui fait baisser la musique. Annulée à T−3 s et pas au début du repos : au pire on perd
 trois secondes de filet de sécurité.
 
+**Le manque signalé depuis le téléphone : « il y a une sorte d'écho sur les voix
+administrateurs ».** Exact, et rien ne le spécifiait. Ce qui rend une annonce de sono
+reconnaissable en un mot n'est pas le timbre de la personne qui lit, c'est **le haut-parleur et la
+salle** — et aucun TTS ne le donne, la réverbération étant du post-traitement. `publicAddress.ts`
+la produit donc à la lecture : bande passante de haut-parleur (170 Hz – 5,2 kHz, bosse de présence
+à 2,6 kHz), écho de mur à 110 ms, hall d'environ 1,4 s en réverbération synthétique — pas de
+fichier d'impulsion à embarquer. Le carillon d'annonce traverse la même chaîne, **les tics du
+décompte restent secs** : un battement noyé dans une salle cesse d'être un battement.
+
+Conséquence pour l'enregistrement, écrite là où quelqu'un qui s'apprête à enregistrer la lira :
+**les clips doivent être secs.** Une réverbération gravée dans un fichier ne s'annule pas, elle
+s'additionne. Et le garder en direct veut dire qu'on change d'avis sur la salle en modifiant trois
+constantes, pas vingt-trois fichiers.
+
+Le script porte désormais, ligne par ligne, une **indication de jeu** (`direction`) à côté des
+réglages TTS — inutile au moteur, décisive pour quelqu'un au micro — et une consigne générale :
+les phrases retombent, parce qu'une intonation montante fait d'un constat une question, et elle
+n'en pose pas.
+
 **Ce qui manque, et c'est tout ce qui manque : les 23 clips.** Le dépôt porte le script
 (`src/audio/voiceScript.json`), pas les enregistrements — une clé d'API n'entre pas dans un bundle
 public (règle n°3). `npm run voice:generate` avec `VOICE_API_KEY` dans le shell les fabrique. Sans
@@ -46,7 +65,7 @@ un silence, jamais une erreur.
 chose : le premier demande le focus audio au système, le second se contente de mixer. Sur un
 téléphone qui joue de la musique, c'est toute la différence entre une annonce et une interruption.
 
-1596 tests / 144 fichiers (+72). Aucun changement de schéma. **Rien n'est commité** : l'utilisateur
+1600 tests / 145 fichiers (+76). Aucun changement de schéma. **Rien n'est commité** : l'utilisateur
 prévoit un dépôt de test.
 
 Détail complet : `docs/plans/lot-21-annonces-vocales.md`.

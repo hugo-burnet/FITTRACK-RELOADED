@@ -97,6 +97,9 @@ for (const line of wanted) {
   await writeFile(file, Buffer.from(await response.arrayBuffer()));
   written += 1;
   console.log(`✓ ${line.id} — « ${line.text} »`);
+  // L'indication de jeu ne sert à rien au moteur TTS ; elle sert à toi, au
+  // moment où tu réécoutes et où tu décides de refaire la prise avec --force.
+  if (line.direction) console.log(`    ${line.direction}`);
 }
 
 console.log(`\n${written} clip(s) écrit(s), ${skipped} conservé(s), dans public/voice/.`);

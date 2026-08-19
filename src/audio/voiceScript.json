@@ -1,8 +1,13 @@
 {
-  "$comment": "Le script parlé de l'annonceuse. Source unique : l'app lit ce fichier pour savoir quels clips existent, et scripts/generate-voice.mjs le lit pour les fabriquer. Un texte modifié ici est un fichier .mp3 à régénérer. Ce n'est pas de la copie d'interface au sens de src/i18n/fr.ts — rien de tout ceci ne s'affiche à l'écran ; c'est le script d'enregistrement d'une voix, et il vit avec les réglages qui l'ont produite.",
+  "$comment": "Le script parlé de l'annonceuse. Source unique : l'app lit ce fichier pour savoir quels clips existent, et scripts/generate-voice.mjs le lit pour les fabriquer. Un texte modifié ici est un fichier .mp3 à régénérer. Ce n'est pas de la copie d'interface au sens de src/i18n/fr.ts — rien de tout ceci ne s'affiche à l'écran ; c'est le script d'enregistrement d'une voix, et il vit avec les indications de jeu et les réglages qui l'ont produite. « direction » est destiné à un humain : au générateur TTS il ne sert à rien, à quelqu'un qui s'enregistre au micro il sert de tout.",
   "voice": {
-    "character": "Administratrice. Vouvoiement, impersonnel, aucune chaleur. Elle constate, elle n'encourage pas. Débit posé, jamais pressé — c'est le contraste avec l'effort qui fait l'effet.",
-    "format": "mp3, mono, 44.1 kHz, 64 kbps. Un silence de tête inférieur à 60 ms : un clip qui met un quart de seconde à démarrer arrive en retard sur le décompte.",
+    "character": "Une administratrice. Elle ne s'adresse pas à toi, elle diffuse une information dans un lieu où tu te trouves. Vouvoiement, impersonnel, aucune chaleur — elle constate, elle n'encourage jamais. Tout l'effet tient dans le contraste entre ce calme administratif et l'effort de celui qui l'écoute.",
+    "delivery": "Débit posé et régulier, jamais pressé, jamais traînant. Registre médium, volume constant d'une ligne à l'autre. Les phrases retombent à la fin : une intonation montante transformerait un constat en question, et elle ne pose pas de questions. Une seule respiration par ligne, aucune n'en demande deux.",
+    "never": "Pas de sourire dans la voix, pas d'ironie, pas d'emphase sur un mot pour le « vendre ». Surtout pas d'encouragement : « Dernière série » dit avec entrain devient un coach, et un coach n'est pas ce personnage. Le déadpan est la consigne, y compris — surtout — sur « Vous en aurez besoin ».",
+    "recording": "ENREGISTRER À SEC. Aucune réverbération, aucun écho, aucun filtre « radio » ou « mégaphone » dans les fichiers : l'app les ajoute elle-même à la lecture. Une réverbération enregistrée ne s'annule pas, elle s'additionne, et deux salles donnent de la bouillie. Pièce mate, micro proche, pas de salle de bain.",
+    "runtime": "L'app colore les clips en direct (src/audio/publicAddress.ts) : passe-haut à 170 Hz, bosse de présence à 2,6 kHz, passe-bas à 5,2 kHz — la bande passante d'un haut-parleur de sono —, puis un écho de mur à 110 ms et une réverbération de hall d'environ 1,4 s. Le carillon d'annonce traverse la même chaîne ; les tics du décompte restent secs, parce qu'un battement noyé dans une salle cesse d'être un battement. Le tout se coupe dans Réglages → Annonces → Écho de haut-parleur.",
+    "format": "mp3, mono, 44,1 kHz, 64 kbps. Silence de tête inférieur à 60 ms : un clip qui met un quart de seconde à démarrer arrive après le tic qu'il double. Couper aussi le silence de queue — la réverbération de l'app se charge de la traîne.",
+    "settings": "Réglages ElevenLabs, par ligne. stability : plus haut = plus monocorde et plus reproductible ; c'est ce qu'on veut presque partout, et au maximum sur les décomptes, dont les trois mots doivent être interchangeables. style : l'exagération d'intonation ; proche de zéro partout, sauf une pointe sur le record. similarity : fidélité au timbre de la voix source, à laisser haut.",
     "counting": "Les décomptes de repos (rest-*) et de répétitions (rep-*) disent les mêmes mots et sont pourtant des clips distincts : l'un s'adresse à quelqu'un debout qui attend, l'autre à quelqu'un sous une barre. Enregistre-les séparément, l'intonation n'est pas la même. Et « Une » au féminin pour une répétition, « Un » pour une seconde."
   },
   "lines": [
@@ -10,6 +15,7 @@
       "id": "workout-started-1",
       "cue": "workout-started",
       "text": "La séance commence.",
+      "direction": "Plat, administratif. Ni accueil ni menace : une information qui n'attend pas de réponse.",
       "settings": {
         "stability": 0.75,
         "style": 0.1
@@ -19,6 +25,7 @@
       "id": "workout-started-2",
       "cue": "workout-started",
       "text": "Séance ouverte. Bonne chance.",
+      "direction": "« Bonne chance » exactement sur le même ton que le reste. C'est de ne pas l'appuyer que vient l'effet.",
       "settings": {
         "stability": 0.75,
         "style": 0.1
@@ -28,6 +35,7 @@
       "id": "last-set-ahead-1",
       "cue": "last-set-ahead",
       "text": "Dernière série.",
+      "direction": "Deux mots posés, légère descente sur « série ». Aucun encouragement.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -37,6 +45,7 @@
       "id": "last-set-ahead-2",
       "cue": "last-set-ahead",
       "text": "Il vous reste une série.",
+      "direction": "Constat comptable. Le « une » n'est pas appuyé.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -46,6 +55,7 @@
       "id": "exercise-cleared-1",
       "cue": "exercise-cleared",
       "text": "Exercice terminé.",
+      "direction": "Chute nette à la fin. Le dossier est clos.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -55,6 +65,7 @@
       "id": "exercise-cleared-2",
       "cue": "exercise-cleared",
       "text": "Exercice validé. Passez au suivant.",
+      "direction": "Deux phrases, une courte pause entre les deux. L'ordre est donné sans hausser le ton.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -64,6 +75,7 @@
       "id": "record-beaten-1",
       "cue": "record-beaten",
       "text": "Nouveau record. Enregistré.",
+      "direction": "Le seul endroit où une once de couleur est permise, sur « record ». « Enregistré » retombe au plat : c'est le contraste qui fait l'effet, pas l'enthousiasme.",
       "settings": {
         "stability": 0.7,
         "style": 0.2
@@ -73,6 +85,7 @@
       "id": "record-beaten-2",
       "cue": "record-beaten",
       "text": "Record battu.",
+      "direction": "Constat. Deux mots, aucune célébration.",
       "settings": {
         "stability": 0.7,
         "style": 0.2
@@ -82,6 +95,7 @@
       "id": "rest-3-1",
       "cue": "rest-3",
       "text": "Trois.",
+      "direction": "Décompte de repos. Même hauteur, même durée, même énergie que « Deux » et « Un » — c'est une horloge qui parle.",
       "settings": {
         "stability": 0.9,
         "style": 0
@@ -91,6 +105,7 @@
       "id": "rest-2-1",
       "cue": "rest-2",
       "text": "Deux.",
+      "direction": "Identique à « Trois », au mot près. Toute variation s'entend comme une hésitation.",
       "settings": {
         "stability": 0.9,
         "style": 0
@@ -100,6 +115,7 @@
       "id": "rest-1-1",
       "cue": "rest-1",
       "text": "Un.",
+      "direction": "Identique aux deux précédents. Surtout pas de descente finale : ce n'est pas la fin de la phrase, la cloche suit.",
       "settings": {
         "stability": 0.9,
         "style": 0
@@ -109,6 +125,7 @@
       "id": "rest-over-1",
       "cue": "rest-over",
       "text": "Repos terminé. Retournez à la barre.",
+      "direction": "Pause nette après « terminé ». L'ordre suit, sans insistance.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -118,6 +135,7 @@
       "id": "rest-over-2",
       "cue": "rest-over",
       "text": "Fin du repos.",
+      "direction": "Trois mots, plats. La variante courte, pour quand elle revient trop souvent.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -127,6 +145,7 @@
       "id": "rest-over-3",
       "cue": "rest-over",
       "text": "Repos terminé. Reprenez.",
+      "direction": "Plus sec que la variante 1. « Reprenez » tombe.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -136,6 +155,7 @@
       "id": "rest-extended-1",
       "cue": "rest-extended",
       "text": "Repos prolongé.",
+      "direction": "Neutre. Ce n'est ni une faveur ni un reproche.",
       "settings": {
         "stability": 0.8,
         "style": 0.05
@@ -145,6 +165,7 @@
       "id": "rest-extended-2",
       "cue": "rest-extended",
       "text": "Repos prolongé. Vous en aurez besoin.",
+      "direction": "La seconde phrase surtout pas ironique — dite exactement comme la première. Tout le déadpan est là.",
       "settings": {
         "stability": 0.8,
         "style": 0.1
@@ -154,6 +175,7 @@
       "id": "rep-3-1",
       "cue": "rep-3",
       "text": "Trois.",
+      "direction": "Décompte de répétitions, dit à quelqu'un sous une barre : un cran plus ferme et légèrement plus court que le décompte de repos. Toujours pas encourageant.",
       "settings": {
         "stability": 0.9,
         "style": 0
@@ -163,6 +185,7 @@
       "id": "rep-2-1",
       "cue": "rep-2",
       "text": "Deux.",
+      "direction": "Identique à « Trois », un cran plus ferme que le repos.",
       "settings": {
         "stability": 0.9,
         "style": 0
@@ -172,6 +195,7 @@
       "id": "rep-1-1",
       "cue": "rep-1",
       "text": "Une.",
+      "direction": "« Une », au féminin. Même fermeté, aucune montée : la dernière rep n'est pas une ligne d'arrivée annoncée.",
       "settings": {
         "stability": 0.9,
         "style": 0
@@ -181,6 +205,7 @@
       "id": "set-done-1",
       "cue": "set-done",
       "text": "Validé.",
+      "direction": "Un mot, tombant. La série est enregistrée, ça ne se discute pas.",
       "settings": {
         "stability": 0.85,
         "style": 0.05
@@ -190,6 +215,7 @@
       "id": "set-done-2",
       "cue": "set-done",
       "text": "Série terminée.",
+      "direction": "Plat. La variante longue, pour alterner.",
       "settings": {
         "stability": 0.85,
         "style": 0.05
@@ -199,6 +225,7 @@
       "id": "workout-finished-1",
       "cue": "workout-finished",
       "text": "Séance terminée. Vous pouvez disposer.",
+      "direction": "La phrase-signature. « Vous pouvez disposer » sans aucune chaleur, comme un congé administratif.",
       "settings": {
         "stability": 0.75,
         "style": 0.1
@@ -208,6 +235,7 @@
       "id": "workout-finished-2",
       "cue": "workout-finished",
       "text": "Séance terminée. Vos résultats sont enregistrés.",
+      "direction": "Bureaucratique jusqu'au bout. Elle lit un registre.",
       "settings": {
         "stability": 0.75,
         "style": 0.1
