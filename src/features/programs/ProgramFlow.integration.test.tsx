@@ -927,4 +927,18 @@ describe('liste des blocs', () => {
     expect(screen.getByText('Bloc terminé')).toBeVisible();
     expect(screen.getByText('Terminé')).toBeVisible();
   });
+
+  it('signale la séance à réparer quand sa routine a quitté la bibliothèque', async () => {
+    const { program, routine } = await createEditableActiveProgram();
+    // Permis depuis que le bloc ne gouverne plus la bibliothèque : supprimer
+    // une routine ne demande pas la permission au bloc, et c'est cet écran-ci
+    // qui porte la réparation.
+    await routinesRepository.deleteRoutine(routine.id);
+    renderProgramFlow(`/programs/${program.id}`);
+
+    expect(await screen.findByText('Routine indisponible')).toBeVisible();
+    expect(screen.getByText('Cette séance doit être réparée dans le split.')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Réparer le split' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /^Démarrer/ })).not.toBeInTheDocument();
+  });
 });

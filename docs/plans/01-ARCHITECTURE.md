@@ -194,12 +194,18 @@ export interface RoutineFolder extends Syncable {
 
 export interface Routine extends Syncable {
   name: string;
+  subtitle?: string;
   folderId: string;                  // '' si à la racine
   order: number;
   notes?: string;
-  version: number;                   // recommandation audit M3 : versionnage
-  originRoutineId?: string;          // pointe vers la v1 si duplication versionnée
 }
+
+// Le versionnage de routine (`version`, `versionState`, `originRoutineId`,
+// recommandation audit M3) a existé du Lot 17 au découplage bloc/routine, puis
+// a été retiré par la migration `version(8)`. Il servait à geler une routine
+// qu'un bloc programme ; ce qu'il protégeait — les cibles d'une séance passée —
+// est déjà figé par l'instantané que la séance recopie à son démarrage. Un bloc
+// pointe une routine, et la routine ne pointe rien.
 
 export interface RoutineExercise extends Syncable {
   routineId: string;

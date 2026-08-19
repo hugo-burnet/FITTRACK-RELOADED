@@ -2,7 +2,59 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-15 (**Release Android v0.7.4 — la semaine entière sur la fiche du bloc**).
+**Dernière mise à jour :** 2026-08-19 (**Découplage bloc / routine — les programmes sortent de l'onglet Routines**).
+
+## Découplage bloc / routine
+
+Signalé depuis l'usage : « l'intégration des programmes est mauvaise, bourrée de
+frictions ». Deux causes, une de données, une de hiérarchie.
+
+**Le cycle.** Le bloc pointait la routine (`programScheduleEntries.routineId`) et
+la routine lisait le bloc en retour pour savoir si elle avait le droit d'être
+modifiée. Or ce que ce scellage protégeait — les cibles d'une séance passée —
+est déjà figé par l'instantané que `buildWorkoutEntities` recopie au démarrage :
+l'historique ne relit jamais la routine. **Le cycle ne protégeait rien.**
+
+Sont partis avec lui : `version` / `versionState` / `originRoutineId` (migration
+`version(8)` ; aucun champ n'était indexé, et un brouillon devient une routine
+ordinaire — rien n'est supprimé), `routineVersions.ts` en entier,
+`RoutineReferencedError`, et `withEditableRoutine` qui rouvrait une transaction
+sur les entrées de split avant chaque frappe.
+
+**Trois frictions réparées au passage :**
+
+- Renommer, déplacer ou supprimer une routine programmée **échouait en silence** :
+  `void deleteRoutine(...)` sans `catch`, la feuille se fermait, rien ne bougeait,
+  aucun message.
+- Changer une série demandait cinq étapes et quatre mots — *version, brouillon,
+  scellé, semaine d'entrée en vigueur* — qui n'existent nulle part ailleurs.
+- Le brouillon créé **disparaissait de la liste des routines**
+  (`listRoutineSummaries` ne gardait que la dernière publiée par lignée) : il
+  n'était atteignable que depuis la routine scellée qui l'avait engendré.
+
+**La hiérarchie.** La ligne « Programmes » descend de l'onglet Routines vers
+l'accueil, sous la carte du jour — c'est là qu'une séance commence, dans les
+deux modes. Elle y est **toujours** : le nom du bloc quand un bloc tourne,
+« Aucun bloc actif » sinon. L'onglet Routines redevient une bibliothèque et ne
+lit plus le bloc actif : plus d'état d'erreur ni de bouton « Réessayer la
+lecture » dupliqué sur deux écrans.
+
+**Décision de produit :** on ne s'entraîne **jamais** obligatoirement sous un
+bloc. La séance libre et la routine lancée seule restent à un appui (règle n°1,
+aucune limite artificielle). Le bloc gouverne le calendrier quand il existe, il
+ne le confisque pas.
+
+**Ce qui devient possible :** supprimer une routine que programme un bloc. La
+séance orpheline affiche « Routine indisponible » et propose « Réparer le
+split » — un chemin qui existait déjà dans le code et que personne ne pouvait
+atteindre.
+
+`RoutineEditorScreen` : 570 → 304 lignes. 1504 tests / 132 fichiers.
+Schéma : `version(8)`.
+
+---
+
+**Précédent :** 2026-08-15 (**Release Android v0.7.4 — la semaine entière sur la fiche du bloc**).
 
 ## v0.7.4 — les jours de repos sont la moitié de l'information
 
