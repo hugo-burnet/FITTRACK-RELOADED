@@ -125,16 +125,24 @@ describe('parcours de création d’un programme', () => {
     await user.selectOptions(screen.getByRole('combobox', { name: 'Durée' }), '8');
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
-    await user.selectOptions(
-      await screen.findByRole('combobox', { name: 'Jour de la séance 1' }),
-      '1',
+    // Le jour est une pastille, pas un menu : sept cibles visibles, la semaine
+    // se lit pendant qu'on la pose.
+    await user.click(
+      within(await screen.findByRole('group', { name: 'Jour de la séance 1' })).getByRole(
+        'button',
+        { name: 'Lundi' },
+      ),
     );
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Routine de la séance 1' }),
       mondayRoutine.id,
     );
     await user.click(screen.getByRole('button', { name: 'Ajouter une séance' }));
-    await user.selectOptions(screen.getByRole('combobox', { name: 'Jour de la séance 2' }), '4');
+    await user.click(
+      within(screen.getByRole('group', { name: 'Jour de la séance 2' })).getByRole('button', {
+        name: 'Jeudi',
+      }),
+    );
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Routine de la séance 2' }),
       thursdayRoutine.id,
@@ -481,6 +489,56 @@ describe('parcours de création d’un programme', () => {
     expect(screen.getByRole('button', { name: 'Continuer' })).toBeDisabled();
   });
 
+  it('nomme le champ qui manque, et écrit la règle du lundi', async () => {
+    await createRoutine('Full-body');
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    // La contrainte est lisible avant d'être enfreinte.
+    expect(await screen.findByText(/les semaines du bloc se comptent du lundi/)).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Donne un nom au bloc.');
+
+    await user.type(screen.getByRole('textbox', { name: 'Nom du bloc' }), 'Bloc force');
+    // Un mercredi : seule la date est en cause, et c'est la seule chose que dit
+    // le message. Avant, il redemandait le nom et la durée, tous deux corrects.
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-19');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Le départ tombe un lundi : un bloc se compte en semaines pleines.',
+    );
+  });
+
+  it('crée la routine qui manque depuis le split, sans quitter l’assistant', async () => {
+    // Bibliothèque vide : l'étape était une impasse — sortir, composer, revenir.
+    const user = userEvent.setup();
+    renderProgramFlow();
+
+    await user.type(await screen.findByRole('textbox', { name: 'Nom du bloc' }), 'Premier bloc');
+    await user.type(screen.getByLabelText('Lundi de départ'), '2026-08-17');
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    await user.click(await screen.findByRole('button', { name: 'Nouvelle routine' }));
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Nom de la routine' }),
+      'Poussée',
+    );
+    await user.click(screen.getByRole('button', { name: 'Créer et placer' }));
+
+    // Créée, et déjà choisie pour cette séance : on continue sans rien retaper.
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Routine de la séance 1' })).toHaveDisplayValue(
+        'Poussée',
+      ),
+    );
+    await user.click(screen.getByRole('button', { name: 'Continuer' }));
+
+    expect(await screen.findByText('Étape 3 sur 3 · Semaines')).toBeVisible();
+    const stored = await routinesRepository.listRoutineSummaries();
+    expect(stored.map(({ routine }) => routine.name)).toEqual(['Poussée']);
+  });
 });
 
 const TRACKING_NOW = new Date(2026, 7, 13, 12).getTime();

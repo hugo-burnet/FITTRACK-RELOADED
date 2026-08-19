@@ -18,7 +18,13 @@ export interface ProgramEditorData {
   existing: ExistingProgramQuery | undefined;
   routines: RoutineSummary[] | undefined;
   routinesReadFailed: boolean;
-  /** No split can be composed yet: still reading, read failed, or nothing to pick. */
+  /**
+   * No split can be composed yet: still reading, or the read failed.
+   *
+   * Une bibliothèque vide n'en fait plus partie : l'étape sait créer la routine
+   * qui lui manque, et bloquer là-dessus renvoyait composer ailleurs pour
+   * revenir ensuite.
+   */
   splitBlocked: boolean;
 }
 
@@ -69,6 +75,6 @@ export function useProgramEditorData(routeProgramId: string | undefined): Progra
     existing,
     routines,
     routinesReadFailed,
-    splitBlocked: routinesQuery === undefined || routinesReadFailed || routines?.length === 0,
+    splitBlocked: routinesQuery === undefined || routinesReadFailed,
   };
 }

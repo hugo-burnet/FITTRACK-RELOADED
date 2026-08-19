@@ -117,15 +117,26 @@ export function effectiveWeekOptions(
   );
 }
 
+/**
+ * Ce qui manque, et rien d'autre.
+ *
+ * Un seul message couvrait six conditions : une date au mercredi redemandait le
+ * nom et la durée, tous deux corrects, et ne disait nulle part que le départ
+ * devait tomber un lundi. Le bouton restait vivant, on appuyait, et l'écran
+ * répondait à côté.
+ */
 export function basicsIssue(basics: ProgramBasicsDraft): TranslationKey | null {
-  const valid =
-    basics.name.trim().length > 0 &&
-    basics.startsAt > 0 &&
-    new Date(basics.startsAt).getDay() === 1 &&
-    Number.isInteger(basics.durationWeeks) &&
-    basics.durationWeeks >= MIN_DURATION_WEEKS &&
-    basics.durationWeeks <= MAX_DURATION_WEEKS;
-  return valid ? null : 'program.errorBasics';
+  if (basics.name.trim().length === 0) return 'program.errorBasicsName';
+  if (basics.startsAt <= 0) return 'program.errorBasicsDate';
+  if (new Date(basics.startsAt).getDay() !== 1) return 'program.errorBasicsMonday';
+  if (
+    !Number.isInteger(basics.durationWeeks) ||
+    basics.durationWeeks < MIN_DURATION_WEEKS ||
+    basics.durationWeeks > MAX_DURATION_WEEKS
+  ) {
+    return 'program.errorBasicsDuration';
+  }
+  return null;
 }
 
 export function splitIssue(split: readonly ProgramSplitDraftEntry[]): TranslationKey | null {

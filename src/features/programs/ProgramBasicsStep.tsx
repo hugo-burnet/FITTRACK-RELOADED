@@ -29,13 +29,23 @@ export function ProgramBasicsStep({ value, dateValue, locked = false, onChange, 
             enterKeyHint="done"
             onChange={(event) => onChange({ ...value, name: event.target.value })}
           />
-          <Input
-            label={t('program.startsAtLabel')}
-            type="date"
-            value={dateValue}
-            disabled={locked}
-            onChange={(event) => onDateChange(event.target.value)}
-          />
+          <div className="flex flex-col gap-2">
+            <Input
+              label={t('program.startsAtLabel')}
+              type="date"
+              value={dateValue}
+              disabled={locked}
+              onChange={(event) => onDateChange(event.target.value)}
+            />
+            {/* La contrainte est écrite là où elle s'applique. Le champ accepte
+                n'importe quel jour et c'est « Continuer » qui refusait : la
+                règle n'apparaissait qu'après l'avoir enfreinte. */}
+            {!locked && (
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('program.startsAtHint')}
+              </p>
+            )}
+          </div>
           <label className="flex flex-col gap-2">
             <span className="label-xs font-semibold text-[var(--text-2)]">
               {t('program.durationLabel')}

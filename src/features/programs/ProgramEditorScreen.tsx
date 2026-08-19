@@ -11,6 +11,7 @@ import {
   replaceProgramWeeksFrom,
   updateProgramDraft,
 } from '@/data/repositories/programs';
+import { createRoutine } from '@/data/repositories/routines';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { ActionBand, ConfirmSheet, SectionTitle } from '@/ui';
@@ -120,6 +121,17 @@ export function ProgramEditorScreen() {
     else if (step === 'weeks') setStep('split');
     else if (step === 'split') setStep('basics');
     else leaveEditor();
+  };
+
+  /**
+   * La routine que le split réclame, créée depuis le split.
+   *
+   * Vide : le bloc pose la forme de la semaine, la routine se remplit après —
+   * depuis l'onglet Routines, où elle apparaît immédiatement.
+   */
+  const createSplitRoutine = async (name: string): Promise<string> => {
+    const routine = await createRoutine(name);
+    return routine.id;
   };
 
   const changeBasics = (next: ProgramBasicsDraft) => {
@@ -262,7 +274,12 @@ export function ProgramEditorScreen() {
       {t('program.routinesReadError')}
     </p>
   ) : (
-    <ProgramSplitStep entries={split} routines={routines} onChange={setSplit} />
+    <ProgramSplitStep
+      entries={split}
+      routines={routines}
+      onChange={setSplit}
+      onCreateRoutine={createSplitRoutine}
+    />
   );
 
   return (

@@ -23,9 +23,6 @@ describe('program week intention copy', () => {
     expect(
       t('program.weekLine', { number: '05', level: 60, phase: t('program.phase.deload') }),
     ).toBe('05 — 60 % · Décharge');
-    expect(t('program.weekPhaseReading', { number: 3, phase: t('program.phase.progression') })).toBe(
-      'Semaine 3 · Progression',
-    );
     expect(t('program.stepProgress', { current: 2, name: t('program.stepSplit') })).toBe(
       'Étape 2 sur 3 · Split',
     );

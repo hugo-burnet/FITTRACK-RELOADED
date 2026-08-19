@@ -56,17 +56,6 @@ export function weekRunLine(run: {
   });
 }
 
-/** Home card grammar: `Semaine 3 · Progression`. */
-export function weekPhaseReading(week: {
-  weekIndex: number;
-  phase: ProgramPhase;
-}): string {
-  return t('program.weekPhaseReading', {
-    number: week.weekIndex + 1,
-    phase: phaseLabel(week.phase),
-  });
-}
-
 /**
  * Ce que le niveau de la semaine fait aux charges, en une phrase.
  *

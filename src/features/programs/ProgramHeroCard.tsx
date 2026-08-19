@@ -5,16 +5,20 @@ import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
-import { weekPhaseReading } from './weekReading';
+import { phaseLabel } from './weekReading';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
   month: 'long',
 });
 
+/**
+ * La phase seule : le sur-titre au-dessus dit déjà « Semaine 2 sur 8 », et la
+ * lecture complète y répétait « Semaine 2 » à deux lignes d'intervalle.
+ */
 function intentionLabel(program: HomeProgramProjection): string | null {
   if (program.week === null) return null;
-  return weekPhaseReading(program.week);
+  return phaseLabel(program.week.phase);
 }
 
 function ruleLabel(program: HomeProgramProjection): string {
