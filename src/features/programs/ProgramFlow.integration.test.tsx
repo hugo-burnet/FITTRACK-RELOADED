@@ -941,4 +941,34 @@ describe('liste des blocs', () => {
     expect(screen.getByRole('button', { name: 'Réparer le split' })).toBeVisible();
     expect(screen.queryByRole('button', { name: /^Démarrer/ })).not.toBeInTheDocument();
   });
+
+  it('replie les semaines identiques et n’y répète pas la semaine en cours', async () => {
+    const routine = await createRoutine('Full-body');
+    const program = await createProgramDraft({
+      name: 'Bloc plat',
+      startsAt: mondayWeeksAgo(0),
+      durationWeeks: 8,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 8 }, (_, weekIndex) => ({
+        weekIndex,
+        loadIndex: 100,
+        phase: 'construction' as const,
+      })),
+    );
+    await activateProgram(program.id);
+    renderProgramFlow(`/programs/${program.id}`);
+
+    // Une seule ligne pour sept semaines qui ne changent pas, et elle démarre
+    // à la 02 : la 01 est déjà écrite en grand sous « Intention de la semaine ».
+    expect(await screen.findByText('02–08 — 100 % · Construction')).toBeVisible();
+    // La 01 ne se lit qu'une fois, sous « Intention de la semaine » — et jamais
+    // en tête de la liste de ce qui reste.
+    expect(screen.getAllByText('01 — 100 % · Construction')).toHaveLength(1);
+    expect(screen.queryByText('02 — 100 % · Construction')).not.toBeInTheDocument();
+  });
 });

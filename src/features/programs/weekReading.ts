@@ -40,6 +40,22 @@ export function weekLine(week: {
   });
 }
 
+/** Même grammaire pour une suite repliée : `02–04 — 100 % · Construction`. */
+export function weekRunLine(run: {
+  weekIndex: number;
+  lastWeekIndex: number;
+  loadIndex: number;
+  phase: ProgramPhase;
+}): string {
+  if (run.lastWeekIndex === run.weekIndex) return weekLine(run);
+  return t('program.weekRunLine', {
+    from: String(run.weekIndex + 1).padStart(2, '0'),
+    to: String(run.lastWeekIndex + 1).padStart(2, '0'),
+    level: run.loadIndex,
+    phase: phaseLabel(run.phase),
+  });
+}
+
 /** Home card grammar: `Semaine 3 · Progression`. */
 export function weekPhaseReading(week: {
   weekIndex: number;

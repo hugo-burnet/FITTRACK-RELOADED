@@ -2,7 +2,8 @@ import type { ProgramWeek } from '@/data/types';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { Button, SectionTitle } from '@/ui';
-import { weekLine } from './weekReading';
+import { weekRunLine } from './weekReading';
+import { groupWeekRuns } from './weekRuns';
 
 export type ProgramSessionState = 'completed' | 'today' | 'missed' | 'upcoming';
 
@@ -40,26 +41,34 @@ const DAY_KEYS: TranslationKey[] = [
   'program.weekday7',
 ];
 
+/**
+ * Ce qui reste du bloc, par changements et non par semaines.
+ *
+ * Une ligne par semaine donnait huit lignes identiques sur un trajet plat —
+ * huit fois la même phrase pour apprendre qu'il ne se passe rien. Les suites
+ * identiques sont repliées : ce qui reste à l'écran, ce sont les endroits où le
+ * bloc change d'avis.
+ */
 export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
   if (weeks.length === 0) return null;
   return (
     <section>
       <SectionTitle>{t('program.upcomingTitle')}</SectionTitle>
       <div className="border-y border-[var(--border)]">
-        {weeks.map((week) => (
+        {groupWeekRuns(weeks).map((run) => (
           <div
-            key={week.id}
+            key={run.weekIndex}
             className="flex min-h-14 items-center border-b border-[var(--border)] py-3
               last:border-b-0"
           >
             <span
               className={`text-base ${
-                week.phase === 'deload'
+                run.phase === 'deload'
                   ? 'font-semibold text-[var(--accent-ink)]'
                   : 'text-[var(--text-1)]'
               }`}
             >
-              {weekLine(week)}
+              {weekRunLine(run)}
             </span>
           </div>
         ))}

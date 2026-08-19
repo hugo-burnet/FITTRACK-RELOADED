@@ -4,6 +4,7 @@ import type { TranslationKey } from '@/i18n/fr';
 import {
   MAX_LOAD_INDEX,
   MIN_LOAD_INDEX,
+  applyProgramRecipe,
   programPosition,
   resolveSchedule,
 } from '@/lib/programs';
@@ -19,12 +20,17 @@ export const emptySplit = (): ProgramSplitDraftEntry[] => [
   { routineId: '', dayOfWeek: 1, order: 0 },
 ];
 
+/**
+ * Le trajet de départ : une recette, pas une ligne plate.
+ *
+ * Huit semaines identiques à 100 %, c'était l'absence de périodisation proposée
+ * par défaut dans l'écran qui n'existe que pour ça — ne rien toucher revenait à
+ * répéter la même semaine jusqu'au bout. Hypertrophie pose
+ * construction / progression / surcharge / décharge ; les trois boutons de
+ * recette échangent le trajet et chaque semaine reste modifiable en dessous.
+ */
 export const defaultWeeks = (durationWeeks: number): ProgramWeekDraft[] =>
-  Array.from({ length: durationWeeks }, (_, weekIndex) => ({
-    weekIndex,
-    loadIndex: 100,
-    phase: 'construction',
-  }));
+  applyProgramRecipe('hypertrophy', durationWeeks);
 
 /** Keeps the week list as long as the block: extra weeks fall off, new ones start neutral. */
 export function resizeWeeks(

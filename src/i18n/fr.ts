@@ -606,6 +606,8 @@ const fr = {
     loadIndexLabel: 'Niveau',
     loadIndexPreset: '{value} %',
     weekLine: '{number} — {level} % · {phase}',
+    /** Même grammaire, pour une suite de semaines identiques repliée en une ligne. */
+    weekRunLine: '{from}–{to} — {level} % · {phase}',
     weekPhaseReading: 'Semaine {number} · {phase}',
     phase: {
       construction: 'Construction',

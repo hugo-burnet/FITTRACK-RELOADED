@@ -236,10 +236,13 @@ export function ProgramDetailScreen() {
     position.phase === 'active' &&
     !activeWorkoutExists &&
     effectiveSelected !== null;
-  const upcomingWeeks =
-    position.phase === 'active'
-      ? detail.weeks.filter((candidate) => candidate.weekIndex > position.weekIndex)
-      : detail.weeks;
+  // Après celle que « Intention de la semaine » affiche déjà, quelle que soit
+  // la phase. Avant le départ, la liste répétait la semaine 01 deux fois : une
+  // fois en grand au-dessus, une fois en tête de la liste.
+  const currentWeekIndex = week?.weekIndex ?? -1;
+  const upcomingWeeks = detail.weeks.filter(
+    (candidate) => candidate.weekIndex > currentWeekIndex,
+  );
 
   const runAction = async (action: () => Promise<void>) => {
     setActionErrorKey(null);
