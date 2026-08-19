@@ -2,7 +2,51 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-19 (**Découplage bloc / routine — les programmes sortent de l'onglet Routines**).
+**Dernière mise à jour :** 2026-08-19 (**Le bloc prescrit enfin quelque chose**).
+
+## Trois défauts du programme, trouvés en parcourant l'app
+
+Parcours complet dans le navigateur : accueil → Programmes → cadre → split →
+semaines → activation → fiche. Trois défauts majeurs, tous corrigés.
+
+**1. Le niveau de semaine ne prescrivait rien.** `projectProgramPrescription`
+n'appliquait jamais `loadIndex`, et `createDeloadTargets` s'ouvrait sur
+`void input.week.loadIndex`. « 105 % · Progression » prescrivait donc les mêmes
+kilos que « 100 % · Construction » : l'étape la plus longue de l'assistant ne
+changeait rien à ce qu'on soulevait. Le niveau opère désormais **en crans,
+jamais en facteur** — un cran tous les cinq points, et un cran c'est le plus
+petit saut réel de l'exercice (`resolveLoadIncrementKg`). Passer par
+`nextLoad`/`previousLoad` autant de fois que de crans garde chaque étape sur la
+grille : deux crans au-dessus de 82,5 kg font 87,5 kg, jamais 86,625 kg.
+L'assistance s'inverse, les échauffements ne bougent pas, rien ne passe sous
+zéro, aucune répétition n'est inventée. Les décharges gardent leur recette.
+
+**2. Le bloc naissait plat.** Huit semaines identiques à 100 % : ne rien toucher
+revenait à n'avoir aucune périodisation, dans l'écran qui n'existe que pour ça.
+Le trajet de départ est la recette Hypertrophie. Et « Semaines suivantes »
+commence après la semaine que l'intention affiche déjà, en repliant les suites
+identiques — « 02–08 — 100 % · Construction » au lieu de sept lignes.
+
+**3. Composer un split supposait la bibliothèque déjà faite.** Sans routine,
+impasse : sortir, composer, revenir. L'étape crée maintenant la routine qui lui
+manque, vide et nommée, placée aussitôt. Le jour se choisit sur sept pastilles
+au lieu d'un menu déroulant — quatre colonnes et non sept, parce que sept
+faisaient 32 px de large là où la charte en exige 48 (mesuré au navigateur).
+
+Au passage : chaque champ du cadre a son message d'erreur (un fourre-tout
+redemandait le nom et la durée pour une date au mercredi), la règle du lundi est
+écrite sous le champ avant d'être enfreinte, et la carte d'accueil ne lit plus
+« Semaine 1 » deux fois.
+
+**Pas touché, et volontairement** : les six lignes « Repos » d'une semaine à une
+séance. C'est la décision du v0.7.4 — les jours de repos sont la moitié de
+l'information d'un bloc — et rien dans ce parcours ne l'a contredite.
+
+1523 tests / 134 fichiers. Aucun changement de schéma.
+
+---
+
+**Précédent :** 2026-08-19 (**Découplage bloc / routine — les programmes sortent de l'onglet Routines**).
 
 ## Découplage bloc / routine
 
