@@ -27,7 +27,7 @@ import { ProgramActionsSheet } from './ProgramActionsSheet';
 import { repositoryErrorKey } from './programEditorModel';
 import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
-import { phaseIntention, weekLine } from './weekReading';
+import { loadRuleReading, weekLine } from './weekReading';
 
 interface DetailProjection {
   detail: ProgramDetail;
@@ -77,7 +77,7 @@ function ProgramProgressReading({ program, position }: { program: Program; posit
 }
 
 function CurrentIntention({ week }: { week: ProgramWeek }) {
-  const intention = phaseIntention(week.phase);
+  const intention = loadRuleReading(week);
   return (
     <section className="border-y border-[var(--border)] py-4">
       <p className="label-xs font-semibold text-[var(--text-2)]">
@@ -90,9 +90,7 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
       >
         {weekLine(week)}
       </p>
-      {intention !== null && (
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{intention}</p>
-      )}
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{intention}</p>
       {week.notes && <p className="mt-2 text-sm text-[var(--text-2)]">{week.notes}</p>}
     </section>
   );

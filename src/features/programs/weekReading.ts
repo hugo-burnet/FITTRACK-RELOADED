@@ -1,5 +1,5 @@
 import type { ProgramPhase } from '@/data/types';
-import type { ProgramRecipeId } from '@/lib/programs';
+import { loadIndexSteps, type ProgramRecipeId } from '@/lib/programs';
 import { t, type TranslationKey } from '@/i18n/fr';
 
 // The suggestion table lives in `lib/programs` so recipes can read it without
@@ -21,13 +21,7 @@ export const PHASE_LABEL_KEYS: Record<ProgramPhase, TranslationKey> = {
   test: 'program.phase.test',
 };
 
-const PHASE_INTENTION_KEYS: Partial<Record<ProgramPhase, TranslationKey>> = {
-  progression: 'program.intention.progression',
-  overload: 'program.intention.overload',
-  deload: 'program.intention.deload',
-  return: 'program.intention.return',
-  test: 'program.intention.test',
-};
+
 
 export function phaseLabel(phase: ProgramPhase): string {
   return t(PHASE_LABEL_KEYS[phase]);
@@ -57,8 +51,23 @@ export function weekPhaseReading(week: {
   });
 }
 
-/** Intention phrase under the week line; Construction stays silent. */
-export function phaseIntention(phase: ProgramPhase): string | null {
-  const key = PHASE_INTENTION_KEYS[phase];
-  return key === undefined ? null : t(key);
+/**
+ * Ce que le niveau de la semaine fait aux charges, en une phrase.
+ *
+ * Il n'y a plus de semaine muette : même le niveau neutre a quelque chose à
+ * dire — que rien ne bouge — et c'est justement la ligne qui manquait quand le
+ * nombre ne servait à rien. Une décharge parle de sa recette, pas de son
+ * niveau : c'est elle qui décide, pas lui.
+ */
+export function loadRuleReading(week: { loadIndex: number; phase: ProgramPhase }): string {
+  if (week.phase === 'deload') return t('program.loadRule.deload');
+
+  const steps = loadIndexSteps(week.loadIndex);
+  if (steps === 0) return t('program.loadRule.neutral');
+
+  const count = Math.abs(steps);
+  if (steps > 0) {
+    return count === 1 ? t('program.loadRule.up') : t('program.loadRule.upMany', { count });
+  }
+  return count === 1 ? t('program.loadRule.down') : t('program.loadRule.downMany', { count });
 }

@@ -615,12 +615,19 @@ const fr = {
       return: 'Reprise',
       test: 'Test',
     },
-    intention: {
-      progression: 'Progresser si les perfs le permettent.',
-      overload: 'Ajouter du volume si c’est déjà autorisé.',
-      deload: 'Charge et volume réduits.',
-      return: 'Retour à la prescription, sans forcer.',
-      test: 'Tentative contrôlée, seulement si déjà autorisée.',
+    // Ce que le niveau fait vraiment, écrit sous le nombre. Les anciennes
+    // phrases d'intention étaient au conditionnel — « Progresser si les perfs
+    // le permettent » — parce que le niveau ne prescrivait rien. Il opère
+    // maintenant, donc il y a une règle, donc elle s'écrit.
+    loadRule: {
+      neutral: 'Charges inchangées : celles de tes routines.',
+      up: '+1 cran de charge sur les séries de travail.',
+      upMany: '+{count} crans de charge sur les séries de travail.',
+      down: '−1 cran de charge sur les séries de travail.',
+      downMany: '−{count} crans de charge sur les séries de travail.',
+      deload: 'Deux crans de moins, une série de travail en moins, bas de la fourchette.',
+      /** Sous le champ de saisie, une fois : le pas de l'effet n'est pas celui du champ. */
+      hint: 'Un cran tous les 5 points. Un cran, c’est le plus petit saut de charge de l’exercice.',
     },
     // Une recette pose un trajet, elle ne le verrouille pas : chaque semaine
     // reste modifiable juste en dessous.

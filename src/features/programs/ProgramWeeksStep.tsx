@@ -14,7 +14,7 @@ import {
   PHASE_LABEL_KEYS,
   RECIPE_LABEL_KEYS,
   SUGGESTED_LOAD_INDEX,
-  phaseIntention,
+  loadRuleReading,
   phaseLabel,
   weekLine,
 } from './weekReading';
@@ -225,13 +225,17 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
                 integer
                 suffix="%"
               />
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('program.loadRule.hint')}
+              </p>
             </div>
 
-            {phaseIntention(editor.week.phase) !== null && (
-              <p className="text-sm leading-relaxed text-[var(--text-2)]">
-                {phaseIntention(editor.week.phase)}
-              </p>
-            )}
+            {/* La règle avant le bouton : on lit ce que le niveau qu'on vient
+                de choisir va faire aux charges, pas ce qu'il pourrait vouloir
+                dire. */}
+            <p className="text-sm leading-relaxed text-[var(--text-1)]">
+              {loadRuleReading(editor.week)}
+            </p>
 
             <Button type="button" variant="primary" fullWidth onClick={saveEditor}>
               {t('program.saveWeek')}

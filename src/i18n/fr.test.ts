@@ -31,14 +31,20 @@ describe('program week intention copy', () => {
     );
   });
 
-  it('exposes phase labels and intention phrases from the design spec', () => {
+  it('exposes phase labels from the design spec', () => {
     expect(t('program.phase.construction')).toBe('Construction');
     expect(t('program.phase.overload')).toBe('Surcharge');
     expect(t('program.phase.return')).toBe('Reprise');
-    expect(t('program.intention.progression')).toBe('Progresser si les perfs le permettent.');
-    expect(t('program.intention.deload')).toBe('Charge et volume réduits.');
-    expect(t('program.intention.test')).toBe(
-      'Tentative contrôlée, seulement si déjà autorisée.',
+  });
+
+  it('states what the level does, in load increments and never as a factor', () => {
+    // Les anciennes phrases d'intention étaient au conditionnel parce que le
+    // niveau ne prescrivait rien. Il opère : la règle est donc affirmative.
+    expect(t('program.loadRule.neutral')).toBe('Charges inchangées : celles de tes routines.');
+    expect(t('program.loadRule.up')).toBe('+1 cran de charge sur les séries de travail.');
+    expect(t('program.loadRule.downMany', { count: 2 })).toBe(
+      '−2 crans de charge sur les séries de travail.',
     );
+    expect(t('program.loadRule.hint')).toContain('tous les 5 points');
   });
 });

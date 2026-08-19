@@ -23,7 +23,13 @@ export {
   type ProjectedProgramSet,
 } from './prescription';
 export { createDeloadTargets } from './deloadTargets';
-export { LOAD_INDEX_PRESETS, SUGGESTED_LOAD_INDEX } from './phaseSuggestions';
+export {
+  LOAD_INDEX_NEUTRAL,
+  LOAD_INDEX_POINTS_PER_STEP,
+  LOAD_INDEX_PRESETS,
+  SUGGESTED_LOAD_INDEX,
+  loadIndexSteps,
+} from './phaseSuggestions';
 export {
   PROGRAM_RECIPE_IDS,
   applyProgramRecipe,

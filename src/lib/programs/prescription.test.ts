@@ -32,9 +32,9 @@ const week = (overrides: Partial<Pick<ProgramWeek, 'loadIndex' | 'phase'>> = {})
 });
 
 describe('projectProgramPrescription', () => {
-  it('copies working-set routine targets as-is (identity; loadIndex is not a multiplier)', () => {
+  it('copies working-set routine targets as-is at the neutral level', () => {
     const result = projectProgramPrescription({
-      week: week({ loadIndex: 75 }),
+      week: week({ loadIndex: 100 }),
       exercises: [
         {
           exercise: exercise({ loadIncrementKg: 1.25 }),
@@ -103,7 +103,7 @@ describe('projectProgramPrescription', () => {
     ]);
   });
 
-  it('copies assisted-exercise targets as-is', () => {
+  it('copies assisted-exercise targets as-is at the neutral level', () => {
     const result = projectProgramPrescription({
       week: week(),
       exercises: [
@@ -159,6 +159,119 @@ describe('projectProgramPrescription', () => {
         { routineSetId: 'warmup', targetWeight: 40, targetRpe: 5 },
         { routineSetId: 'work', targetWeight: 100, targetReps: 5, targetRpe: 7 },
       ],
+    });
+  });
+
+  describe('le niveau de la semaine, en crans de charge', () => {
+    const bench = (targetWeight: number, over: Partial<RoutineSet> = {}) =>
+      routineSet({ targetWeight, targetReps: 5, ...over });
+
+    it('monte les séries de travail d’un cran à 105', () => {
+      const result = projectProgramPrescription({
+        week: week({ loadIndex: 105, phase: 'progression' }),
+        exercises: [{ exercise: exercise(), sets: [bench(70)] }],
+      });
+
+      // Barre : 2,5 kg le cran.
+      expect(result.sets).toEqual([
+        { routineSetId: 'routine-set', targetWeight: 72.5, targetReps: 5 },
+      ]);
+    });
+
+    it('en monte deux à 110 et en descend deux à 90', () => {
+      const up = projectProgramPrescription({
+        week: week({ loadIndex: 110, phase: 'overload' }),
+        exercises: [{ exercise: exercise(), sets: [bench(70)] }],
+      });
+      const down = projectProgramPrescription({
+        week: week({ loadIndex: 90 }),
+        exercises: [{ exercise: exercise(), sets: [bench(70)] }],
+      });
+
+      expect(up.sets[0]?.targetWeight).toBe(75);
+      expect(down.sets[0]?.targetWeight).toBe(65);
+    });
+
+    it('compte un cran tous les cinq points, pas un par point', () => {
+      const result = projectProgramPrescription({
+        week: week({ loadIndex: 95 }),
+        exercises: [{ exercise: exercise(), sets: [bench(70)] }],
+      });
+
+      expect(result.sets[0]?.targetWeight).toBe(67.5);
+    });
+
+    it('prend le cran de l’exercice, pas un pas universel', () => {
+      const machine = projectProgramPrescription({
+        week: week({ loadIndex: 105 }),
+        exercises: [
+          { exercise: exercise({ id: 'leg-press', equipment: 'machine' }), sets: [bench(70)] },
+        ],
+      });
+      const override = projectProgramPrescription({
+        week: week({ loadIndex: 105 }),
+        exercises: [{ exercise: exercise({ loadIncrementKg: 1.25 }), sets: [bench(70)] }],
+      });
+
+      expect(machine.sets[0]?.targetWeight).toBe(75);
+      expect(override.sets[0]?.targetWeight).toBe(71.25);
+    });
+
+    it('ne touche pas aux échauffements', () => {
+      const result = projectProgramPrescription({
+        week: week({ loadIndex: 110 }),
+        exercises: [
+          {
+            exercise: exercise(),
+            sets: [
+              bench(40, { id: 'warmup', setType: 'warmup' }),
+              bench(70, { id: 'work', order: 1 }),
+            ],
+          },
+        ],
+      });
+
+      expect(result.sets).toEqual([
+        { routineSetId: 'warmup', targetWeight: 40, targetReps: 5 },
+        { routineSetId: 'work', targetWeight: 75, targetReps: 5 },
+      ]);
+    });
+
+    it('inverse sur l’assistance : plus dur, c’est moins de contrepoids', () => {
+      const result = projectProgramPrescription({
+        week: week({ loadIndex: 105 }),
+        exercises: [
+          {
+            exercise: exercise({ id: 'assisted', measurementType: 'assisted_weight_reps' }),
+            sets: [bench(40)],
+          },
+        ],
+      });
+
+      expect(result.sets[0]?.targetWeight).toBe(37.5);
+    });
+
+    it('ne descend jamais sous zéro', () => {
+      const result = projectProgramPrescription({
+        week: week({ loadIndex: 60 }),
+        exercises: [{ exercise: exercise(), sets: [bench(2)] }],
+      });
+
+      expect(result.sets[0]?.targetWeight).toBe(0);
+    });
+
+    it('laisse une série sans charge sans charge', () => {
+      const result = projectProgramPrescription({
+        week: week({ loadIndex: 110 }),
+        exercises: [
+          {
+            exercise: exercise({ id: 'pull-up', measurementType: 'reps_only' }),
+            sets: [routineSet({ targetReps: 8 })],
+          },
+        ],
+      });
+
+      expect(result.sets).toEqual([{ routineSetId: 'routine-set', targetReps: 8 }]);
     });
   });
 
