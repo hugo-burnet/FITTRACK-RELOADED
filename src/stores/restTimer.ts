@@ -23,6 +23,14 @@ export interface RestTimer {
 
 interface RestTimerStore extends RestTimer {
   start: (setId: string, seconds: number) => void;
+  /**
+   * Pushes the deadline back without restarting the countdown.
+   *
+   * The effort strip answers a few seconds after the set was validated, and
+   * those seconds are already rest — calling `start` again would hand them back
+   * and make a bonus of fifteen seconds read as a bonus of twenty-five.
+   */
+  extend: (setId: string, seconds: number) => void;
   /** Ends the rest. Idempotent, and safe to call for a set that is not resting. */
   stop: (setId?: string) => void;
 }
@@ -38,6 +46,16 @@ export const useRestTimer = create<RestTimerStore>((set) => ({
     const now = Date.now();
     set({ setId, startedAt: now, endsAt: now + seconds * 1000, seconds });
   },
+
+  extend: (setId, seconds) =>
+    set((state) =>
+      state.setId === setId && seconds > 0
+        ? {
+            endsAt: state.endsAt + seconds * 1000,
+            seconds: state.seconds + seconds,
+          }
+        : state,
+    ),
 
   stop: (setId) =>
     set((state) => (setId === undefined || state.setId === setId ? IDLE : state)),
