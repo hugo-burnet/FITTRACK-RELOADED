@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Screen } from '@/app/Screen';
 import { ANNOUNCER_STORAGE_KEY } from '@/stores/announcer';
+import { useRepPacer } from '@/stores/repPacer';
+import { useRestTimer } from '@/stores/restTimer';
 import { TUTORIAL_STORAGE_KEY } from './tutorialStore';
 import { TutorialProvider } from './TutorialProvider';
 
@@ -34,6 +36,8 @@ describe('TutorialProvider', () => {
     localStorage.clear();
     playTutorialNarrationMock.mockClear();
     stopTutorialNarrationMock.mockClear();
+    useRepPacer.getState().stop();
+    useRestTimer.getState().stop();
   });
 
   it('propose la visite au premier lancement puis conserve le choix audio', async () => {
@@ -75,5 +79,22 @@ describe('TutorialProvider', () => {
     expect(
       await screen.findByRole('button', { name: 'Lire le texte' }, { timeout: 3_000 }),
     ).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('laisse ouvrir l’aide quand le chrono conservé dans le store est déjà fini', async () => {
+    localStorage.setItem(TUTORIAL_STORAGE_KEY, 'completed');
+    useRestTimer.setState({
+      setId: 'ancienne-serie',
+      startedAt: Date.now() - 60_000,
+      endsAt: Date.now() - 1_000,
+      seconds: 59,
+    });
+    const user = userEvent.setup();
+    renderTutorial('/routines');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+
+    expect(screen.getByRole('button', { name: /Expliquer cette page/ })).toBeEnabled();
+    expect(screen.getByText('Environ vingt secondes.')).toBeVisible();
   });
 });

@@ -23,6 +23,7 @@ import {
   saveTutorialCompletion,
   type TutorialCompletion,
 } from './tutorialStore';
+import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
 type TourKind = 'full' | 'contextual';
 type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice';
@@ -256,9 +257,11 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const [completion, setCompletion] = useState<TutorialCompletion>('completed');
   const [narrationActive, setNarrationActive] = useState(false);
   const topic = tutorialTopicForPath(pathname);
-  const pacerActive = useRepPacer((state) => state.setId !== null);
-  const restActive = useRestTimer((state) => state.setId !== null);
-  const workoutAudioBusy = pacerActive || restActive;
+  const pacer = useRepPacer();
+  const rest = useRestTimer();
+  // Opening the help sheet renders this again, so expired wall-clock timers
+  // cease blocking immediately even if their store identity was never cleared.
+  const workoutAudioBusy = isWorkoutAudioBusy(pacer, rest);
 
   const showVoiceChoice = useCallback((result: TutorialCompletion) => {
     primeAnnouncer();
