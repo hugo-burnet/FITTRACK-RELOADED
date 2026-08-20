@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.fittrack.test',
-  appName: 'FitTrack test',
+  appId: 'com.fittrack.app',
+  appName: 'FitTrack',
   webDir: 'dist',
   backgroundColor: '#12110f',
   plugins: {
