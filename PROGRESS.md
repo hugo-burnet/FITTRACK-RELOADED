@@ -2,7 +2,43 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Clarification des outils de dépannage et des routines supprimées**).
+**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.5 — la revue du lot 21**).
+
+## v0.8.5 — les états parallèles de la séance, et le silence qui parlait
+
+Revue de code du lot 21 : sept correctifs, tous sur des chemins que l'usage normal traverse.
+
+La cadence armée à la saisie ne se désarmait jamais quand sa série cessait d'être la cible.
+Valider une série pendant ses dix secondes de préparation — c'est-à-dire saisir après avoir fait
+la série, le geste le plus courant — laissait l'attente en place pour toute la vie de l'écran, et
+plus aucune saisie de répétitions n'armait de cadence ensuite. Même piège pour l'attente « il
+manque les répétitions » quand la série concernée est validée ou supprimée.
+
+« Silence » ne survivait pas à un redémarrage : le gain maître repartait à 1, et la narration du
+tutoriel — qui ne passe pas par les règles d'annonce — parlait par-dessus un réglage qui promet
+l'inverse. Le mode est maintenant réappliqué à l'ouverture du contexte audio, et la narration s'y
+soumet en retombant sur son temps de lecture.
+
+« Repos prolongé » s'annonçait même sans repos à prolonger : en superset, la bande d'effort
+s'affiche alors qu'aucune minuterie ne tourne. L'annonce est désormais liée à l'extension réelle.
+
+`rep-impact.wav` rejoint les clips mp3 dans le précache du service worker : hors ligne, l'impact
+de répétition était muet pour toute la session, et l'échec était mémorisé sans nouvelle tentative.
+
+Un repos démarré sur la carte d'une cadence en cours démontait le composant qui porte les
+battements, et les tuait silencieusement en laissant le store armé. Le métronome survit maintenant
+à l'affichage du repos.
+
+Côté Android, le listener de focus audio ignorait `AUDIOFOCUS_LOSS` : après une perte décidée par
+le système, l'app croyait détenir un focus qu'elle n'avait plus et cessait d'atténuer la musique.
+
+Enfin, la trentaine de chaînes du tutoriel et de l'en-tête vivent dans `src/i18n/fr.ts`, comme le
+veut la convention du projet.
+
+1 663 tests / 155 fichiers, typecheck, lint et build de production. Aucun changement de schéma.
+Installer par-dessus la v0.8.4, sans désinstaller, pour conserver les données locales.
+
+---
 
 ## Clarification des outils de dépannage
 
