@@ -132,7 +132,7 @@ export function WorkoutScreen() {
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
   /** A cadence waiting only for the missing repetitions to be typed. */
   const [pendingPace, setPendingPace] = useState<PendingPace | null>(null);
-  /** The first working set, armed by its first entered load. */
+  /** The first working set, armed by its first entered repetition count. */
   const [firstPace, setFirstPace] = useState<FirstPace | null>(null);
   const armedFirstSets = useRef(new Set<string>());
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
@@ -248,10 +248,9 @@ export function WorkoutScreen() {
     return () => clearTimeout(timer);
   }, [detail, pendingPace, startPace]);
 
-  // The first load is the user's implicit "get ready" action. Repetitions may
-  // arrive before or during those ten seconds; as soon as both are known, the
-  // pacer is scheduled on the original deadline. If the deadline arrives with
-  // an empty rep field, the normal missing-reps hand-off takes over.
+  // The first repetition count is the user's implicit "get ready" action. The
+  // debounce is important: while "10" is being typed, the persisted value
+  // briefly is "1". Only the settled cell value may configure the pacer.
   useEffect(() => {
     if (firstPace === null || detail == null) return;
     const line = detail.exercises.find(({ row }) => row.id === firstPace.rowId);
@@ -270,7 +269,7 @@ export function WorkoutScreen() {
           leadSeconds,
         );
         setFirstPace((current) => (current?.setId === firstPace.setId ? null : current));
-      }, 0);
+      }, 600);
       return () => clearTimeout(timer);
     }
 
@@ -439,12 +438,12 @@ export function WorkoutScreen() {
     return true;
   };
 
-  const armFirstPaceFromWeight = (
+  const armFirstPaceFromReps = (
     line: WorkoutExerciseDetail,
     setId: string,
     values: Partial<Parameters<typeof updateSetValues>[1]>,
   ): void => {
-    if (values.weight === undefined || values.weight <= 0) return;
+    if (values.reps === undefined || values.reps <= 0) return;
     const firstWorkingSet = exercises
       .flatMap((exercise) => exercise.sets)
       .find((set) => set.deletedAt === 0 && set.setType !== 'warmup');
@@ -463,9 +462,9 @@ export function WorkoutScreen() {
     armedFirstSets.current.add(setId);
     primeAnnouncer();
     announce('pace-start-10');
-    // The first digit deliberately arms the preparation. Ten seconds leave
-    // enough time to finish typing (for example 1 then 4), put the phone down,
-    // and get into position before the final 3–2–1.
+    // The first digit deliberately starts the ten-second preparation, while
+    // the effect above waits for the complete cell value before fixing the
+    // cadence target (for example 10, not the transient 1).
     setFirstPace({ rowId: line.row.id, setId, launchAt: launchAfter(10_000) });
   };
 
@@ -624,7 +623,7 @@ export function WorkoutScreen() {
                     onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
                     onWrite={(setId, values) => {
                       void updateSetValues(setId, values);
-                      armFirstPaceFromWeight(line, setId, values);
+                      armFirstPaceFromReps(line, setId, values);
                     }}
                     onComplete={(setId, values, set) => {
                       void completeSet(setId, values);

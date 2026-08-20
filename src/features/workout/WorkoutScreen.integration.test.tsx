@@ -457,7 +457,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(useRepPacer.getState().setId).toBeNull();
   });
 
-  it('arme automatiquement la première cadence dix secondes après la première charge', async () => {
+  it('arme la première cadence depuis la valeur complète des répétitions', async () => {
     const workoutId = await seedTwoSetWorkout();
     const first = (await getWorkoutDetail(workoutId))?.exercises[0]?.sets[0];
     if (first === undefined) throw new Error('série absente');
@@ -466,14 +466,15 @@ describe('WorkoutScreen — effort et fatigue', () => {
     renderWorkout();
 
     await screen.findByText('Développé couché');
-    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
-    expect(useRepPacer.getState().setId).toBeNull();
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '80');
+    expect(useRepPacer.getState().setId).toBeNull();
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '10');
 
     await waitFor(
       () => expect(useRepPacer.getState().setId).toBe(first.id),
       { timeout: 2_000 },
     );
+    expect(useRepPacer.getState().reps).toBe(10);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
   });
