@@ -68,12 +68,16 @@ import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
+import { nextPaceTarget, prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
 import {
-  nextPaceTarget,
-  prepareFollowingExercisePace,
-  prepareNextPace,
-  type PacePreparation,
-} from './paceTarget';
+  IDLE_PACE_PLAN,
+  PACE_LEAD_SECONDS,
+  leadSecondsAt,
+  paceDecision,
+  planAskingReps,
+  planWithoutSet,
+  type PacePlan,
+} from './paceMachine';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -110,34 +114,8 @@ type PlatesView = {
   barWeightAdjustable: boolean;
 };
 
-type PendingPace = {
-  rowId: string;
-  setId: string;
-  afterSetId?: string;
-};
-
-type TypedPace = {
-  rowId: string;
-  setId: string;
-  launchAt: number;
-};
-
 function launchAfter(delayMs: number): number {
   return Date.now() + delayMs;
-}
-
-/**
- * The set a preparation still points at, whatever state it is in — `null` once
- * it points nowhere.
- *
- * Both waiting states below are keyed on a set, and both must be dropped the
- * moment that set stops being the one to pace: validated, deleted, or simply
- * overtaken. A wait left behind is not inert — it blocks every later arming.
- */
-function pacedSetIdOf(preparation: PacePreparation): string | null {
-  if (preparation.kind === 'ready') return preparation.target.setId;
-  if (preparation.kind === 'missing-reps') return preparation.setId;
-  return null;
 }
 
 /** Live workout backed entirely by the persisted active-workout query. */
@@ -149,10 +127,8 @@ export function WorkoutScreen() {
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   /** The one set currently being asked how hard it was. */
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
-  /** A cadence waiting only for the missing repetitions to be typed. */
-  const [pendingPace, setPendingPace] = useState<PendingPace | null>(null);
-  /** A next working set, armed by the repetition count just entered in its row. */
-  const [typedPace, setTypedPace] = useState<TypedPace | null>(null);
+  /** The one cadence being prepared — waiting for reps, or armed by them. */
+  const [pacePlan, setPacePlan] = useState<PacePlan>(IDLE_PACE_PLAN);
   const armedTypedSets = useRef(new Set<string>());
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
@@ -242,81 +218,60 @@ export function WorkoutScreen() {
   const stopPace = useRepPacer((state) => state.stop);
   const restingSetId = rest.setId;
 
-  // Once the requested repetitions arrive, a short debounce lets a two-digit
-  // entry settle. Ten seconds gives enough time to put the phone down and get
-  // under the bar; the final 3–2–1 is armed by `RepPaceRail` at the right time.
+  // The whole preparation of a cadence, from one state and one rule.
+  //
+  // Waiting for repetitions is legitimate; waiting for a set nobody is going to
+  // perform is not, and it costs every arming that comes after — validating a
+  // set inside its own ten-second lead is the ordinary way of logging a series
+  // after doing it. `paceDecision` is what says which of the two this is.
+  //
+  // Ten seconds gives enough time to put the phone down and get under the bar;
+  // the final 3–2–1 is armed by `RepPaceRail` at the right time.
   useEffect(() => {
-    if (pendingPace === null || detail == null) return;
-    const line = detail.exercises.find(({ row }) => row.id === pendingPace.rowId);
+    if (pacePlan.kind === 'idle' || detail == null) return;
+    const rowId = pacePlan.rowId;
+    const line = detail.exercises.find(({ row }) => row.id === rowId);
     const preparation =
       line === undefined
         ? null
-        : prepareNextPace(line.sets, Date.now() - detail.workout.startedAt, pendingPace.afterSetId);
-    // Waiting for repetitions is legitimate; waiting for a set nobody is going
-    // to perform is not, and it costs every arming that comes after — the
-    // guard in `armPaceFromTypedReps` reads this very state.
-    if (preparation === null || pacedSetIdOf(preparation) !== pendingPace.setId) {
-      const forget = setTimeout(() => setPendingPace(null));
+        : prepareNextPace(
+            line.sets,
+            Date.now() - detail.workout.startedAt,
+            pacePlan.kind === 'awaiting-reps' ? pacePlan.afterSetId : undefined,
+          );
+    const decision = paceDecision(pacePlan, preparation, Date.now());
+
+    if (decision.kind === 'hold') return;
+    if (decision.kind === 'forget') {
+      const forget = setTimeout(() =>
+        setPacePlan((current) => planWithoutSet(current, pacePlan.setId)),
+      );
       return () => clearTimeout(forget);
     }
-    if (line === undefined || preparation.kind !== 'ready') return;
-    const target = preparation.target;
 
-    const timer = setTimeout(() => {
-      announce('pace-start-10');
-      startPace(line.row.id, target.setId, target.reps, target.repSeconds, 10);
-      setPendingPace((current) => (current?.setId === target.setId ? null : current));
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [detail, pendingPace, startPace]);
-
-  // A repetition count entered on the next set of an exercise is the user's
-  // implicit "get ready" action. The
-  // debounce is important: while "10" is being typed, the persisted value
-  // briefly is "1". Only the settled cell value may configure the pacer.
-  useEffect(() => {
-    if (typedPace === null || detail == null) return;
-    const line = detail.exercises.find(({ row }) => row.id === typedPace.rowId);
-    const preparation =
-      line === undefined ? null : prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
-    // Validating the set inside its own ten-second lead is the ordinary way of
-    // logging a series after doing it. The cadence it was preparing is void,
-    // and the state preparing it has to go with it — left behind it blocks
-    // every later arming, for the whole life of the screen.
-    if (preparation === null || pacedSetIdOf(preparation) !== typedPace.setId) {
-      const forget = setTimeout(() => setTypedPace(null));
-      return () => clearTimeout(forget);
-    }
-    if (line === undefined) return;
-
-    if (preparation.kind === 'ready') {
+    if (decision.kind === 'ask') {
       const timer = setTimeout(() => {
-        const remaining = Math.max(0, (typedPace.launchAt - Date.now()) / 1_000);
-        const leadSeconds = remaining > 0 ? remaining : 10;
-        startPace(
-          line.row.id,
-          preparation.target.setId,
-          preparation.target.reps,
-          preparation.target.repSeconds,
-          leadSeconds,
-        );
-        setTypedPace((current) => (current?.setId === typedPace.setId ? null : current));
-      }, 600);
+        announce('pace-reps-missing');
+        setPacePlan((current) => planAskingReps(current, decision.rowId, decision.setId));
+      }, decision.delayMs);
       return () => clearTimeout(timer);
     }
 
-    // Everything else was filtered above: the preparation still points at this
-    // set, and it is not ready — the repetitions are what is missing.
-    const timer = setTimeout(
-      () => {
-        announce('pace-reps-missing');
-        setPendingPace({ rowId: line.row.id, setId: typedPace.setId });
-        setTypedPace((current) => (current?.setId === typedPace.setId ? null : current));
-      },
-      Math.max(0, typedPace.launchAt - Date.now()),
-    );
+    const timer = setTimeout(() => {
+      if (decision.announceStart) announce('pace-start-10');
+      startPace(
+        decision.rowId,
+        decision.target.setId,
+        decision.target.reps,
+        decision.target.repSeconds,
+        // Read now, not when the decision was taken: the settle delay must not
+        // push the beat back.
+        leadSecondsAt(decision.launchAt, Date.now()),
+      );
+      setPacePlan((current) => planWithoutSet(current, decision.setId));
+    }, decision.delayMs);
     return () => clearTimeout(timer);
-  }, [detail, typedPace, startPace]);
+  }, [detail, pacePlan, startPace]);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -455,20 +410,24 @@ export function WorkoutScreen() {
     const preparation = prepareNextPace(line.sets, now - workout.startedAt, afterSetId);
     if (preparation.kind === 'done') return false;
     primeAnnouncer();
-    // An explicit launch (menu or end of rest) supersedes the delayed launch
-    // armed by typing. Otherwise its 600 ms callback can restart a cadence
-    // that the user has just stopped.
-    setTypedPace(null);
     // Starting the next set is the clearest possible signal that rest is over.
     // Keeping both clocks alive hides the pace reading and lets the rest
     // countdown speak over the repetition beats.
     rest.stop();
     if (preparation.kind === 'missing-reps') {
-      setPendingPace({ rowId: line.row.id, setId: preparation.setId, afterSetId });
+      setPacePlan({
+        kind: 'awaiting-reps',
+        rowId: line.row.id,
+        setId: preparation.setId,
+        afterSetId,
+      });
       announce('pace-reps-missing');
       return true;
     }
-    setPendingPace(null);
+    // An explicit launch supersedes whatever was being prepared: replacing the
+    // single plan is what keeps a delayed launch from restarting a cadence the
+    // user has just stopped.
+    setPacePlan(IDLE_PACE_PLAN);
     const target = preparation.target;
     startPace(line.row.id, target.setId, target.reps, target.repSeconds);
     return true;
@@ -488,13 +447,17 @@ export function WorkoutScreen() {
     primeAnnouncer();
     rest.stop();
     if (following.preparation.kind === 'missing-reps') {
-      setPendingPace({ rowId: following.rowId, setId: following.preparation.setId });
+      setPacePlan({
+        kind: 'awaiting-reps',
+        rowId: following.rowId,
+        setId: following.preparation.setId,
+      });
       announce('pace-reps-missing');
       return true;
     }
 
     const target = following.preparation.target;
-    setPendingPace(null);
+    setPacePlan(IDLE_PACE_PLAN);
     // A new exercise needs its own preparation window. The rest has just
     // finished; this is a fresh “dans dix secondes”, followed by 3–2–1.
     announce('pace-start-10');
@@ -515,8 +478,7 @@ export function WorkoutScreen() {
       nextWorkingSet?.id !== setId ||
       pacer.setId !== null ||
       rest.setId !== null ||
-      typedPace !== null ||
-      pendingPace !== null ||
+      pacePlan.kind !== 'idle' ||
       armedTypedSets.current.has(setId)
     ) {
       return;
@@ -528,7 +490,12 @@ export function WorkoutScreen() {
     // The first digit deliberately starts the ten-second preparation, while
     // the effect above waits for the complete cell value before fixing the
     // cadence target (for example 10, not the transient 1).
-    setTypedPace({ rowId: line.row.id, setId, launchAt: launchAfter(10_000) });
+    setPacePlan({
+      kind: 'arming',
+      rowId: line.row.id,
+      setId,
+      launchAt: launchAfter(PACE_LEAD_SECONDS * 1_000),
+    });
   };
 
   return (

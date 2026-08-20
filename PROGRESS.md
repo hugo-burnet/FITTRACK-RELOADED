@@ -2,7 +2,39 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.5 — la revue du lot 21**).
+**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.6 — une seule machine pour la cadence**).
+
+## v0.8.6 — une seule machine pour la cadence
+
+Les sept correctifs de la v0.8.5 étaient sept symptômes d'une même cause : la préparation d'une
+cadence vivait dans deux états React indépendants. `pendingPace` — « il ne manque que les
+répétitions » — et `typedPace` — « les répétitions viennent d'être saisies, le départ est armé ».
+Rien n'interdisait aux deux d'être posés en même temps, ni à l'un de survivre à la série qu'il
+désignait. Un état resté en place ne dort pas : il bloque tous les armements suivants pour le
+reste de la séance, et c'est exactement le bug qu'on a corrigé cinq fois.
+
+Les deux états n'en font plus qu'un, `PacePlan`, une union à trois branches — `idle`,
+`awaiting-reps`, `arming` — dans `src/features/workout/paceMachine.ts`. Être dans l'une, c'est
+être hors de l'autre : l'état illégal n'est plus rattrapé au cas par cas, il n'est plus
+représentable. La règle qui décide de la suite (`paceDecision`) est une fonction pure qui lit un
+plan et une préparation et rend une intention — attendre, oublier, demander les répétitions,
+lancer le métronome. L'écran garde l'horloge et le son ; le module garde la règle. Dix-huit tests
+couvrent la validation d'une série pendant ses dix secondes, la suppression de sa ligne, l'échéance
+dépassée et la reprise du temps restant.
+
+Côté écran de séance, deux `useEffect` de trente lignes chacun deviennent un seul, et la rustine
+posée en v0.8.4 — annuler à la main le lancement différé avant tout départ explicite — disparaît :
+remplacer le plan unique fait le travail. Le fichier perd une centaine de lignes.
+
+**Aucun changement de comportement volontaire** : mêmes annonces, mêmes 600 ms de stabilisation
+de la saisie, mêmes dix secondes de préparation, même reprise du temps restant quand la valeur se
+fixe tard. 1 681 tests / 156 fichiers, typecheck, lint et build de production. Aucun changement de
+schéma. Installer par-dessus la v0.8.5, sans désinstaller, pour conserver les données locales.
+
+**Reste à faire, un jour :** `WorkoutScreen.tsx` fait encore ~950 lignes pour une convention à 300.
+La cadence est rangée ; le repos, l'effort et les feuilles ne le sont pas.
+
+---
 
 ## v0.8.5 — les états parallèles de la séance, et le silence qui parlait
 
