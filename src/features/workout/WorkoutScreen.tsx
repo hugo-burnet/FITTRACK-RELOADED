@@ -68,7 +68,7 @@ import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
-import { nextPaceTarget } from './paceTarget';
+import { nextPaceTarget, prepareNextPace } from './paceTarget';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -329,16 +329,25 @@ export function WorkoutScreen() {
         ? { reps: pacer.reps, repSeconds: pacer.repSeconds }
         : nextPaceTarget(exerciseMenuLine.sets, exerciseMenuOpenedAt - workout.startedAt);
 
-  const startPaceFor = (line: WorkoutExerciseDetail, now: number): boolean => {
+  const startPaceFor = (
+    line: WorkoutExerciseDetail,
+    now: number,
+    afterSetId?: string,
+  ): boolean => {
     // Read at the tap, never at render: the tempo is a function of how long
     // the session has been running.
-    const target = nextPaceTarget(line.sets, now - workout.startedAt);
-    if (target === null) return false;
+    const preparation = prepareNextPace(line.sets, now - workout.startedAt, afterSetId);
+    if (preparation.kind === 'done') return false;
     primeAnnouncer();
     // Starting the next set is the clearest possible signal that rest is over.
     // Keeping both clocks alive hides the pace reading and lets the rest
     // countdown speak over the repetition beats.
     rest.stop();
+    if (preparation.kind === 'missing-reps') {
+      announce('pace-reps-missing');
+      return true;
+    }
+    const target = preparation.target;
     startPace(line.row.id, target.setId, target.reps, target.repSeconds);
     return true;
   };
@@ -443,7 +452,11 @@ export function WorkoutScreen() {
                             onDone: () => {
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
-                              const paced = startPaceFor(line, Date.now());
+                              const paced = startPaceFor(
+                                line,
+                                Date.now(),
+                                rest.setId ?? undefined,
+                              );
                               if (!paced) rest.stop();
                               return paced;
                             },

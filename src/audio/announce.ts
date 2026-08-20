@@ -3,6 +3,7 @@ import { EMPTY_MEMORY, pickAtRandom, planCue, type AnnouncerMemory } from './ann
 import { audioBus, setAudioEcho, unlockAudio } from './context';
 import { CUES, allClips, clipsFor, type CueId } from './cues';
 import { playTone } from './tones';
+import { impactPack } from './impactPack';
 import { voicePack } from './voicePack';
 
 /**
@@ -30,6 +31,7 @@ export function primeAnnouncer(): void {
   setAudioEcho(loadAnnouncerEcho());
   if (warmed) return;
   warmed = true;
+  void impactPack.warmUp(bus);
   void voicePack.warmUp(bus, allClips());
 }
 

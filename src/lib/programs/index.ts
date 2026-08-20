@@ -33,6 +33,7 @@ export {
 export {
   PROGRAM_RECIPE_IDS,
   applyProgramRecipe,
+  matchingProgramRecipe,
   type ApplyProgramRecipeOptions,
   type ProgramRecipeId,
   type ProgramRecipeWeek,

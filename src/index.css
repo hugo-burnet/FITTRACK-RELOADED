@@ -88,7 +88,8 @@
 
 /* Personal-record readouts: the machine's engraved figures, not UI copy. */
 @utility record-figure {
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-family:
+    ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.035em;
 }
@@ -156,4 +157,55 @@
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* The effort rail: a native range keeps keyboard and screen-reader semantics,
+   while the loaded track and heavy thumb make it belong to the workout grid. */
+.rpe-gauge {
+  --rpe-progress: 50%;
+  height: 2.75rem;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.rpe-gauge::-webkit-slider-runnable-track {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent-ink) 0 var(--rpe-progress),
+    var(--border) var(--rpe-progress) 100%
+  );
+}
+
+.rpe-gauge::-webkit-slider-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: -0.6875rem;
+  appearance: none;
+  border: 0.25rem solid var(--surface-2);
+  border-radius: 50%;
+  background: var(--accent-ink);
+  box-shadow: 0 0 0 1px var(--text-2);
+}
+
+.rpe-gauge::-moz-range-track {
+  height: 0.375rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent-ink) 0 var(--rpe-progress),
+    var(--border) var(--rpe-progress) 100%
+  );
+}
+
+.rpe-gauge::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0.25rem solid var(--surface-2);
+  border-radius: 50%;
+  background: var(--accent-ink);
+  box-shadow: 0 0 0 1px var(--text-2);
 }

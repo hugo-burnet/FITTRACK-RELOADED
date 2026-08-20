@@ -16,11 +16,13 @@ export type CueId =
   | 'last-set-ahead'
   | 'exercise-cleared'
   | 'record-beaten'
+  | 'rest-10'
   | 'rest-3'
   | 'rest-2'
   | 'rest-1'
   | 'rest-over'
   | 'rest-extended'
+  | 'pace-reps-missing'
   | 'rep-tick'
   | 'rep-3'
   | 'rep-2'
@@ -55,6 +57,7 @@ export const CUES: Record<CueId, CueDefinition> = {
   'last-set-ahead': { tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000 },
   'exercise-cleared': { tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000 },
   'record-beaten': { tone: 'record', priority: 3, gapMs: 0, cooldownMs: 10_000 },
+  'rest-10': { tone: null, priority: 2, gapMs: 1_000, cooldownMs: 0 },
   // The countdown is the cadence: three ticks, one per second, no cooldown
   // between them and nothing allowed to speak across them.
   'rest-3': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
@@ -64,6 +67,7 @@ export const CUES: Record<CueId, CueDefinition> = {
   // Said once, when the effort strip buys you seconds. Worth a sentence because
   // the number on the rest line changed under you and nothing else explains it.
   'rest-extended': { tone: 'validate', priority: 2, gapMs: 1_000, cooldownMs: 5_000 },
+  'pace-reps-missing': { tone: 'chime', priority: 3, gapMs: 700, cooldownMs: 2_000 },
   // The rep metronome. `rep-tick` is the beat and says nothing — it fires
   // eight to twelve times a set. Only the last three reps are named, and the
   // words are recorded apart from the rest countdown's: the same "trois" said

@@ -5,6 +5,7 @@ import {
   MIN_LOAD_INDEX,
   PROGRAM_RECIPE_IDS,
   applyProgramRecipe,
+  matchingProgramRecipe,
   type ProgramRecipeId,
 } from '@/lib/programs';
 import { t } from '@/i18n/fr';
@@ -39,9 +40,10 @@ interface WeekEditor {
 
 export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }: Props) {
   const [editor, setEditor] = useState<WeekEditor | null>(null);
-  // No persisted "active recipe": it is a trajectory you just laid down, and the
-  // first manual touch means the weeks are no longer the recipe's own.
-  const [recipe, setRecipe] = useState<ProgramRecipeId | null>(null);
+  // The weeks are the source of truth. Deriving the recipe is what makes an
+  // already-prefilled draft look selected on first render, without persisting a
+  // second state that could disagree with the trajectory below it.
+  const recipe = matchingProgramRecipe(weeks, effectiveFromWeekIndex);
 
   const updateEditor = (changes: Partial<ProgramWeekDraft>) => {
     setEditor((current) =>
@@ -54,7 +56,6 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
   };
 
   const applyRecipe = (id: ProgramRecipeId) => {
-    setRecipe(id);
     onChange(
       applyProgramRecipe(id, weeks.length, {
         existing: weeks,
@@ -66,7 +67,6 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
   const saveEditor = () => {
     if (editor === null) return;
     onChange(weeks.map((week, index) => (index === editor.index ? editor.week : week)));
-    setRecipe(null);
     setEditor(null);
   };
 
@@ -140,9 +140,7 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
                   })}
               leading={
                 <span
-                  className={`record-figure text-sm font-semibold ${
-                    sealed ? 'opacity-50' : ''
-                  }`}
+                  className={`record-figure text-sm font-semibold ${sealed ? 'opacity-50' : ''}`}
                 >
                   {String(number).padStart(2, '0')}
                 </span>

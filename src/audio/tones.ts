@@ -1,4 +1,5 @@
 import type { AudioBus } from './context';
+import { impactPack } from './impactPack';
 
 /**
  * The synthesised half of the announcer.
@@ -122,6 +123,7 @@ const TONES: Record<ToneId, readonly Partial_[]> = {
  */
 export function playTone(bus: AudioBus, tone: ToneId, when = 0): void {
   try {
+    if (tone === 'repTap' && impactPack.play(bus, when)) return;
     const start = bus.context.currentTime + Math.max(0, when);
     const destination = ANNOUNCED[tone] ? bus.voice : bus.master;
     for (const partial of TONES[tone]) voice(bus, destination, partial, start);

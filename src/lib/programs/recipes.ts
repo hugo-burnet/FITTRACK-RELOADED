@@ -49,9 +49,7 @@ export function applyProgramRecipe(
   if (!Number.isInteger(durationWeeks) || durationWeeks <= 0) return [];
 
   const sealedBefore = options.effectiveFromWeekIndex ?? 0;
-  const existingByIndex = new Map(
-    (options.existing ?? []).map((week) => [week.weekIndex, week]),
-  );
+  const existingByIndex = new Map((options.existing ?? []).map((week) => [week.weekIndex, week]));
 
   return Array.from({ length: durationWeeks }, (_, weekIndex) => {
     if (weekIndex < sealedBefore) {
@@ -62,4 +60,30 @@ export function applyProgramRecipe(
     }
     return recipeWeek(id, weekIndex);
   });
+}
+
+/**
+ * Identifies the recipe already visible in the editable part of a block.
+ * Recipe selection is derived from the weeks rather than stored beside them:
+ * opening a prefilled draft therefore colours the right button, while the
+ * first manual change naturally clears it.
+ */
+export function matchingProgramRecipe(
+  weeks: readonly ProgramRecipeWeek[],
+  effectiveFromWeekIndex = 0,
+): ProgramRecipeId | null {
+  if (weeks.length === 0 || effectiveFromWeekIndex >= weeks.length) return null;
+
+  return (
+    PROGRAM_RECIPE_IDS.find((id) => {
+      const expected = new Map(
+        applyProgramRecipe(id, weeks.length).map((week) => [week.weekIndex, week]),
+      );
+      return weeks.every((week) => {
+        if (week.weekIndex < effectiveFromWeekIndex) return true;
+        const recipeWeek = expected.get(week.weekIndex);
+        return recipeWeek?.phase === week.phase && recipeWeek.loadIndex === week.loadIndex;
+      });
+    }) ?? null
+  );
 }

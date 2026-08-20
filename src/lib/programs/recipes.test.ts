@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PROGRAM_PHASES } from '@/data/types';
 import { SUGGESTED_LOAD_INDEX } from './phaseSuggestions';
-import { PROGRAM_RECIPE_IDS, applyProgramRecipe } from './recipes';
+import { PROGRAM_RECIPE_IDS, applyProgramRecipe, matchingProgramRecipe } from './recipes';
 
 const shape = (weeks: readonly { phase: string; loadIndex: number }[]): string =>
   weeks.map((week) => `${week.phase} ${week.loadIndex}`).join(' | ');
@@ -92,9 +92,7 @@ describe('applyProgramRecipe', () => {
         effectiveFromWeekIndex: 2,
       });
 
-      expect(shape(weeks)).toBe(
-        ['test 110', 'test 110', 'overload 110', 'deload 60'].join(' | '),
-      );
+      expect(shape(weeks)).toBe(['test 110', 'test 110', 'overload 110', 'deload 60'].join(' | '));
     });
 
     /** The pattern is anchored to the block, not to the edit: S5 of an 8-week
@@ -130,5 +128,27 @@ describe('applyProgramRecipe', () => {
       expect(weeks[0]).toMatchObject({ phase: 'test', loadIndex: 110 });
       expect(weeks[1]).toMatchObject({ phase: 'progression', loadIndex: 105 });
     });
+  });
+});
+
+describe('matchingProgramRecipe', () => {
+  it('reconnaît la recette déjà appliquée au premier affichage', () => {
+    expect(matchingProgramRecipe(applyProgramRecipe('hypertrophy', 8))).toBe('hypertrophy');
+    expect(matchingProgramRecipe(applyProgramRecipe('strength', 8))).toBe('strength');
+    expect(matchingProgramRecipe(applyProgramRecipe('return', 8))).toBe('return');
+  });
+
+  it('ne garde aucun bouton actif après une retouche manuelle', () => {
+    const weeks = applyProgramRecipe('hypertrophy', 8);
+    weeks[4] = { ...weeks[4]!, phase: 'deload', loadIndex: 60 };
+
+    expect(matchingProgramRecipe(weeks)).toBeNull();
+  });
+
+  it('ignore les semaines scellées et reconnaît le trajet encore modifiable', () => {
+    const weeks = applyProgramRecipe('hypertrophy', 8);
+    weeks[0] = { ...weeks[0]!, phase: 'test', loadIndex: 110 };
+
+    expect(matchingProgramRecipe(weeks, 4)).toBe('hypertrophy');
   });
 });

@@ -95,9 +95,7 @@ async function createEditableActiveProgram() {
     startsAt: mondayWeeksAgo(4),
     durationWeeks: 8,
   });
-  await createScheduleRevision(program.id, 0, [
-    { routineId: routine.id, dayOfWeek: 1, order: 0 },
-  ]);
+  await createScheduleRevision(program.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
   await replaceProgramWeeks(
     program.id,
     Array.from({ length: 8 }, (_, weekIndex) => ({
@@ -158,6 +156,12 @@ describe('parcours de création d’un programme', () => {
     expect(screen.queryByRole('button', { name: 'Cadre' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Split' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Semaines' })).not.toBeInTheDocument();
+
+    // Le trajet de départ est déjà la recette Hypertrophie : le bouton doit le
+    // refléter dès le premier affichage, sans imposer un clic redondant.
+    expect(
+      screen.getByRole('button', { name: 'Appliquer la recette Hypertrophie' }),
+    ).toHaveAttribute('aria-pressed', 'true');
 
     // Une recette pose le trajet — puis la semaine 5 le corrige à la main, ce
     // qui relâche la recette : elle n'est pas un état, juste un point de départ.
@@ -337,9 +341,7 @@ describe('parcours de création d’un programme', () => {
     await createScheduleRevision(program.id, 0, [
       { routineId: initial.id, dayOfWeek: 1, order: 0 },
     ]);
-    await createScheduleRevision(program.id, 2, [
-      { routineId: future.id, dayOfWeek: 1, order: 0 },
-    ]);
+    await createScheduleRevision(program.id, 2, [{ routineId: future.id, dayOfWeek: 1, order: 0 }]);
     await activateProgram(program.id);
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}/edit`);
@@ -458,9 +460,9 @@ describe('parcours de création d’un programme', () => {
   });
 
   it('distingue une erreur de lecture de l’absence et du chargement', async () => {
-    const read = vi.spyOn(programsRepository, 'getProgramDetail').mockRejectedValueOnce(
-      new Error('read failed'),
-    );
+    const read = vi
+      .spyOn(programsRepository, 'getProgramDetail')
+      .mockRejectedValueOnce(new Error('read failed'));
 
     renderProgramFlow('/programs/unreadable/edit');
 
@@ -521,10 +523,7 @@ describe('parcours de création d’un programme', () => {
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
 
     await user.click(await screen.findByRole('button', { name: 'Nouvelle routine' }));
-    await user.type(
-      await screen.findByRole('textbox', { name: 'Nom de la routine' }),
-      'Poussée',
-    );
+    await user.type(await screen.findByRole('textbox', { name: 'Nom de la routine' }), 'Poussée');
     await user.click(screen.getByRole('button', { name: 'Créer et placer' }));
 
     // Créée, et déjà choisie pour cette séance : on continue sans rien retaper.
@@ -668,9 +667,7 @@ describe('suivi du bloc courant', () => {
 
     renderProgramFlow(`/programs/${program.id}`);
 
-    expect(
-      await screen.findByRole('button', { name: 'Force terminée, Terminée' }),
-    ).toBeDisabled();
+    expect(await screen.findByRole('button', { name: 'Force terminée, Terminée' })).toBeDisabled();
   });
 
   it('supprime le bloc depuis la fiche sans toucher aux séances de l’historique', async () => {
@@ -777,9 +774,10 @@ describe('suivi du bloc courant', () => {
   it('propose d’abord la première séance ordonnée lorsque deux séances tombent aujourd’hui', async () => {
     const { program, entries, routines } = await createTrackingProgram();
     const todayEntries = [entries[2]!, entries[3]!];
-    const later = todayEntries[0]!.id.localeCompare(todayEntries[1]!.id) < 0
-      ? todayEntries[0]!
-      : todayEntries[1]!;
+    const later =
+      todayEntries[0]!.id.localeCompare(todayEntries[1]!.id) < 0
+        ? todayEntries[0]!
+        : todayEntries[1]!;
     const first = later.id === todayEntries[0]!.id ? todayEntries[1]! : todayEntries[0]!;
     await db.programScheduleEntries.update(later.id, { dayOfWeek: 4, order: 1 });
     await db.programScheduleEntries.update(first.id, { dayOfWeek: 4, order: 0 });
@@ -797,7 +795,9 @@ describe('suivi du bloc courant', () => {
 
     expect(await screen.findByText('Une séance est déjà en cours.')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Poussée du jour, Aujourd’hui' })).toBeDisabled();
-    expect(screen.queryByRole('button', { name: 'Démarrer Poussée du jour' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Démarrer Poussée du jour' }),
+    ).not.toBeInTheDocument();
   });
 
   it('confirme un décalage en semaines entières et avertit lorsque le bloc a commencé', async () => {
@@ -807,7 +807,9 @@ describe('suivi du bloc courant', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
     await user.click(screen.getByRole('button', { name: /^Décaler le bloc/ }));
-    expect(screen.getByText('Le bloc a déjà commencé. Les séances passées ne bougeront pas.')).toBeVisible();
+    expect(
+      screen.getByText('Le bloc a déjà commencé. Les séances passées ne bougeront pas.'),
+    ).toBeVisible();
     const weeks = screen.getByRole('spinbutton', { name: 'Nombre de semaines' });
     await user.clear(weeks);
     await user.type(weeks, '2.5');
@@ -831,7 +833,9 @@ describe('suivi du bloc courant', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Options du bloc' }));
     await user.click(screen.getByRole('button', { name: /^Terminer le bloc/ }));
-    expect(screen.getByText('Les semaines, le split et les séances restent dans ton historique.')).toBeVisible();
+    expect(
+      screen.getByText('Les semaines, le split et les séances restent dans ton historique.'),
+    ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Terminer le bloc' }));
 
     await waitFor(async () => {
@@ -962,11 +966,13 @@ describe('liste des blocs', () => {
         phase: 'construction' as const,
       })),
     );
-    await createScheduleRevision(active.id, 0, [
-      { routineId: routine.id, dayOfWeek: 1, order: 0 },
-    ]);
+    await createScheduleRevision(active.id, 0, [{ routineId: routine.id, dayOfWeek: 1, order: 0 }]);
     await activateProgram(active.id);
-    await createProgramDraft({ name: 'Bloc brouillon', startsAt: TRACKING_START, durationWeeks: 8 });
+    await createProgramDraft({
+      name: 'Bloc brouillon',
+      startsAt: TRACKING_START,
+      durationWeeks: 8,
+    });
 
     renderProgramFlow('/programs');
 

@@ -17,6 +17,7 @@ import { nativeNotifications } from '@/platform/nativeNotifications';
  * all a browser deciding whether to throttle the tab.
  */
 const LEAD_MS = 3_000;
+const TEN_SECONDS_MS = 10_000;
 
 /** A tick left to play, with its offset in seconds from now. */
 export interface CountdownTick {
@@ -70,13 +71,24 @@ export function fireCountdown(endsAt: number, now = Date.now()): boolean {
  * two minutes that standing the notification down early would have risked.
  */
 export function armRestCountdown(endsAt: number, now = Date.now()): () => void {
-  const id = setTimeout(
-    () => {
-      if (!fireCountdown(endsAt)) return;
-      void nativeNotifications.standDownRest(endsAt);
-    },
-    Math.max(0, endsAt - LEAD_MS - now),
+  const ids: ReturnType<typeof setTimeout>[] = [];
+
+  // Unlike the final countdown this early notice is informative only: it never
+  // stands the Android notification down, and it is skipped when the rest was
+  // armed with fewer than ten seconds left rather than lying about the time.
+  if (endsAt - now >= TEN_SECONDS_MS - 150) {
+    ids.push(setTimeout(() => announce('rest-10'), Math.max(0, endsAt - TEN_SECONDS_MS - now)));
+  }
+
+  ids.push(
+    setTimeout(
+      () => {
+        if (!fireCountdown(endsAt)) return;
+        void nativeNotifications.standDownRest(endsAt);
+      },
+      Math.max(0, endsAt - LEAD_MS - now),
+    ),
   );
 
-  return () => clearTimeout(id);
+  return () => ids.forEach(clearTimeout);
 }

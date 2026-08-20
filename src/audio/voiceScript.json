@@ -93,6 +93,16 @@
       }
     },
     {
+      "id": "rest-10-1",
+      "cue": "rest-10",
+      "text": "Reprise dans dix secondes.",
+      "direction": "Annonce préalable, plate et brève. Le nombre est une échéance, pas un encouragement.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
       "id": "rest-3-1",
       "cue": "rest-3",
       "text": "Trois.",
@@ -170,6 +180,16 @@
       "settings": {
         "stability": 0.8,
         "style": 0.1
+      }
+    },
+    {
+      "id": "pace-reps-missing-1",
+      "cue": "pace-reps-missing",
+      "text": "Veuillez renseigner un nombre de répétitions pour la prochaine série.",
+      "direction": "Consigne administrative claire. Aucun reproche et aucune intonation interrogative.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
       }
     },
     {

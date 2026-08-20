@@ -380,10 +380,11 @@ describe('WorkoutScreen — effort et fatigue', () => {
     const rest = useRestTimer.getState();
     expect(rest.setId).not.toBeNull();
 
+    fireEvent.change(within(strip).getByRole('slider', { name: t('workout.rpeGauge') }), {
+      target: { value: '9' },
+    });
     await user.click(
-      within(strip).getByRole('button', {
-        name: t('workout.effortOption', { label: t('workout.effortHard'), value: '9' }),
-      }),
+      within(strip).getByRole('button', { name: t('workout.rpeConfirm', { value: '9' }) }),
     );
 
     // Trente secondes de plus, comptées depuis l'échéance en cours : les
@@ -439,6 +440,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     renderWorkout();
 
     await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     act(() => useRestTimer.getState().start('previous-set', 90));
     await user.click(
       screen.getByRole('button', {
@@ -464,6 +466,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     renderWorkout();
 
     await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '6');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
     await waitFor(async () => {
@@ -476,6 +479,24 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
     await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id));
     expect(useRestTimer.getState().setId).toBeNull();
-    expect(screen.getByText(/Cadence · 1\/8/)).toBeVisible();
+    expect(screen.getByText(/Cadence · 1\/6/)).toBeVisible();
+  });
+
+  it('ne lance pas une prescription fantôme quand les prochaines reps sont vides', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const detail = await getWorkoutDetail(workoutId);
+    const first = detail?.exercises[0]?.sets[0];
+    if (first === undefined) throw new Error('série absente');
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+    act(() => useRestTimer.getState().start(first.id, 0.05));
+
+    await waitFor(() => expect(useRestTimer.getState().setId).toBeNull());
+    expect(useRepPacer.getState().setId).toBeNull();
   });
 });

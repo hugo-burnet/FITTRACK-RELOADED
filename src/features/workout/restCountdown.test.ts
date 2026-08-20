@@ -49,15 +49,35 @@ describe('armRestCountdown', () => {
 
   it('n’annonce rien avant les trois dernières secondes', () => {
     armRestCountdown(90_000, 0);
-    vi.advanceTimersByTime(86_000);
+    vi.advanceTimersByTime(79_000);
     expect(announce).not.toHaveBeenCalled();
+  });
+
+  it('annonce la reprise dix secondes avant sans désarmer la notification', () => {
+    armRestCountdown(90_000, 0);
+    vi.advanceTimersByTime(80_000);
+
+    expect(announce).toHaveBeenCalledWith('rest-10');
+    expect(standDownRest).not.toHaveBeenCalled();
+  });
+
+  it('ne ment pas avec une annonce à dix sur un repos plus court', () => {
+    armRestCountdown(9_000, 0);
+    vi.advanceTimersByTime(6_000);
+
+    expect(announce.mock.calls.map(([cue]) => cue)).toEqual(['rest-3', 'rest-2', 'rest-1']);
   });
 
   it('joue les trois tics puis rend la main à la notification', () => {
     armRestCountdown(90_000, 0);
     vi.advanceTimersByTime(87_000);
 
-    expect(announce.mock.calls.map(([cue]) => cue)).toEqual(['rest-3', 'rest-2', 'rest-1']);
+    expect(announce.mock.calls.map(([cue]) => cue)).toEqual([
+      'rest-10',
+      'rest-3',
+      'rest-2',
+      'rest-1',
+    ]);
     expect(standDownRest).toHaveBeenCalledOnce();
   });
 

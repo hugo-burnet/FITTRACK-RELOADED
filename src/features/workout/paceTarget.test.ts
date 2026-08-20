@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SetType, WorkoutSet } from '@/data/types';
-import { nextPaceTarget } from './paceTarget';
+import { nextPaceTarget, prepareNextPace } from './paceTarget';
 
 function set(
   id: string,
@@ -9,6 +9,7 @@ function set(
   // défaut, et le test « sans cible » testerait une série à huit répétitions.
   targetReps: number | null = 8,
   setType: SetType = 'normal',
+  reps: number | undefined = targetReps ?? undefined,
 ): WorkoutSet {
   return {
     id,
@@ -24,6 +25,7 @@ function set(
     isCompleted,
     performedAt: 0,
     targetReps: targetReps ?? undefined,
+    reps,
   };
 }
 
@@ -39,9 +41,26 @@ describe('nextPaceTarget', () => {
     expect(target?.setId).toBe('a');
   });
 
-  it('ne propose rien sans cible de répétitions', () => {
-    expect(nextPaceTarget([set('a', 0, null)], 0)).toBeNull();
-    expect(nextPaceTarget([set('a', 0, 0)], 0)).toBeNull();
+  it('lit les répétitions saisies et non la prescription', () => {
+    expect(nextPaceTarget([set('a', 0, 12, 'normal', 7)], 0)?.reps).toBe(7);
+  });
+
+  it('distingue une prochaine série vide d’une séance terminée', () => {
+    expect(prepareNextPace([{ ...set('a', 0, 8), reps: undefined }], 0)).toEqual({
+      kind: 'missing-reps',
+      setId: 'a',
+    });
+    expect(prepareNextPace([set('a', 1)], 0)).toEqual({ kind: 'done' });
+  });
+
+  it('regarde après la série dont le repos vient de finir', () => {
+    const justCompleted = set('a', 0, 8, 'normal', 8);
+    const next = { ...set('b', 0, 8), reps: undefined };
+
+    expect(prepareNextPace([justCompleted, next], 0, justCompleted.id)).toEqual({
+      kind: 'missing-reps',
+      setId: next.id,
+    });
   });
 
   it('ne propose rien quand tout est fait', () => {
