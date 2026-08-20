@@ -62,20 +62,36 @@ export interface CueDefinition {
 
 export const CUES: Record<CueId, CueDefinition> = {
   'workout-started': {
-    tone: 'chime', priority: 2, gapMs: 1_500, cooldownMs: 60_000, duckMusic: true,
+    tone: 'chime',
+    priority: 2,
+    gapMs: 1_500,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   // The one cue with no line: it fires on every validated set.
   'set-validated': { tone: 'validate', priority: 0, gapMs: 0, cooldownMs: 0, duckMusic: false },
   'last-set-ahead': {
-    tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000, duckMusic: true,
+    tone: 'validate',
+    priority: 2,
+    gapMs: 3_000,
+    cooldownMs: 20_000,
+    duckMusic: true,
   },
   'exercise-cleared': {
-    tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000, duckMusic: true,
+    tone: 'validate',
+    priority: 2,
+    gapMs: 3_000,
+    cooldownMs: 20_000,
+    duckMusic: true,
   },
   // One validation may create several distinct records. The voice pack queues
   // their lines; a cue cooldown here would silently discard all but the first.
   'record-beaten': {
-    tone: 'record', priority: 3, gapMs: 0, cooldownMs: 0, duckMusic: true,
+    tone: 'record',
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 0,
+    duckMusic: true,
   },
   'rest-10': { tone: null, priority: 2, gapMs: 1_000, cooldownMs: 0, duckMusic: true },
   // The countdown is the cadence: three ticks, one per second, no cooldown
@@ -84,18 +100,34 @@ export const CUES: Record<CueId, CueDefinition> = {
   'rest-2': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: true },
   'rest-1': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: true },
   'rest-over': {
-    tone: 'chime', priority: 2, gapMs: 700, cooldownMs: 5_000, duckMusic: true,
+    tone: 'chime',
+    priority: 2,
+    gapMs: 700,
+    cooldownMs: 5_000,
+    duckMusic: true,
   },
   // Said once, when the effort strip buys you seconds. Worth a sentence because
   // the number on the rest line changed under you and nothing else explains it.
   'rest-extended': {
-    tone: 'validate', priority: 2, gapMs: 1_000, cooldownMs: 5_000, duckMusic: true,
+    tone: 'validate',
+    priority: 2,
+    gapMs: 1_000,
+    cooldownMs: 5_000,
+    duckMusic: true,
   },
   'pace-start-10': {
-    tone: null, priority: 3, gapMs: 1_000, cooldownMs: 0, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 1_000,
+    cooldownMs: 0,
+    duckMusic: true,
   },
   'pace-reps-missing': {
-    tone: 'chime', priority: 3, gapMs: 700, cooldownMs: 2_000, duckMusic: true,
+    tone: 'chime',
+    priority: 3,
+    gapMs: 700,
+    cooldownMs: 2_000,
+    duckMusic: true,
   },
   // The rep metronome. `rep-tick` is the beat and says nothing — it fires
   // eight to twelve times a set. Only the last three reps are named, and the
@@ -106,33 +138,69 @@ export const CUES: Record<CueId, CueDefinition> = {
   'rep-2': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: false },
   'rep-1': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: false },
   'set-done': {
-    tone: 'validate', priority: 2, gapMs: 700, cooldownMs: 3_000, duckMusic: true,
+    tone: 'validate',
+    priority: 2,
+    gapMs: 700,
+    cooldownMs: 3_000,
+    duckMusic: true,
   },
   // These lines form one deliberate debrief. They all enter the voice pack at
   // once; its one-second breathing room serializes them without losing any.
   'workout-recap-start': {
-    tone: 'chime', priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: 'chime',
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'coach-recap-steady': {
-    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'coach-recap-progress': {
-    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'coach-recap-increase': {
-    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'coach-recap-adjust': {
-    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'coach-recap-fatigue': {
-    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'coach-recap-plateau': {
-    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+    tone: null,
+    priority: 3,
+    gapMs: 0,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
   'workout-finished': {
-    tone: 'chime', priority: 3, gapMs: 1_500, cooldownMs: 60_000, duckMusic: true,
+    tone: 'chime',
+    priority: 3,
+    gapMs: 1_500,
+    cooldownMs: 60_000,
+    duckMusic: true,
   },
 };
 
@@ -142,9 +210,14 @@ export interface VoiceLine {
   text: string;
 }
 
-const LINES: readonly VoiceLine[] = (script.lines as VoiceLine[]).filter(
-  (line) => line.cue in CUES,
-);
+interface RecordedLine {
+  id: string;
+  cue: string;
+  text: string;
+}
+
+const SCRIPT_LINES = script.lines as RecordedLine[];
+const LINES: readonly VoiceLine[] = SCRIPT_LINES.filter((line) => line.cue in CUES) as VoiceLine[];
 
 const BY_CUE = new Map<CueId, string[]>();
 for (const line of LINES) {
@@ -165,5 +238,5 @@ export function allClips(): readonly string[] {
 
 /** The written line behind a clip, for the credits screen and the generator. */
 export function textOf(clip: string): string | undefined {
-  return LINES.find((line) => line.id === clip)?.text;
+  return SCRIPT_LINES.find((line) => line.id === clip)?.text;
 }

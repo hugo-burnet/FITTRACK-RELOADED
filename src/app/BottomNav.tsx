@@ -34,6 +34,7 @@ export function BottomNav() {
             <NavLink
               to={to}
               end={end}
+              data-tutorial-nav={to}
               className={({ isActive }) =>
                 `relative flex min-h-14 flex-col items-center justify-center gap-1 pt-1
                  ${isActive ? 'text-[var(--accent-ink)]' : 'text-[var(--text-2)]'}`

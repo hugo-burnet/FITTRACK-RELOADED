@@ -1,0 +1,385 @@
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { primeAnnouncer } from '@/audio/announce';
+import { textOf } from '@/audio/cues';
+import type { AnnouncerMode } from '@/audio/announcer';
+import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
+import { useRepPacer } from '@/stores/repPacer';
+import { useRestTimer } from '@/stores/restTimer';
+import { ActionSheet, Button, Sheet } from '@/ui';
+import { TutorialContext, type TutorialControls } from './tutorialContext';
+import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
+import {
+  contextualTutorial,
+  FULL_TUTORIAL,
+  TUTORIAL_TOPIC_LABELS,
+  TUTORIAL_VOICE_CHOICE_CLIP,
+  tutorialTopicForPath,
+  type TutorialStep,
+} from './tutorialScript';
+import {
+  loadTutorialCompletion,
+  saveTutorialCompletion,
+  type TutorialCompletion,
+} from './tutorialStore';
+
+type TourKind = 'full' | 'contextual';
+type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice';
+
+function TutorialOverlay({
+  step,
+  index,
+  count,
+  pathname,
+  onPrevious,
+  onNext,
+  onSkip,
+}: {
+  step: TutorialStep;
+  index: number;
+  count: number;
+  pathname: string;
+  onPrevious: () => void;
+  onNext: () => void;
+  onSkip: () => void;
+}) {
+  const [rect, setRect] = useState<DOMRect | null>(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const measure = () => {
+      const target = document.querySelector<HTMLElement>(`[data-tutorial-${step.target}]`);
+      setRect(target?.getBoundingClientRect() ?? null);
+    };
+    frame = requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+    window.addEventListener('scroll', measure, true);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('scroll', measure, true);
+    };
+  }, [pathname, step]);
+
+  const inset = 6;
+  const focus =
+    rect === null
+      ? null
+      : {
+          top: Math.max(0, rect.top - inset),
+          left: Math.max(0, rect.left - inset),
+          right: Math.min(window.innerWidth, rect.right + inset),
+          bottom: Math.min(window.innerHeight, rect.bottom + inset),
+        };
+  const scrim = 'bg-black/65';
+
+  return (
+    <div
+      className="fixed inset-0 z-[70]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Visite guidée"
+    >
+      {focus === null ? (
+        <div className={`absolute inset-0 ${scrim}`} />
+      ) : (
+        <>
+          <div className={`absolute inset-x-0 top-0 ${scrim}`} style={{ height: focus.top }} />
+          <div
+            className={`absolute left-0 ${scrim}`}
+            style={{ top: focus.top, width: focus.left, height: focus.bottom - focus.top }}
+          />
+          <div
+            className={`absolute right-0 ${scrim}`}
+            style={{
+              top: focus.top,
+              width: window.innerWidth - focus.right,
+              height: focus.bottom - focus.top,
+            }}
+          />
+          <div className={`absolute inset-x-0 bottom-0 ${scrim}`} style={{ top: focus.bottom }} />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute rounded-[1.25rem] border border-[var(--accent-ink)]
+              shadow-[0_0_0_1px_color-mix(in_srgb,var(--accent-ink)_35%,transparent)]
+              transition-[top,left,width,height] duration-[var(--dur-2)] ease-[var(--ease-mech)]"
+            style={{
+              top: focus.top,
+              left: focus.left,
+              width: focus.right - focus.left,
+              height: focus.bottom - focus.top,
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute"
+            style={{
+              top: focus.top,
+              left: focus.left,
+              width: focus.right - focus.left,
+              height: focus.bottom - focus.top,
+            }}
+          />
+        </>
+      )}
+
+      <section
+        className="safe-bottom absolute right-4 bottom-[4.5rem] left-4 mx-auto max-w-[34rem]
+          overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-1)]
+          shadow-[0_18px_48px_rgba(0,0,0,0.45)]"
+      >
+        <div className="flex gap-1 px-4 pt-3" aria-hidden="true">
+          {Array.from({ length: count }, (_, position) => (
+            <span
+              key={position}
+              className={`h-[3px] flex-1 rounded-full ${
+                position <= index ? 'bg-[var(--accent-ink)]' : 'bg-[var(--border)]'
+              }`}
+            />
+          ))}
+        </div>
+        <div className="px-4 pt-4 pb-2">
+          <p className="label-xs font-semibold text-[var(--accent-ink)]">
+            Visite · {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+          </p>
+          <h2 className="mt-2 text-lg font-semibold text-[var(--text-1)]">
+            {step.id === 'intro' ? 'Prise en main' : TUTORIAL_TOPIC_LABELS[step.topic]}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]" aria-live="polite">
+            {textOf(step.clip)}
+          </p>
+        </div>
+        <div className="flex items-center border-t border-[var(--border)] px-2 py-1">
+          <button
+            type="button"
+            onClick={onSkip}
+            className="min-h-12 px-3 text-sm font-semibold text-[var(--text-2)]"
+          >
+            Passer
+          </button>
+          <span className="flex-1" />
+          <button
+            type="button"
+            disabled={index === 0}
+            onClick={onPrevious}
+            className="min-h-12 px-3 text-sm font-semibold text-[var(--text-2)] disabled:opacity-30"
+          >
+            Précédent
+          </button>
+          <button
+            type="button"
+            onClick={onNext}
+            className="min-h-12 px-3 text-sm font-semibold text-[var(--accent-ink)]"
+          >
+            {index === count - 1 ? 'Terminer' : 'Suivant'}
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+const AUDIO_OPTIONS: { mode: AnnouncerMode; label: string; hint: string }[] = [
+  { mode: 'voice', label: 'Voix et sons', hint: 'Guidage complet pendant la séance.' },
+  {
+    mode: 'sounds',
+    label: 'Sons uniquement',
+    hint: 'Impacts, cadence et validations, sans parole.',
+  },
+  { mode: 'silence', label: 'Silence', hint: 'Aucun son produit par FitTrack.' },
+];
+
+export function TutorialProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [phase, setPhase] = useState<Phase>(() =>
+    loadTutorialCompletion() === null ? 'prompt' : 'idle',
+  );
+  const [steps, setSteps] = useState<readonly TutorialStep[]>(FULL_TUTORIAL);
+  const [index, setIndex] = useState(0);
+  const [kind, setKind] = useState<TourKind>('full');
+  const [completion, setCompletion] = useState<TutorialCompletion>('completed');
+  const topic = tutorialTopicForPath(pathname);
+  const pacerActive = useRepPacer((state) => state.setId !== null);
+  const restActive = useRestTimer((state) => state.setId !== null);
+  const workoutAudioBusy = pacerActive || restActive;
+
+  const showVoiceChoice = useCallback((result: TutorialCompletion) => {
+    primeAnnouncer();
+    stopTutorialNarration();
+    setCompletion(result);
+    setPhase('voice-choice');
+  }, []);
+
+  const finishCurrent = useCallback(() => {
+    stopTutorialNarration();
+    if (kind === 'full') showVoiceChoice('completed');
+    else setPhase('idle');
+  }, [kind, showVoiceChoice]);
+
+  const next = useCallback(() => {
+    if (index >= steps.length - 1) finishCurrent();
+    else setIndex((current) => current + 1);
+  }, [finishCurrent, index, steps.length]);
+
+  useEffect(() => {
+    if (phase !== 'tour') return;
+    const step = steps[index];
+    if (step?.route !== undefined && pathname !== step.route) navigate(step.route);
+  }, [index, navigate, pathname, phase, steps]);
+
+  useEffect(() => {
+    if (phase !== 'tour') return;
+    const step = steps[index];
+    if (step === undefined) return;
+    let cancelled = false;
+    let timer: number | undefined;
+    const ended = () => {
+      if (!cancelled) timer = window.setTimeout(next, 650);
+    };
+    void playTutorialNarration(step.clip, ended).then((started) => {
+      if (!cancelled && !started) timer = window.setTimeout(next, step.fallbackMs);
+    });
+    return () => {
+      cancelled = true;
+      if (timer !== undefined) window.clearTimeout(timer);
+      stopTutorialNarration();
+    };
+  }, [index, next, phase, steps]);
+
+  useEffect(() => {
+    if (phase !== 'voice-choice') return;
+    void playTutorialNarration(TUTORIAL_VOICE_CHOICE_CLIP, () => undefined);
+    return stopTutorialNarration;
+  }, [phase]);
+
+  const startFull = () => {
+    primeAnnouncer();
+    setSteps(FULL_TUTORIAL);
+    setIndex(0);
+    setKind('full');
+    setCompletion('completed');
+    setPhase('tour');
+  };
+
+  const startContextual = () => {
+    primeAnnouncer();
+    setSteps(contextualTutorial(topic));
+    setIndex(0);
+    setKind('contextual');
+    setPhase('tour');
+  };
+
+  const skipTour = () => {
+    if (kind === 'full') showVoiceChoice('skipped');
+    else {
+      stopTutorialNarration();
+      setPhase('idle');
+    }
+  };
+
+  const chooseAudio = (mode: AnnouncerMode) => {
+    stopTutorialNarration();
+    applyAnnouncerMode(mode);
+    saveTutorialCompletion(completion);
+    setPhase('idle');
+    navigate('/', { replace: true });
+  };
+
+  const controls = useMemo<TutorialControls>(
+    () => ({ openHelp: () => phase === 'idle' && setPhase('help') }),
+    [phase],
+  );
+  const current = steps[index];
+
+  return (
+    <TutorialContext.Provider value={controls}>
+      {children}
+
+      <Sheet
+        open={phase === 'prompt'}
+        onClose={() => showVoiceChoice('skipped')}
+        title="Visite guidée"
+      >
+        <p className="text-base leading-relaxed text-[var(--text-1)]">
+          Découvrez l’essentiel de FitTrack en moins de deux minutes trente. La visite utilise la
+          voix uniquement pendant la présentation.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+          Vous pourrez la relancer à tout moment avec le point d’interrogation dans l’en-tête.
+        </p>
+        <div className="mt-6 flex flex-col gap-2">
+          <Button variant="primary" size="lg" fullWidth onClick={startFull}>
+            Commencer
+          </Button>
+          <Button variant="ghost" size="lg" fullWidth onClick={() => showVoiceChoice('skipped')}>
+            Passer
+          </Button>
+        </div>
+      </Sheet>
+
+      <ActionSheet
+        open={phase === 'help'}
+        onClose={() => setPhase('idle')}
+        title="Aide"
+        actions={[
+          {
+            label: `Expliquer cette page · ${TUTORIAL_TOPIC_LABELS[topic]}`,
+            hint: workoutAudioBusy
+              ? 'Disponible dès la fin du décompte en cours.'
+              : 'Environ vingt secondes.',
+            disabled: workoutAudioBusy,
+            onSelect: startContextual,
+          },
+          {
+            label: 'Recommencer la visite complète',
+            hint: workoutAudioBusy
+              ? 'Disponible dès la fin du décompte en cours.'
+              : 'Moins de deux minutes trente.',
+            disabled: workoutAudioBusy,
+            onSelect: startFull,
+          },
+        ]}
+      />
+
+      <Sheet
+        open={phase === 'voice-choice'}
+        onClose={() => chooseAudio(loadAnnouncerMode())}
+        title="Guidage vocal"
+      >
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {textOf(TUTORIAL_VOICE_CHOICE_CLIP)}
+        </p>
+        <div className="mt-5 overflow-hidden rounded-2xl bg-[var(--surface-2)]">
+          {AUDIO_OPTIONS.map(({ mode, label, hint }) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => chooseAudio(mode)}
+              className="flex min-h-16 w-full flex-col justify-center border-b border-[var(--border)]
+                px-4 py-3 text-left last:border-b-0 active:bg-[var(--surface-1)]"
+            >
+              <span className="font-semibold text-[var(--text-1)]">{label}</span>
+              <span className="mt-0.5 text-sm text-[var(--text-2)]">{hint}</span>
+            </button>
+          ))}
+        </div>
+        <p className="mt-4 text-xs leading-relaxed text-[var(--text-2)]">
+          Mode actuel : {AUDIO_OPTIONS.find(({ mode }) => mode === loadAnnouncerMode())?.label}
+        </p>
+      </Sheet>
+
+      {phase === 'tour' && current !== undefined && (
+        <TutorialOverlay
+          step={current}
+          index={index}
+          count={steps.length}
+          pathname={pathname}
+          onPrevious={() => setIndex((position) => Math.max(0, position - 1))}
+          onNext={next}
+          onSkip={skipTour}
+        />
+      )}
+    </TutorialContext.Provider>
+  );
+}

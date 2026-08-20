@@ -139,6 +139,17 @@ export function CloseIcon(props: IconProps) {
   );
 }
 
+/** Contextual help — a question drawn on the same instrument grid. */
+export function HelpIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.7 9a2.5 2.5 0 0 1 4.8 1c0 1.9-2.5 2.1-2.5 4" />
+      <circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none" />
+    </Icon>
+  );
+}
+
 /** "This control opens a picker". Same mark as the chevron, turned a quarter. */
 export function ChevronDownIcon(props: IconProps) {
   return (

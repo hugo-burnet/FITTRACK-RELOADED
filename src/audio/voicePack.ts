@@ -30,7 +30,7 @@ export interface VoicePack {
 export type ClipLoader = (clip: string) => Promise<ArrayBuffer>;
 
 /** Roughly +10 dB: speech must remain foreground information over gym music. */
-const VOICE_GAIN = 3.2;
+export const VOICE_GAIN = 3.2;
 /** Two spoken messages are information, never a crossfade. */
 const VOICE_GAP_SECONDS = 1;
 

@@ -323,6 +323,76 @@
       }
     },
     {
+      "id": "tutorial-intro-1",
+      "cue": "tutorial",
+      "text": "Bienvenue dans FitTrack. Cette visite présente les commandes essentielles. Elle peut être interrompue à tout moment.",
+      "direction": "Ouverture d'un briefing. Calme, claire, légèrement moins froide que les annonces de séance.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-home-1",
+      "cue": "tutorial",
+      "text": "L'accueil indique ce que vous allez travailler et la séance à lancer. Le bloc actif, votre rythme récent et les muscles sollicités restent visibles au même endroit.",
+      "direction": "Présentation fonctionnelle. Chaque proposition est un constat, pas une publicité.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-routines-1",
+      "cue": "tutorial",
+      "text": "Une routine est une séance préparée à l'avance : exercices, séries, charges, répétitions et repos. Les blocs organisent ensuite ces routines sur plusieurs semaines, avec une intention de construction, de force, de reprise ou de décharge.",
+      "direction": "Définition méthodique. Bien séparer routine et bloc.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-workout-1",
+      "cue": "tutorial",
+      "text": "Pendant la séance, renseignez la charge et le nombre de répétitions. La préparation démarre automatiquement : dix secondes pour poser le téléphone, puis trois, deux, un, et la cadence. Chaque série validée lance le repos. Si les répétitions manquent, FitTrack vous les demande et repart seul dès qu'elles sont renseignées.",
+      "direction": "Procédure de sécurité avant une manœuvre. Débit régulier, nombres très nets.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-coach-1",
+      "cue": "tutorial",
+      "text": "Après une série, la jauge RPE recueille l'effort ressenti sans interrompre la séance. À la fin, le coach analyse la progression, les baisses de performance et les plateaux. Toute nouvelle charge reste une proposition visible avant d'être appliquée.",
+      "direction": "Rapport analytique. Aucune promesse, seulement ce que le système mesure.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-history-1",
+      "cue": "tutorial",
+      "text": "L'historique conserve chaque séance, ses notes et ses records. Le journal donne le détail chronologique. Le calendrier permet de retrouver rapidement une journée d'entraînement.",
+      "direction": "Lecture d'un registre. Simple et posée.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-analytics-1",
+      "cue": "tutorial",
+      "text": "La progression regroupe vos records, votre fréquence, votre volume et l'équilibre musculaire. Chaque exercice possède aussi sa propre évolution pour distinguer une vraie tendance d'une seule bonne séance.",
+      "direction": "Synthèse de données. Descendre légèrement sur la dernière phrase.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-exercises-1",
+      "cue": "tutorial",
+      "text": "La bibliothèque décrit chaque exercice, son matériel, ses muscles et son type de mesure. Vous pouvez créer vos propres exercices sans modifier ceux déjà présents.",
+      "direction": "Notice de catalogue. Ne pas accélérer sur l'énumération.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-settings-1",
+      "cue": "tutorial",
+      "text": "Les réglages contrôlent l'apparence, la voix, les sons, le RPE et le calcul des records. Les sauvegardes et les outils de réparation se trouvent également ici.",
+      "direction": "Fin d'inventaire. Ton administratif stable.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
+      "id": "tutorial-voice-choice-1",
+      "cue": "tutorial",
+      "text": "La visite est terminée. Choisissez maintenant la présence de FitTrack pendant vos séances : voix et sons, sons uniquement, ou silence.",
+      "direction": "Dernière instruction du briefing. Laisser les trois choix parfaitement distincts.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
       "id": "workout-finished-1",
       "cue": "workout-finished",
       "text": "Séance terminée. Vous pouvez disposer.",

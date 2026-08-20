@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
-import { ArrowLeftIcon } from '@/ui/icons';
+import { HeaderAction } from '@/ui/HeaderAction';
+import { ArrowLeftIcon, HelpIcon } from '@/ui/icons';
 
 type Props = {
   title: string;
@@ -56,9 +58,14 @@ type Props = {
  * entière qui se met à défiler — pied compris.
  */
 export function Screen({ title, onBack, action, sub, footer, children }: Props) {
+  const tutorial = useTutorialControls();
+
   return (
     <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
-      <header className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
+      <header
+        data-tutorial-header
+        className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4"
+      >
         {onBack && (
           <button
             type="button"
@@ -75,7 +82,16 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
         <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight text-[var(--text-1)]">
           {title}
         </h1>
-        {action}
+        {(action !== undefined || tutorial !== null) && (
+          <div className="flex shrink-0 items-center gap-1">
+            {action}
+            {tutorial !== null && (
+              <HeaderAction label="Aide sur cette page" onClick={tutorial.openHelp}>
+                <HelpIcon />
+              </HeaderAction>
+            )}
+          </div>
+        )}
       </header>
 
       {/* Pinned with the header, above the scroll: whatever it holds stays in view
@@ -91,7 +107,10 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
           Ici et pas dans chaque écran : la marge est une propriété du cadre, et
           vingt écrans qui se souviennent chacun d'une valeur finissent par en
           oublier une. */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pt-3 pb-8">
+      <div
+        data-tutorial-content
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pt-3 pb-8"
+      >
         {children}
       </div>
 

@@ -1,0 +1,23 @@
+import { describe, expect, it } from 'vitest';
+import { textOf } from '@/audio/cues';
+import { FULL_TUTORIAL, contextualTutorial, tutorialTopicForPath } from './tutorialScript';
+
+describe('script du tutoriel', () => {
+  it('possède un texte parlé pour chaque chapitre', () => {
+    expect(FULL_TUTORIAL.length).toBeGreaterThanOrEqual(8);
+    for (const step of FULL_TUTORIAL) expect(textOf(step.clip), step.id).toBeTruthy();
+  });
+
+  it('associe les sous-pages à leur grande fonctionnalité', () => {
+    expect(tutorialTopicForPath('/programs/new')).toBe('routines');
+    expect(tutorialTopicForPath('/workout/finish')).toBe('coach');
+    expect(tutorialTopicForPath('/analytics/records')).toBe('analytics');
+    expect(tutorialTopicForPath('/exercises/bench')).toBe('exercises');
+  });
+
+  it('garde le tutoriel contextuel sur la page courante', () => {
+    expect(contextualTutorial('history')).toEqual([
+      expect.objectContaining({ id: 'history', route: undefined }),
+    ]);
+  });
+});
