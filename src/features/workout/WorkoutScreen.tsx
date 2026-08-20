@@ -175,18 +175,23 @@ export function WorkoutScreen() {
       (count, line) => count + line.sets.filter((set) => set.isCompleted === 1).length,
       0,
     ) ?? 0;
+  const availableSets =
+    detail?.exercises.reduce(
+      (count, line) => count + line.sets.filter((set) => set.deletedAt === 0).length,
+      0,
+    ) ?? 0;
 
-  // Runs again at every validated set, and says nothing: the greeting is
-  // claimed once per workout id, and a session with a set behind it is not
-  // one to greet. The guard lives in `claimWorkoutGreeting`, not in the deps.
+  // Runs again when a first exercise is added or a set is validated. The
+  // greeting is claimed once per workout id; an empty shell and a session
+  // already under way are both silent.
   useEffect(() => {
     if (workoutId === undefined) return;
     // The tap that started the session happened on another screen, so this one
     // opens with no gesture of its own — but the document has one, and that is
     // what the browser actually requires.
     primeAnnouncer();
-    if (claimWorkoutGreeting(workoutId, openedSets)) announce('workout-started');
-  }, [workoutId, openedSets]);
+    if (claimWorkoutGreeting(workoutId, openedSets, availableSets)) announce('workout-started');
+  }, [workoutId, openedSets, availableSets]);
 
   /**
    * Records arrive from the database a beat after the set that took them, so

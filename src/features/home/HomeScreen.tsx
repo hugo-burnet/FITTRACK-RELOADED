@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
-import { getActiveWorkout, startWorkout } from '@/data/repositories/workouts';
+import { getActiveWorkout } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
-import { ActionBand, Card, HeaderAction } from '@/ui';
+import { Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
 import { HomeBodyCard } from './HomeBodyCard';
 import { ProgramHeroCard } from '@/features/programs/ProgramHeroCard';
@@ -14,7 +14,7 @@ import { HomeSuggestionCard } from './HomeSuggestionCard';
 import { useHomeDashboard } from './useHomeDashboard';
 
 /**
- * Où une séance commence — RF-17, les deux entrées.
+ * Où une séance préparée commence.
  *
  * **L'ordre a changé, et c'est le sujet de l'écran qui a changé avec lui.**
  * L'accueil posait quatre questions dans l'ordre du tableau de bord : où j'en
@@ -40,10 +40,6 @@ export function HomeScreen() {
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const state = useHomeDashboard();
 
-  const startEmpty = () => {
-    void startWorkout('', t('workout.emptyName')).then(() => navigate('/workout'));
-  };
-
   return (
     <Screen
       title={t('home.title')}
@@ -51,14 +47,6 @@ export function HomeScreen() {
         <HeaderAction label={t('nav.settings')} onClick={() => void navigate('/settings')}>
           <SlidersIcon />
         </HeaderAction>
-      }
-      /* Rien n'est proposé pendant qu'une séance tourne : deux séances à la fois
-         n'est pas un état de l'app, et la barre de reprise au-dessus des onglets
-         porte déjà le chemin du retour, sur tous les écrans. */
-      footer={
-        active === null ? (
-          <ActionBand label={t('home.startEmpty')} tone="quiet" onClick={startEmpty} />
-        ) : undefined
       }
     >
       <div className="space-y-6">

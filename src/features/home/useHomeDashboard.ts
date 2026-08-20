@@ -15,8 +15,7 @@ export type HomeDashboardState =
  *
  * L'erreur est **attrapée ici** plutôt que laissée remonter : une lecture
  * IndexedDB qui échoue (base bloquée par un autre onglet, quota, navigation
- * privée) ferait sauter la limite d'erreur et effacerait tout l'écran, y compris
- * le bouton « séance libre » qui, lui, n'a besoin de rien de ce qui a échoué.
+ * privée) ferait sauter la limite d'erreur et effacerait tout l'écran.
  *
  * La régularité est calculée ici avec la fonction de l'Historique, à partir des
  * mêmes dates et du même historique d'objectifs : une seule implémentation de la

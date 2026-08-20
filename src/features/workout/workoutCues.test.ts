@@ -55,17 +55,21 @@ describe('setValidationCue', () => {
 describe('claimWorkoutGreeting', () => {
   beforeEach(forgetWorkoutGreetings);
 
-  it('salue une séance vierge, une seule fois', () => {
-    expect(claimWorkoutGreeting('w1', 0)).toBe(true);
-    expect(claimWorkoutGreeting('w1', 0)).toBe(false);
+  it('salue une séance prête, une seule fois', () => {
+    expect(claimWorkoutGreeting('w1', 0, 4)).toBe(true);
+    expect(claimWorkoutGreeting('w1', 0, 4)).toBe(false);
   });
 
   it('ne salue pas une séance déjà entamée', () => {
-    expect(claimWorkoutGreeting('w2', 3)).toBe(false);
+    expect(claimWorkoutGreeting('w2', 3, 4)).toBe(false);
+  });
+
+  it('ne parle pas sur une séance sans aucune série', () => {
+    expect(claimWorkoutGreeting('w-empty', 0, 0)).toBe(false);
   });
 
   it('salue chaque séance pour elle-même', () => {
-    expect(claimWorkoutGreeting('w1', 0)).toBe(true);
-    expect(claimWorkoutGreeting('w2', 0)).toBe(true);
+    expect(claimWorkoutGreeting('w1', 0, 4)).toBe(true);
+    expect(claimWorkoutGreeting('w2', 0, 4)).toBe(true);
   });
 });

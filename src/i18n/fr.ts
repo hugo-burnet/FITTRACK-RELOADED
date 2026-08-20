@@ -114,8 +114,6 @@ const fr = {
   home: {
     title: 'Accueil',
     emptyBody: 'Le compteur démarre à ta première séance terminée.',
-    /** Le même nom que la séance elle-même porte (`workout.emptyName`). */
-    startEmpty: 'Démarrer une séance libre',
     resumeTitle: 'Séance en cours',
     resume: 'Reprendre',
 

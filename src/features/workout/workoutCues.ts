@@ -31,8 +31,8 @@ export function setValidationCue(sets: readonly WorkoutSet[], setId: string): Cu
 }
 
 /**
- * The opening line, once per workout and never over a session already under
- * way — reopening the screen between two sets is not a new beginning.
+ * The opening line, once per workout, never over a session already under way,
+ * and never over an empty shell with no set to perform.
  *
  * The memory is module-level and dies with the page: a workout resumed after a
  * crash gets greeted again, which is the right answer for the one case where
@@ -40,8 +40,12 @@ export function setValidationCue(sets: readonly WorkoutSet[], setId: string): Cu
  */
 const greeted = new Set<string>();
 
-export function claimWorkoutGreeting(workoutId: string, completedSets: number): boolean {
-  if (completedSets > 0 || greeted.has(workoutId)) return false;
+export function claimWorkoutGreeting(
+  workoutId: string,
+  completedSets: number,
+  availableSets: number,
+): boolean {
+  if (availableSets === 0 || completedSets > 0 || greeted.has(workoutId)) return false;
   greeted.add(workoutId);
   return true;
 }
