@@ -859,11 +859,19 @@ describe('suivi du bloc courant', () => {
     const user = userEvent.setup();
     renderProgramFlow(`/programs/${program.id}`);
 
-    expect(await screen.findByText('Routine indisponible')).toBeVisible();
-    expect(screen.getByText('Cette séance doit être réparée dans le split.')).toBeVisible();
+    expect(await screen.findByText('Routine supprimée')).toBeVisible();
+    expect(screen.getByText(/La routine prévue .* n’existe plus/)).toBeVisible();
     expect(screen.getByRole('button', { name: 'Poussée du jour, Aujourd’hui' })).toBeEnabled();
-    await user.click(screen.getByRole('button', { name: 'Réparer le split' }));
-    await expectRoute(`/programs/${program.id}/edit`);
+    await user.click(screen.getByRole('button', { name: 'Choisir une autre routine' }));
+    expect(
+      await screen.findByRole('heading', { name: 'Remplacer la routine supprimée' }),
+    ).toBeVisible();
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Routine de remplacement' }),
+      routines[0]!.id,
+    );
+    await user.click(screen.getByRole('button', { name: 'Confirmer le remplacement' }));
+    await waitFor(() => expect(screen.queryByText('Routine supprimée')).toBeNull());
   });
 });
 
@@ -1000,9 +1008,9 @@ describe('liste des blocs', () => {
     await routinesRepository.deleteRoutine(routine.id);
     renderProgramFlow(`/programs/${program.id}`);
 
-    expect(await screen.findByText('Routine indisponible')).toBeVisible();
-    expect(screen.getByText('Cette séance doit être réparée dans le split.')).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Réparer le split' })).toBeVisible();
+    expect(await screen.findByText('Routine supprimée')).toBeVisible();
+    expect(screen.getByText(/La routine prévue .* n’existe plus/)).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Choisir une autre routine' })).toBeVisible();
     expect(screen.queryByRole('button', { name: /^Démarrer/ })).not.toBeInTheDocument();
   });
 

@@ -1,4 +1,3 @@
-
 import { db } from '@/data/db';
 import type { Exercise, WorkoutExercise } from '@/data/types';
 import { snapshotOf } from '@/lib/exerciseSnapshot';
@@ -26,6 +25,14 @@ export interface HistoryRepairResult {
   repaired: number;
   /** Rows left exactly as they were, for either reason below. */
   kept: number;
+}
+
+export interface HistoryRepairPreview {
+  changed: number;
+  names: number;
+  muscles: number;
+  equipment: number;
+  measurements: number;
 }
 
 /**
@@ -64,6 +71,42 @@ function differs(row: WorkoutExercise, exercise: Exercise): boolean {
     row.exerciseBodyweightLoadFactor !== exercise.bodyweightLoadFactor
   );
 }
+
+export async function inspectHistoryResnapshot(): Promise<HistoryRepairPreview> {
+  const [rows, exercises] = await Promise.all([
+    db.workoutExercises.toArray(),
+    db.exercises.toArray(),
+  ]);
+  const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+  const preview: HistoryRepairPreview = {
+    changed: 0,
+    names: 0,
+    muscles: 0,
+    equipment: 0,
+    measurements: 0,
+  };
+
+  for (const row of rows) {
+    const exercise = byId.get(row.exerciseId);
+    if (exercise === undefined || !differs(row, exercise)) continue;
+
+    preview.changed += 1;
+    if (row.exerciseName !== exercise.name) preview.names += 1;
+    if (row.exercisePrimaryMuscle !== exercise.primaryMuscle || !sameSecondaries(row, exercise)) {
+      preview.muscles += 1;
+    }
+    if (row.exerciseEquipment !== exercise.equipment) preview.equipment += 1;
+    if (
+      row.exerciseMeasurementType !== exercise.measurementType ||
+      row.exerciseBodyweightLoadFactor !== exercise.bodyweightLoadFactor
+    ) {
+      preview.measurements += 1;
+    }
+  }
+
+  return preview;
+}
+
 export async function resnapshotHistory(): Promise<HistoryRepairResult> {
   return db.transaction(
     'rw',
@@ -105,10 +148,7 @@ export async function resnapshotHistory(): Promise<HistoryRepairResult> {
         repaired += 1;
       });
 
-      await reconcileRecordsForExercises(
-        [...affectedExerciseIds],
-        await getOneRepMaxFormula(),
-      );
+      await reconcileRecordsForExercises([...affectedExerciseIds], await getOneRepMaxFormula());
 
       return { repaired, kept };
     },

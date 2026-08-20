@@ -14,6 +14,7 @@ export interface ProgramSessionReading {
   dayOfWeek: number;
   order: number;
   state: ProgramSessionState;
+  repairUnavailableReason?: 'locked' | 'completed' | null;
 }
 
 interface Props {
@@ -21,7 +22,7 @@ interface Props {
   selectedEntryId: string | null;
   startDisabled: boolean;
   onSelect: (entryId: string) => void;
-  onRepair: () => void;
+  onRepair: (session: ProgramSessionReading) => void;
 }
 
 const STATE_KEYS: Record<ProgramSessionState, TranslationKey> = {
@@ -120,9 +121,16 @@ function SessionRow({
   selected: boolean;
   startDisabled: boolean;
   onSelect: (entryId: string) => void;
-  onRepair: () => void;
+  onRepair: (session: ProgramSessionReading) => void;
 }) {
   if (session.routineName === null) {
+    const day = t(DAY_KEYS[session.dayOfWeek - 1]!).toLocaleLowerCase('fr-FR');
+    const blockedHint =
+      session.repairUnavailableReason === 'completed'
+        ? t('program.missingRoutineCompleted')
+        : session.repairUnavailableReason === 'locked'
+          ? t('program.missingRoutineLocked')
+          : null;
     return (
       <div
         className="flex min-h-16 items-center gap-3 border-b border-[var(--border)] py-3
@@ -133,12 +141,19 @@ function SessionRow({
             {t('program.missingRoutine')}
           </span>
           <span className="mt-0.5 block text-sm leading-snug text-[var(--danger-ink)]">
-            {t('program.missingRoutineHint')}
+            {t('program.missingRoutineHint', { day })}
           </span>
+          {blockedHint !== null && (
+            <span className="mt-1 block text-sm leading-snug text-[var(--text-2)]">
+              {blockedHint}
+            </span>
+          )}
         </span>
-        <Button variant="ghost" onClick={onRepair}>
-          {t('program.repairSplit')}
-        </Button>
+        {session.repairUnavailableReason == null && (
+          <Button variant="ghost" onClick={() => onRepair(session)}>
+            {t('program.repairSplit')}
+          </Button>
+        )}
       </div>
     );
   }

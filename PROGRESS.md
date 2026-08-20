@@ -2,7 +2,22 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.4 — la cadence passe d’un exercice au suivant**).
+**Dernière mise à jour :** 2026-08-20 (**Clarification des outils de dépannage et des routines supprimées**).
+
+## Clarification des outils de dépannage
+
+Les anciennes actions génériques de « réparation » décrivent maintenant précisément leur effet :
+recalculer les records, mettre à jour les instantanés des anciennes séances ou restaurer le
+catalogue d’exercices. Elles sont regroupées dans « Dépannage et données » et affichent leur état
+ou un aperçu du nombre de lignes concernées avant toute écriture.
+
+Une routine supprimée d’un programme peut désormais être remplacée directement depuis la séance
+manquante, ou recréée sur place. L’action disparaît avec une explication lorsque la semaine a déjà
+été entraînée ou que le programme est terminé. Vérification mobile à 375 × 812 px, sans erreur
+console ; typecheck et lint passent, ainsi que 1 663 tests répartis dans 155 fichiers et le build
+de production.
+
+---
 
 ## v0.8.4 — poser le téléphone une seule fois
 

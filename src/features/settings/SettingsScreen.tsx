@@ -22,12 +22,10 @@ import {
 import { buildCsvExport, csvExportFileName } from '@/data/repositories/csvExport';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
-import { resnapshotHistory } from '@/data/repositories/historyRepair';
-import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
+import { ListRow, SectionTitle } from '@/ui';
 import { AnnouncerSettings } from './AnnouncerSettings';
 import { EffortPromptSettings } from './EffortPromptSettings';
 import { OneRepMaxSettings } from './OneRepMaxSettings';
-import { RecordRepairAction } from './RecordRepairAction';
 
 const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
   { value: 'dark', labelKey: 'settings.themeDark' },
@@ -45,14 +43,11 @@ const INSTALL_MESSAGE = {
 export function SettingsScreen() {
   const navigate = useNavigate();
   const [theme, setTheme] = useState<Theme>(loadTheme);
-  const [repairOpen, setRepairOpen] = useState(false);
   const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
   /** Ce que la sauvegarde CSV a donné, dit une fois sous la liste. */
   const [csvMessage, setCsvMessage] = useState<string>();
   const [csvFailed, setCsvFailed] = useState(false);
   const [csvBusy, setCsvBusy] = useState(false);
-  /** Ce que la réparation a fait, dit une fois et sans fenêtre à fermer. */
-  const [repairReport, setRepairReport] = useState<string>();
   /** Ce que l'invite d'installation a donné. */
   const [installOutcome, setInstallOutcome] = useState<InstallOutcome | null>(null);
   const installAvailable = useSyncExternalStore(subscribeInstall, isInstallAvailable, () => false);
@@ -79,16 +74,6 @@ export function SettingsScreen() {
     [],
     0,
   );
-
-  const repair = () => {
-    void resnapshotHistory().then(({ repaired }) => {
-      setRepairReport(
-        repaired === 0
-          ? t('settings.repairDoneNone')
-          : t(repaired === 1 ? 'settings.repairDoneOne' : 'settings.repairDone', { repaired }),
-      );
-    });
-  };
 
   const chooseTheme = (next: Theme) => {
     setTheme(next);
@@ -230,8 +215,6 @@ export function SettingsScreen() {
 
         <EffortPromptSettings />
 
-        <RecordRepairAction />
-
         <section>
           <SectionTitle>{t('settings.dataSection')}</SectionTitle>
           <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
@@ -246,11 +229,6 @@ export function SettingsScreen() {
               subtitle={t('settings.exportCsvHint')}
               disabled={csvBusy || workoutCount === 0}
               onClick={() => void saveCsv()}
-            />
-            <ListRow
-              title={t('settings.repairLink')}
-              subtitle={t('settings.repairHint')}
-              onClick={() => setRepairOpen(true)}
             />
             <ListRow
               title={t('settings.debugLink')}
@@ -275,9 +253,6 @@ export function SettingsScreen() {
               {csvMessage}
             </p>
           )}
-          {repairReport !== undefined && (
-            <p className="mt-3 px-1 text-sm leading-relaxed text-[var(--text-2)]">{repairReport}</p>
-          )}
           {historyShareOutcome !== null && (
             <p
               role="status"
@@ -296,15 +271,6 @@ export function SettingsScreen() {
           )}
         </section>
       </div>
-
-      <ConfirmSheet
-        open={repairOpen}
-        onClose={() => setRepairOpen(false)}
-        title={t('settings.repairConfirmTitle')}
-        body={t('settings.repairConfirmBody')}
-        confirmLabel={t('settings.repairConfirmAction')}
-        onConfirm={repair}
-      />
     </Screen>
   );
 }

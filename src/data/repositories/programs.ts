@@ -6,11 +6,7 @@ import type {
   ProgramWeek,
   Workout,
 } from '@/data/types';
-import {
-  programPosition,
-  resolveSchedule,
-  type ProgramPosition,
-} from '@/lib/programs';
+import { programPosition, resolveSchedule, type ProgramPosition } from '@/lib/programs';
 import { alive } from './base';
 
 export {
@@ -23,12 +19,10 @@ export {
   shiftProgram,
   updateProgramDraft,
 } from './programLifecycle';
-export type {
-  CreateProgramDraftInput,
-  ProgramRepositoryErrorCode,
-} from './programLifecycle';
+export type { CreateProgramDraftInput, ProgramRepositoryErrorCode } from './programLifecycle';
 export {
   createScheduleRevision,
+  replaceMissingProgramRoutine,
   replaceProgramWeeks,
   replaceProgramWeeksFrom,
 } from './programSchedules';
@@ -61,10 +55,7 @@ const compareById = (left: { id: string }, right: { id: string }): number =>
 const compareEntries = (left: ProgramScheduleEntry, right: ProgramScheduleEntry): number =>
   left.dayOfWeek - right.dayOfWeek || left.order - right.order || compareById(left, right);
 
-const compareRevisions = (
-  left: ProgramScheduleRevision,
-  right: ProgramScheduleRevision,
-): number =>
+const compareRevisions = (left: ProgramScheduleRevision, right: ProgramScheduleRevision): number =>
   left.effectiveFromWeekIndex - right.effectiveFromWeekIndex ||
   left.createdAt - right.createdAt ||
   compareById(left, right);
@@ -114,7 +105,9 @@ export async function listPrograms(): Promise<ProgramSummary[]> {
   return alive(await db.programs.toArray())
     .sort(
       (left, right) =>
-        right.startsAt - left.startsAt || right.createdAt - left.createdAt || compareById(left, right),
+        right.startsAt - left.startsAt ||
+        right.createdAt - left.createdAt ||
+        compareById(left, right),
     )
     .map((program) => ({ program }));
 }
@@ -153,9 +146,7 @@ export async function getActiveProgramDetail(at = Date.now()): Promise<ActivePro
             workout.programWeekIndex !== undefined &&
             workout.programScheduleEntryId !== undefined,
         )
-        .sort(
-          (left, right) => left.startedAt - right.startedAt || left.id.localeCompare(right.id),
-        );
+        .sort((left, right) => left.startedAt - right.startedAt || left.id.localeCompare(right.id));
 
       return { ...detail, position, resolvedEntries, completedWorkouts };
     },

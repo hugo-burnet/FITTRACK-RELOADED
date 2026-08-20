@@ -255,14 +255,15 @@ describe('SettingsScreen — installation', () => {
 describe('SettingsScreen — records personnels', () => {
   beforeEach(resetDb);
 
-  it('keeps formula choice and record repair separate from history repair', async () => {
+  it('garde les actions de dépannage hors des réglages ordinaires', async () => {
     renderSettings();
 
     expect(await screen.findByRole('heading', { name: 'Entraînement' })).toBeVisible();
+    expect(await screen.findByRole('button', { name: /Estimation du 1RM.*Epley/ })).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Recalculer tous les records/ })).toBeNull();
     expect(
-      await screen.findByRole('button', { name: /Estimation du 1RM.*Epley/ }),
-    ).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Réparer les records' })).toBeVisible();
-    expect(screen.getByRole('button', { name: /Réparer les muscles de l’historique/ })).toBeVisible();
+      screen.queryByRole('button', { name: /Mettre à jour les anciennes séances/ }),
+    ).toBeNull();
+    expect(screen.getByRole('button', { name: /Dépannage et données/ })).toBeVisible();
   });
 });

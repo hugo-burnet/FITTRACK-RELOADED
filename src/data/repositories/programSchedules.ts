@@ -53,9 +53,7 @@ export async function replaceProgramWeeks(
     const existing = alive(await db.programWeeks.where('programId').equals(programId).toArray());
     const now = Date.now();
     if (existing.length > 0) {
-      await db.programWeeks.bulkPut(
-        existing.map((row) => touch(row, { deletedAt: now })),
-      );
+      await db.programWeeks.bulkPut(existing.map((row) => touch(row, { deletedAt: now })));
     }
     await db.programWeeks.bulkAdd(
       weeks.map((week) => newEntity<ProgramWeek>({ ...week, programId })),
@@ -181,8 +179,7 @@ function assertForwardOnlyRevision(
   const programWorkouts = workouts.filter((workout) => workout.programId === program.id);
   const wouldRewriteWorkoutWeek = programWorkouts.some(
     (workout) =>
-      workout.programWeekIndex !== undefined &&
-      effectiveFromWeekIndex <= workout.programWeekIndex,
+      workout.programWeekIndex !== undefined && effectiveFromWeekIndex <= workout.programWeekIndex,
   );
   const supersededRevisionIds = new Set(
     revisions
@@ -190,9 +187,7 @@ function assertForwardOnlyRevision(
       .map((revision) => revision.id),
   );
   const supersededEntryIds = new Set(
-    entries
-      .filter((entry) => supersededRevisionIds.has(entry.revisionId))
-      .map((entry) => entry.id),
+    entries.filter((entry) => supersededRevisionIds.has(entry.revisionId)).map((entry) => entry.id),
   );
   const wouldDeleteReferencedEntry = programWorkouts.some(
     (workout) =>
@@ -208,10 +203,7 @@ function assertForwardOnlyRevision(
   if (position.phase === 'after') {
     throw new ProgramRepositoryError('retroactive_revision');
   }
-  if (
-    position.phase === 'active' &&
-    effectiveFromWeekIndex < position.weekIndex
-  ) {
+  if (position.phase === 'active' && effectiveFromWeekIndex < position.weekIndex) {
     throw new ProgramRepositoryError('retroactive_revision');
   }
 }
@@ -220,9 +212,9 @@ async function exerciseIdsForRoutines(routineIds: readonly string[]): Promise<Se
   const uniqueRoutineIds = [...new Set(routineIds)];
   if (uniqueRoutineIds.length === 0) return new Set();
   return new Set(
-    alive(
-      await db.routineExercises.where('routineId').anyOf(uniqueRoutineIds).toArray(),
-    ).map((row) => row.exerciseId),
+    alive(await db.routineExercises.where('routineId').anyOf(uniqueRoutineIds).toArray()).map(
+      (row) => row.exerciseId,
+    ),
   );
 }
 
@@ -241,9 +233,7 @@ export async function writeScheduleRevisionInTransaction(
   }
   validateScheduleInput(effectiveFromWeekIndex, program.durationWeeks, entries);
 
-  const routines = await db.routines.bulkGet([
-    ...new Set(entries.map((entry) => entry.routineId)),
-  ]);
+  const routines = await db.routines.bulkGet([...new Set(entries.map((entry) => entry.routineId))]);
   if (routines.some((routine) => routine === undefined || routine.deletedAt !== 0)) {
     throw new ProgramRepositoryError('routine_missing');
   }
@@ -255,23 +245,11 @@ export async function writeScheduleRevisionInTransaction(
   const allEntries =
     revisionIds.length === 0
       ? []
-      : alive(
-          await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray(),
-        );
+      : alive(await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray());
   const workouts = alive(await db.workouts.toArray());
-  assertForwardOnlyRevision(
-    program,
-    effectiveFromWeekIndex,
-    revisions,
-    allEntries,
-    workouts,
-  );
+  assertForwardOnlyRevision(program, effectiveFromWeekIndex, revisions, allEntries, workouts);
 
-  const previousEntries = resolveSchedule(
-    revisions,
-    allEntries,
-    effectiveFromWeekIndex,
-  );
+  const previousEntries = resolveSchedule(revisions, allEntries, effectiveFromWeekIndex);
   const [previousExerciseIds, nextExerciseIds] = await Promise.all([
     exerciseIdsForRoutines(previousEntries.map((entry) => entry.routineId)),
     exerciseIdsForRoutines(entries.map((entry) => entry.routineId)),
@@ -330,5 +308,70 @@ export async function createScheduleRevision(
       db.coachRecommendations,
     ],
     () => writeScheduleRevisionInTransaction(programId, effectiveFromWeekIndex, entries),
+  );
+}
+
+/**
+ * Replaces one missing routine reference without sending the user through the
+ * complete block editor. The new revision is still forward-only: the same
+ * repository guard that protects normal edits seals trained and past weeks.
+ */
+export async function replaceMissingProgramRoutine(
+  programId: string,
+  effectiveFromWeekIndex: number,
+  entryId: string,
+  replacementRoutineId: string,
+): Promise<void> {
+  await db.transaction(
+    'rw',
+    [
+      db.programs,
+      db.programScheduleRevisions,
+      db.programScheduleEntries,
+      db.routines,
+      db.routineExercises,
+      db.workouts,
+      db.coachRecommendations,
+    ],
+    async () => {
+      const program = await db.programs.get(programId);
+      if (program === undefined || program.deletedAt !== 0) {
+        throw new ProgramRepositoryError('program_not_found');
+      }
+      if (program.status === 'completed') throw new ProgramRepositoryError('retroactive_revision');
+
+      const revisions = alive(
+        await db.programScheduleRevisions.where('programId').equals(programId).toArray(),
+      );
+      const revisionIds = revisions.map((revision) => revision.id);
+      const allEntries =
+        revisionIds.length === 0
+          ? []
+          : alive(await db.programScheduleEntries.where('revisionId').anyOf(revisionIds).toArray());
+      const resolved = resolveSchedule(revisions, allEntries, effectiveFromWeekIndex);
+      const target = resolved.find((entry) => entry.id === entryId);
+      if (target === undefined) throw new ProgramRepositoryError('program_invalid');
+
+      const [missingRoutine, replacementRoutine] = await Promise.all([
+        db.routines.get(target.routineId),
+        db.routines.get(replacementRoutineId),
+      ]);
+      if (missingRoutine !== undefined && missingRoutine.deletedAt === 0) {
+        throw new ProgramRepositoryError('program_invalid');
+      }
+      if (replacementRoutine === undefined || replacementRoutine.deletedAt !== 0) {
+        throw new ProgramRepositoryError('routine_missing');
+      }
+
+      await writeScheduleRevisionInTransaction(
+        programId,
+        effectiveFromWeekIndex,
+        resolved.map((entry) => ({
+          routineId: entry.id === entryId ? replacementRoutineId : entry.routineId,
+          dayOfWeek: entry.dayOfWeek,
+          order: entry.order,
+        })),
+      );
+    },
   );
 }
