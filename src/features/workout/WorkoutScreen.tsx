@@ -69,6 +69,7 @@ import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
 import { nextPaceTarget, prepareNextPace } from './paceTarget';
+import { fireCountdown } from './restCountdown';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -105,6 +106,12 @@ type PlatesView = {
   barWeightAdjustable: boolean;
 };
 
+type PendingPace = {
+  rowId: string;
+  setId: string;
+  afterSetId?: string;
+};
+
 /** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
   const navigate = useNavigate();
@@ -114,6 +121,8 @@ export function WorkoutScreen() {
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   /** The one set currently being asked how hard it was. */
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
+  /** A cadence waiting only for the missing repetitions to be typed. */
+  const [pendingPace, setPendingPace] = useState<PendingPace | null>(null);
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
   const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
@@ -197,6 +206,37 @@ export function WorkoutScreen() {
   const startPace = useRepPacer((state) => state.start);
   const stopPace = useRepPacer((state) => state.stop);
   const restingSetId = rest.setId;
+
+  // Once the requested repetitions arrive, a short debounce lets a two-digit
+  // entry settle. The pacer is armed three seconds in the future immediately:
+  // its rail shows 3–2–1 while the audio clock schedules the same countdown.
+  useEffect(() => {
+    if (pendingPace === null || detail == null) return;
+    const line = detail.exercises.find(({ row }) => row.id === pendingPace.rowId);
+    if (line === undefined) return;
+    const preparation = prepareNextPace(
+      line.sets,
+      Date.now() - detail.workout.startedAt,
+      pendingPace.afterSetId,
+    );
+    if (preparation.kind !== 'ready' || preparation.target.setId !== pendingPace.setId) return;
+
+    const timer = setTimeout(() => {
+      const launchAt = Date.now() + 3_000;
+      fireCountdown(launchAt);
+      startPace(
+        line.row.id,
+        preparation.target.setId,
+        preparation.target.reps,
+        preparation.target.repSeconds,
+        3,
+      );
+      setPendingPace((current) =>
+        current?.setId === preparation.target.setId ? null : current,
+      );
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [detail, pendingPace, startPace]);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -344,9 +384,11 @@ export function WorkoutScreen() {
     // countdown speak over the repetition beats.
     rest.stop();
     if (preparation.kind === 'missing-reps') {
+      setPendingPace({ rowId: line.row.id, setId: preparation.setId, afterSetId });
       announce('pace-reps-missing');
       return true;
     }
+    setPendingPace(null);
     const target = preparation.target;
     startPace(line.row.id, target.setId, target.reps, target.repSeconds);
     return true;

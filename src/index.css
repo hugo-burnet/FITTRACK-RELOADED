@@ -159,18 +159,18 @@
   }
 }
 
-/* The effort rail: a native range keeps keyboard and screen-reader semantics,
-   while the loaded track and heavy thumb make it belong to the workout grid. */
+/* A deliberately quiet effort rail. It stays native for keyboard and screen
+   reader semantics, but occupies no more visual weight than a set input. */
 .rpe-gauge {
   --rpe-progress: 50%;
-  height: 2.75rem;
+  height: 2rem;
   appearance: none;
   background: transparent;
   cursor: pointer;
 }
 
 .rpe-gauge::-webkit-slider-runnable-track {
-  height: 0.375rem;
+  height: 0.1875rem;
   border-radius: 999px;
   background: linear-gradient(
     to right,
@@ -180,18 +180,18 @@
 }
 
 .rpe-gauge::-webkit-slider-thumb {
-  width: 1.75rem;
-  height: 1.75rem;
-  margin-top: -0.6875rem;
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.40625rem;
   appearance: none;
-  border: 0.25rem solid var(--surface-2);
+  border: 0.1875rem solid var(--surface-2);
   border-radius: 50%;
   background: var(--accent-ink);
   box-shadow: 0 0 0 1px var(--text-2);
 }
 
 .rpe-gauge::-moz-range-track {
-  height: 0.375rem;
+  height: 0.1875rem;
   border: 0;
   border-radius: 999px;
   background: linear-gradient(
@@ -202,9 +202,9 @@
 }
 
 .rpe-gauge::-moz-range-thumb {
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 0.25rem solid var(--surface-2);
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 0.1875rem solid var(--surface-2);
   border-radius: 50%;
   background: var(--accent-ink);
   box-shadow: 0 0 0 1px var(--text-2);

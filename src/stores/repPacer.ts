@@ -23,7 +23,13 @@ export interface RepPacer {
 }
 
 interface RepPacerStore extends RepPacer {
-  start: (rowId: string, setId: string, reps: number, repSeconds: number) => void;
+  start: (
+    rowId: string,
+    setId: string,
+    reps: number,
+    repSeconds: number,
+    leadSeconds?: number,
+  ) => void;
   /** Ends the pace. Idempotent, and safe to call for a set that is not paced. */
   stop: (setId?: string) => void;
 }
@@ -33,8 +39,14 @@ const IDLE: RepPacer = { setId: null, rowId: null, reps: 0, repSeconds: 0, start
 export const useRepPacer = create<RepPacerStore>((set) => ({
   ...IDLE,
 
-  start: (rowId, setId, reps, repSeconds) => {
-    set({ rowId, setId, reps, repSeconds, startedAt: Date.now() });
+  start: (rowId, setId, reps, repSeconds, leadSeconds = 0) => {
+    set({
+      rowId,
+      setId,
+      reps,
+      repSeconds,
+      startedAt: Date.now() + Math.max(0, leadSeconds) * 1_000,
+    });
   },
 
   stop: (setId) => set((state) => (setId === undefined || state.setId === setId ? IDLE : state)),

@@ -42,16 +42,19 @@ export function RepPaceRail({
 
   const elapsed = Math.max(0, now - pacer.startedAt);
   const current = Math.min(pacer.reps, Math.floor(elapsed / (pacer.repSeconds * 1_000)) + 1);
+  const leadSeconds = Math.max(0, Math.ceil((pacer.startedAt - now) / 1_000));
 
   return (
     <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-[var(--accent-ink)]">
       <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]" />
       <span className="tabular truncate">
-        {t('workout.paceStatus', {
-          current,
-          total: pacer.reps,
-          tempo: formatNumber(pacer.repSeconds),
-        })}
+        {leadSeconds > 0
+          ? t('workout.pacePreparing', { seconds: leadSeconds })
+          : t('workout.paceStatus', {
+              current,
+              total: pacer.reps,
+              tempo: formatNumber(pacer.repSeconds),
+            })}
       </span>
     </span>
   );

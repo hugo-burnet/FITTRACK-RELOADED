@@ -196,6 +196,7 @@ const fr = {
     rpeGauge: 'Jauge RPE',
     rpeConfirm: 'Valider le RPE {value}',
     paceStop: 'Arrêter la cadence',
+    pacePreparing: 'Départ · {seconds}',
     paceStatus: 'Cadence · {current}/{total} · {tempo} s',
     complete: 'Valider la série {number}',
     uncomplete: 'Annuler la série {number}',

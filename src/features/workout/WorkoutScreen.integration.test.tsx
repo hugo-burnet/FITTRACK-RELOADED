@@ -485,8 +485,8 @@ describe('WorkoutScreen — effort et fatigue', () => {
   it('ne lance pas une prescription fantôme quand les prochaines reps sont vides', async () => {
     const workoutId = await seedTwoSetWorkout();
     const detail = await getWorkoutDetail(workoutId);
-    const first = detail?.exercises[0]?.sets[0];
-    if (first === undefined) throw new Error('série absente');
+    const [first, second] = detail?.exercises[0]?.sets ?? [];
+    if (first === undefined || second === undefined) throw new Error('séries absentes');
 
     const user = userEvent.setup();
     renderWorkout();
@@ -498,5 +498,13 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
     await waitFor(() => expect(useRestTimer.getState().setId).toBeNull());
     expect(useRepPacer.getState().setId).toBeNull();
+
+    await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '6');
+    await waitFor(
+      () => expect(useRepPacer.getState().setId).toBe(second.id),
+      { timeout: 2_000 },
+    );
+    expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(2_000);
+    expect(screen.getByText(/Départ · 3/)).toBeVisible();
   });
 });

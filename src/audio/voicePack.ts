@@ -27,10 +27,22 @@ export interface VoicePack {
 
 export type ClipLoader = (clip: string) => Promise<ArrayBuffer>;
 
+/** +6 dB: speech must remain foreground information over gym music. */
+const VOICE_GAIN = 2;
+/** Two spoken messages are information, never a crossfade. */
+const VOICE_GAP_SECONDS = 1;
+
+/** Three, two, one is one announcement split into files, not three messages. */
+function isCountdownWord(clip: string): boolean {
+  return /^(?:rest|rep)-[123]-/.test(clip);
+}
+
 export function createVoicePack(load: ClipLoader): VoicePack {
   /** `null` marks a clip known to be absent — the miss is cached too. */
   const decoded = new Map<string, AudioBuffer | null>();
   const pending = new Map<string, Promise<void>>();
+  /** Audio-clock end of the last queued phrase, including its breathing room. */
+  let availableAt = 0;
 
   function fetchClip(bus: AudioBus, clip: string): Promise<void> {
     const existing = pending.get(clip);
@@ -69,11 +81,18 @@ export function createVoicePack(load: ClipLoader): VoicePack {
 
       try {
         const source = bus.context.createBufferSource();
+        const gain = bus.context.createGain();
         source.buffer = buffer;
         // The announcement bus, never the master: a voice that skips the
         // loudspeaker colouring is a voice memo played in a gym.
-        source.connect(bus.voice);
-        source.start(bus.context.currentTime + Math.max(0, when));
+        gain.gain.value = VOICE_GAIN;
+        source.connect(gain);
+        gain.connect(bus.voice);
+        const requestedAt = bus.context.currentTime + Math.max(0, when);
+        const startsAt = Math.max(requestedAt, availableAt);
+        source.start(startsAt);
+        const duration = Number.isFinite(buffer.duration) ? buffer.duration : 0;
+        availableAt = startsAt + duration + (isCountdownWord(clip) ? 0 : VOICE_GAP_SECONDS);
         return true;
       } catch {
         return false;
