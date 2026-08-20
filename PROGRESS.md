@@ -2,7 +2,28 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.2 — la séance vide disparaît**).
+**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.3 — le tutoriel montre enfin l’écran**).
+
+## v0.8.3 — la voix raconte, l’interface montre
+
+Le panneau du tutoriel masquait presque la moitié de la fonctionnalité qu’il était censé
+présenter. Chaque chapitre affiche désormais son titre, un résumé d’une phrase et sa progression,
+puis replie automatiquement la transcription après 1,8 seconde pendant que la voix continue.
+L’écran encadré redevient le sujet principal de la visite.
+
+« Lire le texte » rouvre la transcription complète à la demande ; elle reste contenue dans le
+viewport et peut défiler sur les petits écrans. Le choix manuel est ensuite respecté jusqu’au
+chapitre suivant. Contrôle visuel effectué à 390 × 844 px sur les états replié et déplié, sans
+erreur console.
+
+Le verrou vocal de l’aide lit maintenant les échéances réelles : un ancien `setId` de repos ou de
+cadence resté dans le store après la fin du chrono ne grise plus le bouton. Seul un décompte encore
+actif reporte le tutoriel.
+
+1656 tests / 154 fichiers. Aucun changement de schéma. Installer par-dessus la v0.8.2, sans
+désinstaller, pour conserver les données locales.
+
+---
 
 ## v0.8.2 — une séance commence par une intention
 
