@@ -4,12 +4,11 @@ import { formatRest, restProgress } from '@/lib/rest';
 import { signalRestFinishedOnCurrentPlatform } from './restAlert';
 import { armRestCountdown } from './restCountdown';
 
-const GRACE_MS = 4000;
-
 type Props = {
   startedAt: number;
   endsAt: number;
-  onDone: () => void;
+  /** Returns true when the next set takes over with its repetition cadence. */
+  onDone: () => boolean;
 };
 
 /** Compositor-driven progress bar anchored to the resting exercise. */
@@ -26,20 +25,16 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     done.current = onDone;
   });
 
-  // Derive delays from the absolute deadline so late mounts remain correct.
-  useEffect(() => {
-    const delay = endsAt - Date.now();
-    if (delay <= 0) return;
-    const id = setTimeout(signalRestFinishedOnCurrentPlatform, delay);
-    return () => clearTimeout(id);
-  }, [endsAt]);
-
   // The three ticks before the deadline, cancelled with the rest they count.
   useEffect(() => armRestCountdown(endsAt), [endsAt]);
 
   useEffect(() => {
-    // transitionend is unreliable in backgrounded tabs.
-    const id = setTimeout(() => done.current(), Math.max(0, endsAt + GRACE_MS - Date.now()));
+    // The countdown hands the clock directly to the next set at zero. Its first
+    // repetition beat replaces the old end-of-rest chime, so the two never land
+    // on top of each other. Without a pace target, keep the normal alert.
+    const id = setTimeout(() => {
+      if (!done.current()) signalRestFinishedOnCurrentPlatform();
+    }, Math.max(0, endsAt - Date.now()));
     return () => clearTimeout(id);
   }, [endsAt]);
 

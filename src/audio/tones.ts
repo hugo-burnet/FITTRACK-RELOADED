@@ -15,7 +15,7 @@ export type ToneId = 'tick' | 'repTap' | 'chime' | 'validate' | 'record';
 
 interface Partial_ {
   frequency: number;
-  /** Optional downward movement gives a tap a body without adding a sample. */
+  /** Optional downward movement gives an impact a body without adding a sample. */
   endFrequency?: number;
   /** Seconds after the tone's own start. */
   delay: number;
@@ -47,27 +47,48 @@ const TONES: Record<ToneId, readonly Partial_[]> = {
   tick: [{ frequency: 1046.5, delay: 0, duration: 0.06, gain: 0.22, type: 'square' }],
 
   /**
-   * The repetition beat: a rounded wooden tap rather than the countdown's
-   * square-wave alarm. Two falling sine partials give it a small, tactile
-   * "tok" that remains audible over music without becoming abrasive when it
-   * repeats twelve times.
+   * The repetition beat: a compact hangar latch, not a polite metronome.
+   *
+   * The falling triangle is the mass of the door, the saw and square are its
+   * metal strike, and the delayed low sine is the bay answering just after the
+   * lock lands. It is deliberately louder and wider than the old wooden tap,
+   * but all four layers die inside 220 ms so twelve reps never turn into a
+   * continuous drone over the music.
    */
   repTap: [
     {
-      frequency: 520,
-      endFrequency: 360,
+      frequency: 150,
+      endFrequency: 72,
       delay: 0,
-      duration: 0.1,
-      gain: 0.16,
-      type: 'sine',
-      attack: 0.006,
+      duration: 0.16,
+      gain: 0.3,
+      type: 'triangle',
+      attack: 0.002,
     },
     {
-      frequency: 920,
-      endFrequency: 640,
-      delay: 0.004,
-      duration: 0.065,
-      gain: 0.065,
+      frequency: 680,
+      endFrequency: 260,
+      delay: 0,
+      duration: 0.09,
+      gain: 0.16,
+      type: 'sawtooth',
+      attack: 0.001,
+    },
+    {
+      frequency: 1_620,
+      endFrequency: 900,
+      delay: 0.003,
+      duration: 0.038,
+      gain: 0.07,
+      type: 'square',
+      attack: 0.001,
+    },
+    {
+      frequency: 240,
+      endFrequency: 180,
+      delay: 0.028,
+      duration: 0.19,
+      gain: 0.12,
       type: 'sine',
       attack: 0.004,
     },

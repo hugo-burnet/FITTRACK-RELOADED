@@ -55,11 +55,15 @@ function renderWorkout() {
 describe('WorkoutScreen — persistance', () => {
   beforeEach(async () => {
     useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
     useExerciseOrderLock.getState().reset();
     await resetDb();
   });
 
-  afterEach(() => useRestTimer.getState().stop());
+  afterEach(() => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+  });
 
   it('persiste la saisie et la validation après un remontage complet', async () => {
     const workoutId = await seedActiveWorkout();
@@ -351,12 +355,16 @@ async function seedTwoSetWorkout(): Promise<string> {
 describe('WorkoutScreen — effort et fatigue', () => {
   beforeEach(async () => {
     useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
     useExerciseOrderLock.getState().reset();
     localStorage.clear();
     await resetDb();
   });
 
-  afterEach(() => useRestTimer.getState().stop());
+  afterEach(() => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+  });
 
   it('demande l’effort sous la série validée, et allonge le repos', async () => {
     const workoutId = await seedTwoSetWorkout();
@@ -444,5 +452,30 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
     await user.click(screen.getByRole('button', { name: t('workout.paceStop') }));
     expect(useRepPacer.getState().setId).toBeNull();
+  });
+
+  it('lance toute seule la cadence suivante à la fin du compte à rebours', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const detail = await getWorkoutDetail(workoutId);
+    const [first, second] = detail?.exercises[0]?.sets ?? [];
+    if (first === undefined || second === undefined) throw new Error('séries absentes');
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ isCompleted: 1 });
+    });
+
+    // Raccourcit seulement l'attente du test : dans l'app, les trois dernières
+    // secondes du vrai repos jouent 3–2–1 avant ce même passage de relais.
+    act(() => useRestTimer.getState().start(first.id, 0.05));
+
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id));
+    expect(useRestTimer.getState().setId).toBeNull();
+    expect(screen.getByText(/Cadence · 1\/8/)).toBeVisible();
   });
 });

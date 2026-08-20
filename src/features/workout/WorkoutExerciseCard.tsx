@@ -68,7 +68,13 @@ export function workoutRecordNotices(
   return notices;
 }
 
-export type CardRest = { setId: string; startedAt: number; endsAt: number; onDone: () => void };
+export type CardRest = {
+  setId: string;
+  startedAt: number;
+  endsAt: number;
+  /** True when the rest flows directly into the next set's cadence. */
+  onDone: () => boolean;
+};
 
 export type CardPace = RepPacer & { setId: string; onFinished: () => void };
 

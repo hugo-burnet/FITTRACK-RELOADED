@@ -329,17 +329,18 @@ export function WorkoutScreen() {
         ? { reps: pacer.reps, repSeconds: pacer.repSeconds }
         : nextPaceTarget(exerciseMenuLine.sets, exerciseMenuOpenedAt - workout.startedAt);
 
-  const startPaceFor = (line: WorkoutExerciseDetail): void => {
+  const startPaceFor = (line: WorkoutExerciseDetail, now: number): boolean => {
     // Read at the tap, never at render: the tempo is a function of how long
     // the session has been running.
-    const target = nextPaceTarget(line.sets, Date.now() - workout.startedAt);
-    if (target === null) return;
+    const target = nextPaceTarget(line.sets, now - workout.startedAt);
+    if (target === null) return false;
     primeAnnouncer();
     // Starting the next set is the clearest possible signal that rest is over.
     // Keeping both clocks alive hides the pace reading and lets the rest
     // countdown speak over the repetition beats.
     rest.stop();
     startPace(line.row.id, target.setId, target.reps, target.repSeconds);
+    return true;
   };
 
   return (
@@ -439,7 +440,13 @@ export function WorkoutScreen() {
                             setId: rest.setId,
                             startedAt: rest.startedAt,
                             endsAt: rest.endsAt,
-                            onDone: () => rest.stop(),
+                            onDone: () => {
+                              // The rest's 3–2–1 is the preparation: at zero,
+                              // its next working set owns the audio clock.
+                              const paced = startPaceFor(line, Date.now());
+                              if (!paced) rest.stop();
+                              return paced;
+                            },
                           }
                         : null
                     }
@@ -613,7 +620,7 @@ export function WorkoutScreen() {
                     if (exerciseMenuPaceRunning) {
                       stopPace();
                     } else if (exerciseMenuLine !== null) {
-                      startPaceFor(exerciseMenuLine);
+                      startPaceFor(exerciseMenuLine, Date.now());
                     }
                   },
                 },
