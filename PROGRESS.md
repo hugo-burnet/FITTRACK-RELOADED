@@ -2,7 +2,50 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.6 — une seule machine pour la cadence**).
+**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.7 — le corps de l'accueil devient une porte**).
+
+## v0.8.7 — toucher un muscle, trouver quoi lui donner
+
+Le dessin de l'accueil se lisait ; il se touche maintenant. Un doigt sur un muscle ouvre une
+feuille qui nomme le groupe et liste les exercices du catalogue qui le ciblent, avec un passage
+vers le catalogue filtré sur le même groupe.
+
+**La moitié du chemin était déjà construite.** `MuscleMap` expose une option `onSelect` depuis que
+le dessin existe — le hit-testing sur `path[data-muscle]` était écrit, testé par personne et branché
+nulle part. `MUSCLE_IDS_BY_GROUP` faisait déjà la jointure entre les 26 muscles dessinés et les 16
+groupes du catalogue, mais dans le seul sens dont l'éclairage a besoin. Ce qui manquait : le sens
+inverse (`groupOfMuscleId`, dérivé de la même table — un miroir tenu à la main est un miroir qui
+dérive), le passage de la prop à travers `MuscleMapView`, et la feuille.
+
+**Une feuille, pas une navigation, et c'est le doigt qui tranche.** Le dessin porte 26 muscles dans
+300 px : le deltoïde latéral fait 19 px de large, très loin des 48 px de la charte. Des taps
+tomberont à côté — ce n'est pas un défaut à corriger mais un fait à absorber. Une feuille annonce ce
+qu'elle a compris (« Épaules ») et coûte un swipe ; une navigation aurait coûté l'écran d'accueil à
+chaque erreur de pouce.
+
+**Le dessin grandit : 15 rem → 19 rem.** Les 240 px d'origine arbitraient contre « Lancer », du temps
+où le corps ouvrait l'écran ; la carte du jour est passée devant depuis, et l'arbitrage ne porte plus
+que sur les trois liens d'analyse. Les 64 px de plus font passer le deltoïde latéral de 15 à 19 px et
+les rhomboïdes de 12 à 15 — ça ne règle pas la cible tactile, ça rend le muscle visable. Les deux
+réserves de place (`h-72`) suivent à `h-[26rem]`, sinon les boutons sautent sous le pouce quand le
+dessin arrive.
+
+**Les trois muscles orphelins ont droit à une phrase.** Psoas, dentelé antérieur et jambier
+antérieur sont dessinés sans qu'aucun groupe du catalogue ne les nomme (`UNMAPPED_MUSCLE_IDS`, un
+refus délibéré d'approximer). Le doigt tombera dessus : la feuille l'explique au lieu de ne rien
+faire en silence.
+
+**Limites assumées :** la liste suit le *muscle principal*, exactement comme le filtre du catalogue
+derrière « Voir dans le catalogue » — compter l'implication secondaire ici et pas là ferait répondre
+deux nombres différents au même muscle. Et la carte disparaît toujours quand rien n'a été travaillé
+sur douze semaines : le raccourci s'en va avec elle. Le catalogue reste à un onglet de distance,
+avec son propre filtre par muscle.
+
+15 tests neufs (la jointure inverse, le tap sur le dessin, la feuille, et le parcours complet depuis
+l'accueil) : 1 698 tests / 159 fichiers, typecheck, lint et build de production. Aucun changement de
+schéma. Installer par-dessus la v0.8.6, sans désinstaller.
+
+---
 
 ## v0.8.6 — une seule machine pour la cadence
 

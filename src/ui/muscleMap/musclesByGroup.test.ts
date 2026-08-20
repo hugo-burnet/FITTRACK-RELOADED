@@ -7,6 +7,7 @@ import {
   MAPPED_MUSCLE_IDS,
   MUSCLE_IDS_BY_GROUP,
   UNMAPPED_MUSCLE_IDS,
+  groupOfMuscleId,
   hasDrawableMuscles,
   isDrawable,
   toIntensities,
@@ -116,5 +117,33 @@ describe('toIntensities', () => {
       pectoralis_major: 1,
       latissimus_dorsi: 0.3,
     });
+  });
+});
+
+describe('groupOfMuscleId', () => {
+  it('rend le groupe du catalogue pour un muscle dessiné', () => {
+    expect(groupOfMuscleId('pectoralis_major')).toBe('chest');
+    expect(groupOfMuscleId('rhomboids')).toBe('upper_back');
+    expect(groupOfMuscleId('rotator_cuff')).toBe('shoulders');
+  });
+
+  it('est l’exact inverse de la table de lecture', () => {
+    for (const [group, ids] of Object.entries(MUSCLE_IDS_BY_GROUP)) {
+      for (const id of ids) expect(groupOfMuscleId(id)).toBe(group);
+    }
+  });
+
+  it('ne rend rien pour les muscles que le catalogue ne nomme pas', () => {
+    // Ils sont dessinés exprès : un doigt tombera dessus, et l'écran doit avoir
+    // une réponse — simplement pas une liste d'exercices.
+    for (const id of UNMAPPED_MUSCLE_IDS) expect(groupOfMuscleId(id)).toBeNull();
+  });
+
+  it('répond pour chaque muscle du dessin, sans exception muette', () => {
+    for (const id of ALL_MUSCLE_IDS) {
+      const group = groupOfMuscleId(id);
+      const claimed: readonly string[] = group === null ? [] : MUSCLE_IDS_BY_GROUP[group];
+      expect(group === null || claimed.includes(id)).toBe(true);
+    }
   });
 });

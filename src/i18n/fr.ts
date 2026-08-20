@@ -164,6 +164,26 @@ const fr = {
      * de 375 px ; le nom complet de chaque analyse est donné à l'oreille.
      */
     bodyLabel: 'Les muscles travaillés sur les douze dernières semaines',
+
+    /**
+     * Le dessin ne dit pas qu'on peut le toucher — un corps humain ne ressemble
+     * pas à un bouton. Une ligne sous la carte, et une seule : la découverte se
+     * fait une fois, la ligne se lit toute la vie de l'écran.
+     */
+    bodyTapHint: 'Touche un muscle pour voir les exercices',
+    /** Le titre de la feuille est le nom du groupe ; ceci en est le sous-titre. */
+    muscleSheetCount: '{count} exercices du catalogue',
+    muscleSheetCountOne: '1 exercice du catalogue',
+    muscleSheetEmpty: 'Aucun exercice du catalogue ne cible ce muscle.',
+    /**
+     * Trois muscles sont dessinés sans qu'aucun groupe du catalogue ne les
+     * nomme — psoas, dentelé, jambier antérieur. Le doigt tombera dessus : il a
+     * droit à une explication, pas à un tap qui ne fait rien.
+     */
+    muscleSheetUnknown: 'Muscle hors catalogue',
+    muscleSheetUnknownBody:
+      'Ce muscle est dessiné mais le catalogue ne le nomme pas : aucun exercice ne peut le cibler.',
+    muscleSheetAll: 'Voir dans le catalogue',
     progressPace: 'Rythme',
     progressVolume: 'Volume',
     progressMuscles: 'Muscles',

@@ -58,7 +58,7 @@ export function HomeBodyCard() {
         {/* Une trame vide à la hauteur du dessin, jamais un spinner : le chunk
             arrive en une frame ou deux, et réserver la place empêche les trois
             boutons de sauter sous le pouce au moment où il se remplit. */}
-        <Suspense fallback={<div className="h-72" aria-hidden />}>
+        <Suspense fallback={<div className="h-[26rem]" aria-hidden />}>
           <HomeMuscleMap onResolved={setDrawn} />
         </Suspense>
 

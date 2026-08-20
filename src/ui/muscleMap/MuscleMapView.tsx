@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import svgSource from './muscle-map.svg?raw';
-import { MUSCLE_IDS, type MuscleView } from './muscleGroups';
+import { MUSCLE_IDS, type MuscleId, type MuscleView } from './muscleGroups';
 import { MuscleMap as MuscleMapCore, type MuscleMapOptions } from './muscleMap';
 import { toIntensities, type MuscleHighlight } from './musclesByGroup';
 
@@ -90,6 +90,19 @@ interface Props {
    * stops being true.
    */
   label?: string;
+  /**
+   * Makes the drawing tappable: a finger on a muscle names it to the caller.
+   *
+   * Absent by default. The body is a reading on most screens that show it, and a
+   * reading that reacts to a stray thumb is a reading that lies about being
+   * interactive.
+   *
+   * **Not a substitute for a written path anywhere.** The tap is a shortcut on
+   * top of one — the catalogue and its muscle filter are reachable from the tab
+   * bar regardless — so nothing is lost to a finger that cannot land on a
+   * 20-pixel deltoid, or to a reader who never sees the drawing at all.
+   */
+  onSelectMuscle?: (id: MuscleId) => void;
 }
 
 /**
@@ -100,7 +113,7 @@ interface Props {
  * gaps* — needs both halves in the eye at once. It costs a second copy of the
  * geometry in the DOM and buys a glance.
  */
-export function MuscleMap({ highlight, label }: Props) {
+export function MuscleMap({ highlight, label, onSelectMuscle }: Props) {
   return (
     /* Sized by the width available, not by a fixed height.
      *
@@ -114,23 +127,48 @@ export function MuscleMap({ highlight, label }: Props) {
       className="mx-auto flex w-full max-w-sm items-start justify-center gap-3"
       {...(label === undefined ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label })}
     >
-      <MuscleMapView view="front" highlight={highlight} />
-      <MuscleMapView view="back" highlight={highlight} />
+      <MuscleMapView view="front" highlight={highlight} onSelectMuscle={onSelectMuscle} />
+      <MuscleMapView view="back" highlight={highlight} onSelectMuscle={onSelectMuscle} />
     </div>
   );
 }
 
-function MuscleMapView({ view, highlight }: { view: MuscleView; highlight: MuscleHighlight }) {
+function MuscleMapView({
+  view,
+  highlight,
+  onSelectMuscle,
+}: {
+  view: MuscleView;
+  highlight: MuscleHighlight;
+  onSelectMuscle?: (id: MuscleId) => void;
+}) {
   const hostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MuscleMapCore | null>(null);
   /** What is currently painted, so an unchanged highlight repaints nothing. */
   const painted = useRef<string | null>(null);
+  /**
+   * The handler is read at the tap, not captured at construction.
+   *
+   * The map is built once per view; a callback passed straight into its options
+   * would freeze the first render's closure, and the drawing would go on calling
+   * a handler whose state is a session old. Rebuilding the map on every new
+   * callback identity would be worse — it reinjects 23 kB of geometry.
+   */
+  const handler = useRef(onSelectMuscle);
+  useEffect(() => {
+    handler.current = onSelectMuscle;
+  }, [onSelectMuscle]);
 
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return undefined;
 
-    const map = new MuscleMapCore(host, { svgSource, view, ...RAMP });
+    const map = new MuscleMapCore(host, {
+      svgSource,
+      view,
+      ...RAMP,
+      onSelect: (id) => handler.current?.(id),
+    });
     mapRef.current = map;
     painted.current = null;
 
@@ -166,6 +204,18 @@ function MuscleMapView({ view, highlight }: { view: MuscleView; highlight: Muscl
   });
 
   return (
-    <div ref={hostRef} className="min-w-0 grow basis-0" style={{ aspectRatio: VIEW_BOX_RATIO }} />
+    <div
+      ref={hostRef}
+      className="min-w-0 grow basis-0"
+      style={{
+        aspectRatio: VIEW_BOX_RATIO,
+        // `manipulation` kills the 300 ms wait for a second tap: without it the
+        // sheet opens a third of a second after the finger leaves, which reads
+        // as the app hesitating rather than as a tap being registered.
+        ...(onSelectMuscle === undefined
+          ? null
+          : { cursor: 'pointer', touchAction: 'manipulation' }),
+      }}
+    />
   );
 }

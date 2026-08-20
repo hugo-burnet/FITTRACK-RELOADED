@@ -132,3 +132,33 @@ export const MAPPED_MUSCLE_IDS: readonly MuscleId[] = Object.values(MUSCLE_IDS_B
 
 /** Every muscle the drawing defines, mapped or not. */
 export const ALL_MUSCLE_IDS: readonly MuscleId[] = MUSCLE_IDS;
+
+/**
+ * The reverse join: which group a drawn muscle belongs to.
+ *
+ * `MUSCLE_IDS_BY_GROUP` reads from the catalogue to the drawing, which is what
+ * lighting a body needs. A tap needs the other direction — a finger lands on a
+ * path, and the question is what to look up in a catalogue that has never heard
+ * of a rhomboid.
+ *
+ * Built from the same table rather than written a second time: a hand-kept
+ * mirror is a mirror that drifts.
+ */
+const GROUP_BY_MUSCLE_ID: Partial<Record<MuscleId, RegionMuscle>> = Object.fromEntries(
+  Object.entries(MUSCLE_IDS_BY_GROUP).flatMap(([group, ids]) =>
+    ids.map((id) => [id, group as RegionMuscle]),
+  ),
+);
+
+/**
+ * The group a tapped muscle belongs to — `null` when the catalogue has no word
+ * for it.
+ *
+ * `null` is not a failure to handle quietly: the three muscles of
+ * `UNMAPPED_MUSCLE_IDS` are drawn on purpose, so a finger *will* land on them.
+ * The caller owes that finger an answer; it simply cannot be a list of
+ * exercises.
+ */
+export function groupOfMuscleId(id: MuscleId): RegionMuscle | null {
+  return GROUP_BY_MUSCLE_ID[id] ?? null;
+}

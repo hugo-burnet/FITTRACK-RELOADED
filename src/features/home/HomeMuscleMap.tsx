@@ -5,7 +5,8 @@ import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { toMuscleRows } from '@/lib/analytics/muscles';
 import { periodBounds } from '@/lib/analytics/periods';
 import { t } from '@/i18n/fr';
-import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
+import { MuscleMap, balanceHighlight, type MuscleId } from '@/ui/muscleMap';
+import { HomeMuscleSheet } from './HomeMuscleSheet';
 
 /**
  * The body at the top of the home screen's Progression section.
@@ -44,6 +45,15 @@ export function HomeMuscleMap({ onResolved }: Props) {
   // Frozen on open, like every other historical window in the app: the bounds
   // must not slide under the reader at midnight.
   const [openedAt] = useState(() => Date.now());
+  /**
+   * Le muscle touché, et l'ouverture de sa feuille, tenus séparément.
+   *
+   * Vider `selected` à la fermeture ferait retomber le titre sur son libellé de
+   * repli le temps de l'animation de sortie — même raison que la feuille des
+   * disques dans l'écran de séance.
+   */
+  const [selected, setSelected] = useState<MuscleId | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const { from, to } = periodBounds(PERIOD, openedAt);
 
   const workouts = useLiveQuery(
@@ -55,9 +65,7 @@ export function HomeMuscleMap({ onResolved }: Props) {
   );
 
   const highlight =
-    workouts === undefined
-      ? null
-      : balanceHighlight(muscleInvolvement(toMuscleRows(workouts)));
+    workouts === undefined ? null : balanceHighlight(muscleInvolvement(toMuscleRows(workouts)));
   const drawn = highlight === null ? null : Object.keys(highlight).length > 0;
 
   // Après le rendu, jamais pendant : prévenir la carte hôte au fil du rendu
@@ -68,8 +76,9 @@ export function HomeMuscleMap({ onResolved }: Props) {
   }, [drawn, onResolved]);
 
   // Not answered yet: hold the drawing's own height, so the three buttons do not
-  // jump under the thumb when it fills in.
-  if (highlight === null) return <div className="h-72" aria-hidden />;
+  // jump under the thumb when it fills in. 416 px = les 367 px de la paire à sa
+  // largeur bridée, plus le liseré et la ligne d'aide sous elle.
+  if (highlight === null) return <div className="h-[26rem]" aria-hidden />;
 
   // Answered, and there is nothing to draw — a fresh install, or twelve quiet
   // weeks. **No body at all rather than a dark one.** An all-unlit silhouette
@@ -87,18 +96,42 @@ export function HomeMuscleMap({ onResolved }: Props) {
   //
   // Le dessin est calé sur sa largeur (aspect-ratio 815/2048, soit deux figures
   // deux fois et demie plus hautes que larges) : laissé libre sur un téléphone
-  // de 375 px, la paire fait 375 px de haut à elle seule. L'accueil est le seul
-  // écran qui ait à arbitrer entre le corps et un bouton — 240 px de large, donc
-  // 287 px de haut, est ce qui laisse « Lancer » au-dessus de la ligne de
-  // flottaison d'un 375 × 812. Les écrans d'analyse, eux, gardent toute la
-  // largeur : ils n'ont rien à faire tenir en dessous.
+  // de 375 px, la paire fait 375 px de haut à elle seule.
+  //
+  // **19 rem et plus 15.** Les 240 px d'origine arbitraient contre « Lancer » :
+  // le corps ouvrait l'écran, et chaque pixel de hauteur poussait le bouton vers
+  // le bas. Ce n'est plus l'ordre de l'accueil — la carte du jour passe en
+  // premier, le corps la suit — donc l'arbitrage porte désormais sur les trois
+  // liens d'analyse, qui n'ont pas à tenir au-dessus de la ligne de flottaison.
+  //
+  // Ce que les 64 px de plus achètent : le deltoïde latéral passe de 15 à 19 px,
+  // les rhomboïdes de 12 à 15. C'est encore loin des 48 px de la charte, et
+  // aucune largeur tenable n'y arriverait — la feuille est ce qui rattrape un
+  // doigt qui tombe à côté, pas la taille. Mais un muscle qu'on distingue est un
+  // muscle qu'on vise, et ce dessin se lit autant qu'il se touche.
   //
   // C'est un arbitrage, et il se règle ici en un nombre.
   return (
-    <div className="border-b border-[var(--border)] px-4 pt-4 pb-2">
-      <div className="mx-auto max-w-[15rem]">
-        <MuscleMap highlight={highlight} label={t('home.bodyLabel')} />
+    <>
+      <div className="border-b border-[var(--border)] px-4 pt-4 pb-2">
+        <div className="mx-auto max-w-[19rem]">
+          <MuscleMap
+            highlight={highlight}
+            label={t('home.bodyLabel')}
+            onSelectMuscle={(id) => {
+              setSelected(id);
+              setSheetOpen(true);
+            }}
+          />
+        </div>
+        {/* Le dessin ne ressemble pas à un bouton, et c'est très bien : la ligne
+            le dit à sa place, une fois, sans habiller le corps de chrome. */}
+        <p className="pt-2 text-center text-xs text-[var(--text-2)]">{t('home.bodyTapHint')}</p>
       </div>
-    </div>
+
+      {/* `selected` survit à la fermeture : le titre de la feuille ne doit pas
+          retomber sur son libellé de repli pendant l'animation de sortie. */}
+      <HomeMuscleSheet open={sheetOpen} muscle={selected} onClose={() => setSheetOpen(false)} />
+    </>
   );
 }
