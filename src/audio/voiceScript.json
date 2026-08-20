@@ -1,14 +1,15 @@
 {
-  "$comment": "Le script parlé de l'annonceuse. Source unique : l'app lit ce fichier pour savoir quels clips existent, et scripts/generate-voice.mjs le lit pour les fabriquer. Un texte modifié ici est un fichier .mp3 à régénérer. Ce n'est pas de la copie d'interface au sens de src/i18n/fr.ts — rien de tout ceci ne s'affiche à l'écran ; c'est le script d'enregistrement d'une voix, et il vit avec les indications de jeu et les réglages qui l'ont produite. « direction » est destiné à un humain : au générateur TTS il ne sert à rien, à quelqu'un qui s'enregistre au micro il sert de tout.",
+  "$comment": "Le script parlé de l'annonceuse. Source unique : l'app lit ce fichier pour savoir quels clips existent, et scripts/generate-voice.mjs le lit pour les fabriquer. Un texte modifié ici est un fichier .mp3 à régénérer. Ce n'est pas de la copie d'interface au sens de src/i18n/fr.ts — rien de tout ceci ne s'affiche à l'écran ; c'est le script d'enregistrement d'une voix, et il vit avec les indications de jeu et les réglages qui l'ont produite. « direction » est destiné à un humain : à quelqu'un qui s'enregistre au micro il sert de tout. « tag » en est la traduction pour le modèle v3, qui interprète les crochets. Les décomptes ne sont pas des lignes indépendantes mais des « groups » : une seule génération, découpée ensuite, parce que trois mots demandés séparément ne sortent jamais du même moule.",
   "voice": {
     "character": "Une administratrice. Elle ne s'adresse pas à toi, elle diffuse une information dans un lieu où tu te trouves. Vouvoiement, impersonnel, aucune chaleur — elle constate, elle n'encourage jamais. Tout l'effet tient dans le contraste entre ce calme administratif et l'effort de celui qui l'écoute.",
     "delivery": "Débit posé et régulier, jamais pressé, jamais traînant. Registre médium, volume constant d'une ligne à l'autre. Les phrases retombent à la fin : une intonation montante transformerait un constat en question, et elle ne pose pas de questions. Une seule respiration par ligne, aucune n'en demande deux.",
     "never": "Pas de sourire dans la voix, pas d'ironie, pas d'emphase sur un mot pour le « vendre ». Surtout pas d'encouragement : « Dernière série » dit avec entrain devient un coach, et un coach n'est pas ce personnage. Le déadpan est la consigne, y compris — surtout — sur « Vous en aurez besoin ».",
     "recording": "ENREGISTRER À SEC. Aucune réverbération, aucun écho, aucun filtre « radio » ou « mégaphone » dans les fichiers : l'app les ajoute elle-même à la lecture. Une réverbération enregistrée ne s'annule pas, elle s'additionne, et deux salles donnent de la bouillie. Pièce mate, micro proche, pas de salle de bain.",
     "runtime": "L'app colore les clips en direct (src/audio/publicAddress.ts) : passe-haut à 170 Hz, bosse de présence à 2,6 kHz, passe-bas à 5,2 kHz — la bande passante d'un haut-parleur de sono —, puis un écho de mur à 110 ms et une réverbération de hall d'environ 1,4 s. Le carillon d'annonce traverse la même chaîne ; les tics du décompte restent secs, parce qu'un battement noyé dans une salle cesse d'être un battement. Le tout se coupe dans Réglages → Annonces → Écho de haut-parleur.",
-    "format": "mp3, mono, 44,1 kHz, 64 kbps. Silence de tête inférieur à 60 ms : un clip qui met un quart de seconde à démarrer arrive après le tic qu'il double. Couper aussi le silence de queue — la réverbération de l'app se charge de la traîne.",
-    "settings": "Réglages ElevenLabs, par ligne. stability : plus haut = plus monocorde et plus reproductible ; c'est ce qu'on veut presque partout, et au maximum sur les décomptes, dont les trois mots doivent être interchangeables. style : l'exagération d'intonation ; proche de zéro partout, sauf une pointe sur le record. similarity : fidélité au timbre de la voix source, à laisser haut.",
-    "counting": "Les décomptes de repos (rest-*) et de répétitions (rep-*) disent les mêmes mots et sont pourtant des clips distincts : l'un s'adresse à quelqu'un debout qui attend, l'autre à quelqu'un sous une barre. Enregistre-les séparément, l'intonation n'est pas la même. Et « Une » au féminin pour une répétition, « Un » pour une seconde."
+    "format": "mp3 mono 24 kHz 128 kbps, produit par le script : la voix est demandée en PCM brut puis encodée une seule fois, après découpage. Découper un mp3 revient à trancher entre des trames qui partagent un réservoir de bits, et les premières trames d'après la coupe décodent en bruit — pile sur la consonne d'attaque. Le 44,1 kHz est réservé au palier Pro, et 12 kHz de bande passante suffisent largement à une voix.",
+    "settings": "Réglages ElevenLabs, par ligne. Le modèle par défaut est eleven_v3, dont la stability n'est pas un curseur mais trois choix (0 créatif, 0,5 naturel, 1 robuste), et qui ignore style. scripts/voice/speech.mjs fait la conversion explicitement, parce que l'API accepte n'importe quelle valeur et la réinterprète en silence — ce qui est pire qu'un refus. Les nombres ci-dessous restent écrits dans la logique v2, toujours accessible via VOICE_MODEL.",
+    "counting": "Les décomptes de repos (rest-*) et de répétitions (rep-*) disent les mêmes mots et restent des clips distincts : l'un s'adresse à quelqu'un debout qui attend, l'autre à quelqu'un sous une barre. Chacun est un « group » : une seule génération « Trois… Deux… Un. » découpée en trois fichiers. Les points de suspension sur les deux premiers mots et le point final sur le dernier ne sont pas une coquetterie — mesurés, ils donnent trois courbes mélodiques à un tiers de ton près, là où toute autre ponctuation les fait diverger de trois à cinq demi-tons. Et « Une » au féminin pour une répétition, « Un » pour une seconde.",
+    "leadIn": "Chaque génération commence par une amorce jetée. Le premier mot d'une génération sort systématiquement mal — le modèle s'installe dessus — et une amorce d'un seul mot le prend à sa place. Elle sert aussi de repère de découpage : le premier bloc sonore est l'amorce, tout ce qui suit est la ligne."
   },
   "lines": [
     {
@@ -74,8 +75,8 @@
     {
       "id": "record-beaten-1",
       "cue": "record-beaten",
-      "text": "Nouveau record. Enregistré.",
-      "direction": "Le seul endroit où une once de couleur est permise, sur « record ». « Enregistré » retombe au plat : c'est le contraste qui fait l'effet, pas l'enthousiasme.",
+      "text": "Nouveau record enregistré.",
+      "direction": "Une seule ligne d'état, sans arrêt interne. Le point entre « record » et « enregistré » se lit comme une virgule et casse la phrase en deux ; sans lui, le Système énonce un fait unique.",
       "settings": {
         "stability": 0.7,
         "style": 0.2
@@ -239,6 +240,39 @@
       "settings": {
         "stability": 0.75,
         "style": 0.1
+      }
+    }
+  ],
+  "generation": {
+    "$comment": "Ce dont le script a besoin et qui ne concerne pas l'app.",
+    "model": "eleven_v3",
+    "leadIn": "Initialisation.",
+    "attempts": 12
+  },
+  "groups": [
+    {
+      "id": "rest-count",
+      "$comment": "Une génération, trois fichiers. Voir voice.counting.",
+      "text": "[monotone] Trois… [monotone] Deux… [monotone] Un.",
+      "clips": ["rest-3-1", "rest-2-1", "rest-1-1"],
+      "accept": {
+        "minMs": 120,
+        "maxMs": 700,
+        "maxReversals": 12,
+        "sameDirection": true,
+        "$comment": "Deux règles, et une seule qui décide. sameDirection est le vrai critère : trois mots qui ne descendent pas tous ensemble font boiter le décompte, et c'est le défaut qu'on entend. maxReversals n'est qu'un garde-fou large contre une prise partie en vrille — calé à 12 après avoir refusé deux fois, à 2 puis à 3, des prises validées à l'oreille (celle des répétitions comptait 8, 4 et 10 inversions et sonnait juste). Un compte d'inversions élevé sur un mot qui garde sa direction ne s'entend pas."
+      }
+    },
+    {
+      "id": "rep-count",
+      "text": "[monotone] Trois… [monotone] Deux… [monotone] Une.",
+      "clips": ["rep-3-1", "rep-2-1", "rep-1-1"],
+      "accept": {
+        "minMs": 120,
+        "maxMs": 700,
+        "maxReversals": 12,
+        "sameDirection": true,
+        "$comment": "Deux règles, et une seule qui décide. sameDirection est le vrai critère : trois mots qui ne descendent pas tous ensemble font boiter le décompte, et c'est le défaut qu'on entend. maxReversals n'est qu'un garde-fou large contre une prise partie en vrille — calé à 12 après avoir refusé deux fois, à 2 puis à 3, des prises validées à l'oreille (celle des répétitions comptait 8, 4 et 10 inversions et sonnait juste). Un compte d'inversions élevé sur un mot qui garde sa direction ne s'entend pas."
       }
     }
   ]

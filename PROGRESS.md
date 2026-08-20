@@ -2,9 +2,9 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-19 (**Lot 21 — l'annonceuse : sons, voix, cadence, fatigue**).
+**Dernière mise à jour :** 2026-08-20 (**Lot 21 — l'annonceuse : les 23 clips existent**).
 
-## Lot 21 — l'annonceuse (non commité, en attente du dépôt de test)
+## Lot 21 — l'annonceuse (clips générés, chaîne audio en cours)
 
 Demandé en cours de session : « des sons de notification et des phrases avec une voix féminine ia,
 un peu à la squid game, une sorte d'admin ». Puis, deux précisions qui ont tout cadré :
@@ -55,11 +55,49 @@ réglages TTS — inutile au moteur, décisive pour quelqu'un au micro — et un
 les phrases retombent, parce qu'une intonation montante fait d'un constat une question, et elle
 n'en pose pas.
 
-**Ce qui manque, et c'est tout ce qui manque : les 23 clips.** Le dépôt porte le script
-(`src/audio/voiceScript.json`), pas les enregistrements — une clé d'API n'entre pas dans un bundle
-public (règle n°3). `npm run voice:generate` avec `VOICE_API_KEY` dans le shell les fabrique. Sans
-eux l'app sonne et ne parle pas, ce qui est exactement le comportement voulu : un clip absent est
-un silence, jamais une erreur.
+**Les 23 clips existent.** Voix conçue dans Voice Design d'ElevenLabs, rendue par
+`eleven_v3`, générée par `npm run voice:generate`. Ce qui s'est révélé pendant la fabrication
+tient en quelques pièges, tous payés en crédits :
+
+**Un modèle ne sait pas dire un mot isolé.** « Trois. » demandé seul revient avec une mélodie
+inventée, différente à chaque tirage : mesurées, douze prises séparées donnaient douze courbes
+divergentes. Demandés **dans une même génération**, les trois mots partagent une ligne. Les
+décomptes sont donc des `groups` dans `voiceScript.json` : une génération, découpée ensuite.
+La ponctuation compte autant que le modèle — `Trois… Deux… Un.` aligne les trois courbes à un
+tiers de ton près, là où points ou virgules les font diverger de trois à cinq demi-tons.
+
+**Le premier mot d'une génération est toujours le pire** : le modèle s'installe dessus. Chaque
+génération porte donc une amorce d'un mot, jetée, qui prend le coup — et qui sert au passage de
+repère de découpage, le premier bloc sonore étant l'amorce.
+
+**On ne découpe pas un mp3.** Les trames Layer III partagent un réservoir de bits ; couper entre
+elles fait décoder du bruit aux premières trames d'après la coupe, pile sur la consonne d'attaque.
+La voix est donc demandée en `pcm_24000`, découpée dans le signal avec des fondus de 6 ms, et
+encodée **une seule fois**. Le `pcm_44100` est réservé au palier Pro ; sans importance, 12 kHz de
+bande passante suffisent à une voix.
+
+**Le script juge les prises avant l'oreille.** `scripts/voice/analysis.mjs` mesure la durée de
+parole et la forme de la mélodie, et le générateur redemande une prise tant que les règles de
+`accept` ne passent pas. Le critère qui prédit vraiment ce qu'on entend est **l'accord de sens**
+entre les trois mots, pas le compte d'inversions : une prise validée à l'oreille comptait 8, 4 et
+10 inversions et sonnait juste, tandis qu'un seuil serré rejetait des prises que l'utilisateur
+avait approuvées. Le compte d'inversions n'est resté qu'un garde-fou large.
+
+**Les prises brutes sont mises en cache** dans `.voice-cache/` (ignoré par git). Un bug dans
+l'analyse ne doit jamais coûter une seconde génération — celui-ci a été appris en épuisant les
+10 000 crédits d'un mois gratuit.
+
+**Ce qui n'a pas marché, et qu'il est inutile de retenter :** lire tout le script d'un seul tenant
+pour le découper ensuite. L'idée est bonne — un seul contexte pour les 23 lignes — mais le modèle
+ne marque pas la fin d'une ligne plus longuement que la fin d'une phrase à l'intérieur d'une ligne.
+Mesuré : des silences continus de 51 à 470 ms, 38 à 41 blocs sonores pour 31 attendus, aucun seuil
+séparateur. Le décompte des répétitions fait exception et vient bien d'une lecture d'ensemble, mais
+parce qu'il en occupe la toute fin, donc les trois derniers blocs, sans ambiguïté.
+
+**Uniformité obtenue :** 126–132 ms d'avance de tête et −3,5 à −3,4 dB de crête sur les 23 clips.
+La première empêche un mot d'arriver après le tic qu'il double, la seconde empêche un mot de sortir
+plus fort que son voisin. L'égalisation vise −3 dB et non 0 : `publicAddress` somme le direct et
+deux retours, et une voix écrêtée sur un haut-parleur de téléphone crache au lieu de sonner.
 
 **Piège à retenir.** Un `<audio>` et un `BufferSource` jouent le même mp3 et ne coûtent pas la même
 chose : le premier demande le focus audio au système, le second se contente de mixer. Sur un
