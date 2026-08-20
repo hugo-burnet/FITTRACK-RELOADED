@@ -22,7 +22,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId "com.fittrack.app"
+        applicationId "com.fittrack.test"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode fittrackVersionCode
