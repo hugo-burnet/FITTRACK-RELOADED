@@ -180,9 +180,7 @@ describe('WorkoutScreen — persistance', () => {
       screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
     ).not.toBeInTheDocument();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }));
     const firstHandle = screen.getByRole('button', { name: 'Déplacer Développé couché' });
     expect(useExerciseOrderLock.getState().unlocked).toEqual({
       routine: true,
@@ -196,13 +194,9 @@ describe('WorkoutScreen — persistance', () => {
 
     mounted.unmount();
     renderWorkout();
-    expect(
-      await screen.findByRole('button', { name: `Déplacer ${second.name}` }),
-    ).toBeVisible();
+    expect(await screen.findByRole('button', { name: `Déplacer ${second.name}` })).toBeVisible();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }));
     expect(useExerciseOrderLock.getState().unlocked).toEqual({
       routine: true,
       workout: false,
@@ -246,12 +240,11 @@ describe('WorkoutScreen — objectif du coach', () => {
     renderWorkout();
 
     // La carte porte le chiffre et la phrase qui l'explique, sans « + » trompeur.
-    expect(await screen.findByText('47,5 → 50 kg car 3 × 12 a atteint le haut de la fourchette.'))
-      .toBeVisible();
+    expect(
+      await screen.findByText('47,5 → 50 kg car 3 × 12 a atteint le haut de la fourchette.'),
+    ).toBeVisible();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Appliquer 50 kg aux séries restantes' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Appliquer 50 kg aux séries restantes' }));
 
     await waitFor(async () => {
       expect(await firstSet(workoutId)).toMatchObject({ targetWeight: 50, isCompleted: 0 });
@@ -414,16 +407,40 @@ describe('WorkoutScreen — effort et fatigue', () => {
     applyEffortPrompt(true);
   });
 
-  it('propose la cadence, et l’arrête quand on la retape', async () => {
+  it('garde la question d’effort visible quand la dernière série replie la carte', async () => {
+    await seedActiveWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '60');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    const complete = screen.getByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+    await user.click(complete);
+
+    expect(await screen.findByRole('group', { name: t('workout.effortQuestion') })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { expanded: false })).toHaveTextContent('Développé couché');
+    });
+  });
+
+  it('propose une cadence nommée dans le menu, puis un arrêt direct', async () => {
     await seedTwoSetWorkout();
     const user = userEvent.setup();
     renderWorkout();
 
     await screen.findByText('Développé couché');
-    const start = await screen.findByRole('button', { name: t('workout.pace') });
-
-    await user.click(start);
+    act(() => useRestTimer.getState().start('previous-set', 90));
+    await user.click(
+      screen.getByRole('button', {
+        name: t('workout.exerciseMenu', { name: 'Développé couché' }),
+      }),
+    );
+    await user.click(screen.getByRole('button', { name: /Lancer la cadence/ }));
     expect(useRepPacer.getState().setId).not.toBeNull();
+    expect(useRestTimer.getState().setId).toBeNull();
+    expect(screen.getByText(/Cadence · 1\/8/)).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: t('workout.paceStop') }));
     expect(useRepPacer.getState().setId).toBeNull();

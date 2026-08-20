@@ -35,6 +35,7 @@ import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import { SET_TYPES } from '@/data/types';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { formatNumber } from '@/ui/numberField';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { isDeloadEligibleMeasurement } from '@/lib/deload';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
@@ -71,14 +72,8 @@ import { nextPaceTarget } from './paceTarget';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
-import {
-  WorkoutExerciseCard,
-  workoutRecordNotices,
-} from './WorkoutExerciseCard';
-import {
-  INITIAL_WORKOUT_FOLD_COMMAND,
-  nextWorkoutFoldCommand,
-} from './workoutFold';
+import { WorkoutExerciseCard, workoutRecordNotices } from './WorkoutExerciseCard';
+import { INITIAL_WORKOUT_FOLD_COMMAND, nextWorkoutFoldCommand } from './workoutFold';
 import { WorkoutRpeField } from './WorkoutRpeField';
 import { workoutProgressLine } from './summary';
 
@@ -87,7 +82,7 @@ type SheetState =
   | { kind: 'deload' }
   | { kind: 'rename' }
   | { kind: 'notes' }
-  | { kind: 'exercise'; rowId: string }
+  | { kind: 'exercise'; rowId: string; openedAt: number }
   | { kind: 'exerciseNotes'; rowId: string }
   | { kind: 'removeExercise'; rowId: string }
   | { kind: 'warmup'; rowId: string }
@@ -119,9 +114,7 @@ export function WorkoutScreen() {
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   /** The one set currently being asked how hard it was. */
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
-  const [foldCommand, setFoldCommand] = useState(
-    INITIAL_WORKOUT_FOLD_COMMAND,
-  );
+  const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
   const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
   const rest = useRestTimer();
@@ -208,9 +201,7 @@ export function WorkoutScreen() {
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
     if (restingSetId === null || detail == null) return;
-    const alive = detail.exercises.some((line) =>
-      line.sets.some((set) => set.id === restingSetId),
-    );
+    const alive = detail.exercises.some((line) => line.sets.some((set) => set.id === restingSetId));
     if (!alive) stopRest(restingSetId);
   }, [restingSetId, detail, stopRest]);
 
@@ -299,7 +290,7 @@ export function WorkoutScreen() {
     const line = lineOf(rowId);
     return line === null
       ? t('workout.deletedExercise')
-      : workoutExerciseIdentityOf(line).name ?? t('workout.deletedExercise');
+      : (workoutExerciseIdentityOf(line).name ?? t('workout.deletedExercise'));
   };
 
   // Sheets outlive deleted rows during their closing animation.
@@ -325,6 +316,30 @@ export function WorkoutScreen() {
       }
     }
     return loads;
+  };
+
+  const exerciseMenuLine = sheet?.kind === 'exercise' ? lineOf(sheet.rowId) : null;
+  const exerciseMenuOpenedAt = sheet?.kind === 'exercise' ? sheet.openedAt : workout.startedAt;
+  const exerciseMenuPaceRunning =
+    sheet?.kind === 'exercise' && pacer.rowId === sheet.rowId && pacer.setId !== null;
+  const exerciseMenuPace =
+    exerciseMenuLine === null
+      ? null
+      : exerciseMenuPaceRunning
+        ? { reps: pacer.reps, repSeconds: pacer.repSeconds }
+        : nextPaceTarget(exerciseMenuLine.sets, exerciseMenuOpenedAt - workout.startedAt);
+
+  const startPaceFor = (line: WorkoutExerciseDetail): void => {
+    // Read at the tap, never at render: the tempo is a function of how long
+    // the session has been running.
+    const target = nextPaceTarget(line.sets, Date.now() - workout.startedAt);
+    if (target === null) return;
+    primeAnnouncer();
+    // Starting the next set is the clearest possible signal that rest is over.
+    // Keeping both clocks alive hides the pace reading and lets the rest
+    // countdown speak over the repetition beats.
+    rest.stop();
+    startPace(line.row.id, target.setId, target.reps, target.repSeconds);
   };
 
   return (
@@ -359,17 +374,10 @@ export function WorkoutScreen() {
               disabled={deloadActive || !canDeload}
               onChange={() => setSheet({ kind: 'deload' })}
             />
-            <OrderLockButton
-              unlocked={reorderUnlocked}
-              onToggle={() => toggleReorder('workout')}
-            />
+            <OrderLockButton unlocked={reorderUnlocked} onToggle={() => toggleReorder('workout')} />
             <button
               type="button"
-              aria-label={t(
-                willExpandAll
-                  ? 'workout.expandAll'
-                  : 'workout.collapseAll',
-              )}
+              aria-label={t(willExpandAll ? 'workout.expandAll' : 'workout.collapseAll')}
               onClick={() => setFoldCommand(nextWorkoutFoldCommand)}
               className="flex size-12 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -380,10 +388,7 @@ export function WorkoutScreen() {
         ) : undefined
       }
       footer={
-        <ActionBand
-          label={t('workout.finish')}
-          onClick={() => void navigate('/workout/finish')}
-        />
+        <ActionBand label={t('workout.finish')} onClick={() => void navigate('/workout/finish')} />
       }
     >
       <div className="flex flex-col gap-2">
@@ -412,146 +417,121 @@ export function WorkoutScreen() {
               disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
               renderItem={(line, _index, state) => {
-                const config =
-                  line.exercise !== undefined ? platesConfigFor(line.exercise) : null;
+                const config = line.exercise !== undefined ? platesConfigFor(line.exercise) : null;
                 const loads = config !== null ? exerciseLoads(line) : [];
                 return (
-                <WorkoutExerciseCard
-                  line={line}
-                  superset={places.get(line.row.id)}
-                  pace={
-                    pacer.setId !== null && pacer.rowId === line.row.id
-                      ? { ...pacer, setId: pacer.setId, onFinished: () => stopPace() }
-                      : null
-                  }
-                  onPace={
-                    // Hidden when there is nothing to pace — never shown greyed:
-                    // a disabled metronome invites a tap that explains nothing.
-                    nextPaceTarget(line.sets, 0) === null && pacer.rowId !== line.row.id
-                      ? undefined
-                      : () => {
-                          if (pacer.rowId === line.row.id && pacer.setId !== null) {
-                            stopPace();
-                            return;
+                  <WorkoutExerciseCard
+                    line={line}
+                    superset={places.get(line.row.id)}
+                    pace={
+                      pacer.setId !== null && pacer.rowId === line.row.id
+                        ? { ...pacer, setId: pacer.setId, onFinished: () => stopPace() }
+                        : null
+                    }
+                    onStopPace={
+                      pacer.rowId === line.row.id && pacer.setId !== null
+                        ? () => stopPace()
+                        : undefined
+                    }
+                    rest={
+                      rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
+                        ? {
+                            setId: rest.setId,
+                            startedAt: rest.startedAt,
+                            endsAt: rest.endsAt,
+                            onDone: () => rest.stop(),
                           }
-                          // Read at the tap, never at render: the tempo is a
-                          // function of how long you have been in the gym.
-                          const target = nextPaceTarget(
-                            line.sets,
-                            Date.now() - workout.startedAt,
-                          );
-                          if (target === null) return;
-                          primeAnnouncer();
-                          startPace(
-                            line.row.id,
-                            target.setId,
-                            target.reps,
-                            target.repSeconds,
-                          );
-                        }
-                  }
-                  rest={
-                    rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
-                      ? {
-                          setId: rest.setId,
-                          startedAt: rest.startedAt,
-                          endsAt: rest.endsAt,
-                          onDone: () => rest.stop(),
-                        }
-                      : null
-                  }
-                  effort={
-                    effortSetId !== null && line.sets.some((set) => set.id === effortSetId)
-                      ? {
-                          setId: effortSetId,
-                          onExpire: () =>
-                            setEffortSetId((current) =>
-                              current === effortSetId ? null : current,
-                            ),
-                          onAnswer: (rpe) => {
-                            void updateSetValues(effortSetId, { rpe });
-                            const bonus = restBonusSecondsFor(rpe);
-                            if (bonus > 0) {
-                              extendRest(effortSetId, bonus);
-                              announce('rest-extended');
-                            }
-                            setEffortSetId(null);
-                          },
-                        }
-                      : null
-                  }
-                  records={records}
-                  state={state}
-                  reorderEnabled={reorderUnlocked}
-                  foldCommand={foldCommand}
-                  onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
-                  onPlates={
-                    config !== null && loads.length > 0
-                      ? () => {
-                          setPlatesView({
-                            rowId: line.row.id,
-                            loads,
-                            barWeight: plateBarWeights[line.row.id] ?? config.barWeight,
-                            sides: config.sides,
-                            barWeightAdjustable: config.barWeightAdjustable,
-                          });
-                          setSheet({ kind: 'plates' });
-                        }
-                      : undefined
-                  }
-                  onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
-                  onWrite={(setId, values) => void updateSetValues(setId, values)}
-                  onComplete={(setId, values, set) => {
-                    void completeSet(setId, values);
-                    // The metronome paced this set; the set is over.
-                    stopPace(setId);
-                    startRest(line, setId, set.setType);
-                    announce(setValidationCue(line.sets, setId));
-                    // A warm-up is not an effort to report, and one strip at a
-                    // time: the previous question dies with the set that
-                    // replaces it rather than stacking up down the card.
-                    setEffortSetId(
-                      set.setType !== 'warmup' && loadEffortPrompt() ? setId : null,
-                    );
-                  }}
-                  onUncomplete={(setId) => {
-                    void uncompleteSet(setId);
-                    setEffortSetId((current) => (current === setId ? null : current));
-                    // Only stop the rest owned by this set.
-                    stopRest(setId);
-                  }}
-                  onDeleteSet={(setId) => void deleteSet(setId)}
-                  onRestoreSet={(setId) => void restoreSet(setId)}
-                  onAddSet={() => void duplicateLastSet(line.row.id)}
-                  coachObjective={coachByExercise.get(line.row.exerciseId)}
-                  onDismissCoach={
-                    coachByExercise.get(line.row.exerciseId) === undefined
-                      ? undefined
-                      : () =>
-                          void dismissRecommendation(
-                            coachByExercise.get(line.row.exerciseId)!.id,
-                          )
-                  }
-                  onApplyCoach={
-                    // Left undefined without a load: an observation has nothing
-                    // to write, and a dead tap target is worse than none.
-                    coachByExercise.get(line.row.exerciseId)?.nextLoadKg === undefined
-                      ? undefined
-                      : () => {
-                          const objective = coachByExercise.get(line.row.exerciseId)!;
-                          // Applying *is* accepting: the card closes on the spot
-                          // because it leaves `pending`, not by a local flag a
-                          // remount would forget.
-                          void applyCoachObjective(line.row.id, objective.nextLoadKg!).then(
-                            () =>
+                        : null
+                    }
+                    effort={
+                      effortSetId !== null && line.sets.some((set) => set.id === effortSetId)
+                        ? {
+                            setId: effortSetId,
+                            onExpire: () =>
+                              setEffortSetId((current) =>
+                                current === effortSetId ? null : current,
+                              ),
+                            onAnswer: (rpe) => {
+                              void updateSetValues(effortSetId, { rpe });
+                              const bonus = restBonusSecondsFor(rpe);
+                              if (bonus > 0) {
+                                extendRest(effortSetId, bonus);
+                                announce('rest-extended');
+                              }
+                              setEffortSetId(null);
+                            },
+                          }
+                        : null
+                    }
+                    records={records}
+                    state={state}
+                    reorderEnabled={reorderUnlocked}
+                    foldCommand={foldCommand}
+                    onMenu={() =>
+                      setSheet({ kind: 'exercise', rowId: line.row.id, openedAt: Date.now() })
+                    }
+                    onPlates={
+                      config !== null && loads.length > 0
+                        ? () => {
+                            setPlatesView({
+                              rowId: line.row.id,
+                              loads,
+                              barWeight: plateBarWeights[line.row.id] ?? config.barWeight,
+                              sides: config.sides,
+                              barWeightAdjustable: config.barWeightAdjustable,
+                            });
+                            setSheet({ kind: 'plates' });
+                          }
+                        : undefined
+                    }
+                    onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
+                    onWrite={(setId, values) => void updateSetValues(setId, values)}
+                    onComplete={(setId, values, set) => {
+                      void completeSet(setId, values);
+                      // The metronome paced this set; the set is over.
+                      stopPace(setId);
+                      startRest(line, setId, set.setType);
+                      announce(setValidationCue(line.sets, setId));
+                      // A warm-up is not an effort to report, and one strip at a
+                      // time: the previous question dies with the set that
+                      // replaces it rather than stacking up down the card.
+                      setEffortSetId(set.setType !== 'warmup' && loadEffortPrompt() ? setId : null);
+                    }}
+                    onUncomplete={(setId) => {
+                      void uncompleteSet(setId);
+                      setEffortSetId((current) => (current === setId ? null : current));
+                      // Only stop the rest owned by this set.
+                      stopRest(setId);
+                    }}
+                    onDeleteSet={(setId) => void deleteSet(setId)}
+                    onRestoreSet={(setId) => void restoreSet(setId)}
+                    onAddSet={() => void duplicateLastSet(line.row.id)}
+                    coachObjective={coachByExercise.get(line.row.exerciseId)}
+                    onDismissCoach={
+                      coachByExercise.get(line.row.exerciseId) === undefined
+                        ? undefined
+                        : () =>
+                            void dismissRecommendation(coachByExercise.get(line.row.exerciseId)!.id)
+                    }
+                    onApplyCoach={
+                      // Left undefined without a load: an observation has nothing
+                      // to write, and a dead tap target is worse than none.
+                      coachByExercise.get(line.row.exerciseId)?.nextLoadKg === undefined
+                        ? undefined
+                        : () => {
+                            const objective = coachByExercise.get(line.row.exerciseId)!;
+                            // Applying *is* accepting: the card closes on the spot
+                            // because it leaves `pending`, not by a local flag a
+                            // remount would forget.
+                            void applyCoachObjective(line.row.id, objective.nextLoadKg!).then(() =>
                               markRecommendationFollowed(objective.id, {
                                 workoutId: workout.id,
                                 loadKg: objective.nextLoadKg,
                               }),
-                          );
-                        }
-                  }
-                />
+                            );
+                          }
+                    }
+                  />
                 );
               }}
             />
@@ -559,10 +539,7 @@ export function WorkoutScreen() {
         )}
 
         <Card>
-          <AddRow
-            label={t('workout.addExercise')}
-            onClick={() => void navigate('/workout/add')}
-          />
+          <AddRow label={t('workout.addExercise')} onClick={() => void navigate('/workout/add')} />
         </Card>
       </div>
 
@@ -623,6 +600,24 @@ export function WorkoutScreen() {
         onClose={() => setSheet(null)}
         title={sheet?.kind === 'exercise' ? nameOf(sheet.rowId) : ''}
         actions={[
+          ...(exerciseMenuPace === null
+            ? []
+            : [
+                {
+                  label: t(exerciseMenuPaceRunning ? 'workout.paceStop' : 'workout.pace'),
+                  hint: t('workout.paceHint', {
+                    reps: exerciseMenuPace.reps,
+                    tempo: formatNumber(exerciseMenuPace.repSeconds),
+                  }),
+                  onSelect: () => {
+                    if (exerciseMenuPaceRunning) {
+                      stopPace();
+                    } else if (exerciseMenuLine !== null) {
+                      startPaceFor(exerciseMenuLine);
+                    }
+                  },
+                },
+              ]),
           {
             label: t('workout.addSetAction'),
             onSelect: () => {
@@ -644,7 +639,8 @@ export function WorkoutScreen() {
           {
             label: t('workout.notesLabel'),
             onSelect: () => {
-              if (sheet?.kind === 'exercise') setSheet({ kind: 'exerciseNotes', rowId: sheet.rowId });
+              if (sheet?.kind === 'exercise')
+                setSheet({ kind: 'exerciseNotes', rowId: sheet.rowId });
             },
           },
           {

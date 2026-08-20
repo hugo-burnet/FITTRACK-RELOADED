@@ -73,16 +73,19 @@ export function CalendarIcon(props: IconProps) {
 }
 
 /**
- * The rep metronome. A pendulum's body and its swinging rod — the one piece of
- * gym-adjacent hardware here that is not gym hardware, kept because no arrow,
- * clock, or waveform says "tempo" as fast as this silhouette does.
+ * Stop — a filled square, the one glyph nobody has to be taught.
+ *
+ * It replaced a metronome that was drawn here for the rep pacer. At 20 px a
+ * metronome loses its swinging rod and keeps only its body, which is a slab:
+ * the first person to use it read it as a monolith and never guessed it could
+ * be pressed. Starting the pace is a named line in the exercise menu now, and
+ * only stopping stayed an icon — because stopping is the one you reach for
+ * while it is beeping, and because a square needs no caption.
  */
-export function MetronomeIcon(props: IconProps) {
+export function StopIcon(props: IconProps) {
   return (
     <Icon {...props}>
-      <path d="M9.5 3.5h5l4 17h-13z" />
-      <path d="M12 19.5 15.5 7.5" />
-      <circle cx="14.6" cy="10.5" r="1.3" fill="currentColor" stroke="none" />
+      <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" fill="currentColor" stroke="none" />
     </Icon>
   );
 }

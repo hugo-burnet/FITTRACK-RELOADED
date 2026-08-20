@@ -5,8 +5,8 @@ import { formatNumber } from '@/ui/numberField';
 import { armRepPacer } from './repBeats';
 
 /**
- * The metronome of the set under way: it arms the beats, and says where you
- * are while they run.
+ * The metronome of the set under way: it arms the beats, says where you are
+ * while they run, and stops them when tapped.
  *
  * Mounted keyed by the set, like the rest bar — the component's lifetime *is*
  * the pace's, so nothing has to be cancelled by hand when the set ends, is
@@ -15,6 +15,10 @@ import { armRepPacer } from './repBeats';
  * The reading names the tempo as well as the rep, and that is not decoration:
  * "3,5 s" is how the fatigue rule shows its work. A beat that stretches without
  * saying so reads as an app that has lost count.
+ *
+ * A reading, not a control: it renders inside the header's expand button, and a
+ * button nested in a button is invalid. Stopping is the square next to it —
+ * see `WorkoutExerciseCard`.
  */
 export function RepPaceRail({
   pacer,

@@ -183,16 +183,17 @@ const fr = {
     emptyName: 'Séance libre',
     restLabel: 'Repos {duration}',
     restRemaining: 'Repos, {time} restantes',
-    pace: 'Donner la cadence',
-    effortQuestion: 'Effort ?',
+    pace: 'Lancer la cadence',
+    paceHint: '{reps} reps · {tempo} s par rep',
+    effortQuestion: 'Effort perçu',
+    effortLead: 'C’était',
     effortEasy: 'Facile',
     effortOk: 'Correct',
     effortHard: 'Dur',
     effortMax: 'Limite',
     effortOption: '{label}, RPE {value}',
-    effortBonus: '+{seconds} s de repos',
     paceStop: 'Arrêter la cadence',
-    paceStatus: 'Rép. {current}/{total} · {tempo} s',
+    paceStatus: 'Cadence · {current}/{total} · {tempo} s',
     complete: 'Valider la série {number}',
     uncomplete: 'Annuler la série {number}',
     previous: 'Précédent',
@@ -326,15 +327,13 @@ const fr = {
     range_ceiling_reached_plain:
       '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     /** Ceiling constat with no next load (stripped escalate, overload add_set sibling). */
-    range_ceiling_reached_constat:
-      '{sets} × {reps} a atteint le haut de la fourchette.',
+    range_ceiling_reached_constat: '{sets} × {reps} a atteint le haut de la fourchette.',
     /** @deprecated Read alias — same wording as range_ceiling_reached. */
     range_completed:
       '{current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_completed_assist:
       'Assistance {current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
-    range_completed_plain:
-      '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
+    range_completed_plain: '{weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',
     range_satisfied:
       'Fourchette respectée ({sets} séries ≥ {reps}, sans atteindre le plafond {max}).',
     range_missed:
@@ -343,10 +342,8 @@ const fr = {
       'Assistance {current} → {weight} kg car le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}).',
     // Pas de flèche ici : « → » veut dire « fais ça » sur la carte d'objectif,
     // et une observation ne demande rien.
-    intra_session_drop:
-      'Baisse de reps observée : {first} puis {low} (−{drop}).',
-    plateau:
-      'Plateau détecté : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
+    intra_session_drop: 'Baisse de reps observée : {first} puis {low} (−{drop}).',
+    plateau: 'Plateau détecté : {sessions} séances sans progrès du 1RM estimé ({value} kg).',
     long_rest: 'Repos long ({seconds} s) associé à une chute de reps.',
     /** Progression phase chose maintain — no increase_* was authorized. */
     progressionDeferred: 'Maintien — progression différée',
@@ -547,8 +544,7 @@ const fr = {
     shiftTitle: 'Décaler le bloc',
     shiftWeeksLabel: 'Nombre de semaines',
     shiftWeeksHint: 'Positif pour repousser, négatif pour avancer. Le bloc reste calé au lundi.',
-    shiftStartedWarning:
-      'Le bloc a déjà commencé. Les séances passées ne bougeront pas.',
+    shiftStartedWarning: 'Le bloc a déjà commencé. Les séances passées ne bougeront pas.',
     shiftConfirm: 'Confirmer le décalage',
     completeAction: 'Terminer le bloc',
     completeHint: 'Arrêter les prochaines séances sans effacer les données.',
@@ -599,12 +595,12 @@ const fr = {
     addSession: 'Ajouter une séance',
     removeSession: 'Retirer la séance {number}',
     routinesLoading: 'Chargement des routines…',
-    routinesReadError:
-      'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
+    routinesReadError: 'Les routines n’ont pas pu être lues. Réessaie avant de composer le split.',
     newRoutine: 'Nouvelle routine',
     newRoutineLabel: 'Nom de la routine',
     newRoutinePlaceholder: 'Poussée',
-    newRoutineHint: 'Elle est créée vide et prend sa place dans le split. Les exercices s’ajoutent depuis l’onglet Routines, avant la première séance.',
+    newRoutineHint:
+      'Elle est créée vide et prend sa place dans le split. Les exercices s’ajoutent depuis l’onglet Routines, avant la première séance.',
     newRoutineCreate: 'Créer et placer',
     weekday1: 'Lundi',
     weekday2: 'Mardi',

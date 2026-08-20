@@ -17,10 +17,10 @@ import {
   CheckIcon,
   ChevronDownIcon,
   GripIcon,
-  MetronomeIcon,
   MoreIcon,
   PlateIcon,
   StarIcon,
+  StopIcon,
 } from '@/ui/icons';
 import { CoachCard } from './CoachCard';
 import { EffortStrip } from './EffortStrip';
@@ -93,8 +93,8 @@ type Props = {
   reorderEnabled: boolean;
   foldCommand: WorkoutFoldCommand;
   onMenu: () => void;
-  /** Absent when there is nothing to pace: no working set left, or no target. */
-  onPace?: () => void;
+  /** Present only while this card's cadence is running. */
+  onStopPace?: () => void;
   onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
   onWrite: (setId: string, values: Partial<SetValues>) => void;
@@ -126,7 +126,7 @@ export function WorkoutExerciseCard({
   reorderEnabled,
   foldCommand,
   onMenu,
-  onPace,
+  onStopPace,
   onPlates,
   onSetMenu,
   onWrite,
@@ -152,9 +152,7 @@ export function WorkoutExerciseCard({
   // Convergent render-time adjustment prevents one stale expanded frame.
   const [expanded, setExpanded] = useState(!allDone);
   const [wasAllDone, setWasAllDone] = useState(allDone);
-  const [seenFoldVersion, setSeenFoldVersion] = useState(
-    foldCommand.version,
-  );
+  const [seenFoldVersion, setSeenFoldVersion] = useState(foldCommand.version);
   if (foldCommand.version !== seenFoldVersion) {
     setSeenFoldVersion(foldCommand.version);
     setWasAllDone(allDone);
@@ -172,16 +170,17 @@ export function WorkoutExerciseCard({
 
   const [deleted, setDeleted] = useState<DeletedSet | null>(null);
 
-  const undoRow = deleted === null ? null : (
-    <UndoRow
-      reading={deleted.reading}
-      onUndo={() => {
-        setDeleted(null);
-        onRestoreSet(deleted.setId);
-      }}
-      onExpire={() => setDeleted(null)}
-    />
-  );
+  const undoRow =
+    deleted === null ? null : (
+      <UndoRow
+        reading={deleted.reading}
+        onUndo={() => {
+          setDeleted(null);
+          onRestoreSet(deleted.setId);
+        }}
+        onExpire={() => setDeleted(null)}
+      />
+    );
 
   return (
     <div className={`relative ${superset === undefined ? '' : 'pl-3'}`}>
@@ -280,17 +279,15 @@ export function WorkoutExerciseCard({
             />
           </button>
 
-          {onPace !== undefined && (
+          {pace !== null && onStopPace !== undefined && (
             <button
               type="button"
-              aria-label={t(pace !== null ? 'workout.paceStop' : 'workout.pace')}
-              aria-pressed={pace !== null}
-              onClick={onPace}
-              className={`flex w-11 shrink-0 items-center justify-center
-                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
-                ${pace !== null ? 'text-[var(--accent-ink)]' : 'text-[var(--text-2)]'}`}
+              aria-label={t('workout.paceStop')}
+              onClick={onStopPace}
+              className="flex w-12 shrink-0 items-center justify-center text-[var(--accent-ink)]
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
             >
-              <MetronomeIcon width={20} height={20} />
+              <StopIcon width={18} height={18} />
             </button>
           )}
 
@@ -329,8 +326,10 @@ export function WorkoutExerciseCard({
         {expanded && (
           <>
             {row.notes !== undefined && row.notes !== '' && (
-              <p className="border-b border-[var(--border)] px-4 py-2 text-sm leading-relaxed
-                text-[var(--text-2)]">
+              <p
+                className="border-b border-[var(--border)] px-4 py-2 text-sm leading-relaxed
+                text-[var(--text-2)]"
+              >
                 {row.notes}
               </p>
             )}
@@ -372,37 +371,37 @@ export function WorkoutExerciseCard({
             {sets.map((set, index) => {
               const record = records.get(set.id);
               return (
-              <Fragment key={set.id}>
-                {deleted?.rank === index && undoRow}
-                <SwipeToDelete
-                  label={t('workout.swipeDelete')}
-                  onDelete={() => {
-                    setDeleted({
-                      setId: set.id,
-                      rank: index,
-                      reading:
-                        setReading(set, columns) ||
-                        t('workout.emptySetReading', { number: index + 1 }),
-                    });
-                    onDeleteSet(set.id);
-                  }}
-                >
-                  <WorkoutSetRow
-                    set={set}
-                    number={index + 1}
-                    columns={columns}
-                    previous={previous[index]}
-                    onWrite={(values) => onWrite(set.id, values)}
-                    onComplete={(values) => onComplete(set.id, values, set)}
-                    onUncomplete={() => onUncomplete(set.id)}
-                    onMenu={() => onSetMenu(set, index + 1)}
-                  />
-                  {record !== undefined && <RecordNote notice={record} />}
-                </SwipeToDelete>
-                {effort?.setId === set.id && (
-                  <EffortStrip onAnswer={effort.onAnswer} onExpire={effort.onExpire} />
-                )}
-              </Fragment>
+                <Fragment key={set.id}>
+                  {deleted?.rank === index && undoRow}
+                  <SwipeToDelete
+                    label={t('workout.swipeDelete')}
+                    onDelete={() => {
+                      setDeleted({
+                        setId: set.id,
+                        rank: index,
+                        reading:
+                          setReading(set, columns) ||
+                          t('workout.emptySetReading', { number: index + 1 }),
+                      });
+                      onDeleteSet(set.id);
+                    }}
+                  >
+                    <WorkoutSetRow
+                      set={set}
+                      number={index + 1}
+                      columns={columns}
+                      previous={previous[index]}
+                      onWrite={(values) => onWrite(set.id, values)}
+                      onComplete={(values) => onComplete(set.id, values, set)}
+                      onUncomplete={() => onUncomplete(set.id)}
+                      onMenu={() => onSetMenu(set, index + 1)}
+                    />
+                    {record !== undefined && <RecordNote notice={record} />}
+                  </SwipeToDelete>
+                  {effort?.setId === set.id && (
+                    <EffortStrip onAnswer={effort.onAnswer} onExpire={effort.onExpire} />
+                  )}
+                </Fragment>
               );
             })}
 
@@ -410,6 +409,13 @@ export function WorkoutExerciseCard({
 
             <AddRow label={t('workout.addSet')} onClick={onAddSet} />
           </>
+        )}
+
+        {/* Completing the last set folds the card. The answer must survive
+            that fold, otherwise the one effort reading most likely to matter
+            is also the only one the person can never enter. */}
+        {!expanded && effort !== null && (
+          <EffortStrip onAnswer={effort.onAnswer} onExpire={effort.onExpire} />
         )}
       </div>
     </div>

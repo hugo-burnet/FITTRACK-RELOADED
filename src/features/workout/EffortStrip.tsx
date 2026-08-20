@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { t, type TranslationKey } from '@/i18n/fr';
-import { restBonusSecondsFor } from '@/lib/restBonus';
 import { formatNumber } from '@/ui/numberField';
 
 /** The four answers, and the RPE each one writes. RF-30's scale, quantised. */
@@ -34,6 +33,20 @@ const CLOSE_MS = 220;
  * **It sits under its own set**, for the same reason `RecordNote` does: this
  * screen holds twenty near-identical rows, and a prompt at the foot of the
  * screen could never say which one it means.
+ *
+ * **It is built like the two other things that hang off a set row**, and that
+ * is the whole of its styling: a band on the validated surface, a muted label on
+ * the left, accent words on the right, no boxes. `UndoRow` and `RecordNote`
+ * already established that grammar; the first version of this strip invented
+ * boxed chips instead and was the only place in the app wearing them, which is
+ * exactly why it read as bolted on rather than built in.
+ *
+ * **The rest bonus is not printed on the answers.** It used to be, and it cost
+ * twice: three-line labels wrapping inside four cramped chips, and — worse — a
+ * price tag on each answer, which invites choosing "Dur" to buy thirty seconds
+ * rather than because the set was hard. An RPE that can be gamed is not a
+ * measurement. The extra rest is felt where it happens: the countdown sits two
+ * lines above, already on screen, and jumps the moment you answer.
  */
 export function EffortStrip({
   onAnswer,
@@ -70,37 +83,37 @@ export function EffortStrip({
       style={{ gridTemplateRows: closing ? '0fr' : '1fr' }}
     >
       <div className="overflow-hidden">
-        <div className="flex items-center gap-1.5 bg-[var(--surface-2)] px-2 py-1.5">
-          <span className="label-xs w-12 shrink-0 text-center font-semibold text-[var(--text-2)]">
-            {t('workout.effortQuestion')}
+        {/* 12 px in, like `RestRail` and `RecordNote`: everything that hangs off
+            a set line agrees on the same inset. */}
+        <div className="flex min-h-14 items-stretch gap-1 bg-[var(--surface-2)] px-3">
+          {/* An opening, not a label. "Effort ?" was a question mark hung over
+              four words that already are the answer — two grammars competing in
+              48 px. « C’était » makes the four the end of one sentence, which
+              is also how anyone would say it out loud. */}
+          <span className="flex shrink-0 items-center pr-1 text-sm text-[var(--text-2)]">
+            {t('workout.effortLead')}
           </span>
-          {ANSWERS.map(({ labelKey, rpe }) => {
-            const bonus = restBonusSecondsFor(rpe);
-            return (
-              <button
-                key={rpe}
-                type="button"
-                aria-label={t('workout.effortOption', {
-                  label: t(labelKey),
-                  value: formatNumber(rpe),
-                })}
-                onClick={() => {
-                  setClosing(true);
-                  onAnswer(rpe);
-                }}
-                className="flex min-h-12 flex-1 flex-col items-center justify-center rounded-lg
-                  bg-[var(--surface-1)] px-1 text-sm font-semibold text-[var(--text-1)]
-                  transition-colors duration-[var(--dur-1)] active:bg-[var(--accent-soft)]"
-              >
-                <span className="truncate">{t(labelKey)}</span>
-                {bonus > 0 && (
-                  <span className="label-xs font-semibold text-[var(--accent-ink)]">
-                    {t('workout.effortBonus', { seconds: bonus })}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {ANSWERS.map(({ labelKey, rpe }) => (
+            <button
+              key={rpe}
+              type="button"
+              aria-label={t('workout.effortOption', {
+                label: t(labelKey),
+                value: formatNumber(rpe),
+              })}
+              onClick={() => {
+                setClosing(true);
+                onAnswer(rpe);
+              }}
+              // No background of its own: the press is the feedback, the same
+              // one `UndoRow` uses. A resting chip would claim a weight these
+              // four answers do not have.
+              className="min-h-12 flex-1 text-sm font-semibold text-[var(--accent-ink)]
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
+            >
+              {t(labelKey)}
+            </button>
+          ))}
         </div>
       </div>
     </div>

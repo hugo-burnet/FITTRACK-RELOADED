@@ -49,6 +49,16 @@ describe('planCue', () => {
     expect(plans.every((plan) => plan.clip !== null)).toBe(true);
   });
 
+  it('distingue le tap des répétitions du tic d’urgence du repos', () => {
+    const [rep, rest] = run('sounds', [
+      { cue: 'rep-tick', at: 0 },
+      { cue: 'rest-3', at: 1_000 },
+    ]);
+
+    expect(rep?.tone).toBe('repTap');
+    expect(rest?.tone).toBe('tick');
+  });
+
   it('ne parle pas par-dessus une phrase qui vient de commencer', () => {
     const plans = run('voice', [
       { cue: 'exercise-cleared', at: 0 },

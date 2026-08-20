@@ -7,7 +7,7 @@
 **Objectif :** que l'app se fasse entendre. Les yeux sont sur la barre, les mains sont prises, le
 téléphone est dans la poche : l'audio est le seul canal libre pendant une séance.
 
-**À ne pas confondre avec le Lot 20**, qui est la saisie *vocale* (dicter une série). Ici, c'est
+**À ne pas confondre avec le Lot 20**, qui est la saisie _vocale_ (dicter une série). Ici, c'est
 l'app qui parle, jamais elle qui écoute. Aucun micro, aucune permission.
 
 ## Le besoin, dans les mots de l'utilisateur
@@ -31,12 +31,12 @@ n'encourage pas — c'est le contraste avec l'effort qui fait l'effet.
 ## Décidé — ne pas rouvrir
 
 - **Tout passe par Web Audio, jamais par `<audio>`.** Un `HTMLAudioElement` demande le focus audio
-  à Android, qui l'accorde en *baissant* ce qui joue. Un `BufferSource` se mélange. C'est une
+  à Android, qui l'accorde en _baissant_ ce qui joue. Un `BufferSource` se mélange. C'est une
   exigence de l'utilisateur, pas un détail d'implémentation.
 - **Les sons sont synthétisés, la voix est enregistrée.** Zéro octet et zéro licence pour les
   premiers ; le personnage n'existe que dans la seconde. Le TTS de l'appareil a été écarté :
   voix Google neutre, l'effet tombe à plat.
-- **Les clips sont optionnels.** Le dépôt porte le *script* (`src/audio/voiceScript.json`), pas
+- **Les clips sont optionnels.** Le dépôt porte le _script_ (`src/audio/voiceScript.json`), pas
   forcément les enregistrements. Un clip absent = silence, jamais une erreur, et jamais redemandé.
   « Sons + voix » sans pack se comporte exactement comme « Sons ».
 - **L'écho est ajouté à la lecture, jamais enregistré.** Le personnage n'est pas dans le timbre,
@@ -51,27 +51,31 @@ n'encourage pas — c'est le contraste avec l'effort qui fait l'effet.
   qui dérive s'entend avant d'être faux.
 - **Le son ne compte pas les répétitions à ta place.** Le métronome ne se déclenche que sur demande
   explicite (un bouton par carte d'exercice) et jamais sur un échauffement.
+- **Repos et répétitions n'ont pas le même battement.** Les trois secondes de repos gardent leur
+  tic carré, aigu et urgent. La cadence emploie un « tok » plus bas et arrondi (`repTap`) : deux
+  sinus descendants, sans fichier audio, assez présents pour traverser la musique sans fatiguer
+  l'oreille sur douze répétitions.
 
 ## Les règles de cadence — le vrai travail
 
 Jouer un son est trivial. Décider de **ne pas** en jouer un est la fonctionnalité. `planCue`
 (`src/audio/announcer.ts`, 10 tests) :
 
-| Règle | Pourquoi |
-|---|---|
-| Un **son** part à chaque cue | Un son est une information, et il est court. |
-| Une **phrase** exige du silence devant elle (`gapMs`) | Deux phrases qui se chevauchent ne s'entendent ni l'une ni l'autre. |
-| Une **priorité plus haute** coupe la parole | Un record vaut d'interrompre « dernière série ». Rien n'interrompt un record. |
-| Chaque cue a un **temps de repos** (`cooldownMs`) | Sinon la même phrase revient trois fois en dix secondes. |
-| Jamais **deux fois de suite la même variante** | Deux phrases identiques d'affilée : c'est là qu'une voix enregistrée devient une machine. |
-| Une cue **muette** ne consomme pas de silence | `set-validated` sonne trente fois par séance ; s'il ouvrait un délai de grâce, il ferait taire toutes les phrases de la séance. |
+| Règle                                                 | Pourquoi                                                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Un **son** part à chaque cue                          | Un son est une information, et il est court.                                                                                    |
+| Une **phrase** exige du silence devant elle (`gapMs`) | Deux phrases qui se chevauchent ne s'entendent ni l'une ni l'autre.                                                             |
+| Une **priorité plus haute** coupe la parole           | Un record vaut d'interrompre « dernière série ». Rien n'interrompt un record.                                                   |
+| Chaque cue a un **temps de repos** (`cooldownMs`)     | Sinon la même phrase revient trois fois en dix secondes.                                                                        |
+| Jamais **deux fois de suite la même variante**        | Deux phrases identiques d'affilée : c'est là qu'une voix enregistrée devient une machine.                                       |
+| Une cue **muette** ne consomme pas de silence         | `set-validated` sonne trente fois par séance ; s'il ouvrait un délai de grâce, il ferait taire toutes les phrases de la séance. |
 
 ## La voix : le personnage, la salle, et ce qui produit quoi
 
 Trois choses différentes, souvent confondues, et qui ne se règlent pas au même endroit.
 
 **1. Le texte** — `voiceScript.json`, champ `text`. Vouvoiement, phrases courtes, aucun
-encouragement. C'est le seul étage qui change ce qui est *dit*.
+encouragement. C'est le seul étage qui change ce qui est _dit_.
 
 **2. L'intonation** — champ `direction` (pour un humain au micro) et champ `settings` (pour le
 moteur TTS). La consigne générale : débit posé, volume constant, **les phrases retombent** — une
@@ -83,17 +87,17 @@ proche de zéro sauf une pointe sur le record. Le déadpan est la consigne, y co
 **3. La salle** — `src/audio/publicAddress.ts`, appliquée en direct, identique quelle que soit
 l'origine des clips :
 
-| Étage | Réglage | Rôle |
-|---|---|---|
-| Passe-haut | 170 Hz | Sous cette limite une voix ne porte que du grondement. |
-| Présence | +4 dB à 3,2 kHz | Là où se décident les occlusives françaises. À 2,6 kHz, le /t/ de « trois » s'entend comme un /k/ — « croix ». |
-| Plateau aigu | +4 dB à 5 kHz | Remplace le passe-bas de l'ancienne chaîne. Celui-ci fabriquait le haut-parleur de sono ; le personnage n'en est plus un. |
-| Écho de mur | 110 ms, réinjection 17 % | Un mur en face. Deux ou trois retours, pas un canyon. |
-| Pièce | ~0,6 s, mix 22 % | Resserrée en même temps que le haut s’ouvrait : une queue brillante s’entend bien plus qu’une queue sourde au même dosage. |
+| Étage        | Réglage                  | Rôle                                                                                                                       |
+| ------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Passe-haut   | 170 Hz                   | Sous cette limite une voix ne porte que du grondement.                                                                     |
+| Présence     | +4 dB à 3,2 kHz          | Là où se décident les occlusives françaises. À 2,6 kHz, le /t/ de « trois » s'entend comme un /k/ — « croix ».             |
+| Plateau aigu | +4 dB à 5 kHz            | Remplace le passe-bas de l'ancienne chaîne. Celui-ci fabriquait le haut-parleur de sono ; le personnage n'en est plus un.  |
+| Écho de mur  | 110 ms, réinjection 17 % | Un mur en face. Deux ou trois retours, pas un canyon.                                                                      |
+| Pièce        | ~0,6 s, mix 22 %         | Resserrée en même temps que le haut s’ouvrait : une queue brillante s’entend bien plus qu’une queue sourde au même dosage. |
 
 Le **carillon** d'annonce traverse la même chaîne : c'est la cloche qui précède la phrase, elle doit
-venir de la même pièce. Les **tics du décompte restent secs** — un battement noyé dans une salle
-cesse d'être un battement, et le décompte n'a qu'un seul travail.
+venir de la même pièce. Les **tics du décompte et les taps de répétition restent secs** — un
+battement noyé dans une salle cesse d'être un battement, et la cadence n'a qu'un seul travail.
 
 Le mélange humide reste sous un tiers : ça s'écoute dans une salle de sport par-dessus de la
 musique, et l'intelligibilité passe avant l'atmosphère. Coupable dans Réglages → Annonces.
@@ -123,31 +127,31 @@ T−3 s : au pire on perd trois secondes de filet, pas deux minutes.
 
 ## Fichiers
 
-| Fichier | Rôle |
-|---|---|
-| `src/audio/context.ts` | Le seul `AudioContext`, son déblocage, son volume. |
-| `src/audio/tones.ts` | Les quatre sons synthétisés. |
-| `src/audio/voicePack.ts` | Chargement, décodage, cache — et le cache des absences. |
-| `src/audio/publicAddress.ts` | La salle : haut-parleur, écho de mur, hall. |
-| `src/audio/voiceScript.json` | **Source unique** : ce que l'app peut dire, ce que le générateur doit fabriquer. |
-| `src/audio/cues.ts` | Le vocabulaire d'événements et leurs règles. |
-| `src/audio/announcer.ts` | La décision. Pur, testé. |
-| `src/audio/announce.ts` | Le câblage : `announce(cue)`, `primeAnnouncer()`, l'aperçu des réglages. |
-| `src/lib/tempo.ts`, `src/lib/restBonus.ts` | Les deux règles de fatigue. Pures, testées. |
-| `src/features/workout/restCountdown.ts` | 3, 2, 1 — et la reprise en main de la notification. |
-| `src/features/workout/repBeats.ts`, `paceTarget.ts`, `RepPaceRail.tsx` | Le métronome de série. |
-| `src/features/workout/EffortStrip.tsx` | La question « Effort ? », sous sa série. |
-| `src/stores/announcer.ts`, `effortPrompt.ts`, `repPacer.ts` | Réglages et état éphémère. |
-| `scripts/generate-voice.mjs` | Fabrique les clips. Jamais exécuté par l'app. |
+| Fichier                                                                | Rôle                                                                             |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `src/audio/context.ts`                                                 | Le seul `AudioContext`, son déblocage, son volume.                               |
+| `src/audio/tones.ts`                                                   | Les quatre sons synthétisés.                                                     |
+| `src/audio/voicePack.ts`                                               | Chargement, décodage, cache — et le cache des absences.                          |
+| `src/audio/publicAddress.ts`                                           | La salle : haut-parleur, écho de mur, hall.                                      |
+| `src/audio/voiceScript.json`                                           | **Source unique** : ce que l'app peut dire, ce que le générateur doit fabriquer. |
+| `src/audio/cues.ts`                                                    | Le vocabulaire d'événements et leurs règles.                                     |
+| `src/audio/announcer.ts`                                               | La décision. Pur, testé.                                                         |
+| `src/audio/announce.ts`                                                | Le câblage : `announce(cue)`, `primeAnnouncer()`, l'aperçu des réglages.         |
+| `src/lib/tempo.ts`, `src/lib/restBonus.ts`                             | Les deux règles de fatigue. Pures, testées.                                      |
+| `src/features/workout/restCountdown.ts`                                | 3, 2, 1 — et la reprise en main de la notification.                              |
+| `src/features/workout/repBeats.ts`, `paceTarget.ts`, `RepPaceRail.tsx` | Le métronome de série.                                                           |
+| `src/features/workout/EffortStrip.tsx`                                 | La question « Effort ? », sous sa série.                                         |
+| `src/stores/announcer.ts`, `effortPrompt.ts`, `repPacer.ts`            | Réglages et état éphémère.                                                       |
+| `scripts/generate-voice.mjs`                                           | Fabrique les clips. Jamais exécuté par l'app.                                    |
 
 ## Ce qui reste
 
-- **Les clips.** Le script compte 23 lignes ; aucune n'est enregistrée. Tant qu'elles manquent,
-  l'app sonne mais ne parle pas. `npm run voice:generate` avec une clé, puis écoute avant commit :
-  un blanc en tête de clip retarde tout le décompte.
-- **Le silence de tête et la régularité** sont les deux seuls critères qui comptent à
-  l'enregistrement ; « Trois », « Deux », « Un » doivent durer pareil.
-- **À sec**, sans réverbération : celle de l'app s'ajouterait par-dessus.
+- **Écoute en salle du nouveau tap de répétition.** Le profil synthétique est volontairement plus
+  bas et plus rond que le tic du repos. Le seul réglage encore empirique est son gain face à une
+  vraie musique dans des écouteurs ; ne pas remonter l'aigu pour le rendre audible, augmenter le
+  gain du `repTap` si nécessaire.
+- **Les 23 clips sont présents et normalisés.** La prochaine passe voix est une écoute sur le
+  haut-parleur du téléphone, pas une nouvelle génération.
 
 ## ✅ Checkpoint manuel (téléphone)
 
@@ -157,7 +161,10 @@ T−3 s : au pire on perd trois secondes de filet, pas deux minutes.
       seule** alerte, pas la notification en plus.
 - [ ] Écran éteint, téléphone en poche : la notification Android sonne toujours à la fin du repos.
 - [ ] Bande « Effort ? » sous la série validée ; « Dur » ajoute 30 s à la ligne de repos.
-- [ ] Bouton métronome sur une carte : le tempo affiché passe de 3 s à 3,5 s sur la dernière série.
+- [ ] Menu `⋯` d'un exercice → « Lancer la cadence » : le nombre de reps et les secondes par rep
+      sont annoncés avant le geste ; le repos s'arrête, la cadence apparaît et un carré l'arrête.
+- [ ] Le « tok » des répétitions reste audible avec de la musique sans devenir agressif sur une
+      série de 12 ; le tic aigu reste réservé aux trois dernières secondes du repos.
 - [ ] Réglages → Annonces → « Silence » : plus rien ne sort, immédiatement.
 - [ ] « Écho de haut-parleur » : le carillon change de pièce en une touche, les tics du décompte
       ne bougent pas.

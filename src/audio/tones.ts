@@ -11,15 +11,18 @@ import type { AudioBus } from './context';
  * Every envelope is ramped, never switched: a gain that jumps to zero clicks,
  * and a click is the one thing that makes a synthesised sound read as a bug.
  */
-export type ToneId = 'tick' | 'chime' | 'validate' | 'record';
+export type ToneId = 'tick' | 'repTap' | 'chime' | 'validate' | 'record';
 
 interface Partial_ {
   frequency: number;
+  /** Optional downward movement gives a tap a body without adding a sample. */
+  endFrequency?: number;
   /** Seconds after the tone's own start. */
   delay: number;
   duration: number;
   gain: number;
   type?: OscillatorType;
+  attack?: number;
 }
 
 /**
@@ -33,6 +36,7 @@ interface Partial_ {
  */
 const ANNOUNCED: Record<ToneId, boolean> = {
   tick: false,
+  repTap: false,
   chime: true,
   validate: false,
   record: false,
@@ -41,6 +45,33 @@ const ANNOUNCED: Record<ToneId, boolean> = {
 const TONES: Record<ToneId, readonly Partial_[]> = {
   /** The cadence of the last three seconds. Dry, short, unmistakably a count. */
   tick: [{ frequency: 1046.5, delay: 0, duration: 0.06, gain: 0.22, type: 'square' }],
+
+  /**
+   * The repetition beat: a rounded wooden tap rather than the countdown's
+   * square-wave alarm. Two falling sine partials give it a small, tactile
+   * "tok" that remains audible over music without becoming abrasive when it
+   * repeats twelve times.
+   */
+  repTap: [
+    {
+      frequency: 520,
+      endFrequency: 360,
+      delay: 0,
+      duration: 0.1,
+      gain: 0.16,
+      type: 'sine',
+      attack: 0.006,
+    },
+    {
+      frequency: 920,
+      endFrequency: 640,
+      delay: 0.004,
+      duration: 0.065,
+      gain: 0.065,
+      type: 'sine',
+      attack: 0.004,
+    },
+  ],
 
   /** Rest is over. A4 then E5 — the interval carries further than one beep. */
   chime: [
@@ -85,9 +116,15 @@ function voice(bus: AudioBus, destination: AudioNode, partial: Partial_, base: n
 
   oscillator.type = partial.type ?? 'sine';
   oscillator.frequency.value = partial.frequency;
+  if (partial.endFrequency !== undefined) {
+    oscillator.frequency.exponentialRampToValueAtTime(
+      partial.endFrequency,
+      start + partial.duration,
+    );
+  }
 
   gain.gain.setValueAtTime(0.0001, start);
-  gain.gain.exponentialRampToValueAtTime(partial.gain, start + 0.02);
+  gain.gain.exponentialRampToValueAtTime(partial.gain, start + (partial.attack ?? 0.02));
   gain.gain.exponentialRampToValueAtTime(0.0001, start + partial.duration);
 
   oscillator.connect(gain).connect(destination);

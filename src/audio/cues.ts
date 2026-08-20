@@ -68,10 +68,10 @@ export const CUES: Record<CueId, CueDefinition> = {
   // eight to twelve times a set. Only the last three reps are named, and the
   // words are recorded apart from the rest countdown's: the same "trois" said
   // over a bar and said to someone standing up are not the same "trois".
-  'rep-tick': { tone: 'tick', priority: 1, gapMs: 0, cooldownMs: 0 },
-  'rep-3': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rep-2': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rep-1': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
+  'rep-tick': { tone: 'repTap', priority: 1, gapMs: 0, cooldownMs: 0 },
+  'rep-3': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0 },
+  'rep-2': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0 },
+  'rep-1': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0 },
   'set-done': { tone: 'validate', priority: 2, gapMs: 700, cooldownMs: 3_000 },
   'workout-finished': { tone: 'chime', priority: 3, gapMs: 1_500, cooldownMs: 60_000 },
 };
