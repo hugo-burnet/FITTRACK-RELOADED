@@ -28,7 +28,13 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:run
       - run: npm run android:sync
-      - name: Validate signing secrets and decode the keystore
+      # Une release taguée doit être signée avec la vraie clé, sinon elle ne peut
+      # pas mettre à jour une installation existante. Un APK d'essai, non : Gradle
+      # a sa clé de debug, et un dépôt de test n'a aucune raison de détenir la
+      # clé de signature de la production. Exiger les secrets partout rendait ce
+      # workflow inutilisable ailleurs que dans le dépôt principal.
+      - name: Choose how the APK is signed
+        id: signing
         shell: bash
         env:
           FITTRACK_ANDROID_KEYSTORE_BASE64: ${{ secrets.FITTRACK_ANDROID_KEYSTORE_BASE64 }}
@@ -37,16 +43,26 @@ jobs:
           FITTRACK_ANDROID_KEY_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEY_PASSWORD }}
         run: |
           set -euo pipefail
+          missing=()
           for name in FITTRACK_ANDROID_KEYSTORE_BASE64 FITTRACK_ANDROID_KEYSTORE_PASSWORD FITTRACK_ANDROID_KEY_ALIAS FITTRACK_ANDROID_KEY_PASSWORD; do
-            if [[ -z "${!name:-}" ]]; then
-              echo "::error::Missing required Android signing secret: $name"
-              exit 1
-            fi
+            if [[ -z "${!name:-}" ]]; then missing+=("$name"); fi
           done
-          printf '%s' "$FITTRACK_ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/fittrack.jks"
-      - name: Build signed debug APK
+          if [[ ${#missing[@]} -eq 0 ]]; then
+            printf '%s' "$FITTRACK_ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/fittrack.jks"
+            echo "keystore=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::APK signé avec la clé de release."
+          elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "::error::Une release taguée exige les secrets de signature. Manquants : ${missing[*]}"
+            exit 1
+          else
+            echo "keystore=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Secrets de signature absents (${missing[*]}) — APK signé avec la clé de debug de Gradle."
+          fi
+      - name: Build the APK
         env:
-          FITTRACK_KEYSTORE_FILE: ${{ runner.temp }}/fittrack.jks
+          # Vide quand il n'y a pas de clé : android/app/build.gradle exige les
+          # quatre valeurs et retombe sur la signature de debug s'il en manque une.
+          FITTRACK_KEYSTORE_FILE: ${{ steps.signing.outputs.keystore == 'true' && format('{0}/fittrack.jks', runner.temp) || '' }}
           FITTRACK_KEYSTORE_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEYSTORE_PASSWORD }}
           FITTRACK_KEY_ALIAS: ${{ secrets.FITTRACK_ANDROID_KEY_ALIAS }}
           FITTRACK_KEY_PASSWORD: ${{ secrets.FITTRACK_ANDROID_KEY_PASSWORD }}
