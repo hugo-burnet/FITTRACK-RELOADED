@@ -6,6 +6,8 @@ import { db } from '@/data/db';
 import { seedDatabase } from '@/data/seed/seedDatabase';
 import { t } from '@/i18n/fr';
 import { Card, ConfirmAction, ListRow, SectionTitle } from '@/ui';
+import { HistoryUpdateAction } from './HistoryUpdateAction';
+import { RecordRepairAction } from './RecordRepairAction';
 
 /**
  * The screen that answers "is it the database or the display?" in five seconds.
@@ -57,11 +59,12 @@ export function DebugScreen() {
   };
 
   return (
-    <Screen
-      title={t('debug.title')}
-      onBack={() => void navigate('/settings')}
-    >
+    <Screen title={t('debug.title')} onBack={() => void navigate('/settings')}>
       <div className="flex flex-col gap-9">
+        <RecordRepairAction />
+
+        <HistoryUpdateAction />
+
         <section>
           <SectionTitle>{t('debug.storageSection')}</SectionTitle>
           <Card>

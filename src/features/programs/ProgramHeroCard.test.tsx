@@ -42,7 +42,9 @@ describe('ProgramHeroCard', () => {
 
   it('démarre l’entrée persistée sans reclasser les séances dans le composant', async () => {
     const start = vi.spyOn(programWorkoutRepository, 'startWorkoutFromProgram').mockResolvedValue({
-      workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'],
+      workout: {} as Awaited<
+        ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>
+      >['workout'],
     });
     const user = userEvent.setup();
     renderCard();
@@ -57,11 +59,17 @@ describe('ProgramHeroCard', () => {
   });
 
   it('ignore un second appui pendant le démarrage transactionnel', async () => {
-    let release!: (value: Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>) => void;
-    const pending = new Promise<Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>>(
-      (resolve) => { release = resolve; },
-    );
-    const start = vi.spyOn(programWorkoutRepository, 'startWorkoutFromProgram').mockReturnValue(pending);
+    let release!: (
+      value: Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>,
+    ) => void;
+    const pending = new Promise<
+      Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>
+    >((resolve) => {
+      release = resolve;
+    });
+    const start = vi
+      .spyOn(programWorkoutRepository, 'startWorkoutFromProgram')
+      .mockReturnValue(pending);
     const user = userEvent.setup();
     renderCard();
     const button = screen.getByRole('button', { name: 'Démarrer Force A' });
@@ -70,7 +78,11 @@ describe('ProgramHeroCard', () => {
 
     expect(start).toHaveBeenCalledTimes(1);
     expect(button).toBeDisabled();
-    release({ workout: {} as Awaited<ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>>['workout'] });
+    release({
+      workout: {} as Awaited<
+        ReturnType<typeof programWorkoutRepository.startWorkoutFromProgram>
+      >['workout'],
+    });
   });
 
   it('annonce un bloc futur sans afficher de commande de démarrage', () => {
@@ -102,7 +114,8 @@ describe('ProgramHeroCard', () => {
       },
     });
 
-    expect(screen.getByText('Routine indisponible')).toBeVisible();
+    expect(screen.getByText('Routine supprimée')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Choisir une autre routine' })).toBeVisible();
     expect(screen.queryByRole('button', { name: /démarrer/i })).not.toBeInTheDocument();
   });
 });

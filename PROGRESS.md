@@ -2,7 +2,49 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.3 — le tutoriel montre enfin l’écran**).
+**Dernière mise à jour :** 2026-08-20 (**Clarification des outils de dépannage et des routines supprimées**).
+
+## Clarification des outils de dépannage
+
+Les anciennes actions génériques de « réparation » décrivent maintenant précisément leur effet :
+recalculer les records, mettre à jour les instantanés des anciennes séances ou restaurer le
+catalogue d’exercices. Elles sont regroupées dans « Dépannage et données » et affichent leur état
+ou un aperçu du nombre de lignes concernées avant toute écriture.
+
+Une routine supprimée d’un programme peut désormais être remplacée directement depuis la séance
+manquante, ou recréée sur place. L’action disparaît avec une explication lorsque la semaine a déjà
+été entraînée ou que le programme est terminé. Vérification mobile à 375 × 812 px, sans erreur
+console ; typecheck et lint passent, ainsi que 1 663 tests répartis dans 155 fichiers et le build
+de production.
+
+---
+
+## v0.8.4 — poser le téléphone une seule fois
+
+La cadence automatique savait déjà enchaîner les séries d’un même exercice, mais elle s’arrêtait
+à la frontière de l’exercice suivant. C’était particulièrement visible quand la première série du
+prochain exercice avait été préremplie pendant le repos : à zéro, l’app considérait l’exercice
+précédent terminé, coupait le chrono et ne faisait rien de la valeur déjà prête.
+
+Le passage de relais suit maintenant l’ordre réel de la séance. À la fin du repos, l’app cherche
+le premier exercice suivant qui possède encore une série de travail. Si ses répétitions ont été
+renseignées, elle annonce « Début dans dix secondes », arme dix secondes de préparation, puis le
+cadenceur joue 3, 2, 1 avant le premier impact. Les exercices déjà terminés sont sautés. Si la
+prochaine série est vide, la voix demande toujours de renseigner les répétitions et la saisie
+relance le même scénario de dix secondes.
+
+**Bug rencontré pendant la vérification :** écrire les répétitions arme un lancement différé de
+600 ms pour laisser une valeur à deux chiffres se stabiliser. Un lancement explicite par le menu
+pouvait donc démarrer la cadence, puis l’ancien callback la redémarrait juste après un arrêt
+manuel. Tout lancement explicite — menu ou fin de repos — annule désormais cette préparation
+différée avant de prendre l’horloge audio.
+
+La sélection du prochain exercice vit dans une fonction pure testée séparément ; le parcours
+complet est aussi couvert dans l’écran de séance, avec saisie du prochain exercice pendant le
+repos et vérification du départ à dix secondes. 1659 tests / 154 fichiers. Aucun changement de
+schéma. Installer par-dessus la v0.8.3, sans désinstaller, pour conserver les données locales.
+
+---
 
 ## v0.8.3 — la voix raconte, l’interface montre
 

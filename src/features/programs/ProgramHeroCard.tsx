@@ -5,6 +5,7 @@ import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
 import { Button, Card } from '@/ui';
 import { ChevronRightIcon } from '@/ui/icons';
+import { MissingRoutineReplacementSheet } from './MissingRoutineReplacementSheet';
 import { phaseLabel } from './weekReading';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
@@ -55,6 +56,7 @@ export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Pro
   const navigate = useNavigate();
   const [failed, setFailed] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [replacementOpen, setReplacementOpen] = useState(false);
   const startingRef = useRef(false);
   const intention = intentionLabel(program);
   const pick = program.pick;
@@ -150,16 +152,27 @@ export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Pro
             </Button>
           )}
 
-          {pick.kind === 'session' && pick.routineName === null && (
-            <Button
-              variant="secondary"
-              size="lg"
-              fullWidth
-              onClick={() => void navigate(`/programs/${program.programId}/edit`)}
-            >
-              {t('program.repairSplit')}
-            </Button>
-          )}
+          {pick.kind === 'session' &&
+            pick.routineName === null &&
+            pick.repairUnavailableReason !== 'locked' &&
+            !disabled && (
+              <Button
+                variant="secondary"
+                size="lg"
+                fullWidth
+                onClick={() => setReplacementOpen(true)}
+              >
+                {t('program.repairSplit')}
+              </Button>
+            )}
+
+          {pick.kind === 'session' &&
+            pick.routineName === null &&
+            (pick.repairUnavailableReason === 'locked' || disabled) && (
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('program.missingRoutineLocked')}
+              </p>
+            )}
 
           <p className="text-sm leading-relaxed text-[var(--text-2)]">{ruleLabel(program)}</p>
           {failed && (
@@ -169,6 +182,16 @@ export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Pro
           )}
         </div>
       </Card>
+
+      {replacementOpen && pick.kind === 'session' && pick.routineName === null && (
+        <MissingRoutineReplacementSheet
+          open
+          programId={program.programId}
+          entryId={pick.programScheduleEntryId}
+          effectiveFromWeekIndex={program.week?.weekIndex ?? 0}
+          onClose={() => setReplacementOpen(false)}
+        />
+      )}
     </section>
   );
 }

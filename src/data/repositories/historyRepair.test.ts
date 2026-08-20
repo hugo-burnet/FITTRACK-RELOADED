@@ -12,7 +12,7 @@ import type {
 import { projectRecordTimeline, type RecordEventDraft } from '@/lib/records';
 import { resetDb } from '@/test/resetDb';
 import { newEntity } from './base';
-import { resnapshotHistory } from './historyRepair';
+import { inspectHistoryResnapshot, resnapshotHistory } from './historyRepair';
 import { reconcileRecordsForExercises } from './recordReconciliation';
 import { listRecordSourcesForExercises } from './recordSources';
 
@@ -186,6 +186,37 @@ async function seedBodyweightFactorMismatch(
 
 describe('resnapshotHistory', () => {
   beforeEach(resetDb);
+
+  it('compte les champs qui changeraient avant toute écriture', async () => {
+    const bench = exercise({
+      name: 'Nouveau nom',
+      primaryMuscle: 'chest',
+      secondaryMuscles: ['triceps'],
+      equipment: 'dumbbell',
+      measurementType: 'weight_reps',
+    });
+    const session = workout();
+    await db.exercises.add(bench);
+    await db.workouts.add(session);
+    await db.workoutExercises.add(
+      row(session.id, bench.id, {
+        exerciseName: 'Ancien nom',
+        exercisePrimaryMuscle: 'abs',
+        exerciseSecondaryMuscles: [],
+        exerciseEquipment: 'barbell',
+        exerciseMeasurementType: 'time_only',
+      }),
+    );
+
+    expect(await inspectHistoryResnapshot()).toEqual({
+      changed: 1,
+      names: 1,
+      muscles: 1,
+      equipment: 1,
+      measurements: 1,
+    });
+    expect((await db.workoutExercises.toArray())[0]?.exerciseName).toBe('Ancien nom');
+  });
 
   it('réécrit l’instantané avec la bibliothèque d’aujourd’hui', async () => {
     const bench = exercise({ primaryMuscle: 'chest' });

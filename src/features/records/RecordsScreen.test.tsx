@@ -226,7 +226,9 @@ describe('RecordsScreen', () => {
     ).toBeVisible();
     await user.click(screen.getByRole('radio', { name: 'Tous les exercices' }));
 
-    await waitFor(() => expect(screen.getByLabelText('URL courante')).toHaveTextContent('/analytics/records'));
+    await waitFor(() =>
+      expect(screen.getByLabelText('URL courante')).toHaveTextContent('/analytics/records'),
+    );
     expect(
       await screen.findByRole('button', {
         name: /Hack squat très longue amplitude contrôlée.*Répétitions max.*14 reps/i,
@@ -375,15 +377,15 @@ describe('RecordsScreen', () => {
     const user = userEvent.setup();
     renderRoute();
 
-    expect(await screen.findByText('Tes records doivent être reconstruits')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Réparer les records' }));
+    expect(await screen.findByText('Les records ne peuvent pas être affichés')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Recalculer les records' }));
 
     expect(await screen.findByRole('button', { name: 'Réessayer' })).toBeVisible();
-    expect(screen.getByText(/La réparation n’a pas abouti/)).toBeVisible();
+    expect(screen.getByText(/n’ont pas pu être recalculés/)).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Réessayer' }));
 
     expect(await screen.findByText('90 kg')).toBeVisible();
-    expect(screen.queryByText('Tes records doivent être reconstruits')).toBeNull();
+    expect(screen.queryByText('Les records ne peuvent pas être affichés')).toBeNull();
     expect(rebuild).toHaveBeenCalledTimes(2);
   });
 

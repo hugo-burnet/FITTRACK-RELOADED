@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { SetType, WorkoutSet } from '@/data/types';
-import { nextPaceTarget, prepareNextPace } from './paceTarget';
+import {
+  nextPaceTarget,
+  prepareFollowingExercisePace,
+  prepareNextPace,
+} from './paceTarget';
 
 function set(
   id: string,
@@ -85,5 +89,41 @@ describe('nextPaceTarget', () => {
     const deleted = { ...set('z', 0), deletedAt: 5 };
     const target = nextPaceTarget([deleted, set('a', 0)], 0);
     expect(target?.setId).toBe('a');
+  });
+});
+
+describe('prepareFollowingExercisePace', () => {
+  it('prend la première série renseignée de l’exercice suivant', () => {
+    const result = prepareFollowingExercisePace(
+      [
+        { rowId: 'row-a', sets: [set('a', 1)] },
+        { rowId: 'row-b', sets: [set('b', 0, 10, 'normal', 12)] },
+      ],
+      'row-a',
+      0,
+    );
+
+    expect(result?.rowId).toBe('row-b');
+    expect(result?.preparation).toMatchObject({
+      kind: 'ready',
+      target: { setId: 'b', reps: 12 },
+    });
+  });
+
+  it('saute un exercice déjà terminé', () => {
+    const result = prepareFollowingExercisePace(
+      [
+        { rowId: 'row-a', sets: [set('a', 1)] },
+        { rowId: 'row-b', sets: [set('b', 1)] },
+        { rowId: 'row-c', sets: [{ ...set('c', 0), reps: undefined }] },
+      ],
+      'row-a',
+      0,
+    );
+
+    expect(result).toEqual({
+      rowId: 'row-c',
+      preparation: { kind: 'missing-reps', setId: 'c' },
+    });
   });
 });

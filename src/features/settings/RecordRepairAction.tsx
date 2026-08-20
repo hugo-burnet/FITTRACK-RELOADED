@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
-import { rebuildAllRecords } from '@/data/repositories/personalRecords';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { rebuildAllRecords, isRecordProjectionCurrent } from '@/data/repositories/personalRecords';
 import { t } from '@/i18n/fr';
 import { Button, ConfirmSheet, SectionTitle } from '@/ui';
 
 export function RecordRepairAction() {
+  const projectionCurrent = useLiveQuery(isRecordProjectionCurrent, []);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<string>();
@@ -38,7 +40,18 @@ export function RecordRepairAction() {
     <section>
       <SectionTitle>{t('settings.recordsSection')}</SectionTitle>
       <div className="rounded-2xl bg-[var(--surface-1)] p-4">
-        <p className="text-base text-[var(--text-1)]">{t('settings.recordRepairTitle')}</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-base text-[var(--text-1)]">{t('settings.recordRepairTitle')}</p>
+          {projectionCurrent !== undefined && (
+            <span
+              className={`label-xs shrink-0 font-semibold ${
+                projectionCurrent ? 'text-[var(--accent-ink)]' : 'text-[var(--danger-ink)]'
+              }`}
+            >
+              {t(projectionCurrent ? 'settings.repairStatusCurrent' : 'settings.repairStatusStale')}
+            </span>
+          )}
+        </div>
         <p className="mt-1 mb-4 text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.recordRepairHint')}
         </p>

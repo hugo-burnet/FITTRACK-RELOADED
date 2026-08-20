@@ -24,6 +24,7 @@ import type { ProgramPosition } from '@/lib/programs';
 import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
+import { MissingRoutineReplacementSheet } from './MissingRoutineReplacementSheet';
 import { repositoryErrorKey } from './programEditorModel';
 import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
@@ -37,12 +38,11 @@ interface DetailProjection {
   activeWorkoutExists: boolean;
   /** A draft is only activable once it has a split to run and a week for each. */
   draftReady: boolean;
+  displayWeekIndex: number;
 }
 
 type DetailQuery =
-  | { status: 'ready'; value: DetailProjection }
-  | { status: 'not_found' }
-  | { status: 'error' };
+  { status: 'ready'; value: DetailProjection } | { status: 'not_found' } | { status: 'error' };
 
 const STATUS_KEYS: Record<Program['status'], TranslationKey> = {
   draft: 'program.statusDraft',
@@ -51,13 +51,23 @@ const STATUS_KEYS: Record<Program['status'], TranslationKey> = {
 };
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
-  day: 'numeric', month: 'long', year: 'numeric',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
 });
 
-function ProgramProgressReading({ program, position }: { program: Program; position: ProgramPosition }) {
+function ProgramProgressReading({
+  program,
+  position,
+}: {
+  program: Program;
+  position: ProgramPosition;
+}) {
   return (
     <section className="px-1 pt-1">
-      <p className="label-xs font-semibold text-[var(--text-2)]">{t(STATUS_KEYS[program.status])}</p>
+      <p className="label-xs font-semibold text-[var(--text-2)]">
+        {t(STATUS_KEYS[program.status])}
+      </p>
       {position.phase === 'active' ? (
         <p className="metric mt-2 text-4xl leading-none font-semibold tracking-tight text-[var(--text-1)]">
           {t('program.progressWeek', {
@@ -80,9 +90,7 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
   const intention = loadRuleReading(week);
   return (
     <section className="border-y border-[var(--border)] py-4">
-      <p className="label-xs font-semibold text-[var(--text-2)]">
-        {t('program.intentionTitle')}
-      </p>
+      <p className="label-xs font-semibold text-[var(--text-2)]">{t('program.intentionTitle')}</p>
       <p
         className={`mt-2 text-xl font-semibold ${
           week.phase === 'deload' ? 'text-[var(--accent-ink)]' : 'text-[var(--text-1)]'
@@ -130,6 +138,19 @@ async function readProjection(programId: string): Promise<DetailQuery> {
         .map((workout) => workout.programScheduleEntryId),
     );
     const currentDay = position.phase === 'active' ? position.dayOfWeek : 0;
+    const hasWorkoutInDisplayedWeek = [
+      ...completedWorkouts,
+      ...(activeWorkout ? [activeWorkout] : []),
+    ].some(
+      (workout) =>
+        workout.programId === detail.program.id && workout.programWeekIndex === weekIndex,
+    );
+    const repairUnavailableReason =
+      detail.program.status === 'completed' || position.phase === 'after'
+        ? ('completed' as const)
+        : detail.program.status === 'active' && hasWorkoutInDisplayedWeek
+          ? ('locked' as const)
+          : null;
     const sessions: ProgramSessionReading[] = entries.map((entry, index) => ({
       entryId: entry.id,
       routineId: entry.routineId,
@@ -143,6 +164,7 @@ async function readProjection(programId: string): Promise<DetailQuery> {
           : currentDay > entry.dayOfWeek
             ? 'missed'
             : 'upcoming',
+      repairUnavailableReason,
     }));
 
     // Le brouillon se juge sur la semaine 1 : c'est celle par laquelle le bloc
@@ -162,8 +184,8 @@ async function readProjection(programId: string): Promise<DetailQuery> {
         sessions,
         activeWorkoutExists: activeWorkout !== undefined,
         draftReady:
-          initialSchedule.length > 0 &&
-          detail.weeks.length === detail.program.durationWeeks,
+          initialSchedule.length > 0 && detail.weeks.length === detail.program.durationWeeks,
+        displayWeekIndex: weekIndex,
       },
     };
   } catch {
@@ -178,6 +200,7 @@ export function ProgramDetailScreen() {
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [actionErrorKey, setActionErrorKey] = useState<TranslationKey | null>(null);
   const [replacementOpen, setReplacementOpen] = useState(false);
+  const [replacementTarget, setReplacementTarget] = useState<ProgramSessionReading | null>(null);
   const [starting, setStarting] = useState(false);
   const startingRef = useRef(false);
   const query = useLiveQuery(() => readProjection(id), [id]);
@@ -212,7 +235,8 @@ export function ProgramDetailScreen() {
     );
   }
 
-  const { detail, position, week, sessions, activeWorkoutExists, draftReady } = query.value;
+  const { detail, position, week, sessions, activeWorkoutExists, draftReady, displayWeekIndex } =
+    query.value;
   const isDraft = detail.program.status === 'draft';
   const candidates = sessions
     .filter((session) => session.routineName !== null)
@@ -240,9 +264,7 @@ export function ProgramDetailScreen() {
   // la phase. Avant le départ, la liste répétait la semaine 01 deux fois : une
   // fois en grand au-dessus, une fois en tête de la liste.
   const currentWeekIndex = week?.weekIndex ?? -1;
-  const upcomingWeeks = detail.weeks.filter(
-    (candidate) => candidate.weekIndex > currentWeekIndex,
-  );
+  const upcomingWeeks = detail.weeks.filter((candidate) => candidate.weekIndex > currentWeekIndex);
 
   const runAction = async (action: () => Promise<void>) => {
     setActionErrorKey(null);
@@ -322,9 +344,7 @@ export function ProgramDetailScreen() {
           <ActionBand
             label={draftReady ? t('program.activate') : t('program.continueCreation')}
             onClick={() =>
-              draftReady
-                ? void activate()
-                : void navigate(`/programs/${detail.program.id}/edit`)
+              draftReady ? void activate() : void navigate(`/programs/${detail.program.id}/edit`)
             }
           />
         ) : undefined
@@ -356,7 +376,7 @@ export function ProgramDetailScreen() {
             selectedEntryId={effectiveSelected?.entryId ?? null}
             startDisabled={activeWorkoutExists || detail.program.status !== 'active'}
             onSelect={setSelectedEntryId}
-            onRepair={() => void navigate(`/programs/${detail.program.id}/edit`)}
+            onRepair={setReplacementTarget}
           />
         )}
         <UpcomingWeeks weeks={upcomingWeeks} />
@@ -387,6 +407,16 @@ export function ProgramDetailScreen() {
         confirmLabel={t('program.replaceActiveConfirm')}
         onConfirm={() => void confirmReplacement()}
       />
+
+      {replacementTarget !== null && (
+        <MissingRoutineReplacementSheet
+          open
+          programId={detail.program.id}
+          entryId={replacementTarget.entryId}
+          effectiveFromWeekIndex={displayWeekIndex}
+          onClose={() => setReplacementTarget(null)}
+        />
+      )}
     </Screen>
   );
 }

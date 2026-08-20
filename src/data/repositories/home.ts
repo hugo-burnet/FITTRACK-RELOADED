@@ -45,6 +45,7 @@ export type HomeProgramPick =
       routineId: string;
       routineName: string | null;
       scheduledAt: number;
+      repairUnavailableReason?: 'locked' | null;
     }
   | {
       kind: 'announcement';
@@ -85,100 +86,99 @@ function programDayTimestamp(startsAt: number, weekIndex: number, dayOfWeek = 1)
 }
 
 async function readHomeProgramProjection(at: number): Promise<HomeProgramProjection | null> {
-    const detail = await getActiveProgramDetail(at);
-    if (detail === null || detail.position.phase === 'after') return null;
+  const detail = await getActiveProgramDetail(at);
+  if (detail === null || detail.position.phase === 'after') return null;
 
-    const weekIndex = detail.position.phase === 'before' ? 0 : detail.position.weekIndex;
-    const week = detail.weeks.find((candidate) => candidate.weekIndex === weekIndex) ?? null;
-    const base = {
-      programId: detail.program.id,
-      programName: detail.program.name,
-      startsAt: detail.program.startsAt,
-      durationWeeks: detail.program.durationWeeks,
+  const weekIndex = detail.position.phase === 'before' ? 0 : detail.position.weekIndex;
+  const week = detail.weeks.find((candidate) => candidate.weekIndex === weekIndex) ?? null;
+  const base = {
+    programId: detail.program.id,
+    programName: detail.program.name,
+    startsAt: detail.program.startsAt,
+    durationWeeks: detail.program.durationWeeks,
+    week:
+      week === null
+        ? null
+        : {
+            weekIndex: week.weekIndex,
+            loadIndex: week.loadIndex,
+            phase: week.phase,
+          },
+  };
+
+  if (detail.position.phase === 'before') {
+    return {
+      ...base,
+      pick: {
+        kind: 'announcement',
+        rule: 'starts',
+        startsAt: detail.program.startsAt,
+        weekIndex: 0,
+      },
+    };
+  }
+
+  const currentWeekIndex = detail.position.weekIndex;
+  const completedEntryIds = new Set(
+    detail.completedWorkouts
+      .filter((workout) => workout.programWeekIndex === currentWeekIndex)
+      .map((workout) => workout.programScheduleEntryId),
+  );
+  const picked = pickProgramSession(
+    detail.resolvedEntries.map((entry) => ({
+      entryId: entry.id,
+      routineId: entry.routineId,
+      weekIndex: currentWeekIndex,
+      dayOfWeek: entry.dayOfWeek,
+      order: entry.order,
+      completed: completedEntryIds.has(entry.id),
+    })),
+    detail.position,
+    detail.program.durationWeeks,
+  );
+
+  if ('session' in picked) {
+    const routine = await getRoutineDetail(picked.session.routineId);
+    return {
+      ...base,
+      pick: {
+        kind: 'session',
+        rule: picked.kind,
+        programScheduleEntryId: picked.session.entryId,
+        routineId: picked.session.routineId,
+        routineName: routine?.routine.name ?? null,
+        scheduledAt: programDayTimestamp(
+          detail.program.startsAt,
+          picked.session.weekIndex,
+          picked.session.dayOfWeek,
+        ),
+        repairUnavailableReason: completedEntryIds.size > 0 ? 'locked' : null,
+      },
+    };
+  }
+
+  if (picked.kind === 'next_week') {
+    const nextWeek = detail.weeks.find((candidate) => candidate.weekIndex === picked.weekIndex);
+    return {
+      ...base,
       week:
-        week === null
+        nextWeek === undefined
           ? null
           : {
-              weekIndex: week.weekIndex,
-              loadIndex: week.loadIndex,
-              phase: week.phase,
+              weekIndex: nextWeek.weekIndex,
+              loadIndex: nextWeek.loadIndex,
+              phase: nextWeek.phase,
             },
+      pick: {
+        kind: 'announcement',
+        rule: 'next_week',
+        startsAt: programDayTimestamp(detail.program.startsAt, picked.weekIndex),
+        weekIndex: picked.weekIndex,
+      },
     };
+  }
 
-    if (detail.position.phase === 'before') {
-      return {
-        ...base,
-        pick: {
-          kind: 'announcement',
-          rule: 'starts',
-          startsAt: detail.program.startsAt,
-          weekIndex: 0,
-        },
-      };
-    }
-
-    const currentWeekIndex = detail.position.weekIndex;
-    const completedEntryIds = new Set(
-      detail.completedWorkouts
-        .filter((workout) => workout.programWeekIndex === currentWeekIndex)
-        .map((workout) => workout.programScheduleEntryId),
-    );
-    const picked = pickProgramSession(
-      detail.resolvedEntries.map((entry) => ({
-        entryId: entry.id,
-        routineId: entry.routineId,
-        weekIndex: currentWeekIndex,
-        dayOfWeek: entry.dayOfWeek,
-        order: entry.order,
-        completed: completedEntryIds.has(entry.id),
-      })),
-      detail.position,
-      detail.program.durationWeeks,
-    );
-
-    if ('session' in picked) {
-      const routine = await getRoutineDetail(picked.session.routineId);
-      return {
-        ...base,
-        pick: {
-          kind: 'session',
-          rule: picked.kind,
-          programScheduleEntryId: picked.session.entryId,
-          routineId: picked.session.routineId,
-          routineName: routine?.routine.name ?? null,
-          scheduledAt: programDayTimestamp(
-            detail.program.startsAt,
-            picked.session.weekIndex,
-            picked.session.dayOfWeek,
-          ),
-        },
-      };
-    }
-
-    if (picked.kind === 'next_week') {
-      const nextWeek = detail.weeks.find(
-        (candidate) => candidate.weekIndex === picked.weekIndex,
-      );
-      return {
-        ...base,
-        week:
-          nextWeek === undefined
-            ? null
-            : {
-                weekIndex: nextWeek.weekIndex,
-                loadIndex: nextWeek.loadIndex,
-                phase: nextWeek.phase,
-              },
-        pick: {
-          kind: 'announcement',
-          rule: 'next_week',
-          startsAt: programDayTimestamp(detail.program.startsAt, picked.weekIndex),
-          weekIndex: picked.weekIndex,
-        },
-      };
-    }
-
-    return { ...base, pick: { kind: 'none' } };
+  return { ...base, pick: { kind: 'none' } };
 }
 
 /**
@@ -211,9 +211,7 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     completed.map(({ routineId, name, startedAt }) => ({ routineId, name, startedAt })),
   );
   const picked =
-    pick === null
-      ? undefined
-      : routines.find(({ routine }) => routine.id === pick.routineId);
+    pick === null ? undefined : routines.find(({ routine }) => routine.id === pick.routineId);
 
   return {
     completedWorkoutTimestamps: completed.map((workout) => workout.startedAt),
@@ -224,12 +222,12 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
       pick === null || picked === undefined
         ? null
         : {
-          routineId: picked.routine.id,
-          name: picked.routine.name,
-          exerciseCount: picked.exerciseCount,
-          setCount: picked.setCount,
-          lastPerformedAt: pick.lastPerformedAt,
-        },
+            routineId: picked.routine.id,
+            name: picked.routine.name,
+            exerciseCount: picked.exerciseCount,
+            setCount: picked.setCount,
+            lastPerformedAt: pick.lastPerformedAt,
+          },
     // `slice` avant `buildWorkoutSummaries` : les compteurs d'exercices et de
     // séries ne sont lus que pour les trois lignes affichées, pas pour toute
     // la base.

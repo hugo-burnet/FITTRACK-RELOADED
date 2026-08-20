@@ -425,13 +425,14 @@ const fr = {
     noResultsBody: 'Change un filtre ou efface-les pour retrouver tous tes jalons.',
     clearFilters: 'Effacer les filtres',
     assistanceQualifier: 'd’assistance',
-    staleTitle: 'Tes records doivent être reconstruits',
+    staleTitle: 'Les records ne peuvent pas être affichés',
     staleBody:
-      'Tes séances sont intactes. Reconstruis les records depuis ton historique pour afficher le rail.',
-    repair: 'Réparer les records',
-    repairing: 'Réparation en cours…',
+      'FitTrack doit les recalculer depuis tes séances. Tes séances et tes séries ne seront pas modifiées.',
+    repair: 'Recalculer les records',
+    repairing: 'Recalcul en cours…',
     retryRepair: 'Réessayer',
-    repairFailed: 'La réparation n’a pas abouti. Tes séances sont intactes, tu peux réessayer.',
+    repairFailed:
+      'Les records n’ont pas pu être recalculés. Tes séances sont intactes, tu peux réessayer.',
   },
 
   setTypeHint: {
@@ -532,9 +533,21 @@ const fr = {
     sessionMissed: 'Manquée',
     sessionUpcoming: 'À venir',
     activeWorkoutCollision: 'Une séance est déjà en cours.',
-    missingRoutine: 'Routine indisponible',
-    missingRoutineHint: 'Cette séance doit être réparée dans le split.',
-    repairSplit: 'Réparer le split',
+    missingRoutine: 'Routine supprimée',
+    missingRoutineHint: 'La routine prévue {day} n’existe plus.',
+    missingRoutineLocked: 'Cette semaine contient déjà une séance et ne peut plus être modifiée.',
+    missingRoutineCompleted: 'Ce bloc est terminé et ne peut plus être modifié.',
+    repairSplit: 'Choisir une autre routine',
+    replaceRoutineTitle: 'Remplacer la routine supprimée',
+    replaceRoutineHint:
+      'Choisis la routine qui doit prendre sa place à partir de la semaine {week}.',
+    replaceRoutineLabel: 'Routine de remplacement',
+    replaceRoutineConfirm: 'Confirmer le remplacement',
+    replaceRoutineFailed: 'La routine n’a pas pu être remplacée. Vérifie le bloc puis réessaie.',
+    replaceRoutineEmpty: 'Aucune routine disponible. Tu peux en créer une vide ici.',
+    replaceRoutineCreateLabel: 'Nom de la nouvelle routine',
+    replaceRoutineCreatePlaceholder: 'Ex. Poussée A',
+    replaceRoutineCreate: 'Créer et utiliser cette routine',
     startSession: 'Démarrer {name}',
     upcomingTitle: 'Semaines suivantes',
     actionsLabel: 'Options du bloc',
@@ -1161,20 +1174,22 @@ const fr = {
       'La formule n’a pas pu être enregistrée. La formule précédente reste utilisée.',
 
     recordsSection: 'Records',
-    recordRepairTitle: 'Recalculer les records personnels',
+    recordRepairTitle: 'Recalcul des records',
     recordRepairHint:
-      'Reconstruit les records depuis tes séances. Aucune séance ni série n’est modifiée.',
-    recordRepairAction: 'Réparer les records',
-    recordRepairWorking: 'Réparation en cours…',
-    recordRepairConfirmTitle: 'Reconstruire les records',
+      'À utiliser uniquement si certains records semblent absents ou incorrects. Tes séances et tes séries ne sont jamais modifiées.',
+    recordRepairAction: 'Recalculer tous les records',
+    recordRepairWorking: 'Recalcul en cours…',
+    recordRepairConfirmTitle: 'Recalculer tous les records',
     recordRepairConfirmBody:
       'Tous les records seront recalculés depuis les séances enregistrées. Tes séances et tes séries restent intactes.',
-    recordRepairConfirmAction: 'Lancer la réparation',
+    recordRepairConfirmAction: 'Lancer le recalcul',
     recordRepairDone:
-      'Records réparés · créations : {created} · mises à jour : {updated} · suppressions : {deleted}.',
-    recordRepairFailed: 'Les records n’ont pas pu être réparés. Tu peux réessayer.',
+      'Recalcul terminé : ajouts : {created} · corrections : {updated} · anciens jalons retirés : {deleted}.',
+    recordRepairFailed: 'Les records n’ont pas pu être recalculés. Tu peux réessayer.',
+    repairStatusCurrent: 'À jour',
+    repairStatusStale: 'Recalcul nécessaire',
 
-    dataSection: 'Données',
+    dataSection: 'Données et sauvegardes',
     exportHistoryLink: 'Exporter tout l’historique',
     exportHistoryHint: 'Partage toutes tes séances dans un document texte lisible.',
     exportHistoryTitle: 'FitTrack — historique complet',
@@ -1192,8 +1207,8 @@ const fr = {
     exportCsvFailed: 'La sauvegarde n’a pas pu être enregistrée.',
     exportHistoryCopied: 'Historique copié dans le presse-papiers.',
     exportHistoryFailed: 'L’historique n’a pas pu être partagé ni copié.',
-    debugLink: 'Diagnostic',
-    debugHint: 'Contenu de la base, stockage utilisé, réinitialisation.',
+    debugLink: 'Dépannage et données',
+    debugHint: 'État des records, historique, catalogue et stockage.',
 
     /**
      * Les crédits. Ce n'est pas une politesse : la carte musculaire est une
@@ -1209,17 +1224,23 @@ const fr = {
      * 08A existe pour empêcher — donc jamais automatique, jamais silencieuse,
      * et la phrase de confirmation dit le prix plutôt que « es-tu sûr ? ».
      */
-    repairLink: 'Réparer les muscles de l’historique',
+    repairLink: 'Mettre à jour les anciennes séances',
     /** Au pluriel depuis que l’instantané fige aussi les muscles secondaires. */
     repairHint:
-      'À utiliser après avoir corrigé un exercice mal classé : les séances passées gardent sinon les anciens muscles, principal et secondaires.',
-    repairConfirmTitle: 'Réparer l’historique',
+      'Remplace le nom, les muscles, le matériel et le type de mesure enregistrés par les informations actuelles de la bibliothèque.',
+    repairConfirmTitle: 'Mettre à jour les anciennes séances',
     repairConfirmBody:
-      'Chaque séance passée reprendra le nom, le muscle, le matériel et le type de mesure que ses exercices ont AUJOURD’HUI dans la bibliothèque. Un exercice renommé depuis prendra donc son nouveau nom. Rien n’est supprimé, et les charges et répétitions ne bougent pas.',
-    repairConfirmAction: 'Réparer',
-    repairDone: '{repaired} exercices de séance corrigés.',
-    repairDoneOne: '1 exercice de séance corrigé.',
-    repairDoneNone: 'Rien à corriger : l’historique est déjà d’accord avec la bibliothèque.',
+      '{count} exercices de séance reprendront les informations actuelles de la bibliothèque. Les charges et les répétitions resteront intactes.',
+    repairConfirmAction: 'Appliquer les mises à jour',
+    repairDone: '{repaired} exercices de séance mis à jour.',
+    repairDoneOne: '1 exercice de séance mis à jour.',
+    repairDoneNone: 'Historique déjà à jour.',
+    repairPreviewLoading: 'Analyse de l’historique…',
+    repairPreviewCurrent: 'Historique déjà à jour',
+    repairPreviewChanges: '{count} exercices de séance à mettre à jour',
+    repairPreviewDetails:
+      'Muscles : {muscles} · noms : {names} · matériels : {equipment} · types de mesure : {measurements}',
+    repairFailed: 'Les anciennes séances n’ont pas pu être mises à jour. Tu peux réessayer.',
   },
 
   /**
@@ -1256,7 +1277,7 @@ const fr = {
   },
 
   debug: {
-    title: 'Diagnostic',
+    title: 'Dépannage et données',
 
     storageSection: 'Stockage',
     storageUsed: 'utilisé',
@@ -1271,9 +1292,10 @@ const fr = {
     recentEmpty: 'Aucun exercice en base. Relance le seed.',
 
     actionsSection: 'Actions',
-    reseed: 'Relancer le seed',
-    reseedHint: 'Insère les exercices du catalogue absents de la base. N’écrase rien.',
-    reseedDone: 'Seed terminé.',
+    reseed: 'Restaurer le catalogue d’exercices',
+    reseedHint:
+      'Ajoute les exercices officiels manquants et restaure leur classification musculaire. Tes exercices personnalisés, notes et temps de repos sont conservés.',
+    reseedDone: 'Catalogue restauré.',
     reset: 'Réinitialiser la base',
     resetHint:
       'Efface tes séances, tes routines et tes exercices personnalisés — définitivement. Le catalogue, lui, se réinstalle seul au prochain démarrage.',

@@ -68,7 +68,12 @@ import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
-import { nextPaceTarget, prepareNextPace, type PacePreparation } from './paceTarget';
+import {
+  nextPaceTarget,
+  prepareFollowingExercisePace,
+  prepareNextPace,
+  type PacePreparation,
+} from './paceTarget';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -273,9 +278,7 @@ export function WorkoutScreen() {
     if (typedPace === null || detail == null) return;
     const line = detail.exercises.find(({ row }) => row.id === typedPace.rowId);
     const preparation =
-      line === undefined
-        ? null
-        : prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
+      line === undefined ? null : prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
     // Validating the set inside its own ten-second lead is the ordinary way of
     // logging a series after doing it. The cadence it was preparing is void,
     // and the state preparing it has to go with it — left behind it blocks
@@ -452,6 +455,10 @@ export function WorkoutScreen() {
     const preparation = prepareNextPace(line.sets, now - workout.startedAt, afterSetId);
     if (preparation.kind === 'done') return false;
     primeAnnouncer();
+    // An explicit launch (menu or end of rest) supersedes the delayed launch
+    // armed by typing. Otherwise its 600 ms callback can restart a cadence
+    // that the user has just stopped.
+    setTypedPace(null);
     // Starting the next set is the clearest possible signal that rest is over.
     // Keeping both clocks alive hides the pace reading and lets the rest
     // countdown speak over the repetition beats.
@@ -464,6 +471,34 @@ export function WorkoutScreen() {
     setPendingPace(null);
     const target = preparation.target;
     startPace(line.row.id, target.setId, target.reps, target.repSeconds);
+    return true;
+  };
+
+  const startFollowingExercisePace = (
+    completedLine: WorkoutExerciseDetail,
+    now: number,
+  ): boolean => {
+    const following = prepareFollowingExercisePace(
+      exercises.map((line) => ({ rowId: line.row.id, sets: line.sets })),
+      completedLine.row.id,
+      now - workout.startedAt,
+    );
+    if (following === null) return false;
+
+    primeAnnouncer();
+    rest.stop();
+    if (following.preparation.kind === 'missing-reps') {
+      setPendingPace({ rowId: following.rowId, setId: following.preparation.setId });
+      announce('pace-reps-missing');
+      return true;
+    }
+
+    const target = following.preparation.target;
+    setPendingPace(null);
+    // A new exercise needs its own preparation window. The rest has just
+    // finished; this is a fresh “dans dix secondes”, followed by 3–2–1.
+    announce('pace-start-10');
+    startPace(following.rowId, target.setId, target.reps, target.repSeconds, 10);
     return true;
   };
 
@@ -597,8 +632,10 @@ export function WorkoutScreen() {
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
                               const paced = startPaceFor(line, Date.now(), rest.setId ?? undefined);
-                              if (!paced) rest.stop();
-                              return paced;
+                              if (paced) return true;
+                              const advanced = startFollowingExercisePace(line, Date.now());
+                              if (!advanced) rest.stop();
+                              return advanced;
                             },
                           }
                         : null

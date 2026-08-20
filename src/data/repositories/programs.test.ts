@@ -5,7 +5,7 @@ import { resetDb } from '@/test/resetDb';
 import { newEntity } from './base';
 import { createCustomExercise } from './exercises';
 import { recordCoachSignals } from './coachRecommendations';
-import { addExercisesToRoutine, createRoutine } from './routines';
+import { addExercisesToRoutine, createRoutine, deleteRoutine } from './routines';
 import {
   ProgramRepositoryError,
   activateProgram,
@@ -17,6 +17,7 @@ import {
   getProgramDetail,
   listPrograms,
   replaceActiveProgram,
+  replaceMissingProgramRoutine,
   replaceProgramWeeks,
   shiftProgram,
   updateProgramDraft,
@@ -24,7 +25,11 @@ import {
 
 const MONDAY = new Date(2026, 7, 10, 0, 0, 0, 0).getTime();
 
-function week(weekIndex: number, loadIndex = 100, phase: 'construction' | 'deload' = 'construction') {
+function week(
+  weekIndex: number,
+  loadIndex = 100,
+  phase: 'construction' | 'deload' = 'construction',
+) {
   return {
     weekIndex,
     loadIndex,
@@ -185,9 +190,7 @@ describe('program lifecycle repository', () => {
       .mockRejectedValueOnce(new Error('coach write failed'));
 
     try {
-      await expect(replaceActiveProgram(secondProgram.id)).rejects.toThrow(
-        'coach write failed',
-      );
+      await expect(replaceActiveProgram(secondProgram.id)).rejects.toThrow('coach write failed');
     } finally {
       writeRecommendations.mockRestore();
     }
@@ -245,7 +248,10 @@ describe('program lifecycle repository', () => {
       ),
     );
     const routine = await createRoutine('Coach authority routine');
-    await addExercisesToRoutine(routine.id, exercises.map((exercise) => exercise.id));
+    await addExercisesToRoutine(
+      routine.id,
+      exercises.map((exercise) => exercise.id),
+    );
     const program = await createProgramDraft({
       name: 'Coach authority',
       startsAt: MONDAY,
@@ -277,7 +283,11 @@ describe('program lifecycle repository', () => {
 
 describe('program weeks and schedules', () => {
   it('replaces the complete week set and returns it ordered', async () => {
-    const program = await createProgramDraft({ name: 'Volume', startsAt: MONDAY, durationWeeks: 4 });
+    const program = await createProgramDraft({
+      name: 'Volume',
+      startsAt: MONDAY,
+      durationWeeks: 4,
+    });
     await replaceProgramWeeks(program.id, [week(2, 80), week(0, 70), week(1, 75), week(3, 60)]);
 
     await replaceProgramWeeks(program.id, [
@@ -352,6 +362,32 @@ describe('program weeks and schedules', () => {
     expect(livingAtZero).toHaveLength(1);
   });
 
+  it('remplace directement une routine supprimée sans réécrire le reste du split', async () => {
+    const keptRoutine = await createRoutine('Push');
+    const missingRoutine = await createRoutine('Pull supprimé');
+    const replacementRoutine = await createRoutine('Pull B');
+    const program = await createProgramDraft({ name: 'Split', startsAt: MONDAY, durationWeeks: 4 });
+    const revision = await createScheduleRevision(program.id, 0, [
+      { routineId: keptRoutine.id, dayOfWeek: 1, order: 0 },
+      { routineId: missingRoutine.id, dayOfWeek: 3, order: 0 },
+    ]);
+    const target = (
+      await db.programScheduleEntries.where('revisionId').equals(revision.id).toArray()
+    ).find((entry) => entry.routineId === missingRoutine.id)!;
+    await deleteRoutine(missingRoutine.id);
+
+    await replaceMissingProgramRoutine(program.id, 0, target.id, replacementRoutine.id);
+
+    const detail = await getProgramDetail(program.id);
+    expect(detail?.revisions).toHaveLength(1);
+    expect(
+      detail?.revisions[0]?.entries.map(({ routineId, dayOfWeek }) => [routineId, dayOfWeek]),
+    ).toEqual([
+      [keptRoutine.id, 1],
+      [replacementRoutine.id, 3],
+    ]);
+  });
+
   it('rejects a revision earlier than the latest effective revision', async () => {
     const routine = await createRoutine('Upper');
     const program = await createProgramDraft({ name: 'Wave', startsAt: MONDAY, durationWeeks: 8 });
@@ -360,9 +396,7 @@ describe('program weeks and schedules', () => {
     ]);
 
     await expect(
-      createScheduleRevision(program.id, 2, [
-        { routineId: routine.id, dayOfWeek: 2, order: 0 },
-      ]),
+      createScheduleRevision(program.id, 2, [{ routineId: routine.id, dayOfWeek: 2, order: 0 }]),
     ).rejects.toMatchObject({
       code: 'retroactive_revision',
     } satisfies Partial<ProgramRepositoryError>);
@@ -376,10 +410,14 @@ describe('program weeks and schedules', () => {
 
     await expect(
       createScheduleRevision(program.id, 0, [{ routineId, dayOfWeek: 5, order: 0 }]),
-    ).rejects.toMatchObject({ code: 'retroactive_revision' } satisfies Partial<ProgramRepositoryError>);
+    ).rejects.toMatchObject({
+      code: 'retroactive_revision',
+    } satisfies Partial<ProgramRepositoryError>);
     await expect(
       createScheduleRevision(program.id, 2, [{ routineId, dayOfWeek: 5, order: 0 }]),
-    ).rejects.toMatchObject({ code: 'retroactive_revision' } satisfies Partial<ProgramRepositoryError>);
+    ).rejects.toMatchObject({
+      code: 'retroactive_revision',
+    } satisfies Partial<ProgramRepositoryError>);
     await expect(
       replaceProgramWeeks(program.id, [week(0, 60), week(1, 65), week(2, 70), week(3, 75)]),
     ).rejects.toMatchObject({ code: 'program_invalid' } satisfies Partial<ProgramRepositoryError>);
@@ -390,7 +428,11 @@ describe('program weeks and schedules', () => {
   it('serializes concurrent same-week writes into one live revision', async () => {
     const firstRoutine = await createRoutine('A');
     const secondRoutine = await createRoutine('B');
-    const program = await createProgramDraft({ name: 'Concurrent', startsAt: MONDAY, durationWeeks: 4 });
+    const program = await createProgramDraft({
+      name: 'Concurrent',
+      startsAt: MONDAY,
+      durationWeeks: 4,
+    });
 
     await Promise.all([
       createScheduleRevision(program.id, 0, [
@@ -425,9 +467,7 @@ describe('program weeks and schedules', () => {
       await shiftProgram(program.id, 7);
 
       await expect(
-        createScheduleRevision(program.id, 1, [
-          { routineId, dayOfWeek: 2, order: 0 },
-        ]),
+        createScheduleRevision(program.id, 1, [{ routineId, dayOfWeek: 2, order: 0 }]),
       ).rejects.toMatchObject({
         code: 'retroactive_revision',
       } satisfies Partial<ProgramRepositoryError>);
@@ -463,9 +503,7 @@ describe('program weeks and schedules', () => {
       await shiftProgram(program.id, 7);
 
       await expect(
-        createScheduleRevision(program.id, 0, [
-          { routineId, dayOfWeek: 2, order: 0 },
-        ]),
+        createScheduleRevision(program.id, 0, [{ routineId, dayOfWeek: 2, order: 0 }]),
       ).rejects.toMatchObject({
         code: 'retroactive_revision',
       } satisfies Partial<ProgramRepositoryError>);
@@ -507,10 +545,7 @@ describe('program weeks and schedules', () => {
       const initialRoutine = await createRoutine('Initial split');
       await addExercisesToRoutine(initialRoutine.id, [existingExercise.id]);
       const futureRoutine = await createRoutine('Future split');
-      await addExercisesToRoutine(futureRoutine.id, [
-        existingExercise.id,
-        introducedExercise.id,
-      ]);
+      await addExercisesToRoutine(futureRoutine.id, [existingExercise.id, introducedExercise.id]);
       const program = await createProgramDraft({
         name: 'Coach split authority',
         startsAt: MONDAY,
@@ -598,9 +633,7 @@ describe('program weeks and schedules', () => {
       }
 
       const detail = await getProgramDetail(program.id);
-      expect(detail?.revisions.map(({ revision }) => revision.id)).toEqual([
-        initialRevision.id,
-      ]);
+      expect(detail?.revisions.map(({ revision }) => revision.id)).toEqual([initialRevision.id]);
       expect((await db.coachRecommendations.get(recommendation!.id))?.status).toBe('pending');
     } finally {
       now.mockRestore();
@@ -693,10 +726,15 @@ describe('program projections and deletion', () => {
 
     expect(await getProgramDetail(program.id)).toBeNull();
     expect(await listPrograms()).toEqual([]);
-    expect((await db.programWeeks.where('programId').equals(program.id).toArray()).every(
-      (row) => row.deletedAt !== 0,
-    )).toBe(true);
-    const revisions = await db.programScheduleRevisions.where('programId').equals(program.id).toArray();
+    expect(
+      (await db.programWeeks.where('programId').equals(program.id).toArray()).every(
+        (row) => row.deletedAt !== 0,
+      ),
+    ).toBe(true);
+    const revisions = await db.programScheduleRevisions
+      .where('programId')
+      .equals(program.id)
+      .toArray();
     expect(revisions.every((row) => row.deletedAt !== 0)).toBe(true);
     const entries = await db.programScheduleEntries
       .where('revisionId')
