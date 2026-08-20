@@ -60,5 +60,20 @@ describe('TutorialProvider', () => {
 
     expect(await screen.findByRole('dialog', { name: 'Visite guidée' })).toBeVisible();
     expect(screen.getByText('Progression')).toBeVisible();
+    expect(screen.getByText(/Suis tes records/)).toBeVisible();
+  });
+
+  it('replie automatiquement la transcription pendant la narration', async () => {
+    localStorage.setItem(TUTORIAL_STORAGE_KEY, 'completed');
+    const user = userEvent.setup();
+    renderTutorial('/routines');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(screen.getByRole('button', { name: /Expliquer cette page/ }));
+
+    expect(await screen.findByRole('button', { name: 'Réduire' })).toBeVisible();
+    expect(
+      await screen.findByRole('button', { name: 'Lire le texte' }, { timeout: 3_000 }),
+    ).toHaveAttribute('aria-expanded', 'false');
   });
 });

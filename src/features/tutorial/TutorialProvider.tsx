@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { primeAnnouncer } from '@/audio/announce';
 import { textOf } from '@/audio/cues';
@@ -7,6 +7,7 @@ import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { ActionSheet, Button, Sheet } from '@/ui';
+import { ChevronDownIcon } from '@/ui/icons';
 import { TutorialContext, type TutorialControls } from './tutorialContext';
 import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
 import {
@@ -31,6 +32,7 @@ function TutorialOverlay({
   index,
   count,
   pathname,
+  narrationActive,
   onPrevious,
   onNext,
   onSkip,
@@ -39,11 +41,20 @@ function TutorialOverlay({
   index: number;
   count: number;
   pathname: string;
+  narrationActive: boolean;
   onPrevious: () => void;
   onNext: () => void;
   onSkip: () => void;
 }) {
   const [rect, setRect] = useState<DOMRect | null>(null);
+  const [expanded, setExpanded] = useState(true);
+  const userToggled = useRef(false);
+
+  useEffect(() => {
+    if (!narrationActive || userToggled.current) return;
+    const timer = window.setTimeout(() => setExpanded(false), 1_800);
+    return () => window.clearTimeout(timer);
+  }, [narrationActive, step.id]);
 
   useEffect(() => {
     let frame = 0;
@@ -125,8 +136,10 @@ function TutorialOverlay({
 
       <section
         className="safe-bottom absolute right-4 bottom-[4.5rem] left-4 mx-auto max-w-[34rem]
-          overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-1)]
-          shadow-[0_18px_48px_rgba(0,0,0,0.45)]"
+          max-h-[calc(100dvh-6rem)] overflow-hidden rounded-2xl border border-[var(--border)]
+          bg-[var(--surface-1)]
+          shadow-[0_18px_48px_rgba(0,0,0,0.45)] transition-[max-height]
+          duration-[var(--dur-2)] ease-[var(--ease-mech)]"
       >
         <div className="flex gap-1 px-4 pt-3" aria-hidden="true">
           {Array.from({ length: count }, (_, position) => (
@@ -138,16 +151,58 @@ function TutorialOverlay({
             />
           ))}
         </div>
-        <div className="px-4 pt-4 pb-2">
-          <p className="label-xs font-semibold text-[var(--accent-ink)]">
-            Visite · {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+        <div className="px-4 pt-3 pb-2">
+          <div className="flex items-start gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="label-xs font-semibold text-[var(--accent-ink)]">
+                Visite · {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+              </p>
+              <h2 className="mt-1 truncate text-base font-semibold text-[var(--text-1)]">
+                {step.id === 'intro' ? 'Prise en main' : TUTORIAL_TOPIC_LABELS[step.topic]}
+              </h2>
+            </div>
+            <button
+              type="button"
+              aria-expanded={expanded}
+              aria-controls="tutorial-transcript"
+              onClick={() => {
+                userToggled.current = true;
+                setExpanded((current) => !current);
+              }}
+              className="flex min-h-10 shrink-0 items-center gap-1 rounded-xl px-2 text-sm
+                font-semibold text-[var(--text-2)] active:bg-[var(--surface-2)]"
+            >
+              {expanded ? 'Réduire' : 'Lire le texte'}
+              <ChevronDownIcon
+                aria-hidden="true"
+                className={`transition-transform duration-[var(--dur-2)] ${
+                  expanded ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+          </div>
+
+          <p className="mt-2 text-sm leading-snug text-[var(--text-2)]" aria-live="polite">
+            {step.summary}
           </p>
-          <h2 className="mt-2 text-lg font-semibold text-[var(--text-1)]">
-            {step.id === 'intro' ? 'Prise en main' : TUTORIAL_TOPIC_LABELS[step.topic]}
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]" aria-live="polite">
-            {textOf(step.clip)}
-          </p>
+
+          <div
+            id="tutorial-transcript"
+            aria-hidden={!expanded}
+            className={`grid transition-[grid-template-rows,opacity] duration-[var(--dur-2)]
+              ease-[var(--ease-mech)] ${
+                expanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+          >
+            <div className="overflow-hidden">
+              <div className="max-h-[42dvh] overflow-y-auto">
+                <p className="mt-3 border-t border-[var(--border)] pt-3 text-sm leading-relaxed
+                  text-[var(--text-2)]">
+                  {textOf(step.clip)}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="flex items-center border-t border-[var(--border)] px-2 py-1">
           <button
@@ -199,6 +254,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const [index, setIndex] = useState(0);
   const [kind, setKind] = useState<TourKind>('full');
   const [completion, setCompletion] = useState<TutorialCompletion>('completed');
+  const [narrationActive, setNarrationActive] = useState(false);
   const topic = tutorialTopicForPath(pathname);
   const pacerActive = useRepPacer((state) => state.setId !== null);
   const restActive = useRestTimer((state) => state.setId !== null);
@@ -207,6 +263,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const showVoiceChoice = useCallback((result: TutorialCompletion) => {
     primeAnnouncer();
     stopTutorialNarration();
+    setNarrationActive(false);
     setCompletion(result);
     setPhase('voice-choice');
   }, []);
@@ -218,6 +275,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   }, [kind, showVoiceChoice]);
 
   const next = useCallback(() => {
+    setNarrationActive(false);
     if (index >= steps.length - 1) finishCurrent();
     else setIndex((current) => current + 1);
   }, [finishCurrent, index, steps.length]);
@@ -235,10 +293,15 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     let timer: number | undefined;
     const ended = () => {
-      if (!cancelled) timer = window.setTimeout(next, 650);
+      if (!cancelled) {
+        setNarrationActive(false);
+        timer = window.setTimeout(next, 650);
+      }
     };
     void playTutorialNarration(step.clip, ended).then((started) => {
-      if (!cancelled && !started) timer = window.setTimeout(next, step.fallbackMs);
+      if (cancelled) return;
+      setNarrationActive(started);
+      if (!started) timer = window.setTimeout(next, step.fallbackMs);
     });
     return () => {
       cancelled = true;
@@ -255,6 +318,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const startFull = () => {
     primeAnnouncer();
+    setNarrationActive(false);
     setSteps(FULL_TUTORIAL);
     setIndex(0);
     setKind('full');
@@ -264,6 +328,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const startContextual = () => {
     primeAnnouncer();
+    setNarrationActive(false);
     setSteps(contextualTutorial(topic));
     setIndex(0);
     setKind('contextual');
@@ -271,6 +336,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   };
 
   const skipTour = () => {
+    setNarrationActive(false);
     if (kind === 'full') showVoiceChoice('skipped');
     else {
       stopTutorialNarration();
@@ -371,11 +437,16 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
       {phase === 'tour' && current !== undefined && (
         <TutorialOverlay
+          key={`${kind}:${String(index)}:${current.id}`}
           step={current}
           index={index}
           count={steps.length}
           pathname={pathname}
-          onPrevious={() => setIndex((position) => Math.max(0, position - 1))}
+          narrationActive={narrationActive}
+          onPrevious={() => {
+            setNarrationActive(false);
+            setIndex((position) => Math.max(0, position - 1));
+          }}
           onNext={next}
           onSkip={skipTour}
         />
