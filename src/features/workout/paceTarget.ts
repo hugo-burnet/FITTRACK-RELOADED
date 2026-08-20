@@ -22,6 +22,16 @@ export type PacePreparation =
   | { kind: 'missing-reps'; setId: string }
   | { kind: 'done' };
 
+export interface PaceExerciseLine {
+  rowId: string;
+  sets: readonly WorkoutSet[];
+}
+
+export interface FollowingExercisePace {
+  rowId: string;
+  preparation: Exclude<PacePreparation, { kind: 'done' }>;
+}
+
 /**
  * Reads the next working row as a small state machine. Keeping "empty" apart
  * from "finished" lets the workout screen ask for the missing input without
@@ -68,4 +78,23 @@ export function nextPaceTarget(
 ): PaceTarget | null {
   const preparation = prepareNextPace(sets, sessionElapsedMs);
   return preparation.kind === 'ready' ? preparation.target : null;
+}
+
+/**
+ * Hands a finished exercise to the first following exercise that still has a
+ * working set. The list order is the workout order visible on screen.
+ */
+export function prepareFollowingExercisePace(
+  lines: readonly PaceExerciseLine[],
+  currentRowId: string,
+  sessionElapsedMs: number,
+): FollowingExercisePace | null {
+  const currentIndex = lines.findIndex((line) => line.rowId === currentRowId);
+  if (currentIndex < 0) return null;
+
+  for (const line of lines.slice(currentIndex + 1)) {
+    const preparation = prepareNextPace(line.sets, sessionElapsedMs);
+    if (preparation.kind !== 'done') return { rowId: line.rowId, preparation };
+  }
+  return null;
 }

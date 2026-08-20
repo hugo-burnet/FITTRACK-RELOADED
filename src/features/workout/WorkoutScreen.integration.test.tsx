@@ -516,6 +516,57 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
   });
 
+  it("prépare dans dix secondes l'exercice suivant renseigné pendant le repos", async () => {
+    const workoutId = await seedActiveWorkout();
+    const secondExercise = await createCustomExercise({
+      name: 'Tirage horizontal',
+      primaryMuscle: 'upper_back',
+      secondaryMuscles: [],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    await addWorkoutExercise(workoutId, secondExercise.id);
+    const detail = await getWorkoutDetail(workoutId);
+    const firstExerciseSet = detail?.exercises[0]?.sets[0];
+    const nextExerciseSet = detail?.exercises[1]?.sets[0];
+    if (firstExerciseSet === undefined || nextExerciseSet === undefined) {
+      throw new Error('séries de séance absentes');
+    }
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Tirage horizontal');
+    const firstCard = screen.getByRole('button', {
+      name: /Développé couché/,
+      expanded: true,
+    }).parentElement?.parentElement;
+    if (firstCard === null || firstCard === undefined) throw new Error('première carte absente');
+    await user.type(within(firstCard).getByRole('textbox', { name: 'Série 1 — kg' }), '60');
+    await user.type(within(firstCard).getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    const completeFirst = within(firstCard).getByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(completeFirst).toBeEnabled());
+    await user.click(completeFirst);
+    await waitFor(() => expect(useRestTimer.getState().setId).toBe(firstExerciseSet.id));
+
+    const nextCard = screen.getByRole('button', {
+      name: /Tirage horizontal/,
+      expanded: true,
+    }).parentElement?.parentElement;
+    if (nextCard === null || nextCard === undefined) throw new Error('carte suivante absente');
+    await user.type(within(nextCard).getByRole('textbox', { name: 'Série 1 — reps' }), '12');
+    expect(useRepPacer.getState().setId).toBeNull();
+
+    act(() => useRestTimer.getState().start(firstExerciseSet.id, 0.05));
+
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id));
+    expect(useRestTimer.getState().setId).toBeNull();
+    expect(useRepPacer.getState().reps).toBe(12);
+    expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
+    expect(within(nextCard).getByText(/Départ · 10/)).toBeVisible();
+  });
+
   it('lance toute seule la cadence suivante à la fin du compte à rebours', async () => {
     const workoutId = await seedTwoSetWorkout();
     const detail = await getWorkoutDetail(workoutId);
