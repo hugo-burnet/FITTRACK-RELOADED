@@ -263,20 +263,28 @@ export function WorkoutExerciseCard({
               </span>
               {rest !== null ? (
                 <RestStatus endsAt={rest.endsAt} />
-              ) : pace !== null ? (
-                <RepPaceRail pacer={pace} onFinished={pace.onFinished} />
-              ) : expanded ? (
+              ) : pace === null && expanded ? (
                 exercise !== undefined && (
                   <span className="truncate text-sm text-[var(--text-2)]">
                     {exerciseSubtitle(exercise)}
                   </span>
                 )
               ) : (
+                pace === null &&
                 doneReading !== '' && (
                   <span className="metric truncate text-sm text-[var(--text-2)]">
                     {doneReading}
                   </span>
                 )
+              )}
+              {/* Mounted for as long as the cadence runs, even when the rest
+                  reading takes the slot: this component's lifetime *is* the
+                  pace's, so hiding it by unmounting cancels every beat left in
+                  the set — silently, and with the store still armed. */}
+              {pace !== null && (
+                <span className={rest === null ? 'contents' : 'hidden'}>
+                  <RepPaceRail pacer={pace} onFinished={pace.onFinished} />
+                </span>
               )}
             </span>
             <ChevronDownIcon

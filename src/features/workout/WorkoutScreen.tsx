@@ -68,7 +68,7 @@ import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
-import { nextPaceTarget, prepareNextPace } from './paceTarget';
+import { nextPaceTarget, prepareNextPace, type PacePreparation } from './paceTarget';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -119,6 +119,20 @@ type TypedPace = {
 
 function launchAfter(delayMs: number): number {
   return Date.now() + delayMs;
+}
+
+/**
+ * The set a preparation still points at, whatever state it is in — `null` once
+ * it points nowhere.
+ *
+ * Both waiting states below are keyed on a set, and both must be dropped the
+ * moment that set stops being the one to pace: validated, deleted, or simply
+ * overtaken. A wait left behind is not inert — it blocks every later arming.
+ */
+function pacedSetIdOf(preparation: PacePreparation): string | null {
+  if (preparation.kind === 'ready') return preparation.target.setId;
+  if (preparation.kind === 'missing-reps') return preparation.setId;
+  return null;
 }
 
 /** Live workout backed entirely by the persisted active-workout query. */
@@ -229,26 +243,24 @@ export function WorkoutScreen() {
   useEffect(() => {
     if (pendingPace === null || detail == null) return;
     const line = detail.exercises.find(({ row }) => row.id === pendingPace.rowId);
-    if (line === undefined) return;
-    const preparation = prepareNextPace(
-      line.sets,
-      Date.now() - detail.workout.startedAt,
-      pendingPace.afterSetId,
-    );
-    if (preparation.kind !== 'ready' || preparation.target.setId !== pendingPace.setId) return;
+    const preparation =
+      line === undefined
+        ? null
+        : prepareNextPace(line.sets, Date.now() - detail.workout.startedAt, pendingPace.afterSetId);
+    // Waiting for repetitions is legitimate; waiting for a set nobody is going
+    // to perform is not, and it costs every arming that comes after — the
+    // guard in `armPaceFromTypedReps` reads this very state.
+    if (preparation === null || pacedSetIdOf(preparation) !== pendingPace.setId) {
+      const forget = setTimeout(() => setPendingPace(null));
+      return () => clearTimeout(forget);
+    }
+    if (line === undefined || preparation.kind !== 'ready') return;
+    const target = preparation.target;
 
     const timer = setTimeout(() => {
       announce('pace-start-10');
-      startPace(
-        line.row.id,
-        preparation.target.setId,
-        preparation.target.reps,
-        preparation.target.repSeconds,
-        10,
-      );
-      setPendingPace((current) =>
-        current?.setId === preparation.target.setId ? null : current,
-      );
+      startPace(line.row.id, target.setId, target.reps, target.repSeconds, 10);
+      setPendingPace((current) => (current?.setId === target.setId ? null : current));
     }, 600);
     return () => clearTimeout(timer);
   }, [detail, pendingPace, startPace]);
@@ -260,10 +272,21 @@ export function WorkoutScreen() {
   useEffect(() => {
     if (typedPace === null || detail == null) return;
     const line = detail.exercises.find(({ row }) => row.id === typedPace.rowId);
+    const preparation =
+      line === undefined
+        ? null
+        : prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
+    // Validating the set inside its own ten-second lead is the ordinary way of
+    // logging a series after doing it. The cadence it was preparing is void,
+    // and the state preparing it has to go with it — left behind it blocks
+    // every later arming, for the whole life of the screen.
+    if (preparation === null || pacedSetIdOf(preparation) !== typedPace.setId) {
+      const forget = setTimeout(() => setTypedPace(null));
+      return () => clearTimeout(forget);
+    }
     if (line === undefined) return;
-    const preparation = prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
 
-    if (preparation.kind === 'ready' && preparation.target.setId === typedPace.setId) {
+    if (preparation.kind === 'ready') {
       const timer = setTimeout(() => {
         const remaining = Math.max(0, (typedPace.launchAt - Date.now()) / 1_000);
         const leadSeconds = remaining > 0 ? remaining : 10;
@@ -279,12 +302,16 @@ export function WorkoutScreen() {
       return () => clearTimeout(timer);
     }
 
-    if (preparation.kind !== 'missing-reps' || preparation.setId !== typedPace.setId) return;
-    const timer = setTimeout(() => {
-      announce('pace-reps-missing');
-      setPendingPace({ rowId: line.row.id, setId: typedPace.setId });
-      setTypedPace((current) => (current?.setId === typedPace.setId ? null : current));
-    }, Math.max(0, typedPace.launchAt - Date.now()));
+    // Everything else was filtered above: the preparation still points at this
+    // set, and it is not ready — the repetitions are what is missing.
+    const timer = setTimeout(
+      () => {
+        announce('pace-reps-missing');
+        setPendingPace({ rowId: line.row.id, setId: typedPace.setId });
+        setTypedPace((current) => (current?.setId === typedPace.setId ? null : current));
+      },
+      Math.max(0, typedPace.launchAt - Date.now()),
+    );
     return () => clearTimeout(timer);
   }, [detail, typedPace, startPace]);
 
@@ -419,11 +446,7 @@ export function WorkoutScreen() {
         ? { reps: pacer.reps, repSeconds: pacer.repSeconds }
         : nextPaceTarget(exerciseMenuLine.sets, exerciseMenuOpenedAt - workout.startedAt);
 
-  const startPaceFor = (
-    line: WorkoutExerciseDetail,
-    now: number,
-    afterSetId?: string,
-  ): boolean => {
+  const startPaceFor = (line: WorkoutExerciseDetail, now: number, afterSetId?: string): boolean => {
     // Read at the tap, never at render: the tempo is a function of how long
     // the session has been running.
     const preparation = prepareNextPace(line.sets, now - workout.startedAt, afterSetId);
@@ -573,11 +596,7 @@ export function WorkoutScreen() {
                             onDone: () => {
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
-                              const paced = startPaceFor(
-                                line,
-                                Date.now(),
-                                rest.setId ?? undefined,
-                              );
+                              const paced = startPaceFor(line, Date.now(), rest.setId ?? undefined);
                               if (!paced) rest.stop();
                               return paced;
                             },
@@ -595,7 +614,11 @@ export function WorkoutScreen() {
                             onAnswer: (rpe) => {
                               void updateSetValues(effortSetId, { rpe });
                               const bonus = restBonusSecondsFor(rpe);
-                              if (bonus > 0) {
+                              // Only when the rest being extended is this set’s:
+                              // a superset round and a set followed by a drop
+                              // set start none, and announcing a bonus nothing
+                              // is counting down is the announcer crying wolf.
+                              if (bonus > 0 && useRestTimer.getState().setId === effortSetId) {
                                 extendRest(effortSetId, bonus);
                                 announce('rest-extended');
                               }

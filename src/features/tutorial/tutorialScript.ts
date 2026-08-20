@@ -1,3 +1,5 @@
+import type { TranslationKey } from '@/i18n/fr';
+
 export type TutorialTopic =
   'home' | 'routines' | 'workout' | 'coach' | 'history' | 'analytics' | 'exercises' | 'settings';
 
@@ -8,7 +10,7 @@ export interface TutorialStep {
   topic: TutorialTopic;
   clip: string;
   /** One glance while the voice carries the full explanation. */
-  summary: string;
+  summaryKey: TranslationKey;
   route?: string;
   target: TutorialTarget;
   /** Reading time when the recorded clip is absent. */
@@ -20,7 +22,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'intro',
     topic: 'home',
     clip: 'tutorial-intro-1',
-    summary: 'Un tour rapide des écrans essentiels avant ta première séance.',
+    summaryKey: 'tutorial.step.intro',
     route: '/',
     target: 'header',
     fallbackMs: 9_000,
@@ -29,7 +31,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'home',
     topic: 'home',
     clip: 'tutorial-home-1',
-    summary: 'L’accueil te montre quoi lancer et où tu en es.',
+    summaryKey: 'tutorial.step.home',
     route: '/',
     target: 'content',
     fallbackMs: 16_000,
@@ -38,7 +40,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'routines',
     topic: 'routines',
     clip: 'tutorial-routines-1',
-    summary: 'Prépare tes séances, puis organise-les en blocs de plusieurs semaines.',
+    summaryKey: 'tutorial.step.routines',
     route: '/routines',
     target: 'content',
     fallbackMs: 20_000,
@@ -47,7 +49,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'workout',
     topic: 'workout',
     clip: 'tutorial-workout-1',
-    summary: 'Renseigne charge et répétitions : la voix cadence, compte et relance.',
+    summaryKey: 'tutorial.step.workout',
     route: '/',
     target: 'content',
     fallbackMs: 29_000,
@@ -56,7 +58,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'coach',
     topic: 'coach',
     clip: 'tutorial-coach-1',
-    summary: 'Le coach résume la séance et explique la prochaine progression.',
+    summaryKey: 'tutorial.step.coach',
     route: '/',
     target: 'content',
     fallbackMs: 18_000,
@@ -65,7 +67,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'history',
     topic: 'history',
     clip: 'tutorial-history-1',
-    summary: 'Chaque séance terminée reste consultable et modifiable.',
+    summaryKey: 'tutorial.step.history',
     route: '/history',
     target: 'content',
     fallbackMs: 15_000,
@@ -74,7 +76,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'analytics',
     topic: 'analytics',
     clip: 'tutorial-analytics-1',
-    summary: 'Suis tes records, ton volume, ta régularité et tes muscles.',
+    summaryKey: 'tutorial.step.analytics',
     route: '/analytics',
     target: 'content',
     fallbackMs: 16_000,
@@ -83,7 +85,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'exercises',
     topic: 'exercises',
     clip: 'tutorial-exercises-1',
-    summary: 'Chaque exercice rassemble son historique et ses performances.',
+    summaryKey: 'tutorial.step.exercises',
     route: '/exercises',
     target: 'content',
     fallbackMs: 13_000,
@@ -92,7 +94,7 @@ const STEPS: readonly TutorialStep[] = [
     id: 'settings',
     topic: 'settings',
     clip: 'tutorial-settings-1',
-    summary: 'Adapte la voix, les sons et le comportement de FitTrack.',
+    summaryKey: 'tutorial.step.settings',
     route: '/settings',
     target: 'content',
     fallbackMs: 14_000,
@@ -118,15 +120,15 @@ export function tutorialTopicForPath(pathname: string): TutorialTopic {
   return 'home';
 }
 
-export const TUTORIAL_TOPIC_LABELS: Record<TutorialTopic, string> = {
-  home: 'Accueil',
-  routines: 'Routines et blocs',
-  workout: 'Séance',
-  coach: 'Coach',
-  history: 'Historique',
-  analytics: 'Progression',
-  exercises: 'Exercices',
-  settings: 'Réglages',
+export const TUTORIAL_TOPIC_LABEL_KEYS: Record<TutorialTopic, TranslationKey> = {
+  home: 'tutorial.topic.home',
+  routines: 'tutorial.topic.routines',
+  workout: 'tutorial.topic.workout',
+  coach: 'tutorial.topic.coach',
+  history: 'tutorial.topic.history',
+  analytics: 'tutorial.topic.analytics',
+  exercises: 'tutorial.topic.exercises',
+  settings: 'tutorial.topic.settings',
 };
 
 export const TUTORIAL_VOICE_CHOICE_CLIP = 'tutorial-voice-choice-1';

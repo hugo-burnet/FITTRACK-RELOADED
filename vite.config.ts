@@ -43,10 +43,10 @@ export default defineConfig(({ mode }) => {
         },
 
         workbox: {
-          // mp3 included on purpose: a voice that needs the network is not a
-          // voice, in a basement with no 4G. Sixteen short clips, precached
-          // with the rest of the shell.
-          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3}'],
+          // mp3 and wav included on purpose: a voice that needs the network is not
+          // a voice, in a basement with no 4G. The clips and the one cadence
+          // impact are precached with the rest of the shell.
+          globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,mp3,wav}'],
           navigateFallback: `${base}index.html`,
           cleanupOutdatedCaches: true,
         },

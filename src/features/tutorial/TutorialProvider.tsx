@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { primeAnnouncer } from '@/audio/announce';
 import { textOf } from '@/audio/cues';
 import type { AnnouncerMode } from '@/audio/announcer';
+import { t, type TranslationKey } from '@/i18n/fr';
 import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
@@ -13,7 +14,7 @@ import { playTutorialNarration, stopTutorialNarration } from './tutorialNarratio
 import {
   contextualTutorial,
   FULL_TUTORIAL,
-  TUTORIAL_TOPIC_LABELS,
+  TUTORIAL_TOPIC_LABEL_KEYS,
   TUTORIAL_VOICE_CHOICE_CLIP,
   tutorialTopicForPath,
   type TutorialStep,
@@ -90,7 +91,7 @@ function TutorialOverlay({
       className="fixed inset-0 z-[70]"
       role="dialog"
       aria-modal="true"
-      aria-label="Visite guidée"
+      aria-label={t('tutorial.tourLabel')}
     >
       {focus === null ? (
         <div className={`absolute inset-0 ${scrim}`} />
@@ -156,10 +157,15 @@ function TutorialOverlay({
           <div className="flex items-start gap-3">
             <div className="min-w-0 flex-1">
               <p className="label-xs font-semibold text-[var(--accent-ink)]">
-                Visite · {String(index + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}
+                {t('tutorial.stepCounter', {
+                  index: String(index + 1).padStart(2, '0'),
+                  count: String(count).padStart(2, '0'),
+                })}
               </p>
               <h2 className="mt-1 truncate text-base font-semibold text-[var(--text-1)]">
-                {step.id === 'intro' ? 'Prise en main' : TUTORIAL_TOPIC_LABELS[step.topic]}
+                {step.id === 'intro'
+                  ? t('tutorial.introTitle')
+                  : t(TUTORIAL_TOPIC_LABEL_KEYS[step.topic])}
               </h2>
             </div>
             <button
@@ -173,7 +179,7 @@ function TutorialOverlay({
               className="flex min-h-10 shrink-0 items-center gap-1 rounded-xl px-2 text-sm
                 font-semibold text-[var(--text-2)] active:bg-[var(--surface-2)]"
             >
-              {expanded ? 'Réduire' : 'Lire le texte'}
+              {t(expanded ? 'tutorial.collapseText' : 'tutorial.readText')}
               <ChevronDownIcon
                 aria-hidden="true"
                 className={`transition-transform duration-[var(--dur-2)] ${
@@ -184,7 +190,7 @@ function TutorialOverlay({
           </div>
 
           <p className="mt-2 text-sm leading-snug text-[var(--text-2)]" aria-live="polite">
-            {step.summary}
+            {t(step.summaryKey)}
           </p>
 
           <div
@@ -197,8 +203,10 @@ function TutorialOverlay({
           >
             <div className="overflow-hidden">
               <div className="max-h-[42dvh] overflow-y-auto">
-                <p className="mt-3 border-t border-[var(--border)] pt-3 text-sm leading-relaxed
-                  text-[var(--text-2)]">
+                <p
+                  className="mt-3 border-t border-[var(--border)] pt-3 text-sm leading-relaxed
+                  text-[var(--text-2)]"
+                >
                   {textOf(step.clip)}
                 </p>
               </div>
@@ -211,7 +219,7 @@ function TutorialOverlay({
             onClick={onSkip}
             className="min-h-12 px-3 text-sm font-semibold text-[var(--text-2)]"
           >
-            Passer
+            {t('tutorial.skip')}
           </button>
           <span className="flex-1" />
           <button
@@ -220,14 +228,14 @@ function TutorialOverlay({
             onClick={onPrevious}
             className="min-h-12 px-3 text-sm font-semibold text-[var(--text-2)] disabled:opacity-30"
           >
-            Précédent
+            {t('tutorial.previous')}
           </button>
           <button
             type="button"
             onClick={onNext}
             className="min-h-12 px-3 text-sm font-semibold text-[var(--accent-ink)]"
           >
-            {index === count - 1 ? 'Terminer' : 'Suivant'}
+            {t(index === count - 1 ? 'tutorial.finish' : 'tutorial.next')}
           </button>
         </div>
       </section>
@@ -235,15 +243,12 @@ function TutorialOverlay({
   );
 }
 
-const AUDIO_OPTIONS: { mode: AnnouncerMode; label: string; hint: string }[] = [
-  { mode: 'voice', label: 'Voix et sons', hint: 'Guidage complet pendant la séance.' },
-  {
-    mode: 'sounds',
-    label: 'Sons uniquement',
-    hint: 'Impacts, cadence et validations, sans parole.',
-  },
-  { mode: 'silence', label: 'Silence', hint: 'Aucun son produit par FitTrack.' },
-];
+const AUDIO_OPTIONS: { mode: AnnouncerMode; labelKey: TranslationKey; hintKey: TranslationKey }[] =
+  [
+    { mode: 'voice', labelKey: 'tutorial.modeVoice', hintKey: 'tutorial.modeVoiceHint' },
+    { mode: 'sounds', labelKey: 'tutorial.modeSounds', hintKey: 'tutorial.modeSoundsHint' },
+    { mode: 'silence', labelKey: 'tutorial.modeSilence', hintKey: 'tutorial.modeSilenceHint' },
+  ];
 
 export function TutorialProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -360,6 +365,11 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     [phase],
   );
   const current = steps[index];
+  // Every mode has a row here, so the fallback never runs — it is what lets
+  // the reading below be a plain value rather than an optional one.
+  const currentMode = loadAnnouncerMode();
+  const currentModeOption =
+    AUDIO_OPTIONS.find((option) => option.mode === currentMode) ?? AUDIO_OPTIONS[0]!;
 
   return (
     <TutorialContext.Provider value={controls}>
@@ -368,21 +378,18 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
       <Sheet
         open={phase === 'prompt'}
         onClose={() => showVoiceChoice('skipped')}
-        title="Visite guidée"
+        title={t('tutorial.tourLabel')}
       >
-        <p className="text-base leading-relaxed text-[var(--text-1)]">
-          Découvrez l’essentiel de FitTrack en moins de deux minutes trente. La visite utilise la
-          voix uniquement pendant la présentation.
-        </p>
+        <p className="text-base leading-relaxed text-[var(--text-1)]">{t('tutorial.promptBody')}</p>
         <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
-          Vous pourrez la relancer à tout moment avec le point d’interrogation dans l’en-tête.
+          {t('tutorial.promptReplay')}
         </p>
         <div className="mt-6 flex flex-col gap-2">
           <Button variant="primary" size="lg" fullWidth onClick={startFull}>
-            Commencer
+            {t('tutorial.start')}
           </Button>
           <Button variant="ghost" size="lg" fullWidth onClick={() => showVoiceChoice('skipped')}>
-            Passer
+            {t('tutorial.skip')}
           </Button>
         </div>
       </Sheet>
@@ -390,21 +397,17 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
       <ActionSheet
         open={phase === 'help'}
         onClose={() => setPhase('idle')}
-        title="Aide"
+        title={t('tutorial.helpTitle')}
         actions={[
           {
-            label: `Expliquer cette page · ${TUTORIAL_TOPIC_LABELS[topic]}`,
-            hint: workoutAudioBusy
-              ? 'Disponible dès la fin du décompte en cours.'
-              : 'Environ vingt secondes.',
+            label: t('tutorial.explainPage', { topic: t(TUTORIAL_TOPIC_LABEL_KEYS[topic]) }),
+            hint: workoutAudioBusy ? t('tutorial.busyHint') : t('tutorial.explainDuration'),
             disabled: workoutAudioBusy,
             onSelect: startContextual,
           },
           {
-            label: 'Recommencer la visite complète',
-            hint: workoutAudioBusy
-              ? 'Disponible dès la fin du décompte en cours.'
-              : 'Moins de deux minutes trente.',
+            label: t('tutorial.restartFull'),
+            hint: workoutAudioBusy ? t('tutorial.busyHint') : t('tutorial.fullDuration'),
             disabled: workoutAudioBusy,
             onSelect: startFull,
           },
@@ -414,13 +417,13 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
       <Sheet
         open={phase === 'voice-choice'}
         onClose={() => chooseAudio(loadAnnouncerMode())}
-        title="Guidage vocal"
+        title={t('tutorial.voiceChoiceTitle')}
       >
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
           {textOf(TUTORIAL_VOICE_CHOICE_CLIP)}
         </p>
         <div className="mt-5 overflow-hidden rounded-2xl bg-[var(--surface-2)]">
-          {AUDIO_OPTIONS.map(({ mode, label, hint }) => (
+          {AUDIO_OPTIONS.map(({ mode, labelKey, hintKey }) => (
             <button
               key={mode}
               type="button"
@@ -428,13 +431,13 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
               className="flex min-h-16 w-full flex-col justify-center border-b border-[var(--border)]
                 px-4 py-3 text-left last:border-b-0 active:bg-[var(--surface-1)]"
             >
-              <span className="font-semibold text-[var(--text-1)]">{label}</span>
-              <span className="mt-0.5 text-sm text-[var(--text-2)]">{hint}</span>
+              <span className="font-semibold text-[var(--text-1)]">{t(labelKey)}</span>
+              <span className="mt-0.5 text-sm text-[var(--text-2)]">{t(hintKey)}</span>
             </button>
           ))}
         </div>
         <p className="mt-4 text-xs leading-relaxed text-[var(--text-2)]">
-          Mode actuel : {AUDIO_OPTIONS.find(({ mode }) => mode === loadAnnouncerMode())?.label}
+          {t('tutorial.currentMode', { mode: t(currentModeOption.labelKey) })}
         </p>
       </Sheet>
 

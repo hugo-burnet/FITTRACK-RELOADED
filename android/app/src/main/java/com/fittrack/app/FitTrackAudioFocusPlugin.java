@@ -16,7 +16,16 @@ public class FitTrackAudioFocusPlugin extends Plugin {
     private AudioManager audioManager;
     private AudioFocusRequest focusRequest;
     private boolean ownsFocus = false;
-    private final AudioManager.OnAudioFocusChangeListener focusListener = focusChange -> {};
+    // Android can take the focus back at any moment — an incoming call, another
+    // app asking for GAIN. Without this `ownsFocus` stays true forever and
+    // every later request short-circuits on a focus we no longer hold.
+    private final AudioManager.OnAudioFocusChangeListener focusListener = focusChange -> {
+        if (focusChange == AudioManager.AUDIOFOCUS_LOSS
+            || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+            || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+            ownsFocus = false;
+        }
+    };
 
     @PluginMethod
     public void requestDucking(PluginCall call) {

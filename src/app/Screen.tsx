@@ -86,7 +86,7 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
           <div className="flex shrink-0 items-center gap-1">
             {action}
             {tutorial !== null && (
-              <HeaderAction label="Aide sur cette page" onClick={tutorial.openHelp}>
+              <HeaderAction label={t('tutorial.pageHelp')} onClick={tutorial.openHelp}>
                 <HelpIcon />
               </HeaderAction>
             )}

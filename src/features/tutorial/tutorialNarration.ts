@@ -2,6 +2,7 @@ import { primeAnnouncer } from '@/audio/announce';
 import { audioBus } from '@/audio/context';
 import { clipUrl, VOICE_GAIN } from '@/audio/voicePack';
 import { requestMusicDucking, releaseMusicDuckingAfter } from '@/platform/audioFocus';
+import { loadAnnouncerMode } from '@/stores/announcer';
 
 let request = 0;
 let activeSource: AudioBufferSourceNode | null = null;
@@ -25,6 +26,10 @@ export function stopTutorialNarration(): void {
  */
 export async function playTutorialNarration(clip: string, onEnded: () => void): Promise<boolean> {
   stopTutorialNarration();
+  // `Silence` means the app makes no sound, and this clip is a sound: the
+  // overlay then falls back to its reading time, with the transcript carrying
+  // the chapter. Announcements are filtered in `planCue`; this path is not.
+  if (loadAnnouncerMode() === 'silence') return false;
   const ownRequest = request;
   primeAnnouncer();
   const bus = audioBus();

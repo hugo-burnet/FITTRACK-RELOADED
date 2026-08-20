@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { textOf } from '@/audio/cues';
+import { t } from '@/i18n/fr';
 import { FULL_TUTORIAL, contextualTutorial, tutorialTopicForPath } from './tutorialScript';
 
 describe('script du tutoriel', () => {
@@ -7,8 +8,9 @@ describe('script du tutoriel', () => {
     expect(FULL_TUTORIAL.length).toBeGreaterThanOrEqual(8);
     for (const step of FULL_TUTORIAL) {
       expect(textOf(step.clip), step.id).toBeTruthy();
-      expect(step.summary.length, step.id).toBeGreaterThan(20);
-      expect(step.summary.length, step.id).toBeLessThan(90);
+      const summary = t(step.summaryKey);
+      expect(summary.length, step.id).toBeGreaterThan(20);
+      expect(summary.length, step.id).toBeLessThan(90);
     }
   });
 

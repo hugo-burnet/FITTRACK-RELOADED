@@ -1563,6 +1563,61 @@ const fr = {
     body: 'Tes données sont intactes : elles vivent sur l’appareil, pas dans l’écran.',
     reload: 'Recharger',
   },
+
+  tutorial: {
+    pageHelp: 'Aide sur cette page',
+    tourLabel: 'Visite guidée',
+    helpTitle: 'Aide',
+    stepCounter: 'Visite · {index} / {count}',
+    introTitle: 'Prise en main',
+    readText: 'Lire le texte',
+    collapseText: 'Réduire',
+    skip: 'Passer',
+    previous: 'Précédent',
+    next: 'Suivant',
+    finish: 'Terminer',
+    start: 'Commencer',
+    promptBody:
+      'Découvrez l’essentiel de FitTrack en moins de deux minutes trente. La visite utilise la voix uniquement pendant la présentation.',
+    promptReplay:
+      'Vous pourrez la relancer à tout moment avec le point d’interrogation dans l’en-tête.',
+    explainPage: 'Expliquer cette page · {topic}',
+    explainDuration: 'Environ vingt secondes.',
+    restartFull: 'Recommencer la visite complète',
+    fullDuration: 'Moins de deux minutes trente.',
+    busyHint: 'Disponible dès la fin du décompte en cours.',
+    voiceChoiceTitle: 'Guidage vocal',
+    currentMode: 'Mode actuel : {mode}',
+    modeVoice: 'Voix et sons',
+    modeVoiceHint: 'Guidage complet pendant la séance.',
+    modeSounds: 'Sons uniquement',
+    modeSoundsHint: 'Impacts, cadence et validations, sans parole.',
+    modeSilence: 'Silence',
+    modeSilenceHint: 'Aucun son produit par FitTrack.',
+
+    topic: {
+      home: 'Accueil',
+      routines: 'Routines et blocs',
+      workout: 'Séance',
+      coach: 'Coach',
+      history: 'Historique',
+      analytics: 'Progression',
+      exercises: 'Exercices',
+      settings: 'Réglages',
+    },
+
+    step: {
+      intro: 'Un tour rapide des écrans essentiels avant ta première séance.',
+      home: 'L’accueil te montre quoi lancer et où tu en es.',
+      routines: 'Prépare tes séances, puis organise-les en blocs de plusieurs semaines.',
+      workout: 'Renseigne charge et répétitions : la voix cadence, compte et relance.',
+      coach: 'Le coach résume la séance et explique la prochaine progression.',
+      history: 'Chaque séance terminée reste consultable et modifiable.',
+      analytics: 'Suis tes records, ton volume, ta régularité et tes muscles.',
+      exercises: 'Chaque exercice rassemble son historique et ses performances.',
+      settings: 'Adapte la voix, les sons et le comportement de FitTrack.',
+    },
+  },
 } satisfies Dictionary;
 
 type Dictionary = { [key: string]: string | Dictionary };

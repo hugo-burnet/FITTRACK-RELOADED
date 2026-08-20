@@ -1,6 +1,6 @@
 import { loadAnnouncerEcho, loadAnnouncerMode } from '@/stores/announcer';
 import { EMPTY_MEMORY, pickAtRandom, planCue, type AnnouncerMemory } from './announcer';
-import { audioBus, setAudioEcho, unlockAudio } from './context';
+import { audioBus, setAudioEcho, setAudioVolume, unlockAudio } from './context';
 import { CUES, allClips, clipsFor, type CueId } from './cues';
 import { playTone } from './tones';
 import { impactPack } from './impactPack';
@@ -30,6 +30,11 @@ export function primeAnnouncer(): void {
   // The chain is built with the context, before anything has read the stored
   // preference — this is the first moment both exist, so it is where they meet.
   setAudioEcho(loadAnnouncerEcho());
+  // The master gain is in the same situation, and worse: `applyAnnouncerMode`
+  // is the only thing that ever moves it, so a stored `silence` came back at
+  // full volume on the next launch for every path that bypasses `planCue` —
+  // the tutorial narration being one.
+  setAudioVolume(loadAnnouncerMode() === 'silence' ? 0 : 1);
   if (warmed) return;
   warmed = true;
   void impactPack.warmUp(bus);
