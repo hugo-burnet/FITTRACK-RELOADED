@@ -435,12 +435,13 @@ describe('WorkoutScreen — effort et fatigue', () => {
   });
 
   it('propose une cadence nommée dans le menu, puis un arrêt direct', async () => {
-    await seedTwoSetWorkout();
+    const workoutId = await seedTwoSetWorkout();
     const user = userEvent.setup();
     renderWorkout();
 
     await screen.findByText('Développé couché');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    await waitFor(async () => expect(await firstSet(workoutId)).toMatchObject({ reps: 8 }));
     act(() => useRestTimer.getState().start('previous-set', 90));
     await user.click(
       screen.getByRole('button', {
@@ -454,6 +455,27 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
     await user.click(screen.getByRole('button', { name: t('workout.paceStop') }));
     expect(useRepPacer.getState().setId).toBeNull();
+  });
+
+  it('arme automatiquement la première cadence dix secondes après la première charge', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const first = (await getWorkoutDetail(workoutId))?.exercises[0]?.sets[0];
+    if (first === undefined) throw new Error('série absente');
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    expect(useRepPacer.getState().setId).toBeNull();
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '80');
+
+    await waitFor(
+      () => expect(useRepPacer.getState().setId).toBe(first.id),
+      { timeout: 2_000 },
+    );
+    expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
+    expect(screen.getByText(/Départ · 10/)).toBeVisible();
   });
 
   it('lance toute seule la cadence suivante à la fin du compte à rebours', async () => {
@@ -504,7 +526,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
       () => expect(useRepPacer.getState().setId).toBe(second.id),
       { timeout: 2_000 },
     );
-    expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(2_000);
-    expect(screen.getByText(/Départ · 3/)).toBeVisible();
+    expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
+    expect(screen.getByText(/Départ · 10/)).toBeVisible();
   });
 });

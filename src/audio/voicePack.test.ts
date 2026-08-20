@@ -43,7 +43,7 @@ describe('voicePack', () => {
     await pack.warmUp(bus, ['rest-over-1']);
 
     expect(pack.play(bus, 'rest-over-1')).toBe(true);
-    expect(gain.value).toBe(2);
+    expect(gain.value).toBe(3.2);
     expect(sourceConnect).toHaveBeenCalledOnce();
     expect(gainConnect).toHaveBeenCalledWith(bus.voice);
     expect(start).toHaveBeenCalledOnce();

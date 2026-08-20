@@ -79,15 +79,15 @@ describe('planCue', () => {
     expect(plans[1]?.clip).toBe(clipsFor('record-beaten')[0]);
   });
 
-  it('ne répète pas le même cue pendant son temps de repos', () => {
+  it('laisse deux records distincts entrer dans la file vocale', () => {
     const plans = run('voice', [
       { cue: 'record-beaten', at: 0 },
-      { cue: 'record-beaten', at: 5_000 },
-      { cue: 'record-beaten', at: 20_000 },
+      { cue: 'record-beaten', at: 0 },
     ]);
 
-    expect(plans[1]).toEqual({ tone: null, clip: null });
-    expect(plans[2]?.tone).toBe('record');
+    expect(plans.map((plan) => plan.tone)).toEqual(['record', 'record']);
+    expect(plans.every((plan) => plan.clip !== null)).toBe(true);
+    expect(plans[1]?.clip).not.toBe(plans[0]?.clip);
   });
 
   it('ne redit jamais deux fois de suite la même variante', () => {

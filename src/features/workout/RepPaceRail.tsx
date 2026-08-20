@@ -3,6 +3,7 @@ import { t } from '@/i18n/fr';
 import type { RepPacer } from '@/stores/repPacer';
 import { formatNumber } from '@/ui/numberField';
 import { armRepPacer } from './repBeats';
+import { fireCountdown } from './restCountdown';
 
 /**
  * The metronome of the set under way: it arms the beats, says where you are
@@ -33,6 +34,15 @@ export function RepPaceRail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [pacer.setId, pacer.startedAt, pacer.reps, pacer.repSeconds],
   );
+
+  // A future start is a preparation window, not silence. Arm the spoken
+  // 3–2–1 only at T−3 so it cannot reserve the voice queue ten seconds early.
+  useEffect(() => {
+    const leadMs = pacer.startedAt - Date.now();
+    if (leadMs <= 0) return;
+    const id = setTimeout(() => fireCountdown(pacer.startedAt), Math.max(0, leadMs - 3_000));
+    return () => clearTimeout(id);
+  }, [pacer.setId, pacer.startedAt]);
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {

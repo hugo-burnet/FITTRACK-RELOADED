@@ -22,6 +22,7 @@ export type CueId =
   | 'rest-1'
   | 'rest-over'
   | 'rest-extended'
+  | 'pace-start-10'
   | 'pace-reps-missing'
   | 'rep-tick'
   | 'rep-3'
@@ -56,7 +57,9 @@ export const CUES: Record<CueId, CueDefinition> = {
   'set-validated': { tone: 'validate', priority: 0, gapMs: 0, cooldownMs: 0 },
   'last-set-ahead': { tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000 },
   'exercise-cleared': { tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000 },
-  'record-beaten': { tone: 'record', priority: 3, gapMs: 0, cooldownMs: 10_000 },
+  // One validation may create several distinct records. The voice pack queues
+  // their lines; a cue cooldown here would silently discard all but the first.
+  'record-beaten': { tone: 'record', priority: 3, gapMs: 0, cooldownMs: 0 },
   'rest-10': { tone: null, priority: 2, gapMs: 1_000, cooldownMs: 0 },
   // The countdown is the cadence: three ticks, one per second, no cooldown
   // between them and nothing allowed to speak across them.
@@ -67,6 +70,7 @@ export const CUES: Record<CueId, CueDefinition> = {
   // Said once, when the effort strip buys you seconds. Worth a sentence because
   // the number on the rest line changed under you and nothing else explains it.
   'rest-extended': { tone: 'validate', priority: 2, gapMs: 1_000, cooldownMs: 5_000 },
+  'pace-start-10': { tone: null, priority: 3, gapMs: 1_000, cooldownMs: 0 },
   'pace-reps-missing': { tone: 'chime', priority: 3, gapMs: 700, cooldownMs: 2_000 },
   // The rep metronome. `rep-tick` is the beat and says nothing — it fires
   // eight to twelve times a set. Only the last three reps are named, and the

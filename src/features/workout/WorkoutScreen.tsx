@@ -69,7 +69,6 @@ import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
 import { nextPaceTarget, prepareNextPace } from './paceTarget';
-import { fireCountdown } from './restCountdown';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -112,6 +111,16 @@ type PendingPace = {
   afterSetId?: string;
 };
 
+type FirstPace = {
+  rowId: string;
+  setId: string;
+  launchAt: number;
+};
+
+function launchAfter(delayMs: number): number {
+  return Date.now() + delayMs;
+}
+
 /** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
   const navigate = useNavigate();
@@ -123,6 +132,9 @@ export function WorkoutScreen() {
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
   /** A cadence waiting only for the missing repetitions to be typed. */
   const [pendingPace, setPendingPace] = useState<PendingPace | null>(null);
+  /** The first working set, armed by its first entered load. */
+  const [firstPace, setFirstPace] = useState<FirstPace | null>(null);
+  const armedFirstSets = useRef(new Set<string>());
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
   const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
@@ -196,7 +208,6 @@ export function WorkoutScreen() {
     for (const key of keys) {
       if (!seen.keys.has(key)) {
         announce('record-beaten');
-        return;
       }
     }
   }, [workoutId, recordEntries]);
@@ -208,8 +219,8 @@ export function WorkoutScreen() {
   const restingSetId = rest.setId;
 
   // Once the requested repetitions arrive, a short debounce lets a two-digit
-  // entry settle. The pacer is armed three seconds in the future immediately:
-  // its rail shows 3–2–1 while the audio clock schedules the same countdown.
+  // entry settle. Ten seconds gives enough time to put the phone down and get
+  // under the bar; the final 3–2–1 is armed by `RepPaceRail` at the right time.
   useEffect(() => {
     if (pendingPace === null || detail == null) return;
     const line = detail.exercises.find(({ row }) => row.id === pendingPace.rowId);
@@ -222,14 +233,13 @@ export function WorkoutScreen() {
     if (preparation.kind !== 'ready' || preparation.target.setId !== pendingPace.setId) return;
 
     const timer = setTimeout(() => {
-      const launchAt = Date.now() + 3_000;
-      fireCountdown(launchAt);
+      announce('pace-start-10');
       startPace(
         line.row.id,
         preparation.target.setId,
         preparation.target.reps,
         preparation.target.repSeconds,
-        3,
+        10,
       );
       setPendingPace((current) =>
         current?.setId === preparation.target.setId ? null : current,
@@ -237,6 +247,41 @@ export function WorkoutScreen() {
     }, 600);
     return () => clearTimeout(timer);
   }, [detail, pendingPace, startPace]);
+
+  // The first load is the user's implicit "get ready" action. Repetitions may
+  // arrive before or during those ten seconds; as soon as both are known, the
+  // pacer is scheduled on the original deadline. If the deadline arrives with
+  // an empty rep field, the normal missing-reps hand-off takes over.
+  useEffect(() => {
+    if (firstPace === null || detail == null) return;
+    const line = detail.exercises.find(({ row }) => row.id === firstPace.rowId);
+    if (line === undefined) return;
+    const preparation = prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
+
+    if (preparation.kind === 'ready' && preparation.target.setId === firstPace.setId) {
+      const timer = setTimeout(() => {
+        const remaining = Math.max(0, (firstPace.launchAt - Date.now()) / 1_000);
+        const leadSeconds = remaining > 0 ? remaining : 10;
+        startPace(
+          line.row.id,
+          preparation.target.setId,
+          preparation.target.reps,
+          preparation.target.repSeconds,
+          leadSeconds,
+        );
+        setFirstPace((current) => (current?.setId === firstPace.setId ? null : current));
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
+    if (preparation.kind !== 'missing-reps' || preparation.setId !== firstPace.setId) return;
+    const timer = setTimeout(() => {
+      announce('pace-reps-missing');
+      setPendingPace({ rowId: line.row.id, setId: firstPace.setId });
+      setFirstPace((current) => (current?.setId === firstPace.setId ? null : current));
+    }, Math.max(0, firstPace.launchAt - Date.now()));
+    return () => clearTimeout(timer);
+  }, [detail, firstPace, startPace]);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -394,6 +439,36 @@ export function WorkoutScreen() {
     return true;
   };
 
+  const armFirstPaceFromWeight = (
+    line: WorkoutExerciseDetail,
+    setId: string,
+    values: Partial<Parameters<typeof updateSetValues>[1]>,
+  ): void => {
+    if (values.weight === undefined || values.weight <= 0) return;
+    const firstWorkingSet = exercises
+      .flatMap((exercise) => exercise.sets)
+      .find((set) => set.deletedAt === 0 && set.setType !== 'warmup');
+    if (
+      firstWorkingSet?.id !== setId ||
+      firstWorkingSet.isCompleted === 1 ||
+      pacer.setId !== null ||
+      rest.setId !== null ||
+      firstPace !== null ||
+      pendingPace !== null ||
+      armedFirstSets.current.has(setId)
+    ) {
+      return;
+    }
+
+    armedFirstSets.current.add(setId);
+    primeAnnouncer();
+    announce('pace-start-10');
+    // The first digit deliberately arms the preparation. Ten seconds leave
+    // enough time to finish typing (for example 1 then 4), put the phone down,
+    // and get into position before the final 3–2–1.
+    setFirstPace({ rowId: line.row.id, setId, launchAt: launchAfter(10_000) });
+  };
+
   return (
     <Screen
       title={workout.name === '' ? t('workout.emptyName') : workout.name}
@@ -547,7 +622,10 @@ export function WorkoutScreen() {
                         : undefined
                     }
                     onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
-                    onWrite={(setId, values) => void updateSetValues(setId, values)}
+                    onWrite={(setId, values) => {
+                      void updateSetValues(setId, values);
+                      armFirstPaceFromWeight(line, setId, values);
+                    }}
                     onComplete={(setId, values, set) => {
                       void completeSet(setId, values);
                       // The metronome paced this set; the set is over.

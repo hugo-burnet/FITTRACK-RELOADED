@@ -183,6 +183,16 @@
       }
     },
     {
+      "id": "pace-start-10-1",
+      "cue": "pace-start-10",
+      "text": "Début dans dix secondes.",
+      "direction": "Annonce de préparation, plate et précise. Le départ est une échéance, pas un encouragement.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
       "id": "pace-reps-missing-1",
       "cue": "pace-reps-missing",
       "text": "Veuillez renseigner un nombre de répétitions pour la prochaine série.",
