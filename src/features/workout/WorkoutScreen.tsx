@@ -111,7 +111,7 @@ type PendingPace = {
   afterSetId?: string;
 };
 
-type FirstPace = {
+type TypedPace = {
   rowId: string;
   setId: string;
   launchAt: number;
@@ -132,9 +132,9 @@ export function WorkoutScreen() {
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
   /** A cadence waiting only for the missing repetitions to be typed. */
   const [pendingPace, setPendingPace] = useState<PendingPace | null>(null);
-  /** The first working set, armed by its first entered repetition count. */
-  const [firstPace, setFirstPace] = useState<FirstPace | null>(null);
-  const armedFirstSets = useRef(new Set<string>());
+  /** A next working set, armed by the repetition count just entered in its row. */
+  const [typedPace, setTypedPace] = useState<TypedPace | null>(null);
+  const armedTypedSets = useRef(new Set<string>());
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
   const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
@@ -150,7 +150,7 @@ export function WorkoutScreen() {
   const availablePlateWeightsKg = useLiveQuery(getAvailablePlateWeightsKg);
 
   const recordEntries = useLiveQuery(
-    async () => (active == null ? [] : listRecordsForWorkout(active.id)),
+    async () => (active == null ? undefined : listRecordsForWorkout(active.id)),
     [active?.id],
   );
 
@@ -248,18 +248,19 @@ export function WorkoutScreen() {
     return () => clearTimeout(timer);
   }, [detail, pendingPace, startPace]);
 
-  // The first repetition count is the user's implicit "get ready" action. The
+  // A repetition count entered on the next set of an exercise is the user's
+  // implicit "get ready" action. The
   // debounce is important: while "10" is being typed, the persisted value
   // briefly is "1". Only the settled cell value may configure the pacer.
   useEffect(() => {
-    if (firstPace === null || detail == null) return;
-    const line = detail.exercises.find(({ row }) => row.id === firstPace.rowId);
+    if (typedPace === null || detail == null) return;
+    const line = detail.exercises.find(({ row }) => row.id === typedPace.rowId);
     if (line === undefined) return;
     const preparation = prepareNextPace(line.sets, Date.now() - detail.workout.startedAt);
 
-    if (preparation.kind === 'ready' && preparation.target.setId === firstPace.setId) {
+    if (preparation.kind === 'ready' && preparation.target.setId === typedPace.setId) {
       const timer = setTimeout(() => {
-        const remaining = Math.max(0, (firstPace.launchAt - Date.now()) / 1_000);
+        const remaining = Math.max(0, (typedPace.launchAt - Date.now()) / 1_000);
         const leadSeconds = remaining > 0 ? remaining : 10;
         startPace(
           line.row.id,
@@ -268,19 +269,19 @@ export function WorkoutScreen() {
           preparation.target.repSeconds,
           leadSeconds,
         );
-        setFirstPace((current) => (current?.setId === firstPace.setId ? null : current));
+        setTypedPace((current) => (current?.setId === typedPace.setId ? null : current));
       }, 600);
       return () => clearTimeout(timer);
     }
 
-    if (preparation.kind !== 'missing-reps' || preparation.setId !== firstPace.setId) return;
+    if (preparation.kind !== 'missing-reps' || preparation.setId !== typedPace.setId) return;
     const timer = setTimeout(() => {
       announce('pace-reps-missing');
-      setPendingPace({ rowId: line.row.id, setId: firstPace.setId });
-      setFirstPace((current) => (current?.setId === firstPace.setId ? null : current));
-    }, Math.max(0, firstPace.launchAt - Date.now()));
+      setPendingPace({ rowId: line.row.id, setId: typedPace.setId });
+      setTypedPace((current) => (current?.setId === typedPace.setId ? null : current));
+    }, Math.max(0, typedPace.launchAt - Date.now()));
     return () => clearTimeout(timer);
-  }, [detail, firstPace, startPace]);
+  }, [detail, typedPace, startPace]);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -438,34 +439,33 @@ export function WorkoutScreen() {
     return true;
   };
 
-  const armFirstPaceFromReps = (
+  const armPaceFromTypedReps = (
     line: WorkoutExerciseDetail,
     setId: string,
     values: Partial<Parameters<typeof updateSetValues>[1]>,
   ): void => {
     if (values.reps === undefined || values.reps <= 0) return;
-    const firstWorkingSet = exercises
-      .flatMap((exercise) => exercise.sets)
-      .find((set) => set.deletedAt === 0 && set.setType !== 'warmup');
+    const nextWorkingSet = line.sets.find(
+      (set) => set.deletedAt === 0 && set.setType !== 'warmup' && set.isCompleted === 0,
+    );
     if (
-      firstWorkingSet?.id !== setId ||
-      firstWorkingSet.isCompleted === 1 ||
+      nextWorkingSet?.id !== setId ||
       pacer.setId !== null ||
       rest.setId !== null ||
-      firstPace !== null ||
+      typedPace !== null ||
       pendingPace !== null ||
-      armedFirstSets.current.has(setId)
+      armedTypedSets.current.has(setId)
     ) {
       return;
     }
 
-    armedFirstSets.current.add(setId);
+    armedTypedSets.current.add(setId);
     primeAnnouncer();
     announce('pace-start-10');
     // The first digit deliberately starts the ten-second preparation, while
     // the effect above waits for the complete cell value before fixing the
     // cadence target (for example 10, not the transient 1).
-    setFirstPace({ rowId: line.row.id, setId, launchAt: launchAfter(10_000) });
+    setTypedPace({ rowId: line.row.id, setId, launchAt: launchAfter(10_000) });
   };
 
   return (
@@ -623,7 +623,7 @@ export function WorkoutScreen() {
                     onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
                     onWrite={(setId, values) => {
                       void updateSetValues(setId, values);
-                      armFirstPaceFromReps(line, setId, values);
+                      armPaceFromTypedReps(line, setId, values);
                     }}
                     onComplete={(setId, values, set) => {
                       void completeSet(setId, values);

@@ -479,6 +479,43 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
   });
 
+  it("arme aussi la première série d'un nouvel exercice", async () => {
+    const workoutId = await seedActiveWorkout();
+    const secondExercise = await createCustomExercise({
+      name: 'Tirage horizontal',
+      primaryMuscle: 'upper_back',
+      secondaryMuscles: [],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    await addWorkoutExercise(workoutId, secondExercise.id);
+    const detail = await getWorkoutDetail(workoutId);
+    const firstExerciseSet = detail?.exercises[0]?.sets[0];
+    const nextExerciseSet = detail?.exercises[1]?.sets[0];
+    if (firstExerciseSet === undefined || nextExerciseSet === undefined) {
+      throw new Error('séries de séance absentes');
+    }
+    await db.workoutSets.update(firstExerciseSet.id, {
+      reps: 8,
+      isCompleted: 1,
+      performedAt: Date.now(),
+    });
+
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Tirage horizontal');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '12');
+
+    await waitFor(
+      () => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id),
+      { timeout: 2_000 },
+    );
+    expect(useRepPacer.getState().reps).toBe(12);
+    expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
+  });
+
   it('lance toute seule la cadence suivante à la fin du compte à rebours', async () => {
     const workoutId = await seedTwoSetWorkout();
     const detail = await getWorkoutDetail(workoutId);
@@ -489,7 +526,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     renderWorkout();
 
     await screen.findByText('Développé couché');
-    await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '6');
+    await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '10');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
     await waitFor(async () => {
@@ -502,7 +539,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
     await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id));
     expect(useRestTimer.getState().setId).toBeNull();
-    expect(screen.getByText(/Cadence · 1\/6/)).toBeVisible();
+    expect(screen.getByText(/Cadence · 1\/10/)).toBeVisible();
   });
 
   it('ne lance pas une prescription fantôme quand les prochaines reps sont vides', async () => {
@@ -522,11 +559,12 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await waitFor(() => expect(useRestTimer.getState().setId).toBeNull());
     expect(useRepPacer.getState().setId).toBeNull();
 
-    await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '6');
+    await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '10');
     await waitFor(
       () => expect(useRepPacer.getState().setId).toBe(second.id),
       { timeout: 2_000 },
     );
+    expect(useRepPacer.getState().reps).toBe(10);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
   });
