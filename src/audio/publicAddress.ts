@@ -17,19 +17,34 @@
  * mush. `public/voice/README.md` says so where someone about to record will
  * read it.
  *
+ * **The room got smaller, on purpose.** This chain first imitated a station
+ * concourse: band-limited to 170 Hz – 5.2 kHz like a PA horn, a wall repeat,
+ * and 1.4 s of hall. It read as an announcement because that band-limiting is
+ * what a cheap driver does. But the character moved — she is not calling across
+ * a concourse any more, she is a system reporting from inside your head — and
+ * that top cut was the whole illusion of the horn. Keeping it meant paying for
+ * a fiction no longer in use, in the one currency that matters here: the
+ * consonants that carry the words.
+ *
+ * So the low-pass is gone, the presence bump moved up to where French stops
+ * actually live, and a shelf gives back the air. Two consequences, and the
+ * second is why the space shrank in the same move: an open top makes the tail
+ * far more audible than a dark one does at the same mix, so 1.4 s of hall that
+ * sat politely under the old filter would now sound like a cathedral.
+ *
  * The chain, in order:
  *
- * 1. **the speaker** — a high-pass that takes the chest out of the voice, a
- *    presence bump where consonants live, and a low-pass that cuts the air.
- *    A PA horn reproduces almost nothing below 200 Hz or above 5 kHz, and that
- *    band-limiting alone carries half the effect;
- * 2. **the slapback** — one distinct repeat, the sound of a facing wall;
- * 3. **the hall** — a short synthetic reverb tail, procedural rather than a
- *    recorded impulse: an impulse response is a `.wav` to ship, to license and
- *    to precache, for something a decaying noise burst does convincingly.
+ * 1. **the tone** — a high-pass that takes the chest out, a presence bump at
+ *    3.2 kHz where /t/ and /k/ are decided, and a high shelf that keeps the
+ *    voice close rather than reproduced;
+ * 2. **the slapback** — one quiet repeat, enough to say the voice is somewhere
+ *    rather than pressed against the ear;
+ * 3. **the room** — a short synthetic tail, procedural rather than a recorded
+ *    impulse: an impulse response is a `.wav` to ship, to license and to
+ *    precache, for something a decaying noise burst does convincingly.
  *
- * Nothing here is subtle by accident. The wet mix stays under a third: this is
- * meant to be heard in a gym over music, and intelligibility outranks
+ * Nothing here is subtle by accident. The wet mix stays under a quarter: this
+ * is meant to be heard in a gym over music, and intelligibility outranks
  * atmosphere every time.
  */
 
@@ -41,18 +56,23 @@ export interface PublicAddress {
   setEnabled: (enabled: boolean) => void;
 }
 
-const SPEAKER = {
-  /** Below this a PA horn has nothing to say. */
+const TONE = {
+  /** Below this a voice carries nothing but rumble and handling noise. */
   highPassHz: 170,
-  /** Where consonants live. Lifting it is what keeps words readable over music. */
-  presenceHz: 2_600,
-  presenceGainDb: 5,
-  /** The top a cheap driver simply does not reproduce. */
-  lowPassHz: 5_200,
+  /**
+   * Where French stops are decided. Measured on the clips: at 2.6 kHz a /t/
+   * before a cluster reads as a /k/ — "trois" heard as "croix" — and moving the
+   * bump up here is what separates them again.
+   */
+  presenceHz: 3_200,
+  presenceGainDb: 4,
+  /** The air a low-pass used to remove. Present, not sibilant. */
+  shelfHz: 5_000,
+  shelfGainDb: 4,
 } as const;
 
-const SLAPBACK = { seconds: 0.11, feedback: 0.17, mix: 0.28 } as const;
-const HALL = { seconds: 1.4, decay: 2.6, mix: 0.3 } as const;
+const SLAPBACK = { seconds: 0.11, feedback: 0.17, mix: 0.18 } as const;
+const HALL = { seconds: 0.6, decay: 2.6, mix: 0.22 } as const;
 
 /**
  * Headroom on the coloured bus. The direct sound plus its two returns add up to
@@ -110,20 +130,21 @@ export function createPublicAddress(context: AudioContext, destination: AudioNod
 
     const highPass = context.createBiquadFilter();
     highPass.type = 'highpass';
-    highPass.frequency.value = SPEAKER.highPassHz;
+    highPass.frequency.value = TONE.highPassHz;
 
     const presence = context.createBiquadFilter();
     presence.type = 'peaking';
-    presence.frequency.value = SPEAKER.presenceHz;
+    presence.frequency.value = TONE.presenceHz;
     presence.Q.value = 1;
-    presence.gain.value = SPEAKER.presenceGainDb;
+    presence.gain.value = TONE.presenceGainDb;
 
-    const lowPass = context.createBiquadFilter();
-    lowPass.type = 'lowpass';
-    lowPass.frequency.value = SPEAKER.lowPassHz;
+    const air = context.createBiquadFilter();
+    air.type = 'highshelf';
+    air.frequency.value = TONE.shelfHz;
+    air.gain.value = TONE.shelfGainDb;
 
     const speaker = context.createGain();
-    input.connect(highPass).connect(presence).connect(lowPass).connect(speaker);
+    input.connect(highPass).connect(presence).connect(air).connect(speaker);
     speaker.connect(coloured);
 
     const slap = context.createDelay(1);

@@ -25,11 +25,11 @@ trois constantes dans `src/audio/publicAddress.ts`, pas vingt-trois fichiers.
 
 | Étage | Réglage | Pourquoi |
 |---|---|---|
-| Passe-haut | 170 Hz | Un haut-parleur de sono ne descend pas plus bas. Ça vide la voix de son corps, et c'est ça qu'on reconnaît. |
-| Bosse de présence | +5 dB à 2,6 kHz | Là où vivent les consonnes. C'est ce qui garde les mots lisibles par-dessus la musique. |
-| Passe-bas | 5,2 kHz | Le haut qu'un petit transducteur ne reproduit pas. |
+| Passe-haut | 170 Hz | Sous cette limite une voix ne porte que du grondement. |
+| Présence | +4 dB à 3,2 kHz | Là où se décident les occlusives françaises. À 2,6 kHz, le /t/ de « trois » s'entend comme un /k/ — « croix ». |
+| Plateau aigu | +4 dB à 5 kHz | Remplace le passe-bas de l'ancienne chaîne. Celui-ci fabriquait le haut-parleur de sono ; le personnage n'en est plus un. |
 | Écho de mur | 110 ms, réinjecté à 17 % | Un mur en face. Deux ou trois retours, puis plus rien. |
-| Hall | ~1,4 s, mélangé à 30 % | La pièce. Réverbération synthétique, pas de fichier d'impulsion à embarquer. |
+| Pièce | ~0,6 s, mix 22 % | Resserrée en même temps que le haut s’ouvrait : une queue brillante s’entend bien plus qu’une queue sourde au même dosage. |
 
 Le carillon d'annonce traverse la même chaîne — c'est la cloche qui précède la
 phrase, elle doit venir de la même pièce qu'elle. **Les tics du décompte
