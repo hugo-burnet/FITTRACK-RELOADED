@@ -2,7 +2,24 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Lot 21 — l'annonceuse : les 23 clips existent**).
+**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.2 — la séance vide disparaît**).
+
+## v0.8.2 — une séance commence par une intention
+
+Le bouton « Démarrer une séance libre » quitte l'accueil : personne ne vient à la salle pour
+ouvrir une coquille vide puis reconstruire sa séance exercice par exercice. Les routines et les
+blocs restent les deux entrées visibles ; l'ajout d'un exercice pendant une séance préparée reste
+disponible.
+
+La voix avait un défaut lié à cette ancienne entrée : elle annonçait le démarrage dès l'ouverture
+d'une séance qui ne contenait encore aucune série. L'annonce d'ouverture exige désormais au moins
+une série disponible. Une ancienne séance vide reste donc silencieuse, sans casser la lecture des
+anciens historiques ni les imports qui n'ont pas de routine d'origine.
+
+1650 tests / 153 fichiers. Aucun changement de schéma. Installer par-dessus la v0.8.1, sans
+désinstaller, pour conserver les données locales.
+
+---
 
 ## Lot 21 — l'annonceuse (clips générés, chaîne audio en cours)
 
