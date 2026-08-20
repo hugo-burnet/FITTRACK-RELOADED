@@ -1,9 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { db } from '@/data/db';
 import { saveBodyWeight } from '@/data/repositories/bodyMeasurements';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import {
+  addSet,
   addWorkoutExercise,
   completeSet,
   getWorkoutDetail,
@@ -11,6 +13,12 @@ import {
 } from '@/data/repositories/workouts';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutFinishScreen } from './WorkoutFinishScreen';
+
+const { speakWorkoutRecapMock } = vi.hoisted(() => ({
+  speakWorkoutRecapMock: vi.fn(),
+}));
+
+vi.mock('./workoutRecapVoice', () => ({ speakWorkoutRecap: speakWorkoutRecapMock }));
 
 function renderFinishScreen() {
   return render(
@@ -23,7 +31,10 @@ function renderFinishScreen() {
 }
 
 describe('WorkoutFinishScreen', () => {
-  beforeEach(resetDb);
+  beforeEach(async () => {
+    speakWorkoutRecapMock.mockReset();
+    await resetDb();
+  });
 
   it('affiche le tonnage effectif des exercices au poids du corps', async () => {
     const pushUp = await createCustomExercise({
@@ -45,5 +56,50 @@ describe('WorkoutFinishScreen', () => {
     renderFinishScreen();
 
     expect(await screen.findByText('448 kg')).toBeInTheDocument();
+  });
+
+  it("attend le calcul du coach avant d'annoncer le récapitulatif", async () => {
+    const exercise = await createCustomExercise({
+      name: 'Traction pronation',
+      primaryMuscle: 'lats',
+      secondaryMuscles: ['biceps'],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Dos');
+    const row = await addWorkoutExercise(workout.id, exercise.id);
+    const initial = (await getWorkoutDetail(workout.id))?.exercises[0]?.sets[0];
+    if (initial === undefined) throw new Error('série initiale absente');
+
+    const sets = [
+      initial,
+      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 15 }),
+      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 15 }),
+      await addSet(row.id, { targetReps: 8, targetRepsMax: 10, targetWeight: 15 }),
+    ];
+    for (const set of sets) {
+      if (set.id === initial.id) {
+        await db.workoutSets.update(set.id, {
+          targetReps: 8,
+          targetRepsMax: 10,
+          targetWeight: 15,
+        });
+      }
+      await completeSet(set.id, { weight: 15, reps: 10 });
+    }
+
+    renderFinishScreen();
+
+    expect(await screen.findByText(/15 → 17,5 kg/)).toBeInTheDocument();
+    await waitFor(() =>
+      expect(speakWorkoutRecapMock).toHaveBeenCalledWith([
+        expect.objectContaining({
+          code: 'range_ceiling_reached',
+          nextLoadKg: 17.5,
+        }),
+      ]),
+    );
+    expect(speakWorkoutRecapMock).not.toHaveBeenCalledWith([]);
   });
 });

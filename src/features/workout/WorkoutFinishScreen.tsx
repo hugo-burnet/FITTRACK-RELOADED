@@ -57,7 +57,8 @@ export function WorkoutFinishScreen() {
     [active?.id],
   );
   const coachSignals = useLiveQuery(
-    async () => (active == null ? [] : await evaluateCoachForWorkout(active.id)),
+    async () =>
+      active == null || detail == null ? undefined : await evaluateCoachForWorkout(active.id),
     [active?.id, detail?.workout.updatedAt],
   );
   const spokenRecap = useRef<string | null>(null);

@@ -31,4 +31,13 @@ describe('workoutRecapCues', () => {
       'coach-recap-plateau',
     ]);
   });
+
+  it.each([
+    ['range_missed', 'coach-recap-adjust'],
+    ['intra_session_drop', 'coach-recap-fatigue'],
+    ['plateau', 'coach-recap-plateau'],
+  ] as const)('annonce %s avec le verdict %s', (code, expectedCue) => {
+    expect(workoutRecapCues([signal(code)])).toEqual(['workout-recap-start', expectedCue]);
+    expect(workoutRecapCues([signal(code)])).not.toContain('coach-recap-steady');
+  });
 });
