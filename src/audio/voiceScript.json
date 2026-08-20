@@ -253,6 +253,76 @@
       }
     },
     {
+      "id": "workout-recap-start-1",
+      "cue": "workout-recap-start",
+      "text": "Analyse de la séance.",
+      "direction": "Ouverture d'un rapport. Calme, précis, aucune félicitation.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "coach-recap-steady-1",
+      "cue": "coach-recap-steady",
+      "text": "Aucun ajustement nécessaire. Le plan reste inchangé.",
+      "direction": "Constat neutre. Le plan est une décision déjà prise.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "coach-recap-progress-1",
+      "cue": "coach-recap-progress",
+      "text": "Objectif atteint. La progression est conforme.",
+      "direction": "Validation factuelle, sans enthousiasme.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "coach-recap-increase-1",
+      "cue": "coach-recap-increase",
+      "text": "Le haut de la fourchette est atteint. Une hausse de charge est prévue.",
+      "direction": "Prescription administrative. Bien détacher la seconde phrase.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "coach-recap-adjust-1",
+      "cue": "coach-recap-adjust",
+      "text": "La fourchette n'est pas atteinte. La charge sera ajustée.",
+      "direction": "Aucune déception. C'est une correction mécanique.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "coach-recap-fatigue-1",
+      "cue": "coach-recap-fatigue",
+      "text": "Une baisse de performance est détectée. Surveillez la récupération.",
+      "direction": "Avertissement calme, sans dramatisation.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
+      "id": "coach-recap-plateau-1",
+      "cue": "coach-recap-plateau",
+      "text": "Un plateau est détecté. Le plan devra être adapté.",
+      "direction": "Diagnostic froid et assuré.",
+      "settings": {
+        "stability": 0.85,
+        "style": 0.05
+      }
+    },
+    {
       "id": "workout-finished-1",
       "cue": "workout-finished",
       "text": "Séance terminée. Vous pouvez disposer.",

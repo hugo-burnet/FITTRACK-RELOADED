@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -27,6 +27,7 @@ import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
 import { formatNumber } from '@/ui/numberField';
 import { CoachCard } from './CoachCard';
 import { ElapsedTime } from './ElapsedTime';
+import { speakWorkoutRecap } from './workoutRecapVoice';
 
 /** One figure and what it counts. The reading register of Lot 1. */
 function Reading({ value, label }: { value: ReactNode; label: string }) {
@@ -59,6 +60,16 @@ export function WorkoutFinishScreen() {
     async () => (active == null ? [] : await evaluateCoachForWorkout(active.id)),
     [active?.id, detail?.workout.updatedAt],
   );
+  const spokenRecap = useRef<string | null>(null);
+
+  useEffect(() => {
+    const workoutId = detail?.workout.id;
+    if (workoutId === undefined || coachSignals === undefined || spokenRecap.current === workoutId) {
+      return;
+    }
+    spokenRecap.current = workoutId;
+    void speakWorkoutRecap(coachSignals);
+  }, [coachSignals, detail?.workout.id]);
 
   const [draft, setDraft] = useState<{ id: string; notes: string } | null>(null);
   if (detail != null && draft?.id !== detail.workout.id) {

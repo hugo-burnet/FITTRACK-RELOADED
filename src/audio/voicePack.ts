@@ -21,6 +21,8 @@ export interface VoicePack {
   warmUp: (bus: AudioBus, clips: readonly string[]) => Promise<void>;
   /** `true` when a sound was actually started. */
   play: (bus: AudioBus, clip: string, when?: number) => boolean;
+  /** Milliseconds until every queued phrase and its final breathing room end. */
+  queuedMs: (bus: AudioBus) => number;
   /** How many clips are decoded and ready — the settings screen reads this. */
   readyCount: () => number;
 }
@@ -97,6 +99,10 @@ export function createVoicePack(load: ClipLoader): VoicePack {
       } catch {
         return false;
       }
+    },
+
+    queuedMs(bus) {
+      return Math.max(0, availableAt - bus.context.currentTime) * 1_000;
     },
 
     readyCount() {

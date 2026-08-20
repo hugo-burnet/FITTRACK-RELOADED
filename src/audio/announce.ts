@@ -5,6 +5,7 @@ import { CUES, allClips, clipsFor, type CueId } from './cues';
 import { playTone } from './tones';
 import { impactPack } from './impactPack';
 import { voicePack } from './voicePack';
+import { requestMusicDucking, releaseMusicDuckingAfter } from '@/platform/audioFocus';
 
 /**
  * The announcer as the app calls it: one function, one cue, no ceremony.
@@ -76,5 +77,16 @@ export function announce(cue: CueId, when = 0): boolean {
   const { tone, clip } = result.plan;
   if (tone !== null) playTone(bus, tone, when);
   const spoke = clip !== null && voicePack.play(bus, clip, when);
+  if (spoke && CUES[cue].duckMusic) {
+    void requestMusicDucking().then((granted) => {
+      if (granted) releaseMusicDuckingAfter(voicePack.queuedMs(bus) + 250);
+    });
+  }
   return tone !== null || spoke;
+}
+
+/** How long external music must remain ducked for every queued line to finish. */
+export function voiceQueueRemainingMs(): number {
+  const bus = audioBus();
+  return bus === null ? 0 : voicePack.queuedMs(bus);
 }

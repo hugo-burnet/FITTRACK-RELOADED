@@ -59,6 +59,7 @@ describe('voicePack', () => {
     expect(pack.play(bus, 'second')).toBe(true);
 
     expect(start.mock.calls).toEqual([[0], [2.25]]);
+    expect(pack.queuedMs(bus)).toBe(4_500);
   });
 
   it('garde les mots d’un même décompte rapprochés sans les superposer', async () => {

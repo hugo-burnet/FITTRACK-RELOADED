@@ -29,6 +29,13 @@ export type CueId =
   | 'rep-2'
   | 'rep-1'
   | 'set-done'
+  | 'workout-recap-start'
+  | 'coach-recap-steady'
+  | 'coach-recap-progress'
+  | 'coach-recap-increase'
+  | 'coach-recap-adjust'
+  | 'coach-recap-fatigue'
+  | 'coach-recap-plateau'
   | 'workout-finished';
 
 export interface CueDefinition {
@@ -49,39 +56,84 @@ export interface CueDefinition {
   gapMs: number;
   /** The same cue stays silent for this long after firing. */
   cooldownMs: number;
+  /** Spoken outside an active set: temporarily lower other Android media. */
+  duckMusic: boolean;
 }
 
 export const CUES: Record<CueId, CueDefinition> = {
-  'workout-started': { tone: 'chime', priority: 2, gapMs: 1_500, cooldownMs: 60_000 },
+  'workout-started': {
+    tone: 'chime', priority: 2, gapMs: 1_500, cooldownMs: 60_000, duckMusic: true,
+  },
   // The one cue with no line: it fires on every validated set.
-  'set-validated': { tone: 'validate', priority: 0, gapMs: 0, cooldownMs: 0 },
-  'last-set-ahead': { tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000 },
-  'exercise-cleared': { tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000 },
+  'set-validated': { tone: 'validate', priority: 0, gapMs: 0, cooldownMs: 0, duckMusic: false },
+  'last-set-ahead': {
+    tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000, duckMusic: true,
+  },
+  'exercise-cleared': {
+    tone: 'validate', priority: 2, gapMs: 3_000, cooldownMs: 20_000, duckMusic: true,
+  },
   // One validation may create several distinct records. The voice pack queues
   // their lines; a cue cooldown here would silently discard all but the first.
-  'record-beaten': { tone: 'record', priority: 3, gapMs: 0, cooldownMs: 0 },
-  'rest-10': { tone: null, priority: 2, gapMs: 1_000, cooldownMs: 0 },
+  'record-beaten': {
+    tone: 'record', priority: 3, gapMs: 0, cooldownMs: 0, duckMusic: true,
+  },
+  'rest-10': { tone: null, priority: 2, gapMs: 1_000, cooldownMs: 0, duckMusic: true },
   // The countdown is the cadence: three ticks, one per second, no cooldown
   // between them and nothing allowed to speak across them.
-  'rest-3': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rest-2': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rest-1': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rest-over': { tone: 'chime', priority: 2, gapMs: 700, cooldownMs: 5_000 },
+  'rest-3': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: true },
+  'rest-2': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: true },
+  'rest-1': { tone: 'tick', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: true },
+  'rest-over': {
+    tone: 'chime', priority: 2, gapMs: 700, cooldownMs: 5_000, duckMusic: true,
+  },
   // Said once, when the effort strip buys you seconds. Worth a sentence because
   // the number on the rest line changed under you and nothing else explains it.
-  'rest-extended': { tone: 'validate', priority: 2, gapMs: 1_000, cooldownMs: 5_000 },
-  'pace-start-10': { tone: null, priority: 3, gapMs: 1_000, cooldownMs: 0 },
-  'pace-reps-missing': { tone: 'chime', priority: 3, gapMs: 700, cooldownMs: 2_000 },
+  'rest-extended': {
+    tone: 'validate', priority: 2, gapMs: 1_000, cooldownMs: 5_000, duckMusic: true,
+  },
+  'pace-start-10': {
+    tone: null, priority: 3, gapMs: 1_000, cooldownMs: 0, duckMusic: true,
+  },
+  'pace-reps-missing': {
+    tone: 'chime', priority: 3, gapMs: 700, cooldownMs: 2_000, duckMusic: true,
+  },
   // The rep metronome. `rep-tick` is the beat and says nothing — it fires
   // eight to twelve times a set. Only the last three reps are named, and the
   // words are recorded apart from the rest countdown's: the same "trois" said
   // over a bar and said to someone standing up are not the same "trois".
-  'rep-tick': { tone: 'repTap', priority: 1, gapMs: 0, cooldownMs: 0 },
-  'rep-3': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rep-2': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'rep-1': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0 },
-  'set-done': { tone: 'validate', priority: 2, gapMs: 700, cooldownMs: 3_000 },
-  'workout-finished': { tone: 'chime', priority: 3, gapMs: 1_500, cooldownMs: 60_000 },
+  'rep-tick': { tone: 'repTap', priority: 1, gapMs: 0, cooldownMs: 0, duckMusic: false },
+  'rep-3': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: false },
+  'rep-2': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: false },
+  'rep-1': { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: false },
+  'set-done': {
+    tone: 'validate', priority: 2, gapMs: 700, cooldownMs: 3_000, duckMusic: true,
+  },
+  // These lines form one deliberate debrief. They all enter the voice pack at
+  // once; its one-second breathing room serializes them without losing any.
+  'workout-recap-start': {
+    tone: 'chime', priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'coach-recap-steady': {
+    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'coach-recap-progress': {
+    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'coach-recap-increase': {
+    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'coach-recap-adjust': {
+    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'coach-recap-fatigue': {
+    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'coach-recap-plateau': {
+    tone: null, priority: 3, gapMs: 0, cooldownMs: 60_000, duckMusic: true,
+  },
+  'workout-finished': {
+    tone: 'chime', priority: 3, gapMs: 1_500, cooldownMs: 60_000, duckMusic: true,
+  },
 };
 
 export interface VoiceLine {

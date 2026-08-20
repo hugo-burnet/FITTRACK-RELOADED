@@ -2,12 +2,11 @@
  * The single audio context of the app, and the two rules that shape it.
  *
  * **Everything goes through Web Audio, nothing through `<audio>`.** An
- * `HTMLAudioElement` asks Android for audio focus, and Android grants it by
- * ducking whatever else is playing — the music in the headphones drops for the
- * duration of a 400 ms word, then climbs back. A `BufferSource` on a context
- * built for short effects mixes instead of interrupting. That is a requirement
- * of this feature, not an implementation detail: the announcer speaks *over*
- * the music, it never takes its place.
+ * `HTMLAudioElement` asks Android for audio focus on every tiny file, making the
+ * music pump word by word. A `BufferSource` on a context built for short effects
+ * keeps playback continuous. FitTrack now requests focus separately, once for
+ * a complete phrase queue: outside a set the music ducks under the voice, while
+ * rep impacts and in-set words continue to mix at full music level.
  *
  * **The unlock is the whole problem.** Mobile browsers refuse to start audio
  * without a user gesture, and a `play()` fired from a timer two minutes later
