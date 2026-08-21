@@ -26,6 +26,7 @@ import { hasDrawableMuscles } from '@/ui/muscleMap';
 import { ChevronRightIcon } from '@/ui/icons';
 import { CoachCard } from '@/features/workout/CoachCard';
 import { recommendationAsSignal } from '@/features/workout/coachCopy';
+import { ExerciseLoadCard } from './ExerciseLoadCard';
 import { ExerciseMusclesCard } from './ExerciseMusclesCard';
 
 /** "8 janvier 2026" — long month, because a history is read, not scanned for keys. */
@@ -358,6 +359,14 @@ export function ExerciseDetailScreen() {
             </div>
           </Card>
         </section>
+
+        {/* Sa propre section, sous « Tes réglages » : le coefficient et le
+            chargement ne sont pas des préférences de confort mais ce avec quoi
+            l'app compte — le tonnage d'un côté, les disques à empiler de
+            l'autre. Ils valent pour un exercice du catalogue comme pour un
+            exercice fait maison, ce que le formulaire de création ne pouvait
+            pas offrir : il ne s'ouvre que sur les seconds. */}
+        <ExerciseLoadCard exercise={exercise} />
 
         {exercise.isCustom === 1 ? (
           <Card>

@@ -11,6 +11,7 @@ export { FilterChip } from './FilterChip';
 export { HeaderAction } from './HeaderAction';
 export { Input } from './Input';
 export { ListRow } from './ListRow';
+export { MultiOptionSheet } from './MultiOptionSheet';
 export { NumberInput } from './NumberInput';
 export { OrderLockButton } from './OrderLockButton';
 export { OptionSheet } from './OptionSheet';

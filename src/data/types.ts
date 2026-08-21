@@ -60,6 +60,26 @@ export const MEASUREMENT_TYPES = [
 
 export type MeasurementType = (typeof MEASUREMENT_TYPES)[number];
 
+/**
+ * How the iron of an exercise is physically assembled — the one thing the plate
+ * calculator cannot deduce from `equipment` alone.
+ *
+ * `equipment` says what the movement is done *on*; it does not say how the load
+ * is *hung*. A back extension is `bodyweight` and takes a disc held against the
+ * chest; a belt squat is a machine and loads a single peg; a loadable dumbbell
+ * has two collars and no bar. Guessing from the hardware gave a confident wrong
+ * answer for each of them, so the answer belongs to the exercise.
+ *
+ * - `none` — nothing to compute: a pin stack, a fixed dumbbell, a band.
+ * - `barbell` — two symmetric sleeves **plus** a bar that weighs something.
+ * - `two_sided` — two symmetric loading points, no bar to speak of: a two-peg
+ *   sled, a loadable dumbbell, a plate machine.
+ * - `single_sided` — one loading point: a belt, a single peg, a held disc.
+ */
+export const PLATE_LOADINGS = ['none', 'barbell', 'two_sided', 'single_sided'] as const;
+
+export type PlateLoading = (typeof PLATE_LOADINGS)[number];
+
 export const SET_TYPES = ['normal', 'warmup', 'dropset', 'failure'] as const;
 
 export type SetType = (typeof SET_TYPES)[number];
@@ -89,6 +109,29 @@ export interface Exercise extends Syncable {
   loadIncrementKg?: number;
   /** Catalogue coefficient for effective bodyweight tonnage, when applicable. */
   bodyweightLoadFactor?: number;
+  /**
+   * Raised the moment the user sets the coefficient themselves.
+   *
+   * `seedDatabase` realigns `bodyweightLoadFactor` on every launch, because a
+   * wrong catalogue coefficient has to be fixable for everybody. That realignment
+   * would also undo the one figure the lifter typed, on the next start, without a
+   * word — so a row that carries this flag is left alone. The flag, not a second
+   * coefficient field: every reader keeps reading one number.
+   */
+  bodyweightLoadFactorIsCustom?: 0 | 1;
+  /**
+   * How this exercise takes loose plates (RF-28). Absent falls back to the
+   * equipment table in `lib/plateLoading.ts` — same optional, non-indexed
+   * pattern as `loadIncrementKg`, so no `.stores()` change is required.
+   */
+  plateLoading?: PlateLoading;
+  /**
+   * What the bar, sled or carriage weighs before a single plate, in kilograms.
+   * Absent falls back to the default of the loading mode. Persisted here rather
+   * than held in the session screen: a 15 kg bar is a property of the exercise,
+   * and it was being forgotten the moment the sheet closed.
+   */
+  plateBaseWeightKg?: number;
 }
 
 export type ExternalExerciseSource = 'hevy_csv';

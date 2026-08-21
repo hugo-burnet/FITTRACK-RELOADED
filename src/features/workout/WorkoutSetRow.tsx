@@ -173,12 +173,17 @@ export function WorkoutSetRow({
           transition-transform duration-[var(--dur-1)] ease-[var(--ease-mech)]
           active:scale-[0.92] disabled:pointer-events-none disabled:opacity-40"
       >
+        {/* Clé sur `done` : le geste le plus répété de l'app mérite d'être
+            accusé réception, et une animation CSS ne rejoue qu'au montage. Sur
+            la coche seule — remonter la ligne entière remonterait les champs de
+            saisie avec elle, et le clavier partirait entre deux séries. */}
         <span
+          key={done ? 'done' : 'todo'}
           className={`flex size-[2.125rem] items-center justify-center rounded-lg
             transition-colors duration-[var(--dur-1)]
             ${
               done
-                ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                ? 'animate-pop bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
                 : 'bg-[var(--surface-2)] text-[var(--text-2)]'
             }`}
         >

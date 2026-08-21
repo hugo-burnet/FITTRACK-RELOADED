@@ -650,3 +650,96 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
   });
 });
+
+/**
+ * « Sur pas mal d'exos on peut ajouter des plaques pour se lester, ou même des
+ * exos qui peuvent se faire avec des plaques ; or pour le moment on ne peut pas
+ * choisir si un exo a des plaques et si les plaques sont sur une barre ou non. »
+ * Remonté du téléphone. Le calculateur se réglait au matériel : une traction
+ * lestée n'y avait droit à rien, et le poids de barre saisi mourait avec la
+ * feuille.
+ */
+describe('WorkoutScreen — plaques réglées sur la fiche', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  afterEach(() => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+  });
+
+  async function seedWorkoutWith(
+    overrides: Partial<Parameters<typeof createCustomExercise>[0]>,
+  ): Promise<string> {
+    const exercise = await createCustomExercise({
+      name: 'Traction lestée',
+      primaryMuscle: 'lats',
+      secondaryMuscles: [],
+      equipment: 'bodyweight',
+      measurementType: 'reps_only',
+      isUnilateral: 0,
+      ...overrides,
+    });
+    const routine = await createRoutine('Tirage');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    return (await startWorkoutFromRoutine(routine.id)).id;
+  }
+
+  it('n’offre aucun calcul de plaques tant que la fiche n’a rien dit', async () => {
+    const workoutId = await seedWorkoutWith({});
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Traction lestée');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '25');
+    await waitFor(async () => {
+      expect((await firstSet(workoutId)).weight).toBe(25);
+    });
+
+    expect(screen.queryByRole('button', { name: 'Plaques à charger' })).not.toBeInTheDocument();
+  });
+
+  it('calcule le lest d’une traction dès que la fiche dit « un seul côté »', async () => {
+    await seedWorkoutWith({ plateLoading: 'single_sided' });
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Traction lestée');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '25');
+
+    const plates = await screen.findByRole('button', { name: 'Plaques à charger' });
+    await user.click(plates);
+
+    expect(await screen.findByText('À charger')).toBeInTheDocument();
+    expect(screen.getByText('25')).toBeInTheDocument();
+  });
+
+  it('retient le poids de barre saisi dans la feuille, au-delà de sa fermeture', async () => {
+    const workoutId = await seedWorkoutWith({
+      name: 'Curl barre EZ',
+      primaryMuscle: 'biceps',
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+    });
+    const detail = await getWorkoutDetail(workoutId);
+    const exerciseId = detail!.exercises[0]!.row.exerciseId;
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Curl barre EZ');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '40');
+    await user.click(await screen.findByRole('button', { name: 'Plaques à charger' }));
+
+    const field = await screen.findByLabelText('Poids de la barre');
+    await user.clear(field);
+    await user.type(field, '10');
+
+    await waitFor(async () => {
+      expect((await db.exercises.get(exerciseId))?.plateBaseWeightKg).toBe(10);
+    });
+  });
+});

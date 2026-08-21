@@ -34,12 +34,14 @@ import {
   markRecommendationFollowed,
 } from '@/data/repositories/coachRecommendations';
 import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
+import { updateExercise } from '@/data/repositories/exercises';
 import { SET_TYPES } from '@/data/types';
-import type { SetType, WorkoutSet } from '@/data/types';
+import type { PlateLoading, SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatNumber } from '@/ui/numberField';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { isDeloadEligibleMeasurement } from '@/lib/deload';
+import { platesConfigFor } from '@/lib/plateLoading';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
@@ -69,7 +71,6 @@ import { ElapsedTime } from './ElapsedTime';
 import { DeloadSheet } from './DeloadSheet';
 import { PaceSheet, type PaceSheetView } from './PaceSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
-import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
 import { prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
@@ -114,10 +115,11 @@ const SET_TYPE_OPTIONS = SET_TYPES.map((value) => ({
 /** Plate data must survive the menu's closing animation. */
 type PlatesView = {
   rowId: string;
+  exerciseId: string;
   loads: number[];
   barWeight: number;
   sides: number;
-  barWeightAdjustable: boolean;
+  loading: Exclude<PlateLoading, 'none'>;
 };
 
 function launchAfter(delayMs: number): number {
@@ -138,7 +140,6 @@ export function WorkoutScreen() {
   const armedTypedSets = useRef(new Set<string>());
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
-  const [plateBarWeights, setPlateBarWeights] = useState<Record<string, number>>({});
   const rest = useRestTimer();
   const pacer = useRepPacer();
 
@@ -663,10 +664,14 @@ export function WorkoutScreen() {
                         ? () => {
                             setPlatesView({
                               rowId: line.row.id,
+                              exerciseId: line.row.exerciseId,
                               loads,
-                              barWeight: plateBarWeights[line.row.id] ?? config.barWeight,
+                              // Straight from the exercise: the bar weight is
+                              // stored on it now, so a 15 kg bar typed once is
+                              // still 15 kg at the next session.
+                              barWeight: config.barWeight,
                               sides: config.sides,
-                              barWeightAdjustable: config.barWeightAdjustable,
+                              loading: config.loading,
                             });
                             setSheet({ kind: 'plates' });
                           }
@@ -935,15 +940,18 @@ export function WorkoutScreen() {
         loads={platesView?.loads ?? []}
         barWeight={platesView?.barWeight ?? 20}
         sides={platesView?.sides ?? 2}
-        barWeightAdjustable={platesView?.barWeightAdjustable ?? false}
+        loading={platesView?.loading ?? 'barbell'}
         availablePlateWeightsKg={availablePlateWeightsKg ?? [...DEFAULT_PLATES_KG]}
         onAvailablePlateWeightsChange={async (weights) => {
           await setAvailablePlateWeightsKg(weights);
         }}
         onBarWeightChange={(barWeight) => {
           if (platesView === null) return;
-          setPlateBarWeights((current) => ({ ...current, [platesView.rowId]: barWeight }));
+          // Shown immediately, written to the exercise straight after: the
+          // diagram must not wait for a round trip through Dexie, and the
+          // figure must not die with the sheet the way it used to.
           setPlatesView({ ...platesView, barWeight });
+          void updateExercise(platesView.exerciseId, { plateBaseWeightKg: barWeight });
         }}
       />
     </Screen>

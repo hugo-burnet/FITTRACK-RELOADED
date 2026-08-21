@@ -15,7 +15,7 @@ export function EmptyState({ reading, unit, title, body, action }: Props) {
   return (
     // my-auto, not justify-center on the parent: it centres in whatever room is
     // left, and collapses harmlessly when there is none.
-    <div className="my-auto flex flex-col items-center px-6 py-12 text-center">
+    <div className="animate-rise my-auto flex flex-col items-center px-6 py-12 text-center">
       {reading === undefined ? (
         <h2 className="text-xl font-semibold text-[var(--text-1)]">{title}</h2>
       ) : (

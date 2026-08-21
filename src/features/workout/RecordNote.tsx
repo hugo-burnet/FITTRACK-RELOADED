@@ -53,7 +53,10 @@ export function RecordNote({ notice }: { notice: WorkoutRecordNotice }) {
       // The validated surface of the row above, continued: the strip is the
       // bottom of that row, not a line of its own. 12 px in — the inset `RestRail`
       // already uses, so the two things that hang off a set line agree.
-      className="label-xs flex items-center gap-1.5 bg-[var(--surface-2)] px-3 pb-2.5
+      // `animate-rise` : la bande n'existe qu'une fois le record pris, donc
+      // elle se monte au moment exact où il tombe. C'est le seul endroit de
+      // l'app où une animation célèbre quelque chose, et le seul qui le mérite.
+      className="label-xs animate-rise flex items-center gap-1.5 bg-[var(--surface-2)] px-3 pb-2.5
         font-semibold text-[var(--accent-ink)]"
     >
       <StarIcon width={14} height={14} className="shrink-0" />

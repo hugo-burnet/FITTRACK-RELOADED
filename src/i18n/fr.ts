@@ -15,6 +15,7 @@ const fr = {
     no: 'Non',
     back: 'Retour',
     close: 'Fermer',
+    done: 'Terminé',
     decrease: 'Diminuer',
     increase: 'Augmenter',
     undo: 'Annuler',
@@ -109,6 +110,25 @@ const fr = {
     time_only: 'Planche, chaise, suspension à la barre.',
     distance_time: 'Rameur, tapis, vélo.',
     assisted_weight_reps: 'Tractions assistées : la charge te soulage.',
+  },
+
+  /**
+   * Comment les disques se posent. Nommé par le geste — « sur une barre »,
+   * « d'un seul côté » — et jamais par le vocabulaire de la machine : ce qu'on
+   * cherche à l'écran, c'est le tas de fonte qu'on a devant soi.
+   */
+  plateLoading: {
+    none: 'Aucun',
+    barbell: 'Sur une barre',
+    two_sided: 'Deux côtés, sans barre',
+    single_sided: 'Un seul côté',
+  },
+
+  plateLoadingHint: {
+    none: 'Charge guidée, haltère fixe, élastique : rien à empiler.',
+    barbell: 'Barre olympique, barre EZ, Smith. Le poids de la barre compte.',
+    two_sided: 'Machine à deux pivots, haltère chargeable, chariot.',
+    single_sided: 'Ceinture de lest, disque tenu, machine à un seul pivot.',
   },
 
   home: {
@@ -304,19 +324,27 @@ const fr = {
     plates: 'Plaques à charger',
     platesTitle: 'Plaques à charger',
     platesPerSide: 'De chaque côté',
+    /** Un seul point de chargement : « de chaque côté » y serait un mensonge. */
+    platesOneSide: 'À charger',
     platesTotalReading: '{weight} kg',
     platesBarWeight: 'Poids de la barre',
+    platesBaseWeight: 'Charge à vide',
+    /** Ce que la fiche a réglé, rappelé là où on charge vraiment. */
+    platesLoadingReading: '{loading}',
+    platesSettingsLink: 'Se règle sur la fiche de l’exercice.',
     platesAvailable: 'Plaques disponibles',
     platesAvailableCount: '{selected} sur {total}',
     platesAvailableOption: '{weight} kg',
     platesAvailableEmpty: 'Aucune plaque sélectionnée.',
     platesAvailableSaveError: 'Impossible d’enregistrer les plaques disponibles.',
-    platesMachineBase: 'Charge à vide {weight} kg',
     platesEmpty: 'Barre nue, aucune plaque à ajouter.',
     platesReadingPlate: '{count} × {weight}',
     platesRemainder: 'Il manque {weight} kg pour la charge exacte.',
     platesBelowBar: 'Plus léger que la barre seule ({weight} kg).',
     platesAria: 'De chaque côté : {plates}',
+    platesAriaOneSide: 'À charger : {plates}',
+    platesEmptyOneSide: 'Rien à charger.',
+    platesBelowBase: 'Plus léger que la charge à vide ({weight} kg).',
   },
 
   androidNotification: {
@@ -1101,8 +1129,36 @@ const fr = {
     loadIncrementAssistHint:
       'Sur une machine assistée, progresser baisse l’assistance de ce pas. Vide = défaut ({value} kg).',
 
+    /**
+     * « Charge » — comment cet exercice se charge, et ce qu'il pèse déjà.
+     *
+     * Sur la fiche et pas seulement dans le formulaire de création : les deux
+     * réglages valent autant pour « Extension lombaire » du catalogue que pour
+     * un exercice fait maison, et le formulaire ne s'ouvre que sur le second.
+     */
+    loadSection: 'Charge',
+
+    bodyweightFactorLabel: 'Part du poids du corps',
+    bodyweightFactorHint:
+      'Ce que ces répétitions soulèvent de toi. Sans ça, une traction sans lest pèse zéro dans le tonnage. Tractions et dips 100 %, squats 90 %, pompes 70 %.',
+    bodyweightFactorNone: 'Non comptée',
+    bodyweightFactorPreset: '{percent} %',
+    bodyweightFactorError: 'Plus de 0 et jusqu’à 100 %.',
+    bodyweightFactorMissingWeight:
+      'Renseigne ton poids sur l’accueil pour que ces répétitions comptent.',
+
+    plateLoadingLabel: 'Chargement en disques',
+    plateLoadingHint: 'Décide si « Plaques à charger » apparaît en séance.',
+    plateBaseWeightLabel: 'Poids de la barre',
+    plateBaseWeightBarHint: 'Barre olympique 20 kg, barre EZ 10 kg, barre courte 7 kg.',
+    plateBaseWeightMachineLabel: 'Charge à vide',
+    plateBaseWeightMachineHint:
+      'Ce qui pèse déjà avant le premier disque : un chariot, un levier, un bras de machine. 0 pour une ceinture de lest.',
+    plateLoadingPreviewNone: 'Rien à charger sous {weight} kg.',
+    plateLoadingPreviewLabel: 'Pour {weight} kg',
+
     catalogueNote:
-      'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes, ton repos et ton incrément, si.',
+      'Exercice du catalogue : son nom et son matériel ne se modifient pas. Tes notes, ton repos, ton incrément et son chargement, si.',
     /** Not "Enregistrer": there is nothing left to save, only somewhere to go. */
     done: 'Terminé',
     edit: 'Modifier',
@@ -1122,6 +1178,16 @@ const fr = {
     muscleLabel: 'Muscle principal',
     equipmentLabel: 'Matériel',
     measurementLabel: 'Ce que tu saisis',
+    /**
+     * Le pluriel est le sujet : une traction en prise neutre travaille le dos
+     * **et** les biceps, et le formulaire n'en acceptait qu'un seul — remonté
+     * du téléphone, en ces termes.
+     */
+    secondaryMusclesLabel: 'Muscles secondaires',
+    secondaryMusclesHint:
+      'Ce que le mouvement sollicite aussi. Sert au schéma musculaire et à l’équilibre des séances.',
+    secondaryMusclesNone: 'Aucun',
+    secondaryMusclesCount: '{count} muscles',
     bodyweightFactorLabel: 'Part du poids du corps',
     bodyweightFactorHint: 'Optionnel. 70 % pour des pompes, 100 % pour des tractions.',
     bodyweightFactorError: 'Plus de 0 et jusqu’à 100 %.',

@@ -149,7 +149,9 @@ export function Sheet({ open, onClose, title, children }: Props) {
           </div>
         </header>
 
-        <div className="sheet-bottom px-5">{children}</div>
+        {/* Monté avec la feuille et démonté avec elle : l'animation joue donc
+            à chaque ouverture, jamais à une frappe dans un champ. */}
+        <div className="animate-fade sheet-bottom px-5">{children}</div>
       </div>
     </div>,
     document.body,

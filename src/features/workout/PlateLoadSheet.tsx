@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import type { PlateLoading } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { plateLoadingLabel } from '@/i18n/labels';
+import { plateBaseWeightMatters } from '@/lib/plateLoading';
 import {
   computePlateLoad,
   DEFAULT_PLATES_KG,
@@ -55,7 +58,13 @@ type Props = {
   loads: number[];
   barWeight: number;
   sides: number;
-  barWeightAdjustable: boolean;
+  /**
+   * How the exercise says it is loaded. Drives every word on this sheet: "de
+   * chaque côté" is a lie over a dip belt, and "poids de la barre" is a lie over
+   * a sled. The sheet reads the setting, it never decides it — that lives on the
+   * exercise's own sheet.
+   */
+  loading: Exclude<PlateLoading, 'none'>;
   onBarWeightChange: (barWeight: number) => void;
   availablePlateWeightsKg: readonly number[];
   onAvailablePlateWeightsChange: (weights: number[]) => void | Promise<void>;
@@ -78,12 +87,15 @@ export function PlateLoadSheet({
   loads,
   barWeight,
   sides,
-  barWeightAdjustable,
+  loading,
   onBarWeightChange,
   availablePlateWeightsKg,
   onAvailablePlateWeightsChange,
 }: Props) {
   const [availablePlatesSaveFailed, setAvailablePlatesSaveFailed] = useState(false);
+  const baseWeightLabel = plateBaseWeightMatters(loading)
+    ? t('workout.platesBarWeight')
+    : t('workout.platesBaseWeight');
   const inventory: PlateInventory = availablePlateWeightsKg.map((weight) => ({ weight }));
 
   const toggleAvailablePlate = async (weight: number) => {
@@ -103,23 +115,30 @@ export function PlateLoadSheet({
   return (
     <Sheet open={open} onClose={onClose} title={t('workout.platesTitle')}>
       <div className="pb-2">
-        {barWeightAdjustable && (
-          <div className="mb-6 flex flex-col gap-2 border-b border-[var(--border)] pb-6">
-            <span className="label-xs font-semibold text-[var(--text-2)]">
-              {t('workout.platesBarWeight')}
-            </span>
-            {/* Keyed on `open` so every opening starts from the stored weight: a
-                field left empty must not come back empty over a bar that is
-                still 20 kg. `Sheet` does drop its children, but only once the
-                closing transition has run — not a guarantee to hang the field's
-                correctness on. */}
-            <BarWeightField
-              key={String(open)}
-              weight={barWeight}
-              onChange={onBarWeightChange}
-            />
+        {/* Always here, whatever the mode. It used to appear for a bar and hide
+            for everything else, which left a plate machine's 12 kg carriage
+            uncorrectable and its diagram quietly wrong. The label changes with
+            the mode; the field does not come and go. */}
+        <div className="mb-6 flex flex-col gap-2 border-b border-[var(--border)] pb-6">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="label-xs font-semibold text-[var(--text-2)]">{baseWeightLabel}</span>
+            <span className="text-sm text-[var(--text-2)]">{plateLoadingLabel(loading)}</span>
           </div>
-        )}
+          {/* Keyed on `open` so every opening starts from the stored weight: a
+              field left empty must not come back empty over a bar that is still
+              20 kg. `Sheet` does drop its children, but only once the closing
+              transition has run — not a guarantee to hang the field's
+              correctness on. */}
+          <BarWeightField
+            key={String(open)}
+            label={baseWeightLabel}
+            weight={barWeight}
+            onChange={onBarWeightChange}
+          />
+          <p className="text-sm leading-relaxed text-[var(--text-2)]">
+            {t('workout.platesSettingsLink')}
+          </p>
+        </div>
 
         <details className="group mb-6 border-b border-[var(--border)] pb-6">
           <summary
@@ -194,6 +213,7 @@ export function PlateLoadSheet({
             weightKg={weightKg}
             barWeight={barWeight}
             sides={sides}
+            loading={loading}
             inventory={inventory}
             // Each further load is set off by a divider: the loads are a list of
             // separate answers, not one reading that runs together.
@@ -201,14 +221,6 @@ export function PlateLoadSheet({
           />
         ))}
 
-        {!barWeightAdjustable && (
-          <p
-            className="mt-6 border-t border-[var(--border)] pt-4 text-center text-sm
-              text-[var(--text-2)]"
-          >
-            {t('workout.platesMachineBase', { weight: formatNumber(barWeight) })}
-          </p>
-        )}
       </div>
     </Sheet>
   );
@@ -228,9 +240,11 @@ export function PlateLoadSheet({
  * lifter actually entered until they finish typing the next one.
  */
 function BarWeightField({
+  label,
   weight,
   onChange,
 }: {
+  label: string;
   weight: number;
   onChange: (barWeight: number) => void;
 }) {
@@ -257,7 +271,7 @@ function BarWeightField({
       step={2.5}
       suffix={t('units.kg')}
       focusTone="neutral"
-      aria-label={t('workout.platesBarWeight')}
+      aria-label={label}
     />
   );
 }
@@ -267,18 +281,27 @@ function PlateBlock({
   weightKg,
   barWeight,
   sides,
+  loading,
   inventory,
   divided,
 }: {
   weightKg: number;
   barWeight: number;
   sides: number;
+  loading: Exclude<PlateLoading, 'none'>;
   inventory: PlateInventory;
   divided: boolean;
 }) {
   const load = computePlateLoad(weightKg, { barWeight, sides, inventory });
   const slabs = expand(load.perSide);
-  const reading = slabs.length === 0 ? t('workout.platesEmpty') : readingLine(load.perSide);
+  const onOneSide = sides === 1;
+  const bar = plateBaseWeightMatters(loading);
+  const reading =
+    slabs.length === 0
+      ? bar
+        ? t('workout.platesEmpty')
+        : t('workout.platesEmptyOneSide')
+      : readingLine(load.perSide);
 
   return (
     <div className={divided ? 'mt-6 border-t border-[var(--border)] pt-6' : ''}>
@@ -290,7 +313,9 @@ function PlateBlock({
 
       {load.belowBar ? (
         <p className="mt-4 text-center text-sm text-[var(--text-2)]">
-          {t('workout.platesBelowBar', { weight: formatNumber(barWeight) })}
+          {t(bar ? 'workout.platesBelowBar' : 'workout.platesBelowBase', {
+            weight: formatNumber(barWeight),
+          })}
         </p>
       ) : (
         <>
@@ -311,12 +336,16 @@ function PlateBlock({
           </div>
 
           <p className="label-xs mt-5 text-center font-semibold text-[var(--text-2)]">
-            {t('workout.platesPerSide')}
+            {t(onOneSide ? 'workout.platesOneSide' : 'workout.platesPerSide')}
           </p>
           <p className="metric mt-1.5 text-center text-lg text-[var(--text-1)]">{reading}</p>
 
           {/* Read aloud for a screen reader in place of the diagram. */}
-          <p className="sr-only">{t('workout.platesAria', { plates: reading })}</p>
+          <p className="sr-only">
+            {t(onOneSide ? 'workout.platesAriaOneSide' : 'workout.platesAria', {
+              plates: reading,
+            })}
+          </p>
 
           {load.remainderKg > 0 && (
             <p className="mt-2 text-center text-sm text-[var(--text-2)]">

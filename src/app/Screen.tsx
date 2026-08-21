@@ -62,9 +62,12 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
 
   return (
     <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
+      {/* L'en-tête arrive une fraction avant son contenu : le titre pose le
+          décor, la page se remplit derrière. `animate-*` ne rejoue qu'au
+          montage, donc une fois par écran et jamais à chaque série validée. */}
       <header
         data-tutorial-header
-        className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4"
+        className="animate-fade flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4"
       >
         {onBack && (
           <button
@@ -109,7 +112,8 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
           oublier une. */}
       <div
         data-tutorial-content
-        className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pt-3 pb-8"
+        className="animate-rise flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain
+          px-4 pt-3 pb-8"
       >
         {children}
       </div>

@@ -12,6 +12,72 @@
 
   --color-danger: #ff5c5c;
   --color-warn: #ffb020;
+
+  /*
+   * Le mouvement de l'app, en quatre gestes et pas un de plus.
+   *
+   * Chacun est court (≤ 220 ms) et part d'une position **proche** de l'arrivée :
+   * une app de salle se manipule d'une main, en sueur, entre deux séries — une
+   * animation qu'on attend est une animation qui gêne. Ils ne servent qu'à dire
+   * d'où une chose vient, jamais à faire spectacle.
+   *
+   * `both` sur chacun : sans lui l'élément clignote à son état final le temps
+   * d'une frame avant de commencer, ce qui est exactement le défaut qu'on
+   * cherche à corriger.
+   *
+   * La règle `prefers-reduced-motion` du bas du fichier les ramène tous à
+   * 0,01 ms d'un coup : aucun de ces quatre n'a besoin d'être désarmé à la main.
+   */
+  --animate-rise: rise var(--dur-2) var(--ease-mech) both;
+  --animate-fade: fade var(--dur-2) var(--ease-mech) both;
+  --animate-pop: pop var(--dur-2) var(--ease-mech) both;
+  --animate-flash: flash 640ms var(--ease-mech) both;
+}
+
+/* Une carte, une liste, un écran : ça monte de huit pixels et ça s'allume. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* La coche d'une série validée, le compteur d'un record : ça arrive, ça pose. */
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Un passage d'accent qui s'efface : « c'est bien cette ligne-là qui vient de bouger ». */
+@keyframes flash {
+  from {
+    background-color: var(--accent-soft);
+  }
+  to {
+    background-color: transparent;
+  }
 }
 
 :root {

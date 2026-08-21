@@ -5,6 +5,7 @@ import type {
   MuscleGroup,
   PersonalRecord,
   PersonalRecordType,
+  PlateLoading,
   SetType,
   Side,
 } from '@/data/types';
@@ -35,6 +36,11 @@ export const measurementLabel = (measurement: MeasurementType): string =>
 
 export const measurementHint = (measurement: MeasurementType): string =>
   t(`measurementHint.${measurement}`);
+
+export const plateLoadingLabel = (loading: PlateLoading): string => t(`plateLoading.${loading}`);
+
+export const plateLoadingHint = (loading: PlateLoading): string =>
+  t(`plateLoadingHint.${loading}`);
 
 export const setTypeLabel = (setType: SetType): string => t(`setType.${setType}`);
 

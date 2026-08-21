@@ -1,6 +1,6 @@
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { measurementShape } from '@/lib/measurement';
-import { platesConfigFor } from './plateConfig';
+import { platesConfigFor } from '@/lib/plateLoading';
 
 export interface WarmupContext {
   targetWeightKg: number | undefined;

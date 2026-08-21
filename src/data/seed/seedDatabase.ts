@@ -67,7 +67,9 @@ export async function seedDatabase(): Promise<void> {
  * The accepted cost, stated rather than hidden: someone who deliberately
  * reclassified a shipped exercise will see it realigned. Their own exercises
  * (`isCustom: 1`, no slug) are untouchable, and that is where a disagreement
- * belongs. Soft-deleted rows are realigned too: a deleted exercise is still the
+ * belongs — with one exception since the coefficient became editable on the
+ * sheet: a row flagged `bodyweightLoadFactorIsCustom` keeps its coefficient,
+ * because a figure the lifter typed there is an answer, not drift. Soft-deleted rows are realigned too: a deleted exercise is still the
  * one that was performed, and its history still reads its muscle.
  */
 async function reconcileShippedMetadata(rows: readonly Exercise[]): Promise<void> {
@@ -81,11 +83,24 @@ async function reconcileShippedMetadata(rows: readonly Exercise[]): Promise<void
     const entry = shipped.get(row.slug);
     if (entry === undefined) return [];
 
+    /**
+     * A coefficient the lifter set themselves is theirs, and the catalogue steps
+     * back from it — permanently.
+     *
+     * Without this the sheet's new "part du poids du corps" field would have
+     * been a trap: type 100 % on a shipped back extension, close the app, and
+     * the very next launch would silently put it back to nothing, because this
+     * function runs on every start. The muscles stay realigned either way —
+     * anatomy is still the app's answer — but the one figure the user typed is
+     * not the app's to correct.
+     */
+    const factorIsTheirs = row.bodyweightLoadFactorIsCustom === 1;
+
     const same =
       row.primaryMuscle === entry.primaryMuscle &&
       row.secondaryMuscles.length === entry.secondaryMuscles.length &&
       row.secondaryMuscles.every((muscle, index) => muscle === entry.secondaryMuscles[index]) &&
-      row.bodyweightLoadFactor === entry.bodyweightLoadFactor;
+      (factorIsTheirs || row.bodyweightLoadFactor === entry.bodyweightLoadFactor);
 
     // Nothing written when nothing differs: this runs at every launch, and a
     // no-op that still bumps `updatedAt` would make every row look dirty to the
@@ -96,6 +111,8 @@ async function reconcileShippedMetadata(rows: readonly Exercise[]): Promise<void
       primaryMuscle: entry.primaryMuscle,
       secondaryMuscles: [...entry.secondaryMuscles],
     };
+
+    if (factorIsTheirs) return [touch(row, changes)];
 
     if (entry.bodyweightLoadFactor === undefined) {
       const withoutFactor = { ...row };

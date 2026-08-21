@@ -7,13 +7,21 @@ import { EQUIPMENT, MEASUREMENT_TYPES, MUSCLE_GROUPS } from '@/data/types';
 import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { equipmentLabel, measurementHint, measurementLabel, muscleLabel } from '@/i18n/labels';
-import { Button, Card, Input, ListRow, NumberInput, OptionSheet } from '@/ui';
+import {
+  defaultBodyweightLoadFactor,
+  factorToPercent,
+  isValidBodyweightFactorPercent,
+  percentToFactor,
+  supportsBodyweightLoad,
+} from '@/lib/bodyweightLoad';
+import { Button, Card, Input, ListRow, MultiOptionSheet, NumberInput, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 
 type Draft = {
   name: string;
   primaryMuscle: MuscleGroup;
+  secondaryMuscles: MuscleGroup[];
   equipment: Equipment;
   measurementType: MeasurementType;
   isUnilateral: 0 | 1;
@@ -24,6 +32,7 @@ type Draft = {
 const BLANK: Draft = {
   name: '',
   primaryMuscle: 'chest',
+  secondaryMuscles: [],
   equipment: 'barbell',
   measurementType: 'weight_reps',
   isUnilateral: 0,
@@ -46,7 +55,19 @@ const MEASUREMENT_OPTIONS: Option<MeasurementType>[] = MEASUREMENT_TYPES.map((me
   hint: measurementHint(measurement),
 }));
 
-type Field = 'muscle' | 'equipment' | 'measurement';
+type Field = 'muscle' | 'secondaryMuscles' | 'equipment' | 'measurement';
+
+/**
+ * « Biceps · Haut du dos », « 3 muscles », « Aucun ».
+ *
+ * Two names are read faster than "2 muscles"; past three the list stops fitting
+ * on the row and a count is the only honest reading left.
+ */
+function secondaryMusclesReading(muscles: readonly MuscleGroup[]): string {
+  if (muscles.length === 0) return t('exerciseForm.secondaryMusclesNone');
+  if (muscles.length > 2) return t('exerciseForm.secondaryMusclesCount', { count: muscles.length });
+  return muscles.map(muscleLabel).join(' · ');
+}
 
 function PickerRow({ label, value, onOpen }: { label: string; value: string; onOpen: () => void }) {
   return (
@@ -88,6 +109,9 @@ export function ExerciseFormScreen() {
     setDraft({
       name: existing.name,
       primaryMuscle: existing.primaryMuscle,
+      // Copied, never referenced: the stored array must not be handed to a form
+      // that mutates its draft, or editing would rewrite the row behind its back.
+      secondaryMuscles: [...existing.secondaryMuscles],
       equipment: existing.equipment,
       measurementType: existing.measurementType,
       isUnilateral: existing.isUnilateral,
@@ -96,14 +120,41 @@ export function ExerciseFormScreen() {
   }
 
   const name = draft.name.trim();
-  const supportsBodyweightFactor =
-    draft.measurementType === 'reps_only' || draft.measurementType === 'assisted_weight_reps';
+  const supportsBodyweightFactor = supportsBodyweightLoad(draft.measurementType);
   const factorPercent =
     draft.bodyweightLoadFactor === undefined
       ? undefined
-      : Number((draft.bodyweightLoadFactor * 100).toFixed(2));
-  const factorInvalid =
-    factorPercent !== undefined && (factorPercent <= 0 || factorPercent > 100);
+      : factorToPercent(draft.bodyweightLoadFactor);
+  const factorInvalid = factorPercent !== undefined && !isValidBodyweightFactorPercent(factorPercent);
+
+  /**
+   * The primary muscle is never also a secondary one. Filtered here rather than
+   * forbidden in the sheet: the primary can be changed *after* the secondaries
+   * are picked, and a list that quietly contradicts the row above it is what
+   * `ExerciseMusclesCard` was already filtering out at display time.
+   */
+  const secondaryMuscles = draft.secondaryMuscles.filter(
+    (muscle) => muscle !== draft.primaryMuscle,
+  );
+
+  /**
+   * Re-defaults the coefficient when the movement's nature changes — and only
+   * while nobody has said otherwise.
+   *
+   * The test is "is it still on the default for what this exercise *was*". A
+   * figure the lifter typed survives every later change of matériel; a default
+   * they never looked at follows the movement, so switching "répétitions seules"
+   * from a pull-up bar to an élastique empties it instead of leaving 100 % of a
+   * body hanging off a rubber band.
+   */
+  const withBodyweightDefault = (next: Draft): Draft => ({
+    ...next,
+    bodyweightLoadFactor:
+      draft.bodyweightLoadFactor ===
+      defaultBodyweightLoadFactor(draft.measurementType, draft.equipment)
+        ? defaultBodyweightLoadFactor(next.measurementType, next.equipment)
+        : draft.bodyweightLoadFactor,
+  });
 
   const submit = () => {
     if (name === '' || factorInvalid) return;
@@ -111,6 +162,7 @@ export function ExerciseFormScreen() {
     const base = {
       name,
       primaryMuscle: draft.primaryMuscle,
+      secondaryMuscles,
       equipment: draft.equipment,
       measurementType: draft.measurementType,
       isUnilateral: draft.isUnilateral,
@@ -124,11 +176,14 @@ export function ExerciseFormScreen() {
       void updateExercise(existing.id, {
         ...withFactor,
         ...(supportsBodyweightFactor ? {} : { bodyweightLoadFactor: undefined }),
+        // A coefficient the lifter typed is theirs; the catalogue stops
+        // realigning it at the next launch (cf. `seedDatabase`).
+        bodyweightLoadFactorIsCustom: 1,
       }).then(() => navigate(-1));
       return;
     }
 
-    void createCustomExercise({ ...withFactor, secondaryMuscles: [] }).then((created) =>
+    void createCustomExercise({ ...withFactor, bodyweightLoadFactorIsCustom: 1 }).then((created) =>
       // `replace`: going back from the new exercise returns to the library, not
       // to a form that would create a second copy.
       navigate(`/exercises/${created.id}`, { replace: true }),
@@ -163,7 +218,7 @@ export function ExerciseFormScreen() {
               onChange={(value) =>
                 setDraft({
                   ...draft,
-                  bodyweightLoadFactor: value === undefined ? undefined : value / 100,
+                  bodyweightLoadFactor: value === undefined ? undefined : percentToFactor(value),
                 })
               }
               step={5}
@@ -192,6 +247,16 @@ export function ExerciseFormScreen() {
             label={t('exerciseForm.muscleLabel')}
             value={muscleLabel(draft.primaryMuscle)}
             onOpen={() => setPicker('muscle')}
+          />
+          {/* La seule ligne qui porte plusieurs réponses : sa lecture descend en
+              sous-titre au lieu de disputer la ligne au libellé. « Muscles
+              secondaires · Biceps · Haut du dos » sur 375 px tronquait le
+              libellé lui-même — mesuré. */}
+          <ListRow
+            title={t('exerciseForm.secondaryMusclesLabel')}
+            subtitle={secondaryMusclesReading(secondaryMuscles)}
+            onClick={() => setPicker('secondaryMuscles')}
+            trailing={<ChevronDownIcon className="text-[var(--text-2)]" />}
           />
           <PickerRow
             label={t('exerciseForm.equipmentLabel')}
@@ -261,13 +326,33 @@ export function ExerciseFormScreen() {
         onSelect={(primaryMuscle) => setDraft({ ...draft, primaryMuscle })}
       />
 
+      <MultiOptionSheet<MuscleGroup>
+        open={picker === 'secondaryMuscles'}
+        onClose={() => setPicker(null)}
+        title={t('exerciseForm.secondaryMusclesLabel')}
+        hint={t('exerciseForm.secondaryMusclesHint')}
+        // The primary muscle is not on offer: it is already answered one row up,
+        // and a movement that "also works" what it mainly works says nothing.
+        options={MUSCLE_OPTIONS.filter((option) => option.value !== draft.primaryMuscle)}
+        values={secondaryMuscles}
+        doneLabel={t('common.done')}
+        onToggle={(muscle) =>
+          setDraft({
+            ...draft,
+            secondaryMuscles: secondaryMuscles.includes(muscle)
+              ? secondaryMuscles.filter((value) => value !== muscle)
+              : [...secondaryMuscles, muscle],
+          })
+        }
+      />
+
       <OptionSheet<Equipment>
         open={picker === 'equipment'}
         onClose={() => setPicker(null)}
         title={t('exerciseForm.equipmentLabel')}
         options={EQUIPMENT_OPTIONS}
         value={draft.equipment}
-        onSelect={(equipment) => setDraft({ ...draft, equipment })}
+        onSelect={(equipment) => setDraft(withBodyweightDefault({ ...draft, equipment }))}
       />
 
       <OptionSheet<MeasurementType>
@@ -276,20 +361,14 @@ export function ExerciseFormScreen() {
         title={t('exerciseForm.measurementLabel')}
         options={MEASUREMENT_OPTIONS}
         value={draft.measurementType}
-        onSelect={(measurementType) => {
-          const supportsFactor =
-            measurementType === 'reps_only' || measurementType === 'assisted_weight_reps';
-          setDraft({
-            ...draft,
-            measurementType,
-            bodyweightLoadFactor:
-              measurementType === 'assisted_weight_reps'
-                ? 1
-                : supportsFactor
-                  ? draft.bodyweightLoadFactor
-                  : undefined,
-          });
-        }}
+        /**
+         * A default, not a blank. An exercise measured against the body with no
+         * coefficient weighs **zero** in the tonnage — which is exactly how a
+         * self-made pull-up came to count fourteen repetitions of nothing.
+         * `lib/bodyweightLoad` decides the figure; the field above shows it, and
+         * one tap changes it.
+         */
+        onSelect={(measurementType) => setDraft(withBodyweightDefault({ ...draft, measurementType }))}
       />
     </Screen>
   );

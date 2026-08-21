@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import { defaultBodyweightLoadFactor } from '@/lib/bodyweightLoad';
 import { snapshotOf } from '@/lib/exerciseSnapshot';
 import { localOffsetMinutes } from '@/lib/timezone';
 import type {
@@ -214,6 +215,48 @@ export class FitTrackDB extends Dexie {
           delete routine.version;
           delete routine.versionState;
           delete routine.originRoutineId;
+        });
+    });
+
+    /**
+     * Gives the exercises you made yourself the bodyweight coefficient the form
+     * would write for them today.
+     *
+     * The field was optional and the form left it blank, so a self-made pull-up
+     * carried no coefficient — and an exercise measured against the body with no
+     * coefficient weighs **zero** in `effectiveLoadKg`. Fourteen repetitions, no
+     * tonnage, no session record, and nothing on any screen printing the zero to
+     * be suspicious about. Reported from the phone, twice, in exactly those
+     * words: "les tractions non lestées ne comptent toujours pas le poids du
+     * corps".
+     *
+     * Only rows with **no coefficient at all** (nothing is overwritten), only
+     * `isCustom: 1` (a catalogue row is the catalogue's business, and
+     * `seedDatabase` would realign it back on the next launch anyway), and only
+     * the equipment where the body genuinely is the load — `lib/bodyweightLoad`
+     * owns that judgement and this upgrade restates none of it.
+     *
+     * The same trade as version 2 and version 4, and stated the same way: the
+     * best information available, and the only one there is. A self-made crunch
+     * comes out at 100 % of a body, which it is not — and it now says so, in
+     * figures, on its own sheet, where one tap corrects it. That is strictly
+     * better than the silent zero it replaces.
+     *
+     * No `.stores()`: neither field is indexed, so version 8's declaration
+     * carries over.
+     */
+    this.version(9).upgrade(async (tx) => {
+      await tx
+        .table<Exercise>('exercises')
+        .toCollection()
+        .modify((exercise) => {
+          if (exercise.isCustom !== 1 || exercise.bodyweightLoadFactor !== undefined) return;
+          const factor = defaultBodyweightLoadFactor(
+            exercise.measurementType,
+            exercise.equipment,
+          );
+          if (factor === undefined) return;
+          exercise.bodyweightLoadFactor = factor;
         });
     });
   }

@@ -2,8 +2,103 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**Release Android v0.8.9 — le « Temps » d'une séance se
-compte enfin**).
+**Dernière mise à jour :** 2026-08-21 (**La charge se règle sur la fiche : coefficient du poids du
+corps, chargement en disques, muscles secondaires**). *Pas encore publiée en APK.*
+
+## En cours — ce que l'app devinait, la fiche d'exercice le dit
+
+Quatre demandes de terrain, remontées ensemble parce qu'elles se répondent : trois portent sur la
+même chose, **une fiche d'exercice qui ne portait pas assez d'informations pour que l'app arrête de
+deviner**.
+
+### 1. Une traction sans lest pesait zéro, et rien ne le disait
+
+`effectiveLoadKg` lit un exercice mesuré au corps à travers son `bodyweightLoadFactor`. Le champ
+était optionnel, le formulaire de création le laissait **vide**, et un coefficient absent vaut
+« aucun corps » : quatorze tractions maison comptaient quatorze répétitions et **pas un kilo** de
+tonnage. Le zéro n'était affiché nulle part — c'est ce qui a rendu le défaut si long à voir.
+
+Trois corrections, dans cet ordre :
+
+- **`lib/bodyweightLoad.ts`** (nouveau, testé avant écrit) décide du coefficient de départ :
+  100 % partout où le corps est ce qu'on déplace, rien là où la résistance vient d'ailleurs
+  (élastique, poulie, machine). Un assisté vaut toujours 100 % par construction.
+- **Le formulaire ne part plus d'un champ vide.** Il pose le défaut et le montre. Un chiffre tapé
+  à la main survit à tout changement ultérieur de matériel ; un défaut auquel personne n'a touché
+  suit le mouvement (« répétitions seules » qui passe de la barre fixe à l'élastique se vide).
+- **La `version(9)` de Dexie rattrape les exercices déjà créés** : `isCustom: 1`, mesuré au corps,
+  sans coefficient → celui que le formulaire écrirait aujourd'hui. Rien n'est écrasé, le catalogue
+  n'est pas touché. Même arbitrage que les versions 2 et 4, et dit de la même façon : la meilleure
+  information disponible, et la seule.
+
+Le coefficient devient aussi **modifiable sur la fiche de n'importe quel exercice** — quatre
+préréglages plus un champ — catalogue compris, ce que le formulaire ne pouvait pas offrir (il ne
+s'ouvre que sur les exercices faits maison). Conséquence à traiter : `seedDatabase` réaligne
+`bodyweightLoadFactor` à **chaque lancement**, et aurait donc effacé silencieusement le chiffre
+tapé au démarrage suivant. Un exercice porte désormais `bodyweightLoadFactorIsCustom` ; le
+catalogue s'en écarte définitivement, sans cesser de réaligner l'anatomie.
+
+Et quand aucun poids du corps n'est enregistré, la fiche le dit sur place plutôt que de laisser
+les totaux à zéro.
+
+### 2. Le calculateur de plaques se réglait au matériel — donc mal
+
+`equipment` dit sur quoi un mouvement se fait ; il n'a jamais dit **comment la fonte est
+suspendue**. Résultat : une extension lombaire avec un disque contre la poitrine, une ceinture de
+lest, un haltère chargeable et un chariot à un seul pivot recevaient tous la même mauvaise réponse
+— le plus souvent aucune.
+
+`Exercise.plateLoading` porte maintenant l'un de quatre mots : **aucun · sur une barre · deux
+côtés sans barre · un seul côté**. `lib/plateLoading.ts` (déplacé depuis `features/workout/`, la
+fiche en a besoin autant que la séance) résout la fiche d'abord, le matériel ensuite — l'ancienne
+table barre/Smith/machine à disques reste le défaut, donc rien ne change pour qui n'y touche pas.
+Un « aucun » explicite est une réponse, pas une absence.
+
+Deux conséquences directes :
+
+- **La feuille « Plaques à charger » s'ouvre enfin sur une traction lestée.** Le calculateur
+  refusait les charges *ajoutées* : 25 kg à la ceinture, c'est 25 kg de fonte à aller chercher, et
+  la barre ne s'y intéressait pas.
+- **Le poids de barre ne meurt plus avec la feuille.** Il vivait dans un `useState` de l'écran de
+  séance : une barre EZ réglée à 10 kg était oubliée à la fermeture. Il vit sur l'exercice
+  (`plateBaseWeightKg`), se règle des deux côtés — fiche et feuille — et le champ, qui
+  disparaissait dès qu'il n'y avait « pas de barre », reste là sous le nom de **charge à vide**
+  (un chariot de machine pèse quelque chose, et c'était incorrigible).
+
+La feuille parle enfin la langue du réglage : « à charger » quand il n'y a qu'un point de
+chargement, « de chaque côté » quand il y en a deux.
+
+### 3. Les muscles secondaires ne se choisissaient pas
+
+« Pour les tractions en prise neutre je n'ai pu renseigner que dos ou biceps, pas les 2. » Et pour
+cause : `createCustomExercise` recevait `secondaryMuscles: []` en dur. Nouveau `MultiOptionSheet`
+— le jumeau d'`OptionSheet` avec une seule différence, **choisir ne referme pas** : « dos » est une
+réponse qui attend encore « biceps ». Cases à cocher (le rôle doit annoncer qu'on peut en prendre
+plusieurs *avant* le premier appui), « Terminé » collé en bas du panneau, et le muscle principal
+retiré de la liste.
+
+### 4. Des animations, pour que ça glisse
+
+Quatre gestes, pas un de plus, tous ≤ 220 ms et tous partant d'une position **proche** de
+l'arrivée : une app de salle se manipule d'une main, en sueur, et une animation qu'on attend est
+une animation qui gêne. `rise` (l'en-tête et le contenu d'un écran, un état vide, la barre de
+séance en cours), `fade` (le contenu d'une feuille), `pop` (la coche d'une série validée, clé sur
+son état pour qu'elle rejoue à chaque validation — sur la coche seule, remonter la ligne ferait
+partir le clavier), `flash` (réservé). `prefers-reduced-motion` les désarme tous d'un bloc, la
+règle existait déjà.
+
+**Portes locales :** typecheck, lint, **1 794 tests dans 165 fichiers**, build PWA.
+
+**Checkpoint téléphone :**
+
+- [ ] Ouvrir la fiche d'une traction : « Part du poids du corps » à 100 %, et le tonnage d'une
+      ancienne séance de tractions n'est plus à zéro.
+- [ ] Relancer l'app : le coefficient tapé à la main est **toujours là** (c'était le piège).
+- [ ] Fiche « Extension lombaire » → chargement « un seul côté ». En séance, saisir 20 kg :
+      « Plaques à charger » apparaît et dit « à charger », pas « de chaque côté ».
+- [ ] Régler une barre EZ à 10 kg depuis la feuille, quitter la séance, revenir : toujours 10 kg.
+- [ ] Créer un exercice avec deux muscles secondaires ; vérifier le schéma musculaire de sa fiche.
+- [ ] Vérifier qu'aucune animation ne gêne la saisie d'une série au milieu d'une séance.
 
 ## v0.8.9 — le « Temps » du bilan de séance compte les répétitions
 

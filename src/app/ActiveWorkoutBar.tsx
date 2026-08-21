@@ -26,7 +26,7 @@ export function ActiveWorkoutBar() {
   return (
     <Link
       to="/workout"
-      className="flex min-h-14 shrink-0 items-center gap-3 border-t border-[var(--border)]
+      className="animate-rise flex min-h-14 shrink-0 items-center gap-3 border-t border-[var(--border)]
         bg-[var(--color-accent)] px-4 text-[var(--color-accent-fg)]
         transition-[filter] duration-[var(--dur-1)] active:brightness-95"
     >

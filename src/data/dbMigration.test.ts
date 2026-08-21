@@ -210,7 +210,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(8);
+    expect(db.verno).toBe(9);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -286,7 +286,7 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(8);
+    expect(db.verno).toBe(9);
 
     const week = await db.programWeeks.get('legacy-week');
     expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });
@@ -301,5 +301,105 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const deloadWeek = await db.programWeeks.get('legacy-deload-week');
     expect(deloadWeek).toMatchObject({ loadIndex: 60, phase: 'deload' });
     expect(deloadWeek).not.toHaveProperty('isDeload');
+  });
+});
+
+/**
+ * « Les tractions non lestées ne comptent toujours pas le poids du corps. »
+ *
+ * Un exercice fait maison, mesuré en répétitions et sans coefficient, pèse zéro
+ * kilo dans le tonnage — silencieusement, faute d'un zéro affiché quelque part.
+ * La version 9 lui donne le coefficient que le formulaire écrirait aujourd'hui.
+ */
+describe('migration version 8 → 9 (coefficient du poids du corps)', () => {
+  afterEach(async () => {
+    const { db } = await import('./db');
+    await db.delete();
+  });
+
+  async function seedVersion8Exercises(rows: readonly Exercise[]): Promise<void> {
+    const legacy = new Dexie('fittrack');
+    legacy.version(1).stores(V1_STORES);
+    legacy.version(2).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(3).stores(V3_STORES);
+    legacy.version(4).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(5).stores({
+      coachRecommendations:
+        'id, exerciseId, status, [exerciseId+status], recommendedAt, deletedAt',
+    });
+    legacy.version(6).stores({
+      programs: 'id, status, startsAt, updatedAt, deletedAt',
+      programWeeks: 'id, programId, [programId+weekIndex], deletedAt',
+      programScheduleRevisions: 'id, programId, [programId+effectiveFromWeekIndex], deletedAt',
+      programScheduleEntries: 'id, revisionId, [revisionId+order], routineId, deletedAt',
+    });
+    legacy.version(7).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(8).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    await legacy.open();
+    await legacy.table<Exercise>('exercises').bulkAdd([...rows]);
+    legacy.close();
+  }
+
+  const custom = (overrides: Partial<Exercise>): Exercise => ({
+    ...stamps,
+    id: 'custom',
+    name: 'Traction prise neutre',
+    primaryMuscle: 'lats',
+    secondaryMuscles: [],
+    equipment: 'bodyweight',
+    measurementType: 'reps_only',
+    isCustom: 1,
+    isUnilateral: 0,
+    ...overrides,
+  });
+
+  it('donne 100 % du corps à une traction faite maison qui n’en avait aucun', async () => {
+    await seedVersion8Exercises([custom({})]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.exercises.get('custom'))?.bodyweightLoadFactor).toBe(1);
+  });
+
+  it('n’écrase aucun coefficient déjà renseigné', async () => {
+    await seedVersion8Exercises([custom({ id: 'pushups', bodyweightLoadFactor: 0.7 })]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.exercises.get('pushups'))?.bodyweightLoadFactor).toBe(0.7);
+  });
+
+  it('laisse le catalogue au catalogue', async () => {
+    await seedVersion8Exercises([
+      custom({ id: 'shipped', isCustom: 0, slug: 'hanging-leg-raise' }),
+    ]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.exercises.get('shipped'))?.bodyweightLoadFactor).toBeUndefined();
+  });
+
+  it('ne suppose aucun corps derrière un exercice à l’élastique ou à la barre', async () => {
+    await seedVersion8Exercises([
+      custom({ id: 'band', equipment: 'band' }),
+      custom({ id: 'bench', equipment: 'barbell', measurementType: 'weight_reps' }),
+    ]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.exercises.get('band'))?.bodyweightLoadFactor).toBeUndefined();
+    expect((await db.exercises.get('bench'))?.bodyweightLoadFactor).toBeUndefined();
   });
 });

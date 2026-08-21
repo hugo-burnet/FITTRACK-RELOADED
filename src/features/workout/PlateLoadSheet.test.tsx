@@ -28,7 +28,7 @@ function AdjustableHarness({
       loads={[100]}
       barWeight={barWeight}
       sides={2}
-      barWeightAdjustable
+      loading="barbell"
       onBarWeightChange={setBarWeight}
       availablePlateWeightsKg={availablePlateWeightsKg}
       onAvailablePlateWeightsChange={async (weights) => {
@@ -86,7 +86,7 @@ describe('PlateLoadSheet', () => {
     expect(screen.getByLabelText('Poids de la barre')).toHaveValue('20');
   });
 
-  it('ne présente pas de réglage de barre à une machine à plaques', () => {
+  it('appelle « charge à vide » la base d’une machine à plaques, et la laisse corrigeable', () => {
     render(
       <PlateLoadSheet
         open
@@ -94,7 +94,7 @@ describe('PlateLoadSheet', () => {
         loads={[100]}
         barWeight={0}
         sides={2}
-        barWeightAdjustable={false}
+        loading="two_sided"
         onBarWeightChange={vi.fn()}
         availablePlateWeightsKg={DEFAULT_PLATES_KG}
         onAvailablePlateWeightsChange={vi.fn()}
@@ -102,7 +102,28 @@ describe('PlateLoadSheet', () => {
     );
 
     expect(screen.queryByLabelText('Poids de la barre')).not.toBeInTheDocument();
-    expect(screen.getByText('Charge à vide 0 kg')).toBeInTheDocument();
+    expect(screen.getByLabelText('Charge à vide')).toHaveValue('0');
+    expect(screen.getByText('De chaque côté')).toBeInTheDocument();
+  });
+
+  it('parle d’un seul côté quand le lest ne pend que d’un point', () => {
+    render(
+      <PlateLoadSheet
+        open
+        onClose={vi.fn()}
+        loads={[25]}
+        barWeight={0}
+        sides={1}
+        loading="single_sided"
+        onBarWeightChange={vi.fn()}
+        availablePlateWeightsKg={DEFAULT_PLATES_KG}
+        onAvailablePlateWeightsChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('À charger')).toBeInTheDocument();
+    expect(screen.queryByText('De chaque côté')).not.toBeInTheDocument();
+    expect(screen.getByText('25')).toBeInTheDocument();
   });
 
   it('sélectionne les dix dénominations par défaut', async () => {
