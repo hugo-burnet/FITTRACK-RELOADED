@@ -318,6 +318,38 @@ function rangeMissedSignal(
   };
 }
 
+/** Two loads that are the same figure — or two sets that carry no figure. */
+function sameLoad(left: number | undefined, right: number | undefined): boolean {
+  return left === right;
+}
+
+/**
+ * The set a later one may be compared with: the first set of the session that
+ * carries the **same load** and a rep count.
+ *
+ * **A heavier bar is not a collapse.** `100 × 10` then `110 × 7` is a pyramid —
+ * the load went up and the reps followed it down, which is what going up a
+ * load is. Reading the second set against the first turned a deliberate step
+ * into « Baisse de reps observée », and a coach that calls a progression a
+ * regression is a coach you stop reading. Reps only mean something against
+ * reps done at the same weight; a set that opens a new load has nothing behind
+ * it to fall from, so it says nothing until a second set at that load answers.
+ *
+ * Lighter sets never reach here — `progressionSets` already drops them.
+ */
+function dropReference(
+  working: readonly CoachSetInput[],
+  index: number,
+): CoachSetInput | undefined {
+  const set = working[index]!;
+  for (let i = 0; i < index; i += 1) {
+    const candidate = working[i]!;
+    if (candidate.reps === undefined) continue;
+    if (sameLoad(candidate.weight, set.weight)) return candidate;
+  }
+  return undefined;
+}
+
 function intraSessionDropSignal(
   line: CoachExerciseLine,
   dropReps: number,
@@ -325,15 +357,14 @@ function intraSessionDropSignal(
   const working = progressionSets(line);
   if (working.length < 2) return undefined;
 
-  const firstReps = working[0]!.reps;
-  if (firstReps === undefined) return undefined;
-
-  let worst: { set: CoachSetInput; drop: number } | undefined;
+  let worst: { set: CoachSetInput; reference: CoachSetInput; drop: number } | undefined;
   for (let i = 1; i < working.length; i++) {
     const set = working[i]!;
     const reps = set.reps;
     if (reps === undefined) continue;
-    const drop = firstReps - reps;
+    const reference = dropReference(working, i);
+    if (reference === undefined) continue;
+    const drop = reference.reps! - reps;
     if (drop < dropReps) continue;
     // A set that lands inside its own prescription is not a defect. `12, 12, 12,
     // 10` on an 8–12 range is the range being respected, and calling it a drop
@@ -341,7 +372,7 @@ function intraSessionDropSignal(
     // being read at all. Only a set that falls *through the floor* is news.
     if (set.targetReps !== undefined && reps >= set.targetReps) continue;
     if (worst === undefined || drop > worst.drop) {
-      worst = { set, drop };
+      worst = { set, reference, drop };
     }
   }
   if (worst === undefined) return undefined;
@@ -350,7 +381,7 @@ function intraSessionDropSignal(
     code: 'intra_session_drop',
     exerciseId: line.exerciseId,
     evidence: [
-      { label: 'first_reps', value: firstReps },
+      { label: 'first_reps', value: worst.reference.reps! },
       { label: 'low_reps', value: worst.set.reps! },
       { label: 'drop_reps', value: worst.drop },
     ],
@@ -393,6 +424,20 @@ function longRestSignal(
 }
 
 /**
+ * The heaviest load a session actually worked, `undefined` when the exercise
+ * carries no load at all. Assistance is out of scope here — `plateauSignal`
+ * refuses those sessions before it asks.
+ */
+function topWorkingLoad(line: CoachExerciseLine): number | undefined {
+  let top: number | undefined;
+  for (const set of completedWorkingSets(line.sets)) {
+    if (set.weight === undefined) continue;
+    if (top === undefined || set.weight > top) top = set.weight;
+  }
+  return top;
+}
+
+/**
  * Plateau: N consecutive non-deload sessions with no improvement on best estimated 1RM.
  * Deload sessions are skipped so a planned cut never looks like stagnation.
  *
@@ -432,6 +477,18 @@ function plateauSignal(
     }
   }
   if (improved) return undefined;
+
+  // **A heavier bar is progress, whatever the estimate says.** Trading reps for
+  // load — `100 × 10`, then `105 × 8`, then `110 × 6` — moves the estimated 1RM
+  // by a kilo or two in whichever direction the formula happens to lean, and
+  // three such sessions read as a flat line. They are not: ten kilos went onto
+  // the bar. The estimate is a model; the load is a fact, and the fact wins.
+  const loads = window.map(topWorkingLoad);
+  const newestLoad = loads[0];
+  const oldestLoad = loads[loads.length - 1];
+  if (newestLoad !== undefined && oldestLoad !== undefined && newestLoad > oldestLoad) {
+    return undefined;
+  }
 
   return {
     code: 'plateau',

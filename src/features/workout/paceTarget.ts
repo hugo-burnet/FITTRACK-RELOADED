@@ -1,5 +1,4 @@
 import type { WorkoutSet } from '@/data/types';
-import { repSecondsFor } from '@/lib/tempo';
 
 /**
  * Which set the metronome would pace, and at what beat.
@@ -10,6 +9,9 @@ import { repSecondsFor } from '@/lib/tempo';
  * **Performed reps, never the prescription.** The pale target in an empty
  * field is context, not an instruction to the metronome. The pace only owns a
  * set once the lifter has typed the number they are about to perform.
+ *
+ * **The tempo comes in, it is not computed here.** It is the exercise's own
+ * choice (or the preference behind it) — cf. `lib/tempo`.
  */
 export interface PaceTarget {
   setId: string;
@@ -25,6 +27,8 @@ export type PacePreparation =
 export interface PaceExerciseLine {
   rowId: string;
   sets: readonly WorkoutSet[];
+  /** The exercise's own tempo, already resolved against the preference. */
+  repSeconds: number;
 }
 
 export interface FollowingExercisePace {
@@ -39,7 +43,7 @@ export interface FollowingExercisePace {
  */
 export function prepareNextPace(
   sets: readonly WorkoutSet[],
-  sessionElapsedMs: number,
+  repSeconds: number,
   afterSetId?: string,
 ): PacePreparation {
   const working = sets.filter((set) => set.deletedAt === 0 && set.setType !== 'warmup');
@@ -55,28 +59,17 @@ export function prepareNextPace(
     return { kind: 'missing-reps', setId: target.id };
   }
 
-  const done = working.filter((set) => set.isCompleted === 1).length;
-  const remaining = working.filter((set) => set.isCompleted === 0).length;
-
   return {
     kind: 'ready',
-    target: {
-      setId: target.id,
-      reps: target.reps,
-      repSeconds: repSecondsFor({
-        workingSetsDone: done,
-        isLastWorkingSet: remaining === 1,
-        sessionElapsedMs,
-      }),
-    },
+    target: { setId: target.id, reps: target.reps, repSeconds },
   };
 }
 
 export function nextPaceTarget(
   sets: readonly WorkoutSet[],
-  sessionElapsedMs: number,
+  repSeconds: number,
 ): PaceTarget | null {
-  const preparation = prepareNextPace(sets, sessionElapsedMs);
+  const preparation = prepareNextPace(sets, repSeconds);
   return preparation.kind === 'ready' ? preparation.target : null;
 }
 
@@ -87,13 +80,12 @@ export function nextPaceTarget(
 export function prepareFollowingExercisePace(
   lines: readonly PaceExerciseLine[],
   currentRowId: string,
-  sessionElapsedMs: number,
 ): FollowingExercisePace | null {
   const currentIndex = lines.findIndex((line) => line.rowId === currentRowId);
   if (currentIndex < 0) return null;
 
   for (const line of lines.slice(currentIndex + 1)) {
-    const preparation = prepareNextPace(line.sets, sessionElapsedMs);
+    const preparation = prepareNextPace(line.sets, line.repSeconds);
     if (preparation.kind !== 'done') return { rowId: line.rowId, preparation };
   }
   return null;

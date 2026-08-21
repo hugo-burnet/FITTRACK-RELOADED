@@ -223,6 +223,13 @@ export interface WorkoutExercise extends Syncable {
   /** Resolved once on session entry; always positive and independent of later edits. */
   restSeconds: number;
 
+  /**
+   * Seconds per repetition for the metronome, when this exercise has its own.
+   * Absent means "use the preference" — a tempo is chosen, never derived
+   * (cf. `lib/tempo`).
+   */
+  repSeconds?: number;
+
   /** Immutable exercise snapshot; optional for rows created before snapshots existed. */
   exerciseName?: string;
   exerciseMeasurementType?: MeasurementType;

@@ -1,55 +1,71 @@
 /**
- * How long one repetition is given, once fatigue is taken into account.
+ * How long one repetition is given — a number the lifter chooses, and nothing
+ * else chooses for them.
  *
- * A metronome that keeps the same beat from the first warm-up to the last set
- * of the session is a metronome you stop obeying halfway through: the tenth
- * working set of an hour-long session does not move at the speed of the first,
- * and being told otherwise by a click is worse than being told nothing. So the
- * beat *stretches*, on three grounds that all cost you something real:
+ * **This used to be automatic, and that was the mistake.** The beat stretched
+ * by a quarter of a second per set already done, half a second on the last set,
+ * half a second past three quarters of an hour. Every term was defensible and
+ * the sum was not: the app decided the tempo of *your* exercise from a model of
+ * fatigue it cannot measure, and a metronome you did not choose is a metronome
+ * you argue with. A tempo is part of the prescription — 3 s on a bench press,
+ * 5 s on a slow squat, 2 s on an explosive pull — and the person under the bar
+ * is the only one who knows which.
  *
- * - **sets already done in this exercise** — the local, ordinary fatigue;
- * - **the last working set** — where you are at once the most cooked and the
- *   most likely to grind out a rep that takes twice as long;
- * - **a long session** — after three quarters of an hour, everything is slower.
- *
- * Every term is additive, small, and capped: the tempo is a guide, and a guide
- * that drifts to eight seconds a rep is prescribing a different exercise. Never
- * a factor, always seconds, for the same reason the program level moves in
- * increments — a percentage of a number nobody chose means nothing.
+ * So the number is stored where the exercise is (`WorkoutExercise.repSeconds`),
+ * set from the exercise card, and falls back to a single preference when the
+ * row carries none. What is left here is the grid it moves on and the floor and
+ * ceiling it stays inside.
  */
 
-/** Concentric plus eccentric, the beat of a rep with nothing against it yet. */
-export const BASE_REP_SECONDS = 3;
+/** Concentric plus eccentric, the beat of an ordinary rep. */
+export const DEFAULT_REP_SECONDS = 3;
 
-/** Past this, the guide stops being one. */
-export const MAX_REP_SECONDS = 5;
+/** Below this the click is a rattle rather than a beat. */
+export const MIN_REP_SECONDS = 1;
 
-const PER_SET_BONUS = 0.25;
-const PER_SET_BONUS_CAP = 1;
-const LAST_SET_BONUS = 0.5;
-const LONG_SESSION_BONUS = 0.5;
-const LONG_SESSION_MS = 45 * 60 * 1_000;
+/** Ten seconds a rep is a hold, and a hold has its own timer. */
+export const MAX_REP_SECONDS = 10;
 
-export interface TempoInput {
-  /** Working sets of this exercise already validated. Warm-ups excluded. */
-  workingSetsDone: number;
-  /** The set about to be done is the exercise's last working set. */
-  isLastWorkingSet: boolean;
-  /** Time since the session opened. */
-  sessionElapsedMs: number;
+/**
+ * Quarter seconds: the ear hears the difference between 3 and 3,25 s across ten
+ * reps, and nothing below that is worth carrying around.
+ */
+export const REP_SECONDS_STEP = 0.25;
+
+/** The tempos a lifter actually reaches for, one tap away in the picker. */
+export const REP_SECONDS_PRESETS = [2, 2.5, 3, 4, 5] as const;
+
+/** Snaps to the quarter-second grid and keeps the value inside its bounds. */
+export function clampRepSeconds(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_REP_SECONDS;
+  const snapped = Math.round(value / REP_SECONDS_STEP) * REP_SECONDS_STEP;
+  return Math.min(MAX_REP_SECONDS, Math.max(MIN_REP_SECONDS, snapped));
 }
 
-export function repSecondsFor(input: TempoInput): number {
-  const fromSets = Math.min(
-    PER_SET_BONUS * Math.max(0, input.workingSetsDone),
-    PER_SET_BONUS_CAP,
-  );
-  const fromLast = input.isLastWorkingSet ? LAST_SET_BONUS : 0;
-  const fromSession = input.sessionElapsedMs >= LONG_SESSION_MS ? LONG_SESSION_BONUS : 0;
+/** One step of the ± pair. */
+export function stepRepSeconds(value: number, steps: number): number {
+  return clampRepSeconds(value + steps * REP_SECONDS_STEP);
+}
 
-  const total = BASE_REP_SECONDS + fromSets + fromLast + fromSession;
+/**
+ * A persisted value read back — `undefined` for anything that is not a usable
+ * tempo, so the caller falls through to the preference rather than pacing a set
+ * at `NaN` seconds a rep.
+ */
+export function normalizeRepSeconds(value: unknown): number | undefined {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+  if (value < MIN_REP_SECONDS || value > MAX_REP_SECONDS) return undefined;
+  return clampRepSeconds(value);
+}
 
-  // Quarter seconds: the ear hears the difference between 3 and 3,25 s across
-  // ten reps, and nothing below that is worth carrying around.
-  return Math.min(MAX_REP_SECONDS, Math.round(total * 4) / 4);
+/**
+ * The tempo to beat, from the most specific source that has one: the exercise's
+ * own choice, then the preference, then the plain three seconds.
+ */
+export function resolveRepSeconds(...candidates: readonly (number | undefined)[]): number {
+  for (const candidate of candidates) {
+    const value = normalizeRepSeconds(candidate);
+    if (value !== undefined) return value;
+  }
+  return DEFAULT_REP_SECONDS;
 }

@@ -21,6 +21,7 @@ import {
   PlateIcon,
   StarIcon,
   StopIcon,
+  StopwatchIcon,
 } from '@/ui/icons';
 import { CoachCard } from './CoachCard';
 import { EffortStrip } from './EffortStrip';
@@ -99,6 +100,8 @@ type Props = {
   reorderEnabled: boolean;
   foldCommand: WorkoutFoldCommand;
   onMenu: () => void;
+  /** Opens the cadence of this exercise — tempo, and the button that beats it. */
+  onPace: () => void;
   /** Present only while this card's cadence is running. */
   onStopPace?: () => void;
   onPlates?: () => void;
@@ -132,6 +135,7 @@ export function WorkoutExerciseCard({
   reorderEnabled,
   foldCommand,
   onMenu,
+  onPace,
   onStopPace,
   onPlates,
   onSetMenu,
@@ -293,7 +297,12 @@ export function WorkoutExerciseCard({
             />
           </button>
 
-          {pace !== null && onStopPace !== undefined && (
+          {/* Le chrono de l'exercice. Une seule place dans le bandeau pour deux
+              gestes qui ne se présentent jamais ensemble : ouvrir la cadence
+              quand rien ne tourne, l'arrêter d'un doigt quand elle tourne — la
+              vieille case « stop » n'apparaissait qu'à ce moment-là, elle est
+              donc exactement ce bouton dans son autre état. */}
+          {pace !== null && onStopPace !== undefined ? (
             <button
               type="button"
               aria-label={t('workout.paceStop')}
@@ -302,6 +311,16 @@ export function WorkoutExerciseCard({
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
             >
               <StopIcon width={18} height={18} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              aria-label={t('workout.paceOpen', { name })}
+              onClick={onPace}
+              className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+            >
+              <StopwatchIcon width={20} height={20} />
             </button>
           )}
 

@@ -6,10 +6,12 @@ import {
   type WeeklyTrainingGoal,
 } from '@/lib/history';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
+import { DEFAULT_REP_SECONDS, clampRepSeconds, normalizeRepSeconds } from '@/lib/tempo';
 
 const AVAILABLE_PLATE_WEIGHTS_KEY = 'availablePlateWeightsKg';
 const WEEKLY_TRAINING_GOAL_HISTORY_KEY = 'weeklyTrainingGoalHistory';
 const ONE_REP_MAX_FORMULA_KEY = 'oneRepMaxFormula';
+const REP_SECONDS_KEY = 'repSeconds';
 const CANONICAL_PLATE_WEIGHTS = new Set<number>(DEFAULT_PLATES_KG);
 const ONE_REP_MAX_FORMULAS: ReadonlySet<OneRepMaxFormula> = new Set([
   'epley',
@@ -153,4 +155,23 @@ export async function setOneRepMaxFormula(formula: OneRepMaxFormula): Promise<vo
       });
     },
   );
+}
+
+/**
+ * The tempo an exercise takes when it has none of its own.
+ *
+ * One preference for the whole app rather than a default per exercise in the
+ * catalogue: the number that matters is the one you are beating *now*, it is
+ * set from the card in one gesture, and the last thing a settings screen needs
+ * is four hundred tempos to maintain.
+ */
+export async function getDefaultRepSeconds(): Promise<number> {
+  const setting = await db.settings.get(REP_SECONDS_KEY);
+  return normalizeRepSeconds(setting?.value) ?? DEFAULT_REP_SECONDS;
+}
+
+export async function setDefaultRepSeconds(seconds: number): Promise<number> {
+  const value = clampRepSeconds(seconds);
+  await db.settings.put({ key: REP_SECONDS_KEY, value, updatedAt: Date.now() });
+  return value;
 }

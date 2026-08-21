@@ -68,6 +68,48 @@ describe('shareText', () => {
   });
 });
 
+describe('shareText — Android natif', () => {
+  it('passe par la feuille de partage du système, que la WebView n’expose pas', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    const writeText = vi.fn();
+    // `navigator.share` absent : c'est exactement l'APK, et c'est là que le
+    // bouton « Partager » se contentait de copier.
+    install({ share: undefined, clipboard: { writeText } });
+
+    expect(await shareText(PAYLOAD, { isNative: () => true, native: { share } })).toBe(
+      'shared',
+    );
+    expect(share).toHaveBeenCalledWith(PAYLOAD);
+    expect(writeText).not.toHaveBeenCalled();
+  });
+
+  it('lit un refus du plugin comme une fermeture, sans message', async () => {
+    const writeText = vi.fn();
+    install({ share: undefined, clipboard: { writeText } });
+
+    expect(
+      await shareText(PAYLOAD, {
+        isNative: () => true,
+        native: { share: vi.fn().mockRejectedValue(new Error('Share canceled')) },
+      }),
+    ).toBe('cancelled');
+    expect(writeText).not.toHaveBeenCalled();
+  });
+
+  it('retombe sur le presse-papiers quand la feuille native échoue', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    install({ share: undefined, clipboard: { writeText } });
+
+    expect(
+      await shareText(PAYLOAD, {
+        isNative: () => true,
+        native: { share: vi.fn().mockRejectedValue(new Error('no activity found')) },
+      }),
+    ).toBe('copied');
+    expect(writeText).toHaveBeenCalledWith(PAYLOAD.text);
+  });
+});
+
 describe('copyText', () => {
   it('copies without touching the share sheet', async () => {
     const share = vi.fn();

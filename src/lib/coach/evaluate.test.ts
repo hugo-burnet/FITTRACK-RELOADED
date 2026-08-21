@@ -484,6 +484,45 @@ describe('intra_session_drop', () => {
     expect(signals.filter((s) => s.code === 'intra_session_drop')).toEqual([]);
   });
 
+  it('ignores a pyramid — the bar went up, the reps followed it down', () => {
+    // Terrain : 100 × 10 puis 110 × 6. La charge a monté de dix kilos, et le
+    // coach répondait « Baisse de reps observée : 10 puis 6 ». Une progression
+    // annoncée comme une régression.
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 10, weight: 100, targetReps: 6, targetRepsMax: 12 }),
+          set({ order: 1, reps: 6, weight: 110, targetReps: 6, targetRepsMax: 12 }),
+        ],
+      }),
+    ]);
+    expect(signals.filter((s) => s.code === 'intra_session_drop')).toEqual([]);
+  });
+
+  it('compare une série à la première du même palier, pas à celle d’avant', () => {
+    const signals = evaluateCoach([
+      line({
+        exerciseId: 'bench',
+        workoutId: 'w1',
+        sets: [
+          set({ order: 0, reps: 10, weight: 100, targetReps: 5, targetRepsMax: 12 }),
+          set({ order: 1, reps: 8, weight: 110, targetReps: 5, targetRepsMax: 12 }),
+          set({ order: 2, reps: 3, weight: 110, targetReps: 5, targetRepsMax: 12 }),
+        ],
+      }),
+    ]);
+    const drop = signals.find((s) => s.code === 'intra_session_drop');
+    expect(drop?.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'first_reps', value: 8 },
+        { label: 'low_reps', value: 3 },
+        { label: 'drop_reps', value: 5 },
+      ]),
+    );
+  });
+
   it('still reports a collapse at the same load', () => {
     const signals = evaluateCoach([
       line({
@@ -614,6 +653,27 @@ describe('plateau', () => {
     ]);
     // Deload skipped → comparable are 110 and 100 (progress) — not enough for N=3.
     expect(onlyDeloadNewest.filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
+  it('ne parle pas de plateau quand la barre s’est alourdie', () => {
+    // 100 × 10 → 105 × 8 → 110 × 6 : le 1RM estimé recule d’un kilo (133,3 →
+    // 133 → 132) alors que dix kilos sont montés sur la barre. Le modèle dit
+    // « rien ne bouge », le fait dit le contraire — et c'est le fait qui compte.
+    const signals = evaluateCoach([
+      session('w3', 14, 110, 6),
+      session('w2', 7, 105, 8),
+      session('w1', 0, 100, 10),
+    ]);
+    expect(signals.filter((s) => s.code === 'plateau')).toEqual([]);
+  });
+
+  it('garde le plateau quand la charge, elle non plus, ne bouge pas', () => {
+    const signals = evaluateCoach([
+      session('w3', 14, 100, 5),
+      session('w2', 7, 100, 6),
+      session('w1', 0, 100, 6),
+    ]);
+    expect(signals.some((s) => s.code === 'plateau')).toBe(true);
   });
 
   /**

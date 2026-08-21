@@ -10,7 +10,7 @@ Suivi de musculation personnel. Local-first, hors-ligne, sans compte, sans fil s
 Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol sans 4G, pas un réseau social.
 
 **En ligne :** [hugo-burnet.github.io/FITTRACK-RELOADED](https://hugo-burnet.github.io/FITTRACK-RELOADED/)  
-**Dernier tag :** [`v0.8.7`](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v0.8.7)
+**Dernier tag :** [`v0.8.8`](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v0.8.8)
 
 ---
 
@@ -18,12 +18,13 @@ Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol
 
 - **Séance en direct** — saisie une main, écriture en base à chaque série validée.
 - **Coach vocal** — annonces sérialisées, musique atténuée hors effort, records et récapitulatif de fin.
-- **Cadence automatique** — préparation dans 10 secondes, 3–2–1, impacts par répétition et passage à l’exercice suivant.
+- **Cadence** — tempo choisi au chrono de la carte d’exercice, préparation dans 10 secondes, 3–2–1, impacts par répétition et passage à l’exercice suivant.
 - **Tutoriel oral** — visite initiale facultative et aide contextuelle `?` sur chaque grande page.
 - **Routines** — modèles, dossiers, pas de quota.
 - **Blocs** — périodisation par intention (`loadIndex` + phase). La routine reste le 100 %. Le Coach tranche sur les perfs, il n’invente pas de permissions.
 - **Carte du corps** — les muscles travaillés sur douze semaines ; toucher un muscle donne ses exercices.
 - **Historique & records** — 1RM, volume, import CSV Hevy, export CSV / Markdown.
+- **Sauvegarde complète** — tout le compte (tables, réglages, préférences) dans un JSON que l’app sait restaurer.
 - **PWA et APK** — même code. Capacitor pour Android.
 
 ## Ce que ce n’est pas
@@ -45,7 +46,7 @@ Un tag `v*` publie l’APK dans une GitHub Release. Pousser `master` seul met à
 
 ```bash
 git push origin master
-git tag -a v0.8.7 -m "FitTrack v0.8.7" && git push origin v0.8.7
+git tag -a v0.8.8 -m "FitTrack v0.8.8" && git push origin v0.8.8
 ```
 
 ---

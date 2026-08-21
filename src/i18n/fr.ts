@@ -202,7 +202,6 @@ const fr = {
     restLabel: 'Repos {duration}',
     restRemaining: 'Repos, {time} restantes',
     pace: 'Lancer la cadence',
-    paceHint: '{reps} reps · {tempo} s par rep',
     effortQuestion: 'Effort perçu',
     effortLead: 'C’était',
     effortEasy: 'Facile',
@@ -216,6 +215,21 @@ const fr = {
     paceStop: 'Arrêter la cadence',
     pacePreparing: 'Départ · {seconds}',
     paceStatus: 'Cadence · {current}/{total} · {tempo} s',
+    // La cadence de l'exercice : le chrono du bandeau de la carte l'ouvre, et
+    // l'arrête quand elle tourne.
+    paceTitle: 'Cadence',
+    paceOpen: 'Cadence de {name}',
+    paceTempoLabel: 'Secondes par répétition',
+    paceMenuHint: '{tempo} s par répétition',
+    paceUnit: 's / rep',
+    paceDecrease: 'Un quart de seconde de moins',
+    paceIncrease: 'Un quart de seconde de plus',
+    paceSetReading: '{reps} reps à ce tempo : environ {seconds} s de série.',
+    paceNoSet: 'Aucune série à cadencer sur cet exercice.',
+    paceMissingReps: 'Répétitions à saisir : la cadence les demandera avant de partir.',
+    paceSetDefault: 'Par défaut partout',
+    paceHelp:
+      'Le tempo est celui de cet exercice. « Par défaut partout » le donne à ceux qui n’ont pas encore le leur.',
     complete: 'Valider la série {number}',
     uncomplete: 'Annuler la série {number}',
     previous: 'Précédent',
@@ -1229,6 +1243,38 @@ const fr = {
     exportHistoryFailed: 'L’historique n’a pas pu être partagé ni copié.',
     debugLink: 'Dépannage et données',
     debugHint: 'État des records, historique, catalogue et stockage.',
+
+    /**
+     * La sauvegarde complète. Elle vit à côté du CSV et pas à sa place : le CSV
+     * est l'historique dans un format que d'autres outils lisent, celle-ci est
+     * tout le reste avec — routines jamais faites, programmes, records,
+     * journal du coach, réglages, préférences — dans un format que seule
+     * FitTrack relit.
+     */
+    backupSection: 'Sauvegarde complète',
+    backupExportLink: 'Exporter tout le compte (JSON)',
+    backupExportHint:
+      'Séances, routines, programmes, records, réglages et préférences : tout ce que contient l’app, dans un fichier qu’elle sait relire.',
+    backupExportTitle: 'Sauvegarde complète FitTrack',
+    backupExportDownloaded: 'Sauvegarde téléchargée.',
+    backupExportFailed: 'La sauvegarde n’a pas pu être enregistrée.',
+    backupImportLink: 'Restaurer une sauvegarde',
+    backupImportHint:
+      'Remplace tout le contenu de l’app par celui du fichier. À faire sur un téléphone neuf, ou après une perte.',
+    restoreConfirmTitle: 'Restaurer cette sauvegarde ?',
+    // Une liste plutôt qu'une phrase : « 1 séances » se lit mal, et un fichier
+    // à une seule séance est exactement le cas où on relit deux fois.
+    restoreConfirmBody:
+      'Contenu du fichier — séances : {workouts}, routines : {routines}, exercices : {exercises}, records : {records}. Tout ce que contient l’app aujourd’hui sera remplacé.',
+    restoreConfirmAction: 'Tout remplacer',
+    restoreDone: 'Sauvegarde restaurée. L’app se recharge.',
+    restoreFailed: 'La restauration a échoué : rien n’a été modifié.',
+    restoreErrorUnreadable: 'Le fichier n’a pas pu être lu.',
+    restoreErrorNotJson: 'Ce fichier n’est pas une sauvegarde FitTrack (JSON attendu).',
+    restoreErrorNotBackup: 'Ce fichier n’est pas une sauvegarde FitTrack.',
+    restoreErrorVersion:
+      'Cette sauvegarde vient d’une version plus récente de l’app. Mets l’app à jour avant de la restaurer.',
+    restoreErrorEmpty: 'Cette sauvegarde est vide : rien n’a été remplacé.',
 
     /**
      * Les crédits. Ce n'est pas une politesse : la carte musculaire est une

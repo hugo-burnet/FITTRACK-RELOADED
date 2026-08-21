@@ -13,12 +13,20 @@ import {
 } from '@/data/repositories/workouts';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutFinishScreen } from './WorkoutFinishScreen';
+import { forgetWorkoutRecaps } from './workoutRecapVoice';
 
 const { speakWorkoutRecapMock } = vi.hoisted(() => ({
   speakWorkoutRecapMock: vi.fn(),
 }));
 
-vi.mock('./workoutRecapVoice', () => ({ speakWorkoutRecap: speakWorkoutRecapMock }));
+// `claimWorkoutRecap` reste le vrai : c'est lui qui garantit qu'un aller-retour
+// sur cet écran ne fait pas relire la séance, et c'est ce que le test vérifie.
+vi.mock('./workoutRecapVoice', async () => {
+  const actual = await vi.importActual<typeof import('./workoutRecapVoice')>(
+    './workoutRecapVoice',
+  );
+  return { ...actual, speakWorkoutRecap: speakWorkoutRecapMock };
+});
 
 function renderFinishScreen() {
   return render(
@@ -33,6 +41,7 @@ function renderFinishScreen() {
 describe('WorkoutFinishScreen', () => {
   beforeEach(async () => {
     speakWorkoutRecapMock.mockReset();
+    forgetWorkoutRecaps();
     await resetDb();
   });
 
@@ -101,5 +110,30 @@ describe('WorkoutFinishScreen', () => {
       ]),
     );
     expect(speakWorkoutRecapMock).not.toHaveBeenCalledWith([]);
+  });
+
+  it('ne relit pas le bilan quand on revient sur l’écran', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Rowing',
+      primaryMuscle: 'lats',
+      secondaryMuscles: [],
+      equipment: 'cable',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Dos');
+    await addWorkoutExercise(workout.id, exercise.id);
+    const initial = (await getWorkoutDetail(workout.id))?.exercises[0]?.sets[0];
+    if (initial === undefined) throw new Error('série initiale absente');
+    await completeSet(initial.id, { weight: 15, reps: 10 });
+
+    const first = renderFinishScreen();
+    await waitFor(() => expect(speakWorkoutRecapMock).toHaveBeenCalledTimes(1));
+    first.unmount();
+
+    const second = renderFinishScreen();
+    await screen.findByText(/Enregistrer/);
+    await waitFor(() => expect(speakWorkoutRecapMock).toHaveBeenCalledTimes(1));
+    second.unmount();
   });
 });

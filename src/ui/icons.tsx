@@ -90,6 +90,24 @@ export function StopIcon(props: IconProps) {
   );
 }
 
+/**
+ * La cadence — un chronomètre de poche : couronne, anse et aiguille.
+ *
+ * Une horloge ronde aurait dit « heure » ; ce qui se règle derrière ce bouton
+ * est une durée qu'on déclenche, et c'est le chrono qui dit ça.
+ */
+export function StopwatchIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="13.5" r="7.5" />
+      <path d="M12 13.5V9.5" />
+      <path d="M9.5 2.5h5" />
+      <path d="M12 2.5v3.5" />
+      <path d="M18.5 6.5 20 5" />
+    </Icon>
+  );
+}
+
 /** Exercices — a weight plate seen face-on. */
 export function PlateIcon(props: IconProps) {
   return (
