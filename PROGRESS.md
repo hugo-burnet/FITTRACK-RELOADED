@@ -2,7 +2,7 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**v0.8.8 en cours — la cadence qu'on choisit, la sauvegarde qui revient**).
+**Dernière mise à jour :** 2026-08-21 (**Release Android v0.8.8 — la cadence qu'on choisit, la sauvegarde qui revient**).
 
 ## v0.8.8 — cinq ajustements, dont deux qui rendent la main
 
