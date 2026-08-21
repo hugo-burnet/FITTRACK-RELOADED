@@ -104,10 +104,14 @@ musique, et l'intelligibilité passe avant l'atmosphère. Coupable dans Réglage
 
 ## La fatigue, en trois endroits
 
-1. **Le tempo de la répétition** (`src/lib/tempo.ts`) — la cadence s'allonge : +0,25 s par série
+1. ~~**Le tempo de la répétition** (`src/lib/tempo.ts`) — la cadence s'allonge : +0,25 s par série
    déjà faite (plafond +1 s), +0,5 s sur la dernière série de travail, +0,5 s après 45 min de
-   séance, **5 s par rep au maximum**. En secondes, jamais en pourcentage — même raisonnement que
-   les crans de charge du programme.
+   séance, **5 s par rep au maximum**.~~ **Retiré en v0.8.8.** Chaque terme se défendait, la somme
+   non : l'app décidait du tempo d'un exercice à partir d'un modèle de fatigue qu'elle ne mesure
+   pas. Le tempo est désormais **choisi** — chrono dans le bandeau de la carte, valeur portée par
+   `WorkoutExercise.repSeconds`, préférence derrière. `src/lib/tempo.ts` ne garde que la grille au
+   quart de seconde et la résolution. Les deux autres règles de fatigue ci-dessous n'ont pas
+   bougé : elles paient un effort constaté, elles ne prédisent rien.
 2. **Le repos, payé à l'effort** (`src/lib/restBonus.ts`) — la bande d'effort sous la série
    validée écrit un RPE en une touche, et ajoute 0 / 15 / 30 / 45 s. **Elle n'enlève jamais de
    repos** : une app qui punit l'honnêteté cesse d'être renseignée honnêtement.
@@ -161,8 +165,9 @@ T−3 s : au pire on perd trois secondes de filet, pas deux minutes.
       seule** alerte, pas la notification en plus.
 - [ ] Écran éteint, téléphone en poche : la notification Android sonne toujours à la fin du repos.
 - [ ] Bande « Effort ? » sous la série validée ; « Dur » ajoute 30 s à la ligne de repos.
-- [ ] Menu `⋯` d'un exercice → « Lancer la cadence » : le nombre de reps et les secondes par rep
-      sont annoncés avant le geste ; le repos s'arrête, la cadence apparaît et un carré l'arrête.
+- [ ] Chrono du bandeau d'un exercice → feuille « Cadence » : le tempo se règle au quart de
+      seconde, « Lancer la cadence » arrête le repos et fait apparaître la cadence, et le même
+      chrono — devenu carré — l'arrête (depuis v0.8.8).
 - [ ] Le « tok » des répétitions reste audible avec de la musique sans devenir agressif sur une
       série de 12 ; le tic aigu reste réservé aux trois dernières secondes du repos.
 - [ ] Réglages → Annonces → « Silence » : plus rien ne sort, immédiatement.

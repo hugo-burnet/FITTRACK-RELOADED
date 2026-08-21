@@ -2,7 +2,69 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-20 (**Release Android v0.8.7 — le corps de l'accueil devient une porte**).
+**Dernière mise à jour :** 2026-08-21 (**v0.8.8 en cours — la cadence qu'on choisit, la sauvegarde qui revient**).
+
+## v0.8.8 — cinq ajustements, dont deux qui rendent la main
+
+Pas un lot : cinq demandes de terrain, traitées ensemble parce qu'elles se répondent.
+
+**Le tempo de la cadence n'est plus calculé.** Il l'était : 3 s, plus un quart par série déjà
+faite, plus une demie sur la dernière, plus une demie après trois quarts d'heure. Chaque terme se
+défendait ; la somme non. L'app décidait du tempo d'*un* exercice à partir d'un modèle de fatigue
+qu'elle ne mesure pas, et une cadence qu'on n'a pas choisie est une cadence avec laquelle on
+discute. Le nombre appartient maintenant à qui est sous la barre : un **chrono dans le bandeau de
+la carte** ouvre la feuille « Cadence » (± au quart de seconde, cinq préréglages, ce que ça donne
+sur la série, le départ, et « Par défaut partout »). Quand la cadence tourne, ce même bouton
+l'arrête — c'est exactement la place qu'occupait le carré. La valeur vit sur
+`WorkoutExercise.repSeconds` (champ non indexé : **aucun changement de schéma**), la préférence
+dans la table des réglages. `src/lib/tempo.ts` ne garde que la grille et la résolution
+« exercice → préférence → 3 s ».
+
+**Le bilan de fin de séance ne se relit plus à chaque retour.** La mémoire de ce qui avait déjà été
+dit vivait dans un `useRef` : un aller-retour vers un autre écran la vidait, et l'écran de fin
+reparlait. Elle passe au niveau module, comme `claimWorkoutGreeting` — et la même chose est faite
+pour les records, dont la clé devient `exercice:type:valeur` plutôt que l'identifiant de la ligne
+projetée, stable à travers une reprojection.
+
+**« Partager » ouvre enfin la feuille du système sur l'APK.** La WebView Capacitor n'implémente pas
+`navigator.share` : le bouton tombait directement sur le presse-papiers, quand celui-ci répondait.
+`shareText` emprunte désormais la même échelle que `saveFile` — plugin natif, puis Web Share, puis
+presse-papiers.
+
+**Une sauvegarde complète, à côté du CSV et pas à sa place.** Le CSV décrit des *séances* dans un
+format que d'autres outils lisent ; il ne dit rien des routines jamais réalisées, des programmes,
+des records, du journal du coach, des réglages ni des préférences. Le JSON de `lib/backup` emporte
+toutes les tables telles quelles (suppressions douces comprises — une sauvegarde est une copie, pas
+une projection) et les préférences `localStorage` prises **par espace de noms** (`fittrack:`), pour
+qu'une préférence ajoutée plus tard soit sauvegardée sans que personne y pense. La restauration
+remplace, dans une seule transaction, après avoir montré ce que contient le fichier. Ce qu'elle ne
+porte pas, et le dit : les binaires de photos (`photoBlobs`), que JSON n'exprime pas et qu'aucun
+écran n'écrit aujourd'hui.
+
+**Le coach ne lit plus une charge qui monte comme une régression.** Deux règles jugeaient des
+répétitions sans regarder ce qu'il y avait sur la barre. `intra_session_drop` comparait toute série
+à la première de la séance : `100 × 10` puis `110 × 6` ressortait en « Baisse de reps observée ».
+Une série ne se compare désormais qu'à la première du **même palier**. Et `plateau`, qui lit trois
+séances de 1RM estimé, se tait quand la charge maximale a monté sur la fenêtre : sur `100 × 10`,
+`105 × 8`, `110 × 6` l'estimation recule d'un kilo pendant que dix kilos montent sur la barre — le
+modèle dit « rien ne bouge », le fait dit le contraire, et c'est le fait qui compte.
+
+1 730 tests / 163 fichiers, typecheck, lint et build de production. Aucun changement de schéma :
+installer par-dessus la v0.8.7, sans désinstaller.
+
+**Checkpoint manuel à faire sur le téléphone :**
+
+1. En séance, toucher le chrono d'une carte : régler 5 s, lancer, vérifier que le tok tombe toutes
+   les cinq secondes de la première à la dernière série (plus d'allongement automatique).
+2. Toucher le chrono pendant que la cadence tourne : elle s'arrête d'un doigt.
+3. « Par défaut partout », puis ouvrir la cadence d'un autre exercice : il part sur ce tempo.
+4. Terminer une séance, revenir en arrière, revenir sur l'écran de fin : le bilan n'est **pas**
+   relu.
+5. Historique → une séance → ⋯ → Partager : la feuille de partage Android s'ouvre.
+6. Réglages → Sauvegarde complète → Exporter, puis Restaurer le fichier obtenu : les nombres
+   annoncés correspondent, et l'app revient à l'identique après le rechargement.
+
+---
 
 ## v0.8.7 — toucher un muscle, trouver quoi lui donner
 
