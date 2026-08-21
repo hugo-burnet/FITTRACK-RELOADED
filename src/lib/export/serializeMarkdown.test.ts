@@ -7,7 +7,7 @@ const NO_TOTALS: SessionTotals = {
   workingSets: 0,
   totalReps: 0,
   tonnage: 0,
-  durationSeconds: 0,
+  workingSeconds: 0,
   distanceMeters: 0,
 };
 

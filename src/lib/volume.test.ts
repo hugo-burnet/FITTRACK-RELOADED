@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { WorkoutSet } from '@/data/types';
 import type { WeightRole } from './measurement';
 import { effectiveLoadKg, sessionTotals } from './volume';
+import type { VolumeEntry } from './volume';
 
 let sequence = 0;
 
@@ -27,6 +28,12 @@ const entry = (values: Partial<WorkoutSet>, weightRole?: WeightRole) => ({
   weightRole,
 });
 
+/** A set of an exercise the clock measures: a plank, a run, a farmer's walk. */
+const timedEntry = (values: Partial<WorkoutSet>, weightRole?: WeightRole): VolumeEntry => ({
+  ...entry(values, weightRole),
+  timed: true,
+});
+
 describe('sessionTotals', () => {
   it('expose la charge effective que les records de volume par série peuvent réutiliser', () => {
     const set = aSet({ weight: 10, reps: 8 });
@@ -44,7 +51,7 @@ describe('sessionTotals', () => {
       workingSets: 0,
       totalReps: 0,
       tonnage: 0,
-      durationSeconds: 0,
+      workingSeconds: 0,
       distanceMeters: 0,
     });
   });
@@ -94,16 +101,58 @@ describe('sessionTotals', () => {
 
   it('additionne le temps et la distance des exercices qui en ont', () => {
     const totals = sessionTotals([
-      entry({ durationSeconds: 45 }),
-      entry({ durationSeconds: 60, weight: 20 }, 'load'),
-      entry({ distanceMeters: 1000, durationSeconds: 300 }),
+      timedEntry({ durationSeconds: 45 }),
+      timedEntry({ durationSeconds: 60, weight: 20 }, 'load'),
+      timedEntry({ distanceMeters: 1000, durationSeconds: 300 }),
     ]);
 
-    expect(totals.durationSeconds).toBe(405);
+    expect(totals.workingSeconds).toBe(405);
     expect(totals.distanceMeters).toBe(1000);
     // Un gainage lesté n'a pas de répétitions, donc pas de tonnage non plus.
     expect(totals.tonnage).toBe(0);
     expect(totals.workingSets).toBe(3);
+  });
+
+  it('compte une série en répétitions à la cadence de son exercice', () => {
+    const totals = sessionTotals([
+      { ...entry({ weight: 100, reps: 10 }, 'load'), repSeconds: 2.5 },
+      { ...entry({ weight: 100, reps: 8 }, 'load'), repSeconds: 2.5 },
+    ]);
+
+    expect(totals.workingSeconds).toBe(45);
+  });
+
+  it('retombe sur trois secondes par répétition quand aucune cadence n’est réglée', () => {
+    const totals = sessionTotals([entry({ weight: 100, reps: 10 }, 'load')]);
+
+    expect(totals.workingSeconds).toBe(30);
+  });
+
+  it('rend un temps en secondes entières malgré les quarts de seconde', () => {
+    const totals = sessionTotals([
+      { ...entry({ weight: 60, reps: 5 }, 'load'), repSeconds: 2.25 },
+    ]);
+
+    // 11,25 s : une durée de séance se lit sur une horloge, pas au quart de seconde.
+    expect(totals.workingSeconds).toBe(11);
+  });
+
+  it('garde le chronomètre d’un exercice chronométré qui porte aussi des répétitions', () => {
+    // Un gainage relu après que l'exercice a changé de type : le chrono reste la
+    // seule mesure de ce qui a été fait.
+    const totals = sessionTotals([timedEntry({ reps: 10, durationSeconds: 45 })]);
+
+    expect(totals.workingSeconds).toBe(45);
+  });
+
+  it('ignore les secondes qu’une série en répétitions n’aurait jamais dû garder', () => {
+    // Exercice re-typé, ou import qui a recopié une durée sur une série en reps :
+    // l'écran ne les montre pas, le total ne les compte pas non plus.
+    const totals = sessionTotals([
+      { ...entry({ weight: 80, reps: 10, durationSeconds: 45 }, 'load'), timed: false },
+    ]);
+
+    expect(totals.workingSeconds).toBe(30);
   });
 
   it('encaisse une série à moitié remplie sans fausser le reste', () => {

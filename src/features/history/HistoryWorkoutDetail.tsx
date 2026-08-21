@@ -1,4 +1,6 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import type { ReactNode } from 'react';
+import { getDefaultRepSeconds } from '@/data/repositories/settings';
 import {
   workoutExerciseIdentityOf,
   type WorkoutDetail,
@@ -7,8 +9,9 @@ import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatDuration, partReading, setTypeLabel, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
-import { measurementShape, performedParts } from '@/lib/measurement';
+import { isTimedMeasurement, measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
+import { resolveRepSeconds } from '@/lib/tempo';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
 import { Card, SectionTitle } from '@/ui';
@@ -63,6 +66,10 @@ function TotalReading({ label, value }: { label: string; value: ReactNode }) {
 
 export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
   const { workout, exercises } = detail;
+  // The tempo behind the session's working time. Read here rather than passed
+  // in: the preference is what the metronome used, and the recap has to count
+  // the same seconds the lifter was clicked through.
+  const defaultRepSeconds = useLiveQuery(getDefaultRepSeconds);
   // The row's own snapshot, then today's library — the rule the export reads a
   // past session through, and the only way this screen and a document shared
   // from it can agree after the exercise has been renamed or re-typed.
@@ -74,11 +81,13 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
     measurementType: line.row.exerciseMeasurementType ?? line.exercise?.measurementType,
     sets: line.sets.filter((set) => set.isCompleted === 1),
   }));
-  const entries: VolumeEntry[] = completed.flatMap(({ identity, sets }) =>
+  const entries: VolumeEntry[] = completed.flatMap(({ line, identity, sets }) =>
     sets.map((set) => ({
       set,
       weightRole: measurementShape(identity.measurementType).weightRole,
       bodyweightLoadFactor: identity.bodyweightLoadFactor,
+      timed: isTimedMeasurement(identity.measurementType),
+      repSeconds: resolveRepSeconds(line.row.repSeconds, defaultRepSeconds),
     })),
   );
   const totals = sessionTotals(entries, detail.bodyWeightKg);
@@ -115,8 +124,8 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
     },
     {
       label: t('history.detailTime'),
-      value: formatDuration(totals.durationSeconds),
-      visible: totals.durationSeconds > 0,
+      value: formatDuration(totals.workingSeconds),
+      visible: totals.workingSeconds > 0,
     },
     {
       label: t('history.detailDistance'),
@@ -165,6 +174,13 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
               />
             ))}
           </div>
+          {/* Une estimation se présente comme telle. Le chiffre est lisible
+              seulement si on sait d'où il sort — et la cadence, elle, se règle. */}
+          {totals.workingSeconds > 0 && (
+            <p className="px-4 py-3 text-sm leading-relaxed text-[var(--text-2)]">
+              {t('history.detailTimeHint')}
+            </p>
+          )}
         </Card>
       </section>
 

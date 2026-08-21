@@ -31,6 +31,12 @@ export interface HistoricalExercise {
   secondaryMuscles?: MuscleGroup[];
   equipment?: Equipment;
   bodyweightLoadFactor?: number;
+  /**
+   * The tempo this exercise was performed at, already resolved against the
+   * preference (cf. `lib/tempo`). What the session's working time is counted
+   * with, wherever a set is measured in repetitions rather than in seconds.
+   */
+  repSeconds?: number;
   notes?: string;
   sets: HistoricalSet[];
 }

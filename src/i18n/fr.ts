@@ -870,6 +870,12 @@ const fr = {
     detailReps: 'Répétitions',
     detailTonnage: 'Tonnage',
     detailTime: 'Temps',
+    /**
+     * Le seul chiffre estimé de la carte le dit lui-même, et dit aussi où on
+     * le règle : une estimation qu'on ne peut pas corriger est un chiffre subi.
+     */
+    detailTimeHint:
+      'Le temps compte les exercices chronométrés à la seconde, et les séries en répétitions à la cadence réglée sur l’exercice — 3 s par répétition par défaut.',
     detailDistance: 'Distance',
     detailSet: 'Série {number}',
     detailRpe: 'RPE {value}',

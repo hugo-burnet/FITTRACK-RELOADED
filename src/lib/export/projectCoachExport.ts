@@ -3,7 +3,11 @@ import type {
   HistoricalSet,
   HistoricalWorkout,
 } from '@/lib/historyProjection';
-import { measurementShape, type TargetField } from '@/lib/measurement';
+import {
+  isTimedMeasurement,
+  measurementShape,
+  type TargetField,
+} from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 import {
   isoWithOffset,
@@ -125,10 +129,16 @@ function projectWorkout(
             : measurementShape(
                 exercise.measurementType,
               ).weightRole;
+        const timed =
+          exercise.measurementType === undefined
+            ? undefined
+            : isTimedMeasurement(exercise.measurementType);
         return exercise.sets.map((set) => ({
           set,
           weightRole,
           bodyweightLoadFactor: exercise.bodyweightLoadFactor,
+          timed,
+          repSeconds: exercise.repSeconds,
         }));
       }),
       source.bodyWeightKg,

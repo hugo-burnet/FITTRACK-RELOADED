@@ -255,6 +255,9 @@ describe('listHistoricalWorkouts', () => {
             measurementType: 'weight_reps',
             primaryMuscle: 'chest',
             equipment: 'barbell',
+            // La cadence de l'exercice, résolue contre la préférence : le temps
+            // de travail d'une séance se compte avec, pas sans.
+            repSeconds: 3,
             sets: [
               {
                 setType: 'normal',
@@ -449,6 +452,7 @@ describe('listHistoricalWorkouts', () => {
 
     expect(source?.exercises[0]).toEqual({
       exerciseId: 'jamais-vu',
+      repSeconds: 3,
       sets: [
         {
           setType: 'normal',

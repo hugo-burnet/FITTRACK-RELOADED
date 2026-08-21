@@ -1,6 +1,6 @@
 import type { MeasurementType } from '@/data/types';
 import type { HistoricalSet } from '@/lib/historyProjection';
-import { measurementShape } from '@/lib/measurement';
+import { isTimedMeasurement, measurementShape } from '@/lib/measurement';
 import { estimateOneRepMax, type OneRepMaxFormula } from '@/lib/oneRepMax';
 import { isWorkingSet, setVolume } from '@/lib/records';
 import { sessionTotals } from '@/lib/volume';
@@ -179,6 +179,7 @@ function valueOf(
         set,
         weightRole: measurementShape(type).weightRole,
         bodyweightLoadFactor: set.bodyweightLoadFactor,
+        timed: isTimedMeasurement(type),
       })),
       session.bodyWeightKg,
     );
@@ -209,7 +210,7 @@ function valueOf(
     case 'topDuration':
       return best(sets, (set) => set.durationSeconds, larger);
     case 'totalDuration':
-      return totals().durationSeconds || undefined;
+      return totals().workingSeconds || undefined;
     case 'topDistance':
       return best(sets, (set) => set.distanceMeters, larger);
     case 'totalDistance':

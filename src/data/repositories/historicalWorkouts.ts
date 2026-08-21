@@ -12,8 +12,10 @@ import type {
   HistoricalSet,
   HistoricalWorkout,
 } from '@/lib/historyProjection';
+import { resolveRepSeconds } from '@/lib/tempo';
 import { alive } from './base';
 import { resolveBodyWeightsAt } from './bodyMeasurements';
+import { getDefaultRepSeconds } from './settings';
 
 const byOrder = <T extends { order: number }>(
   left: T,
@@ -140,10 +142,12 @@ function projectExercise(
   row: WorkoutExercise,
   exercise: Exercise | undefined,
   sets: readonly WorkoutSet[],
+  defaultRepSeconds: number,
 ): HistoricalExercise {
   return {
     exerciseId: row.exerciseId,
     ...resolveExerciseIdentity(row, exercise),
+    repSeconds: resolveRepSeconds(row.repSeconds, defaultRepSeconds),
     ...(row.notes === undefined ? {} : { notes: row.notes }),
     sets: [...sets].sort(byOrder).map(projectSet),
   };
@@ -156,9 +160,10 @@ export async function listHistoricalWorkouts(
   if (workouts.length === 0) return [];
 
   const workoutIds = workouts.map((workout) => workout.id);
-  const bodyWeights = await resolveBodyWeightsAt(
-    workouts.map(({ startedAt }) => startedAt),
-  );
+  const [bodyWeights, defaultRepSeconds] = await Promise.all([
+    resolveBodyWeightsAt(workouts.map(({ startedAt }) => startedAt)),
+    getDefaultRepSeconds(),
+  ]);
   const { rows: allRows, sets: allSets } =
     await loadWorkoutGraph(workoutIds);
 
@@ -229,6 +234,7 @@ export async function listHistoricalWorkouts(
             row,
             library.get(row.exerciseId),
             setsPerRow.get(row.id) ?? [],
+            defaultRepSeconds,
           ),
         ),
     }))

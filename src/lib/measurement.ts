@@ -64,6 +64,17 @@ export function measurementShape(type: MeasurementType): MeasurementShape {
   return SHAPES[type];
 }
 
+/**
+ * Whether the clock, and not a count of repetitions, is what this type records.
+ *
+ * Read by the session totals for the same reason the set row reads the shape:
+ * a plank is timed and a squat is counted, and nothing outside this module gets
+ * to decide which of the two a set is.
+ */
+export function isTimedMeasurement(type: MeasurementType): boolean {
+  return measurementShape(type).fields.includes('duration');
+}
+
 // ---------------------------------------------------------------------------
 // Saisie — ce que la grille de la séance en direct affiche comme colonnes
 // ---------------------------------------------------------------------------

@@ -200,6 +200,60 @@ describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
     expect(screen.getByText('448 kg')).toBeInTheDocument();
   });
 
+  /**
+   * The tile used to read the stored seconds and nothing else: an hour and a
+   * half of squats totalled zero, and a stray duration left by an import or a
+   * re-typed exercise totalled minutes nobody could locate on the screen.
+   */
+  it('compte le temps de travail des séries en répétitions à la cadence de l’exercice', () => {
+    render(
+      <HistoryWorkoutDetail
+        detail={detail({
+          row: row({ exerciseName: 'Squat', exerciseMeasurementType: 'weight_reps' }),
+          sets: [
+            set({ id: 'set-1', order: 0, weight: 100, reps: 10 }),
+            set({ id: 'set-2', order: 1, weight: 100, reps: 8 }),
+          ],
+        })}
+      />,
+    );
+
+    // 18 répétitions à 3 s, la cadence par défaut.
+    expect(screen.getByText('54 s')).toBeInTheDocument();
+  });
+
+  it('garde la durée réelle d’un exercice chronométré', () => {
+    render(
+      <HistoryWorkoutDetail
+        detail={detail({
+          row: row({ exerciseName: 'Gainage', exerciseMeasurementType: 'time_only' }),
+          sets: [
+            set({ id: 'set-1', order: 0, durationSeconds: 60 }),
+            set({ id: 'set-2', order: 1, durationSeconds: 45 }),
+          ],
+        })}
+      />,
+    );
+
+    expect(screen.getByText('1:45 min')).toBeInTheDocument();
+  });
+
+  it('ne compte pas les secondes qu’une série en répétitions traîne encore', () => {
+    render(
+      <HistoryWorkoutDetail
+        detail={detail({
+          row: row({ exerciseName: 'Squat', exerciseMeasurementType: 'weight_reps' }),
+          // 45 s héritées d'un import ou d'un exercice re-typé : la ligne de
+          // série ne les montre pas, le total ne les compte pas non plus.
+          sets: [set({ weight: 100, reps: 10, durationSeconds: 45 })],
+        })}
+      />,
+    );
+
+    expect(screen.getByText('30 s')).toBeInTheDocument();
+    expect(screen.queryByText('1:15 min')).toBeNull();
+  });
+
   it('conserve toutes les figures stockées quand le type de mesure est perdu', () => {
     render(
       <HistoryWorkoutDetail

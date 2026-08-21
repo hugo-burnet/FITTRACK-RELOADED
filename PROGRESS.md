@@ -2,7 +2,36 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**Release Android v0.8.8 — la cadence qu'on choisit, la sauvegarde qui revient**).
+**Dernière mise à jour :** 2026-08-21 (**Le « Temps » d'une séance se compte enfin**, après la
+release Android v0.8.8).
+
+## Le « Temps » du bilan de séance compte les répétitions
+
+Remonté du téléphone : une LOWER A d'1 h 41, 31 séries de travail, 346 répétitions, **« 4:30 min »**
+en face de TEMPS. Le chiffre n'était ni faux ni juste — il additionnait `set.durationSeconds`,
+c'est-à-dire le chronomètre des seuls exercices *chronométrés*, et **zéro** pour tout ce qui se
+compte en répétitions. Pire : la somme prenait aussi les secondes qu'une série en répétitions
+traîne encore (exercice re-typé, import Hevy qui recopie `duration_seconds`), alors que la ligne de
+série, elle, ne les affiche pas — la carte affichait donc des minutes introuvables ailleurs à
+l'écran.
+
+Une répétition est du temps. `workingSecondsOf` (`src/lib/volume.ts`) lit désormais chaque série à
+travers son type de mesure, comme toutes les autres lectures d'une séance passée : **exercice
+chronométré → son chrono ; exercice compté → ses répétitions à la cadence de l'exercice**
+(`lib/tempo`, 3 s par répétition tant qu'on n'en règle pas une autre, préférence globale comprise).
+La cadence réglée depuis la feuille « Cadence » de la v0.8.8 sert donc deux fois : le métronome
+pendant la série, le temps de travail après. `SessionTotals.durationSeconds` devient
+`workingSeconds` — le nom disait « durée mesurée », la chose est un temps de travail, et l'export
+coach portait déjà un `durationSeconds` (le temps d'horloge de la séance) juste à côté.
+
+La carte TOTAUX dit maintenant ce qu'elle compte (`history.detailTimeHint`) : une estimation se
+présente comme telle, et dit où elle se règle.
+
+1 738 tests / 163 fichiers, typecheck, lint et build de production. Aucun changement de schéma.
+
+**Checkpoint manuel à faire sur le téléphone :** ouvrir une séance de l'historique et vérifier que
+TEMPS est du même ordre que la durée de séance moins les repos ; régler la cadence d'un exercice à
+2,5 s (chrono de la carte, en séance) puis rouvrir une séance qui le contient — le temps suit.
 
 ## v0.8.8 — cinq ajustements, dont deux qui rendent la main
 
