@@ -2,10 +2,10 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**Le « Temps » d'une séance se compte enfin**, après la
-release Android v0.8.8).
+**Dernière mise à jour :** 2026-08-21 (**Release Android v0.8.9 — le « Temps » d'une séance se
+compte enfin**).
 
-## Le « Temps » du bilan de séance compte les répétitions
+## v0.8.9 — le « Temps » du bilan de séance compte les répétitions
 
 Remonté du téléphone : une LOWER A d'1 h 41, 31 séries de travail, 346 répétitions, **« 4:30 min »**
 en face de TEMPS. Le chiffre n'était ni faux ni juste — il additionnait `set.durationSeconds`,
