@@ -434,7 +434,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     });
   });
 
-  it('propose une cadence nommée dans le menu, puis un arrêt direct', async () => {
+  it('lance la cadence depuis le chrono de la carte, puis l’arrête d’un doigt', async () => {
     const workoutId = await seedTwoSetWorkout();
     const user = userEvent.setup();
     renderWorkout();
@@ -443,18 +443,48 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     await waitFor(async () => expect(await firstSet(workoutId)).toMatchObject({ reps: 8 }));
     act(() => useRestTimer.getState().start('previous-set', 90));
+
     await user.click(
       screen.getByRole('button', {
-        name: t('workout.exerciseMenu', { name: 'Développé couché' }),
+        name: t('workout.paceOpen', { name: 'Développé couché' }),
       }),
     );
-    await user.click(screen.getByRole('button', { name: /Lancer la cadence/ }));
+    await user.click(screen.getByRole('button', { name: t('workout.pace') }));
+
     expect(useRepPacer.getState().setId).not.toBeNull();
     expect(useRestTimer.getState().setId).toBeNull();
     expect(screen.getByText(/Cadence · 1\/8/)).toBeVisible();
 
+    // Le chrono du bandeau est devenu l'arrêt : la cadence se coupe d'un doigt,
+    // sans repasser par la feuille.
     await user.click(screen.getByRole('button', { name: t('workout.paceStop') }));
     expect(useRepPacer.getState().setId).toBeNull();
+  });
+
+  it('bat le tempo choisi dans la feuille, et le garde sur l’exercice', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    await waitFor(async () => expect(await firstSet(workoutId)).toMatchObject({ reps: 8 }));
+
+    await user.click(
+      screen.getByRole('button', {
+        name: t('workout.paceOpen', { name: 'Développé couché' }),
+      }),
+    );
+    // Cinq secondes par répétition : un tempo lent, choisi, que rien ne
+    // rallonge ni ne raccourcit ensuite.
+    await user.click(screen.getByRole('button', { name: '5', pressed: false }));
+    await waitFor(async () => {
+      const detail = await getWorkoutDetail(workoutId);
+      expect(detail?.exercises[0]?.row.repSeconds).toBe(5);
+    });
+
+    await user.click(screen.getByRole('button', { name: t('workout.pace') }));
+    expect(useRepPacer.getState().repSeconds).toBe(5);
   });
 
   it('arme la première cadence depuis la valeur complète des répétitions', async () => {

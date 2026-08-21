@@ -122,7 +122,7 @@ export async function addWorkoutExercise(
 
 export async function updateWorkoutExercise(
   id: string,
-  changes: Partial<Pick<WorkoutExercise, 'notes'>>,
+  changes: Partial<Pick<WorkoutExercise, 'notes' | 'repSeconds'>>,
 ): Promise<void> {
   const row = await db.workoutExercises.get(id);
   if (row === undefined) return;

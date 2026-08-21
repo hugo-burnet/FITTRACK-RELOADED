@@ -1,40 +1,62 @@
 import { describe, expect, it } from 'vitest';
-import { BASE_REP_SECONDS, MAX_REP_SECONDS, repSecondsFor } from './tempo';
+import {
+  DEFAULT_REP_SECONDS,
+  MAX_REP_SECONDS,
+  MIN_REP_SECONDS,
+  clampRepSeconds,
+  normalizeRepSeconds,
+  resolveRepSeconds,
+  stepRepSeconds,
+} from './tempo';
 
-const fresh = { workingSetsDone: 0, isLastWorkingSet: false, sessionElapsedMs: 0 };
-
-describe('repSecondsFor', () => {
-  it('part du tempo de base sur la première série', () => {
-    expect(repSecondsFor(fresh)).toBe(BASE_REP_SECONDS);
+describe('clampRepSeconds', () => {
+  it('cale la valeur sur le quart de seconde', () => {
+    expect(clampRepSeconds(3.1)).toBe(3);
+    expect(clampRepSeconds(3.2)).toBe(3.25);
   });
 
-  it('allonge un quart de seconde par série déjà faite', () => {
-    expect(repSecondsFor({ ...fresh, workingSetsDone: 2 })).toBe(3.5);
+  it('reste entre le plancher et le plafond', () => {
+    expect(clampRepSeconds(0.2)).toBe(MIN_REP_SECONDS);
+    expect(clampRepSeconds(42)).toBe(MAX_REP_SECONDS);
   });
 
-  it('plafonne ce que les séries seules peuvent coûter', () => {
-    expect(repSecondsFor({ ...fresh, workingSetsDone: 12 })).toBe(4);
+  it('répond le tempo par défaut à ce qui n’est pas un nombre utilisable', () => {
+    expect(clampRepSeconds(Number.NaN)).toBe(DEFAULT_REP_SECONDS);
+  });
+});
+
+describe('stepRepSeconds', () => {
+  it('avance et recule d’un quart de seconde', () => {
+    expect(stepRepSeconds(3, 1)).toBe(3.25);
+    expect(stepRepSeconds(3, -1)).toBe(2.75);
   });
 
-  it('donne une demi-seconde de plus sur la dernière série', () => {
-    expect(repSecondsFor({ ...fresh, isLastWorkingSet: true })).toBe(3.5);
+  it('ne franchit pas les bornes', () => {
+    expect(stepRepSeconds(MIN_REP_SECONDS, -1)).toBe(MIN_REP_SECONDS);
+    expect(stepRepSeconds(MAX_REP_SECONDS, 1)).toBe(MAX_REP_SECONDS);
+  });
+});
+
+describe('normalizeRepSeconds', () => {
+  it('refuse ce qui n’est pas un tempo', () => {
+    expect(normalizeRepSeconds(undefined)).toBeUndefined();
+    expect(normalizeRepSeconds('3')).toBeUndefined();
+    expect(normalizeRepSeconds(0)).toBeUndefined();
+    expect(normalizeRepSeconds(60)).toBeUndefined();
   });
 
-  it('donne une demi-seconde de plus après trois quarts d’heure', () => {
-    expect(repSecondsFor({ ...fresh, sessionElapsedMs: 46 * 60_000 })).toBe(3.5);
+  it('accepte un tempo en le calant sur la grille', () => {
+    expect(normalizeRepSeconds(3.4)).toBe(3.5);
+  });
+});
+
+describe('resolveRepSeconds', () => {
+  it('prend la source la plus précise qui ait une valeur', () => {
+    expect(resolveRepSeconds(4, 2)).toBe(4);
+    expect(resolveRepSeconds(undefined, 2)).toBe(2);
   });
 
-  it('cumule les trois, sans jamais dépasser le plafond', () => {
-    expect(
-      repSecondsFor({
-        workingSetsDone: 12,
-        isLastWorkingSet: true,
-        sessionElapsedMs: 90 * 60_000,
-      }),
-    ).toBe(MAX_REP_SECONDS);
-  });
-
-  it('ignore un compte de séries négatif', () => {
-    expect(repSecondsFor({ ...fresh, workingSetsDone: -3 })).toBe(BASE_REP_SECONDS);
+  it('retombe sur trois secondes quand personne ne dit rien', () => {
+    expect(resolveRepSeconds(undefined, undefined)).toBe(DEFAULT_REP_SECONDS);
   });
 });

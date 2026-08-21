@@ -66,6 +66,7 @@ function renderCard(
       state={state}
       reorderEnabled={reorderEnabled}
       foldCommand={INITIAL_WORKOUT_FOLD_COMMAND}
+      onPace={vi.fn()}
       onMenu={vi.fn()}
       onSetMenu={vi.fn()}
       onWrite={vi.fn()}

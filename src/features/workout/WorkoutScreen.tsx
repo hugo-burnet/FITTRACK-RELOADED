@@ -22,7 +22,9 @@ import {
 } from '@/data/repositories/workouts';
 import {
   getAvailablePlateWeightsKg,
+  getDefaultRepSeconds,
   setAvailablePlateWeightsKg,
+  setDefaultRepSeconds,
 } from '@/data/repositories/settings';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { applyCoachObjective } from '@/data/repositories/coachApply';
@@ -41,6 +43,7 @@ import { isDeloadEligibleMeasurement } from '@/lib/deload';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
+import { resolveRepSeconds } from '@/lib/tempo';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { loadEffortPrompt } from '@/stores/effortPrompt';
 import { useRepPacer } from '@/stores/repPacer';
@@ -64,11 +67,12 @@ import {
 import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
 import { DeloadSheet } from './DeloadSheet';
+import { PaceSheet, type PaceSheetView } from './PaceSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { platesConfigFor } from './plateConfig';
 import { announce, primeAnnouncer } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
-import { nextPaceTarget, prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
+import { prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
 import {
   IDLE_PACE_PLAN,
   PACE_LEAD_SECONDS,
@@ -93,6 +97,7 @@ type SheetState =
   | { kind: 'rename' }
   | { kind: 'notes' }
   | { kind: 'exercise'; rowId: string; openedAt: number }
+  | { kind: 'pace'; rowId: string }
   | { kind: 'exerciseNotes'; rowId: string }
   | { kind: 'removeExercise'; rowId: string }
   | { kind: 'warmup'; rowId: string }
@@ -144,6 +149,7 @@ export function WorkoutScreen() {
     [active?.id],
   );
   const availablePlateWeightsKg = useLiveQuery(getAvailablePlateWeightsKg);
+  const defaultRepSeconds = useLiveQuery(getDefaultRepSeconds);
 
   const recordEntries = useLiveQuery(
     async () => (active == null ? undefined : listRecordsForWorkout(active.id)),
@@ -231,7 +237,7 @@ export function WorkoutScreen() {
         ? null
         : prepareNextPace(
             line.sets,
-            Date.now() - detail.workout.startedAt,
+            resolveRepSeconds(line.row.repSeconds, defaultRepSeconds),
             pacePlan.kind === 'awaiting-reps' ? pacePlan.afterSetId : undefined,
           );
     const decision = paceDecision(pacePlan, preparation, Date.now());
@@ -266,7 +272,7 @@ export function WorkoutScreen() {
       setPacePlan((current) => planWithoutSet(current, decision.setId));
     }, decision.delayMs);
     return () => clearTimeout(timer);
-  }, [detail, pacePlan, startPace]);
+  }, [detail, pacePlan, startPace, defaultRepSeconds]);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -388,21 +394,39 @@ export function WorkoutScreen() {
     return loads;
   };
 
-  const exerciseMenuLine = sheet?.kind === 'exercise' ? lineOf(sheet.rowId) : null;
-  const exerciseMenuOpenedAt = sheet?.kind === 'exercise' ? sheet.openedAt : workout.startedAt;
-  const exerciseMenuPaceRunning =
-    sheet?.kind === 'exercise' && pacer.rowId === sheet.rowId && pacer.setId !== null;
-  const exerciseMenuPace =
-    exerciseMenuLine === null
-      ? null
-      : exerciseMenuPaceRunning
-        ? { reps: pacer.reps, repSeconds: pacer.repSeconds }
-        : nextPaceTarget(exerciseMenuLine.sets, exerciseMenuOpenedAt - workout.startedAt);
+  /**
+   * The tempo of one exercise: its own choice, then the preference, then three
+   * seconds. Nothing here depends on the clock any more — a tempo is chosen,
+   * not derived (cf. `lib/tempo`).
+   */
+  const repSecondsOf = (line: WorkoutExerciseDetail): number =>
+    resolveRepSeconds(line.row.repSeconds, defaultRepSeconds);
 
-  const startPaceFor = (line: WorkoutExerciseDetail, now: number, afterSetId?: string): boolean => {
-    // Read at the tap, never at render: the tempo is a function of how long
-    // the session has been running.
-    const preparation = prepareNextPace(line.sets, now - workout.startedAt, afterSetId);
+  const paceSheetLine = sheet?.kind === 'pace' ? lineOf(sheet.rowId) : null;
+  const paceSheetView: PaceSheetView | null =
+    paceSheetLine === null
+      ? null
+      : (() => {
+          const running = pacer.rowId === paceSheetLine.row.id && pacer.setId !== null;
+          const preparation = prepareNextPace(paceSheetLine.sets, repSecondsOf(paceSheetLine));
+          return {
+            rowId: paceSheetLine.row.id,
+            name: nameOf(paceSheetLine.row.id),
+            repSeconds: running ? pacer.repSeconds : repSecondsOf(paceSheetLine),
+            defaultRepSeconds: defaultRepSeconds ?? repSecondsOf(paceSheetLine),
+            reps:
+              running
+                ? pacer.reps
+                : preparation.kind === 'ready'
+                  ? preparation.target.reps
+                  : null,
+            canStart: preparation.kind !== 'done',
+            running,
+          };
+        })();
+
+  const startPaceFor = (line: WorkoutExerciseDetail, afterSetId?: string): boolean => {
+    const preparation = prepareNextPace(line.sets, repSecondsOf(line), afterSetId);
     if (preparation.kind === 'done') return false;
     primeAnnouncer();
     // Starting the next set is the clearest possible signal that rest is over.
@@ -428,14 +452,14 @@ export function WorkoutScreen() {
     return true;
   };
 
-  const startFollowingExercisePace = (
-    completedLine: WorkoutExerciseDetail,
-    now: number,
-  ): boolean => {
+  const startFollowingExercisePace = (completedLine: WorkoutExerciseDetail): boolean => {
     const following = prepareFollowingExercisePace(
-      exercises.map((line) => ({ rowId: line.row.id, sets: line.sets })),
+      exercises.map((line) => ({
+        rowId: line.row.id,
+        sets: line.sets,
+        repSeconds: repSecondsOf(line),
+      })),
       completedLine.row.id,
-      now - workout.startedAt,
     );
     if (following === null) return false;
 
@@ -593,9 +617,9 @@ export function WorkoutScreen() {
                             onDone: () => {
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
-                              const paced = startPaceFor(line, Date.now(), rest.setId ?? undefined);
+                              const paced = startPaceFor(line, rest.setId ?? undefined);
                               if (paced) return true;
-                              const advanced = startFollowingExercisePace(line, Date.now());
+                              const advanced = startFollowingExercisePace(line);
                               if (!advanced) rest.stop();
                               return advanced;
                             },
@@ -633,6 +657,7 @@ export function WorkoutScreen() {
                     onMenu={() =>
                       setSheet({ kind: 'exercise', rowId: line.row.id, openedAt: Date.now() })
                     }
+                    onPace={() => setSheet({ kind: 'pace', rowId: line.row.id })}
                     onPlates={
                       config !== null && loads.length > 0
                         ? () => {
@@ -766,24 +791,20 @@ export function WorkoutScreen() {
         onClose={() => setSheet(null)}
         title={sheet?.kind === 'exercise' ? nameOf(sheet.rowId) : ''}
         actions={[
-          ...(exerciseMenuPace === null
-            ? []
-            : [
-                {
-                  label: t(exerciseMenuPaceRunning ? 'workout.paceStop' : 'workout.pace'),
-                  hint: t('workout.paceHint', {
-                    reps: exerciseMenuPace.reps,
-                    tempo: formatNumber(exerciseMenuPace.repSeconds),
-                  }),
-                  onSelect: () => {
-                    if (exerciseMenuPaceRunning) {
-                      stopPace();
-                    } else if (exerciseMenuLine !== null) {
-                      startPaceFor(exerciseMenuLine, Date.now());
-                    }
-                  },
-                },
-              ]),
+          {
+            label: t('workout.paceTitle'),
+            // The tempo in force, so the entry says what it is about to open
+            // rather than making you open it to find out.
+            hint:
+              sheet?.kind === 'exercise' && lineOf(sheet.rowId) !== null
+                ? t('workout.paceMenuHint', {
+                    tempo: formatNumber(repSecondsOf(lineOf(sheet.rowId)!)),
+                  })
+                : undefined,
+            onSelect: () => {
+              if (sheet?.kind === 'exercise') setSheet({ kind: 'pace', rowId: sheet.rowId });
+            },
+          },
           {
             label: t('workout.addSetAction'),
             onSelect: () => {
@@ -892,6 +913,20 @@ export function WorkoutScreen() {
         onSelect={(setType) => {
           if (sheet?.kind === 'setType') void updateSetType(sheet.setId, setType);
         }}
+      />
+
+      <PaceSheet
+        open={sheet?.kind === 'pace'}
+        onClose={() => setSheet(null)}
+        view={paceSheetView}
+        onChange={(repSeconds) => {
+          if (sheet?.kind === 'pace') void updateWorkoutExercise(sheet.rowId, { repSeconds });
+        }}
+        onSetDefault={(repSeconds) => void setDefaultRepSeconds(repSeconds)}
+        onStart={() => {
+          if (paceSheetLine !== null) startPaceFor(paceSheetLine);
+        }}
+        onStop={() => stopPace()}
       />
 
       <PlateLoadSheet
