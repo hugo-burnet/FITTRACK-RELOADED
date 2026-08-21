@@ -45,6 +45,19 @@ avec son propre filtre par muscle.
 l'accueil) : 1 698 tests / 159 fichiers, typecheck, lint et build de production. Aucun changement de
 schéma. Installer par-dessus la v0.8.6, sans désinstaller.
 
+**Une release se publie aussi depuis l'onglet Actions.** Le chemin normal reste
+`git tag -a vX.Y.Z && git push origin vX.Y.Z`, mais il suppose un poste autorisé à écrire dans
+`refs/tags/*`. Quand il ne l'est pas — une session d'agent se voit refuser les tags alors qu'elle
+pousse des branches — le code part sur `master`, l'APK dort en artefact trente jours et la page
+Releases reste en arrière : le piège de la v0.2.0, cette fois sans `git push` pour le corriger.
+`workflow_dispatch` prend désormais un `release_tag` optionnel ; renseigné, `gh release create` crée
+le tag lui-même avec `--target` sur le SHA construit — le tag ne peut donc désigner que le commit
+qui vient de passer les portes. Laissé vide, le lancement manuel reste un build d'essai. La garde de
+signature suit : sur le dépôt principal, publier sans les secrets échoue, tag ou saisie.
+
+Les v0.8.6 et v0.8.7 n'ont jamais reçu de tag poussé à la main ; la release v0.8.7 a été publiée par
+ce chemin et porte les deux (cadence rangée + carte interactive).
+
 ---
 
 ## v0.8.6 — une seule machine pour la cadence
