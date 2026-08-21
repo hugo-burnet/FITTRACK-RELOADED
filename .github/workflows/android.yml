@@ -4,7 +4,24 @@ on:
   push:
     branches: [master]
     tags: ['v*']
+  # Publier une release sans avoir la main sur un tag.
+  #
+  # Le chemin normal reste `git tag -a vX.Y.Z && git push origin vX.Y.Z`. Mais
+  # il suppose un poste avec les droits de pousser un tag, et ça n'est pas
+  # toujours le cas — une session d'agent, par exemple, peut pousser une branche
+  # et se voir refuser `refs/tags/*`. Le code partait alors sur `master`, l'APK
+  # dormait en artefact 30 jours, et la page Releases restait en arrière.
+  #
+  # Renseigner `release_tag` ici publie la release depuis l'onglet Actions.
+  # `gh release create` crée le tag lui-même, sur le commit qui vient d'être
+  # construit : un seul geste, et le tag ne peut pas désigner autre chose que ce
+  # qu'on a testé. Laisser le champ vide ne fait qu'un build d'essai, comme avant.
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Tag à publier (ex. v0.8.7). Vide = build seul, sans release.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -12,6 +29,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Vide sur un push : `inputs` n'existe pas hors de workflow_dispatch.
+      RELEASE_TAG: ${{ inputs.release_tag }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -51,7 +71,7 @@ jobs:
             printf '%s' "$FITTRACK_ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/fittrack.jks"
             echo "keystore=true" >> "$GITHUB_OUTPUT"
             echo "::notice::APK signé avec la clé de release."
-          elif [[ "$GITHUB_REF" == refs/tags/v* && "$GITHUB_REPOSITORY" == "hugo-burnet/FITTRACK-RELOADED" ]]; then
+          elif [[ ( "$GITHUB_REF" == refs/tags/v* || -n "${RELEASE_TAG:-}" ) && "$GITHUB_REPOSITORY" == "hugo-burnet/FITTRACK-RELOADED" ]]; then
             # Seul le dépôt principal distribue l'application aux appareils qui
             # l'ont déjà : une release y publier sans la vraie clé donnerait un
             # APK incapable de mettre à jour l'installation en place.
@@ -82,26 +102,37 @@ jobs:
           if-no-files-found: error
       - name: Prepare release APK
         id: asset
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
         shell: bash
         run: |
           set -euo pipefail
+          # Le tag vient de la saisie quand on publie à la main, du ref sinon.
+          tag="${RELEASE_TAG:-$GITHUB_REF_NAME}"
           # Le nom du fichier dit avec quelle clé il est signé : deux APK qui se
           # ressemblent et ne s'installent pas l'un sur l'autre, c'est le genre
           # de confusion qu'on ne veut pas six mois plus tard.
           if [[ "${{ steps.signing.outputs.keystore }}" == "true" ]]; then
-            name="FitTrack-${GITHUB_REF_NAME}.apk"
+            name="FitTrack-${tag}.apk"
           else
-            name="FitTrack-test-${GITHUB_REF_NAME}.apk"
+            name="FitTrack-test-${tag}.apk"
           fi
           cp android/app/build/outputs/apk/debug/app-debug.apk "$name"
           echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Publish GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create "${GITHUB_REF_NAME}"
-          "${{ steps.asset.outputs.name }}"
-          --title "FitTrack Android ${GITHUB_REF_NAME}"
-          --generate-notes
+          TAG: ${{ steps.asset.outputs.tag }}
+          ASSET: ${{ steps.asset.outputs.name }}
+        shell: bash
+        # `--target` sur le SHA construit : lancé depuis Actions, le tag n'existe
+        # pas encore et `gh` le crée. Il ne peut donc désigner que le commit qui
+        # vient de passer les portes, jamais la tête d'une branche qui a bougé
+        # entre-temps.
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" "$ASSET" \
+            --target "$GITHUB_SHA" \
+            --title "FitTrack Android $TAG" \
+            --generate-notes
