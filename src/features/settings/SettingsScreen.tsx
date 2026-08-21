@@ -24,6 +24,7 @@ import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { ListRow, SectionTitle } from '@/ui';
 import { AnnouncerSettings } from './AnnouncerSettings';
+import { BackupActions } from './BackupActions';
 import { EffortPromptSettings } from './EffortPromptSettings';
 import { OneRepMaxSettings } from './OneRepMaxSettings';
 
@@ -270,6 +271,8 @@ export function SettingsScreen() {
             </p>
           )}
         </section>
+
+        <BackupActions />
       </div>
     </Screen>
   );
