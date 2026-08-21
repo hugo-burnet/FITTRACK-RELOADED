@@ -2,10 +2,10 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**Retours de terrain — le corps se touche dans le Journal,
-et deux réglages d'affichage**).
+**Dernière mise à jour :** 2026-08-21 (**Release Android v0.9.1 — le corps se touche dans le
+Journal, et deux réglages d'affichage**).
 
-## Retours du 21 août — le corps se touche aussi dans le Journal
+## v0.9.1 — le corps se touche aussi dans le Journal
 
 Trois demandes remontées du téléphone dans la même session.
 
@@ -41,6 +41,18 @@ pendant que « Deux côtés, sans barre » écrasait la phrase d'aide sur trois 
 maintenant la forme des deux autres blocs de la carte « Charge » : intitulé au-dessus, valeur dans
 un champ pleine largeur (même fond et même hauteur qu'un `NumberInput`), explication dessous. Rien
 n'est tronqué.
+
+**Portes de release :** lint, typecheck, **1 796 tests dans 165 fichiers** et build PWA au vert ;
+déploiement Pages et workflow Android APK de `63dee95` au vert sur GitHub.
+
+Rustine d'interface : aucun changement de schéma ni de données. Installer par-dessus la v0.9.0,
+**sans désinstaller**.
+
+**Checkpoint téléphone :**
+
+- [ ] Journal → ouvrir une séance passée → toucher un muscle : la liste de ses exercices s'ouvre.
+- [ ] Volume → vérifier sur un écran étroit que la valeur et « kg » restent sur la même ligne.
+- [ ] Fiche d'exercice → Charge : « Chargement en disques » et son aide sont lisibles en entier.
 
 ## v0.9.0 — ce que l'app devinait, la fiche d'exercice le dit
 
