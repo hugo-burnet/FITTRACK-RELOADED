@@ -1,8 +1,21 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import type { ReactElement } from 'react';
+import { fireEvent, render as renderBare, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { db } from '@/data/db';
+import { newEntity } from '@/data/repositories/base';
 import type { WorkoutDetail } from '@/data/repositories/workouts';
-import type { Exercise, Syncable, WorkoutExercise, WorkoutSet } from '@/data/types';
+import type { Exercise, MuscleGroup, Syncable, WorkoutExercise, WorkoutSet } from '@/data/types';
+import { resetDb } from '@/test/resetDb';
 import { HistoryWorkoutDetail } from './HistoryWorkoutDetail';
+
+/**
+ * Le corps dessiné ouvre une feuille du catalogue, qui navigue vers une fiche
+ * d'exercice : le détail ne se rend plus hors d'un routeur.
+ */
+function render(ui: ReactElement) {
+  return renderBare(ui, { wrapper: MemoryRouter });
+}
 
 /**
  * The screen reads the row's snapshot, never today's library. Every fixture here
@@ -270,5 +283,58 @@ describe('HistoryWorkoutDetail — les chiffres d’une série', () => {
     expect(reading).toHaveTextContent('10 reps');
     expect(reading).toHaveTextContent('500 m');
     expect(reading).toHaveTextContent('45 s');
+  });
+});
+
+describe('HistoryWorkoutDetail — le corps travaillé', () => {
+  const catalogue = (id: string, name: string, primaryMuscle: MuscleGroup): Exercise => ({
+    ...newEntity<Exercise>({
+      name,
+      primaryMuscle,
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isCustom: 0,
+      isUnilateral: 0,
+    }),
+    id,
+  });
+
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.bulkAdd([
+      catalogue('bench', 'Développé couché', 'chest'),
+      catalogue('fly', 'Écarté à la poulie', 'chest'),
+      catalogue('squat', 'Squat', 'quads'),
+    ]);
+  });
+
+  /** Le path du muscle, une fois la géométrie injectée. */
+  async function muscle(container: HTMLElement, id: string): Promise<Element> {
+    return await waitFor(() => {
+      const path = container.querySelector(`path[data-muscle="${id}"]`);
+      if (path === null) throw new Error(`aucun path pour ${id}`);
+      return path;
+    });
+  }
+
+  it('ouvre les exercices du muscle touché, comme sur l’accueil', async () => {
+    const { container } = render(<HistoryWorkoutDetail detail={detail({ row: row() })} />);
+
+    fireEvent.click(await muscle(container, 'pectoralis_major'));
+
+    expect(await screen.findByText('Pectoraux')).toBeInTheDocument();
+    expect(await screen.findByText('Écarté à la poulie')).toBeInTheDocument();
+  });
+
+  it('répond aussi pour un muscle que la séance n’a pas travaillé', async () => {
+    // Relire une séance, c'est d'abord voir ce qu'elle a laissé de côté : le
+    // muscle éteint est justement celui qu'on touche pour la prochaine fois.
+    const { container } = render(<HistoryWorkoutDetail detail={detail({ row: row() })} />);
+
+    fireEvent.click(await muscle(container, 'quadriceps'));
+
+    expect(await screen.findByText('Quadriceps')).toBeInTheDocument();
+    expect(await screen.findByText('Squat')).toBeInTheDocument();
   });
 });

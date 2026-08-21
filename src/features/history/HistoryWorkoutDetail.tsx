@@ -15,8 +15,9 @@ import { resolveRepSeconds } from '@/lib/tempo';
 import { sessionTotals } from '@/lib/volume';
 import type { VolumeEntry } from '@/lib/volume';
 import { Card, SectionTitle } from '@/ui';
-import { MuscleMap, balanceHighlight } from '@/ui/muscleMap';
+import { balanceHighlight } from '@/ui/muscleMap';
 import { formatNumber } from '@/ui/numberField';
+import { HistoryMusclesCard } from './HistoryMusclesCard';
 
 const longDate = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric',
@@ -190,12 +191,7 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
           session with no recorded set, and one made only of exercises that have
           no region. */}
       {Object.keys(sessionHighlight).length > 0 && (
-        <section>
-          <SectionTitle>{t('history.detailMuscles')}</SectionTitle>
-          <Card padded>
-            <MuscleMap highlight={sessionHighlight} />
-          </Card>
-        </section>
+        <HistoryMusclesCard highlight={sessionHighlight} />
       )}
 
       <section>

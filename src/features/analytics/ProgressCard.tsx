@@ -5,6 +5,7 @@ import { bestPointIndex } from '@/lib/analytics/metrics';
 import { plotBounds } from '@/lib/analytics/plot';
 import { Card } from '@/ui';
 import { ProgressChart } from './ProgressChart';
+import { CardHeadline } from './CardHeadline';
 
 /**
  * The readout, the curve, and the scale — one card, in the order they are read.
@@ -67,14 +68,7 @@ export function ProgressCard({ metric, points, selectedIndex, onSelect, stale }:
       >
         {/* Value first, label second — the reader already knows which metric
             they picked and wants the number. */}
-        <div className="flex items-baseline justify-between gap-4">
-          <span className="label-xs font-semibold text-[var(--text-2)]">
-            {metricLabel(metric.key)}
-          </span>
-          <span className="metric text-3xl leading-none font-semibold text-[var(--text-1)]">
-            {reading(selected.value)}
-          </span>
-        </div>
+        <CardHeadline label={metricLabel(metric.key)} value={reading(selected.value)} />
         <p className="mt-1 text-right text-sm text-[var(--text-2)]">
           {longDate(selected.timestamp)}
           {selectedIndex === best && (

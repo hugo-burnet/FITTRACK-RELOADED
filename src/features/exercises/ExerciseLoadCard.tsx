@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { getLatestBodyWeight } from '@/data/repositories/bodyMeasurements';
 import { updateExercise } from '@/data/repositories/exercises';
@@ -21,7 +21,7 @@ import {
 } from '@/lib/plateLoading';
 import { measurementShape } from '@/lib/measurement';
 import { computePlateLoad } from '@/lib/plates';
-import { Card, ListRow, NumberInput, OptionSheet, SectionTitle } from '@/ui';
+import { Card, NumberInput, OptionSheet, SectionTitle } from '@/ui';
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 import { formatNumber } from '@/ui/numberField';
@@ -90,16 +90,10 @@ export function ExerciseLoadCard({ exercise }: { exercise: Exercise }) {
         )}
 
         {takesWeight && (
-          <ListRow
-            title={t('exercise.plateLoadingLabel')}
-            subtitle={t('exercise.plateLoadingHint')}
-            onClick={() => setPicker(true)}
-            trailing={
-              <span className="flex items-center gap-1 text-base text-[var(--text-1)]">
-                {plateLoadingLabel(loading)}
-                <ChevronDownIcon className="text-[var(--text-2)]" />
-              </span>
-            }
+          <PlateLoadingRow
+            loading={loading}
+            separated={supportsFactor}
+            onOpen={() => setPicker(true)}
           />
         )}
 
@@ -143,6 +137,67 @@ export function ExerciseLoadCard({ exercise }: { exercise: Exercise }) {
         onSelect={(plateLoading) => write({ plateLoading })}
       />
     </section>
+  );
+}
+
+/**
+ * « Chargement en disques », posé comme les autres réglages de la carte.
+ *
+ * **C'était une `ListRow`, et la ligne ne tenait pas.** Le titre et la valeur se
+ * disputaient la même largeur : sur un téléphone de 375 px, « Chargement en
+ * disques » se coupait en « Chargement en d… » pendant que « Deux côtés, sans
+ * barre » poussait la phrase d'aide dans une colonne de trois lignes. Deux
+ * textes longs de part et d'autre d'une même ligne ne rentrent pas, et aucun
+ * réglage de troncature ne rend ça lisible.
+ *
+ * Alors le réglage prend la forme des deux autres blocs de la carte : le nom en
+ * intitulé au-dessus, la valeur dans un champ pleine largeur, l'explication
+ * dessous. Rien n'est tronqué, la phrase d'aide retrouve toute la largeur, et la
+ * carte se lit d'un seul mouvement de haut en bas.
+ *
+ * Le champ ressemble à celui de `NumberInput` — même fond, même rayon, même
+ * hauteur — parce qu'il fait la même chose : il porte une valeur qu'on change.
+ */
+function PlateLoadingRow({
+  loading,
+  separated,
+  onOpen,
+}: {
+  loading: PlateLoading;
+  /** Un liseré seulement s'il y a un bloc au-dessus dont il faut se détacher. */
+  separated: boolean;
+  onOpen: () => void;
+}) {
+  const labelId = useId();
+  const valueId = useId();
+
+  return (
+    <div className={`p-4 ${separated ? 'border-t border-[var(--border)]' : ''}`}>
+      <p id={labelId} className="label-xs mb-2 font-semibold text-[var(--text-2)]">
+        {t('exercise.plateLoadingLabel')}
+      </p>
+
+      {/* Nommé par ses deux textes, dans l'ordre où l'œil les lit : « Chargement
+          en disques, Deux côtés, sans barre ». L'intitulé au-dessus est déjà
+          référencé ici, donc il n'est pas lu deux fois. */}
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-labelledby={`${labelId} ${valueId}`}
+        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg
+          bg-[var(--surface-2)] px-4 py-2 text-left transition-colors duration-[var(--dur-1)]
+          active:bg-[var(--surface-1)]"
+      >
+        <span id={valueId} className="min-w-0 text-base text-[var(--text-1)]">
+          {plateLoadingLabel(loading)}
+        </span>
+        <ChevronDownIcon className="shrink-0 text-[var(--text-2)]" />
+      </button>
+
+      <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
+        {t('exercise.plateLoadingHint')}
+      </p>
+    </div>
   );
 }
 

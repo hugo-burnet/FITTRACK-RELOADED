@@ -13,6 +13,7 @@ import {
 } from '@/lib/analytics/volume';
 import { Card } from '@/ui';
 import { WeeklyVolumeChart } from './WeeklyVolumeChart';
+import { CardHeadline } from './CardHeadline';
 
 const shortDate = (at: number): string =>
   new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
@@ -74,14 +75,10 @@ export function WeeklyVolumeCard({
   return (
     <Card padded>
       <div className={`transition-opacity duration-[var(--dur-1)] ${stale ? 'opacity-50' : ''}`}>
-        <div className="flex items-baseline justify-between gap-4">
-          <span className="label-xs font-semibold text-[var(--text-2)]">
-            {t('volume.weekOf', { date: longDate(selected.weekStart) })}
-          </span>
-          <span className="metric text-right text-3xl leading-none font-semibold text-[var(--text-1)]">
-            {reading(selectedValue)}
-          </span>
-        </div>
+        <CardHeadline
+          label={t('volume.weekOf', { date: longDate(selected.weekStart) })}
+          value={reading(selectedValue)}
+        />
 
         <div className="mt-5 flex gap-3">
           <div className="metric flex shrink-0 flex-col justify-between py-1 text-right text-xs font-semibold text-[var(--text-2)]">

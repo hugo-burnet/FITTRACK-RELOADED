@@ -6,7 +6,7 @@ import { toMuscleRows } from '@/lib/analytics/muscles';
 import { periodBounds } from '@/lib/analytics/periods';
 import { t } from '@/i18n/fr';
 import { MuscleMap, balanceHighlight, type MuscleId } from '@/ui/muscleMap';
-import { HomeMuscleSheet } from './HomeMuscleSheet';
+import { MuscleExercisesSheet } from '@/features/exercises/MuscleExercisesSheet';
 
 /**
  * The body at the top of the home screen's Progression section.
@@ -126,12 +126,12 @@ export function HomeMuscleMap({ onResolved }: Props) {
         </div>
         {/* Le dessin ne ressemble pas à un bouton, et c'est très bien : la ligne
             le dit à sa place, une fois, sans habiller le corps de chrome. */}
-        <p className="pt-2 text-center text-xs text-[var(--text-2)]">{t('home.bodyTapHint')}</p>
+        <p className="pt-2 text-center text-xs text-[var(--text-2)]">{t('muscleSheet.tapHint')}</p>
       </div>
 
       {/* `selected` survit à la fermeture : le titre de la feuille ne doit pas
           retomber sur son libellé de repli pendant l'animation de sortie. */}
-      <HomeMuscleSheet open={sheetOpen} muscle={selected} onClose={() => setSheetOpen(false)} />
+      <MuscleExercisesSheet open={sheetOpen} muscle={selected} onClose={() => setSheetOpen(false)} />
     </>
   );
 }

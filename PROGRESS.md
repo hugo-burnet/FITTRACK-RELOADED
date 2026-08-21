@@ -2,8 +2,45 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**Release Android v0.9.0 — ce que l'app devinait, la fiche
-d'exercice le dit**).
+**Dernière mise à jour :** 2026-08-21 (**Retours de terrain — le corps se touche dans le Journal,
+et deux réglages d'affichage**).
+
+## Retours du 21 août — le corps se touche aussi dans le Journal
+
+Trois demandes remontées du téléphone dans la même session.
+
+### 1. Les muscles d'une séance passée se touchent, comme sur l'accueil
+
+Le dessin du Journal (`HistoryWorkoutDetail`) était muet : le même corps répondait au doigt sur
+l'accueil et pas ici. Un geste qui marche sur un écran et pas sur l'autre apprend surtout à ne
+plus essayer.
+
+- La feuille du catalogue quitte `features/home/` pour `features/exercises/` et s'appelle
+  **`MuscleExercisesSheet`** : elle ne sait rien de l'écran qui l'ouvre, on lui donne un muscle,
+  elle répond avec les exercices du catalogue qui le ciblent. L'accueil et le Journal lisent donc
+  exactement la même réponse.
+- Ses textes quittent `home.*` pour une section **`muscleSheet`** partagée, la ligne
+  « Touche un muscle… » comprise — deux copies du même texte finissent toujours par diverger.
+- **`HistoryMusclesCard`** (nouveau) porte la carte du Journal : le dessin, la ligne d'aide, la
+  feuille et l'état du muscle touché. `HistoryWorkoutDetail` n'en garde qu'une ligne.
+- Le dessin n'est plus décoratif ici : il porte son libellé (`history.detailMusclesLabel`) puisqu'il
+  se touche.
+
+### 2. « kg » passait à la ligne sous le chiffre
+
+Sur l'écran Volume, « 19 313,5 kg » en `text-3xl` ne laissait plus la place à « Semaine du 17 août
+2026 » : le nombre se cassait entre sa valeur et son unité. Les quatre cartes d'analyse partageaient
+le même en-tête copié-collé ; il devient **`CardHeadline`**, avec deux règles — la valeur ne se coupe
+jamais (`whitespace-nowrap`), et la ligne se dédouble avant de se serrer (`flex-wrap` + `ml-auto`).
+Les lectures courtes tiennent toujours sur une ligne, comme avant. Vérifié en Chromium à 375 px.
+
+### 3. Le réglage « Chargement en disques » était illisible
+
+Deux textes longs de part et d'autre d'une `ListRow` : le titre se coupait en « Chargement en d… »
+pendant que « Deux côtés, sans barre » écrasait la phrase d'aide sur trois lignes. Le réglage prend
+maintenant la forme des deux autres blocs de la carte « Charge » : intitulé au-dessus, valeur dans
+un champ pleine largeur (même fond et même hauteur qu'un `NumberInput`), explication dessous. Rien
+n'est tronqué.
 
 ## v0.9.0 — ce que l'app devinait, la fiche d'exercice le dit
 

@@ -3,6 +3,7 @@ import { weeklySessionsReading } from '@/i18n/labels';
 import { goalWeeksReached, weeklyAverage, type WeekBucket } from '@/lib/analytics/weeks';
 import { Card } from '@/ui';
 import { WeeklyChart } from './WeeklyChart';
+import { CardHeadline } from './CardHeadline';
 
 /**
  * The reading, the histogram, and what the window really says — one card, in the
@@ -75,14 +76,10 @@ export function WeeklyCard({ buckets, selectedIndex, onSelect, onOpenHistory, st
   return (
     <Card padded>
       <div className={`transition-opacity duration-[var(--dur-1)] ${stale ? 'opacity-50' : ''}`}>
-        <div className="flex items-baseline justify-between gap-4">
-          <span className="label-xs font-semibold text-[var(--text-2)]">
-            {t('weekly.weekOf', { date: longDate(selected.weekStart) })}
-          </span>
-          <span className="metric text-3xl leading-none font-semibold text-[var(--text-1)]">
-            {weeklySessionsReading(selected.sessions)}
-          </span>
-        </div>
+        <CardHeadline
+          label={t('weekly.weekOf', { date: longDate(selected.weekStart) })}
+          value={weeklySessionsReading(selected.sessions)}
+        />
 
         {selected.goal !== null && (
           <p className="mt-1 text-right text-sm text-[var(--text-2)]">

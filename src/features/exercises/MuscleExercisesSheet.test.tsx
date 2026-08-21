@@ -6,7 +6,7 @@ import { db } from '@/data/db';
 import { newEntity } from '@/data/repositories/base';
 import type { Exercise, MuscleGroup } from '@/data/types';
 import { resetDb } from '@/test/resetDb';
-import { HomeMuscleSheet } from './HomeMuscleSheet';
+import { MuscleExercisesSheet } from './MuscleExercisesSheet';
 
 function exercise(id: string, name: string, primaryMuscle: MuscleGroup): Exercise {
   return {
@@ -28,11 +28,11 @@ function LocationProbe() {
   return <div data-testid="location">{`${location.pathname}${location.search}`}</div>;
 }
 
-function renderSheet(muscle: Parameters<typeof HomeMuscleSheet>[0]['muscle']) {
+function renderSheet(muscle: Parameters<typeof MuscleExercisesSheet>[0]['muscle']) {
   const onClose = vi.fn();
   render(
     <MemoryRouter initialEntries={['/']}>
-      <HomeMuscleSheet open muscle={muscle} onClose={onClose} />
+      <MuscleExercisesSheet open muscle={muscle} onClose={onClose} />
       <Routes>
         <Route path="*" element={<LocationProbe />} />
       </Routes>
@@ -50,7 +50,7 @@ beforeEach(async () => {
   ]);
 });
 
-describe('HomeMuscleSheet', () => {
+describe('MuscleExercisesSheet', () => {
   it('nomme le groupe du catalogue, pas le muscle dessiné', async () => {
     // Le deltoïde latéral n'existe pas pour le catalogue : il file les exercices
     // par groupe, et la feuille ne doit pas promettre une finesse absente.

@@ -185,25 +185,6 @@ const fr = {
      */
     bodyLabel: 'Les muscles travaillés sur les douze dernières semaines',
 
-    /**
-     * Le dessin ne dit pas qu'on peut le toucher — un corps humain ne ressemble
-     * pas à un bouton. Une ligne sous la carte, et une seule : la découverte se
-     * fait une fois, la ligne se lit toute la vie de l'écran.
-     */
-    bodyTapHint: 'Touche un muscle pour voir les exercices',
-    /** Le titre de la feuille est le nom du groupe ; ceci en est le sous-titre. */
-    muscleSheetCount: '{count} exercices du catalogue',
-    muscleSheetCountOne: '1 exercice du catalogue',
-    muscleSheetEmpty: 'Aucun exercice du catalogue ne cible ce muscle.',
-    /**
-     * Trois muscles sont dessinés sans qu'aucun groupe du catalogue ne les
-     * nomme — psoas, dentelé, jambier antérieur. Le doigt tombera dessus : il a
-     * droit à une explication, pas à un tap qui ne fait rien.
-     */
-    muscleSheetUnknown: 'Muscle hors catalogue',
-    muscleSheetUnknownBody:
-      'Ce muscle est dessiné mais le catalogue ne le nomme pas : aucun exercice ne peut le cibler.',
-    muscleSheetAll: 'Voir dans le catalogue',
     progressPace: 'Rythme',
     progressVolume: 'Volume',
     progressMuscles: 'Muscles',
@@ -893,6 +874,12 @@ const fr = {
     detailTotals: 'Totaux',
     /** Past tense: the recap says what this session did, not what it targets. */
     detailMuscles: 'Muscles travaillés',
+    /**
+     * Le titre de section suffit à l'œil ; l'oreille, elle, n'a que ce libellé
+     * pour savoir ce que porte le dessin — et depuis qu'il se touche, il n'est
+     * plus décoratif.
+     */
+    detailMusclesLabel: 'Les muscles travaillés pendant cette séance',
     detailExercises: 'Exercices',
     detailSets: 'Séries de travail',
     detailReps: 'Répétitions',
@@ -1636,6 +1623,34 @@ const fr = {
     chartSummary:
       '{metric} sur {count} semaines, du {first} au {last}. Minimum {min}, maximum {max}, moyenne {average}.',
     chartSummaryOne: '{metric} de la semaine du {first} : {current}.',
+  },
+
+  /**
+   * La feuille ouverte par un doigt sur le corps dessiné, et la ligne qui dit
+   * qu'on peut le toucher. **Partagée, et pas rangée sous `home`** : le même
+   * geste existe sur l'accueil et sur une séance du Journal, et deux copies du
+   * même texte finissent toujours par diverger sur une seule des deux.
+   */
+  muscleSheet: {
+    /**
+     * Le dessin ne dit pas qu'on peut le toucher — un corps humain ne ressemble
+     * pas à un bouton. Une ligne sous la carte, et une seule : la découverte se
+     * fait une fois, la ligne se lit toute la vie de l'écran.
+     */
+    tapHint: 'Touche un muscle pour voir les exercices',
+    /** Le titre de la feuille est le nom du groupe ; ceci en est le sous-titre. */
+    count: '{count} exercices du catalogue',
+    countOne: '1 exercice du catalogue',
+    empty: 'Aucun exercice du catalogue ne cible ce muscle.',
+    /**
+     * Trois muscles sont dessinés sans qu'aucun groupe du catalogue ne les
+     * nomme — psoas, dentelé, jambier antérieur. Le doigt tombera dessus : il a
+     * droit à une explication, pas à un tap qui ne fait rien.
+     */
+    unknown: 'Muscle hors catalogue',
+    unknownBody:
+      'Ce muscle est dessiné mais le catalogue ne le nomme pas : aucun exercice ne peut le cibler.',
+    all: 'Voir dans le catalogue',
   },
 
   /**

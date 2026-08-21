@@ -3,6 +3,7 @@ import { muscleLabel, muscleSetsReading } from '@/i18n/labels';
 import { barFractions } from '@/lib/analytics/plot';
 import type { MuscleBalance, MuscleCount } from '@/lib/analytics/muscles';
 import { Card } from '@/ui';
+import { CardHeadline } from './CardHeadline';
 
 /**
  * The distribution — a ranked horizontal bar per muscle, and the third form of
@@ -45,14 +46,7 @@ export function MuscleBalanceCard({ balance, weeks, stale }: Props) {
   return (
     <Card padded>
       <div className={`transition-opacity duration-[var(--dur-1)] ${stale ? 'opacity-50' : ''}`}>
-        <div className="flex items-baseline justify-between gap-4">
-          <span className="label-xs font-semibold text-[var(--text-2)]">
-            {t('muscles.totalLabel')}
-          </span>
-          <span className="metric text-3xl leading-none font-semibold text-[var(--text-1)]">
-            {total}
-          </span>
-        </div>
+        <CardHeadline label={t('muscles.totalLabel')} value={String(total)} />
 
         {weeks > 0 && (
           <p className="mt-1 text-right text-sm text-[var(--text-2)]">
