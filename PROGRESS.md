@@ -2,10 +2,10 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**La charge se règle sur la fiche : coefficient du poids du
-corps, chargement en disques, muscles secondaires**). *Pas encore publiée en APK.*
+**Dernière mise à jour :** 2026-08-21 (**Release Android v0.9.0 — ce que l'app devinait, la fiche
+d'exercice le dit**).
 
-## En cours — ce que l'app devinait, la fiche d'exercice le dit
+## v0.9.0 — ce que l'app devinait, la fiche d'exercice le dit
 
 Quatre demandes de terrain, remontées ensemble parce qu'elles se répondent : trois portent sur la
 même chose, **une fiche d'exercice qui ne portait pas assez d'informations pour que l'app arrête de
@@ -88,6 +88,12 @@ partir le clavier), `flash` (réservé). `prefers-reduced-motion` les désarme t
 règle existait déjà.
 
 **Portes locales :** typecheck, lint, **1 794 tests dans 165 fichiers**, build PWA.
+
+Mineure et non corrective : le formulaire d'exercice change de forme, la fiche gagne une section,
+et le tonnage d'anciennes séances de tractions cesse d'être nul. ⚠️ **Migration Dexie
+`version(9)`** — les exercices faits maison mesurés au corps reçoivent le coefficient que le
+formulaire écrirait aujourd'hui ; rien n'est écrasé, rien n'est supprimé, le catalogue n'est pas
+touché. Installer par-dessus la v0.8.9, **sans désinstaller**.
 
 **Checkpoint téléphone :**
 
