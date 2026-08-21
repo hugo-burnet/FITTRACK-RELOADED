@@ -36,6 +36,28 @@ export function workoutRecapCues(signals: readonly CoachSignal[]): CueId[] {
   return ['workout-recap-start', ...findings];
 }
 
+/**
+ * The sessions whose recap has already been read out.
+ *
+ * Module-level, like the greeting and the records: the finish screen is one
+ * back-and-forth away from the session screen, and a ref inside the component
+ * forgets everything the moment you leave it — so the whole recap was spoken
+ * again on every return. Dies with the page, which is the right answer for a
+ * session resumed after a kill.
+ */
+const spoken = new Set<string>();
+
+export function claimWorkoutRecap(workoutId: string): boolean {
+  if (spoken.has(workoutId)) return false;
+  spoken.add(workoutId);
+  return true;
+}
+
+/** Only for the tests: the set is a module singleton by design. */
+export function forgetWorkoutRecaps(): void {
+  spoken.clear();
+}
+
 /** Speak the visible coach recap, ducking external Android media for its duration. */
 export async function speakWorkoutRecap(signals: readonly CoachSignal[]): Promise<void> {
   if (loadAnnouncerMode() !== 'voice') return;

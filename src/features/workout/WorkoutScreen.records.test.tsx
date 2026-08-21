@@ -6,6 +6,7 @@ import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routin
 import { getWorkoutDetail, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import { resetDb } from '@/test/resetDb';
+import { forgetRecordAnnouncements } from './recordAnnouncements';
 
 const { announceMock, listRecordsForWorkoutMock, primeAnnouncerMock } = vi.hoisted(() => ({
   announceMock: vi.fn(),
@@ -32,6 +33,7 @@ describe('WorkoutScreen — reprise des records', () => {
     announceMock.mockReset();
     primeAnnouncerMock.mockReset();
     listRecordsForWorkoutMock.mockReset();
+    forgetRecordAnnouncements();
     await resetDb();
   });
 
@@ -91,5 +93,62 @@ describe('WorkoutScreen — reprise des records', () => {
 
     await waitFor(() => expect(screen.getByText(/Charge max/)).toBeVisible());
     expect(announceMock).not.toHaveBeenCalledWith('record-beaten');
+  });
+
+  it('ne réannonce pas les records en revenant d’un autre écran', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const set = (await getWorkoutDetail(workout.id))?.exercises[0]?.sets[0];
+    if (set === undefined) throw new Error('série absente');
+
+    const entries: RecordTimelineEntry[] = [
+      {
+        record: {
+          id: 'record-current',
+          createdAt: 1,
+          updatedAt: 1,
+          deletedAt: 0,
+          exerciseId: exercise.id,
+          type: 'max_weight',
+          value: 80,
+          achievedAt: 1,
+          workoutId: workout.id,
+          workoutSetId: set.id,
+        },
+        exerciseName: exercise.name,
+        workoutStatus: 'active',
+        previousValue: 70,
+        triggerWorkoutSetId: set.id,
+      },
+    ];
+    listRecordsForWorkoutMock.mockResolvedValue(entries);
+
+    const mount = () =>
+      render(
+        <MemoryRouter initialEntries={['/workout']}>
+          <Routes>
+            <Route path="/workout" element={<WorkoutScreen />} />
+          </Routes>
+        </MemoryRouter>,
+      );
+
+    const first = mount();
+    await screen.findByText(/Charge max/);
+    // Sortie vers un autre écran : le composant est démonté, sa mémoire aussi.
+    first.unmount();
+
+    const second = mount();
+    await screen.findByText(/Charge max/);
+    expect(announceMock).not.toHaveBeenCalledWith('record-beaten');
+    second.unmount();
   });
 });

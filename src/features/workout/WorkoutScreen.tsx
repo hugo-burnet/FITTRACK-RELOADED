@@ -78,6 +78,7 @@ import {
   planWithoutSet,
   type PacePlan,
 } from './paceMachine';
+import { claimNewRecords, recordAnnouncementKeys } from './recordAnnouncements';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -190,25 +191,19 @@ export function WorkoutScreen() {
 
   /**
    * Records arrive from the database a beat after the set that took them, so
-   * the announcement watches the list rather than the validation. The first
-   * reading of a session is the *past* and is never announced: reopening a
-   * workout that already broke three records is not breaking them again.
+   * the announcement watches the list rather than the validation. What has
+   * already been said is remembered outside the component — leaving the screen
+   * and coming back is not a reason to hear the whole session again; cf.
+   * `recordAnnouncements`.
+   *
+   * One word for a batch, not one per record: three records taken by the same
+   * set is one moment, and the announcer's cooldown would swallow the rest
+   * anyway.
    */
-  const seenRecords = useRef<{ workoutId: string; keys: Set<string> } | null>(null);
   useEffect(() => {
     if (workoutId === undefined || recordEntries === undefined) return;
-    const keys = new Set(
-      recordEntries
-        .filter((entry) => entry.previousValue !== undefined)
-        .map((entry) => `${entry.record.id}:${String(entry.record.value)}`),
-    );
-    const seen = seenRecords.current;
-    seenRecords.current = { workoutId, keys };
-    if (seen === null || seen.workoutId !== workoutId) return;
-    for (const key of keys) {
-      if (!seen.keys.has(key)) {
-        announce('record-beaten');
-      }
+    if (claimNewRecords(workoutId, recordAnnouncementKeys(recordEntries)) > 0) {
+      announce('record-beaten');
     }
   }, [workoutId, recordEntries]);
 
