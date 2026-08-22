@@ -40,7 +40,8 @@ type Props = {
   columns: EntryColumn[];
   /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
-  onWrite: (values: Partial<SetValues>) => void;
+  tutorial?: boolean;
+  onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
   onComplete: (values: Partial<SetValues>) => void;
   onUncomplete: () => void;
   onMenu: () => void;
@@ -52,6 +53,7 @@ export function WorkoutSetRow({
   number,
   columns,
   previous,
+  tutorial = false,
   onWrite,
   onComplete,
   onUncomplete,
@@ -61,8 +63,7 @@ export function WorkoutSetRow({
   const Mark = TYPE_MARK[set.setType];
 
   // Never borrow another rank: proposed values may be recorded with one tap.
-  const previousValue = (field: TargetField): number | undefined =>
-    previous?.[FIELD_KEY[field]];
+  const previousValue = (field: TargetField): number | undefined => previous?.[FIELD_KEY[field]];
 
   const valueOf = (field: TargetField): number | undefined => set[FIELD_KEY[field]];
 
@@ -97,8 +98,24 @@ export function WorkoutSetRow({
 
   const previousReading = previous === undefined ? '' : setReading(previous, columns);
 
+  const write = (values: Partial<SetValues>) => {
+    const next: ResolvedValues = { ...resolved };
+    const apply = (field: keyof ResolvedValues, key: keyof SetValues) => {
+      if (!(key in values)) return;
+      const value = values[key];
+      if (typeof value === 'number') next[field] = value;
+      else delete next[field];
+    };
+    apply('weight', 'weight');
+    apply('reps', 'reps');
+    apply('duration', 'durationSeconds');
+    apply('distance', 'distanceMeters');
+    onWrite(values, isSetRecordable(columns, next));
+  };
+
   return (
     <div
+      data-tutorial-id={tutorial ? 'workout-first-set' : undefined}
       className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
@@ -126,7 +143,7 @@ export function WorkoutSetRow({
         type="button"
         disabled={previousReading === ''}
         aria-label={t('workout.previous')}
-        onClick={() => onWrite(collect(previousValue))}
+        onClick={() => write(collect(previousValue))}
         className="metric min-h-12 min-w-0 flex-1 truncate rounded-lg px-1 text-center text-sm
           text-[var(--text-2)] active:bg-[var(--surface-2)] disabled:active:bg-transparent"
       >
@@ -143,7 +160,7 @@ export function WorkoutSetRow({
             target={target}
             // Durations are stored as whole seconds.
             integer={column.field === 'duration'}
-            onChange={(next) => onWrite(single(column.field, next))}
+            onChange={(next) => write(single(column.field, next))}
             width={index === 0 ? WIDTH.first : WIDTH.second}
             // Pair the visually hidden target with its input for screen readers.
             aria-label={[
@@ -159,13 +176,10 @@ export function WorkoutSetRow({
 
       <button
         type="button"
+        data-tutorial-id={tutorial ? 'workout-first-set-complete' : undefined}
         aria-pressed={done}
         disabled={!done && !isSetRecordable(columns, resolved)}
-        aria-label={
-          done
-            ? t('workout.uncomplete', { number })
-            : t('workout.complete', { number })
-        }
+        aria-label={done ? t('workout.uncomplete', { number }) : t('workout.complete', { number })}
         onClick={() =>
           done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))
         }

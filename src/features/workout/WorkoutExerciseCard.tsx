@@ -88,6 +88,7 @@ export type CardEffort = {
 
 type Props = {
   line: WorkoutExerciseDetail;
+  tutorial?: boolean;
   superset?: SupersetPlace;
   rest: CardRest | null;
   /** The metronome running on this card's next set, if any. */
@@ -106,7 +107,7 @@ type Props = {
   onStopPace?: () => void;
   onPlates?: () => void;
   onSetMenu: (set: WorkoutSet, number: number) => void;
-  onWrite: (setId: string, values: Partial<SetValues>) => void;
+  onWrite: (setId: string, values: Partial<SetValues>, recordable: boolean) => void;
   onComplete: (setId: string, values: Partial<SetValues>, set: WorkoutSet) => void;
   onUncomplete: (setId: string) => void;
   onDeleteSet: (setId: string) => void;
@@ -126,6 +127,7 @@ const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
 /** Live-workout exercise card with set entry, records, rest, and supersets. */
 export function WorkoutExerciseCard({
   line,
+  tutorial = false,
   superset,
   rest,
   pace,
@@ -193,7 +195,10 @@ export function WorkoutExerciseCard({
     );
 
   return (
-    <div className={`relative ${superset === undefined ? '' : 'pl-3'}`}>
+    <div
+      data-tutorial-id={rest !== null ? 'workout-rest' : undefined}
+      className={`relative ${superset === undefined ? '' : 'pl-3'}`}
+    >
       {superset !== undefined && (
         <span
           aria-hidden="true"
@@ -424,7 +429,8 @@ export function WorkoutExerciseCard({
                       number={index + 1}
                       columns={columns}
                       previous={previous[index]}
-                      onWrite={(values) => onWrite(set.id, values)}
+                      tutorial={tutorial && index === 0}
+                      onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
                       onComplete={(values) => onComplete(set.id, values, set)}
                       onUncomplete={() => onUncomplete(set.id)}
                       onMenu={() => onSetMenu(set, index + 1)}

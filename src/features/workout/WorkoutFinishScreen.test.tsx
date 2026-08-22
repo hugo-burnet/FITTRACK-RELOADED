@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { saveBodyWeight } from '@/data/repositories/bodyMeasurements';
 import { createCustomExercise } from '@/data/repositories/exercises';
@@ -11,6 +12,8 @@ import {
   getWorkoutDetail,
   startWorkout,
 } from '@/data/repositories/workouts';
+import * as workoutsRepository from '@/data/repositories/workouts';
+import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutFinishScreen } from './WorkoutFinishScreen';
 import { forgetWorkoutRecaps } from './workoutRecapVoice';
@@ -22,20 +25,32 @@ const { speakWorkoutRecapMock } = vi.hoisted(() => ({
 // `claimWorkoutRecap` reste le vrai : c'est lui qui garantit qu'un aller-retour
 // sur cet écran ne fait pas relire la séance, et c'est ce que le test vérifie.
 vi.mock('./workoutRecapVoice', async () => {
-  const actual = await vi.importActual<typeof import('./workoutRecapVoice')>(
-    './workoutRecapVoice',
-  );
+  const actual = await vi.importActual<typeof import('./workoutRecapVoice')>('./workoutRecapVoice');
   return { ...actual, speakWorkoutRecap: speakWorkoutRecapMock };
 });
 
-function renderFinishScreen() {
+function renderFinishScreen(report = vi.fn()) {
   return render(
-    <MemoryRouter initialEntries={['/workout/finish']}>
-      <Routes>
-        <Route path="/workout/finish" element={<WorkoutFinishScreen />} />
-      </Routes>
-    </MemoryRouter>,
+    <TutorialContext.Provider
+      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
+    >
+      <MemoryRouter initialEntries={['/workout/finish']}>
+        <Routes>
+          <Route path="/workout/finish" element={<WorkoutFinishScreen />} />
+        </Routes>
+      </MemoryRouter>
+    </TutorialContext.Provider>,
   );
+}
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
 }
 
 describe('WorkoutFinishScreen', () => {
@@ -43,6 +58,66 @@ describe('WorkoutFinishScreen', () => {
     speakWorkoutRecapMock.mockReset();
     forgetWorkoutRecaps();
     await resetDb();
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('reports workout-saved only after completion is durable and exposes the save anchor', async () => {
+    const workout = await startWorkout('', 'Séance sûre');
+    const gate = deferred<void>();
+    const realFinish = workoutsRepository.finishWorkout;
+    vi.spyOn(workoutsRepository, 'finishWorkout').mockImplementation(async (workoutId) => {
+      await gate.promise;
+      return realFinish(workoutId);
+    });
+    const report = vi.fn();
+    renderFinishScreen(report);
+
+    await screen.findByText('Aucune série validée. Rien ne sera enregistré.');
+    const saveAnchors = document.querySelectorAll('[data-tutorial-id="workout-save"]');
+    expect(saveAnchors).toHaveLength(1);
+    await userEvent.click(saveAnchors[0] as HTMLButtonElement);
+
+    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
+    expect((await db.workouts.get(workout.id))?.status).toBe('active');
+
+    gate.resolve();
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'workout-saved', workoutId: workout.id }),
+    );
+    expect((await db.workouts.get(workout.id))?.status).toBe('completed');
+  });
+
+  it('never reports workout-saved when finishWorkout rejects', async () => {
+    const workout = await startWorkout('', 'Séance en erreur');
+    const finish = vi
+      .spyOn(workoutsRepository, 'finishWorkout')
+      .mockRejectedValueOnce(new Error('IndexedDB unavailable'));
+    const report = vi.fn();
+    renderFinishScreen(report);
+
+    await userEvent.click(
+      (await screen.findByText('Enregistrer la séance')).closest('button') as HTMLButtonElement,
+    );
+    await waitFor(() => expect(finish).toHaveBeenCalledOnce());
+    await Promise.resolve();
+
+    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
+    expect((await db.workouts.get(workout.id))?.status).toBe('active');
+  });
+
+  it('never reports workout-saved from the explicit discard path', async () => {
+    const workout = await startWorkout('', 'Séance abandonnée');
+    const report = vi.fn();
+    renderFinishScreen(report);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Abandonner la séance' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Abandonner' }));
+    await waitFor(async () =>
+      expect((await db.workouts.get(workout.id))?.deletedAt).toBeGreaterThan(0),
+    );
+
+    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
   });
 
   it('affiche le tonnage effectif des exercices au poids du corps', async () => {

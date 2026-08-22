@@ -1858,6 +1858,19 @@ const fr = {
       later: 'Plus tard',
     },
 
+    recovery: {
+      title: 'Séance toujours en cours',
+      body: 'Cette séance a commencé il y a plus de douze heures. Choisis ce que tu veux en faire.',
+      resume: 'Reprendre la séance',
+      finish: 'Voir le bilan et terminer',
+      discard: 'Abandonner la séance',
+      discardTitle: 'Abandonner cette séance ?',
+      discardBodyNone: 'Aucune série validée ne sera conservée.',
+      discardBodyOne: 'La série validée ne sera pas conservée.',
+      discardBody: '{count} séries validées ne seront pas conservées.',
+      discardConfirm: 'Confirmer l’abandon',
+    },
+
     mission: {
       label: 'Mission guidée',
       counter: 'Étape {index} sur {count}',

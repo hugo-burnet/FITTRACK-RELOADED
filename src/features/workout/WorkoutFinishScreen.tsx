@@ -16,6 +16,7 @@ import {
   workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import { announce } from '@/audio/announce';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { partReading, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
@@ -49,6 +50,7 @@ function Reading({ value, label }: { value: ReactNode; label: string }) {
  */
 export function WorkoutFinishScreen() {
   const navigate = useNavigate();
+  const tutorial = useTutorialControls();
   const [confirming, setConfirming] = useState(false);
 
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
@@ -141,8 +143,12 @@ export function WorkoutFinishScreen() {
     void finishWorkout(workout.id)
       // The coach is never a gate. The session is already saved; a failed
       // evaluation must not strand you on this screen with nowhere to go.
-      .then(() => finalizeCoachForWorkout(workout.id).catch(() => undefined))
-      .then(() => navigate('/', { replace: true }));
+      .then(() => {
+        tutorial?.report({ type: 'workout-saved', workoutId: workout.id });
+        return finalizeCoachForWorkout(workout.id).catch(() => undefined);
+      })
+      .then(() => navigate('/', { replace: true }))
+      .catch(() => undefined);
   };
 
   const discard = () => {
@@ -153,7 +159,7 @@ export function WorkoutFinishScreen() {
     <Screen
       title={t('finish.title')}
       onBack={() => void navigate(-1)}
-      footer={<ActionBand label={t('finish.save')} onClick={save} />}
+      footer={<ActionBand label={t('finish.save')} tutorialId="workout-save" onClick={save} />}
     >
       <div className="flex flex-col gap-6">
         <Card padded>
@@ -200,9 +206,7 @@ export function WorkoutFinishScreen() {
             */}
             <Card>
               {coachSignals.map((signal) => {
-                const line = exercises.find(
-                  (item) => item.row.exerciseId === signal.exerciseId,
-                );
+                const line = exercises.find((item) => item.row.exerciseId === signal.exerciseId);
                 const name =
                   line === undefined
                     ? undefined

@@ -35,6 +35,7 @@ import {
 } from '@/data/repositories/coachRecommendations';
 import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import { updateExercise } from '@/data/repositories/exercises';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { SET_TYPES } from '@/data/types';
 import type { PlateLoading, SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
@@ -119,6 +120,7 @@ const EMPTY_LINES: WorkoutExerciseDetail[] = [];
 /** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
   const navigate = useNavigate();
+  const tutorial = useTutorialControls();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
@@ -340,7 +342,14 @@ export function WorkoutScreen() {
         ) : undefined
       }
       footer={
-        <ActionBand label={t('workout.finish')} onClick={() => void navigate('/workout/finish')} />
+        <ActionBand
+          label={t('workout.finish')}
+          tutorialId="workout-finish"
+          onClick={() => {
+            tutorial?.report({ type: 'workout-finish-opened', workoutId: workout.id });
+            void navigate('/workout/finish');
+          }}
+        />
       }
     >
       <div className="flex flex-col gap-2">
@@ -368,12 +377,17 @@ export function WorkoutScreen() {
               keyOf={(line) => line.row.id}
               disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderWorkoutExercises(workout.id, from, to)}
-              renderItem={(line, _index, state) => {
+              renderItem={(line, index, state) => {
                 const config = line.exercise !== undefined ? platesConfigFor(line.exercise) : null;
                 const loads = config !== null ? exerciseLoads(line) : [];
+                const activeRestSetId =
+                  rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
+                    ? rest.setId
+                    : null;
                 return (
                   <WorkoutExerciseCard
                     line={line}
+                    tutorial={index === 0}
                     superset={places.get(line.row.id)}
                     pace={
                       pacer.setId !== null && pacer.rowId === line.row.id
@@ -386,15 +400,19 @@ export function WorkoutScreen() {
                         : undefined
                     }
                     rest={
-                      rest.setId !== null && line.sets.some((set) => set.id === rest.setId)
+                      activeRestSetId !== null
                         ? {
-                            setId: rest.setId,
+                            setId: activeRestSetId,
                             startedAt: rest.startedAt,
                             endsAt: rest.endsAt,
                             onDone: () => {
+                              tutorial?.report({
+                                type: 'rest-finished',
+                                setId: activeRestSetId,
+                              });
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
-                              const paced = pace.startFor(line, rest.setId ?? undefined);
+                              const paced = pace.startFor(line, activeRestSetId);
                               if (paced) return true;
                               const advanced = pace.startFollowing(line);
                               if (!advanced) rest.stop();
@@ -454,12 +472,20 @@ export function WorkoutScreen() {
                         : undefined
                     }
                     onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
-                    onWrite={(setId, values) => {
-                      void updateSetValues(setId, values);
+                    onWrite={(setId, values, recordable) => {
+                      void updateSetValues(setId, values)
+                        .then(() => {
+                          tutorial?.report({ type: 'workout-set-written', setId, recordable });
+                        })
+                        .catch(() => undefined);
                       pace.armFromTypedReps(line, setId, values.reps);
                     }}
                     onComplete={(setId, values, set) => {
-                      void completeSet(setId, values);
+                      void completeSet(setId, values)
+                        .then(() => {
+                          tutorial?.report({ type: 'workout-set-completed', setId });
+                        })
+                        .catch(() => undefined);
                       // The metronome paced this set; the set is over.
                       pace.stop(setId);
                       startRest(line, setId, set.setType);

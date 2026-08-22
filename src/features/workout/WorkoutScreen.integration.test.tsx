@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
@@ -11,7 +11,9 @@ import {
   getWorkoutDetail,
   startWorkoutFromRoutine,
 } from '@/data/repositories/workouts';
+import * as workoutsRepository from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
+import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { applyEffortPrompt } from '@/stores/effortPrompt';
@@ -42,14 +44,28 @@ async function firstSet(workoutId: string): Promise<WorkoutSet> {
   return set;
 }
 
-function renderWorkout() {
+function renderWorkout(report = vi.fn()) {
   return render(
-    <MemoryRouter initialEntries={['/workout']}>
-      <Routes>
-        <Route path="/workout" element={<WorkoutScreen />} />
-      </Routes>
-    </MemoryRouter>,
+    <TutorialContext.Provider
+      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
+    >
+      <MemoryRouter initialEntries={['/workout']}>
+        <Routes>
+          <Route path="/workout" element={<WorkoutScreen />} />
+        </Routes>
+      </MemoryRouter>
+    </TutorialContext.Provider>,
   );
+}
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, resolve, reject };
 }
 
 describe('WorkoutScreen — persistance', () => {
@@ -352,6 +368,187 @@ async function seedTwoSetWorkout(): Promise<string> {
   return workoutId;
 }
 
+describe('WorkoutScreen — tutoriel durable', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    localStorage.clear();
+    await resetDb();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+  });
+
+  it('reports a partial numeric edit as non-recordable and exposes unique first-row anchors', async () => {
+    const workoutId = await seedActiveWorkout();
+    const set = await firstSet(workoutId);
+    const report = vi.fn();
+    renderWorkout(report);
+
+    await screen.findByText('Développé couché');
+    expect(document.querySelectorAll('[data-tutorial-id="workout-first-set"]')).toHaveLength(1);
+    expect(
+      document.querySelectorAll('[data-tutorial-id="workout-first-set-complete"]'),
+    ).toHaveLength(1);
+    expect(document.querySelectorAll('[data-tutorial-id="workout-finish"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-tutorial-id="workout-rest"]')).toHaveLength(0);
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Série 1 — kg' }), '80');
+
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({
+        type: 'workout-set-written',
+        setId: set.id,
+        recordable: false,
+      }),
+    );
+  });
+
+  it('reports a recordable first row only after updateSetValues resolves', async () => {
+    const workoutId = await seedActiveWorkout();
+    const set = await firstSet(workoutId);
+    await db.workoutSets.update(set.id, { weight: 80 });
+    const gate = deferred<void>();
+    const realUpdate = workoutsRepository.updateSetValues;
+    vi.spyOn(workoutsRepository, 'updateSetValues').mockImplementation(async (setId, values) => {
+      await gate.promise;
+      return realUpdate(setId, values);
+    });
+    const report = vi.fn();
+    renderWorkout(report);
+
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Série 1 — reps' }), {
+      target: { value: '10' },
+    });
+    expect(report).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'workout-set-written', recordable: true }),
+    );
+
+    gate.resolve();
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({
+        type: 'workout-set-written',
+        setId: set.id,
+        recordable: true,
+      }),
+    );
+    expect(await firstSet(workoutId)).toMatchObject({ weight: 80, reps: 10 });
+  });
+
+  it('emits no write event when updateSetValues rejects', async () => {
+    await seedActiveWorkout();
+    vi.spyOn(workoutsRepository, 'updateSetValues').mockRejectedValueOnce(
+      new Error('IndexedDB unavailable'),
+    );
+    const report = vi.fn();
+    renderWorkout(report);
+
+    fireEvent.change(await screen.findByRole('textbox', { name: 'Série 1 — kg' }), {
+      target: { value: '80' },
+    });
+    await waitFor(() => expect(workoutsRepository.updateSetValues).toHaveBeenCalledOnce());
+    await Promise.resolve();
+
+    expect(report).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'workout-set-written' }),
+    );
+  });
+
+  it('starts rest immediately but reports completion only after the durable write', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const set = await firstSet(workoutId);
+    await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
+    const gate = deferred<void>();
+    const realComplete = workoutsRepository.completeSet;
+    vi.spyOn(workoutsRepository, 'completeSet').mockImplementation(async (setId, values) => {
+      await gate.promise;
+      return realComplete(setId, values);
+    });
+    const report = vi.fn();
+    renderWorkout(report);
+
+    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+    await userEvent.click(complete);
+
+    expect(useRestTimer.getState().setId).toBe(set.id);
+    expect(report).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'workout-set-completed' }),
+    );
+    await waitFor(() =>
+      expect(document.querySelectorAll('[data-tutorial-id="workout-rest"]')).toHaveLength(1),
+    );
+
+    gate.resolve();
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'workout-set-completed', setId: set.id }),
+    );
+    expect(await firstSet(workoutId)).toMatchObject({ isCompleted: 1 });
+  });
+
+  it('emits no completion event when completeSet rejects while preserving immediate rest', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const set = await firstSet(workoutId);
+    await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
+    vi.spyOn(workoutsRepository, 'completeSet').mockRejectedValueOnce(
+      new Error('IndexedDB unavailable'),
+    );
+    const report = vi.fn();
+    renderWorkout(report);
+
+    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+    await userEvent.click(complete);
+    await waitFor(() => expect(workoutsRepository.completeSet).toHaveBeenCalledOnce());
+
+    expect(useRestTimer.getState().setId).toBe(set.id);
+    expect(report).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'workout-set-completed' }),
+    );
+  });
+
+  it('reports the exact resting set when its countdown finishes', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const set = await firstSet(workoutId);
+    await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
+    const report = vi.fn();
+    renderWorkout(report);
+
+    const complete = await screen.findByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(complete).toBeEnabled());
+    await userEvent.click(complete);
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'workout-set-completed', setId: set.id }),
+    );
+    report.mockClear();
+
+    act(() => useRestTimer.getState().start(set.id, 0.05));
+
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'rest-finished', setId: set.id }),
+    );
+  });
+
+  it('reports opening the finish screen from its unique footer anchor', async () => {
+    const workoutId = await seedActiveWorkout();
+    const report = vi.fn();
+    renderWorkout(report);
+
+    await screen.findByText('Développé couché');
+    const finish = document.querySelector(
+      '[data-tutorial-id="workout-finish"]',
+    ) as HTMLButtonElement | null;
+    expect(finish).not.toBeNull();
+    await userEvent.click(finish!);
+
+    expect(report).toHaveBeenCalledWith({ type: 'workout-finish-opened', workoutId });
+  });
+});
+
 describe('WorkoutScreen — effort et fatigue', () => {
   beforeEach(async () => {
     useRestTimer.getState().stop();
@@ -500,10 +697,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(useRepPacer.getState().setId).toBeNull();
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '10');
 
-    await waitFor(
-      () => expect(useRepPacer.getState().setId).toBe(first.id),
-      { timeout: 2_000 },
-    );
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(first.id), { timeout: 2_000 });
     expect(useRepPacer.getState().reps).toBe(10);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
@@ -538,10 +732,9 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await screen.findByText('Tirage horizontal');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '12');
 
-    await waitFor(
-      () => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id),
-      { timeout: 2_000 },
-    );
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id), {
+      timeout: 2_000,
+    });
     expect(useRepPacer.getState().reps).toBe(12);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
   });
@@ -641,10 +834,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     expect(useRepPacer.getState().setId).toBeNull();
 
     await user.type(screen.getByRole('textbox', { name: 'Série 2 — reps' }), '10');
-    await waitFor(
-      () => expect(useRepPacer.getState().setId).toBe(second.id),
-      { timeout: 2_000 },
-    );
+    await waitFor(() => expect(useRepPacer.getState().setId).toBe(second.id), { timeout: 2_000 });
     expect(useRepPacer.getState().reps).toBe(10);
     expect(useRepPacer.getState().startedAt - Date.now()).toBeGreaterThan(8_000);
     expect(screen.getByText(/Départ · 10/)).toBeVisible();
