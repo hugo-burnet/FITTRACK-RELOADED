@@ -106,4 +106,45 @@ describe('sauvegarde complète', () => {
     expect(localStorage.getItem('fittrack:theme')).toBe('dark');
     expect(localStorage.getItem('evil')).toBeNull();
   });
+
+  /**
+   * Le fichier écrit avant la version 9 du schéma porte des exercices perso
+   * sans coefficient — et un coefficient absent vaut zéro au tonnage. Aucune
+   * migration Dexie ne passe sur une restauration : le numéro de version de la
+   * base ne bouge pas. C'est `restoreBackup` qui doit rattraper, ou personne.
+   */
+  it('remet à niveau un fichier écrit sous un schéma plus ancien', async () => {
+    await seedAccount();
+    const backup = await buildBackup();
+    const pullUp = {
+      id: 'ex-traction',
+      createdAt: 1,
+      updatedAt: 1,
+      deletedAt: 0,
+      name: 'Traction',
+      primaryMuscle: 'lats',
+      secondaryMuscles: ['biceps'],
+      equipment: 'bodyweight',
+      measurementType: 'reps_only',
+      isCustom: 1,
+      isUnilateral: 0,
+    };
+    backup.tables.exercises = [...backup.tables.exercises, pullUp];
+    backup.app.schemaVersion = 8;
+
+    await restoreBackup(backup);
+
+    expect((await db.exercises.get('ex-traction'))?.bodyweightLoadFactor).toBe(1);
+  });
+
+  it('ne retouche rien quand le fichier vient du schéma courant', async () => {
+    await seedAccount();
+    const backup = await buildBackup();
+    const untouched = structuredClone(backup.tables);
+
+    await restoreBackup(backup);
+
+    const after = await buildBackup(backup.exportedAt);
+    expect(after.tables).toEqual(untouched);
+  });
 });

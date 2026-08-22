@@ -8,5 +8,6 @@ export {
   totalRows,
 } from './types';
 export type { BackupCounts, BackupFile, BackupRow, BackupTable } from './types';
+export { CURRENT_SCHEMA_VERSION, backfillBackupTables } from './backfill';
 export { parseBackup } from './parse';
 export type { BackupParse, BackupProblem } from './parse';

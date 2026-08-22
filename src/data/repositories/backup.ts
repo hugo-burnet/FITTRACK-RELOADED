@@ -3,6 +3,7 @@ import {
   BACKUP_FORMAT,
   BACKUP_TABLES,
   BACKUP_VERSION,
+  backfillBackupTables,
   backupCounts,
   type BackupCounts,
   type BackupFile,
@@ -87,17 +88,26 @@ export async function buildBackup(now = Date.now()): Promise<BackupFile> {
  * `photoBlobs` is left alone: the format does not carry binaries, and wiping a
  * table a backup cannot refill would destroy what it was meant to protect.
  *
+ * **The rows are brought up to the running schema first.** Dexie's `upgrade()`
+ * blocks fire on a change of *version number*, which a restore does not cause —
+ * so an older file's rows would otherwise land in a current database having
+ * been seen by no migration at all, then or ever. `backfillBackupTables` is the
+ * one place that answers for it; `app.schemaVersion` is what tells it how far
+ * back to reach, and the file has said so since the format shipped.
+ *
  * The caller reloads the app afterwards. Live queries would catch up on their
  * own, but the preferences are read once into module memory (the announcer, the
  * theme), and a restored setting that only takes effect at the next launch is
  * a setting that looks broken.
  */
 export async function restoreBackup(backup: BackupFile): Promise<BackupCounts> {
+  const tables = backfillBackupTables(backup.tables, backup.app.schemaVersion);
+
   await db.transaction('rw', BACKUP_TABLES.map(tableOf), async () => {
     for (const name of BACKUP_TABLES) {
       const table = tableOf(name);
       await table.clear();
-      const rows = backup.tables[name] ?? [];
+      const rows = tables[name] ?? [];
       if (rows.length > 0) await table.bulkPut(rows);
     }
   });
