@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { buildBackup, restoreBackup } from '@/data/repositories/backup';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t, type TranslationKey } from '@/i18n/fr';
 import {
   backupFileName,
@@ -45,12 +46,11 @@ export function BackupActions({
 }: {
   reload?: () => void;
 } = {}) {
+  const tutorial = useTutorialControls();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
-  const [pending, setPending] = useState<{ backup: BackupFile; counts: BackupCounts } | null>(
-    null,
-  );
+  const [pending, setPending] = useState<{ backup: BackupFile; counts: BackupCounts } | null>(null);
 
   const fail = (key: TranslationKey) => setNotice({ text: t(key), failed: true });
 
@@ -67,8 +67,11 @@ export function BackupActions({
         title: t('settings.backupExportTitle'),
       });
       if (outcome === 'failed') fail('settings.backupExportFailed');
-      else if (outcome === 'downloaded') {
-        setNotice({ text: t('settings.backupExportDownloaded'), failed: false });
+      else if (outcome === 'shared' || outcome === 'downloaded') {
+        tutorial?.report({ type: 'backup-exported', outcome });
+        if (outcome === 'downloaded') {
+          setNotice({ text: t('settings.backupExportDownloaded'), failed: false });
+        }
       }
     } catch {
       fail('settings.backupExportFailed');
@@ -92,6 +95,7 @@ export function BackupActions({
       return;
     }
     setPending({ backup: parsed.backup, counts: parsed.counts });
+    tutorial?.report({ type: 'restore-confirmation-opened' });
   };
 
   const confirm = () => {
@@ -116,12 +120,14 @@ export function BackupActions({
       <SectionTitle>{t('settings.backupSection')}</SectionTitle>
       <div className="overflow-hidden rounded-2xl bg-[var(--surface-1)]">
         <ListRow
+          tutorialId="backup-export"
           title={t('settings.backupExportLink')}
           subtitle={t('settings.backupExportHint')}
           disabled={busy}
           onClick={() => void save()}
         />
         <ListRow
+          tutorialId="backup-restore"
           title={t('settings.backupImportLink')}
           subtitle={t('settings.backupImportHint')}
           disabled={busy}
