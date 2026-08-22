@@ -16,23 +16,36 @@ import {
   getRoutineDetail,
   listRoutineSummaries,
 } from '@/data/repositories/routines';
+import * as routinesRepository from '@/data/repositories/routines';
+import { getActiveWorkout } from '@/data/repositories/workouts';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { resetDb } from '@/test/resetDb';
+import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { ExercisePickerScreen } from './ExercisePickerScreen';
 import { RoutineEditorScreen } from './RoutineEditorScreen';
 import { RoutinesScreen } from './RoutinesScreen';
 
-function renderRoutineFlow(initialEntry = '/routines') {
+function renderRoutineFlow(initialEntry = '/routines', report = vi.fn()) {
   return render(
-    <MemoryRouter initialEntries={[initialEntry]}>
-      <Routes>
-        <Route path="/routines" element={<RoutinesScreen />} />
-        <Route path="/routines/:id" element={<RoutineEditorScreen />} />
-        <Route path="/routines/:id/add" element={<ExercisePickerScreen />} />
-        <Route path="/programs" element={<p>Liste des programmes</p>} />
-      </Routes>
-    </MemoryRouter>,
+    <TutorialContext.Provider
+      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
+    >
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <Routes>
+          <Route path="/routines" element={<RoutinesScreen />} />
+          <Route path="/routines/:id" element={<RoutineEditorScreen />} />
+          <Route path="/routines/:id/add" element={<ExercisePickerScreen />} />
+          <Route path="/programs" element={<p>Liste des programmes</p>} />
+        </Routes>
+      </MemoryRouter>
+    </TutorialContext.Provider>,
   );
+}
+
+function reportedEvent<T extends string>(report: ReturnType<typeof vi.fn>, type: T) {
+  const event = report.mock.calls.map(([value]) => value).find((value) => value.type === type);
+  expect(event).toBeDefined();
+  return event;
 }
 
 describe('parcours de composition d’une routine', () => {
@@ -45,6 +58,163 @@ describe('parcours de composition d’une routine', () => {
   });
 
   afterEach(() => vi.restoreAllMocks());
+
+  it('reports routine creation only after a successful repository write and exposes the picker anchor', async () => {
+    const report = vi.fn();
+    const user = userEvent.setup();
+    renderRoutineFlow('/routines', report);
+
+    expect(document.querySelectorAll('[data-tutorial-id="routine-create"]')).toHaveLength(1);
+    await user.click(screen.getByRole('button', { name: 'Nouvelle routine' }));
+    await user.click(screen.getByRole('button', { name: 'Routine vide' }));
+
+    await waitFor(() => expect(reportedEvent(report, 'routine-created')).toBeDefined());
+    const created = reportedEvent(report, 'routine-created');
+    expect(created).toEqual({ type: 'routine-created', routineId: expect.any(String) });
+    expect((await getRoutineDetail(created.routineId))?.routine.id).toBe(created.routineId);
+    await screen.findByRole('textbox', { name: 'Nom de la routine' });
+    expect(document.querySelectorAll('[data-tutorial-id="routine-add-exercise"]')).toHaveLength(1);
+  });
+
+  it('does not report or navigate when routine creation is rejected', async () => {
+    const report = vi.fn();
+    const user = userEvent.setup();
+    const failure = new Error('IndexedDB unavailable');
+    const create = vi.spyOn(routinesRepository, 'createRoutine').mockRejectedValueOnce(failure);
+    renderRoutineFlow('/routines', report);
+
+    await user.click(screen.getByRole('button', { name: 'Nouvelle routine' }));
+    await user.click(screen.getByRole('button', { name: 'Routine vide' }));
+    await waitFor(() => expect(create).toHaveBeenCalledOnce());
+    await Promise.resolve();
+
+    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'routine-created' }));
+    expect(screen.queryByRole('textbox', { name: 'Nom de la routine' })).not.toBeInTheDocument();
+    expect(document.querySelector('[data-tutorial-id="routine-add-exercise"]')).toBeNull();
+  });
+
+  it('reports persisted routine configuration events with exact IDs and values', async () => {
+    const first = await createCustomExercise({
+      name: 'Développé guidé',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const second = await createCustomExercise({
+      name: 'Écarté à la machine',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    const report = vi.fn();
+    const user = userEvent.setup();
+    renderRoutineFlow(`/routines/${routine.id}`, report);
+
+    await screen.findByRole('textbox', { name: 'Nom de la routine' });
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'routine-opened', routineId: routine.id }),
+    );
+    expect(
+      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'routine-opened'),
+    ).toEqual([{ type: 'routine-opened', routineId: routine.id }]);
+
+    await user.click(screen.getByRole('button', { name: 'Ajouter un exercice' }));
+    await user.click(await screen.findByRole('checkbox', { name: new RegExp(first.name) }));
+    await user.click(screen.getByRole('checkbox', { name: new RegExp(second.name) }));
+    await user.click(screen.getByRole('button', { name: 'Ajouter 2 exercices' }));
+    await screen.findByRole('textbox', { name: 'Nom de la routine' });
+
+    await waitFor(() => {
+      expect(reportedEvent(report, 'routine-exercise-added')).toEqual({
+        type: 'routine-exercise-added',
+        routineId: routine.id,
+        count: 2,
+      });
+    });
+    expect(
+      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'routine-opened'),
+    ).toEqual([
+      { type: 'routine-opened', routineId: routine.id },
+      { type: 'routine-opened', routineId: routine.id },
+    ]);
+    report.mockClear();
+    expect(document.querySelectorAll('[data-tutorial-id="routine-add-exercise"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-tutorial-id="routine-first-set"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-tutorial-id="routine-exercise-menu"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-tutorial-id="routine-add-set"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-tutorial-id="routine-start"]')).toHaveLength(1);
+
+    await user.click(
+      document.querySelector('[data-tutorial-id="routine-add-set"]') as HTMLButtonElement,
+    );
+    await waitFor(async () => {
+      const detail = await getRoutineDetail(routine.id);
+      expect(detail?.exercises[0]?.sets).toHaveLength(2);
+    });
+    const addedSet = reportedEvent(report, 'routine-set-added');
+    expect(addedSet).toEqual({
+      type: 'routine-set-added',
+      routineId: routine.id,
+      setId: expect.any(String),
+    });
+    const detailAfterSet = await getRoutineDetail(routine.id);
+    expect(detailAfterSet?.exercises[0]?.sets.map((set) => set.id)).toContain(addedSet.setId);
+
+    await user.click(
+      document.querySelector('[data-tutorial-id="routine-first-set"]') as HTMLButtonElement,
+    );
+    await user.click(screen.getAllByRole('button', { name: 'Augmenter' })[0] as HTMLButtonElement);
+    await waitFor(async () => {
+      const detail = await getRoutineDetail(routine.id);
+      expect(detail?.exercises[0]?.sets[0]?.targetReps).toBe(1);
+      expect(reportedEvent(report, 'routine-target-updated')).toEqual({
+        type: 'routine-target-updated',
+        routineId: routine.id,
+      });
+    });
+    await user.click(screen.getByRole('button', { name: 'Appliquer à toutes les séries' }));
+    await waitFor(async () => {
+      const detail = await getRoutineDetail(routine.id);
+      expect(detail?.exercises[0]?.sets[1]?.targetReps).toBe(1);
+      expect(
+        report.mock.calls
+          .map(([event]) => event)
+          .filter((event) => event.type === 'routine-target-updated'),
+      ).toHaveLength(2);
+    });
+
+    await user.click(
+      document.querySelector('[data-tutorial-id="routine-exercise-menu"]') as HTMLButtonElement,
+    );
+    await user.click(screen.getByRole('button', { name: '1:30' }));
+    await waitFor(async () => {
+      const detail = await getRoutineDetail(routine.id);
+      expect(detail?.exercises[0]?.row.restSeconds).toBe(90);
+      expect(reportedEvent(report, 'routine-rest-updated')).toEqual({
+        type: 'routine-rest-updated',
+        routineId: routine.id,
+        seconds: 90,
+      });
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Démarrer' }));
+    await waitFor(async () => {
+      const workout = await getActiveWorkout();
+      expect(reportedEvent(report, 'workout-started')).toEqual({
+        type: 'workout-started',
+        workoutId: workout?.id,
+        routineId: routine.id,
+      });
+    });
+    expect(
+      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'routine-opened'),
+    ).toEqual([]);
+  });
 
   it('persiste la routine complète après un remontage de la liste', async () => {
     const exercise = await createCustomExercise({
@@ -124,9 +294,7 @@ describe('parcours de composition d’une routine', () => {
       screen.queryByRole('button', { name: `Déplacer ${first.name}` }),
     ).not.toBeInTheDocument();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }));
     const firstHandle = screen.getByRole('button', { name: `Déplacer ${first.name}` });
     fireEvent.keyDown(firstHandle, { key: 'ArrowDown' });
 
@@ -136,13 +304,9 @@ describe('parcours de composition d’une routine', () => {
 
     mounted.unmount();
     renderRoutineFlow(`/routines/${routine.id}`);
-    expect(
-      await screen.findByRole('button', { name: `Déplacer ${second.name}` }),
-    ).toBeVisible();
+    expect(await screen.findByRole('button', { name: `Déplacer ${second.name}` })).toBeVisible();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }));
     expect(
       screen.queryByRole('button', { name: `Déplacer ${second.name}` }),
     ).not.toBeInTheDocument();

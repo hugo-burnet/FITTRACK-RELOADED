@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -20,6 +20,7 @@ import type { RoutineExerciseDetail, RoutineSetTargets } from '@/data/repositori
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import type { RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import {
@@ -63,6 +64,8 @@ type SheetState =
 export function RoutineEditorScreen() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
+  const tutorial = useTutorialControls();
+  const report = tutorial?.report;
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.routine);
   const toggleReorder = useExerciseOrderLock((state) => state.toggle);
@@ -82,7 +85,10 @@ export function RoutineEditorScreen() {
   const running = active != null;
 
   const start = () => {
-    void startWorkoutFromRoutine(id).then(() => navigate('/workout'));
+    void startWorkoutFromRoutine(id).then((workout) => {
+      report?.({ type: 'workout-started', workoutId: workout.id, routineId: id });
+      navigate('/workout');
+    });
   };
 
   /**
@@ -99,6 +105,12 @@ export function RoutineEditorScreen() {
       subtitle: detail.routine.subtitle ?? '',
     });
   }
+
+  useEffect(() => {
+    if (detail?.routine.id === id) {
+      report?.({ type: 'routine-opened', routineId: id });
+    }
+  }, [detail?.routine.id, id, report]);
 
   const goBack = () => {
     // React Router's own history index, not `location.key`: arriving here through
@@ -126,6 +138,40 @@ export function RoutineEditorScreen() {
   }
 
   const { routine, exercises } = detail;
+
+  const reportTargetUpdate = (changes: RoutineSetTargets) => {
+    const hasTarget = Object.entries(changes).some(
+      ([key, value]) => key.startsWith('target') && typeof value === 'number',
+    );
+    if (hasTarget) report?.({ type: 'routine-target-updated', routineId: routine.id });
+  };
+
+  const saveSetTargets = (setId: string, changes: RoutineSetTargets) => {
+    void updateRoutineSet(setId, changes).then(() => {
+      reportTargetUpdate(changes);
+    });
+  };
+
+  const applySetTargets = (rowId: string, changes: RoutineSetTargets) => {
+    void applyToAllSets(rowId, changes).then(() => {
+      reportTargetUpdate(changes);
+    });
+  };
+
+  const saveExerciseChanges = (
+    rowId: string,
+    changes: { restSeconds?: number; notes?: string },
+  ) => {
+    void updateRoutineExercise(rowId, changes).then(() => {
+      if (changes.restSeconds !== undefined) {
+        report?.({
+          type: 'routine-rest-updated',
+          routineId: routine.id,
+          seconds: changes.restSeconds,
+        });
+      }
+    });
+  };
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const setCount = exercises.reduce((total, line) => total + line.sets.length, 0);
 
@@ -144,8 +190,7 @@ export function RoutineEditorScreen() {
   const folderName =
     routine.folderId === ''
       ? t('routines.noFolder')
-      : (folders?.find((folder) => folder.id === routine.folderId)?.name ??
-        t('routines.noFolder'));
+      : (folders?.find((folder) => folder.id === routine.folderId)?.name ?? t('routines.noFolder'));
 
   return (
     <Screen
@@ -168,6 +213,7 @@ export function RoutineEditorScreen() {
         running ? undefined : (
           <ActionBand
             label={t('routine.start')}
+            tutorialId="routine-start"
             // Une routine sans exercice démarrerait une séance vide sous un nom
             // qui promet des exercices. L'état vide dit déjà quoi faire.
             disabled={active === undefined || exercises.length === 0}
@@ -241,12 +287,13 @@ export function RoutineEditorScreen() {
               keyOf={(line) => line.row.id}
               disabled={!reorderUnlocked}
               onReorder={(from, to) => void reorderRoutineExercises(routine.id, from, to)}
-              renderItem={(line, _index, state) => (
+              renderItem={(line, index, state) => (
                 <RoutineExerciseCard
                   line={line}
                   superset={places.get(line.row.id)}
                   state={state}
                   reorderEnabled={reorderUnlocked}
+                  tutorial={index === 0}
                   onMenu={() => setSheet({ kind: 'exercise', rowId: line.row.id })}
                   onOpenSet={(set) =>
                     setSheet({
@@ -257,7 +304,11 @@ export function RoutineEditorScreen() {
                     })
                   }
                   onDeleteSet={(set) => void deleteRoutineSet(set.id)}
-                  onAddSet={() => void addRoutineSet(line.row.id)}
+                  onAddSet={() => {
+                    void addRoutineSet(line.row.id).then((set) => {
+                      report?.({ type: 'routine-set-added', routineId: routine.id, setId: set.id });
+                    });
+                  }}
                 />
               )}
             />
@@ -271,6 +322,7 @@ export function RoutineEditorScreen() {
         <Card>
           <AddRow
             label={t('routine.addExercise')}
+            tutorialId="routine-add-exercise"
             onClick={() => void navigate(`/routines/${routine.id}/add`)}
           />
         </Card>
@@ -294,7 +346,7 @@ export function RoutineEditorScreen() {
           exercises.findIndex((line) => line.row.id === sheet.rowId) > 0
         }
         onWrite={(changes) => {
-          if (sheet?.kind === 'exercise') void updateRoutineExercise(sheet.rowId, changes);
+          if (sheet?.kind === 'exercise') saveExerciseChanges(sheet.rowId, changes);
         }}
         onGroup={() => {
           if (sheet?.kind === 'exercise') void groupWithPrevious(routine.id, sheet.rowId);
@@ -318,10 +370,10 @@ export function RoutineEditorScreen() {
         }
         number={sheet?.kind === 'set' ? sheet.number : 1}
         onSave={(changes: RoutineSetTargets) => {
-          if (sheet?.kind === 'set') void updateRoutineSet(sheet.setId, changes);
+          if (sheet?.kind === 'set') saveSetTargets(sheet.setId, changes);
         }}
         onApplyToAll={(changes: RoutineSetTargets) => {
-          if (sheet?.kind === 'set') void applyToAllSets(sheet.rowId, changes);
+          if (sheet?.kind === 'set') applySetTargets(sheet.rowId, changes);
         }}
         onDelete={() => {
           if (sheet?.kind === 'set') void deleteRoutineSet(sheet.setId);

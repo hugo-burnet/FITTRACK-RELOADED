@@ -14,6 +14,7 @@ type Props = {
   superset?: SupersetPlace;
   state: ItemState;
   reorderEnabled: boolean;
+  tutorial?: boolean;
   onMenu: () => void;
   onOpenSet: (set: RoutineSet) => void;
   onDeleteSet: (set: RoutineSet) => void;
@@ -53,6 +54,7 @@ function SetRow({
   measurementType,
   number,
   last,
+  tutorial,
   onOpen,
 }: {
   set: RoutineSet;
@@ -64,6 +66,7 @@ function SetRow({
    * be dropped with `last:border-b-0`; it is driven here instead.
    */
   last: boolean;
+  tutorial?: boolean;
   onOpen: () => void;
 }) {
   const parts = targetParts(measurementType, set);
@@ -71,6 +74,7 @@ function SetRow({
   return (
     <button
       type="button"
+      data-tutorial-id={tutorial && number === 1 ? 'routine-first-set' : undefined}
       onClick={onOpen}
       className={`flex min-h-12 w-full items-center gap-3 px-4 py-2 text-left
         transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
@@ -139,6 +143,7 @@ export function RoutineExerciseCard({
   superset,
   state,
   reorderEnabled,
+  tutorial = false,
   onMenu,
   onOpenSet,
   onDeleteSet,
@@ -221,6 +226,7 @@ export function RoutineExerciseCard({
 
           <button
             type="button"
+            data-tutorial-id={tutorial ? 'routine-exercise-menu' : undefined}
             aria-label={`${t('routine.exerciseSheetTitle')} — ${name}`}
             onClick={onMenu}
             className="flex w-12 shrink-0 items-center justify-center text-[var(--text-2)]
@@ -247,12 +253,17 @@ export function RoutineExerciseCard({
               measurementType={exercise?.measurementType ?? 'weight_reps'}
               number={index + 1}
               last={index === sets.length - 1}
+              tutorial={tutorial}
               onOpen={() => onOpenSet(set)}
             />
           </SwipeToDelete>
         ))}
 
-        <AddRow label={t('routine.addSet')} onClick={onAddSet} />
+        <AddRow
+          label={t('routine.addSet')}
+          tutorialId={tutorial ? 'routine-add-set' : undefined}
+          onClick={onAddSet}
+        />
       </div>
 
       {row.notes !== undefined && row.notes !== '' && (

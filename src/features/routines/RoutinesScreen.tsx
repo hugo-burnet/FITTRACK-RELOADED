@@ -19,6 +19,7 @@ import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/w
 import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTemplates';
 import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionSheet, ConfirmSheet, HeaderAction, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
 import { PlusIcon } from '@/ui/icons';
@@ -39,6 +40,7 @@ type SheetState =
 
 export function RoutinesScreen() {
   const navigate = useNavigate();
+  const tutorial = useTutorialControls();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);
   const [sheet, setSheet] = useState<SheetState | null>(null);
@@ -46,7 +48,12 @@ export function RoutinesScreen() {
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);
 
   const startBlank = () => {
-    void createRoutine(t('routines.defaultName')).then(openEditor);
+    void createRoutine(t('routines.defaultName'))
+      .then((routine) => {
+        tutorial?.report({ type: 'routine-created', routineId: routine.id });
+        openEditor(routine);
+      })
+      .catch(() => undefined);
   };
 
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
@@ -58,7 +65,10 @@ export function RoutinesScreen() {
    * qu'un menu sait dire (`hint`) et qu'un bouton qui redirige ne dit pas.
    */
   const start = (routineId: string) => {
-    void startWorkoutFromRoutine(routineId).then(() => navigate('/workout'));
+    void startWorkoutFromRoutine(routineId).then((workout) => {
+      tutorial?.report({ type: 'workout-started', workoutId: workout.id, routineId });
+      navigate('/workout');
+    });
   };
 
   const folderOptions: Option<string>[] = [
@@ -110,7 +120,11 @@ export function RoutinesScreen() {
               </span>
             </p>
           )}
-          <HeaderAction label={t('routines.create')} onClick={() => setSheet({ kind: 'create' })}>
+          <HeaderAction
+            label={t('routines.create')}
+            tutorialId="routine-create"
+            onClick={() => setSheet({ kind: 'create' })}
+          >
             <PlusIcon />
           </HeaderAction>
         </div>

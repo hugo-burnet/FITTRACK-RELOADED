@@ -5,6 +5,7 @@ import { addExercisesToRoutine } from '@/data/repositories/routines';
 import { ExerciseBrowser } from '@/features/exercises/ExerciseBrowser';
 import type { BrowserQuery } from '@/features/exercises/ExerciseBrowser';
 import { t } from '@/i18n/fr';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionBand } from '@/ui';
 
 /**
@@ -22,6 +23,7 @@ import { ActionBand } from '@/ui';
 export function ExercisePickerScreen() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
+  const tutorial = useTutorialControls();
 
   const [query, setQuery] = useState<BrowserQuery>({ search: '' });
   const [selected, setSelected] = useState<string[]>([]);
@@ -35,7 +37,10 @@ export function ExercisePickerScreen() {
 
   const add = () => {
     // Added in the order they were tapped, which is the order they were meant.
-    void addExercisesToRoutine(id, selected).then(() => navigate(-1));
+    void addExercisesToRoutine(id, selected).then(() => {
+      tutorial?.report({ type: 'routine-exercise-added', routineId: id, count: selected.length });
+      navigate(-1);
+    });
   };
 
   return (
