@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { HomeDashboardData, SuggestedRoutine } from '@/data/repositories/home';
 import { startWorkoutFromRoutine } from '@/data/repositories/workouts';
@@ -6,10 +6,8 @@ import { t } from '@/i18n/fr';
 import { routineSummaryLine } from '@/features/routines/summary';
 import { Button, Card } from '@/ui';
 import { FolderSwitchIcon } from '@/ui/icons';
-import {
-  HomeRoutineContextSheet,
-  routineContextOptionLabel,
-} from './HomeRoutineContextSheet';
+import { HomeRoutineContextSheet } from './HomeRoutineContextSheet';
+import { routineContextOptionLabel } from './homeRoutineContextPresentation';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
 
@@ -58,18 +56,26 @@ interface Props {
  * récemment — et la règle est écrite sous le titre. La routine n'est jamais
  * modifiée par cet écran : proposer, c'est tout ce que fait cette carte.
  */
-export function HomeSuggestionCard({
+function routineContextEpisodeKey(routineContext: HomeDashboardData['routineContext']): string {
+  return JSON.stringify({
+    required: routineContext.required,
+    selected: routineContext.selected,
+    optionValues: routineContext.options.map((option) => option.value),
+  });
+}
+
+export function HomeSuggestionCard(props: Props) {
+  return <HomeSuggestionCardContent key={routineContextEpisodeKey(props.routineContext)} {...props} />;
+}
+
+function HomeSuggestionCardContent({
   suggestion,
   routineCount,
   disabled,
   routineContext,
 }: Props) {
   const navigate = useNavigate();
-  const [contextSheetOpen, setContextSheetOpen] = useState(false);
-
-  useEffect(() => {
-    if (routineContext.required) setContextSheetOpen(true);
-  }, [routineContext.required]);
+  const [contextSheetOpen, setContextSheetOpen] = useState(() => routineContext.required);
 
   const selectedContext = routineContext.options.find(
     (option) => option.value === routineContext.selected,

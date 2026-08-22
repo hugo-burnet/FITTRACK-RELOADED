@@ -4,6 +4,7 @@ import { setRoutineFolderContext } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
 import { Sheet } from '@/ui';
 import { CheckIcon } from '@/ui/icons';
+import { routineContextOptionLabel } from './homeRoutineContextPresentation';
 
 type RoutineContext = HomeDashboardData['routineContext'];
 
@@ -12,12 +13,6 @@ interface Props {
   value: RoutineContext['selected'];
   options: RoutineContext['options'];
   onClose: () => void;
-}
-
-export function routineContextOptionLabel(
-  option: RoutineContext['options'][number],
-): string {
-  return option.value === 'root' ? t('home.rootRoutineFolder') : option.label;
 }
 
 /**

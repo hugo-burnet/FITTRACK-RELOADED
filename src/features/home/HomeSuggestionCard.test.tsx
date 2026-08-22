@@ -74,6 +74,36 @@ describe('HomeSuggestionCard routine folder context', () => {
     expect(screen.queryByRole('dialog', { name: 'Choisir un dossier' })).not.toBeInTheDocument();
   });
 
+  it('opens the picker for a new required context after a dismissal', async () => {
+    const user = userEvent.setup();
+    const requiredContext = context({ required: true, selected: null });
+    const view = renderCard({ suggestion: null, routineContext: requiredContext });
+
+    const dialog = await screen.findByRole('dialog', { name: 'Choisir un dossier' });
+    await user.click(screen.getAllByRole('button', { name: 'Fermer' }).at(-1)!);
+    fireEvent.transitionEnd(dialog);
+
+    view.rerender(
+      <MemoryRouter>
+        <HomeSuggestionCard
+          suggestion={null}
+          routineCount={3}
+          disabled={false}
+          routineContext={context({
+            required: true,
+            selected: null,
+            options: [
+              ...options,
+              { value: 'folder:pull', label: 'Bureau', routineCount: 1 },
+            ],
+          })}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('dialog', { name: 'Choisir un dossier' })).toBeVisible();
+  });
+
   it('shows the selected context and opens its change action', async () => {
     const user = userEvent.setup();
     renderCard();
