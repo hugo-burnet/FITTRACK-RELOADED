@@ -8,8 +8,9 @@ import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import type { CoachRecommendation, PersonalRecordType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
-import { entryColumns } from '@/lib/measurement';
+import { entryColumns, isTimedMeasurement } from '@/lib/measurement';
 import type { SupersetPlace } from '@/lib/routineOrder';
+import type { HoldTimer } from '@/stores/holdTimer';
 import type { RepPacer } from '@/stores/repPacer';
 import { AddRow, SwipeToDelete, UndoRow } from '@/ui';
 import type { ItemState } from '@/ui';
@@ -27,6 +28,7 @@ import { CoachCard } from './CoachCard';
 import { EffortStrip } from './EffortStrip';
 import { recommendationAsSignal } from './coachCopy';
 import { RecordNote } from './RecordNote';
+import { HoldRail } from './HoldRail';
 import { RepPaceRail } from './RepPaceRail';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
@@ -81,6 +83,14 @@ export type CardRest = {
 
 export type CardPace = RepPacer & { setId: string; onFinished: () => void };
 
+/**
+ * Le chrono qui tourne sur une série de cette carte, s'il y en a un.
+ *
+ * Pas de `onFinished` ici, et c'est le fond du sujet : un maintien ne se termine
+ * pas tout seul. Il s'arrête quand celui qui tient relâche et valide.
+ */
+export type CardHold = HoldTimer & { setId: string };
+
 /** The effort question waiting under one validated set. */
 export type CardEffort = {
   setId: string;
@@ -95,6 +105,8 @@ type Props = {
   rest: CardRest | null;
   /** The metronome running on this card's next set, if any. */
   pace: CardPace | null;
+  /** Le chrono de maintien de cette carte, si une série est tenue. */
+  hold: CardHold | null;
   /** The effort strip, when the set it belongs to is on this card. */
   effort: CardEffort | null;
   /** Persisted improvements keyed by the set that triggered them. */
@@ -133,6 +145,7 @@ export function WorkoutExerciseCard({
   superset,
   rest,
   pace,
+  hold,
   effort,
   records,
   state,
@@ -157,6 +170,10 @@ export function WorkoutExerciseCard({
   const identity = workoutExerciseIdentityOf(line);
   const name = identity.name ?? t('workout.deletedExercise');
   const columns = entryColumns(identity.measurementType);
+  // La carte sait déjà de quoi la série est faite ; le bandeau doit le dire.
+  // Le même bouton ouvre une cadence ici et un chrono là : il ne peut pas
+  // promettre la même chose dans les deux cas.
+  const timed = isTimedMeasurement(identity.measurementType);
 
   const first = superset !== undefined && superset.index === 0;
   const last = superset !== undefined && superset.index === superset.size - 1;
@@ -297,6 +314,14 @@ export function WorkoutExerciseCard({
                   <RepPaceRail pacer={pace} onFinished={pace.onFinished} />
                 </span>
               )}
+              {/* Monté tant que le maintien dure, pour la même raison que le
+                  métronome : la vie du composant *est* celle du chrono, donc le
+                  masquer en le démontant annulerait tous ses repères. */}
+              {hold !== null && (
+                <span className={rest === null ? 'contents' : 'hidden'}>
+                  <HoldRail hold={hold} />
+                </span>
+              )}
             </span>
             <ChevronDownIcon
               className={`shrink-0 text-[var(--text-2)] transition-transform
@@ -309,10 +334,10 @@ export function WorkoutExerciseCard({
               quand rien ne tourne, l'arrêter d'un doigt quand elle tourne — la
               vieille case « stop » n'apparaissait qu'à ce moment-là, elle est
               donc exactement ce bouton dans son autre état. */}
-          {pace !== null && onStopPace !== undefined ? (
+          {(pace !== null || hold !== null) && onStopPace !== undefined ? (
             <button
               type="button"
-              aria-label={t('workout.paceStop')}
+              aria-label={t(hold !== null ? 'workout.holdStop' : 'workout.paceStop')}
               onClick={onStopPace}
               className="flex w-12 shrink-0 items-center justify-center text-[var(--accent-ink)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -322,7 +347,7 @@ export function WorkoutExerciseCard({
           ) : (
             <button
               type="button"
-              aria-label={t('workout.paceOpen', { name })}
+              aria-label={t(timed ? 'workout.holdOpen' : 'workout.paceOpen', { name })}
               onClick={onPace}
               className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -433,6 +458,7 @@ export function WorkoutExerciseCard({
                       columns={columns}
                       previous={previous[index]}
                       tutorial={tutorial && index === 0}
+                      holding={hold?.setId === set.id}
                       onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
                       onComplete={(values) => onComplete(set.id, values, set)}
                       onUncomplete={() => onUncomplete(set.id)}

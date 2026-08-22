@@ -64,12 +64,14 @@ function renderCard(
   currentLine = line,
   records: Map<string, WorkoutRecordNotice> = new Map(),
   rest: React.ComponentProps<typeof WorkoutExerciseCard>['rest'] = null,
+  hold: React.ComponentProps<typeof WorkoutExerciseCard>['hold'] = null,
 ) {
   render(
     <WorkoutExerciseCard
       line={currentLine}
       rest={rest}
       pace={null}
+      hold={hold}
       effort={null}
       records={records}
       state={state}
@@ -107,6 +109,55 @@ describe('WorkoutExerciseCard', () => {
     renderCard(true);
 
     expect(headerContent()).not.toHaveClass('pl-4');
+  });
+
+  it('porte le relevé du maintien et garde la coche active', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(100_000);
+    const timedSet: WorkoutSet = {
+      ...stamps,
+      id: 'set-hold',
+      workoutExerciseId: row.id,
+      exerciseId: exercise.id,
+      workoutId: row.workoutId,
+      order: 0,
+      setType: 'normal',
+      side: 'both',
+      isCompleted: 0,
+      performedAt: 0,
+    };
+    const timedLine: WorkoutExerciseDetail = {
+      row,
+      exercise: { ...exercise, measurementType: 'time_only' },
+      sets: [timedSet],
+      previous: [],
+    };
+
+    renderCard(false, timedLine, new Map(), null, {
+      setId: timedSet.id,
+      rowId: row.id,
+      startedAt: 100_000 - 3_000,
+    });
+
+    expect(screen.getByText('Maintien · 0:03')).toBeInTheDocument();
+    // Aucune durée saisie, et pourtant la coche est active : c'est elle qui
+    // arrête le chrono, donc l'exiger remplie l'enfermerait sans sortie.
+    expect(screen.getByRole('button', { name: 'Valider la série 1' })).toBeEnabled();
+  });
+
+  it('nomme le chronomètre du bandeau selon ce qu’il ouvre', () => {
+    renderCard(false);
+    expect(screen.getByRole('button', { name: `Cadence de ${NAME}` })).toBeInTheDocument();
+
+    render(<span />);
+    const timedLine: WorkoutExerciseDetail = {
+      row,
+      exercise: { ...exercise, measurementType: 'time_only' },
+      sets: [],
+      previous: [],
+    };
+    renderCard(false, timedLine);
+    expect(screen.getByRole('button', { name: `Chrono de ${NAME}` })).toBeInTheDocument();
   });
 
   it('transmet la suspension audio du repos au rail', () => {

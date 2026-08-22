@@ -152,6 +152,12 @@ export function useWorkoutPace(
       setPlan((current) => planWithoutSet(current, decision.setId));
     }, decision.delayMs);
     return () => clearTimeout(timer);
+    // `cadenceOf` et `startClock` sont recréés à chaque rendu : les lister
+    // rejouerait cet effet en boucle et annulerait le minuteur qu'il vient
+    // d'armer. Tout ce dont ils dépendent réellement est déjà là — `lines` et
+    // `defaultRepSeconds` pour la cadence, des actions Zustand stables pour les
+    // deux horloges.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lines, plan, startPace, defaultRepSeconds]);
 
   const startFor = (line: Line, afterSetId?: string): boolean => {

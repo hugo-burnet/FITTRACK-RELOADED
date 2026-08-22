@@ -41,6 +41,13 @@ type Props = {
   /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
   tutorial?: boolean;
+  /**
+   * Vrai tant que le chrono tourne sur cette série. La coche est alors le geste
+   * qui l'arrête : la désactiver parce qu'aucune durée n'est encore tapée
+   * enfermerait le chrono sans aucune sortie — la durée, justement, c'est lui
+   * qui l'écrit.
+   */
+  holding?: boolean;
   onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
   onComplete: (values: Partial<SetValues>) => void;
   onUncomplete: () => void;
@@ -54,6 +61,7 @@ export function WorkoutSetRow({
   columns,
   previous,
   tutorial = false,
+  holding = false,
   onWrite,
   onComplete,
   onUncomplete,
@@ -178,7 +186,7 @@ export function WorkoutSetRow({
         type="button"
         data-tutorial-id={tutorial ? 'workout-first-set-complete' : undefined}
         aria-pressed={done}
-        disabled={!done && !isSetRecordable(columns, resolved)}
+        disabled={!done && !holding && !isSetRecordable(columns, resolved)}
         aria-label={done ? t('workout.uncomplete', { number }) : t('workout.complete', { number })}
         onClick={() =>
           done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))

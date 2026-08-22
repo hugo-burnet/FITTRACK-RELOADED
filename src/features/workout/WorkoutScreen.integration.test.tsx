@@ -17,6 +17,7 @@ import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { applyEffortPrompt } from '@/stores/effortPrompt';
+import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
@@ -979,6 +980,107 @@ describe('WorkoutScreen — plaques réglées sur la fiche', () => {
 
     await waitFor(async () => {
       expect((await db.exercises.get(exerciseId))?.plateBaseWeightKg).toBe(10);
+    });
+  });
+});
+
+async function seedTimedWorkout(): Promise<string> {
+  const exercise = await createCustomExercise({
+    name: 'Gainage',
+    primaryMuscle: 'abs',
+    secondaryMuscles: [],
+    equipment: 'bodyweight',
+    measurementType: 'time_only',
+    isUnilateral: 0,
+  });
+  const routine = await createRoutine('Ceinture');
+  await addExercisesToRoutine(routine.id, [exercise.id]);
+  return (await startWorkoutFromRoutine(routine.id)).id;
+}
+
+describe('WorkoutScreen — chrono de maintien', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().stop();
+  });
+
+  it('écrit le temps tenu, relâchement retiré, quand la série est validée', async () => {
+    const workoutId = await seedTimedWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Gainage');
+    await user.click(screen.getByRole('button', { name: 'Chrono de Gainage' }));
+    await user.click(await screen.findByRole('button', { name: t('workout.holdStart') }));
+    expect(useHoldTimer.getState().setId).not.toBeNull();
+
+    // Quarante-sept secondes tenues, obtenues en reculant le départ plutôt qu'en
+    // faussant l'horloge : les faux minuteurs figent aussi `fake-indexeddb`, et
+    // la séance n'arriverait jamais à l'écran.
+    act(() => {
+      useHoldTimer.setState({ startedAt: Date.now() - 47_000 });
+    });
+
+    // Aucune durée n'a été saisie. Si la coche n'était pas active pendant un
+    // maintien, le chrono n'aurait aucune sortie.
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ durationSeconds: 45, isCompleted: 1 });
+    });
+    expect(useHoldTimer.getState().setId).toBeNull();
+  });
+
+  it('laisse intacte une série chronométrée validée à la main, sans chrono', async () => {
+    const workoutId = await seedTimedWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Gainage');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — s' }), '40');
+
+    const validate = screen.getByRole('button', { name: 'Valider la série 1' });
+    await waitFor(() => expect(validate).toBeEnabled());
+    await user.click(validate);
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ durationSeconds: 40, isCompleted: 1 });
+    });
+  });
+
+  // Même raison que pour le repos : une horloge qui suit un set disparu avec sa
+  // ligne ne s'arrêterait jamais toute seule.
+  it('arrête le chrono quand son exercice est retiré de la séance', async () => {
+    await seedTimedWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Gainage');
+    await user.click(screen.getByRole('button', { name: 'Chrono de Gainage' }));
+    await user.click(await screen.findByRole('button', { name: t('workout.holdStart') }));
+    expect(useHoldTimer.getState().setId).not.toBeNull();
+
+    await user.click(screen.getByRole('button', { name: 'Options de Gainage' }));
+    await user.click(await screen.findByRole('button', { name: t('workout.removeExercise') }));
+    // La feuille de confirmation reprend le même libellé que l'entrée du menu ;
+    // la dernière occurrence est la sienne.
+    const confirms = await screen.findAllByRole('button', {
+      name: t('workout.removeExercise'),
+    });
+    await user.click(confirms[confirms.length - 1] as HTMLElement);
+
+    await waitFor(() => {
+      expect(useHoldTimer.getState().setId).toBeNull();
     });
   });
 });

@@ -51,15 +51,7 @@ type Props = {
  * A ± pair on a quarter-second grid and five presets, exactly like `RestPicker`
  * and for the same reason: there is no text field to type "2,5" into wrong.
  */
-export function PaceSheet({
-  open,
-  onClose,
-  view,
-  onChange,
-  onSetDefault,
-  onStart,
-  onStop,
-}: Props) {
+export function PaceSheet({ open, onClose, view, onChange, onSetDefault, onStart, onStop }: Props) {
   // Adjusted during render rather than in an effect, like every other draft of
   // the app: the sheet opens on the value already in force.
   const [draft, setDraft] = useState<{ rowId: string; repSeconds: number } | null>(null);
@@ -81,81 +73,93 @@ export function PaceSheet({
     'disabled:opacity-40';
 
   return (
-    <Sheet open={open} onClose={onClose} title={t('workout.paceTitle')}>
+    <Sheet
+      open={open}
+      onClose={onClose}
+      title={t(view?.kind === 'hold' ? 'workout.holdTitle' : 'workout.paceTitle')}
+    >
       {view !== null && (
         <div className="flex flex-col gap-4">
-          <div role="group" aria-label={t('workout.paceTempoLabel')}>
-            <div className="flex items-stretch gap-1">
-              <button
-                type="button"
-                aria-label={t('workout.paceDecrease')}
-                disabled={repSeconds <= MIN_REP_SECONDS}
-                onClick={() => write(stepRepSeconds(repSeconds, -1))}
-                className={stepper}
-              >
-                −
-              </button>
+          {/* Un maintien n'a pas de secondes par répétition. Montrer le réglage
+              quand même, désactivé ou sans effet, serait pire que de ne rien
+              montrer : il promettrait une prise sur le chrono qui n'existe pas. */}
+          {view.kind === 'reps' && (
+            <div role="group" aria-label={t('workout.paceTempoLabel')}>
+              <div className="flex items-stretch gap-1">
+                <button
+                  type="button"
+                  aria-label={t('workout.paceDecrease')}
+                  disabled={repSeconds <= MIN_REP_SECONDS}
+                  onClick={() => write(stepRepSeconds(repSeconds, -1))}
+                  className={stepper}
+                >
+                  −
+                </button>
 
-              <div
-                className="flex min-h-14 flex-1 items-center justify-center rounded-lg
+                <div
+                  className="flex min-h-14 flex-1 items-center justify-center rounded-lg
                   bg-[var(--surface-2)]"
-              >
-                <span className="flex items-baseline gap-1.5">
-                  <span className="metric text-3xl font-semibold text-[var(--text-1)]">
-                    {formatNumber(repSeconds)}
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="text-[0.6875rem] font-semibold tracking-[0.08em]
+                >
+                  <span className="flex items-baseline gap-1.5">
+                    <span className="metric text-3xl font-semibold text-[var(--text-1)]">
+                      {formatNumber(repSeconds)}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="text-[0.6875rem] font-semibold tracking-[0.08em]
                       text-[var(--text-2)]"
-                  >
-                    {t('workout.paceUnit')}
+                    >
+                      {t('workout.paceUnit')}
+                    </span>
                   </span>
-                </span>
+                </div>
+
+                <button
+                  type="button"
+                  aria-label={t('workout.paceIncrease')}
+                  disabled={repSeconds >= MAX_REP_SECONDS}
+                  onClick={() => write(stepRepSeconds(repSeconds, 1))}
+                  className={stepper}
+                >
+                  +
+                </button>
               </div>
 
-              <button
-                type="button"
-                aria-label={t('workout.paceIncrease')}
-                disabled={repSeconds >= MAX_REP_SECONDS}
-                onClick={() => write(stepRepSeconds(repSeconds, 1))}
-                className={stepper}
-              >
-                +
-              </button>
-            </div>
-
-            <div className="mt-3 grid grid-cols-5 gap-2">
-              {REP_SECONDS_PRESETS.map((preset) => (
-                <button
-                  key={preset}
-                  type="button"
-                  aria-pressed={repSeconds === preset}
-                  onClick={() => write(preset)}
-                  className={`metric min-h-12 w-full rounded-xl px-1 text-base font-semibold
+              <div className="mt-3 grid grid-cols-5 gap-2">
+                {REP_SECONDS_PRESETS.map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    aria-pressed={repSeconds === preset}
+                    onClick={() => write(preset)}
+                    className={`metric min-h-12 w-full rounded-xl px-1 text-base font-semibold
                     transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
                       repSeconds === preset
                         ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
                         : 'bg-[var(--surface-2)] text-[var(--text-1)]'
                     }`}
-                >
-                  {formatNumber(preset)}
-                </button>
-              ))}
+                  >
+                    {formatNumber(preset)}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* What the number costs, in the only unit that is felt: the set. A
-              tempo is abstract until it is "8 reps ≈ 24 s". */}
+              tempo is abstract until it is "8 reps ≈ 24 s". Pour un maintien,
+              la seule chose à dire est ce que la coche va écrire. */}
           <p className="text-sm leading-relaxed text-[var(--text-2)]">
-            {!view.canStart
-              ? t('workout.paceNoSet')
-              : view.reps === null
-                ? t('workout.paceMissingReps')
-                : t('workout.paceSetReading', {
-                    reps: view.reps,
-                    seconds: Math.round(view.reps * repSeconds),
-                  })}
+            {view.kind === 'hold'
+              ? t(view.canStart ? 'workout.holdHelp' : 'workout.holdNoSet')
+              : !view.canStart
+                ? t('workout.paceNoSet')
+                : view.reps === null
+                  ? t('workout.paceMissingReps')
+                  : t('workout.paceSetReading', {
+                      reps: view.reps,
+                      seconds: Math.round(view.reps * repSeconds),
+                    })}
           </p>
 
           <Button
@@ -169,29 +173,33 @@ export function PaceSheet({
               else onStart();
             }}
           >
-            {t(view.running ? 'workout.paceStop' : 'workout.pace')}
+            {view.kind === 'hold'
+              ? t(view.running ? 'workout.holdStop' : 'workout.holdStart')
+              : t(view.running ? 'workout.paceStop' : 'workout.pace')}
           </Button>
 
           {/* The preference, one tap away from the value already chosen: setting
               a tempo once and having every other exercise follow is the whole
               of "easy to configure". Lit while the two already agree. */}
-          <button
-            type="button"
-            aria-pressed={view.defaultRepSeconds === repSeconds}
-            onClick={() => onSetDefault(repSeconds)}
-            className={`min-h-12 self-start rounded-xl px-4 text-base font-semibold
+          {view.kind === 'reps' && (
+            <button
+              type="button"
+              aria-pressed={view.defaultRepSeconds === repSeconds}
+              onClick={() => onSetDefault(repSeconds)}
+              className={`min-h-12 self-start rounded-xl px-4 text-base font-semibold
               transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
                 view.defaultRepSeconds === repSeconds
                   ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
                   : 'bg-[var(--surface-2)] text-[var(--text-1)]'
               }`}
-          >
-            {t('workout.paceSetDefault')}
-          </button>
+            >
+              {t('workout.paceSetDefault')}
+            </button>
+          )}
 
-          <p className="text-sm leading-relaxed text-[var(--text-2)]">
-            {t('workout.paceHelp')}
-          </p>
+          {view.kind === 'reps' && (
+            <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('workout.paceHelp')}</p>
+          )}
         </div>
       )}
     </Sheet>

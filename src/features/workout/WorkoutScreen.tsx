@@ -48,6 +48,7 @@ import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { loadEffortPrompt } from '@/stores/effortPrompt';
+import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import {
@@ -75,6 +76,7 @@ import { announce } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
 import { ExerciseNotesSheet } from './ExerciseNotesSheet';
 import { setValidationCue } from './workoutCues';
+import { heldSecondsAt } from './holdDuration';
 import { useWorkoutAnnouncements } from './useWorkoutAnnouncements';
 import { useWorkoutPace } from './useWorkoutPace';
 import { WarmupSheet } from './WarmupSheet';
@@ -172,6 +174,9 @@ export function WorkoutScreen() {
   const extendRest = useRestTimer((state) => state.extend);
   const restingSetId = rest.setId;
   const pacer = useRepPacer();
+  const hold = useHoldTimer();
+  const stopHold = useHoldTimer((state) => state.stop);
+  const holdSetId = hold.setId;
   const pace = useWorkoutPace(detail?.exercises ?? EMPTY_LINES, defaultRepSeconds);
 
   // Stop rests whose set was deleted with its row or exercise.
@@ -180,6 +185,14 @@ export function WorkoutScreen() {
     const alive = detail.exercises.some((line) => line.sets.some((set) => set.id === restingSetId));
     if (!alive) stopRest(restingSetId);
   }, [restingSetId, detail, stopRest]);
+
+  // Même raison que pour le repos : un chrono qui suit un set supprimé avec sa
+  // ligne ou son exercice ne s'arrêterait jamais tout seul.
+  useEffect(() => {
+    if (holdSetId === null || detail == null) return;
+    const alive = detail.exercises.some((line) => line.sets.some((set) => set.id === holdSetId));
+    if (!alive) stopHold(holdSetId);
+  }, [holdSetId, detail, stopHold]);
 
   const [draft, setDraft] = useState<{ id: string; name: string; notes: string } | null>(null);
   if (detail != null && draft?.id !== detail.workout.id) {
@@ -394,8 +407,14 @@ export function WorkoutScreen() {
                         ? { ...pacer, setId: pacer.setId, onFinished: () => pace.stop() }
                         : null
                     }
+                    hold={
+                      hold.setId !== null && hold.rowId === line.row.id
+                        ? { ...hold, setId: hold.setId }
+                        : null
+                    }
                     onStopPace={
-                      pacer.rowId === line.row.id && pacer.setId !== null
+                      (pacer.rowId === line.row.id && pacer.setId !== null) ||
+                      (hold.rowId === line.row.id && hold.setId !== null)
                         ? () => pace.stop()
                         : undefined
                     }
@@ -490,12 +509,22 @@ export function WorkoutScreen() {
                       pace.armFromTypedReps(line, setId, values.reps);
                     }}
                     onComplete={(setId, values, set) => {
-                      void completeSet(setId, values)
+                      // Le chrono est ce qui sait combien de temps a été tenu, et
+                      // la coche est le geste qui l'arrête : c'est donc elle qui
+                      // écrit la durée. Tant qu'il tourne, la saisie manuelle des
+                      // secondes n'a plus lieu d'être.
+                      const held =
+                        hold.setId === setId
+                          ? heldSecondsAt(hold.startedAt, Date.now())
+                          : undefined;
+                      const written =
+                        held === undefined ? values : { ...values, durationSeconds: held };
+                      void completeSet(setId, written)
                         .then(() => {
                           tutorial?.report({ type: 'workout-set-completed', setId });
                         })
                         .catch(() => undefined);
-                      // The metronome paced this set; the set is over.
+                      // The metronome or the chronometer owned this set; it is over.
                       pace.stop(setId);
                       startRest(line, setId, set.setType);
                       announce(setValidationCue(line.sets, setId));
