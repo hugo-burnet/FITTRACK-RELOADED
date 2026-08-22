@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createElement } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
@@ -42,9 +42,11 @@ function LocationProbe() {
 function renderBar({
   report = vi.fn<TutorialControls['report']>(),
   offerMission = vi.fn<TutorialControls['offerMission']>(),
+  initialEntry = '/',
 }: {
   report?: TutorialControls['report'];
   offerMission?: TutorialControls['offerMission'];
+  initialEntry?: string;
 } = {}) {
   render(
     createElement(
@@ -52,7 +54,7 @@ function renderBar({
       { value: { openHelp: vi.fn(), startMission: vi.fn(), offerMission, report } },
       createElement(
         MemoryRouter,
-        { initialEntries: ['/'] },
+        { initialEntries: [initialEntry] },
         createElement(ActiveWorkoutBar),
         createElement(LocationProbe),
       ),
@@ -80,7 +82,7 @@ describe('ActiveWorkoutBar recovery', () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  async function createActiveWorkout(stale: boolean) {
+  async function createActiveWorkout(stale: boolean, name = 'Poussée') {
     const exercise = await createCustomExercise({
       name: 'Développé guidé',
       primaryMuscle: 'chest',
@@ -89,7 +91,7 @@ describe('ActiveWorkoutBar recovery', () => {
       measurementType: 'weight_reps',
       isUnilateral: 0,
     });
-    const routine = await createRoutine('Poussée');
+    const routine = await createRoutine(name);
     await addExercisesToRoutine(routine.id, [exercise.id]);
     const workout = await startWorkoutFromRoutine(routine.id);
     await db.workouts.update(workout.id, {
@@ -120,16 +122,72 @@ describe('ActiveWorkoutBar recovery', () => {
 
     await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
     expect(offerMission).toHaveBeenCalledWith('TUT-REC-01');
-    const discard = screen.getByRole('button', { name: 'Abandonner la séance' });
-    expect(discard).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Abandonner la séance' })).toBeDisabled();
     expect(screen.queryByText(/0 série/)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reprendre la séance' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Voir le bilan et terminer' })).toBeEnabled();
 
     pending.resolve(actualDetail);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Abandonner la séance' })).toBeEnabled(),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Abandonner la séance' }));
+    expect(screen.getByText('La série validée ne sera pas conservée.')).toBeVisible();
+  });
+
+  it('invalidates a retained previous detail when the active workout id changes', async () => {
+    const firstWorkout = await createActiveWorkout(true, 'Poussée');
+    const firstSet = (await getWorkoutDetail(firstWorkout.id))?.exercises[0]?.sets[0];
+    if (firstSet === undefined) throw new Error('Expected the first workout set');
+    await completeSet(firstSet.id, { weight: 42, reps: 8 });
+    const realGetDetail = workoutsRepository.getWorkoutDetail;
+    await db.workouts.update(firstWorkout.id, { status: 'completed', endedAt: now });
+    const secondWorkout = await createActiveWorkout(true, 'Tirage');
+    const actualSecondDetail = await realGetDetail(secondWorkout.id);
+    await db.transaction('rw', db.workouts, async () => {
+      await db.workouts.update(secondWorkout.id, { status: 'completed', endedAt: now });
+      await db.workouts.update(firstWorkout.id, { status: 'active', endedAt: 0 });
+    });
+    const nextDetail = deferred<WorkoutDetail | null>();
+    vi.spyOn(workoutsRepository, 'getWorkoutDetail').mockImplementation((workoutId) =>
+      workoutId === firstWorkout.id ? realGetDetail(workoutId) : nextDetail.promise,
+    );
+    renderBar();
+
+    await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
+    const discard = screen.getByRole('button', { name: 'Abandonner la séance' });
     await waitFor(() => expect(discard).toBeEnabled());
     await userEvent.click(discard);
-    expect(screen.getByText('La série validée ne sera pas conservée.')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Confirmer l’abandon' })).toBeVisible();
+
+    await act(async () => {
+      await db.transaction('rw', db.workouts, async () => {
+        await db.workouts.update(firstWorkout.id, { status: 'completed', endedAt: now });
+        await db.workouts.update(secondWorkout.id, { status: 'active', endedAt: 0 });
+      });
+    });
+    await screen.findByRole('button', { name: /Tirage/ });
+
+    const resume = screen.getByRole('button', { name: 'Reprendre la séance' });
+    const choiceDialog = resume.closest('[role="dialog"]');
+    if (choiceDialog === null) throw new Error('Expected the recovery choice dialog');
+    await waitFor(() => expect(choiceDialog).not.toHaveStyle({ transform: 'translateY(100%)' }));
+    expect(screen.getByRole('button', { name: 'Abandonner la séance' })).toBeDisabled();
+    const staleConfirm = screen.queryByRole('button', { name: 'Confirmer l’abandon' });
+    if (staleConfirm !== null) {
+      const confirmDialog = staleConfirm.closest('[role="dialog"]');
+      expect(confirmDialog).toHaveStyle({ transform: 'translateY(100%)' });
+      if (confirmDialog !== null) fireEvent.transitionEnd(confirmDialog);
+    }
+    expect(screen.queryByRole('button', { name: 'Confirmer l’abandon' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/série validée ne sera pas conservée/)).not.toBeInTheDocument();
+
+    await act(async () => nextDetail.resolve(actualSecondDetail));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Abandonner la séance' })).toBeEnabled(),
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Abandonner la séance' }));
+    expect(screen.getByText('Aucune série validée ne sera conservée.')).toBeVisible();
   });
 
   it.each([
@@ -157,7 +215,7 @@ describe('ActiveWorkoutBar recovery', () => {
     const discard = vi
       .spyOn(workoutsRepository, 'discardWorkout')
       .mockRejectedValueOnce(new Error('IndexedDB unavailable'));
-    renderBar({ report });
+    renderBar({ report, initialEntry: '/settings' });
 
     await userEvent.click(await screen.findByRole('button', { name: /Poussée/ }));
     await userEvent.click(screen.getByRole('button', { name: 'Abandonner la séance' }));
@@ -167,7 +225,8 @@ describe('ActiveWorkoutBar recovery', () => {
     expect(report).not.toHaveBeenCalledWith(
       expect.objectContaining({ type: 'stale-workout-choice', choice: 'discard' }),
     );
-    expect(screen.getByTestId('location-probe')).toHaveTextContent('/');
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/settings');
+    expect(screen.getByTestId('location-probe')).not.toHaveTextContent(/^\/$/);
     expect(screen.getByRole('button', { name: 'Reprendre la séance' })).toBeInTheDocument();
   });
 

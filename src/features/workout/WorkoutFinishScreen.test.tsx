@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { saveBodyWeight } from '@/data/repositories/bodyMeasurements';
@@ -29,6 +29,10 @@ vi.mock('./workoutRecapVoice', async () => {
   return { ...actual, speakWorkoutRecap: speakWorkoutRecapMock };
 });
 
+function LocationProbe() {
+  return <output data-testid="location-probe">{useLocation().pathname}</output>;
+}
+
 function renderFinishScreen(report = vi.fn()) {
   return render(
     <TutorialContext.Provider
@@ -37,7 +41,9 @@ function renderFinishScreen(report = vi.fn()) {
       <MemoryRouter initialEntries={['/workout/finish']}>
         <Routes>
           <Route path="/workout/finish" element={<WorkoutFinishScreen />} />
+          <Route path="/" element={<p>Destination accueil</p>} />
         </Routes>
+        <LocationProbe />
       </MemoryRouter>
     </TutorialContext.Provider>,
   );
@@ -73,6 +79,8 @@ describe('WorkoutFinishScreen', () => {
     const report = vi.fn();
     renderFinishScreen(report);
 
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
+
     await screen.findByText('Aucune série validée. Rien ne sera enregistré.');
     const saveAnchors = document.querySelectorAll('[data-tutorial-id="workout-save"]');
     expect(saveAnchors).toHaveLength(1);
@@ -96,6 +104,8 @@ describe('WorkoutFinishScreen', () => {
     const report = vi.fn();
     renderFinishScreen(report);
 
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
+
     await userEvent.click(
       (await screen.findByText('Enregistrer la séance')).closest('button') as HTMLButtonElement,
     );
@@ -104,6 +114,8 @@ describe('WorkoutFinishScreen', () => {
 
     expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-saved' }));
     expect((await db.workouts.get(workout.id))?.status).toBe('active');
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
+    expect(screen.queryByText('Destination accueil')).not.toBeInTheDocument();
   });
 
   it('never reports workout-saved from the explicit discard path', async () => {

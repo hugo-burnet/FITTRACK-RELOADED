@@ -60,7 +60,7 @@ export function ActiveWorkoutBar() {
   }
 
   const validatedSetCount =
-    detail == null
+    detail == null || detail.workout.id !== active.id
       ? null
       : detail.exercises.reduce(
           (count, line) =>
@@ -104,6 +104,7 @@ export function ActiveWorkoutBar() {
         {content}
       </button>
       <ActiveWorkoutRecoverySheet
+        key={active.id}
         open={recoveryOpen}
         workoutName={name}
         validatedSetCount={validatedSetCount}
