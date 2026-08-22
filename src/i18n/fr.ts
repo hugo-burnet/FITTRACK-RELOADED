@@ -238,6 +238,17 @@ const fr = {
     paceStop: 'Arrêter la cadence',
     pacePreparing: 'Départ · {seconds}',
     paceStatus: 'Cadence · {current}/{total} · {tempo} s',
+    // Le chrono d'un maintien. La préparation réutilise « Départ · n » : c'est
+    // la même attente, et lui inventer d'autres mots la ferait lire comme autre
+    // chose.
+    holdStatus: 'Maintien · {time}',
+    holdStart: 'Démarrer le chrono',
+    holdStop: 'Arrêter le chrono',
+    holdTitle: 'Chrono',
+    holdOpen: 'Chrono de {name}',
+    holdNoSet: 'Aucune série à chronométrer sur cet exercice.',
+    holdHelp:
+      'Le chrono compte le temps tenu et l’écrit dans la série quand tu valides. Les deux dernières secondes, celles du relâchement, ne sont pas comptées.',
     // La cadence de l'exercice : le chrono du bandeau de la carte l'ouvre, et
     // l'arrête quand elle tourne.
     paceTitle: 'Cadence',
