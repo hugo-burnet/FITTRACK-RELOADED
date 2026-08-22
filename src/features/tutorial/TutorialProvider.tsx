@@ -7,6 +7,7 @@ import type { AnnouncerMode } from '@/audio/announcer';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
+import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { ActionSheet, Button, Sheet } from '@/ui';
@@ -270,9 +271,10 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const missions = useTutorialMissions(pathname, navigate, missionFacts);
   const pacer = useRepPacer();
   const rest = useRestTimer();
+  const hold = useHoldTimer();
   // Opening the help sheet renders this again, so expired wall-clock timers
   // cease blocking immediately even if their store identity was never cleared.
-  const workoutAudioBusy = isWorkoutAudioBusy(pacer, rest);
+  const workoutAudioBusy = isWorkoutAudioBusy(pacer, rest, hold);
 
   const showVoiceChoice = useCallback((result: TutorialCompletion) => {
     primeAnnouncer();

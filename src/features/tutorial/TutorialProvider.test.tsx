@@ -222,7 +222,16 @@ describe('TutorialProvider', () => {
     expect(screen.getByRole('button', { name: /Recommencer la visite complète/ })).toBeVisible();
   });
 
-  it('keeps a mission fully readable in Silence without requesting narration', async () => {
+  /*
+   * Le texte reste tout ce dont la mission a besoin, et c'est ce que ce test
+   * garde.
+   *
+   * La garantie de silence, elle, a changé de place. Ce n'est plus « le coach ne
+   * demande rien » — il demande désormais, pour chaque mission — mais
+   * `playTutorialNarration` qui refuse en mode Silence, avant même de chercher
+   * un bus audio. Son propre test l'épingle là où c'est décidé.
+   */
+  it('keeps a mission fully readable in Silence', async () => {
     localStorage.setItem(ANNOUNCER_STORAGE_KEY, 'silence');
     saveTutorialState({
       ...createTutorialState(),
@@ -234,7 +243,9 @@ describe('TutorialProvider', () => {
 
     expect(await screen.findByRole('region', { name: 'Mission guidée' })).toBeVisible();
     expect(screen.getByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
-    expect(playTutorialNarrationMock).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.'),
+    ).toBeVisible();
   });
 
   it('does not offer activation to a migrated v1 user', () => {

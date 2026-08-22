@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { t } from '@/i18n/fr';
+import { useHoldTimer } from '@/stores/holdTimer';
+import { useRepPacer } from '@/stores/repPacer';
+import { useRestTimer } from '@/stores/restTimer';
 import type { TutorialMission } from './tutorialMissions';
+import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
+import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
 export function TutorialMissionCoach({
   mission,
@@ -13,6 +18,43 @@ export function TutorialMissionCoach({
 }) {
   const step = mission.steps[stepIndex];
   const [rect, setRect] = useState<DOMRect | null>(null);
+
+  /*
+   * La consigne se dit une fois, en arrivant sur l'étape — et seulement si rien
+   * ne parle déjà.
+   *
+   * `playTutorialNarration` ne passe pas par `planCue` : il ne connaît ni les
+   * priorités ni les temps de silence, il joue. Or quatre missions se déroulent
+   * pendant la séance, où le décompte du repos, la cadence et le chrono sont
+   * calés sur l'horloge murale et ne se mettent pas en file d'attente. Une
+   * consigne par-dessus un « trois, deux, un », c'est le décompte qu'on perd,
+   * et c'est lui qui compte sous la barre. Le texte, lui, reste à l'écran —
+   * exactement comme en mode Silence.
+   *
+   * L'occupation est lue dans une référence et non dans les dépendances :
+   * l'effet ne doit se rejouer que sur l'étape. Une horloge qui démarre ensuite
+   * n'interrompt pas une consigne déjà commencée, et une horloge qui s'arrête ne
+   * déclenche pas après coup une consigne qu'on a laissé passer — même
+   * discipline que le reste : jamais de rattrapage.
+   */
+  const pacer = useRepPacer();
+  const rest = useRestTimer();
+  const hold = useHoldTimer();
+  const busy = isWorkoutAudioBusy(pacer, rest, hold);
+  const busyRef = useRef(busy);
+  // Écrit dans un effet de disposition et non pendant le rendu : les effets de
+  // disposition passent tous avant les effets passifs, donc la référence est à
+  // jour quand la narration décide. Même motif que `RestRail`.
+  useLayoutEffect(() => {
+    busyRef.current = busy;
+  }, [busy]);
+
+  const clipId = step?.clipId;
+  useEffect(() => {
+    if (clipId === undefined || busyRef.current) return;
+    void playTutorialNarration(clipId, () => undefined);
+    return () => stopTutorialNarration();
+  }, [clipId]);
 
   useEffect(() => {
     if (step === undefined) return;

@@ -670,6 +670,111 @@
       "text": "Changement de côté. Reprise dans dix secondes.",
       "direction": "Deux constats, pas un encouragement. Pause nette après « côté » : la première phrase dit ce qui se passe, la seconde ce qui va se passer. Aucune insistance sur « dix ».",
       "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-activation-1",
+      "cue": "tutorial",
+      "text": "Ouvrez le menu de création, puis choisissez un modèle. Il reste modifiable avant le démarrage.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-recovery-1",
+      "cue": "tutorial",
+      "text": "Ouvrez la séance en attente et décidez de sa suite. Elle ne sera jamais supprimée automatiquement.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-routine-create-1",
+      "cue": "tutorial",
+      "text": "Ouvrez le menu de création, puis choisissez Nouvelle routine. Chaque modification est enregistrée immédiatement.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-routine-exercise-1",
+      "cue": "tutorial",
+      "text": "Ajoutez au moins un exercice à cette routine. Choisissez-en un que vous pouvez effectuer maintenant.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-routine-set-1",
+      "cue": "tutorial",
+      "text": "Ajoutez une deuxième série au premier exercice. Elle rendra le repos visible.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-routine-targets-1",
+      "cue": "tutorial",
+      "text": "Ouvrez la première série et renseignez sa cible. Les champs dépendent du type de mesure.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-routine-rest-1",
+      "cue": "tutorial",
+      "text": "Ouvrez les options de l'exercice et choisissez un temps de repos. Il démarrera après chaque série de travail.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-routine-start-1",
+      "cue": "tutorial",
+      "text": "Démarrez la séance depuis la barre d'action. Une seule séance peut être active.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-set-input-1",
+      "cue": "tutorial",
+      "text": "Renseignez les valeurs de la première série. Le résultat précédent se reprend d'un geste.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-set-validate-1",
+      "cue": "tutorial",
+      "text": "Touchez la coche de la première série. La validation est écrite immédiatement.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-rest-1",
+      "cue": "tutorial",
+      "text": "Laissez le minuteur atteindre la fin du repos. Le décompte reste fiable si vous quittez cet écran.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-workout-finish-1",
+      "cue": "tutorial",
+      "text": "Quand la séance est terminée, ouvrez le bilan. Les séries non validées ne seront pas comptées.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-workout-save-1",
+      "cue": "tutorial",
+      "text": "Relisez le bilan, puis enregistrez la séance. Elle rejoindra l'historique et les analyses.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-backup-export-1",
+      "cue": "tutorial",
+      "text": "Exportez une sauvegarde complète. Le fichier contient vos séances, vos routines et vos réglages.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
+    },
+    {
+      "id": "mission-backup-restore-1",
+      "cue": "tutorial",
+      "text": "Choisissez un fichier de sauvegarde pour ouvrir sa confirmation. Vous pouvez la fermer sans restaurer.",
+      "direction": "Consigne de mission, dite une fois. Elle constate ce qu'il y a à faire et ce que l'app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
+      "settings": { "stability": 0.8, "style": 0.05 }
     }
   ],
   "generation": {

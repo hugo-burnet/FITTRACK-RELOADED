@@ -26,10 +26,14 @@ function createBus() {
 }
 
 describe('voicePack', () => {
-  it('garde les nouvelles missions sans voix jusqu’à la phase dédiée', () => {
-    expect(
-      P1_MISSIONS.flatMap((mission) => mission.steps).every((step) => step.clipId === undefined),
-    ).toBe(true);
+  // Les missions ont désormais leur voix. Ce qui reste à garantir est qu'aucune
+  // ne partage son clip avec une autre : deux étapes sur le même enregistrement,
+  // et l'une des deux dirait la consigne de sa voisine.
+  it('donne à chaque mission son propre clip', () => {
+    const clips = P1_MISSIONS.flatMap((mission) => mission.steps).map((step) => step.clipId);
+
+    expect(clips.every((clip) => clip !== undefined)).toBe(true);
+    expect(new Set(clips).size).toBe(clips.length);
   });
 
   it('ne télécharge chaque clip qu’une fois', async () => {

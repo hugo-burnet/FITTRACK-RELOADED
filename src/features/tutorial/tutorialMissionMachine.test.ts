@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import script from '@/audio/voiceScript.json';
 import { createTutorialState } from './tutorialStore';
 import { advanceMission, dismissMission, startMission } from './tutorialMissionMachine';
 import { contextualMissionsForPath, P1_MISSIONS } from './tutorialMissions';
@@ -82,9 +83,17 @@ describe('tutorial mission machine', () => {
     ).toBe(state);
   });
 
-  it('keeps every P1 mission on the text-only path', () => {
-    expect(
-      P1_MISSIONS.flatMap((mission) => mission.steps).every((step) => step.clipId === undefined),
-    ).toBe(true);
+  // Le contrat s'est inversé : les missions parlent désormais. Ce qui compte est
+  // qu'aucune n'annonce un clip absent du script — un `clipId` orphelin serait un
+  // silence qui se fait passer pour une consigne.
+  it('donne à chaque étape P1 un clip déclaré dans le script vocal', () => {
+    const declared = new Set(script.lines.map((line) => line.id));
+    const steps = P1_MISSIONS.flatMap((mission) => mission.steps);
+
+    expect(steps).not.toHaveLength(0);
+    for (const step of steps) {
+      expect(step.clipId, `${step.id} n'a pas de clip`).toBeDefined();
+      expect(declared.has(step.clipId ?? ''), `${step.clipId} absent du script`).toBe(true);
+    }
   });
 });

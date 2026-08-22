@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import script from './voiceScript.json';
 import { CUES, allClips, clipsFor, textOf } from './cues';
 import { HOLD_MARK_LIMIT_SECONDS, HOLD_MARK_SECONDS, holdMarkCue } from './holdMarks';
 
@@ -54,13 +55,23 @@ describe('le cue du changement de côté', () => {
  * passer pour une phrase.** Le lecteur de clips le traite proprement (il reste
  * muet et ne redemande pas), donc rien ne casse à l'écran : c'est exactement ce
  * qui rend l'écart indétectable sans ce test.
+ *
+ * **Le script entier, pas `allClips()`.** Ce dernier ne rend que les lignes dont
+ * le `cue` existe dans `CUES` — la narration du tutoriel porte `cue: 'tutorial'`,
+ * qui n'en est pas un, et passait donc à travers le contrôle. Dix clips sur
+ * quatre-vingts n'étaient pas vérifiés, et les missions guidées seraient tombées
+ * dans le même angle mort.
  */
 describe('le manifeste', () => {
   it('a un MP3 pour chaque identifiant déclaré', () => {
-    const missing = allClips().filter(
-      (clip) => !existsSync(join(process.cwd(), 'public', 'voice', `${clip}.mp3`)),
-    );
+    const missing = script.lines
+      .map((line) => line.id)
+      .filter((clip) => !existsSync(join(process.cwd(), 'public', 'voice', `${clip}.mp3`)));
 
     expect(missing, `clips déclarés sans MP3 : ${missing.join(', ')}`).toEqual([]);
+  });
+
+  it('couvre bien plus que les clips rattachés à un cue', () => {
+    expect(script.lines.length).toBeGreaterThan(allClips().length);
   });
 });

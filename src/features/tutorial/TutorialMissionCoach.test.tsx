@@ -1,7 +1,16 @@
+const { playTutorialNarration, stopTutorialNarration } = vi.hoisted(() => ({
+  playTutorialNarration: vi.fn(() => Promise.resolve(true)),
+  stopTutorialNarration: vi.fn(),
+}));
+vi.mock('./tutorialNarration', () => ({ playTutorialNarration, stopTutorialNarration }));
+
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Sheet } from '@/ui';
+import { useHoldTimer } from '@/stores/holdTimer';
+import { useRepPacer } from '@/stores/repPacer';
+import { useRestTimer } from '@/stores/restTimer';
 import { TutorialMissionCoach } from './TutorialMissionCoach';
 import { missionFor } from './tutorialMissions';
 
@@ -164,5 +173,64 @@ describe('TutorialMissionCoach', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Passer cette mission' }));
     expect(dismiss).toHaveBeenCalledOnce();
+  });
+});
+
+describe('TutorialMissionCoach — la voix de la mission', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().stop();
+  });
+
+  afterEach(() => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().stop();
+  });
+
+  it('dit la consigne de l’étape en arrivant dessus', () => {
+    render(
+      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+    );
+
+    expect(playTutorialNarration).toHaveBeenCalledWith('mission-routine-create-1', expect.any(Function));
+  });
+
+  // Le décompte d'un repos est cadencé sur l'horloge murale : il ne se met pas
+  // en file d'attente, et une consigne par-dessus lui fait perdre le « un ».
+  it('se tait tant qu’une horloge de séance tourne', () => {
+    useRestTimer.getState().start('set-1', 60);
+
+    render(
+      <TutorialMissionCoach mission={missionFor('TUT-WRK-03')} stepIndex={0} onDismiss={vi.fn()} />,
+    );
+
+    expect(playTutorialNarration).not.toHaveBeenCalled();
+  });
+
+  it('se tait aussi pendant la cadence et pendant un maintien', () => {
+    useRepPacer.getState().start('row', 'set-1', 8, 3);
+    render(
+      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+    );
+    expect(playTutorialNarration).not.toHaveBeenCalled();
+
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().start('row', 'set-1');
+    render(
+      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+    );
+    expect(playTutorialNarration).not.toHaveBeenCalled();
+  });
+
+  it('coupe la consigne en quittant l’étape', () => {
+    const view = render(
+      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+    );
+    view.unmount();
+
+    expect(stopTutorialNarration).toHaveBeenCalled();
   });
 });
