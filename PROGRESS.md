@@ -2,8 +2,113 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-21 (**Release Android v0.9.0 — ce que l'app devinait, la fiche
-d'exercice le dit**).
+**Dernière mise à jour :** 2026-08-22 (**Release Android v1.0.0 — les Lots 12 et 13 sont fermés,
+la V1 est complète**).
+
+## v1.0.0 — le mois se lit, le graphique s'emporte, l'app sait quand parler
+
+Les deux derniers lots partiels de la V1 sont fermés. Ce qui restait n'était pas de la finition :
+c'étaient quatre exigences du cahier des charges qui n'avaient jamais été écrites.
+
+### Lot 12 — le rapport mensuel (RF-44)
+
+`PERIOD_KEYS` ne connaît que des fenêtres en semaines, et c'est la bonne unité pour un split — mais
+un rapport se lit contre un calendrier. « Juillet », pas « les semaines 27 à 31 », et aucun nombre
+entier de semaines ne fait un mois.
+
+- **`lib/analytics/months.ts`** construit les mois locaux sur des composantes civiles (jamais
+  30 × 24 h) et range une séance dans **son propre fuseau** — la règle de `weeks.ts` transposée.
+  Une séance du 31 juillet à 23:30 reste en juillet, où qu'on la relise.
+- **`lib/analytics/monthlyReport.ts`** répond aux six mêmes questions pour chaque mois — séances,
+  jours d'entraînement, séries, répétitions, tonnage, temps — du mois courant au plus ancien.
+  **Les mois blancs sont gardés** : un mois sans séance est une lecture, pas un trou à sauter.
+- L'écran affiche l'**écart avec le mois précédent** sur quatre des six lignes. C'est ce qui
+  transforme « 1 200 kg » en information. Le plus ancien mois n'a pas d'écart : il n'a pas
+  « tout gagné », il n'a simplement rien avant lui.
+- **Pas de compte de records dans le rapport.** `personalRecords` ne garde que les records
+  **encore debout** : un record de mars battu en avril disparaît de mars. Un chiffre qui décroît
+  en relisant le passé est pire que pas de chiffre.
+
+**Dette remboursée au passage :** trois copies de la projection « séance stockée → tonnage »
+vivaient dans l'export coach, le graphique de volume et les métriques d'exercice. Elles sont
+maintenant une seule (`lib/volumeSource.ts`). Trois copies d'une même règle, c'est trois écrans
+qui peuvent finir par ne plus dire le même chiffre — le défaut exact que la v0.9.0 a corrigé une
+couche plus bas.
+
+### Lot 12 — l'export PNG d'un graphique
+
+Trois obstacles séparent un graphique à l'écran d'une image partageable, et
+`platform/chartImage.ts` les traite dans cet ordre :
+
+1. **Les couleurs sont des variables.** Chaque marque est peinte en `var(--accent-data)`, résolu
+   par la feuille de style de la page. Un `<svg>` chargé dans une `<img>` est un document sans
+   feuille de style : tout sortirait en noir sur noir. Les peintures **calculées** sont donc
+   relevées sur les nœuds vivants et réécrites en attributs sur la copie.
+2. **Un graphique seul ne dit rien.** Douze barres sans titre, sans unité et sans date, c'est une
+   image illisible dans trois mois. L'image est composée : titre, lecture en cours, graphique,
+   date d'export.
+3. **La transparence.** Le fond de carte est peint en premier : un PNG transparent collé sur du
+   blanc est illisible une fois sur deux.
+
+`saveFile.ts` porte désormais **une seule échelle** (partage web, partage natif, téléchargement)
+pour le texte comme pour les octets ; le chemin Android écrit l'image en base64, seule forme qui
+traverse le pont de la WebView intacte. Le bouton est sur les trois écrans à graphique : séances
+par semaine, volume, progression d'un exercice.
+
+**Vérifié dans un vrai Chromium**, la partie que jsdom ne peut pas atteindre : le SVG composé se
+rastérise en PNG de 31 ko, et le comptage des pixels retrouve le fond (18,17,15), la couleur des
+barres (168,90,32), l'encre du titre et le gris de la légende.
+
+### Lot 13 — les trois notifications, chacune avec son interrupteur (RF-53)
+
+La fin de repos, le record battu et le rappel d'entraînement sont **trois intrusions
+différentes** : qui veut la première ne veut pas forcément la troisième. Un interrupteur chacun,
+jamais un maître qui fait payer au premier le coût du troisième.
+
+- **Les rappels programmables.** `lib/reminders.ts` calcule les prochaines occurrences **à
+  l'horloge murale**, jamais en heures écoulées : la semaine qui enjambe un changement d'heure
+  dure 169 heures, l'heure affichée ne bouge pas. Douze rappels sont posés d'avance et réarmés à
+  chaque retour dans l'app — une liste d'alarmes datées est la seule version dont le résultat se
+  lit dans un test, sans téléphone.
+- **Le record battu s'écrit dans les notifications**, sur un canal d'importance 2 : **visible,
+  jamais audible**. Un record tombe au moment où une série est validée, téléphone en main — la
+  carte l'a déjà dit et la voix aussi, en Web Audio. Une cloche système serait la seule de l'app
+  à baisser la musique de l'utilisateur (règle du Lot 21).
+- **Le rappel, lui, interrompt** (importance 4) : il sonne un jour où l'app n'a pas été ouverte,
+  c'est tout son intérêt. Par défaut il est **éteint** — c'est la notification que personne n'a
+  installé l'app pour recevoir ; les deux autres sont allumées, elles répondent à un geste.
+- Les trois réglages vivent sous une seule clé de `settings`, donc **dans la sauvegarde** : un
+  téléphone restauré retrouve ses rappels sans qu'on les lui redonne.
+
+### Ce qui reste hors V1
+
+Le **Lot 11** (mesures autres que le poids, photos de progression) et les lots 14 à 16, 19 et 20
+restent ouverts. Ce sont des lots de V2 et de V3 : « tout ce qui suit le Lot 10 est du confort »,
+dit la feuille de route, et la V1 utilisable en salle est complète depuis longtemps. Les Lots 12
+et 13 en faisaient partie parce qu'ils portaient des RF du cahier des charges restés vides.
+
+**Checkpoint téléphone :**
+
+- [ ] Progression → **Rapport mensuel** : le mois en cours s'ouvre, les six chiffres correspondent
+      à ce que l'historique montre, et « Comparé à juillet » dit quelque chose de vrai.
+- [ ] Choisir un mois sans séance dans la feuille : « Aucune séance ce mois-ci », sans zéro
+      trompeur ailleurs.
+- [ ] Sur **Volume d'entraînement**, toucher « Exporter en image » : la feuille de partage Android
+      s'ouvre, le PNG arrive dans Fichiers ou dans une conversation, **avec son titre, sa période
+      et sa date**, et les barres sont de la bonne couleur (pas noires).
+- [ ] Réglages → **Notifications** : couper « Fin de repos », lancer une série, verrouiller
+      l'écran — le téléphone ne sonne plus. Rallumer : il sonne à nouveau.
+- [ ] Allumer « Rappels d'entraînement », cocher **le jour même** et régler l'heure à trois minutes
+      d'ici. Fermer l'app, poser le téléphone : le rappel arrive à l'heure dite.
+- [ ] Décocher tous les jours : la ligne dit que rien ne sonnera. Aucun rappel ne doit arriver.
+- [ ] Battre un record en séance : la bande apparaît sous la série **et** une ligne « Record
+      battu · <exercice> » attend dans le volet des notifications, **sans avoir fait de bruit**.
+- [ ] Exporter la sauvegarde, réinstaller par-dessus, réimporter : les trois interrupteurs et la
+      semaine de rappel reviennent tels quels.
+
+⚠️ **Aucune migration Dexie.** Les préférences de notification sont une clé de plus dans
+`settings`, lue avec un défaut quand elle est absente. Installer par-dessus la v0.9.0, sans
+désinstaller.
 
 ## v0.9.0 — ce que l'app devinait, la fiche d'exercice le dit
 
@@ -5097,8 +5202,8 @@ ci-dessus fait foi.
 | 9    | PWA & installation       | ✅ terminé  | 2026-08-02         | ✅ 2026-08-12                                  |
 | 10   | Android (Capacitor)      | ✅ terminé  | 2026-08-09         | ✅ 2026-08-12                                  |
 | 11   | Mesures & photos         | 🟨 en cours | —                  | ⬜                                             |
-| 12   | Statistiques             | 🟨 en cours | 2026-08-11         | ✅ 2026-08-12 (courbe en attente d'historique) |
-| 13   | Records & notifications  | 🟨 en cours | 2026-08-11         | ✅ 2026-08-12                                  |
+| 12   | Statistiques             | ✅ terminé  | 2026-08-11, 08-22  | 🟨 à valider sur le téléphone                  |
+| 13   | Records & notifications  | ✅ terminé  | 2026-08-11, 08-22  | 🟨 à valider sur le téléphone                  |
 | 14   | Sync cloud (optionnel)   | ⬜ à faire  | —                  | ⬜                                             |
 | 15   | Health Connect           | ⬜ à faire  | —                  | ⬜                                             |
 | 16   | Widgets                  | ⬜ à faire  | —                  | ⬜                                             |
@@ -5116,25 +5221,34 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
 > validation n'a jamais été consignée portent « à confirmer » plutôt qu'un ✅ deviné. C'est le
 > raisonnement posé au Lot 9, appliqué cette fois sans laisser l'État en souffrance avec.
 
-### Les trois lots partiels, et ce qui leur manque exactement
+### Le lot partiel qui reste, et ce qui lui manque exactement
+
+> **Mise à jour du 2026-08-22.** Les Lots 12 et 13 sont fermés : le rapport mensuel (RF-44) et
+> l'export PNG d'un graphique pour le premier, les rappels programmables et la notification de
+> record (RF-53) pour le second. Le paragraphe qui suit décrivait les trois lots partiels ; seul
+> le Lot 11 est encore ouvert, et il appartient à la V2.
 
 - **Lot 11 — Mesures & photos.** Livré : le poids de corps (`bodyMeasurements`,
   `HomeBodyWeightCard`, `resolveBodyWeightsAt` pour la tonnage au poids de corps). Manquant :
   **toute autre mesure** (tour de taille, masse grasse…) alors que `BodyMeasurement.type` est
   une chaîne libre qui les accepte déjà, et **les photos de progression** — `progressPhotos` et
   `photoBlobs` sont dans le schéma depuis le Lot 2 et **aucun code ne les écrit**.
-- **Lot 12 — Statistiques.** Livré : progression par exercice (RF-41), volume hebdomadaire et
-  répartition des séries par groupe musculaire (RF-42), séances par semaine, le **1RM estimé
+- ~~**Lot 12 — Statistiques.**~~ **Fermé le 2026-08-22.** Livré : progression par exercice (RF-41),
+  volume hebdomadaire et répartition des séries par groupe musculaire (RF-42), séances par semaine, le **1RM estimé
   (RF-46)** — formule configurable en réglages, traçable comme métrique et filtrable dans le rail
   des records — et la **carte de chaleur musculaire (RF-43)**, rendue par le schéma du Lot 5bis
   sur l'écran d'équilibre. Manquant, vérifié dans le code : le **rapport mensuel (RF-44)** —
   `PERIOD_KEYS` ne connaît que des fenêtres en semaines — et l'**export PNG d'un graphique**.
-- **Lot 13 — Records & notifications.** Livré le 2026-08-11 : les records sont **persistés**
-  dans `personalRecords`, écrits dans la même transaction que la série, réconciliés à chaque
+  **Les deux sont écrits** : `lib/analytics/months.ts` + `monthlyReport.ts` pour le rapport,
+  `platform/chartImage.ts` pour l'image. Cf. la section v1.0.0 en tête de fichier.
+- ~~**Lot 13 — Records & notifications.**~~ **Fermé le 2026-08-22.** Livré le 2026-08-11 : les records
+  sont **persistés** dans `personalRecords`, écrits dans la même transaction que la série, réconciliés à chaque
   mutation, avec une page « mes records » filtrable par exercice et par type, un rail de
   progression, et une réparation manuelle idempotente. Manquant : les **rappels d'entraînement
   programmables (RF-53)** — `nativeNotifications` ne planifie que la fin du repos — et la
-  **notification système quand un record tombe**, la détection restant à l'écran.
+  **notification système quand un record tombe**, la détection restant à l'écran. **Les deux sont
+  écrits** : `lib/reminders.ts` pose douze rappels d'avance sur les jours et l'heure choisis, et un
+  record persisté part sur un canal muet. Cf. la section v1.0.0 en tête de fichier.
 
 ## Décisions prises en cours de route
 
