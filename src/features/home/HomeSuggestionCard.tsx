@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { SuggestedRoutine } from '@/data/repositories/home';
+import type { HomeDashboardData, SuggestedRoutine } from '@/data/repositories/home';
 import { startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { routineSummaryLine } from '@/features/routines/summary';
 import { Button, Card } from '@/ui';
+import { FolderSwitchIcon } from '@/ui/icons';
+import { HomeRoutineContextSheet } from './HomeRoutineContextSheet';
+import { routineContextOptionLabel } from './homeRoutineContextPresentation';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
 
@@ -41,6 +45,7 @@ interface Props {
   routineCount: number;
   /** Aucune séance ne s'ouvre tant qu'une autre tourne — la barre du bas y ramène. */
   disabled: boolean;
+  routineContext: HomeDashboardData['routineContext'];
 }
 
 /**
@@ -51,12 +56,66 @@ interface Props {
  * récemment — et la règle est écrite sous le titre. La routine n'est jamais
  * modifiée par cet écran : proposer, c'est tout ce que fait cette carte.
  */
-export function HomeSuggestionCard({ suggestion, routineCount, disabled }: Props) {
+function routineContextEpisodeKey(routineContext: HomeDashboardData['routineContext']): string {
+  return JSON.stringify({
+    required: routineContext.required,
+    selected: routineContext.selected,
+    optionValues: routineContext.options.map((option) => option.value),
+  });
+}
+
+export function HomeSuggestionCard(props: Props) {
+  return <HomeSuggestionCardContent key={routineContextEpisodeKey(props.routineContext)} {...props} />;
+}
+
+function HomeSuggestionCardContent({
+  suggestion,
+  routineCount,
+  disabled,
+  routineContext,
+}: Props) {
   const navigate = useNavigate();
+  const [contextSheetOpen, setContextSheetOpen] = useState(() => routineContext.required);
+
+  const selectedContext = routineContext.options.find(
+    (option) => option.value === routineContext.selected,
+  );
+  const hasFolderPicker = routineContext.options.length > 0;
+  const selectedFolderIsEmpty = selectedContext?.routineCount === 0;
 
   const start = (routineId: string) => {
     void startWorkoutFromRoutine(routineId).then(() => navigate('/workout'));
   };
+
+  const contextHeader = (
+    <div className="flex min-h-12 items-center gap-3">
+      <div className="min-w-0 flex-1">
+        <p className="label-xs font-semibold text-[var(--text-2)]">
+          {t('home.suggestionSection')}
+        </p>
+        {hasFolderPicker && (
+          <p className="mt-1 truncate text-sm font-semibold text-[var(--text-1)]">
+            {selectedContext === undefined
+              ? t('home.chooseRoutineFolder')
+              : routineContextOptionLabel(selectedContext)}
+          </p>
+        )}
+      </div>
+
+      {hasFolderPicker && (
+        <button
+          type="button"
+          aria-label={t('home.changeRoutineFolder')}
+          onClick={() => setContextSheetOpen(true)}
+          className="flex size-12 shrink-0 items-center justify-center rounded-xl
+            text-[var(--text-2)] transition-colors duration-[var(--dur-1)]
+            active:bg-[var(--surface-2)]"
+        >
+          <FolderSwitchIcon />
+        </button>
+      )}
+    </div>
+  );
 
   return (
     /* Le nom de la section est passé *dans* la carte, en sur-titre.
@@ -67,20 +126,24 @@ export function HomeSuggestionCard({ suggestion, routineCount, disabled }: Props
       <Card padded>
         {suggestion === null || routineCount === 0 ? (
           <div className="space-y-4">
-            <p className="label-xs font-semibold text-[var(--text-2)]">
-              {t('home.suggestionSection')}
+            {contextHeader}
+            <p className="text-sm leading-relaxed text-[var(--text-2)]">
+              {selectedFolderIsEmpty
+                ? t('home.emptyRoutineFolder')
+                : routineContext.required
+                  ? t('home.chooseRoutineFolder')
+                  : t('home.noRoutines')}
             </p>
-            <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('home.noRoutines')}</p>
-            <Button variant="secondary" fullWidth onClick={() => void navigate('/routines')}>
-              {t('home.createRoutine')}
-            </Button>
+            {!selectedFolderIsEmpty && !routineContext.required && (
+              <Button variant="secondary" fullWidth onClick={() => void navigate('/routines')}>
+                {t('home.createRoutine')}
+              </Button>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
+            {contextHeader}
             <div>
-              <p className="label-xs font-semibold text-[var(--text-2)]">
-                {t('home.suggestionSection')}
-              </p>
               <h3 className="mt-1 truncate text-lg font-semibold text-[var(--text-1)]">
                 {suggestion.name}
               </h3>
@@ -112,6 +175,13 @@ export function HomeSuggestionCard({ suggestion, routineCount, disabled }: Props
           </div>
         )}
       </Card>
+
+      <HomeRoutineContextSheet
+        open={contextSheetOpen}
+        value={routineContext.selected}
+        options={routineContext.options}
+        onClose={() => setContextSheetOpen(false)}
+      />
     </section>
   );
 }

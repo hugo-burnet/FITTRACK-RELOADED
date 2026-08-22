@@ -61,7 +61,7 @@ export default defineConfig(({ mode }) => {
       maxWorkers: 2,
       setupFiles: ['./src/test/setup.ts'],
       // Prevent tests in local agent worktrees from running twice.
-      exclude: [...configDefaults.exclude, '**/.claude/**'],
+      exclude: [...configDefaults.exclude, '**/.claude/**', '**/.worktrees/**'],
     },
   };
 });

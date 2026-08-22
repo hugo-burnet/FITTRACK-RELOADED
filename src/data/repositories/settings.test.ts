@@ -6,9 +6,11 @@ import { resetDb } from '@/test/resetDb';
 import {
   getAvailablePlateWeightsKg,
   getOneRepMaxFormula,
+  getRoutineFolderContext,
   getWeeklyTrainingGoalHistory,
   setAvailablePlateWeightsKg,
   setOneRepMaxFormula,
+  setRoutineFolderContext,
   setWeeklyTrainingGoal,
 } from './settings';
 import { rebuildAllRecords } from './personalRecords';
@@ -159,6 +161,31 @@ describe('weekly training goal history setting', () => {
   });
 });
 
+describe('home routine folder context setting', () => {
+  beforeEach(resetDb);
+  afterEach(() => vi.restoreAllMocks());
+
+  it('distinguishes no choice from an explicit root choice', async () => {
+    expect(await getRoutineFolderContext()).toBeNull();
+
+    await setRoutineFolderContext({ kind: 'root' });
+
+    expect(await getRoutineFolderContext()).toEqual({ kind: 'root' });
+  });
+
+  it('persists a folder id', async () => {
+    await setRoutineFolderContext({ kind: 'folder', folderId: 'push' });
+    expect(await getRoutineFolderContext()).toEqual({ kind: 'folder', folderId: 'push' });
+  });
+
+  it.each([null, '', { kind: 'folder', folderId: '' }, { kind: 'other' }])(
+    'normalizes an invalid stored context to no choice: %j',
+    async (value) => {
+      await db.settings.put({ key: 'homeRoutineFolderContext', value, updatedAt: 1 });
+      expect(await getRoutineFolderContext()).toBeNull();
+    },
+  );
+});
 describe('one-rep-max formula setting', () => {
   beforeEach(resetDb);
   afterEach(() => vi.restoreAllMocks());

@@ -184,6 +184,11 @@ const fr = {
     startRoutine: 'Démarrer {name}',
     noRoutines: 'Aucune routine pour l’instant. Une routine, c’est la séance écrite à l’avance.',
     createRoutine: 'Créer une routine',
+    chooseRoutineFolder: 'Choisir un dossier',
+    changeRoutineFolder: 'Changer de dossier',
+    rootRoutineFolder: 'Sans dossier',
+    emptyRoutineFolder: 'Aucune routine dans ce dossier.',
+    routineFolderWriteError: 'Impossible de changer de dossier.',
     programSection: 'Bloc en cours',
     programWeek: 'Semaine {current} sur {total}',
     /** La ligne « Programmes » quand aucun bloc ne tourne. */

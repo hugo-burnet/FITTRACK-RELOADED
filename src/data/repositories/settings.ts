@@ -12,6 +12,7 @@ const AVAILABLE_PLATE_WEIGHTS_KEY = 'availablePlateWeightsKg';
 const WEEKLY_TRAINING_GOAL_HISTORY_KEY = 'weeklyTrainingGoalHistory';
 const ONE_REP_MAX_FORMULA_KEY = 'oneRepMaxFormula';
 const REP_SECONDS_KEY = 'repSeconds';
+const HOME_ROUTINE_FOLDER_CONTEXT_KEY = 'homeRoutineFolderContext';
 const CANONICAL_PLATE_WEIGHTS = new Set<number>(DEFAULT_PLATES_KG);
 const ONE_REP_MAX_FORMULAS: ReadonlySet<OneRepMaxFormula> = new Set([
   'epley',
@@ -174,4 +175,32 @@ export async function setDefaultRepSeconds(seconds: number): Promise<number> {
   const value = clampRepSeconds(seconds);
   await db.settings.put({ key: REP_SECONDS_KEY, value, updatedAt: Date.now() });
   return value;
+}
+
+export type RoutineFolderContext =
+  | { kind: 'root' }
+  | { kind: 'folder'; folderId: string };
+
+function normalizeRoutineFolderContext(value: unknown): RoutineFolderContext | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const candidate = value as Record<string, unknown>;
+  if (candidate.kind === 'root') return { kind: 'root' };
+  return candidate.kind === 'folder' &&
+    typeof candidate.folderId === 'string' && candidate.folderId.length > 0
+    ? { kind: 'folder', folderId: candidate.folderId }
+    : null;
+}
+
+export async function getRoutineFolderContext(): Promise<RoutineFolderContext | null> {
+  return normalizeRoutineFolderContext(
+    (await db.settings.get(HOME_ROUTINE_FOLDER_CONTEXT_KEY))?.value,
+  );
+}
+
+export async function setRoutineFolderContext(context: RoutineFolderContext): Promise<void> {
+  await db.settings.put({
+    key: HOME_ROUTINE_FOLDER_CONTEXT_KEY,
+    value: context,
+    updatedAt: Date.now(),
+  });
 }
