@@ -19,7 +19,10 @@ export function TutorialMissionCoach({
     const measure = () => {
       const target = document.querySelector<HTMLElement>(`[data-tutorial-id="${step.targetId}"]`);
       setRect(target?.getBoundingClientRect() ?? null);
-      target?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' });
+      const behavior = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+      target?.scrollIntoView?.({ block: 'nearest', behavior });
     };
     const frame = requestAnimationFrame(measure);
     window.addEventListener('resize', measure);
