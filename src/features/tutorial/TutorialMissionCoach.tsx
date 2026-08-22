@@ -1,10 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { t } from '@/i18n/fr';
 import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import type { TutorialMission } from './tutorialMissions';
 import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
+import { useTutorialAnchor } from './useTutorialAnchor';
 import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
 export function TutorialMissionCoach({
@@ -17,7 +18,9 @@ export function TutorialMissionCoach({
   onDismiss: () => void;
 }) {
   const step = mission.steps[stepIndex];
-  const [rect, setRect] = useState<DOMRect | null>(null);
+  const rect = useTutorialAnchor(
+    step === undefined ? null : `[data-tutorial-id="${step.targetId}"]`,
+  );
 
   /*
    * La consigne se dit une fois, en arrivant sur l'étape — et seulement si rien
@@ -56,25 +59,26 @@ export function TutorialMissionCoach({
     return () => stopTutorialNarration();
   }, [clipId]);
 
+  /*
+   * Amener la cible à l'écran une fois, en arrivant sur l'étape.
+   *
+   * Séparé de la mesure, qui tourne désormais en continu : faire défiler à
+   * chaque mesure, c'est reprendre la main sur le doigt de l'utilisateur dès
+   * qu'une carte se replie ailleurs dans la page.
+   */
+  const targetId = step?.targetId;
   useEffect(() => {
-    if (step === undefined) return;
-    const measure = () => {
-      const target = document.querySelector<HTMLElement>(`[data-tutorial-id="${step.targetId}"]`);
-      setRect(target?.getBoundingClientRect() ?? null);
+    if (targetId === undefined) return;
+    const frame = requestAnimationFrame(() => {
       const behavior = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
         ? 'auto'
         : 'smooth';
-      target?.scrollIntoView?.({ block: 'nearest', behavior });
-    };
-    const frame = requestAnimationFrame(measure);
-    window.addEventListener('resize', measure);
-    window.addEventListener('scroll', measure, true);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('resize', measure);
-      window.removeEventListener('scroll', measure, true);
-    };
-  }, [step]);
+      document
+        .querySelector<HTMLElement>(`[data-tutorial-id="${targetId}"]`)
+        ?.scrollIntoView?.({ block: 'nearest', behavior });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [targetId]);
 
   if (step === undefined) return null;
 

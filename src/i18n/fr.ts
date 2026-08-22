@@ -1869,6 +1869,8 @@ const fr = {
     modeSoundsHint: 'Impacts, cadence et validations, sans parole.',
     modeSilence: 'Silence',
     modeSilenceHint: 'Aucun son produit par FitTrack.',
+    offScreenNotice:
+      'Cet écran n’existe que pendant une séance : la visite le décrit sans l’ouvrir.',
 
     activation: {
       title: 'Préparer ma première séance',
@@ -1976,7 +1978,8 @@ const fr = {
 
     topic: {
       home: 'Accueil',
-      routines: 'Routines et blocs',
+      routines: 'Routines',
+      programs: 'Blocs',
       workout: 'Séance',
       coach: 'Coach',
       history: 'Historique',
@@ -1989,6 +1992,7 @@ const fr = {
       intro: 'Un tour rapide des écrans essentiels avant ta première séance.',
       home: 'L’accueil te montre quoi lancer et où tu en es.',
       routines: 'Prépare tes séances, puis organise-les en blocs de plusieurs semaines.',
+      programs: 'Un bloc étale tes routines sur plusieurs semaines, avec une intention.',
       workout: 'Renseigne charge et répétitions : la voix cadence, compte et relance.',
       coach: 'Le coach résume la séance et explique la prochaine progression.',
       history: 'Chaque séance terminée reste consultable et modifiable.',

@@ -19,6 +19,7 @@ import { playTutorialNarration, stopTutorialNarration } from './tutorialNarratio
 import {
   contextualTutorial,
   FULL_TUTORIAL,
+  spotlightSelector,
   TUTORIAL_TOPIC_LABEL_KEYS,
   TUTORIAL_VOICE_CHOICE_CLIP,
   tutorialTopicForPath,
@@ -26,6 +27,7 @@ import {
 } from './tutorialScript';
 import { loadTutorialState } from './tutorialStore';
 import type { TutorialCompletion } from './tutorialTypes';
+import { useTutorialAnchor } from './useTutorialAnchor';
 import { useTutorialMissions } from './useTutorialMissions';
 import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
@@ -36,7 +38,6 @@ function TutorialOverlay({
   step,
   index,
   count,
-  pathname,
   narrationActive,
   onPrevious,
   onNext,
@@ -45,37 +46,23 @@ function TutorialOverlay({
   step: TutorialStep;
   index: number;
   count: number;
-  pathname: string;
   narrationActive: boolean;
   onPrevious: () => void;
   onNext: () => void;
   onSkip: () => void;
 }) {
-  const [rect, setRect] = useState<DOMRect | null>(null);
   const [expanded, setExpanded] = useState(true);
   const userToggled = useRef(false);
+  // Suivie en continu : la route du chapitre vient d'être demandée, et l'écran
+  // qu'elle amène — chargé paresseusement, rempli par Dexie — n'existe pas
+  // encore à la première image.
+  const rect = useTutorialAnchor(spotlightSelector(step.spotlight));
 
   useEffect(() => {
     if (!narrationActive || userToggled.current) return;
     const timer = window.setTimeout(() => setExpanded(false), 1_800);
     return () => window.clearTimeout(timer);
   }, [narrationActive, step.id]);
-
-  useEffect(() => {
-    let frame = 0;
-    const measure = () => {
-      const target = document.querySelector<HTMLElement>(`[data-tutorial-${step.target}]`);
-      setRect(target?.getBoundingClientRect() ?? null);
-    };
-    frame = requestAnimationFrame(measure);
-    window.addEventListener('resize', measure);
-    window.addEventListener('scroll', measure, true);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('resize', measure);
-      window.removeEventListener('scroll', measure, true);
-    };
-  }, [pathname, step]);
 
   const inset = 6;
   const focus =
@@ -195,6 +182,12 @@ function TutorialOverlay({
           <p className="mt-2 text-sm leading-snug text-[var(--text-2)]" aria-live="polite">
             {t(step.summaryKey)}
           </p>
+
+          {step.offScreen === true && (
+            <p className="mt-2 text-xs leading-snug text-[var(--text-2)]">
+              {t('tutorial.offScreenNotice')}
+            </p>
+          )}
 
           <div
             id="tutorial-transcript"
@@ -497,7 +490,9 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         </div>
       </Sheet>
 
-      {missions.activeMission !== null && phase === 'idle' && (
+      {/* Jamais ailleurs que sur l'écran de l'étape : une consigne lue devant
+          une page qui ne la contient pas ne s'explique pas, elle s'endure. */}
+      {missions.activeMission !== null && missions.onStepScreen && phase === 'idle' && (
         <TutorialMissionCoach
           mission={missions.activeMission}
           stepIndex={missions.state.activeStepIndex}
@@ -511,7 +506,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
           step={current}
           index={index}
           count={steps.length}
-          pathname={pathname}
           narrationActive={narrationActive}
           onPrevious={() => {
             setNarrationActive(false);

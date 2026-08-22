@@ -4,7 +4,7 @@ const { playTutorialNarration, stopTutorialNarration } = vi.hoisted(() => ({
 }));
 vi.mock('./tutorialNarration', () => ({ playTutorialNarration, stopTutorialNarration }));
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Sheet } from '@/ui';
@@ -163,6 +163,34 @@ describe('TutorialMissionCoach', () => {
 
     expect(matchMedia).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)');
     expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest', behavior: 'auto' });
+  });
+
+  /*
+   * L'ancre arrive après le coach, pas avant.
+   *
+   * La mesure tenait dans une seule `requestAnimationFrame`, jamais reprise :
+   * une cible montée ensuite — route paresseuse, lecture Dexie, carte dépliée —
+   * n'était plus jamais encadrée, et l'utilisateur voyait une consigne sans
+   * rien de désigné. C'est le décalage remonté du téléphone.
+   */
+  it('encadre une cible qui n’apparaît qu’après lui', async () => {
+    const { container } = render(
+      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+    );
+    const ring = () => container.querySelector('[aria-hidden="true"].ring-2');
+    await waitFor(() => expect(screen.getByRole('region', { name: /Mission guidée/ })).toBeVisible());
+    expect(ring()).toBeNull();
+
+    const late = document.createElement('button');
+    late.setAttribute('data-tutorial-id', 'routine-create');
+    act(() => {
+      document.body.append(late);
+    });
+
+    await waitFor(() => expect(ring()).not.toBeNull());
+
+    act(() => late.remove());
+    await waitFor(() => expect(ring()).toBeNull());
   });
 
   it('dismisses immediately', async () => {

@@ -15,7 +15,9 @@ describe('script du tutoriel', () => {
   });
 
   it('associe les sous-pages à leur grande fonctionnalité', () => {
-    expect(tutorialTopicForPath('/programs/new')).toBe('routines');
+    // Les blocs ont leur chapitre : leur écran n'emprunte plus celui des routines.
+    expect(tutorialTopicForPath('/programs/new')).toBe('programs');
+    expect(tutorialTopicForPath('/routines/abc')).toBe('routines');
     expect(tutorialTopicForPath('/workout/finish')).toBe('coach');
     expect(tutorialTopicForPath('/analytics/records')).toBe('analytics');
     expect(tutorialTopicForPath('/exercises/bench')).toBe('exercises');

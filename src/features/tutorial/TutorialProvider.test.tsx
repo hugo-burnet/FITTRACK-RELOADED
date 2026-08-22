@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Screen } from '@/app/Screen';
 import { ANNOUNCER_STORAGE_KEY } from '@/stores/announcer';
@@ -33,12 +33,17 @@ vi.mock('./tutorialNarration', () => ({
   stopTutorialNarration: stopTutorialNarrationMock,
 }));
 
+/** L'adresse courante, lisible depuis un test : la visite navigue toute seule. */
+function Address() {
+  return <p>adresse : {useLocation().pathname}</p>;
+}
+
 function renderTutorial(path = '/', strict = false) {
   const tutorial = (
     <MemoryRouter initialEntries={[path]}>
       <TutorialProvider>
         <Screen title="Écran de test">
-          <p>Contenu réel</p>
+          <Address />
         </Screen>
       </TutorialProvider>
     </MemoryRouter>
@@ -246,6 +251,74 @@ describe('TutorialProvider', () => {
     expect(
       screen.getByText('Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.'),
     ).toBeVisible();
+  });
+
+  /*
+   * Les cinq étapes de composition visent des commandes qui n'existent que dans
+   * `/routines/:id`. Le préfixe `/routines` de la mission correspondait déjà
+   * depuis la liste : rien ne naviguait, aucune cible n'était trouvée, et le
+   * coach demandait d'ajouter un exercice « à cette routine » devant une liste
+   * qui n'en désigne aucune. La mission ne pouvait alors plus avancer.
+   */
+  it('emmène une mission de composition dans l’éditeur de sa routine', async () => {
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: 'completed',
+      activeMissionId: 'TUT-ROU-02',
+      missionRoutineId: 'r-1',
+    });
+
+    renderTutorial('/routines');
+
+    expect(await screen.findByText('adresse : /routines/r-1')).toBeVisible();
+  });
+
+  it('ne dit rien tant que l’écran de l’étape n’est pas là', async () => {
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: 'completed',
+      activeMissionId: 'TUT-DAT-01',
+      missionRoutineId: null,
+    });
+
+    // `TUT-DAT-01` s'enchaîne après l'enregistrement d'une séance : elle ne
+    // téléporte personne dans les Réglages, et ne parle pas depuis l'historique.
+    renderTutorial('/history');
+
+    await screen.findByText('adresse : /history');
+    expect(screen.queryByRole('region', { name: 'Mission guidée' })).not.toBeInTheDocument();
+    expect(playTutorialNarrationMock).not.toHaveBeenCalled();
+  });
+
+  it('retient la routine ouverte pour savoir y revenir', async () => {
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
+
+    renderTutorial('/routines/r-9');
+
+    await waitFor(() => expect(loadTutorialState().missionRoutineId).toBe('r-9'));
+  });
+
+  it('n’offre pas depuis la liste une mission qui se joue dans un éditeur', async () => {
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
+    const user = userEvent.setup();
+    renderTutorial('/routines');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+
+    expect(screen.getByRole('button', { name: 'Créer une première routine' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Ajouter un exercice' })).not.toBeInTheDocument();
+  });
+
+  it('donne son propre chapitre aux blocs', async () => {
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
+    const user = userEvent.setup();
+    renderTutorial('/programs');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(screen.getByRole('button', { name: /Expliquer cette page · Blocs/ }));
+
+    expect(await screen.findByRole('dialog', { name: 'Visite guidée' })).toBeVisible();
+    expect(screen.getByText(/Un bloc étale tes routines/)).toBeVisible();
   });
 
   it('does not offer activation to a migrated v1 user', () => {

@@ -27,6 +27,15 @@ export interface TutorialStateV2 {
   activationPath: TutorialActivationPath | null;
   activeMissionId: TutorialMissionId | null;
   activeStepIndex: number;
+  /**
+   * La routine dont les missions de composition parlent — la dernière ouverte.
+   *
+   * Sans elle, `/routines/:id` n'est pas une adresse : on sait qu'une étape
+   * vit dans l'éditeur d'une routine, pas dans lequel, et on ne peut donc ni
+   * y renvoyer l'utilisateur ni décider qu'il n'y est pas. Persistée avec le
+   * reste : une mission reprise après un rechargement doit retrouver la sienne.
+   */
+  missionRoutineId: string | null;
   missions: Partial<Record<TutorialMissionId, TutorialMissionStatus>>;
 }
 

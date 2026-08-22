@@ -23,7 +23,37 @@ describe('tutorialStore v2', () => {
       activationPath: null,
       activeMissionId: null,
       activeStepIndex: 0,
+      missionRoutineId: null,
       missions: {},
+    });
+  });
+
+  it('complète une progression écrite avant que la routine de mission existe', () => {
+    localStorage.setItem(
+      TUTORIAL_STORAGE_KEY,
+      JSON.stringify({
+        version: 2,
+        scriptVersion: 1,
+        orientation: 'completed',
+        activationPath: 'blank',
+        activeMissionId: 'TUT-ROU-03',
+        activeStepIndex: 1,
+        missions: { 'TUT-ROU-02': 'completed' },
+      }),
+    );
+
+    // La progression est conservée telle quelle ; seul le champ ajouté est
+    // complété. Jeter l'état entier ferait recommencer une mission en cours
+    // pour cause de mise à jour de l'application.
+    expect(loadTutorialState()).toEqual({
+      version: 2,
+      scriptVersion: 1,
+      orientation: 'completed',
+      activationPath: 'blank',
+      activeMissionId: 'TUT-ROU-03',
+      activeStepIndex: 1,
+      missionRoutineId: null,
+      missions: { 'TUT-ROU-02': 'completed' },
     });
   });
 

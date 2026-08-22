@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import { advanceMission, dismissMission, startMission } from './tutorialMissionMachine';
-import { isMissionAvailable, missionFor, type TutorialMissionFacts } from './tutorialMissions';
+import {
+  isMissionAvailable,
+  isMissionReachable,
+  missionFor,
+  stepOf,
+  type TutorialMissionFacts,
+} from './tutorialMissions';
+import { pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
 import { loadTutorialState, saveTutorialState } from './tutorialStore';
 import type {
   TutorialActivationPath,
@@ -31,11 +38,12 @@ export function useTutorialMissions(
 
   const start = useCallback(
     (missionId: TutorialMissionId) =>
-      commit((current) =>
-        isMissionAvailable(missionFor(missionId), facts)
-          ? startMission(current, missionId)
-          : current,
-      ),
+      commit((current) => {
+        const mission = missionFor(missionId);
+        if (!isMissionAvailable(mission, facts)) return current;
+        if (!isMissionReachable(mission, current.missionRoutineId)) return current;
+        return startMission(current, missionId);
+      }),
     [commit, facts],
   );
   const offer = useCallback(
@@ -45,7 +53,8 @@ export function useTutorialMissions(
         if (
           current.activeMissionId !== null ||
           current.missions[missionId] !== undefined ||
-          (mission.guard !== 'external' && !isMissionAvailable(mission, facts))
+          (mission.guard !== 'external' && !isMissionAvailable(mission, facts)) ||
+          !isMissionReachable(mission, current.missionRoutineId)
         ) {
           return current;
         }
@@ -81,10 +90,34 @@ export function useTutorialMissions(
     [state.activeMissionId],
   );
 
+  const activeStep = stepOf(activeMission, state.activeStepIndex);
+  const onStepScreen =
+    activeStep !== null && screenHolds(pathname, activeStep.screen, state.missionRoutineId);
+
+  /*
+   * La routine dont parlent les missions de composition, retenue dès qu'on
+   * entre dans son éditeur.
+   *
+   * C'est l'URL qui l'apprend, et non les événements : une mission lancée
+   * depuis l'aide de la page n'en a émis aucun, et c'est précisément le cas où
+   * l'ancienne version partait dans le vide.
+   */
+  const pathRoutineId = routineIdFromPath(pathname);
   useEffect(() => {
-    if (activeMission === null || activeMission.routePrefix === '/') return;
-    if (!pathname.startsWith(activeMission.routePrefix)) navigate(activeMission.routePrefix);
-  }, [activeMission, navigate, pathname]);
+    if (pathRoutineId === null) return;
+    commit((current) =>
+      current.missionRoutineId === pathRoutineId
+        ? current
+        : { ...current, missionRoutineId: pathRoutineId },
+    );
+  }, [commit, pathRoutineId]);
+
+  useEffect(() => {
+    if (activeStep === null || onStepScreen || activeStep.reach === 'wait') return;
+    const destination = pathForScreen(activeStep.screen, state.missionRoutineId);
+    if (destination === null) return;
+    navigate(destination);
+  }, [activeStep, navigate, onStepScreen, state.missionRoutineId]);
 
   useEffect(() => {
     if (
@@ -107,6 +140,8 @@ export function useTutorialMissions(
   return {
     state,
     activeMission,
+    activeStep,
+    onStepScreen,
     start,
     offer,
     report,

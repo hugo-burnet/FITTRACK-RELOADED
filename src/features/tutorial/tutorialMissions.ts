@@ -1,8 +1,22 @@
 import type { TranslationKey } from '@/i18n/fr';
+import { pathForScreen, type TutorialScreen } from './tutorialScreens';
 import type { TutorialEvent, TutorialMissionId, TutorialStateV2 } from './tutorialTypes';
 
 export interface TutorialMissionStep {
   id: string;
+  /**
+   * L'écran qui porte l'ancre `targetId`. C'est lui qui décide de la
+   * navigation, et non plus le `routePrefix` de la mission : celui-ci répond à
+   * « de quel onglet cette mission parle-t-elle », pas à « où est le bouton ».
+   */
+  screen: TutorialScreen;
+  /**
+   * `wait` pour une étape qu'on n'a pas le droit d'atteindre à la place de
+   * l'utilisateur : le bilan s'ouvre parce qu'il a fini sa séance, et les
+   * Réglages ne sont pas un endroit où le jeter à la seconde où il vient
+   * d'enregistrer sa première séance. Le coach attend alors qu'il y arrive.
+   */
+  reach: 'navigate' | 'wait';
   targetId: string;
   instructionKey: TranslationKey;
   detailKey: TranslationKey;
@@ -12,6 +26,7 @@ export interface TutorialMissionStep {
 
 export interface TutorialMission {
   id: TutorialMissionId;
+  /** La zone de l'application dont la mission parle — pour l'aide de la page. */
   routePrefix: '/routines' | '/workout' | '/settings' | '/';
   titleKey: TranslationKey;
   guard: 'always' | 'requires-active-workout' | 'requires-no-active-workout' | 'external';
@@ -48,6 +63,8 @@ const ACTIVATE: TutorialMission = {
   steps: [
     {
       id: 'pick-template',
+      screen: 'routines',
+      reach: 'navigate',
       targetId: 'routine-create',
       instructionKey: 'tutorial.mission.activation.instruction',
       clipId: 'mission-activation-1',
@@ -66,6 +83,8 @@ const RECOVER: TutorialMission = {
   steps: [
     {
       id: 'recover',
+      screen: 'anywhere',
+      reach: 'navigate',
       targetId: 'active-workout-bar',
       instructionKey: 'tutorial.mission.recovery.instruction',
       clipId: 'mission-recovery-1',
@@ -84,6 +103,8 @@ const ROUTINE_CREATE: TutorialMission = {
   steps: [
     {
       id: 'create',
+      screen: 'routines',
+      reach: 'navigate',
       targetId: 'routine-create',
       instructionKey: 'tutorial.mission.routineCreate.instruction',
       clipId: 'mission-routine-create-1',
@@ -102,6 +123,8 @@ const ROUTINE_EXERCISE: TutorialMission = {
   steps: [
     {
       id: 'add-exercise',
+      screen: 'routine-editor',
+      reach: 'navigate',
       targetId: 'routine-add-exercise',
       instructionKey: 'tutorial.mission.routineExercise.instruction',
       clipId: 'mission-routine-exercise-1',
@@ -110,6 +133,8 @@ const ROUTINE_EXERCISE: TutorialMission = {
     },
     {
       id: 'add-set',
+      screen: 'routine-editor',
+      reach: 'navigate',
       targetId: 'routine-add-set',
       instructionKey: 'tutorial.mission.routineSet.instruction',
       clipId: 'mission-routine-set-1',
@@ -128,6 +153,8 @@ const ROUTINE_TARGETS: TutorialMission = {
   steps: [
     {
       id: 'set-target',
+      screen: 'routine-editor',
+      reach: 'navigate',
       targetId: 'routine-first-set',
       instructionKey: 'tutorial.mission.routineTargets.instruction',
       clipId: 'mission-routine-targets-1',
@@ -136,6 +163,8 @@ const ROUTINE_TARGETS: TutorialMission = {
     },
     {
       id: 'set-rest',
+      screen: 'routine-editor',
+      reach: 'navigate',
       targetId: 'routine-exercise-menu',
       instructionKey: 'tutorial.mission.routineRest.instruction',
       clipId: 'mission-routine-rest-1',
@@ -154,6 +183,8 @@ const ROUTINE_START: TutorialMission = {
   steps: [
     {
       id: 'start',
+      screen: 'routine-editor',
+      reach: 'navigate',
       targetId: 'routine-start',
       instructionKey: 'tutorial.mission.routineStart.instruction',
       clipId: 'mission-routine-start-1',
@@ -172,6 +203,8 @@ const WORKOUT_INPUT: TutorialMission = {
   steps: [
     {
       id: 'write',
+      screen: 'workout',
+      reach: 'navigate',
       targetId: 'workout-first-set',
       instructionKey: 'tutorial.mission.setInput.instruction',
       clipId: 'mission-set-input-1',
@@ -190,6 +223,8 @@ const WORKOUT_VALIDATE: TutorialMission = {
   steps: [
     {
       id: 'complete',
+      screen: 'workout',
+      reach: 'navigate',
       targetId: 'workout-first-set-complete',
       instructionKey: 'tutorial.mission.setValidate.instruction',
       clipId: 'mission-set-validate-1',
@@ -208,6 +243,8 @@ const WORKOUT_REST: TutorialMission = {
   steps: [
     {
       id: 'rest',
+      screen: 'workout',
+      reach: 'navigate',
       targetId: 'workout-rest',
       instructionKey: 'tutorial.mission.rest.instruction',
       clipId: 'mission-rest-1',
@@ -226,6 +263,8 @@ const WORKOUT_FINISH: TutorialMission = {
   steps: [
     {
       id: 'open-finish',
+      screen: 'workout',
+      reach: 'navigate',
       targetId: 'workout-finish',
       instructionKey: 'tutorial.mission.workoutFinish.instruction',
       clipId: 'mission-workout-finish-1',
@@ -234,6 +273,8 @@ const WORKOUT_FINISH: TutorialMission = {
     },
     {
       id: 'save',
+      screen: 'workout-finish',
+      reach: 'wait',
       targetId: 'workout-save',
       instructionKey: 'tutorial.mission.workoutSave.instruction',
       clipId: 'mission-workout-save-1',
@@ -252,6 +293,8 @@ const BACKUP_EXPORT: TutorialMission = {
   steps: [
     {
       id: 'export',
+      screen: 'settings',
+      reach: 'wait',
       targetId: 'backup-export',
       instructionKey: 'tutorial.mission.backupExport.instruction',
       clipId: 'mission-backup-export-1',
@@ -270,6 +313,8 @@ const BACKUP_RESTORE: TutorialMission = {
   steps: [
     {
       id: 'restore',
+      screen: 'settings',
+      reach: 'wait',
       targetId: 'backup-restore',
       instructionKey: 'tutorial.mission.backupRestore.instruction',
       clipId: 'mission-backup-restore-1',
@@ -301,6 +346,34 @@ export function missionFor(id: TutorialMissionId): TutorialMission {
   return mission;
 }
 
+/**
+ * L'étape en cours, ou `null` quand la mission est finie ou absente.
+ *
+ * L'index vit dans l'état et le catalogue peut changer entre deux versions :
+ * la lecture est donc faite ici, une fois, plutôt que ré-indexée sur place par
+ * chaque appelant.
+ */
+export function stepOf(
+  mission: TutorialMission | null,
+  stepIndex: number,
+): TutorialMissionStep | null {
+  return mission?.steps[stepIndex] ?? null;
+}
+
+/**
+ * Peut-on seulement jouer cette mission depuis ici ?
+ *
+ * L'aide de la page proposait « Ajouter un exercice » depuis la **liste** des
+ * routines : la mission démarrait, le coach parlait, et sa cible vivait dans un
+ * éditeur qu'aucune routine retenue ne permettait d'ouvrir. Une mission dont on
+ * ne sait pas rejoindre la première étape n'est pas proposée du tout.
+ */
+export function isMissionReachable(mission: TutorialMission, routineId: string | null): boolean {
+  const first = mission.steps[0];
+  if (first === undefined) return false;
+  return first.screen === 'anywhere' || pathForScreen(first.screen, routineId) !== null;
+}
+
 export function contextualMissionsForPath(
   pathname: string,
   state: TutorialStateV2,
@@ -312,6 +385,7 @@ export function contextualMissionsForPath(
       mission.id !== 'TUT-REC-01' &&
       pathname.startsWith(mission.routePrefix) &&
       isMissionAvailable(mission, facts) &&
-      state.missions[mission.id] !== 'completed',
+      state.missions[mission.id] !== 'completed' &&
+      isMissionReachable(mission, state.missionRoutineId),
   );
 }

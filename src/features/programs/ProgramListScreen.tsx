@@ -66,7 +66,11 @@ export function ProgramListScreen() {
       title={t('program.listTitle')}
       onBack={goBack}
       action={
-        <HeaderAction label={t('program.listCreate')} onClick={() => void navigate('/programs/new')}>
+        <HeaderAction
+          label={t('program.listCreate')}
+          tutorialId="program-create"
+          onClick={() => void navigate('/programs/new')}
+        >
           <PlusIcon />
         </HeaderAction>
       }

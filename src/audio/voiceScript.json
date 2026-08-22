@@ -344,6 +344,13 @@
       "settings": { "stability": 0.85, "style": 0.05 }
     },
     {
+      "id": "tutorial-programs-1",
+      "cue": "tutorial",
+      "text": "Un bloc étale vos routines sur plusieurs semaines. Vous choisissez sa durée, son intention — construction, force, reprise ou décharge — et les séances de chaque semaine. L'accueil vous dit ensuite laquelle lancer aujourd'hui.",
+      "direction": "Définition méthodique. Enchaîne le chapitre précédent : la routine est la séance, le bloc est le calendrier.",
+      "settings": { "stability": 0.85, "style": 0.05 }
+    },
+    {
       "id": "tutorial-workout-1",
       "cue": "tutorial",
       "text": "Pendant la séance, renseignez la charge et le nombre de répétitions. La préparation démarre automatiquement : dix secondes pour poser le téléphone, puis trois, deux, un, et la cadence. Chaque série validée lance le repos. Si les répétitions manquent, FitTrack vous les demande et repart seul dès qu'elles sont renseignées.",

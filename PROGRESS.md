@@ -2,9 +2,93 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**v1.2.0 publiée. L'app parle : 95 clips pour
-95 identifiants. Chrono, unilatéral et voix des missions livrés ; trois checkpoints téléphone en
-attente**).
+**Dernière mise à jour :** 2026-08-23 (**revue du tutoriel : les missions savent enfin sur quel
+écran elles se jouent, la visite encadre une commande et non 83 % de l'écran, et les blocs ont leur
+chapitre**).
+
+## Revue du tutoriel — ce qu'il couvrait mal, et pourquoi
+
+Quatre défauts remontés du téléphone, tous reproduits avant correction.
+
+### 1. Cinq étapes sur douze parlaient d'un écran qu'elles n'ouvraient jamais
+
+Une mission ne connaissait qu'un `routePrefix`. Les étapes de composition — ajouter un exercice,
+ajouter une série, régler la cible, régler le repos, démarrer — visent des ancres qui n'existent
+que dans `/routines/:id`. Depuis la **liste** `/routines`, le préfixe correspondait déjà : rien ne
+naviguait, aucune cible n'était trouvée, et le coach affichait « Ajoute au moins un exercice à
+cette routine » devant une liste qui ne désigne aucune routine. La mission ne pouvait alors plus
+avancer du tout — aucun geste disponible sur cet écran n'émettait l'événement attendu.
+
+`tutorialScreens.ts` remplace le préfixe par un **écran par étape** : où emmener l'utilisateur
+(`pathForScreen`) et comment savoir qu'il y est (`screenHolds`). La routine concernée — la dernière
+ouverte — est retenue dans `missionRoutineId`, lue dans l'URL et non dans les événements : une
+mission lancée depuis l'aide de la page n'en a émis aucun, et c'était précisément le cas qui
+partait dans le vide.
+
+`screenHolds` est **tolérant vers le bas** : `/routines/:id/add` compte comme l'éditeur, parce que
+c'est l'étape elle-même qui vient d'ouvrir le sélecteur d'exercices. Le renvoyer à l'éditeur
+casserait le geste demandé.
+
+### 2. Le coach parlait devant des écrans qui ne montraient pas ça
+
+Il se montait dès qu'une mission était active, où que l'on soit. Il ne se rend plus que sur l'écran
+de son étape (`onStepScreen`), donc il ne parle plus non plus ailleurs.
+
+Deux étapes n'ont pas le droit d'être atteintes à la place de l'utilisateur (`reach: 'wait'`) : le
+bilan de séance, qui s'ouvre parce qu'il a fini, et l'export de sauvegarde — qui s'enchaîne après
+`workout-saved` et **téléportait dans les Réglages quelqu'un qui venait d'enregistrer sa première
+séance**. La mission reste armée, muette, et s'allume quand il arrive dans les Réglages de
+lui-même.
+
+L'aide de la page ne propose plus non plus une mission injouable depuis ici : `isMissionReachable`
+écarte celle dont on ne sait pas rejoindre la première étape.
+
+### 3. Le cadre de la visite couvrait 83 % de l'écran
+
+La visite ne savait viser que `data-tutorial-header` ou `data-tutorial-content`. Mesuré à
+375 × 812 : le contenu fait **375 × 671**, et le panneau du tutoriel se pose par-dessus. Un cadre
+qui entoure tout n'entoure rien.
+
+Chaque chapitre déclare désormais ce qu'il encadre : un onglet de la barre du bas
+(`data-tutorial-nav`, une ancre qui existait déjà et que personne n'interrogeait), une commande
+nommée (`data-tutorial-id`, le vocabulaire des missions), ou **rien** — on assombrit alors sans
+encadrer. Mesuré après : 87 × 62 sur l'onglet, 60 × 60 sur le « + » des Blocs. Les deux ancres
+mortes de `Screen` sont retirées.
+
+Les chapitres Séance et Coach gardent `route: '/'` — leur écran n'existe pas tant qu'aucune séance
+ne tourne, et la visite se fait avant la première. Ils le **disent** maintenant, au lieu de laisser
+croire que l'accueil derrière est le sujet.
+
+### 4. La mesure ne se reprenait jamais
+
+Les deux couches mesuraient leur cible dans **une seule** `requestAnimationFrame`. Une ancre montée
+ensuite — route paresseuse, lecture Dexie, carte dépliée — n'était plus jamais encadrée.
+`useTutorialAnchor` remplace les deux : `MutationObserver` pour l'apparition et la disparition,
+`ResizeObserver` pour le changement de taille, défilement et redimensionnement pour le reste — une
+seule mesure par image, et l'état n'est écrit que si la boîte a bougé.
+
+### Les blocs, enfin montrés
+
+`tutorialTopicForPath('/programs')` renvoyait `routines` : l'aide de l'écran Blocs jouait le
+chapitre des routines. Or ce chapitre **annonce les blocs dans sa seconde phrase**, devant la liste
+des routines — la voix décrivait un écran que personne n'avait vu. Les blocs ont leur topic, leur
+chapitre `tutorial-programs-1` (12,3 s, une prise) et leur place dans la visite, juste après les
+routines dont ils prolongent la phrase.
+
+**96 clips pour 96 identifiants.** `@breezystack/lamejs` manquait de `node_modules` — le générateur
+ne démarre pas sans lui ; `npm i` avant la prochaine génération.
+
+**Ce que les tests ne couvrent pas :** l'aspect du cadre à l'écran. Le panneau du navigateur n'était
+pas affiché pendant la session, donc `requestAnimationFrame` était gelé et rien ne se mesurait
+réellement. La géométrie ci-dessus a été relevée en remplaçant l'horloge d'animation ; la
+**vérification visuelle sur téléphone reste à faire**, et avec elle l'écoute du nouveau clip.
+
+### Checkpoint téléphone demandé
+
+> Depuis la liste des routines, lancer « Ajouter un exercice » depuis l'aide : l'app ouvre la bonne
+> routine, le cadre se pose sur le bouton et pas ailleurs. Terminer une séance : on n'est pas
+> éjecté dans les Réglages. Refaire la visite complète : le chapitre Blocs ouvre l'écran des blocs,
+> et Séance/Coach annoncent qu'ils ne peuvent pas être montrés.
 
 ## v1.1.0 et v1.2.0 — livrées et publiées
 

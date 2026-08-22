@@ -66,7 +66,6 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
           décor, la page se remplit derrière. `animate-*` ne rejoue qu'au
           montage, donc une fois par écran et jamais à chaque série validée. */}
       <header
-        data-tutorial-header
         className="animate-fade flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4"
       >
         {onBack && (
@@ -111,7 +110,6 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
           vingt écrans qui se souviennent chacun d'une valeur finissent par en
           oublier une. */}
       <div
-        data-tutorial-content
         className="animate-rise flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain
           px-4 pt-3 pb-8"
       >

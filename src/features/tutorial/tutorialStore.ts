@@ -11,6 +11,7 @@ export function createTutorialState(): TutorialStateV2 {
     activationPath: null,
     activeMissionId: null,
     activeStepIndex: 0,
+    missionRoutineId: null,
     missions: {},
   };
 }
@@ -42,6 +43,11 @@ function isTutorialState(value: unknown): value is TutorialStateV2 {
     typeof state.activeStepIndex === 'number' &&
     Number.isInteger(state.activeStepIndex) &&
     state.activeStepIndex >= 0 &&
+    // Absente des états écrits avant qu'elle existe : `loadTutorialState` la
+    // complète, plutôt que de jeter une progression entière pour un champ ajouté.
+    (state.missionRoutineId === undefined ||
+      state.missionRoutineId === null ||
+      typeof state.missionRoutineId === 'string') &&
     missionEntries.every(
       ([missionId, status]) =>
         TUTORIAL_MISSION_IDS.includes(missionId as (typeof TUTORIAL_MISSION_IDS)[number]) &&
@@ -55,7 +61,7 @@ export function loadTutorialState(): TutorialStateV2 {
     const raw = localStorage.getItem(TUTORIAL_STORAGE_KEY);
     if (raw !== null) {
       const parsed: unknown = JSON.parse(raw);
-      if (isTutorialState(parsed)) return parsed;
+      if (isTutorialState(parsed)) return { ...createTutorialState(), ...parsed };
     }
   } catch {
     return createTutorialState();
