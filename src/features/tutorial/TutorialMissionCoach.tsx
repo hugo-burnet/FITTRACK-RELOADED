@@ -37,7 +37,7 @@ export function TutorialMissionCoach({
   if (step === undefined) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[65]" aria-live="polite">
+    <div className="pointer-events-none fixed inset-0 z-40" aria-live="polite">
       {rect !== null && (
         <span
           aria-hidden="true"
@@ -54,7 +54,7 @@ export function TutorialMissionCoach({
         role="region"
         aria-label={t('tutorial.mission.label')}
         className={`pointer-events-auto safe-bottom absolute right-4 left-4 mx-auto max-w-[34rem] rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-4 shadow-[0_18px_48px_rgba(0,0,0,0.45)] ${
-          rect !== null && rect.top > window.innerHeight / 2 ? 'top-[5rem]' : 'bottom-[4.5rem]'
+          rect === null || rect.top > window.innerHeight / 2 ? 'top-[5rem]' : 'bottom-[4.5rem]'
         }`}
       >
         <p className="label-xs font-semibold text-[var(--accent-ink)]">
