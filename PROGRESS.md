@@ -2,9 +2,31 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-23 (**revue du tutoriel : les missions savent enfin sur quel
-écran elles se jouent, la visite encadre une commande et non 83 % de l'écran, et les blocs ont leur
-chapitre**).
+**Dernière mise à jour :** 2026-08-23 (**v1.3.0 publiée. Le tutoriel sait où il pointe : les
+missions ouvrent le bon écran, la surbrillance vise une commande, les blocs ont leur chapitre.
+Le contrôle visuel sur téléphone reste dû**).
+
+## v1.3.0 — livrée et publiée
+
+| Version | Contenu | APK |
+|---|---|---|
+| **v1.3.0** (`2bdade3`) | Revue du tutoriel : écran par étape, surbrillance ciblée, chapitre des blocs | `FitTrack-v1.3.0.apk`, 9,5 Mo |
+
+Signée avec la vraie clé — le nom du fichier le dit — donc elle met à jour une installation
+existante. Le workflow `android.yml` l'a construite depuis le tag `v1.3.0`, en rejouant lint,
+typecheck et les **2 107 tests** avant Gradle. Les trois runs sont verts : APK depuis le tag, APK
+depuis `master`, déploiement Pages. **152 entrées précachées** — le nouveau clip part avec le reste,
+donc le chapitre des blocs parle hors ligne comme les neuf autres.
+
+Aucun changement de schéma. Installer par-dessus la v1.2.0, sans désinstaller, pour conserver les
+données locales. `fittrack:tutorial:v2` gagne un champ (`missionRoutineId`) : une progression
+écrite avant lui est complétée au chargement, jamais jetée — une mission en cours ne recommence pas
+pour cause de mise à jour.
+
+**Ce que cette version n'a pas encore prouvé :** l'aspect du cadre à l'écran. Le panneau du
+navigateur n'était pas affiché pendant la session, donc `requestAnimationFrame` était gelé et rien
+ne se mesurait vraiment ; la géométrie ci-dessous a été relevée en remplaçant l'horloge
+d'animation. Le contrôle sur téléphone reste dû, et avec lui la première écoute du clip des blocs.
 
 ## Revue du tutoriel — ce qu'il couvrait mal, et pourquoi
 
@@ -102,7 +124,7 @@ puisque l'utilisateur vient de le demander.
 > éjecté dans les Réglages. Refaire la visite complète : le chapitre Blocs ouvre l'écran des blocs,
 > et Séance/Coach annoncent qu'ils ne peuvent pas être montrés.
 
-## v1.1.0 et v1.2.0 — livrées et publiées
+## v1.1.0 et v1.2.0 — livrées et publiées avant elle
 
 Deux versions taguées dans la même session, chacune après ses quatre portes.
 
