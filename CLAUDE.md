@@ -55,11 +55,17 @@ npm run lint         # eslint
 
 ## Conventions de code
 
-- Code, noms de variables, commentaires : **en anglais**. Interface utilisateur : **en français**.
+- Code, noms de variables, noms de fichiers : **en anglais**. Interface utilisateur : **en français**.
+- Commentaires : la langue dans laquelle le raisonnement a été écrit. L'anglais est le défaut
+  historique et le reste pour les modules qui y sont déjà ; le français est admis, et l'est en
+  pratique dans la moitié du dépôt. Ce qui n'est pas négociable, c'est qu'un commentaire dise
+  **pourquoi** — quel défaut réel il empêche de revenir. Un commentaire juste en français vaut
+  mieux qu'une traduction qui a perdu la nuance, et cette règle disait le contraire.
 - Tous les textes de l'UI vivent dans `src/i18n/fr.ts`. **Jamais de chaîne en dur dans un composant.**
 - Un fichier = une responsabilité. Si un fichier dépasse ~300 lignes, le découper.
 - Accès aux données **uniquement** via `src/data/repositories/*`. Un composant n'importe jamais
-  `db` directement.
+  `db` directement. Seule exception, et elle est commentée sur place : `DebugScreen`, qui parle de
+  *tables* et non de routines ou de séances.
 - Types partagés dans `src/data/types.ts`. Pas de `any`.
 - Dates : timestamps epoch en millisecondes (`number`), jamais de `Date` stockée en base.
 - IDs : `crypto.randomUUID()`. Jamais d'auto-increment (cf. ADR-005).
