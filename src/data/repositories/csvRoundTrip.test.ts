@@ -31,6 +31,7 @@ import {
   createRoutine,
   updateRoutineSet,
 } from './routines';
+import { setRoutineFolderContext } from './settings';
 import { completeSet } from './workoutSets';
 import { finishWorkout } from './workoutLifecycle';
 import { startWorkoutFromProgram } from './programWorkout';
@@ -313,6 +314,13 @@ describe('aller-retour export CSV → import', () => {
 
     await resetDb();
     await restoreFrom(csv);
+
+    const [restoredRoutine] = await db.routines.toArray();
+    expect(restoredRoutine?.folderId).toBeTruthy();
+    await setRoutineFolderContext({
+      kind: 'folder',
+      folderId: restoredRoutine!.folderId,
+    });
 
     const dashboard = await getHomeDashboard();
     expect(dashboard.suggestedRoutine).toMatchObject({
