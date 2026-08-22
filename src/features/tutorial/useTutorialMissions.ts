@@ -65,6 +65,7 @@ export function useTutorialMissions(
   const chooseActivation = useCallback(
     (activationPath: TutorialActivationPath | null) =>
       commit((current) => {
+        if (current.activeMissionId !== null) return current;
         if (activationPath === null) {
           return current.activationPath === null ? current : { ...current, activationPath };
         }

@@ -177,6 +177,39 @@ describe('TutorialProvider', () => {
     }
   });
 
+  it('preserves an active mission when activation is reached defensively', async () => {
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: null,
+      activeMissionId: 'TUT-ROU-02',
+    });
+    const storageSpy = vi.spyOn(Storage.prototype, 'setItem');
+    try {
+      const user = userEvent.setup();
+      renderTutorial();
+
+      await user.click(await screen.findByRole('button', { name: 'Passer' }));
+      await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+      const activation = await screen.findByRole('dialog', {
+        name: 'Préparer ma première séance',
+      });
+      const blankChoice = screen.getByRole('button', { name: 'Créer ma routine' });
+      await waitFor(() => expect(blankChoice).toBeEnabled());
+      storageSpy.mockClear();
+
+      await user.click(blankChoice);
+
+      expect(storageSpy.mock.calls.filter(([key]) => key === TUTORIAL_STORAGE_KEY)).toHaveLength(0);
+      expect(loadTutorialState()).toMatchObject({
+        activationPath: null,
+        activeMissionId: 'TUT-ROU-02',
+      });
+      expect(activation).toBeVisible();
+    } finally {
+      storageSpy.mockRestore();
+    }
+  });
+
   it('lists route-specific missions before the full orientation replay', async () => {
     saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
     const user = userEvent.setup();
