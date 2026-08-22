@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
@@ -8,6 +8,7 @@ import { periodLabel, weeklySessionsReading } from '@/i18n/labels';
 import { PERIOD_KEYS, type PeriodKey } from '@/lib/analytics/periods';
 import { weeklySessionCounts } from '@/lib/analytics/weeks';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
+import { ChartExportAction } from './ChartExportAction';
 import { WeeklyCard } from './WeeklyCard';
 import { useHistoricalPeriod } from './useHistoricalPeriod';
 
@@ -35,6 +36,7 @@ export function WeeklySessionsScreen() {
   const [openedAt] = useState(() => Date.now());
   const [period, setPeriod] = useState<PeriodKey>('12w');
   const [selectedIndex, setSelectedIndex] = useState<number>();
+  const chartRef = useRef<HTMLDivElement>(null);
 
   const goals = useLiveQuery(getWeeklyTrainingGoalHistory, []);
   const historicalPeriod = useHistoricalPeriod(period, openedAt);
@@ -94,13 +96,23 @@ export function WeeklySessionsScreen() {
             )}
           </Card>
         ) : (
-          <WeeklyCard
-            buckets={buckets}
-            selectedIndex={selected}
-            onSelect={setSelectedIndex}
-            onOpenHistory={openHistory}
-            stale={stale}
-          />
+          <div>
+            <div ref={chartRef}>
+              <WeeklyCard
+                buckets={buckets}
+                selectedIndex={selected}
+                onSelect={setSelectedIndex}
+                onOpenHistory={openHistory}
+                stale={stale}
+              />
+            </div>
+            <ChartExportAction
+              chartRef={chartRef}
+              slug="seances"
+              title={t('weekly.title')}
+              subtitle={periodLabel(period)}
+            />
+          </div>
         )}
 
         {/* The accessible table. It carries **every** week, the empty ones

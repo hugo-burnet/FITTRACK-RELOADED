@@ -1566,6 +1566,13 @@ const fr = {
     overviewSection: 'Vue d’ensemble',
     exercisesSection: 'Exercices',
 
+    exportImage: 'Exporter en image',
+    exportImageFooter: 'FitTrack · exporté le {date}',
+    exportImageShared: 'Image partagée.',
+    exportImageDownloaded: 'Image téléchargée.',
+    exportImageCancelled: '',
+    exportImageFailed: 'L’image n’a pas pu être créée.',
+
     metricFilter: 'Métrique',
     metricSheetTitle: 'Ce que la courbe compte',
     periodFilter: 'Période',

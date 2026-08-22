@@ -39,6 +39,12 @@ export interface SaveFilePayload {
 /** Android-only file write + share. Injected in tests so jsdom never loads the plugins. */
 export interface NativeFileSave {
   writeCache: (name: string, text: string) => Promise<string>;
+  /**
+   * The same write, for bytes. A PNG has no encoding to declare: Capacitor
+   * takes base64 and writes the decoded bytes, which is the only way an image
+   * survives the trip through the WebView bridge intact.
+   */
+  writeCacheBinary: (name: string, base64: string) => Promise<string>;
   share: (title: string, fileUri: string) => Promise<void>;
 }
 
@@ -93,53 +99,123 @@ export const capacitorFileSave: NativeFileSave = {
     });
     return written.uri;
   },
+  async writeCacheBinary(name, base64) {
+    const written = await Filesystem.writeFile({
+      path: name,
+      data: base64,
+      directory: Directory.Cache,
+    });
+    return written.uri;
+  },
   async share(title, fileUri) {
     await Share.share({ title, files: [fileUri], dialogTitle: title });
   },
 };
 
 async function shareNatively(
-  payload: SaveFilePayload,
+  title: string,
   native: NativeFileSave,
+  write: (native: NativeFileSave) => Promise<string>,
 ): Promise<SaveOutcome> {
   let uri: string;
   try {
-    uri = await native.writeCache(payload.name, BOM + payload.text);
+    uri = await write(native);
   } catch {
     return 'failed';
   }
   try {
-    await native.share(payload.title, uri);
+    await native.share(title, uri);
     return 'shared';
   } catch (error) {
     return isShareCancelled(error) ? 'cancelled' : 'failed';
   }
 }
 
-export async function saveTextFile(
-  payload: SaveFilePayload,
-  options: SaveFileOptions = {},
+/**
+ * The ladder itself, once, whatever the file is made of.
+ *
+ * Text and bytes only differ in how the Android write is spelled; everything
+ * above — what Chrome will share, what a WebView lies about, what a desktop
+ * browser can download — is the same three rungs in the same order.
+ */
+async function saveFile(
+  file: File,
+  title: string,
+  options: SaveFileOptions,
+  writeNatively: (native: NativeFileSave) => Promise<string>,
 ): Promise<SaveOutcome> {
-  const file = new File([BOM + payload.text], payload.name, { type: payload.type });
-  const native = options.isNative ?? isNativeAndroid;
+  const isNative = options.isNative ?? isNativeAndroid;
+  const native = options.native ?? capacitorFileSave;
 
   // `canShare` and not `share` alone: Chrome exposes `share` on desktop but
   // refuses files, and the refusal is a rejected promise mid-flight rather than
   // something we can catch before the user has watched a dialog fail.
   if (canShareFile(file)) {
     try {
-      await navigator.share({ files: [file], title: payload.title });
+      await navigator.share({ files: [file], title });
       return 'shared';
     } catch (error) {
       if (isShareCancelled(error)) return 'cancelled';
-      if (native()) return shareNatively(payload, options.native ?? capacitorFileSave);
+      if (isNative()) return shareNatively(title, native, writeNatively);
       return download(file);
     }
   }
 
   // The WebView download click is a lie: it returns success and writes nothing.
   // On the APK the share sheet is the only way a backup actually leaves the app.
-  if (native()) return shareNatively(payload, options.native ?? capacitorFileSave);
+  if (isNative()) return shareNatively(title, native, writeNatively);
 
   return download(file);
+}
+
+export async function saveTextFile(
+  payload: SaveFilePayload,
+  options: SaveFileOptions = {},
+): Promise<SaveOutcome> {
+  const text = BOM + payload.text;
+  return saveFile(
+    new File([text], payload.name, { type: payload.type }),
+    payload.title,
+    options,
+    (native) => native.writeCache(payload.name, text),
+  );
+}
+
+export interface SaveBlobPayload {
+  name: string;
+  blob: Blob;
+  /** Shown by the share sheet above the file. */
+  title: string;
+}
+
+/**
+ * Reads a blob as the base64 the Capacitor bridge takes.
+ *
+ * `FileReader` and not `arrayBuffer()` + `btoa`: a chart PNG is a few tens of
+ * kilobytes, and turning that into a `String.fromCharCode` argument list is how
+ * an export dies with "too many arguments" on a phone rather than on a desktop.
+ */
+function toBase64(blob: Blob): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Blob could not be read'));
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      resolve(result.slice(result.indexOf(',') + 1));
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+/** The same three rungs, for bytes: an image, a PDF, anything not typed. */
+export async function saveBlobFile(
+  payload: SaveBlobPayload,
+  options: SaveFileOptions = {},
+): Promise<SaveOutcome> {
+  return saveFile(
+    new File([payload.blob], payload.name, { type: payload.blob.type }),
+    payload.title,
+    options,
+    async (native) => native.writeCacheBinary(payload.name, await toBase64(payload.blob)),
+  );
 }
