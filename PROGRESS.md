@@ -2,8 +2,112 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Release Android v1.0.0 — les Lots 12 et 13 sont fermés
-et validés sur le téléphone : la V1 est complète**).
+**Dernière mise à jour :** 2026-08-22 (**Revue de code complète post-v1.0.0** — cinq correctifs
+livrés, dont un défaut de perte de données silencieuse à la restauration).
+
+## Revue de code complète — post-v1.0.0
+
+Passe de relecture sur l'ensemble du dépôt, la V1 étant fermée. Les quatre vérifications passaient
+déjà toutes avant la revue (typecheck, lint, 1886 tests, build) et passent toujours après
+(1908 tests). Ce qui suit est ce que la relecture a trouvé et ce qui en a été fait.
+
+### Le défaut sérieux : restaurer une vieille sauvegarde contournait toutes les migrations
+
+Les blocs `upgrade()` de Dexie se déclenchent sur un changement de **numéro de version** de la
+base — ce qu'une restauration ne provoque pas. `restoreBackup` vidait chaque table et y remettait
+les lignes du fichier telles quelles : une sauvegarde écrite sous un schéma plus ancien atterrissait
+dans une base à jour sans qu'aucune migration ne l'ait jamais vue, ni alors ni plus tard.
+
+Conséquence concrète : un fichier antérieur au schéma 9 porte des exercices perso sans
+`bodyweightLoadFactor`, et `effectiveLoadKg` lit un coefficient absent comme « aucun corps
+impliqué » — zéro. Le restaurer remettait en place, en silence, **le défaut exact que la version 9
+existe pour corriger** — celui reporté deux fois depuis le téléphone. `seedDatabase` ne rattrape
+pas : la v9 vise `isCustom: 1`, précisément ce que le seed refuse de toucher.
+
+Le fichier disait pourtant d'où il venait depuis toujours (`app.schemaVersion`, écrit par
+`buildBackup`, relu par `parseBackup`) — mais personne ne le consultait.
+
+**`lib/backup/backfill.ts`** rattrape les versions 2, 4, 7, 8 et 9 sur les lignes du fichier avant
+l'écriture. `db.ts` n'est pas touché : une version livrée ne se réécrit pas. Chaque étape remplit ce
+qui est **absent** et n'écrase jamais ce qui est là — plus strict que ce dont les migrations
+d'origine avaient besoin, parce qu'ici l'étape peut croiser une ligne qui porte déjà la bonne
+réponse, et écraser un instantané gelé avec le catalogue d'aujourd'hui est la réécriture de
+l'histoire que les instantanés existent pour empêcher. Ces gardes les rendent idempotentes, ce qui
+permet de faire traverser toutes les étapes à un fichier qui ne dit pas d'où il vient.
+
+**Piège à retenir :** `CURRENT_SCHEMA_VERSION` redit la version de Dexie parce que `lib/` ne peut
+pas importer `data/db` (le cycle serait réel). `data/schemaVersion.test.ts` vérifie que les deux
+s'accordent — **ajouter un `version(n)` à `db.ts` fait échouer ce test** tant que la table des
+rattrapages n'a pas été mise au courant. C'est voulu.
+
+### Le bundle : seules les analyses étaient découpées
+
+`router.tsx` importait statiquement une vingtaine d'écrans, donc tout atterrissait dans le morceau
+à télécharger avant le premier rendu — l'import Hevy et sa machinerie CSV, l'écran de debug, les
+crédits, les trois écrans de blocs, l'éditeur de séance archivée. Aucun n'est sur le chemin
+Accueil → Séance.
+
+    index      736,93 kB → 470,09 kB   (gzip 214,61 → 130,70)
+    dexie      314,55 kB → 118,92 kB   (gzip 100,23 →  38,26)
+    ─────────────────────────────────────────────────────────
+    au démarrage           −46 % de JavaScript compressé
+
+L'avertissement « chunks are larger than 500 kB » de Vite disparaît. Le couple `lazy` + `Suspense`
+que les sept routes d'analyse épelaient chacune vit maintenant dans **`app/lazyRoute`**. Restent
+chargés d'emblée : les cinq onglets, les trois écrans de séance, les réglages.
+
+### L'écran de séance : 1009 → 738 lignes
+
+Le métronome part dans **`useWorkoutPace`** (un état, une ref, un long effet, quatre closures —
+un seul sujet), les annonces dans **`useWorkoutAnnouncements`**, `ExerciseNotesSheet` prend son
+fichier. Aucune règle ne change, les commentaires ont suivi le code qu'ils expliquent, et les
+153 tests de `features/workout` passent sans retouche.
+
+L'écran reste au-dessus des ~300 lignes : ce qui subsiste est la pile de feuilles en JSX, et la
+sortir demanderait une interface d'une vingtaine de props qui ne serait qu'un passe-plat.
+
+### Points mineurs corrigés
+
+- **`db` importé par deux composants**, contre la règle. `countCompletedWorkouts` (dépôt
+  d'historique) et `hasExistingHistory` (dépôt d'import) les remplacent — et comptent au lieu de
+  charger les tables entières. `DebugScreen` garde son accès, avec le commentaire qui dit pourquoi :
+  il parle de *tables*, pas de routines.
+- **`workout.deloadPercent === 80`** dupliquait `DELOAD_PERCENT`, exporté par un module déjà importé
+  dans le même fichier.
+- **`RestRail`** portait un `role="progressbar"` et un `aria-valuetext` soigné à l'intérieur d'un
+  conteneur `aria-hidden` : jamais annoncés par rien. Retirés — `RestStatus` imprime déjà le
+  décompte en toutes lettres.
+
+### Ce qui a été regardé et laissé tel quel
+
+- **`appendNote`** trime pour décider et concatène brut. J'ai voulu « corriger », un test l'a
+  arrêté — il épingle le comportement avec une note volontairement entourée d'espaces. Ajouter une
+  ligne aux notes de quelqu'un n'autorise pas à reformater ce qu'il a écrit au-dessus. L'asymétrie
+  est maintenant documentée au lieu d'être subie.
+- **La règle « commentaires en anglais »** de `CLAUDE.md` était contredite par 750 lignes dans
+  76 fichiers, sur toutes les couches. La règle a été assouplie plutôt que le dépôt traduit : ces
+  commentaires disent quel défaut réel les a fait écrire, et traduire cette prose-là en aplatirait
+  la moitié pour un gain de conformité et rien d'autre. L'exigence se déplace sur le **pourquoi**.
+- **`writePreferences` hors transaction** dans `restoreBackup` : un échec y laisse la base restaurée
+  et le `localStorage` à moitié vidé. Pas corrigé — `localStorage` n'entre pas dans une transaction
+  Dexie, et la vraie parade demanderait un journal. Connu, peu probable, noté ici.
+- **`listCompletedWorkouts`** charge toutes les séances terminées à chaque appel, la pagination
+  n'arrivant qu'après. Les bancs d'essai existent (`history.bench.ts`), le seuil est donc surveillé.
+- **`lib/programs/phaseSuggestions.ts`** et **`data/repositories/programSchedules.ts`** (377 lignes)
+  n'ont pas de fichier de test à leur nom. Probablement couverts par
+  `ProgramFlow.integration.test.tsx` — à confirmer, la couverture instrumentée n'est pas configurée
+  (`@vitest/coverage-v8` absent).
+
+### Checkpoint téléphone
+
+Rien de visible n'a changé, ce qui est précisément ce qu'il faut vérifier :
+
+1. **Restaurer une sauvegarde** faite avec une version précédente — l'écran de réglages doit
+   annoncer les mêmes comptes qu'avant, et un exercice perso au poids du corps doit compter son
+   tonnage après restauration.
+2. **Ouvrir l'import Hevy, les blocs, le debug et les crédits** — ils arrivent maintenant en
+   différé ; l'attente doit être invisible.
+3. **Une séance complète** : cadence, repos, records, décharge, feuilles. C'est l'écran remanié.
 
 ## v1.0.0 — le mois se lit, le graphique s'emporte, l'app sait quand parler
 
