@@ -98,6 +98,10 @@ function units() {
     text: group.text,
     clips: group.clips,
     accept: group.accept ?? {},
+    // Absent partout sauf là où le découpage par défaut se trompe — cf.
+    // `clipsFromTake`. Reconstruire l'unité champ par champ est ce qui garde ce
+    // contrat lisible, à condition de ne pas oublier d'ajouter les nouveaux.
+    gapMs: group.gapMs,
     line: script.lines.find((entry) => entry.id === group.clips[0]),
   }));
 
@@ -130,9 +134,25 @@ async function exists(path) {
  * clips are the blocks that follow it. For a group the count has to be exact —
  * one block too many means the model spoke a tag or took a breath, and the
  * mapping of words to files can no longer be trusted.
+ *
+ * **`gapMs` se règle par groupe, et il le fallait pour les nombres.** Le seuil
+ * par défaut de 50 ms tient pour « Trois… Deux… Un », dont aucun mot ne finit par
+ * une occlusive. « Cinq » si : son /k/ final est une fermeture d'environ 120 ms
+ * suivie d'une explosion de 80 ms, et le détecteur y voyait deux mots — quatre
+ * prises de suite refusées pour « 5 blocs, 4 attendus », toujours au même
+ * endroit. Sur ces mêmes prises, les vrais silences entre mots faisaient 300 à
+ * 600 ms : un seuil de 200 ms sépare les deux cas sans rapprocher personne.
+ *
+ * Un seuil trop haut ne peut pas fabriquer un mauvais découpage. Il ne peut que
+ * **fusionner** deux mots, donc rendre le compte trop petit — et une prise au
+ * compte faux est refusée, jamais mal coupée.
  */
 function clipsFromTake(samples, unit) {
-  const blocks = soundBlocks(samples, SAMPLE_RATE);
+  const blocks = soundBlocks(
+    samples,
+    SAMPLE_RATE,
+    unit.gapMs === undefined ? {} : { gapMs: unit.gapMs },
+  );
   const wanted = unit.clips.length;
 
   if (blocks.length < 2) return { error: "aucune parole après l'amorce" };
