@@ -12,6 +12,13 @@ import { RecordRepairAction } from './RecordRepairAction';
 /**
  * The screen that answers "is it the database or the display?" in five seconds.
  * It stays in the app on purpose: a diagnostic tool, not technical debt.
+ *
+ * **The one screen that may import `db`**, and it is not an oversight. Every
+ * other component goes through `data/repositories/*` because it speaks about
+ * routines or sessions, and a repository is what knows how those are stored.
+ * This one speaks about *tables* — it enumerates them, counts their rows and
+ * empties the lot — so a repository would have nothing to add and would only
+ * hide the very thing the screen exists to show.
  */
 
 const megabytes = (bytes: number): string =>

@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
-import { db } from '@/data/db';
+import { countCompletedWorkouts } from '@/data/repositories/history';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { projectCoachExport } from '@/lib/export/projectCoachExport';
@@ -68,14 +68,7 @@ export function SettingsScreen() {
   }, []);
 
   /** Le compte des séances terminées : rien à sauvegarder, rien à cliquer. */
-  const workoutCount = useLiveQuery(
-    async () =>
-      (await db.workouts.where('status').equals('completed').toArray()).filter(
-        (workout) => workout.deletedAt === 0,
-      ).length,
-    [],
-    0,
-  );
+  const workoutCount = useLiveQuery(countCompletedWorkouts, [], 0);
 
   const chooseTheme = (next: Theme) => {
     setTheme(next);

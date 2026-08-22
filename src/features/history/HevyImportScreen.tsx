@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
-import { db } from '@/data/db';
 import {
+  hasExistingHistory,
   importHevyWorkouts,
   prepareHevyImport,
   type HevyImportPreparation,
@@ -119,16 +119,7 @@ export function HevyImportScreen() {
   });
   const [openedRow, setOpenedRow] =
     useState<HevyMappingDraftRow | null>(null);
-  const populated = useLiveQuery(async () => {
-    const [workouts, routines] = await Promise.all([
-      db.workouts.toArray(),
-      db.routines.toArray(),
-    ]);
-    return (
-      workouts.some((workout) => workout.deletedAt === 0) ||
-      routines.some((routine) => routine.deletedAt === 0)
-    );
-  }, []);
+  const populated = useLiveQuery(hasExistingHistory, []);
 
   /*
    * La décision est prise **une fois**, à l'ouverture de l'écran, et pas relue

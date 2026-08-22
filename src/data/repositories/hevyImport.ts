@@ -71,6 +71,22 @@ async function existingImportKeys(
     .map((workout) => workout.importKey!);
 }
 
+/**
+ * Whether this phone already holds something of its own.
+ *
+ * What the import screen asks before offering to replace the account rather
+ * than add to it. A session or a routine is enough — an account with routines
+ * and no session yet is still an account somebody built.
+ *
+ * `some` over two counts rather than two full reads: neither table is loaded,
+ * and the second is not touched at all once the first has answered.
+ */
+export async function hasExistingHistory(): Promise<boolean> {
+  const workouts = await db.workouts.filter((workout) => workout.deletedAt === 0).count();
+  if (workouts > 0) return true;
+  return (await db.routines.filter((routine) => routine.deletedAt === 0).count()) > 0;
+}
+
 export async function prepareHevyImport(
   data: HevyImportData,
 ): Promise<HevyImportPreparation> {

@@ -101,6 +101,23 @@ export async function listCompletedWorkouts(filters: HistoryFilters = {}): Promi
     .sort(byMostRecent);
 }
 
+/**
+ * How many sessions are actually in the history.
+ *
+ * A count and not a list: the settings screen only needs to know whether there
+ * is anything to save, and reading every completed session into memory to
+ * measure its length is the kind of thing that stops being free at four
+ * thousand sessions. It lives here rather than in the screen because a
+ * component never reaches for `db` — the one rule the data layer has.
+ */
+export async function countCompletedWorkouts(): Promise<number> {
+  return db.workouts
+    .where('status')
+    .equals('completed')
+    .filter((workout) => workout.deletedAt === 0)
+    .count();
+}
+
 export async function buildWorkoutSummaries(
   workouts: readonly Workout[],
 ): Promise<HistoryWorkoutSummary[]> {
