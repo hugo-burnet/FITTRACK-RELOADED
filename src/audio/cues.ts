@@ -1,4 +1,5 @@
 import script from './voiceScript.json';
+import { HOLD_MARK_SECONDS, holdMarkCue, type HoldMarkCue } from './holdMarks';
 import type { ToneId } from './tones';
 
 /**
@@ -36,7 +37,9 @@ export type CueId =
   | 'coach-recap-adjust'
   | 'coach-recap-fatigue'
   | 'coach-recap-plateau'
-  | 'workout-finished';
+  | 'workout-finished'
+  /** Les repères du chrono de maintien — cf. `holdMarks.ts`. */
+  | HoldMarkCue;
 
 export interface CueDefinition {
   /** Always played, in every mode but silence. `null` for a line-only cue. */
@@ -59,6 +62,22 @@ export interface CueDefinition {
   /** Spoken outside an active set: temporarily lower other Android media. */
   duckMusic: boolean;
 }
+
+/**
+ * Les trente-six repères du chrono, générés depuis leur seule source.
+ *
+ * Même profil que les battements de répétitions, et pour la même raison : ils
+ * tombent pendant l'effort, sous la barre ou en gainage. Une tonalité douce,
+ * pour que le mode « sons » ne soit pas muet sur un maintien — ce serait rater
+ * le besoin d'origine —, et pas de musique baissée : on est à l'intérieur d'une
+ * série, pas entre deux.
+ */
+const HOLD_MARK_CUES = Object.fromEntries(
+  HOLD_MARK_SECONDS.map((seconds) => [
+    holdMarkCue(seconds),
+    { tone: 'repTap', priority: 1, gapMs: 700, cooldownMs: 0, duckMusic: false },
+  ]),
+) as Record<HoldMarkCue, CueDefinition>;
 
 export const CUES: Record<CueId, CueDefinition> = {
   'workout-started': {
@@ -202,6 +221,7 @@ export const CUES: Record<CueId, CueDefinition> = {
     cooldownMs: 60_000,
     duckMusic: true,
   },
+  ...HOLD_MARK_CUES,
 };
 
 export interface VoiceLine {
