@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,12 +6,25 @@ import { Screen } from '@/app/Screen';
 import { ANNOUNCER_STORAGE_KEY } from '@/stores/announcer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
-import { LEGACY_TUTORIAL_STORAGE_KEY, TUTORIAL_STORAGE_KEY } from './tutorialStore';
+import {
+  createTutorialState,
+  LEGACY_TUTORIAL_STORAGE_KEY,
+  loadTutorialState,
+  saveTutorialState,
+  TUTORIAL_STORAGE_KEY,
+} from './tutorialStore';
 import { TutorialProvider } from './TutorialProvider';
 
-const { playTutorialNarrationMock, stopTutorialNarrationMock } = vi.hoisted(() => ({
-  playTutorialNarrationMock: vi.fn().mockResolvedValue(true),
-  stopTutorialNarrationMock: vi.fn(),
+const { getActiveWorkoutMock, playTutorialNarrationMock, stopTutorialNarrationMock } = vi.hoisted(
+  () => ({
+    getActiveWorkoutMock: vi.fn(),
+    playTutorialNarrationMock: vi.fn().mockResolvedValue(true),
+    stopTutorialNarrationMock: vi.fn(),
+  }),
+);
+
+vi.mock('@/data/repositories/workouts', () => ({
+  getActiveWorkout: getActiveWorkoutMock,
 }));
 
 vi.mock('./tutorialNarration', () => ({
@@ -34,6 +47,8 @@ function renderTutorial(path = '/') {
 describe('TutorialProvider', () => {
   beforeEach(() => {
     localStorage.clear();
+    getActiveWorkoutMock.mockReset();
+    getActiveWorkoutMock.mockResolvedValue(undefined);
     playTutorialNarrationMock.mockClear();
     stopTutorialNarrationMock.mockClear();
     useRepPacer.getState().stop();
@@ -57,7 +72,7 @@ describe('TutorialProvider', () => {
   });
 
   it('ouvre depuis le point d’interrogation le tutoriel de la page courante', async () => {
-    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
     const user = userEvent.setup();
     renderTutorial('/analytics/records');
 
@@ -71,7 +86,7 @@ describe('TutorialProvider', () => {
   });
 
   it('replie automatiquement la transcription pendant la narration', async () => {
-    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
     const user = userEvent.setup();
     renderTutorial('/routines');
 
@@ -85,7 +100,7 @@ describe('TutorialProvider', () => {
   });
 
   it('laisse ouvrir l’aide quand le chrono conservé dans le store est déjà fini', async () => {
-    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
     useRestTimer.setState({
       setId: 'ancienne-serie',
       startedAt: Date.now() - 60_000,
@@ -99,5 +114,96 @@ describe('TutorialProvider', () => {
 
     expect(screen.getByRole('button', { name: /Expliquer cette page/ })).toBeEnabled();
     expect(screen.getByText('Environ vingt secondes.')).toBeVisible();
+  });
+
+  it('offers a real activation path after the first orientation choice', async () => {
+    const user = userEvent.setup();
+    renderTutorial();
+
+    await user.click(await screen.findByRole('button', { name: 'Passer' }));
+    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+
+    expect(
+      await screen.findByRole('dialog', { name: 'Préparer ma première séance' }),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Choisir un modèle' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Créer ma routine' })).toBeVisible();
+  });
+
+  it('starts the blank-routine mission without creating data', async () => {
+    const user = userEvent.setup();
+    renderTutorial();
+
+    await user.click(await screen.findByRole('button', { name: 'Passer' }));
+    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    const blankChoice = await screen.findByRole('button', { name: 'Créer ma routine' });
+    await waitFor(() => expect(blankChoice).toBeEnabled());
+    await user.click(blankChoice);
+
+    const state = loadTutorialState();
+    expect(state.activationPath).toBe('blank');
+    expect(state.activeMissionId).toBe('TUT-ROU-01');
+  });
+
+  it('lists route-specific missions before the full orientation replay', async () => {
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
+    const user = userEvent.setup();
+    renderTutorial('/settings');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+
+    expect(screen.getByRole('button', { name: 'Exporter une sauvegarde complète' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Comprendre une restauration' })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Recommencer la visite complète/ })).toBeVisible();
+  });
+
+  it('keeps a mission fully readable in Silence without requesting narration', async () => {
+    localStorage.setItem(ANNOUNCER_STORAGE_KEY, 'silence');
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: 'completed',
+      activeMissionId: 'TUT-DAT-01',
+    });
+
+    renderTutorial('/settings');
+
+    expect(await screen.findByRole('region', { name: 'Mission guidée' })).toBeVisible();
+    expect(screen.getByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
+    expect(playTutorialNarrationMock).not.toHaveBeenCalled();
+  });
+
+  it('does not offer activation to a migrated v1 user', () => {
+    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
+
+    renderTutorial();
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Préparer ma première séance' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Visite guidée' })).not.toBeInTheDocument();
+  });
+
+  it('keeps guarded activation choices inert until the workout fact is known', async () => {
+    getActiveWorkoutMock.mockReturnValue(new Promise(() => undefined));
+    const user = userEvent.setup();
+    renderTutorial();
+
+    await user.click(await screen.findByRole('button', { name: 'Passer' }));
+    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    const activation = await screen.findByRole('dialog', {
+      name: 'Préparer ma première séance',
+    });
+    const templateChoice = screen.getByRole('button', { name: 'Choisir un modèle' });
+    const blankChoice = screen.getByRole('button', { name: 'Créer ma routine' });
+
+    expect(templateChoice).toBeDisabled();
+    expect(blankChoice).toBeDisabled();
+    await user.click(blankChoice);
+
+    expect(activation).toBeVisible();
+    expect(loadTutorialState()).toMatchObject({
+      activationPath: null,
+      activeMissionId: null,
+    });
   });
 });

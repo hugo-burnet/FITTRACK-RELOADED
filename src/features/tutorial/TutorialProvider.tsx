@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { primeAnnouncer } from '@/audio/announce';
 import { textOf } from '@/audio/cues';
 import type { AnnouncerMode } from '@/audio/announcer';
+import { getActiveWorkout } from '@/data/repositories/workouts';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
 import { useRepPacer } from '@/stores/repPacer';
@@ -10,6 +12,8 @@ import { useRestTimer } from '@/stores/restTimer';
 import { ActionSheet, Button, Sheet } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 import { TutorialContext, type TutorialControls } from './tutorialContext';
+import { TutorialMissionCoach } from './TutorialMissionCoach';
+import { contextualMissionsForPath } from './tutorialMissions';
 import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
 import {
   contextualTutorial,
@@ -19,15 +23,13 @@ import {
   tutorialTopicForPath,
   type TutorialStep,
 } from './tutorialScript';
-import {
-  loadTutorialCompletion,
-  saveTutorialCompletion,
-  type TutorialCompletion,
-} from './tutorialStore';
+import { loadTutorialState } from './tutorialStore';
+import type { TutorialCompletion } from './tutorialTypes';
+import { useTutorialMissions } from './useTutorialMissions';
 import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
 type TourKind = 'full' | 'contextual';
-type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice';
+type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice' | 'activation';
 
 function TutorialOverlay({
   step,
@@ -254,7 +256,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [phase, setPhase] = useState<Phase>(() =>
-    loadTutorialCompletion() === null ? 'prompt' : 'idle',
+    loadTutorialState().orientation === null ? 'prompt' : 'idle',
   );
   const [steps, setSteps] = useState<readonly TutorialStep[]>(FULL_TUTORIAL);
   const [index, setIndex] = useState(0);
@@ -262,6 +264,14 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const [completion, setCompletion] = useState<TutorialCompletion>('completed');
   const [narrationActive, setNarrationActive] = useState(false);
   const topic = tutorialTopicForPath(pathname);
+  const activeWorkout = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
+  const missionFacts = useMemo(
+    () => ({
+      hasActiveWorkout: activeWorkout === undefined ? null : activeWorkout !== null,
+    }),
+    [activeWorkout],
+  );
+  const missions = useTutorialMissions(pathname, navigate, missionFacts);
   const pacer = useRepPacer();
   const rest = useRestTimer();
   // Opening the help sheet renders this again, so expired wall-clock timers
@@ -355,14 +365,20 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const chooseAudio = (mode: AnnouncerMode) => {
     stopTutorialNarration();
     applyAnnouncerMode(mode);
-    saveTutorialCompletion(completion);
-    setPhase('idle');
+    const firstRun = missions.state.orientation === null;
+    missions.setOrientation(completion);
+    setPhase(firstRun ? 'activation' : 'idle');
     navigate('/', { replace: true });
   };
 
   const controls = useMemo<TutorialControls>(
-    () => ({ openHelp: () => phase === 'idle' && setPhase('help') }),
-    [phase],
+    () => ({
+      openHelp: () => phase === 'idle' && setPhase('help'),
+      startMission: missions.start,
+      offerMission: missions.offer,
+      report: missions.report,
+    }),
+    [missions.offer, missions.report, missions.start, phase],
   );
   const current = steps[index];
   // Every mode has a row here, so the fallback never runs — it is what lets
@@ -399,6 +415,12 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         onClose={() => setPhase('idle')}
         title={t('tutorial.helpTitle')}
         actions={[
+          ...contextualMissionsForPath(pathname, missions.state, missionFacts)
+            .slice(0, 3)
+            .map((mission) => ({
+              label: t(mission.titleKey),
+              onSelect: () => missions.start(mission.id),
+            })),
           {
             label: t('tutorial.explainPage', { topic: t(TUTORIAL_TOPIC_LABEL_KEYS[topic]) }),
             hint: workoutAudioBusy ? t('tutorial.busyHint') : t('tutorial.explainDuration'),
@@ -440,6 +462,54 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
           {t('tutorial.currentMode', { mode: t(currentModeOption.labelKey) })}
         </p>
       </Sheet>
+
+      <Sheet
+        open={phase === 'activation'}
+        onClose={() => setPhase('idle')}
+        title={t('tutorial.activation.title')}
+      >
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('tutorial.activation.body')}
+        </p>
+        <div className="mt-5 flex flex-col gap-2">
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            disabled={missionFacts.hasActiveWorkout !== false}
+            onClick={() => {
+              missions.chooseActivation('template');
+              missions.start('TUT-ACT-01');
+              setPhase('idle');
+            }}
+          >
+            {t('tutorial.activation.template')}
+          </Button>
+          <Button
+            size="lg"
+            fullWidth
+            disabled={missionFacts.hasActiveWorkout !== false}
+            onClick={() => {
+              missions.chooseActivation('blank');
+              missions.start('TUT-ROU-01');
+              setPhase('idle');
+            }}
+          >
+            {t('tutorial.activation.blank')}
+          </Button>
+          <Button variant="ghost" size="lg" fullWidth onClick={() => setPhase('idle')}>
+            {t('tutorial.activation.later')}
+          </Button>
+        </div>
+      </Sheet>
+
+      {missions.activeMission !== null && phase === 'idle' && (
+        <TutorialMissionCoach
+          mission={missions.activeMission}
+          stepIndex={missions.state.activeStepIndex}
+          onDismiss={missions.dismiss}
+        />
+      )}
 
       {phase === 'tour' && current !== undefined && (
         <TutorialOverlay

@@ -1,10 +1,4 @@
-import {
-  TUTORIAL_MISSION_IDS,
-  type TutorialCompletion,
-  type TutorialStateV2,
-} from './tutorialTypes';
-
-export type { TutorialCompletion } from './tutorialTypes';
+import { TUTORIAL_MISSION_IDS, type TutorialStateV2 } from './tutorialTypes';
 
 export const LEGACY_TUTORIAL_STORAGE_KEY = 'fittrack:tutorial:v1';
 export const TUTORIAL_STORAGE_KEY = 'fittrack:tutorial:v2';
@@ -75,10 +69,4 @@ export function loadTutorialState(): TutorialStateV2 {
 
 export function saveTutorialState(state: TutorialStateV2): void {
   localStorage.setItem(TUTORIAL_STORAGE_KEY, JSON.stringify(state));
-}
-
-export const loadTutorialCompletion = () => loadTutorialState().orientation;
-
-export function saveTutorialCompletion(value: TutorialCompletion): void {
-  saveTutorialState({ ...loadTutorialState(), orientation: value });
 }

@@ -1850,6 +1850,14 @@ const fr = {
     modeSilence: 'Silence',
     modeSilenceHint: 'Aucun son produit par FitTrack.',
 
+    activation: {
+      title: 'Préparer ma première séance',
+      body: 'Choisis un point de départ. FitTrack te laissera effectuer chaque geste sur tes propres données.',
+      template: 'Choisir un modèle',
+      blank: 'Créer ma routine',
+      later: 'Plus tard',
+    },
+
     mission: {
       label: 'Mission guidée',
       counter: 'Étape {index} sur {count}',
