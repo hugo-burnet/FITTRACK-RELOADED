@@ -9,22 +9,22 @@ import {
   WeeklySessionsRoute,
   WeeklyVolumeRoute,
 } from './features/analytics/routes';
+import { HevyImportRoute, HistoryEditRoute } from './features/history/routes';
+import {
+  ProgramDetailRoute,
+  ProgramEditorRoute,
+  ProgramListRoute,
+} from './features/programs/routes';
+import { CreditsRoute, DebugRoute } from './features/settings/routes';
 import { ExerciseDetailScreen } from './features/exercises/ExerciseDetailScreen';
 import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryDetailScreen } from './features/history/HistoryDetailScreen';
-import { HistoryEditScreen } from './features/history/HistoryEditScreen';
-import { HevyImportScreen } from './features/history/HevyImportScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
-import { ProgramDetailScreen } from './features/programs/ProgramDetailScreen';
-import { ProgramEditorScreen } from './features/programs/ProgramEditorScreen';
-import { ProgramListScreen } from './features/programs/ProgramListScreen';
 import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
 import { RoutineEditorScreen } from './features/routines/RoutineEditorScreen';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
-import { CreditsScreen } from './features/settings/CreditsScreen';
-import { DebugScreen } from './features/settings/DebugScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { WorkoutAddExerciseScreen } from './features/workout/WorkoutAddExerciseScreen';
 import { WorkoutFinishScreen } from './features/workout/WorkoutFinishScreen';
@@ -39,10 +39,10 @@ export const router = createHashRouter([
     children: [
       { index: true, element: <HomeScreen /> },
       { path: 'routines', element: <RoutinesScreen /> },
-      { path: 'programs', element: <ProgramListScreen /> },
-      { path: 'programs/new', element: <ProgramEditorScreen /> },
-      { path: 'programs/:id', element: <ProgramDetailScreen /> },
-      { path: 'programs/:id/edit', element: <ProgramEditorScreen /> },
+      { path: 'programs', element: <ProgramListRoute /> },
+      { path: 'programs/new', element: <ProgramEditorRoute /> },
+      { path: 'programs/:id', element: <ProgramDetailRoute /> },
+      { path: 'programs/:id/edit', element: <ProgramEditorRoute /> },
       // A routine's screen is its editor: everything is written as it is typed,
       // so there is no read-only view to separate from it.
       { path: 'routines/:id', element: <RoutineEditorScreen /> },
@@ -54,8 +54,8 @@ export const router = createHashRouter([
       { path: 'workout/add', element: <WorkoutAddExerciseScreen /> },
       { path: 'workout/finish', element: <WorkoutFinishScreen /> },
       { path: 'history', element: <HistoryScreen /> },
-      { path: 'history/import', element: <HevyImportScreen /> },
-      { path: 'history/:workoutId/edit', element: <HistoryEditScreen /> },
+      { path: 'history/import', element: <HevyImportRoute /> },
+      { path: 'history/:workoutId/edit', element: <HistoryEditRoute /> },
       { path: 'history/:workoutId', element: <HistoryDetailScreen /> },
       // Pas de sixième onglet (§12.1) : la barre en compte cinq depuis le Lot 1.
       // On entre par l'Historique et par la fiche d'un exercice.
@@ -73,8 +73,8 @@ export const router = createHashRouter([
       { path: 'exercises/:id', element: <ExerciseDetailScreen /> },
       { path: 'exercises/:id/edit', element: <ExerciseFormScreen /> },
       { path: 'settings', element: <SettingsScreen /> },
-      { path: 'settings/debug', element: <DebugScreen /> },
-      { path: 'settings/about', element: <CreditsScreen /> },
+      { path: 'settings/debug', element: <DebugRoute /> },
+      { path: 'settings/about', element: <CreditsRoute /> },
     ],
   },
 ]);
