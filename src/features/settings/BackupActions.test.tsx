@@ -15,11 +15,15 @@ import { BackupActions } from './BackupActions';
 const { saveTextFileMock } = vi.hoisted(() => ({ saveTextFileMock: vi.fn() }));
 vi.mock('@/platform/saveFile', () => ({ saveTextFile: saveTextFileMock }));
 
-function jsonFile(text: string, name = 'fittrack-sauvegarde.json'): File {
+function jsonFile(
+  text: string,
+  name = 'fittrack-sauvegarde.json',
+  readText: () => Promise<string> = () => Promise.resolve(text),
+): File {
   const file = new File([text], name, { type: 'application/json' });
   // jsdom's File has no `text()` before Node 20's Blob lands on it in every
   // environment; the component only ever calls that one method.
-  Object.defineProperty(file, 'text', { value: () => Promise.resolve(text) });
+  Object.defineProperty(file, 'text', { value: readText });
   return file;
 }
 
@@ -148,9 +152,8 @@ describe('BackupActions', () => {
 
       pendingSave.resolve(outcome);
 
-      await waitFor(() =>
-        expect(report).toHaveBeenCalledWith({ type: 'backup-exported', outcome }),
-      );
+      await waitFor(() => expect(report).toHaveBeenCalledOnce());
+      expect(report).toHaveBeenLastCalledWith({ type: 'backup-exported', outcome });
     },
   );
 
@@ -180,15 +183,24 @@ describe('BackupActions', () => {
   it('signale la confirmation d’une restauration valide sans restaurer', async () => {
     await createRoutine('Poussée');
     const text = serializeBackup(await backupRepository.buildBackup());
+    const pendingText = deferred<string>();
+    const readText = vi.fn(() => pendingText.promise);
     const restoreSpy = vi.spyOn(backupRepository, 'restoreBackup');
     const report = vi.fn();
     const user = userEvent.setup();
     renderBackupActions(report);
 
-    await chooseFile(user, jsonFile(text));
+    await chooseFile(user, jsonFile(text, 'fittrack-sauvegarde.json', readText));
+
+    await waitFor(() => expect(readText).toHaveBeenCalledOnce());
+    expect(report).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    pendingText.resolve(text);
 
     expect(await screen.findByRole('dialog', { name: /Restaurer cette sauvegarde/ })).toBeVisible();
-    expect(report).toHaveBeenCalledWith({ type: 'restore-confirmation-opened' });
+    expect(report).toHaveBeenCalledOnce();
+    expect(report).toHaveBeenLastCalledWith({ type: 'restore-confirmation-opened' });
     expect(restoreSpy).not.toHaveBeenCalled();
   });
 
@@ -211,6 +223,7 @@ describe('BackupActions', () => {
 
     const cases = [
       ['pas du json', t('settings.restoreErrorNotJson')],
+      [JSON.stringify({ format: 'pas-une-sauvegarde' }), t('settings.restoreErrorNotBackup')],
       [JSON.stringify(empty), t('settings.restoreErrorEmpty')],
       [JSON.stringify(future), t('settings.restoreErrorVersion')],
     ] as const;

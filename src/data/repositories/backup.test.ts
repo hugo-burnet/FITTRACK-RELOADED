@@ -51,9 +51,7 @@ describe('sauvegarde complète', () => {
     // Les records sont projetés à la validation : la sauvegarde les emporte
     // tels quels plutôt que de les faire recalculer à la restauration.
     expect(backup.tables.personalRecords.length).toBeGreaterThan(0);
-    expect(
-      backup.tables.settings.some((row) => row.key === 'oneRepMaxFormula'),
-    ).toBe(true);
+    expect(backup.tables.settings.some((row) => row.key === 'oneRepMaxFormula')).toBe(true);
     expect(backup.preferences['fittrack:theme']).toBe('light');
     expect(backup.app.schemaVersion).toBeGreaterThan(0);
   });
@@ -79,6 +77,25 @@ describe('sauvegarde complète', () => {
     expect(after.tables).toEqual(JSON.parse(text).tables);
     expect(after.preferences).toEqual(before.preferences);
     expect(localStorage.getItem('fittrack:theme')).toBe('light');
+  });
+
+  it('conserve la progression namespacée du tutoriel v2 après restauration', async () => {
+    const tutorial = JSON.stringify({
+      version: 2,
+      scriptVersion: 1,
+      orientation: 'completed',
+      activationPath: 'blank',
+      activeMissionId: 'TUT-WRK-02',
+      activeStepIndex: 0,
+      missions: { 'TUT-ROU-01': 'completed' },
+    });
+    localStorage.setItem('fittrack:tutorial:v2', tutorial);
+
+    const backup = await buildBackup();
+    localStorage.removeItem('fittrack:tutorial:v2');
+    await restoreBackup(backup);
+
+    expect(localStorage.getItem('fittrack:tutorial:v2')).toBe(tutorial);
   });
 
   it('remplace ce qui est là plutôt que de s’y ajouter', async () => {

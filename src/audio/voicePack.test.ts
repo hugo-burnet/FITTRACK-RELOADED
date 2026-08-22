@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { P1_MISSIONS } from '@/features/tutorial/tutorialMissions';
 import type { AudioBus } from './context';
 import { createVoicePack } from './voicePack';
 
@@ -25,6 +26,12 @@ function createBus() {
 }
 
 describe('voicePack', () => {
+  it('garde les nouvelles missions sans voix jusqu’à la phase dédiée', () => {
+    expect(
+      P1_MISSIONS.flatMap((mission) => mission.steps).every((step) => step.clipId === undefined),
+    ).toBe(true);
+  });
+
   it('ne télécharge chaque clip qu’une fois', async () => {
     const load = vi.fn().mockResolvedValue(new ArrayBuffer(8));
     const pack = createVoicePack(load);
