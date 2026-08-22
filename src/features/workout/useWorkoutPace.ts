@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { announce, primeAnnouncer } from '@/audio/announce';
-import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
+import {
+  workoutExerciseIdentityOf,
+  type WorkoutExerciseDetail,
+} from '@/data/repositories/workouts';
 import { resolveRepSeconds } from '@/lib/tempo';
+import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import type { PaceSheetView } from './PaceSheet';
@@ -14,7 +18,12 @@ import {
   planWithoutSet,
   type PacePlan,
 } from './paceMachine';
-import { prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
+import {
+  cadenceFor,
+  prepareFollowingExercisePace,
+  prepareNextPace,
+  type PaceTarget,
+} from './paceTarget';
 
 /**
  * The whole preparation of a cadence, kept in one place.
@@ -29,8 +38,14 @@ import { prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
  * code they explain.
  */
 
-/** One exercise line, as the pace reads it. */
-type Line = Pick<WorkoutExerciseDetail, 'row' | 'sets'>;
+/**
+ * One exercise line, as the pace reads it.
+ *
+ * L'exercice en fait partie depuis que l'horloge peut être une montre : c'est
+ * le type de mesure qui dit laquelle des deux tourne, et il vient de
+ * l'instantané de la ligne avant la bibliothèque.
+ */
+type Line = Pick<WorkoutExerciseDetail, 'row' | 'sets' | 'exercise' | 'identity'>;
 
 export interface WorkoutPace {
   /** The tempo in force for a line: its own choice, then the preference, then 3 s. */
@@ -61,9 +76,34 @@ export function useWorkoutPace(
   const stopPace = useRepPacer((state) => state.stop);
   const stopRest = useRestTimer((state) => state.stop);
   const restingSetId = useRestTimer((state) => state.setId);
+  const startHold = useHoldTimer((state) => state.start);
+  const stopHold = useHoldTimer((state) => state.stop);
+  const holdSetId = useHoldTimer((state) => state.setId);
+  const holdRowId = useHoldTimer((state) => state.rowId);
 
   const repSecondsOf = (line: Line): number =>
     resolveRepSeconds(line.row.repSeconds, defaultRepSeconds);
+
+  const cadenceOf = (line: Line) =>
+    cadenceFor(workoutExerciseIdentityOf(line).measurementType, repSecondsOf(line));
+
+  /**
+   * Une seule horloge à la fois, et c'est ici que ça se décide.
+   *
+   * Deux horloges vivantes, ce sont deux files audio qui parlent l'une par-dessus
+   * l'autre et deux relevés qui se disputent la même place dans le bandeau. Même
+   * règle que « un seul repos à la fois », et elle est épinglée par un test
+   * plutôt que laissée à la discipline des appelants.
+   */
+  const startClock = (rowId: string, target: PaceTarget, leadSeconds: number): void => {
+    if (target.kind === 'hold') {
+      stopPace();
+      startHold(rowId, target.setId, leadSeconds);
+      return;
+    }
+    stopHold();
+    startPace(rowId, target.setId, target.reps, target.repSeconds, leadSeconds);
+  };
 
   // Waiting for repetitions is legitimate; waiting for a set nobody is going to
   // perform is not, and it costs every arming that comes after — validating a
@@ -81,7 +121,7 @@ export function useWorkoutPace(
         ? null
         : prepareNextPace(
             line.sets,
-            resolveRepSeconds(line.row.repSeconds, defaultRepSeconds),
+            cadenceOf(line),
             plan.kind === 'awaiting-reps' ? plan.afterSetId : undefined,
           );
     const decision = paceDecision(plan, preparation, Date.now());
@@ -102,11 +142,9 @@ export function useWorkoutPace(
 
     const timer = setTimeout(() => {
       if (decision.announceStart) announce('pace-start-10');
-      startPace(
+      startClock(
         decision.rowId,
-        decision.target.setId,
-        decision.target.reps,
-        decision.target.repSeconds,
+        decision.target,
         // Read now, not when the decision was taken: the settle delay must not
         // push the beat back.
         leadSecondsAt(decision.launchAt, Date.now()),
@@ -117,7 +155,7 @@ export function useWorkoutPace(
   }, [lines, plan, startPace, defaultRepSeconds]);
 
   const startFor = (line: Line, afterSetId?: string): boolean => {
-    const preparation = prepareNextPace(line.sets, repSecondsOf(line), afterSetId);
+    const preparation = prepareNextPace(line.sets, cadenceOf(line), afterSetId);
     if (preparation.kind === 'done') return false;
     primeAnnouncer();
     // Starting the next set is the clearest possible signal that rest is over.
@@ -139,7 +177,12 @@ export function useWorkoutPace(
     // user has just stopped.
     setPlan(IDLE_PACE_PLAN);
     const target = preparation.target;
-    startPace(line.row.id, target.setId, target.reps, target.repSeconds);
+    // Se mettre en gainage prend dix secondes ; se remettre sous la barre après
+    // un repos qui vient de compter 3–2–1 n'en prend aucune. Une cadence de
+    // répétitions, elle, part quand on la lance : la main est déjà sur la barre.
+    const lead = target.kind === 'hold' && afterSetId === undefined ? PACE_LEAD_SECONDS : 0;
+    if (lead > 0) announce('pace-start-10');
+    startClock(line.row.id, target, lead);
     return true;
   };
 
@@ -148,7 +191,7 @@ export function useWorkoutPace(
       lines.map((line) => ({
         rowId: line.row.id,
         sets: line.sets,
-        repSeconds: repSecondsOf(line),
+        cadence: cadenceOf(line),
       })),
       completedLine.row.id,
     );
@@ -171,18 +214,22 @@ export function useWorkoutPace(
     // A new exercise needs its own preparation window. The rest has just
     // finished; this is a fresh "dans dix secondes", followed by 3–2–1.
     announce('pace-start-10');
-    startPace(following.rowId, target.setId, target.reps, target.repSeconds, 10);
+    startClock(following.rowId, target, PACE_LEAD_SECONDS);
     return true;
   };
 
   const armFromTypedReps = (line: Line, setId: string, reps: number | undefined): void => {
     if (reps === undefined || reps <= 0) return;
+    // Une ligne chronométrée n'a pas de colonne « répétitions » : rien ne peut y
+    // être tapé, et rien ne doit y armer une cadence qui n'a rien à battre.
+    if (cadenceOf(line).kind === 'hold') return;
     const nextWorkingSet = line.sets.find(
       (set) => set.deletedAt === 0 && set.setType !== 'warmup' && set.isCompleted === 0,
     );
     if (
       nextWorkingSet?.id !== setId ||
       pacer.setId !== null ||
+      holdSetId !== null ||
       restingSetId !== null ||
       plan.kind !== 'idle' ||
       armedTypedSets.current.has(setId)
@@ -206,19 +253,36 @@ export function useWorkoutPace(
 
   const viewFor = (line: Line | null, name: string): PaceSheetView | null => {
     if (line === null) return null;
-    const running = pacer.rowId === line.row.id && pacer.setId !== null;
-    const preparation = prepareNextPace(line.sets, repSecondsOf(line));
+    const cadence = cadenceOf(line);
+    const running =
+      cadence.kind === 'hold'
+        ? holdRowId === line.row.id && holdSetId !== null
+        : pacer.rowId === line.row.id && pacer.setId !== null;
+    const preparation = prepareNextPace(line.sets, cadence);
+    const target = preparation.kind === 'ready' ? preparation.target : null;
 
     return {
+      kind: cadence.kind,
       rowId: line.row.id,
       name,
-      repSeconds: running ? pacer.repSeconds : repSecondsOf(line),
+      repSeconds: running && cadence.kind === 'reps' ? pacer.repSeconds : repSecondsOf(line),
       defaultRepSeconds: defaultRepSeconds ?? repSecondsOf(line),
-      reps: running ? pacer.reps : preparation.kind === 'ready' ? preparation.target.reps : null,
+      reps:
+        running && cadence.kind === 'reps'
+          ? pacer.reps
+          : target?.kind === 'reps'
+            ? target.reps
+            : null,
       canStart: preparation.kind !== 'done',
       running,
     };
   };
 
-  return { repSecondsOf, startFor, startFollowing, armFromTypedReps, stop: stopPace, viewFor };
+  /** Arrête l'horloge de ce set, quelle que soit celle des deux qui le suivait. */
+  const stop = (setId?: string): void => {
+    stopPace(setId);
+    stopHold(setId);
+  };
+
+  return { repSecondsOf, startFor, startFollowing, armFromTypedReps, stop, viewFor };
 }

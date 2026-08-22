@@ -14,7 +14,7 @@ import type { PacePreparation } from './paceTarget';
 
 const ready = (setId: string): PacePreparation => ({
   kind: 'ready',
-  target: { setId, reps: 8, repSeconds: 3 },
+  target: { kind: 'reps', setId, reps: 8, repSeconds: 3 },
 });
 const missing = (setId: string): PacePreparation => ({ kind: 'missing-reps', setId });
 const done: PacePreparation = { kind: 'done' };

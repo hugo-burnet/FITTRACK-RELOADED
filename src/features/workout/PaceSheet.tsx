@@ -11,6 +11,8 @@ import { Button, Sheet } from '@/ui';
 import { formatNumber } from '@/ui/numberField';
 
 export type PaceSheetView = {
+  /** Ce que la feuille pilote : un tempo à battre, ou une montre à lancer. */
+  kind: 'reps' | 'hold';
   rowId: string;
   name: string;
   /** The tempo in force for this exercise, preference included. */

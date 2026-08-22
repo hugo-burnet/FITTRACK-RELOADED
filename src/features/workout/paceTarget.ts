@@ -1,22 +1,40 @@
-import type { WorkoutSet } from '@/data/types';
+import type { MeasurementType, WorkoutSet } from '@/data/types';
+import { isTimedMeasurement } from '@/lib/measurement';
 
 /**
- * Which set the metronome would pace, and at what beat.
+ * Ce que bat l'horloge d'une ligne : des répétitions, ou une montre.
  *
- * **The next working set, never a warm-up.** A warm-up is where you find the
- * groove of the day; being clicked at through it is exactly the wrong help.
- *
- * **Performed reps, never the prescription.** The pale target in an empty
- * field is context, not an instruction to the metronome. The pace only owns a
- * set once the lifter has typed the number they are about to perform.
- *
- * **The tempo comes in, it is not computed here.** It is the exercise's own
- * choice (or the preference behind it) — cf. `lib/tempo`.
+ * C'est le type de mesure de l'exercice qui tranche, et lui seul — `cadenceFor`
+ * est le seul endroit du dépôt qui a le droit de répondre à cette question,
+ * exactement comme `lib/measurement` est le seul à dire de quoi une série est
+ * faite.
  */
-export interface PaceTarget {
-  setId: string;
-  reps: number;
-  repSeconds: number;
+export type PaceCadence = { kind: 'reps'; repSeconds: number } | { kind: 'hold' };
+
+/**
+ * Quelle série l'horloge suit, et à quel rythme.
+ *
+ * **La série de travail suivante, jamais un échauffement.** Un échauffement est
+ * là où on trouve sa journée ; être cliqué dessus est exactement la mauvaise
+ * aide.
+ *
+ * **Répétitions saisies, jamais la prescription.** L'objectif pâle d'un champ
+ * vide est un contexte, pas une consigne : le métronome ne prend une série que
+ * lorsque le nombre qu'on s'apprête à faire est écrit.
+ *
+ * **Un maintien n'a pas d'équivalent, et c'est voulu.** Il n'y a rien à saisir
+ * avant de tenir — la durée est le résultat, pas l'entrée.
+ *
+ * **Le tempo entre, il n'est pas calculé ici.** C'est le choix de l'exercice
+ * (ou la préférence derrière lui) — cf. `lib/tempo`.
+ */
+export type PaceTarget =
+  | { kind: 'reps'; setId: string; reps: number; repSeconds: number }
+  | { kind: 'hold'; setId: string };
+
+/** La montre pour ce qui se mesure en temps, le métronome pour ce qui se compte. */
+export function cadenceFor(measurementType: MeasurementType, repSeconds: number): PaceCadence {
+  return isTimedMeasurement(measurementType) ? { kind: 'hold' } : { kind: 'reps', repSeconds };
 }
 
 export type PacePreparation =
@@ -27,8 +45,8 @@ export type PacePreparation =
 export interface PaceExerciseLine {
   rowId: string;
   sets: readonly WorkoutSet[];
-  /** The exercise's own tempo, already resolved against the preference. */
-  repSeconds: number;
+  /** La cadence de l'exercice, tempo déjà résolu contre la préférence. */
+  cadence: PaceCadence;
 }
 
 export interface FollowingExercisePace {
@@ -43,7 +61,7 @@ export interface FollowingExercisePace {
  */
 export function prepareNextPace(
   sets: readonly WorkoutSet[],
-  repSeconds: number,
+  cadence: PaceCadence,
   afterSetId?: string,
 ): PacePreparation {
   const working = sets.filter((set) => set.deletedAt === 0 && set.setType !== 'warmup');
@@ -55,22 +73,21 @@ export function prepareNextPace(
       (finishedIndex < 0 || sets.findIndex((candidate) => candidate.id === set.id) > finishedIndex),
   );
   if (target === undefined) return { kind: 'done' };
+
+  // Un maintien est prêt dès qu'il a une série : la durée est ce qu'il produit,
+  // pas ce qu'il attend.
+  if (cadence.kind === 'hold') {
+    return { kind: 'ready', target: { kind: 'hold', setId: target.id } };
+  }
+
   if (target.reps === undefined || target.reps <= 0) {
     return { kind: 'missing-reps', setId: target.id };
   }
 
   return {
     kind: 'ready',
-    target: { setId: target.id, reps: target.reps, repSeconds },
+    target: { kind: 'reps', setId: target.id, reps: target.reps, repSeconds: cadence.repSeconds },
   };
-}
-
-export function nextPaceTarget(
-  sets: readonly WorkoutSet[],
-  repSeconds: number,
-): PaceTarget | null {
-  const preparation = prepareNextPace(sets, repSeconds);
-  return preparation.kind === 'ready' ? preparation.target : null;
 }
 
 /**
@@ -85,7 +102,7 @@ export function prepareFollowingExercisePace(
   if (currentIndex < 0) return null;
 
   for (const line of lines.slice(currentIndex + 1)) {
-    const preparation = prepareNextPace(line.sets, line.repSeconds);
+    const preparation = prepareNextPace(line.sets, line.cadence);
     if (preparation.kind !== 'done') return { rowId: line.rowId, preparation };
   }
   return null;
