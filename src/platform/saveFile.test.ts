@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { saveTextFile } from './saveFile';
+import { saveBlobFile, saveTextFile } from './saveFile';
 
 const PAYLOAD = {
   name: 'fittrack-2026-08-02.csv',
@@ -96,7 +96,7 @@ describe('saveTextFile', () => {
     expect(
       await saveTextFile(PAYLOAD, {
         isNative: () => true,
-        native: { writeCache, share },
+        native: { writeCache, writeCacheBinary: vi.fn(), share },
       }),
     ).toBe('shared');
 
@@ -118,7 +118,7 @@ describe('saveTextFile', () => {
     expect(
       await saveTextFile(PAYLOAD, {
         isNative: () => true,
-        native: { writeCache, share },
+        native: { writeCache, writeCacheBinary: vi.fn(), share },
       }),
     ).toBe('cancelled');
     expect(URL.createObjectURL).not.toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('saveTextFile', () => {
     expect(
       await saveTextFile(PAYLOAD, {
         isNative: () => true,
-        native: { writeCache, share },
+        native: { writeCache, writeCacheBinary: vi.fn(), share },
       }),
     ).toBe('failed');
     expect(share).not.toHaveBeenCalled();
@@ -149,5 +149,50 @@ describe('saveTextFile', () => {
     const shared = share.mock.calls[0]?.[0] as { files: File[] };
     const bytes = new Uint8Array(await shared.files[0]!.arrayBuffer());
     expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+  });
+});
+
+describe('saveBlobFile', () => {
+  const png = () => new Blob([new Uint8Array([137, 80, 78, 71])], { type: 'image/png' });
+  const payload = () => ({
+    name: 'fittrack-volume-2026-08-22.png',
+    blob: png(),
+    title: 'Volume d’entraînement',
+  });
+
+  it('passe l’image à la feuille de partage du navigateur quand elle en veut', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    install({ share, canShare: () => true });
+
+    expect(await saveBlobFile(payload())).toBe('shared');
+    const [[options]] = share.mock.calls as [[{ files: File[]; title: string }]];
+    expect(options.files[0]?.name).toBe('fittrack-volume-2026-08-22.png');
+    expect(options.files[0]?.type).toBe('image/png');
+  });
+
+  it('sur Android natif, écrit les octets en base64 puis ouvre la feuille', async () => {
+    install({ share: undefined, canShare: undefined });
+    const writeCacheBinary = vi.fn().mockResolvedValue('file:///cache/chart.png');
+    const share = vi.fn().mockResolvedValue(undefined);
+
+    expect(
+      await saveBlobFile(payload(), {
+        isNative: () => true,
+        native: { writeCache: vi.fn(), writeCacheBinary, share },
+      }),
+    ).toBe('shared');
+
+    const [[name, base64]] = writeCacheBinary.mock.calls as [[string, string]];
+    expect(name).toBe('fittrack-volume-2026-08-22.png');
+    // Les quatre premiers octets d'un PNG, en base64 et sans le préfixe data:.
+    expect(base64).toBe('iVBORw==');
+    expect(share).toHaveBeenCalledWith('Volume d’entraînement', 'file:///cache/chart.png');
+  });
+
+  it('sur un navigateur de bureau, tombe sur le téléchargement', async () => {
+    install({ share: undefined, canShare: undefined });
+
+    expect(await saveBlobFile(payload(), { isNative: () => false })).toBe('downloaded');
+    expect(URL.createObjectURL).toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
@@ -15,6 +15,7 @@ import {
 import { PERIOD_KEYS, periodBounds, type PeriodKey } from '@/lib/analytics/periods';
 import { toAnalyticsSessions } from '@/lib/analytics/sessions';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
+import { ChartExportAction } from './ChartExportAction';
 import { ProgressCard } from './ProgressCard';
 
 /**
@@ -50,6 +51,7 @@ export function ExerciseAnalyticsScreen() {
    * decided by the measurement type, the other points at a session that may not
    * even exist here. Same idiom as `ExerciseDetailScreen`'s draft.
    */
+  const chartRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<{
     exerciseId: string;
     period: PeriodKey;
@@ -146,13 +148,23 @@ export function ExerciseAnalyticsScreen() {
             )}
           </Card>
         ) : (
-          <ProgressCard
-            metric={metric}
-            points={points}
-            selectedIndex={selected}
-            onSelect={setSelectedIndex}
-            stale={sources === undefined}
-          />
+          <div>
+            <div ref={chartRef}>
+              <ProgressCard
+                metric={metric}
+                points={points}
+                selectedIndex={selected}
+                onSelect={setSelectedIndex}
+                stale={sources === undefined}
+              />
+            </div>
+            <ChartExportAction
+              chartRef={chartRef}
+              slug="progression"
+              title={exercise?.name ?? t('analytics.title')}
+              subtitle={`${metricLabel(metric.key)} · ${periodLabel(period)}`}
+            />
+          </div>
         )}
 
         {/* The accessible table. Not a hidden twin of the chart: it is the same

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
@@ -13,6 +13,7 @@ import {
   type WeeklyVolumeMetric,
 } from '@/lib/analytics/volume';
 import { Card, FilterChip, ListRow, OptionSheet, SectionTitle } from '@/ui';
+import { ChartExportAction } from './ChartExportAction';
 import { WeeklyVolumeCard } from './WeeklyVolumeCard';
 import { useHistoricalPeriod } from './useHistoricalPeriod';
 
@@ -36,6 +37,7 @@ export function WeeklyVolumeScreen() {
   const [period, setPeriod] = useState<PeriodKey>('12w');
   const [metric, setMetric] = useState<WeeklyVolumeMetric>('tonnage');
   const [selectedIndex, setSelectedIndex] = useState<number>();
+  const chartRef = useRef<HTMLDivElement>(null);
   const historicalPeriod = useHistoricalPeriod(period, openedAt);
   const data = historicalPeriod.data;
   const buckets =
@@ -86,13 +88,23 @@ export function WeeklyVolumeScreen() {
             )}
           </Card>
         ) : (
-          <WeeklyVolumeCard
-            buckets={buckets}
-            metric={metric}
-            selectedIndex={selected}
-            onSelect={setSelectedIndex}
-            stale={historicalPeriod.stale}
-          />
+          <div>
+            <div ref={chartRef}>
+              <WeeklyVolumeCard
+                buckets={buckets}
+                metric={metric}
+                selectedIndex={selected}
+                onSelect={setSelectedIndex}
+                stale={historicalPeriod.stale}
+              />
+            </div>
+            <ChartExportAction
+              chartRef={chartRef}
+              slug="volume"
+              title={t('volume.title')}
+              subtitle={`${periodLabel(period)} · ${weeklyVolumeMetricLabel(metric)}`}
+            />
+          </div>
         )}
 
         {hasSessions && buckets.length > 0 && (
