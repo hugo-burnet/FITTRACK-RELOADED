@@ -2,8 +2,92 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Chrono de série chronométrée livré ; checkpoints
-téléphone en attente : la récupération d'une séance ancienne, et un vrai gainage**).
+**Dernière mise à jour :** 2026-08-22 (**Chrono de série chronométrée et exercices unilatéraux
+livrés ; checkpoints téléphone en attente : la récupération d'une séance ancienne, un vrai
+gainage, et une série unilatérale**).
+
+## Exercices unilatéraux — une ligne, deux côtés
+
+`isUnilateral` existait sur `Exercise` depuis le Lot 2 et **n'était lu par personne** : c'est le
+contrôle « champ déclaré et lu par personne » ouvert au Lot 4 et consigné depuis comme *en
+attente*. Ce lot le ferme.
+
+Pour un exercice porteur du drapeau, **une ligne représente les deux côtés** : une saisie, une
+validation, un enregistrement, un seul `setId`. La première cadence bat le premier côté ; à sa fin
+l'app annonce « Changement de côté. Reprise dans dix secondes. », attend réellement dix secondes,
+puis repart pour le second côté. Le premier côté ne déclenche **ni validation durable, ni repos,
+ni RPE, ni record, ni volume supplémentaire**. La série n'est terminée qu'après le second.
+
+**Les répétitions saisies valent par côté, et la série s'enregistre une fois.** Tu saisis 10 : dix
+battements à gauche, dix à droite, et la série vaut 10 × la charge. Doubler le tonnage créerait
+une rupture dans les courbes avec toutes les séances unilatérales déjà enregistrées, pour un gain
+de fidélité qu'aucun écran ne demande.
+
+**Sur une ligne unilatérale chronométrée, la coche finit le côté, pas la série.** Une cadence de
+répétitions sait compter jusqu'à la fin ; un maintien ne sait pas quand il s'arrête, donc la coche
+est le seul signal disponible. La première change de côté, la seconde valide — et la durée écrite
+est celle du côté qu'on vient de finir.
+
+### La machine, et pourquoi elle est faite ainsi
+
+`features/workout/sideCycle.ts` porte la règle, pure et testée. **Trois stades visibles, deux
+stockés** : `transition` n'est pas un état de plus, c'est `second` avant son instant de reprise.
+Le stade se **dérive d'un instant absolu** au lieu d'être avancé par un minuteur — même règle que
+la barre de repos, le métronome et le chrono. Et les dix secondes ne sont pas comptées deux fois :
+elles **sont** la fenêtre de préparation de l'horloge du second côté, `resumesAt` et `startedAt`
+étant le même instant.
+
+Le cycle vit dans une **référence** autant que dans un état. Ouvrir le cycle et en tourner un côté
+peuvent tomber dans le même tour de boucle ; une décision qui lit l'état de la fermeture de rendu
+y verrait encore le cycle d'avant et repartirait du premier côté, indéfiniment. Le test l'a
+attrapé avant la salle.
+
+`repBeats` accepte désormais le cue qui **ferme** une cadence : les clips de `set-done` disent
+« Validé. » et « Série terminée. », faux au milieu d'une série. Le premier côté se ferme par
+`side-change`.
+
+### Données
+
+`WorkoutExercise.exerciseIsUnilateral` rejoint l'instantané, avec **`version(10)`** de Dexie et le
+rattrapage de sauvegarde correspondant (`CURRENT_SCHEMA_VERSION = 10`). Mêmes gardes que la
+version 4 : uniquement les lignes déjà instantanées, et jamais par-dessus un drapeau que la ligne
+porte déjà.
+
+**`WorkoutSet.side` n'est pas touché** : il reste `'both'`. Une ligne représente les deux côtés ;
+écrire `'left'` puis `'right'` demanderait deux lignes, ce que le contrat interdit.
+
+La **projection historique ne transporte pas** le drapeau : elle est lue par les exports et les
+analyses, dont aucun ne s'en sert. Un champ transporté que personne ne lit est exactement la dette
+que ce lot solde ailleurs.
+
+### Pièges rencontrés
+
+- **Ne jamais lancer `prettier --write` sur un fichier que le lot ne formate pas déjà.**
+  `historicalWorkouts.ts` a été reformaté en entier — 159 lignes de diff pour un ajout de douze.
+  Remis en état, le commit tient en 14 lignes. Le dépôt n'est pas uniformément formaté, et
+  `prettier --check` s'y plaint aussi des fins de ligne CRLF : le vrai portail est `npm run lint`.
+- Ajouter un champ à `snapshotOf` fait échouer trois assertions exhaustives (`toEqual`) qui
+  épinglent volontairement la forme de l'instantané. Les étendre est la bonne réponse ; les
+  affaiblir ne l'aurait pas été.
+
+### Portes
+
+- `npm run typecheck` : sortie 0 ;
+- `npm run lint` : sortie 0, aucun avertissement ;
+- `npm run test:run` : **190 fichiers, 2 058 tests**, sortie 0 ;
+- `npm run build` : sortie 0, service worker PWA généré, 99 entrées précachées.
+
+### La voix, toujours pas enregistrée
+
+« Changement de côté. Reprise dans dix secondes. » est **figé** ici et rejoint la validation des
+transcriptions avant génération, avec les trente-six repères du chrono et les douze textes P1. Le
+cue `side-change` sonne (`chime`) et ne parle pas encore ; un test épingle qu'il n'a aucun clip.
+
+**Checkpoint téléphone demandé :**
+
+> Une série unilatérale se fait en une ligne : je saisis une fois, la cadence part, elle m'annonce
+> le changement de côté, j'ai dix secondes pour changer, elle repart, et je ne valide qu'une fois.
+> En Silence, le relevé me dit où j'en suis.
 
 ## Chrono de série chronométrée
 

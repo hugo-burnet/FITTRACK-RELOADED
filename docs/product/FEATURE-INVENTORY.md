@@ -510,10 +510,11 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
    chronomètrent dans l'app ; la coche arrête le chrono, écrit la durée tenue (relâchement de 2 s
    retiré) et valide la série. Trente-six repères toutes les 5 s jusqu'à 3 min, **déclarés mais
    pas encore enregistrés**.
-6. Pour un exercice unilatéral, faire représenter les deux côtés par une seule ligne : changement
-   de côté vocal, reprise après 10 s, et aucun repos/RPE/record après le premier côté. **Se pose
-   sur le chrono** : la cadence d'une ligne est désormais soit des répétitions, soit un maintien,
-   et le cycle deux côtés doit fonctionner sur les deux.
+6. **Livré :** exercices unilatéraux. Une ligne représente les deux côtés — une saisie, une
+   validation, un `setId`. Changement de côté annoncé, dix secondes réelles, et aucun
+   repos/RPE/record après le premier côté. Fonctionne sur les deux cadences, répétitions et
+   maintien. Le texte « Changement de côté. Reprise dans dix secondes. » est figé, **pas encore
+   enregistré**.
 7. Décider explicitement si la séance vide retrouve une porte UI ou reste un comportement interne.
 
 ### P2
@@ -540,7 +541,7 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
 3. **Livré — récupération** : séance ancienne, reprise après kill, abandon explicite.
 4. **Livré — annonces de séance** : le bug RPE/repos est fermé, et le chrono de maintien comble le
    manque signalé (sortir de l'app pour chronométrer un gainage).
-5. **Cycle unilatéral à deux côtés**, sur les deux cadences — répétitions et maintien.
+5. **Livré — cycle unilatéral à deux côtés**, sur les deux cadences : répétitions et maintien.
 6. **Revue des textes** : figer les douze transcriptions P1, les trente-six repères du chrono et
    le texte du changement de côté, puis les faire valider.
 7. **Voix** : auditer les manques, générer **uniquement** ce qui manque, écouter dans l'app et
