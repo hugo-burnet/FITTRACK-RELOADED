@@ -208,6 +208,53 @@ describe('backfillBackupTables', () => {
     });
   });
 
+  describe('v10 — le drapeau unilatéral de l’instantané', () => {
+    // Même garde que la v4 : seules les lignes déjà instantanées. Une ligne
+    // sans instantané retombe sur la bibliothèque en bloc, et lui donner ce
+    // seul champ casserait ce repli.
+    it('remplit les lignes déjà instantanées depuis la bibliothèque du fichier', () => {
+      const migrated = backfillBackupTables(
+        tables({
+          exercises: [{ ...PULL_UP, isUnilateral: 1 }],
+          workoutExercises: [
+            {
+              id: 'we-1',
+              exerciseId: 'ex-1',
+              exerciseName: 'Traction',
+              exercisePrimaryMuscle: 'lats',
+            },
+            { id: 'we-2', exerciseId: 'ex-1' },
+          ],
+        }),
+        9,
+      );
+
+      expect(migrated.workoutExercises[0]?.exerciseIsUnilateral).toBe(1);
+      expect(migrated.workoutExercises[1]).not.toHaveProperty('exerciseIsUnilateral');
+    });
+
+    // Écraser un instantané gelé avec le catalogue d'aujourd'hui est
+    // précisément la réécriture de l'histoire que les instantanés empêchent.
+    it('n’écrase jamais un drapeau déjà gelé', () => {
+      const migrated = backfillBackupTables(
+        tables({
+          exercises: [{ ...PULL_UP, isUnilateral: 1 }],
+          workoutExercises: [
+            {
+              id: 'we-1',
+              exerciseId: 'ex-1',
+              exercisePrimaryMuscle: 'lats',
+              exerciseIsUnilateral: 0,
+            },
+          ],
+        }),
+        9,
+      );
+
+      expect(migrated.workoutExercises[0]?.exerciseIsUnilateral).toBe(0);
+    });
+  });
+
   describe('la porte de version', () => {
     it('ne fait rien sur une sauvegarde déjà au schéma courant', () => {
       const source = tables({ exercises: [PULL_UP] });

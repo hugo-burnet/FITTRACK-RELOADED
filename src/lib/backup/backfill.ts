@@ -53,7 +53,7 @@ import type { BackupRow, BackupTable } from './types';
  * imports this layer, and the cycle would be real. `schemaVersion.test.ts` in
  * `data/` asserts the two agree, so the constant cannot drift in silence.
  */
-export const CURRENT_SCHEMA_VERSION = 9;
+export const CURRENT_SCHEMA_VERSION = 10;
 
 /** `0` is what `parseBackup` writes when a file names no schema at all. */
 const UNKNOWN_SCHEMA_VERSION = 0;
@@ -199,6 +199,26 @@ function toVersion9(tables: Tables): Tables {
   });
 }
 
+/**
+ * Version 10 — le drapeau unilatéral de l'instantané.
+ *
+ * Mêmes gardes que la version 4 : uniquement les lignes déjà instantanées, et
+ * jamais par-dessus un drapeau que le fichier porte déjà. Écraser un instantané
+ * gelé avec le catalogue d'aujourd'hui est précisément la réécriture de
+ * l'histoire que les instantanés empêchent.
+ */
+function toVersion10(tables: Tables): Tables {
+  const library = libraryOf(tables);
+
+  return mapTable(tables, 'workoutExercises', (row) => {
+    if (row.exercisePrimaryMuscle === undefined) return row;
+    if (row.exerciseIsUnilateral !== undefined) return row;
+    if (typeof row.exerciseId !== 'string') return row;
+    const flag = library.get(row.exerciseId)?.isUnilateral;
+    return flag === undefined ? row : { ...row, exerciseIsUnilateral: flag };
+  });
+}
+
 /** Each backfill, and the schema version that first shipped it. */
 const BACKFILLS: readonly { version: number; apply: (tables: Tables) => Tables }[] = [
   { version: 2, apply: toVersion2 },
@@ -206,6 +226,7 @@ const BACKFILLS: readonly { version: number; apply: (tables: Tables) => Tables }
   { version: 7, apply: toVersion7 },
   { version: 8, apply: toVersion8 },
   { version: 9, apply: toVersion9 },
+  { version: 10, apply: toVersion10 },
 ];
 
 /**

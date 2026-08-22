@@ -259,6 +259,40 @@ export class FitTrackDB extends Dexie {
           exercise.bodyweightLoadFactor = factor;
         });
     });
+
+    /**
+     * Gèle le drapeau unilatéral sur les lignes de séance déjà instantanées.
+     *
+     * Le champ vient d'entrer dans `snapshotOf` : les lignes créées à partir de
+     * maintenant le portent, celles d'avant non. Sans ce rattrapage, une séance
+     * passée sur un exercice unilatéral lirait le drapeau **d'aujourd'hui** — la
+     * réécriture de l'histoire que les instantanés existent pour empêcher, le
+     * jour où ce drapeau est décoché.
+     *
+     * Seules les lignes **déjà instantanées**, exactement comme la version 4 :
+     * une ligne sans instantané du tout retombe sur la bibliothèque en bloc, et
+     * lui donner ce seul champ casserait ce repli.
+     *
+     * Le même compromis que les versions 2, 4 et 9, et il se dit de la même
+     * façon : la meilleure information disponible, et la seule qu'il y ait. Une
+     * ligne dont l'exercice a changé de drapeau avant ce passage enregistre
+     * celui d'aujourd'hui — indétectable, et pas pire que le rien qu'il remplace.
+     *
+     * Pas de `.stores()` : le champ n'est pas indexé.
+     */
+    this.version(10).upgrade(async (tx) => {
+      const exercises = await tx.table<Exercise>('exercises').toArray();
+      const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+
+      await tx
+        .table<WorkoutExercise>('workoutExercises')
+        .toCollection()
+        .modify((row) => {
+          if (row.exercisePrimaryMuscle === undefined) return;
+          const flag = byId.get(row.exerciseId)?.isUnilateral;
+          if (flag !== undefined) row.exerciseIsUnilateral = flag;
+        });
+    });
   }
 }
 

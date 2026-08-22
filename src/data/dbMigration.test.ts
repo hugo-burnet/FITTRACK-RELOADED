@@ -69,7 +69,8 @@ async function seedVersion1(): Promise<void> {
       equipment: 'machine',
       measurementType: 'weight_reps',
       isCustom: 1,
-      isUnilateral: 0,
+      // Unilatérale, pour que la version 10 ait un drapeau à geler.
+      isUnilateral: 1,
       deletedAt: 1,
     },
   ]);
@@ -210,7 +211,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(9);
+    expect(db.verno).toBe(10);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -262,6 +263,12 @@ describe('migration depuis la version 1', () => {
       'exerciseSecondaryMuscles',
     );
 
+    // Version 10 — le drapeau unilatéral rejoint l'instantané des lignes qui en
+    // ont un, et la ligne orpheline continue de n'inventer rien.
+    expect((await db.workoutExercises.get('row-retired'))?.exerciseIsUnilateral).toBe(1);
+    expect(bench?.exerciseIsUnilateral).toBe(0);
+    expect(orphan?.exerciseIsUnilateral).toBeUndefined();
+
     // Chaque séance reçoit l'offset de SA date, pas celui du jour de la
     // migration : en zone à heure d'été les deux diffèrent, ailleurs ils
     // coïncident, et les deux cas sont justes.
@@ -286,7 +293,7 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(9);
+    expect(db.verno).toBe(10);
 
     const week = await db.programWeeks.get('legacy-week');
     expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });
