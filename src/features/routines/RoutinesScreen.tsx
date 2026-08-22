@@ -65,10 +65,12 @@ export function RoutinesScreen() {
    * qu'un menu sait dire (`hint`) et qu'un bouton qui redirige ne dit pas.
    */
   const start = (routineId: string) => {
-    void startWorkoutFromRoutine(routineId).then((workout) => {
-      tutorial?.report({ type: 'workout-started', workoutId: workout.id, routineId });
-      navigate('/workout');
-    });
+    void startWorkoutFromRoutine(routineId)
+      .then((workout) => {
+        tutorial?.report({ type: 'workout-started', workoutId: workout.id, routineId });
+        navigate('/workout');
+      })
+      .catch(() => undefined);
   };
 
   const folderOptions: Option<string>[] = [

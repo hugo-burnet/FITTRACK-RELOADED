@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createCustomExercise } from '@/data/repositories/exercises';
 import { db } from '@/data/db';
@@ -18,6 +18,8 @@ import {
 } from '@/data/repositories/routines';
 import * as routinesRepository from '@/data/repositories/routines';
 import { getActiveWorkout } from '@/data/repositories/workouts';
+import * as workoutsRepository from '@/data/repositories/workouts';
+import type { Workout } from '@/data/types';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { resetDb } from '@/test/resetDb';
 import { TutorialContext } from '@/features/tutorial/tutorialContext';
@@ -31,6 +33,7 @@ function renderRoutineFlow(initialEntry = '/routines', report = vi.fn()) {
       value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report }}
     >
       <MemoryRouter initialEntries={[initialEntry]}>
+        <LocationProbe />
         <Routes>
           <Route path="/routines" element={<RoutinesScreen />} />
           <Route path="/routines/:id" element={<RoutineEditorScreen />} />
@@ -40,6 +43,22 @@ function renderRoutineFlow(initialEntry = '/routines', report = vi.fn()) {
       </MemoryRouter>
     </TutorialContext.Provider>,
   );
+}
+
+function LocationProbe() {
+  const location = useLocation();
+  return <output data-testid="location-probe">{location.pathname}</output>;
+}
+
+function deferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+
+  return { promise, resolve, reject };
 }
 
 function reportedEvent<T extends string>(report: ReturnType<typeof vi.fn>, type: T) {
@@ -91,6 +110,66 @@ describe('parcours de composition d’une routine', () => {
     expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'routine-created' }));
     expect(screen.queryByRole('textbox', { name: 'Nom de la routine' })).not.toBeInTheDocument();
     expect(document.querySelector('[data-tutorial-id="routine-add-exercise"]')).toBeNull();
+  });
+
+  it('reports collection start only after the workout repository resolves', async () => {
+    const routine = await createRoutine('Démarrage collection');
+    const workout: Workout = {
+      id: 'workout-collection-success',
+      createdAt: monday,
+      updatedAt: monday,
+      deletedAt: 0,
+      routineId: routine.id,
+      name: routine.name,
+      status: 'active',
+      startedAt: monday,
+      endedAt: 0,
+      durationSeconds: 0,
+      startedTimezoneOffsetMinutes: 120,
+    };
+    const pending = deferred<Workout>();
+    const report = vi.fn();
+    const user = userEvent.setup();
+    vi.spyOn(workoutsRepository, 'startWorkoutFromRoutine').mockReturnValueOnce(pending.promise);
+    renderRoutineFlow('/routines', report);
+
+    await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
+    await user.click(screen.getByRole('button', { name: 'Démarrer' }));
+
+    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-started' }));
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/routines');
+
+    pending.resolve(workout);
+
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({
+        type: 'workout-started',
+        workoutId: workout.id,
+        routineId: routine.id,
+      }),
+    );
+    expect(
+      report.mock.calls.map(([event]) => event).filter((event) => event.type === 'workout-started'),
+    ).toEqual([{ type: 'workout-started', workoutId: workout.id, routineId: routine.id }]);
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout');
+  });
+
+  it('keeps the collection route and emits no event when workout start is rejected', async () => {
+    const routine = await createRoutine('Échec collection');
+    const pending = deferred<Workout>();
+    const report = vi.fn();
+    const user = userEvent.setup();
+    vi.spyOn(workoutsRepository, 'startWorkoutFromRoutine').mockReturnValueOnce(pending.promise);
+    renderRoutineFlow('/routines', report);
+
+    await user.click(await screen.findByRole('button', { name: `Routine — ${routine.name}` }));
+    await user.click(screen.getByRole('button', { name: 'Démarrer' }));
+    pending.reject(new Error('Workout repository unavailable'));
+
+    await Promise.resolve();
+
+    expect(report).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'workout-started' }));
+    expect(screen.getByTestId('location-probe')).toHaveTextContent('/routines');
   });
 
   it('reports persisted routine configuration events with exact IDs and values', async () => {
