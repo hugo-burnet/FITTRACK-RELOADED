@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import type { Exercise, PersonalRecord, WorkoutExercise, WorkoutSet } from '@/data/types';
 import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
@@ -10,6 +10,14 @@ import {
   workoutRecordNotices,
 } from './WorkoutExerciseCard';
 import { INITIAL_WORKOUT_FOLD_COMMAND } from './workoutFold';
+
+const announce = vi.hoisted(() => vi.fn<(cue: string, when?: number) => boolean>(() => true));
+
+vi.mock('@/audio/announce', () => ({ announce }));
+vi.mock('@/platform/nativeNotifications', () => ({
+  nativeNotifications: { standDownRest: vi.fn().mockResolvedValue(undefined) },
+}));
+vi.mock('./restAlert', () => ({ signalRestFinishedOnCurrentPlatform: vi.fn() }));
 
 const stamps = { createdAt: 1, updatedAt: 1, deletedAt: 0 };
 
@@ -55,11 +63,12 @@ function renderCard(
   reorderEnabled: boolean,
   currentLine = line,
   records: Map<string, WorkoutRecordNotice> = new Map(),
+  rest: React.ComponentProps<typeof WorkoutExerciseCard>['rest'] = null,
 ) {
   render(
     <WorkoutExerciseCard
       line={currentLine}
-      rest={null}
+      rest={rest}
       pace={null}
       effort={null}
       records={records}
@@ -83,6 +92,10 @@ function renderCard(
 const headerContent = (): HTMLElement => screen.getByRole('button', { expanded: true });
 
 describe('WorkoutExerciseCard', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('décale l’en-tête quand l’ordre est verrouillé', () => {
     renderCard(false);
 
@@ -94,6 +107,24 @@ describe('WorkoutExerciseCard', () => {
     renderCard(true);
 
     expect(headerContent()).not.toHaveClass('pl-4');
+  });
+
+  it('transmet la suspension audio du repos au rail', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+    announce.mockClear();
+    const rest = {
+      setId: 'set-resting',
+      startedAt: 0,
+      endsAt: 15_000,
+      audioSuppressed: true,
+      onDone: vi.fn(() => false),
+    };
+
+    renderCard(false, line, new Map(), rest);
+    act(() => vi.advanceTimersByTime(15_000));
+
+    expect(announce).not.toHaveBeenCalled();
   });
 
   const completedSet: WorkoutSet = {
@@ -151,9 +182,7 @@ describe('WorkoutExerciseCard', () => {
     renderCard(
       false,
       { ...line, sets: [completedSet, draftSet] },
-      new Map([
-        [completedSet.id, { types: ['max_weight'], entries: [maxWeight] }],
-      ]),
+      new Map([[completedSet.id, { types: ['max_weight'], entries: [maxWeight] }]]),
     );
 
     expect(screen.getByText('Record · Charge max · 105 kg · +5 kg')).toBeVisible();
@@ -178,9 +207,7 @@ describe('WorkoutExerciseCard', () => {
       ]),
     );
 
-    expect(
-      screen.getByText('3 records · Charge max, 1RM estimé et Tonnage séance'),
-    ).toBeVisible();
+    expect(screen.getByText('3 records · Charge max, 1RM estimé et Tonnage séance')).toBeVisible();
   });
 
   it('groups every improvement by its trigger and excludes initial marks', () => {
@@ -200,10 +227,7 @@ describe('WorkoutExerciseCard', () => {
     const notices = workoutRecordNotices([initial, setRecord, sessionRecord]);
 
     expect([...notices.keys()]).toEqual([completedSet.id]);
-    expect(notices.get(completedSet.id)?.types).toEqual([
-      'max_weight',
-      'max_volume_session',
-    ]);
+    expect(notices.get(completedSet.id)?.types).toEqual(['max_weight', 'max_volume_session']);
     expect(notices.get(completedSet.id)?.entries).toEqual([setRecord, sessionRecord]);
   });
 });

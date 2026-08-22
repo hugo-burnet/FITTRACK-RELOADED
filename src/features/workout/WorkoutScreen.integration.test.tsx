@@ -20,6 +20,7 @@ import { applyEffortPrompt } from '@/stores/effortPrompt';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
+import * as announcer from '@/audio/announce';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutScreen } from './WorkoutScreen';
 
@@ -559,6 +560,8 @@ describe('WorkoutScreen — effort et fatigue', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
+    applyEffortPrompt(true);
     useRestTimer.getState().stop();
     useRepPacer.getState().stop();
   });
@@ -592,6 +595,49 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await waitFor(async () => {
       expect(await firstSet(workoutId)).toMatchObject({ rpe: 9, isCompleted: 1 });
     });
+  });
+
+  it('termine le repos sans lancer la série suivante tant que le RPE reste ouvert', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const set = await firstSet(workoutId);
+    const report = vi.fn();
+    const user = userEvent.setup();
+    renderWorkout(report);
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+    expect(await screen.findByRole('group', { name: t('workout.effortQuestion') })).toBeVisible();
+    report.mockClear();
+
+    act(() => useRestTimer.getState().start(set.id, 0.05));
+
+    await waitFor(() =>
+      expect(report).toHaveBeenCalledWith({ type: 'rest-finished', setId: set.id }),
+    );
+    expect(useRestTimer.getState().setId).toBeNull();
+    expect(useRepPacer.getState().setId).toBeNull();
+  });
+
+  it('garde l’annonce de reprise à dix silencieuse tant que le RPE reste ouvert', async () => {
+    const workoutId = await seedTwoSetWorkout();
+    const set = await firstSet(workoutId);
+    const announce = vi.spyOn(announcer, 'announce').mockReturnValue(true);
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Développé couché');
+    await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+    expect(await screen.findByRole('group', { name: t('workout.effortQuestion') })).toBeVisible();
+    announce.mockClear();
+
+    act(() => useRestTimer.getState().start(set.id, 10.05));
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    expect(announce).not.toHaveBeenCalledWith('rest-10');
   });
 
   it('ne demande rien quand le réglage est éteint', async () => {
@@ -781,6 +827,8 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await user.type(within(nextCard).getByRole('textbox', { name: 'Série 1 — reps' }), '12');
     expect(useRepPacer.getState().setId).toBeNull();
 
+    await user.click(screen.getByRole('button', { name: t('workout.rpeConfirm', { value: '8' }) }));
+
     act(() => useRestTimer.getState().start(firstExerciseSet.id, 0.05));
 
     await waitFor(() => expect(useRepPacer.getState().setId).toBe(nextExerciseSet.id));
@@ -792,6 +840,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
 
   it('lance toute seule la cadence suivante à la fin du compte à rebours', async () => {
     const workoutId = await seedTwoSetWorkout();
+    applyEffortPrompt(false);
     const detail = await getWorkoutDetail(workoutId);
     const [first, second] = detail?.exercises[0]?.sets ?? [];
     if (first === undefined || second === undefined) throw new Error('séries absentes');

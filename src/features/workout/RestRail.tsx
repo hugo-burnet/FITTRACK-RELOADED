@@ -7,12 +7,14 @@ import { armRestCountdown } from './restCountdown';
 type Props = {
   startedAt: number;
   endsAt: number;
+  /** Keeps the wall clock running while muting every rest-owned sound. */
+  audioSuppressed: boolean;
   /** Returns true when the next set takes over with its repetition cadence. */
-  onDone: () => boolean;
+  onDone: (audioAllowed: boolean) => boolean;
 };
 
 /** Compositor-driven progress bar anchored to the resting exercise. */
-export function RestRail({ startedAt, endsAt, onDone }: Props) {
+export function RestRail({ startedAt, endsAt, audioSuppressed, onDone }: Props) {
   const barRef = useRef<HTMLSpanElement | null>(null);
 
   const [reduced] = useState(
@@ -25,16 +27,31 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     done.current = onDone;
   });
 
+  // The deadline is armed once for the wall-clock instant, so keep the latest
+  // RPE state in a ref rather than resetting that timer when the strip closes.
+  const suppressed = useRef(audioSuppressed);
+  useLayoutEffect(() => {
+    suppressed.current = audioSuppressed;
+  }, [audioSuppressed]);
+
   // The three ticks before the deadline, cancelled with the rest they count.
-  useEffect(() => armRestCountdown(endsAt), [endsAt]);
+  useEffect(() => {
+    if (audioSuppressed) return;
+    return armRestCountdown(endsAt);
+  }, [endsAt, audioSuppressed]);
 
   useEffect(() => {
     // The countdown hands the clock directly to the next set at zero. Its first
     // repetition beat replaces the old end-of-rest chime, so the two never land
     // on top of each other. Without a pace target, keep the normal alert.
-    const id = setTimeout(() => {
-      if (!done.current()) signalRestFinishedOnCurrentPlatform();
-    }, Math.max(0, endsAt - Date.now()));
+    const id = setTimeout(
+      () => {
+        const audioAllowed = !suppressed.current;
+        const paced = done.current(audioAllowed);
+        if (audioAllowed && !paced) signalRestFinishedOnCurrentPlatform();
+      },
+      Math.max(0, endsAt - Date.now()),
+    );
     return () => clearTimeout(id);
   }, [endsAt]);
 

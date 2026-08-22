@@ -73,8 +73,10 @@ export type CardRest = {
   setId: string;
   startedAt: number;
   endsAt: number;
+  /** True while this set's effort question owns the user's attention. */
+  audioSuppressed: boolean;
   /** True when the rest flows directly into the next set's cadence. */
-  onDone: () => boolean;
+  onDone: (audioAllowed: boolean) => boolean;
 };
 
 export type CardPace = RepPacer & { setId: string; onFinished: () => void };
@@ -356,6 +358,7 @@ export function WorkoutExerciseCard({
               key={rest.setId}
               startedAt={rest.startedAt}
               endsAt={rest.endsAt}
+              audioSuppressed={rest.audioSuppressed}
               onDone={rest.onDone}
             />
           )}

@@ -405,11 +405,20 @@ export function WorkoutScreen() {
                             setId: activeRestSetId,
                             startedAt: rest.startedAt,
                             endsAt: rest.endsAt,
-                            onDone: () => {
+                            audioSuppressed: effortSetId === activeRestSetId,
+                            onDone: (audioAllowed) => {
                               tutorial?.report({
                                 type: 'rest-finished',
                                 setId: activeRestSetId,
                               });
+                              // The wall clock is authoritative even while the
+                              // effort strip is open. At its deadline the rest
+                              // still ends, but the unanswered RPE must not
+                              // start a cadence behind the user's question.
+                              if (!audioAllowed) {
+                                rest.stop(activeRestSetId);
+                                return false;
+                              }
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
                               const paced = pace.startFor(line, activeRestSetId);
