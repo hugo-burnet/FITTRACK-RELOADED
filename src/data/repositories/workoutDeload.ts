@@ -11,15 +11,20 @@ import { getLastPerformance } from './workoutHistory';
 
 const byOrder = (left: WorkoutSet, right: WorkoutSet): number => left.order - right.order;
 
+/**
+ * Adds the deload's line to the session's notes, once.
+ *
+ * Trimmed to *decide*, raw to *join*, and that asymmetry is deliberate. What is
+ * being asked — is there anything here, and does it already say this? — is a
+ * question about the text, and neither answer should turn on a trailing
+ * newline. What is being written is somebody's own note, and appending a line
+ * to it is no licence to reformat what they typed above.
+ */
 function appendNote(notes: string | undefined, note: string): string | undefined {
-  const current = notes;
-  const normalizedCurrent = current?.trim();
+  const existing = notes?.trim() ?? '';
   const addition = note.trim();
-  if (addition === '') return current;
-  if (normalizedCurrent?.includes(addition)) return current;
-  return normalizedCurrent === undefined || normalizedCurrent === ''
-    ? addition
-    : `${current}\n\n${addition}`;
+  if (addition === '' || existing.includes(addition)) return notes;
+  return existing === '' ? addition : `${notes}\n\n${addition}`;
 }
 
 export async function applyWorkoutDeload(

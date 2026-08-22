@@ -61,8 +61,17 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
   }, [reduced]);
 
   const progress = restProgress(startedAt, endsAt, now);
-  const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));
 
+  /*
+   * Decoration, and declared as such. The bar used to carry a `progressbar`
+   * role with a carefully worded `aria-valuetext` — inside a wrapper marked
+   * `aria-hidden`, which removes the whole subtree from the accessibility tree.
+   * The sentence was never announced by anything.
+   *
+   * Removed rather than un-hidden, because the countdown is already readable:
+   * `RestStatus` prints it in the card, as text, once a second. Exposing the
+   * bar too would say the same thing twice.
+   */
   return (
     <span
       aria-hidden="true"
@@ -71,12 +80,6 @@ export function RestRail({ startedAt, endsAt, onDone }: Props) {
     >
       <span
         ref={barRef}
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(progress * 100)}
-        // Deliberately not live: announcing every second is unusable.
-        aria-valuetext={t('workout.restRemaining', { time: formatRest(remaining) })}
         className="block h-full rounded-full bg-[var(--accent-ink)]"
         style={reduced ? { width: `${progress * 100}%` } : undefined}
       />

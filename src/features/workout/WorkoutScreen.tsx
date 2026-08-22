@@ -40,7 +40,7 @@ import type { PlateLoading, SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { formatNumber } from '@/ui/numberField';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
-import { isDeloadEligibleMeasurement } from '@/lib/deload';
+import { DELOAD_PERCENT, isDeloadEligibleMeasurement } from '@/lib/deload';
 import { platesConfigFor } from '@/lib/plateLoading';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { isRestTriggering, restPlans } from '@/lib/rest';
@@ -205,7 +205,7 @@ export function WorkoutScreen() {
   }
 
   const { workout, exercises } = detail;
-  const deloadActive = workout.deloadPercent === 80;
+  const deloadActive = workout.deloadPercent === DELOAD_PERCENT;
   const canDeload = exercises.some((line) =>
     (() => {
       return (

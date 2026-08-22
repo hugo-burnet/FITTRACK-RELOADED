@@ -224,7 +224,6 @@ const fr = {
   workout: {
     emptyName: 'Séance libre',
     restLabel: 'Repos {duration}',
-    restRemaining: 'Repos, {time} restantes',
     pace: 'Lancer la cadence',
     effortQuestion: 'Effort perçu',
     effortLead: 'C’était',
