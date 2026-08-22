@@ -52,6 +52,29 @@ const fr = {
     hours: 'h',
   },
 
+  weekday: {
+    long: {
+      sunday: 'dimanche',
+      monday: 'lundi',
+      tuesday: 'mardi',
+      wednesday: 'mercredi',
+      thursday: 'jeudi',
+      friday: 'vendredi',
+      saturday: 'samedi',
+    },
+    // Deux « M » : c'est ce que tout le monde lit sur un agenda. Le nom complet
+    // est dans l'étiquette accessible, là où l'ambiguïté se paierait.
+    initial: {
+      sunday: 'D',
+      monday: 'L',
+      tuesday: 'M',
+      wednesday: 'M',
+      thursday: 'J',
+      friday: 'V',
+      saturday: 'S',
+    },
+  },
+
   rest: {
     decrease: 'Diminuer le repos',
     increase: 'Augmenter le repos',
@@ -355,6 +378,15 @@ const fr = {
     workoutBody: 'Touche pour revenir à la séance.',
     restTitle: 'Repos terminé',
     restBody: 'La prochaine série peut commencer.',
+    recordChannel: 'Records battus',
+    recordChannelDescription: 'Écrit un record dans les notifications, sans bruit.',
+    reminderChannel: 'Rappels d’entraînement',
+    reminderChannelDescription: 'Sonne aux jours et à l’heure que tu as choisis.',
+    reminderTitle: 'C’est un jour de séance',
+    reminderBody: 'Touche pour ouvrir FitTrack.',
+    recordTitle: 'Record battu',
+    recordOne: '{exercise} · {record} {value}',
+    recordMany: '{count} records · {exercises}',
   },
 
   finish: {
@@ -1255,6 +1287,25 @@ const fr = {
       'c’est un mémo vocal. Les tics du décompte, eux, restent secs.',
 
     trainingSection: 'Entraînement',
+
+    notificationsSection: 'Notifications',
+    notificationsRest: 'Fin de repos',
+    notificationsRestHint: 'Sonne quand le minuteur arrive à zéro, écran éteint.',
+    notificationsRecords: 'Records battus',
+    notificationsRecordsHint:
+      'Écrit le record dans les notifications, sans un bruit : la séance l’a déjà annoncé.',
+    notificationsReminders: 'Rappels d’entraînement',
+    notificationsRemindersHint: 'Aux jours et à l’heure que tu choisis.',
+    notificationsOn: 'Oui',
+    notificationsOff: 'Non',
+    notificationsDays: 'Jours de rappel',
+    notificationsTime: 'Heure du rappel',
+    notificationsNoDay: 'Aucun jour coché : rien ne sonnera tant qu’il en manque un.',
+    notificationsNext: 'Prochain rappel : {date}.',
+    notificationsAndroidHint:
+      'Ces trois notifications sont posées par l’application Android. Dans un navigateur, ' +
+      'seule l’app ouverte peut sonner.',
+
     effortSection: 'Effort et fatigue',
     effortPromptTitle: 'Demander l’effort après chaque série',
     effortPromptHint:

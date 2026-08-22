@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { t } from '@/i18n/fr';
 import type { RestTimer } from '@/stores/restTimer';
+import { DEFAULT_NOTIFICATION_PREFERENCES } from '@/lib/notificationPreferences';
 import {
   createNativeNotificationGateway,
+  RECORD_CHANNEL_ID,
+  RECORD_NOTIFICATION_ID,
+  REMINDER_CHANNEL_ID,
+  REMINDER_HORIZON,
+  REMINDER_NOTIFICATION_BASE_ID,
   REST_CHANNEL_ID,
   REST_NOTIFICATION_ID,
   WORKOUT_CHANNEL_ID,
@@ -54,7 +60,8 @@ describe('native notification gateway', () => {
     await gateway.reconcileWorkout('Lower A');
 
     expect(plugin.requestPermissions).toHaveBeenCalledOnce();
-    expect(plugin.createChannel).toHaveBeenCalledTimes(2);
+    // Les quatre canaux de RF-53 : séance, repos, record, rappel.
+    expect(plugin.createChannel).toHaveBeenCalledTimes(4);
     expect(plugin.schedule).toHaveBeenCalledOnce();
   });
 
@@ -304,5 +311,152 @@ describe('native notification gateway', () => {
 
     expect(plugin.schedule).toHaveBeenCalledOnce();
     expect(gateway.isRestAlertArmed()).toBe(true);
+  });
+});
+
+describe('notification preferences — RF-53', () => {
+  const week = { days: [1, 3, 5], minutes: 18 * 60 };
+
+  beforeEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('never arms a rest alert while the rest switch is off', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+
+    await gateway.applyPreferences({ ...DEFAULT_NOTIFICATION_PREFERENCES, rest: false });
+    vi.mocked(plugin.schedule).mockClear();
+    await gateway.reconcileRest(activeRest(Date.now() + 90_000));
+
+    expect(plugin.schedule).not.toHaveBeenCalled();
+    expect(gateway.isRestAlertArmed()).toBe(false);
+  });
+
+  it('takes down the rest alert already in the air when the switch goes off', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+
+    await gateway.reconcileRest(activeRest(Date.now() + 90_000));
+    expect(gateway.isRestAlertArmed()).toBe(true);
+    vi.mocked(plugin.cancel).mockClear();
+    await gateway.applyPreferences({ ...DEFAULT_NOTIFICATION_PREFERENCES, rest: false });
+
+    expect(plugin.cancel).toHaveBeenCalledWith({
+      notifications: [{ id: REST_NOTIFICATION_ID }],
+    });
+    expect(gateway.isRestAlertArmed()).toBe(false);
+  });
+
+  it('says nothing about a record while the record switch is off', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+
+    await gateway.applyPreferences({ ...DEFAULT_NOTIFICATION_PREFERENCES, records: false });
+    await gateway.notifyRecord({ title: 'Record battu', body: 'Développé couché · 102,5 kg' });
+
+    expect(plugin.schedule).not.toHaveBeenCalled();
+  });
+
+  it('posts a record on its own silent channel, replacing the previous one', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+
+    await gateway.notifyRecord({ title: 'Record battu', body: 'Développé couché · 102,5 kg' });
+
+    expect(plugin.createChannel).toHaveBeenCalledWith(
+      expect.objectContaining({ id: RECORD_CHANNEL_ID, importance: 2, vibration: false }),
+    );
+    expect(plugin.schedule).toHaveBeenCalledWith({
+      notifications: [
+        expect.objectContaining({
+          id: RECORD_NOTIFICATION_ID,
+          title: 'Record battu',
+          body: 'Développé couché · 102,5 kg',
+          channelId: RECORD_CHANNEL_ID,
+        }),
+      ],
+    });
+    // Pas d'horaire : un record est une nouvelle du moment, pas une alarme.
+    expect(
+      vi.mocked(plugin.schedule).mock.calls[0]?.[0].notifications[0]?.schedule,
+    ).toBeUndefined();
+  });
+
+  it('arms the coming reminders when the schedule is on', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    const now = new Date(2026, 7, 24, 9, 0, 0, 0).getTime();
+
+    await gateway.applyPreferences(
+      { ...DEFAULT_NOTIFICATION_PREFERENCES, reminders: true, schedule: week },
+      now,
+    );
+
+    const scheduled = vi.mocked(plugin.schedule).mock.calls.at(-1)?.[0].notifications ?? [];
+    expect(scheduled).toHaveLength(REMINDER_HORIZON);
+    expect(scheduled[0]).toEqual(
+      expect.objectContaining({
+        id: REMINDER_NOTIFICATION_BASE_ID,
+        channelId: REMINDER_CHANNEL_ID,
+        title: t('androidNotification.reminderTitle'),
+        body: t('androidNotification.reminderBody'),
+      }),
+    );
+    expect(scheduled[0]?.schedule?.at?.getTime()).toBe(new Date(2026, 7, 24, 18, 0).getTime());
+    expect(scheduled.every((notification) => notification.schedule?.allowWhileIdle)).toBe(true);
+  });
+
+  it('cancels every reminder slot before re-arming, so a removed day goes away', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+
+    await gateway.applyPreferences({
+      ...DEFAULT_NOTIFICATION_PREFERENCES,
+      reminders: true,
+      schedule: week,
+    });
+    vi.mocked(plugin.cancel).mockClear();
+    vi.mocked(plugin.schedule).mockClear();
+    await gateway.applyPreferences({
+      ...DEFAULT_NOTIFICATION_PREFERENCES,
+      reminders: false,
+      schedule: week,
+    });
+
+    expect(plugin.cancel).toHaveBeenCalledWith({
+      notifications: Array.from({ length: REMINDER_HORIZON }, (_, index) => ({
+        id: REMINDER_NOTIFICATION_BASE_ID + index,
+      })),
+    });
+    expect(plugin.schedule).not.toHaveBeenCalled();
+  });
+
+  it('arms nothing when the switch is on but the week is empty', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+
+    await gateway.applyPreferences({
+      ...DEFAULT_NOTIFICATION_PREFERENCES,
+      reminders: true,
+      schedule: { days: [], minutes: 600 },
+    });
+
+    expect(plugin.schedule).not.toHaveBeenCalled();
+  });
+
+  it('leaves the phone alone outside native Android', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => false, vi.fn());
+
+    await gateway.applyPreferences({
+      ...DEFAULT_NOTIFICATION_PREFERENCES,
+      reminders: true,
+      schedule: week,
+    });
+    await gateway.notifyRecord({ title: 'Record battu', body: 'Développé couché' });
+
+    expect(plugin.schedule).not.toHaveBeenCalled();
+    expect(plugin.cancel).not.toHaveBeenCalled();
   });
 });

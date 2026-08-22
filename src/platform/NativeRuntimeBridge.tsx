@@ -3,6 +3,8 @@ import { App } from '@capacitor/app';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getNotificationPreferences } from '@/data/repositories/notificationSettings';
+import type { NotificationPreferences } from '@/lib/notificationPreferences';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import { useRestTimer } from '@/stores/restTimer';
 import { androidBackDecision } from './androidBack';
@@ -11,10 +13,12 @@ import { nativeNotifications } from './nativeNotifications';
 
 export function NativeRuntimeBridge() {
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
+  const preferences = useLiveQuery(getNotificationPreferences);
   const rest = useRestTimer();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const activeRef = useRef(active);
+  const preferencesRef = useRef(preferences);
   const restRef = useRef(rest);
   const pathnameRef = useRef(pathname);
 
@@ -25,6 +29,10 @@ export function NativeRuntimeBridge() {
   useEffect(() => {
     restRef.current = rest;
   }, [rest]);
+
+  useEffect(() => {
+    preferencesRef.current = preferences;
+  }, [preferences]);
 
   useEffect(() => {
     pathnameRef.current = pathname;
@@ -43,6 +51,21 @@ export function NativeRuntimeBridge() {
     void nativeNotifications.reconcileRest(rest);
   }, [rest]);
 
+  /**
+   * The three switches and the reminder week, pushed down at every change.
+   *
+   * Keyed on the content and not on the object: `useLiveQuery` re-runs on any
+   * write to `settings` — a plate list, a 1RM formula — and re-arming twelve
+   * alarms because somebody changed a formula is churn the phone can feel.
+   */
+  const preferencesKey = preferences === undefined ? undefined : JSON.stringify(preferences);
+  useEffect(() => {
+    if (preferencesKey === undefined) return;
+    void nativeNotifications.applyPreferences(
+      JSON.parse(preferencesKey) as NotificationPreferences,
+    );
+  }, [preferencesKey]);
+
   useEffect(() => {
     let handle: PluginListenerHandle | undefined;
     let disposed = false;
@@ -55,6 +78,12 @@ export function NativeRuntimeBridge() {
         void nativeNotifications.reconcileWorkout(currentActive.name);
       }
       void nativeNotifications.reconcileRest(restRef.current);
+      // The reminder horizon drains as the weeks go by. Coming back to the app
+      // is the moment to refill it — and the only one the app is given.
+      const currentPreferences = preferencesRef.current;
+      if (currentPreferences !== undefined) {
+        void nativeNotifications.applyPreferences(currentPreferences);
+      }
     }).then((registered) => {
       if (disposed) void registered.remove();
       else handle = registered;

@@ -72,6 +72,7 @@ import { DeloadSheet } from './DeloadSheet';
 import { PaceSheet, type PaceSheetView } from './PaceSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
 import { announce, primeAnnouncer } from '@/audio/announce';
+import { nativeNotifications } from '@/platform/nativeNotifications';
 import { restBonusSecondsFor } from '@/lib/restBonus';
 import { prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
 import {
@@ -83,7 +84,12 @@ import {
   planWithoutSet,
   type PacePlan,
 } from './paceMachine';
-import { claimNewRecords, recordAnnouncementKeys } from './recordAnnouncements';
+import {
+  claimNewRecords,
+  recordAnnouncementKey,
+  recordAnnouncementKeys,
+} from './recordAnnouncements';
+import { recordNotificationCopy } from './recordNotificationCopy';
 import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
@@ -209,9 +215,21 @@ export function WorkoutScreen() {
    */
   useEffect(() => {
     if (workoutId === undefined || recordEntries === undefined) return;
-    if (claimNewRecords(workoutId, recordAnnouncementKeys(recordEntries)) > 0) {
-      announce('record-beaten');
-    }
+    const fresh = new Set(claimNewRecords(workoutId, recordAnnouncementKeys(recordEntries)));
+    if (fresh.size === 0) return;
+
+    announce('record-beaten');
+    // And the written trace, on the phone, for later — RF-53. The card and the
+    // voice both speak to somebody looking at the screen right now; this one is
+    // for the glance at a lock screen two hours later. Silent by channel, so it
+    // never becomes a second bell over the first.
+    const copy = recordNotificationCopy(
+      recordEntries.filter((entry) => {
+        const key = recordAnnouncementKey(entry);
+        return key !== undefined && fresh.has(key);
+      }),
+    );
+    if (copy !== undefined) void nativeNotifications.notifyRecord(copy);
   }, [workoutId, recordEntries]);
 
   const stopRest = useRestTimer((state) => state.stop);

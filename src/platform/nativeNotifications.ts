@@ -1,5 +1,11 @@
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { t } from '@/i18n/fr';
+import {
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  remindersArmed,
+  type NotificationPreferences,
+} from '@/lib/notificationPreferences';
+import { nextReminderOccurrences } from '@/lib/reminders';
 import type { RestTimer } from '@/stores/restTimer';
 import { isNativeAndroid } from './nativeEnvironment';
 
@@ -16,8 +22,31 @@ export type NotificationPlugin = Pick<
 
 export const WORKOUT_NOTIFICATION_ID = 41001;
 export const REST_NOTIFICATION_ID = 41002;
+/**
+ * One id for every record: a second record replaces the first in the shade.
+ *
+ * Three categories can fall on the same set, and three lines saying "record
+ * battu" one under the other is a notification drawer to clear, not news. The
+ * card in the session is where the detail lives (`RecordNote`); this is the
+ * trace you find later, and the last one is the one worth finding.
+ */
+export const RECORD_NOTIFICATION_ID = 41003;
+/** Reminders occupy `BASE … BASE + REMINDER_HORIZON - 1`, and nothing else. */
+export const REMINDER_NOTIFICATION_BASE_ID = 41100;
 export const WORKOUT_CHANNEL_ID = 'fittrack-workout';
 export const REST_CHANNEL_ID = 'fittrack-rest';
+export const RECORD_CHANNEL_ID = 'fittrack-record';
+export const REMINDER_CHANNEL_ID = 'fittrack-reminder';
+
+/**
+ * How many reminders are armed ahead — four weeks of a three-day week.
+ *
+ * The app re-arms the list at every launch and at every change of the schedule,
+ * so the horizon only has to outlive the longest plausible silence: a phone
+ * that has not opened FitTrack for a month has stopped needing a reminder and
+ * needs a decision instead.
+ */
+export const REMINDER_HORIZON = 12;
 
 interface NativeNotificationGateway {
   reconcileWorkout: (name: string | null) => Promise<void>;
@@ -28,6 +57,16 @@ interface NativeNotificationGateway {
    * on Android, the one bell that ducks the music instead of mixing with it.
    */
   standDownRest: (endsAt: number) => Promise<void>;
+  /**
+   * The three switches of RF-53, and the week the reminder rings on.
+   *
+   * Called with what the database holds, at launch and at every change: the
+   * gateway never reads Dexie itself, and never keeps a preference of its own
+   * that the settings screen could contradict.
+   */
+  applyPreferences: (preferences: NotificationPreferences, now?: number) => Promise<void>;
+  /** Posts one record, now — the copy is the caller's, the channel is ours. */
+  notifyRecord: (notice: { title: string; body: string }) => Promise<void>;
   clearAll: () => Promise<void>;
   isRestAlertArmed: () => boolean;
 }
@@ -45,6 +84,7 @@ export function createNativeNotificationGateway(
   let restAlertArmed = false;
   /** The one deadline the app has taken over. Never re-armed behind its back. */
   let standDownEndsAt = 0;
+  let preferences: NotificationPreferences = DEFAULT_NOTIFICATION_PREFERENCES;
 
   async function initialize(): Promise<boolean> {
     try {
@@ -68,6 +108,29 @@ export function createNativeNotificationGateway(
         id: REST_CHANNEL_ID,
         name: t('androidNotification.restChannel'),
         description: t('androidNotification.restChannelDescription'),
+        importance: 4,
+        visibility: 1,
+        vibration: true,
+      });
+      // Importance 2 — visible, never audible. A record falls at the exact
+      // moment a set is validated, phone in hand: the app has already said so
+      // in the card and, if the announcer is on, out loud through Web Audio.
+      // A system sound here would be the one bell of the whole app that ducks
+      // the music (cf. Lot 21), to say something already said.
+      await plugin.createChannel({
+        id: RECORD_CHANNEL_ID,
+        name: t('androidNotification.recordChannel'),
+        description: t('androidNotification.recordChannelDescription'),
+        importance: 2,
+        visibility: 1,
+        vibration: false,
+      });
+      // Importance 4 — this one has to interrupt: it rings on a day the app was
+      // not opened, which is the whole point of a reminder.
+      await plugin.createChannel({
+        id: REMINDER_CHANNEL_ID,
+        name: t('androidNotification.reminderChannel'),
+        description: t('androidNotification.reminderChannelDescription'),
         importance: 4,
         visibility: 1,
         vibration: true,
@@ -144,6 +207,9 @@ export function createNativeNotificationGateway(
     reconcileRest(rest) {
       return enqueue(async () => {
         if (!isAndroid()) return;
+        // Switch off: nothing to arm, and nothing to cancel either — the branch
+        // below already ran the last time the timer stopped.
+        if (!preferences.rest && rest.setId !== null) return;
 
         if (rest.setId === null) {
           if (lastRestEndsAt > Date.now()) await cancel([REST_NOTIFICATION_ID]);
@@ -190,6 +256,66 @@ export function createNativeNotificationGateway(
         if (lastRestEndsAt !== endsAt) return;
         lastRestEndsAt = 0;
         await cancel([REST_NOTIFICATION_ID]);
+      });
+    },
+
+    applyPreferences(next, now = Date.now()) {
+      return enqueue(async () => {
+        const previous = preferences;
+        preferences = next;
+        if (!isAndroid()) return;
+
+        // A rest alert already in the air outlives the switch that armed it
+        // unless it is taken down here: the session is running, the phone is in
+        // a pocket, and nobody will come back to this screen to cancel it.
+        if (previous.rest && !next.rest && restAlertArmed) {
+          restAlertArmed = false;
+          lastRestEndsAt = 0;
+          await cancel([REST_NOTIFICATION_ID]);
+        }
+
+        const ids = Array.from(
+          { length: REMINDER_HORIZON },
+          (_, index) => REMINDER_NOTIFICATION_BASE_ID + index,
+        );
+        // Cancel first, always: the week may have lost a day, and a reminder
+        // scheduled under the old schedule has no other chance of going away.
+        await cancel(ids);
+        if (!remindersArmed(next)) return;
+        if (!(await ensureReady())) return;
+
+        const occurrences = nextReminderOccurrences(next.schedule, now, REMINDER_HORIZON);
+        if (occurrences.length === 0) return;
+
+        await plugin.schedule({
+          notifications: occurrences.map((at, index) => ({
+            id: REMINDER_NOTIFICATION_BASE_ID + index,
+            title: t('androidNotification.reminderTitle'),
+            body: t('androidNotification.reminderBody'),
+            channelId: REMINDER_CHANNEL_ID,
+            schedule: { at: new Date(at), allowWhileIdle: true },
+            autoCancel: true,
+          })),
+        });
+      });
+    },
+
+    notifyRecord(notice) {
+      return enqueue(async () => {
+        if (!isAndroid() || !preferences.records) return;
+        if (!(await ensureReady())) return;
+
+        await plugin.schedule({
+          notifications: [
+            {
+              id: RECORD_NOTIFICATION_ID,
+              title: notice.title,
+              body: notice.body,
+              channelId: RECORD_CHANNEL_ID,
+              autoCancel: true,
+            },
+          ],
+        });
       });
     },
 

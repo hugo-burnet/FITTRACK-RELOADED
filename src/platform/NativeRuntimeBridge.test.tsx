@@ -1,5 +1,9 @@
 import { act, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  type NotificationPreferences,
+} from '@/lib/notificationPreferences';
 import { NativeRuntimeBridge } from './NativeRuntimeBridge';
 
 const state = vi.hoisted(() => ({
@@ -13,13 +17,29 @@ const state = vi.hoisted(() => ({
   navigate: vi.fn(),
   exitApp: vi.fn().mockResolvedValue(undefined),
   getActiveWorkout: vi.fn(),
+  getNotificationPreferences: vi.fn(),
+  // Écrit à la main : `vi.hoisted` s'exécute avant les imports du fichier.
+  preferences: {
+    reminders: false,
+    rest: true,
+    records: true,
+    schedule: { days: [1, 3, 5], minutes: 1080 },
+  } as NotificationPreferences | undefined,
   reconcileWorkout: vi.fn().mockResolvedValue(undefined),
   reconcileRest: vi.fn().mockResolvedValue(undefined),
+  applyPreferences: vi.fn().mockResolvedValue(undefined),
   clearAll: vi.fn().mockResolvedValue(undefined),
 }));
 
+// Deux requêtes vives dans ce composant : la séance active et les préférences
+// de notification. On les distingue par la fonction passée, pas par leur ordre.
 vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: () => state.active,
+  useLiveQuery: (query: unknown) =>
+    query === state.getNotificationPreferences ? state.preferences : state.active,
+}));
+
+vi.mock('@/data/repositories/notificationSettings', () => ({
+  getNotificationPreferences: state.getNotificationPreferences,
 }));
 
 vi.mock('@/data/repositories/workouts', () => ({
@@ -43,6 +63,7 @@ vi.mock('./nativeNotifications', () => ({
   nativeNotifications: {
     reconcileWorkout: state.reconcileWorkout,
     reconcileRest: state.reconcileRest,
+    applyPreferences: state.applyPreferences,
     clearAll: state.clearAll,
   },
 }));
@@ -72,6 +93,7 @@ describe('NativeRuntimeBridge', () => {
     state.active = { name: 'Lower A' };
     state.rest = { setId: 'set-1', startedAt: 1_000, endsAt: 91_000, seconds: 90 };
     state.pathname = '/workout/add';
+    state.preferences = DEFAULT_NOTIFICATION_PREFERENCES;
     state.appStateListener = undefined;
     state.backListener = undefined;
     vi.clearAllMocks();
@@ -87,6 +109,34 @@ describe('NativeRuntimeBridge', () => {
     render(<NativeRuntimeBridge />);
 
     await waitFor(() => expect(state.reconcileRest).toHaveBeenCalledWith(state.rest));
+  });
+
+  it('pushes the notification preferences down at mount', async () => {
+    render(<NativeRuntimeBridge />);
+
+    await waitFor(() =>
+      expect(state.applyPreferences).toHaveBeenCalledWith(DEFAULT_NOTIFICATION_PREFERENCES),
+    );
+  });
+
+  it('waits for the preferences rather than applying a guessed default', async () => {
+    state.preferences = undefined;
+    render(<NativeRuntimeBridge />);
+
+    await waitFor(() => expect(state.reconcileRest).toHaveBeenCalled());
+    expect(state.applyPreferences).not.toHaveBeenCalled();
+  });
+
+  it('re-arms the reminders when Android resumes, the horizon having drained', async () => {
+    render(<NativeRuntimeBridge />);
+    await waitFor(() => expect(state.appStateListener).toBeTypeOf('function'));
+    vi.clearAllMocks();
+
+    act(() => state.appStateListener?.({ isActive: true }));
+
+    await waitFor(() =>
+      expect(state.applyPreferences).toHaveBeenCalledWith(DEFAULT_NOTIFICATION_PREFERENCES),
+    );
   });
 
   it('clears notifications when the workout ends', async () => {

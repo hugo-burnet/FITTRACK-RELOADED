@@ -47,23 +47,25 @@ describe('claimNewRecords', () => {
   beforeEach(forgetRecordAnnouncements);
 
   it('prend la première lecture comme référence, sans rien annoncer', () => {
-    expect(claimNewRecords('w1', ['bench:max_weight:80'])).toBe(0);
+    expect(claimNewRecords('w1', ['bench:max_weight:80'])).toEqual([]);
   });
 
   it('annonce ce qui arrive après cette référence', () => {
     claimNewRecords('w1', ['bench:max_weight:80']);
-    expect(claimNewRecords('w1', ['bench:max_weight:80', 'bench:best_1rm:100'])).toBe(1);
+    expect(claimNewRecords('w1', ['bench:max_weight:80', 'bench:best_1rm:100'])).toEqual([
+      'bench:best_1rm:100',
+    ]);
   });
 
   it('ne réannonce rien quand l’écran est quitté puis rouvert', () => {
     claimNewRecords('w1', ['bench:max_weight:80']);
-    expect(claimNewRecords('w1', ['bench:max_weight:80', 'bench:best_1rm:100'])).toBe(1);
+    expect(claimNewRecords('w1', ['bench:max_weight:80', 'bench:best_1rm:100'])).toHaveLength(1);
     // Retour sur la séance : la liste complète est relue d'un coup.
-    expect(claimNewRecords('w1', ['bench:max_weight:80', 'bench:best_1rm:100'])).toBe(0);
+    expect(claimNewRecords('w1', ['bench:max_weight:80', 'bench:best_1rm:100'])).toEqual([]);
   });
 
   it('repart de zéro pour une autre séance', () => {
     claimNewRecords('w1', ['bench:max_weight:80']);
-    expect(claimNewRecords('w2', ['bench:max_weight:80'])).toBe(0);
+    expect(claimNewRecords('w2', ['bench:max_weight:80'])).toEqual([]);
   });
 });

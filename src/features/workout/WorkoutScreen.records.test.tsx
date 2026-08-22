@@ -8,16 +8,28 @@ import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import { resetDb } from '@/test/resetDb';
 import { forgetRecordAnnouncements } from './recordAnnouncements';
 
-const { announceMock, listRecordsForWorkoutMock, primeAnnouncerMock } = vi.hoisted(() => ({
-  announceMock: vi.fn(),
-  listRecordsForWorkoutMock: vi.fn(),
-  primeAnnouncerMock: vi.fn(),
-}));
+const { announceMock, listRecordsForWorkoutMock, notifyRecordMock, primeAnnouncerMock } =
+  vi.hoisted(() => ({
+    announceMock: vi.fn(),
+    listRecordsForWorkoutMock: vi.fn(),
+    notifyRecordMock: vi.fn(),
+    primeAnnouncerMock: vi.fn(),
+  }));
 
 vi.mock('@/audio/announce', () => ({
   announce: announceMock,
   primeAnnouncer: primeAnnouncerMock,
 }));
+
+vi.mock('@/platform/nativeNotifications', async () => {
+  const actual = await vi.importActual<typeof import('@/platform/nativeNotifications')>(
+    '@/platform/nativeNotifications',
+  );
+  return {
+    ...actual,
+    nativeNotifications: { notifyRecord: notifyRecordMock },
+  };
+});
 
 vi.mock('@/data/repositories/personalRecords', async () => {
   const actual = await vi.importActual<typeof import('@/data/repositories/personalRecords')>(
@@ -33,6 +45,7 @@ describe('WorkoutScreen — reprise des records', () => {
     announceMock.mockReset();
     primeAnnouncerMock.mockReset();
     listRecordsForWorkoutMock.mockReset();
+    notifyRecordMock.mockReset().mockResolvedValue(undefined);
     forgetRecordAnnouncements();
     await resetDb();
   });
@@ -93,6 +106,7 @@ describe('WorkoutScreen — reprise des records', () => {
 
     await waitFor(() => expect(screen.getByText(/Charge max/)).toBeVisible());
     expect(announceMock).not.toHaveBeenCalledWith('record-beaten');
+    expect(notifyRecordMock).not.toHaveBeenCalled();
   });
 
   it('ne réannonce pas les records en revenant d’un autre écran', async () => {
@@ -149,6 +163,69 @@ describe('WorkoutScreen — reprise des records', () => {
     const second = mount();
     await screen.findByText(/Charge max/);
     expect(announceMock).not.toHaveBeenCalledWith('record-beaten');
+    expect(notifyRecordMock).not.toHaveBeenCalled();
     second.unmount();
+  });
+
+  it('écrit le record qui vient de tomber dans les notifications', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const workout = await startWorkoutFromRoutine(routine.id);
+    const set = (await getWorkoutDetail(workout.id))?.exercises[0]?.sets[0];
+    if (set === undefined) throw new Error('série absente');
+
+    const entry = (value: number, previousValue: number): RecordTimelineEntry => ({
+      record: {
+        id: `record-${String(value)}`,
+        createdAt: 1,
+        updatedAt: 1,
+        deletedAt: 0,
+        exerciseId: exercise.id,
+        type: 'max_weight',
+        value,
+        achievedAt: 1,
+        workoutId: workout.id,
+        workoutSetId: set.id,
+      },
+      exerciseName: exercise.name,
+      workoutStatus: 'active',
+      previousValue,
+      triggerWorkoutSetId: set.id,
+    });
+
+    const mount = () =>
+      render(
+        <MemoryRouter initialEntries={['/workout']}>
+          <Routes>
+            <Route path="/workout" element={<WorkoutScreen />} />
+          </Routes>
+        </MemoryRouter>,
+      );
+
+    // La première lecture est le passé de la séance : elle ne notifie rien.
+    listRecordsForWorkoutMock.mockResolvedValue([entry(80, 70)]);
+    const first = mount();
+    await screen.findByText(/Charge max/);
+    expect(notifyRecordMock).not.toHaveBeenCalled();
+    first.unmount();
+
+    // Une série validée plus tard : le record suivant, lui, est une nouvelle.
+    listRecordsForWorkoutMock.mockResolvedValue([entry(80, 70), entry(102.5, 80)]);
+    mount();
+
+    await waitFor(() => expect(notifyRecordMock).toHaveBeenCalledOnce());
+    expect(notifyRecordMock).toHaveBeenCalledWith({
+      title: 'Record battu',
+      body: 'Développé couché · Charge max 102,5 kg',
+    });
+    expect(announceMock).toHaveBeenCalledWith('record-beaten');
   });
 });
