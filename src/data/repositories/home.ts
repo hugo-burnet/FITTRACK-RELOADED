@@ -1,10 +1,11 @@
-import { getWeeklyTrainingGoalHistory } from './settings';
+import { getRoutineFolderContext, getWeeklyTrainingGoalHistory } from './settings';
 import {
   buildWorkoutSummaries,
   listCompletedWorkouts,
   type HistoryWorkoutSummary,
 } from './history';
 import { getActiveProgramDetail } from './programs';
+import { listFolders } from './routineFolders';
 import { getRoutineDetail, listRoutineSummaries } from './routines';
 import { pickSuggestedRoutine } from '@/lib/home';
 import { pickProgramSession } from '@/lib/programs';
@@ -65,12 +66,23 @@ export interface HomeProgramProjection {
   pick: HomeProgramPick;
 }
 
+export interface HomeRoutineContextOption {
+  value: 'root' | `folder:${string}`;
+  label: string;
+  routineCount: number;
+}
+
 export interface HomeDashboardData {
   /** Toutes les dates de séances terminées — la matière de `calculateWeeklyRegularity`. */
   completedWorkoutTimestamps: number[];
   weeklyGoalHistory: WeeklyTrainingGoal[];
   /** Compté même quand rien n'est suggérable, pour distinguer les deux vides. */
   routineCount: number;
+  routineContext: {
+    required: boolean;
+    selected: string | null;
+    options: HomeRoutineContextOption[];
+  };
   activeProgram: HomeProgramProjection | null;
   suggestedRoutine: SuggestedRoutine | null;
   recentWorkouts: HistoryWorkoutSummary[];
@@ -193,15 +205,50 @@ export async function getActiveProgramProjection(
 }
 
 export async function getHomeDashboard(): Promise<HomeDashboardData> {
-  const [completed, routines, weeklyGoalHistory, activeProgram] = await Promise.all([
-    listCompletedWorkouts(),
+  const [folders, context, routines, completed, weeklyGoalHistory, activeProgram] = await Promise.all([
+    listFolders(),
+    getRoutineFolderContext(),
     listRoutineSummaries(),
+    listCompletedWorkouts(),
     getWeeklyTrainingGoalHistory(),
     readHomeProgramProjection(Date.now()),
   ]);
 
+  const rootRoutines = routines.filter(({ routine }) => routine.folderId === '');
+  const options: HomeRoutineContextOption[] = [];
+  if (folders.length > 0) {
+    options.push(
+      ...folders.map((folder) => ({
+        value: `folder:${folder.id}` as const,
+        label: folder.name,
+        routineCount: routines.filter(({ routine }) => routine.folderId === folder.id).length,
+      })),
+    );
+    if (rootRoutines.length > 0) {
+      options.push({ value: 'root', label: 'Sans dossier', routineCount: rootRoutines.length });
+    }
+  }
+
+  const selectedValue =
+    context === null
+      ? null
+      : context.kind === 'root'
+        ? 'root'
+        : (`folder:${context.folderId}` as const);
+  const validSelected = options.some((option) => option.value === selectedValue)
+    ? selectedValue
+    : null;
+  const candidates =
+    folders.length === 0 && context?.kind !== 'folder'
+      ? routines
+      : validSelected === 'root'
+        ? rootRoutines
+        : validSelected?.startsWith('folder:')
+          ? routines.filter(({ routine }) => routine.folderId === validSelected.slice(7))
+          : [];
+
   const pick = pickSuggestedRoutine(
-    routines.map(({ routine }) => ({
+    candidates.map(({ routine }) => ({
       routineId: routine.id,
       name: routine.name,
       order: routine.order,
@@ -217,6 +264,12 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     completedWorkoutTimestamps: completed.map((workout) => workout.startedAt),
     weeklyGoalHistory,
     routineCount: routines.length,
+    routineContext: {
+      required:
+        validSelected === null && (folders.length > 0 || context?.kind === 'folder'),
+      selected: validSelected,
+      options,
+    },
     activeProgram,
     suggestedRoutine:
       pick === null || picked === undefined

@@ -11,7 +11,8 @@ import {
   createScheduleRevision,
   replaceProgramWeeks,
 } from './programs';
-import { createRoutine } from './routines';
+import { setRoutineFolderContext } from './settings';
+import { createFolder, createRoutine, deleteFolder } from './routines';
 
 const AT = Date.UTC(2026, 6, 20);
 const MONDAY = new Date(2026, 7, 10, 0, 0, 0, 0).getTime();
@@ -93,6 +94,89 @@ describe('getHomeDashboard', () => {
     const dashboard = await getHomeDashboard();
 
     expect(dashboard.suggestedRoutine).toMatchObject({ lastPerformedAt: null });
+  });
+
+  it('keeps the global suggestion when no folder exists', async () => {
+    const push = await createRoutine('Push');
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext).toEqual({ required: false, selected: null, options: [] });
+    expect(dashboard.suggestedRoutine?.routineId).toBe(push.id);
+  });
+
+  it('offers folders and root, then scopes the suggestion to the chosen folder', async () => {
+    const root = await createRoutine('Libre');
+    const folder = await createFolder('Salle');
+    const inside = await createRoutine('Push salle', folder.id);
+    await setRoutineFolderContext({ kind: 'folder', folderId: folder.id });
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext.options.map(({ value }) => value)).toEqual([
+      `folder:${folder.id}`,
+      'root',
+    ]);
+    expect(dashboard.routineContext.selected).toBe(`folder:${folder.id}`);
+    expect(dashboard.suggestedRoutine?.routineId).toBe(inside.id);
+    expect(dashboard.suggestedRoutine?.routineId).not.toBe(root.id);
+  });
+
+  it('requires a routine context when folders exist without a saved choice', async () => {
+    const folder = await createFolder('Salle');
+    await createRoutine('Push salle', folder.id);
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext).toMatchObject({ required: true, selected: null });
+    expect(dashboard.suggestedRoutine).toBeNull();
+  });
+
+  it('does not fall back when the selected folder has no routines', async () => {
+    await createRoutine('Libre');
+    const emptyFolder = await createFolder('Vide');
+    await setRoutineFolderContext({ kind: 'folder', folderId: emptyFolder.id });
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext).toMatchObject({
+      required: false,
+      selected: `folder:${emptyFolder.id}`,
+    });
+    expect(dashboard.suggestedRoutine).toBeNull();
+  });
+
+  it('invalidates a saved context for a deleted folder', async () => {
+    const folder = await createFolder('Salle');
+    await createRoutine('Push salle', folder.id);
+    await setRoutineFolderContext({ kind: 'folder', folderId: folder.id });
+    await deleteFolder(folder.id);
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext).toMatchObject({ required: true, selected: null });
+    expect(dashboard.suggestedRoutine).toBeNull();
+  });
+
+  it('omits root from contexts when it has no routines', async () => {
+    const folder = await createFolder('Salle');
+    await createRoutine('Push salle', folder.id);
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext.options.map(({ value }) => value)).toEqual([
+      `folder:${folder.id}`,
+    ]);
+  });
+
+  it('keeps the active program projection while a folder context is required', async () => {
+    await createFolder('Salle');
+    const { program } = await seedProgram();
+
+    const dashboard = await getHomeDashboard();
+
+    expect(dashboard.routineContext.required).toBe(true);
+    expect(dashboard.activeProgram?.programId).toBe(program.id);
   });
 
   it('précalcule la séance exacte du bloc actif dans ses dates', async () => {
