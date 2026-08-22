@@ -2,8 +2,89 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Tutoriel v2 P1 livré et contrôlé en navigateur mobile ;
-checkpoint téléphone de la récupération ancienne encore requis**).
+**Dernière mise à jour :** 2026-08-22 (**Chrono de série chronométrée livré ; checkpoints
+téléphone en attente : la récupération d'une séance ancienne, et un vrai gainage**).
+
+## Chrono de série chronométrée
+
+Un gainage, une planche, un dead hang, un rameur : `measurementType` distinguait les exercices
+chronométrés depuis le Lot 2, la colonne « secondes » se saisissait à la main, et **rien dans
+l'app ne comptait ce temps**. Il fallait sortir de FitTrack pour ouvrir le chronomètre du
+téléphone — exactement le geste que « mobile-first, une main, en sueur » interdit. Signalé depuis
+l'usage réel.
+
+Le chronomètre du bandeau ouvre désormais un **Chrono** au lieu d'une **Cadence** sur ces
+exercices. « Démarrer le chrono » donne dix secondes pour se mettre en position (annonce, puis
+3-2-1), puis compte. La fin du repos de la série précédente enchaîne toute seule, sans redonner
+ces dix secondes : le 3-2-1 du repos était déjà la préparation.
+
+**La coche fait tout en un geste** : elle arrête le chrono, écrit la durée tenue dans la série et
+la valide — puis repos, RPE et records suivent leur chemin habituel. Elle reste active pendant un
+maintien même si aucune durée n'est saisie : l'exiger remplie enfermerait le chrono sans sortie,
+puisque c'est lui qui écrit cette durée.
+
+**`HOLD_RELEASE_SECONDS = 2`.** On tape *après* avoir relâché. Sans cette correction, chaque
+maintien serait sur-noté des deux mêmes secondes, à chaque série, pour toujours — une dérive
+silencieuse qui finirait dans les records de durée et dans les courbes sans que rien à l'écran ne
+permette de la soupçonner. Constante nommée, pas un réglage : c'est un nombre qu'on règle une
+fois, et une ligne à changer si la salle dit autre chose.
+
+**Une cible n'arrête rien.** `holdBeats` n'a aucun battement de fin — c'est toute sa différence
+avec `repBeats`. Une série qui prescrit 45 s voit son repère annoncé à l'échéance et le chrono
+continue : une cible est un objectif, pas une limite.
+
+### Ce qui a bougé dans le code
+
+La cible de cadence est devenue une **union discriminée** : `{ kind: 'reps' }` ou
+`{ kind: 'hold' }`, et `cadenceFor(measurementType, repSeconds)` est le seul endroit du dépôt qui
+tranche. `repPacer` n'a pas été fusionné dans une horloge générique — c'est un chemin audio
+lourdement testé, et le fusionner aurait fait porter le risque de cette fonctionnalité sur les
+répétitions, qui marchent. Le chrono est un jumeau (`stores/holdTimer`, `holdBeats`, `HoldRail`)
+et `useWorkoutPace` est l'arbitre : **une seule des deux horloges tourne**, épinglé par un test.
+
+Différence structurante : **une série chronométrée sans valeur saisie est `ready`, pas
+`missing-reps`.** Il n'y a rien à taper avant de tenir — la durée est le résultat, pas l'entrée.
+
+### Pièges rencontrés
+
+- **Les faux minuteurs figent `fake-indexeddb`.** Un test d'intégration qui pose
+  `vi.useFakeTimers()` puis attend l'écran ne voit jamais la séance arriver : il expire à 5 s sans
+  rien dire d'utile. Le maintien de 47 s est simulé en **reculant `startedAt`** dans le store, pas
+  en faussant l'horloge.
+- **La feuille de confirmation de retrait porte le même libellé que l'entrée du menu**
+  (`workout.removeExercise`). Chercher le bouton par son nom en trouve deux ; c'est la dernière
+  occurrence qui confirme.
+- Une prop d'objet manquante n'est pas `null` mais `undefined`, et `hold !== null` laisse alors
+  passer `undefined` jusqu'au rendu. La carte ne rendait plus rien du tout, ce qui ressemblait à un
+  bug de la séance et n'était qu'un branchement inachevé.
+
+### Les voix : déclarées, pas enregistrées
+
+Trente-six repères — `hold-5` à `hold-180`, de cinq en cinq — générés depuis `HOLD_MARK_SECONDS`,
+la seule source. Ils portent une **tonalité douce** pour que le mode « sons » ne soit pas muet sur
+un gainage ; **Silence reste silencieux**. Au-delà de trois minutes, le chrono continue à l'écran
+et se tait : aucun repère n'est annoncé sans clip derrière lui.
+
+**Aucun clip n'est déclaré dans `voiceScript.json` ni généré.** Même règle que les douze textes
+P1 : un identifiant déclaré sans MP3 est un silence qui se fait passer pour une phrase. Un test
+épingle que `clipsFor` est vide pour les trente-six. Transcriptions à valider avant génération :
+« cinq », « dix » … « cinquante-cinq », « une minute », « une minute cinq » … « trois minutes ».
+
+### Portes
+
+- `npm run typecheck` : sortie 0 ;
+- `npm run lint` : sortie 0, aucun avertissement ;
+- `npm run test:run` : **189 fichiers, 2 031 tests**, sortie 0 (contre 184 / 1 993 avant le lot) ;
+- `npm run build` : sortie 0, service worker PWA généré, 99 entrées précachées.
+
+**Checkpoint téléphone demandé :**
+
+> Je peux tenir un gainage sans sortir de l'app : le chrono part après dix secondes, il me dit où
+> j'en suis, et la coche écrit le temps tenu sans que j'aie rien tapé. En Silence, le relevé à
+> l'écran suffit.
+
+**Ensuite :** l'unilatéral (une ligne, deux côtés), qui se pose sur ce socle et sait désormais
+qu'une série peut être battue **ou** tenue.
 
 ## Tutoriel v2 — première séance P1
 

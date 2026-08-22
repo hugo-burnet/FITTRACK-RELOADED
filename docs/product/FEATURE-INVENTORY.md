@@ -504,11 +504,17 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
 2. **Livré :** récupération explicite d'une séance active âgée d'au moins 12 h, sans suppression
    automatique.
 3. **Livré :** export et lecture de la confirmation de restauration de la sauvegarde complète.
-4. Corriger l'annonce de reprise afin qu'elle reste muette tant que le RPE est ouvert, sans mettre
-   en pause l'horloge du repos ni rejouer un repère dépassé.
-5. Pour un exercice unilatéral, faire représenter les deux côtés par une seule ligne : changement
-   de côté vocal, reprise après 10 s, et aucun repos/RPE/record après le premier côté.
-6. Décider explicitement si la séance vide retrouve une porte UI ou reste un comportement interne.
+4. **Livré :** l'annonce de reprise reste muette tant que le RPE est ouvert, sans mettre en pause
+   l'horloge du repos ni rejouer un repère dépassé.
+5. **Livré :** chrono de série chronométrée. Un gainage, une planche, un dead hang ou un rameur se
+   chronomètrent dans l'app ; la coche arrête le chrono, écrit la durée tenue (relâchement de 2 s
+   retiré) et valide la série. Trente-six repères toutes les 5 s jusqu'à 3 min, **déclarés mais
+   pas encore enregistrés**.
+6. Pour un exercice unilatéral, faire représenter les deux côtés par une seule ligne : changement
+   de côté vocal, reprise après 10 s, et aucun repos/RPE/record après le premier côté. **Se pose
+   sur le chrono** : la cadence d'une ligne est désormais soit des répétitions, soit un maintien,
+   et le cycle deux côtés doit fonctionner sur les deux.
+7. Décider explicitement si la séance vide retrouve une porte UI ou reste un comportement interne.
 
 ### P2
 
@@ -532,11 +538,15 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
 1. **Livré — socle tutoriel v2** : registre de missions, progression, ancrages et aide par route.
 2. **Livré — activation P1** : routine → première série → repos → fin → sauvegarde.
 3. **Livré — récupération** : séance ancienne, reprise après kill, abandon explicite.
-4. **Annonces de séance** : fermer le bug RPE/repos puis le cycle unilatéral à deux côtés.
-5. **Revue des textes P1** : figer les douze transcriptions françaises et leurs identifiants.
-6. **Voix P1** : auditer les manques, générer, écouter dans l'app et vérifier manifeste/MP3.
-7. **Missions P2** : outils, blocs, historique, analyses et exercices.
-8. **Audit final** : typecheck, tests, build, mobile 390 px, TalkBack et vraie séance hors ligne.
+4. **Livré — annonces de séance** : le bug RPE/repos est fermé, et le chrono de maintien comble le
+   manque signalé (sortir de l'app pour chronométrer un gainage).
+5. **Cycle unilatéral à deux côtés**, sur les deux cadences — répétitions et maintien.
+6. **Revue des textes** : figer les douze transcriptions P1, les trente-six repères du chrono et
+   le texte du changement de côté, puis les faire valider.
+7. **Voix** : auditer les manques, générer **uniquement** ce qui manque, écouter dans l'app et
+   vérifier manifeste/MP3 — sans jamais exposer ni consigner la clé.
+8. **Missions P2** : outils, blocs, historique, analyses et exercices.
+9. **Audit final** : typecheck, tests, build, mobile 390 px, TalkBack et vraie séance hors ligne.
 
 ## 11. Critères de réussite du futur tutoriel
 
