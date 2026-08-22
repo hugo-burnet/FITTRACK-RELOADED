@@ -1,5 +1,7 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { CUES, clipsFor } from './cues';
+import { CUES, allClips, clipsFor, textOf } from './cues';
 import { HOLD_MARK_LIMIT_SECONDS, HOLD_MARK_SECONDS, holdMarkCue } from './holdMarks';
 
 describe('HOLD_MARK_SECONDS', () => {
@@ -28,18 +30,37 @@ describe('les cues des repères', () => {
     }
   });
 
-  // Le lot ne génère aucune voix : un identifiant déclaré sans MP3 derrière lui
-  // est un silence qui se fait passer pour une phrase.
-  it('n’ont encore aucun clip, donc aucune voix', () => {
+  it('ont chacun exactement un clip, nommé d’après leur cue', () => {
     for (const seconds of HOLD_MARK_SECONDS) {
-      expect(clipsFor(holdMarkCue(seconds))).toHaveLength(0);
+      expect(clipsFor(holdMarkCue(seconds))).toEqual([`hold-${seconds}-1`]);
     }
   });
 });
 
 describe('le cue du changement de côté', () => {
-  it('sonne, et ne parle pas encore', () => {
+  it('sonne et porte sa phrase', () => {
     expect(CUES['side-change'].tone).toBe('chime');
-    expect(clipsFor('side-change')).toHaveLength(0);
+    expect(clipsFor('side-change')).toEqual(['side-change-1']);
+    expect(textOf('side-change-1')).toBe('Changement de côté. Reprise dans dix secondes.');
+  });
+});
+
+/**
+ * L'invariant que le dépôt tenait à la main dans `PROGRESS.md` — « le manifeste
+ * reste complet à N identifiants / N MP3 » — et qu'un compte recopié de session
+ * en session finit toujours par rater.
+ *
+ * **Un identifiant déclaré sans MP3 derrière lui est un silence qui se fait
+ * passer pour une phrase.** Le lecteur de clips le traite proprement (il reste
+ * muet et ne redemande pas), donc rien ne casse à l'écran : c'est exactement ce
+ * qui rend l'écart indétectable sans ce test.
+ */
+describe('le manifeste', () => {
+  it('a un MP3 pour chaque identifiant déclaré', () => {
+    const missing = allClips().filter(
+      (clip) => !existsSync(join(process.cwd(), 'public', 'voice', `${clip}.mp3`)),
+    );
+
+    expect(missing, `clips déclarés sans MP3 : ${missing.join(', ')}`).toEqual([]);
   });
 });

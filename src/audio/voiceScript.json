@@ -411,6 +411,265 @@
         "stability": 0.75,
         "style": 0.1
       }
+    },
+    {
+      "id": "hold-5-1",
+      "cue": "hold-5",
+      "text": "Cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-10-1",
+      "cue": "hold-10",
+      "text": "Dix.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-15-1",
+      "cue": "hold-15",
+      "text": "Quinze.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-20-1",
+      "cue": "hold-20",
+      "text": "Vingt.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-25-1",
+      "cue": "hold-25",
+      "text": "Vingt-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-30-1",
+      "cue": "hold-30",
+      "text": "Trente.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-35-1",
+      "cue": "hold-35",
+      "text": "Trente-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-40-1",
+      "cue": "hold-40",
+      "text": "Quarante.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-45-1",
+      "cue": "hold-45",
+      "text": "Quarante-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-50-1",
+      "cue": "hold-50",
+      "text": "Cinquante.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-55-1",
+      "cue": "hold-55",
+      "text": "Cinquante-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-60-1",
+      "cue": "hold-60",
+      "text": "Une minute.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-65-1",
+      "cue": "hold-65",
+      "text": "Une minute cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-70-1",
+      "cue": "hold-70",
+      "text": "Une minute dix.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-75-1",
+      "cue": "hold-75",
+      "text": "Une minute quinze.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-80-1",
+      "cue": "hold-80",
+      "text": "Une minute vingt.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-85-1",
+      "cue": "hold-85",
+      "text": "Une minute vingt-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-90-1",
+      "cue": "hold-90",
+      "text": "Une minute trente.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-95-1",
+      "cue": "hold-95",
+      "text": "Une minute trente-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-100-1",
+      "cue": "hold-100",
+      "text": "Une minute quarante.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-105-1",
+      "cue": "hold-105",
+      "text": "Une minute quarante-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-110-1",
+      "cue": "hold-110",
+      "text": "Une minute cinquante.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-115-1",
+      "cue": "hold-115",
+      "text": "Une minute cinquante-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-120-1",
+      "cue": "hold-120",
+      "text": "Deux minutes.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-125-1",
+      "cue": "hold-125",
+      "text": "Deux minutes cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-130-1",
+      "cue": "hold-130",
+      "text": "Deux minutes dix.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-135-1",
+      "cue": "hold-135",
+      "text": "Deux minutes quinze.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-140-1",
+      "cue": "hold-140",
+      "text": "Deux minutes vingt.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-145-1",
+      "cue": "hold-145",
+      "text": "Deux minutes vingt-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-150-1",
+      "cue": "hold-150",
+      "text": "Deux minutes trente.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-155-1",
+      "cue": "hold-155",
+      "text": "Deux minutes trente-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-160-1",
+      "cue": "hold-160",
+      "text": "Deux minutes quarante.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-165-1",
+      "cue": "hold-165",
+      "text": "Deux minutes quarante-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-170-1",
+      "cue": "hold-170",
+      "text": "Deux minutes cinquante.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-175-1",
+      "cue": "hold-175",
+      "text": "Deux minutes cinquante-cinq.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "hold-180-1",
+      "cue": "hold-180",
+      "text": "Trois minutes.",
+      "direction": "Relevé de chrono. Hauteur et énergie identiques à tous les autres repères — c'est la même horloge qui parle toutes les cinq secondes, pas un commentaire.",
+      "settings": { "stability": 0.9, "style": 0 }
+    },
+    {
+      "id": "side-change-1",
+      "cue": "side-change",
+      "text": "Changement de côté. Reprise dans dix secondes.",
+      "direction": "Deux constats, pas un encouragement. Pause nette après « côté » : la première phrase dit ce qui se passe, la seconde ce qui va se passer. Aucune insistance sur « dix ».",
+      "settings": { "stability": 0.8, "style": 0.05 }
     }
   ],
   "generation": {
@@ -444,6 +703,60 @@
         "sameDirection": true,
         "$comment": "Deux règles, et une seule qui décide. sameDirection est le vrai critère : trois mots qui ne descendent pas tous ensemble font boiter le décompte, et c'est le défaut qu'on entend. maxReversals n'est qu'un garde-fou large contre une prise partie en vrille — calé à 12 après avoir refusé deux fois, à 2 puis à 3, des prises validées à l'oreille (celle des répétitions comptait 8, 4 et 10 inversions et sonnait juste). Un compte d'inversions élevé sur un mot qui garde sa direction ne s'entend pas."
       }
+    },
+    {
+      "id": "hold-count-1",
+      "text": "[monotone] Cinq… [monotone] Dix… [monotone] Quinze… [monotone] Vingt.",
+      "clips": ["hold-5-1", "hold-10-1", "hold-15-1", "hold-20-1"],
+      "accept": { "minMs": 120, "maxMs": 1000, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-2",
+      "text": "[monotone] Vingt-cinq… [monotone] Trente… [monotone] Trente-cinq… [monotone] Quarante.",
+      "clips": ["hold-25-1", "hold-30-1", "hold-35-1", "hold-40-1"],
+      "accept": { "minMs": 120, "maxMs": 1000, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-3",
+      "text": "[monotone] Quarante-cinq… [monotone] Cinquante… [monotone] Cinquante-cinq… [monotone] Une minute.",
+      "clips": ["hold-45-1", "hold-50-1", "hold-55-1", "hold-60-1"],
+      "accept": { "minMs": 120, "maxMs": 1000, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-4",
+      "text": "[monotone] Une minute cinq… [monotone] Une minute dix… [monotone] Une minute quinze… [monotone] Une minute vingt.",
+      "clips": ["hold-65-1", "hold-70-1", "hold-75-1", "hold-80-1"],
+      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-5",
+      "text": "[monotone] Une minute vingt-cinq… [monotone] Une minute trente… [monotone] Une minute trente-cinq… [monotone] Une minute quarante.",
+      "clips": ["hold-85-1", "hold-90-1", "hold-95-1", "hold-100-1"],
+      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-6",
+      "text": "[monotone] Une minute quarante-cinq… [monotone] Une minute cinquante… [monotone] Une minute cinquante-cinq… [monotone] Deux minutes.",
+      "clips": ["hold-105-1", "hold-110-1", "hold-115-1", "hold-120-1"],
+      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-7",
+      "text": "[monotone] Deux minutes cinq… [monotone] Deux minutes dix… [monotone] Deux minutes quinze… [monotone] Deux minutes vingt.",
+      "clips": ["hold-125-1", "hold-130-1", "hold-135-1", "hold-140-1"],
+      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-8",
+      "text": "[monotone] Deux minutes vingt-cinq… [monotone] Deux minutes trente… [monotone] Deux minutes trente-cinq… [monotone] Deux minutes quarante.",
+      "clips": ["hold-145-1", "hold-150-1", "hold-155-1", "hold-160-1"],
+      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+    },
+    {
+      "id": "hold-count-9",
+      "text": "[monotone] Deux minutes quarante-cinq… [monotone] Deux minutes cinquante… [monotone] Deux minutes cinquante-cinq… [monotone] Trois minutes.",
+      "clips": ["hold-165-1", "hold-170-1", "hold-175-1", "hold-180-1"],
+      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
     }
   ]
 }
