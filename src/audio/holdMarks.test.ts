@@ -36,3 +36,10 @@ describe('les cues des repères', () => {
     }
   });
 });
+
+describe('le cue du changement de côté', () => {
+  it('sonne, et ne parle pas encore', () => {
+    expect(CUES['side-change'].tone).toBe('chime');
+    expect(clipsFor('side-change')).toHaveLength(0);
+  });
+});

@@ -30,6 +30,7 @@ export type CueId =
   | 'rep-2'
   | 'rep-1'
   | 'set-done'
+  | 'side-change'
   | 'workout-recap-start'
   | 'coach-recap-steady'
   | 'coach-recap-progress'
@@ -163,6 +164,16 @@ export const CUES: Record<CueId, CueDefinition> = {
     cooldownMs: 3_000,
     duckMusic: true,
   },
+  /*
+   * « Changement de côté. Reprise dans dix secondes. »
+   *
+   * Priorité haute et aucun refroidissement : cette phrase est la seule chose
+   * qui distingue une série qui continue d'une série finie. La manquer laisse
+   * l'utilisateur debout à attendre une reprise qu'il n'a pas entendue venir —
+   * et un exercice unilatéral la joue à chaque série, donc un refroidissement
+   * la mangerait dès la deuxième.
+   */
+  'side-change': { tone: 'chime', priority: 3, gapMs: 700, cooldownMs: 0, duckMusic: true },
   // These lines form one deliberate debrief. They all enter the voice pack at
   // once; its one-second breathing room serializes them without losing any.
   'workout-recap-start': {

@@ -242,6 +242,10 @@ const fr = {
     // la même attente, et lui inventer d'autres mots la ferait lire comme autre
     // chose.
     holdStatus: 'Maintien · {time}',
+    // La transition entre les deux côtés d'une série unilatérale. Même forme
+    // que « Départ · n » parce que c'est la même attente — et en Silence, ce
+    // relevé est tout ce qui dit que la série n'est pas finie.
+    sideChanging: 'Changement de côté · {seconds}',
     holdStart: 'Démarrer le chrono',
     holdStop: 'Arrêter le chrono',
     holdTitle: 'Chrono',

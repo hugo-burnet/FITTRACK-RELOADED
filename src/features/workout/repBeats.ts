@@ -19,7 +19,15 @@ export interface RepBeat {
   at: number;
 }
 
-export function repBeats(pacer: Pick<RepPacer, 'reps' | 'repSeconds' | 'startedAt'>): RepBeat[] {
+export function repBeats(
+  pacer: Pick<RepPacer, 'reps' | 'repSeconds' | 'startedAt'>,
+  /**
+   * Ce qui ferme la cadence. `set-done` par défaut — mais ses clips disent
+   * « Validé. » et « Série terminée. », faux au milieu d'une série unilatérale
+   * dont le premier côté se ferme par le changement de côté.
+   */
+  endCue: CueId = 'set-done',
+): RepBeat[] {
   if (pacer.reps <= 0 || pacer.repSeconds <= 0) return [];
 
   const beats: RepBeat[] = [];
@@ -31,7 +39,7 @@ export function repBeats(pacer: Pick<RepPacer, 'reps' | 'repSeconds' | 'startedA
     });
   }
   beats.push({
-    cue: 'set-done',
+    cue: endCue,
     at: pacer.startedAt + pacer.reps * pacer.repSeconds * 1_000,
   });
   return beats;
@@ -54,12 +62,13 @@ export function armRepPacer(
   pacer: Pick<RepPacer, 'reps' | 'repSeconds' | 'startedAt'>,
   onFinished: () => void,
   now = Date.now(),
+  endCue: CueId = 'set-done',
 ): () => void {
-  const timers = pendingBeats(repBeats(pacer), now).map((beat) =>
+  const timers = pendingBeats(repBeats(pacer, endCue), now).map((beat) =>
     setTimeout(
       () => {
         announce(beat.cue);
-        if (beat.cue === 'set-done') onFinished();
+        if (beat.cue === endCue) onFinished();
       },
       Math.max(0, beat.at - now),
     ),

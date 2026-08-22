@@ -85,4 +85,28 @@ describe('armRepPacer', () => {
 
     expect(announce.mock.calls.map(([cue]) => cue)).toEqual(['rep-tick', 'rep-tick']);
   });
+
+  it('prévient la fin quel que soit le cue de clôture', () => {
+    const finished = vi.fn();
+    armRepPacer({ reps: 1, repSeconds: 1, startedAt: 0 }, finished, 0, 'side-change');
+
+    vi.advanceTimersByTime(1_000);
+    expect(announce).toHaveBeenCalledWith('side-change');
+    expect(finished).toHaveBeenCalledOnce();
+  });
+});
+
+describe('le cue de clôture', () => {
+  // « Validé. » et « Série terminée. » sont faux au milieu d'une série : sur le
+  // premier côté d'une ligne unilatérale, la cadence se ferme autrement.
+  it('ferme le premier côté par le changement de côté', () => {
+    const beats = repBeats(pacer, 'side-change');
+
+    expect(beats[beats.length - 1]).toEqual({ cue: 'side-change', at: 25_000 });
+    expect(beats.some(({ cue }) => cue === 'set-done')).toBe(false);
+  });
+
+  it('ferme par la fin de série quand rien n’est précisé', () => {
+    expect(repBeats(pacer).at(-1)?.cue).toBe('set-done');
+  });
 });
