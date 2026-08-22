@@ -1,6 +1,5 @@
 import type { HistoricalWorkout } from '@/lib/historyProjection';
-import { measurementShape } from '@/lib/measurement';
-import { sessionTotals } from '@/lib/volume';
+import { workoutTotals } from '@/lib/volumeSource';
 import type { PeriodBounds } from './periods';
 import { knownWeekStarts, weekStartOf } from './weeks';
 
@@ -13,20 +12,7 @@ export interface WeeklyVolumeBucket {
 }
 
 function sourceTonnage(workout: HistoricalWorkout): number {
-  return sessionTotals(
-    workout.exercises.flatMap((exercise) => {
-      const weightRole =
-        exercise.measurementType === undefined
-          ? undefined
-          : measurementShape(exercise.measurementType).weightRole;
-      return exercise.sets.map((set) => ({
-        set,
-        weightRole,
-        bodyweightLoadFactor: exercise.bodyweightLoadFactor,
-      }));
-    }),
-    workout.bodyWeightKg,
-  ).tonnage;
+  return workoutTotals(workout).tonnage;
 }
 
 export function weeklyVolumeBuckets(

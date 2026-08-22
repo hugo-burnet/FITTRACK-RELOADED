@@ -38,6 +38,7 @@ describe('AnalyticsScreen', () => {
       'Séances par semaine',
       'Volume d’entraînement',
       'Séries par muscle',
+      'Rapport mensuel',
     ]);
 
     unmount();

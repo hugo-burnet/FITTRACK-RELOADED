@@ -3,18 +3,14 @@ import type {
   HistoricalSet,
   HistoricalWorkout,
 } from '@/lib/historyProjection';
-import {
-  isTimedMeasurement,
-  measurementShape,
-  type TargetField,
-} from '@/lib/measurement';
+import { measurementShape, type TargetField } from '@/lib/measurement';
 import { isWorkingSet } from '@/lib/records';
 import {
   isoWithOffset,
   localDateKey,
   localOffsetMinutes,
 } from '@/lib/timezone';
-import { sessionTotals } from '@/lib/volume';
+import { workoutTotals } from '@/lib/volumeSource';
 import type {
   CoachExport,
   ExportExercise,
@@ -121,28 +117,7 @@ function projectWorkout(
     localDate: localDateKey(source.startedAt, offset),
     timezoneOffsetMinutes: offset,
     durationSeconds: source.durationSeconds,
-    totals: sessionTotals(
-      source.exercises.flatMap((exercise) => {
-        const weightRole =
-          exercise.measurementType === undefined
-            ? undefined
-            : measurementShape(
-                exercise.measurementType,
-              ).weightRole;
-        const timed =
-          exercise.measurementType === undefined
-            ? undefined
-            : isTimedMeasurement(exercise.measurementType);
-        return exercise.sets.map((set) => ({
-          set,
-          weightRole,
-          bodyweightLoadFactor: exercise.bodyweightLoadFactor,
-          timed,
-          repSeconds: exercise.repSeconds,
-        }));
-      }),
-      source.bodyWeightKg,
-    ),
+    totals: workoutTotals(source),
     exercises: source.exercises.map((exercise) =>
       projectExercise(exercise, options),
     ),
