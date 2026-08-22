@@ -58,6 +58,30 @@ Différence structurante : **une série chronométrée sans valeur saisie est `r
   passer `undefined` jusqu'au rendu. La carte ne rendait plus rien du tout, ce qui ressemblait à un
   bug de la séance et n'était qu'un branchement inachevé.
 
+### Ce que la revue a trouvé (`bf2cd38`)
+
+Trois constatations, dont deux avec le même correctif.
+
+**L'horloge d'un maintien démarrait à zéro quand elle prenait la suite d'un repos.** Le premier
+jet copiait la règle de la cadence de répétitions : après un repos qui vient de compter 3-2-1, on
+est déjà sous la barre, donc pas de préparation. Mais l'horloge d'un maintien **est la valeur
+écrite dans la série** : partie au T0 du repos, elle comptait comme du gainage les secondes qu'il
+faut pour se mettre au sol. Sur une routine « 3 × gainage », chaque transition sur-notait la durée
+du temps de mise en place, en base et pour toujours. Le 3-2-1 du repos dit « le repos se
+termine », pas « tu es en position ». Un maintien reçoit désormais ses dix secondes **dans tous
+les cas** ; une cadence de répétitions garde son départ immédiat, et un test épingle les deux.
+
+**Le T0 était muet**, et pour la même raison : l'alerte de fin de repos est sautée dès que le
+relais réussit, `HoldRail` n'arme pas de 3-2-1 quand la préparation est nulle, et le premier
+repère du chrono ne tombe qu'à cinq secondes. On entendait « trois, deux, un » puis rien, sans
+savoir que l'horloge qui note la série tournait. Les dix secondes rétablies referment ça.
+
+**La coche pendant un maintien levait la garde sur toute la ligne.** Elle doit rester active alors
+que la cellule des secondes est vide — c'est elle qui arrête le chrono, et l'exiger remplie
+l'enfermerait sans sortie. Mais le chrono n'écrit **que** la durée : un rameur (`distance_time`)
+pouvait être validé sans sa distance. Seule la colonne « durée » est désormais considérée comme
+déjà tenue.
+
 ### Les voix : déclarées, pas enregistrées
 
 Trente-six repères — `hold-5` à `hold-180`, de cinq en cinq — générés depuis `HOLD_MARK_SECONDS`,
@@ -74,7 +98,7 @@ P1 : un identifiant déclaré sans MP3 est un silence qui se fait passer pour un
 
 - `npm run typecheck` : sortie 0 ;
 - `npm run lint` : sortie 0, aucun avertissement ;
-- `npm run test:run` : **189 fichiers, 2 031 tests**, sortie 0 (contre 184 / 1 993 avant le lot) ;
+- `npm run test:run` : **189 fichiers, 2 033 tests**, sortie 0 (contre 184 / 1 993 avant le lot) ;
 - `npm run build` : sortie 0, service worker PWA généré, 99 entrées précachées.
 
 **Checkpoint téléphone demandé :**
