@@ -716,56 +716,56 @@
       "text": "[monotone] Vingt-cinq… [monotone] Trente… [monotone] Trente-cinq… [monotone] Quarante.",
       "clips": ["hold-25-1", "hold-30-1", "hold-35-1", "hold-40-1"],
       "gapMs": 200,
-      "accept": { "minMs": 120, "maxMs": 1000, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 180, "maxMs": 1300, "maxReversals": 18, "sameDirection": true }
     },
     {
       "id": "hold-count-3",
       "text": "[monotone] Quarante-cinq… [monotone] Cinquante… [monotone] Cinquante-cinq… [monotone] Une minute.",
       "clips": ["hold-45-1", "hold-50-1", "hold-55-1", "hold-60-1"],
       "gapMs": 200,
-      "accept": { "minMs": 120, "maxMs": 1000, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 300, "maxMs": 1900, "maxReversals": 30, "sameDirection": true }
     },
     {
       "id": "hold-count-4",
       "text": "[monotone] Une minute cinq… [monotone] Une minute dix… [monotone] Une minute quinze… [monotone] Une minute vingt.",
       "clips": ["hold-65-1", "hold-70-1", "hold-75-1", "hold-80-1"],
       "gapMs": 200,
-      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 420, "maxMs": 2500, "maxReversals": 42, "sameDirection": true }
     },
     {
       "id": "hold-count-5",
       "text": "[monotone] Une minute vingt-cinq… [monotone] Une minute trente… [monotone] Une minute trente-cinq… [monotone] Une minute quarante.",
       "clips": ["hold-85-1", "hold-90-1", "hold-95-1", "hold-100-1"],
       "gapMs": 200,
-      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 480, "maxMs": 2800, "maxReversals": 48, "sameDirection": true }
     },
     {
       "id": "hold-count-6",
       "text": "[monotone] Une minute quarante-cinq… [monotone] Une minute cinquante… [monotone] Une minute cinquante-cinq… [monotone] Deux minutes.",
       "clips": ["hold-105-1", "hold-110-1", "hold-115-1", "hold-120-1"],
       "gapMs": 200,
-      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 540, "maxMs": 3100, "maxReversals": 54, "sameDirection": true }
     },
     {
       "id": "hold-count-7",
       "text": "[monotone] Deux minutes cinq… [monotone] Deux minutes dix… [monotone] Deux minutes quinze… [monotone] Deux minutes vingt.",
       "clips": ["hold-125-1", "hold-130-1", "hold-135-1", "hold-140-1"],
       "gapMs": 200,
-      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 360, "maxMs": 2200, "maxReversals": 36, "sameDirection": true }
     },
     {
       "id": "hold-count-8",
       "text": "[monotone] Deux minutes vingt-cinq… [monotone] Deux minutes trente… [monotone] Deux minutes trente-cinq… [monotone] Deux minutes quarante.",
       "clips": ["hold-145-1", "hold-150-1", "hold-155-1", "hold-160-1"],
       "gapMs": 200,
-      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 420, "maxMs": 2500, "maxReversals": 42, "sameDirection": true }
     },
     {
       "id": "hold-count-9",
       "text": "[monotone] Deux minutes quarante-cinq… [monotone] Deux minutes cinquante… [monotone] Deux minutes cinquante-cinq… [monotone] Trois minutes.",
       "clips": ["hold-165-1", "hold-170-1", "hold-175-1", "hold-180-1"],
       "gapMs": 200,
-      "accept": { "minMs": 400, "maxMs": 2200, "maxReversals": 12, "sameDirection": true }
+      "accept": { "minMs": 480, "maxMs": 2800, "maxReversals": 48, "sameDirection": true }
     }
   ]
 }
