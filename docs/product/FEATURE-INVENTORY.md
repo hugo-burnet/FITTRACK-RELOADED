@@ -1,7 +1,7 @@
 # FitTrack — Inventaire maître des fonctionnalités et du tutoriel
 
-> **Statut :** document produit de référence, établi sur `master` à la version `v1.0.1`
-> (`437bf83`) le 22 août 2026.
+> **Statut :** document produit de référence, établi à la version `v1.0.1` (`437bf83`) puis
+> actualisé sur l'implémentation tutoriel P1 (`308dfcd`) le 22 août 2026.
 >
 > **But :** dire ce que FitTrack sait réellement faire, où cela vit, ce qui reste incomplet et
 > ce que le tutoriel doit apprendre avant de refaire les voix.
@@ -15,10 +15,10 @@ Cet inventaire croise quatre sources :
 3. le cahier des charges `audit-hevy-cahier-des-charges.md`, la roadmap et `PROGRESS.md` ;
 4. le script vocal et les fichiers présents dans `public/voice/`.
 
-Le parcours navigateur a couvert l'accueil, les routines, les blocs, la séance active,
+Le parcours navigateur initial a couvert l'accueil, les routines, les blocs, la séance active,
 l'historique, l'import Hevy, les analyses, les exercices, les réglages, le dépannage, les crédits,
-le premier lancement et la visite guidée. Il n'a volontairement supprimé, restauré, importé ni
-modifié aucune donnée utilisateur.
+le premier lancement et la visite guidée. Un second contrôle sur une origine isolée a ensuite
+exercé le parcours P1 complet, sans toucher aux données de l'origine habituelle.
 
 ### États fonctionnels
 
@@ -39,9 +39,9 @@ modifié aucune donnée utilisateur.
 | **Survolé** | La voix cite la zone ou la fonctionnalité sans apprendre à l'utiliser. |
 | **Absent** | Ni la visite complète ni l'aide contextuelle ne l'expliquent. |
 
-À la date de l'inventaire, **une seule fonctionnalité est couverte au niveau Action** : le choix
-final du mode d'annonce. La visite actuelle est un bon sommaire vocal, mais pas encore un tutoriel
-opératoire.
+L'orientation vocale reste un sommaire des grandes zones. Elle est désormais complétée par
+**douze missions P1 opératoires**, toujours compréhensibles en Silence et validées par le résultat
+réel des gestes plutôt que par un simple clic.
 
 ### Priorités
 
@@ -57,21 +57,16 @@ repos, cadence, RPE, records, historique éditable, import Hevy, analyses, sauve
 Les fondations respectent les règles majeures du projet : aucune limite artificielle, aucune
 dépendance réseau pour s'entraîner et écriture immédiate des séries.
 
-Le principal manque n'est plus une fonction de logging : c'est **l'activation et la transmission
-du modèle mental**. La visite actuelle compte neuf chapitres et une voix de choix final. Elle
-explique les grandes zones, mais ne montre pas comment :
+La première tranche d'activation est livrée : choisir un chemin, préparer une routine, démarrer,
+saisir et valider une série, comprendre le repos, terminer la séance puis exporter et inspecter
+une restauration. La progression vit sous `fittrack:tutorial:v2`, reprend à l'étape exacte après
+fermeture et traverse la sauvegarde complète.
 
-- préparer une routine utilisable ;
-- démarrer puis terminer une première séance ;
-- saisir et valider une série sans perdre de données ;
-- comprendre repos, cadence, RPE, plaques et échauffement ;
-- corriger une séance ou restaurer une sauvegarde ;
-- résoudre une séance active abandonnée depuis plusieurs heures ou jours.
-
-Deux sessions actives anciennes ont été rencontrées pendant l'audit (`44 h` et `687 h`). FitTrack
-les préserve correctement, mais elles bloquent le démarrage d'une autre séance et le tutoriel ne
-dit pas comment les reprendre ou les abandonner. La solution ne doit jamais supprimer seule une
-séance : elle doit proposer un choix de récupération explicite.
+Une séance active atteint l'état ancien à **douze heures révolues** (`âge >= 12 h`). Elle reste
+intacte tant que l'utilisateur n'a pas explicitement choisi Reprendre, Terminer ou confirmé
+Abandonner ; aucune minuterie ne la supprime. Ce chemin est couvert par les tests et la revue, mais
+son checkpoint sur un vrai téléphone reste à faire. Les outils avancés — cadence, RPE, plaques,
+échauffement, historique et analyses — restent volontairement dans les P2/P3.
 
 ### Santé technique de l'interface
 
@@ -96,8 +91,8 @@ pas des images cassées.
 |---|---|---|---|---|
 | FND-01 | Fonctionnement intégral hors ligne, sans compte | Livré | Survolé | L'annoncer dès le premier écran. |
 | FND-02 | Persistance IndexedDB via Dexie et repositories | Livré | Absent | Expliquer simplement où vivent les données. |
-| FND-03 | Écriture en base à chaque série validée | Livré | Survolé | En faire une preuve visible dans la mission de première série. |
-| FND-04 | Reprise d'une séance après kill ou interruption | Livré | Absent | Ajouter une mission de récupération sans suppression automatique. |
+| FND-03 | Écriture en base à chaque série validée | Livré | Action | La mission de validation attend la réussite de l'écriture durable. |
+| FND-04 | Reprise d'une séance après kill ou interruption | Livré | Action | Une séance ancienne propose trois choix explicites, sans suppression automatique. |
 | FND-05 | Routines, historique et exercices personnalisés sans quota | Livré | Absent | Le signaler dans l'aide des bibliothèques. |
 | FND-06 | Navigation hash compatible GitHub Pages et Capacitor | Livré | Sans objet | Maintenir `createHashRouter`. |
 | FND-07 | PWA installable et mise à jour contrôlée | Livré | Absent | Ajouter une aide d'installation et de mise à jour. |
@@ -121,7 +116,7 @@ RF-69.
 | HOM-05 | Objectif hebdomadaire et accès à son réglage | Livré | Absent | Expliquer objectif, semaine et absence de sanction. |
 | HOM-06 | Poids du jour saisi depuis l'accueil | Livré | Absent | Contextualiser son effet sur le tonnage au poids du corps. |
 | HOM-07 | Trois dernières séances | Livré | Absent | Montrer l'accès au détail et à la correction. |
-| HOM-08 | Barre persistante de reprise de séance | Livré | Absent | P1 : apprendre reprise/fin/abandon d'une séance ancienne. |
+| HOM-08 | Barre persistante de reprise de séance | Livré | Action | À partir de 12 h incluses, elle ouvre la récupération Reprendre/Terminer/Abandonner. |
 | HOM-09 | Démarrage d'une séance vide depuis l'interface | Partiel | Absent | Le repository le permet, mais la porte UI a été retirée en v0.8.2 ; décider si elle revient. |
 
 **Traçabilité :** `src/features/home/*`, `src/data/repositories/home.ts`, `src/lib/home.ts`,
@@ -132,17 +127,17 @@ RF-69.
 | ID | Fonctionnalité | État | Tutoriel | Suite recommandée |
 |---|---|---|---|---|
 | ROU-01 | Liste illimitée de routines | Livré | Survolé | Distinguer bibliothèque et séance en cours. |
-| ROU-02 | Création d'une routine | Livré | Absent | P1 : mission guidée depuis l'état vide. |
+| ROU-02 | Création d'une routine | Livré | Action | La mission attend la routine réellement persistée. |
 | ROU-03 | Dossiers, création, renommage et déplacement | Livré | Absent | Ajouter une aide secondaire, non bloquante. |
 | ROU-04 | Nom, sous-titre et dossier enregistrés au fil de la frappe | Livré | Absent | Expliquer qu'il n'y a pas de bouton Enregistrer. |
-| ROU-05 | Ajout et retrait d'exercices | Livré | Absent | P1 : faire ajouter un exercice réel. |
-| ROU-06 | Ajout, suppression et édition de séries prévues | Livré | Absent | P1 : définir reps, charge et plage cible. |
-| ROU-07 | Repos, notes et paramètres par exercice | Livré | Absent | Relier ces valeurs à la séance. |
+| ROU-05 | Ajout et retrait d'exercices | Livré | Action | La P1 fait ajouter un exercice réel ; retrait différé à l'aide avancée. |
+| ROU-06 | Ajout, suppression et édition de séries prévues | Livré | Action | La P1 fait ajouter une deuxième série puis définir sa cible. |
+| ROU-07 | Repos, notes et paramètres par exercice | Livré | Action | La P1 fait enregistrer un repos positif ; notes et paramètres restent en aide avancée. |
 | ROU-08 | Réorganisation tactile avec verrou | Livré | Absent | Expliquer verrou, poignée et persistance. |
 | ROU-09 | Duplication et suppression | Livré | Absent | Ajouter à l'aide à la demande. |
 | ROU-10 | Supersets et regroupements | Livré | Absent | Ajouter une micro-mission avancée. |
-| ROU-11 | Modèles prêts à l'emploi semés localement | Livré | Absent | Les proposer comme raccourci de première activation. |
-| ROU-12 | Démarrage d'une séance depuis une routine | Livré | Survolé | P1 : terminer la mission de création par un démarrage. |
+| ROU-11 | Modèles prêts à l'emploi semés localement | Livré | Action | L'activation propose modèle existant ou création, sans imposer l'un des deux. |
+| ROU-12 | Démarrage d'une séance depuis une routine | Livré | Action | La mission avance après création durable de la séance active. |
 
 **Traçabilité :** `src/features/routines/*`, `src/data/repositories/routines*.ts`,
 `src/data/seed/routineTemplates.ts`, RF-11 à RF-15.
@@ -171,17 +166,17 @@ RF-69.
 
 | ID | Fonctionnalité | État | Tutoriel | Suite recommandée |
 |---|---|---|---|---|
-| WRK-01 | Démarrage depuis une routine ou un bloc | Livré | Survolé | P1 : intégrer au parcours de première séance. |
+| WRK-01 | Démarrage depuis une routine ou un bloc | Livré | Action | La P1 vérifie le démarrage depuis une routine ; les blocs restent en P2. |
 | WRK-02 | Chronomètre dérivé de l'heure réelle | Livré | Absent | Expliquer qu'un kill ne remet pas le temps à zéro. |
-| WRK-03 | Saisie selon six familles de mesure | Livré | Survolé | P1 : mission adaptée au type d'exercice. |
-| WRK-04 | Valeur précédente tapable pour préremplir | Livré | Absent | P1 : enseigner le geste le plus fréquent. |
-| WRK-05 | Validation d'une série en un geste | Livré | Survolé | P1 : montrer la coche et la persistance immédiate. |
+| WRK-03 | Saisie selon six familles de mesure | Livré | Action | La mission attend une série enregistrable selon son type de mesure réel. |
+| WRK-04 | Valeur précédente tapable pour préremplir | Livré | Action | La première série explique la valeur précédente et la saisie attendue. |
+| WRK-05 | Validation d'une série en un geste | Livré | Action | La mission n'avance qu'après validation persistée. |
 | WRK-06 | Ajout/suppression de séries en cours de séance | Livré | Absent | Ajouter une aide contextuelle. |
 | WRK-07 | Ajout/suppression d'exercices en cours de séance | Livré | Absent | Ajouter une aide contextuelle. |
 | WRK-08 | Réorganisation et repli des exercices | Livré | Absent | Expliquer verrou et Tout replier/déplier. |
 | WRK-09 | Types normale, échauffement, dégressive, échec | Livré | Absent | Relier type, volume, repos et records. |
 | WRK-10 | Notes de séance et notes d'exercice | Livré | Absent | Montrer où elles réapparaissent. |
-| WRK-11 | Minuteur automatique de repos | Livré | Survolé | P1 : montrer démarrage, ±15 s et fin. |
+| WRK-11 | Minuteur automatique de repos | Livré | Action | La mission montre le repos réel et attend sa fin. |
 | WRK-12 | Notification Android de fin de repos écran éteint | Livré | Absent | Expliquer la différence navigateur/Android. |
 | WRK-13 | Calculateur de plaques configurable | Livré | Absent | Mission avancée depuis une série chargée. |
 | WRK-14 | Calculateur et insertion des séries d'échauffement | Livré | Absent | Mission avancée orientée sécurité. |
@@ -190,9 +185,9 @@ RF-69.
 | WRK-17 | Fatigue appliquée au tempo et au repos | Livré | Absent | Documenter la règle et son plafond. |
 | WRK-18 | Détection et annonce d'un record en direct | Livré | Survolé | Montrer ce qui est enregistré et notifié. |
 | WRK-19 | Décharge ponctuelle des séries restantes | Livré | Absent | Aide avancée avec aperçu avant application. |
-| WRK-20 | Écran de fin, bilan et notes | Livré | Survolé | P1 : mission « terminer proprement ». |
+| WRK-20 | Écran de fin, bilan et notes | Livré | Action | La mission ouvre le bilan puis attend l'enregistrement durable. |
 | WRK-21 | Coach déterministe et proposition de prochaine charge | Partiel | Survolé | Hausse, baisse et plateau existent ; règles RPE lourdes/décharge restent hors V1. |
-| WRK-22 | Abandon explicite sans confusion avec Terminer | Livré | Absent | P1 : inclure dans la récupération d'une séance ancienne. |
+| WRK-22 | Abandon explicite sans confusion avec Terminer | Livré | Action | L'abandon d'une vieille séance exige une confirmation comptée. |
 
 **Traçabilité :** `src/features/workout/*`, `src/data/repositories/workout*.ts`,
 `src/stores/restTimer.ts`, `src/stores/repPacer.ts`, Lots 5, 6, 18 et 21, RF-17 à RF-31,
@@ -271,7 +266,7 @@ RF-10.
 | SET-07 | Notifications fin de repos, record et rappel séparées | Livré | Absent | Tutoriel Android dédié aux permissions et jours/heures. |
 | SET-08 | Export lisible de tout l'historique | Livré | Absent | Ajouter au chapitre portabilité. |
 | SET-09 | Export/import CSV réutilisable | Livré | Absent | Expliquer ce qui revient et ce qui ne revient pas. |
-| SET-10 | Sauvegarde/restauration JSON complète | Livré | Absent | P1 : mission de sécurité des données. |
+| SET-10 | Sauvegarde/restauration JSON complète | Livré | Action | Export réel puis ouverture de la confirmation, sans restaurer à la place de l'utilisateur. |
 | SET-11 | Recalcul des records et mise à jour des instantanés | Livré | Absent | Garder dans une aide dépannage, pas la visite initiale. |
 | SET-12 | État du stockage, tables, catalogue et reset | Livré | Absent | Ajouter des avertissements pédagogiques avant les actions destructrices. |
 | SET-13 | Unités kg/lb et unités individuelles | Absent | Absent | RF-50 : l'interface et les calculs sont aujourd'hui en kg. |
@@ -321,6 +316,8 @@ RF-50 à RF-54, RF-66 à RF-69.
 
 - une invite au premier lancement : Commencer ou Passer ;
 - une visite complète de **9 étapes** ;
+- douze missions P1 contextuelles, avec un objectif et une réussite observée ;
+- un coach non modal qui laisse la vraie commande accessible ;
 - une aide contextuelle accessible par le point d'interrogation de chaque écran ;
 - une transcription lisible et repliable ;
 - Précédent, Suivant, Passer et progression visuelle ;
@@ -328,9 +325,11 @@ RF-50 à RF-54, RF-66 à RF-69.
 - attente de lecture quand un clip manque ;
 - garde contre la concurrence avec repos/cadence actifs ;
 - choix final Voix et sons / Sons / Silence ;
-- préférence `fittrack:tutorial:v1`, incluse dans la sauvegarde JSON complète.
+- progression versionnée `fittrack:tutorial:v2`, incluse dans la sauvegarde JSON complète ;
+- reprise à la mission et à l'étape exactes après rechargement ;
+- récupération explicite d'une séance active âgée de douze heures ou plus.
 
-### 5.2 Couverture réelle
+### 5.2 Couverture de l'orientation
 
 | Étape actuelle | Route | Ce qu'elle fait | Limite |
 |---|---|---|---|
@@ -343,17 +342,18 @@ RF-50 à RF-54, RF-66 à RF-69.
 | Progression | `/analytics` | Décrit les familles d'analyse | N'enseigne période, métrique ou export. |
 | Exercices | `/exercises` | Décrit le catalogue | N'enseigne ni recherche, ni filtre, ni création. |
 | Réglages | `/settings` | Énumère les catégories | N'enseigne ni sauvegarde, ni notifications. |
-| Choix vocal | fin | Enregistre le mode d'annonce | Seule étape qui demande un vrai choix. |
+| Choix vocal | fin | Enregistre le mode d'annonce | Geste réel conservé ; les missions P1 prennent ensuite le relais. |
 
-### 5.3 Cause structurelle
+### 5.3 Couverture opératoire P1
 
-Le type `TutorialTarget` ne connaît que `header` et `content`. Les seuls ancrages sont
-`data-tutorial-header` et `data-tutorial-content`. Une étape peut donc éclairer un écran entier,
-mais pas une routine, une ancienne valeur, une coche, un minuteur ou un bouton de sauvegarde.
+La limite structurelle de l'orientation est contournée par des ancres précises
+`data-tutorial-id` et des événements métier émis seulement après le résultat durable attendu. Les
+missions peuvent donc viser une routine, la première ligne, sa coche, le repos, le bilan ou la
+sauvegarde sans écrire à la place de l'utilisateur. Les cibles propres à une série n'apparaissent
+que sur le premier exercice et la première série ; cette unicité est épinglée par les tests.
 
-`tutorialTopicForPath` regroupe aussi toutes les sous-routes d'un domaine sous un seul texte. Par
-exemple, la création d'un exercice, sa fiche et sa progression reçoivent la même explication
-générale « Exercices ».
+Le parcours P1 est **text-only** : aucune de ses étapes ne porte encore de `clipId`. Il reste donc
+entièrement utilisable en Silence, mais les douze futurs clips n'ont pas été générés.
 
 ## 6. Architecture cible du tutoriel
 
@@ -391,7 +391,7 @@ une action secondaire.
 
 ### Persistance
 
-Créer une préférence versionnée `fittrack:tutorial:v2` contenant :
+La préférence versionnée `fittrack:tutorial:v2` contient :
 
 - orientation `completed | skipped` ;
 - missions terminées ;
@@ -411,9 +411,12 @@ ancienne valeur v1 migre vers « orientation terminée, missions non commencées
 - Aucun clip n'est généré avant validation finale du texte, de son identifiant et de sa condition
   de réussite.
 
-## 7. Briques tutoriel manquantes
+## 7. Catalogue des missions tutoriel
 
 ### P1 — Première séance et sécurité des données
+
+Les douze missions ci-dessous sont livrées au niveau **Action (texte)**. Les identifiants de voix
+restent réservés pour la phase suivante : aucun clip P1 n'est encore généré ou déclaré.
 
 | ID | Mission | Départ | Réussite observée | Voix future |
 |---|---|---|---|---|
@@ -474,7 +477,8 @@ Ces sujets appartiennent à l'aide à la demande, jamais à l'orientation initia
 - `public/voice/` contient **43 MP3 correspondants** ;
 - les deux groupes de décompte réutilisent six de ces identifiants ;
 - **10 clips** appartiennent au tutoriel actuel ;
-- aucun fichier déclaré par le manifeste actuel ne manque au moment de l'inventaire.
+- aucun fichier déclaré par le manifeste actuel ne manque au moment de l'inventaire ;
+- les **12 clips P1 futurs ne sont ni déclarés ni générés** : les missions utilisent leur texte.
 
 La future « voix manquante » désigne donc principalement les **nouveaux clips des missions**, pas
 un trou entre le manifeste actuel et `public/voice/`.
@@ -496,12 +500,15 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
 
 ### P1
 
-1. Introduire les missions tutoriel P1 et les ancrages précis.
-2. Ajouter un choix de récupération pour une séance active anormalement ancienne, sans suppression
+1. **Livré :** missions tutoriel P1, ancrages précis et progression versionnée.
+2. **Livré :** récupération explicite d'une séance active âgée d'au moins 12 h, sans suppression
    automatique.
-3. Enseigner export et restauration de la sauvegarde complète avant toute accumulation importante
-   de données.
-4. Décider explicitement si la séance vide retrouve une porte UI ou reste un comportement interne.
+3. **Livré :** export et lecture de la confirmation de restauration de la sauvegarde complète.
+4. Corriger l'annonce de reprise afin qu'elle reste muette tant que le RPE est ouvert, sans mettre
+   en pause l'horloge du repos ni rejouer un repère dépassé.
+5. Pour un exercice unilatéral, faire représenter les deux côtés par une seule ligne : changement
+   de côté vocal, reprise après 10 s, et aucun repos/RPE/record après le premier côté.
+6. Décider explicitement si la séance vide retrouve une porte UI ou reste un comportement interne.
 
 ### P2
 
@@ -522,13 +529,14 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
 
 ## 10. Ordre de réalisation recommandé
 
-1. **Socle tutoriel v2** : registre de missions, progression, ancrages et aide par route.
-2. **Activation P1** : routine → première série → repos → fin → sauvegarde.
-3. **Récupération** : séance ancienne, reprise après kill, abandon explicite.
-4. **Missions P2** : outils, blocs, historique, analyses et exercices.
-5. **Revue des textes** : cohérence, longueur, vouvoiement et conditions de réussite.
-6. **Voix P1 puis P2** : génération, écoute dans l'app et vérification manifeste/MP3.
-7. **Audit final** : typecheck, tests, build, mobile 390 px, TalkBack et vraie séance hors ligne.
+1. **Livré — socle tutoriel v2** : registre de missions, progression, ancrages et aide par route.
+2. **Livré — activation P1** : routine → première série → repos → fin → sauvegarde.
+3. **Livré — récupération** : séance ancienne, reprise après kill, abandon explicite.
+4. **Annonces de séance** : fermer le bug RPE/repos puis le cycle unilatéral à deux côtés.
+5. **Revue des textes P1** : figer les douze transcriptions françaises et leurs identifiants.
+6. **Voix P1** : auditer les manques, générer, écouter dans l'app et vérifier manifeste/MP3.
+7. **Missions P2** : outils, blocs, historique, analyses et exercices.
+8. **Audit final** : typecheck, tests, build, mobile 390 px, TalkBack et vraie séance hors ligne.
 
 ## 11. Critères de réussite du futur tutoriel
 

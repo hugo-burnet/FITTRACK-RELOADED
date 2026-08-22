@@ -2,49 +2,87 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Plan tutoriel v2 P1** — plan d'implémentation détaillé
-écrit et auto-relu, aucun comportement applicatif modifié).
+**Dernière mise à jour :** 2026-08-22 (**Tutoriel v2 P1 livré et contrôlé en navigateur mobile ;
+checkpoint téléphone de la récupération ancienne encore requis**).
 
-## Plan tutoriel v2 — première séance P1
+## Tutoriel v2 — première séance P1
 
-Le document maître a été validé par l'utilisateur. Le plan exécutable vit dans
-**`docs/superpowers/plans/2026-08-22-tutorial-v2-first-session.md`** et découpe le travail en neuf
-tâches atomiques : progression v2, catalogue et machine d'état, coach non modal, activation et
-aide contextuelle, routines, séance et récupération sûre, sauvegarde, parcours intégré, puis
-validation mobile/documentation.
+Les douze missions `TUT-ACT-01`, `TUT-REC-01`, `TUT-ROU-01` à `04`, `TUT-WRK-01` à `04`,
+`TUT-DAT-01` et `02` sont implémentées. Elles guident les vraies commandes, avancent sur des
+événements émis après le résultat durable attendu et ne créent, ne valident, ne suppriment ni ne
+restaurent de donnée à la place de l'utilisateur. La progression `fittrack:tutorial:v2` reprend à
+l'étape exacte après rechargement et traverse la sauvegarde JSON complète.
 
-Le lot couvre les douze missions P1 `TUT-ACT-01`, `TUT-REC-01`, `TUT-ROU-01` à `04`,
-`TUT-WRK-01` à `04`, `TUT-DAT-01` et `02`. Il fixe notamment un seuil explicite de douze heures
-pour proposer la récupération d'une séance ancienne, sans suppression automatique, et garantit
-une deuxième série dans le parcours afin que le repos enseigné existe réellement.
+La récupération s'ouvre quand l'âge d'une séance active atteint **12 heures incluses**. Reprendre
+et Terminer restent immédiats ; Abandonner est inaccessible tant que le nombre de séries validées
+n'est pas connu, puis exige une confirmation comptée. Fermer la feuille ou attendre ne supprime
+rien.
 
-**Hors de ce plan :** aucune génération vocale, aucune modification des 43 MP3 actuels et aucune
-lecture de la clé API. Les textes P1 seront d'abord testés et validés dans l'application en mode
-texte/Silence ; leur génération fera l'objet du plan suivant.
+### Traçabilité des tâches
 
-**Suite :** choisir le mode d'exécution du plan, l'implémenter tâche par tâche, puis faire valider
-le checkpoint 390 × 844 sur téléphone avant toute génération ElevenLabs.
+- Task 1 — progression versionnée : `57c5002`, durcissement `e5f185b` ;
+- Task 2 — catalogue P1 et machine d'état : `37ff6e8` ;
+- Task 3 — coach non modal : `646618e`, mouvement réduit `3674456` ;
+- Task 4 — activation et aide contextuelle : `39abe39`, persistance atomique `bf5a77c`, garde de
+  mission active `241ce27` ;
+- Task 5 — routines : `85575c0`, démarrage depuis la collection `991885b` ;
+- Task 6 — séance et récupération sûre : `f0438f6`, courses de récupération `a32adc9` ;
+- Task 7 — sécurité des sauvegardes : `5b996db` ;
+- Task 8 — parcours intégré et persistance : `054702b` ;
+- correction du checkpoint mobile — coach sous les feuilles et repli haut sans cible : `308dfcd`.
 
-## Inventaire produit et tutoriel — post-v1.0.1
+### Preuves locales
 
-L'application a été parcourue au format mobile et croisée avec ses routes, repositories, tests,
-plans et scripts vocaux. Le résultat vit dans **`docs/product/FEATURE-INVENTORY.md`** : un document
-maître unique qui répertorie les fonctionnalités livrées, partielles, différées ou absentes, leur
-couverture par le tutoriel et un backlog priorisé d'améliorations.
+- scan `voiceScript|generate-voice|ELEVEN|VITE_.*KEY` dans les zones P1 : **zéro match** ;
+- toutes les ancres P1 sont présentes ; les tests épinglent l'unicité des cibles propres au premier
+  exercice et à la première série ;
+- `npm run typecheck` : sortie 0 ;
+- `npm run lint` : sortie 0 ;
+- `npm run test:run` : **183 fichiers, 1 985 tests**, sortie 0 ;
+- `npm run build` : **373 modules transformés**, sortie 0, service worker PWA généré.
 
-Constats structurants :
+### Checkpoint navigateur réel — 390 × 844
 
-- la visite actuelle couvre neuf thèmes et présente bien l'application, mais n'accompagne aucun
-  parcours métier complet ; seul le choix final du mode d'annonce atteint le niveau « Action » ;
-- le prochain socle P1 doit enseigner la chaîne routine → première série → repos → fin de séance →
-  sauvegarde, ainsi que la reprise ou l'abandon explicite d'une séance ancienne ;
-- le manifeste audio courant est complet : **43 identifiants uniques et 43 MP3 présents**, dont
-  dix clips de tutoriel. Les futures « voix manquantes » seront donc celles des nouvelles missions,
-  à générer seulement après validation définitive de leurs textes ;
-- la clé API voix remise en service n'a été ni lue ni utilisée pendant cet inventaire.
+Sur une origine isolée, le parcours routine → ajout d'exercice → deuxième série → cible → repos
+60 s → séance → série/RPE → fin du repos → bilan/enregistrement → export JSON → ouverture puis
+fermeture de la confirmation de restauration est passé. Le mode Silence conserve des instructions
+textuelles complètes. Un rechargement pendant l'étape 2 de `TUT-ROU-03` revient exactement sur
+cette étape. La largeur racine reste à `390/390`.
 
-**Suite :** faire relire le document maître, intégrer les arbitrages produit, puis écrire le plan
-d'implémentation détaillé avant toute modification du tutoriel ou régénération audio.
+Le contrôle a trouvé deux recouvrements : la feuille partagée était sous le coach, puis le repli du
+coach sans cible couvrait l'action fixe du sélecteur d'exercices. Le correctif `308dfcd` place le
+coach sous les feuilles et en haut quand sa cible est absente ; le même parcours navigateur est
+repassé après correction.
+
+**Aucune mission de la chaîne de création `TUT-ROU-01` → `TUT-DAT-02` n'a été sautée pour cause de
+garde incompatible.** `TUT-ACT-01` appartient au chemin alternatif « Choisir un modèle » ; son
+activation est couverte par les tests, pas par ce checkpoint parti de « Créer ma routine ».
+`TUT-REC-01` n'a pas non plus été déclenchée manuellement : aucune séance artificiellement âgée de
+plus de 12 h n'a été injectée, afin d'éviter une restauration synthétique destructive. Ses
+frontières `< 12 h`, `= 12 h`, `> 12 h`, ses trois choix, la confirmation, les rejets et l'absence
+d'abandon automatique sont couverts par les tests et la revue. Le checkpoint sur téléphone reste
+donc explicitement en attente.
+
+### Prochaine reprise exacte
+
+Avant toute génération de voix :
+
+1. empêcher l'annonce « reprise dans 10 » tant que le RPE est ouvert, sans arrêter l'horloge du
+   repos et sans rejouer ensuite un repère déjà dépassé ;
+2. pour un exercice marqué unilatéral, faire représenter les deux côtés par **une seule ligne** :
+   annoncer le changement de côté, reprendre après 10 s, puis ne déclencher repos, RPE et record
+   qu'après le second côté ;
+3. figer les douze textes français P1, puis auditer et générer les clips manquants avec la clé API
+   restaurée, sans jamais la lire dans les sorties, l'exposer ni la consigner dans le dépôt.
+
+Le manifeste courant reste complet à **43 identifiants / 43 MP3**. Les douze missions P1 sont
+volontairement text-only : leurs futurs clips ne sont pas encore déclarés ni générés. Les missions
+P2 et P3 restent inchangées et non commencées.
+
+**Checkpoint téléphone demandé avant les voix :**
+
+> Je peux aller d'une première routine à une séance sauvegardée, reprendre après fermeture,
+> résoudre une vieille séance sans perte et comprendre la sauvegarde, même en Silence.
 
 ## Revue de code complète — post-v1.0.0
 
