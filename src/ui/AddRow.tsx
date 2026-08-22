@@ -16,10 +16,19 @@ import { PlusIcon } from './icons';
  * change d'un cas à l'autre, c'est ce qu'on ajoute, et c'est exactement ce que
  * le libellé dit.
  */
-export function AddRow({ label, onClick }: { label: string; onClick: () => void }) {
+export function AddRow({
+  label,
+  onClick,
+  tutorialId,
+}: {
+  label: string;
+  onClick: () => void;
+  tutorialId?: string;
+}) {
   return (
     <button
       type="button"
+      data-tutorial-id={tutorialId}
       onClick={onClick}
       className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-base
         font-semibold text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]

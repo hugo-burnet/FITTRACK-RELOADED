@@ -4,6 +4,7 @@ type Props = {
   disabled?: boolean;
   /** `accent` pour le verbe de l'écran, `quiet` pour une sortie. */
   tone?: 'accent' | 'quiet';
+  tutorialId?: string;
 };
 
 /**
@@ -23,10 +24,17 @@ type Props = {
  * sortie vit dans la zone du pouce ») datait d'avant cette flèche, ajoutée au
  * Lot 4 ; le doublon lui a simplement survécu.
  */
-export function ActionBand({ label, onClick, disabled = false, tone = 'accent' }: Props) {
+export function ActionBand({
+  label,
+  onClick,
+  disabled = false,
+  tone = 'accent',
+  tutorialId,
+}: Props) {
   return (
     <button
       type="button"
+      data-tutorial-id={tutorialId}
       onClick={onClick}
       disabled={disabled}
       className={`flex min-h-14 w-full shrink-0 items-center justify-center border-t

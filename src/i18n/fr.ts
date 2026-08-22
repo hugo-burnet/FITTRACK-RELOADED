@@ -1851,6 +1851,9 @@ const fr = {
     modeSilenceHint: 'Aucun son produit par FitTrack.',
 
     mission: {
+      label: 'Mission guidée',
+      counter: 'Étape {index} sur {count}',
+      dismiss: 'Passer cette mission',
       activation: {
         title: 'Choisir un modèle',
         instruction: 'Ouvre le menu de création, puis choisis un modèle.',
