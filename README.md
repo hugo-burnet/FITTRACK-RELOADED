@@ -10,7 +10,7 @@ Suivi de musculation personnel. Local-first, hors-ligne, sans compte, sans fil s
 Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol sans 4G, pas un réseau social.
 
 **En ligne :** [hugo-burnet.github.io/FITTRACK-RELOADED](https://hugo-burnet.github.io/FITTRACK-RELOADED/)  
-**Dernier tag :** [`v0.9.1`](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v0.9.1)
+**Dernier tag :** [`v1.0.0`](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v1.0.0)
 
 ---
 
@@ -46,7 +46,7 @@ Un tag `v*` publie l’APK dans une GitHub Release. Pousser `master` seul met à
 
 ```bash
 git push origin master
-git tag -a v0.9.1 -m "FitTrack v0.9.1" && git push origin v0.9.1
+git tag -a v1.0.0 -m "FitTrack v1.0.0" && git push origin v1.0.0
 ```
 
 ---

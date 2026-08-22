@@ -515,19 +515,31 @@ sont redimensionnées avant stockage pour ne pas saturer le quota.
 **RF couverts :** RF-41 (progression par exercice), RF-42 (volume et répartition), RF-43 (carte de
 chaleur musculaire), RF-44 (rapport mensuel), RF-46 (1RM estimé), + export des graphiques en image
 (recommandation audit M8).
-**Dépend de :** Lot 11.
-**Budget :** 2 sessions.
+**Dépend de :** ~~Lot 11~~ — **dépendance levée** : aucun graphique de ce lot ne lit une mesure
+corporelle autre que le poids, déjà livré au Lot 11.
+**Budget :** 2 sessions. **Fait** (2026-08-11 et 2026-08-22).
 
 **Livrables :** `lib/oneRepMax.ts` (Epley/Brzycki/Lombardi, formule configurable, **en TDD**),
 graphiques de progression par exercice (charge max, volume, 1RM estimé), volume par semaine/mois,
 répartition des séries par groupe musculaire, carte de chaleur corporelle, rapport mensuel,
 export PNG d'un graphique.
 
+**Le rapport mensuel a sa propre unité.** Toute la couche d'analyse compte en semaines, et c'est la
+bonne unité pour un split ; un rapport, lui, se lit contre un calendrier. `lib/analytics/months.ts`
+construit donc les mois civils locaux à côté de `weeks.ts`, sur les mêmes règles (composantes
+civiles, jamais 30 × 24 h ; une séance rangée dans son propre fuseau).
+
+**Ce que le rapport ne compte pas, volontairement :** les records du mois. `personalRecords` ne
+garde que les records **encore debout** — un record de mars battu en avril disparaît de mars. Un
+chiffre qui décroît en relisant le passé est pire que pas de chiffre.
+
 **✅ Checkpoint :**
 
 - [ ] Tu ouvres un exercice que tu pratiques depuis des semaines : la courbe monte (ou pas, mais
       elle est juste).
 - [ ] La répartition par groupe musculaire révèle un déséquilibre réel et vérifiable.
+- [ ] Le rapport du mois en cours dit ce que l'historique montre, et le compare au mois d'avant.
+- [ ] Un graphique exporté en image arrive dans une conversation avec son titre et ses couleurs.
 
 ---
 
@@ -535,15 +547,26 @@ export PNG d'un graphique.
 
 **RF couverts :** consolidation de RF-10 et RF-23, RF-53 (rappels d'entraînement).
 **Dépend de :** Lot 12.
-**Budget :** 1 session.
+**Budget :** 1 session. **Fait** (2026-08-11 et 2026-08-22).
 
 **Livrables :** consolidation de `lib/records.ts` (tous les types de PR, recalcul complet fiable),
 page « mes records », historique d'un record dans le temps, rappels d'entraînement programmables.
+
+**RF-53 se lit « individuellement ».** Fin de repos, record battu et rappel d'entraînement sont
+trois intrusions différentes : un interrupteur chacun, jamais un maître qui fait payer au premier
+le coût du troisième. Le rappel est éteint par défaut — c'est la seule des trois qui parle un jour
+où l'app n'a pas été ouverte.
+
+**Le record tombe sur un canal muet** (importance Android 2, visible et jamais audible). Un record
+est pris téléphone en main : la carte l'a déjà dit et la voix aussi, en Web Audio. Une cloche
+système serait la seule de l'app à baisser la musique de l'utilisateur (règle du Lot 21).
 
 **✅ Checkpoint :**
 
 - [ ] La page records affiche des valeurs cohérentes avec ton historique réel.
 - [ ] Le recalcul complet donne exactement le même résultat que le calcul incrémental.
+- [ ] Un rappel réglé pour dans trois minutes arrive, app fermée.
+- [ ] Un record battu laisse une ligne dans le volet des notifications, sans un bruit.
 
 ---
 
