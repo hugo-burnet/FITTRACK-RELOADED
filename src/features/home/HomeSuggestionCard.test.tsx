@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import type { HomeDashboardData, SuggestedRoutine } from '@/data/repositories/home';
+import { t } from '@/i18n/fr';
 import { HomeSuggestionCard } from './HomeSuggestionCard';
 
 const suggestion: SuggestedRoutine = {
@@ -16,7 +17,7 @@ const suggestion: SuggestedRoutine = {
 const options: HomeDashboardData['routineContext']['options'] = [
   { value: 'folder:push', label: 'Salle', routineCount: 1 },
   { value: 'folder:empty', label: 'Maison', routineCount: 0 },
-  { value: 'root', label: 'Sans dossier', routineCount: 2 },
+  { value: 'root', routineCount: 2 },
 ];
 
 function context(
@@ -84,6 +85,12 @@ describe('HomeSuggestionCard routine folder context', () => {
     await user.click(change);
 
     expect(await screen.findByRole('dialog', { name: 'Choisir un dossier' })).toBeVisible();
+  });
+
+  it('renders the selected root context from the home dictionary', () => {
+    renderCard({ routineContext: context({ selected: 'root' }) });
+
+    expect(screen.getByText(t('home.rootRoutineFolder'))).toBeVisible();
   });
 
   it('explains an empty selected folder and keeps the change action', () => {

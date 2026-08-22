@@ -117,6 +117,10 @@ describe('getHomeDashboard', () => {
       `folder:${folder.id}`,
       'root',
     ]);
+    expect(dashboard.routineContext.options.at(-1)).toEqual({
+      value: 'root',
+      routineCount: 1,
+    });
     expect(dashboard.routineContext.selected).toBe(`folder:${folder.id}`);
     expect(dashboard.suggestedRoutine?.routineId).toBe(inside.id);
     expect(dashboard.suggestedRoutine?.routineId).not.toBe(root.id);

@@ -6,7 +6,10 @@ import { t } from '@/i18n/fr';
 import { routineSummaryLine } from '@/features/routines/summary';
 import { Button, Card } from '@/ui';
 import { FolderSwitchIcon } from '@/ui/icons';
-import { HomeRoutineContextSheet } from './HomeRoutineContextSheet';
+import {
+  HomeRoutineContextSheet,
+  routineContextOptionLabel,
+} from './HomeRoutineContextSheet';
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' });
 
@@ -86,7 +89,9 @@ export function HomeSuggestionCard({
         </p>
         {hasFolderPicker && (
           <p className="mt-1 truncate text-sm font-semibold text-[var(--text-1)]">
-            {selectedContext?.label ?? t('home.chooseRoutineFolder')}
+            {selectedContext === undefined
+              ? t('home.chooseRoutineFolder')
+              : routineContextOptionLabel(selectedContext)}
           </p>
         )}
       </div>

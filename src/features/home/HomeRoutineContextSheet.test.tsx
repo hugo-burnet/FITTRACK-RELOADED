@@ -1,7 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { useState } from 'react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { HomeDashboardData } from '@/data/repositories/home';
 import { setRoutineFolderContext } from '@/data/repositories/settings';
+import { t } from '@/i18n/fr';
 import { HomeRoutineContextSheet } from './HomeRoutineContextSheet';
 
 vi.mock('@/data/repositories/settings', () => ({
@@ -10,8 +13,26 @@ vi.mock('@/data/repositories/settings', () => ({
 
 const options = [
   { value: 'folder:push' as const, label: 'Salle', routineCount: 2 },
-  { value: 'root' as const, label: 'Sans dossier', routineCount: 1 },
-];
+  { value: 'root' as const, routineCount: 1 },
+] satisfies HomeDashboardData['routineContext']['options'];
+
+function SessionHarness() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>
+        Rouvrir
+      </button>
+      <HomeRoutineContextSheet
+        open={open}
+        value={null}
+        options={options}
+        onClose={() => setOpen(false)}
+      />
+    </>
+  );
+}
 
 describe('HomeRoutineContextSheet', () => {
   beforeEach(() => {
@@ -52,7 +73,9 @@ describe('HomeRoutineContextSheet', () => {
       <HomeRoutineContextSheet open value={null} options={options} onClose={vi.fn()} />,
     );
 
-    await user.click(screen.getByRole('radio', { name: /Sans dossier/ }));
+    await user.click(
+      screen.getByRole('radio', { name: t('home.rootRoutineFolder') }),
+    );
 
     expect(setRoutineFolderContext).toHaveBeenCalledWith({ kind: 'root' });
   });
@@ -75,6 +98,23 @@ describe('HomeRoutineContextSheet', () => {
     expect(screen.getByRole('radio', { name: /Salle/ })).toBeEnabled();
   });
 
+  it('clears failed feedback after dismissal before a new sheet session', async () => {
+    vi.mocked(setRoutineFolderContext).mockRejectedValueOnce(new Error('disk full'));
+    const user = userEvent.setup();
+    render(<SessionHarness />);
+
+    await user.click(screen.getByRole('radio', { name: /Salle/ }));
+    expect(await screen.findByRole('status')).toBeVisible();
+
+    const dialog = screen.getByRole('dialog', { name: 'Choisir un dossier' });
+    await user.click(screen.getAllByRole('button', { name: 'Fermer' }).at(-1)!);
+    fireEvent.transitionEnd(dialog);
+    await user.click(screen.getByRole('button', { name: 'Rouvrir' }));
+
+    expect(await screen.findByRole('dialog', { name: 'Choisir un dossier' })).toBeVisible();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
   it('exposes checked radio rows with 56px touch targets', () => {
     render(
       <HomeRoutineContextSheet open value="root" options={options} onClose={vi.fn()} />,
@@ -84,7 +124,9 @@ describe('HomeRoutineContextSheet', () => {
     expect(radios).toHaveLength(2);
     for (const radio of radios) expect(radio).toHaveClass('min-h-14');
 
-    const selected = screen.getByRole('radio', { name: /Sans dossier/ });
+    const selected = screen.getByRole('radio', {
+      name: t('home.rootRoutineFolder'),
+    });
     expect(selected).toHaveAttribute('aria-checked', 'true');
     expect(selected.querySelector('svg')).not.toBeNull();
     expect(screen.getByRole('radio', { name: /Salle/ })).toHaveAttribute(

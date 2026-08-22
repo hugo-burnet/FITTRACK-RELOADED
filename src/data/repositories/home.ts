@@ -66,11 +66,17 @@ export interface HomeProgramProjection {
   pick: HomeProgramPick;
 }
 
-export interface HomeRoutineContextOption {
-  value: 'root' | `folder:${string}`;
-  label: string;
-  routineCount: number;
-}
+export type HomeRoutineContextOption =
+  | {
+      value: 'root';
+      label?: never;
+      routineCount: number;
+    }
+  | {
+      value: `folder:${string}`;
+      label: string;
+      routineCount: number;
+    };
 
 export interface HomeDashboardData {
   /** Toutes les dates de séances terminées — la matière de `calculateWeeklyRegularity`. */
@@ -225,7 +231,7 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
       })),
     );
     if (rootRoutines.length > 0) {
-      options.push({ value: 'root', label: 'Sans dossier', routineCount: rootRoutines.length });
+      options.push({ value: 'root', routineCount: rootRoutines.length });
     }
   }
 

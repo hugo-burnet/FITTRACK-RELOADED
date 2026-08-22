@@ -14,6 +14,12 @@ interface Props {
   onClose: () => void;
 }
 
+export function routineContextOptionLabel(
+  option: RoutineContext['options'][number],
+): string {
+  return option.value === 'root' ? t('home.rootRoutineFolder') : option.label;
+}
+
 /**
  * Le dossier dont l'accueil tire sa suggestion.
  *
@@ -27,7 +33,10 @@ export function HomeRoutineContextSheet({ open, value, options, onClose }: Props
   const [error, setError] = useState(false);
 
   const close = () => {
-    if (saving === null) onClose();
+    if (saving === null) {
+      setError(false);
+      onClose();
+    }
   };
 
   const select = async (nextValue: RoutineContext['options'][number]['value']) => {
@@ -72,7 +81,7 @@ export function HomeRoutineContextSheet({ open, value, options, onClose }: Props
                   selected ? 'font-semibold text-[var(--accent-ink)]' : 'text-[var(--text-1)]'
                 }`}
               >
-                {option.label}
+                {routineContextOptionLabel(option)}
               </span>
               {selected && <CheckIcon className="shrink-0 text-[var(--accent-ink)]" />}
             </button>
