@@ -1855,6 +1855,97 @@ const fr = {
     modeSilence: 'Silence',
     modeSilenceHint: 'Aucun son produit par FitTrack.',
 
+    activation: {
+      title: 'Préparer ma première séance',
+      body: 'Choisis un point de départ. FitTrack te laissera effectuer chaque geste sur tes propres données.',
+      template: 'Choisir un modèle',
+      blank: 'Créer ma routine',
+      later: 'Plus tard',
+    },
+
+    mission: {
+      label: 'Mission guidée',
+      counter: 'Étape {index} sur {count}',
+      dismiss: 'Passer cette mission',
+      activation: {
+        title: 'Choisir un modèle',
+        instruction: 'Ouvre le menu de création, puis choisis un modèle.',
+        detail: 'Le modèle reste entièrement modifiable avant de démarrer.',
+      },
+      recovery: {
+        title: 'Résoudre la séance en attente',
+        instruction: 'Ouvre la séance en attente et choisis consciemment sa suite.',
+        detail: 'FitTrack ne supprimera jamais cette séance automatiquement.',
+      },
+      routineCreate: {
+        title: 'Créer une première routine',
+        instruction: 'Ouvre le menu de création, puis choisis Nouvelle routine.',
+        detail: 'Le nom et chaque modification sont enregistrés immédiatement.',
+      },
+      routineExercise: {
+        title: 'Ajouter un exercice',
+        instruction: 'Ajoute au moins un exercice à cette routine.',
+        detail: 'Choisis un exercice que tu peux réellement effectuer maintenant.',
+      },
+      routineSet: {
+        title: 'Préparer plusieurs séries',
+        instruction: 'Ajoute une deuxième série au premier exercice.',
+        detail: 'Elle permettra de voir le repos entre deux efforts.',
+      },
+      routineTargets: {
+        title: 'Définir la série',
+        instruction: 'Ouvre la première série et renseigne sa cible.',
+        detail: 'Les champs proposés dépendent du type de mesure de l’exercice.',
+      },
+      routineRest: {
+        title: 'Définir le repos',
+        instruction: 'Ouvre les options de l’exercice et choisis un temps de repos.',
+        detail: 'Ce repos démarrera après chaque série de travail compatible.',
+      },
+      routineStart: {
+        title: 'Démarrer la routine',
+        instruction: 'Démarre la séance depuis la barre d’action.',
+        detail: 'Une seule séance peut être active à la fois.',
+      },
+      setInput: {
+        title: 'Renseigner la première série',
+        instruction: 'Renseigne les valeurs de la première série.',
+        detail: 'S’il existe, touche le résultat précédent pour le reprendre en un geste.',
+      },
+      setValidate: {
+        title: 'Valider la série',
+        instruction: 'Touche la coche de la première série.',
+        detail: 'La validation est écrite immédiatement sur cet appareil.',
+      },
+      rest: {
+        title: 'Lire le repos',
+        instruction: 'Laisse le minuteur atteindre la fin du repos.',
+        detail: 'Le décompte reste fiable si tu quittes momentanément cet écran.',
+      },
+      workoutFinish: {
+        title: 'Ouvrir le bilan',
+        instruction: 'Quand ta séance est terminée, ouvre le bilan.',
+        detail: 'Les séries non validées ne seront pas comptées.',
+      },
+      workoutSave: {
+        title: 'Enregistrer la séance',
+        instruction: 'Relis le bilan, puis enregistre la séance.',
+        detail: 'Elle rejoindra immédiatement ton historique et tes analyses.',
+      },
+      backupExport: {
+        title: 'Exporter une sauvegarde complète',
+        instruction: 'Exporte une sauvegarde complète de FitTrack.',
+        detail:
+          'Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.',
+      },
+      backupRestore: {
+        title: 'Comprendre une restauration',
+        instruction: 'Choisis un fichier de sauvegarde pour ouvrir sa confirmation.',
+        detail:
+          'Tu peux fermer la confirmation : cette mission ne demande pas de restaurer le fichier.',
+      },
+    },
+
     topic: {
       home: 'Accueil',
       routines: 'Routines et blocs',

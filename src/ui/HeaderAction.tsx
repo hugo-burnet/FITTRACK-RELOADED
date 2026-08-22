@@ -20,16 +20,19 @@ export function HeaderAction({
   children,
   pressed,
   disabled = false,
+  tutorialId,
 }: {
   label: string;
   onClick: () => void;
   children: ReactNode;
   pressed?: boolean;
   disabled?: boolean;
+  tutorialId?: string;
 }) {
   return (
     <button
       type="button"
+      data-tutorial-id={tutorialId}
       aria-label={label}
       aria-pressed={pressed}
       disabled={disabled}
