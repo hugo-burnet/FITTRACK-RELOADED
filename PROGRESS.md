@@ -2,8 +2,29 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Revue de code complète post-v1.0.0** — cinq correctifs
-livrés, dont un défaut de perte de données silencieuse à la restauration).
+**Dernière mise à jour :** 2026-08-22 (**Inventaire produit et tutoriel** — document maître créé,
+aucun comportement applicatif modifié).
+
+## Inventaire produit et tutoriel — post-v1.0.1
+
+L'application a été parcourue au format mobile et croisée avec ses routes, repositories, tests,
+plans et scripts vocaux. Le résultat vit dans **`docs/product/FEATURE-INVENTORY.md`** : un document
+maître unique qui répertorie les fonctionnalités livrées, partielles, différées ou absentes, leur
+couverture par le tutoriel et un backlog priorisé d'améliorations.
+
+Constats structurants :
+
+- la visite actuelle couvre neuf thèmes et présente bien l'application, mais n'accompagne aucun
+  parcours métier complet ; seul le choix final du mode d'annonce atteint le niveau « Action » ;
+- le prochain socle P1 doit enseigner la chaîne routine → première série → repos → fin de séance →
+  sauvegarde, ainsi que la reprise ou l'abandon explicite d'une séance ancienne ;
+- le manifeste audio courant est complet : **43 identifiants uniques et 43 MP3 présents**, dont
+  dix clips de tutoriel. Les futures « voix manquantes » seront donc celles des nouvelles missions,
+  à générer seulement après validation définitive de leurs textes ;
+- la clé API voix remise en service n'a été ni lue ni utilisée pendant cet inventaire.
+
+**Suite :** faire relire le document maître, intégrer les arbitrages produit, puis écrire le plan
+d'implémentation détaillé avant toute modification du tutoriel ou régénération audio.
 
 ## Revue de code complète — post-v1.0.0
 
