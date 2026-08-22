@@ -2,9 +2,75 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Chrono de série chronométrée et exercices unilatéraux
-livrés ; checkpoints téléphone en attente : la récupération d'une séance ancienne, un vrai
-gainage, et une série unilatérale**).
+**Dernière mise à jour :** 2026-08-22 (**L'app parle : 95 clips pour 95 identifiants. Chrono,
+unilatéral et voix des missions livrés ; checkpoints téléphone en attente**).
+
+## La voix — le manifeste est complet
+
+**95 identifiants, 95 MP3.** Trois familles enregistrées dans la foulée : les 36 repères du chrono,
+la phrase du changement de côté, et les 15 consignes des missions guidées.
+
+### Ce que les enregistrements ont appris
+
+**« Cinq » se coupait en deux.** Son /k/ final est une fermeture d'environ 120 ms suivie d'une
+explosion de 80 ms, et le détecteur de blocs, calé à 50 ms, y voyait deux mots — quatre prises de
+suite refusées pour « 5 blocs, 4 attendus ». Rien n'était cassé pour autant : les deux groupes
+historiques disent « Trois… Deux… Un », dont aucun mot ne finit par une occlusive, et les 38 lignes
+seules ne passent jamais par ce découpage. `gapMs` est désormais réglable par groupe, absent par
+défaut, donc les groupes d'origine se découpent à l'identique.
+
+**Le plafond d'inversions venait des décomptes.** Calibré sur des mots d'une syllabe, il refusait
+« deux minutes quarante-cinq » à 17 inversions — de la prosodie, pas un défaut. Les trois seuils
+suivent maintenant la plus longue phrase du groupe : `minMs` 60×syllabes, `maxMs` 300×syllabes+400,
+`maxReversals` 6×syllabes. Le barème extrapole les valeurs déjà validées à l'oreille (2 syllabes →
+120/1000/12) au lieu d'inventer un second jeu de nombres.
+
+**Le cache de prises a payé ces deux découvertes.** Les deux correctifs ont été validés en
+redécoupant des prises déjà en mémoire, sans un appel d'API supplémentaire. Sur l'ensemble du lot,
+neuf prises refusées seulement — très loin du « une sur six » que le script redoutait.
+
+**Piège de méthode :** commencer par les deux extrêmes — le groupe le plus court, puis le plus
+long — a trouvé les deux réglages faux en huit clips. Générer dans l'ordre aurait payé la même
+découverte beaucoup plus cher.
+
+### Les missions guidées parlent
+
+`clipId` existait sur les étapes depuis leur écriture et **n'était lu par personne** — la même
+dette que `isUnilateral`. Les quinze étapes portent un clip, et le coach le joue en arrivant
+dessus.
+
+Les textes sont **écrits pour la voix, pas copiés de l'écran**. Celui-ci tutoie (« Ouvre le menu de
+création ») ; l'annonceuse vouvoie et constate. Lui faire lire la copie d'interface aurait cassé le
+personnage que `voiceScript.json` décrit.
+
+**Elle se tait quand une horloge de séance tourne.** `playTutorialNarration` ne passe pas par
+`planCue` : il ignore les priorités et joue. Or quatre missions se déroulent pendant la séance. Une
+consigne par-dessus un « trois, deux, un », c'est le décompte qu'on perd — et c'est lui qui compte
+sous la barre. Le texte reste à l'écran, exactement comme en mode Silence.
+
+`isWorkoutAudioBusy` existait déjà et répond mieux qu'un module écrit à côté : il lit l'échéance à
+l'horloge murale, pas un `setId` qui survit au démontage de l'écran. Il gagne seulement le chrono de
+maintien — le seul des trois sans échéance, puisqu'il s'arrête quand on relâche.
+
+### Le garde-fou du manifeste
+
+Le compte « N identifiants / N MP3 » était recopié à la main de session en session. C'est un test
+désormais. Il a d'ailleurs commencé par se tromper : `allClips()` ne rend que les lignes dont le
+`cue` existe dans `CUES`, or la narration porte `cue: 'tutorial'` — dix clips sur quatre-vingts
+passaient à travers. Il lit maintenant le script entier.
+
+### Portes
+
+- `npm run typecheck` : sortie 0 ;
+- `npm run lint` : sortie 0, aucun avertissement ;
+- `npm run test:run` : **193 fichiers, 2 091 tests**, sortie 0 ;
+- `npm run build` : sortie 0, **151 entrées précachées** — les MP3 partent dans le service worker,
+  donc la voix marche hors ligne.
+
+**Checkpoint téléphone demandé :**
+
+> J'entends les repères pendant un gainage, le changement de côté sur une série unilatérale, et la
+> consigne de chaque mission — sauf quand un repos ou une cadence tourne, où l'écran suffit.
 
 ## Exercices unilatéraux — une ligne, deux côtés
 

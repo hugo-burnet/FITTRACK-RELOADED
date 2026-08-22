@@ -542,10 +542,10 @@ La clé API rebranchée le 22 août 2026 n'a pas été utilisée pendant cet inv
 4. **Livré — annonces de séance** : le bug RPE/repos est fermé, et le chrono de maintien comble le
    manque signalé (sortir de l'app pour chronométrer un gainage).
 5. **Livré — cycle unilatéral à deux côtés**, sur les deux cadences : répétitions et maintien.
-6. **Revue des textes** : figer les douze transcriptions P1, les trente-six repères du chrono et
-   le texte du changement de côté, puis les faire valider.
-7. **Voix** : auditer les manques, générer **uniquement** ce qui manque, écouter dans l'app et
-   vérifier manifeste/MP3 — sans jamais exposer ni consigner la clé.
+6. **Livré — revue des textes** : les quinze consignes de mission, les trente-six repères du
+   chrono et le changement de côté sont figés et validés.
+7. **Livré — voix** : 95 identifiants, 95 MP3, épinglés par un test du manifeste. La clé n'a
+   jamais été lue, affichée ni consignée.
 8. **Missions P2** : outils, blocs, historique, analyses et exercices.
 9. **Audit final** : typecheck, tests, build, mobile 390 px, TalkBack et vraie séance hors ligne.
 
