@@ -9,6 +9,7 @@ import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import type { PaceSheetView } from './PaceSheet';
+import { paceSheetViewOf } from './paceSheetView';
 import {
   IDLE_PACE_PLAN,
   PACE_LEAD_SECONDS,
@@ -24,6 +25,16 @@ import {
   prepareNextPace,
   type PaceTarget,
 } from './paceTarget';
+import {
+  IDLE_SIDE_CYCLE,
+  SIDE_CHANGE_LEAD_SECONDS,
+  openSideCycle,
+  sideCycleWithoutSet,
+  sideStageAt,
+  turnSide,
+  type SideCycle,
+  type SideStage,
+} from './sideCycle';
 
 /**
  * The whole preparation of a cadence, kept in one place.
@@ -62,6 +73,17 @@ export interface WorkoutPace {
   stop: (setId?: string) => void;
   /** What the tempo sheet shows for a line, `null` when no line is open. */
   viewFor: (line: Line | null, name: string) => PaceSheetView | null;
+  /** Où en est le cycle deux côtés de cette série, `null` hors cycle. */
+  sideStageOf: (setId: string) => SideStage | null;
+  /**
+   * Un côté vient de finir.
+   *
+   * `'changed'` veut dire que la série continue : **rien de durable ne doit en
+   * découler** — ni validation, ni repos, ni RPE, ni record. `'completed'` rend
+   * la main à l'appelant, et `'none'` dit que cette série n'est pas dans un
+   * cycle.
+   */
+  turnSideOf: (line: Line, setId: string) => 'changed' | 'completed' | 'none';
 }
 
 export function useWorkoutPace(
@@ -70,6 +92,23 @@ export function useWorkoutPace(
 ): WorkoutPace {
   /** The one cadence being prepared — waiting for reps, or armed by them. */
   const [plan, setPlan] = useState<PacePlan>(IDLE_PACE_PLAN);
+  /**
+   * Le cycle deux côtés de la série unilatérale en cours, s'il y en a une.
+   *
+   * **Une référence pour décider, un état pour redessiner.** Ouvrir le cycle et
+   * en tourner un côté peuvent tomber dans le même tour de boucle — le relais
+   * d'un repos vers un maintien unilatéral, par exemple. Une décision qui lit
+   * l'état de la fermeture de rendu y verrait encore le cycle d'avant et
+   * repartirait du premier côté, indéfiniment. Chaque écriture touche les deux :
+   * la référence est toujours au moins aussi fraîche que l'état, et un rendu
+   * suit toujours.
+   */
+  const cycleRef = useRef<SideCycle>(IDLE_SIDE_CYCLE);
+  const [, setSideCycle] = useState<SideCycle>(IDLE_SIDE_CYCLE);
+  const writeCycle = (next: SideCycle): void => {
+    cycleRef.current = next;
+    setSideCycle(next);
+  };
   const armedTypedSets = useRef(new Set<string>());
   const pacer = useRepPacer();
   const startPace = useRepPacer((state) => state.start);
@@ -87,6 +126,12 @@ export function useWorkoutPace(
   const cadenceOf = (line: Line) =>
     cadenceFor(workoutExerciseIdentityOf(line).measurementType, repSecondsOf(line));
 
+  /** Lu dans l'instantané avant la bibliothèque, comme le reste de l'identité. */
+  const unilateralOf = (line: Line): boolean => workoutExerciseIdentityOf(line).isUnilateral === 1;
+
+  const sideStageOf = (setId: string): SideStage | null =>
+    sideStageAt(cycleRef.current, setId, Date.now());
+
   /**
    * Une seule horloge à la fois, et c'est ici que ça se décide.
    *
@@ -95,7 +140,19 @@ export function useWorkoutPace(
    * règle que « un seul repos à la fois », et elle est épinglée par un test
    * plutôt que laissée à la discipline des appelants.
    */
-  const startClock = (rowId: string, target: PaceTarget, leadSeconds: number): void => {
+  const startClock = (
+    rowId: string,
+    target: PaceTarget,
+    leadSeconds: number,
+    unilateral: boolean,
+  ): void => {
+    // Le cycle s'ouvre au démarrage d'une horloge — jamais à la reprise du
+    // second côté, qui court déjà sur ce `setId` et le ferait repartir du
+    // premier, indéfiniment.
+    if (sideStageAt(cycleRef.current, target.setId, Date.now()) === null) {
+      writeCycle(openSideCycle(target.setId, unilateral));
+    }
+
     if (target.kind === 'hold') {
       stopPace();
       startHold(rowId, target.setId, leadSeconds);
@@ -148,6 +205,7 @@ export function useWorkoutPace(
         // Read now, not when the decision was taken: the settle delay must not
         // push the beat back.
         leadSecondsAt(decision.launchAt, Date.now()),
+        line !== undefined && unilateralOf(line),
       );
       setPlan((current) => planWithoutSet(current, decision.setId));
     }, decision.delayMs);
@@ -199,8 +257,34 @@ export function useWorkoutPace(
      */
     const lead = target.kind === 'hold' ? PACE_LEAD_SECONDS : 0;
     if (lead > 0) announce('pace-start-10');
-    startClock(line.row.id, target, lead);
+    startClock(line.row.id, target, lead, unilateralOf(line));
     return true;
+  };
+
+  /**
+   * Un côté vient de finir.
+   *
+   * Sur le premier, la même horloge repart **sur le même `setId`** après dix
+   * secondes : c'est la même série, et le contrat l'exige. Sur le second, le
+   * cycle se referme et l'appelant reprend la main — c'est lui qui valide,
+   * démarre le repos et ouvre le RPE, ce qu'aucun premier côté ne doit faire.
+   */
+  const turnSideOf = (line: Line, setId: string): 'changed' | 'completed' | 'none' => {
+    const turn = turnSide(cycleRef.current, setId, Date.now());
+    if (turn.kind === 'ignore') return 'none';
+    if (turn.kind === 'complete') {
+      writeCycle(sideCycleWithoutSet(cycleRef.current, setId));
+      return 'completed';
+    }
+
+    writeCycle(turn.cycle);
+    announce('side-change');
+    const preparation = prepareNextPace(line.sets, cadenceOf(line));
+    // La série n'est pas validée : elle est toujours la prochaine à faire.
+    if (preparation.kind === 'ready' && preparation.target.setId === setId) {
+      startClock(line.row.id, preparation.target, SIDE_CHANGE_LEAD_SECONDS, unilateralOf(line));
+    }
+    return 'changed';
   };
 
   const startFollowing = (completedLine: Line): boolean => {
@@ -231,7 +315,13 @@ export function useWorkoutPace(
     // A new exercise needs its own preparation window. The rest has just
     // finished; this is a fresh "dans dix secondes", followed by 3–2–1.
     announce('pace-start-10');
-    startClock(following.rowId, target, PACE_LEAD_SECONDS);
+    const followingLine = lines.find(({ row }) => row.id === following.rowId);
+    startClock(
+      following.rowId,
+      target,
+      PACE_LEAD_SECONDS,
+      followingLine !== undefined && unilateralOf(followingLine),
+    );
     return true;
   };
 
@@ -271,35 +361,41 @@ export function useWorkoutPace(
   const viewFor = (line: Line | null, name: string): PaceSheetView | null => {
     if (line === null) return null;
     const cadence = cadenceOf(line);
-    const running =
-      cadence.kind === 'hold'
-        ? holdRowId === line.row.id && holdSetId !== null
-        : pacer.rowId === line.row.id && pacer.setId !== null;
-    const preparation = prepareNextPace(line.sets, cadence);
-    const target = preparation.kind === 'ready' ? preparation.target : null;
 
-    return {
-      kind: cadence.kind,
+    return paceSheetViewOf({
       rowId: line.row.id,
       name,
-      repSeconds: running && cadence.kind === 'reps' ? pacer.repSeconds : repSecondsOf(line),
+      sets: line.sets,
+      cadence,
+      repSeconds: repSecondsOf(line),
       defaultRepSeconds: defaultRepSeconds ?? repSecondsOf(line),
-      reps:
-        running && cadence.kind === 'reps'
-          ? pacer.reps
-          : target?.kind === 'reps'
-            ? target.reps
-            : null,
-      canStart: preparation.kind !== 'done',
-      running,
-    };
+      running:
+        cadence.kind === 'hold'
+          ? holdRowId === line.row.id && holdSetId !== null
+          : pacer.rowId === line.row.id && pacer.setId !== null,
+      pacer,
+    });
   };
 
-  /** Arrête l'horloge de ce set, quelle que soit celle des deux qui le suivait. */
+  /**
+   * Arrête l'horloge de ce set, quelle que soit celle des deux qui le suivait —
+   * et referme le cycle deux côtés avec elle : rien ne doit rester armé derrière
+   * un arrêt.
+   */
   const stop = (setId?: string): void => {
     stopPace(setId);
     stopHold(setId);
+    writeCycle(sideCycleWithoutSet(cycleRef.current, setId));
   };
 
-  return { repSecondsOf, startFor, startFollowing, armFromTypedReps, stop, viewFor };
+  return {
+    repSecondsOf,
+    startFor,
+    startFollowing,
+    armFromTypedReps,
+    stop,
+    viewFor,
+    sideStageOf,
+    turnSideOf,
+  };
 }

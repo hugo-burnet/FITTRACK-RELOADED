@@ -11,7 +11,7 @@ vi.mock('@/audio/announce', () => ({ announce, primeAnnouncer: vi.fn() }));
 
 const now = 1_000_000;
 
-function exercise(measurementType: Exercise['measurementType']): Exercise {
+function exercise(measurementType: Exercise['measurementType'], unilateral = false): Exercise {
   return {
     id: 'ex',
     createdAt: 0,
@@ -23,7 +23,7 @@ function exercise(measurementType: Exercise['measurementType']): Exercise {
     equipment: 'bodyweight',
     measurementType,
     isCustom: 0,
-    isUnilateral: 0,
+    isUnilateral: unilateral ? 1 : 0,
   };
 }
 
@@ -62,8 +62,9 @@ function workoutSet(id: string, reps?: number): WorkoutSet {
 function mount(
   measurementType: Exercise['measurementType'],
   sets: WorkoutSet[] = [workoutSet('s1', 8)],
+  unilateral = false,
 ) {
-  const line = { row: row(), exercise: exercise(measurementType), sets };
+  const line = { row: row(), exercise: exercise(measurementType, unilateral), sets };
   const captured: { pace: WorkoutPace | null } = { pace: null };
   function Probe() {
     captured.pace = useWorkoutPace([line], 3);
@@ -190,6 +191,70 @@ describe('useWorkoutPace', () => {
     });
 
     expect(announce).toHaveBeenCalledWith('pace-start-10');
+  });
+
+  it('ouvre le cycle deux côtés sur une ligne unilatérale, et pas ailleurs', () => {
+    const uni = mount('weight_reps', [workoutSet('s1', 8)], true);
+    act(() => {
+      uni.pace().startFor(uni.line);
+    });
+    expect(uni.pace().sideStageOf('s1')).toBe('first');
+
+    const bi = mount('weight_reps');
+    act(() => {
+      bi.pace().startFor(bi.line);
+    });
+    expect(bi.pace().sideStageOf('s1')).toBeNull();
+  });
+
+  // Le contrat : même série, même identifiant, dix secondes réelles.
+  it('reprend le second côté sur le même setId, dix secondes plus tard', () => {
+    const { line, pace } = mount('weight_reps', [workoutSet('s1', 8)], true);
+    act(() => {
+      pace().startFor(line);
+    });
+    expect(useRepPacer.getState().startedAt).toBe(now);
+
+    act(() => {
+      expect(pace().turnSideOf(line, 's1')).toBe('changed');
+    });
+
+    expect(announce).toHaveBeenCalledWith('side-change');
+    expect(useRepPacer.getState().setId).toBe('s1');
+    expect(useRepPacer.getState().startedAt).toBe(now + 10_000);
+    expect(pace().sideStageOf('s1')).toBe('transition');
+  });
+
+  it('termine la série au bout du second côté', () => {
+    const { line, pace } = mount('time_only', [workoutSet('s1')], true);
+    act(() => {
+      pace().startFor(line);
+      pace().turnSideOf(line, 's1');
+    });
+
+    // Les dix secondes passées, le second côté a commencé.
+    vi.setSystemTime(now + 30_000);
+    act(() => {
+      expect(pace().turnSideOf(line, 's1')).toBe('completed');
+    });
+    expect(pace().sideStageOf('s1')).toBeNull();
+  });
+
+  it('ne tourne rien sur une ligne bilatérale', () => {
+    const { line, pace } = mount('weight_reps');
+    act(() => {
+      pace().startFor(line);
+      expect(pace().turnSideOf(line, 's1')).toBe('none');
+    });
+  });
+
+  it('referme le cycle avec l’horloge', () => {
+    const { line, pace } = mount('weight_reps', [workoutSet('s1', 8)], true);
+    act(() => {
+      pace().startFor(line);
+      pace().stop();
+    });
+    expect(pace().sideStageOf('s1')).toBeNull();
   });
 
   it('dit à la feuille ce qu’elle pilote', () => {
