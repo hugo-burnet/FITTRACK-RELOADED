@@ -2,8 +2,29 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Plan tutoriel v2 P1** — plan d'implémentation détaillé
-écrit et auto-relu, aucun comportement applicatif modifié).
+**Dernière mise à jour :** 2026-08-22 (**Accueil — le dossier actif suit enfin la suggestion**).
+
+## Contexte de dossier pour la suggestion de l'accueil
+
+La suggestion globale fonctionnait tant que toutes les routines formaient une seule pile : choisir
+la moins récemment réalisée parmi toute la bibliothèque devient faux dès que les routines sont
+rangées dans plusieurs dossiers. Le classement sait alors répondre à « laquelle est la plus
+ancienne ? », mais plus à « dans quel ensemble veux-tu t'entraîner ? ».
+
+L'accueil mémorise maintenant un contexte choisi explicitement : un dossier, ou la racine
+**« Sans dossier »**. Ce choix est persisté dans les réglages locaux et la suggestion de la carte
+classe la routine la moins récemment réalisée **uniquement dans ce contexte**. Quand aucun dossier
+n'existe, rien ne change : le comportement global historique est conservé sans imposer de sélecteur.
+
+Les bords importants sont écrits dans le comportement, pas laissés au hasard : supprimer le dernier
+dossier ramène à la sélection globale ; supprimer le dossier sélectionné alors que d'autres dossiers
+existent demande de choisir à nouveau ; un dossier sélectionné mais vide reste vide et ne pioche
+jamais silencieusement ailleurs. Un programme actif reste prioritaire, exactement comme avant.
+
+**Preuves.** Réglages : **32/32** tests ciblés ; repository de l'accueil : **14/14** ; interface
+d'accueil : **9/9**. Le checkpoint téléphone couvre le premier sélecteur, l'icône pour changer de
+dossier depuis la carte, la persistance après fermeture/réouverture, **« Sans dossier »** et le
+dossier vide. Aucun APK ni succès de la suite complète n'est revendiqué à ce stade.
 
 ## Plan tutoriel v2 — première séance P1
 
