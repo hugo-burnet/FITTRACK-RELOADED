@@ -1084,3 +1084,77 @@ describe('WorkoutScreen — chrono de maintien', () => {
     });
   });
 });
+
+async function seedUnilateralHoldWorkout(): Promise<string> {
+  const exercise = await createCustomExercise({
+    name: 'Planche latérale',
+    primaryMuscle: 'abs',
+    secondaryMuscles: [],
+    equipment: 'bodyweight',
+    measurementType: 'time_only',
+    isUnilateral: 1,
+  });
+  const routine = await createRoutine('Ceinture');
+  await addExercisesToRoutine(routine.id, [exercise.id]);
+  return (await startWorkoutFromRoutine(routine.id)).id;
+}
+
+describe('WorkoutScreen — exercice unilatéral', () => {
+  beforeEach(async () => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().stop();
+    useExerciseOrderLock.getState().reset();
+    await resetDb();
+  });
+
+  afterEach(() => {
+    useRestTimer.getState().stop();
+    useRepPacer.getState().stop();
+    useHoldTimer.getState().stop();
+  });
+
+  it('fait deux côtés et une seule validation sur la même série', async () => {
+    const workoutId = await seedUnilateralHoldWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Planche latérale');
+    await user.click(screen.getByRole('button', { name: 'Chrono de Planche latérale' }));
+    await user.click(await screen.findByRole('button', { name: t('workout.holdStart') }));
+    const setId = useHoldTimer.getState().setId;
+    expect(setId).not.toBeNull();
+
+    // Premier côté tenu, puis relâché.
+    act(() => {
+      useHoldTimer.setState({ startedAt: Date.now() - 42_000 });
+    });
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    // Rien de durable : ni validation, ni repos, ni RPE.
+    expect((await firstSet(workoutId)).isCompleted).toBe(0);
+    expect((await firstSet(workoutId)).durationSeconds).toBeUndefined();
+    expect(useRestTimer.getState().setId).toBeNull();
+    expect(screen.queryByRole('group', { name: t('workout.effortQuestion') })).toBeNull();
+    // Le relevé le dit, y compris en Silence.
+    expect(await screen.findByText(/Changement de côté ·/)).toBeInTheDocument();
+    // Même série : changer de côté ne crée pas de ligne.
+    expect(useHoldTimer.getState().setId).toBe(setId);
+
+    // Second côté, une fois les dix secondes passées.
+    act(() => {
+      useHoldTimer.setState({ startedAt: Date.now() - 40_000 });
+    });
+    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    await waitFor(async () => {
+      expect(await firstSet(workoutId)).toMatchObject({ durationSeconds: 38, isCompleted: 1 });
+    });
+
+    // Une seule série en base, et son côté n'a pas bougé : une ligne représente
+    // les deux côtés, elle ne se dédouble pas.
+    const detail = await getWorkoutDetail(workoutId);
+    expect(detail?.exercises[0]?.sets).toHaveLength(1);
+    expect(detail?.exercises[0]?.sets[0]?.side).toBe('both');
+  });
+});

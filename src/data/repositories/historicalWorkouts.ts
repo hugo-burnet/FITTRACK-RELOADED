@@ -144,9 +144,21 @@ function projectExercise(
   sets: readonly WorkoutSet[],
   defaultRepSeconds: number,
 ): HistoricalExercise {
+  const identity = resolveExerciseIdentity(row, exercise);
+  /*
+   * Le drapeau unilatéral n'entre pas dans la projection.
+   *
+   * Elle est lue par les exports et les analyses, et aucun des deux ne s'en
+   * sert. Un champ transporté que personne ne lit est exactement la dette que
+   * ce lot vient de solder ailleurs — `isUnilateral` a passé cinq lots déclaré
+   * et lu par personne. Il reste sur la ligne de séance, où l'écran en direct
+   * le lit pour savoir qu'une ligne représente deux côtés.
+   */
+  delete identity.isUnilateral;
+
   return {
     exerciseId: row.exerciseId,
-    ...resolveExerciseIdentity(row, exercise),
+    ...identity,
     repSeconds: resolveRepSeconds(row.repSeconds, defaultRepSeconds),
     ...(row.notes === undefined ? {} : { notes: row.notes }),
     sets: [...sets].sort(byOrder).map(projectSet),
