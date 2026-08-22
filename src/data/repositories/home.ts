@@ -239,7 +239,7 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     ? selectedValue
     : null;
   const candidates =
-    folders.length === 0 && context?.kind !== 'folder'
+    folders.length === 0
       ? routines
       : validSelected === 'root'
         ? rootRoutines
@@ -265,8 +265,7 @@ export async function getHomeDashboard(): Promise<HomeDashboardData> {
     weeklyGoalHistory,
     routineCount: routines.length,
     routineContext: {
-      required:
-        validSelected === null && (folders.length > 0 || context?.kind === 'folder'),
+      required: folders.length > 0 && validSelected === null,
       selected: validSelected,
       options,
     },
