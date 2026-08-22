@@ -35,6 +35,12 @@ const WeeklyVolumeScreen = lazy(() =>
   })),
 );
 
+const MonthlyReportScreen = lazy(() =>
+  import('./MonthlyReportScreen').then((module) => ({
+    default: module.MonthlyReportScreen,
+  })),
+);
+
 const MuscleBalanceScreen = lazy(() =>
   import('./MuscleBalanceScreen').then((module) => ({
     default: module.MuscleBalanceScreen,
@@ -77,6 +83,14 @@ export function WeeklyVolumeRoute() {
   return (
     <Suspense fallback={<span />}>
       <WeeklyVolumeScreen />
+    </Suspense>
+  );
+}
+
+export function MonthlyReportRoute() {
+  return (
+    <Suspense fallback={<span />}>
+      <MonthlyReportScreen />
     </Suspense>
   );
 }

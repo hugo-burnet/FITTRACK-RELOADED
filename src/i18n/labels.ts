@@ -267,6 +267,33 @@ export function weeklyVolumeReading(value: number, metric: WeeklyVolumeMetric): 
   return `${rounded.toLocaleString('fr-FR')} ${unitLabel('kg')}`;
 }
 
+/** « août 2026 » — the name of a month, wherever a report names one. */
+export const monthLabel = (monthStart: number): string =>
+  new Date(monthStart).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+/** What a monthly figure is counted in. */
+export type MonthlyUnit = 'count' | 'tonnage' | 'duration';
+
+export function monthlyReading(value: number, unit: MonthlyUnit): string {
+  if (unit === 'duration') return weeklyVolumeReading(value, 'duration');
+  if (unit === 'tonnage') return weeklyVolumeReading(value, 'tonnage');
+  return value.toLocaleString('fr-FR');
+}
+
+/**
+ * « +500 kg », « −2 », « = ».
+ *
+ * The sign is carried by the reading itself rather than by an arrow: a month
+ * that did less is not a failure to be dressed up, and `−` printed plainly is
+ * the same information a red arrow gives without the verdict. `=` for an exact
+ * tie, because "+0 kg" reads as a rounding error rather than as a match.
+ */
+export function monthlyDeltaReading(value: number, unit: MonthlyUnit): string {
+  if (value === 0) return t('monthly.deltaSame');
+  const reading = monthlyReading(Math.abs(value), unit);
+  return `${value > 0 ? '+' : '\u2212'}${reading}`;
+}
+
 /** The short engraving beside the chart, where a four-digit label would steal the plot. */
 export function weeklyVolumeScaleReading(value: number, metric: WeeklyVolumeMetric): string {
   if (metric === 'duration') return weeklyDurationReading(value);

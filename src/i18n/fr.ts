@@ -1657,6 +1657,29 @@ const fr = {
    * charge externe réellement soulevée et le temps complet passé en séance.
    * Aucun vert : une grande quantité n'est ni un objectif ni un jugement.
    */
+  monthly: {
+    title: 'Rapport mensuel',
+    link: 'Rapport mensuel',
+    subtitle: 'Le résumé d’un mois civil, comparé au précédent',
+    monthSheetTitle: 'Mois',
+    empty: 'Aucune séance enregistrée : le premier rapport arrivera avec la première séance.',
+    emptyMonth: 'Aucune séance ce mois-ci.',
+    summarySection: 'Le mois',
+    sessions: 'Séances',
+    activeDays: 'Jours d’entraînement',
+    sets: 'Séries de travail',
+    reps: 'Répétitions',
+    tonnage: 'Tonnage',
+    duration: 'Temps de séance',
+    exercisesSection: 'Ce qui a le plus pesé',
+    exerciseReading: '{tonnage} · {sets}',
+    exerciseSessions: '{count} séances',
+    exerciseSession: '1 séance',
+    comparedTo: 'Comparé à {month}.',
+    noPrevious: 'Premier mois enregistré : il n’y a rien avant lui à comparer.',
+    deltaSame: '=',
+  },
+
   volume: {
     title: 'Volume d’entraînement',
     link: 'Volume d’entraînement',

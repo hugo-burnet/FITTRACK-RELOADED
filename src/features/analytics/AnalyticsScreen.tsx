@@ -56,6 +56,11 @@ export function AnalyticsScreen() {
                 subtitle={t('muscles.subtitle')}
                 onClick={() => void navigate('/analytics/muscles')}
               />
+              <ListRow
+                title={t('monthly.link')}
+                subtitle={t('monthly.subtitle')}
+                onClick={() => void navigate('/analytics/months')}
+              />
               </>
             )}
           </Card>
