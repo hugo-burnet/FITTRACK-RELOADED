@@ -29,6 +29,41 @@ import { t } from './fr';
 
 export const muscleLabel = (muscle: MuscleGroup): string => t(`muscle.${muscle}`);
 
+/** `Date.getDay()` order, so a stored day and a label never need a conversion. */
+const WEEKDAY_KEYS = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const;
+
+export const weekdayLabel = (day: number): string => {
+  const key = WEEKDAY_KEYS[day];
+  return key === undefined ? '' : t(`weekday.long.${key}`);
+};
+
+/** The letter on a seven-box week. Never on its own — cf. `weekdayLabel`. */
+export const weekdayInitial = (day: number): string => {
+  const key = WEEKDAY_KEYS[day];
+  return key === undefined ? '' : t(`weekday.initial.${key}`);
+};
+
+/** « mercredi 26 août à 18:00 » — one reminder, in one readable sentence. */
+export const reminderMoment = (at: number): string =>
+  new Date(at)
+    .toLocaleString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+    // Intl écrit « mercredi 26 août, 18:00 » ; la phrase, elle, se lit « à ».
+    .replace(', ', ' à ');
+
 export const equipmentLabel = (equipment: Equipment): string => t(`equipment.${equipment}`);
 
 export const measurementLabel = (measurement: MeasurementType): string =>

@@ -26,6 +26,7 @@ import { ListRow, SectionTitle } from '@/ui';
 import { AnnouncerSettings } from './AnnouncerSettings';
 import { BackupActions } from './BackupActions';
 import { EffortPromptSettings } from './EffortPromptSettings';
+import { NotificationSettings } from './NotificationSettings';
 import { OneRepMaxSettings } from './OneRepMaxSettings';
 
 const THEME_OPTIONS: { value: Theme; labelKey: 'settings.themeDark' | 'settings.themeLight' }[] = [
@@ -215,6 +216,8 @@ export function SettingsScreen() {
         <OneRepMaxSettings />
 
         <EffortPromptSettings />
+
+        <NotificationSettings />
 
         <section>
           <SectionTitle>{t('settings.dataSection')}</SectionTitle>

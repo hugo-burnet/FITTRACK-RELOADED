@@ -22,12 +22,18 @@ import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
  */
 const announced = new Map<string, Set<string>>();
 
+/** `undefined` for a first record: it beats nothing, so it announces nothing. */
+export function recordAnnouncementKey(entry: RecordTimelineEntry): string | undefined {
+  if (entry.previousValue === undefined) return undefined;
+  return `${entry.record.exerciseId}:${entry.record.type}:${String(entry.record.value)}`;
+}
+
 export function recordAnnouncementKeys(
   entries: readonly RecordTimelineEntry[],
 ): string[] {
   return entries
-    .filter((entry) => entry.previousValue !== undefined)
-    .map((entry) => `${entry.record.exerciseId}:${entry.record.type}:${String(entry.record.value)}`);
+    .map(recordAnnouncementKey)
+    .filter((key): key is string => key !== undefined);
 }
 
 /**
@@ -36,22 +42,26 @@ export function recordAnnouncementKeys(
  * The **first** reading of a workout is its past, and is never announced:
  * reopening a session that already broke three records is not breaking them
  * again. Every later reading answers with the records it adds.
+ *
+ * The keys come back rather than their count: the voice only needs to know that
+ * *something* fell, but the notification has to name it, and claiming twice —
+ * once per audience — would leave the second one empty.
  */
-export function claimNewRecords(workoutId: string, keys: readonly string[]): number {
+export function claimNewRecords(workoutId: string, keys: readonly string[]): string[] {
   const known = announced.get(workoutId);
   if (known === undefined) {
     // Only ever one workout is active, and the memory is not a cache: dropping
     // the others keeps it from growing across a day of sessions.
     announced.clear();
     announced.set(workoutId, new Set(keys));
-    return 0;
+    return [];
   }
 
-  let fresh = 0;
+  const fresh: string[] = [];
   for (const key of keys) {
     if (known.has(key)) continue;
     known.add(key);
-    fresh += 1;
+    fresh.push(key);
   }
   return fresh;
 }
