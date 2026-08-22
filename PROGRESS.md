@@ -83,6 +83,18 @@ pas affiché pendant la session, donc `requestAnimationFrame` était gelé et ri
 réellement. La géométrie ci-dessus a été relevée en remplaçant l'horloge d'animation ; la
 **vérification visuelle sur téléphone reste à faire**, et avec elle l'écoute du nouveau clip.
 
+### Le piège que la correction a ouvert : le retour en arrière
+
+Donner un écran à chaque étape crée un chemin de retour. `TUT-ACT-01` vise le bouton de création,
+**sur la liste**, mais s'achève sur `routine-opened` — dans l'éditeur, une fois la routine lue en
+base, plusieurs images après l'arrivée. Entre les deux, l'étape courante désigne encore la liste :
+l'effet y renvoyait quelqu'un qui venait d'ouvrir exactement ce qu'on lui demandait d'ouvrir.
+
+`movesForward` : un écran plus profond que la destination compte comme l'ayant dépassée, et le
+tutoriel ne va qu'en avant. Un déplacement **demandé** — une mission choisie dans l'aide de la
+page — est traité dans `start`, pas dans l'effet : celui-là a le droit de revenir en arrière,
+puisque l'utilisateur vient de le demander.
+
 ### Checkpoint téléphone demandé
 
 > Depuis la liste des routines, lancer « Ajouter un exercice » depuis l'aide : l'app ouvre la bonne
