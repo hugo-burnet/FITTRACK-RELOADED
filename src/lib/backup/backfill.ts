@@ -61,11 +61,7 @@ const UNKNOWN_SCHEMA_VERSION = 0;
 type Tables = Record<BackupTable, BackupRow[]>;
 
 /** Maps one table, sharing the rows a step did not change. */
-function mapTable(
-  tables: Tables,
-  name: BackupTable,
-  step: (row: BackupRow) => BackupRow,
-): Tables {
+function mapTable(tables: Tables, name: BackupTable, step: (row: BackupRow) => BackupRow): Tables {
   return { ...tables, [name]: tables[name].map(step) };
 }
 
@@ -92,8 +88,7 @@ function libraryOf(tables: Tables): Map<string, Exercise> {
 const isMeasurementType = (value: unknown): value is MeasurementType =>
   MEASUREMENT_TYPES.includes(value as MeasurementType);
 
-const isEquipment = (value: unknown): value is Equipment =>
-  EQUIPMENT.includes(value as Equipment);
+const isEquipment = (value: unknown): value is Equipment => EQUIPMENT.includes(value as Equipment);
 
 /**
  * `snapshotOf` reads `exercise.secondaryMuscles.length` unguarded, which is
@@ -164,8 +159,7 @@ function toVersion7(tables: Tables): Tables {
       prescriptionKind === 'target_rpe' || typeof prescriptionValue !== 'number'
         ? 100
         : prescriptionValue;
-    const phase =
-      prescriptionKind !== 'target_rpe' && isDeload === 1 ? 'deload' : 'construction';
+    const phase = prescriptionKind !== 'target_rpe' && isDeload === 1 ? 'deload' : 'construction';
 
     return {
       ...omit(row, ['prescriptionKind', 'prescriptionValue', 'isDeload']),

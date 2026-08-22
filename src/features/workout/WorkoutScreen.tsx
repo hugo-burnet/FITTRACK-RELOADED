@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -45,7 +45,6 @@ import { platesConfigFor } from '@/lib/plateLoading';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { isRestTriggering, restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
-import { resolveRepSeconds } from '@/lib/tempo';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { loadEffortPrompt } from '@/stores/effortPrompt';
 import { useRepPacer } from '@/stores/repPacer';
@@ -69,28 +68,14 @@ import {
 import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
 import { DeloadSheet } from './DeloadSheet';
-import { PaceSheet, type PaceSheetView } from './PaceSheet';
+import { PaceSheet } from './PaceSheet';
 import { PlateLoadSheet } from './PlateLoadSheet';
-import { announce, primeAnnouncer } from '@/audio/announce';
-import { nativeNotifications } from '@/platform/nativeNotifications';
+import { announce } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
-import { prepareFollowingExercisePace, prepareNextPace } from './paceTarget';
-import {
-  IDLE_PACE_PLAN,
-  PACE_LEAD_SECONDS,
-  leadSecondsAt,
-  paceDecision,
-  planAskingReps,
-  planWithoutSet,
-  type PacePlan,
-} from './paceMachine';
-import {
-  claimNewRecords,
-  recordAnnouncementKey,
-  recordAnnouncementKeys,
-} from './recordAnnouncements';
-import { recordNotificationCopy } from './recordNotificationCopy';
-import { claimWorkoutGreeting, setValidationCue } from './workoutCues';
+import { ExerciseNotesSheet } from './ExerciseNotesSheet';
+import { setValidationCue } from './workoutCues';
+import { useWorkoutAnnouncements } from './useWorkoutAnnouncements';
+import { useWorkoutPace } from './useWorkoutPace';
 import { WarmupSheet } from './WarmupSheet';
 import { warmupContextFor } from './warmupContext';
 import { WorkoutExerciseCard, workoutRecordNotices } from './WorkoutExerciseCard';
@@ -128,9 +113,8 @@ type PlatesView = {
   loading: Exclude<PlateLoading, 'none'>;
 };
 
-function launchAfter(delayMs: number): number {
-  return Date.now() + delayMs;
-}
+/** A stable empty list, so the pace hook's effect does not re-run on every render. */
+const EMPTY_LINES: WorkoutExerciseDetail[] = [];
 
 /** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
@@ -141,13 +125,9 @@ export function WorkoutScreen() {
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   /** The one set currently being asked how hard it was. */
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
-  /** The one cadence being prepared — waiting for reps, or armed by them. */
-  const [pacePlan, setPacePlan] = useState<PacePlan>(IDLE_PACE_PLAN);
-  const armedTypedSets = useRef(new Set<string>());
   const [foldCommand, setFoldCommand] = useState(INITIAL_WORKOUT_FOLD_COMMAND);
   const willExpandAll = !foldCommand.expanded;
   const rest = useRestTimer();
-  const pacer = useRepPacer();
 
   // Keep loading (`undefined`) distinct from no active workout (`null`).
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
@@ -172,12 +152,6 @@ export function WorkoutScreen() {
       : pending.filter((recommendation) => recommendation.nextLoadKg === undefined);
   }, [detail?.workout.id, detail?.exercises.map((line) => line.row.exerciseId).join('|')]);
 
-  // Mobile browsers require a user gesture before later timer-driven audio.
-  useEffect(() => {
-    document.addEventListener('pointerdown', primeAnnouncer);
-    return () => document.removeEventListener('pointerdown', primeAnnouncer);
-  }, []);
-
   const workoutId = detail?.workout.id;
   const openedSets =
     detail?.exercises.reduce(
@@ -190,108 +164,13 @@ export function WorkoutScreen() {
       0,
     ) ?? 0;
 
-  // Runs again when a first exercise is added or a set is validated. The
-  // greeting is claimed once per workout id; an empty shell and a session
-  // already under way are both silent.
-  useEffect(() => {
-    if (workoutId === undefined) return;
-    // The tap that started the session happened on another screen, so this one
-    // opens with no gesture of its own — but the document has one, and that is
-    // what the browser actually requires.
-    primeAnnouncer();
-    if (claimWorkoutGreeting(workoutId, openedSets, availableSets)) announce('workout-started');
-  }, [workoutId, openedSets, availableSets]);
-
-  /**
-   * Records arrive from the database a beat after the set that took them, so
-   * the announcement watches the list rather than the validation. What has
-   * already been said is remembered outside the component — leaving the screen
-   * and coming back is not a reason to hear the whole session again; cf.
-   * `recordAnnouncements`.
-   *
-   * One word for a batch, not one per record: three records taken by the same
-   * set is one moment, and the announcer's cooldown would swallow the rest
-   * anyway.
-   */
-  useEffect(() => {
-    if (workoutId === undefined || recordEntries === undefined) return;
-    const fresh = new Set(claimNewRecords(workoutId, recordAnnouncementKeys(recordEntries)));
-    if (fresh.size === 0) return;
-
-    announce('record-beaten');
-    // And the written trace, on the phone, for later — RF-53. The card and the
-    // voice both speak to somebody looking at the screen right now; this one is
-    // for the glance at a lock screen two hours later. Silent by channel, so it
-    // never becomes a second bell over the first.
-    const copy = recordNotificationCopy(
-      recordEntries.filter((entry) => {
-        const key = recordAnnouncementKey(entry);
-        return key !== undefined && fresh.has(key);
-      }),
-    );
-    if (copy !== undefined) void nativeNotifications.notifyRecord(copy);
-  }, [workoutId, recordEntries]);
+  useWorkoutAnnouncements({ workoutId, openedSets, availableSets, recordEntries });
 
   const stopRest = useRestTimer((state) => state.stop);
   const extendRest = useRestTimer((state) => state.extend);
-  const startPace = useRepPacer((state) => state.start);
-  const stopPace = useRepPacer((state) => state.stop);
   const restingSetId = rest.setId;
-
-  // The whole preparation of a cadence, from one state and one rule.
-  //
-  // Waiting for repetitions is legitimate; waiting for a set nobody is going to
-  // perform is not, and it costs every arming that comes after — validating a
-  // set inside its own ten-second lead is the ordinary way of logging a series
-  // after doing it. `paceDecision` is what says which of the two this is.
-  //
-  // Ten seconds gives enough time to put the phone down and get under the bar;
-  // the final 3–2–1 is armed by `RepPaceRail` at the right time.
-  useEffect(() => {
-    if (pacePlan.kind === 'idle' || detail == null) return;
-    const rowId = pacePlan.rowId;
-    const line = detail.exercises.find(({ row }) => row.id === rowId);
-    const preparation =
-      line === undefined
-        ? null
-        : prepareNextPace(
-            line.sets,
-            resolveRepSeconds(line.row.repSeconds, defaultRepSeconds),
-            pacePlan.kind === 'awaiting-reps' ? pacePlan.afterSetId : undefined,
-          );
-    const decision = paceDecision(pacePlan, preparation, Date.now());
-
-    if (decision.kind === 'hold') return;
-    if (decision.kind === 'forget') {
-      const forget = setTimeout(() =>
-        setPacePlan((current) => planWithoutSet(current, pacePlan.setId)),
-      );
-      return () => clearTimeout(forget);
-    }
-
-    if (decision.kind === 'ask') {
-      const timer = setTimeout(() => {
-        announce('pace-reps-missing');
-        setPacePlan((current) => planAskingReps(current, decision.rowId, decision.setId));
-      }, decision.delayMs);
-      return () => clearTimeout(timer);
-    }
-
-    const timer = setTimeout(() => {
-      if (decision.announceStart) announce('pace-start-10');
-      startPace(
-        decision.rowId,
-        decision.target.setId,
-        decision.target.reps,
-        decision.target.repSeconds,
-        // Read now, not when the decision was taken: the settle delay must not
-        // push the beat back.
-        leadSecondsAt(decision.launchAt, Date.now()),
-      );
-      setPacePlan((current) => planWithoutSet(current, decision.setId));
-    }, decision.delayMs);
-    return () => clearTimeout(timer);
-  }, [detail, pacePlan, startPace, defaultRepSeconds]);
+  const pacer = useRepPacer();
+  const pace = useWorkoutPace(detail?.exercises ?? EMPTY_LINES, defaultRepSeconds);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -413,128 +292,7 @@ export function WorkoutScreen() {
     return loads;
   };
 
-  /**
-   * The tempo of one exercise: its own choice, then the preference, then three
-   * seconds. Nothing here depends on the clock any more — a tempo is chosen,
-   * not derived (cf. `lib/tempo`).
-   */
-  const repSecondsOf = (line: WorkoutExerciseDetail): number =>
-    resolveRepSeconds(line.row.repSeconds, defaultRepSeconds);
-
   const paceSheetLine = sheet?.kind === 'pace' ? lineOf(sheet.rowId) : null;
-  const paceSheetView: PaceSheetView | null =
-    paceSheetLine === null
-      ? null
-      : (() => {
-          const running = pacer.rowId === paceSheetLine.row.id && pacer.setId !== null;
-          const preparation = prepareNextPace(paceSheetLine.sets, repSecondsOf(paceSheetLine));
-          return {
-            rowId: paceSheetLine.row.id,
-            name: nameOf(paceSheetLine.row.id),
-            repSeconds: running ? pacer.repSeconds : repSecondsOf(paceSheetLine),
-            defaultRepSeconds: defaultRepSeconds ?? repSecondsOf(paceSheetLine),
-            reps:
-              running
-                ? pacer.reps
-                : preparation.kind === 'ready'
-                  ? preparation.target.reps
-                  : null,
-            canStart: preparation.kind !== 'done',
-            running,
-          };
-        })();
-
-  const startPaceFor = (line: WorkoutExerciseDetail, afterSetId?: string): boolean => {
-    const preparation = prepareNextPace(line.sets, repSecondsOf(line), afterSetId);
-    if (preparation.kind === 'done') return false;
-    primeAnnouncer();
-    // Starting the next set is the clearest possible signal that rest is over.
-    // Keeping both clocks alive hides the pace reading and lets the rest
-    // countdown speak over the repetition beats.
-    rest.stop();
-    if (preparation.kind === 'missing-reps') {
-      setPacePlan({
-        kind: 'awaiting-reps',
-        rowId: line.row.id,
-        setId: preparation.setId,
-        afterSetId,
-      });
-      announce('pace-reps-missing');
-      return true;
-    }
-    // An explicit launch supersedes whatever was being prepared: replacing the
-    // single plan is what keeps a delayed launch from restarting a cadence the
-    // user has just stopped.
-    setPacePlan(IDLE_PACE_PLAN);
-    const target = preparation.target;
-    startPace(line.row.id, target.setId, target.reps, target.repSeconds);
-    return true;
-  };
-
-  const startFollowingExercisePace = (completedLine: WorkoutExerciseDetail): boolean => {
-    const following = prepareFollowingExercisePace(
-      exercises.map((line) => ({
-        rowId: line.row.id,
-        sets: line.sets,
-        repSeconds: repSecondsOf(line),
-      })),
-      completedLine.row.id,
-    );
-    if (following === null) return false;
-
-    primeAnnouncer();
-    rest.stop();
-    if (following.preparation.kind === 'missing-reps') {
-      setPacePlan({
-        kind: 'awaiting-reps',
-        rowId: following.rowId,
-        setId: following.preparation.setId,
-      });
-      announce('pace-reps-missing');
-      return true;
-    }
-
-    const target = following.preparation.target;
-    setPacePlan(IDLE_PACE_PLAN);
-    // A new exercise needs its own preparation window. The rest has just
-    // finished; this is a fresh “dans dix secondes”, followed by 3–2–1.
-    announce('pace-start-10');
-    startPace(following.rowId, target.setId, target.reps, target.repSeconds, 10);
-    return true;
-  };
-
-  const armPaceFromTypedReps = (
-    line: WorkoutExerciseDetail,
-    setId: string,
-    values: Partial<Parameters<typeof updateSetValues>[1]>,
-  ): void => {
-    if (values.reps === undefined || values.reps <= 0) return;
-    const nextWorkingSet = line.sets.find(
-      (set) => set.deletedAt === 0 && set.setType !== 'warmup' && set.isCompleted === 0,
-    );
-    if (
-      nextWorkingSet?.id !== setId ||
-      pacer.setId !== null ||
-      rest.setId !== null ||
-      pacePlan.kind !== 'idle' ||
-      armedTypedSets.current.has(setId)
-    ) {
-      return;
-    }
-
-    armedTypedSets.current.add(setId);
-    primeAnnouncer();
-    announce('pace-start-10');
-    // The first digit deliberately starts the ten-second preparation, while
-    // the effect above waits for the complete cell value before fixing the
-    // cadence target (for example 10, not the transient 1).
-    setPacePlan({
-      kind: 'arming',
-      rowId: line.row.id,
-      setId,
-      launchAt: launchAfter(PACE_LEAD_SECONDS * 1_000),
-    });
-  };
 
   return (
     <Screen
@@ -619,12 +377,12 @@ export function WorkoutScreen() {
                     superset={places.get(line.row.id)}
                     pace={
                       pacer.setId !== null && pacer.rowId === line.row.id
-                        ? { ...pacer, setId: pacer.setId, onFinished: () => stopPace() }
+                        ? { ...pacer, setId: pacer.setId, onFinished: () => pace.stop() }
                         : null
                     }
                     onStopPace={
                       pacer.rowId === line.row.id && pacer.setId !== null
-                        ? () => stopPace()
+                        ? () => pace.stop()
                         : undefined
                     }
                     rest={
@@ -636,9 +394,9 @@ export function WorkoutScreen() {
                             onDone: () => {
                               // The rest's 3–2–1 is the preparation: at zero,
                               // its next working set owns the audio clock.
-                              const paced = startPaceFor(line, rest.setId ?? undefined);
+                              const paced = pace.startFor(line, rest.setId ?? undefined);
                               if (paced) return true;
-                              const advanced = startFollowingExercisePace(line);
+                              const advanced = pace.startFollowing(line);
                               if (!advanced) rest.stop();
                               return advanced;
                             },
@@ -698,12 +456,12 @@ export function WorkoutScreen() {
                     onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
                     onWrite={(setId, values) => {
                       void updateSetValues(setId, values);
-                      armPaceFromTypedReps(line, setId, values);
+                      pace.armFromTypedReps(line, setId, values.reps);
                     }}
                     onComplete={(setId, values, set) => {
                       void completeSet(setId, values);
                       // The metronome paced this set; the set is over.
-                      stopPace(setId);
+                      pace.stop(setId);
                       startRest(line, setId, set.setType);
                       announce(setValidationCue(line.sets, setId));
                       // A warm-up is not an effort to report, and one strip at a
@@ -821,7 +579,7 @@ export function WorkoutScreen() {
             hint:
               sheet?.kind === 'exercise' && lineOf(sheet.rowId) !== null
                 ? t('workout.paceMenuHint', {
-                    tempo: formatNumber(repSecondsOf(lineOf(sheet.rowId)!)),
+                    tempo: formatNumber(pace.repSecondsOf(lineOf(sheet.rowId)!)),
                   })
                 : undefined,
             onSelect: () => {
@@ -941,15 +699,18 @@ export function WorkoutScreen() {
       <PaceSheet
         open={sheet?.kind === 'pace'}
         onClose={() => setSheet(null)}
-        view={paceSheetView}
+        view={pace.viewFor(
+          paceSheetLine,
+          paceSheetLine === null ? '' : nameOf(paceSheetLine.row.id),
+        )}
         onChange={(repSeconds) => {
           if (sheet?.kind === 'pace') void updateWorkoutExercise(sheet.rowId, { repSeconds });
         }}
         onSetDefault={(repSeconds) => void setDefaultRepSeconds(repSeconds)}
         onStart={() => {
-          if (paceSheetLine !== null) startPaceFor(paceSheetLine);
+          if (paceSheetLine !== null) pace.startFor(paceSheetLine);
         }}
-        onStop={() => stopPace()}
+        onStop={() => pace.stop()}
       />
 
       <PlateLoadSheet
@@ -973,37 +734,5 @@ export function WorkoutScreen() {
         }}
       />
     </Screen>
-  );
-}
-
-/** Keeps the notes draft keyed to its workout-exercise row. */
-function ExerciseNotesSheet({
-  open,
-  onClose,
-  line,
-}: {
-  open: boolean;
-  onClose: () => void;
-  line: WorkoutExerciseDetail | null;
-}) {
-  const [draft, setDraft] = useState<{ id: string; notes: string } | null>(null);
-  if (line !== null && draft?.id !== line.row.id) {
-    setDraft({ id: line.row.id, notes: line.row.notes ?? '' });
-  }
-
-  return (
-    <Sheet open={open} onClose={onClose} title={t('workout.notesLabel')}>
-      {draft !== null && (
-        <Textarea
-          label={t('workout.notesLabel')}
-          placeholder={t('workout.notesPlaceholder')}
-          value={draft.notes}
-          onChange={(event) => {
-            setDraft({ ...draft, notes: event.target.value });
-            void updateWorkoutExercise(draft.id, { notes: event.target.value });
-          }}
-        />
-      )}
-    </Sheet>
   );
 }
