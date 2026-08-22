@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import { advanceMission, dismissMission, startMission } from './tutorialMissionMachine';
 import { isMissionAvailable, missionFor, type TutorialMissionFacts } from './tutorialMissions';
@@ -17,13 +17,16 @@ export function useTutorialMissions(
   facts: TutorialMissionFacts,
 ) {
   const [state, setState] = useState<TutorialStateV2>(loadTutorialState);
+  const stateRef = useRef(state);
 
   const commit = useCallback((change: (current: TutorialStateV2) => TutorialStateV2) => {
-    setState((current) => {
-      const next = change(current);
-      if (next !== current) saveTutorialState(next);
-      return next;
-    });
+    const current = stateRef.current;
+    const next = change(current);
+    if (next === current) return false;
+    stateRef.current = next;
+    saveTutorialState(next);
+    setState(next);
+    return true;
   }, []);
 
   const start = useCallback(
@@ -61,8 +64,15 @@ export function useTutorialMissions(
   );
   const chooseActivation = useCallback(
     (activationPath: TutorialActivationPath | null) =>
-      commit((current) => ({ ...current, activationPath })),
-    [commit],
+      commit((current) => {
+        if (activationPath === null) {
+          return current.activationPath === null ? current : { ...current, activationPath };
+        }
+        const missionId = activationPath === 'template' ? 'TUT-ACT-01' : 'TUT-ROU-01';
+        if (!isMissionAvailable(missionFor(missionId), facts)) return current;
+        return { ...startMission(current, missionId), activationPath };
+      }),
+    [commit, facts],
   );
 
   const activeMission = useMemo(

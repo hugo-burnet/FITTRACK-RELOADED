@@ -265,12 +265,8 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const [narrationActive, setNarrationActive] = useState(false);
   const topic = tutorialTopicForPath(pathname);
   const activeWorkout = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
-  const missionFacts = useMemo(
-    () => ({
-      hasActiveWorkout: activeWorkout === undefined ? null : activeWorkout !== null,
-    }),
-    [activeWorkout],
-  );
+  const hasActiveWorkout = activeWorkout === undefined ? null : activeWorkout !== null;
+  const missionFacts = useMemo(() => ({ hasActiveWorkout }), [hasActiveWorkout]);
   const missions = useTutorialMissions(pathname, navigate, missionFacts);
   const pacer = useRepPacer();
   const rest = useRestTimer();
@@ -478,9 +474,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
             fullWidth
             disabled={missionFacts.hasActiveWorkout !== false}
             onClick={() => {
-              missions.chooseActivation('template');
-              missions.start('TUT-ACT-01');
-              setPhase('idle');
+              if (missions.chooseActivation('template')) setPhase('idle');
             }}
           >
             {t('tutorial.activation.template')}
@@ -490,9 +484,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
             fullWidth
             disabled={missionFacts.hasActiveWorkout !== false}
             onClick={() => {
-              missions.chooseActivation('blank');
-              missions.start('TUT-ROU-01');
-              setPhase('idle');
+              if (missions.chooseActivation('blank')) setPhase('idle');
             }}
           >
             {t('tutorial.activation.blank')}
