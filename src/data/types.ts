@@ -285,6 +285,14 @@ export interface WorkoutExercise extends Syncable {
   exerciseSecondaryMuscles?: MuscleGroup[];
   exerciseEquipment?: Equipment;
   exerciseBodyweightLoadFactor?: number;
+  /**
+   * Ajouté après les autres, comme les muscles secondaires : une ligne peut
+   * porter l'instantané sans porter ce champ. Lu par la séance en direct pour
+   * savoir si une ligne représente **deux côtés** — et gelé ici pour qu'une
+   * séance passée reste lisible telle qu'elle a été faite, le jour où le
+   * drapeau est décoché sur l'exercice.
+   */
+  exerciseIsUnilateral?: 0 | 1;
 }
 
 export interface WorkoutSet extends Syncable {

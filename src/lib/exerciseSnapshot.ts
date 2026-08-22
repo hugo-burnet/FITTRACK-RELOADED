@@ -24,6 +24,7 @@ export type ExerciseSnapshot = Pick<
   | 'exerciseSecondaryMuscles'
   | 'exerciseEquipment'
   | 'exerciseBodyweightLoadFactor'
+  | 'exerciseIsUnilateral'
 >;
 
 /**
@@ -50,6 +51,9 @@ export function snapshotOf(exercise: Exercise | undefined): ExerciseSnapshot {
     ...(exercise.bodyweightLoadFactor === undefined
       ? {}
       : { exerciseBodyweightLoadFactor: exercise.bodyweightLoadFactor }),
+    // Sans garde, comme le nom et le matériel : le drapeau est obligatoire sur
+    // un exercice, donc `0` est une réponse et non une absence.
+    exerciseIsUnilateral: exercise.isUnilateral,
   };
 }
 
@@ -76,6 +80,9 @@ export function exerciseSnapshotOfRow(row: WorkoutExercise): ExerciseSnapshot {
     ...(row.exerciseBodyweightLoadFactor === undefined
       ? {}
       : { exerciseBodyweightLoadFactor: row.exerciseBodyweightLoadFactor }),
+    ...(row.exerciseIsUnilateral === undefined
+      ? {}
+      : { exerciseIsUnilateral: row.exerciseIsUnilateral }),
   };
 }
 
@@ -93,6 +100,8 @@ export interface ExerciseIdentity {
   secondaryMuscles?: MuscleGroup[];
   equipment?: Equipment;
   bodyweightLoadFactor?: number;
+  /** Absent sur une ligne instantanée avant que ce champ existe, et sans exercice à lire. */
+  isUnilateral?: 0 | 1;
 }
 
 /** A live workout must always have a grid shape, even for a truly missing exercise. */
@@ -135,6 +144,7 @@ export function resolveExerciseIdentity(
     (row.exercisePrimaryMuscle === undefined ? exercise?.secondaryMuscles : undefined);
   const equipment = row.exerciseEquipment ?? exercise?.equipment;
   const bodyweightLoadFactor = row.exerciseBodyweightLoadFactor ?? exercise?.bodyweightLoadFactor;
+  const isUnilateral = row.exerciseIsUnilateral ?? exercise?.isUnilateral;
 
   return {
     ...(name === undefined ? {} : { name }),
@@ -145,6 +155,7 @@ export function resolveExerciseIdentity(
       : { secondaryMuscles: [...secondaryMuscles] }),
     ...(equipment === undefined ? {} : { equipment }),
     ...(bodyweightLoadFactor === undefined ? {} : { bodyweightLoadFactor }),
+    ...(isUnilateral === undefined ? {} : { isUnilateral }),
   };
 }
 

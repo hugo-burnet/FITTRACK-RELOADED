@@ -44,6 +44,7 @@ describe('snapshotOf', () => {
       exercisePrimaryMuscle: 'chest',
       exerciseSecondaryMuscles: ['triceps'],
       exerciseEquipment: 'barbell',
+      exerciseIsUnilateral: 0,
     });
   });
 
@@ -123,6 +124,7 @@ describe('resolveExerciseIdentity', () => {
       primaryMuscle: 'chest',
       secondaryMuscles: ['triceps'],
       equipment: 'barbell',
+      isUnilateral: 0,
     });
   });
 
@@ -133,6 +135,7 @@ describe('resolveExerciseIdentity', () => {
       primaryMuscle: 'chest',
       secondaryMuscles: ['triceps'],
       equipment: 'barbell',
+      isUnilateral: 0,
     });
   });
 
@@ -202,5 +205,34 @@ describe('resolveWorkoutExerciseIdentity', () => {
 
   it("n'utilise weight_reps que lorsque les deux sources sont absentes", () => {
     expect(resolveWorkoutExerciseIdentity(row(), undefined).measurementType).toBe('weight_reps');
+  });
+});
+
+describe('le drapeau unilatéral', () => {
+  it('est gelé avec le reste de l’identité', () => {
+    expect(snapshotOf(exercise({ isUnilateral: 1 }))).toMatchObject({
+      exerciseIsUnilateral: 1,
+    });
+    expect(snapshotOf(exercise({ isUnilateral: 0 }))).toMatchObject({
+      exerciseIsUnilateral: 0,
+    });
+  });
+
+  it('se recopie d’une ligne, et ne s’invente pas quand il manque', () => {
+    expect(exerciseSnapshotOfRow(row({ exerciseIsUnilateral: 1 }))).toMatchObject({
+      exerciseIsUnilateral: 1,
+    });
+    expect(exerciseSnapshotOfRow(row())).not.toHaveProperty('exerciseIsUnilateral');
+  });
+
+  // L'instantané gagne, comme les autres champs : décocher l'exercice
+  // aujourd'hui ne réécrit pas la séance où il était unilatéral.
+  it('se lit dans l’instantané avant la bibliothèque', () => {
+    expect(
+      resolveExerciseIdentity(row({ exerciseIsUnilateral: 1 }), exercise({ isUnilateral: 0 }))
+        .isUnilateral,
+    ).toBe(1);
+    expect(resolveExerciseIdentity(row(), exercise({ isUnilateral: 1 })).isUnilateral).toBe(1);
+    expect(resolveExerciseIdentity(row(), undefined).isUnilateral).toBeUndefined();
   });
 });
