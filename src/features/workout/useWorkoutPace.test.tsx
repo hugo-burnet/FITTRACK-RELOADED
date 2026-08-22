@@ -106,8 +106,10 @@ describe('useWorkoutPace', () => {
     expect(announce).toHaveBeenCalledWith('pace-start-10');
   });
 
-  // Le repos a déjà compté 3-2-1 : redonner dix secondes ferait attendre debout.
-  it('enchaîne sans préparation quand le maintien suit un repos', () => {
+  // L'horloge d'un maintien est la valeur écrite dans la série : partie à la fin
+  // du repos, elle compterait comme du gainage le temps de se mettre au sol. Le
+  // 3-2-1 du repos dit « le repos se termine », pas « tu es en position ».
+  it('garde ses dix secondes même quand le maintien suit un repos', () => {
     const { line, pace } = mount('time_only', [
       { ...workoutSet('s0'), isCompleted: 1 },
       workoutSet('s1'),
@@ -118,7 +120,26 @@ describe('useWorkoutPace', () => {
     });
 
     expect(useHoldTimer.getState().setId).toBe('s1');
-    expect(useHoldTimer.getState().startedAt).toBe(now);
+    expect(useHoldTimer.getState().startedAt).toBe(now + 10_000);
+    // Et le T0 n'est pas muet : l'alerte de fin de repos est sautée dès que le
+    // relais réussit, donc c'est cette annonce qui marque le passage.
+    expect(announce).toHaveBeenCalledWith('pace-start-10');
+  });
+
+  // Une cadence de répétitions, elle, part bien à zéro après un repos : la main
+  // est déjà sur la barre, et son premier battement tombe tout de suite.
+  it('enchaîne une cadence de répétitions sans préparation après un repos', () => {
+    const { line, pace } = mount('weight_reps', [
+      { ...workoutSet('s0', 8), isCompleted: 1 },
+      workoutSet('s1', 8),
+    ]);
+
+    act(() => {
+      expect(pace().startFor(line, 's0')).toBe(true);
+    });
+
+    expect(useRepPacer.getState().setId).toBe('s1');
+    expect(useRepPacer.getState().startedAt).toBe(now);
   });
 
   it('n’a jamais deux horloges qui tournent', () => {

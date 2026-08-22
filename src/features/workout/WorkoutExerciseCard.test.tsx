@@ -145,6 +145,39 @@ describe('WorkoutExerciseCard', () => {
     expect(screen.getByRole('button', { name: 'Valider la série 1' })).toBeEnabled();
   });
 
+  // Le chrono fournit la durée et rien d'autre : lever la garde pour toute la
+  // ligne laisserait valider un rameur sans sa distance.
+  it('garde la coche fermée sur les colonnes que le chrono n’écrit pas', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(100_000);
+    const rowerSet: WorkoutSet = {
+      ...stamps,
+      id: 'set-row',
+      workoutExerciseId: row.id,
+      exerciseId: exercise.id,
+      workoutId: row.workoutId,
+      order: 0,
+      setType: 'normal',
+      side: 'both',
+      isCompleted: 0,
+      performedAt: 0,
+    };
+    const rowerLine: WorkoutExerciseDetail = {
+      row,
+      exercise: { ...exercise, measurementType: 'distance_time' },
+      sets: [rowerSet],
+      previous: [],
+    };
+
+    renderCard(false, rowerLine, new Map(), null, {
+      setId: rowerSet.id,
+      rowId: row.id,
+      startedAt: 100_000 - 3_000,
+    });
+
+    expect(screen.getByRole('button', { name: 'Valider la série 1' })).toBeDisabled();
+  });
+
   it('nomme le chronomètre du bandeau selon ce qu’il ouvre', () => {
     renderCard(false);
     expect(screen.getByRole('button', { name: `Cadence de ${NAME}` })).toBeInTheDocument();

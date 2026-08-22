@@ -183,10 +183,21 @@ export function useWorkoutPace(
     // user has just stopped.
     setPlan(IDLE_PACE_PLAN);
     const target = preparation.target;
-    // Se mettre en gainage prend dix secondes ; se remettre sous la barre après
-    // un repos qui vient de compter 3–2–1 n'en prend aucune. Une cadence de
-    // répétitions, elle, part quand on la lance : la main est déjà sur la barre.
-    const lead = target.kind === 'hold' && afterSetId === undefined ? PACE_LEAD_SECONDS : 0;
+    /*
+     * Un maintien reçoit toujours ses dix secondes — y compris quand il prend la
+     * suite d'un repos, où une cadence de répétitions, elle, part à zéro.
+     *
+     * La différence n'est pas de confort : **l'horloge d'un maintien est la
+     * valeur écrite dans la série.** Partie à la fin du repos, elle compte comme
+     * du gainage les secondes qu'il faut pour se mettre au sol, et chaque
+     * transition d'une routine sur-note la durée d'autant. Le 3–2–1 du repos dit
+     * « le repos se termine », pas « tu es en position ».
+     *
+     * Ces dix secondes sont aussi ce qui empêche le T0 d'être muet : sans elles,
+     * l'alerte de fin de repos est sautée (le relais a réussi) et le premier
+     * repère du chrono ne tombe qu'à +5 s.
+     */
+    const lead = target.kind === 'hold' ? PACE_LEAD_SECONDS : 0;
     if (lead > 0) announce('pace-start-10');
     startClock(line.row.id, target, lead);
     return true;

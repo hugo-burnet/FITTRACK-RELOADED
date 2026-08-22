@@ -45,7 +45,7 @@ type Props = {
    * Vrai tant que le chrono tourne sur cette série. La coche est alors le geste
    * qui l'arrête : la désactiver parce qu'aucune durée n'est encore tapée
    * enfermerait le chrono sans aucune sortie — la durée, justement, c'est lui
-   * qui l'écrit.
+   * qui l'écrit. Il n'écrit qu'elle : les autres colonnes gardent leur garde.
    */
   holding?: boolean;
   onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
@@ -91,6 +91,20 @@ export function WorkoutSetRow({
     const value = valueOf(column.field) ?? ghostNumberOf(column.field);
     if (value !== undefined) resolved[column.field] = value;
   }
+
+  /*
+   * Le chrono fournit la durée, et **rien d'autre**.
+   *
+   * Pendant un maintien la coche doit rester active alors que la cellule des
+   * secondes est vide — c'est elle qui l'arrête, et l'exiger remplie
+   * l'enfermerait sans sortie. Mais lever la garde pour toute la ligne laisserait
+   * valider un rameur sans sa distance : la seule colonne à considérer comme
+   * déjà tenue est celle que le chrono écrira.
+   */
+  const recordable = isSetRecordable(
+    columns,
+    holding ? { ...resolved, duration: resolved.duration ?? 0 } : resolved,
+  );
 
   const collect = (pick: (field: TargetField) => number | undefined): Partial<SetValues> => {
     const values: Partial<SetValues> = {};
@@ -186,7 +200,7 @@ export function WorkoutSetRow({
         type="button"
         data-tutorial-id={tutorial ? 'workout-first-set-complete' : undefined}
         aria-pressed={done}
-        disabled={!done && !holding && !isSetRecordable(columns, resolved)}
+        disabled={!done && !recordable}
         aria-label={done ? t('workout.uncomplete', { number }) : t('workout.complete', { number })}
         onClick={() =>
           done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))
