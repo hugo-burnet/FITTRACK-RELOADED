@@ -52,4 +52,23 @@ describe('tutorialStore v2', () => {
     localStorage.setItem(TUTORIAL_STORAGE_KEY, JSON.stringify({ version: 99 }));
     expect(loadTutorialState()).toEqual(createTutorialState());
   });
+
+  it('ignores a v2 state whose missions value is an array', () => {
+    localStorage.setItem(
+      TUTORIAL_STORAGE_KEY,
+      JSON.stringify({ ...createTutorialState(), missions: [] }),
+    );
+    expect(loadTutorialState()).toEqual(createTutorialState());
+  });
+
+  it('ignores a v2 state containing an unknown mission key', () => {
+    localStorage.setItem(
+      TUTORIAL_STORAGE_KEY,
+      JSON.stringify({
+        ...createTutorialState(),
+        missions: { 'TUT-UNKNOWN': 'completed' },
+      }),
+    );
+    expect(loadTutorialState()).toEqual(createTutorialState());
+  });
 });

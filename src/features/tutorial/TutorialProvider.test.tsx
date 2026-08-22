@@ -6,7 +6,7 @@ import { Screen } from '@/app/Screen';
 import { ANNOUNCER_STORAGE_KEY } from '@/stores/announcer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
-import { TUTORIAL_STORAGE_KEY } from './tutorialStore';
+import { LEGACY_TUTORIAL_STORAGE_KEY, TUTORIAL_STORAGE_KEY } from './tutorialStore';
 import { TutorialProvider } from './TutorialProvider';
 
 const { playTutorialNarrationMock, stopTutorialNarrationMock } = vi.hoisted(() => ({
@@ -49,12 +49,15 @@ describe('TutorialProvider', () => {
     expect(await screen.findByRole('dialog', { name: 'Guidage vocal' })).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: /Sons uniquement/ }));
-    expect(localStorage.getItem(TUTORIAL_STORAGE_KEY)).toBe('skipped');
+    expect(JSON.parse(localStorage.getItem(TUTORIAL_STORAGE_KEY) ?? '{}')).toMatchObject({
+      version: 2,
+      orientation: 'skipped',
+    });
     expect(localStorage.getItem(ANNOUNCER_STORAGE_KEY)).toBe('sounds');
   });
 
   it('ouvre depuis le point d’interrogation le tutoriel de la page courante', async () => {
-    localStorage.setItem(TUTORIAL_STORAGE_KEY, 'completed');
+    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
     const user = userEvent.setup();
     renderTutorial('/analytics/records');
 
@@ -68,7 +71,7 @@ describe('TutorialProvider', () => {
   });
 
   it('replie automatiquement la transcription pendant la narration', async () => {
-    localStorage.setItem(TUTORIAL_STORAGE_KEY, 'completed');
+    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
     const user = userEvent.setup();
     renderTutorial('/routines');
 
@@ -82,7 +85,7 @@ describe('TutorialProvider', () => {
   });
 
   it('laisse ouvrir l’aide quand le chrono conservé dans le store est déjà fini', async () => {
-    localStorage.setItem(TUTORIAL_STORAGE_KEY, 'completed');
+    localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
     useRestTimer.setState({
       setId: 'ancienne-serie',
       startedAt: Date.now() - 60_000,
