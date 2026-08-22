@@ -2,8 +2,8 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Release Android v1.0.0 — les Lots 12 et 13 sont fermés,
-la V1 est complète**).
+**Dernière mise à jour :** 2026-08-22 (**Release Android v1.0.0 — les Lots 12 et 13 sont fermés
+et validés sur le téléphone : la V1 est complète**).
 
 ## v1.0.0 — le mois se lit, le graphique s'emporte, l'app sait quand parler
 
@@ -93,23 +93,23 @@ restent ouverts. Ce sont des lots de V2 et de V3 : « tout ce qui suit le Lot 10
 dit la feuille de route, et la V1 utilisable en salle est complète depuis longtemps. Les Lots 12
 et 13 en faisaient partie parce qu'ils portaient des RF du cahier des charges restés vides.
 
-**Checkpoint téléphone :**
+**Checkpoint téléphone — validé sur le téléphone le 2026-08-22 :**
 
-- [ ] Progression → **Rapport mensuel** : le mois en cours s'ouvre, les six chiffres correspondent
+- [x] Progression → **Rapport mensuel** : le mois en cours s'ouvre, les six chiffres correspondent
       à ce que l'historique montre, et « Comparé à juillet » dit quelque chose de vrai.
-- [ ] Choisir un mois sans séance dans la feuille : « Aucune séance ce mois-ci », sans zéro
+- [x] Choisir un mois sans séance dans la feuille : « Aucune séance ce mois-ci », sans zéro
       trompeur ailleurs.
-- [ ] Sur **Volume d'entraînement**, toucher « Exporter en image » : la feuille de partage Android
+- [x] Sur **Volume d'entraînement**, toucher « Exporter en image » : la feuille de partage Android
       s'ouvre, le PNG arrive dans Fichiers ou dans une conversation, **avec son titre, sa période
       et sa date**, et les barres sont de la bonne couleur (pas noires).
-- [ ] Réglages → **Notifications** : couper « Fin de repos », lancer une série, verrouiller
+- [x] Réglages → **Notifications** : couper « Fin de repos », lancer une série, verrouiller
       l'écran — le téléphone ne sonne plus. Rallumer : il sonne à nouveau.
-- [ ] Allumer « Rappels d'entraînement », cocher **le jour même** et régler l'heure à trois minutes
+- [x] Allumer « Rappels d'entraînement », cocher **le jour même** et régler l'heure à trois minutes
       d'ici. Fermer l'app, poser le téléphone : le rappel arrive à l'heure dite.
-- [ ] Décocher tous les jours : la ligne dit que rien ne sonnera. Aucun rappel ne doit arriver.
-- [ ] Battre un record en séance : la bande apparaît sous la série **et** une ligne « Record
+- [x] Décocher tous les jours : la ligne dit que rien ne sonnera. Aucun rappel ne doit arriver.
+- [x] Battre un record en séance : la bande apparaît sous la série **et** une ligne « Record
       battu · <exercice> » attend dans le volet des notifications, **sans avoir fait de bruit**.
-- [ ] Exporter la sauvegarde, réinstaller par-dessus, réimporter : les trois interrupteurs et la
+- [x] Exporter la sauvegarde, réinstaller par-dessus, réimporter : les trois interrupteurs et la
       semaine de rappel reviennent tels quels.
 
 ⚠️ **Aucune migration Dexie.** Les préférences de notification sont une clé de plus dans
@@ -5257,8 +5257,8 @@ ci-dessus fait foi.
 | 9    | PWA & installation       | ✅ terminé  | 2026-08-02         | ✅ 2026-08-12                                  |
 | 10   | Android (Capacitor)      | ✅ terminé  | 2026-08-09         | ✅ 2026-08-12                                  |
 | 11   | Mesures & photos         | 🟨 en cours | —                  | ⬜                                             |
-| 12   | Statistiques             | ✅ terminé  | 2026-08-11, 08-22  | 🟨 à valider sur le téléphone                  |
-| 13   | Records & notifications  | ✅ terminé  | 2026-08-11, 08-22  | 🟨 à valider sur le téléphone                  |
+| 12   | Statistiques             | ✅ terminé  | 2026-08-11, 08-22  | ✅ 2026-08-22                                  |
+| 13   | Records & notifications  | ✅ terminé  | 2026-08-11, 08-22  | ✅ 2026-08-22                                  |
 | 14   | Sync cloud (optionnel)   | ⬜ à faire  | —                  | ⬜                                             |
 | 15   | Health Connect           | ⬜ à faire  | —                  | ⬜                                             |
 | 16   | Widgets                  | ⬜ à faire  | —                  | ⬜                                             |
