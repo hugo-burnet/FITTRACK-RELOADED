@@ -72,6 +72,7 @@ function renderCard(
       rest={rest}
       pace={null}
       hold={hold}
+      sideStageOf={() => null}
       effort={null}
       records={records}
       state={state}

@@ -4,6 +4,7 @@ import { formatRest } from '@/lib/rest';
 import type { HoldTimer } from '@/stores/holdTimer';
 import { armHoldChrono } from './holdBeats';
 import { fireCountdown } from './restCountdown';
+import type { SideStage } from './sideCycle';
 
 /**
  * Le chrono du maintien en cours : il arme les repères, dit depuis combien de
@@ -17,7 +18,14 @@ import { fireCountdown } from './restCountdown';
  * l'en-tête, et un bouton dans un bouton n'est pas valide. Arrêter, c'est le
  * carré à côté — cf. `WorkoutExerciseCard`.
  */
-export function HoldRail({ hold }: { hold: HoldTimer & { setId: string } }) {
+export function HoldRail({
+  hold,
+  sideStage = null,
+}: {
+  hold: HoldTimer & { setId: string };
+  /** Où en est le cycle deux côtés de cette série, `null` quand il n'y en a pas. */
+  sideStage?: SideStage | null;
+}) {
   useEffect(
     () => armHoldChrono(hold.startedAt),
     // Réarmé sur l'identité du maintien, jamais sur celle d'un callback.
@@ -47,7 +55,9 @@ export function HoldRail({ hold }: { hold: HoldTimer & { setId: string } }) {
       <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]" />
       <span className="tabular truncate">
         {leadSeconds > 0
-          ? t('workout.pacePreparing', { seconds: leadSeconds })
+          ? t(sideStage === 'transition' ? 'workout.sideChanging' : 'workout.pacePreparing', {
+              seconds: leadSeconds,
+            })
           : t('workout.holdStatus', { time: formatRest(heldSeconds) })}
       </span>
     </span>

@@ -4,6 +4,7 @@ import type { RepPacer } from '@/stores/repPacer';
 import { formatNumber } from '@/ui/numberField';
 import { armRepPacer } from './repBeats';
 import { fireCountdown } from './restCountdown';
+import type { SideStage } from './sideCycle';
 
 /**
  * The metronome of the set under way: it arms the beats, says where you are
@@ -23,16 +24,27 @@ import { fireCountdown } from './restCountdown';
  */
 export function RepPaceRail({
   pacer,
+  sideStage = null,
   onFinished,
 }: {
   pacer: RepPacer & { setId: string };
+  /** Où en est le cycle deux côtés de cette série, `null` quand il n'y en a pas. */
+  sideStage?: SideStage | null;
   onFinished: () => void;
 }) {
   useEffect(
-    () => armRepPacer(pacer, onFinished),
+    () =>
+      armRepPacer(
+        pacer,
+        onFinished,
+        Date.now(),
+        // « Validé. » et « Série terminée. » sont faux au milieu d'une série :
+        // le premier côté d'une ligne unilatérale se ferme autrement.
+        sideStage === 'first' ? 'side-change' : 'set-done',
+      ),
     // Re-arming on the identity of the pace, never on the callback's.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [pacer.setId, pacer.startedAt, pacer.reps, pacer.repSeconds],
+    [pacer.setId, pacer.startedAt, pacer.reps, pacer.repSeconds, sideStage],
   );
 
   // A future start is a preparation window, not silence. Arm the spoken
@@ -59,7 +71,9 @@ export function RepPaceRail({
       <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-[var(--accent-ink)]" />
       <span className="tabular truncate">
         {leadSeconds > 0
-          ? t('workout.pacePreparing', { seconds: leadSeconds })
+          ? t(sideStage === 'transition' ? 'workout.sideChanging' : 'workout.pacePreparing', {
+              seconds: leadSeconds,
+            })
           : t('workout.paceStatus', {
               current,
               total: pacer.reps,

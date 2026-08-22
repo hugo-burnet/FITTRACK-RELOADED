@@ -29,6 +29,7 @@ import { EffortStrip } from './EffortStrip';
 import { recommendationAsSignal } from './coachCopy';
 import { RecordNote } from './RecordNote';
 import { HoldRail } from './HoldRail';
+import type { SideStage } from './sideCycle';
 import { RepPaceRail } from './RepPaceRail';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
@@ -107,6 +108,8 @@ type Props = {
   pace: CardPace | null;
   /** Le chrono de maintien de cette carte, si une série est tenue. */
   hold: CardHold | null;
+  /** Où en est le cycle deux côtés d'une série, `null` quand elle n'en a pas. */
+  sideStageOf: (setId: string) => SideStage | null;
   /** The effort strip, when the set it belongs to is on this card. */
   effort: CardEffort | null;
   /** Persisted improvements keyed by the set that triggered them. */
@@ -146,6 +149,7 @@ export function WorkoutExerciseCard({
   rest,
   pace,
   hold,
+  sideStageOf,
   effort,
   records,
   state,
@@ -311,7 +315,11 @@ export function WorkoutExerciseCard({
                   the set — silently, and with the store still armed. */}
               {pace !== null && (
                 <span className={rest === null ? 'contents' : 'hidden'}>
-                  <RepPaceRail pacer={pace} onFinished={pace.onFinished} />
+                  <RepPaceRail
+                    pacer={pace}
+                    sideStage={sideStageOf(pace.setId)}
+                    onFinished={pace.onFinished}
+                  />
                 </span>
               )}
               {/* Monté tant que le maintien dure, pour la même raison que le
@@ -319,7 +327,7 @@ export function WorkoutExerciseCard({
                   masquer en le démontant annulerait tous ses repères. */}
               {hold !== null && (
                 <span className={rest === null ? 'contents' : 'hidden'}>
-                  <HoldRail hold={hold} />
+                  <HoldRail hold={hold} sideStage={sideStageOf(hold.setId)} />
                 </span>
               )}
             </span>

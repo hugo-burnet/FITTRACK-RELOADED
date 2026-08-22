@@ -37,6 +37,17 @@ describe('HoldRail', () => {
     expect(announce).not.toHaveBeenCalled();
   });
 
+  // En Silence, ce relevé est tout ce qui dit que la série n'est pas finie.
+  it('lit la transition entre les deux côtés', () => {
+    render(
+      <HoldRail
+        hold={{ setId: 's1', rowId: 'row', startedAt: now + 7_000 }}
+        sideStage="transition"
+      />,
+    );
+    expect(screen.getByText('Changement de côté · 7')).toBeInTheDocument();
+  });
+
   it('annonce les repères tant qu’il est monté', () => {
     render(<HoldRail hold={{ setId: 's1', rowId: 'row', startedAt: now }} />);
     vi.advanceTimersByTime(5_000);

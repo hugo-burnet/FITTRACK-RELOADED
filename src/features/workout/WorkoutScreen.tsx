@@ -404,9 +404,23 @@ export function WorkoutScreen() {
                     superset={places.get(line.row.id)}
                     pace={
                       pacer.setId !== null && pacer.rowId === line.row.id
-                        ? { ...pacer, setId: pacer.setId, onFinished: () => pace.stop() }
+                        ? {
+                            ...pacer,
+                            setId: pacer.setId,
+                            // La fin d'un côté n'est pas la fin de la série : sur
+                            // le premier, la cadence repart d'elle-même après
+                            // dix secondes, sur la même série.
+                            onFinished: () => {
+                              const setId = pacer.setId;
+                              if (setId !== null && pace.turnSideOf(line, setId) === 'changed') {
+                                return;
+                              }
+                              pace.stop();
+                            },
+                          }
                         : null
                     }
+                    sideStageOf={pace.sideStageOf}
                     hold={
                       hold.setId !== null && hold.rowId === line.row.id
                         ? { ...hold, setId: hold.setId }
@@ -509,6 +523,14 @@ export function WorkoutScreen() {
                       pace.armFromTypedReps(line, setId, values.reps);
                     }}
                     onComplete={(setId, values, set) => {
+                      // Sur une ligne unilatérale tenue, la première coche finit
+                      // le côté et non la série : un maintien ne sait pas quand
+                      // il s'arrête, donc ce geste est le seul signal disponible.
+                      // Rien de durable n'en découle — ni validation, ni repos,
+                      // ni RPE, ni record.
+                      if (hold.setId === setId && pace.turnSideOf(line, setId) === 'changed') {
+                        return;
+                      }
                       // Le chrono est ce qui sait combien de temps a été tenu, et
                       // la coche est le geste qui l'arrête : c'est donc elle qui
                       // écrit la durée. Tant qu'il tourne, la saisie manuelle des
