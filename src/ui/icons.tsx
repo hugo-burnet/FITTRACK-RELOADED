@@ -211,6 +211,19 @@ export function PlusIcon(props: IconProps) {
   );
 }
 
+/** Change the routine folder — a folder carrying two short exchange arrows. */
+export function FolderSwitchIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 7.5h6l2 2h10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h4l2 2" />
+      <path d="M8 13h7.5" />
+      <path d="m13.5 11 2 2-2 2" />
+      <path d="M16 17H8.5" />
+      <path d="m10.5 15-2 2 2 2" />
+    </Icon>
+  );
+}
+
 /** The chosen option. The only tick in the app until Lot 5 ticks a set. */
 export function CheckIcon(props: IconProps) {
   return (

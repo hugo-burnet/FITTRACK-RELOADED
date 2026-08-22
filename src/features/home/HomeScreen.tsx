@@ -76,6 +76,7 @@ export function HomeScreen() {
               <HomeSuggestionCard
                 suggestion={state.data.suggestedRoutine}
                 routineCount={state.data.routineCount}
+                routineContext={state.data.routineContext}
                 disabled={active != null}
               />
             )}

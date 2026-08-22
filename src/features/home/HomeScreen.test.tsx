@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
+import type { HomeDashboardData } from '@/data/repositories/home';
 import { HomeScreen } from './HomeScreen';
 
 vi.mock('dexie-react-hooks', () => ({ useLiveQuery: () => null }));
@@ -12,6 +13,11 @@ vi.mock('./useHomeDashboard', () => ({
       activeProgram: null,
       suggestedRoutine: null,
       routineCount: 0,
+      routineContext: {
+        required: true,
+        selected: null,
+        options: [{ value: 'folder:push', label: 'Salle', routineCount: 2 }],
+      },
       recentWorkouts: [],
     },
     regularity: {},
@@ -23,7 +29,11 @@ vi.mock('./HomeProgramsRow', () => ({ HomeProgramsRow: () => <div>Programmes</di
 vi.mock('./HomeRecentWorkouts', () => ({ HomeRecentWorkouts: () => <div>Historique</div> }));
 vi.mock('./HomeStatsIsland', () => ({ HomeStatsIsland: () => <div>Statistiques</div> }));
 vi.mock('./HomeSuggestionCard', () => ({
-  HomeSuggestionCard: () => <div>Routine suggérée</div>,
+  HomeSuggestionCard: ({
+    routineContext,
+  }: {
+    routineContext: HomeDashboardData['routineContext'];
+  }) => <div>Contexte accueil : {routineContext.options[0]?.label}</div>,
 }));
 
 describe('HomeScreen', () => {
@@ -37,6 +47,6 @@ describe('HomeScreen', () => {
     expect(
       screen.queryByRole('button', { name: 'Démarrer une séance libre' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('Routine suggérée')).toBeVisible();
+    expect(screen.getByText('Contexte accueil : Salle')).toBeVisible();
   });
 });
