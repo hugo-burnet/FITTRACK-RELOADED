@@ -2,8 +2,28 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**Inventaire produit et tutoriel** — document maître créé,
-aucun comportement applicatif modifié).
+**Dernière mise à jour :** 2026-08-22 (**Plan tutoriel v2 P1** — plan d'implémentation détaillé
+écrit et auto-relu, aucun comportement applicatif modifié).
+
+## Plan tutoriel v2 — première séance P1
+
+Le document maître a été validé par l'utilisateur. Le plan exécutable vit dans
+**`docs/superpowers/plans/2026-08-22-tutorial-v2-first-session.md`** et découpe le travail en neuf
+tâches atomiques : progression v2, catalogue et machine d'état, coach non modal, activation et
+aide contextuelle, routines, séance et récupération sûre, sauvegarde, parcours intégré, puis
+validation mobile/documentation.
+
+Le lot couvre les douze missions P1 `TUT-ACT-01`, `TUT-REC-01`, `TUT-ROU-01` à `04`,
+`TUT-WRK-01` à `04`, `TUT-DAT-01` et `02`. Il fixe notamment un seuil explicite de douze heures
+pour proposer la récupération d'une séance ancienne, sans suppression automatique, et garantit
+une deuxième série dans le parcours afin que le repos enseigné existe réellement.
+
+**Hors de ce plan :** aucune génération vocale, aucune modification des 43 MP3 actuels et aucune
+lecture de la clé API. Les textes P1 seront d'abord testés et validés dans l'application en mode
+texte/Silence ; leur génération fera l'objet du plan suivant.
+
+**Suite :** choisir le mode d'exécution du plan, l'implémenter tâche par tâche, puis faire valider
+le checkpoint 390 × 844 sur téléphone avant toute génération ElevenLabs.
 
 ## Inventaire produit et tutoriel — post-v1.0.1
 
