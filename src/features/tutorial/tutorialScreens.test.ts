@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { contextualMissionsForPath, missionFor } from './tutorialMissions';
-import { pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
+import { movesForward, pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
 import { createTutorialState } from './tutorialStore';
 
 const NO_WORKOUT = { hasActiveWorkout: false };
@@ -45,6 +45,22 @@ describe('les écrans des missions guidées', () => {
     // Les sauvegardes non plus : elles s'allument dans les Réglages, elles n'y
     // téléportent pas quelqu'un qui vient d'enregistrer sa première séance.
     expect(missionFor('TUT-DAT-01').steps[0]?.reach).toBe('wait');
+  });
+
+  /*
+   * `TUT-ACT-01` vise le bouton de création, sur la liste, et s'achève sur
+   * `routine-opened` — dans l'éditeur, une fois la routine lue en base. Entre
+   * les deux, l'étape désigne encore la liste : sans cette règle, la visite
+   * renvoyait à la liste quelqu'un qui venait d'ouvrir la routine demandée.
+   */
+  it('ne renvoie jamais vers un écran déjà dépassé', () => {
+    expect(movesForward('/routines/r-1', '/routines')).toBe(false);
+    expect(movesForward('/routines', '/routines')).toBe(false);
+    expect(movesForward('/settings/debug', '/settings')).toBe(false);
+    expect(movesForward('/routines', '/routines/r-1')).toBe(true);
+    expect(movesForward('/history', '/settings')).toBe(true);
+    // Deux routines sœurs : ni l'une ni l'autre n'est en amont de sa voisine.
+    expect(movesForward('/routines/autre', '/routines/r-1')).toBe(true);
   });
 
   it('ne propose pas depuis l’aide une mission dont la cible est ailleurs', () => {

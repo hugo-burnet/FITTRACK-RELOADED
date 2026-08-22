@@ -273,6 +273,39 @@ describe('TutorialProvider', () => {
     expect(await screen.findByText('adresse : /routines/r-1')).toBeVisible();
   });
 
+  it('ne renvoie pas à la liste quelqu’un qui vient d’ouvrir une routine', async () => {
+    // `TUT-ACT-01` vise le bouton de création de la liste, et s'achève sur
+    // l'ouverture d'une routine — donc depuis l'éditeur, quelques images plus
+    // tard. La visite ne doit pas l'en faire sortir entre-temps.
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: 'completed',
+      activationPath: 'template',
+      activeMissionId: 'TUT-ACT-01',
+    });
+
+    renderTutorial('/routines/r-1');
+
+    await waitFor(() => expect(loadTutorialState().missionRoutineId).toBe('r-1'));
+    expect(screen.getByText('adresse : /routines/r-1')).toBeVisible();
+  });
+
+  it('emmène tout de suite une mission choisie dans l’aide, même en arrière', async () => {
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: 'completed',
+      missionRoutineId: 'r-1',
+    });
+    const user = userEvent.setup();
+    renderTutorial('/routines/r-1');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(screen.getByRole('button', { name: 'Créer une première routine' }));
+
+    // Demandé explicitement : la liste est en amont, on y va quand même.
+    expect(await screen.findByText('adresse : /routines')).toBeVisible();
+  });
+
   it('ne dit rien tant que l’écran de l’étape n’est pas là', async () => {
     saveTutorialState({
       ...createTutorialState(),

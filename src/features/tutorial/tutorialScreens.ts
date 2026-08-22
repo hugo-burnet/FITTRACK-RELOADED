@@ -84,3 +84,21 @@ export function screenHolds(
       return true;
   }
 }
+
+/**
+ * Le tutoriel n'a jamais le droit de faire **reculer** l'utilisateur.
+ *
+ * `TUT-ACT-01` vise le bouton de création, sur la liste, mais s'achève sur
+ * `routine-opened` — c'est-à-dire dans l'éditeur, une fois la routine lue en
+ * base, plusieurs images après l'arrivée. Entre les deux, l'étape courante
+ * désigne encore la liste : sans cette règle, la visite renvoyait à la liste
+ * quelqu'un qui venait d'ouvrir exactement ce qu'on lui demandait d'ouvrir.
+ *
+ * Un écran plus profond que la destination compte donc comme l'ayant déjà
+ * dépassée. Un déplacement demandé explicitement — une mission choisie dans
+ * l'aide de la page — ne passe pas par ici : c'est l'utilisateur qui l'a
+ * demandé, il peut revenir en arrière.
+ */
+export function movesForward(pathname: string, destination: string): boolean {
+  return pathname !== destination && !pathname.startsWith(`${destination}/`);
+}

@@ -8,7 +8,7 @@ import {
   stepOf,
   type TutorialMissionFacts,
 } from './tutorialMissions';
-import { pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
+import { movesForward, pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
 import { loadTutorialState, saveTutorialState } from './tutorialStore';
 import type {
   TutorialActivationPath,
@@ -36,15 +36,30 @@ export function useTutorialMissions(
     return true;
   }, []);
 
+  /*
+   * Une mission choisie dans l'aide de la page emmène tout de suite sur son
+   * écran, y compris en arrière — l'utilisateur vient de la demander. Le trajet
+   * ne passe donc pas par la règle de l'effet, qui, elle, ne va qu'en avant.
+   */
   const start = useCallback(
-    (missionId: TutorialMissionId) =>
-      commit((current) => {
+    (missionId: TutorialMissionId) => {
+      const started = commit((current) => {
         const mission = missionFor(missionId);
         if (!isMissionAvailable(mission, facts)) return current;
         if (!isMissionReachable(mission, current.missionRoutineId)) return current;
         return startMission(current, missionId);
-      }),
-    [commit, facts],
+      });
+      if (!started) return false;
+      const first = missionFor(missionId).steps[0];
+      if (first === undefined) return true;
+      const { missionRoutineId } = stateRef.current;
+      const destination = pathForScreen(first.screen, missionRoutineId);
+      if (destination !== null && !screenHolds(pathname, first.screen, missionRoutineId)) {
+        navigate(destination);
+      }
+      return true;
+    },
+    [commit, facts, navigate, pathname],
   );
   const offer = useCallback(
     (missionId: TutorialMissionId) =>
@@ -115,9 +130,9 @@ export function useTutorialMissions(
   useEffect(() => {
     if (activeStep === null || onStepScreen || activeStep.reach === 'wait') return;
     const destination = pathForScreen(activeStep.screen, state.missionRoutineId);
-    if (destination === null) return;
+    if (destination === null || !movesForward(pathname, destination)) return;
     navigate(destination);
-  }, [activeStep, navigate, onStepScreen, state.missionRoutineId]);
+  }, [activeStep, navigate, onStepScreen, pathname, state.missionRoutineId]);
 
   useEffect(() => {
     if (
