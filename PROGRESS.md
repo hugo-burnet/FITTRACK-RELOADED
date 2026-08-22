@@ -2,8 +2,42 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-22 (**L'app parle : 95 clips pour 95 identifiants. Chrono,
-unilatéral et voix des missions livrés ; checkpoints téléphone en attente**).
+**Dernière mise à jour :** 2026-08-22 (**v1.2.0 publiée. L'app parle : 95 clips pour
+95 identifiants. Chrono, unilatéral et voix des missions livrés ; trois checkpoints téléphone en
+attente**).
+
+## v1.1.0 et v1.2.0 — livrées et publiées
+
+Deux versions taguées dans la même session, chacune après ses quatre portes.
+
+| Version | Contenu | APK |
+|---|---|---|
+| **v1.1.0** (`b182fe4`) | Chrono de série chronométrée · exercices unilatéraux à deux côtés | `FitTrack-v1.1.0.apk`, 7,5 Mo |
+| **v1.2.0** (`e172294`) | 95 clips pour 95 identifiants — repères du chrono, changement de côté, consignes des missions | `FitTrack-v1.2.0.apk`, 9,3 Mo |
+
+Les deux APK s'appellent `FitTrack-…` et non `FitTrack-test-…` : **signés avec la vraie clé**, donc
+ils mettent à jour une installation existante. Le workflow `android.yml` les a construits depuis le
+tag, en rejouant lint, typecheck et la suite complète avant Gradle.
+
+Les 1,8 Mo gagnés entre les deux versions sont les 52 nouveaux MP3. Ils partent dans le service
+worker — **151 entrées précachées** — donc la voix fonctionne hors ligne, comme le reste.
+
+### Les trois checkpoints téléphone qui restent
+
+Aucun des trois n'est couvert par les tests, et c'est assumé : ils demandent un vrai corps, une
+vraie salle et un vrai téléphone.
+
+1. **Un vrai gainage.** Le chrono part après dix secondes, annonce un repère toutes les cinq, et la
+   coche écrit la durée sans qu'on tape quoi que ce soit.
+2. **Une série unilatérale complète**, dont une fois **en Silence** — c'est le seul mode où le
+   relevé à l'écran est tout ce qui dit que la série n'est pas finie.
+3. **Une séance active de plus de 12 h**, jamais déclenchée manuellement depuis son écriture :
+   la provoquer aurait demandé d'injecter une séance artificiellement vieillie, donc de fabriquer
+   une restauration destructive pour la tester.
+
+**Un réglage à surveiller au premier essai :** `HOLD_RELEASE_SECONDS` vaut 2, sur estimation et non
+sur mesure. Si les durées de gainage enregistrées paraissent systématiquement trop courtes ou trop
+longues, c'est cette constante — une ligne, dans `features/workout/holdDuration.ts`.
 
 ## La voix — le manifeste est complet
 
