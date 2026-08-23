@@ -1,0 +1,350 @@
+{
+  "note": "Cas qui DOIVENT échouer. Chacun cible une garantie précise du contrat. Le validateur ne se contente pas de constater l'échec : il vérifie que l'échec vient bien de la contrainte visée, parce qu'une fixture qui échoue pour une coquille ne teste rien.",
+  "collections": [
+    {
+      "kind": "claim",
+      "records": [
+        {
+          "id": "claim.invalid.no-provenance.0001",
+          "slug": "claim-sans-provenance",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "domain": "training",
+          "rawStatement": "Le volume hebdomadaire élevé augmente l'hypertrophie.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": []
+        },
+        {
+          "id": "claim.invalid.expert-practice-promoted.0001",
+          "slug": "pratique-experte-promue-en-fait",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f1.0008", "corpusFileRef": "corpus.f1.programmation-hypertrophie", "extractionMethod": "manual_curation" }],
+          "domain": "training",
+          "rawStatement": "Un deload toutes les 4 à 6 semaines est nécessaire.",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "established",
+          "cannotConclude": []
+        },
+        {
+          "id": "claim.invalid.emg-as-hypertrophy.0001",
+          "slug": "emg-promue-en-preuve-hypertrophique",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f2.0001", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "domain": "biomechanics",
+          "rawStatement": "Le hip thrust active davantage le grand fessier, il produit donc plus d'hypertrophie.",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "established",
+          "cannotConclude": []
+        },
+        {
+          "id": "claim.invalid.missing-cannot-conclude.0001",
+          "slug": "claim-sans-cannot-conclude",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f1.0001", "corpusFileRef": "corpus.f1.programmation-hypertrophie", "extractionMethod": "deterministic_table_row" }],
+          "domain": "training",
+          "rawStatement": "Plus de séries hebdomadaires produisent en moyenne plus d'hypertrophie, avec rendements décroissants.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction"
+        },
+        {
+          "id": "claim.invalid.policy-as-medical-truth.0001",
+          "slug": "politique-produit-presentee-comme-verite",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f3.0013", "corpusFileRef": "corpus.f3.coaching-clinique", "extractionMethod": "manual_curation" }],
+          "domain": "clinical",
+          "rawStatement": "Rester sous 3/10 de douleur est le seuil de sécurité médicalement établi.",
+          "knowledgeType": "PRODUCT_POLICY",
+          "epistemicStatus": "established",
+          "cannotConclude": []
+        },
+        {
+          "id": "claim.invalid.orphan-reference.0001",
+          "slug": "reference-interne-orpheline",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f1.0001", "corpusFileRef": "corpus.f1.programmation-hypertrophie", "extractionMethod": "deterministic_table_row" }],
+          "domain": "training",
+          "rawStatement": "Plus de séries hebdomadaires produisent en moyenne plus d'hypertrophie.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": ["Pas de meilleur nombre universel"],
+          "sourceRefs": ["source.inexistante.0099"]
+        },
+        {
+          "id": "claim.invalid.reworded-new-id.0001",
+          "slug": "reformulation-avec-nouvel-identifiant",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f1.0001", "corpusFileRef": "corpus.f1.programmation-hypertrophie", "extractionMethod": "deterministic_table_row" }],
+          "domain": "training",
+          "rawStatement": "Augmenter les séries hebdomadaires augmente l'hypertrophie moyenne, avec des rendements qui diminuent.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "cannotConclude": ["Pas de meilleur nombre universel"],
+          "notes": "Simple reformulation de claim.training.volume.0001. Un nouvel identifiant a été attribué au lieu d'incrémenter la révision : l'identité a suivi le texte, ce que la politique d'identifiants interdit."
+        }
+      ]
+    },
+    {
+      "kind": "source",
+      "records": [
+        {
+          "id": "source.invalid.fabricated-doi.0001",
+          "slug": "doi-sans-provenance",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f2.0004", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "citationLabel": "Heidel et al.",
+          "doi": "10.1186/s13102-023-00713-4",
+          "urls": [],
+          "resolutionStatus": "resolved"
+        }
+      ]
+    },
+    {
+      "kind": "evidence-assessment",
+      "records": [
+        {
+          "id": "assessment.invalid.emg-high-confidence.0001",
+          "slug": "emg-avec-confiance-elevee-sur-ampleur",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f2.0001", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "claimRef": "claim.biomechanics.emg.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.biomechanics.selection-v1",
+          "knowledgeType": "EMG_OBSERVATION",
+          "directness": "emg_only",
+          "confidenceByAspect": [{ "aspect": "magnitude", "confidence": "high" }],
+          "supportsHypertrophySuperiority": true
+        },
+        {
+          "id": "assessment.invalid.certainty-inflation.0001",
+          "slug": "hausse-de-certitude-sans-preuve-nouvelle",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f1.0001", "corpusFileRef": "corpus.f1.programmation-hypertrophie", "extractionMethod": "manual_curation" }],
+          "claimRef": "claim.exercise.freeweight-machine.0001",
+          "assessedAt": "2026-09-01",
+          "hierarchyRef": "hierarchy.biomechanics.selection-v1",
+          "knowledgeType": "EVIDENCE",
+          "directness": "direct_hypertrophy_measured",
+          "confidenceByAspect": [
+            { "aspect": "equivalence", "confidence": "high" },
+            { "aspect": "generalization", "confidence": "high" }
+          ],
+          "sourceRefs": ["source.heidel-2023-free-weight-vs-machine"],
+          "supersedes": "assessment.freeweight.0001",
+          "changeRationale": "Relecture ; la conclusion paraît plus solide qu'estimé initialement.",
+          "supportsHypertrophySuperiority": false
+        }
+      ]
+    },
+    {
+      "kind": "joint-load-observation",
+      "records": [
+        {
+          "id": "observation.invalid.load-as-danger.0001",
+          "slug": "charge-mecanique-convertie-en-risque-demontre",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "provenance": [{ "fragmentRef": "frag.f2.0009", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "jointRef": "joint.lumbar-spine.0001",
+          "exerciseRef": "exercise.deadlift.0001",
+          "observationType": "risque_demontre",
+          "finding": "La compression lombaire élevée pendant le soulevé de terre lourd cause des blessures.",
+          "sourceRefs": ["source.plotkin-2023-hipthrust-squat"],
+          "impliesContraindication": false
+        }
+      ]
+    },
+    {
+      "kind": "contraindication",
+      "records": [
+        {
+          "id": "contraindication.invalid.unjustified.0001",
+          "slug": "contre-indication-sans-fondement-verifie",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "provenance": [{ "fragmentRef": "frag.f2.0009", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "conditionRefs": ["condition.low-back-pain.0001"],
+          "action": "Soulevé de terre",
+          "scope": "temporary",
+          "basis": "explicit_guideline_statement",
+          "reason": "La charge lombaire est élevée, donc l'exercice doit être évité en cas de lombalgie."
+        }
+      ]
+    },
+    {
+      "kind": "red-flag",
+      "records": [
+        {
+          "id": "redflag.invalid.no-action.0001",
+          "slug": "red-flag-sans-action-ni-urgence",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "provenance": [{ "fragmentRef": "frag.f3.0008", "corpusFileRef": "corpus.f3.coaching-clinique", "extractionMethod": "manual_curation" }],
+          "signal": "Nouvelle rétention urinaire avec faiblesse bilatérale.",
+          "question": "Avez-vous une difficulté nouvelle à uriner ?",
+          "overridesNormalCoaching": true,
+          "isDiagnostic": false,
+          "sourceRefs": ["source.ifompt-2020-red-flags"]
+        }
+      ]
+    },
+    {
+      "kind": "substitution-relation",
+      "records": [
+        {
+          "id": "substitution.invalid.no-criterion.0001",
+          "slug": "substitution-sans-critere-justificatif",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f2.0010", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "sourceRef": "variant.elbow-extension.pushdown.0001",
+          "targetRef": "variant.elbow-extension.overhead.0001",
+          "referentKind": "variant_to_variant",
+          "equivalenceLevel": "quasi_directe",
+          "matchingDimensions": [],
+          "differingDimensions": [],
+          "objective": { "forHypertrophy": "equivalent" },
+          "justification": { "rationale": "Les deux exercices ciblent le triceps.", "knowledgeType": "EXPERT_PRACTICE" }
+        }
+      ]
+    },
+    {
+      "kind": "exercise",
+      "records": [
+        {
+          "id": "exercise.invalid.unattested-property.0001",
+          "slug": "exercice-avec-muscle-non-atteste",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f2.0010", "corpusFileRef": "corpus.f2.anatomie-biomecanique", "extractionMethod": "manual_curation" }],
+          "label": "Développé couché",
+          "movementPattern": "poussee_horizontale",
+          "completeness": "documented",
+          "primaryMuscles": [{ "muscleRef": "muscle.pectoralis-major.0001" }]
+        }
+      ]
+    },
+    {
+      "kind": "product-safety-policy",
+      "records": [
+        {
+          "id": "policy.invalid.medical-truth.0001",
+          "slug": "politique-produit-declaree-medicale",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "knowledgeType": "PRODUCT_POLICY",
+          "presentedAsMedicalTruth": true,
+          "title": "Seuil de douleur de sécurité",
+          "policyStatement": "Rester sous 3/10 est le seuil de sécurité recommandé médicalement.",
+          "decision": { "decidedBy": "Produit", "decidedAt": "2026-08-23", "rationale": "Prudence." },
+          "userFacingFraming": "Ne dépassez jamais 3/10 : c'est la limite médicale."
+        }
+      ]
+    },
+    {
+      "kind": "adaptation-rule",
+      "records": [
+        {
+          "id": "adaptation.invalid.unjustified-rule.0001",
+          "slug": "regle-normative-sans-justification",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "provenance": [{ "fragmentRef": "frag.f3.0026", "corpusFileRef": "corpus.f3.coaching-clinique", "extractionMethod": "manual_curation" }],
+          "trigger": "Douleur au squat.",
+          "action": "Réduire la charge de 50 %.",
+          "monitoring": "Vérifier la semaine suivante.",
+          "stopCriteria": ["Aggravation"],
+          "yieldsToActiveRedFlag": true,
+          "evidence": { "knowledgeType": "EVIDENCE", "directness": "direct_clinical", "confidence": "moderate" }
+        },
+        {
+          "id": "adaptation.invalid.overrides-red-flag.0001",
+          "slug": "regle-qui-ne-cede-pas-devant-un-red-flag",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "provenance": [{ "fragmentRef": "frag.f3.0026", "corpusFileRef": "corpus.f3.coaching-clinique", "extractionMethod": "manual_curation" }],
+          "trigger": "Faiblesse nouvelle rapportée pendant la séance.",
+          "action": "Proposer une séance allégée sur une autre région et poursuivre l'entraînement.",
+          "monitoring": "Vérifier la semaine suivante.",
+          "stopCriteria": ["Aggravation franche"],
+          "yieldsToActiveRedFlag": false,
+          "evidence": { "knowledgeType": "EXPERT_PRACTICE", "directness": "expert_only", "confidence": "very_low" },
+          "claimRefs": ["claim.clinical.pain.0001"]
+        }
+      ]
+    },
+    {
+      "kind": "condition",
+      "records": [
+        {
+          "id": "condition.invalid.runtime-leak.0001",
+          "slug": "condition-portant-un-etat-utilisateur",
+          "revision": 1,
+          "lifecycle": { "status": "approved", "reviewedAt": "2026-08-23" },
+          "provenance": [{ "fragmentRef": "frag.f3.0014", "corpusFileRef": "corpus.f3.coaching-clinique", "extractionMethod": "manual_curation" }],
+          "label": "Lombalgie non spécifique",
+          "description": "Douleur lombaire sans cause spécifique identifiée.",
+          "scope": "symptom_pattern",
+          "diagnosticCertaintyRequired": "none_symptom_based_only",
+          "symptoms": ["Douleur lombaire"],
+          "clinicalQuestionRefs": [],
+          "redFlagRefs": [],
+          "irritability": "moderate",
+          "testedLoad": "70 kg",
+          "symptomAfter24h": 3,
+          "evidenceLevel": { "knowledgeType": "EVIDENCE", "clinicalEvidenceLevel": "A_high", "directness": "direct_clinical" },
+          "sourceRefs": ["source.smith-2017-painful-exercise"],
+          "uncertainty": []
+        }
+      ]
+    },
+    {
+      "kind": "safety-zone",
+      "records": [
+        {
+          "id": "zone.invalid.retired-without-decision.0001",
+          "slug": "entite-retiree-sans-decision",
+          "revision": 2,
+          "lifecycle": { "status": "retired", "reviewedAt": "2026-08-23", "retiredAt": "2026-09-01" },
+          "provenance": [{ "fragmentRef": "frag.f3.0006", "corpusFileRef": "corpus.f3.coaching-clinique", "extractionMethod": "manual_curation" }],
+          "zone": "RED",
+          "criteria": ["Red flag actif"],
+          "allowedActions": ["Arrêter le coaching normal"],
+          "forbiddenActions": ["Proposer une séance alternative comme réponse principale"],
+          "haltsNormalCoaching": true,
+          "referralRuleRefs": ["referral.emergency.0001"]
+        }
+      ]
+    },
+    {
+      "kind": "source-resolution",
+      "records": [
+        {
+          "id": "resolution.invalid.similarity-merge.0001",
+          "slug": "fusion-sur-similarite",
+          "revision": 1,
+          "lifecycle": { "status": "approved" },
+          "provenance": [{ "fragmentRef": "frag.f1.0012", "corpusFileRef": "corpus.f1.programmation-hypertrophie", "extractionMethod": "manual_curation" }],
+          "status": "ambiguous",
+          "occurrenceRefs": ["occurrence.f1.0004", "occurrence.f2.0001"],
+          "candidateSourceRefs": ["source.haugen-2023-free-weight-vs-machine", "source.heidel-2023-free-weight-vs-machine"],
+          "mergeAllowed": true,
+          "mergeBasis": "human_review_decision",
+          "mergedIntoSourceRef": "source.haugen-2023-free-weight-vs-machine",
+          "reviewState": "approved",
+          "rationale": "Même revue, même année, même sujet : ce sont sûrement les mêmes auteurs.",
+          "resolvableWithCorpusAlone": true
+        }
+      ]
+    }
+  ]
+}

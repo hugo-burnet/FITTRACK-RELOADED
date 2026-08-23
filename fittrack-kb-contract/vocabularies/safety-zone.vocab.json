@@ -1,0 +1,29 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "safety-zone",
+  "title": "Zones de sécurité",
+  "origin": "corpus",
+  "description": "Les trois zones de F3 §2.2, également portées par F4 zoneLogic.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "GREEN",
+      "label": "Verte",
+      "origin": "corpus",
+      "corpusRef": "F3 §2.2 ; F4 zoneLogic.green"
+    },
+    {
+      "term": "ORANGE",
+      "label": "Orange",
+      "origin": "corpus",
+      "corpusRef": "F3 §2.2 ; F4 zoneLogic.orange"
+    },
+    {
+      "term": "RED",
+      "label": "Rouge",
+      "origin": "corpus",
+      "corpusRef": "F3 §2.2 ; F4 zoneLogic.red"
+    }
+  ]
+}

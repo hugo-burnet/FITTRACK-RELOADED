@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/safety-zone.schema.json",
+  "title": "SafetyZone",
+  "description": "Zone verte, orange ou rouge. Reprend zoneLogic de F4 en y ajoutant l'identité, la révision et la date de revue qui lui manquaient.\n\nforbiddenActions est obligatoire et non vide : une zone qui n'interdit rien n'encadre rien.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "zone", "criteria", "allowedActions", "forbiddenActions"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "description": "En zone rouge, le coaching normal s'arrête. Proposer une séance alternative comme réponse principale est précisément ce que F3 §2.2 interdit.",
+      "if": { "properties": { "zone": { "const": "RED" } }, "required": ["zone"] },
+      "then": {
+        "required": ["haltsNormalCoaching", "referralRuleRefs"],
+        "properties": {
+          "haltsNormalCoaching": { "const": true },
+          "referralRuleRefs": { "minItems": 1 }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "zone": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/safetyZone" },
+    "profile": { "type": "string" },
+    "criteria": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "allowedActions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "forbiddenActions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "referralThreshold": { "type": ["string", "null"] },
+    "referralRuleRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "haltsNormalCoaching": { "type": "boolean" },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}

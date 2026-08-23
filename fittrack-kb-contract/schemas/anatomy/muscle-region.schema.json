@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/muscle-region.schema.json",
+  "title": "MuscleRegion",
+  "description": "Sous-région d'un muscle, distincte d'un chef. Nécessaire parce que le corpus documente des différences régionales (portions claviculaire et sterno-costale du grand pectoral, régions du grand fessier mesurées en IRM) sans que ces régions soient des chefs anatomiques séparés.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "label", "muscleRef", "regionBasis"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "muscleRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "regionBasis": {
+      "enum": ["anatomical_subdivision", "imaging_measurement_site", "emg_electrode_site", "functional_hypothesis"],
+      "description": "Sur quoi repose l'existence de cette région. Un site de mesure IRM et une sous-division anatomique ne sont pas la même chose, et les confondre ferait passer une convention de mesure pour une structure."
+    },
+    "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "notes": { "type": "array", "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" } }
+  }
+}

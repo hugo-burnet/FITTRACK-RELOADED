@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/evidence-conflict.schema.json",
+  "title": "EvidenceConflict",
+  "description": "Désaccord documenté entre résultats. Entité de première classe : le corpus consacre une section entière à ses contradictions (F1 §18, F2 §11) et les effacer au profit d'une conclusion unique serait la perte d'information la plus grave possible.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "topic", "dominantResult", "opposingResult", "probableCauses", "resolutionState"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Un conflit déclaré tranché doit dire par quoi. Sinon « resolved » masquerait un choix arbitraire.",
+      "if": { "properties": { "resolutionState": { "const": "resolved_by_review" } }, "required": ["resolutionState"] },
+      "then": { "required": ["reviewDecisionRef", "resolutionRationale"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "domain": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/domain" },
+    "topic": { "type": "string", "minLength": 1 },
+    "dominantResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement"],
+      "properties": {
+        "statement": { "type": "string", "minLength": 1 },
+        "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "opposingResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement"],
+      "properties": {
+        "statement": { "type": "string", "minLength": 1 },
+        "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "probableCauses": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/conflictCause" },
+      "description": "Le corpus donne systématiquement une colonne « Explication probable ». Elle est reprise, jamais devinée."
+    },
+    "causeNarrative": { "type": "string" },
+    "resolutionState": {
+      "enum": ["open_by_design", "pending_human_review", "resolved_by_review"],
+      "description": "open_by_design est l'état normal : le corpus présente ces désaccords comme irréductibles en l'état des connaissances."
+    },
+    "resolutionRationale": { "type": "string" },
+    "reviewDecisionRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "mustBeSurfacedToUser": {
+      "type": "boolean",
+      "description": "Vrai quand le corpus demande explicitement de présenter les deux résultats plutôt que de trancher."
+    }
+  }
+}

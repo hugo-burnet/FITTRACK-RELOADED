@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/evidence-gap.schema.json",
+  "title": "EvidenceGap",
+  "description": "Absence de preuve signalée explicitement par le corpus. C'est une donnée, pas un vide à combler : F2 §11 énumère ses lacunes et interdit de les combler par extrapolation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "topic", "whatIsMissing", "doNotFillBy"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "domain": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/domain" },
+    "topic": { "type": "string", "minLength": 1 },
+    "whatIsMissing": { "type": "string", "minLength": 1 },
+    "whatExistsInstead": {
+      "type": ["string", "null"],
+      "description": "Ce dont on dispose à la place, typiquement un raisonnement biomécanique de premier principe ou des données issues d'une autre population."
+    },
+    "doNotFillBy": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["extrapolation", "analogy_from_other_population", "emg_substitution", "expert_opinion", "llm_inference"] },
+      "description": "Modes de comblement explicitement interdits pour cette lacune."
+    },
+    "affectedEntityRefs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Entités dont un champ doit rester vide à cause de cette lacune."
+    },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "severity": { "enum": ["blocking", "high", "medium", "low"] }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "domain",
+  "title": "Domaines de la KB",
+  "origin": "modeling_decision",
+  "description": "Sert au préfixage des identifiants et au routage vers les sous-dossiers de curated/.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "training",
+      "label": "Programmation",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "anatomy",
+      "label": "Anatomie",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "biomechanics",
+      "label": "Biomécanique",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "exercise",
+      "label": "Exercices et substitutions",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "clinical",
+      "label": "Clinique",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "product",
+      "label": "Produit",
+      "origin": "modeling_decision"
+    }
+  ]
+}

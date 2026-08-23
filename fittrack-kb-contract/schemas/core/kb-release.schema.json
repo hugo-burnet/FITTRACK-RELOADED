@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/kb-release.schema.json",
+  "title": "KBRelease",
+  "description": "Publication immuable d'un état de la KB curée. Porte un SemVer ET une date de corpus : les confondre était le défaut relevé dans la proposition GPT, où une version au format date se faisait passer pour du SemVer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "version", "releasedAt", "corpusSnapshot", "contractVersion", "entityCounts", "blockingChecks"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une release ne peut pas être publiée si un contrôle bloquant a échoué. Le champ n'est pas décoratif : la publication est refusée.",
+      "properties": {
+        "blockingChecks": {
+          "items": {
+            "if": { "properties": { "blocking": { "const": true } }, "required": ["blocking"] },
+            "then": { "properties": { "passed": { "const": true } } }
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$",
+      "description": "SemVer strict du contenu de la KB."
+    },
+    "contractVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$",
+      "description": "SemVer des schemas et vocabulaires. Évolue indépendamment du contenu."
+    },
+    "releasedAt": { "type": "string", "format": "date" },
+    "corpusSnapshot": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Empreinte exacte des fichiers du corpus ayant produit cette release. Sans elle, deux releases identiques en apparence pourraient venir de corpus différents.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["corpusFileId", "contentHash"],
+        "properties": {
+          "corpusFileId": { "type": "string" },
+          "contentHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "corpusDate": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "entityCounts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "blockingChecks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["invariantId", "blocking", "passed"],
+        "properties": {
+          "invariantId": { "type": "string", "pattern": "^INV-[0-9]{3}$" },
+          "blocking": { "type": "boolean" },
+          "passed": { "type": "boolean" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "changelog": { "type": "array", "items": { "type": "string" } },
+    "immutable": { "const": true }
+  }
+}

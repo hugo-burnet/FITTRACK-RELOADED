@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/corpus-fragment.schema.json",
+  "title": "CorpusFragment",
+  "description": "Tranche exacte d'un fichier du corpus. Porte les offsets bruts en octets pour que la relecture reste possible même si le découpage sémantique change.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fragmentId",
+    "corpusFileId",
+    "headingPath",
+    "startLine",
+    "endLine",
+    "startByte",
+    "endByte",
+    "blockType",
+    "rawText",
+    "textHash"
+  ],
+  "properties": {
+    "fragmentId": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+    "corpusFileId": { "type": "string", "pattern": "^corpus\\.[a-z0-9]+\\.[a-z0-9-]+$" },
+    "headingPath": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Chemin de titres markdown menant au fragment. Vide pour un fichier JSON, qui n'a pas de titres."
+    },
+    "startLine": { "type": "integer", "minimum": 1 },
+    "endLine": { "type": "integer", "minimum": 1 },
+    "startByte": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Offset en OCTETS, pas en caractères : le corpus est en français et un offset en caractères ne permettrait pas de relire le fichier avec un outil bas niveau."
+    },
+    "endByte": { "type": "integer", "minimum": 0 },
+    "blockType": {
+      "enum": [
+        "heading",
+        "paragraph",
+        "table",
+        "table_row",
+        "list",
+        "list_item",
+        "callout",
+        "code_block",
+        "json_object"
+      ]
+    },
+    "rawText": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Texte brut verbatim. Jamais normalisé, jamais reformulé."
+    },
+    "textHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "corpusFileContentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Hash du fichier au moment de la fragmentation. Permet de détecter qu'un fragment pointe vers une version périmée du corpus."
+    }
+  }
+}

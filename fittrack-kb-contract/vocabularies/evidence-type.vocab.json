@@ -1,0 +1,143 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "evidence-type",
+  "title": "Types d'étude ou de document",
+  "origin": "clinical_schema_f4",
+  "description": "Étend documentType de F4 avec les types réellement présents dans les registres de sources de F1 §20 et F3 §15.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "position_stand",
+      "label": "Position stand",
+      "origin": "corpus",
+      "corpusRef": "F1 §20 (ACSM, IUSCA)"
+    },
+    {
+      "term": "clinical_practice_guideline",
+      "label": "Recommandation de pratique clinique",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F3 §15"
+    },
+    {
+      "term": "medical_body_recommendation",
+      "label": "Recommandation d'organisme médical",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F3 §15 (OMS, NICE)"
+    },
+    {
+      "term": "consensus_statement",
+      "label": "Consensus",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F3 §15 (Berne 2022)"
+    },
+    {
+      "term": "umbrella_review",
+      "label": "Revue parapluie",
+      "origin": "corpus",
+      "corpusRef": "F1 §20 (Bernárdez-Vázquez, McLeod)"
+    },
+    {
+      "term": "systematic_review",
+      "label": "Revue systématique",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F1 §20"
+    },
+    {
+      "term": "meta_analysis",
+      "label": "Méta-analyse",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F1 §20"
+    },
+    {
+      "term": "meta_regression",
+      "label": "Méta-régression",
+      "origin": "corpus",
+      "corpusRef": "F1 §20 (Pelland 2026)"
+    },
+    {
+      "term": "network_meta_analysis",
+      "label": "Méta-analyse en réseau",
+      "origin": "corpus",
+      "corpusRef": "F1 §20 (Lopez 2021, Currier 2023)"
+    },
+    {
+      "term": "randomized_trial",
+      "label": "Essai randomisé",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F1 §20"
+    },
+    {
+      "term": "within_participant_trial",
+      "label": "Essai intra-sujet",
+      "origin": "corpus",
+      "corpusRef": "F1 §20 (Wolf 2025, Pancar 2026)"
+    },
+    {
+      "term": "cohort",
+      "label": "Cohorte",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4"
+    },
+    {
+      "term": "cross_sectional_survey",
+      "label": "Enquête transversale",
+      "origin": "corpus",
+      "corpusRef": "F1 §13 (Rogerson 2024)"
+    },
+    {
+      "term": "biomechanical_study",
+      "label": "Étude biomécanique",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 ; F2 §6"
+    },
+    {
+      "term": "cadaveric_study",
+      "label": "Étude cadavérique",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.2"
+    },
+    {
+      "term": "emg_study",
+      "label": "Étude EMG",
+      "origin": "corpus",
+      "corpusRef": "F2 §0.3"
+    },
+    {
+      "term": "imaging_study",
+      "label": "Étude d'imagerie",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.1"
+    },
+    {
+      "term": "narrative_review",
+      "label": "Revue narrative",
+      "origin": "corpus",
+      "corpusRef": "F1 §20 (Sousa 2024)"
+    },
+    {
+      "term": "scoping_review",
+      "label": "Revue de portée",
+      "origin": "corpus",
+      "corpusRef": "F1 §4 (Refalo 2022)"
+    },
+    {
+      "term": "qualitative_study",
+      "label": "Étude qualitative",
+      "origin": "corpus",
+      "corpusRef": "F2 §9"
+    },
+    {
+      "term": "expert_practice",
+      "label": "Pratique experte",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 documentType"
+    },
+    {
+      "term": "unknown",
+      "label": "Type non déterminé dans le corpus",
+      "origin": "modeling_decision",
+      "note": "Nécessaire : F2 cite une centaine de références sans jamais typer le document."
+    }
+  ]
+}

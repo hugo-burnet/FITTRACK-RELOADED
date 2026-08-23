@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/red-flag.schema.json",
+  "title": "RedFlag",
+  "description": "Signal d'arrêt prioritaire. action et urgency sont obligatoires : un red flag sans action est un red flag qui ne fait rien.\n\nUn red flag n'est pas un diagnostic. Le schéma impose un libellé non diagnostique et interdit d'en dériver un nom de pathologie : F3 §3 formule la règle « ce symptôme nécessite une évaluation », jamais « vous avez X ».",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "provenance",
+    "signal",
+    "question",
+    "action",
+    "urgency",
+    "overridesNormalCoaching",
+    "isDiagnostic",
+    "sourceRefs"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une entité normative clinique doit porter sa date de revue : F3 §16 l'exige explicitement, et F4 ne l'offrait pas.",
+      "properties": { "lifecycle": { "required": ["reviewedAt"] } }
+    },
+    {
+      "description": "Une urgence immédiate ne peut pas se contenter d'inviter à consulter. Les deux champs de F4 étaient indépendants ; les lier interdit le red flag mal calibré.",
+      "if": { "properties": { "urgency": { "const": "emergency_now" } }, "required": ["urgency"] },
+      "then": { "properties": { "action": { "const": "stop_and_emergency_assessment" } } }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "signal": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Signal ou contexte, formulé en symptômes observables et non en pathologie."
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Question posée à l'utilisateur. Reprend le champ question de F4."
+    },
+    "positiveExamples": { "type": "array", "items": { "type": "string" } },
+    "action": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/redFlagAction" },
+    "urgency": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/redFlagUrgency" },
+    "safetyZone": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/safetyZone" },
+    "overridesNormalCoaching": {
+      "const": true,
+      "description": "Constante vraie. Un red flag actif ne peut jamais laisser le flux normal de coaching contourner son action ; INV-007 vérifie qu'aucune règle d'adaptation ne s'exécute par-dessus."
+    },
+    "isDiagnostic": {
+      "const": false,
+      "description": "Constante fausse. Un red flag suggère une évaluation, il n'établit rien."
+    },
+    "suspectedConditionMention": {
+      "type": ["string", "null"],
+      "description": "Ce que le corpus mentionne comme suspicion, à des fins de traçabilité de la source uniquement. Ne doit jamais être présenté à l'utilisateur comme un diagnostic."
+    },
+    "isolatedSignalWarning": {
+      "type": ["string", "null"],
+      "description": "F3 §3 rappelle que les signaux isolés ont souvent une faible précision et que c'est la combinaison qui compte. Conserver cet avertissement évite un déclenchement mécanique sur un signe unique."
+    },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Ordre d'évaluation quand plusieurs red flags sont candidats. 1 = évalué en premier."
+    }
+  }
+}

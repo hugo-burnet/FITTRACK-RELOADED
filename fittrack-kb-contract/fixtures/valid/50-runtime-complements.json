@@ -1,0 +1,114 @@
+{
+  "note": "Compléments runtime : les quatre entités que le golden set n'illustrait pas encore. Toutes sont des données d'exemple, non réelles. Aucune n'a de provenance de corpus, et leurs identifiants portent tous le préfixe rt. qui les rend inréférençables depuis curated/.",
+  "collections": [
+    {
+      "kind": "irritability-state",
+      "records": [
+        {
+          "id": "rt.irritability-state.b02f5a91-7c34-4e6a-9d81-3f5b0c7a2e18",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-21T08:15:00Z",
+          "recordedAt": "2026-08-21T08:15:00Z",
+          "basis": "observed_response",
+          "level": "low",
+          "bodyRegion": "Rachis lombaire",
+          "indicators": ["none_reported"],
+          "conditionContextRef": "condition.low-back-pain.0001",
+          "notes": "Le symptôme de la veille est revenu au niveau de base le lendemain matin, sans douleur au repos ni perte de fonction. Ce niveau appartient à une personne et à une date : dans F4, il vivait dans conditionRecord, c'est-à-dire dans la connaissance générale, où il n'avait aucun sens."
+        },
+        {
+          "id": "rt.irritability-state.d47c8e13-2b96-4a05-8e72-1c9f6d3b5a80",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-14T07:50:00Z",
+          "recordedAt": "2026-08-14T07:50:00Z",
+          "basis": "user_report",
+          "level": "moderate",
+          "bodyRegion": "Rachis lombaire",
+          "indicators": ["reaction_to_low_load", "durable_aggravation"],
+          "conditionContextRef": "condition.low-back-pain.0001",
+          "notes": "État antérieur, conservé. L'état du 21 août ne l'écrase pas : côté runtime aussi, l'historique reste interrogeable."
+        }
+      ]
+    },
+    {
+      "kind": "exercise-response",
+      "records": [
+        {
+          "id": "rt.exercise-response.a915b3d7-6e42-4c08-b7f1-9d24e0a8c536",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-20T18:42:00Z",
+          "recordedAt": "2026-08-20T18:44:00Z",
+          "basis": "observed_response",
+          "exerciseVariantRef": "variant.squat.barbell-back.0001",
+          "performedLoad": "70 kg",
+          "performedReps": 6,
+          "performedSets": 3,
+          "reportedRir": 2,
+          "immediateResponse": "mildly_worse",
+          "stopReason": null,
+          "technicalQualityNote": "Amplitude volontairement limitée à mi-cuisse sur la dernière série.",
+          "delayedResponseRefs": ["rt.delayed-response.e6803f21-45ba-4d97-a0c3-8b71f2d94e05"],
+          "notes": "Donnée d'exemple. Le RIR est auto-déclaré : le corpus établit que cette estimation est imparfaite, elle ne doit jamais être traitée comme une mesure objective."
+        }
+      ]
+    },
+    {
+      "kind": "delayed-response",
+      "records": [
+        {
+          "id": "rt.delayed-response.e6803f21-45ba-4d97-a0c3-8b71f2d94e05",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-21T08:00:00Z",
+          "recordedAt": "2026-08-21T08:12:00Z",
+          "basis": "user_report",
+          "exposureRef": "rt.exercise-response.a915b3d7-6e42-4c08-b7f1-9d24e0a8c536",
+          "delayWindow": "next_morning",
+          "symptomLevel": 1,
+          "baselineLevel": 1,
+          "returnedToBaseline": true,
+          "functionImpact": "none",
+          "sleepDisturbed": false,
+          "notes": "Donnée d'exemple. Entité séparée de la réponse immédiate parce qu'elle est saisie le lendemain : la loger dans l'enregistrement de la veille obligerait à l'écraser et effacerait la trajectoire, qui est précisément ce que le corpus demande de suivre."
+        },
+        {
+          "id": "rt.delayed-response.f2417c86-9d50-4b31-8a6e-05c7b3e19d42",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-15T08:00:00Z",
+          "recordedAt": "2026-08-15T08:05:00Z",
+          "basis": "user_report",
+          "exposureRef": "rt.exercise-response.a915b3d7-6e42-4c08-b7f1-9d24e0a8c536",
+          "delayWindow": "24h",
+          "symptomLevel": 4,
+          "baselineLevel": 1,
+          "returnedToBaseline": false,
+          "whatRemainsElevated": "Raideur lombaire au lever, gêne persistante en flexion, non revenue au niveau habituel.",
+          "functionImpact": "mild",
+          "sleepDisturbed": false,
+          "notes": "Donnée d'exemple illustrant le cas de non-retour au niveau de base, qui déclenche la régression prévue par la règle d'adaptation. Le schéma exige alors de dire ce qui reste élevé : sans cela, le déclencheur ne serait pas exploitable."
+        }
+      ]
+    },
+    {
+      "kind": "clinician-instruction",
+      "records": [
+        {
+          "id": "rt.clinician-instruction.9c1e0b74-3f28-4d65-a819-7e40b2c6fa13",
+          "subjectRef": "local-user",
+          "observedAt": "2026-07-02T10:00:00Z",
+          "recordedAt": "2026-07-02T19:30:00Z",
+          "basis": "clinician_instruction",
+          "instructionText": "Pas de charge axiale debout pendant six semaines, reprise progressive ensuite selon la tolérance.",
+          "instructionKind": "load_restriction",
+          "issuedBy": "Kinésithérapeute",
+          "effectiveFrom": "2026-07-02",
+          "effectiveUntil": "2026-08-13",
+          "overridesCoachingLogic": true,
+          "verificationStatus": "user_reported_unverified",
+          "relatedConditionRef": "condition.low-back-pain.0001",
+          "restrictedExerciseRefs": ["exercise.squat.0001"],
+          "notes": "Donnée d'exemple. verificationStatus est explicite : FitTrack ne peut pas vérifier une consigne médicale, et traiter un souvenir approximatif comme un protocole serait une erreur coûteuse dans les deux sens."
+        }
+      ]
+    }
+  ]
+}

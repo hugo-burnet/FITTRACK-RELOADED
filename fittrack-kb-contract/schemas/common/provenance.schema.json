@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/common/provenance.schema.json",
+  "title": "Provenance et valeurs attestées",
+  "description": "Chaîne minimale : entité canonique → candidat extrait → fragment exact → fichier du corpus. Toute entité de curated/ doit porter au moins un lien de provenance ; c'est le seul moyen de rendre l'invariant INV-002 vérifiable par le schéma et non par convention.",
+
+  "$defs": {
+    "provenanceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fragmentRef", "corpusFileRef", "extractionMethod"],
+      "properties": {
+        "fragmentRef": {
+          "type": "string",
+          "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$",
+          "description": "CorpusFragment exact d'où provient l'information."
+        },
+        "corpusFileRef": {
+          "type": "string",
+          "pattern": "^corpus\\.[a-z0-9]+\\.[a-z0-9-]+$"
+        },
+        "candidateRef": {
+          "type": "string",
+          "description": "Candidat d'extraction ayant produit cette entité, quand le pipeline en a créé un. Absent pour les entités saisies manuellement dans le golden set."
+        },
+        "extractionMethod": {
+          "enum": [
+            "manual_curation",
+            "deterministic_table_row",
+            "deterministic_table_cell",
+            "deterministic_link_scan",
+            "deterministic_json_path",
+            "llm_prose_extraction"
+          ]
+        },
+        "extractedAt": { "type": "string", "format": "date" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "provenance": {
+      "type": "array",
+      "description": "Au moins un lien. Un tableau vide est un rejet de validation, pas une entité incomplète.",
+      "items": { "$ref": "#/$defs/provenanceLink" },
+      "minItems": 1
+    },
+
+    "attestation": {
+      "type": "object",
+      "description": "Ce qui justifie une valeur non triviale : au moins une claim ou une source, plus la nature de la connaissance. Sans cela, un champ d'exercice deviendrait une affirmation sans auteur.",
+      "additionalProperties": false,
+      "required": ["knowledgeType"],
+      "properties": {
+        "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "knowledgeType": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType"
+        },
+        "directness": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/directness"
+        },
+        "confidence": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceLevel"
+        },
+        "note": { "type": "string" }
+      },
+      "anyOf": [
+        { "required": ["claimRefs"], "properties": { "claimRefs": { "minItems": 1 } } },
+        { "required": ["sourceRefs"], "properties": { "sourceRefs": { "minItems": 1 } } },
+        {
+          "description": "Seule exception : une valeur explicitement étiquetée décision de modélisation ou politique produit n'a pas de claim scientifique derrière elle, et ne doit surtout pas en fabriquer une.",
+          "properties": {
+            "knowledgeType": { "enum": ["MODELING_DECISION", "PRODUCT_POLICY"] }
+          },
+          "required": ["knowledgeType"]
+        }
+      ]
+    },
+
+    "attestedString": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "attestation"],
+      "properties": {
+        "value": { "type": ["string", "null"] },
+        "attestation": { "$ref": "#/$defs/attestation" }
+      }
+    },
+
+    "attestedBoolean": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "attestation"],
+      "properties": {
+        "value": { "type": ["boolean", "null"] },
+        "attestation": { "$ref": "#/$defs/attestation" }
+      }
+    },
+
+    "attestedOrdinal": {
+      "type": "object",
+      "description": "Échelle ordinale nommée, jamais un nombre nu : un nombre nu invite à une arithmétique que les données ne supportent pas.",
+      "additionalProperties": false,
+      "required": ["value", "attestation"],
+      "properties": {
+        "value": { "type": ["string", "null"] },
+        "scale": { "type": "string" },
+        "attestation": { "$ref": "#/$defs/attestation" }
+      }
+    },
+
+    "attestedRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "attestation"],
+      "properties": {
+        "value": { "type": ["string", "null"] },
+        "attestation": { "$ref": "#/$defs/attestation" }
+      }
+    }
+  }
+}

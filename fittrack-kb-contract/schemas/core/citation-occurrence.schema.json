@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/citation-occurrence.schema.json",
+  "title": "CitationOccurrence",
+  "description": "Une occurrence de citation à un endroit précis du corpus. Distincte de la Source : le même essai est cité douze fois avec trois libellés et trois URL, et chaque occurrence doit rester traçable séparément pour que S-1 à S-4 soient reconstituables.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "rawLabel", "fragmentRef"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "rawLabel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Texte du lien tel qu'écrit, par exemple « ACSM, 2026 » ou « Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet »."
+    },
+    "rawUrl": { "type": ["string", "null"] },
+    "fragmentRef": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+    "resolvesToSourceRef": {
+      "oneOf": [
+        { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+        { "type": "null" }
+      ],
+      "description": "null tant que l'occurrence n'est rattachée à aucune Source. Une occurrence non résolue est une donnée, pas une erreur."
+    },
+    "resolutionStatus": {
+      "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/sourceResolutionStatus"
+    },
+    "note": { "type": "string" }
+  }
+}

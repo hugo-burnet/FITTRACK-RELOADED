@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/claim.schema.json",
+  "title": "Claim",
+  "description": "Une seule affirmation vérifiable. Le texte brut extrait n'est jamais remplacé par sa forme canonique. Une claim ne porte AUCUN score global de preuve : la confiance vit dans les EvidenceAssessment, référencés et non embarqués, pour que l'historique ne puisse pas être écrasé par une mise à jour de la claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "provenance",
+    "domain",
+    "rawStatement",
+    "knowledgeType",
+    "epistemicStatus",
+    "cannotConclude"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Contrainte non négociable rendue structurelle : une pratique experte ou une hypothèse ne peut pas porter un statut de fait établi. Le schéma refuse la combinaison ; aucune convention d'usage n'est nécessaire.",
+      "if": {
+        "properties": { "knowledgeType": { "enum": ["EXPERT_PRACTICE", "HYPOTHESIS"] } },
+        "required": ["knowledgeType"]
+      },
+      "then": {
+        "properties": {
+          "epistemicStatus": {
+            "enum": ["uncertain", "controversial", "mechanistic_only", "practice_only", "absence_of_evidence"]
+          }
+        }
+      }
+    },
+    {
+      "description": "Une observation EMG seule ne peut pas être présentée comme un fait établi ni comme une direction établie : F2 §0.1 en fait une règle non négociable.",
+      "if": {
+        "properties": { "knowledgeType": { "const": "EMG_OBSERVATION" } },
+        "required": ["knowledgeType"]
+      },
+      "then": {
+        "properties": {
+          "epistemicStatus": {
+            "enum": ["probable", "uncertain", "controversial", "mechanistic_only", "absence_of_evidence"]
+          }
+        }
+      }
+    },
+    {
+      "description": "Une politique produit n'est pas une claim scientifique. Si elle apparaît ici, elle doit se déclarer comme telle et pointer la politique qui la porte.",
+      "if": {
+        "properties": { "knowledgeType": { "const": "PRODUCT_POLICY" } },
+        "required": ["knowledgeType"]
+      },
+      "then": { "required": ["policyRef"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "domain": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/domain" },
+
+    "rawStatement": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Texte extrait verbatim. La normalisation ne le remplace jamais."
+    },
+    "canonicalStatement": {
+      "type": ["string", "null"],
+      "description": "Reformulation normalisée, facultative. Sa présence n'autorise jamais à supprimer rawStatement."
+    },
+
+    "knowledgeType": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType" },
+    "epistemicStatus": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/epistemicStatus" },
+
+    "cannotConclude": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Ce que la claim ne permet PAS de conclure. Champ obligatoire, y compris vide : une absence de champ et un tableau vide n'ont pas le même sens, et INV-004 vérifie que le contenu survit à toutes les projections. Le corpus fournit une colonne dédiée dans presque tous ses tableaux."
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "exceptions": { "type": "array", "items": { "type": "string" } },
+    "conditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions d'application. Une recommandation chiffrée sans condition est une règle absolue déguisée."
+    },
+    "practicalInterpretation": { "type": ["string", "null"] },
+
+    "populationRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true
+    },
+    "outcomeRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true
+    },
+    "assessmentRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true,
+      "description": "Références, jamais objets embarqués. Embarquer les évaluations rendrait leur historique dépendant de la révision de la claim."
+    },
+    "sourceRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true
+    },
+    "relations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "targetClaimRef"],
+        "properties": {
+          "type": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/claimRelationType" },
+          "targetClaimRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "policyRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "siblingClaimsFromSameFragment": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true,
+      "description": "Une ligne de tableau peut porter plusieurs affirmations indépendantes. Ce champ les relie sans les fusionner, et sans supposer une correspondance 1 pour 1 entre ligne et claim."
+    },
+    "notes": { "type": "string" }
+  }
+}

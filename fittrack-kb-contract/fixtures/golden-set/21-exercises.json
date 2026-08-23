@@ -1,0 +1,717 @@
+{
+  "note": "Trois exercices, cinq variantes, trois observations de charge articulaire et trois substitutions. La plupart des fiches restent en completeness « stub » ou « partial » : F2 §12.6 préfère une fiche incomplète à une fiche comblée par inférence, et le schéma interdit à une fiche stub de porter la moindre affirmation musculaire.",
+  "collections": [
+    {
+      "kind": "exercise",
+      "records": [
+        {
+          "id": "exercise.press.bench.0001",
+          "slug": "developpe-couche",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0010",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Développé couché",
+          "aliases": [
+            "bench press"
+          ],
+          "movementPattern": "poussee_horizontale",
+          "isMultiJoint": true,
+          "primaryMuscles": [
+            {
+              "muscleRef": "muscle.pectoralis-major.0001",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "moderate",
+                "claimRefs": [
+                  "claim.exercise.mode-specificity.0001"
+                ],
+                "note": "Déduit de l'anatomie fonctionnelle de F2 §1.1 (adduction horizontale) et non du nom populaire de l'exercice, ce que F2 §12.3 interdit explicitement."
+              }
+            }
+          ],
+          "variantRefs": [
+            "variant.bench.barbell-flat.0001",
+            "variant.bench.dumbbell.0001"
+          ],
+          "completeness": "partial",
+          "contentHash": "sha256:0ef97fe560c0af5caf90cff9ed6873be321be02539c8a453f6de2ce733ab7320"
+        },
+        {
+          "id": "exercise.elbow-extension.0001",
+          "slug": "extension-du-coude",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Extension du coude",
+          "aliases": [
+            "triceps extension"
+          ],
+          "movementPattern": "isolation_coude",
+          "isMultiJoint": false,
+          "primaryMuscles": [
+            {
+              "muscleRef": "muscle.triceps-brachii.0001",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "high",
+                "claimRefs": [
+                  "claim.exercise.triceps-longhead.0001"
+                ]
+              }
+            }
+          ],
+          "variantRefs": [
+            "variant.elbow-extension.overhead.0001",
+            "variant.elbow-extension.pushdown.0001"
+          ],
+          "completeness": "partial",
+          "contentHash": "sha256:360857a2e4a8c97699ea8768c06e9dc160960b9630058f6290fe48899cbbe1e5"
+        },
+        {
+          "id": "exercise.squat.0001",
+          "slug": "squat",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0011",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Squat",
+          "movementPattern": "squat",
+          "isMultiJoint": true,
+          "primaryMuscles": [],
+          "secondaryMuscles": [],
+          "completeness": "stub",
+          "unknownFields": [
+            {
+              "field": "primaryMuscles",
+              "reason": "not_in_corpus",
+              "note": "F2 §7.6 dit que le squat sollicite l'ensemble du quadriceps de façon relativement homogène, mais aucune entité Muscle du quadriceps n'existe encore dans ce golden set restreint. La fiche reste stub plutôt que d'affirmer un muscle non modélisé."
+            }
+          ],
+          "contentHash": "sha256:a0a908d4318b452038414354a7daf65edb9a39914afad0f73a2ea1db14058aaf"
+        },
+        {
+          "id": "exercise.leg-press.0001",
+          "slug": "leg-press",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0011",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Leg press",
+          "aliases": [
+            "presse à cuisses"
+          ],
+          "movementPattern": "squat",
+          "isMultiJoint": true,
+          "primaryMuscles": [],
+          "secondaryMuscles": [],
+          "completeness": "stub",
+          "contentHash": "sha256:025e89941200065e12ba4652711a7652d6bfbf63703c5bd984d3b068bd1e825d"
+        },
+        {
+          "id": "exercise.deadlift.0001",
+          "slug": "souleve-de-terre",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0009",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Soulevé de terre",
+          "aliases": [
+            "deadlift"
+          ],
+          "movementPattern": "hinge",
+          "isMultiJoint": true,
+          "primaryMuscles": [],
+          "secondaryMuscles": [],
+          "completeness": "stub",
+          "unknownFields": [
+            {
+              "field": "primaryMuscles",
+              "reason": "not_in_corpus",
+              "note": "Le corpus ne documente le soulevé de terre que sous l'angle de la charge lombaire modélisée, jamais sous celui des muscles moteurs."
+            }
+          ],
+          "contentHash": "sha256:025d3d8faf3e5dadd1d19d76a057a099f4a6b2700954e7f99cf2c87fc8bc3930"
+        }
+      ]
+    },
+    {
+      "kind": "exercise-variant",
+      "records": [
+        {
+          "id": "variant.bench.barbell-flat.0001",
+          "slug": "developpe-couche-barre-plat",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0010",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Développé couché barre, banc plat",
+          "exerciseRef": "exercise.press.bench.0001",
+          "equipmentRefs": [
+            "equipment.barre.0001"
+          ],
+          "stabilityDemand": {
+            "value": "poids_libre_stable",
+            "scale": "guidé/machine → poids libre stable → poids libre instable",
+            "attestation": {
+              "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+              "directness": "biomechanical_only",
+              "confidence": "moderate",
+              "claimRefs": [
+                "claim.biomechanics.stability.0001"
+              ],
+              "note": "Le classement est vérifiable ; sa conséquence hypertrophique ne l'est pas. L'attestation porte sur le classement seul."
+            }
+          },
+          "completeness": "partial",
+          "jointLoadObservationRefs": [
+            "observation.shoulder.bench-press.0001"
+          ],
+          "contentHash": "sha256:01d24db2af2f9a65033f7f53868cd42a1b5addc559cf6ccf5076d28a475eaefb"
+        },
+        {
+          "id": "variant.bench.dumbbell.0001",
+          "slug": "developpe-couche-halteres",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0010",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Développé couché haltères",
+          "exerciseRef": "exercise.press.bench.0001",
+          "equipmentRefs": [
+            "equipment.haltere.0001"
+          ],
+          "resistanceProfileRef": "profile.bench-dumbbell.0001",
+          "stabilityDemand": {
+            "value": "poids_libre_instable",
+            "scale": "guidé/machine → poids libre stable → poids libre instable",
+            "attestation": {
+              "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+              "directness": "biomechanical_only",
+              "confidence": "moderate",
+              "claimRefs": [
+                "claim.biomechanics.stability.0001"
+              ],
+              "note": "F2 §8.2 désigne la stabilité comme la différence principale entre haltères et barre pour cette paire."
+            }
+          },
+          "completeness": "partial",
+          "contentHash": "sha256:c7bb4ab04777e64d04a07cdbe049e8ff5ed37d6b8d6722d37b652cf7e7c91c73"
+        },
+        {
+          "id": "variant.elbow-extension.overhead.0001",
+          "slug": "extension-overhead",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Extension du coude bras au-dessus de la tête",
+          "aliases": [
+            "overhead extension"
+          ],
+          "exerciseRef": "exercise.elbow-extension.0001",
+          "jointPositionNotes": [
+            {
+              "value": "Épaule fléchie, bras au-dessus de la tête : le chef long est étiré au niveau de l'épaule pendant que le coude s'étend.",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "high",
+                "claimRefs": [
+                  "claim.exercise.triceps-longhead.0001"
+                ]
+              }
+            }
+          ],
+          "lengthenedBias": {
+            "value": "allongee",
+            "scale": "raccourcie | moyenne | allongee",
+            "attestation": {
+              "knowledgeType": "EVIDENCE",
+              "directness": "direct_hypertrophy_measured",
+              "confidence": "moderate",
+              "claimRefs": [
+                "claim.exercise.triceps-longhead.0001"
+              ],
+              "sourceRefs": [
+                "source.nunes-2022-overhead-triceps"
+              ],
+              "note": "Rare cas où le biais de longueur est soutenu par une hypertrophie régionale mesurée, et non par la seule biomécanique."
+            }
+          },
+          "completeness": "documented",
+          "jointLoadObservationRefs": [
+            "observation.elbow.overhead-extension.0001"
+          ],
+          "contentHash": "sha256:a73e729e238aec429849ca1b1795cdf2911a046a328f2fe2aed95d8a1280f07d"
+        },
+        {
+          "id": "variant.elbow-extension.pushdown.0001",
+          "slug": "pushdown",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0012",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Pushdown à la poulie",
+          "exerciseRef": "exercise.elbow-extension.0001",
+          "equipmentRefs": [
+            "equipment.poulie-cable.0001"
+          ],
+          "jointPositionNotes": [
+            {
+              "value": "Bras le long du corps : le chef long n'est pas étiré à l'épaule.",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "high",
+                "claimRefs": [
+                  "claim.exercise.triceps-longhead.0001"
+                ]
+              }
+            }
+          ],
+          "lengthenedBias": {
+            "value": "moyenne",
+            "scale": "raccourcie | moyenne | allongee",
+            "attestation": {
+              "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+              "directness": "biomechanical_only",
+              "confidence": "moderate",
+              "claimRefs": [
+                "claim.exercise.triceps-longhead.0001"
+              ],
+              "note": "Déduit par contraste avec la variante overhead, qui est la seule des deux à avoir été testée directement."
+            }
+          },
+          "completeness": "documented",
+          "jointLoadObservationRefs": [
+            "observation.elbow.overhead-extension.0001"
+          ],
+          "contentHash": "sha256:b295b60637b53eced5f9b3d853a9beabf1e0a523b6eb1bb671a7025fb66e2a49"
+        },
+        {
+          "id": "variant.squat.barbell-back.0001",
+          "slug": "squat-barre-dos",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0011",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Squat barre au dos",
+          "exerciseRef": "exercise.squat.0001",
+          "equipmentRefs": [
+            "equipment.barre.0001"
+          ],
+          "axialLoad": {
+            "value": true,
+            "attestation": {
+              "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+              "directness": "biomechanical_only",
+              "confidence": "high",
+              "claimRefs": [
+                "claim.biomechanics.stability.0001"
+              ],
+              "note": "« le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press ». Fait biomécanique, jamais converti en jugement de risque."
+            }
+          },
+          "completeness": "partial",
+          "contentHash": "sha256:d9905624c24f999cdf22c110e1a2c17b0f7a1c91ae8157e1af532ac68c283c2c"
+        }
+      ]
+    },
+    {
+      "kind": "joint-load-observation",
+      "records": [
+        {
+          "id": "observation.lumbar.deadlift.0001",
+          "slug": "charge-lombaire-souleve-de-terre",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0009",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "jointRef": "joint.lumbar-spine.0001",
+          "exerciseRef": "exercise.deadlift.0001",
+          "observationType": "charge_mecanique",
+          "finding": "Les forces musculaires du tronc et les charges rachidiennes pendant un soulevé de terre lourd sont quantifiables par modélisation, mais varient fortement selon la personnalisation du modèle, l'enveloppement musculaire et le rythme lombo-pelvien retenus.",
+          "measurementMethod": "Modélisation biomécanique",
+          "uncertaintyNote": "Une charge de compression ou de cisaillement lombaire élevée mesurée par modélisation est une charge mécanique documentée, pas un risque de blessure démontré. Le rachis, comme tout tissu, s'adapte à la charge progressive.",
+          "sourceRefs": [
+            "source.plotkin-2023-hipthrust-squat"
+          ],
+          "impliesContraindication": false,
+          "relatedGapRef": "gap.biomechanics.lumbar-injury-link",
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "Les deux études de modélisation citées par F2 §6.4 n'ont pas encore d'entité Source dans ce golden set restreint."
+            }
+          ],
+          "contentHash": "sha256:14c547a6afe402371a453b75fc48c5563e7ecc6438c7e9ec4d883cd1adf42b81"
+        },
+        {
+          "id": "observation.shoulder.bench-press.0001",
+          "slug": "charge-epaule-developpe-contre-poulie",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0007",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "jointRef": "joint.shoulder.0001",
+          "variantRef": "variant.bench.barbell-flat.0001",
+          "observationType": "charge_mecanique",
+          "finding": "Les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché.",
+          "measurementMethod": "Analyse biomécanique des moments articulaires",
+          "uncertaintyNote": "Utile pour comparer objectivement la charge articulaire entre familles d'exercices de pectoraux sans préjuger d'un danger.",
+          "sourceRefs": [
+            "source.plotkin-2023-hipthrust-squat"
+          ],
+          "impliesContraindication": false,
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "L'analyse biomécanique des exercices de développé citée par F2 §6.1 n'a pas encore d'entité Source."
+            }
+          ],
+          "contentHash": "sha256:3cc38cc22a6a81e25adc65a95bd0557277939c239bdaaada4621b380b0cac148"
+        },
+        {
+          "id": "observation.elbow.overhead-extension.0001",
+          "slug": "contrainte-coude-extension-overhead-supposee",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0008",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "jointRef": "joint.elbow.0001",
+          "exerciseRef": "exercise.elbow-extension.0001",
+          "observationType": "risque_suppose",
+          "finding": "L'affirmation courante selon laquelle le skull crusher ou l'extension overhead imposerait une contrainte particulière au coude repose largement sur un raisonnement biomécanique de premier principe plutôt que sur une mesure directe publiée en contexte de musculation.",
+          "measurementMethod": null,
+          "uncertaintyNote": "Niveau de preuve très faible, largement inférentiel. Aucune étude biomécanique dédiée en musculation récréative n'a été identifiée.",
+          "sourceRefs": [
+            "source.plotkin-2023-hipthrust-squat"
+          ],
+          "analogySource": {
+            "fromPopulation": "Lanceurs de baseball, charges répétitives à haute vitesse",
+            "toPopulation": "Pratiquants de musculation récréative",
+            "transferabilityNote": "La littérature disponible sur la charge au coude provient principalement du contexte du lancer au baseball, peu généralisable. Le corpus qualifie explicitement ce transfert de peu généralisable."
+          },
+          "impliesContraindication": false,
+          "relatedGapRef": "gap.biomechanics.elbow-load",
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "L'étude de biomécanique du lancer citée par F2 §6.2 n'a pas encore d'entité Source."
+            }
+          ],
+          "contentHash": "sha256:049a186ff74619a898c0f2569d26e815338791057bc794739634c69ee9150f11"
+        }
+      ]
+    },
+    {
+      "kind": "substitution-relation",
+      "records": [
+        {
+          "id": "substitution.bench.barbell-to-dumbbell.0001",
+          "slug": "barre-vers-halteres-quasi-directe",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0010",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "sourceRef": "variant.bench.barbell-flat.0001",
+          "targetRef": "variant.bench.dumbbell.0001",
+          "referentKind": "variant_to_variant",
+          "equivalenceLevel": "quasi_directe",
+          "matchingDimensions": [
+            {
+              "criterion": "pattern_de_mouvement",
+              "note": "Même poussée horizontale."
+            },
+            {
+              "criterion": "fonction_musculaire_precise",
+              "note": "Même muscle dominant."
+            },
+            {
+              "criterion": "longueur_musculaire_dominante",
+              "note": "Longueur dominante comparable."
+            }
+          ],
+          "differingDimensions": [
+            {
+              "criterion": "stabilite_requise",
+              "consequence": "Modifie la charge utilisable et l'attention technique, pas nécessairement l'hypertrophie."
+            },
+            {
+              "criterion": "profil_de_resistance",
+              "consequence": "Légère variation d'amplitude d'épaule et de point difficile."
+            }
+          ],
+          "objective": {
+            "forHypertrophy": "likely_equivalent",
+            "forStrengthTransfer": "not_equivalent",
+            "contextNote": "La méta-analyse poids libres contre machines fournit une base de preuve directe pour l'hypertrophie ; la spécificité de force reste distincte."
+          },
+          "justification": {
+            "rationale": "Deux exercices sollicitant le même pattern de mouvement, la même fonction musculaire principale, une longueur musculaire dominante comparable, et ne différant principalement que par le profil de résistance ou le niveau de stabilité.",
+            "knowledgeType": "EVIDENCE",
+            "claimRefs": [
+              "claim.exercise.freeweight-machine.0001",
+              "claim.exercise.mode-specificity.0001"
+            ],
+            "sourceRefs": [
+              "source.heidel-2023-free-weight-vs-machine"
+            ]
+          },
+          "directionality": "symmetric",
+          "contentHash": "sha256:df3770c4894f411a11fc1ec037ae93288af71b3c978550385b204341a9383ed3"
+        },
+        {
+          "id": "substitution.squat-to-leg-press.0001",
+          "slug": "squat-vers-leg-press-acceptable",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0011",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "sourceRef": "exercise.squat.0001",
+          "targetRef": "exercise.leg-press.0001",
+          "referentKind": "exercise_to_exercise",
+          "equivalenceLevel": "acceptable",
+          "matchingDimensions": [
+            {
+              "criterion": "pattern_de_mouvement",
+              "note": "Même famille squat."
+            },
+            {
+              "criterion": "fonction_musculaire_precise",
+              "note": "Même fonction quadriceps dominante."
+            }
+          ],
+          "differingDimensions": [
+            {
+              "criterion": "demande_lombaire_charge_axiale",
+              "consequence": "Le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press."
+            },
+            {
+              "criterion": "objectif_force_vs_hypertrophie",
+              "consequence": "Non interchangeables pour l'objectif de force spécifique au squat."
+            },
+            {
+              "criterion": "stabilite_requise",
+              "consequence": "L'extension de hanche concomitante du squat sollicite davantage fessiers et ischio-jambiers en synergie."
+            }
+          ],
+          "objective": {
+            "forHypertrophy": "likely_equivalent",
+            "forStrengthTransfer": "not_equivalent",
+            "contextNote": "Substitution raisonnable pour l'hypertrophie du quadriceps : aucune étude ne démontre de supériorité franche de l'un sur l'autre pour ce muscle dans les données identifiées."
+          },
+          "justification": {
+            "rationale": "Même pattern et muscle principal, mais une dimension significative diffère : la charge axiale et la demande de stabilisation du tronc. La différence de demande lombaire est pertinente pour la gestion de fatigue et les préférences, pas comme jugement de dangerosité.",
+            "knowledgeType": "EVIDENCE",
+            "claimRefs": [
+              "claim.biomechanics.stability.0001"
+            ]
+          },
+          "directionality": "symmetric",
+          "contentHash": "sha256:f17b54649e81013ab24d24cee42c90dc5bc8604d7970db82ea977e77119b8783"
+        },
+        {
+          "id": "substitution.pushdown-to-overhead.0001",
+          "slug": "pushdown-vers-overhead-partielle",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0012",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "sourceRef": "variant.elbow-extension.pushdown.0001",
+          "targetRef": "variant.elbow-extension.overhead.0001",
+          "referentKind": "variant_to_variant",
+          "equivalenceLevel": "partielle",
+          "matchingDimensions": [
+            {
+              "criterion": "pattern_de_mouvement",
+              "note": "Même isolation du coude."
+            }
+          ],
+          "differingDimensions": [
+            {
+              "criterion": "longueur_musculaire_dominante",
+              "consequence": "L'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations."
+            },
+            {
+              "criterion": "fonction_musculaire_precise",
+              "consequence": "Le chef long biarticulaire est sollicité à une longueur différente ; les chefs latéral et médial ne le sont pas."
+            }
+          ],
+          "objective": {
+            "forHypertrophy": "regionally_different",
+            "forStrengthTransfer": "unknown",
+            "contextNote": "Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise, par exemple prioriser le chef long du triceps."
+          },
+          "justification": {
+            "rationale": "Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante et la biarticularité exploitée, de façon qui module l'hypertrophie régionale. Le corpus dispose ici d'un essai contrôlé direct, ce qui est rare.",
+            "knowledgeType": "EVIDENCE",
+            "claimRefs": [
+              "claim.exercise.triceps-longhead.0001"
+            ],
+            "sourceRefs": [
+              "source.nunes-2022-overhead-triceps"
+            ]
+          },
+          "directionality": "one_way",
+          "notes": "Sens unique : remplacer un pushdown par une extension overhead ajoute une exposition à grande longueur du chef long. L'inverse la retire, ce qui n'est pas une substitution neutre quand le chef long est prioritaire.",
+          "contentHash": "sha256:dab45fdbc0c288ec52f81e392a8a73b7f85db3dbfb7b62a9613119c0e2f8e0d3"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/outcome.schema.json",
+  "title": "Outcome",
+  "description": "Ce qui a été mesuré, et comment. Entité séparée parce que F1 §1.3 insiste sur la non-interchangeabilité des mesures : IRM et échographie localisée ne sont pas DXA, masse maigre globale, circonférences ou bio-impédance. Confondre les mesures reviendrait à confondre les conclusions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "label", "construct"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "construct": {
+      "enum": [
+        "muscle_size",
+        "regional_muscle_size",
+        "maximal_strength",
+        "muscular_endurance",
+        "power",
+        "emg_activation",
+        "joint_load",
+        "perceived_effort",
+        "pain",
+        "function",
+        "recovery",
+        "adherence",
+        "other"
+      ]
+    },
+    "measurementMethod": {
+      "type": ["string", "null"],
+      "description": "Méthode telle que déclarée par le corpus. null quand le corpus ne la précise pas — cas fréquent, et à ne surtout pas deviner."
+    },
+    "measurementSpecificityNote": { "type": ["string", "null"] },
+    "isProxyFor": {
+      "oneOf": [
+        { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+        { "type": "null" }
+      ],
+      "description": "Marque explicitement un outcome substitut. Une activation EMG déclarée proxy d'hypertrophie reste un proxy et ne peut jamais devenir l'outcome lui-même."
+    }
+  }
+}

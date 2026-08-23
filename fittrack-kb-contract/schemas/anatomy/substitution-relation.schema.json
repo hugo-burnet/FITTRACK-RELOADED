@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/substitution-relation.schema.json",
+  "title": "SubstitutionRelation",
+  "description": "Relation de substitution réifiée et justifiée. F2 §12.4 exige que toute règle de substitution cite le critère de §8.2 qui la justifie, et non le seul nom du muscle cible commun ; matchingDimensions est donc obligatoire et non vide.\n\nUne substitution équivalente pour l'hypertrophie ne l'est pas nécessairement pour le transfert de force : les deux objectifs sont déclarés séparément.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "provenance",
+    "sourceRef",
+    "targetRef",
+    "equivalenceLevel",
+    "matchingDimensions",
+    "differingDimensions",
+    "objective",
+    "justification"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une substitution quasi directe ne peut pas diverger sur la fonction musculaire précise ni sur la longueur dominante : ce serait, par définition de F2 §8.2, une substitution partielle.",
+      "if": { "properties": { "equivalenceLevel": { "const": "quasi_directe" } }, "required": ["equivalenceLevel"] },
+      "then": {
+        "properties": {
+          "differingDimensions": {
+            "items": {
+              "properties": {
+                "criterion": { "not": { "enum": ["fonction_musculaire_precise", "longueur_musculaire_dominante"] } }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "description": "Le matériel seul ne justifie pas une équivalence : F2 §8.3 le qualifie de critère purement logistique.",
+      "properties": {
+        "matchingDimensions": {
+          "not": {
+            "allOf": [
+              { "maxItems": 1 },
+              { "contains": { "properties": { "criterion": { "const": "materiel_disponible" } }, "required": ["criterion"] } }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "sourceRef": {
+      "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId",
+      "description": "Exercice ou variante remplacé."
+    },
+    "targetRef": {
+      "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId",
+      "description": "Exercice ou variante de remplacement."
+    },
+    "referentKind": { "enum": ["exercise_to_exercise", "variant_to_variant", "exercise_to_variant", "variant_to_exercise"] },
+    "equivalenceLevel": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/substitutionEquivalenceLevel" },
+    "matchingDimensions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion"],
+        "properties": {
+          "criterion": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/substitutionCriterion" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "differingDimensions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion", "consequence"],
+        "properties": {
+          "criterion": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/substitutionCriterion" },
+          "consequence": { "type": "string", "minLength": 1 },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "objective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["forHypertrophy"],
+      "description": "Une même paire peut être équivalente pour l'hypertrophie et ne pas l'être pour la force. Un seul champ d'équivalence aurait effacé cette distinction.",
+      "properties": {
+        "forHypertrophy": { "enum": ["equivalent", "likely_equivalent", "regionally_different", "unknown"] },
+        "forStrengthTransfer": { "enum": ["equivalent", "likely_equivalent", "not_equivalent", "unknown"] },
+        "contextNote": { "type": "string" }
+      }
+    },
+    "justification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rationale", "knowledgeType"],
+      "properties": {
+        "rationale": { "type": "string", "minLength": 1 },
+        "knowledgeType": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType" },
+        "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "directionality": { "enum": ["symmetric", "one_way"] },
+    "notes": { "type": "string" }
+  }
+}

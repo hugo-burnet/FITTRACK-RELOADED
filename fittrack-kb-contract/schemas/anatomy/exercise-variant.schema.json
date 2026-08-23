@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/exercise-variant.schema.json",
+  "title": "ExerciseVariant",
+  "description": "Exécution précise d'un exercice : matériel, position articulaire, amplitude, support. Tout ce qui change avec l'équipement vit ici et non dans Exercise.\n\nAucun champ binaire sûr / dangereux n'existe dans ce schéma, à aucun niveau. Les observations de charge articulaire passent par JointLoadObservation, qui impose la distinction en quatre catégories de F2 §6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "label", "exerciseRef", "completeness"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Le potentiel de progression est classé essentiellement empirique par F2 §10. Le déclarer autrement que comme pratique experte serait lui donner une autorité qu'il n'a pas.",
+      "if": { "required": ["progressionPotential"] },
+      "then": {
+        "properties": {
+          "progressionPotential": {
+            "properties": {
+              "attestation": { "properties": { "knowledgeType": { "const": "EXPERT_PRACTICE" } }, "required": ["knowledgeType"] }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "exerciseRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "equipmentRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "resistanceProfileRef": { "type": ["string", "null"] },
+
+    "jointPositionNotes": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" },
+      "description": "Ce qui distingue réellement la variante : épaule fléchie ou neutre, hanche fléchie ou étendue. C'est de là que vient la longueur musculaire dominante."
+    },
+    "lengthenedBias": {
+      "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedOrdinal",
+      "description": "Position dominante : raccourcie, moyenne ou allongée. Attesté parce que la preuve est croissante mais pas établie pour tous les muscles (F2 §3.2)."
+    },
+    "stabilityDemand": {
+      "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedOrdinal",
+      "description": "Le classement est vérifiable ; sa conséquence hypertrophique ne l'est pas (F2 §5.3). L'attestation doit porter sur le classement, pas sur un effet."
+    },
+    "axialLoad": {
+      "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedBoolean",
+      "description": "Fait biomécanique. Ne se convertit jamais automatiquement en jugement de risque (F2 §10, §6.4)."
+    },
+    "lumbarDemand": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedOrdinal" },
+    "romNotes": { "type": "array", "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" } },
+    "progressionPotential": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedOrdinal" },
+    "emgActivationComparative": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Champ séparé et étiqueté, jamais fusionné avec un champ d'hypertrophie : F2 §12.1 l'exige. Son existence même est la trace de l'interdiction.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["muscleRef", "comparedToVariantRef", "finding", "attestation"],
+        "properties": {
+          "muscleRef": { "type": "string" },
+          "comparedToVariantRef": { "type": "string" },
+          "finding": { "type": "string", "minLength": 1 },
+          "attestation": {
+            "allOf": [
+              { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestation" },
+              { "properties": { "knowledgeType": { "const": "EMG_OBSERVATION" } }, "required": ["knowledgeType"] }
+            ]
+          }
+        }
+      }
+    },
+    "jointLoadObservationRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "completeness": { "enum": ["stub", "partial", "documented"] },
+    "practicalNotes": { "type": "array", "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" } }
+  }
+}

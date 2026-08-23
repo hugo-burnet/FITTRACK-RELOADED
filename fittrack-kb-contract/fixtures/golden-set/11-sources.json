@@ -1,0 +1,811 @@
+{
+  "note": "Dix sources issues des seuls registres du corpus (F1 §20, F3 §15) et des citations en ligne. Elles instancient les quatre cas de résolution réellement présents : alias non déclaré, localisateurs multiples, référence partielle sans identifiant fort, et conflit d'attribution non tranchable. Aucune métadonnée n'a été complétée par une recherche extérieure.",
+  "collections": [
+    {
+      "kind": "source",
+      "records": [
+        {
+          "id": "source.currier-2026-acsm-position-stand",
+          "slug": "currier-2026-position-stand",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0011",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Currier BS et al., 2026",
+          "citationAliases": [
+            "ACSM, 2026",
+            "ACSM 2026",
+            "ACSM position stand 2026"
+          ],
+          "title": "Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults",
+          "authors": "Currier BS et al.",
+          "year": 2026,
+          "journal": "Med Sci Sports Exerc 58(4):851–872",
+          "documentType": "position_stand",
+          "doi": "10.1249/MSS.0000000000003897",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": null,
+          "urls": [
+            {
+              "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/",
+              "role": "pmc",
+              "citedIn": [
+                "frag.f1.0011",
+                "frag.f1.0014",
+                "frag.f1.0019"
+              ]
+            },
+            {
+              "url": "https://acsm.org/resistance-training-guidelines-update-2026/",
+              "role": "official",
+              "citedIn": [
+                "frag.f1.0014"
+              ]
+            }
+          ],
+          "resolutionStatus": "resolved",
+          "resolutionRef": "resolution.s1.acsm-currier-alias",
+          "unknownFields": [
+            {
+              "field": "pmid",
+              "reason": "not_in_corpus",
+              "note": "F1 §20 écrit littéralement « non relevé » dans la colonne PMID. Absence déclarée par la source elle-même, pas oubli d'extraction."
+            }
+          ],
+          "notes": "Un seul et même document, cité sous deux libellés et via deux URL. La résolution s'appuie sur une preuve interne au corpus.",
+          "contentHash": "sha256:2119e58719ffe966a2eb76446bcaf3ba32ef51d753688541da926e766c7abb61"
+        },
+        {
+          "id": "source.pelland-2026-dose-response",
+          "slug": "pelland-2026-dose-response",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0010",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Pelland et al., 2026",
+          "title": "The Resistance Training Dose Response…",
+          "authors": "Pelland JC et al.",
+          "year": 2026,
+          "journal": "Sports Med 56:481–505",
+          "documentType": "meta_regression",
+          "doi": "10.1007/s40279-025-02344-w",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": "41343037",
+          "pmidProvenance": "stated_in_corpus",
+          "urls": [
+            {
+              "url": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+              "role": "pubmed",
+              "citedIn": [
+                "frag.f1.0001",
+                "frag.f1.0003",
+                "frag.f1.0009",
+                "frag.f1.0010"
+              ]
+            }
+          ],
+          "resolutionStatus": "resolved",
+          "contentHash": "sha256:a35271263704bfdf4d5c4415fa7df438ff85a0e09ffc24478e0ccfe6b8a12d11"
+        },
+        {
+          "id": "source.wolf-2025-lengthened-partials",
+          "slug": "wolf-2025-lengthened-partials",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0013",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Wolf M et al., 2025",
+          "citationAliases": [
+            "Wolf et al., 2025",
+            "Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet"
+          ],
+          "title": "Lengthened partial repetitions elicit similar muscular adaptations…",
+          "authors": "Wolf M et al.",
+          "year": 2025,
+          "journal": "PeerJ 13:e18904",
+          "documentType": "within_participant_trial",
+          "doi": "10.7717/peerj.18904",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": "39959841",
+          "pmidProvenance": "stated_in_corpus",
+          "urls": [
+            {
+              "url": "https://pubmed.ncbi.nlm.nih.gov/39959841/",
+              "role": "pubmed",
+              "citedIn": [
+                "frag.f1.0013"
+              ]
+            },
+            {
+              "url": "https://peerj.com/articles/18904",
+              "role": "publisher",
+              "citedIn": [
+                "frag.f1.0007"
+              ]
+            },
+            {
+              "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11829627/",
+              "role": "pmc",
+              "citedIn": [
+                "frag.f2.0021"
+              ]
+            }
+          ],
+          "resolutionStatus": "resolved",
+          "resolutionRef": "resolution.s2.wolf-three-locators",
+          "notes": "Trois localisateurs pour un même essai, dont un cité sans nom d'auteur dans F2 §4.1. Résolu par les métadonnées de F1 §20.",
+          "contentHash": "sha256:0167135a2061d5116b8678183ec9655fdb8b34916bb132ba9a2458c000f25878"
+        },
+        {
+          "id": "source.haugen-2023-free-weight-vs-machine",
+          "slug": "haugen-2023-free-weight-vs-machine",
+          "revision": 1,
+          "lifecycle": {
+            "status": "in_review",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0012",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Haugen ME et al., 2023",
+          "title": "Effect of free-weight vs machine-based strength training…",
+          "authors": "Haugen ME et al.",
+          "year": 2023,
+          "journal": "BMC Sports Sci Med Rehabil",
+          "documentType": "meta_analysis",
+          "doi": "10.1186/s13102-023-00713-4",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": null,
+          "urls": [
+            {
+              "url": "https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4",
+              "role": "publisher",
+              "citedIn": [
+                "frag.f1.0012"
+              ]
+            }
+          ],
+          "resolutionStatus": "ambiguous",
+          "resolutionRef": "resolution.s3.haugen-vs-heidel",
+          "unknownFields": [
+            {
+              "field": "pmid",
+              "reason": "not_in_corpus",
+              "note": "F1 §20 porte « n.a. » dans la colonne PMID."
+            }
+          ],
+          "notes": "Conflit d'attribution ouvert avec source.heidel-2023. NE PAS FUSIONNER tant que la revue n'a pas tranché.",
+          "contentHash": "sha256:7695f5bfbde3345cb5c5b29b2606d36f7833fa97f8c6d4683c8ce7782910fe1a"
+        },
+        {
+          "id": "source.heidel-2023-free-weight-vs-machine",
+          "slug": "heidel-2023-free-weight-vs-machine",
+          "revision": 1,
+          "lifecycle": {
+            "status": "in_review",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Heidel et al. / free-weight vs machine meta-analysis",
+          "title": null,
+          "authors": "Heidel et al.",
+          "year": null,
+          "journal": "BMC Sports Sci Med Rehabil",
+          "documentType": "meta_analysis",
+          "doi": null,
+          "pmid": null,
+          "urls": [
+            {
+              "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/",
+              "role": "pmc",
+              "citedIn": [
+                "frag.f2.0004",
+                "frag.f2.0014"
+              ]
+            }
+          ],
+          "resolutionStatus": "ambiguous",
+          "resolutionRef": "resolution.s3.haugen-vs-heidel",
+          "unknownFields": [
+            {
+              "field": "title",
+              "reason": "not_in_corpus",
+              "note": "F2 ne donne pas de titre : seulement un libellé descriptif et une URL."
+            },
+            {
+              "field": "year",
+              "reason": "not_in_corpus",
+              "note": "Non énoncée dans la citation de F2 §2.5. L'année 2023 n'est PAS reportée depuis la source Haugen : ce serait présumer que les deux entrées désignent la même publication, ce que le corpus ne permet pas d'établir."
+            },
+            {
+              "field": "doi",
+              "reason": "not_in_corpus"
+            }
+          ],
+          "notes": "Même revue apparente, même objet, mêmes conclusions, mais nom d'auteur différent et localisateur sans recouvrement avec Haugen. Le corpus ne permet pas de trancher.",
+          "contentHash": "sha256:29f160d19e8e0a1ec7523c920a8836749a605ee8c02c51c9c95824bf52cea780"
+        },
+        {
+          "id": "source.plotkin-2023-hipthrust-squat",
+          "slug": "plotkin-2023-hipthrust-squat",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0001",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Plotkin et al., 2023, Front Physiol",
+          "title": null,
+          "authors": "Plotkin et al.",
+          "year": 2023,
+          "journal": "Front Physiol",
+          "documentType": "randomized_trial",
+          "doi": null,
+          "pmid": null,
+          "urls": [
+            {
+              "url": "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full",
+              "role": "publisher",
+              "citedIn": [
+                "frag.f2.0001",
+                "frag.f2.0014"
+              ]
+            }
+          ],
+          "resolutionStatus": "partial",
+          "unknownFields": [
+            {
+              "field": "title",
+              "reason": "not_in_corpus"
+            },
+            {
+              "field": "doi",
+              "reason": "requires_external_enrichment",
+              "note": "Un identifiant de la forme 10.3389/fphys.2023.1279170 est lisible dans l'URL, mais l'extraire ici en ferait une métadonnée dérivée non vérifiée. Réservé à une phase d'enrichissement externe explicite, interdite pendant l'extraction initiale."
+            },
+            {
+              "field": "pmid",
+              "reason": "not_in_corpus"
+            }
+          ],
+          "notes": "Référence partielle représentative de la centaine de citations de F2, qui n'a pas de registre de sources.",
+          "contentHash": "sha256:88eaec5aea3ddbbfbc6bb57624bb96c2c1d0bb861a7d9d1d8433853e2b67e995"
+        },
+        {
+          "id": "source.nunes-2022-overhead-triceps",
+          "slug": "nunes-2022-overhead-triceps",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Nunes et al., 2022",
+          "title": null,
+          "authors": "Nunes et al.",
+          "year": 2022,
+          "journal": "Eur J Sport Sci",
+          "documentType": "randomized_trial",
+          "doi": "10.1080/17461391.2022.2100279",
+          "doiProvenance": "derived_from_url",
+          "pmid": null,
+          "urls": [
+            {
+              "url": "https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279",
+              "role": "publisher",
+              "citedIn": [
+                "frag.f2.0003",
+                "frag.f2.0012"
+              ]
+            }
+          ],
+          "resolutionStatus": "resolved",
+          "unknownFields": [
+            {
+              "field": "title",
+              "reason": "not_in_corpus"
+            },
+            {
+              "field": "pmid",
+              "reason": "not_in_corpus"
+            }
+          ],
+          "notes": "Cas de DOI extrait littéralement d'une URL éditeur. La provenance derived_from_url distingue cette extraction d'un DOI énoncé en clair dans un registre.",
+          "contentHash": "sha256:95731495e6922afe4bd062e669e8cc0b007b16f45900c009fbbbd5dcd01f0f43"
+        },
+        {
+          "id": "source.smith-2017-painful-exercise",
+          "slug": "smith-2017-painful-exercise",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0019",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Smith et al., 2017",
+          "title": "Exercice douloureux",
+          "authors": "Smith et al.",
+          "year": 2017,
+          "documentType": "meta_analysis",
+          "doi": "10.1136/bjsports-2016-097383",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": "28596288",
+          "pmidProvenance": "stated_in_corpus",
+          "urls": [
+            {
+              "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/",
+              "role": "pmc",
+              "citedIn": [
+                "frag.f3.0001",
+                "frag.f3.0019"
+              ]
+            }
+          ],
+          "population": "Douleurs MSK chroniques",
+          "resolutionStatus": "resolved",
+          "unknownFields": [
+            {
+              "field": "journal",
+              "reason": "not_in_corpus",
+              "note": "Le registre de F3 §15 donne le DOI mais pas le nom de revue en clair."
+            }
+          ],
+          "contentHash": "sha256:fc62b38b27cacafaa4739e06be3747e312d7e1b26a44825ccccee9f74c720b5f"
+        },
+        {
+          "id": "source.sprague-2021-pain-monitoring",
+          "slug": "sprague-2021-pain-monitoring",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0020",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "Sprague et al., 2021",
+          "title": "Monitoring douleur",
+          "authors": "Sprague et al.",
+          "year": 2021,
+          "documentType": "randomized_trial",
+          "doi": "10.1186/s40814-021-00792-5",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": "33632313",
+          "pmidProvenance": "stated_in_corpus",
+          "urls": [
+            {
+              "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/",
+              "role": "pmc",
+              "citedIn": [
+                "frag.f3.0002",
+                "frag.f3.0012",
+                "frag.f3.0020"
+              ]
+            }
+          ],
+          "population": "15 sujets, tendon patellaire",
+          "resolutionStatus": "resolved",
+          "unknownFields": [
+            {
+              "field": "journal",
+              "reason": "not_in_corpus"
+            }
+          ],
+          "contentHash": "sha256:ff9c5d50ba3fef60b97f9944ec100e4f1fbd15895ae6db3e3b7837a9cba8bda8"
+        },
+        {
+          "id": "source.ifompt-2020-red-flags",
+          "slug": "ifompt-2020-red-flags",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0007",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "citationLabel": "IFOMPT, 2020",
+          "citationAliases": [
+            "Finucane et al./IFOMPT"
+          ],
+          "title": "International Framework for Red Flags",
+          "authors": "Finucane et al. / IFOMPT",
+          "year": 2020,
+          "documentType": "consensus_statement",
+          "doi": "10.2519/jospt.2020.9971",
+          "doiProvenance": "stated_in_corpus",
+          "pmid": null,
+          "urls": [
+            {
+              "url": "https://www.jospt.org/doi/10.2519/jospt.2020.9971",
+              "role": "publisher",
+              "citedIn": [
+                "frag.f3.0003",
+                "frag.f3.0007",
+                "frag.f3.0008",
+                "frag.f3.0009",
+                "frag.f3.0011"
+              ]
+            }
+          ],
+          "population": "Pathologies rachidiennes graves potentielles",
+          "resolutionStatus": "resolved",
+          "unknownFields": [
+            {
+              "field": "pmid",
+              "reason": "not_in_corpus"
+            }
+          ],
+          "contentHash": "sha256:dfc8d6a8db32fe8c0f48c2f8ed0567d3fea8b1b12bbebdc2c7ba06d8cc4e8b86"
+        }
+      ]
+    },
+    {
+      "kind": "citation-occurrence",
+      "records": [
+        {
+          "id": "occurrence.f1.0001",
+          "slug": "acsm-2026-resume-executif",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0014",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_link_scan",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "ACSM, 2026",
+          "rawUrl": "https://acsm.org/resistance-training-guidelines-update-2026/",
+          "fragmentRef": "frag.f1.0014",
+          "resolvesToSourceRef": "source.currier-2026-acsm-position-stand",
+          "resolutionStatus": "resolved",
+          "contentHash": "sha256:8305c0fef3c36c64a4bc9403106b369a12d44c78ac6e1349c3fc3d7f3207a770"
+        },
+        {
+          "id": "occurrence.f1.0002",
+          "slug": "currier-2026-resume-executif",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0014",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_link_scan",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "Currier et al., 2026",
+          "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/",
+          "fragmentRef": "frag.f1.0014",
+          "resolvesToSourceRef": "source.currier-2026-acsm-position-stand",
+          "resolutionStatus": "resolved",
+          "note": "Cité dans la même phrase que l'occurrence ACSM, avec une URL différente.",
+          "contentHash": "sha256:6e36c0cb09080cfec2ee3c3a94834dd65d4529e385cdb43a69e46e6ef5204274"
+        },
+        {
+          "id": "occurrence.f1.0003",
+          "slug": "acsm-2026-section-amplitude",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0019",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_link_scan",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "ACSM, 2026",
+          "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/",
+          "fragmentRef": "frag.f1.0019",
+          "resolvesToSourceRef": "source.currier-2026-acsm-position-stand",
+          "resolutionStatus": "resolved",
+          "note": "Preuve interne décisive du cas S-1 : le libellé « ACSM, 2026 » pointe ici l'URL que F1 §20 attribue explicitement à Currier et al.",
+          "contentHash": "sha256:44e2f1b9d8e21d43ec3887a9b548c4957d33b6ac077ee4276372e720dbd494bc"
+        },
+        {
+          "id": "occurrence.f1.0004",
+          "slug": "haugen-2023-registre-sources",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0012",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "Haugen ME et al., 2023",
+          "rawUrl": "https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4",
+          "fragmentRef": "frag.f1.0012",
+          "resolvesToSourceRef": "source.haugen-2023-free-weight-vs-machine",
+          "resolutionStatus": "ambiguous",
+          "contentHash": "sha256:3e2751f79da478f61d039bfaabd778069627246d8c6bbe702da507c615f4fb03"
+        },
+        {
+          "id": "occurrence.f2.0001",
+          "slug": "heidel-2023-poids-libres-machines",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "deterministic_link_scan",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "Heidel et al. / free-weight vs machine meta-analysis, BMC Sports Sci Med Rehabil",
+          "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/",
+          "fragmentRef": "frag.f2.0004",
+          "resolvesToSourceRef": "source.heidel-2023-free-weight-vs-machine",
+          "resolutionStatus": "ambiguous",
+          "contentHash": "sha256:a70cee7b3fada32241bb0e04ca29bc8e71622c2b4310f0df01db03e07384e63c"
+        },
+        {
+          "id": "occurrence.f2.0002",
+          "slug": "wolf-2025-cite-sans-auteur",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0021",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "deterministic_link_scan",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet",
+          "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11829627/",
+          "fragmentRef": "frag.f2.0021",
+          "resolvesToSourceRef": "source.wolf-2025-lengthened-partials",
+          "resolutionStatus": "resolved",
+          "note": "Citation sans nom d'auteur ni année. Rattachée par le titre littéral, que F1 §20 reprend presque mot pour mot.",
+          "contentHash": "sha256:d56e6ef9815d9393186259f4066bf38d2e20faaafbd8cc5666286245df9a31f3"
+        },
+        {
+          "id": "occurrence.f1.0005",
+          "slug": "wolf-2025-lengthened-partials-tableau",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0007",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_link_scan",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawLabel": "Wolf et al., 2025",
+          "rawUrl": "https://peerj.com/articles/18904",
+          "fragmentRef": "frag.f1.0007",
+          "resolvesToSourceRef": "source.wolf-2025-lengthened-partials",
+          "resolutionStatus": "resolved",
+          "contentHash": "sha256:7abdcbef6f139558fe054c9dc11607d218077c0e815897dedfe4ad20512cb6cc"
+        }
+      ]
+    },
+    {
+      "kind": "source-resolution",
+      "records": [
+        {
+          "id": "resolution.s1.acsm-currier-alias",
+          "slug": "acsm-currier-alias",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0019",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            },
+            {
+              "fragmentRef": "frag.f1.0011",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "status": "resolved",
+          "occurrenceRefs": [
+            "occurrence.f1.0001",
+            "occurrence.f1.0002",
+            "occurrence.f1.0003"
+          ],
+          "candidateSourceRefs": [
+            "source.currier-2026-acsm-position-stand"
+          ],
+          "mergeAllowed": true,
+          "mergeBasis": "human_review_decision",
+          "mergedIntoSourceRef": "source.currier-2026-acsm-position-stand",
+          "reviewState": "approved",
+          "reviewDecisionRef": "decision.2026-08-23.0001",
+          "resolvableWithCorpusAlone": true,
+          "rationale": "Le libellé « ACSM, 2026 » pointe en §7 l'URL PMC12965823 que le registre §20 attribue à Currier et al. 2026. Un seul document, deux libellés. La fusion repose sur une preuve interne au corpus et sur une décision de revue tracée, pas sur une similarité de titre.",
+          "contentHash": "sha256:723b7c88137c2efca7eb7a21a34672e27726374a66f8370364b6ac42700f995a"
+        },
+        {
+          "id": "resolution.s2.wolf-three-locators",
+          "slug": "wolf-trois-localisateurs",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0013",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "status": "resolved",
+          "occurrenceRefs": [
+            "occurrence.f1.0005",
+            "occurrence.f2.0002"
+          ],
+          "candidateSourceRefs": [
+            "source.wolf-2025-lengthened-partials"
+          ],
+          "mergeAllowed": true,
+          "mergeBasis": "identical_pmid",
+          "mergedIntoSourceRef": "source.wolf-2025-lengthened-partials",
+          "reviewState": "approved",
+          "reviewDecisionRef": "decision.2026-08-23.0002",
+          "resolvableWithCorpusAlone": true,
+          "rationale": "F1 §20 tranche explicitement : PeerJ 13:e18904, DOI 10.7717/peerj.18904, PMID 39959841. Les trois localisateurs désignent cet essai, dont l'un est cité sans nom d'auteur dans F2 §4.1 mais avec un titre littéralement identique.",
+          "contentHash": "sha256:5fdcb15e8858865ec3b55c1c21531fe03582899c3c64e45cf23ff14feb8321e6"
+        },
+        {
+          "id": "resolution.s3.haugen-vs-heidel",
+          "slug": "haugen-vs-heidel-attribution",
+          "revision": 1,
+          "lifecycle": {
+            "status": "in_review",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0012",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            },
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "status": "ambiguous",
+          "occurrenceRefs": [
+            "occurrence.f1.0004",
+            "occurrence.f2.0001"
+          ],
+          "candidateSourceRefs": [
+            "source.haugen-2023-free-weight-vs-machine",
+            "source.heidel-2023-free-weight-vs-machine"
+          ],
+          "mergeAllowed": false,
+          "conflictingAttributions": [
+            {
+              "sourceRef": "source.haugen-2023-free-weight-vs-machine",
+              "attributedTo": "Haugen ME et al., 2023",
+              "fragmentRef": "frag.f1.0012"
+            },
+            {
+              "sourceRef": "source.heidel-2023-free-weight-vs-machine",
+              "attributedTo": "Heidel et al.",
+              "fragmentRef": "frag.f2.0004"
+            }
+          ],
+          "reviewState": "escalated",
+          "reviewDecisionRef": "decision.2026-08-23.0003",
+          "resolvableWithCorpusAlone": false,
+          "rationale": "Même revue apparente (BMC Sports Sci Med Rehabil), même objet (poids libres contre machines), conclusions concordantes — mais deux noms d'auteur différents et deux localisateurs sans recouvrement : un DOI éditeur d'un côté, un identifiant PMC de l'autre. F2 rapporte en outre des statistiques absentes de F1. Le corpus seul ne permet pas de trancher, et la similarité de titre, d'auteur ou de sujet ne produit qu'un candidat à la revue, jamais une fusion. Deux entrées distinctes sont conservées en attente d'une vérification bibliographique externe, hors périmètre de cette phase.",
+          "contentHash": "sha256:5e1a5b9af578cd70307fd0033a62cbe94e1ae9b2d773235a21549ca4bb72b387"
+        }
+      ]
+    }
+  ]
+}

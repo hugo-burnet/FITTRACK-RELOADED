@@ -1,0 +1,59 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "tolerance-axis",
+  "title": "Axes de tolérance",
+  "origin": "clinical_schema_f4",
+  "description": "Axes portés par F4 sous forme de propriétés nommées (flexionTolerance, extensionTolerance…). Les transformer en vocabulaire permet d'en ajouter sans modifier le schéma, ce que la forme de F4 interdisait.",
+  "closed": false,
+  "terms": [
+    {
+      "term": "flexion",
+      "label": "Flexion",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 flexionTolerance"
+    },
+    {
+      "term": "extension",
+      "label": "Extension",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 extensionTolerance"
+    },
+    {
+      "term": "rotation",
+      "label": "Rotation",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 rotationTolerance"
+    },
+    {
+      "term": "charge_axiale",
+      "label": "Charge axiale",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 axialLoadTolerance ; F3 §6.3"
+    },
+    {
+      "term": "overhead",
+      "label": "Bras au-dessus de la tête",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 overheadTolerance ; F3 §7"
+    },
+    {
+      "term": "charge_generale",
+      "label": "Charge générale",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F4 loadSensitivity"
+    },
+    {
+      "term": "grip",
+      "label": "Préhension",
+      "origin": "corpus",
+      "corpusRef": "F3 §8 (épicondylalgie : charge de grip)"
+    },
+    {
+      "term": "amplitude_terminale",
+      "label": "Amplitude terminale",
+      "origin": "corpus",
+      "corpusRef": "F3 §8 (« éviter étirement terminal irritant temporairement »)"
+    }
+  ]
+}

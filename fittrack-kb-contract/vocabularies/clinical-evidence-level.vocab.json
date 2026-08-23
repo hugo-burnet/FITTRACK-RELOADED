@@ -1,0 +1,35 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "clinical-evidence-level",
+  "title": "Niveaux de preuve clinique",
+  "origin": "clinical_schema_f4",
+  "description": "F4 mélangeait quatre niveaux et une nature (expert_practice). Les quatre niveaux sont conservés ; expert_practice quitte cet axe pour devenir knowledgeType EXPERT_PRACTICE. C'est la seule modification de valeur de toute la migration, et elle est tracée en SPLIT dans mappings/.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "A_high",
+      "label": "A — élevé",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F3 §14 ; F4 evidenceRating.level"
+    },
+    {
+      "term": "B_moderate",
+      "label": "B — modéré",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F3 §14 ; F4"
+    },
+    {
+      "term": "C_low",
+      "label": "C — faible",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F3 §14 ; F4"
+    },
+    {
+      "term": "D_very_low",
+      "label": "D — très faible",
+      "origin": "clinical_schema_f4",
+      "corpusRef": "F3 §14 ; F4"
+    }
+  ]
+}

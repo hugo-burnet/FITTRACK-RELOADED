@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/symptom.schema.json",
+  "title": "Symptom",
+  "description": "Définition générale d'un symptôme. Entité de KB : elle décrit ce qu'est le symptôme et comment le décrire, pas ce que ressent une personne. Ce qu'une personne rapporte est un SymptomObservation, dans le runtime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "label", "description"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "description": { "type": "string", "minLength": 1 },
+    "bodyRegion": { "type": ["string", "null"] },
+    "temporalPattern": {
+      "type": ["string", "null"],
+      "description": "Pendant, immédiatement après, le lendemain, jusqu'à 48 h. F3 §4.2 fait de ce profil temporel la donnée décisive, plus que l'intensité instantanée."
+    },
+    "isRedFlagCandidate": {
+      "type": "boolean",
+      "description": "Vrai si ce symptôme apparaît dans la table des red flags. Ne déclenche rien par lui-même : le déclenchement appartient au RedFlag."
+    },
+    "relatedRedFlagRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}

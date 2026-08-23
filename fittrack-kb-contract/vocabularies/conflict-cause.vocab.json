@@ -1,0 +1,76 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "conflict-cause",
+  "title": "Causes de conflits de preuve",
+  "origin": "corpus",
+  "description": "Reprend les explications probables que le corpus donne lui-même en colonne « Explication probable » de F1 §18 et F2 §11.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "unequated_volume",
+      "label": "Volume non égalisé",
+      "origin": "corpus",
+      "corpusRef": "F1 §18 (fréquence, échec)"
+    },
+    {
+      "term": "category_contrast_vs_continuous_model",
+      "label": "Contraste de catégories contre modèle continu",
+      "origin": "corpus",
+      "corpusRef": "F1 §18 ligne volume"
+    },
+    {
+      "term": "low_statistical_power",
+      "label": "Puissance statistique faible",
+      "origin": "corpus",
+      "corpusRef": "F1 §18"
+    },
+    {
+      "term": "differing_definitions",
+      "label": "Définitions différentes",
+      "origin": "corpus",
+      "corpusRef": "F1 §18 ligne échec"
+    },
+    {
+      "term": "differing_population",
+      "label": "Populations différentes",
+      "origin": "corpus",
+      "corpusRef": "F1 §18"
+    },
+    {
+      "term": "differing_measurement_method",
+      "label": "Méthodes de mesure différentes",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.3 ; F2 §11 ligne EMG"
+    },
+    {
+      "term": "differing_modality",
+      "label": "Modalité de charge différente",
+      "origin": "corpus",
+      "corpusRef": "F2 §11 ligne longueur musculaire (occlusion vasculaire)"
+    },
+    {
+      "term": "differing_duration",
+      "label": "Durées différentes",
+      "origin": "corpus",
+      "corpusRef": "F1 §18"
+    },
+    {
+      "term": "measurement_does_not_capture_construct",
+      "label": "La mesure ne capture pas le construit",
+      "origin": "corpus",
+      "corpusRef": "F2 §11 : l'EMG de surface ne capture pas la tension mécanique totale"
+    },
+    {
+      "term": "selection_bias",
+      "label": "Biais de sélection",
+      "origin": "corpus",
+      "corpusRef": "F1 §13 (tous les répondants deloadaient déjà)"
+    },
+    {
+      "term": "unknown",
+      "label": "Cause non explicitée par le corpus",
+      "origin": "modeling_decision"
+    }
+  ]
+}

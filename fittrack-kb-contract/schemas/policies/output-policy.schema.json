@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/policies/output-policy.schema.json",
+  "title": "OutputPolicy",
+  "description": "Règles de formulation des sorties. Cible manquante dans F4 : F3 §12 énumère des formulations recommandées et des formulations interdites littérales, et F1 comme F2 terminent par des règles de prudence de rédaction, sans qu'aucune entité ne puisse les porter.\n\nforbiddenFormulations conserve les interdits verbatim : les paraphraser reviendrait à en perdre la précision, et c'est précisément leur précision qui les rend testables.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "knowledgeType", "presentedAsMedicalTruth", "title", "scope", "decision"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "description": "Une politique de sortie qui n'interdit ni n'impose rien ne contraint aucune sortie.",
+      "anyOf": [
+        { "required": ["forbiddenFormulations"], "properties": { "forbiddenFormulations": { "minItems": 1 } } },
+        { "required": ["requiredElements"], "properties": { "requiredElements": { "minItems": 1 } } }
+      ]
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+
+    "knowledgeType": { "const": "PRODUCT_POLICY" },
+    "presentedAsMedicalTruth": { "const": false },
+    "title": { "type": "string", "minLength": 1 },
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["clinical_advice", "training_advice", "evidence_reporting", "uncertainty_reporting", "numeric_recommendations", "substitution_advice"] }
+    },
+    "forbiddenFormulations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "reason"],
+        "properties": {
+          "text": { "type": "string", "minLength": 1, "description": "Verbatim." },
+          "reason": { "type": "string", "minLength": 1 },
+          "fragmentRef": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" }
+        }
+      }
+    },
+    "requiredElements": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["element", "reason"],
+        "properties": {
+          "element": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 },
+          "fragmentRef": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" }
+        }
+      }
+    },
+    "recommendedFraming": { "type": "array", "items": { "type": "string" } },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decidedBy", "decidedAt", "rationale"],
+      "properties": {
+        "decidedBy": { "type": "string", "minLength": 1 },
+        "decidedAt": { "type": "string", "format": "date" },
+        "rationale": { "type": "string", "minLength": 1 },
+        "reviewDecisionRef": { "type": "string" }
+      }
+    },
+    "corpusContextFragmentRefs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+      "uniqueItems": true
+    },
+    "auditTargets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ce que l'audit des sorties doit chercher. F3 §16 en donne la liste : sur-réassurance, diagnostics implicites, restrictions définitives injustifiées, omission de red flags, dérive des seuils numériques."
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/exercise-response.schema.json",
+  "title": "ExerciseResponse",
+  "description": "Réponse d'un utilisateur à un exercice précis lors d'une séance. C'est la donnée que la boucle d'autorégulation consomme réellement ; elle n'appartient à aucune fiche d'exercice.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis", "exerciseVariantRef", "immediateResponse"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeId" },
+    "subjectRef": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/subjectRef" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+
+    "exerciseVariantRef": { "type": "string", "minLength": 1 },
+    "sessionRef": { "type": ["string", "null"] },
+    "performedLoad": { "type": ["string", "null"] },
+    "performedReps": { "type": ["integer", "null"], "minimum": 0 },
+    "performedSets": { "type": ["integer", "null"], "minimum": 0 },
+    "reportedRir": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Auto-déclaré. Le corpus établit que l'estimation du RIR est imparfaite ; ce champ ne doit jamais être traité comme une mesure objective."
+    },
+    "immediateResponse": {
+      "enum": ["better", "unchanged", "mildly_worse", "clearly_worse", "stopped_early"]
+    },
+    "stopReason": {
+      "type": ["string", "null"],
+      "description": "Renseigné quand la série a été interrompue. Une interruption sans raison notée n'est pas exploitable pour la décision suivante."
+    },
+    "technicalQualityNote": { "type": ["string", "null"] },
+    "delayedResponseRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "notes": { "type": "string" }
+  }
+}

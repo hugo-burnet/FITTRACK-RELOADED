@@ -1,0 +1,1000 @@
+{
+  "note": "Bloc clinique. Les trois zones, quatre red flags, deux conditions, les définitions de tolérance, les règles d'adaptation, une contre-indication réellement justifiée et deux règles d'orientation. Aucune de ces entités ne contient l'état d'un utilisateur : irritabilité, charge testée et douleur à 24 h sont partis au runtime.",
+  "collections": [
+    {
+      "kind": "safety-zone",
+      "records": [
+        {
+          "id": "zone.safety.green.0001",
+          "slug": "zone-verte",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0004",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "zone": "GREEN",
+          "profile": "Symptôme léger à modéré, stable ou s'améliorant; pas de red flag; pas de déficit progressif; fonction conservée; réponse post-séance acceptable",
+          "criteria": [
+            "Symptôme léger à modéré, stable ou s'améliorant",
+            "Pas de red flag",
+            "Pas de déficit progressif",
+            "Fonction conservée",
+            "Réponse post-séance acceptable"
+          ],
+          "allowedActions": [
+            "Réduire charge, séries ou fréquence",
+            "Augmenter le repos",
+            "Raccourcir temporairement l'amplitude",
+            "Ralentir ou contrôler le tempo",
+            "Choisir une prise/trajectoire/support mieux tolérés",
+            "Conserver un entraînement des régions non irritées",
+            "Tester une progression graduée"
+          ],
+          "forbiddenActions": [
+            "Nommer une lésion",
+            "Promettre l'innocuité",
+            "Imposer un seuil de douleur universel",
+            "Bannir définitivement un mouvement"
+          ],
+          "haltsNormalCoaching": false,
+          "sourceRefs": [
+            "source.smith-2017-painful-exercise"
+          ],
+          "contentHash": "sha256:0f65284cbe4fff18ddc3c4121f0a7255a9e00321c2878069b20ecedd56c6cab3"
+        },
+        {
+          "id": "zone.safety.orange.0001",
+          "slug": "zone-orange",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0005",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "zone": "ORANGE",
+          "profile": "Douleur persistante/récidivante, nocturne inexpliquée, nette perte de fonction, gonflement important, sensation d'instabilité, symptômes neurologiques non progressifs, antécédent de luxation/rupture/chirurgie, diagnostic incertain, échec d'adaptations raisonnables",
+          "criteria": [
+            "Douleur persistante ou récidivante",
+            "Douleur nocturne inexpliquée",
+            "Nette perte de fonction",
+            "Gonflement important",
+            "Sensation d'instabilité",
+            "Symptômes neurologiques non progressifs",
+            "Antécédent de luxation, rupture ou chirurgie",
+            "Diagnostic incertain",
+            "Échec d'adaptations raisonnables"
+          ],
+          "allowedActions": [
+            "Modification conservatrice et réversible",
+            "Maintenir seulement les tâches nettement tolérées",
+            "Recommander une évaluation par professionnel",
+            "Suivre l'évolution"
+          ],
+          "forbiddenActions": [
+            "« Réhabiliter » une lésion supposée",
+            "Tester agressivement",
+            "Dépasser une consigne postopératoire",
+            "Retarder l'évaluation"
+          ],
+          "referralThreshold": "Recommander une évaluation par professionnel et suivre l'évolution.",
+          "referralRuleRefs": [
+            "referral.professional-assessment.0001"
+          ],
+          "haltsNormalCoaching": false,
+          "contentHash": "sha256:6037ebc006976cc241be8e5a5b942371420b2ba87d83487569d4c5b7a85df0ef"
+        },
+        {
+          "id": "zone.safety.red.0001",
+          "slug": "zone-rouge",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0006",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "zone": "RED",
+          "profile": "Red flag, traumatisme majeur, déformation, impossibilité aiguë de mise en charge, déficit neurologique nouveau/progressif, troubles sphinctériens, anesthésie en selle, suspicion d'infection/fracture/malignité",
+          "criteria": [
+            "Red flag actif",
+            "Traumatisme majeur",
+            "Déformation",
+            "Impossibilité aiguë de mise en charge",
+            "Déficit neurologique nouveau ou progressif",
+            "Troubles sphinctériens",
+            "Anesthésie en selle",
+            "Suspicion d'infection, de fracture ou de malignité"
+          ],
+          "allowedActions": [
+            "Arrêter le coaching normal",
+            "Recommander la voie d'évaluation urgente adaptée"
+          ],
+          "forbiddenActions": [
+            "Proposer une séance alternative comme réponse principale",
+            "Rassurer à distance",
+            "Demander de « tester » le symptôme sous charge"
+          ],
+          "referralThreshold": "Voie d'évaluation urgente adaptée, immédiatement.",
+          "referralRuleRefs": [
+            "referral.emergency.0001",
+            "referral.professional-assessment.0001"
+          ],
+          "haltsNormalCoaching": true,
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "contentHash": "sha256:993179114dfbe729e23706aa1c911994041406acb61e517595ff10865bf231a8"
+        }
+      ]
+    },
+    {
+      "kind": "red-flag",
+      "records": [
+        {
+          "id": "redflag.cauda-equina.0001",
+          "slug": "suspicion-queue-de-cheval",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0008",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "signal": "Nouvelle rétention urinaire, incontinence urinaire ou fécale, anesthésie en selle/périnéale, altération sexuelle nouvelle, faiblesse bilatérale ou rapidement progressive avec douleur rachidienne/radiculaire",
+          "question": "Avez-vous remarqué depuis peu une difficulté à uriner, une perte de contrôle urinaire ou intestinale, une zone insensible entre les jambes, ou une faiblesse qui touche les deux jambes ?",
+          "positiveExamples": [
+            "Impossibilité nouvelle d'uriner",
+            "Perte de sensation en selle",
+            "Faiblesse des deux jambes qui s'aggrave en quelques heures"
+          ],
+          "action": "stop_and_emergency_assessment",
+          "urgency": "emergency_now",
+          "safetyZone": "RED",
+          "overridesNormalCoaching": true,
+          "isDiagnostic": false,
+          "suspectedConditionMention": "syndrome de la queue de cheval",
+          "isolatedSignalWarning": "Un red flag n'est pas un diagnostic. Les signaux isolés ont souvent une faible précision ; la combinaison, le contexte et l'évolution déterminent le niveau de suspicion.",
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "priority": 1,
+          "contentHash": "sha256:f4be0797a0fbdd69afeadfe02952ba2823f3137b876d6cec6fe20e897daec775"
+        },
+        {
+          "id": "redflag.progressive-neuro-deficit.0001",
+          "slug": "deficit-neurologique-progressif",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0009",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "signal": "Déficit moteur nouveau ou progressif, perte croissante de sensibilité, troubles de la marche ou chutes associés à des symptômes rachidiens",
+          "question": "Avez-vous une faiblesse ou une perte de sensibilité qui s'étend ou s'aggrave, ou des troubles de la marche apparus avec ces symptômes ?",
+          "action": "stop_and_urgent_medical_assessment",
+          "urgency": "same_day",
+          "safetyZone": "RED",
+          "overridesNormalCoaching": true,
+          "isDiagnostic": false,
+          "isolatedSignalWarning": "Les pathologies neurologiques graves requièrent un raisonnement contextuel et une escalade rapide. Ne pas charger pour « tester ».",
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "priority": 2,
+          "contentHash": "sha256:4259ab749675eae4fa7043b532d9f538c91278c8bd89209f01fb309af596a954"
+        },
+        {
+          "id": "redflag.fracture-suspicion.0001",
+          "slug": "suspicion-de-fracture",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0010",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "signal": "Traumatisme majeur; ou traumatisme mineur avec ostéoporose, âge avancé, fragilité ou corticothérapie prolongée; déformation ou douleur osseuse aiguë",
+          "question": "Y a-t-il eu un choc, une chute ou un traumatisme ? Prenez-vous des corticoïdes au long cours ou avez-vous une ostéoporose connue ?",
+          "action": "stop_and_urgent_medical_assessment",
+          "urgency": "same_day",
+          "safetyZone": "RED",
+          "overridesNormalCoaching": true,
+          "isDiagnostic": false,
+          "suspectedConditionMention": "fracture",
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "priority": 3,
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F3 §3 fonde cette ligne sur l'ACR, dont l'entité Source n'est pas encore créée dans ce golden set restreint. IFOMPT est référencé comme cadre général de red flags."
+            }
+          ],
+          "contentHash": "sha256:218a379a09f92ed36614bd883ffc38c83561f72c255188db7f337eb68518c04b"
+        },
+        {
+          "id": "redflag.infection-suspicion.0001",
+          "slug": "suspicion-d-infection",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0011",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "signal": "Fièvre/frissons, malaise, douleur rachidienne sévère ou progressive avec immunosuppression, diabète, cancer, usage de drogues IV, chirurgie/procédure récente, infection récente",
+          "question": "Avez-vous de la fièvre, des frissons ou un malaise général, ou une infection, une chirurgie ou une procédure médicale récente ?",
+          "action": "stop_and_urgent_medical_assessment",
+          "urgency": "same_day",
+          "safetyZone": "RED",
+          "overridesNormalCoaching": true,
+          "isDiagnostic": false,
+          "suspectedConditionMention": "infection",
+          "isolatedSignalWarning": "La fièvre n'était présente que chez 55 % des cas de la revue citée ; son absence n'exclut pas l'infection. Il est donc interdit de conclure « pas de fièvre, pas d'infection ».",
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "priority": 4,
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F3 §3 fonde le chiffre de 55 % sur Yusuf et al. 2019, dont l'entité Source n'est pas encore créée."
+            }
+          ],
+          "contentHash": "sha256:b8c9d7f501e055b6fdad1021a16eca40a5a532e899e64d898e26adb9c358a472"
+        }
+      ]
+    },
+    {
+      "kind": "referral-rule",
+      "records": [
+        {
+          "id": "referral.emergency.0001",
+          "slug": "orientation-urgence-immediate",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0008",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "trigger": "Un red flag d'urgence immédiate est actif.",
+          "referTo": "emergency_services",
+          "urgency": "emergency_now",
+          "message": "Ces symptômes nécessitent une évaluation médicale immédiate. Arrêtez l'entraînement et faites-vous évaluer sans attendre. Je ne peux pas déterminer la cause à distance et je ne vais pas vous proposer d'alternative d'entraînement à la place.",
+          "namesADiagnosis": false,
+          "redFlagRefs": [
+            "redflag.cauda-equina.0001"
+          ],
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "contentHash": "sha256:783791919d378679609f15d0b8aaf22451ef7282caa6e0bff1b75dbc3c48c8b7"
+        },
+        {
+          "id": "referral.professional-assessment.0001",
+          "slug": "orientation-evaluation-professionnelle",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0005",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "trigger": "Aggravations répétées malgré régression, ou entrée en zone orange.",
+          "referTo": "physiotherapist",
+          "urgency": "prompt",
+          "message": "Les adaptations n'ont pas suffi et les symptômes reviennent. Faites-vous évaluer par un professionnel avant de reprendre la progression. Je continue à proposer ce qui reste nettement toléré, sans chercher à tester la zone sensible.",
+          "namesADiagnosis": false,
+          "redFlagRefs": [
+            "redflag.progressive-neuro-deficit.0001",
+            "redflag.fracture-suspicion.0001",
+            "redflag.infection-suspicion.0001"
+          ],
+          "conditionRefs": [
+            "condition.low-back-pain.0001",
+            "condition.lateral-elbow-pain.0001"
+          ],
+          "contentHash": "sha256:16f87015b918ac52c3e0f517d6649bfbb74b2d61ad0053993bbc6d08b7fcc8f0"
+        }
+      ]
+    },
+    {
+      "kind": "clinical-question",
+      "records": [
+        {
+          "id": "question.baseline.symptom-timeline.0001",
+          "slug": "chronologie-du-symptome",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0026",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "question": "Quelle est l'intensité au repos, pendant la tâche, immédiatement après et le lendemain ?",
+          "purpose": "symptom_characterization",
+          "isBaseline": true,
+          "answerShape": "ordinal_0_10",
+          "contentHash": "sha256:e5158ffa918c694fa40d07c3d39ecb72acbc4d6d05eeea7defd3996703b1ead5"
+        },
+        {
+          "id": "question.baseline.neuro-screen.0001",
+          "slug": "depistage-neurologique",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0026",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "question": "Avez-vous un engourdissement, une faiblesse nouvelle, des symptômes des deux côtés ou des troubles de l'équilibre ?",
+          "purpose": "red_flag_screening",
+          "isBaseline": true,
+          "screensForRedFlagRefs": [
+            "redflag.cauda-equina.0001",
+            "redflag.progressive-neuro-deficit.0001"
+          ],
+          "answerShape": "multi_select",
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "contentHash": "sha256:b4114f9429c6d9be569433179285da12fbf1211f59342de0601c7837fcac21ba"
+        },
+        {
+          "id": "question.baseline.load-history.0001",
+          "slug": "historique-de-charge",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0026",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "question": "Quel exercice, quelle prise, quelle amplitude, quelle charge, combien de répétitions, quelle proximité de l'échec, quel tempo et quelle fréquence déclenchent ou soulagent ?",
+          "purpose": "load_history",
+          "isBaseline": true,
+          "answerShape": "free_text",
+          "contentHash": "sha256:c64c315044df5eea9dc6a0fd83d2a30c4af37f61fe352407ef64552bc1e039e0"
+        }
+      ]
+    },
+    {
+      "kind": "symptom",
+      "records": [
+        {
+          "id": "symptom.next-morning-return-to-baseline.0001",
+          "slug": "retour-au-niveau-de-base-le-lendemain",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0012",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Retour au niveau pré-activité le lendemain matin",
+          "description": "Critère de tolérance utilisé dans l'essai pilote de tendinopathie patellaire : au plus 5/10 pendant ou immédiatement après, avec retour au niveau pré-activité le lendemain matin.",
+          "temporalPattern": "Pendant, immédiatement après, puis le lendemain matin",
+          "isRedFlagCandidate": false,
+          "sourceRefs": [
+            "source.sprague-2021-pain-monitoring"
+          ],
+          "contentHash": "sha256:3d0200a8231114a87feb84b192e1151c86913ecaff6a23506cced40d943d3ff0"
+        },
+        {
+          "id": "symptom.new-weakness.0001",
+          "slug": "faiblesse-nouvelle",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0009",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Faiblesse nouvelle ou progressive",
+          "description": "Déficit moteur nouveau ou progressif, éventuellement accompagné d'une perte croissante de sensibilité ou de troubles de la marche.",
+          "temporalPattern": "Apparition récente, aggravation progressive",
+          "isRedFlagCandidate": true,
+          "relatedRedFlagRefs": [
+            "redflag.progressive-neuro-deficit.0001",
+            "redflag.cauda-equina.0001"
+          ],
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "contentHash": "sha256:32f29cd00d13c61e5fcdc9ec8cbaf22e3f46cf9f28eefe82c94eb30d7d613980"
+        }
+      ]
+    },
+    {
+      "kind": "tolerance-dimension-definition",
+      "records": [
+        {
+          "id": "tolerance.axial-load.0001",
+          "slug": "tolerance-charge-axiale",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0024",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "axis": "charge_axiale",
+          "label": "Tolérance à la charge axiale",
+          "definition": "Réponse à une compression rachidienne significative, typiquement squat barre, soulevé de terre ou port de charge debout.",
+          "whatToObserve": [
+            "Réponse pendant la série, le soir et le lendemain",
+            "Charge et amplitude auxquelles la gêne apparaît",
+            "Effet d'un passage à une variante à torse soutenu"
+          ],
+          "howToInterpret": [
+            "Passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante, sans supposer que la compression est la cause.",
+            "Une charge mécanique documentée ne fournit pas de seuil lésionnel clinique ; elle aide à doser, pas à prédire un dommage."
+          ],
+          "admissibleStatuses": [
+            "unknown",
+            "tolerated",
+            "conditionally_tolerated",
+            "irritating",
+            "not_tested",
+            "avoid_pending_assessment"
+          ],
+          "admissibleBases": [
+            "user_report",
+            "observed_response",
+            "clinician_instruction",
+            "population_evidence",
+            "unknown"
+          ],
+          "relatedJointRefs": [
+            "joint.lumbar-spine.0001"
+          ],
+          "claimRefs": [
+            "claim.clinical.pain.0001"
+          ],
+          "uncertainty": [
+            "Aucune combinaison optimale universelle de fréquence, intensité et volume n'est établie pour les douleurs musculosquelettiques."
+          ],
+          "contentHash": "sha256:9f08a0b38862c1ab8e24950fe02e32352e52bb0497ba099e2e380b1455d86de2"
+        },
+        {
+          "id": "tolerance.grip.0001",
+          "slug": "tolerance-prehension",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0015",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "axis": "grip",
+          "label": "Tolérance à la préhension",
+          "definition": "Réponse à la charge de préhension, distincte de la charge de l'exercice lui-même.",
+          "whatToObserve": [
+            "Charge de grip, usage de souris et d'outils au quotidien",
+            "Réaction à l'extension résistée du poignet",
+            "Effet de l'ajout temporaire de sangles"
+          ],
+          "howToInterpret": [
+            "Réduire le grip et le volume est une adaptation raisonnable ; les sangles sont un outil temporaire, pas une correction définitive.",
+            "Ne pas convertir « prise neutre souvent confortable » en règle anatomique."
+          ],
+          "admissibleStatuses": [
+            "unknown",
+            "tolerated",
+            "conditionally_tolerated",
+            "irritating",
+            "not_tested"
+          ],
+          "admissibleBases": [
+            "user_report",
+            "observed_response",
+            "clinician_instruction",
+            "unknown"
+          ],
+          "relatedJointRefs": [
+            "joint.elbow.0001"
+          ],
+          "uncertainty": [
+            "Toute dose précise reste de la pratique experte."
+          ],
+          "contentHash": "sha256:25365f40ed37cb531bcaaed8c9b07460f3afa107b05d420b4bd7d4b12f0cba43"
+        }
+      ]
+    },
+    {
+      "kind": "condition",
+      "records": [
+        {
+          "id": "condition.low-back-pain.0001",
+          "slug": "lombalgie-non-specifique",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0014",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            },
+            {
+              "fragmentRef": "frag.f3.0016",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Lombalgie non spécifique",
+          "aliases": [
+            "lombalgie mécanique",
+            "douleur lombaire non spécifique"
+          ],
+          "description": "Douleur lombaire sans cause spécifique identifiée.",
+          "scope": "symptom_pattern",
+          "diagnosticCertaintyRequired": "none_symptom_based_only",
+          "diagnosticGuardrail": "Aucune étiquette diagnostique n'est nécessaire pour adapter un symptôme sans red flag. Ne jamais dire « c'est une hernie », « votre disque est fragile » ni « votre IRM prouve que la douleur vient de là ».",
+          "symptoms": [
+            "Douleur lombaire",
+            "Variation avec les tâches et les postures",
+            "Réaction éventuelle à 24 h après une exposition"
+          ],
+          "symptomRefs": [
+            "symptom.next-morning-return-to-baseline.0001"
+          ],
+          "clinicalQuestionRefs": [
+            "question.baseline.symptom-timeline.0001",
+            "question.baseline.neuro-screen.0001",
+            "question.baseline.load-history.0001"
+          ],
+          "redFlagRefs": [
+            "redflag.cauda-equina.0001",
+            "redflag.progressive-neuro-deficit.0001",
+            "redflag.fracture-suspicion.0001",
+            "redflag.infection-suspicion.0001"
+          ],
+          "toleranceDimensionRefs": [
+            "tolerance.axial-load.0001"
+          ],
+          "commonlySensitiveAxes": [
+            {
+              "axis": "flexion",
+              "note": "Flexion, extension, rotation ou charge peuvent être sensibles selon l'individu; aucune posture n'est universellement nocive.",
+              "isProhibition": false
+            },
+            {
+              "axis": "charge_axiale",
+              "note": "La charge axiale peut être temporairement irritante chez certains, sans que la compression soit établie comme cause.",
+              "isProhibition": false
+            }
+          ],
+          "adaptationRuleRefs": [
+            "adaptation.reduce-then-reexpose.0001",
+            "adaptation.axial-load-swap.0001"
+          ],
+          "referralRuleRefs": [
+            "referral.professional-assessment.0001"
+          ],
+          "progressionCriteria": [
+            "Symptôme stable ou meilleur et fonction intacte",
+            "Hausse modeste revenue au niveau de base le lendemain"
+          ],
+          "regressionCriteria": [
+            "Hausse nette, sommeil perturbé, fonction réduite ou non-retour au niveau de base",
+            "Aggravations répétées malgré régression"
+          ],
+          "evidenceLevel": {
+            "knowledgeType": "EVIDENCE",
+            "clinicalEvidenceLevel": "A_high",
+            "confidence": "high",
+            "directness": "direct_clinical",
+            "rationale": "Recommandation forte pour l'exercice, faible pour le choix d'exercice précis."
+          },
+          "sourceRefs": [
+            "source.smith-2017-painful-exercise"
+          ],
+          "claimRefs": [
+            "claim.clinical.pain.0001",
+            "claim.clinical.imaging.0001"
+          ],
+          "uncertainty": [
+            "Le choix d'exercice précis reste incertain : la recommandation porte sur l'exercice en général.",
+            "La littérature ne permet pas de fixer une combinaison optimale universelle de fréquence, intensité et volume.",
+            "Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque, mais les charges étudiées étaient souvent légères et les données surtout transversales."
+          ],
+          "expertPractice": [
+            {
+              "statement": "Un trap-bar, un rack pull ou un kettlebell élevé peut réduire l'exigence d'amplitude.",
+              "knowledgeType": "EXPERT_PRACTICE",
+              "rationale": "F3 §6.3 présente explicitement cette adaptation comme une option, pas une correction universelle."
+            }
+          ],
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F3 §6.2 fonde cette ligne sur l'APTA 2021 et Li et al. 2023, dont les entités Source ne sont pas encore créées dans ce golden set restreint."
+            }
+          ],
+          "contentHash": "sha256:8f7266c14d3a2c322a25831090030fb270ff818d8071002c48f5cb37f1acd504"
+        },
+        {
+          "id": "condition.lateral-elbow-pain.0001",
+          "slug": "epicondylalgie-laterale",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0015",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            },
+            {
+              "fragmentRef": "frag.f3.0017",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Épicondylalgie latérale",
+          "aliases": [
+            "tennis elbow",
+            "douleur des extenseurs du coude"
+          ],
+          "description": "Douleur près des extenseurs, liée à la préhension et aggravée par l'extension résistée du poignet.",
+          "scope": "symptom_pattern",
+          "diagnosticCertaintyRequired": "none_symptom_based_only",
+          "diagnosticGuardrail": "Le symptôme suffit si le tableau est typique. Ne pas poser de diagnostic de tendinopathie ni promettre l'innocuité.",
+          "symptoms": [
+            "Douleur près des extenseurs du coude",
+            "Aggravation par la préhension",
+            "Aggravation par l'extension résistée du poignet"
+          ],
+          "clinicalQuestionRefs": [
+            "question.baseline.symptom-timeline.0001",
+            "question.baseline.load-history.0001"
+          ],
+          "redFlagRefs": [
+            "redflag.progressive-neuro-deficit.0001"
+          ],
+          "toleranceDimensionRefs": [
+            "tolerance.grip.0001"
+          ],
+          "commonlySensitiveAxes": [
+            {
+              "axis": "grip",
+              "note": "La charge de préhension est fréquemment le facteur limitant.",
+              "isProhibition": false
+            },
+            {
+              "axis": "amplitude_terminale",
+              "note": "L'étirement terminal peut être temporairement irritant.",
+              "isProhibition": false
+            }
+          ],
+          "adaptationRuleRefs": [
+            "adaptation.reduce-then-reexpose.0001"
+          ],
+          "referralRuleRefs": [
+            "referral.professional-assessment.0001"
+          ],
+          "progressionCriteria": [
+            "Tolérance croissante à la préhension et à l'extension résistée"
+          ],
+          "regressionCriteria": [
+            "Persistance malgré adaptations",
+            "Diagnostic douteux"
+          ],
+          "evidenceLevel": {
+            "knowledgeType": "EVIDENCE",
+            "clinicalEvidenceLevel": "B_moderate",
+            "confidence": "moderate",
+            "directness": "direct_clinical",
+            "rationale": "Une recommandation de pratique clinique soutient l'exercice résisté et la réintroduction progressive."
+          },
+          "sourceRefs": [
+            "source.smith-2017-painful-exercise"
+          ],
+          "claimRefs": [
+            "claim.clinical.pain.0001"
+          ],
+          "uncertainty": [
+            "Une orthèse de contre-force peut être adjointe mais ne remplace pas la progression de charge.",
+            "La douleur est définie par l'acceptabilité de la personne plutôt que par un chiffre universel."
+          ],
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F3 §8 fonde cette ligne sur l'APTA 2022 et Bateman et al. 2021, non encore créées comme entités Source."
+            }
+          ],
+          "contentHash": "sha256:46f9d623a6e1c0ce90e4e8c64955017dff98a3f254c94d8e79ce49292baaf46c"
+        }
+      ]
+    },
+    {
+      "kind": "adaptation-rule",
+      "records": [
+        {
+          "id": "adaptation.reduce-then-reexpose.0001",
+          "slug": "reduire-puis-reexposer",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0026",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "conditionRefs": [
+            "condition.low-back-pain.0001",
+            "condition.lateral-elbow-pain.0001"
+          ],
+          "safetyZone": "GREEN",
+          "trigger": "Hausse nette du symptôme, sommeil perturbé, fonction réduite, ou non-retour au niveau de base le lendemain.",
+          "action": "Régresser amplitude, charge, volume ou fréquence, une variable à la fois, puis réexposer graduellement.",
+          "variableOrder": 3,
+          "doseChange": {
+            "load": "Réduire jusqu'à une exposition nettement tolérée",
+            "sets": "Réduire le volume de la région concernée",
+            "rangeOfMotion": "Raccourcir temporairement l'amplitude",
+            "frequency": "Réduire si la réponse à 24 h ne revient pas au niveau de base",
+            "proximityToFailure": "Augmenter le RIR",
+            "repetitions": null,
+            "tempo": null,
+            "rest": null
+          },
+          "monitoring": "Noter la réponse immédiate, le soir, le lendemain et jusqu'à 48 h si le symptôme est retardé.",
+          "stopCriteria": [
+            "Douleur brutale inhabituelle",
+            "Perte de force",
+            "Instabilité franche",
+            "Symptôme neurologique croissant",
+            "Red flag"
+          ],
+          "yieldsToActiveRedFlag": true,
+          "evidence": {
+            "knowledgeType": "EVIDENCE",
+            "clinicalEvidenceLevel": "B_moderate",
+            "directness": "direct_clinical",
+            "confidence": "moderate",
+            "rationale": "F3 §4.2 décrit cet algorithme prudent ; la trajectoire sur 24–48 h y compte davantage que la baisse immédiate."
+          },
+          "claimRefs": [
+            "claim.clinical.pain.0001",
+            "claim.clinical.threshold.0001"
+          ],
+          "uncertainty": [
+            "Aucun seuil numérique universel n'est validé pour déclencher la régression."
+          ],
+          "contentHash": "sha256:2d51f59bddfec11e6c34303e4a153d4793e810ab017d2e54b9c6496d58ead42e"
+        },
+        {
+          "id": "adaptation.axial-load-swap.0001",
+          "slug": "substituer-la-charge-axiale",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0024",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "conditionRefs": [
+            "condition.low-back-pain.0001"
+          ],
+          "safetyZone": "GREEN",
+          "trigger": "La charge axiale debout est rapportée comme irritante alors que le reste de la séance est toléré.",
+          "action": "Passer temporairement du squat barre à une variante à torse soutenu ou à charge axiale réduite, puis réintroduire selon la capacité.",
+          "variableOrder": 6,
+          "doseChange": {
+            "load": "Conserver une charge significative sur la variante substituée",
+            "sets": null,
+            "repetitions": null,
+            "rangeOfMotion": "Limiter la profondeur si la fin d'amplitude irrite",
+            "tempo": null,
+            "frequency": null,
+            "rest": null,
+            "proximityToFailure": null
+          },
+          "monitoring": "Comparer la réponse à 24 h entre la variante substituée et l'exercice initial.",
+          "stopCriteria": [
+            "Aggravation malgré la substitution",
+            "Apparition d'un symptôme neurologique"
+          ],
+          "yieldsToActiveRedFlag": true,
+          "evidence": {
+            "knowledgeType": "EXPERT_PRACTICE",
+            "clinicalEvidenceLevel": null,
+            "directness": "expert_only",
+            "confidence": "very_low",
+            "rationale": "F3 §6.3 présente la substitution comme une option, en précisant explicitement qu'il ne faut pas supposer que la compression est la cause."
+          },
+          "claimRefs": [
+            "claim.clinical.pain.0001"
+          ],
+          "targetExerciseRefs": [
+            "exercise.squat.0001",
+            "exercise.leg-press.0001"
+          ],
+          "uncertainty": [
+            "Le mécanisme du soulagement éventuel n'est pas établi ; la substitution ne démontre pas que la charge axiale était en cause."
+          ],
+          "contentHash": "sha256:7057c62800748ae03b307f13027e89fe59a5d9f6cb7ca11cf574183ebdb071b9"
+        }
+      ]
+    },
+    {
+      "kind": "contraindication",
+      "records": [
+        {
+          "id": "contraindication.red-flag-loading.0001",
+          "slug": "ne-pas-charger-sous-red-flag",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0009",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "conditionRefs": [
+            "condition.low-back-pain.0001"
+          ],
+          "action": "Charger la région concernée pour « tester » le symptôme",
+          "scope": "absolute_until_assessed",
+          "basis": "red_flag",
+          "reason": "Un déficit moteur nouveau ou progressif impose une escalade rapide ; le corpus écrit explicitement de ne pas charger pour tester.",
+          "redFlagRef": "redflag.progressive-neuro-deficit.0001",
+          "sourceRefs": [
+            "source.ifompt-2020-red-flags"
+          ],
+          "liftedBy": "Évaluation médicale ayant écarté le déficit progressif, ou disparition documentée du red flag.",
+          "notes": "Seule contre-indication du golden set. Elle ne vient d'aucune observation de charge mécanique : elle vient d'un red flag actif, seul fondement admissible ici avec la consigne médicale et l'énoncé explicite d'une recommandation.",
+          "contentHash": "sha256:3ac02b10f118e2f640885652e5d1dd312d05dc8291edd93f2f8a9710d6d5e14e"
+        }
+      ]
+    }
+  ]
+}

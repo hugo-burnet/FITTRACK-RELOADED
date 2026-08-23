@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/tolerance-dimension-definition.schema.json",
+  "title": "ToleranceDimensionDefinition",
+  "description": "Définition GÉNÉRALE d'un axe de tolérance : ce qu'il faut observer et comment l'interpréter prudemment. C'est la moitié KB de ce que F4 mélangeait dans toleranceDimension.\n\nL'autre moitié — statut observé, charge testée, douleur pendant, douleur à 24 h — est un fait daté propre à une personne et vit dans ToleranceObservation, côté runtime. Ce schéma refuse ces champs par additionalProperties, ce qui rend la régression impossible plutôt que déconseillée.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "axis", "label", "whatToObserve", "howToInterpret"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "axis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceAxis" },
+    "label": { "type": "string", "minLength": 1 },
+    "definition": { "type": ["string", "null"] },
+    "whatToObserve": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Réponse à la question KB : quelles dimensions faut-il observer ?"
+    },
+    "howToInterpret": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Réponse à la question KB : comment les interpréter prudemment ? Ne contient aucun seuil produit ; les seuils sont des ProductSafetyPolicy."
+    },
+    "admissibleStatuses": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceStatus" },
+      "uniqueItems": true
+    },
+    "admissibleBases": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+      "uniqueItems": true
+    },
+    "relatedJointRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "uncertainty": { "type": "array", "items": { "type": "string" } }
+  }
+}

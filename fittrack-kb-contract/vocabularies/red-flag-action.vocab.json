@@ -1,0 +1,26 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "red-flag-action",
+  "title": "Actions de red flag",
+  "origin": "clinical_schema_f4",
+  "description": "Repris verbatim de F4 $defs.redFlag.action.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "stop_and_emergency_assessment",
+      "label": "Arrêt et évaluation d'urgence",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "stop_and_urgent_medical_assessment",
+      "label": "Arrêt et évaluation médicale rapide",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "prompt_professional_assessment",
+      "label": "Évaluation professionnelle sans délai",
+      "origin": "clinical_schema_f4"
+    }
+  ]
+}

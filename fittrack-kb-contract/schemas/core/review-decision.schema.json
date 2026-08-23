@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/review-decision.schema.json",
+  "title": "ReviewDecision",
+  "description": "Trace d'une décision humaine. Toute fusion, toute promotion en approved et tout retrait passent par une décision de ce type : c'est ce qui rend INV-012 vérifiable, une entité validée ne pouvant disparaître sans décision correspondante.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "decidedAt", "decidedBy", "targetRefs", "action", "rationale"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une fusion doit dire sur quoi elle repose. Une décision de fusion sans base est exactement ce que le contrat interdit au pipeline automatique.",
+      "if": { "properties": { "action": { "const": "merge" } }, "required": ["action"] },
+      "then": { "required": ["mergeBasis"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+
+    "decidedAt": { "type": "string", "format": "date" },
+    "decidedBy": { "type": "string", "minLength": 1, "description": "Personne. Jamais un modèle : un LLM produit des candidats, pas des décisions." },
+    "targetRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "action": {
+      "enum": ["approve", "reject", "request_revision", "merge", "keep_separate", "retire", "supersede", "escalate"]
+    },
+    "mergeBasis": { "enum": ["identical_doi", "identical_pmid", "human_review_decision"] },
+    "riskTrigger": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "red_flag",
+          "contraindication",
+          "evidence_conflict",
+          "ambiguous_source",
+          "clinical_rule",
+          "uncertain_merge",
+          "product_policy",
+          "routine"
+        ]
+      },
+      "description": "Ce qui a envoyé l'objet en revue humaine. La revue est orientée par le risque, pas exhaustive."
+    },
+    "rationale": { "type": "string", "minLength": 1 },
+    "resultingState": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/reviewState" }
+  }
+}

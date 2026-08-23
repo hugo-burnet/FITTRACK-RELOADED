@@ -1,0 +1,964 @@
+{
+  "registryVersion": "1.0.0",
+  "note": "Registre des identifiants attribués. Amorcé par tools/build-derived.mjs à partir du golden set, puis APPEND-ONLY : un identifiant qui y figure ne doit jamais être réattribué ni retiré, même si l'entité est retirée. C'est ce registre, et non le texte ni le hash, qui porte l'identité.",
+  "policy": {
+    "idIsAssignedOnce": true,
+    "slugMayChange": true,
+    "hashIsNotIdentity": true,
+    "deletionIsLogicalOnly": true
+  },
+  "entries": [
+    {
+      "id": "adaptation.axial-load-swap.0001",
+      "kind": "adaptation-rule",
+      "currentSlug": "substituer-la-charge-axiale",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "adaptation.reduce-then-reexpose.0001",
+      "kind": "adaptation-rule",
+      "currentSlug": "reduire-puis-reexposer",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "assessment.clinical.pain.0001",
+      "kind": "evidence-assessment",
+      "currentSlug": "douleur-encadree-evaluation",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "assessment.emg.0001",
+      "kind": "evidence-assessment",
+      "currentSlug": "emg-hip-thrust-evaluation",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "assessment.freeweight.0001",
+      "kind": "evidence-assessment",
+      "currentSlug": "poids-libres-machines-evaluation",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "assessment.triceps.0001",
+      "kind": "evidence-assessment",
+      "currentSlug": "triceps-overhead-evaluation",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "assessment.volume.0001",
+      "kind": "evidence-assessment",
+      "currentSlug": "volume-cartographie-epistemique",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "assessment.volume.0002",
+      "kind": "evidence-assessment",
+      "currentSlug": "volume-confiance-par-aspect",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.biomechanics.emg.0001",
+      "kind": "claim",
+      "currentSlug": "emg-hip-thrust-superieure-au-squat",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.biomechanics.stability.0001",
+      "kind": "claim",
+      "currentSlug": "instabilite-diminue-activation-agoniste",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.clinical.imaging.0001",
+      "kind": "claim",
+      "currentSlug": "imagerie-ne-dicte-pas-la-programmation",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.clinical.pain.0001",
+      "kind": "claim",
+      "currentSlug": "douleur-pendant-exercice-nest-pas-dommage",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.clinical.threshold.0001",
+      "kind": "claim",
+      "currentSlug": "seuils-numeriques-non-universels",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.exercise.freeweight-machine.0001",
+      "kind": "claim",
+      "currentSlug": "poids-libres-machines-hypertrophie-equivalente",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.exercise.gluteal-hypertrophy.0001",
+      "kind": "claim",
+      "currentSlug": "hypertrophie-fessiere-equivalente-hip-thrust-squat",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.exercise.mode-specificity.0001",
+      "kind": "claim",
+      "currentSlug": "force-specifique-au-mode-teste",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.exercise.triceps-longhead.0001",
+      "kind": "claim",
+      "currentSlug": "extension-overhead-chef-long-triceps",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.failure.0001",
+      "kind": "claim",
+      "currentSlug": "echec-momentane-non-necessaire",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.frequency.0001",
+      "kind": "claim",
+      "currentSlug": "frequence-sans-effet-independant-a-volume-egalise",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.rest.0001",
+      "kind": "claim",
+      "currentSlug": "repos-superieurs-a-soixante-secondes",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.rir.0001",
+      "kind": "claim",
+      "currentSlug": "estimation-du-rir-imparfaite",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.rom.0001",
+      "kind": "claim",
+      "currentSlug": "lengthened-partials-equivalence-possible",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.volume.0001",
+      "kind": "claim",
+      "currentSlug": "volume-hebdomadaire-dose-reponse-decroissante",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "claim.training.volume.0002",
+      "kind": "claim",
+      "currentSlug": "dix-series-repere-non-minimum",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "condition.lateral-elbow-pain.0001",
+      "kind": "condition",
+      "currentSlug": "epicondylalgie-laterale",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "condition.low-back-pain.0001",
+      "kind": "condition",
+      "currentSlug": "lombalgie-non-specifique",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "conflict.biomechanics.emg-vs-hypertrophy",
+      "kind": "evidence-conflict",
+      "currentSlug": "emg-elevee-contre-hypertrophie-equivalente",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "conflict.training.high-volume",
+      "kind": "evidence-conflict",
+      "currentSlug": "dix-series-contre-absence-avantage-tres-haut-volume",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "contraindication.red-flag-loading.0001",
+      "kind": "contraindication",
+      "currentSlug": "ne-pas-charger-sous-red-flag",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "decision.2026-08-23.0001",
+      "kind": "review-decision",
+      "currentSlug": "decision-alias-acsm-currier",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "decision.2026-08-23.0002",
+      "kind": "review-decision",
+      "currentSlug": "decision-wolf-trois-localisateurs",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "decision.2026-08-23.0003",
+      "kind": "review-decision",
+      "currentSlug": "decision-haugen-heidel-non-fusion",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "equipment.barre.0001",
+      "kind": "equipment",
+      "currentSlug": "barre",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "equipment.haltere.0001",
+      "kind": "equipment",
+      "currentSlug": "haltere",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "equipment.poulie-cable.0001",
+      "kind": "equipment",
+      "currentSlug": "poulie-cable",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "exercise.deadlift.0001",
+      "kind": "exercise",
+      "currentSlug": "souleve-de-terre",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "exercise.elbow-extension.0001",
+      "kind": "exercise",
+      "currentSlug": "extension-du-coude",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "exercise.leg-press.0001",
+      "kind": "exercise",
+      "currentSlug": "leg-press",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "exercise.press.bench.0001",
+      "kind": "exercise",
+      "currentSlug": "developpe-couche",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "exercise.squat.0001",
+      "kind": "exercise",
+      "currentSlug": "squat",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "gap.biomechanics.elbow-load",
+      "kind": "evidence-gap",
+      "currentSlug": "charge-coude-en-musculation-recreative",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "gap.biomechanics.lumbar-injury-link",
+      "kind": "evidence-gap",
+      "currentSlug": "lien-charge-lombaire-incidence-blessure",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "hierarchy.biomechanics.selection-v1",
+      "kind": "evidence-hierarchy",
+      "currentSlug": "hierarchie-biomecanique-v1",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "hierarchy.clinical.adaptation-v1",
+      "kind": "evidence-hierarchy",
+      "currentSlug": "hierarchie-clinique-v1",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "hierarchy.training.programming-v1",
+      "kind": "evidence-hierarchy",
+      "currentSlug": "hierarchie-programmation-v1",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "joint.elbow.0001",
+      "kind": "joint",
+      "currentSlug": "coude",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "joint.lumbar-spine.0001",
+      "kind": "joint",
+      "currentSlug": "rachis-lombaire",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "joint.shoulder.0001",
+      "kind": "joint",
+      "currentSlug": "epaule",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "jointaction.elbow.extension.0001",
+      "kind": "joint-action",
+      "currentSlug": "extension-du-coude",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "jointaction.shoulder.flexion.0001",
+      "kind": "joint-action",
+      "currentSlug": "flexion-de-lepaule",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "muscle.pectoralis-major.0001",
+      "kind": "muscle",
+      "currentSlug": "grand-pectoral",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "muscle.triceps-brachii.0001",
+      "kind": "muscle",
+      "currentSlug": "triceps-brachial",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "muscle.triceps-long-head.0001",
+      "kind": "muscle",
+      "currentSlug": "triceps-chef-long",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "observation.elbow.overhead-extension.0001",
+      "kind": "joint-load-observation",
+      "currentSlug": "contrainte-coude-extension-overhead-supposee",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "observation.lumbar.deadlift.0001",
+      "kind": "joint-load-observation",
+      "currentSlug": "charge-lombaire-souleve-de-terre",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "observation.shoulder.bench-press.0001",
+      "kind": "joint-load-observation",
+      "currentSlug": "charge-epaule-developpe-contre-poulie",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f1.0001",
+      "kind": "citation-occurrence",
+      "currentSlug": "acsm-2026-resume-executif",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f1.0002",
+      "kind": "citation-occurrence",
+      "currentSlug": "currier-2026-resume-executif",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f1.0003",
+      "kind": "citation-occurrence",
+      "currentSlug": "acsm-2026-section-amplitude",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f1.0004",
+      "kind": "citation-occurrence",
+      "currentSlug": "haugen-2023-registre-sources",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f1.0005",
+      "kind": "citation-occurrence",
+      "currentSlug": "wolf-2025-lengthened-partials-tableau",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f2.0001",
+      "kind": "citation-occurrence",
+      "currentSlug": "heidel-2023-poids-libres-machines",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "occurrence.f2.0002",
+      "kind": "citation-occurrence",
+      "currentSlug": "wolf-2025-cite-sans-auteur",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "outcome.emg.0001",
+      "kind": "outcome",
+      "currentSlug": "activation-emg-de-surface",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "outcome.hypertrophy.0001",
+      "kind": "outcome",
+      "currentSlug": "taille-musculaire-mesuree",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "outcome.hypertrophy.0002",
+      "kind": "outcome",
+      "currentSlug": "hypertrophie-regionale",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "outcome.jointload.0001",
+      "kind": "outcome",
+      "currentSlug": "charge-articulaire-modelisee",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "outcome.strength.0001",
+      "kind": "outcome",
+      "currentSlug": "force-maximale-specifique",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "pattern.isolation-coude.0001",
+      "kind": "movement-pattern",
+      "currentSlug": "isolation-du-coude",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "pattern.poussee-horizontale.0001",
+      "kind": "movement-pattern",
+      "currentSlug": "poussee-horizontale",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "pattern.squat.0001",
+      "kind": "movement-pattern",
+      "currentSlug": "squat",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "policy.output.non-diagnostic.0001",
+      "kind": "output-policy",
+      "currentSlug": "sorties-non-diagnostiques",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "policy.safety.numeric-ranges.0001",
+      "kind": "product-safety-policy",
+      "currentSlug": "plages-chiffrees-revisables",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "policy.safety.pain-guardrail.0001",
+      "kind": "product-safety-policy",
+      "currentSlug": "garde-fou-douleur-0-3",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "population.clinical.0001",
+      "kind": "population",
+      "currentSlug": "douleurs-musculosquelettiques-chroniques",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "population.clinical.0002",
+      "kind": "population",
+      "currentSlug": "quinze-sujets-tendon-patellaire",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "population.training.0001",
+      "kind": "population",
+      "currentSlug": "adultes-sains-majoritairement-jeunes-hommes",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "population.training.0002",
+      "kind": "population",
+      "currentSlug": "sujets-entraines-essai-triceps-overhead",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "profile.bench-dumbbell.0001",
+      "kind": "resistance-profile",
+      "currentSlug": "profil-developpe-halteres",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "question.baseline.load-history.0001",
+      "kind": "clinical-question",
+      "currentSlug": "historique-de-charge",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "question.baseline.neuro-screen.0001",
+      "kind": "clinical-question",
+      "currentSlug": "depistage-neurologique",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "question.baseline.symptom-timeline.0001",
+      "kind": "clinical-question",
+      "currentSlug": "chronologie-du-symptome",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "redflag.cauda-equina.0001",
+      "kind": "red-flag",
+      "currentSlug": "suspicion-queue-de-cheval",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "redflag.fracture-suspicion.0001",
+      "kind": "red-flag",
+      "currentSlug": "suspicion-de-fracture",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "redflag.infection-suspicion.0001",
+      "kind": "red-flag",
+      "currentSlug": "suspicion-d-infection",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "redflag.progressive-neuro-deficit.0001",
+      "kind": "red-flag",
+      "currentSlug": "deficit-neurologique-progressif",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "referral.emergency.0001",
+      "kind": "referral-rule",
+      "currentSlug": "orientation-urgence-immediate",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "referral.professional-assessment.0001",
+      "kind": "referral-rule",
+      "currentSlug": "orientation-evaluation-professionnelle",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "region.pectoralis-major.clavicular.0001",
+      "kind": "muscle-region",
+      "currentSlug": "pectoral-portion-claviculaire",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "region.pectoralis-major.sternocostal.0001",
+      "kind": "muscle-region",
+      "currentSlug": "pectoral-portion-sterno-costale",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "release.kb.0-1-0",
+      "kind": "kb-release",
+      "currentSlug": "release-0-1-0",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "resolution.s1.acsm-currier-alias",
+      "kind": "source-resolution",
+      "currentSlug": "acsm-currier-alias",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "resolution.s2.wolf-three-locators",
+      "kind": "source-resolution",
+      "currentSlug": "wolf-trois-localisateurs",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "resolution.s3.haugen-vs-heidel",
+      "kind": "source-resolution",
+      "currentSlug": "haugen-vs-heidel-attribution",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.currier-2026-acsm-position-stand",
+      "kind": "source",
+      "currentSlug": "currier-2026-position-stand",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.haugen-2023-free-weight-vs-machine",
+      "kind": "source",
+      "currentSlug": "haugen-2023-free-weight-vs-machine",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.heidel-2023-free-weight-vs-machine",
+      "kind": "source",
+      "currentSlug": "heidel-2023-free-weight-vs-machine",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.ifompt-2020-red-flags",
+      "kind": "source",
+      "currentSlug": "ifompt-2020-red-flags",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.nunes-2022-overhead-triceps",
+      "kind": "source",
+      "currentSlug": "nunes-2022-overhead-triceps",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.pelland-2026-dose-response",
+      "kind": "source",
+      "currentSlug": "pelland-2026-dose-response",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.plotkin-2023-hipthrust-squat",
+      "kind": "source",
+      "currentSlug": "plotkin-2023-hipthrust-squat",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.smith-2017-painful-exercise",
+      "kind": "source",
+      "currentSlug": "smith-2017-painful-exercise",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.sprague-2021-pain-monitoring",
+      "kind": "source",
+      "currentSlug": "sprague-2021-pain-monitoring",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "source.wolf-2025-lengthened-partials",
+      "kind": "source",
+      "currentSlug": "wolf-2025-lengthened-partials",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "substitution.bench.barbell-to-dumbbell.0001",
+      "kind": "substitution-relation",
+      "currentSlug": "barre-vers-halteres-quasi-directe",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "substitution.pushdown-to-overhead.0001",
+      "kind": "substitution-relation",
+      "currentSlug": "pushdown-vers-overhead-partielle",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "substitution.squat-to-leg-press.0001",
+      "kind": "substitution-relation",
+      "currentSlug": "squat-vers-leg-press-acceptable",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "symptom.new-weakness.0001",
+      "kind": "symptom",
+      "currentSlug": "faiblesse-nouvelle",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "symptom.next-morning-return-to-baseline.0001",
+      "kind": "symptom",
+      "currentSlug": "retour-au-niveau-de-base-le-lendemain",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "tolerance.axial-load.0001",
+      "kind": "tolerance-dimension-definition",
+      "currentSlug": "tolerance-charge-axiale",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "tolerance.grip.0001",
+      "kind": "tolerance-dimension-definition",
+      "currentSlug": "tolerance-prehension",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "variant.bench.barbell-flat.0001",
+      "kind": "exercise-variant",
+      "currentSlug": "developpe-couche-barre-plat",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "variant.bench.dumbbell.0001",
+      "kind": "exercise-variant",
+      "currentSlug": "developpe-couche-halteres",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "variant.elbow-extension.overhead.0001",
+      "kind": "exercise-variant",
+      "currentSlug": "extension-overhead",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "variant.elbow-extension.pushdown.0001",
+      "kind": "exercise-variant",
+      "currentSlug": "pushdown",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "variant.squat.barbell-back.0001",
+      "kind": "exercise-variant",
+      "currentSlug": "squat-barre-dos",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "zone.safety.green.0001",
+      "kind": "safety-zone",
+      "currentSlug": "zone-verte",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "zone.safety.orange.0001",
+      "kind": "safety-zone",
+      "currentSlug": "zone-orange",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    },
+    {
+      "id": "zone.safety.red.0001",
+      "kind": "safety-zone",
+      "currentSlug": "zone-rouge",
+      "currentRevision": 1,
+      "assignedAt": "2026-08-23",
+      "slugHistory": []
+    }
+  ]
+}

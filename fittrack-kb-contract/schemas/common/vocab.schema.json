@@ -1,0 +1,394 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/common/vocab.schema.json",
+  "title": "Vocabulaires contrôlés (généré)",
+  "description": "FICHIER GÉNÉRÉ par tools/build-vocabularies.mjs depuis vocabularies/vocabularies.source.json. Ne pas éditer à la main : la prochaine génération écrasera la modification.",
+  "$defs": {
+    "knowledgeType": {
+      "title": "Types de connaissance",
+      "description": "Nature de l'objet affirmé. Axe orthogonal à epistemic-status, confidence-level et directness. Remplace l'usage de expert_practice comme niveau de preuve dans F4 : ici ce n'est plus un niveau, c'est une nature. — origine : modeling_decision",
+      "enum": [
+        "EVIDENCE",
+        "EXPERT_PRACTICE",
+        "HYPOTHESIS",
+        "ANATOMICAL_FACT",
+        "BIOMECHANICAL_OBSERVATION",
+        "EMG_OBSERVATION",
+        "MECHANISM",
+        "DEFINITION",
+        "MYTH_REFUTATION",
+        "PRODUCT_POLICY",
+        "MODELING_DECISION"
+      ]
+    },
+    "epistemicStatus": {
+      "title": "Statuts épistémiques",
+      "description": "État de la conclusion, indépendamment de sa nature. Dérivé de la cartographie épistémique explicite de F1 §1.4. — origine : corpus",
+      "enum": [
+        "established",
+        "established_direction",
+        "probable",
+        "uncertain",
+        "controversial",
+        "mechanistic_only",
+        "practice_only",
+        "absence_of_evidence",
+        "refuted"
+      ]
+    },
+    "confidenceLevel": {
+      "title": "Niveaux de confiance",
+      "description": "Quatre niveaux qualitatifs communs à F1 §1.2, F2 §0.2 et F4. La valeur not_applicable est ajoutée pour les types de connaissance qui ne se gradent pas. — origine : corpus",
+      "enum": [
+        "high",
+        "moderate",
+        "low",
+        "very_low",
+        "not_applicable"
+      ]
+    },
+    "confidenceAspect": {
+      "title": "Aspects de confiance",
+      "description": "Dimension sur laquelle porte une confiance. Rend représentables les confiances composites de F1 sans les aplatir : les aplatir vers le haut gonflerait la certitude, vers le bas détruirait de l'information. — origine : corpus",
+      "enum": [
+        "direction",
+        "magnitude",
+        "dose_response_shape",
+        "threshold",
+        "distribution",
+        "acute_effect",
+        "chronic_effect",
+        "generalization",
+        "regional_specificity",
+        "equivalence",
+        "descriptive_accuracy"
+      ]
+    },
+    "directness": {
+      "title": "Directness de la preuve",
+      "description": "Les quatre valeurs de F4 sont conservées telles quelles ; les ajouts couvrent les types de preuve que F2 §0.3 distingue explicitement et que F4 ne pouvait pas exprimer. — origine : clinical_schema_f4",
+      "enum": [
+        "direct_clinical",
+        "indirect_clinical",
+        "biomechanical_only",
+        "expert_only",
+        "direct_hypertrophy_measured",
+        "emg_only",
+        "anatomical_cadaveric",
+        "imaging_descriptive",
+        "animal_model",
+        "mechanistic_hypothesis",
+        "qualitative_survey"
+      ]
+    },
+    "evidenceType": {
+      "title": "Types d'étude ou de document",
+      "description": "Étend documentType de F4 avec les types réellement présents dans les registres de sources de F1 §20 et F3 §15. — origine : clinical_schema_f4",
+      "enum": [
+        "position_stand",
+        "clinical_practice_guideline",
+        "medical_body_recommendation",
+        "consensus_statement",
+        "umbrella_review",
+        "systematic_review",
+        "meta_analysis",
+        "meta_regression",
+        "network_meta_analysis",
+        "randomized_trial",
+        "within_participant_trial",
+        "cohort",
+        "cross_sectional_survey",
+        "biomechanical_study",
+        "cadaveric_study",
+        "emg_study",
+        "imaging_study",
+        "narrative_review",
+        "scoping_review",
+        "qualitative_study",
+        "expert_practice",
+        "unknown"
+      ]
+    },
+    "sourceResolutionStatus": {
+      "title": "États de résolution des sources",
+      "description": "Imposé par le prompt de phase 2. Les cas réels du corpus (S-1 à S-4) instancient chacune de ces valeurs. — origine : modeling_decision",
+      "enum": [
+        "resolved",
+        "partial",
+        "unresolved",
+        "ambiguous",
+        "duplicate_candidate"
+      ]
+    },
+    "doiProvenance": {
+      "title": "Provenance d'un identifiant bibliographique",
+      "description": "Un DOI lu dans un tableau de métadonnées et un DOI déduit d'une URL n'ont pas la même valeur probante. Les confondre reviendrait à fabriquer de la métadonnée. — origine : modeling_decision",
+      "enum": [
+        "stated_in_corpus",
+        "derived_from_url",
+        "external_verified_enrichment"
+      ]
+    },
+    "claimRelationType": {
+      "title": "Types de relations entre claims",
+      "description": "Deux claims issus de fichiers différents ne fusionnent jamais automatiquement ; ils se relient. — origine : modeling_decision",
+      "enum": [
+        "SUPPORTS",
+        "REFINES",
+        "SPECIALIZES",
+        "CONTRADICTS",
+        "LIMITS",
+        "DEPENDS_ON",
+        "REFUTES_MYTH",
+        "DUPLICATE_CANDIDATE"
+      ]
+    },
+    "conflictCause": {
+      "title": "Causes de conflits de preuve",
+      "description": "Reprend les explications probables que le corpus donne lui-même en colonne « Explication probable » de F1 §18 et F2 §11. — origine : corpus",
+      "enum": [
+        "unequated_volume",
+        "category_contrast_vs_continuous_model",
+        "low_statistical_power",
+        "differing_definitions",
+        "differing_population",
+        "differing_measurement_method",
+        "differing_modality",
+        "differing_duration",
+        "measurement_does_not_capture_construct",
+        "selection_bias",
+        "unknown"
+      ]
+    },
+    "movementPattern": {
+      "title": "Patterns de mouvement",
+      "description": "Liste énumérée par F2 §10 pour le champ movementPattern, complétée des isolations que F2 §7 nomme effectivement. — origine : corpus",
+      "enum": [
+        "poussee_horizontale",
+        "poussee_verticale",
+        "tirage_horizontal",
+        "tirage_vertical",
+        "squat",
+        "hinge",
+        "fente",
+        "isolation_coude",
+        "isolation_epaule",
+        "isolation_genou",
+        "isolation_hanche",
+        "isolation_cheville",
+        "isolation_poignet",
+        "autre"
+      ]
+    },
+    "jointAction": {
+      "title": "Actions articulaires",
+      "description": "Actions effectivement nommées dans l'anatomie fonctionnelle de F2 §1. Aucune action n'est ajoutée par complétude anatomique générale : ce serait remplir la KB avec des connaissances hors corpus. — origine : corpus",
+      "enum": [
+        "flexion",
+        "extension",
+        "abduction",
+        "adduction",
+        "rotation_interne",
+        "rotation_externe",
+        "flexion_horizontale",
+        "extension_horizontale",
+        "supination",
+        "pronation",
+        "elevation_scapulaire",
+        "retraction_scapulaire",
+        "depression_scapulaire",
+        "sonnette_externe"
+      ]
+    },
+    "equipmentType": {
+      "title": "Matériel",
+      "description": "Matériel effectivement nommé par F2 §2 et §7 et par F3 §6.3 et §8. Aucun ajout de catalogue. — origine : corpus",
+      "enum": [
+        "barre",
+        "barre_ez",
+        "haltere",
+        "poulie_cable",
+        "machine_came",
+        "machine_convergente",
+        "machine_guidee",
+        "elastique",
+        "poids_du_corps",
+        "kettlebell",
+        "trap_bar",
+        "swiss_bar",
+        "banc",
+        "inconnu"
+      ]
+    },
+    "resistanceProfileShape": {
+      "title": "Profils de résistance",
+      "description": "Enum proposé littéralement par F2 §10 pour le champ resistanceProfile. — origine : corpus",
+      "enum": [
+        "ascendant",
+        "descendant",
+        "en_cloche",
+        "constant_approximatif",
+        "inconnu"
+      ]
+    },
+    "jointLoadObservationType": {
+      "title": "Types d'observations articulaires",
+      "description": "Les quatre catégories que F2 §6 et §10 imposent de ne jamais fusionner dans un champ binaire sûr/dangereux. La contrainte est portée par le schéma, pas par la documentation. — origine : corpus",
+      "enum": [
+        "charge_mecanique",
+        "inconfort_rapporte",
+        "risque_demontre",
+        "risque_suppose"
+      ]
+    },
+    "substitutionEquivalenceLevel": {
+      "title": "Niveaux d'équivalence de substitution",
+      "description": "Trois niveaux définis par F2 §8.2. — origine : corpus",
+      "enum": [
+        "quasi_directe",
+        "acceptable",
+        "partielle"
+      ]
+    },
+    "substitutionCriterion": {
+      "title": "Critères de substitution",
+      "description": "Les huit critères du tableau F2 §8.3. F2 §12.4 exige que toute règle de substitution cite celui qui la justifie ; le schéma rend donc ce champ obligatoire. — origine : corpus",
+      "enum": [
+        "pattern_de_mouvement",
+        "fonction_musculaire_precise",
+        "longueur_musculaire_dominante",
+        "profil_de_resistance",
+        "stabilite_requise",
+        "demande_lombaire_charge_axiale",
+        "materiel_disponible",
+        "objectif_force_vs_hypertrophie"
+      ]
+    },
+    "toleranceAxis": {
+      "title": "Axes de tolérance",
+      "description": "Axes portés par F4 sous forme de propriétés nommées (flexionTolerance, extensionTolerance…). Les transformer en vocabulaire permet d'en ajouter sans modifier le schéma, ce que la forme de F4 interdisait. — origine : clinical_schema_f4",
+      "enum": [
+        "flexion",
+        "extension",
+        "rotation",
+        "charge_axiale",
+        "overhead",
+        "charge_generale",
+        "grip",
+        "amplitude_terminale"
+      ]
+    },
+    "toleranceStatus": {
+      "title": "Statuts de tolérance",
+      "description": "Repris verbatim de F4 $defs.toleranceDimension.status. Aucune valeur ajoutée ni retirée : c'est une migration, pas une réécriture. — origine : clinical_schema_f4",
+      "enum": [
+        "unknown",
+        "tolerated",
+        "conditionally_tolerated",
+        "irritating",
+        "not_tested",
+        "avoid_pending_assessment"
+      ]
+    },
+    "toleranceBasis": {
+      "title": "Bases d'une observation de tolérance",
+      "description": "Repris verbatim de F4 $defs.toleranceDimension.basis. — origine : clinical_schema_f4",
+      "enum": [
+        "user_report",
+        "observed_response",
+        "clinician_instruction",
+        "population_evidence",
+        "unknown"
+      ]
+    },
+    "safetyZone": {
+      "title": "Zones de sécurité",
+      "description": "Les trois zones de F3 §2.2, également portées par F4 zoneLogic. — origine : corpus",
+      "enum": [
+        "GREEN",
+        "ORANGE",
+        "RED"
+      ]
+    },
+    "redFlagAction": {
+      "title": "Actions de red flag",
+      "description": "Repris verbatim de F4 $defs.redFlag.action. — origine : clinical_schema_f4",
+      "enum": [
+        "stop_and_emergency_assessment",
+        "stop_and_urgent_medical_assessment",
+        "prompt_professional_assessment"
+      ]
+    },
+    "redFlagUrgency": {
+      "title": "Urgences de red flag",
+      "description": "Repris verbatim de F4 $defs.redFlag.urgency. — origine : clinical_schema_f4",
+      "enum": [
+        "emergency_now",
+        "same_day",
+        "prompt",
+        "routine"
+      ]
+    },
+    "reviewState": {
+      "title": "États de validation et de revue",
+      "description": "États du workflow de revue humaine. escalated est ajouté pour les cas que la revue ne peut pas trancher seule (conflit d'attribution S-3). — origine : modeling_decision",
+      "enum": [
+        "pending_human_review",
+        "approved",
+        "rejected",
+        "needs_revision",
+        "escalated"
+      ]
+    },
+    "diagnosticCertaintyRequired": {
+      "title": "Certitude diagnostique requise",
+      "description": "Repris verbatim de F4 $defs.conditionRecord.diagnosticCertaintyRequired. — origine : clinical_schema_f4",
+      "enum": [
+        "none_symptom_based_only",
+        "user_reported_prior_diagnosis",
+        "professional_diagnosis_required",
+        "postoperative_protocol_required"
+      ]
+    },
+    "clinicalEvidenceLevel": {
+      "title": "Niveaux de preuve clinique",
+      "description": "F4 mélangeait quatre niveaux et une nature (expert_practice). Les quatre niveaux sont conservés ; expert_practice quitte cet axe pour devenir knowledgeType EXPERT_PRACTICE. C'est la seule modification de valeur de toute la migration, et elle est tracée en SPLIT dans mappings/. — origine : clinical_schema_f4",
+      "enum": [
+        "A_high",
+        "B_moderate",
+        "C_low",
+        "D_very_low"
+      ]
+    },
+    "contraindicationScope": {
+      "title": "Portées de contre-indication",
+      "description": "Repris verbatim de F4 $defs.conditionRecord.contraindications.items.scope. — origine : clinical_schema_f4",
+      "enum": [
+        "absolute_until_assessed",
+        "temporary",
+        "clinician_order_only"
+      ]
+    },
+    "contraindicationBasis": {
+      "title": "Fondements admissibles d'une contre-indication",
+      "description": "F4 exigeait déjà une raison et des sourceIds mais n'empêchait pas de justifier une interdiction par une simple sensibilité fréquente, ce que son propre commentaire interdit. L'énumération des fondements admissibles rend cette interdiction structurelle. — origine : modeling_decision",
+      "enum": [
+        "red_flag",
+        "clinician_order",
+        "explicit_guideline_statement"
+      ]
+    },
+    "domain": {
+      "title": "Domaines de la KB",
+      "description": "Sert au préfixage des identifiants et au routage vers les sous-dossiers de curated/. — origine : modeling_decision",
+      "enum": [
+        "training",
+        "anatomy",
+        "biomechanics",
+        "exercise",
+        "clinical",
+        "product"
+      ]
+    }
+  }
+}

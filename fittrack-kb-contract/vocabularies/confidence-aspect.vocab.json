@@ -1,0 +1,78 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "confidence-aspect",
+  "title": "Aspects de confiance",
+  "origin": "corpus",
+  "description": "Dimension sur laquelle porte une confiance. Rend représentables les confiances composites de F1 sans les aplatir : les aplatir vers le haut gonflerait la certitude, vers le bas détruirait de l'information.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "direction",
+      "label": "Direction de l'effet",
+      "origin": "corpus",
+      "corpusRef": "F1 §2 « Élevé pour la direction »"
+    },
+    {
+      "term": "magnitude",
+      "label": "Ampleur de l'effet",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.3"
+    },
+    {
+      "term": "dose_response_shape",
+      "label": "Forme de la courbe dose-réponse",
+      "origin": "corpus",
+      "corpusRef": "F1 §2 « modéré pour la forme de la courbe »"
+    },
+    {
+      "term": "threshold",
+      "label": "Seuil chiffré",
+      "origin": "corpus",
+      "corpusRef": "F1 §2 « faible pour un plafond chiffré » ; F1 §5 « faible pour le seuil »"
+    },
+    {
+      "term": "distribution",
+      "label": "Répartition du volume",
+      "origin": "corpus",
+      "corpusRef": "F1 §2 « Modéré pour la distribution »"
+    },
+    {
+      "term": "acute_effect",
+      "label": "Effet aigu",
+      "origin": "corpus",
+      "corpusRef": "F1 §5 « Élevé pour l'aigu »"
+    },
+    {
+      "term": "chronic_effect",
+      "label": "Effet chronique",
+      "origin": "corpus",
+      "corpusRef": "F1 §5 « modéré pour impact chronique »"
+    },
+    {
+      "term": "generalization",
+      "label": "Généralisation à d'autres populations",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.3 ; F2 §0.4"
+    },
+    {
+      "term": "regional_specificity",
+      "label": "Spécificité régionale",
+      "origin": "corpus",
+      "corpusRef": "F2 §3.2, §7.6"
+    },
+    {
+      "term": "equivalence",
+      "label": "Équivalence entre deux modalités",
+      "origin": "corpus",
+      "corpusRef": "F1 §11 « modéré pour équivalence des méthodes »"
+    },
+    {
+      "term": "descriptive_accuracy",
+      "label": "Exactitude descriptive",
+      "definition": "Distincte de l'efficacité : F1 §13 note « Très faible pour efficacité; élevé pour description ».",
+      "origin": "corpus",
+      "corpusRef": "F1 §13"
+    }
+  ]
+}

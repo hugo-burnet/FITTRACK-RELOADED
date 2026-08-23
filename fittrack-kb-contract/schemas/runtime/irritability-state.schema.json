@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/irritability-state.schema.json",
+  "title": "IrritabilityState",
+  "description": "État d'irritabilité d'un utilisateur à une date. F4 plaçait irritability dans conditionRecord, c'est-à-dire dans la connaissance générale ; or l'irritabilité change d'une semaine à l'autre chez une même personne et n'a aucun sens au niveau d'une condition.\n\nL'état est daté et porte les indices qui l'ont produit, pour qu'une reclassification puisse être expliquée plutôt que constatée.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis", "level", "indicators"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeId" },
+    "subjectRef": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/subjectRef" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+
+    "level": {
+      "enum": ["unknown", "low", "moderate", "high"],
+      "description": "Repris verbatim de F4 conditionRecord.irritability, mais rattaché à une personne et à une date."
+    },
+    "bodyRegion": { "type": ["string", "null"] },
+    "indicators": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "pain_at_rest",
+          "reaction_to_low_load",
+          "highly_sensitive_range",
+          "durable_aggravation",
+          "loss_of_function",
+          "sleep_disturbance",
+          "none_reported"
+        ]
+      },
+      "description": "Indices énumérés par F3 §4.1 pour abaisser le seuil. Un niveau sans indice serait un jugement sans base."
+    },
+    "conditionContextRef": { "type": ["string", "null"] },
+    "supersedesStateRef": {
+      "type": ["string", "null"],
+      "description": "État précédent. L'historique n'est jamais écrasé, y compris côté runtime."
+    },
+    "notes": { "type": "string" }
+  }
+}

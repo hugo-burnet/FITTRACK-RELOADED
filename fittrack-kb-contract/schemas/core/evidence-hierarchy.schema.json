@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/evidence-hierarchy.schema.json",
+  "title": "EvidenceHierarchy",
+  "description": "Hiérarchie de preuves propre à un domaine. F1 place les position stands au sommet, F2 les études longitudinales d'hypertrophie mesurée, F3 les recommandations cliniques. Ce n'est pas une contradiction mais une différence de finalité : les fusionner en une hiérarchie universelle détruirait une information réelle du corpus.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "domain", "ranks", "purpose"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "domain": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/domain" },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Ce que cette hiérarchie sert à décider. C'est ce qui explique qu'elles diffèrent."
+    },
+    "ranks": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "label"],
+        "properties": {
+          "rank": { "type": "integer", "minimum": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "evidenceTypes": {
+            "type": "array",
+            "items": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/evidenceType" },
+            "uniqueItems": true
+          },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "nonNegotiableRules": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Règles que la hiérarchie déclare elle-même comme non négociables, par exemple l'interdiction de traiter une différence EMG comme preuve d'hypertrophie."
+    }
+  }
+}

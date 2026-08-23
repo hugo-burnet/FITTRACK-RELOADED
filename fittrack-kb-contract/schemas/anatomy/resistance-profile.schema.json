@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/resistance-profile.schema.json",
+  "title": "ResistanceProfile",
+  "description": "Profil de résistance d'une variante d'exercice. Entité séparée parce que F2 §10 signale que ce champ varie pour un même exercice selon l'équipement : l'attacher à Exercise produirait une valeur fausse pour la moitié des exécutions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "shape", "derivation"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Un profil issu d'une mesure doit citer sa source ; un profil déduit du premier principe gravitationnel doit se déclarer comme tel plutôt que d'emprunter l'autorité d'une mesure.",
+      "if": { "properties": { "derivation": { "const": "measured_inverse_dynamics" } }, "required": ["derivation"] },
+      "then": { "required": ["sourceRefs"], "properties": { "sourceRefs": { "minItems": 1 } } }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "shape": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/resistanceProfileShape" },
+    "hardestPortionNote": {
+      "type": ["string", "null"],
+      "description": "Où se situe le point difficile sur l'amplitude, en mots. Pas de pourcentage d'amplitude : le corpus n'en donne aucun."
+    },
+    "derivation": {
+      "enum": ["measured_inverse_dynamics", "first_principle_gravity", "manufacturer_cam_claim", "unknown"]
+    },
+    "equipmentRef": { "type": ["string", "null"] },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "invariantsVersion": "1.0.0",
+  "note": "Contrôles qui dépassent ce que JSON Schema peut exprimer. Chacun est implémenté dans tests/invariants.mjs et exécuté par tests/validate.mjs. Les colonnes « bloquant » indiquent si un échec doit empêcher la publication d'une KBRelease.",
+  "invariants": [
+    {
+      "id": "INV-001",
+      "title": "Intégrité référentielle globale",
+      "statement": "Toute valeur d'un champ se terminant par Ref ou Refs résout vers une entité, un fragment ou un fichier de corpus existants.",
+      "whyNotSchema": "JSON Schema valide un document isolé et ne peut pas vérifier l'existence d'un identifiant ailleurs dans le jeu.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-18"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-002",
+      "title": "Provenance obligatoire",
+      "statement": "Toute entité canonique de curated/ porte au moins un lien de provenance vers un fragment du corpus.",
+      "whyNotSchema": "Le schéma l'impose déjà par entité ; l'invariant vérifie en plus que le catalogue et les données sont d'accord sur ce qui est canonique.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-01"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-003",
+      "title": "Monotonie de certitude",
+      "statement": "Une EvidenceAssessment qui en remplace une autre ne peut relever le niveau de confiance maximal qu'en citant au moins une source absente de la précédente.",
+      "whyNotSchema": "La comparaison porte sur deux documents distincts.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-20"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-004",
+      "title": "Conservation de cannotConclude dans les projections",
+      "statement": "Toute projection d'une claim conserve intégralement le contenu de cannotConclude.",
+      "whyNotSchema": "Il s'agit d'une propriété d'une transformation, pas d'un document.",
+      "blocking": false,
+      "implementedIn": "tests/invariants.mjs, vérifié contre projections/claim-wiki-projection.mjs",
+      "testedBy": ["INV-CASE-06"],
+      "status": "executed",
+      "limitation": "Une seule projection existe à ce stade. La garantie ne vaut que pour elle ; toute projection future devra passer la même assertion."
+    },
+    {
+      "id": "INV-005",
+      "title": "EMG n'est jamais une preuve d'hypertrophie",
+      "statement": "Aucune évaluation emg_only ne soutient une supériorité hypertrophique ; aucune claim EMG n'est rattachée à un outcome de taille musculaire sans être déclarée proxy ; aucune substitution ne justifie une équivalence hypertrophique par une claim EMG.",
+      "whyNotSchema": "Les deux derniers contrôles traversent trois types d'entités.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-04", "INV-CASE-05"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-006",
+      "title": "Biomécanique n'est jamais un risque clinique démontré",
+      "statement": "Un risque démontré exige une donnée épidémiologique longitudinale ; aucune contre-indication ne référence une observation de charge articulaire ; aucune évaluation purement biomécanique ne soutient un risque démontré.",
+      "whyNotSchema": "Le contrôle de non-référencement traverse deux types d'entités.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-07"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-007",
+      "title": "Priorité des red flags",
+      "statement": "Toute AdaptationRule cède devant un red flag actif ; la zone RED arrête le coaching normal et porte une voie d'orientation ; tout red flag d'urgence immédiate est couvert par une ReferralRule.",
+      "whyNotSchema": "La couverture d'un red flag par une règle d'orientation est une propriété du graphe.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-09", "INV-CASE-14"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-008",
+      "title": "Justification des contre-indications",
+      "statement": "Le fondement déclaré d'une contre-indication pointe une entité existante et du bon type : un red flag, une consigne de professionnel, ou un énoncé cité avec sa source.",
+      "whyNotSchema": "Le schéma impose la présence du champ ; l'invariant vérifie que la cible existe et est du bon type.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-08"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-009",
+      "title": "Aucune fusion automatique",
+      "statement": "Une entité dont la provenance croise deux fichiers du corpus porte une décision de revue ; une fusion de sources n'est permise que sur identifiant fort identique ou décision humaine ; un conflit d'attribution ambigu n'est jamais fusionné.",
+      "whyNotSchema": "Le premier contrôle dépend du contenu du tableau de provenance, pas de sa forme.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-17"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-010",
+      "title": "Stabilité des identifiants",
+      "statement": "Tout identifiant métier figure au registre avec le bon type, le bon slug courant et la bonne révision ; le contentHash correspond au contenu normalisé hors identité, slug et cycle de vie.",
+      "whyNotSchema": "Le registre est un document externe à l'entité validée.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs, tools/canonical.mjs",
+      "testedBy": ["INV-CASE-19"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-011",
+      "title": "Idempotence",
+      "statement": "Deux exécutions de la fragmentation sur le même corpus produisent exactement le même texte brut et les mêmes hashes.",
+      "whyNotSchema": "Il s'agit d'une propriété d'un processus.",
+      "blocking": false,
+      "implementedIn": "tests/invariants.mjs, recalcul depuis les fichiers réels",
+      "testedBy": [],
+      "status": "executed",
+      "limitation": "Ne couvre que la fragmentation, seule étape implémentée. L'idempotence du pipeline complet ne pourra être vérifiée qu'en phase 3."
+    },
+    {
+      "id": "INV-012",
+      "title": "Conservation de l'historique",
+      "statement": "Une évaluation remplacée reste présente ; une entité retirée porte une décision de retraite existante et de type approprié ; supersededBy pointe une entité présente.",
+      "whyNotSchema": "Les cibles sont d'autres documents.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-16"],
+      "status": "executed"
+    },
+    {
+      "id": "INV-013",
+      "title": "Aucune perte silencieuse dans la migration clinique",
+      "statement": "Tous les chemins de champs du schéma clinique existant, énumérés depuis le fichier réel, sont couverts exactement une fois par mappings/clinical-schema-migration.json, sans chemin surnuméraire.",
+      "whyNotSchema": "Le contrôle compare un fichier externe à un mapping.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": [],
+      "status": "executed",
+      "note": "98 chemins énumérés et couverts. C'est la preuve exécutable demandée, et non une affirmation."
+    },
+    {
+      "id": "INV-014",
+      "title": "Unicité des identifiants",
+      "statement": "Aucun identifiant n'apparaît deux fois dans l'ensemble du jeu.",
+      "whyNotSchema": "Portée globale.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": [],
+      "status": "executed"
+    },
+    {
+      "id": "INV-015",
+      "title": "Séparation stricte KB / POLICY / RUNTIME",
+      "statement": "Aucune entité runtime ne porte de provenance de corpus ; aucun identifiant runtime n'est référencé depuis curated/ ; aucun champ runtime (testedLoad, testedRange, symptomDuring, symptomAfter24h, irritability) n'apparaît hors du runtime ; toute entité normative porte une date de revue ; toute politique se déclare non médicale.",
+      "whyNotSchema": "La détection d'un champ runtime hors runtime traverse tous les types d'entités.",
+      "blocking": true,
+      "implementedIn": "tests/invariants.mjs",
+      "testedBy": ["INV-CASE-15"],
+      "status": "executed"
+    }
+  ],
+  "notTestedAtThisPhase": [
+    {
+      "topic": "Idempotence du pipeline complet",
+      "reason": "Les étapes 3 à 10 et 15 ne sont pas implémentées en phase 2. Seules la fragmentation et la validation le sont.",
+      "coveredPartiallyBy": "INV-011"
+    },
+    {
+      "topic": "Conservation de cannotConclude dans les projections futures",
+      "reason": "Une seule projection existe. L'assertion est écrite pour être réutilisée, mais elle n'a encore rien d'autre à contrôler.",
+      "coveredPartiallyBy": "INV-004"
+    },
+    {
+      "topic": "Contrôle des sorties conversationnelles",
+      "reason": "OutputPolicy énumère les formulations interdites, mais aucun générateur de sortie n'existe encore. L'audit des sorties est une tâche de phase ultérieure."
+    },
+    {
+      "topic": "Résolution externe des sources ambiguës",
+      "reason": "Le conflit d'attribution Haugen / Heidel n'est pas tranchable avec le corpus seul et l'enrichissement bibliographique externe est hors périmètre de cette phase. Le conflit reste ouvert et escaladé, ce qui est le comportement attendu."
+    }
+  ]
+}

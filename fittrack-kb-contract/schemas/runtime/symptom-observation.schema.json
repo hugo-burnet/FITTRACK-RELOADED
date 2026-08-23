@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/symptom-observation.schema.json",
+  "title": "SymptomObservation",
+  "description": "Symptôme rapporté par un utilisateur à une date. Le champ redFlagCandidateRefs signale qu'un dépistage a été déclenché ; il ne conclut rien et ne nomme aucune pathologie.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis", "reportedDescription", "moment"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeEnvelope" },
+    {
+      "description": "Si l'observation a déclenché un dépistage de red flag, l'issue du dépistage doit être enregistrée. Un dépistage déclenché puis oublié est le scénario que INV-007 doit rendre impossible.",
+      "if": { "required": ["redFlagCandidateRefs"], "properties": { "redFlagCandidateRefs": { "minItems": 1 } } },
+      "then": { "required": ["screeningOutcome"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeId" },
+    "subjectRef": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/subjectRef" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+
+    "reportedDescription": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Mots de l'utilisateur. Non normalisés : la normalisation appartient à l'analyse, pas à la saisie."
+    },
+    "symptomDefinition": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/kbReference" },
+    "bodyRegion": { "type": ["string", "null"] },
+    "intensity": { "type": ["number", "null"], "minimum": 0, "maximum": 10 },
+    "moment": {
+      "enum": ["at_rest", "during_exercise", "immediately_after", "same_evening", "next_morning", "beyond_24h"],
+      "description": "Reprend la chronologie de surveillance de F3 §4.2, qui distingue explicitement ces moments."
+    },
+    "exerciseVariantRef": { "type": ["string", "null"] },
+    "neurologicalFeatures": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["numbness", "new_weakness", "bilateral_symptoms", "balance_disturbance", "bladder_or_bowel_change", "saddle_anaesthesia"] }
+    },
+    "redFlagCandidateRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "screeningOutcome": {
+      "enum": ["no_red_flag", "red_flag_triggered", "inconclusive_more_questions_needed"]
+    },
+    "notes": { "type": "string" }
+  }
+}

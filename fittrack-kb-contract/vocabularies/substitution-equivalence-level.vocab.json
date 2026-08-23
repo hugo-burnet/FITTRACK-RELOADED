@@ -1,0 +1,32 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "substitution-equivalence-level",
+  "title": "Niveaux d'équivalence de substitution",
+  "origin": "corpus",
+  "description": "Trois niveaux définis par F2 §8.2.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "quasi_directe",
+      "label": "Quasi directe",
+      "definition": "Même pattern, même fonction principale, longueur dominante comparable ; diffère surtout par profil de résistance ou stabilité.",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.2"
+    },
+    {
+      "term": "acceptable",
+      "label": "Acceptable",
+      "definition": "Même pattern et muscle principal, mais une dimension significative diffère.",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.2"
+    },
+    {
+      "term": "partielle",
+      "label": "Partiellement équivalente",
+      "definition": "Fonction large partagée mais longueur ou biarticularité module probablement l'hypertrophie régionale.",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.2"
+    }
+  ]
+}

@@ -1,0 +1,706 @@
+{
+  "note": "Quinze claims issues des quatre fichiers. rawStatement est toujours verbatim ; cannotConclude reprend la colonne « Ce qu'on ne peut PAS conclure » que le corpus fournit lui-même dans presque tous ses tableaux. Deux fragments produisent chacun deux claims indépendantes, ce qui montre qu'une ligne de tableau ne correspond pas toujours à une seule affirmation vérifiable.",
+  "collections": [
+    {
+      "kind": "claim",
+      "records": [
+        {
+          "id": "claim.training.volume.0001",
+          "slug": "volume-hebdomadaire-dose-reponse-decroissante",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0001",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "Plus de séries hebdomadaires produisent en moyenne plus d'hypertrophie, avec rendements décroissants.",
+          "canonicalStatement": "Relation dose-réponse positive entre séries hebdomadaires et hypertrophie, à rendements décroissants.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "cannotConclude": [
+            "Pas de « meilleur » nombre universel",
+            "pas de preuve que toujours plus est mieux",
+            "pas de seuil exact de surentraînement"
+          ],
+          "limitations": [
+            "Courtes durées; peu de femmes; volumes élevés rares; causalité moins forte dans une méta-régression entre études."
+          ],
+          "exceptions": [
+            "Certaines comparaisons haut vs modéré chez entraînés ne montrent pas de différence nette pour quadriceps/biceps."
+          ],
+          "conditions": [
+            "Augmenter graduellement le volume si progression, performance et récupération sont satisfaisantes."
+          ],
+          "practicalInterpretation": "Augmenter graduellement le volume si progression, performance et récupération sont satisfaisantes; attendre des gains marginaux décroissants.",
+          "populationRefs": [
+            "population.training.0001"
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "assessmentRefs": [
+            "assessment.volume.0001",
+            "assessment.volume.0002"
+          ],
+          "sourceRefs": [
+            "source.pelland-2026-dose-response",
+            "source.currier-2026-acsm-position-stand"
+          ],
+          "relations": [
+            {
+              "type": "LIMITS",
+              "targetClaimRef": "claim.training.volume.0002",
+              "note": "Le repère de dix séries précise cette dose-réponse sans en faire un seuil."
+            }
+          ],
+          "contentHash": "sha256:4f0671dda07b20e696a858c3492e6b17041a1a294d9ec552e8175b253e2e0db5"
+        },
+        {
+          "id": "claim.training.volume.0002",
+          "slug": "dix-series-repere-non-minimum",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0002",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "Environ 10 séries par muscle/semaine est un repère raisonnable pour maximiser la probabilité de croissance, pas une exigence minimale.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "« Moins de 10 séries ne construit pas de muscle »",
+            "« 10 séries est optimal pour tous »"
+          ],
+          "limitations": [
+            "Seuil dépend du bruit de mesure et du modèle; ne définit ni minimum individuel ni optimum."
+          ],
+          "exceptions": [
+            "Des gains surviennent avec moins; la méta-régression 2026 estime qu'environ 4 séries fractionnelles/semaine peuvent dépasser un seuil de changement détectable moyen."
+          ],
+          "conditions": [
+            "Débutants et muscles indirectement sollicités peuvent nécessiter moins."
+          ],
+          "practicalInterpretation": "Point de départ fréquent : ~6–10 séries directes/fractionnelles par semaine, puis individualisation.",
+          "populationRefs": [
+            "population.training.0001"
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "sourceRefs": [
+            "source.currier-2026-acsm-position-stand"
+          ],
+          "relations": [
+            {
+              "type": "REFINES",
+              "targetClaimRef": "claim.training.volume.0001"
+            }
+          ],
+          "contentHash": "sha256:9fbaf5fc78321d8cc971ff777de181c24a59fda3c25731f67ebc7f907565467c"
+        },
+        {
+          "id": "claim.training.frequency.0001",
+          "slug": "frequence-sans-effet-independant-a-volume-egalise",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0003",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "À volume hebdomadaire égalisé, la fréquence par muscle a peu d'effet indépendant sur l'hypertrophie.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": [
+            "Qu'une fréquence de 1/semaine est toujours équivalente pour tout volume",
+            "que 2/semaine est biologiquement obligatoire"
+          ],
+          "limitations": [
+            "Peu d'études aux extrêmes; faible représentation des avancés/femmes."
+          ],
+          "exceptions": [
+            "Sans égalisation du volume, les fréquences élevées paraissent parfois supérieures parce qu'elles permettent davantage de séries."
+          ],
+          "conditions": [
+            "À volume hebdomadaire égalisé."
+          ],
+          "practicalInterpretation": "Choisir la fréquence pour distribuer le volume et maintenir des séries de qualité.",
+          "populationRefs": [
+            "population.training.0001"
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "sourceRefs": [
+            "source.pelland-2026-dose-response"
+          ],
+          "contentHash": "sha256:34c9d7846ccfd880b4d76adc2fad10446c5eb2e9a1593d583960293157258285"
+        },
+        {
+          "id": "claim.training.failure.0001",
+          "slug": "echec-momentane-non-necessaire",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0004",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "L'échec momentané n'est pas nécessaire pour hypertrophier.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": [
+            "Que 3 RIR est exactement optimal",
+            "que toutes les séries à 5+ RIR sont inefficaces"
+          ],
+          "limitations": [
+            "Peu de comparaisons à RIR précisément contrôlé; faible puissance."
+          ],
+          "exceptions": [
+            "Les définitions du non-échec et le volume diffèrent; les charges légères pourraient nécessiter davantage de proximité."
+          ],
+          "conditions": [],
+          "practicalInterpretation": "Programmer la majorité des séries à ~1–4 RIR selon exercice, charge et phase; l'échec est une option, pas une règle.",
+          "populationRefs": [
+            "population.training.0001"
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "sourceRefs": [
+            "source.currier-2026-acsm-position-stand"
+          ],
+          "contentHash": "sha256:2cfb7fecca9339efcf27e8569ba3137beea26b0d3ea28b3c82695568bcc56595"
+        },
+        {
+          "id": "claim.training.rir.0001",
+          "slug": "estimation-du-rir-imparfaite",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0005",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "L'estimation du RIR est imparfaite, surtout chez débutants et loin de l'échec.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": [
+            "Qu'un RIR auto-déclaré équivaut à une mesure objective."
+          ],
+          "limitations": [
+            "Machines et habitudes personnelles; une séance."
+          ],
+          "exceptions": [
+            "L'expérience améliore la précision sans la rendre parfaite."
+          ],
+          "conditions": [],
+          "practicalInterpretation": "Calibrer périodiquement avec une série sûre à l'échec; utiliser plages, vitesse et historique plutôt qu'un RIR comme vérité exacte.",
+          "outcomeRefs": [
+            "outcome.strength.0001"
+          ],
+          "contentHash": "sha256:13e7e36f3dfe568e101f7a0ba364d73f618f5f7990399f4afce7f1744cbfca8d"
+        },
+        {
+          "id": "claim.training.rest.0001",
+          "slug": "repos-superieurs-a-soixante-secondes",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0006",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "Des repos >60 s ont probablement un petit avantage hypertrophique moyen sur ≤60 s, surtout parce qu'ils préservent le volume et la performance.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Qu'exactement 3 min est optimal",
+            "que 60 s empêche la croissance"
+          ],
+          "limitations": [
+            "Petits échantillons, 5–10 semaines, catégories de repos grossières."
+          ],
+          "exceptions": [
+            "Quand volume/effort sont compensés, les différences peuvent s'atténuer; données rares au-delà de 3 min."
+          ],
+          "conditions": [],
+          "practicalInterpretation": "Défaut : 2–3 min sur polyarticulaires; 1–2 min sur isolation si performance maintenue; plus si nécessaire.",
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "contentHash": "sha256:18bcd240b709501f37a46aa5db240e2c5c42d9b5e8045412a914499fe978fd0e"
+        },
+        {
+          "id": "claim.training.rom.0001",
+          "slug": "lengthened-partials-equivalence-possible",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0007",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "rawStatement": "Les *lengthened partials* peuvent égaler la ROM complète; leur supériorité générale n'est pas démontrée.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "controversial",
+          "cannotConclude": [
+            "Qu'elles remplacent toujours la ROM complète ou préviennent les blessures."
+          ],
+          "limitations": [
+            "8 semaines; sites limités; exercices/muscles spécifiques."
+          ],
+          "exceptions": [
+            "Les partielles longues sont souvent meilleures que partielles courtes, mais pas nécessairement meilleures que ROM complète."
+          ],
+          "conditions": [],
+          "practicalInterpretation": "Option pour ajouter du travail à grande longueur ou contourner une zone douloureuse; ROM complète reste le défaut.",
+          "outcomeRefs": [
+            "outcome.hypertrophy.0002"
+          ],
+          "sourceRefs": [
+            "source.wolf-2025-lengthened-partials"
+          ],
+          "contentHash": "sha256:0a6369ef694cde5e55fbc521c22041cfb3d76bb1a291cb1ce825b517c5335d0f"
+        },
+        {
+          "id": "claim.exercise.mode-specificity.0001",
+          "slug": "force-specifique-au-mode-teste",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "exercise",
+          "rawStatement": "chaque modalité produit un gain de force supérieur dans son propre mode de test",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": [
+            "Que les poids libres sont plus « fonctionnels » donc plus hypertrophiques",
+            "que les machines éliminent toute stabilisation pertinente"
+          ],
+          "limitations": [
+            "Nombre limité d'études d'hypertrophie disponibles, ce que les auteurs signalent eux-mêmes comme une limite appelant à la prudence."
+          ],
+          "conditions": [
+            "Interventions de 9 semaines en moyenne."
+          ],
+          "outcomeRefs": [
+            "outcome.strength.0001"
+          ],
+          "sourceRefs": [
+            "source.heidel-2023-free-weight-vs-machine"
+          ],
+          "assessmentRefs": [
+            "assessment.freeweight.0001"
+          ],
+          "siblingClaimsFromSameFragment": [
+            "claim.exercise.freeweight-machine.0001"
+          ],
+          "notes": "Première des deux affirmations indépendantes portées par le même paragraphe. La spécificité de la force et l'absence de différence d'hypertrophie sont deux conclusions distinctes, que F2 §11 signale précisément comme souvent confondues.",
+          "contentHash": "sha256:cc04b7d44d195e393f2d6c72326fdaffab067e5dc130b2799a10439a9b5758be"
+        },
+        {
+          "id": "claim.exercise.freeweight-machine.0001",
+          "slug": "poids-libres-machines-hypertrophie-equivalente",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "exercise",
+          "rawStatement": "aucune différence significative d'hypertrophie entre les deux modalités",
+          "canonicalStatement": "À l'échelle d'une méta-analyse, poids libres et machines ne diffèrent pas significativement pour l'hypertrophie.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Que l'absence de différence significative établit l'équivalence : F1 §1.3 rappelle qu'une étude peu puissante ne permet pas cette inférence"
+          ],
+          "limitations": [
+            "SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751 ; nombre limité d'études d'hypertrophie disponibles."
+          ],
+          "conditions": [
+            "Interventions de 9 semaines en moyenne."
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "sourceRefs": [
+            "source.heidel-2023-free-weight-vs-machine"
+          ],
+          "assessmentRefs": [
+            "assessment.freeweight.0001"
+          ],
+          "siblingClaimsFromSameFragment": [
+            "claim.exercise.mode-specificity.0001"
+          ],
+          "contentHash": "sha256:e8c64f62c8acb6cfd2e68f5b7a9e7240dd4feea4f1f500f4160dcc9134c2e138"
+        },
+        {
+          "id": "claim.biomechanics.emg.0001",
+          "slug": "emg-hip-thrust-superieure-au-squat",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0001",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "biomechanics",
+          "rawStatement": "l'EMG du hip thrust dépasse largement celle du squat pour le grand fessier (moyenne 69,5 % contre 29,4 % de la contraction volontaire maximale, pics 172 % contre 84,9 %)",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Qu'une activation EMG plus élevée signifie plus d'hypertrophie",
+            "Que l'EMG de surface capture la tension mécanique par fibre, le recrutement des unités motrices profondes ou la durée sous tension à une longueur donnée"
+          ],
+          "limitations": [
+            "L'EMG de surface mesure une activité électrique moyennée et globale."
+          ],
+          "conditions": [],
+          "outcomeRefs": [
+            "outcome.emg.0001"
+          ],
+          "sourceRefs": [
+            "source.plotkin-2023-hipthrust-squat"
+          ],
+          "assessmentRefs": [
+            "assessment.emg.0001"
+          ],
+          "siblingClaimsFromSameFragment": [
+            "claim.exercise.gluteal-hypertrophy.0001"
+          ],
+          "relations": [
+            {
+              "type": "CONTRADICTS",
+              "targetClaimRef": "claim.exercise.gluteal-hypertrophy.0001",
+              "note": "Contradiction apparente entre activation et croissance, documentée par EvidenceConflict."
+            }
+          ],
+          "contentHash": "sha256:cd352786a0bf69cc7932efcda5138842d542a275cf689ab7bee4c497e70da9e9"
+        },
+        {
+          "id": "claim.exercise.gluteal-hypertrophy.0001",
+          "slug": "hypertrophie-fessiere-equivalente-hip-thrust-squat",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0001",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "exercise",
+          "rawStatement": "neuf semaines d'entraînement à volume égalisé produisent une hypertrophie fessière quasiment identique en IRM dans les trois régions du grand fessier, sans corrélation fiable entre l'amplitude EMG et la croissance mesurée",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Que le résultat se généralise à d'autres muscles, populations ou durées",
+            "Que le mécanisme de la dissociation EMG-hypertrophie est identifié"
+          ],
+          "limitations": [
+            "Neuf semaines; un seul essai de référence."
+          ],
+          "conditions": [
+            "À volume égalisé."
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0002"
+          ],
+          "sourceRefs": [
+            "source.plotkin-2023-hipthrust-squat"
+          ],
+          "siblingClaimsFromSameFragment": [
+            "claim.biomechanics.emg.0001"
+          ],
+          "contentHash": "sha256:0021e57fe01162797773a42fbeca71ed339ce31a68b83fb01e74c4531ed6e2a8"
+        },
+        {
+          "id": "claim.exercise.triceps-longhead.0001",
+          "slug": "extension-overhead-chef-long-triceps",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "exercise",
+          "rawStatement": "l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines",
+          "canonicalStatement": "L'extension du coude en position overhead produit plus d'hypertrophie du chef long du triceps que la même extension bras le long du corps, à volume et effort égalisés.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Que le résultat se généralise à tous les muscles biarticulaires sans test direct",
+            "Qu'une supériorité de la grande longueur musculaire vaut pour toute modalité de charge"
+          ],
+          "limitations": [
+            "Essai contrôlé unique, bien que le mécanisme biomécanique soit cohérent et fort."
+          ],
+          "conditions": [
+            "À volume et effort égalisés."
+          ],
+          "populationRefs": [
+            "population.training.0002"
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0002"
+          ],
+          "sourceRefs": [
+            "source.nunes-2022-overhead-triceps"
+          ],
+          "assessmentRefs": [
+            "assessment.triceps.0001"
+          ],
+          "contentHash": "sha256:32f187ee57627c07048a0e2916fbb3629f3cd3a8be48529b97f1c86b37fbcf9d"
+        },
+        {
+          "id": "claim.biomechanics.stability.0001",
+          "slug": "instabilite-diminue-activation-agoniste",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0005",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "biomechanics",
+          "rawStatement": "les surfaces instables augmentent l'activation des muscles stabilisateurs du tronc mais **diminuent généralement l'activation du muscle agoniste principal** et la force produite, comparé à un exercice équivalent sur surface stable",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Qu'une stabilité maximale est toujours supérieure à un poids libre pour l'hypertrophie",
+            "Que la stabilité est un déterminant direct et indépendant démontré de l'hypertrophie"
+          ],
+          "limitations": [
+            "Preuve EMG et de performance ; l'instabilité redistribue l'effort plutôt que de l'augmenter."
+          ],
+          "conditions": [],
+          "outcomeRefs": [
+            "outcome.emg.0001"
+          ],
+          "contentHash": "sha256:8c17456c739bf40bf0d75a13bd86dc6134d1622e149436208250cbc26e7c8191"
+        },
+        {
+          "id": "claim.clinical.pain.0001",
+          "slug": "douleur-pendant-exercice-nest-pas-dommage",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0001",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "clinical",
+          "rawStatement": "« Douleur pendant l'exercice » n'équivaut pas automatiquement à « dommage ».",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "cannotConclude": [
+            "Que la douleur est une obligation : « ce n'est ni une obligation d'avoir mal »",
+            "Qu'une aggravation peut être ignorée : « ni une permission d'ignorer une aggravation »"
+          ],
+          "limitations": [
+            "Un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée."
+          ],
+          "conditions": [
+            "Douleurs musculosquelettiques chroniques, exercice encadré."
+          ],
+          "populationRefs": [
+            "population.clinical.0001"
+          ],
+          "outcomeRefs": [
+            "outcome.hypertrophy.0001"
+          ],
+          "sourceRefs": [
+            "source.smith-2017-painful-exercise"
+          ],
+          "assessmentRefs": [
+            "assessment.clinical.pain.0001"
+          ],
+          "unknownFields": [
+            {
+              "field": "outcomeRefs",
+              "reason": "ambiguous_in_corpus",
+              "note": "F3 parle de « résultats comparables » sans nommer la mesure. L'outcome rattaché est provisoire et devra être remplacé par un outcome clinique dédié lors de la revue."
+            }
+          ],
+          "contentHash": "sha256:cb36377691219a22b5b34884dec74a6defd84df59cfbb6e708cb898865a01d03"
+        },
+        {
+          "id": "claim.clinical.threshold.0001",
+          "slug": "seuils-numeriques-non-universels",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0002",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "clinical",
+          "rawStatement": "Les seuils numériques ne sont pas universels.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": [
+            "Qu'un seuil de 5/10 vaut pour toute douleur ou toute pathologie : « il s'agit d'un protocole de recherche, non d'une règle »",
+            "Que 0–3/10 est un seuil clinique validé"
+          ],
+          "limitations": [
+            "Modèle issu de populations tendineuses spécifiques, 15 sujets."
+          ],
+          "conditions": [
+            "Le modèle autorise jusqu'à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain."
+          ],
+          "populationRefs": [
+            "population.clinical.0002"
+          ],
+          "sourceRefs": [
+            "source.sprague-2021-pain-monitoring"
+          ],
+          "contentHash": "sha256:02d007cb11cb146f95a34052a79c5d0c9fbb887ebd305070136795f974410d7f"
+        },
+        {
+          "id": "claim.clinical.imaging.0001",
+          "slug": "imagerie-ne-dicte-pas-la-programmation",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0003",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "clinical",
+          "rawStatement": "L'imagerie ne dicte pas seule la programmation.",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "cannotConclude": [
+            "Que la fréquence des anomalies chez les asymptomatiques exclut leur pertinence chez un individu"
+          ],
+          "limitations": [],
+          "conditions": [
+            "Bombements, protrusions et autres signes dégénératifs doivent être corrélés aux symptômes et à l'examen clinique."
+          ],
+          "practicalInterpretation": "Ne pas déduire la cause d'une douleur depuis une IRM.",
+          "sourceRefs": [
+            "source.smith-2017-painful-exercise"
+          ],
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F3 §1.5 cite Brinjikji et al. 2015, qui figure au registre §15 mais n'a pas encore d'entité Source dans ce golden set. Le rattachement actuel est incomplet et signalé comme tel plutôt que complété par inférence."
+            }
+          ],
+          "contentHash": "sha256:a28ec1b63765babd0fa6043af3b9bae90979a1a761671fd84f8f99db414d7bcc"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "diagnostic-certainty-required",
+  "title": "Certitude diagnostique requise",
+  "origin": "clinical_schema_f4",
+  "description": "Repris verbatim de F4 $defs.conditionRecord.diagnosticCertaintyRequired.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "none_symptom_based_only",
+      "label": "Aucune, adaptation symptomatique",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "user_reported_prior_diagnosis",
+      "label": "Diagnostic antérieur rapporté",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "professional_diagnosis_required",
+      "label": "Diagnostic professionnel requis",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "postoperative_protocol_required",
+      "label": "Protocole postopératoire requis",
+      "origin": "clinical_schema_f4"
+    }
+  ]
+}

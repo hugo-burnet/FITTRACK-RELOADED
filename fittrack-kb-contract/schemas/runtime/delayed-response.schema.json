@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/delayed-response.schema.json",
+  "title": "DelayedResponse",
+  "description": "Réponse différée à une exposition : le soir, le lendemain matin, jusqu'à 48 h. Entité distincte d'ExerciseResponse parce que F3 §4.2 fait du retour au niveau de base le lendemain le critère de décision principal, plus que la sensation immédiate.\n\nCe champ ne peut pas vivre dans la réponse immédiate : il est saisi plus tard, parfois bien plus tard, et écraser la réponse immédiate pour l'y loger effacerait la trajectoire.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis", "exposureRef", "delayWindow", "returnedToBaseline"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeEnvelope" },
+    {
+      "description": "Un non-retour au niveau de base est le déclencheur de régression de F3 §4.2. Il doit dire ce qui reste au-dessus, sinon il ne déclenche rien d'exploitable.",
+      "if": { "properties": { "returnedToBaseline": { "const": false } }, "required": ["returnedToBaseline"] },
+      "then": { "required": ["whatRemainsElevated"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeId" },
+    "subjectRef": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/subjectRef" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+
+    "exposureRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ExerciseResponse ou séance dont c'est la suite."
+    },
+    "delayWindow": { "enum": ["same_evening", "next_morning", "24h", "48h", "beyond_48h"] },
+    "symptomLevel": { "type": ["number", "null"], "minimum": 0, "maximum": 10 },
+    "baselineLevel": { "type": ["number", "null"], "minimum": 0, "maximum": 10 },
+    "returnedToBaseline": { "type": "boolean" },
+    "whatRemainsElevated": { "type": "string", "minLength": 1 },
+    "functionImpact": { "enum": ["none", "mild", "moderate", "marked"] },
+    "sleepDisturbed": { "type": ["boolean", "null"] },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "source-resolution-status",
+  "title": "États de résolution des sources",
+  "origin": "modeling_decision",
+  "description": "Imposé par le prompt de phase 2. Les cas réels du corpus (S-1 à S-4) instancient chacune de ces valeurs.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "resolved",
+      "label": "Résolue",
+      "definition": "Identifiant bibliographique fort présent et cohérent.",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "partial",
+      "label": "Partielle",
+      "definition": "Localisateur présent, métadonnées bibliographiques incomplètes. État normal pour la majorité des citations de F2.",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "unresolved",
+      "label": "Non résolue",
+      "definition": "Aucune métadonnée exploitable au-delà d'un libellé.",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "ambiguous",
+      "label": "Ambiguë",
+      "definition": "Conflit d'attribution non tranchable avec le seul corpus. Interdit la fusion.",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "duplicate_candidate",
+      "label": "Doublon candidat",
+      "definition": "Deux entrées probablement identiques, en attente de revue humaine.",
+      "origin": "modeling_decision"
+    }
+  ]
+}

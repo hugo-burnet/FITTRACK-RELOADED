@@ -1,0 +1,74 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "epistemic-status",
+  "title": "Statuts épistémiques",
+  "origin": "corpus",
+  "description": "État de la conclusion, indépendamment de sa nature. Dérivé de la cartographie épistémique explicite de F1 §1.4.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "established",
+      "label": "Solidement établi",
+      "definition": "Convergent dans plusieurs synthèses de haut niveau.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4"
+    },
+    {
+      "term": "established_direction",
+      "label": "Direction établie, ampleur incertaine",
+      "definition": "La direction de l'effet est stable, sa forme ou son ampleur ne l'est pas.",
+      "origin": "modeling_decision",
+      "note": "Rendu nécessaire par les confiances composites de F1 (« Élevé pour la direction; modéré pour la forme de la courbe »)."
+    },
+    {
+      "term": "probable",
+      "label": "Probable mais incertain",
+      "definition": "Direction probable, hétérogénéité ou extrapolation.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4"
+    },
+    {
+      "term": "uncertain",
+      "label": "Incertain",
+      "definition": "Quelques essais, résultats discordants, population étroite.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.2 niveau Faible"
+    },
+    {
+      "term": "controversial",
+      "label": "Controversé",
+      "definition": "Résultats opposés documentés ; ne pas trancher sans contexte.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4"
+    },
+    {
+      "term": "mechanistic_only",
+      "label": "Surtout mécanistique",
+      "definition": "Aucun résultat longitudinal correspondant.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4"
+    },
+    {
+      "term": "practice_only",
+      "label": "Surtout pratique",
+      "definition": "Heuristique individualisée, non démontrée.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4 ligne « Surtout pratique »"
+    },
+    {
+      "term": "absence_of_evidence",
+      "label": "Absence de preuve identifiée",
+      "definition": "Le corpus signale explicitement qu'aucune donnée n'a été trouvée. C'est une donnée, pas un vide.",
+      "origin": "corpus",
+      "corpusRef": "F2 §6.2, §6.4, §6.7, §11"
+    },
+    {
+      "term": "refuted",
+      "label": "Réfuté",
+      "definition": "Croyance explicitement rejetée par le corpus.",
+      "origin": "corpus",
+      "corpusRef": "F3 §11"
+    }
+  ]
+}

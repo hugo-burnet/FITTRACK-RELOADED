@@ -1,0 +1,95 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "movement-pattern",
+  "title": "Patterns de mouvement",
+  "origin": "corpus",
+  "description": "Liste énumérée par F2 §10 pour le champ movementPattern, complétée des isolations que F2 §7 nomme effectivement.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "poussee_horizontale",
+      "label": "Poussée horizontale",
+      "origin": "corpus",
+      "corpusRef": "F2 §10 et §8.1"
+    },
+    {
+      "term": "poussee_verticale",
+      "label": "Poussée verticale",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "tirage_horizontal",
+      "label": "Tirage horizontal",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "tirage_vertical",
+      "label": "Tirage vertical",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "squat",
+      "label": "Squat",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "hinge",
+      "label": "Hip hinge",
+      "origin": "corpus",
+      "corpusRef": "F2 §10 et §1.9"
+    },
+    {
+      "term": "fente",
+      "label": "Fente",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "isolation_coude",
+      "label": "Isolation du coude",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "isolation_epaule",
+      "label": "Isolation de l'épaule",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "isolation_genou",
+      "label": "Isolation du genou",
+      "origin": "corpus",
+      "corpusRef": "F2 §7.6 (leg extension), §7.7 (leg curl)"
+    },
+    {
+      "term": "isolation_hanche",
+      "label": "Isolation de la hanche",
+      "origin": "corpus",
+      "corpusRef": "F2 §7.8 (extension de hanche, abduction)"
+    },
+    {
+      "term": "isolation_cheville",
+      "label": "Isolation de la cheville",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "isolation_poignet",
+      "label": "Isolation du poignet",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.7 (curl de poignet)"
+    },
+    {
+      "term": "autre",
+      "label": "Autre",
+      "origin": "corpus",
+      "corpusRef": "F2 §10 termine sa liste par « … »"
+    }
+  ]
+}

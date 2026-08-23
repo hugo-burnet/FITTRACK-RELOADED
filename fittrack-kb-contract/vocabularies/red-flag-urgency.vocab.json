@@ -1,0 +1,31 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "red-flag-urgency",
+  "title": "Urgences de red flag",
+  "origin": "clinical_schema_f4",
+  "description": "Repris verbatim de F4 $defs.redFlag.urgency.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "emergency_now",
+      "label": "Urgence immédiate",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "same_day",
+      "label": "Le jour même",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "prompt",
+      "label": "Rapide",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "routine",
+      "label": "Programmée",
+      "origin": "clinical_schema_f4"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "doi-provenance",
+  "title": "Provenance d'un identifiant bibliographique",
+  "origin": "modeling_decision",
+  "description": "Un DOI lu dans un tableau de métadonnées et un DOI déduit d'une URL n'ont pas la même valeur probante. Les confondre reviendrait à fabriquer de la métadonnée.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "stated_in_corpus",
+      "label": "Énoncé dans le corpus",
+      "origin": "modeling_decision",
+      "corpusRef": "F1 §20, F3 §15 donnent les DOI en clair"
+    },
+    {
+      "term": "derived_from_url",
+      "label": "Extrait littéralement d'une URL du corpus",
+      "origin": "modeling_decision",
+      "corpusRef": "F2 : DOI enfouis dans les URL éditeur"
+    },
+    {
+      "term": "external_verified_enrichment",
+      "label": "Enrichissement externe vérifié",
+      "definition": "Réservé à une phase ultérieure. Interdit pendant l'extraction initiale.",
+      "origin": "modeling_decision"
+    }
+  ]
+}

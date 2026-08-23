@@ -1,0 +1,36 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "tolerance-basis",
+  "title": "Bases d'une observation de tolérance",
+  "origin": "clinical_schema_f4",
+  "description": "Repris verbatim de F4 $defs.toleranceDimension.basis.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "user_report",
+      "label": "Rapport de l'utilisateur",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "observed_response",
+      "label": "Réponse observée",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "clinician_instruction",
+      "label": "Consigne du professionnel",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "population_evidence",
+      "label": "Preuve populationnelle",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "unknown",
+      "label": "Inconnue",
+      "origin": "clinical_schema_f4"
+    }
+  ]
+}

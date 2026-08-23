@@ -1,0 +1,36 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "review-state",
+  "title": "États de validation et de revue",
+  "origin": "modeling_decision",
+  "description": "États du workflow de revue humaine. escalated est ajouté pour les cas que la revue ne peut pas trancher seule (conflit d'attribution S-3).",
+  "closed": true,
+  "terms": [
+    {
+      "term": "pending_human_review",
+      "label": "En attente de revue humaine",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "approved",
+      "label": "Approuvé",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "rejected",
+      "label": "Rejeté",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "needs_revision",
+      "label": "À reprendre",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "escalated",
+      "label": "Escaladé, non tranchable en interne",
+      "origin": "modeling_decision"
+    }
+  ]
+}

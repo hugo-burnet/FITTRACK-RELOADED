@@ -1,0 +1,28 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "contraindication-basis",
+  "title": "Fondements admissibles d'une contre-indication",
+  "origin": "modeling_decision",
+  "description": "F4 exigeait déjà une raison et des sourceIds mais n'empêchait pas de justifier une interdiction par une simple sensibilité fréquente, ce que son propre commentaire interdit. L'énumération des fondements admissibles rend cette interdiction structurelle.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "red_flag",
+      "label": "Red flag actif",
+      "origin": "corpus",
+      "corpusRef": "F3 §3"
+    },
+    {
+      "term": "clinician_order",
+      "label": "Consigne médicale explicite",
+      "origin": "corpus",
+      "corpusRef": "F3 §9 (« protocole du chirurgien prévaut »)"
+    },
+    {
+      "term": "explicit_guideline_statement",
+      "label": "Énoncé explicite d'une recommandation",
+      "origin": "modeling_decision"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "joint-load-observation-type",
+  "title": "Types d'observations articulaires",
+  "origin": "corpus",
+  "description": "Les quatre catégories que F2 §6 et §10 imposent de ne jamais fusionner dans un champ binaire sûr/dangereux. La contrainte est portée par le schéma, pas par la documentation.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "charge_mecanique",
+      "label": "Charge mécanique documentée",
+      "definition": "Force, moment, compression ou cisaillement mesuré ou modélisé.",
+      "origin": "corpus",
+      "corpusRef": "F2 §6 et §10 champ jointConstraints"
+    },
+    {
+      "term": "inconfort_rapporte",
+      "label": "Inconfort rapporté",
+      "origin": "corpus",
+      "corpusRef": "F2 §6, §10"
+    },
+    {
+      "term": "risque_demontre",
+      "label": "Risque démontré",
+      "definition": "Lien longitudinal établi entre exposition et incidence de blessure. Exige une source épidémiologique.",
+      "origin": "corpus",
+      "corpusRef": "F2 §6, §10"
+    },
+    {
+      "term": "risque_suppose",
+      "label": "Risque supposé",
+      "definition": "Analogie biomécanique ou extrapolation d'une autre population.",
+      "origin": "corpus",
+      "corpusRef": "F2 §6.1 (athlètes de lancer), §10"
+    }
+  ]
+}

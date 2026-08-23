@@ -1,0 +1,95 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "joint-action",
+  "title": "Actions articulaires",
+  "origin": "corpus",
+  "description": "Actions effectivement nommées dans l'anatomie fonctionnelle de F2 §1. Aucune action n'est ajoutée par complétude anatomique générale : ce serait remplir la KB avec des connaissances hors corpus.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "flexion",
+      "label": "Flexion",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.4, §1.5"
+    },
+    {
+      "term": "extension",
+      "label": "Extension",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.2, §1.6"
+    },
+    {
+      "term": "abduction",
+      "label": "Abduction",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.4"
+    },
+    {
+      "term": "adduction",
+      "label": "Adduction",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.1, §1.2"
+    },
+    {
+      "term": "rotation_interne",
+      "label": "Rotation interne",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.1, §1.2, §1.4"
+    },
+    {
+      "term": "rotation_externe",
+      "label": "Rotation externe",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.4"
+    },
+    {
+      "term": "flexion_horizontale",
+      "label": "Flexion / adduction horizontale",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.1"
+    },
+    {
+      "term": "extension_horizontale",
+      "label": "Extension horizontale",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.4 (rôle du deltoïde postérieur)"
+    },
+    {
+      "term": "supination",
+      "label": "Supination",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.5"
+    },
+    {
+      "term": "pronation",
+      "label": "Pronation",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.5, §1.7"
+    },
+    {
+      "term": "elevation_scapulaire",
+      "label": "Élévation scapulaire",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.3"
+    },
+    {
+      "term": "retraction_scapulaire",
+      "label": "Rétraction scapulaire",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.3"
+    },
+    {
+      "term": "depression_scapulaire",
+      "label": "Dépression scapulaire",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.3"
+    },
+    {
+      "term": "sonnette_externe",
+      "label": "Rotation haute de la scapula",
+      "origin": "corpus",
+      "corpusRef": "F2 §1.3"
+    }
+  ]
+}

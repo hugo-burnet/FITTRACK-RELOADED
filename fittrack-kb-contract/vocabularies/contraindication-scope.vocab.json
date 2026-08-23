@@ -1,0 +1,26 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "contraindication-scope",
+  "title": "Portées de contre-indication",
+  "origin": "clinical_schema_f4",
+  "description": "Repris verbatim de F4 $defs.conditionRecord.contraindications.items.scope.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "absolute_until_assessed",
+      "label": "Absolue jusqu'à évaluation",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "temporary",
+      "label": "Temporaire",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "clinician_order_only",
+      "label": "Sur consigne du professionnel uniquement",
+      "origin": "clinical_schema_f4"
+    }
+  ]
+}

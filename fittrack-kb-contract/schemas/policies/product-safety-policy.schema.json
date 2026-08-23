@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/policies/product-safety-policy.schema.json",
+  "title": "ProductSafetyPolicy",
+  "description": "Conduite conservatrice décidée par FitTrack. Ce n'est ni un seuil médical universel ni un résultat scientifique.\n\nLe corpus fournit le cas d'école : F3 §4.2 constate que « 0–3/10 » est une règle pratique fréquente mais non validée, que le protocole publié le mieux documenté utilise 5/10, et autorise FitTrack à choisir le garde-fou plus prudent « à condition de le nommer politique de sécurité et non vérité médicale ». Ce schéma rend cette condition structurelle : knowledgeType est constant, presentedAsMedicalTruth est constant à faux, et une divergence avec le corpus doit être déclarée explicitement.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "knowledgeType",
+    "presentedAsMedicalTruth",
+    "title",
+    "policyStatement",
+    "decision",
+    "userFacingFraming"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "description": "Une politique plus stricte que ce que le corpus soutient doit le dire et citer le passage divergent. Le silence transformerait un choix produit en consensus.",
+      "if": {
+        "properties": { "divergesFromCorpus": { "const": true } },
+        "required": ["divergesFromCorpus"]
+      },
+      "then": {
+        "required": ["divergenceRationale", "informedBySourceRefs"],
+        "properties": { "informedBySourceRefs": { "minItems": 1 } }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+
+    "knowledgeType": { "const": "PRODUCT_POLICY" },
+    "presentedAsMedicalTruth": {
+      "const": false,
+      "description": "Constante. Une politique produit présentée comme vérité médicale est un contrôle bloquant de publication."
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "policyStatement": { "type": "string", "minLength": 1 },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decidedBy", "decidedAt", "rationale"],
+      "description": "Provenance d'une politique : elle ne vient pas du corpus, elle vient d'une décision. Exiger un fragment de corpus ici forcerait à fabriquer une source scientifique pour un choix produit.",
+      "properties": {
+        "decidedBy": { "type": "string", "minLength": 1 },
+        "decidedAt": { "type": "string", "format": "date" },
+        "rationale": { "type": "string", "minLength": 1 },
+        "reviewDecisionRef": { "type": "string" }
+      }
+    },
+    "informedByClaimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "informedBySourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "corpusContextFragmentRefs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+      "uniqueItems": true,
+      "description": "Passages du corpus qui éclairent la décision, sans la fonder scientifiquement."
+    },
+    "divergesFromCorpus": { "type": "boolean" },
+    "divergenceRationale": { "type": "string" },
+    "userFacingFraming": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Formulation obligatoire côté interface. C'est ce qui empêche la politique d'être lue comme un seuil clinique."
+    },
+    "appliesTo": {
+      "type": "array",
+      "items": { "enum": ["coaching_flow", "pain_monitoring", "load_progression", "exercise_substitution", "onboarding", "messaging"] },
+      "uniqueItems": true
+    },
+    "supersededByPolicyRef": { "type": "string" }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/evidence-assessment.schema.json",
+  "title": "EvidenceAssessment",
+  "description": "Évaluation datée de la preuve soutenant une claim. Plusieurs évaluations coexistent pour une même claim ; l'évaluation courante est une projection de l'historique, jamais une valeur écrasée. Aucun score global : la confiance est déclarée par aspect.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "provenance",
+    "claimRef",
+    "assessedAt",
+    "hierarchyRef",
+    "knowledgeType",
+    "directness",
+    "confidenceByAspect"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "EMG ≠ hypertrophie, rendu structurel : une évaluation dont la preuve est EMG seule ne peut pas afficher une confiance élevée ou modérée sur un aspect d'hypertrophie. Le sens du résultat de référence de F2 §0.1 (hip thrust) est ainsi impossible à inverser par saisie.",
+      "if": {
+        "properties": { "directness": { "const": "emg_only" } },
+        "required": ["directness"]
+      },
+      "then": {
+        "properties": {
+          "confidenceByAspect": {
+            "items": {
+              "not": {
+                "allOf": [
+                  { "properties": { "aspect": { "enum": ["magnitude", "regional_specificity", "equivalence"] } }, "required": ["aspect"] },
+                  { "properties": { "confidence": { "enum": ["high", "moderate"] } }, "required": ["confidence"] }
+                ]
+              }
+            }
+          },
+          "supportsHypertrophySuperiority": { "const": false }
+        }
+      }
+    },
+    {
+      "description": "Biomécanique ≠ risque clinique démontré : une évaluation purement biomécanique ne peut pas soutenir un risque démontré.",
+      "if": {
+        "properties": { "directness": { "enum": ["biomechanical_only", "mechanistic_hypothesis", "animal_model"] } },
+        "required": ["directness"]
+      },
+      "then": { "properties": { "supportsDemonstratedClinicalRisk": { "const": false } } }
+    },
+    {
+      "description": "Une évaluation ne peut pas relever un niveau de confiance sans citer au moins une source. Sans cela, l'inflation de certitude ne coûterait rien.",
+      "if": { "required": ["supersedes"] },
+      "then": { "required": ["sourceRefs", "changeRationale"], "properties": { "sourceRefs": { "minItems": 1 } } }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "claimRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "assessedAt": { "type": "string", "format": "date" },
+    "hierarchyRef": {
+      "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId",
+      "description": "Hiérarchie de preuves dans laquelle ce rang a un sens. F1, F2 et F3 en déclarent trois différentes ; un rang hors hiérarchie n'a aucune signification."
+    },
+
+    "knowledgeType": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType" },
+    "directness": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/directness" },
+    "evidenceTypes": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/evidenceType" },
+      "uniqueItems": true
+    },
+    "clinicalEvidenceLevel": {
+      "oneOf": [
+        { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/clinicalEvidenceLevel" },
+        { "type": "null" }
+      ],
+      "description": "Axe A/B/C/D de F3 §14, applicable seulement dans la hiérarchie clinique. null ailleurs."
+    },
+
+    "confidenceByAspect": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Un scalaire unique aurait forcé à aplatir « Élevé pour la direction; modéré pour la forme de la courbe » vers le haut, ce qui gonfle la certitude, ou vers le bas, ce qui détruit de l'information.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["aspect", "confidence"],
+        "properties": {
+          "aspect": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceAspect" },
+          "confidence": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceLevel" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+
+    "sourceRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true
+    },
+    "contradictingSourceRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "uniqueItems": true
+    },
+    "supersedes": {
+      "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId",
+      "description": "L'évaluation remplacée reste présente et interrogeable. Rien n'est écrasé."
+    },
+    "changeRationale": { "type": "string" },
+    "supportsHypertrophySuperiority": {
+      "type": "boolean",
+      "description": "Déclaration explicite. Sa valeur est contrainte à false quand la preuve est EMG seule."
+    },
+    "supportsDemonstratedClinicalRisk": {
+      "type": "boolean",
+      "description": "Déclaration explicite. Contrainte à false pour une preuve purement biomécanique ou mécanistique."
+    },
+    "assessedBy": { "enum": ["human_curator", "deterministic_rule", "llm_candidate"] },
+    "notes": { "type": "string" }
+  }
+}

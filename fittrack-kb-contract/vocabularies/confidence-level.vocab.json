@@ -1,0 +1,41 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "confidence-level",
+  "title": "Niveaux de confiance",
+  "origin": "corpus",
+  "description": "Quatre niveaux qualitatifs communs à F1 §1.2, F2 §0.2 et F4. La valeur not_applicable est ajoutée pour les types de connaissance qui ne se gradent pas.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "high",
+      "label": "Élevé",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.2 ; F2 §0.2 ; F4 $defs.evidenceRating.confidence"
+    },
+    {
+      "term": "moderate",
+      "label": "Modéré",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.2 ; F2 §0.2 ; F4"
+    },
+    {
+      "term": "low",
+      "label": "Faible",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.2 ; F2 §0.2 ; F4"
+    },
+    {
+      "term": "very_low",
+      "label": "Très faible",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.2 ; F2 §0.2 ; F4"
+    },
+    {
+      "term": "not_applicable",
+      "label": "Sans objet",
+      "definition": "Utilisé quand la gradation n'a pas de sens : PRODUCT_POLICY, MODELING_DECISION, DEFINITION.",
+      "origin": "modeling_decision"
+    }
+  ]
+}

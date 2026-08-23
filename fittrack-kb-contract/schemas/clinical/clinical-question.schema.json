@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/clinical-question.schema.json",
+  "title": "ClinicalQuestion",
+  "description": "Question à poser avant toute adaptation. Réifiée plutôt que laissée en chaînes libres dans une condition, parce que F3 §2.1 énumère un socle de questions communes à toutes les conditions : les recopier dans chaque fiche garantirait des divergences.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "question", "purpose"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une question de dépistage de red flag doit désigner le red flag qu'elle dépiste, sinon la réponse ne déclenche rien.",
+      "if": { "properties": { "purpose": { "const": "red_flag_screening" } }, "required": ["purpose"] },
+      "then": { "required": ["screensForRedFlagRefs"], "properties": { "screensForRedFlagRefs": { "minItems": 1 } } }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "question": { "type": "string", "minLength": 1 },
+    "purpose": {
+      "enum": [
+        "red_flag_screening",
+        "symptom_characterization",
+        "load_history",
+        "functional_capacity",
+        "psychosocial_context",
+        "prior_care_and_instructions",
+        "goal_setting"
+      ]
+    },
+    "isBaseline": {
+      "type": "boolean",
+      "description": "Vrai pour les questions du socle minimal de F3 §2.1, posées quelle que soit la condition."
+    },
+    "screensForRedFlagRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "answerShape": { "enum": ["free_text", "yes_no", "ordinal_0_10", "duration", "multi_select"] },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+  }
+}

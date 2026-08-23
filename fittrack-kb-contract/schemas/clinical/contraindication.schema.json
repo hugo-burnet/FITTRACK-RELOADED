@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/contraindication.schema.json",
+  "title": "Contraindication",
+  "description": "Interdiction explicite. F4 avertissait déjà de ne pas convertir une sensibilité fréquente en interdiction absolue, mais son schéma ne l'empêchait pas : n'importe quelle chaîne pouvait remplir reason.\n\nIci le fondement est énuméré — red flag actif, consigne médicale explicite, énoncé explicite d'une recommandation — et chacun impose sa propre pièce justificative. Une charge mécanique documentée n'est pas un fondement admissible, ce qui ferme structurellement la conversion biomécanique vers interdiction.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "action", "scope", "basis", "reason"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "if": { "properties": { "basis": { "const": "red_flag" } }, "required": ["basis"] },
+      "then": { "required": ["redFlagRef"] }
+    },
+    {
+      "if": { "properties": { "basis": { "const": "clinician_order" } }, "required": ["basis"] },
+      "then": { "required": ["clinicianInstructionRef"] }
+    },
+    {
+      "if": { "properties": { "basis": { "const": "explicit_guideline_statement" } }, "required": ["basis"] },
+      "then": {
+        "required": ["sourceRefs", "quotedStatement"],
+        "properties": { "sourceRefs": { "minItems": 1 } }
+      }
+    },
+    {
+      "description": "Une contre-indication absolue jusqu'à évaluation doit dire ce qui la lève. Sans critère de levée, elle devient une interdiction définitive, ce que le corpus rejette pour toutes les conditions qu'il documente.",
+      "if": { "properties": { "scope": { "const": "absolute_until_assessed" } }, "required": ["scope"] },
+      "then": { "required": ["liftedBy"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "conditionRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Ce qui est interdit, formulé en action et non en nom d'exercice quand c'est possible."
+    },
+    "scope": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/contraindicationScope" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/contraindicationBasis" },
+    "reason": { "type": "string", "minLength": 1 },
+    "quotedStatement": {
+      "type": "string",
+      "description": "Citation verbatim de l'énoncé qui fonde l'interdiction. Une paraphrase permettrait de durcir une recommandation en interdiction."
+    },
+    "redFlagRef": { "type": "string" },
+    "clinicianInstructionRef": { "type": "string" },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "liftedBy": {
+      "type": "string",
+      "description": "Ce qui met fin à l'interdiction : une évaluation professionnelle, la levée d'un red flag, une consigne postopératoire franchie."
+    },
+    "targetExerciseRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "notes": { "type": "string" }
+  }
+}

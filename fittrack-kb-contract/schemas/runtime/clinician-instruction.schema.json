@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/clinician-instruction.schema.json",
+  "title": "ClinicianInstruction",
+  "description": "Consigne d'un professionnel de santé rapportée par l'utilisateur. Entité runtime : elle concerne une personne et une période, jamais une population.\n\nElle prévaut sur toute logique de coaching — F3 §9 pose que le protocole du chirurgien prévaut — et le champ overridesCoachingLogic est constant à vrai pour que cette priorité soit lisible dans la donnée et pas seulement dans le code qui la consomme.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis", "instructionText", "overridesCoachingLogic", "verificationStatus"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeEnvelope" },
+    {
+      "description": "La base d'une consigne de professionnel ne peut être que clinician_instruction. Toute autre base signifierait que l'utilisateur, et non le professionnel, en est l'auteur.",
+      "properties": { "basis": { "const": "clinician_instruction" } }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeId" },
+    "subjectRef": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/subjectRef" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+
+    "instructionText": { "type": "string", "minLength": 1 },
+    "instructionKind": {
+      "enum": ["postoperative_protocol", "load_restriction", "movement_restriction", "clearance_to_progress", "referral", "other"]
+    },
+    "issuedBy": { "type": ["string", "null"], "description": "Rôle du professionnel tel que rapporté. Aucune donnée nominative n'est requise." },
+    "effectiveFrom": { "type": ["string", "null"], "format": "date" },
+    "effectiveUntil": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "null quand la consigne n'a pas de terme connu. Ne jamais présumer une expiration."
+    },
+    "overridesCoachingLogic": { "const": true },
+    "verificationStatus": {
+      "enum": ["user_reported_unverified", "document_provided", "unknown"],
+      "description": "FitTrack ne peut pas vérifier une consigne médicale. Le déclarer évite de traiter un souvenir approximatif comme un protocole."
+    },
+    "relatedConditionRef": { "type": ["string", "null"] },
+    "restrictedExerciseRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "notes": { "type": "string" }
+  }
+}

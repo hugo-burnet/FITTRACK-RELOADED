@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/joint-action.schema.json",
+  "title": "JointAction",
+  "description": "Action articulaire réifiée : un couple articulation + action, avec sa définition. Réifier permet d'y rattacher des observations de bras de levier sans surcharger Joint ni Muscle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "jointRef", "action"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "jointRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "action": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/jointAction" },
+    "label": { "type": "string" },
+    "definition": { "type": ["string", "null"] },
+    "momentArmNotes": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" },
+      "description": "Le bras de levier interne varie de façon non linéaire avec l'angle. Chaque note reste attestée et n'est jamais convertie en prescription."
+    }
+  }
+}

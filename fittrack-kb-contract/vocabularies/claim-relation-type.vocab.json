@@ -1,0 +1,54 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "claim-relation-type",
+  "title": "Types de relations entre claims",
+  "origin": "modeling_decision",
+  "description": "Deux claims issus de fichiers différents ne fusionnent jamais automatiquement ; ils se relient.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "SUPPORTS",
+      "label": "Soutient",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "REFINES",
+      "label": "Précise",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "SPECIALIZES",
+      "label": "Spécialise à un cas",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "CONTRADICTS",
+      "label": "Contredit",
+      "origin": "corpus",
+      "corpusRef": "F1 §18, F2 §11"
+    },
+    {
+      "term": "LIMITS",
+      "label": "Limite la portée",
+      "origin": "corpus",
+      "corpusRef": "colonnes « Limites » de F1"
+    },
+    {
+      "term": "DEPENDS_ON",
+      "label": "Dépend de",
+      "origin": "modeling_decision"
+    },
+    {
+      "term": "REFUTES_MYTH",
+      "label": "Réfute une croyance",
+      "origin": "corpus",
+      "corpusRef": "F3 §11"
+    },
+    {
+      "term": "DUPLICATE_CANDIDATE",
+      "label": "Doublon candidat, revue requise",
+      "origin": "modeling_decision"
+    }
+  ]
+}

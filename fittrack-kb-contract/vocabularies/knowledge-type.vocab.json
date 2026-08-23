@@ -1,0 +1,87 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "knowledge-type",
+  "title": "Types de connaissance",
+  "origin": "modeling_decision",
+  "description": "Nature de l'objet affirmé. Axe orthogonal à epistemic-status, confidence-level et directness. Remplace l'usage de expert_practice comme niveau de preuve dans F4 : ici ce n'est plus un niveau, c'est une nature.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "EVIDENCE",
+      "label": "Preuve scientifique",
+      "definition": "Affirmation issue d'une ou plusieurs études mesurant l'outcome revendiqué.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4, F2 §0.3"
+    },
+    {
+      "term": "EXPERT_PRACTICE",
+      "label": "Pratique experte",
+      "definition": "Convergence d'opinions de praticiens evidence-based sans essai contrôlé correspondant. Ne peut jamais devenir un fait établi.",
+      "origin": "corpus",
+      "corpusRef": "F2 §0.3 et §9 ; F3 §14"
+    },
+    {
+      "term": "HYPOTHESIS",
+      "label": "Hypothèse",
+      "definition": "Mécanisme plausible non démontré chez l'humain entraîné. Ne peut jamais devenir un fait établi.",
+      "origin": "corpus",
+      "corpusRef": "F2 §0.3"
+    },
+    {
+      "term": "ANATOMICAL_FACT",
+      "label": "Fait anatomique",
+      "definition": "Description structurelle vérifiable (biarticularité, insertions, aire de section). Peut légitimement porter une confiance élevée.",
+      "origin": "corpus",
+      "corpusRef": "F2 §1"
+    },
+    {
+      "term": "BIOMECHANICAL_OBSERVATION",
+      "label": "Observation biomécanique",
+      "definition": "Mesure ou modélisation de moments, forces, bras de levier. Ne se convertit pas en hypertrophie ni en risque clinique.",
+      "origin": "corpus",
+      "corpusRef": "F2 §0.3 et §6"
+    },
+    {
+      "term": "EMG_OBSERVATION",
+      "label": "Observation EMG",
+      "definition": "Amplitude d'activation électrique comparative. Catégorie séparée par construction : F2 §12.1 interdit de la fusionner avec l'hypertrophie.",
+      "origin": "corpus",
+      "corpusRef": "F2 §0.1, §0.3, §12.1"
+    },
+    {
+      "term": "MECHANISM",
+      "label": "Mécanisme",
+      "definition": "Voie physiologique proposée, cohérente avec des données animales ou cellulaires.",
+      "origin": "corpus",
+      "corpusRef": "F1 §1.4 ligne « Surtout mécanistique » ; F2 §3.1"
+    },
+    {
+      "term": "DEFINITION",
+      "label": "Définition",
+      "definition": "Convention terminologique du corpus (série de travail, échec momentané, irritabilité).",
+      "origin": "corpus",
+      "corpusRef": "F1 §2 et §5 ; F2 §8.1"
+    },
+    {
+      "term": "MYTH_REFUTATION",
+      "label": "Réfutation de croyance",
+      "definition": "Énoncé dont l'objet est de rejeter une croyance répandue.",
+      "origin": "corpus",
+      "corpusRef": "F3 §11 ; F2 §11"
+    },
+    {
+      "term": "PRODUCT_POLICY",
+      "label": "Politique produit",
+      "definition": "Conduite conservatrice décidée par FitTrack. N'est jamais une vérité scientifique ou médicale.",
+      "origin": "corpus",
+      "corpusRef": "F3 §4.2, qui exige explicitement de nommer le seuil 0–3/10 « politique de sécurité » et non vérité médicale"
+    },
+    {
+      "term": "MODELING_DECISION",
+      "label": "Décision de modélisation",
+      "definition": "Choix de structure propre à la KB, sans contenu scientifique.",
+      "origin": "modeling_decision"
+    }
+  ]
+}

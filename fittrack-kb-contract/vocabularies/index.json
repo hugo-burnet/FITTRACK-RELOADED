@@ -1,0 +1,237 @@
+{
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularies": [
+    {
+      "vocabularyId": "knowledge-type",
+      "title": "Types de connaissance",
+      "origin": "modeling_decision",
+      "termCount": 11,
+      "file": "knowledge-type.vocab.json",
+      "schemaDef": "#/$defs/knowledgeType"
+    },
+    {
+      "vocabularyId": "epistemic-status",
+      "title": "Statuts épistémiques",
+      "origin": "corpus",
+      "termCount": 9,
+      "file": "epistemic-status.vocab.json",
+      "schemaDef": "#/$defs/epistemicStatus"
+    },
+    {
+      "vocabularyId": "confidence-level",
+      "title": "Niveaux de confiance",
+      "origin": "corpus",
+      "termCount": 5,
+      "file": "confidence-level.vocab.json",
+      "schemaDef": "#/$defs/confidenceLevel"
+    },
+    {
+      "vocabularyId": "confidence-aspect",
+      "title": "Aspects de confiance",
+      "origin": "corpus",
+      "termCount": 11,
+      "file": "confidence-aspect.vocab.json",
+      "schemaDef": "#/$defs/confidenceAspect"
+    },
+    {
+      "vocabularyId": "directness",
+      "title": "Directness de la preuve",
+      "origin": "clinical_schema_f4",
+      "termCount": 11,
+      "file": "directness.vocab.json",
+      "schemaDef": "#/$defs/directness"
+    },
+    {
+      "vocabularyId": "evidence-type",
+      "title": "Types d'étude ou de document",
+      "origin": "clinical_schema_f4",
+      "termCount": 22,
+      "file": "evidence-type.vocab.json",
+      "schemaDef": "#/$defs/evidenceType"
+    },
+    {
+      "vocabularyId": "source-resolution-status",
+      "title": "États de résolution des sources",
+      "origin": "modeling_decision",
+      "termCount": 5,
+      "file": "source-resolution-status.vocab.json",
+      "schemaDef": "#/$defs/sourceResolutionStatus"
+    },
+    {
+      "vocabularyId": "doi-provenance",
+      "title": "Provenance d'un identifiant bibliographique",
+      "origin": "modeling_decision",
+      "termCount": 3,
+      "file": "doi-provenance.vocab.json",
+      "schemaDef": "#/$defs/doiProvenance"
+    },
+    {
+      "vocabularyId": "claim-relation-type",
+      "title": "Types de relations entre claims",
+      "origin": "modeling_decision",
+      "termCount": 8,
+      "file": "claim-relation-type.vocab.json",
+      "schemaDef": "#/$defs/claimRelationType"
+    },
+    {
+      "vocabularyId": "conflict-cause",
+      "title": "Causes de conflits de preuve",
+      "origin": "corpus",
+      "termCount": 11,
+      "file": "conflict-cause.vocab.json",
+      "schemaDef": "#/$defs/conflictCause"
+    },
+    {
+      "vocabularyId": "movement-pattern",
+      "title": "Patterns de mouvement",
+      "origin": "corpus",
+      "termCount": 14,
+      "file": "movement-pattern.vocab.json",
+      "schemaDef": "#/$defs/movementPattern"
+    },
+    {
+      "vocabularyId": "joint-action",
+      "title": "Actions articulaires",
+      "origin": "corpus",
+      "termCount": 14,
+      "file": "joint-action.vocab.json",
+      "schemaDef": "#/$defs/jointAction"
+    },
+    {
+      "vocabularyId": "equipment-type",
+      "title": "Matériel",
+      "origin": "corpus",
+      "termCount": 14,
+      "file": "equipment-type.vocab.json",
+      "schemaDef": "#/$defs/equipmentType"
+    },
+    {
+      "vocabularyId": "resistance-profile-shape",
+      "title": "Profils de résistance",
+      "origin": "corpus",
+      "termCount": 5,
+      "file": "resistance-profile-shape.vocab.json",
+      "schemaDef": "#/$defs/resistanceProfileShape"
+    },
+    {
+      "vocabularyId": "joint-load-observation-type",
+      "title": "Types d'observations articulaires",
+      "origin": "corpus",
+      "termCount": 4,
+      "file": "joint-load-observation-type.vocab.json",
+      "schemaDef": "#/$defs/jointLoadObservationType"
+    },
+    {
+      "vocabularyId": "substitution-equivalence-level",
+      "title": "Niveaux d'équivalence de substitution",
+      "origin": "corpus",
+      "termCount": 3,
+      "file": "substitution-equivalence-level.vocab.json",
+      "schemaDef": "#/$defs/substitutionEquivalenceLevel"
+    },
+    {
+      "vocabularyId": "substitution-criterion",
+      "title": "Critères de substitution",
+      "origin": "corpus",
+      "termCount": 8,
+      "file": "substitution-criterion.vocab.json",
+      "schemaDef": "#/$defs/substitutionCriterion"
+    },
+    {
+      "vocabularyId": "tolerance-axis",
+      "title": "Axes de tolérance",
+      "origin": "clinical_schema_f4",
+      "termCount": 8,
+      "file": "tolerance-axis.vocab.json",
+      "schemaDef": "#/$defs/toleranceAxis"
+    },
+    {
+      "vocabularyId": "tolerance-status",
+      "title": "Statuts de tolérance",
+      "origin": "clinical_schema_f4",
+      "termCount": 6,
+      "file": "tolerance-status.vocab.json",
+      "schemaDef": "#/$defs/toleranceStatus"
+    },
+    {
+      "vocabularyId": "tolerance-basis",
+      "title": "Bases d'une observation de tolérance",
+      "origin": "clinical_schema_f4",
+      "termCount": 5,
+      "file": "tolerance-basis.vocab.json",
+      "schemaDef": "#/$defs/toleranceBasis"
+    },
+    {
+      "vocabularyId": "safety-zone",
+      "title": "Zones de sécurité",
+      "origin": "corpus",
+      "termCount": 3,
+      "file": "safety-zone.vocab.json",
+      "schemaDef": "#/$defs/safetyZone"
+    },
+    {
+      "vocabularyId": "red-flag-action",
+      "title": "Actions de red flag",
+      "origin": "clinical_schema_f4",
+      "termCount": 3,
+      "file": "red-flag-action.vocab.json",
+      "schemaDef": "#/$defs/redFlagAction"
+    },
+    {
+      "vocabularyId": "red-flag-urgency",
+      "title": "Urgences de red flag",
+      "origin": "clinical_schema_f4",
+      "termCount": 4,
+      "file": "red-flag-urgency.vocab.json",
+      "schemaDef": "#/$defs/redFlagUrgency"
+    },
+    {
+      "vocabularyId": "review-state",
+      "title": "États de validation et de revue",
+      "origin": "modeling_decision",
+      "termCount": 5,
+      "file": "review-state.vocab.json",
+      "schemaDef": "#/$defs/reviewState"
+    },
+    {
+      "vocabularyId": "diagnostic-certainty-required",
+      "title": "Certitude diagnostique requise",
+      "origin": "clinical_schema_f4",
+      "termCount": 4,
+      "file": "diagnostic-certainty-required.vocab.json",
+      "schemaDef": "#/$defs/diagnosticCertaintyRequired"
+    },
+    {
+      "vocabularyId": "clinical-evidence-level",
+      "title": "Niveaux de preuve clinique",
+      "origin": "clinical_schema_f4",
+      "termCount": 4,
+      "file": "clinical-evidence-level.vocab.json",
+      "schemaDef": "#/$defs/clinicalEvidenceLevel"
+    },
+    {
+      "vocabularyId": "contraindication-scope",
+      "title": "Portées de contre-indication",
+      "origin": "clinical_schema_f4",
+      "termCount": 3,
+      "file": "contraindication-scope.vocab.json",
+      "schemaDef": "#/$defs/contraindicationScope"
+    },
+    {
+      "vocabularyId": "contraindication-basis",
+      "title": "Fondements admissibles d'une contre-indication",
+      "origin": "modeling_decision",
+      "termCount": 3,
+      "file": "contraindication-basis.vocab.json",
+      "schemaDef": "#/$defs/contraindicationBasis"
+    },
+    {
+      "vocabularyId": "domain",
+      "title": "Domaines de la KB",
+      "origin": "modeling_decision",
+      "termCount": 6,
+      "file": "domain.vocab.json",
+      "schemaDef": "#/$defs/domain"
+    }
+  ]
+}

@@ -1,0 +1,1315 @@
+{
+  "note": "FICHIER GÉNÉRÉ par tools/build-derived.mjs. Contient les CorpusFile et CorpusFragment réels, avec leurs offsets et leurs hashes calculés sur les fichiers du corpus. Les schemas de provenance sont ainsi validés contre des données authentiques, pas contre un exemple fabriqué pour passer.",
+  "collections": [
+    {
+      "kind": "corpus-file",
+      "records": [
+        {
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "shortLabel": "F1",
+          "title": "Programmation hypertrophie — État des connaissances",
+          "originalFilename": "Programmation hypertrophie — État des connaissances.md",
+          "mediaType": "text/markdown",
+          "language": "fr",
+          "corpusDate": "2026-08-23",
+          "byteLength": 71455,
+          "lineCount": 300,
+          "contentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b",
+          "isAuthority": true,
+          "reconstructibleFromFragments": false,
+          "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+        },
+        {
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "shortLabel": "F2",
+          "title": "Anatomie, biomécanique et sélection d'exercices (hypertrophie)",
+          "originalFilename": "Anatomie, biomécanique et sélection d'exercices (hypertrophie).md",
+          "mediaType": "text/markdown",
+          "language": "fr",
+          "corpusDate": "2026-08-23",
+          "byteLength": 96689,
+          "lineCount": 413,
+          "contentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685",
+          "isAuthority": true,
+          "reconstructibleFromFragments": false,
+          "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+        },
+        {
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "shortLabel": "F3",
+          "title": "Base de connaissances — coaching musculation adaptatif",
+          "originalFilename": "Base de connaissances — coaching musculation adaptatif.md",
+          "mediaType": "text/markdown",
+          "language": "fr",
+          "corpusDate": "2026-08-23",
+          "byteLength": 47236,
+          "lineCount": 302,
+          "contentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202",
+          "isAuthority": true,
+          "reconstructibleFromFragments": false,
+          "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+        },
+        {
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "shortLabel": "F4",
+          "title": "Schéma de données IA coaching",
+          "originalFilename": "Schéma de données IA coaching.json",
+          "mediaType": "application/json",
+          "language": "fr",
+          "corpusDate": "2026-08-23",
+          "byteLength": 8638,
+          "lineCount": 192,
+          "contentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5",
+          "isAuthority": true,
+          "reconstructibleFromFragments": false,
+          "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+        }
+      ]
+    },
+    {
+      "kind": "corpus-fragment",
+      "records": [
+        {
+          "fragmentId": "frag.f1.0001",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "2. Volume"
+          ],
+          "startLine": 54,
+          "endLine": 54,
+          "startByte": 8916,
+          "endByte": 10068,
+          "blockType": "table_row",
+          "rawText": "| Plus de séries hebdomadaires produisent en moyenne plus d’hypertrophie, avec rendements décroissants. | Élevé pour la direction; modéré pour la forme de la courbe | Adultes sains; données surtout jeunes, 79 % hommes dans la synthèse 2026; entraînés et non entraînés | [Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/); [Schoenfeld et al., 2017](https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197); [ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/) | Position stand; méta-régressions | Certaines comparaisons haut vs modéré chez entraînés ne montrent pas de différence nette pour quadriceps/biceps ([Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)). | Courtes durées; peu de femmes; volumes élevés rares; causalité moins forte dans une méta-régression entre études. | Augmenter graduellement le volume si progression, performance et récupération sont satisfaisantes; attendre des gains marginaux décroissants. | Pas de « meilleur » nombre universel; pas de preuve que toujours plus est mieux; pas de seuil exact de surentraînement. |",
+          "textHash": "sha256:e13ada664ba43631f0ff45d98e6b4e6f86d99fe06e61646ac776dfeb109c5433",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0002",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "2. Volume"
+          ],
+          "startLine": 55,
+          "endLine": 55,
+          "startByte": 10069,
+          "endByte": 11025,
+          "blockType": "table_row",
+          "rawText": "| Environ 10 séries par muscle/semaine est un repère raisonnable pour maximiser la probabilité de croissance, pas une exigence minimale. | Modéré | Adultes sains; généralisation prudente aux avancés | [Currier et al., 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/); [Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/) | Position stand; umbrella review | Des gains surviennent avec moins; la méta-régression 2026 estime qu’environ 4 séries fractionnelles/semaine peuvent dépasser un seuil de changement détectable moyen. | Seuil dépend du bruit de mesure et du modèle; ne définit ni minimum individuel ni optimum. | Point de départ fréquent : ~6–10 séries directes/fractionnelles par semaine, puis individualisation. Débutants et muscles indirectement sollicités peuvent nécessiter moins. | « Moins de 10 séries ne construit pas de muscle »; « 10 séries est optimal pour tous ». |",
+          "textHash": "sha256:adff2ac743be25328ba7bbeb6d335445127f1f1a36a95648726727cdf58f295c",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0003",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "3. Fréquence"
+          ],
+          "startLine": 63,
+          "endLine": 63,
+          "startByte": 13949,
+          "endByte": 13986,
+          "blockType": "table_row",
+          "rawText": "|---|---|---|---|---|---|---|---|---|",
+          "textHash": "sha256:76865fca7ca1a882958f635c7f5e818b5ee7c973d48c121aab381fa4093672eb",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0004",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "5. Proximité de l’échec, RIR et RPE"
+          ],
+          "startLine": 83,
+          "endLine": 83,
+          "startByte": 20036,
+          "endByte": 20852,
+          "blockType": "table_row",
+          "rawText": "| L’échec momentané n’est pas nécessaire pour hypertrophier. | Élevé | Jeunes adultes; surtout non-entraînés, quelques entraînés | [Grgic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/); [Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/); [ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/) | Méta-analyses; position stand | Les définitions du non-échec et le volume diffèrent; les charges légères pourraient nécessiter davantage de proximité. | Peu de comparaisons à RIR précisément contrôlé; faible puissance. | Programmer la majorité des séries à ~1–4 RIR selon exercice, charge et phase; l’échec est une option, pas une règle. | Que 3 RIR est exactement optimal; que toutes les séries à 5+ RIR sont inefficaces. |",
+          "textHash": "sha256:f883126d8e0994691e63f46a097235ae662fb7af08d8446c090b187e2620b936",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0005",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "5. Proximité de l’échec, RIR et RPE"
+          ],
+          "startLine": 86,
+          "endLine": 86,
+          "startByte": 22481,
+          "endByte": 23065,
+          "blockType": "table_row",
+          "rawText": "| L’estimation du RIR est imparfaite, surtout chez débutants et loin de l’échec. | Élevé | 141 pratiquants, hommes/femmes, novices à experts | [Steele et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5712461/) | Validation observationnelle | L’expérience améliore la précision sans la rendre parfaite. | Machines et habitudes personnelles; une séance. | Calibrer périodiquement avec une série sûre à l’échec; utiliser plages, vitesse et historique plutôt qu’un RIR comme vérité exacte. | Qu’un RIR auto-déclaré équivaut à une mesure objective. |",
+          "textHash": "sha256:21c4fd04e8f2612fd99035397a8626b610ac11bb2af1a70dfe38cd6ec1abfe42",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0006",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "6. Temps de repos interséries"
+          ],
+          "startLine": 92,
+          "endLine": 92,
+          "startByte": 23329,
+          "endByte": 24081,
+          "blockType": "table_row",
+          "rawText": "| Des repos >60 s ont probablement un petit avantage hypertrophique moyen sur ≤60 s, surtout parce qu’ils préservent le volume et la performance. | Modéré | 9 études; jeunes surtout, 6 non-entraînées; principalement hommes | [Singer et al., 2024](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full) | Revue systématique et méta-analyse bayésienne | Quand volume/effort sont compensés, les différences peuvent s’atténuer; données rares au-delà de 3 min. | Petits échantillons, 5–10 semaines, catégories de repos grossières. | Défaut : 2–3 min sur polyarticulaires; 1–2 min sur isolation si performance maintenue; plus si nécessaire. | Qu’exactement 3 min est optimal; que 60 s empêche la croissance. |",
+          "textHash": "sha256:42d469f2fb7864eec930841a7d607771131b2fe7c31ff6727f561e714191c561",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0007",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "7. Amplitude de mouvement et longueur musculaire"
+          ],
+          "startLine": 102,
+          "endLine": 102,
+          "startByte": 27239,
+          "endByte": 28031,
+          "blockType": "table_row",
+          "rawText": "| Les *lengthened partials* peuvent égaler la ROM complète; leur supériorité générale n’est pas démontrée. | Modéré pour équivalence possible; faible pour supériorité | 30 entraînés dans l’essai direct haut du corps | [Wolf et al., 2025](https://peerj.com/articles/18904); [méta-analyse 2026](https://link.springer.com/10.1007/s11332-025-01586-5) | RCT intra-sujet; méta-analyse | Les partielles longues sont souvent meilleures que partielles courtes, mais pas nécessairement meilleures que ROM complète. | 8 semaines; sites limités; exercices/muscles spécifiques. | Option pour ajouter du travail à grande longueur ou contourner une zone douloureuse; ROM complète reste le défaut. | Qu’elles remplacent toujours la ROM complète ou préviennent les blessures. |",
+          "textHash": "sha256:cc9b5883a42f188ab5008649ab472899a354b1c8f608a641fa6ab60e7433c777",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0008",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "1. Méthode, périmètre et langage de certitude",
+            "1.4 Cartographie épistémique explicite"
+          ],
+          "startLine": 42,
+          "endLine": 42,
+          "startByte": 6481,
+          "endByte": 6841,
+          "blockType": "table_row",
+          "rawText": "| **Solidement établi** | Efficacité générale de l’entraînement en résistance; dose-réponse positive mais décroissante du volume; large gamme de charges; échec non nécessaire; neutralité approximative de la fréquence et du split à volume égal. | Peut devenir une règle forte, formulée sans absolu et accompagnée des principales conditions. |",
+          "textHash": "sha256:4377d03b5a51993ba9a9fc68091ddd9b386f848ed6fc32a8ae94959f87142636",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0009",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "18. Contradictions majeures et raisons probables"
+          ],
+          "startLine": 198,
+          "endLine": 198,
+          "startByte": 55009,
+          "endByte": 55550,
+          "blockType": "table_row",
+          "rawText": "| **10+ séries vs absence d’avantage du très haut volume** | Dose-réponse positive avec rendements décroissants ([Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)). | Plusieurs comparaisons 12–20 vs >20 séries ne distinguent pas quadriceps/biceps ([Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)). | Différence entre courbe moyenne et contraste de catégories; puissance faible; comptage direct/indirect; muscles/sites différents; entraînés plus proches du plafond; courtes durées. |",
+          "textHash": "sha256:26f92e4ab6e5c60fc5c5b157a53172b8f84b24f6d93c2ed6bdf42b6dbacaa795",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0010",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "20. Publications majeures — métadonnées vérifiables"
+          ],
+          "startLine": 225,
+          "endLine": 225,
+          "startByte": 60527,
+          "endByte": 60756,
+          "blockType": "table_row",
+          "rawText": "| *The Resistance Training Dose Response…* | Pelland JC et al., 2026, *Sports Med* 56:481–505 | Systematic review/meta-regression | 10.1007/s40279-025-02344-w | 41343037 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/41343037/) |",
+          "textHash": "sha256:2a88ef4242d41c07fca4846d66a2622f9c32621503ec6ea2c2ed8f87b1f966ad",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0011",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "20. Publications majeures — métadonnées vérifiables"
+          ],
+          "startLine": 220,
+          "endLine": 220,
+          "startByte": 59139,
+          "endByte": 59479,
+          "blockType": "table_row",
+          "rawText": "| *Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults* | Currier BS et al., 2026, *Med Sci Sports Exerc* 58(4):851–872 | Position stand / overview of reviews | 10.1249/MSS.0000000000003897 | non relevé | [Texte officiel PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/) |",
+          "textHash": "sha256:de9f5ef8c9da922edc275f6ddd64fad8ffc627bb3ad83863ec52e34bfdf29162",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0012",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "20. Publications majeures — métadonnées vérifiables"
+          ],
+          "startLine": 236,
+          "endLine": 236,
+          "startByte": 63321,
+          "endByte": 63613,
+          "blockType": "table_row",
+          "rawText": "| *Effect of free-weight vs machine-based strength training…* | Haugen ME et al., 2023, *BMC Sports Sci Med Rehabil* | Systematic review/meta-analysis | 10.1186/s13102-023-00713-4 | n.a. | [Publication](https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4) |",
+          "textHash": "sha256:eeae8ecc193033c0ced84dbe23331c3b7cb10412b3ebe31cfbe732839e07fc38",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0013",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "20. Publications majeures — métadonnées vérifiables"
+          ],
+          "startLine": 234,
+          "endLine": 234,
+          "startByte": 62857,
+          "endByte": 63098,
+          "blockType": "table_row",
+          "rawText": "| *Lengthened partial repetitions elicit similar muscular adaptations…* | Wolf M et al., 2025, *PeerJ* 13:e18904 | Randomized within-participant trial | 10.7717/peerj.18904 | 39959841 | [PubMed](https://pubmed.ncbi.nlm.nih.gov/39959841/) |",
+          "textHash": "sha256:0ae3084b341e3c50a439fdd66ac4949ef1360a9390948473a1645b75a87bf80a",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0014",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "Résumé exécutif"
+          ],
+          "startLine": 7,
+          "endLine": 7,
+          "startByte": 254,
+          "endByte": 1004,
+          "blockType": "paragraph",
+          "rawText": "L’entraînement en résistance augmente de façon robuste la taille musculaire, la force et plusieurs dimensions de la fonction physique chez l’adulte sain. Le *position stand* 2026 de l’American College of Sports Medicine (ACSM), fondé sur 137 revues systématiques et plus de 30 000 participants, retient comme principal levier spécifique de l’hypertrophie un volume hebdomadaire relativement élevé, autour d’au moins 10 séries par groupe musculaire, tout en soulignant que l’échec momentané, un matériel particulier et une périodisation complexe ne sont pas indispensables ([ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/); [Currier et al., 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)).",
+          "textHash": "sha256:a69ad629b8244478d2fc608de44848dbb689261b2b55261f850d7d88638352d9",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0015",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "1. Méthode, périmètre et langage de certitude",
+            "1.1 Hiérarchie appliquée"
+          ],
+          "startLine": 23,
+          "endLine": 23,
+          "startByte": 4500,
+          "endByte": 4950,
+          "blockType": "paragraph",
+          "rawText": "L’interprétation suit l’ordre demandé : (1) recommandations officielles et *position stands*; (2) revues parapluie; (3) revues systématiques et méta-analyses; (4) essais randomisés; (5) études longitudinales; (6) observationnel; (7) mécanistique; (8) expertise/pratique. Les conclusions ont été confrontées aux sources contradictoires ou aux résultats nuls. Une étude EMG n’est jamais traitée comme preuve directe d’hypertrophie.",
+          "textHash": "sha256:a8ea4785bc439cd8bcc22f36a0cf09ce94b48122b4a582a56ca74201659bfd9d",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0016",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "1. Méthode, périmètre et langage de certitude",
+            "1.2 Niveaux de confiance"
+          ],
+          "startLine": 27,
+          "endLine": 32,
+          "startByte": 4982,
+          "endByte": 5681,
+          "blockType": "table",
+          "rawText": "| Niveau | Sens opérationnel pour une IA de coaching |\n|---|---|\n| **Élevé** | Résultat convergent dans plusieurs synthèses de haut niveau, applicable à une population assez large; exceptions possibles mais la direction générale est stable. |\n| **Modéré** | Direction probable, mais hétérogénéité, imprécision, extrapolation ou manque de données chez les sujets entraînés. |\n| **Faible** | Quelques essais, résultats discordants, population étroite ou dépendance forte au protocole. Formuler comme option conditionnelle. |\n| **Très faible** | Mécanisme, opinion d’expert, enquête de pratiques ou absence de comparaison directe. Ne pas présenter comme causal ou optimal. |",
+          "textHash": "sha256:7546548ca3eb91ed50e969bbd7feff04de3ec98287acd0be9913cdf0bb167619",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0017",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "1. Méthode, périmètre et langage de certitude",
+            "1.3 Limites transversales"
+          ],
+          "startLine": 36,
+          "endLine": 36,
+          "startByte": 5714,
+          "endByte": 6345,
+          "blockType": "paragraph",
+          "rawText": "La littérature est dominée par des interventions de 6 à 16 semaines, de petits échantillons, des jeunes adultes et souvent des hommes; de nombreuses analyses comprennent surtout des sujets non entraînés. Les mesures d’« hypertrophie » ne sont pas interchangeables : IRM/CT et échographie localisée sont plus spécifiques que DXA, masse maigre globale, circonférences ou bio-impédance. Un changement local peut être régional et une mesure précoce peut être contaminée par l’œdème. L’absence de différence statistique n’établit pas toujours l’équivalence, surtout lorsque l’étude est peu puissante.",
+          "textHash": "sha256:662731509090e90f6325066a93447c2e82ab0336ebd7a3bb393cab5bb6916413",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0018",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+          ],
+          "startLine": 299,
+          "endLine": 299,
+          "startByte": 71056,
+          "endByte": 71454,
+          "blockType": "paragraph",
+          "rawText": "**Règle de prudence pour le dataset :** toute recommandation chiffrée doit être encodée comme *plage de départ révisable*, avec population, objectif, mesure de résultat, niveau de confiance et conditions d’application. Les termes « optimal », « nécessaire », « inutile » et « maximal récupérable » ne doivent être générés sans justification explicite et contexte individuel.",
+          "textHash": "sha256:65ace0e98e667f3aeb62f5b7dadf3f6f120f2eda35920a1834a9a0722fff1ad5",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f1.0019",
+          "corpusFileId": "corpus.f1.programmation-hypertrophie",
+          "headingPath": [
+            "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+            "7. Amplitude de mouvement et longueur musculaire"
+          ],
+          "startLine": 100,
+          "endLine": 100,
+          "startByte": 25718,
+          "endByte": 26494,
+          "blockType": "table_row",
+          "rawText": "| L’amplitude complète est une règle par défaut efficace, particulièrement face aux partielles en position raccourcie. | Modéré à élevé | 135 sujets, 94 % jeunes hommes, 5/6 études non-entraînées | [Schoenfeld et Grgic, 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/); [ACSM, 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/) | Revue systématique; position stand | Les ROM partielles n’étaient pas toutes réalisées à grande longueur; les muscles diffèrent. | Peu de femmes/entraînés; six essais; absence de tronc. | Utiliser la plus grande amplitude active, contrôlée et tolérable qui charge le muscle cible. | Que toucher des repères arbitraires est nécessaire malgré douleur/anatomie; que toute ROM partielle est inférieure. |",
+          "textHash": "sha256:7edc47b946300ed9750dde27ad880c8b41f6ae11db5589326b1c06adc86295ec",
+          "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+        },
+        {
+          "fragmentId": "frag.f2.0001",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "0. Méthode et langage de certitude",
+            "0.1 Hiérarchie des preuves appliquée"
+          ],
+          "startLine": 13,
+          "endLine": 13,
+          "startByte": 1604,
+          "endByte": 2733,
+          "blockType": "paragraph",
+          "rawText": "**Règle non négociable : une différence d'amplitude EMG entre deux exercices n'est jamais traitée comme une preuve suffisante qu'un exercice produit plus d'hypertrophie qu'un autre.** L'EMG de surface mesure une activité électrique moyennée et globale, pas la tension mécanique par fibre, ni le recrutement des unités motrices profondes, ni la durée sous tension à une longueur donnée. L'étude la plus directement illustrative de ce principe compare hip thrust et squat : l'EMG du hip thrust dépasse largement celle du squat pour le grand fessier (moyenne 69,5 % contre 29,4 % de la contraction volontaire maximale, pics 172 % contre 84,9 %), mais neuf semaines d'entraînement à volume égalisé produisent une hypertrophie fessière quasiment identique en IRM dans les trois régions du grand fessier, sans corrélation fiable entre l'amplitude EMG et la croissance mesurée ([Plotkin et al., 2023, *Front Physiol*](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full)). Cette dissociation EMG/hypertrophie est traitée comme un résultat de référence dans tout ce rapport.",
+          "textHash": "sha256:ea673d87252f8298dda672448bc12ee0805090b2c6cc4d827aeb401b32d8a999",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0002",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "0. Méthode et langage de certitude",
+            "0.1 Hiérarchie des preuves appliquée"
+          ],
+          "startLine": 11,
+          "endLine": 11,
+          "startByte": 973,
+          "endByte": 1602,
+          "blockType": "paragraph",
+          "rawText": "Ce rapport applique strictement la hiérarchie suivante, de la preuve la plus forte à la plus faible : (1) études longitudinales mesurant directement l'hypertrophie (IRM, échographie, TDM) ou la force ; (2) revues systématiques et méta-analyses ; (3) études biomécaniques (dynamique inverse, modélisation musculo-squelettique) ; (4) études d'imagerie ou de mesures anatomiques (architecture musculaire, cadavres) ; (5) données de bras de levier (moment arms) et de mécanique articulaire ; (6) électromyographie de surface (EMG) ; (7) avis convergents d'experts *evidence-based* lorsque les données directes manquent.",
+          "textHash": "sha256:f270a068b77f0adbee404f1142c34aded1a874abfb1b8b8e1dba4a1e8e6d670d",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0003",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "1. Anatomie fonctionnelle par groupe musculaire",
+            "1.6 Triceps brachial (chefs long, latéral, médial)"
+          ],
+          "startLine": 76,
+          "endLine": 76,
+          "startByte": 15948,
+          "endByte": 17150,
+          "blockType": "paragraph",
+          "rawText": "Ce point anatomique a une conséquence directement démontrée par un essai contrôlé : l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines ([Nunes et al., 2022, *Eur J Sport Sci*](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)). **Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)** — l'un des exemples les plus solides de tout ce rapport reliant position articulaire, longueur musculaire et hypertrophie régionale mesurée. Conséquence pratique : les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long.",
+          "textHash": "sha256:10213e2e3f81b39736324e280d7438b09ddb5dea77b3b51bd41ad603605061e6",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0004",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+            "2.5 Poids libres vs machines : preuve directe d'hypertrophie"
+          ],
+          "startLine": 138,
+          "endLine": 138,
+          "startByte": 32542,
+          "endByte": 33761,
+          "blockType": "paragraph",
+          "rawText": "Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que **chaque modalité produit un gain de force supérieur dans son propre mode de test** (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, **mais aucune différence significative d'hypertrophie entre les deux modalités** (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al. / free-weight vs machine meta-analysis, *BMC Sports Sci Med Rehabil*](https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/)). **Ceci est une preuve directe d'hypertrophie de niveau modéré à élevé** (méta-analyse, mais nombre limité d'études d'hypertrophie disponibles, ce que les auteurs signalent eux-mêmes comme une limite appelant à la prudence). Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle plutôt que sur une supposée supériorité universelle d'une modalité.",
+          "textHash": "sha256:bfdc0cc95d2d6253484178a8ff80a1a6e365dc0743dbf02c9a87739fdcfb9390",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0005",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "5. Stabilité",
+            "5.1 Principe général"
+          ],
+          "startLine": 190,
+          "endLine": 190,
+          "startByte": 42878,
+          "endByte": 43824,
+          "blockType": "paragraph",
+          "rawText": "La stabilité requise par un exercice — support du torse, base d'appui, guidage de la trajectoire par une machine ou un rail — détermine dans quelle mesure l'effort du pratiquant doit être partagé entre la production de force du muscle cible et la stabilisation posturale/articulaire. Une revue systématique et méta-analyse des études EMG sur l'entraînement en instabilité trouve que les surfaces instables augmentent l'activation des muscles stabilisateurs du tronc mais **diminuent généralement l'activation du muscle agoniste principal** et la force produite, comparé à un exercice équivalent sur surface stable ([Effects of unstable training on muscle activation: systematic review and meta-analysis, 2025](https://peerj.com/articles/19751)) — **preuve EMG et de performance, niveau modéré**, cohérente avec le principe que l'instabilité redistribue l'effort plutôt que de l'augmenter globalement pour le muscle cible.",
+          "textHash": "sha256:5fd56ffb9de0bf17236cad0fcfb738b768d05ece4b5c7328c279d93ef8ef3fc9",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0006",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "6. Contraintes articulaires par articulation"
+          ],
+          "startLine": 204,
+          "endLine": 204,
+          "startByte": 45606,
+          "endByte": 46172,
+          "blockType": "callout",
+          "rawText": "**Avertissement méthodologique impératif :** cette section documente des **contraintes mécaniques connues** (forces, moments, cisaillement, compression) et ne constitue **ni un avis médical ni une affirmation qu'un exercice est dangereux**. Une charge mécanique élevée n'équivaut pas à un risque de blessure démontré ; une sensation d'inconfort n'équivaut pas à une lésion ; un risque supposé par analogie biomécanique n'équivaut pas à un risque mesuré épidémiologiquement. Ces quatre catégories sont explicitement distinguées ligne par ligne.",
+          "textHash": "sha256:59879c77f6d4859ce6e7466f9c541215961e07d707177632b0b60e166db5fc5c",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0007",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "6. Contraintes articulaires par articulation",
+            "6.1 Épaule"
+          ],
+          "startLine": 212,
+          "endLine": 212,
+          "startByte": 48299,
+          "endByte": 48938,
+          "blockType": "paragraph",
+          "rawText": "Une analyse biomécanique dédiée aux exercices de développé (chest exercises) quantifie les moments articulaires à l'épaule, au coude et au poignet et trouve que les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché ([Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints, 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8877248/)) — **preuve biomécanique directe, niveau modéré**, utile pour comparer objectivement la charge articulaire entre familles d'exercices de pectoraux sans préjuger d'un danger.",
+          "textHash": "sha256:e8ed828d9ac5e1089be055bda51eafcd152e1f5afc13103c36ad7558d22f12dd",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0008",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "6. Contraintes articulaires par articulation",
+            "6.2 Coude"
+          ],
+          "startLine": 216,
+          "endLine": 216,
+          "startByte": 48955,
+          "endByte": 49809,
+          "blockType": "paragraph",
+          "rawText": "Peu d'études biomécaniques dédiées quantifient directement la charge au coude pendant les exercices de triceps (skull crusher, extension overhead) en musculation récréative ; la littérature disponible sur la charge au coude provient principalement du contexte du lancer au baseball, peu généralisable ([Biomechanics of the elbow during baseball pitching](http://www.jospt.org/doi/10.2519/jospt.1993.17.6.274)). Il s'agit d'une **lacune de preuve identifiée** : l'affirmation courante selon laquelle le skull crusher ou l'extension overhead imposerait une contrainte particulière au coude repose largement sur un raisonnement biomécanique de premier principe (moment de flexion élevé en bras de levier long) plutôt que sur une mesure directe publiée en contexte de musculation — **niveau de preuve très faible, largement inférentiel**.",
+          "textHash": "sha256:e772705045d2cfde9adae153889c89221829ca2f8483f35629c43dacf19d1c50",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0009",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "6. Contraintes articulaires par articulation",
+            "6.4 Rachis (cervical, thoracique, lombaire)"
+          ],
+          "startLine": 226,
+          "endLine": 226,
+          "startByte": 51658,
+          "endByte": 52403,
+          "blockType": "paragraph",
+          "rawText": "**Distinction impérative pour cette section :** une charge de compression ou de cisaillement lombaire élevée mesurée par modélisation est une **charge mécanique documentée**, pas un **risque de blessure démontré**. Le rachis, comme tout tissu, s'adapte à la charge progressive ; l'existence d'une force élevée pendant un soulevé de terre maximal ne permet pas de conclure que l'exercice est dangereux pour un pratiquant correctement progressé. Aucune étude longitudinale de cohorte en musculation récréative reliant directement une charge lombaire mesurée par modélisation à une incidence de blessure n'a été identifiée dans cette recherche pour les principaux mouvements de musculation — **lacune de preuve explicite**.",
+          "textHash": "sha256:a60d5be9ab911ecb78d468cd183b2ae6ebc3b16790e46c1f31d6b96069b5e7fc",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0010",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "8. Substitutions d'exercices : logique et critères",
+            "8.2 Trois niveaux d'équivalence"
+          ],
+          "startLine": 330,
+          "endLine": 330,
+          "startByte": 79084,
+          "endByte": 79865,
+          "blockType": "paragraph",
+          "rawText": "**Substitutions quasi directes.** Deux exercices sollicitant le même pattern de mouvement, la même fonction musculaire principale, une longueur musculaire dominante comparable, et ne différant principalement que par le profil de résistance ou le niveau de stabilité. Exemple : développé couché haltères vs barre (même pattern, même muscle dominant, différence principale de stabilité et de légère variation d'amplitude d'épaule). La méta-analyse de la section 2.5 (pas de différence d'hypertrophie poids libres/machines) et celle de la section 7.6 (pas de différence unilatéral/bilatéral) fournissent une base de preuve directe pour qualifier ce type de paires de « quasi directes » sur le plan de l'hypertrophie, même si la spécificité de force diffère.",
+          "textHash": "sha256:7d99f0c8754c16a14f4d08bb9fd8128f9eda849c3b08f4af3c83996f35d7f8a2",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0011",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "8. Substitutions d'exercices : logique et critères",
+            "8.2 Trois niveaux d'équivalence"
+          ],
+          "startLine": 332,
+          "endLine": 332,
+          "startByte": 79867,
+          "endByte": 80728,
+          "blockType": "paragraph",
+          "rawText": "**Substitutions acceptables.** Deux exercices partageant le pattern de mouvement et le muscle principal, mais différant sur une dimension significative (longueur musculaire dominante, biarticularité exploitée différemment, demande lombaire). Exemple : squat classique vs leg press — même fonction quadriceps dominante, mais le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press, et une extension de hanche concomitante qui sollicite davantage les fessiers et ischio-jambiers en synergie. Ce sont des substitutions raisonnables pour l'hypertrophie du quadriceps (aucune étude ne démontrant de supériorité franche de l'un sur l'autre pour ce muscle spécifiquement dans les données identifiées), mais pas interchangeables pour l'objectif de force spécifique au squat ni pour la demande lombaire.",
+          "textHash": "sha256:3da1596f802b0039ca974b16000f729a1ab85350147bc073e168db46e4f6b99d",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0012",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "8. Substitutions d'exercices : logique et critères",
+            "8.2 Trois niveaux d'équivalence"
+          ],
+          "startLine": 334,
+          "endLine": 334,
+          "startByte": 80730,
+          "endByte": 81814,
+          "blockType": "paragraph",
+          "rawText": "**Substitutions seulement partiellement équivalentes.** Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale. Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations ([Nunes et al., 2022](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)). Autre exemple : leg curl assis (hanche fléchie) vs leg curl couché (hanche neutre/étendue) — même muscle nominal, mais position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement. Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise (par exemple prioriser le chef long du triceps ou la portion proximale des ischio-jambiers).",
+          "textHash": "sha256:09ce4d543a86b5657e843b13706ca70037b6b3c957de6631cf42ef80b9ad0160",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0013",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "8. Substitutions d'exercices : logique et critères",
+            "8.3 Tableau synthétique de critères de substitution"
+          ],
+          "startLine": 338,
+          "endLine": 347,
+          "startByte": 81875,
+          "endByte": 83479,
+          "blockType": "table",
+          "rawText": "| Critère | Question à poser | Conséquence si différent |\n|---|---|---|\n| Pattern de mouvement | Le mouvement articulaire global est-il le même (poussée, tirage, hinge, squat) ? | Si différent → substitution au mieux partielle, changement de synergistes majeurs. |\n| Fonction musculaire précise | Le même chef/portion du muscle est-il moteur principal ? | Si différent chef → possible ciblage régional différent (ex. triceps, deltoïde, pectoraux). |\n| Longueur musculaire dominante | L'exercice étire-t-il le muscle à une longueur comparable ? | Si différent → hypertrophie régionale potentiellement différente (preuve modérée, section 3). |\n| Profil de résistance | Le point de difficulté maximal est-il à la même portion de l'amplitude ? | Modifie la portion de la course la plus stimulée mécaniquement. |\n| Stabilité requise | Le muscle cible ou l'équilibre est-il le facteur limitant ? | Modifie la charge utilisable et l'attention technique, pas nécessairement l'hypertrophie (section 5.3). |\n| Demande lombaire / charge axiale | Le tronc porte-t-il une charge de compression/flexion significative ? | Pertinent pour la gestion de fatigue systémique et les préférences individuelles, pas un jugement de dangerosité (section 6.4). |\n| Matériel disponible | L'équipement requis est-il accessible ? | Critère purement logistique. |\n| Objectif (force vs hypertrophie) | La spécificité du test de force compte-t-elle ? | Les substitutions équivalentes en hypertrophie ne le sont pas nécessairement en transfert de force (ex. squat/hip thrust, section 7.8). |",
+          "textHash": "sha256:38a93324cdc9cfbda1639915add93b2ba831853651e7d73e7871f641720d2b8d",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0014",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "11. Contradictions majeures et lacunes de preuve explicites"
+          ],
+          "startLine": 395,
+          "endLine": 395,
+          "startByte": 91915,
+          "endByte": 92395,
+          "blockType": "table_row",
+          "rawText": "| EMG élevée = plus d'hypertrophie ? | Hip thrust largement supérieur au squat en EMG fessière. | Hypertrophie fessière équivalente en IRM après 9 semaines ([Plotkin et al., 2023](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full)). | L'EMG de surface ne capture pas la tension mécanique totale, la durée sous tension à une longueur donnée, ni le recrutement en profondeur ; dissociation confirmée directement par cette étude. |",
+          "textHash": "sha256:344c06733081737f5cef1945c60a446b4d35085942f2323f455dcefac2eea3ca",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0015",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "11. Contradictions majeures et lacunes de preuve explicites"
+          ],
+          "startLine": 401,
+          "endLine": 401,
+          "startByte": 94525,
+          "endByte": 95274,
+          "blockType": "paragraph",
+          "rawText": "**Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) :** contraintes précises au coude en musculation récréative (section 6.2) ; lien longitudinal direct entre charge lombaire modélisée et incidence de blessure en musculation (section 6.4) ; contraintes cervicales/thoraciques spécifiques aux exercices de musculation (section 6.4) ; charge de cheville en musculation pure hors contexte clinique (section 6.7) ; hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+          "textHash": "sha256:2ca7aa68e0ddea17fee642a7902cf149a005ea5189bdfabc502c6afdd4bcc4c2",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0016",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "10. Schéma de données générique pour une base d'exercices"
+          ],
+          "startLine": 384,
+          "endLine": 384,
+          "startByte": 90897,
+          "endByte": 91183,
+          "blockType": "table_row",
+          "rawText": "| `jointConstraints` | Liste `{ joint, constraintType: charge_mecanique / inconfort_rapporte / risque_demontre / risque_suppose, source }` | **Distinction obligatoire à quatre catégories (section 6)** | Ne jamais fusionner ces catégories dans un champ binaire « sûr/dangereux ». |",
+          "textHash": "sha256:ccdc51f80e848de54a6ea8b90e49b61a19b2c1e38d18161504e7560ef7a7f9a6",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0017",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "12. Règles de prudence pour l'encodage de la base de données"
+          ],
+          "startLine": 407,
+          "endLine": 412,
+          "startByte": 95348,
+          "endByte": 96688,
+          "blockType": "list",
+          "rawText": "1. **Ne jamais coder une différence EMG comme un champ `hypertrophyAdvantage`.** L'EMG doit alimenter un champ distinct et clairement étiqueté (`emgActivationComparative`), jamais fusionné avec des champs d'hypertrophie mesurée.\n2. **Toujours accompagner un champ de contrainte articulaire d'une des quatre étiquettes de la section 6** (charge mécanique / inconfort rapporté / risque démontré / risque supposé) — jamais un champ binaire de dangerosité.\n3. **Ne jamais remplir `primaryMuscles` par défaut à partir du nom populaire de l'exercice.** Vérifier la cohérence avec l'anatomie fonctionnelle de la section 1 et, si possible, une source EMG ou biomécanique spécifique.\n4. **Toute règle de substitution doit citer le critère de la section 8.2 qui la justifie** (pattern, longueur, profil de résistance, stabilité, etc.), pas seulement le nom du muscle cible commun.\n5. **Les champs `progressionPotential` et `practicalNotes` sont intrinsèquement subjectifs** ; les marquer systématiquement `expert_practice` dans les métadonnées de la fiche, jamais comme fait établi.\n6. **Préférer une fiche incomplète à une fiche comblée par inférence non vérifiée.** Un champ vide avec la mention « donnée non identifiée dans la littérature au [date] » est préférable à une valeur plausible non sourcée.",
+          "textHash": "sha256:217081f0e1e1c0c9c4c89f877c322838ade0c0d354458738fa3f9694930b2da3",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0018",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "1. Anatomie fonctionnelle par groupe musculaire",
+            "1.1 Pectoraux (pectoralis major, pectoralis minor)"
+          ],
+          "startLine": 44,
+          "endLine": 46,
+          "startByte": 6068,
+          "endByte": 8039,
+          "blockType": "paragraph",
+          "rawText": "Le grand pectoral se subdivise fonctionnellement en une portion **claviculaire** (fibres supérieures, orientées obliquement vers le bas et le dehors) et une portion **sterno-costale** (fibres moyennes et inférieures, orientées plus horizontalement puis obliquement vers le haut). Une étude de 2026 utilisant l'EMG pour distinguer ces deux régions pendant le développé couché concentrique confirme des patterns d'activation distincts entre les fibres claviculaires et sternales selon la phase du mouvement, cohérent avec des rôles biomécaniques différenciés selon l'angle du bras ([Distinct activation patterns of the clavicular and sternal regions, 2026](https://journals.sagepub.com/doi/10.1177/17479541261457744)). Sur le plan architectural, l'élastographie par ondes de cisaillement montre des propriétés matérielles différentes entre régions fibreuses du grand pectoral, appuyant l'idée de sous-unités fonctionnelles distinctes plutôt que d'un muscle homogène ([Quantifying differences in material properties, 2017](https://linkinghub.elsevier.com/retrieve/pii/S0021929017304025)) — preuve de type anatomique/imagerie, niveau de confiance modéré à élevé pour l'existence de sous-régions, faible pour toute règle d'entraînement dérivée sans données longitudinales correspondantes.\n\nFonctionnellement, le grand pectoral réalise la **flexion horizontale de l'épaule**, l'**adduction du bras**, et une **rotation interne**. La portion claviculaire est davantage sollicitée en flexion d'épaule (mouvement vers le haut, proche du développé incliné) tandis que la portion sterno-costale domine en adduction horizontale pure et en position déclinée ou horizontale — logique biomécanique validée par de multiples études EMG comparant incliné/plat/décliné (voir section 5.1). Le petit pectoral, souvent négligé, stabilise et abaisse la scapula ; il n'est pas une cible d'hypertrophie volontaire dans la pratique courante.",
+          "textHash": "sha256:5ca65ac0a71f6bec2882bdd1032c5c7a291b4f5b154902011a0a79e5f21f70e8",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0019",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "1. Anatomie fonctionnelle par groupe musculaire",
+            "1.6 Triceps brachial (chefs long, latéral, médial)"
+          ],
+          "startLine": 74,
+          "endLine": 74,
+          "startByte": 15478,
+          "endByte": 15946,
+          "blockType": "paragraph",
+          "rawText": "Le triceps brachial comporte trois chefs : le **chef long**, seul chef biarticulaire (traverse l'épaule et le coude), et les chefs **latéral** et **médial**, mono-articulaires au coude uniquement. Une étude biomécanique dédiée au rôle différencié de chaque chef dans l'extension du coude confirme cette distinction fonctionnelle fondamentale ([The different role of each head of the triceps brachii, 2018](https://pmc.ncbi.nlm.nih.gov/articles/PMC6136322/)).",
+          "textHash": "sha256:19375347d7d38ba0e2fb23e6f89d67705187acc30b30921b8326c6ca5f13840e",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0020",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "10. Schéma de données générique pour une base d'exercices"
+          ],
+          "startLine": 370,
+          "endLine": 371,
+          "startByte": 87378,
+          "endByte": 87928,
+          "blockType": "table_row",
+          "rawText": "| `movementPattern` | Enum (poussée horizontale, poussée verticale, tirage horizontal, tirage vertical, squat, hinge, fente, isolation coude, isolation épaule, isolation cheville…) | **Objectif, vérifiable** | Dérivable de l'anatomie et de la cinématique, forte fiabilité inter-évaluateurs attendue. |\n| `jointActions` | Liste (flexion/extension/abduction/adduction/rotation par articulation) | **Objectif, vérifiable** | Fondé sur l'anatomie fonctionnelle (section 1) ; niveau de preuve élevé quand la littérature anatomique existe. |",
+          "textHash": "sha256:611dd5d8ae2b69094111f40d0f27015e4ace18ca11e38546c02eb82beb7f9f80",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0021",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "4. Amplitude de mouvement (ROM)",
+            "4.1 État des lieux"
+          ],
+          "startLine": 176,
+          "endLine": 176,
+          "startByte": 40855,
+          "endByte": 41855,
+          "blockType": "paragraph",
+          "rawText": "Un essai randomisé intra-sujet chez des sujets entraînés compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions ([Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet](https://pmc.ncbi.nlm.nih.gov/articles/PMC11829627/)) — **preuve directe d'hypertrophie de niveau modéré** (essai contrôlé mais échantillon limité, muscles et exercices spécifiques du haut du corps). Une méta-analyse et revue systématique comparant amplitude partielle et complète de façon plus large confirme l'absence de supériorité générale de l'amplitude complète lorsque la partielle est réalisée à grande longueur, tout en soulignant l'hétérogénéité des protocoles inclus ([Partial vs Full ROM Resistance Training: Systematic Review and Meta-Analysis, IUSCA](https://journal.iusca.org/index.php/Journal/article/download/182/250)).",
+          "textHash": "sha256:92b3e46c7e8a0be8ed26a5ab2943169a980cbc321b5eefdcb91e5e3b621e2f8d",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0022",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "7. Analyse par familles d'exercices",
+            "7.6 Quadriceps"
+          ],
+          "startLine": 294,
+          "endLine": 294,
+          "startByte": 68219,
+          "endByte": 69280,
+          "blockType": "paragraph",
+          "rawText": "**Squat, hack squat, leg press, Smith squat.** Ces variantes polyarticulaires sollicitent l'ensemble du quadriceps de façon relativement homogène selon l'étude d'hypertrophie régionale du squat déjà citée ([Kojic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9737272/)), le vaste latéral montrant l'association la plus forte avec le gain de force. Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées ([Leg Press vs. Smith Machine: Quadriceps Activation, 2018](https://pmc.ncbi.nlm.nih.gov/articles/PMC6206431/)). Une étude testant si le squat classique produit une hypertrophie régionale différenciée entre les chefs du quadriceps ne trouve pas de différence significative entre eux dans son échantillon ([Does Back Squat Lead to Regional Hypertrophy among Quadriceps Muscles?, 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9737272/)) — même étude que celle citée en 1.8, résultat confirmé.",
+          "textHash": "sha256:05c7b9afdb30d9c169c82633ccd813489e61c2dacf2d3c90b808096c86118d71",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f3.0001",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "1. Résumé opérationnel"
+          ],
+          "startLine": 11,
+          "endLine": 11,
+          "startByte": 1559,
+          "endByte": 2027,
+          "blockType": "list_item",
+          "rawText": "3. **« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».** Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation ([Smith et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/)).",
+          "textHash": "sha256:9d6fb9cebf241395bb5e8646b5a3fba6e7558f2e0132abf480f07e180b73154a",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0002",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "1. Résumé opérationnel"
+          ],
+          "startLine": 12,
+          "endLine": 12,
+          "startByte": 2028,
+          "endByte": 2420,
+          "blockType": "list_item",
+          "rawText": "4. **Les seuils numériques ne sont pas universels.** Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie ([Sprague et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/)).",
+          "textHash": "sha256:c28ea82989be19a7bc84fe3019a8322f93b54fcb6340729b9a260d936611b480",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0003",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "1. Résumé opérationnel"
+          ],
+          "startLine": 13,
+          "endLine": 13,
+          "startByte": 2421,
+          "endByte": 2763,
+          "blockType": "list_item",
+          "rawText": "5. **L’imagerie ne dicte pas seule la programmation.** Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique ([Brinjikji et al., 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4464797/)).",
+          "textHash": "sha256:87b9f98455fd71d397adf898e0c9fa347e78f612660c2416744c1ad6c22b60c7",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0004",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "2. Cadre de décision de l’IA",
+            "2.2 Les trois zones"
+          ],
+          "startLine": 33,
+          "endLine": 33,
+          "startByte": 4243,
+          "endByte": 4815,
+          "blockType": "table_row",
+          "rawText": "| **Verte** | Symptôme léger à modéré, stable ou s’améliorant; pas de red flag; pas de déficit progressif; fonction conservée; réponse post-séance acceptable | Réduire charge, séries ou fréquence; augmenter le repos; raccourcir temporairement l’amplitude; ralentir ou contrôler le tempo; choisir une prise/trajectoire/support mieux tolérés; conserver un entraînement des régions non irritées; tester une progression graduée | Nommer une lésion; promettre l’innocuité; imposer un seuil de douleur universel; bannir définitivement un mouvement |",
+          "textHash": "sha256:b28af5fc782b9960103594ada9df27e2118f2a75622f879812d5a65be35949d0",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0005",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "2. Cadre de décision de l’IA",
+            "2.2 Les trois zones"
+          ],
+          "startLine": 34,
+          "endLine": 34,
+          "startByte": 4816,
+          "endByte": 5407,
+          "blockType": "table_row",
+          "rawText": "| **Orange** | Douleur persistante/récidivante, nocturne inexpliquée, nette perte de fonction, gonflement important, sensation d’instabilité, symptômes neurologiques non progressifs, antécédent de luxation/rupture/chirurgie, diagnostic incertain, échec d’adaptations raisonnables | Modification conservatrice et réversible; maintenir seulement les tâches nettement tolérées; recommander une évaluation par professionnel; suivre l’évolution | « Réhabiliter » une lésion supposée; tester agressivement; dépasser une consigne postopératoire; retarder l’évaluation |",
+          "textHash": "sha256:f613e4849f021f9b85174242afecf6668ed1ca679836ae95709f23e0eb77ba52",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0006",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "2. Cadre de décision de l’IA",
+            "2.2 Les trois zones"
+          ],
+          "startLine": 35,
+          "endLine": 35,
+          "startByte": 5408,
+          "endByte": 5859,
+          "blockType": "table_row",
+          "rawText": "| **Rouge** | Red flag, traumatisme majeur, déformation, impossibilité aiguë de mise en charge, déficit neurologique nouveau/progressif, troubles sphinctériens, anesthésie en selle, suspicion d’infection/fracture/malignité | Arrêter le coaching normal; recommander la voie d’évaluation urgente adaptée | Proposer une séance alternative comme réponse principale; rassurer à distance; demander de « tester » le symptôme sous charge |",
+          "textHash": "sha256:1aaf2270351b02828e095f2ca248005bc376f5d4f7bd49dd19755b10c9fda690",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0007",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "3. Red flags : moteur d’arrêt prioritaire"
+          ],
+          "startLine": 53,
+          "endLine": 53,
+          "startByte": 6731,
+          "endByte": 7097,
+          "blockType": "callout",
+          "rawText": "**Règle d’implémentation :** un red flag n’est pas un diagnostic. L’IA doit dire « ce symptôme nécessite une évaluation » et non « vous avez X ». Les signaux isolés ont souvent une faible précision; la combinaison, le contexte et l’évolution déterminent le niveau de suspicion ([IFOMPT, 2020](https://www.jospt.org/doi/10.2519/jospt.2020.9971)).",
+          "textHash": "sha256:1b1f555abea68a5eddea8ba47532a090977b8b256810c8cdc8ce4f1f5e5d0543",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0008",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "3. Red flags : moteur d’arrêt prioritaire"
+          ],
+          "startLine": 57,
+          "endLine": 57,
+          "startByte": 7176,
+          "endByte": 7765,
+          "blockType": "table_row",
+          "rawText": "| Nouvelle rétention urinaire, incontinence urinaire ou fécale, anesthésie en selle/périnéale, altération sexuelle nouvelle, faiblesse bilatérale ou rapidement progressive avec douleur rachidienne/radiculaire | **Rouge : arrêt et évaluation urgente immédiate** pour suspicion de syndrome de la queue de cheval | L’IFOMPT demande une évaluation neurologique et une orientation urgente en cas de suspicion; l’IRM est habituellement appropriée selon l’ACR ([IFOMPT](https://www.jospt.org/doi/10.2519/jospt.2020.9971), [ACR](https://acsearch.acr.org/docs/69483/narrative/)) |",
+          "textHash": "sha256:d1c6fce54b3fafa9535fcaf8dc503f893ab284a840632ac6847c936e41ff1dd6",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0009",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "3. Red flags : moteur d’arrêt prioritaire"
+          ],
+          "startLine": 58,
+          "endLine": 58,
+          "startByte": 7766,
+          "endByte": 8165,
+          "blockType": "table_row",
+          "rawText": "| Déficit moteur nouveau ou progressif, perte croissante de sensibilité, troubles de la marche ou chutes associés à des symptômes rachidiens | **Rouge/orange urgent selon vitesse et sévérité**; ne pas charger pour « tester » | Les pathologies neurologiques graves requièrent un raisonnement contextuel et une escalade rapide ([IFOMPT](https://www.jospt.org/doi/10.2519/jospt.2020.9971)) |",
+          "textHash": "sha256:f16037d9d50e88c479d993a05d1c56d63f801f3592334191e2439c7ba8403900",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0010",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "3. Red flags : moteur d’arrêt prioritaire"
+          ],
+          "startLine": 59,
+          "endLine": 59,
+          "startByte": 8166,
+          "endByte": 8554,
+          "blockType": "table_row",
+          "rawText": "| Traumatisme majeur; ou traumatisme mineur avec ostéoporose, âge avancé, fragilité ou corticothérapie prolongée; déformation ou douleur osseuse aiguë | **Rouge : suspicion de fracture, évaluation rapide** | L’ACR distingue les scénarios de traumatisme, ostéoporose, âge avancé et corticothérapie pour l’imagerie ([ACR](https://acsearch.acr.org/docs/69483/narrative/)) |",
+          "textHash": "sha256:115713c96e842494e105414ebd1e85e0c73bbcc9d374e8fe40cfc402203eb835",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0011",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "3. Red flags : moteur d’arrêt prioritaire"
+          ],
+          "startLine": 60,
+          "endLine": 60,
+          "startByte": 8555,
+          "endByte": 8984,
+          "blockType": "table_row",
+          "rawText": "| Fièvre/frissons, malaise, douleur rachidienne sévère ou progressive avec immunosuppression, diabète, cancer, usage de drogues IV, chirurgie/procédure récente, infection récente | **Rouge : suspicion d’infection, évaluation rapide** | La fièvre n’était présente que chez 55 % des cas de la revue; son absence n’exclut pas l’infection ([Yusuf et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6911279/)) |",
+          "textHash": "sha256:18990f1216df36eda87b532b01cbe9c3a256ef4ecd5a2973edd5c2a83da9cc06",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0012",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "4. Douleur, irritabilité et surveillance",
+            "4.1 Ce qui est soutenu"
+          ],
+          "startLine": 71,
+          "endLine": 71,
+          "startByte": 10648,
+          "endByte": 10896,
+          "blockType": "list_item",
+          "rawText": "- Dans un essai pilote de tendinopathie patellaire, la règle était au plus 5/10 pendant ou immédiatement après, avec retour au niveau pré-activité le lendemain matin ([Sprague et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/)).",
+          "textHash": "sha256:d531483a3c35882792acb57657d677e93a7e7d2c6c2720c95c6b96d19a38b151",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0013",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "4. Douleur, irritabilité et surveillance",
+            "4.2 Algorithme prudent"
+          ],
+          "startLine": 86,
+          "endLine": 86,
+          "startByte": 12187,
+          "endByte": 12564,
+          "blockType": "callout",
+          "rawText": "**Important :** « 0–3/10 » est une règle pratique conservatrice fréquente, mais non un seuil clinique universel validé. Le modèle publié le mieux documenté ici utilise 5/10 dans des populations tendineuses spécifiques; l’IA peut choisir 0–3/10 comme garde-fou produit plus prudent, à condition de le nommer **politique de sécurité** et non vérité médicale.",
+          "textHash": "sha256:ae4954fa93f509382199404bd936134ecdfa82d3f75782b9f2ca7034cc2b9b5e",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0014",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "6. Rachis lombaire",
+            "6.2 Tableau clinique et programmation"
+          ],
+          "startLine": 115,
+          "endLine": 115,
+          "startByte": 15807,
+          "endByte": 16593,
+          "blockType": "table_row",
+          "rawText": "| **Lombalgie non spécifique / mécanique** | Aucune étiquette diagnostique nécessaire pour adapter un symptôme sans red flag. Demander durée, irradiation, variation avec tâches, réaction à 24 h, peur, sommeil, charge récente | Flexion, extension, rotation ou charge peuvent être sensibles selon l’individu; aucune posture n’est universellement nocive | Conserver activité; choisir squat, hip hinge, tirage soutenu, leg press, hip thrust, gainage ou extension lombaire selon tolérance; réduire ROM/charge/volume puis réexposer | CPG forte pour exercice, faible pour choix d’exercice précis ([APTA 2021](https://www.jospt.org/doi/10.2519/jospt.2021.0304)); méta-analyse réseau hétérogène ([Li et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10687566/)) |",
+          "textHash": "sha256:d760b2e7fdcb98c11a5987672158447bb3dc1809d48e09601a9f46967fd79b70",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0015",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "8. Coude et poignet"
+          ],
+          "startLine": 146,
+          "endLine": 146,
+          "startByte": 23896,
+          "endByte": 24370,
+          "blockType": "table_row",
+          "rawText": "| **Épicondylalgie latérale** | Douleur près des extenseurs, aggravée par préhension et extension résistée; demander charge de grip, souris/outils, curls/tractions | Réduire grip et volume; sangles temporairement; prise neutre; câble; exercices isométriques, concentriques et/ou excentriques des extenseurs; progression par phases | CPG 2022 recommande exercice résisté et réintroduction progressive ([APTA](https://www.jospt.org/doi/10.2519/jospt.2022.0302)) |",
+          "textHash": "sha256:3dee8fc5a4c670815533b9c7e8a217eef2e33870c355d65ac6c23f6d13956ea6",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0016",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "13. Matrice de connaissances par problème"
+          ],
+          "startLine": 225,
+          "endLine": 225,
+          "startByte": 35916,
+          "endByte": 36282,
+          "blockType": "table_row",
+          "rawText": "| Lombalgie non spécifique | Douleur lombaire sans cause spécifique identifiée | Symptôme suffit en zone verte | durée, jambe, neurologie, charge, 24 h, psychosocial | table §3 | toute direction selon individu | activité générale, variantes soutenues | bénéfique; moduler dose/ROM/support | CPG; choix précis incertain | persistance, déficit, red flag |",
+          "textHash": "sha256:9594e153b2db72bce7cf27a69c64de8186b0f8cd03ffdd314ca053aa9bfb211a",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0017",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "13. Matrice de connaissances par problème"
+          ],
+          "startLine": 231,
+          "endLine": 231,
+          "startByte": 37794,
+          "endByte": 38079,
+          "blockType": "table_row",
+          "rawText": "| Épicondylalgie latérale | Douleur extenseurs liée au grip | Symptôme suffisant si typique | tâches de prise, cervical/nerf | trauma/neurologie | grip, extension poignet | prise neutre, sangles | isométrique/concentrique/excentrique | CPG 2022 | persistance/diagnostic douteux |",
+          "textHash": "sha256:946ebde4dce8ab19ae65c7419ac18d0aa69f949d763fca5ee31947e4debfb751",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0018",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "12. Règles de réponse conversationnelle",
+            "Formulation recommandée"
+          ],
+          "startLine": 209,
+          "endLine": 217,
+          "startByte": 35154,
+          "endByte": 35506,
+          "blockType": "list",
+          "rawText": "### Formulations interdites\n\n- « C’est une tendinite/hernie/instabilité. »\n- « Votre disque est fragile. »\n- « Ce mouvement est dangereux pour tout le monde. »\n- « 3/10 est toujours sans danger. »\n- « Continuez malgré la douleur. »\n- « L’absence de fièvre exclut une infection. »\n- « Votre IRM prouve que la douleur vient de là. »",
+          "textHash": "sha256:b5fe5000c8de6e91a383f44eb2f3ce5d07550832879d9b5981f4de22b2e24500",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0019",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "15. Registre des sources prioritaires"
+          ],
+          "startLine": 274,
+          "endLine": 274,
+          "startByte": 44883,
+          "endByte": 45085,
+          "blockType": "table_row",
+          "rawText": "| Smith et al. | Exercice douloureux, 2017, revue + méta-analyse ([PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/)) | DOI 10.1136/bjsports-2016-097383; PMID 28596288 | Douleurs MSK chroniques |",
+          "textHash": "sha256:6f9bdb7d59b22e2c365a68f11c804553b514a8b22bfe8c8408b5184cb4d13f2d",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0020",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "15. Registre des sources prioritaires"
+          ],
+          "startLine": 275,
+          "endLine": 275,
+          "startByte": 45086,
+          "endByte": 45281,
+          "blockType": "table_row",
+          "rawText": "| Sprague et al. | Monitoring douleur, 2021, ECR pilote ([PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/)) | DOI 10.1186/s40814-021-00792-5; PMID 33632313 | 15 sujets, tendon patellaire |",
+          "textHash": "sha256:876dcd165ff20ecf18bba84fdc6cab8d7af98b9af94426a058089e82ff24f8dd",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0021",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "14. Niveaux de preuve utilisés"
+          ],
+          "startLine": 243,
+          "endLine": 247,
+          "startByte": 40114,
+          "endByte": 40521,
+          "blockType": "list",
+          "rawText": "- **A — élevé :** plusieurs CPG/revues cohérentes, population directe.\n- **B — modéré :** une CPG solide ou plusieurs études cohérentes avec limites.\n- **C — faible :** petites études, indirectes, hétérogènes.\n- **D — très faible :** biomécanique seule, opinion ou extrapolation.\n- **expert_practice :** option pragmatique clairement séparée; jamais présentée comme norme médicale.",
+          "textHash": "sha256:9a0571acec100d0f824ec813f09802c0bba6c218cf2a83b8afb090d28be903b4",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0022",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "2. Cadre de décision de l’IA",
+            "2.3 Hiérarchie de modification"
+          ],
+          "startLine": 49,
+          "endLine": 49,
+          "startByte": 6294,
+          "endByte": 6680,
+          "blockType": "paragraph",
+          "rawText": "Une baisse de symptômes immédiate n’est pas le seul objectif : la trajectoire sur 24–48 h, la fonction et la progression de capacité comptent davantage. La littérature ne permet pas de fixer une combinaison optimale universelle de fréquence, intensité et volume pour les douleurs musculosquelettiques ([Arora et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10978700/)).",
+          "textHash": "sha256:c90bc6c70b0c35e52c22edda9dc551dddb306b6557da3fce5b92c4c30c6a5f71",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0023",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif"
+          ],
+          "startLine": 5,
+          "endLine": 5,
+          "startByte": 145,
+          "endByte": 498,
+          "blockType": "callout",
+          "rawText": "> **Finalité et limite.** Cette base aide une IA à modifier prudemment un entraînement en fonction de symptômes et de tolérances. Elle ne permet ni de poser ni d’exclure un diagnostic, ne remplace pas un médecin ou un kinésithérapeute, ne doit jamais contredire un protocole postopératoire et ne doit pas retarder une prise en charge urgente.",
+          "textHash": "sha256:1201759dc1db3fef3fe65e55f63d8420d34395b2463742b07541d6942c0c182c",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f4.0001",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 87,
+          "endLine": 99,
+          "startByte": 3673,
+          "endByte": 4372,
+          "blockType": "json_object",
+          "rawText": "    \"toleranceDimension\": {\n      \"type\": \"object\",\n      \"required\": [\"status\", \"basis\"],\n      \"properties\": {\n        \"status\": {\"enum\": [\"unknown\", \"tolerated\", \"conditionally_tolerated\", \"irritating\", \"not_tested\", \"avoid_pending_assessment\"]},\n        \"basis\": {\"enum\": [\"user_report\", \"observed_response\", \"clinician_instruction\", \"population_evidence\", \"unknown\"]},\n        \"testedRange\": {\"type\": [\"string\", \"null\"]},\n        \"testedLoad\": {\"type\": [\"string\", \"null\"]},\n        \"symptomDuring\": {\"type\": [\"number\", \"null\"], \"minimum\": 0, \"maximum\": 10},\n        \"symptomAfter24h\": {\"type\": [\"number\", \"null\"], \"minimum\": 0, \"maximum\": 10},\n        \"notes\": {\"type\": \"string\"}\n      }\n    },",
+          "textHash": "sha256:31372ad085aa5110f48fb6aa1af7a4f2a03b76316d5a5daf14084e218eb72321",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0002",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 64,
+          "endLine": 76,
+          "startByte": 2635,
+          "endByte": 3257,
+          "blockType": "json_object",
+          "rawText": "    \"redFlag\": {\n      \"type\": \"object\",\n      \"required\": [\"id\", \"question\", \"action\", \"urgency\", \"sourceIds\"],\n      \"properties\": {\n        \"id\": {\"type\": \"string\"},\n        \"question\": {\"type\": \"string\"},\n        \"positiveExamples\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"action\": {\"enum\": [\"stop_and_emergency_assessment\", \"stop_and_urgent_medical_assessment\", \"prompt_professional_assessment\"]},\n        \"urgency\": {\"enum\": [\"emergency_now\", \"same_day\", \"prompt\", \"routine\"]},\n        \"sourceIds\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"warning\": {\"type\": \"string\"}\n      }\n    },",
+          "textHash": "sha256:6b39d1676aa0b09a0db041df896925463b10770e2d2798b37ce616ab85428f01",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0003",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 77,
+          "endLine": 86,
+          "startByte": 3258,
+          "endByte": 3672,
+          "blockType": "json_object",
+          "rawText": "    \"zoneRule\": {\n      \"type\": \"object\",\n      \"required\": [\"criteria\", \"allowedActions\", \"forbiddenActions\"],\n      \"properties\": {\n        \"criteria\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"allowedActions\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"forbiddenActions\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"referralThreshold\": {\"type\": \"string\"}\n      }\n    },",
+          "textHash": "sha256:91c214b4d22a3982f926988a8bb592c96fffc22fe2ec864e4a6ddcdfb79c4fe7",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0004",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 123,
+          "endLine": 189,
+          "startByte": 5241,
+          "endByte": 8631,
+          "blockType": "json_object",
+          "rawText": "    \"conditionRecord\": {\n      \"type\": \"object\",\n      \"required\": [\n        \"condition\", \"description\", \"diagnosticCertaintyRequired\", \"symptoms\",\n        \"questionsToAsk\", \"redFlags\", \"movementSensitivity\", \"loadSensitivity\",\n        \"recommendedModifications\", \"contraindications\", \"referralThreshold\",\n        \"evidenceLevel\", \"sources\", \"uncertainty\"\n      ],\n      \"properties\": {\n        \"condition\": {\"type\": \"string\"},\n        \"aliases\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"description\": {\"type\": \"string\"},\n        \"scope\": {\"enum\": [\"symptom_pattern\", \"known_diagnosis\", \"postoperative_state\", \"general_principle\"]},\n        \"diagnosticCertaintyRequired\": {\n          \"enum\": [\"none_symptom_based_only\", \"user_reported_prior_diagnosis\", \"professional_diagnosis_required\", \"postoperative_protocol_required\"]\n        },\n        \"diagnosticGuardrail\": {\"type\": \"string\"},\n        \"symptoms\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"questionsToAsk\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"redFlags\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"irritability\": {\"enum\": [\"unknown\", \"low\", \"moderate\", \"high\"]},\n        \"movementSensitivity\": {\n          \"type\": \"object\",\n          \"additionalProperties\": {\"$ref\": \"#/$defs/toleranceDimension\"}\n        },\n        \"loadSensitivity\": {\"$ref\": \"#/$defs/toleranceDimension\"},\n        \"axialLoadTolerance\": {\"$ref\": \"#/$defs/toleranceDimension\"},\n        \"flexionTolerance\": {\"$ref\": \"#/$defs/toleranceDimension\"},\n        \"extensionTolerance\": {\"$ref\": \"#/$defs/toleranceDimension\"},\n        \"rotationTolerance\": {\"$ref\": \"#/$defs/toleranceDimension\"},\n        \"overheadTolerance\": {\"$ref\": \"#/$defs/toleranceDimension\"},\n        \"recommendedModifications\": {\"type\": \"array\", \"items\": {\"$ref\": \"#/$defs/modification\"}},\n        \"contraindications\": {\n          \"type\": \"array\",\n          \"description\": \"Réservé aux interdictions explicites, aux red flags ou aux consignes médicales; ne pas convertir une sensibilité fréquente en interdiction absolue.\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\"action\", \"scope\", \"reason\", \"sourceIds\"],\n            \"properties\": {\n              \"action\": {\"type\": \"string\"},\n              \"scope\": {\"enum\": [\"absolute_until_assessed\", \"temporary\", \"clinician_order_only\"]},\n              \"reason\": {\"type\": \"string\"},\n              \"sourceIds\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}\n            }\n          }\n        },\n        \"referralThreshold\": {\"type\": \"string\"},\n        \"progressionCriteria\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"regressionCriteria\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"evidenceLevel\": {\"$ref\": \"#/$defs/evidenceRating\"},\n        \"sources\": {\"type\": \"array\", \"items\": {\"$ref\": \"#/$defs/source\"}},\n        \"uncertainty\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"expertPractice\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\"statement\", \"label\"],\n            \"properties\": {\n              \"statement\": {\"type\": \"string\"},\n              \"label\": {\"const\": \"expert_practice\"},\n              \"rationale\": {\"type\": \"string\"},\n              \"sourceIds\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}\n            }\n          }\n        }\n      }\n    }",
+          "textHash": "sha256:cd015cdd87607c7e9c88d7839da52da947503585aa3dc89fdd0fb4761efa92e0",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0005",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 34,
+          "endLine": 52,
+          "startByte": 1259,
+          "endByte": 2104,
+          "blockType": "json_object",
+          "rawText": "    \"source\": {\n      \"type\": \"object\",\n      \"required\": [\"id\", \"title\", \"year\", \"documentType\", \"url\"],\n      \"properties\": {\n        \"id\": {\"type\": \"string\"},\n        \"organizationAuthors\": {\"type\": \"string\"},\n        \"title\": {\"type\": \"string\"},\n        \"year\": {\"type\": \"integer\", \"minimum\": 1900, \"maximum\": 2100},\n        \"documentType\": {\n          \"enum\": [\"clinical_practice_guideline\", \"medical_body_recommendation\", \"consensus_statement\", \"systematic_review\", \"meta_analysis\", \"randomized_trial\", \"cohort\", \"biomechanical_study\", \"expert_practice\"]\n        },\n        \"doi\": {\"type\": [\"string\", \"null\"]},\n        \"pmid\": {\"type\": [\"string\", \"null\"]},\n        \"url\": {\"type\": \"string\", \"format\": \"uri\"},\n        \"population\": {\"type\": \"string\"},\n        \"isOld\": {\"type\": \"boolean\"},\n        \"notes\": {\"type\": \"string\"}\n      }\n    },",
+          "textHash": "sha256:b26f499ccd7498df108e119d202e30aaae8f358a9e406f6c66a30c75935df8b0",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0006",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 53,
+          "endLine": 63,
+          "startByte": 2105,
+          "endByte": 2634,
+          "blockType": "json_object",
+          "rawText": "    \"evidenceRating\": {\n      \"type\": \"object\",\n      \"required\": [\"level\", \"confidence\", \"directness\"],\n      \"properties\": {\n        \"level\": {\"enum\": [\"A_high\", \"B_moderate\", \"C_low\", \"D_very_low\", \"expert_practice\"]},\n        \"confidence\": {\"enum\": [\"high\", \"moderate\", \"low\", \"very_low\"]},\n        \"directness\": {\"enum\": [\"direct_clinical\", \"indirect_clinical\", \"biomechanical_only\", \"expert_only\"]},\n        \"rationale\": {\"type\": \"string\"},\n        \"sourceIds\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}\n      }\n    },",
+          "textHash": "sha256:90c94d5e0e6bd405e14e7429a3b46ff015e8e99178cf4a192110578b8e62ce4c",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0007",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 100,
+          "endLine": 122,
+          "startByte": 4373,
+          "endByte": 5240,
+          "blockType": "json_object",
+          "rawText": "    \"modification\": {\n      \"type\": \"object\",\n      \"required\": [\"trigger\", \"action\", \"monitoring\", \"evidence\"],\n      \"properties\": {\n        \"trigger\": {\"type\": \"string\"},\n        \"action\": {\"type\": \"string\"},\n        \"doseChange\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"load\": {\"type\": [\"string\", \"null\"]},\n            \"sets\": {\"type\": [\"string\", \"null\"]},\n            \"repetitions\": {\"type\": [\"string\", \"null\"]},\n            \"rangeOfMotion\": {\"type\": [\"string\", \"null\"]},\n            \"tempo\": {\"type\": [\"string\", \"null\"]},\n            \"frequency\": {\"type\": [\"string\", \"null\"]},\n            \"rest\": {\"type\": [\"string\", \"null\"]}\n          }\n        },\n        \"monitoring\": {\"type\": \"string\"},\n        \"stopCriteria\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},\n        \"evidence\": {\"$ref\": \"#/$defs/evidenceRating\"}\n      }\n    },",
+          "textHash": "sha256:769db7449c4cf67ab29147666dc7716d087eef9f21dc777e1dc8fdadbfd1d54b",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f4.0008",
+          "corpusFileId": "corpus.f4.schema-ia-coaching",
+          "headingPath": [],
+          "startLine": 155,
+          "endLine": 168,
+          "startByte": 7082,
+          "endByte": 7765,
+          "blockType": "json_object",
+          "rawText": "        \"contraindications\": {\n          \"type\": \"array\",\n          \"description\": \"Réservé aux interdictions explicites, aux red flags ou aux consignes médicales; ne pas convertir une sensibilité fréquente en interdiction absolue.\",\n          \"items\": {\n            \"type\": \"object\",\n            \"required\": [\"action\", \"scope\", \"reason\", \"sourceIds\"],\n            \"properties\": {\n              \"action\": {\"type\": \"string\"},\n              \"scope\": {\"enum\": [\"absolute_until_assessed\", \"temporary\", \"clinician_order_only\"]},\n              \"reason\": {\"type\": \"string\"},\n              \"sourceIds\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}\n            }\n          }\n        },",
+          "textHash": "sha256:2c3ea6fd6a92fd2e4a021a1827a807e7ba600ff6e921472a8a8e44f17604c0d5",
+          "corpusFileContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5"
+        },
+        {
+          "fragmentId": "frag.f2.0023",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "6. Contraintes articulaires par articulation",
+            "6.1 Épaule"
+          ],
+          "startLine": 210,
+          "endLine": 210,
+          "startByte": 47313,
+          "endByte": 48297,
+          "blockType": "paragraph",
+          "rawText": "Le développé militaire (overhead press) et les élévations latérales sollicitent fortement le complexe de la coiffe des rotateurs à des amplitudes d'abduction élevées, une zone anatomiquement associée à un risque supposé (et non démontré de façon causale en musculation récréative) de conflit sous-acromial par analogie avec la littérature sur les athlètes de sports de lancer ([Risk Factors of Overuse Shoulder Injuries in Overhead Athletes, revue systématique](https://pmc.ncbi.nlm.nih.gov/articles/PMC7485028/) ; [Risk factors and prevention strategies for shoulder injuries in overhead sports](https://pmc.ncbi.nlm.nih.gov/articles/PMC9378805/)). **Ces données proviennent de populations d'athlètes de lancer à charges répétitives à haute vitesse, pas de pratiquants de musculation** — leur généralisation à l'overhead press en musculation constitue un **risque supposé par analogie, niveau de preuve très faible pour cette population spécifique**.",
+          "textHash": "sha256:b1bcbfc8d4d569b4fb81bc05b9c2bd778763bf2e069eca15ab9e7d39b85cc700",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f2.0024",
+          "corpusFileId": "corpus.f2.anatomie-biomecanique",
+          "headingPath": [
+            "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+            "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+            "2.2 Poids libres (haltères, barres)"
+          ],
+          "startLine": 126,
+          "endLine": 126,
+          "startByte": 29570,
+          "endByte": 30525,
+          "blockType": "paragraph",
+          "rawText": "Avec un poids libre soumis à la gravité, le moment externe est maximal lorsque le segment est horizontal (bras de levier de la charge maximal par rapport à la verticale de la gravité) et diminue vers zéro lorsque le segment est vertical. Cela crée des courbes de résistance caractéristiques : par exemple, un développé couché haltères impose l'essentiel de la difficulté externe en fin de course (bras tendus, quand le poids est loin du point d'appui vertical) alors qu'un curl haltère debout impose l'essentiel de la difficulté au milieu de l'amplitude, lorsque l'avant-bras est horizontal. Cette dépendance à la gravité signifie que le « point difficile » de l'exercice dépend de l'orientation du corps par rapport à la verticale, pas uniquement de l'anatomie musculaire — un principe biomécanique de base, niveau de confiance élevé pour le principe général, mais application spécifique à documenter exercice par exercice.",
+          "textHash": "sha256:c4572607ba3649babdcd6f78ca6265dd436e40ad90e0750be127dcc5d78d02ee",
+          "corpusFileContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+        },
+        {
+          "fragmentId": "frag.f3.0024",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "6. Rachis lombaire",
+            "6.3 Exercices usuels"
+          ],
+          "startLine": 124,
+          "endLine": 129,
+          "startByte": 19636,
+          "endByte": 20703,
+          "blockType": "list",
+          "rawText": "- **Squat / deadlift / hip hinge :** aucune interdiction générique. Ajuster hauteur de départ, stance, barre/charge, tempo, répétitions, proximité de l’échec et amplitude. Un trap-bar, rack pull ou kettlebell élevé peut réduire l’exigence d’amplitude; c’est une option, pas une correction universelle.\n- **Leg press :** utile si le torse soutenu est mieux toléré; limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite.\n- **Hip thrust :** option pour entraîner les extenseurs de hanche avec moins de demande de maintien debout; ajuster l’extension terminale si sensible.\n- **Rowing :** banc incliné ou chest-supported row si le maintien penché fatigue ou irrite; réintroduire le rowing libre selon la capacité.\n- **Extensions lombaires / gainage :** ni obligatoires ni dangereuses par principe; choisir direction et dose tolérées.\n- **Charge axiale :** passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante, sans supposer que la compression est la cause.",
+          "textHash": "sha256:d59607c58c90e8b4cb9f587d5b11bb6b30383a450a360619683da80cbd1b0f13",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0025",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "12. Règles de réponse conversationnelle",
+            "Formulation recommandée"
+          ],
+          "startLine": 207,
+          "endLine": 207,
+          "startByte": 34689,
+          "endByte": 35152,
+          "blockType": "callout",
+          "rawText": "> « Je ne peux pas déterminer la cause à distance. Comme aucun signe d’alerte n’a été rapporté, on peut tester une adaptation conservatrice : réduire la charge et l’amplitude, garder une variante confortable, puis vérifier la réponse ce soir et demain. Si la douleur augmente nettement, persiste au-dessus du niveau habituel, s’accompagne de faiblesse/engourdissement ou réduit la fonction, arrêtez cette progression et faites-vous évaluer. »",
+          "textHash": "sha256:69e04e92dfed7e3922dbd50a1b1b102ea79121f82db234a47a9c4d2562f6442b",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        },
+        {
+          "fragmentId": "frag.f3.0026",
+          "corpusFileId": "corpus.f3.coaching-clinique",
+          "headingPath": [
+            "Base de connaissances clinique pour un coaching de musculation adaptatif",
+            "4. Douleur, irritabilité et surveillance",
+            "4.2 Algorithme prudent"
+          ],
+          "startLine": 77,
+          "endLine": 78,
+          "startByte": 11370,
+          "endByte": 11752,
+          "blockType": "paragraph",
+          "rawText": "**Pendant :** arrêter immédiatement si douleur brutale inhabituelle, perte de force, instabilité franche, symptôme neurologique croissant ou red flag. Sinon, une gêne stable et tolérable peut mener à une réduction graduée plutôt qu’à l’arrêt total.  \n**Après :** noter la réponse immédiate, le soir, le lendemain et jusqu’à 48 h si le symptôme est retardé.  ",
+          "textHash": "sha256:3fa8ce31b323f7e2490ad9c2df1d728ed497026b225aaf69cdbd850c47cf36b0",
+          "corpusFileContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+        }
+      ]
+    }
+  ]
+}

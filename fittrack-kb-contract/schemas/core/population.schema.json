@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/population.schema.json",
+  "title": "Population",
+  "description": "Population d'une claim ou d'une source. rawDescription est obligatoire et verbatim ; tous les champs structurés sont facultatifs, parce que le corpus écrit « Adultes sains; données surtout jeunes, 79 % hommes » et non un objet structuré. Structurer de force reviendrait à inventer des critères d'inclusion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "rawDescription"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "rawDescription": { "type": "string", "minLength": 1 },
+    "trainingStatus": {
+      "type": ["array", "null"],
+      "items": { "enum": ["untrained", "recreationally_trained", "trained", "advanced", "mixed", "unknown"] },
+      "uniqueItems": true
+    },
+    "ageBand": { "enum": ["young_adult", "adult", "older_adult", "mixed", "unknown"] },
+    "sexDistributionNote": {
+      "type": ["string", "null"],
+      "description": "Note textuelle, pas un pourcentage calculé : le corpus donne « 79 % hommes » pour certaines synthèses seulement."
+    },
+    "sampleSizeNote": { "type": ["string", "null"] },
+    "clinicalContext": { "type": ["string", "null"] },
+    "generalizationWarnings": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "catalogVersion": "1.0.0",
+  "note": "Correspondance kind → schéma → espace de stockage. Sert au validateur et aux invariants. L'espace (space) est ce qui rend INV-015 vérifiable : une entité runtime dans curated/ est une erreur de couche, pas une préférence de rangement.",
+  "spaces": {
+    "corpus": "Fichiers originaux immuables et leur empreinte.",
+    "fragments": "Tranches brutes du corpus avec offsets et hashes.",
+    "curated": "Source de vérité scientifique validée.",
+    "policies": "Décisions normatives propres à FitTrack.",
+    "governance": "Revues, historique et releases.",
+    "runtime": "Observations propres à un utilisateur et à une date. Hors de la KB scientifique."
+  },
+  "entities": [
+    { "kind": "corpus-file", "schemaId": "https://fittrack.local/kb/schemas/core/corpus-file.schema.json", "space": "corpus", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "corpus-fragment", "schemaId": "https://fittrack.local/kb/schemas/core/corpus-fragment.schema.json", "space": "fragments", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "citation-occurrence", "schemaId": "https://fittrack.local/kb/schemas/core/citation-occurrence.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "source", "schemaId": "https://fittrack.local/kb/schemas/core/source.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "source-resolution", "schemaId": "https://fittrack.local/kb/schemas/core/source-resolution.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "claim", "schemaId": "https://fittrack.local/kb/schemas/core/claim.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "evidence-assessment", "schemaId": "https://fittrack.local/kb/schemas/core/evidence-assessment.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "evidence-hierarchy", "schemaId": "https://fittrack.local/kb/schemas/core/evidence-hierarchy.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "evidence-conflict", "schemaId": "https://fittrack.local/kb/schemas/core/evidence-conflict.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "evidence-gap", "schemaId": "https://fittrack.local/kb/schemas/core/evidence-gap.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "population", "schemaId": "https://fittrack.local/kb/schemas/core/population.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "outcome", "schemaId": "https://fittrack.local/kb/schemas/core/outcome.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "review-decision", "schemaId": "https://fittrack.local/kb/schemas/core/review-decision.schema.json", "space": "governance", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "kb-release", "schemaId": "https://fittrack.local/kb/schemas/core/kb-release.schema.json", "space": "governance", "requiresCorpusProvenance": false, "isNormative": false },
+
+    { "kind": "muscle", "schemaId": "https://fittrack.local/kb/schemas/anatomy/muscle.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "muscle-region", "schemaId": "https://fittrack.local/kb/schemas/anatomy/muscle-region.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "joint", "schemaId": "https://fittrack.local/kb/schemas/anatomy/joint.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "joint-action", "schemaId": "https://fittrack.local/kb/schemas/anatomy/joint-action.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "movement-pattern", "schemaId": "https://fittrack.local/kb/schemas/anatomy/movement-pattern.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "exercise", "schemaId": "https://fittrack.local/kb/schemas/anatomy/exercise.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "exercise-variant", "schemaId": "https://fittrack.local/kb/schemas/anatomy/exercise-variant.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "equipment", "schemaId": "https://fittrack.local/kb/schemas/anatomy/equipment.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "resistance-profile", "schemaId": "https://fittrack.local/kb/schemas/anatomy/resistance-profile.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "joint-load-observation", "schemaId": "https://fittrack.local/kb/schemas/anatomy/joint-load-observation.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "substitution-relation", "schemaId": "https://fittrack.local/kb/schemas/anatomy/substitution-relation.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+
+    { "kind": "condition", "schemaId": "https://fittrack.local/kb/schemas/clinical/condition.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+    { "kind": "symptom", "schemaId": "https://fittrack.local/kb/schemas/clinical/symptom.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "clinical-question", "schemaId": "https://fittrack.local/kb/schemas/clinical/clinical-question.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": false },
+    { "kind": "red-flag", "schemaId": "https://fittrack.local/kb/schemas/clinical/red-flag.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+    { "kind": "safety-zone", "schemaId": "https://fittrack.local/kb/schemas/clinical/safety-zone.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+    { "kind": "tolerance-dimension-definition", "schemaId": "https://fittrack.local/kb/schemas/clinical/tolerance-dimension-definition.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+    { "kind": "adaptation-rule", "schemaId": "https://fittrack.local/kb/schemas/clinical/adaptation-rule.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+    { "kind": "contraindication", "schemaId": "https://fittrack.local/kb/schemas/clinical/contraindication.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+    { "kind": "referral-rule", "schemaId": "https://fittrack.local/kb/schemas/clinical/referral-rule.schema.json", "space": "curated", "requiresCorpusProvenance": true, "isNormative": true },
+
+    { "kind": "product-safety-policy", "schemaId": "https://fittrack.local/kb/schemas/policies/product-safety-policy.schema.json", "space": "policies", "requiresCorpusProvenance": false, "isNormative": true },
+    { "kind": "output-policy", "schemaId": "https://fittrack.local/kb/schemas/policies/output-policy.schema.json", "space": "policies", "requiresCorpusProvenance": false, "isNormative": true },
+
+    { "kind": "symptom-observation", "schemaId": "https://fittrack.local/kb/schemas/runtime/symptom-observation.schema.json", "space": "runtime", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "tolerance-observation", "schemaId": "https://fittrack.local/kb/schemas/runtime/tolerance-observation.schema.json", "space": "runtime", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "irritability-state", "schemaId": "https://fittrack.local/kb/schemas/runtime/irritability-state.schema.json", "space": "runtime", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "exercise-response", "schemaId": "https://fittrack.local/kb/schemas/runtime/exercise-response.schema.json", "space": "runtime", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "delayed-response", "schemaId": "https://fittrack.local/kb/schemas/runtime/delayed-response.schema.json", "space": "runtime", "requiresCorpusProvenance": false, "isNormative": false },
+    { "kind": "clinician-instruction", "schemaId": "https://fittrack.local/kb/schemas/runtime/clinician-instruction.schema.json", "space": "runtime", "requiresCorpusProvenance": false, "isNormative": false }
+  ]
+}

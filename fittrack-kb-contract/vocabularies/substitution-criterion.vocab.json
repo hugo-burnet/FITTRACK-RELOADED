@@ -1,0 +1,59 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "substitution-criterion",
+  "title": "Critères de substitution",
+  "origin": "corpus",
+  "description": "Les huit critères du tableau F2 §8.3. F2 §12.4 exige que toute règle de substitution cite celui qui la justifie ; le schéma rend donc ce champ obligatoire.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "pattern_de_mouvement",
+      "label": "Pattern de mouvement",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "fonction_musculaire_precise",
+      "label": "Fonction musculaire précise",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "longueur_musculaire_dominante",
+      "label": "Longueur musculaire dominante",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "profil_de_resistance",
+      "label": "Profil de résistance",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "stabilite_requise",
+      "label": "Stabilité requise",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "demande_lombaire_charge_axiale",
+      "label": "Demande lombaire et charge axiale",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "materiel_disponible",
+      "label": "Matériel disponible",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    },
+    {
+      "term": "objectif_force_vs_hypertrophie",
+      "label": "Objectif force contre hypertrophie",
+      "origin": "corpus",
+      "corpusRef": "F2 §8.3"
+    }
+  ]
+}

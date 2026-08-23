@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/source.schema.json",
+  "title": "Source",
+  "description": "Publication référencée par le corpus. Les métadonnées bibliographiques sont presque toutes facultatives : F2 cite une centaine de références sans auteur, année ni type. Exiger ces champs forcerait à les inventer, ce que le prompt interdit. Seuls l'identité, la provenance et le statut de résolution sont obligatoires.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "citationLabel", "resolutionStatus", "urls"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Un DOI ou un PMID sans provenance déclarée est une métadonnée fabriquée.",
+      "if": { "required": ["doi"], "properties": { "doi": { "type": "string" } } },
+      "then": { "required": ["doiProvenance"] }
+    },
+    {
+      "if": { "required": ["pmid"], "properties": { "pmid": { "type": "string" } } },
+      "then": { "required": ["pmidProvenance"] }
+    },
+    {
+      "description": "Une source déclarée résolue doit porter au moins un identifiant bibliographique fort. Sans cela, resolved ne veut rien dire.",
+      "if": { "properties": { "resolutionStatus": { "const": "resolved" } }, "required": ["resolutionStatus"] },
+      "then": {
+        "anyOf": [
+          { "required": ["doi"], "properties": { "doi": { "type": "string" } } },
+          { "required": ["pmid"], "properties": { "pmid": { "type": "string" } } }
+        ]
+      }
+    },
+    {
+      "description": "Une source ambiguë doit désigner la SourceResolution qui documente le conflit, sinon l'ambiguïté est perdue.",
+      "if": { "properties": { "resolutionStatus": { "const": "ambiguous" } }, "required": ["resolutionStatus"] },
+      "then": { "required": ["resolutionRef"] }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "citationLabel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Libellé tel qu'il apparaît dans le corpus. C'est souvent la seule information certaine."
+    },
+    "citationAliases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Autres libellés désignant la même publication dans le corpus, par exemple « ACSM, 2026 » pour Currier et al. 2026."
+    },
+    "title": { "type": ["string", "null"] },
+    "authors": { "type": ["string", "null"], "description": "Chaîne brute. Non découpée : le corpus ne fournit pas de liste structurée." },
+    "year": { "type": ["integer", "null"], "minimum": 1900, "maximum": 2100 },
+    "journal": { "type": ["string", "null"] },
+    "documentType": {
+      "oneOf": [
+        { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/evidenceType" },
+        { "type": "null" }
+      ]
+    },
+    "doi": { "type": ["string", "null"] },
+    "doiProvenance": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/doiProvenance" },
+    "pmid": { "type": ["string", "null"] },
+    "pmidProvenance": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/doiProvenance" },
+    "urls": {
+      "type": "array",
+      "description": "Plusieurs URL par publication sont la norme, pas l'exception : le corpus cite le même essai via PubMed, PMC et l'éditeur.",
+      "minItems": 0,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "role"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "role": { "enum": ["publisher", "pubmed", "pmc", "official", "preprint", "unknown"] },
+          "citedIn": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        }
+      }
+    },
+    "population": {
+      "type": ["string", "null"],
+      "description": "Description brute de population telle qu'écrite dans le corpus. La version structurée vit dans Population."
+    },
+    "isOld": {
+      "type": ["boolean", "null"],
+      "description": "Signalé comme ancien par le corpus lui-même (SAPS 2014, NASS 2014, Cochrane 2015)."
+    },
+    "resolutionStatus": {
+      "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/sourceResolutionStatus"
+    },
+    "resolutionRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "notes": { "type": "string" }
+  }
+}

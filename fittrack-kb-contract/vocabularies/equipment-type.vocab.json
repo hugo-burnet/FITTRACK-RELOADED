@@ -1,0 +1,94 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "equipment-type",
+  "title": "Matériel",
+  "origin": "corpus",
+  "description": "Matériel effectivement nommé par F2 §2 et §7 et par F3 §6.3 et §8. Aucun ajout de catalogue.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "barre",
+      "label": "Barre",
+      "origin": "corpus",
+      "corpusRef": "F2 §2.2"
+    },
+    {
+      "term": "barre_ez",
+      "label": "Barre EZ",
+      "origin": "corpus",
+      "corpusRef": "F2 §6.3 ; F3 §8 (douleur aux curls)"
+    },
+    {
+      "term": "haltere",
+      "label": "Haltère",
+      "origin": "corpus",
+      "corpusRef": "F2 §2.2"
+    },
+    {
+      "term": "poulie_cable",
+      "label": "Poulie / câble",
+      "origin": "corpus",
+      "corpusRef": "F2 §2.3"
+    },
+    {
+      "term": "machine_came",
+      "label": "Machine à came",
+      "origin": "corpus",
+      "corpusRef": "F2 §2.4"
+    },
+    {
+      "term": "machine_convergente",
+      "label": "Machine convergente",
+      "origin": "corpus",
+      "corpusRef": "F2 §2.4 ; F3 §7"
+    },
+    {
+      "term": "machine_guidee",
+      "label": "Machine guidée",
+      "origin": "corpus",
+      "corpusRef": "F2 §5.3 ; §7.6 (Smith machine)"
+    },
+    {
+      "term": "elastique",
+      "label": "Bande élastique",
+      "origin": "corpus",
+      "corpusRef": "F2 §2.6"
+    },
+    {
+      "term": "poids_du_corps",
+      "label": "Poids du corps",
+      "origin": "corpus",
+      "corpusRef": "F2 §7.1 (dips)"
+    },
+    {
+      "term": "kettlebell",
+      "label": "Kettlebell",
+      "origin": "corpus",
+      "corpusRef": "F3 §6.3"
+    },
+    {
+      "term": "trap_bar",
+      "label": "Trap-bar",
+      "origin": "corpus",
+      "corpusRef": "F3 §6.3"
+    },
+    {
+      "term": "swiss_bar",
+      "label": "Swiss bar",
+      "origin": "corpus",
+      "corpusRef": "F3 §8 (poignet sensible)"
+    },
+    {
+      "term": "banc",
+      "label": "Banc",
+      "origin": "corpus",
+      "corpusRef": "F2 §7.1"
+    },
+    {
+      "term": "inconnu",
+      "label": "Non précisé par le corpus",
+      "origin": "modeling_decision"
+    }
+  ]
+}

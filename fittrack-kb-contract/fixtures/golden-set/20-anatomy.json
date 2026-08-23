@@ -1,0 +1,577 @@
+{
+  "note": "Anatomie et matériel. Toutes les affirmations non triviales — biarticularité, action articulaire, existence d'une sous-région — portent leur attestation. Les champs triviaux (libellé, alias, type de matériel) restent des valeurs nues, comme le prévoit F2 §10 qui les classe objectifs et vérifiables.",
+  "collections": [
+    {
+      "kind": "muscle",
+      "records": [
+        {
+          "id": "muscle.triceps-brachii.0001",
+          "slug": "triceps-brachial",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0019",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Triceps brachial",
+          "latinName": "Triceps brachii",
+          "isBiarticular": {
+            "value": false,
+            "attestation": {
+              "knowledgeType": "ANATOMICAL_FACT",
+              "directness": "anatomical_cadaveric",
+              "confidence": "high",
+              "sourceRefs": [
+                "source.plotkin-2023-hipthrust-squat"
+              ],
+              "note": "Le muscle dans son ensemble n'est pas biarticulaire ; seul son chef long l'est. La distinction est portée par le chef, pas par le muscle."
+            }
+          },
+          "crossesJointRefs": [
+            "joint.elbow.0001",
+            "joint.shoulder.0001"
+          ],
+          "unknownFields": [
+            {
+              "field": "isBiarticular.attestation.sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F2 §1.6 cite une étude biomécanique dédiée au rôle de chaque chef, qui n'a pas encore d'entité Source dans ce golden set restreint. Le rattachement actuel est provisoire et signalé."
+            }
+          ],
+          "contentHash": "sha256:db17bee26d9359d27b170bb017e23e04606ecd47be5e85715f8f08ea060e8d61"
+        },
+        {
+          "id": "muscle.triceps-long-head.0001",
+          "slug": "triceps-chef-long",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0019",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Chef long du triceps",
+          "parentMuscleRef": "muscle.triceps-brachii.0001",
+          "isBiarticular": {
+            "value": true,
+            "attestation": {
+              "knowledgeType": "ANATOMICAL_FACT",
+              "directness": "anatomical_cadaveric",
+              "confidence": "high",
+              "claimRefs": [
+                "claim.exercise.triceps-longhead.0001"
+              ],
+              "note": "« le chef long, seul chef biarticulaire (traverse l'épaule et le coude) ». C'est ce fait qui rend l'étirement à l'épaule possible, et donc l'essai overhead interprétable."
+            }
+          },
+          "crossesJointRefs": [
+            "joint.elbow.0001",
+            "joint.shoulder.0001"
+          ],
+          "primaryJointActions": [
+            {
+              "jointRef": "joint.elbow.0001",
+              "action": "extension",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "high",
+                "claimRefs": [
+                  "claim.exercise.triceps-longhead.0001"
+                ]
+              }
+            }
+          ],
+          "contentHash": "sha256:6449e873529ca7341b670de009af86c6c884330965ac001635a74c65b9662daa"
+        },
+        {
+          "id": "muscle.pectoralis-major.0001",
+          "slug": "grand-pectoral",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0018",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Grand pectoral",
+          "latinName": "Pectoralis major",
+          "isBiarticular": {
+            "value": false,
+            "attestation": {
+              "knowledgeType": "ANATOMICAL_FACT",
+              "directness": "anatomical_cadaveric",
+              "confidence": "high",
+              "sourceRefs": [
+                "source.plotkin-2023-hipthrust-squat"
+              ],
+              "note": "Ne traverse que l'épaule."
+            }
+          },
+          "crossesJointRefs": [
+            "joint.shoulder.0001"
+          ],
+          "primaryJointActions": [
+            {
+              "jointRef": "joint.shoulder.0001",
+              "action": "flexion_horizontale",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "high",
+                "sourceRefs": [
+                  "source.plotkin-2023-hipthrust-squat"
+                ],
+                "note": "« le grand pectoral réalise la flexion horizontale de l'épaule, l'adduction du bras, et une rotation interne »."
+              }
+            }
+          ],
+          "regionRefs": [
+            "region.pectoralis-major.clavicular.0001",
+            "region.pectoralis-major.sternocostal.0001"
+          ],
+          "unknownFields": [
+            {
+              "field": "primaryJointActions[0].attestation.sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F2 §1.1 énonce ces actions sans citer de source pour cette phrase précise. Le rattachement provisoire est signalé plutôt que présenté comme sourcé."
+            }
+          ],
+          "contentHash": "sha256:6faa4115773e6a530a05e073e06ede82d5b8814675e5864f82b01d1312e8fba6"
+        }
+      ]
+    },
+    {
+      "kind": "muscle-region",
+      "records": [
+        {
+          "id": "region.pectoralis-major.clavicular.0001",
+          "slug": "pectoral-portion-claviculaire",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0018",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Portion claviculaire du grand pectoral",
+          "muscleRef": "muscle.pectoralis-major.0001",
+          "regionBasis": "anatomical_subdivision",
+          "notes": [
+            {
+              "value": "Fibres supérieures, orientées obliquement vers le bas et le dehors ; davantage sollicitée en flexion d'épaule.",
+              "attestation": {
+                "knowledgeType": "ANATOMICAL_FACT",
+                "directness": "anatomical_cadaveric",
+                "confidence": "moderate",
+                "sourceRefs": [
+                  "source.plotkin-2023-hipthrust-squat"
+                ],
+                "note": "Confiance modérée à élevée pour l'existence des sous-régions, faible pour toute règle d'entraînement dérivée sans données longitudinales correspondantes."
+              }
+            }
+          ],
+          "unknownFields": [
+            {
+              "field": "notes[0].attestation.sourceRefs",
+              "reason": "pending_human_review",
+              "note": "L'étude EMG de 2026 et l'élastographie de 2017 citées par F2 §1.1 n'ont pas encore d'entité Source."
+            }
+          ],
+          "contentHash": "sha256:ec9435c2bc65bc09ea4e2627d6db75f616b110adc56a70dd19c4e833c08f7b95"
+        },
+        {
+          "id": "region.pectoralis-major.sternocostal.0001",
+          "slug": "pectoral-portion-sterno-costale",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0018",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Portion sterno-costale du grand pectoral",
+          "muscleRef": "muscle.pectoralis-major.0001",
+          "regionBasis": "anatomical_subdivision",
+          "contentHash": "sha256:ef7c601d5778e6bbe68b98d604fcc331e38d947acad16175d3d7029f377fc671"
+        }
+      ]
+    },
+    {
+      "kind": "joint",
+      "records": [
+        {
+          "id": "joint.elbow.0001",
+          "slug": "coude",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0008",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Coude",
+          "region": "upper_limb",
+          "availableActions": [
+            "flexion",
+            "extension",
+            "supination",
+            "pronation"
+          ],
+          "contentHash": "sha256:7656fd7931dd6c7096483af015340d6f237187a0ad8759cbfd9e44e3256dd626"
+        },
+        {
+          "id": "joint.shoulder.0001",
+          "slug": "epaule",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0007",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Épaule",
+          "region": "upper_limb",
+          "availableActions": [
+            "flexion",
+            "extension",
+            "abduction",
+            "adduction",
+            "rotation_interne",
+            "rotation_externe",
+            "flexion_horizontale",
+            "extension_horizontale"
+          ],
+          "contentHash": "sha256:81de0200beab750e15a4145a7ba5989e931cfa3b4d5057ae88874e2a065eb9e6"
+        },
+        {
+          "id": "joint.lumbar-spine.0001",
+          "slug": "rachis-lombaire",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0009",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Rachis lombaire",
+          "region": "spine",
+          "availableActions": [
+            "flexion",
+            "extension",
+            "rotation_interne",
+            "rotation_externe"
+          ],
+          "contentHash": "sha256:8b33778e1ca6149882d0ae52d4bd910a461cf94e2c9e1efdd3044ecaf49250e6"
+        }
+      ]
+    },
+    {
+      "kind": "joint-action",
+      "records": [
+        {
+          "id": "jointaction.elbow.extension.0001",
+          "slug": "extension-du-coude",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0019",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "jointRef": "joint.elbow.0001",
+          "action": "extension",
+          "label": "Extension du coude",
+          "contentHash": "sha256:5b739d0a6bf45d80a290bef6c2473549cfca455130d175f6e171414345f9f1d3"
+        },
+        {
+          "id": "jointaction.shoulder.flexion.0001",
+          "slug": "flexion-de-lepaule",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "jointRef": "joint.shoulder.0001",
+          "action": "flexion",
+          "label": "Flexion de l'épaule",
+          "momentArmNotes": [
+            {
+              "value": "Le bras de levier interne de chaque faisceau change de façon non linéaire avec l'angle articulaire dans les trois plans.",
+              "attestation": {
+                "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+                "directness": "biomechanical_only",
+                "confidence": "high",
+                "sourceRefs": [
+                  "source.plotkin-2023-hipthrust-squat"
+                ],
+                "note": "Principe biomécanique de base, solidement établi pour l'épaule et généralisable par analogie anatomique, sans que des cartographies aussi détaillées existent pour chaque articulation."
+              }
+            }
+          ],
+          "unknownFields": [
+            {
+              "field": "momentArmNotes[0].attestation.sourceRefs",
+              "reason": "pending_human_review",
+              "note": "La cartographie 3D des bras de levier citée par F2 §1.4 et §2.1 n'a pas encore d'entité Source."
+            }
+          ],
+          "contentHash": "sha256:d9dd6f76d85791b93c88d4132b71244bcc5cf5bd18300d0c6c36d89f61be8617"
+        }
+      ]
+    },
+    {
+      "kind": "movement-pattern",
+      "records": [
+        {
+          "id": "pattern.poussee-horizontale.0001",
+          "slug": "poussee-horizontale",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0020",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "pattern": "poussee_horizontale",
+          "label": "Poussée horizontale",
+          "dominantJointActions": [
+            "jointaction.shoulder.flexion.0001",
+            "jointaction.elbow.extension.0001"
+          ],
+          "contentHash": "sha256:77b697449451d7411055f13cbd777d48ec46bb8c3189fd8e5a136bef284d1079"
+        },
+        {
+          "id": "pattern.isolation-coude.0001",
+          "slug": "isolation-du-coude",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0020",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "pattern": "isolation_coude",
+          "label": "Isolation du coude",
+          "dominantJointActions": [
+            "jointaction.elbow.extension.0001"
+          ],
+          "contentHash": "sha256:750d36a96713c42364943394591d71dd75bf7f032fca05384c3f3d8f801c138a"
+        },
+        {
+          "id": "pattern.squat.0001",
+          "slug": "squat",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0020",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "pattern": "squat",
+          "label": "Squat",
+          "contentHash": "sha256:7070c0a0e69a80686531f6b02a4ed7ddfcab05062a5c1f9fe7ea0c4c768231ab"
+        }
+      ]
+    },
+    {
+      "kind": "equipment",
+      "records": [
+        {
+          "id": "equipment.barre.0001",
+          "slug": "barre",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0024",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "type": "barre",
+          "label": "Barre",
+          "contentHash": "sha256:5ef9fd212582597c8ba3015bbfea854e2a2c7528de2b12d2a8bfa48a3676c681"
+        },
+        {
+          "id": "equipment.haltere.0001",
+          "slug": "haltere",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0024",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "type": "haltere",
+          "label": "Haltère",
+          "contentHash": "sha256:1456aa7d6ce65214cf2355fc65b9b9c063e55897817db8a32ff4c25f6d1331df"
+        },
+        {
+          "id": "equipment.poulie-cable.0001",
+          "slug": "poulie-cable",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0007",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "type": "poulie_cable",
+          "label": "Poulie / câble",
+          "loadIncrementNote": {
+            "value": "Les exercices sur machine ou en câble permettent des incréments de charge plus fins, ce qui facilite la surcharge progressive à petite échelle.",
+            "attestation": {
+              "knowledgeType": "EXPERT_PRACTICE",
+              "directness": "expert_only",
+              "confidence": "very_low",
+              "sourceRefs": [
+                "source.plotkin-2023-hipthrust-squat"
+              ],
+              "note": "F2 §9 classe explicitement cette observation en expert_practice, « plausible mais non quantifié par essai »."
+            }
+          },
+          "unknownFields": [
+            {
+              "field": "loadIncrementNote.attestation.sourceRefs",
+              "reason": "pending_human_review",
+              "note": "L'étude qualitative sur les coachs citée par F2 §9 n'a pas encore d'entité Source."
+            }
+          ],
+          "contentHash": "sha256:85446c893a70308e1f1641e67a766b0f23e70d2dc64b6c818de4940ca7d82707"
+        }
+      ]
+    },
+    {
+      "kind": "resistance-profile",
+      "records": [
+        {
+          "id": "profile.bench-dumbbell.0001",
+          "slug": "profil-developpe-halteres",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0024",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "shape": "inconnu",
+          "hardestPortionNote": "F2 §2.2 écrit que le développé couché haltères impose l'essentiel de la difficulté externe en fin de course, bras tendus. Cette description est conservée verbatim et le profil reste inconnu : la ranger d'office en ascendant ou descendant supposerait une convention d'orientation que le corpus ne définit pas.",
+          "derivation": "first_principle_gravity",
+          "equipmentRef": "equipment.haltere.0001",
+          "unknownFields": [
+            {
+              "field": "shape",
+              "reason": "ambiguous_in_corpus",
+              "note": "Le corpus décrit où se situe la difficulté sans nommer la forme de la courbe dans le vocabulaire de son propre §10."
+            }
+          ],
+          "contentHash": "sha256:d269bab066abac008d0d228e92a679c1faf3214b0681aab5772bd15ffdc757df"
+        }
+      ]
+    }
+  ]
+}

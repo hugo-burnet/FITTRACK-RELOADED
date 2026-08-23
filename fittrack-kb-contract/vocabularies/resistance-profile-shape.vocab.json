@@ -1,0 +1,40 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "resistance-profile-shape",
+  "title": "Profils de résistance",
+  "origin": "corpus",
+  "description": "Enum proposé littéralement par F2 §10 pour le champ resistanceProfile.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "ascendant",
+      "label": "Ascendant",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "descendant",
+      "label": "Descendant",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "en_cloche",
+      "label": "En cloche",
+      "origin": "corpus",
+      "corpusRef": "F2 §10"
+    },
+    {
+      "term": "constant_approximatif",
+      "label": "Constant approximatif",
+      "origin": "corpus",
+      "corpusRef": "F2 §10 et §2.3"
+    },
+    {
+      "term": "inconnu",
+      "label": "Non documenté",
+      "origin": "modeling_decision"
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "note": "Ce que chaque cas invalide doit produire. failsAt distingue les violations que le schéma refuse lui-même de celles qui dépassent JSON Schema et sont attrapées par un invariant. Le validateur exige que l'échec corresponde à la raison attendue : une fixture qui échoue pour une coquille ne teste rien.",
+  "cases": [
+    {
+      "id": "INV-CASE-01",
+      "title": "Claim sans provenance",
+      "file": "cases.json",
+      "recordId": "claim.invalid.no-provenance.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "provenance"],
+      "protects": "INV-002"
+    },
+    {
+      "id": "INV-CASE-02",
+      "title": "DOI présent sans provenance déclarée, et source dite résolue sans identifiant vérifiable",
+      "file": "cases.json",
+      "recordId": "source.invalid.fabricated-doi.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "doiProvenance"],
+      "protects": "Aucune métadonnée bibliographique ajoutée sans provenance"
+    },
+    {
+      "id": "INV-CASE-03",
+      "title": "EXPERT_PRACTICE promue en fait établi",
+      "file": "cases.json",
+      "recordId": "claim.invalid.expert-practice-promoted.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["epistemicStatus", "enum"],
+      "protects": "EXPERT_PRACTICE et HYPOTHESIS ne peuvent jamais devenir des faits établis"
+    },
+    {
+      "id": "INV-CASE-04",
+      "title": "Observation EMG déclarée établie",
+      "file": "cases.json",
+      "recordId": "claim.invalid.emg-as-hypertrophy.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["epistemicStatus", "enum"],
+      "protects": "INV-005"
+    },
+    {
+      "id": "INV-CASE-05",
+      "title": "Évaluation EMG portant une confiance élevée sur l'ampleur",
+      "file": "cases.json",
+      "recordId": "assessment.invalid.emg-high-confidence.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["supportsHypertrophySuperiority"],
+      "protects": "INV-005"
+    },
+    {
+      "id": "INV-CASE-06",
+      "title": "Disparition de cannotConclude",
+      "file": "cases.json",
+      "recordId": "claim.invalid.missing-cannot-conclude.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "cannotConclude"],
+      "protects": "INV-004"
+    },
+    {
+      "id": "INV-CASE-07",
+      "title": "Charge mécanique transformée en risque démontré sans donnée épidémiologique",
+      "file": "cases.json",
+      "recordId": "observation.invalid.load-as-danger.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "epidemiologicalEvidence"],
+      "protects": "INV-006"
+    },
+    {
+      "id": "INV-CASE-08",
+      "title": "Contre-indication sans énoncé cité ni source",
+      "file": "cases.json",
+      "recordId": "contraindication.invalid.unjustified.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "quotedStatement"],
+      "protects": "INV-008"
+    },
+    {
+      "id": "INV-CASE-09",
+      "title": "Red flag sans action ni urgence",
+      "file": "cases.json",
+      "recordId": "redflag.invalid.no-action.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "action"],
+      "protects": "INV-007"
+    },
+    {
+      "id": "INV-CASE-10",
+      "title": "Substitution sans critère justificatif",
+      "file": "cases.json",
+      "recordId": "substitution.invalid.no-criterion.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["matchingDimensions", "minItems"],
+      "protects": "Une substitution doit citer le critère qui la justifie"
+    },
+    {
+      "id": "INV-CASE-11",
+      "title": "Propriété d'exercice non triviale sans attestation",
+      "file": "cases.json",
+      "recordId": "exercise.invalid.unattested-property.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "attestation"],
+      "protects": "Les champs non triviaux d'un exercice pointent vers ce qui les justifie"
+    },
+    {
+      "id": "INV-CASE-12",
+      "title": "Politique produit présentée comme vérité médicale",
+      "file": "cases.json",
+      "recordId": "policy.invalid.medical-truth.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["presentedAsMedicalTruth", "const"],
+      "protects": "Une politique FitTrack n'est jamais présentée comme une vérité médicale"
+    },
+    {
+      "id": "INV-CASE-13",
+      "title": "Règle normative sans claim justificatif ni décision produit",
+      "file": "cases.json",
+      "recordId": "adaptation.invalid.unjustified-rule.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["anyOf"],
+      "protects": "Une règle normative référence une claim ou une décision produit explicite"
+    },
+    {
+      "id": "INV-CASE-14",
+      "title": "Règle d'adaptation qui ne cède pas devant un red flag actif",
+      "file": "cases.json",
+      "recordId": "adaptation.invalid.overrides-red-flag.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["yieldsToActiveRedFlag", "const"],
+      "protects": "INV-007"
+    },
+    {
+      "id": "INV-CASE-15",
+      "title": "Condition canonique portant l'état dynamique d'un utilisateur",
+      "file": "cases.json",
+      "recordId": "condition.invalid.runtime-leak.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["additionalProperties"],
+      "protects": "INV-015"
+    },
+    {
+      "id": "INV-CASE-16",
+      "title": "Entité validée retirée sans décision de retraite",
+      "file": "cases.json",
+      "recordId": "zone.invalid.retired-without-decision.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["required", "retirementDecisionRef"],
+      "protects": "INV-012"
+    },
+    {
+      "id": "INV-CASE-17",
+      "title": "Fusion de sources sur simple similarité, malgré un statut ambigu",
+      "file": "cases.json",
+      "recordId": "resolution.invalid.similarity-merge.0001",
+      "failsAt": "schema",
+      "expectedErrorContains": ["mergeAllowed", "const"],
+      "protects": "INV-009"
+    },
+    {
+      "id": "INV-CASE-18",
+      "title": "Référence interne orpheline",
+      "file": "cases.json",
+      "recordId": "claim.invalid.orphan-reference.0001",
+      "failsAt": "invariant",
+      "expectedInvariant": "INV-001",
+      "expectedDetailContains": ["source.inexistante.0099", "entité inconnue"],
+      "protects": "INV-001",
+      "whyNotSchema": "JSON Schema ne peut pas vérifier qu'un identifiant existe ailleurs dans le jeu de données. C'est précisément ce que les invariants exécutables couvrent."
+    },
+    {
+      "id": "INV-CASE-19",
+      "title": "Identifiant changé lors d'une simple reformulation",
+      "file": "cases.json",
+      "recordId": "claim.invalid.reworded-new-id.0001",
+      "failsAt": "invariant",
+      "expectedInvariant": "INV-010",
+      "expectedDetailContains": ["claim.invalid.reworded-new-id.0001", "absent du registre"],
+      "protects": "INV-010",
+      "whyNotSchema": "Le schéma ne peut pas savoir qu'un identifiant est neuf : seul le registre le sait. Une reformulation doit incrémenter la révision et changer le contentHash, jamais l'identifiant."
+    },
+    {
+      "id": "INV-CASE-20",
+      "title": "Hausse de certitude sans preuve nouvelle",
+      "file": "cases.json",
+      "recordId": "assessment.invalid.certainty-inflation.0001",
+      "failsAt": "invariant",
+      "expectedInvariant": "INV-003",
+      "expectedDetailContains": ["relève la confiance sans ajouter de source"],
+      "protects": "INV-003",
+      "whyNotSchema": "La comparaison porte sur deux entités distinctes, l'évaluation courante et celle qu'elle remplace. JSON Schema valide un document à la fois."
+    }
+  ]
+}

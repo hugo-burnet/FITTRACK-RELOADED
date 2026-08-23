@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/condition.schema.json",
+  "title": "Condition",
+  "description": "Condition ou pattern symptomatique, au niveau des connaissances générales. Migration de conditionRecord de F4, avec une correction structurelle : aucun état dynamique d'un utilisateur ne vit ici.\n\nF4 mélangeait dans un même objet les définitions générales (symptômes typiques, questions à poser, red flags) et l'état d'une personne à une date (irritability, testedLoad, symptomDuring, symptomAfter24h). Ces champs sont partis dans fittrack-runtime ; ce schéma les interdit par additionalProperties et par un test dédié, pour que la régression soit impossible et pas seulement déconseillée.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "provenance",
+    "label",
+    "description",
+    "scope",
+    "diagnosticCertaintyRequired",
+    "symptoms",
+    "clinicalQuestionRefs",
+    "redFlagRefs",
+    "evidenceLevel",
+    "sourceRefs",
+    "uncertainty"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "description": "Un état postopératoire impose le protocole du professionnel : F3 §9 pose que celui-ci prévaut sur toute logique de coaching.",
+      "if": { "properties": { "scope": { "const": "postoperative_state" } }, "required": ["scope"] },
+      "then": {
+        "properties": {
+          "diagnosticCertaintyRequired": { "const": "postoperative_protocol_required" },
+          "clinicianProtocolPrevails": { "const": true }
+        },
+        "required": ["clinicianProtocolPrevails"]
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "description": { "type": "string", "minLength": 1 },
+    "scope": {
+      "enum": ["symptom_pattern", "known_diagnosis", "postoperative_state", "general_principle"],
+      "description": "Repris verbatim de F4 $defs.conditionRecord.scope."
+    },
+    "diagnosticCertaintyRequired": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/diagnosticCertaintyRequired" },
+    "diagnosticGuardrail": {
+      "type": ["string", "null"],
+      "description": "Ce que l'IA ne doit pas conclure à propos de cette condition. F3 §12 en donne des formulations interdites littérales."
+    },
+    "clinicianProtocolPrevails": { "type": "boolean" },
+
+    "symptoms": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "symptomRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "clinicalQuestionRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "redFlagRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+
+    "toleranceDimensionRefs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Quelles dimensions il faut OBSERVER pour cette condition. Ce que l'utilisateur rapporte réellement vit dans le runtime."
+    },
+    "commonlySensitiveAxes": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Sensibilités fréquemment rapportées. Jamais des interdictions : F4 lui-même avertit de ne pas convertir une sensibilité fréquente en interdiction absolue.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["axis", "note", "isProhibition"],
+        "properties": {
+          "axis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceAxis" },
+          "note": { "type": "string", "minLength": 1 },
+          "isProhibition": { "const": false }
+        }
+      }
+    },
+    "adaptationRuleRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "contraindicationRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "referralRuleRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "progressionCriteria": { "type": "array", "items": { "type": "string" } },
+    "regressionCriteria": { "type": "array", "items": { "type": "string" } },
+
+    "evidenceLevel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["knowledgeType", "clinicalEvidenceLevel", "directness"],
+      "description": "L'axe A/B/C/D de F4 est conservé, mais expert_practice en est retiré : ce n'était pas un niveau de preuve, c'était une nature de connaissance. Elle a migré vers knowledgeType.",
+      "properties": {
+        "knowledgeType": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType" },
+        "clinicalEvidenceLevel": {
+          "oneOf": [
+            { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/clinicalEvidenceLevel" },
+            { "type": "null" }
+          ]
+        },
+        "confidence": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceLevel" },
+        "directness": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/directness" },
+        "rationale": { "type": "string" }
+      }
+    },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "uncertainty": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Obligatoire, y compris vide. Une condition clinique sans incertitude déclarée est plus suspecte qu'une condition qui en déclare trois."
+    },
+    "expertPractice": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "knowledgeType"],
+        "properties": {
+          "statement": { "type": "string", "minLength": 1 },
+          "knowledgeType": { "const": "EXPERT_PRACTICE" },
+          "rationale": { "type": "string" },
+          "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        }
+      }
+    }
+  }
+}

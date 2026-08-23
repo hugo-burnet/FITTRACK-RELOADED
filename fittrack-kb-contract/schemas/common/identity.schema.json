@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/common/identity.schema.json",
+  "title": "Identité, cycle de vie et représentation de l'inconnu",
+  "description": "Enveloppe partagée par toutes les entités canoniques de la KB. L'identifiant est attribué une fois et ne dépend jamais du texte courant ; le hash détecte le changement mais ne constitue pas l'identité.",
+
+  "$defs": {
+    "entityId": {
+      "type": "string",
+      "description": "Identifiant métier attribué une fois et conservé dans governance/id-registry.json. Forme : <kind>.<domaine>[.<sous-domaine>].<séquence>.",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+$",
+      "minLength": 5,
+      "maxLength": 120
+    },
+
+    "slug": {
+      "type": "string",
+      "description": "Libellé stable lisible. PEUT évoluer sans casser aucune relation : rien ne référence un slug.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 120
+    },
+
+    "contentHash": {
+      "type": "string",
+      "description": "sha256 du contenu normalisé. Détecte un changement. N'entre JAMAIS dans l'identité ni dans une clé de déduplication.",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Incrémentée à chaque modification approuvée du contenu. Une reformulation incrémente la révision et change le contentHash, jamais l'id."
+    },
+
+    "lifecycleStatus": {
+      "enum": ["draft", "candidate", "in_review", "approved", "superseded", "retired"],
+      "description": "Aucune suppression physique. Une entité qui sort de la KB devient superseded ou retired."
+    },
+
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "$ref": "#/$defs/lifecycleStatus" },
+        "createdAt": { "type": "string", "format": "date" },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date",
+          "description": "Date de dernière revue humaine. Obligatoire pour toute entité normative (cf. clinical/*, policies/*)."
+        },
+        "supersededBy": { "$ref": "#/$defs/entityId" },
+        "retiredAt": { "type": "string", "format": "date" },
+        "retirementDecisionRef": {
+          "$ref": "#/$defs/entityId",
+          "description": "ReviewDecision justifiant le retrait. Exigé par INV-012 : pas de disparition sans décision tracée."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "superseded" } }, "required": ["status"] },
+          "then": { "required": ["supersededBy"] }
+        },
+        {
+          "if": { "properties": { "status": { "const": "retired" } }, "required": ["status"] },
+          "then": { "required": ["retiredAt", "retirementDecisionRef"] }
+        }
+      ]
+    },
+
+    "unknownFieldNote": {
+      "type": "object",
+      "description": "Représentation explicite et uniforme d'un champ non renseignable. Un champ absent sans note est une omission ; un champ listé ici est une absence documentée.",
+      "additionalProperties": false,
+      "required": ["field", "reason"],
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "reason": {
+          "enum": [
+            "not_in_corpus",
+            "ambiguous_in_corpus",
+            "pending_human_review",
+            "not_applicable",
+            "requires_external_enrichment"
+          ]
+        },
+        "note": { "type": "string" }
+      }
+    },
+
+    "unknownFields": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/unknownFieldNote" },
+      "uniqueItems": true
+    },
+
+    "identityEnvelope": {
+      "type": "object",
+      "description": "À composer via allOf dans chaque schéma d'entité canonique.",
+      "required": ["id", "slug", "revision", "lifecycle"],
+      "properties": {
+        "id": { "$ref": "#/$defs/entityId" },
+        "slug": { "$ref": "#/$defs/slug" },
+        "revision": { "$ref": "#/$defs/revision" },
+        "contentHash": { "$ref": "#/$defs/contentHash" },
+        "lifecycle": { "$ref": "#/$defs/lifecycle" },
+        "unknownFields": { "$ref": "#/$defs/unknownFields" }
+      }
+    }
+  }
+}

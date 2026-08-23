@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/tolerance-observation.schema.json",
+  "title": "ToleranceObservation",
+  "description": "Ce qu'un utilisateur a toléré, à une date, avec une charge donnée. Reçoit les quatre champs que F4 avait placés dans la KB : testedRange, testedLoad, symptomDuring, symptomAfter24h.\n\nCes champs sont datés et personnels par nature. Les laisser dans une Condition canonique aurait signifié qu'une base de connaissances scientifique change quand un utilisateur soulève une barre.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis", "axis", "status"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeEnvelope" },
+    {
+      "description": "Un statut « toléré » sans aucune condition de test est une généralisation, pas une observation. Au moins une des trois conditions d'exposition doit être renseignée.",
+      "if": { "properties": { "status": { "enum": ["tolerated", "conditionally_tolerated", "irritating"] } }, "required": ["status"] },
+      "then": {
+        "anyOf": [
+          { "required": ["testedLoad"], "properties": { "testedLoad": { "type": "string" } } },
+          { "required": ["testedRange"], "properties": { "testedRange": { "type": "string" } } },
+          { "required": ["exerciseVariantRef"] }
+        ]
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/runtimeId" },
+    "subjectRef": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/subjectRef" },
+    "observedAt": { "type": "string", "format": "date-time" },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" },
+
+    "axis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceAxis" },
+    "dimensionDefinition": { "$ref": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json#/$defs/kbReference" },
+    "status": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceStatus" },
+    "testedRange": { "type": ["string", "null"] },
+    "testedLoad": { "type": ["string", "null"] },
+    "symptomDuring": { "type": ["number", "null"], "minimum": 0, "maximum": 10 },
+    "symptomAfter24h": { "type": ["number", "null"], "minimum": 0, "maximum": 10 },
+    "exerciseVariantRef": { "type": ["string", "null"] },
+    "sessionRef": { "type": ["string", "null"] },
+    "notes": { "type": "string" }
+  }
+}

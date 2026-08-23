@@ -1,0 +1,429 @@
+{
+  "note": "Politiques produit, observations runtime et gouvernance. Les politiques ne portent aucune provenance de corpus : elles viennent d'une décision, pas d'une source. Les observations runtime non plus : elles viennent d'un utilisateur et d'une date. C'est la frontière que le schéma rend infranchissable, et non une convention de rangement.",
+  "collections": [
+    {
+      "kind": "product-safety-policy",
+      "records": [
+        {
+          "id": "policy.safety.pain-guardrail.0001",
+          "slug": "garde-fou-douleur-0-3",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "knowledgeType": "PRODUCT_POLICY",
+          "presentedAsMedicalTruth": false,
+          "title": "Garde-fou de douleur 0–3/10 pendant l'exercice",
+          "policyStatement": "FitTrack propose par défaut de rester dans une gêne de 0 à 3/10 pendant l'exercice, avec retour au niveau de base le lendemain, plutôt que le seuil de 5/10 utilisé dans le protocole de recherche le mieux documenté.",
+          "decision": {
+            "decidedBy": "Hugo (propriétaire produit FitTrack)",
+            "decidedAt": "2026-08-23",
+            "rationale": "L'application est mono-utilisateur, sans supervision clinique, et son écran le plus important est utilisé en salle, seul, en cours de séance. Dans ce contexte, un garde-fou plus conservateur que le protocole publié est un choix produit assumé : il coûte un peu de progression et retire un risque d'interprétation."
+          },
+          "informedByClaimRefs": [
+            "claim.clinical.threshold.0001",
+            "claim.clinical.pain.0001"
+          ],
+          "informedBySourceRefs": [
+            "source.sprague-2021-pain-monitoring",
+            "source.smith-2017-painful-exercise"
+          ],
+          "corpusContextFragmentRefs": [
+            "frag.f3.0013",
+            "frag.f3.0002"
+          ],
+          "divergesFromCorpus": true,
+          "divergenceRationale": "Le corpus autorise explicitement ce choix et en fixe la condition : « l'IA peut choisir 0–3/10 comme garde-fou produit plus prudent, à condition de le nommer politique de sécurité et non vérité médicale ». La divergence est donc prévue par le corpus lui-même, pas contre lui.",
+          "userFacingFraming": "C'est un réglage de prudence de FitTrack, pas un seuil médical. Les protocoles publiés tolèrent davantage. Si votre professionnel de santé vous a donné une autre consigne, la sienne prime.",
+          "appliesTo": [
+            "pain_monitoring",
+            "coaching_flow",
+            "load_progression"
+          ],
+          "contentHash": "sha256:6d3a5e7f79219bd49c128e3bf56f24d82ee9457dbb472aeacc13c634aef205ca"
+        },
+        {
+          "id": "policy.safety.numeric-ranges.0001",
+          "slug": "plages-chiffrees-revisables",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "knowledgeType": "PRODUCT_POLICY",
+          "presentedAsMedicalTruth": false,
+          "title": "Toute recommandation chiffrée est une plage de départ révisable",
+          "policyStatement": "FitTrack n'affiche jamais un nombre de séries, un RIR ou un temps de repos comme une valeur optimale. Chaque chiffre est présenté comme une plage de départ, accompagnée de sa population, de son objectif, de son niveau de confiance et de ses conditions d'application.",
+          "decision": {
+            "decidedBy": "Hugo (propriétaire produit FitTrack)",
+            "decidedAt": "2026-08-23",
+            "rationale": "Le corpus clôt son rapport de programmation par exactement cette règle de prudence pour le dataset. L'appliquer à l'interface, et pas seulement aux données, évite qu'un chiffre correctement encodé redevienne une prescription à l'affichage."
+          },
+          "informedByClaimRefs": [
+            "claim.training.volume.0002",
+            "claim.training.failure.0001",
+            "claim.training.rest.0001"
+          ],
+          "corpusContextFragmentRefs": [
+            "frag.f1.0018"
+          ],
+          "divergesFromCorpus": false,
+          "userFacingFraming": "Point de départ, à ajuster selon votre progression et votre récupération. Ce n'est pas une valeur optimale : il n'en existe pas d'universelle.",
+          "appliesTo": [
+            "coaching_flow",
+            "load_progression",
+            "messaging"
+          ],
+          "contentHash": "sha256:83beb103207bd997bb7d8141ce4c5d81dce19d39db74d5b4fb9a1691cb643e22"
+        }
+      ]
+    },
+    {
+      "kind": "output-policy",
+      "records": [
+        {
+          "id": "policy.output.non-diagnostic.0001",
+          "slug": "sorties-non-diagnostiques",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "knowledgeType": "PRODUCT_POLICY",
+          "presentedAsMedicalTruth": false,
+          "title": "Formulations interdites et éléments obligatoires des sorties cliniques",
+          "scope": [
+            "clinical_advice",
+            "uncertainty_reporting",
+            "numeric_recommendations"
+          ],
+          "forbiddenFormulations": [
+            {
+              "text": "C'est une tendinite/hernie/instabilité.",
+              "reason": "Nomme un diagnostic que rien ne permet d'établir à distance.",
+              "fragmentRef": "frag.f3.0018"
+            },
+            {
+              "text": "Votre disque est fragile.",
+              "reason": "Affirmation structurelle non vérifiable et durablement anxiogène.",
+              "fragmentRef": "frag.f3.0018"
+            },
+            {
+              "text": "Ce mouvement est dangereux pour tout le monde.",
+              "reason": "Convertit une sensibilité individuelle en interdiction universelle.",
+              "fragmentRef": "frag.f3.0018"
+            },
+            {
+              "text": "3/10 est toujours sans danger.",
+              "reason": "Présente un garde-fou produit comme un seuil clinique validé.",
+              "fragmentRef": "frag.f3.0018"
+            },
+            {
+              "text": "Continuez malgré la douleur.",
+              "reason": "Transforme la tolérance encadrée d'une gêne en injonction à ignorer une aggravation.",
+              "fragmentRef": "frag.f3.0018"
+            },
+            {
+              "text": "L'absence de fièvre exclut une infection.",
+              "reason": "La fièvre n'était présente que chez 55 % des cas de la revue citée.",
+              "fragmentRef": "frag.f3.0018"
+            },
+            {
+              "text": "Votre IRM prouve que la douleur vient de là.",
+              "reason": "Les signes dégénératifs sont fréquents chez les personnes asymptomatiques.",
+              "fragmentRef": "frag.f3.0018"
+            }
+          ],
+          "requiredElements": [
+            {
+              "element": "Dire explicitement que la cause ne peut pas être déterminée à distance.",
+              "reason": "Empêche la sortie de se lire comme un avis diagnostique.",
+              "fragmentRef": "frag.f3.0025"
+            },
+            {
+              "element": "Nommer ce qui doit faire arrêter la progression et consulter.",
+              "reason": "Une adaptation sans critère d'arrêt laisse l'utilisateur seul face à une aggravation.",
+              "fragmentRef": "frag.f3.0025"
+            },
+            {
+              "element": "Demander de vérifier la réponse le soir et le lendemain.",
+              "reason": "La trajectoire sur 24–48 h prime sur la sensation immédiate.",
+              "fragmentRef": "frag.f3.0025"
+            }
+          ],
+          "recommendedFraming": [
+            "Je ne peux pas déterminer la cause à distance. Comme aucun signe d'alerte n'a été rapporté, on peut tester une adaptation conservatrice : réduire la charge et l'amplitude, garder une variante confortable, puis vérifier la réponse ce soir et demain."
+          ],
+          "decision": {
+            "decidedBy": "Hugo (propriétaire produit FitTrack)",
+            "decidedAt": "2026-08-23",
+            "rationale": "F3 §12 fournit ces interdits verbatim. Les paraphraser leur ferait perdre la précision qui les rend testables ; ils sont donc conservés mot pour mot et rattachés à leur fragment."
+          },
+          "corpusContextFragmentRefs": [
+            "frag.f3.0018",
+            "frag.f3.0025",
+            "frag.f3.0023"
+          ],
+          "auditTargets": [
+            "sur-réassurance",
+            "diagnostics implicites",
+            "restrictions définitives injustifiées",
+            "omission de red flags",
+            "dérive des seuils numériques"
+          ],
+          "contentHash": "sha256:e27d8799e02fcdb2a48a2983f271070347c18154073ee745541c75c538f38989"
+        }
+      ]
+    },
+    {
+      "kind": "symptom-observation",
+      "records": [
+        {
+          "id": "rt.symptom-observation.7f3a1c02-9b4e-4d18-a5c7-2e10b8d4f931",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-20T18:42:00Z",
+          "recordedAt": "2026-08-20T18:45:00Z",
+          "basis": "user_report",
+          "reportedDescription": "Tiraillement dans le bas du dos sur les dernières répétitions de squat, pas de douleur qui descend dans la jambe.",
+          "symptomDefinition": {
+            "kbEntityRef": "symptom.next-morning-return-to-baseline.0001",
+            "kbEntityKind": "symptom",
+            "kbRevisionAtRecording": 1
+          },
+          "bodyRegion": "Rachis lombaire",
+          "intensity": 3,
+          "moment": "during_exercise",
+          "exerciseVariantRef": "variant.squat.barbell-back.0001",
+          "neurologicalFeatures": [],
+          "redFlagCandidateRefs": [
+            "redflag.progressive-neuro-deficit.0001"
+          ],
+          "screeningOutcome": "no_red_flag",
+          "notes": "Donnée d'exemple, non réelle. Aucune provenance de corpus : cette observation ne vient d'aucun fichier scientifique, elle vient d'une personne à une date. C'est exactement ce que F4 plaçait à tort dans la KB."
+        }
+      ]
+    },
+    {
+      "kind": "tolerance-observation",
+      "records": [
+        {
+          "id": "rt.tolerance-observation.c81d4e60-3a77-4b92-8f05-6d2c9a1e7b44",
+          "subjectRef": "local-user",
+          "observedAt": "2026-08-20T18:42:00Z",
+          "recordedAt": "2026-08-21T08:10:00Z",
+          "basis": "observed_response",
+          "axis": "charge_axiale",
+          "dimensionDefinition": {
+            "kbEntityRef": "tolerance.axial-load.0001",
+            "kbEntityKind": "tolerance-dimension-definition",
+            "kbRevisionAtRecording": 1
+          },
+          "status": "conditionally_tolerated",
+          "testedRange": "Squat jusqu'à mi-cuisse, sans descente complète",
+          "testedLoad": "70 kg, 3 séries de 6",
+          "symptomDuring": 3,
+          "symptomAfter24h": 1,
+          "exerciseVariantRef": "variant.squat.barbell-back.0001",
+          "notes": "Donnée d'exemple, non réelle. Les quatre champs testedRange, testedLoad, symptomDuring et symptomAfter24h viennent tous de F4 $defs/toleranceDimension, où ils cohabitaient avec la définition générale de l'axe. Ils vivent ici, datés et rattachés à une personne ; la définition générale est restée en KB."
+        }
+      ]
+    },
+    {
+      "kind": "review-decision",
+      "records": [
+        {
+          "id": "decision.2026-08-23.0001",
+          "slug": "decision-alias-acsm-currier",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "decidedAt": "2026-08-23",
+          "decidedBy": "Hugo (revue humaine)",
+          "targetRefs": [
+            "resolution.s1.acsm-currier-alias",
+            "source.currier-2026-acsm-position-stand"
+          ],
+          "action": "merge",
+          "mergeBasis": "human_review_decision",
+          "riskTrigger": [
+            "ambiguous_source"
+          ],
+          "rationale": "La preuve de l'identité est interne au corpus : le libellé « ACSM, 2026 » pointe en §7 l'URL que le registre §20 attribue à Currier et al. Fusion acceptée, avec conservation des deux libellés comme alias.",
+          "resultingState": "approved",
+          "contentHash": "sha256:6d3369a2b1c36b4574aad5ce4aa18f5e2bac1415340e67dc5e522fdb38b4f9f5"
+        },
+        {
+          "id": "decision.2026-08-23.0002",
+          "slug": "decision-wolf-trois-localisateurs",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "decidedAt": "2026-08-23",
+          "decidedBy": "Hugo (revue humaine)",
+          "targetRefs": [
+            "resolution.s2.wolf-three-locators",
+            "source.wolf-2025-lengthened-partials"
+          ],
+          "action": "merge",
+          "mergeBasis": "identical_pmid",
+          "riskTrigger": [
+            "ambiguous_source"
+          ],
+          "rationale": "Le registre §20 donne PMID 39959841 et DOI 10.7717/peerj.18904 pour cet essai. Les trois localisateurs y renvoient. Fusion sur identifiant fort.",
+          "resultingState": "approved",
+          "contentHash": "sha256:34d2f4793def545656edadf9ade1776c0055a34174c7ec86a64204a6e0ba318b"
+        },
+        {
+          "id": "decision.2026-08-23.0003",
+          "slug": "decision-haugen-heidel-non-fusion",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "decidedAt": "2026-08-23",
+          "decidedBy": "Hugo (revue humaine)",
+          "targetRefs": [
+            "resolution.s3.haugen-vs-heidel",
+            "source.haugen-2023-free-weight-vs-machine",
+            "source.heidel-2023-free-weight-vs-machine"
+          ],
+          "action": "keep_separate",
+          "riskTrigger": [
+            "ambiguous_source",
+            "uncertain_merge"
+          ],
+          "rationale": "Deux noms d'auteur, deux localisateurs sans recouvrement, aucun identifiant fort partagé. La ressemblance de revue, d'année et d'objet est exactement le type de similarité qui ne suffit pas à fusionner. Décision de garder deux entrées et d'escalader vers une vérification bibliographique externe, hors périmètre de la phase 2.",
+          "resultingState": "escalated",
+          "contentHash": "sha256:5991f62b55dd9c92729251d31c7063643081935e05ba48f389bad4d363605aec"
+        }
+      ]
+    },
+    {
+      "kind": "kb-release",
+      "records": [
+        {
+          "id": "release.kb.0-1-0",
+          "slug": "release-0-1-0",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "version": "0.1.0",
+          "contractVersion": "1.0.0",
+          "releasedAt": "2026-08-23",
+          "corpusSnapshot": [
+            {
+              "corpusFileId": "corpus.f1.programmation-hypertrophie",
+              "contentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b",
+              "corpusDate": "2026-08-23"
+            },
+            {
+              "corpusFileId": "corpus.f2.anatomie-biomecanique",
+              "contentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685",
+              "corpusDate": "2026-08-23"
+            },
+            {
+              "corpusFileId": "corpus.f3.coaching-clinique",
+              "contentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202",
+              "corpusDate": "2026-08-23"
+            },
+            {
+              "corpusFileId": "corpus.f4.schema-ia-coaching",
+              "contentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5",
+              "corpusDate": "2026-08-23"
+            }
+          ],
+          "entityCounts": {
+            "claim": 15,
+            "source": 10,
+            "evidence-assessment": 6,
+            "evidence-conflict": 2,
+            "evidence-gap": 2,
+            "exercise": 5,
+            "exercise-variant": 5,
+            "substitution-relation": 3,
+            "condition": 2,
+            "red-flag": 4,
+            "safety-zone": 3,
+            "product-safety-policy": 2,
+            "output-policy": 1
+          },
+          "blockingChecks": [
+            {
+              "invariantId": "INV-001",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-002",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-005",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-006",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-007",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-008",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-013",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-014",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-015",
+              "blocking": true,
+              "passed": true
+            },
+            {
+              "invariantId": "INV-004",
+              "blocking": false,
+              "passed": true,
+              "note": "Vérifié sur la seule projection existante à ce stade."
+            },
+            {
+              "invariantId": "INV-011",
+              "blocking": false,
+              "passed": true,
+              "note": "Vérifié sur la fragmentation ; le pipeline complet n'existe pas encore."
+            }
+          ],
+          "changelog": [
+            "Première release du golden set de phase 2. Contenu restreint et destiné à la revue humaine, pas à la consommation par un coach."
+          ],
+          "immutable": true,
+          "contentHash": "sha256:bff383dc9ef22abee9a26d1a5e9b46373a512fd912109624514c0dc0bcea0a9d"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,476 @@
+{
+  "note": "Évaluations de preuve, contradictions et lacunes. La claim sur le volume porte DEUX évaluations : la cartographie épistémique globale de F1 §1.4, puis la ligne détaillée de F1 §2 qui décompose la confiance par aspect. La seconde remplace la première sans l'effacer — c'est la démonstration que l'historique n'est jamais écrasé.",
+  "collections": [
+    {
+      "kind": "evidence-assessment",
+      "records": [
+        {
+          "id": "assessment.volume.0001",
+          "slug": "volume-cartographie-epistemique",
+          "revision": 1,
+          "lifecycle": {
+            "status": "superseded",
+            "createdAt": "2026-08-23",
+            "supersededBy": "assessment.volume.0002"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0008",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "claimRef": "claim.training.volume.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.training.programming-v1",
+          "knowledgeType": "EVIDENCE",
+          "directness": "direct_hypertrophy_measured",
+          "evidenceTypes": [
+            "position_stand",
+            "meta_regression"
+          ],
+          "confidenceByAspect": [
+            {
+              "aspect": "direction",
+              "confidence": "high",
+              "rationale": "Rangé par F1 §1.4 parmi les résultats solidement établis, au même titre que l'efficacité générale de l'entraînement en résistance."
+            }
+          ],
+          "sourceRefs": [
+            "source.pelland-2026-dose-response"
+          ],
+          "supportsHypertrophySuperiority": true,
+          "assessedBy": "human_curator",
+          "notes": "Évaluation grossière issue de la cartographie épistémique globale : elle ne dit rien de la forme de la courbe. Conservée telle quelle.",
+          "contentHash": "sha256:17b009e2682733a7bfb5551320f0a8ffae3c9db4bc34635a5dc50379512173db"
+        },
+        {
+          "id": "assessment.volume.0002",
+          "slug": "volume-confiance-par-aspect",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0001",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_cell",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "claimRef": "claim.training.volume.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.training.programming-v1",
+          "knowledgeType": "EVIDENCE",
+          "directness": "direct_hypertrophy_measured",
+          "evidenceTypes": [
+            "position_stand",
+            "meta_regression",
+            "meta_analysis"
+          ],
+          "confidenceByAspect": [
+            {
+              "aspect": "direction",
+              "confidence": "high",
+              "rationale": "« Élevé pour la direction » — F1 §2, colonne Confiance."
+            },
+            {
+              "aspect": "dose_response_shape",
+              "confidence": "moderate",
+              "rationale": "« modéré pour la forme de la courbe » — même cellule. Aplatir les deux vers high aurait gonflé la certitude sur la courbe ; les aplatir vers moderate aurait dégradé une direction pourtant solidement établie."
+            },
+            {
+              "aspect": "threshold",
+              "confidence": "very_low",
+              "rationale": "Le corpus refuse tout seuil exact de surentraînement et toute frontière universelle entre volume minimal efficace, optimum et maximum récupérable."
+            }
+          ],
+          "sourceRefs": [
+            "source.pelland-2026-dose-response",
+            "source.currier-2026-acsm-position-stand"
+          ],
+          "supersedes": "assessment.volume.0001",
+          "changeRationale": "La cellule de confiance de F1 §2 décompose ce que la cartographie §1.4 agrégeait. Aucune confiance n'est relevée : la direction reste élevée, et deux aspects moins certains apparaissent. Une source supplémentaire est ajoutée.",
+          "supportsHypertrophySuperiority": true,
+          "assessedBy": "human_curator",
+          "contentHash": "sha256:aa28ca9a5a1358ba22ca893ab88ae44e83b4e0ad0c407f9ceee8594797158470"
+        },
+        {
+          "id": "assessment.emg.0001",
+          "slug": "emg-hip-thrust-evaluation",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0001",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "claimRef": "claim.biomechanics.emg.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.biomechanics.selection-v1",
+          "knowledgeType": "EMG_OBSERVATION",
+          "directness": "emg_only",
+          "evidenceTypes": [
+            "emg_study"
+          ],
+          "confidenceByAspect": [
+            {
+              "aspect": "descriptive_accuracy",
+              "confidence": "high",
+              "rationale": "Les valeurs d'amplitude sont mesurées et rapportées avec précision."
+            },
+            {
+              "aspect": "direction",
+              "confidence": "low",
+              "rationale": "L'écart d'amplitude est net, mais F2 §0.1 en fait un rang 6 de sa hiérarchie et interdit d'en tirer une direction d'effet hypertrophique."
+            }
+          ],
+          "sourceRefs": [
+            "source.plotkin-2023-hipthrust-squat"
+          ],
+          "supportsHypertrophySuperiority": false,
+          "assessedBy": "human_curator",
+          "notes": "Le schéma refuse structurellement qu'une évaluation emg_only porte une confiance élevée ou modérée sur l'ampleur, la spécificité régionale ou l'équivalence. C'est la traduction exécutable de la règle non négociable de F2 §0.1.",
+          "contentHash": "sha256:dcd74364cfc3eee3d02dd532dcf22bf721fc99d7685a16854fd6ca50f228604b"
+        },
+        {
+          "id": "assessment.triceps.0001",
+          "slug": "triceps-overhead-evaluation",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "claimRef": "claim.exercise.triceps-longhead.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.biomechanics.selection-v1",
+          "knowledgeType": "EVIDENCE",
+          "directness": "direct_hypertrophy_measured",
+          "evidenceTypes": [
+            "randomized_trial"
+          ],
+          "confidenceByAspect": [
+            {
+              "aspect": "direction",
+              "confidence": "high",
+              "rationale": "F2 qualifie ce résultat de « l'un des exemples les plus solides de tout ce rapport » reliant position articulaire, longueur musculaire et hypertrophie régionale mesurée."
+            },
+            {
+              "aspect": "magnitude",
+              "confidence": "moderate",
+              "rationale": "Essai contrôlé unique."
+            },
+            {
+              "aspect": "generalization",
+              "confidence": "low",
+              "rationale": "F2 §3.3 qualifie l'extension aux autres muscles biarticulaires d'extrapolation biomécanique testée directement seulement pour le triceps et partiellement le quadriceps."
+            }
+          ],
+          "sourceRefs": [
+            "source.nunes-2022-overhead-triceps"
+          ],
+          "supportsHypertrophySuperiority": true,
+          "assessedBy": "human_curator",
+          "contentHash": "sha256:0cacdb5859d89b2ec3bdb318d707ca134d47f7ae0cebbbd71bfb965bdbfd2533"
+        },
+        {
+          "id": "assessment.freeweight.0001",
+          "slug": "poids-libres-machines-evaluation",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "claimRef": "claim.exercise.freeweight-machine.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.biomechanics.selection-v1",
+          "knowledgeType": "EVIDENCE",
+          "directness": "direct_hypertrophy_measured",
+          "evidenceTypes": [
+            "meta_analysis"
+          ],
+          "confidenceByAspect": [
+            {
+              "aspect": "equivalence",
+              "confidence": "moderate",
+              "rationale": "Méta-analyse, mais nombre limité d'études d'hypertrophie, limite signalée par les auteurs eux-mêmes."
+            },
+            {
+              "aspect": "generalization",
+              "confidence": "low",
+              "rationale": "Interventions de 9 semaines en moyenne, pas d'athlètes d'élite."
+            }
+          ],
+          "sourceRefs": [
+            "source.heidel-2023-free-weight-vs-machine"
+          ],
+          "supportsHypertrophySuperiority": false,
+          "assessedBy": "human_curator",
+          "notes": "L'évaluation s'appuie sur la source Heidel, dont l'attribution est en conflit ouvert avec Haugen. Ce conflit n'empêche pas d'évaluer la preuve : il empêche de fusionner les deux entrées.",
+          "contentHash": "sha256:d0bb335f7b6b8cf9957065a893603e7031a27167fd920777b63ba766fc2c3894"
+        },
+        {
+          "id": "assessment.clinical.pain.0001",
+          "slug": "douleur-encadree-evaluation",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0012",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "claimRef": "claim.clinical.pain.0001",
+          "assessedAt": "2026-08-23",
+          "hierarchyRef": "hierarchy.clinical.adaptation-v1",
+          "knowledgeType": "EVIDENCE",
+          "directness": "direct_clinical",
+          "evidenceTypes": [
+            "meta_analysis"
+          ],
+          "clinicalEvidenceLevel": "B_moderate",
+          "confidenceByAspect": [
+            {
+              "aspect": "direction",
+              "confidence": "moderate",
+              "rationale": "F3 §11 classe la réfutation de « douleur = dommage tissulaire en cours » en confiance modérée."
+            },
+            {
+              "aspect": "threshold",
+              "confidence": "very_low",
+              "rationale": "Aucun seuil numérique universel n'est validé."
+            }
+          ],
+          "sourceRefs": [
+            "source.smith-2017-painful-exercise"
+          ],
+          "supportsDemonstratedClinicalRisk": false,
+          "assessedBy": "human_curator",
+          "contentHash": "sha256:394fa74b24fa4a52647e94ac085afd24ccb96341ed1bba0e33fb5ca767a8f083"
+        }
+      ]
+    },
+    {
+      "kind": "evidence-conflict",
+      "records": [
+        {
+          "id": "conflict.biomechanics.emg-vs-hypertrophy",
+          "slug": "emg-elevee-contre-hypertrophie-equivalente",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0014",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "biomechanics",
+          "topic": "Une EMG plus élevée signifie-t-elle plus d'hypertrophie ?",
+          "dominantResult": {
+            "statement": "Hip thrust largement supérieur au squat en EMG fessière.",
+            "claimRefs": [
+              "claim.biomechanics.emg.0001"
+            ],
+            "sourceRefs": [
+              "source.plotkin-2023-hipthrust-squat"
+            ]
+          },
+          "opposingResult": {
+            "statement": "Hypertrophie fessière équivalente en IRM après 9 semaines.",
+            "claimRefs": [
+              "claim.exercise.gluteal-hypertrophy.0001"
+            ],
+            "sourceRefs": [
+              "source.plotkin-2023-hipthrust-squat"
+            ]
+          },
+          "probableCauses": [
+            "measurement_does_not_capture_construct",
+            "differing_measurement_method"
+          ],
+          "causeNarrative": "L'EMG de surface ne capture pas la tension mécanique totale, la durée sous tension à une longueur donnée, ni le recrutement en profondeur ; dissociation confirmée directement par cette étude.",
+          "resolutionState": "open_by_design",
+          "mustBeSurfacedToUser": true,
+          "contentHash": "sha256:f3a4ba07393ddd14b41e0351112472e55d22f8a9ab04417e7fd6e00d64620f20"
+        },
+        {
+          "id": "conflict.training.high-volume",
+          "slug": "dix-series-contre-absence-avantage-tres-haut-volume",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0009",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_row",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "topic": "Un volume très élevé apporte-t-il un avantage au-delà de 20 séries hebdomadaires ?",
+          "dominantResult": {
+            "statement": "Dose-réponse positive avec rendements décroissants.",
+            "claimRefs": [
+              "claim.training.volume.0001"
+            ],
+            "sourceRefs": [
+              "source.pelland-2026-dose-response"
+            ]
+          },
+          "opposingResult": {
+            "statement": "Plusieurs comparaisons 12–20 vs >20 séries ne distinguent pas quadriceps/biceps."
+          },
+          "probableCauses": [
+            "category_contrast_vs_continuous_model",
+            "low_statistical_power",
+            "differing_measurement_method",
+            "differing_population",
+            "differing_duration"
+          ],
+          "causeNarrative": "Différence entre courbe moyenne et contraste de catégories; puissance faible; comptage direct/indirect; muscles/sites différents; entraînés plus proches du plafond; courtes durées.",
+          "resolutionState": "open_by_design",
+          "mustBeSurfacedToUser": true,
+          "unknownFields": [
+            {
+              "field": "opposingResult.sourceRefs",
+              "reason": "pending_human_review",
+              "note": "F1 §18 cite Baz-Valle et al. 2022, qui n'a pas encore d'entité Source dans ce golden set restreint."
+            }
+          ],
+          "contentHash": "sha256:05a95b661ba7505879e136d15f49e1f40d6b510ba0eb285ea81472833d80a5d0"
+        }
+      ]
+    },
+    {
+      "kind": "evidence-gap",
+      "records": [
+        {
+          "id": "gap.biomechanics.elbow-load",
+          "slug": "charge-coude-en-musculation-recreative",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0008",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            },
+            {
+              "fragmentRef": "frag.f2.0015",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "biomechanics",
+          "topic": "Contrainte au coude pendant les exercices de triceps en musculation récréative",
+          "whatIsMissing": "Aucune étude biomécanique dédiée ne quantifie directement la charge au coude pendant skull crusher ou extension overhead en musculation récréative.",
+          "whatExistsInstead": "Un raisonnement biomécanique de premier principe (moment de flexion élevé en bras de levier long) et une littérature issue du lancer au baseball, peu généralisable.",
+          "doNotFillBy": [
+            "extrapolation",
+            "analogy_from_other_population",
+            "expert_opinion",
+            "llm_inference"
+          ],
+          "affectedEntityRefs": [
+            "variant.elbow-extension.overhead.0001",
+            "variant.elbow-extension.pushdown.0001"
+          ],
+          "severity": "medium",
+          "contentHash": "sha256:9474e7be88a87308219d4842852bcd1df1ff7aafcab668d16794bb3f8d29f45b"
+        },
+        {
+          "id": "gap.biomechanics.lumbar-injury-link",
+          "slug": "lien-charge-lombaire-incidence-blessure",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0009",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            },
+            {
+              "fragmentRef": "frag.f2.0015",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "biomechanics",
+          "topic": "Lien longitudinal entre charge lombaire modélisée et incidence de blessure en musculation",
+          "whatIsMissing": "Aucune étude longitudinale de cohorte en musculation récréative reliant directement une charge lombaire mesurée par modélisation à une incidence de blessure n'a été identifiée pour les principaux mouvements.",
+          "whatExistsInstead": "Des estimations de compression, cisaillement et moment de flexion par modélisation, dont le corpus souligne lui-même la forte variabilité selon la personnalisation du modèle.",
+          "doNotFillBy": [
+            "extrapolation",
+            "analogy_from_other_population",
+            "expert_opinion",
+            "llm_inference"
+          ],
+          "affectedEntityRefs": [
+            "observation.lumbar.deadlift.0001"
+          ],
+          "severity": "high",
+          "unknownFields": [
+            {
+              "field": "sourceRefs",
+              "reason": "not_applicable",
+              "note": "Une lacune est définie par l'absence de source ; en exiger une n'aurait pas de sens."
+            }
+          ],
+          "contentHash": "sha256:8299c33e3532d188b57c88fb02384fdda0b0cc2db7ca388ac518fbb5bb755a3f"
+        }
+      ]
+    }
+  ]
+}

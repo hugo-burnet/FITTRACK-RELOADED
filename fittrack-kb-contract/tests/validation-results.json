@@ -1,0 +1,115 @@
+{
+  "generatedAt": "2026-08-23",
+  "totals": {
+    "jsonFiles": 101,
+    "schemas": 48,
+    "validInstances": 208,
+    "invalidCases": 20,
+    "invariantsRun": 15,
+    "invariantsNotTestable": 0
+  },
+  "steps": [
+    {
+      "step": "1. Syntaxe JSON",
+      "status": "PASS",
+      "detail": "101 fichiers JSON analysés, 0 erreur"
+    },
+    {
+      "step": "2. Schemas",
+      "status": "PASS",
+      "detail": "48 schemas compilés, tous les $ref résolus localement"
+    },
+    {
+      "step": "3. Vocabulaires",
+      "status": "PASS",
+      "detail": "29 vocabulaires, enums et fichiers cohérents avec la source"
+    },
+    {
+      "step": "4. Fixtures valides",
+      "status": "PASS",
+      "detail": "208 instances validées contre leur schéma"
+    },
+    {
+      "step": "5. Fixtures invalides",
+      "status": "PASS",
+      "detail": "20 cas rejetés pour la raison attendue (17 par le schéma, 3 par un invariant)"
+    },
+    {
+      "step": "6. INV-001",
+      "status": "PASS",
+      "detail": "Intégrité référentielle globale — 208 entités, toutes les références résolvent"
+    },
+    {
+      "step": "6. INV-002",
+      "status": "PASS",
+      "detail": "Provenance obligatoire sur toute entité canonique — toute entité de curated/ porte au moins un lien vers un fragment"
+    },
+    {
+      "step": "6. INV-003",
+      "status": "PASS",
+      "detail": "Monotonie de certitude : pas de hausse sans preuve nouvelle — 1 chaîne(s) de révision contrôlée(s)"
+    },
+    {
+      "step": "6. INV-004",
+      "status": "PASS",
+      "detail": "cannotConclude conservé dans toutes les projections — 16 claims projetées, aucun contenu perdu"
+    },
+    {
+      "step": "6. INV-005",
+      "status": "PASS",
+      "detail": "Une mesure EMG ne devient jamais une preuve hypertrophique — aucune promotion EMG → hypertrophie détectée"
+    },
+    {
+      "step": "6. INV-006",
+      "status": "PASS",
+      "detail": "Une observation biomécanique ne devient jamais un risque démontré — aucune conversion charge mécanique → danger détectée"
+    },
+    {
+      "step": "6. INV-007",
+      "status": "PASS",
+      "detail": "Un red flag actif ne peut pas être contourné par le flux normal — 4 red flags, 2 règles d'adaptation contrôlées"
+    },
+    {
+      "step": "6. INV-008",
+      "status": "PASS",
+      "detail": "Toute contre-indication repose sur un fondement admissible et vérifié — 1 contre-indication(s) justifiée(s)"
+    },
+    {
+      "step": "6. INV-009",
+      "status": "PASS",
+      "detail": "Aucune fusion automatique entre fichiers ou sur similarité — aucune fusion non fondée détectée"
+    },
+    {
+      "step": "6. INV-010",
+      "status": "PASS",
+      "detail": "Stabilité des identifiants ; le hash détecte, il n identifie pas — 119 identifiants au registre, tous cohérents"
+    },
+    {
+      "step": "6. INV-011",
+      "status": "PASS",
+      "detail": "Idempotence : deux exécutions sur le même corpus produisent la même sortie — 77 fragments recalculés à l identique"
+    },
+    {
+      "step": "6. INV-012",
+      "status": "PASS",
+      "detail": "Conservation de l'historique : rien ne disparaît sans décision tracée — aucune entité remplacée ou retirée sans trace"
+    },
+    {
+      "step": "6. INV-013",
+      "status": "PASS",
+      "detail": "Aucune perte silencieuse dans la migration clinique — 98 chemins de F4 énumérés depuis le fichier réel, tous couverts par le mapping"
+    },
+    {
+      "step": "6. INV-014",
+      "status": "PASS",
+      "detail": "Unicité des identifiants — 208 identifiants distincts"
+    },
+    {
+      "step": "6. INV-015",
+      "status": "PASS",
+      "detail": "Séparation stricte KB / POLICY / RUNTIME — aucune fuite de couche détectée"
+    }
+  ],
+  "warnings": [],
+  "failures": []
+}

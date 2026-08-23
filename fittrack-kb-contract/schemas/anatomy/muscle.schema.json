@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/muscle.schema.json",
+  "title": "Muscle",
+  "description": "Muscle ou chef musculaire. La biarticularité est un champ de premier plan : c'est elle qui explique pourquoi une position articulaire modifie la longueur du muscle, et donc toute la logique de sélection et de substitution de F2 §3.3.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "label", "isBiarticular"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "latinName": { "type": ["string", "null"] },
+    "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "parentMuscleRef": {
+      "oneOf": [
+        { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+        { "type": "null" }
+      ],
+      "description": "Pour un chef appartenant à un muscle plus large, par exemple le chef long du triceps."
+    },
+    "regionRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "isBiarticular": {
+      "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedBoolean",
+      "description": "Valeur attestée : c'est un fait anatomique, il doit citer sa source ou sa claim comme n'importe quelle autre affirmation."
+    },
+    "crossesJointRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "primaryJointActions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["jointRef", "action", "attestation"],
+        "properties": {
+          "jointRef": { "type": "string" },
+          "action": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/jointAction" },
+          "attestation": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestation" }
+        }
+      }
+    },
+    "architectureNotes": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" },
+      "description": "Longueur de fascicule, aire de section, sous-régions fonctionnelles. Chaque note porte sa propre attestation."
+    }
+  }
+}

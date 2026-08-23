@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/adaptation-rule.schema.json",
+  "title": "AdaptationRule",
+  "description": "Règle d'adaptation d'une exposition. Migration de $defs/modification de F4, avec deux ajouts imposés par le contrat : une règle normative doit référencer soit une claim justificative, soit une décision produit explicite ; et elle doit déclarer qu'elle cède devant un red flag actif.\n\nF3 §2.3 demande de modifier une variable à la fois : le champ variableOrder conserve la position de la règle dans cette hiérarchie plutôt que de laisser l'ordre à l'implémentation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "slug",
+    "revision",
+    "lifecycle",
+    "provenance",
+    "trigger",
+    "action",
+    "monitoring",
+    "stopCriteria",
+    "evidence",
+    "yieldsToActiveRedFlag"
+  ],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "description": "Une règle normative sans justification est exactement ce que les contrôles bloquants refusent : soit elle s'appuie sur une claim, soit elle assume d'être une décision produit.",
+      "anyOf": [
+        { "required": ["claimRefs"], "properties": { "claimRefs": { "minItems": 1 } } },
+        { "required": ["productPolicyRef"] }
+      ]
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "conditionRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "safetyZone": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/safetyZone" },
+    "trigger": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1 },
+    "variableOrder": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "Position dans la hiérarchie de modification de F3 §2.3, de 1 (technique et trajectoire) à 7 (remplacement temporaire puis réintroduction graduée)."
+    },
+    "doseChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Repris champ pour champ de F4 $defs.modification.doseChange. Toutes les valeurs restent des chaînes : le corpus décrit des directions, pas des pourcentages validés.",
+      "properties": {
+        "load": { "type": ["string", "null"] },
+        "sets": { "type": ["string", "null"] },
+        "repetitions": { "type": ["string", "null"] },
+        "rangeOfMotion": { "type": ["string", "null"] },
+        "tempo": { "type": ["string", "null"] },
+        "frequency": { "type": ["string", "null"] },
+        "rest": { "type": ["string", "null"] },
+        "proximityToFailure": { "type": ["string", "null"] }
+      }
+    },
+    "monitoring": { "type": "string", "minLength": 1 },
+    "stopCriteria": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "yieldsToActiveRedFlag": {
+      "const": true,
+      "description": "Constante vraie. Aucune règle d'adaptation ne peut s'exécuter par-dessus un red flag actif ; INV-007 le vérifie sur l'ensemble du jeu."
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["knowledgeType", "directness", "confidence"],
+      "properties": {
+        "knowledgeType": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType" },
+        "clinicalEvidenceLevel": {
+          "oneOf": [
+            { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/clinicalEvidenceLevel" },
+            { "type": "null" }
+          ]
+        },
+        "directness": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/directness" },
+        "confidence": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceLevel" },
+        "rationale": { "type": "string" }
+      }
+    },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "productPolicyRef": { "type": "string" },
+    "targetExerciseRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "uncertainty": { "type": "array", "items": { "type": "string" } }
+  }
+}

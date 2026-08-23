@@ -1,0 +1,544 @@
+{
+  "note": "Spécification manuelle des fragments du golden set. Les offsets octets, le texte brut et les hashes sont CALCULÉS par tools/make-fragments.mjs à partir des fichiers réels du corpus. Ne jamais éditer fragments/fragments.json à la main.",
+  "fragments": [
+    {
+      "fragmentId": "frag.f1.0001",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 54,
+      "endLine": 54,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0002",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 55,
+      "endLine": 55,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0003",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 63,
+      "endLine": 63,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0004",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 83,
+      "endLine": 83,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0005",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 86,
+      "endLine": 86,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0006",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 92,
+      "endLine": 92,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0007",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 102,
+      "endLine": 102,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0008",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 42,
+      "endLine": 42,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0009",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 198,
+      "endLine": 198,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0010",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 225,
+      "endLine": 225,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0011",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 220,
+      "endLine": 220,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0012",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 236,
+      "endLine": 236,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0013",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 234,
+      "endLine": 234,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f1.0014",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 7,
+      "endLine": 7,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f1.0015",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 23,
+      "endLine": 23,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f1.0016",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 27,
+      "endLine": 32,
+      "blockType": "table"
+    },
+    {
+      "fragmentId": "frag.f1.0017",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 36,
+      "endLine": 36,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f1.0018",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 299,
+      "endLine": 299,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f1.0019",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "startLine": 100,
+      "endLine": 100,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f2.0001",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 13,
+      "endLine": 13,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0002",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 11,
+      "endLine": 11,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0003",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 76,
+      "endLine": 76,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0004",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 138,
+      "endLine": 138,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0005",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 190,
+      "endLine": 190,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0006",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 204,
+      "endLine": 204,
+      "blockType": "callout"
+    },
+    {
+      "fragmentId": "frag.f2.0007",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 212,
+      "endLine": 212,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0008",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 216,
+      "endLine": 216,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0009",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 226,
+      "endLine": 226,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0010",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 330,
+      "endLine": 330,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0011",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 332,
+      "endLine": 332,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0012",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 334,
+      "endLine": 334,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0013",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 338,
+      "endLine": 347,
+      "blockType": "table"
+    },
+    {
+      "fragmentId": "frag.f2.0014",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 395,
+      "endLine": 395,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f2.0015",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 401,
+      "endLine": 401,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0016",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 384,
+      "endLine": 384,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f2.0017",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 407,
+      "endLine": 412,
+      "blockType": "list"
+    },
+    {
+      "fragmentId": "frag.f2.0018",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 44,
+      "endLine": 46,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0019",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 74,
+      "endLine": 74,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0020",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 370,
+      "endLine": 371,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f2.0021",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 176,
+      "endLine": 176,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0022",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 294,
+      "endLine": 294,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f3.0001",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 11,
+      "endLine": 11,
+      "blockType": "list_item"
+    },
+    {
+      "fragmentId": "frag.f3.0002",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 12,
+      "endLine": 12,
+      "blockType": "list_item"
+    },
+    {
+      "fragmentId": "frag.f3.0003",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 13,
+      "endLine": 13,
+      "blockType": "list_item"
+    },
+    {
+      "fragmentId": "frag.f3.0004",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 33,
+      "endLine": 33,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0005",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 34,
+      "endLine": 34,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0006",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 35,
+      "endLine": 35,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0007",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 53,
+      "endLine": 53,
+      "blockType": "callout"
+    },
+    {
+      "fragmentId": "frag.f3.0008",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 57,
+      "endLine": 57,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0009",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 58,
+      "endLine": 58,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0010",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 59,
+      "endLine": 59,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0011",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 60,
+      "endLine": 60,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0012",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 71,
+      "endLine": 71,
+      "blockType": "list_item"
+    },
+    {
+      "fragmentId": "frag.f3.0013",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 86,
+      "endLine": 86,
+      "blockType": "callout"
+    },
+    {
+      "fragmentId": "frag.f3.0014",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 115,
+      "endLine": 115,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0015",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 146,
+      "endLine": 146,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0016",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 225,
+      "endLine": 225,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0017",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 231,
+      "endLine": 231,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0018",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 209,
+      "endLine": 217,
+      "blockType": "list"
+    },
+    {
+      "fragmentId": "frag.f3.0019",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 274,
+      "endLine": 274,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0020",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 275,
+      "endLine": 275,
+      "blockType": "table_row"
+    },
+    {
+      "fragmentId": "frag.f3.0021",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 243,
+      "endLine": 247,
+      "blockType": "list"
+    },
+    {
+      "fragmentId": "frag.f3.0022",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 49,
+      "endLine": 49,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f3.0023",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 5,
+      "endLine": 5,
+      "blockType": "callout"
+    },
+    {
+      "fragmentId": "frag.f4.0001",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 87,
+      "endLine": 99,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0002",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 64,
+      "endLine": 76,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0003",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 77,
+      "endLine": 86,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0004",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 123,
+      "endLine": 189,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0005",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 34,
+      "endLine": 52,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0006",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 53,
+      "endLine": 63,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0007",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 100,
+      "endLine": 122,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f4.0008",
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "startLine": 155,
+      "endLine": 168,
+      "blockType": "json_object"
+    },
+    {
+      "fragmentId": "frag.f2.0023",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 210,
+      "endLine": 210,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f2.0024",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 126,
+      "endLine": 126,
+      "blockType": "paragraph"
+    },
+    {
+      "fragmentId": "frag.f3.0024",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 124,
+      "endLine": 129,
+      "blockType": "list"
+    },
+    {
+      "fragmentId": "frag.f3.0025",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 207,
+      "endLine": 207,
+      "blockType": "callout"
+    },
+    {
+      "fragmentId": "frag.f3.0026",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 77,
+      "endLine": 78,
+      "blockType": "paragraph"
+    }
+  ]
+}

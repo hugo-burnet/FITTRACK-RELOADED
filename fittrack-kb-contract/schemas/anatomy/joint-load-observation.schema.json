@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/joint-load-observation.schema.json",
+  "title": "JointLoadObservation",
+  "description": "Observation de charge articulaire pour un exercice ou une variante. Remplace tout champ laissant entendre qu'un exercice serait intrinsèquement dangereux.\n\nLes quatre catégories de F2 §6 — charge mécanique, inconfort rapporté, risque démontré, risque supposé — ne sont pas des étiquettes documentaires : chacune impose ici des exigences différentes, et un risque démontré sans donnée épidémiologique est refusé par le schéma.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "jointRef", "observationType", "finding", "sourceRefs"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Un risque démontré exige une source établissant un lien longitudinal entre exposition et incidence. Sans elle, ce n'est pas un risque démontré mais un risque supposé.",
+      "if": { "properties": { "observationType": { "const": "risque_demontre" } }, "required": ["observationType"] },
+      "then": {
+        "required": ["epidemiologicalEvidence"],
+        "properties": {
+          "epidemiologicalEvidence": {
+            "type": "object",
+            "required": ["longitudinalSourceRefs", "populationRef"],
+            "properties": { "longitudinalSourceRefs": { "minItems": 1 } }
+          }
+        }
+      }
+    },
+    {
+      "description": "Un risque supposé doit dire d'où vient l'analogie. Le corpus a un cas précis : des données d'athlètes de lancer transposées à la musculation récréative.",
+      "if": { "properties": { "observationType": { "const": "risque_suppose" } }, "required": ["observationType"] },
+      "then": { "required": ["analogySource"] }
+    },
+    {
+      "description": "Aucune observation de charge ne peut à elle seule produire une contre-indication : c'est le point que F2 §6 et §10 défendent le plus fermement.",
+      "properties": {
+        "impliesContraindication": { "const": false }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "jointRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "exerciseRef": { "type": ["string", "null"] },
+    "variantRef": { "type": ["string", "null"] },
+    "observationType": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/jointLoadObservationType" },
+    "finding": { "type": "string", "minLength": 1 },
+    "measurementMethod": {
+      "type": ["string", "null"],
+      "description": "Dynamique inverse, modélisation musculo-squelettique, mesure directe. Le corpus signale lui-même que ces estimations varient fortement selon la personnalisation du modèle."
+    },
+    "uncertaintyNote": { "type": ["string", "null"] },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "claimRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "epidemiologicalEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["longitudinalSourceRefs", "populationRef"],
+      "properties": {
+        "longitudinalSourceRefs": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+        "populationRef": { "type": "string" },
+        "effectNote": { "type": "string" }
+      }
+    },
+    "analogySource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fromPopulation", "toPopulation", "transferabilityNote"],
+      "properties": {
+        "fromPopulation": { "type": "string" },
+        "toPopulation": { "type": "string" },
+        "transferabilityNote": { "type": "string", "minLength": 1 }
+      }
+    },
+    "impliesContraindication": {
+      "const": false,
+      "description": "Constante. Présente pour que la relecture d'une fiche montre l'interdiction plutôt que de la supposer connue."
+    },
+    "relatedGapRef": { "type": ["string", "null"] }
+  }
+}

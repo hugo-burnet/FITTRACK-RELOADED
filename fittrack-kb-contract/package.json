@@ -1,0 +1,16 @@
+{
+  "name": "fittrack-kb-contract",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Contrat technique executable de la Knowledge Base FitTrack (phase 2).",
+  "scripts": {
+    "build": "node tools/make-fragments.mjs && node tools/build-vocabularies.mjs && node tools/build-derived.mjs && node tools/build-migration-doc.mjs",
+    "validate": "node tests/validate.mjs",
+    "check": "npm run build && npm run validate"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

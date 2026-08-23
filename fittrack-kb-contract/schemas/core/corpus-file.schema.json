@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/corpus-file.schema.json",
+  "title": "CorpusFile",
+  "description": "Fichier original immuable. Il reste l'autorité : la KB ne prétend pas pouvoir le reconstruire octet pour octet à partir de fragments sémantiques.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "corpusFileId",
+    "shortLabel",
+    "title",
+    "originalFilename",
+    "mediaType",
+    "byteLength",
+    "lineCount",
+    "contentHash",
+    "isAuthority",
+    "reconstructibleFromFragments"
+  ],
+  "properties": {
+    "corpusFileId": { "type": "string", "pattern": "^corpus\\.[a-z0-9]+\\.[a-z0-9-]+$" },
+    "shortLabel": { "type": "string", "pattern": "^F[0-9]+$" },
+    "title": { "type": "string", "minLength": 1 },
+    "originalFilename": { "type": "string", "minLength": 1 },
+    "mediaType": { "enum": ["text/markdown", "application/json"] },
+    "language": { "type": "string" },
+    "corpusDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date d'arrêt des connaissances déclarée par le document lui-même, pas date de fichier."
+    },
+    "byteLength": { "type": "integer", "minimum": 0 },
+    "lineCount": { "type": "integer", "minimum": 0 },
+    "contentHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "isAuthority": {
+      "const": true,
+      "description": "Toujours vrai. Rendre ce champ obligatoire et constant interdit d'introduire un jour une KB qui se croirait plus autorisée que sa source."
+    },
+    "reconstructibleFromFragments": {
+      "const": false,
+      "description": "Toujours faux dans ce contrat. Les fragments sont sémantiques et non exhaustifs ; prétendre l'inverse serait une garantie de round-trip que le découpage ne tient pas."
+    },
+    "reconstructionNote": { "type": "string" }
+  }
+}

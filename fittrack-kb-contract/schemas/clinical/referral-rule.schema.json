@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/clinical/referral-rule.schema.json",
+  "title": "ReferralRule",
+  "description": "Seuil d'orientation vers un professionnel. F4 portait referralThreshold comme une simple chaîne dans conditionRecord ; le réifier permet de partager un même seuil entre plusieurs conditions et de lui donner une date de revue, ce que F3 §16 exige de toute règle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "trigger", "referTo", "urgency", "message"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    { "properties": { "lifecycle": { "required": ["reviewedAt"] } } },
+    {
+      "description": "Une orientation ne remplace jamais un diagnostic : le message ne doit pas nommer de pathologie. Le champ est déclaré et vérifié plutôt que supposé.",
+      "properties": { "namesADiagnosis": { "const": false } },
+      "required": ["namesADiagnosis"]
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "trigger": { "type": "string", "minLength": 1 },
+    "referTo": {
+      "enum": ["emergency_services", "physician_urgent", "physician_routine", "physiotherapist", "surgical_team", "unspecified_professional"]
+    },
+    "urgency": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/redFlagUrgency" },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Formulation destinée à l'utilisateur. Doit décrire le symptôme et l'action, jamais la cause."
+    },
+    "namesADiagnosis": { "type": "boolean" },
+    "redFlagRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "conditionRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "productPolicyRef": { "type": "string" }
+  }
+}

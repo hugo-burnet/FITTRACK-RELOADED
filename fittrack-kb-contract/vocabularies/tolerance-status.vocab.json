@@ -1,0 +1,41 @@
+{
+  "$schema": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "generatedBy": "tools/build-vocabularies.mjs",
+  "vocabularyId": "tolerance-status",
+  "title": "Statuts de tolérance",
+  "origin": "clinical_schema_f4",
+  "description": "Repris verbatim de F4 $defs.toleranceDimension.status. Aucune valeur ajoutée ni retirée : c'est une migration, pas une réécriture.",
+  "closed": true,
+  "terms": [
+    {
+      "term": "unknown",
+      "label": "Inconnu",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "tolerated",
+      "label": "Toléré",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "conditionally_tolerated",
+      "label": "Toléré sous condition",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "irritating",
+      "label": "Irritant",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "not_tested",
+      "label": "Non testé",
+      "origin": "clinical_schema_f4"
+    },
+    {
+      "term": "avoid_pending_assessment",
+      "label": "À éviter en attente d'évaluation",
+      "origin": "clinical_schema_f4"
+    }
+  ]
+}

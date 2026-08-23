@@ -1,0 +1,62 @@
+{
+  "note": "Emplacements locaux des quatre fichiers du corpus. Les fichiers ne sont PAS copiés dans ce paquet : ils restent l'autorité, et le paquet ne conserve que leur empreinte et les fragments cités.",
+  "whyCandidatePaths": "Le corpus a déjà changé de dossier deux fois pendant la construction de ce contrat. Une liste de chemins candidats évite qu un déplacement casse la régénération ; expectedContentHash garantit qu on ne régénère pas silencieusement à partir d une copie différente. Le premier chemin est l emplacement de référence.",
+  "files": [
+    {
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "shortLabel": "F1",
+      "title": "Programmation hypertrophie — État des connaissances",
+      "candidatePaths": [
+        "C:/Users/e6/Documents/RAPPORT MULTI IA/corpus/Programmation hypertrophie — État des connaissances.md",
+        "C:/Users/e6/Documents/FITTRACK KB CORPUS/Programmation hypertrophie — État des connaissances.md",
+        "C:/Users/e6/Downloads/Programmation hypertrophie — État des connaissances.md"
+      ],
+      "expectedContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b",
+      "mediaType": "text/markdown",
+      "language": "fr",
+      "corpusDate": "2026-08-23"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "shortLabel": "F2",
+      "title": "Anatomie, biomécanique et sélection d'exercices (hypertrophie)",
+      "candidatePaths": [
+        "C:/Users/e6/Documents/RAPPORT MULTI IA/corpus/Anatomie, biomécanique et sélection d'exercices (hypertrophie).md",
+        "C:/Users/e6/Documents/FITTRACK KB CORPUS/Anatomie, biomécanique et sélection d'exercices (hypertrophie).md",
+        "C:/Users/e6/Downloads/Anatomie, biomécanique et sélection d'exercices (hypertrophie).md"
+      ],
+      "expectedContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685",
+      "mediaType": "text/markdown",
+      "language": "fr",
+      "corpusDate": "2026-08-23"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "shortLabel": "F3",
+      "title": "Base de connaissances — coaching musculation adaptatif",
+      "candidatePaths": [
+        "C:/Users/e6/Documents/RAPPORT MULTI IA/corpus/Base de connaissances — coaching musculation adaptatif.md",
+        "C:/Users/e6/Documents/FITTRACK KB CORPUS/Base de connaissances — coaching musculation adaptatif.md",
+        "C:/Users/e6/Downloads/Base de connaissances — coaching musculation adaptatif.md"
+      ],
+      "expectedContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202",
+      "mediaType": "text/markdown",
+      "language": "fr",
+      "corpusDate": "2026-08-23"
+    },
+    {
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "shortLabel": "F4",
+      "title": "Schéma de données IA coaching",
+      "candidatePaths": [
+        "C:/Users/e6/Documents/RAPPORT MULTI IA/corpus/Schéma de données IA coaching.json",
+        "C:/Users/e6/Documents/FITTRACK KB CORPUS/Schéma de données IA coaching.json",
+        "C:/Users/e6/Downloads/Schéma de données IA coaching.json"
+      ],
+      "expectedContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5",
+      "mediaType": "application/json",
+      "language": "fr",
+      "corpusDate": "2026-08-23"
+    }
+  ]
+}

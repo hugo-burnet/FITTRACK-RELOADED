@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/core/source-resolution.schema.json",
+  "title": "SourceResolution",
+  "description": "Décision — ou non-décision — de rattachement entre occurrences de citation et sources. Une fusion automatique n'est autorisée que sur un identifiant bibliographique fort identique. Une similarité de titre, d'auteur ou de sujet ne produit qu'un candidat à la revue.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "status", "occurrenceRefs", "candidateSourceRefs", "mergeAllowed", "rationale"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une fusion n'est permise que si elle s'appuie sur un identifiant fort identique. Toute autre base de fusion est refusée par le schéma, pas par une consigne.",
+      "if": { "properties": { "mergeAllowed": { "const": true } }, "required": ["mergeAllowed"] },
+      "then": {
+        "required": ["mergeBasis", "mergedIntoSourceRef"],
+        "properties": {
+          "mergeBasis": { "enum": ["identical_doi", "identical_pmid", "human_review_decision"] }
+        }
+      }
+    },
+    {
+      "description": "Un conflit d'attribution non tranché doit rester ouvert et escaladé. Il ne peut ni être fusionné, ni être clos silencieusement.",
+      "if": { "properties": { "status": { "const": "ambiguous" } }, "required": ["status"] },
+      "then": {
+        "properties": {
+          "mergeAllowed": { "const": false },
+          "reviewState": { "enum": ["pending_human_review", "escalated"] }
+        },
+        "required": ["reviewState", "conflictingAttributions"]
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "status": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/sourceResolutionStatus" },
+    "occurrenceRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "candidateSourceRefs": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "mergeAllowed": { "type": "boolean" },
+    "mergeBasis": { "enum": ["identical_doi", "identical_pmid", "human_review_decision"] },
+    "mergedIntoSourceRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "conflictingAttributions": {
+      "type": "array",
+      "minItems": 2,
+      "description": "Attributions incompatibles constatées dans le corpus, conservées telles quelles.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceRef", "attributedTo", "fragmentRef"],
+        "properties": {
+          "sourceRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+          "attributedTo": { "type": "string" },
+          "fragmentRef": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" }
+        }
+      }
+    },
+    "reviewState": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/reviewState" },
+    "reviewDecisionRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Pourquoi cette résolution, en langage humain. Un statut sans raison n'est pas auditable."
+    },
+    "resolvableWithCorpusAlone": {
+      "type": "boolean",
+      "description": "Faux quand trancher exigerait une vérification bibliographique externe, interdite à ce stade."
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "manifestVersion": "1.0.0",
+  "generatedBy": "tools/make-fragments.mjs",
+  "note": "Hashes et tailles calculés sur les fichiers réels. Les fichiers du corpus ne sont pas copiés dans ce paquet ; seule leur empreinte l est.",
+  "files": [
+    {
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "shortLabel": "F1",
+      "title": "Programmation hypertrophie — État des connaissances",
+      "originalFilename": "Programmation hypertrophie — État des connaissances.md",
+      "mediaType": "text/markdown",
+      "language": "fr",
+      "corpusDate": "2026-08-23",
+      "byteLength": 71455,
+      "lineCount": 300,
+      "contentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b",
+      "isAuthority": true,
+      "reconstructibleFromFragments": false,
+      "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "shortLabel": "F2",
+      "title": "Anatomie, biomécanique et sélection d'exercices (hypertrophie)",
+      "originalFilename": "Anatomie, biomécanique et sélection d'exercices (hypertrophie).md",
+      "mediaType": "text/markdown",
+      "language": "fr",
+      "corpusDate": "2026-08-23",
+      "byteLength": 96689,
+      "lineCount": 413,
+      "contentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685",
+      "isAuthority": true,
+      "reconstructibleFromFragments": false,
+      "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "shortLabel": "F3",
+      "title": "Base de connaissances — coaching musculation adaptatif",
+      "originalFilename": "Base de connaissances — coaching musculation adaptatif.md",
+      "mediaType": "text/markdown",
+      "language": "fr",
+      "corpusDate": "2026-08-23",
+      "byteLength": 47236,
+      "lineCount": 302,
+      "contentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202",
+      "isAuthority": true,
+      "reconstructibleFromFragments": false,
+      "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+    },
+    {
+      "corpusFileId": "corpus.f4.schema-ia-coaching",
+      "shortLabel": "F4",
+      "title": "Schéma de données IA coaching",
+      "originalFilename": "Schéma de données IA coaching.json",
+      "mediaType": "application/json",
+      "language": "fr",
+      "corpusDate": "2026-08-23",
+      "byteLength": 8638,
+      "lineCount": 192,
+      "contentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5",
+      "isAuthority": true,
+      "reconstructibleFromFragments": false,
+      "reconstructionNote": "Les fragments sont sémantiques et non exhaustifs. Le fichier original est la seule autorité pour le contenu intégral."
+    }
+  ]
+}

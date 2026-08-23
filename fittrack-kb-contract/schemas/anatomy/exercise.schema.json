@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/anatomy/exercise.schema.json",
+  "title": "Exercise",
+  "description": "Concept général d'exercice, indépendant du matériel et de l'exécution précise. Ce qui dépend de l'équipement ou de la position articulaire appartient à ExerciseVariant.\n\nRègle d'attestation, choisie pour rester utilisable : les champs triviaux (identité, libellé, alias, pattern de mouvement) sont des valeurs nues, car F2 §10 les classe objectifs et vérifiables ; les champs non triviaux — ceux sur lesquels deux curateurs compétents pourraient diverger, ou qui peuvent influencer une décision de coaching — sont enveloppés dans une valeur attestée. Tout envelopper rendrait les fiches illisibles ; ne rien envelopper laisserait passer des affirmations sans auteur.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "slug", "revision", "lifecycle", "provenance", "label", "movementPattern", "completeness"],
+  "allOf": [
+    { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/identityEnvelope" },
+    {
+      "description": "Une fiche déclarée stub ne doit contenir aucune affirmation musculaire. F2 §12.6 préfère une fiche incomplète à une fiche comblée par inférence ; le schéma rend l'inverse impossible.",
+      "if": { "properties": { "completeness": { "const": "stub" } }, "required": ["completeness"] },
+      "then": {
+        "properties": {
+          "primaryMuscles": { "maxItems": 0 },
+          "secondaryMuscles": { "maxItems": 0 }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+    "slug": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/slug" },
+    "revision": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/revision" },
+    "contentHash": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/contentHash" },
+    "lifecycle": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/lifecycle" },
+    "unknownFields": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/unknownFields" },
+    "provenance": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/provenance" },
+
+    "label": { "type": "string", "minLength": 1 },
+    "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "movementPattern": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/movementPattern" },
+    "isMultiJoint": { "type": ["boolean", "null"] },
+
+    "primaryMuscles": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Jamais rempli par défaut depuis le nom populaire de l'exercice : F2 §12.3 l'interdit explicitement.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["muscleRef", "attestation"],
+        "properties": {
+          "muscleRef": { "type": "string" },
+          "regionRef": { "type": ["string", "null"] },
+          "attestation": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestation" }
+        }
+      }
+    },
+    "secondaryMuscles": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["muscleRef", "role", "attestation"],
+        "properties": {
+          "muscleRef": { "type": "string" },
+          "regionRef": { "type": ["string", "null"] },
+          "role": {
+            "enum": ["synergist", "postural_stabilizer"],
+            "description": "F2 §10 demande de distinguer explicitement un synergiste direct d'un simple stabilisateur postural."
+          },
+          "attestation": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestation" }
+        }
+      }
+    },
+
+    "variantRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "completeness": {
+      "enum": ["stub", "partial", "documented"],
+      "description": "stub = le corpus nomme l'exercice sans le documenter. C'est l'état attendu pour la grande majorité des exercices cités en texte libre."
+    },
+    "practicalNotes": {
+      "type": "array",
+      "items": { "$ref": "https://fittrack.local/kb/schemas/common/provenance.schema.json#/$defs/attestedString" },
+      "description": "Intrinsèquement subjectif selon F2 §10 : chaque note doit s'attester en EXPERT_PRACTICE."
+    }
+  }
+}

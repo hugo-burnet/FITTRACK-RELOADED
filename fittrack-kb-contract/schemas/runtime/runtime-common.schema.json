@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/runtime/runtime-common.schema.json",
+  "title": "Enveloppe commune du runtime utilisateur",
+  "description": "Les entités runtime vivent HORS de la KB scientifique, dans fittrack-runtime/. Elles répondent à une question différente : non pas « quelles dimensions faut-il observer et comment les interpréter prudemment », mais « que rapporte cet utilisateur, à cette date, avec cette charge ».\n\nDifférence structurelle décisive : une entité runtime n'a et ne peut avoir aucune provenance de corpus. Elle porte à la place un sujet, une date d'observation et une base. Un objet qui aurait les deux serait une confusion de couches, et aucun schéma runtime n'accepte le champ provenance.",
+
+  "$defs": {
+    "runtimeId": {
+      "type": "string",
+      "pattern": "^rt\\.[a-z][a-z0-9-]*\\.[0-9a-f-]{8,}$",
+      "description": "Préfixe rt. obligatoire. Un identifiant runtime ne peut pas être confondu avec un identifiant de KB, ni référencé depuis curated/."
+    },
+    "subjectRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Utilisateur concerné. FitTrack étant mono-utilisateur et local-first, c'est un identifiant local et non un compte."
+    },
+    "runtimeEnvelope": {
+      "type": "object",
+      "required": ["id", "subjectRef", "observedAt", "recordedAt", "basis"],
+      "properties": {
+        "id": { "$ref": "#/$defs/runtimeId" },
+        "subjectRef": { "$ref": "#/$defs/subjectRef" },
+        "observedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Quand le fait a eu lieu."
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Quand il a été saisi. Distinct d'observedAt : une réponse retardée se note souvent le lendemain."
+        },
+        "basis": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/toleranceBasis" }
+      }
+    },
+    "kbReference": {
+      "type": "object",
+      "description": "Référence d'une observation vers la définition KB qu'elle instancie. La direction est toujours runtime → KB, jamais l'inverse : la KB ne connaît aucun utilisateur.",
+      "additionalProperties": false,
+      "required": ["kbEntityRef", "kbEntityKind"],
+      "properties": {
+        "kbEntityRef": { "$ref": "https://fittrack.local/kb/schemas/common/identity.schema.json#/$defs/entityId" },
+        "kbEntityKind": {
+          "enum": ["tolerance-dimension-definition", "symptom", "condition", "exercise", "exercise-variant", "red-flag"]
+        },
+        "kbRevisionAtRecording": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Révision de l'entité KB au moment de la saisie. Sans elle, une mise à jour de la KB réinterpréterait rétroactivement une observation passée."
+        }
+      }
+    }
+  }
+}

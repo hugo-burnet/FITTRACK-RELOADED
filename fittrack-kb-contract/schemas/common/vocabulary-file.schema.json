@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/common/vocabulary-file.schema.json",
+  "title": "Fichier de vocabulaire contrôlé",
+  "description": "Forme d'un fichier vocabularies/<id>.vocab.json. Chaque vocabulaire déclare son origine — corpus, schéma clinique existant, ou décision de modélisation — et chaque terme peut préciser la sienne, parce qu'un vocabulaire majoritairement issu du corpus peut contenir un ou deux ajouts assumés.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["vocabularyId", "title", "origin", "description", "terms"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "generatedBy": { "type": "string" },
+    "vocabularyId": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "origin": { "enum": ["corpus", "clinical_schema_f4", "modeling_decision"] },
+    "description": { "type": "string", "minLength": 1 },
+    "closed": {
+      "type": "boolean",
+      "description": "Faux pour les vocabulaires que l'on sait devoir s'étendre, comme les axes de tolérance."
+    },
+    "terms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "label", "origin"],
+        "properties": {
+          "term": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "definition": { "type": "string" },
+          "origin": { "enum": ["corpus", "clinical_schema_f4", "modeling_decision"] },
+          "corpusRef": {
+            "type": "string",
+            "description": "Où le terme apparaît dans le corpus. Absent pour une décision de modélisation, par construction."
+          },
+          "note": { "type": "string" }
+        },
+        "allOf": [
+          {
+            "description": "Un terme déclaré issu du corpus doit dire où. Sans référence, l'origine n'est pas vérifiable et vaut décision de modélisation non assumée.",
+            "if": { "properties": { "origin": { "enum": ["corpus"] } }, "required": ["origin"] },
+            "then": { "required": ["corpusRef"] }
+          }
+        ]
+      }
+    }
+  }
+}

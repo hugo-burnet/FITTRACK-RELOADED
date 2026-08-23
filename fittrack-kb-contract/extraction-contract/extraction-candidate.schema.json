@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/schemas/extraction/extraction-candidate.schema.json",
+  "title": "ExtractionCandidate",
+  "description": "Sortie d'une étape d'extraction, déterministe ou LLM. Un candidat n'est PAS une entité de la KB : il vit dans candidates/, il n'a pas d'identifiant métier attribué, et il ne peut entrer dans curated/ que par une décision de revue.\n\nC'est cette séparation qui rend l'extraction rejouable : régénérer les candidats n'écrase jamais la source de vérité.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidateId", "targetKind", "fragmentRef", "corpusFileRef", "extraction", "payload", "reviewState"],
+  "allOf": [
+    {
+      "description": "Une extraction par LLM doit être entièrement rejouable : sans identifiant de modèle, hash de prompt et réponse brute, on ne peut ni auditer ni reproduire ce qui a été produit.",
+      "if": { "properties": { "extraction": { "properties": { "method": { "const": "llm_prose_extraction" } }, "required": ["method"] } }, "required": ["extraction"] },
+      "then": {
+        "properties": {
+          "extraction": { "required": ["modelId", "promptHash", "rawResponse", "temperature"] }
+        }
+      }
+    },
+    {
+      "description": "Un candidat LLM ne peut jamais être auto-approuvé. La revue humaine est le seul chemin.",
+      "if": { "properties": { "extraction": { "properties": { "method": { "const": "llm_prose_extraction" } }, "required": ["method"] } }, "required": ["extraction"] },
+      "then": { "properties": { "reviewState": { "enum": ["pending_human_review", "approved", "rejected", "needs_revision", "escalated"] } } }
+    }
+  ],
+  "properties": {
+    "candidateId": {
+      "type": "string",
+      "pattern": "^cand\\.[a-z0-9-]+\\.[0-9a-f]{8,}$",
+      "description": "Identifiant technique, dérivé du contenu. Contrairement à un identifiant métier, il PEUT dépendre du texte : un candidat n'a pas d'identité durable."
+    },
+    "targetKind": { "type": "string", "description": "Type d'entité visé, tel que déclaré dans schemas/entity-catalog.json." },
+    "fragmentRef": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+    "corpusFileRef": { "type": "string", "pattern": "^corpus\\.[a-z0-9]+\\.[a-z0-9-]+$" },
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "runId", "extractedAt", "extractorVersion"],
+      "properties": {
+        "method": {
+          "enum": [
+            "deterministic_table_row",
+            "deterministic_table_cell",
+            "deterministic_link_scan",
+            "deterministic_json_path",
+            "llm_prose_extraction"
+          ]
+        },
+        "runId": { "type": "string" },
+        "extractedAt": { "type": "string", "format": "date-time" },
+        "extractorVersion": { "type": "string" },
+        "modelId": { "type": "string" },
+        "promptHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "temperature": { "type": "number", "minimum": 0, "maximum": 2 },
+        "rawResponse": {
+          "type": "string",
+          "description": "Réponse brute du modèle, conservée intégralement. Sans elle, une erreur d'extraction est indistinguable d'une erreur de post-traitement."
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "description": "Entité proposée, dans la forme de son schéma cible mais SANS identifiant métier ni révision : ceux-ci sont attribués à l'approbation, par le registre.",
+      "additionalProperties": true
+    },
+    "verbatimSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "startByte", "endByte"],
+      "description": "Portion exacte du fragment qui porte l'affirmation. Obligatoire pour toute extraction en prose : c'est ce qui permet de vérifier qu'un LLM n'a pas paraphrasé.",
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "startByte": { "type": "integer", "minimum": 0 },
+        "endByte": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "confidenceOfExtraction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confiance dans l'EXTRACTION, pas dans le contenu scientifique. Les deux ne doivent jamais être confondues : un LLM très sûr d'avoir bien lu une phrase incertaine ne rend pas cette phrase certaine."
+    },
+    "flags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "multiple_claims_in_one_row",
+          "ambiguous_citation",
+          "no_strong_identifier",
+          "clinical_content",
+          "red_flag_content",
+          "contraindication_content",
+          "numeric_threshold",
+          "emg_content",
+          "biomechanical_risk_language",
+          "possible_duplicate"
+        ]
+      },
+      "description": "Drapeaux qui orientent la revue humaine vers le risque plutôt que vers l'exhaustivité."
+    },
+    "reviewState": { "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/reviewState" },
+    "reviewDecisionRef": { "type": "string" },
+    "promotedToEntityId": { "type": "string" }
+  }
+}

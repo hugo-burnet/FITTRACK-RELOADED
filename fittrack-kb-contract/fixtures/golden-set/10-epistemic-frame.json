@@ -1,0 +1,490 @@
+{
+  "note": "Hiérarchies de preuves, populations et outcomes. Les trois hiérarchies sont conservées séparées : F1, F2 et F3 n'ordonnent pas les mêmes choses parce qu'elles ne décident pas les mêmes choses.",
+  "collections": [
+    {
+      "kind": "evidence-hierarchy",
+      "records": [
+        {
+          "id": "hierarchy.training.programming-v1",
+          "slug": "hierarchie-programmation-v1",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0015",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "training",
+          "purpose": "Ordonner les preuves pour décider d'une recommandation de programmation.",
+          "ranks": [
+            {
+              "rank": 1,
+              "label": "Recommandations officielles et position stands",
+              "evidenceTypes": [
+                "position_stand",
+                "medical_body_recommendation"
+              ]
+            },
+            {
+              "rank": 2,
+              "label": "Revues parapluie",
+              "evidenceTypes": [
+                "umbrella_review"
+              ]
+            },
+            {
+              "rank": 3,
+              "label": "Revues systématiques et méta-analyses",
+              "evidenceTypes": [
+                "systematic_review",
+                "meta_analysis",
+                "meta_regression",
+                "network_meta_analysis"
+              ]
+            },
+            {
+              "rank": 4,
+              "label": "Essais randomisés",
+              "evidenceTypes": [
+                "randomized_trial",
+                "within_participant_trial"
+              ]
+            },
+            {
+              "rank": 5,
+              "label": "Études longitudinales",
+              "evidenceTypes": [
+                "cohort"
+              ]
+            },
+            {
+              "rank": 6,
+              "label": "Observationnel",
+              "evidenceTypes": [
+                "cross_sectional_survey"
+              ]
+            },
+            {
+              "rank": 7,
+              "label": "Mécanistique",
+              "evidenceTypes": [
+                "biomechanical_study"
+              ]
+            },
+            {
+              "rank": 8,
+              "label": "Expertise et pratique",
+              "evidenceTypes": [
+                "expert_practice"
+              ]
+            }
+          ],
+          "nonNegotiableRules": [
+            "Une étude EMG n'est jamais traitée comme preuve directe d'hypertrophie."
+          ],
+          "contentHash": "sha256:4d6d348d3c9afa6776906d1ae761f4ad792c5ba0013066a88f757faacb958492"
+        },
+        {
+          "id": "hierarchy.biomechanics.selection-v1",
+          "slug": "hierarchie-biomecanique-v1",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0002",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "biomechanics",
+          "purpose": "Ordonner les preuves pour décider de ce qui se passe à l'intérieur d'un exercice : quel muscle travaille, à quelle longueur, sous quelle contrainte.",
+          "ranks": [
+            {
+              "rank": 1,
+              "label": "Études longitudinales mesurant directement l'hypertrophie ou la force",
+              "evidenceTypes": [
+                "randomized_trial",
+                "within_participant_trial"
+              ]
+            },
+            {
+              "rank": 2,
+              "label": "Revues systématiques et méta-analyses",
+              "evidenceTypes": [
+                "systematic_review",
+                "meta_analysis"
+              ]
+            },
+            {
+              "rank": 3,
+              "label": "Études biomécaniques",
+              "evidenceTypes": [
+                "biomechanical_study"
+              ]
+            },
+            {
+              "rank": 4,
+              "label": "Imagerie et mesures anatomiques",
+              "evidenceTypes": [
+                "imaging_study",
+                "cadaveric_study"
+              ]
+            },
+            {
+              "rank": 5,
+              "label": "Données de bras de levier et mécanique articulaire",
+              "evidenceTypes": [
+                "biomechanical_study"
+              ]
+            },
+            {
+              "rank": 6,
+              "label": "Électromyographie de surface",
+              "evidenceTypes": [
+                "emg_study"
+              ]
+            },
+            {
+              "rank": 7,
+              "label": "Avis convergents d'experts evidence-based",
+              "evidenceTypes": [
+                "expert_practice",
+                "qualitative_study"
+              ]
+            }
+          ],
+          "nonNegotiableRules": [
+            "Une différence d'amplitude EMG entre deux exercices n'est jamais traitée comme une preuve suffisante qu'un exercice produit plus d'hypertrophie qu'un autre."
+          ],
+          "unknownFields": [
+            {
+              "field": "ranks[4].evidenceTypes",
+              "reason": "ambiguous_in_corpus",
+              "note": "F2 sépare le rang 5 (bras de levier) du rang 3 (biomécanique) sans donner de type de document distinct ; le même type est réutilisé plutôt que d'en inventer un."
+            }
+          ],
+          "contentHash": "sha256:bc1666bb953dea2f992dcd7f2d6b4aa9b60caf1b9781c957dc988077342ae3a5"
+        },
+        {
+          "id": "hierarchy.clinical.adaptation-v1",
+          "slug": "hierarchie-clinique-v1",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23",
+            "reviewedAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0021",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "manual_curation",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "domain": "clinical",
+          "purpose": "Ordonner les preuves pour décider d'une adaptation prudente d'exposition, jamais d'un diagnostic.",
+          "ranks": [
+            {
+              "rank": 1,
+              "label": "A — plusieurs CPG ou revues cohérentes, population directe",
+              "evidenceTypes": [
+                "clinical_practice_guideline",
+                "medical_body_recommendation",
+                "systematic_review"
+              ]
+            },
+            {
+              "rank": 2,
+              "label": "B — une CPG solide ou plusieurs études cohérentes avec limites",
+              "evidenceTypes": [
+                "clinical_practice_guideline",
+                "consensus_statement",
+                "meta_analysis"
+              ]
+            },
+            {
+              "rank": 3,
+              "label": "C — petites études, indirectes, hétérogènes",
+              "evidenceTypes": [
+                "randomized_trial",
+                "cohort"
+              ]
+            },
+            {
+              "rank": 4,
+              "label": "D — biomécanique seule, opinion ou extrapolation",
+              "evidenceTypes": [
+                "biomechanical_study",
+                "narrative_review"
+              ]
+            }
+          ],
+          "nonNegotiableRules": [
+            "expert_practice est une option pragmatique clairement séparée, jamais présentée comme norme médicale.",
+            "La biomécanique peut aider à doser un exercice, pas prédire à elle seule la douleur ni le dommage."
+          ],
+          "contentHash": "sha256:cc159238caf4ce728dca5070cdab9e393e8730dd0348d169d962d2b30299f767"
+        }
+      ]
+    },
+    {
+      "kind": "population",
+      "records": [
+        {
+          "id": "population.training.0001",
+          "slug": "adultes-sains-majoritairement-jeunes-hommes",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0001",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "deterministic_table_cell",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawDescription": "Adultes sains; données surtout jeunes, 79 % hommes dans la synthèse 2026; entraînés et non entraînés",
+          "trainingStatus": [
+            "untrained",
+            "trained",
+            "mixed"
+          ],
+          "ageBand": "young_adult",
+          "sexDistributionNote": "79 % hommes dans la synthèse 2026",
+          "generalizationWarnings": [
+            "Peu de femmes ; volumes élevés rares ; causalité moins forte dans une méta-régression entre études."
+          ],
+          "unknownFields": [
+            {
+              "field": "sampleSizeNote",
+              "reason": "not_in_corpus",
+              "note": "La ligne de tableau ne chiffre pas l'effectif total."
+            }
+          ],
+          "contentHash": "sha256:cbb08a4f7e3bb56b13f268709f6d671d1d46a93c77a1846c0b5e384624101a19"
+        },
+        {
+          "id": "population.training.0002",
+          "slug": "sujets-entraines-essai-triceps-overhead",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawDescription": "Participants d'un essai contrôlé d'extension du coude en position overhead contre bras le long du corps, à volume et effort égalisés sur plusieurs semaines",
+          "trainingStatus": [
+            "mixed"
+          ],
+          "ageBand": "unknown",
+          "generalizationWarnings": [
+            "Essai contrôlé unique ; F2 qualifie le mécanisme de cohérent et fort mais la base d'un seul essai."
+          ],
+          "unknownFields": [
+            {
+              "field": "sampleSizeNote",
+              "reason": "not_in_corpus"
+            },
+            {
+              "field": "sexDistributionNote",
+              "reason": "not_in_corpus"
+            }
+          ],
+          "contentHash": "sha256:b706e6d5d62dcfc0cd07854028bfaa898bac8985fded5e72c953c8a327a1b8d7"
+        },
+        {
+          "id": "population.clinical.0001",
+          "slug": "douleurs-musculosquelettiques-chroniques",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0019",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_cell",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawDescription": "Douleurs MSK chroniques",
+          "clinicalContext": "Adultes présentant des douleurs musculosquelettiques chroniques, dans des essais ayant autorisé une douleur encadrée pendant l'exercice",
+          "ageBand": "unknown",
+          "unknownFields": [
+            {
+              "field": "sampleSizeNote",
+              "reason": "not_in_corpus",
+              "note": "Le registre des sources de F3 §15 ne chiffre pas l'effectif pour Smith et al. 2017."
+            }
+          ],
+          "contentHash": "sha256:ef33e9b1270de444fcaa4c4151db3b1da7f0b84551c34b14a6d3dae23dd692f9"
+        },
+        {
+          "id": "population.clinical.0002",
+          "slug": "quinze-sujets-tendon-patellaire",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f3.0020",
+              "corpusFileRef": "corpus.f3.coaching-clinique",
+              "extractionMethod": "deterministic_table_cell",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "rawDescription": "15 sujets, tendon patellaire",
+          "sampleSizeNote": "15 sujets",
+          "clinicalContext": "Essai contrôlé pilote de tendinopathie patellaire",
+          "ageBand": "unknown",
+          "generalizationWarnings": [
+            "Population tendineuse spécifique ; F3 §1.4 avertit qu'il s'agit d'un protocole de recherche, non d'une règle pour toute douleur ou toute pathologie."
+          ],
+          "contentHash": "sha256:2eb5d3938fcdfe4b02e81bb853746638a193baa2b02ded3c81375aecda569848"
+        }
+      ]
+    },
+    {
+      "kind": "outcome",
+      "records": [
+        {
+          "id": "outcome.hypertrophy.0001",
+          "slug": "taille-musculaire-mesuree",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f1.0017",
+              "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Taille musculaire mesurée par imagerie spécifique",
+          "construct": "muscle_size",
+          "measurementMethod": "IRM, CT ou échographie localisée",
+          "measurementSpecificityNote": "F1 §1.3 : les mesures d'hypertrophie ne sont pas interchangeables ; IRM/CT et échographie localisée sont plus spécifiques que DXA, masse maigre globale, circonférences ou bio-impédance.",
+          "contentHash": "sha256:c4f6c3da0c3cb7266f24391d41879418e967098546a25c628a7658bd2bdb5144"
+        },
+        {
+          "id": "outcome.hypertrophy.0002",
+          "slug": "hypertrophie-regionale",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0003",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Hypertrophie régionale d'un chef musculaire",
+          "construct": "regional_muscle_size",
+          "measurementMethod": "Imagerie régionale",
+          "measurementSpecificityNote": "Un changement local peut être régional ; une mesure précoce peut être contaminée par l'œdème.",
+          "contentHash": "sha256:df2917b12ccf8a0d2ecf6744c417df533fd8f3e37953054de490268c8fb025ed"
+        },
+        {
+          "id": "outcome.emg.0001",
+          "slug": "activation-emg-de-surface",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0001",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Activation EMG de surface comparative",
+          "construct": "emg_activation",
+          "measurementMethod": "EMG de surface, normalisée en pourcentage de contraction volontaire maximale",
+          "measurementSpecificityNote": "Mesure une activité électrique moyennée et globale, pas la tension mécanique par fibre, ni le recrutement des unités motrices profondes, ni la durée sous tension à une longueur donnée.",
+          "isProxyFor": "outcome.hypertrophy.0001",
+          "contentHash": "sha256:8723ea22cb2c6401b93e3bbe8b9d39a4f8ddaf9635844513c1bd4f37319e4bc8"
+        },
+        {
+          "id": "outcome.strength.0001",
+          "slug": "force-maximale-specifique",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0004",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Force maximale, spécifique au mode testé",
+          "construct": "maximal_strength",
+          "measurementMethod": "Test de force dans le mode d'entraînement correspondant",
+          "measurementSpecificityNote": "Chaque modalité produit un gain supérieur dans son propre mode de test ; le résultat dépend donc du mode choisi pour tester.",
+          "contentHash": "sha256:c9aaa102025aaf49ff17664a3538cc16fa2115671ed30ecf2ae85126f5fe6c23"
+        },
+        {
+          "id": "outcome.jointload.0001",
+          "slug": "charge-articulaire-modelisee",
+          "revision": 1,
+          "lifecycle": {
+            "status": "approved",
+            "createdAt": "2026-08-23"
+          },
+          "provenance": [
+            {
+              "fragmentRef": "frag.f2.0009",
+              "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+              "extractionMethod": "llm_prose_extraction",
+              "extractedAt": "2026-08-23"
+            }
+          ],
+          "label": "Charge articulaire estimée par modélisation",
+          "construct": "joint_load",
+          "measurementMethod": "Modélisation musculo-squelettique et dynamique inverse",
+          "measurementSpecificityNote": "Les estimations varient fortement selon la personnalisation du modèle, l'enveloppement musculaire et le rythme lombo-pelvien retenus.",
+          "contentHash": "sha256:9043b2ab56581dbf55a0d5b05b23fdfc75a0afe278d815a2ce6b8a2c01651ef1"
+        }
+      ]
+    }
+  ]
+}

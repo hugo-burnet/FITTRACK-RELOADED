@@ -2,3 +2,8 @@ dist
 coverage
 node_modules
 package-lock.json
+
+# Paquet genere : fragments, vocabulaires et registre sont produits par
+# fittrack-kb-contract/tools/*. Les reformater ici les mettrait en conflit
+# permanent avec leurs generateurs, a chaque `npm run build` du paquet.
+fittrack-kb-contract
