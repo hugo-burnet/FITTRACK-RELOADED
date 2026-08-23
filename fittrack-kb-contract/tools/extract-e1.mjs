@@ -69,16 +69,22 @@ function rawStatementFor(kind, cells) {
   return cell?.raw;
 }
 
-function fragmentRefFor(fragments, corpusFileId, startLine, fallbackSeq) {
+function e1FragPrefix(corpusFileId) {
+  if (corpusFileId.includes('.f1.')) return 'frag.e1f1';
+  if (corpusFileId.includes('.f2.')) return 'frag.e1f2';
+  return 'frag.e1';
+}
+
+function fragmentRefFor(fragments, corpusFileId, startLine, endLine, fallbackSeq) {
   const hit = fragments.find(
     (f) =>
       f.corpusFileId === corpusFileId &&
       f.startLine === startLine &&
-      f.endLine === startLine &&
+      f.endLine === endLine &&
       f.blockType === 'table_row'
   );
   if (hit) return hit.fragmentId;
-  return `frag.e1.${String(fallbackSeq).padStart(4, '0')}`;
+  return `${e1FragPrefix(corpusFileId)}.${String(fallbackSeq).padStart(4, '0')}`;
 }
 
 export function extractE1FromText({
@@ -132,14 +138,14 @@ export function extractE1FromText({
         });
       }
 
-      const existing = fragments.some(
-        (f) =>
-          f.corpusFileId === corpusFileId &&
-          f.startLine === row.startLine &&
-          f.blockType === 'table_row'
+      const fragmentRef = fragmentRefFor(
+        fragments,
+        corpusFileId,
+        row.startLine,
+        row.endLine,
+        unmatched + 1
       );
-      if (!existing) unmatched += 1;
-      const fragmentRef = fragmentRefFor(fragments, corpusFileId, row.startLine, unmatched);
+      if (fragmentRef.startsWith('frag.e1')) unmatched += 1;
 
       const idSeed = `${corpusFileId}\n${startByte}\n${rawRow}`;
       const candidateId = `cand.e1.${sha256(idSeed).slice(7, 23)}`;

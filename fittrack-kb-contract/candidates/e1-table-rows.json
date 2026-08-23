@@ -21,7 +21,7 @@
     {
       "candidateId": "cand.e1.bbadd751172a5c7f",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0001",
+      "fragmentRef": "frag.e1f1.0001",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -67,7 +67,7 @@
     {
       "candidateId": "cand.e1.64e4e2d5fbc1ed02",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0002",
+      "fragmentRef": "frag.e1f1.0002",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -113,7 +113,7 @@
     {
       "candidateId": "cand.e1.8a3c9c9dde8a3bf2",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0003",
+      "fragmentRef": "frag.e1f1.0003",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -159,7 +159,7 @@
     {
       "candidateId": "cand.e1.051c5c08b7bcd154",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0004",
+      "fragmentRef": "frag.e1f1.0004",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -257,7 +257,7 @@
     {
       "candidateId": "cand.e1.3b094a48379f421e",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0005",
+      "fragmentRef": "frag.e1f1.0005",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -309,7 +309,7 @@
     {
       "candidateId": "cand.e1.e55265adc1e7cf69",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0006",
+      "fragmentRef": "frag.e1f1.0006",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -361,7 +361,7 @@
     {
       "candidateId": "cand.e1.e9c5830841b25762",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0007",
+      "fragmentRef": "frag.e1f1.0007",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -413,7 +413,7 @@
     {
       "candidateId": "cand.e1.fc6e7d732346146e",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0008",
+      "fragmentRef": "frag.e1f1.0008",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -668,7 +668,7 @@
     {
       "candidateId": "cand.e1.b550a86389a7fe4c",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0009",
+      "fragmentRef": "frag.e1f1.0009",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -765,7 +765,7 @@
     {
       "candidateId": "cand.e1.f77ddafcbc12dedc",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0010",
+      "fragmentRef": "frag.e1f1.0010",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -862,7 +862,7 @@
     {
       "candidateId": "cand.e1.796d46651c820592",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0011",
+      "fragmentRef": "frag.e1f1.0011",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -959,7 +959,7 @@
     {
       "candidateId": "cand.e1.806666d624e12ddf",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0012",
+      "fragmentRef": "frag.e1f1.0012",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1056,7 +1056,7 @@
     {
       "candidateId": "cand.e1.e01892cb025c9c5b",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0013",
+      "fragmentRef": "frag.e1f1.0013",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1153,7 +1153,7 @@
     {
       "candidateId": "cand.e1.bb8f3f5c37473b14",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0014",
+      "fragmentRef": "frag.e1f1.0014",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1246,7 +1246,7 @@
     {
       "candidateId": "cand.e1.b40d20955b2c8581",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0015",
+      "fragmentRef": "frag.e1f1.0015",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1343,7 +1343,7 @@
     {
       "candidateId": "cand.e1.f3e9eb5a18756d37",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0016",
+      "fragmentRef": "frag.e1f1.0016",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1440,7 +1440,7 @@
     {
       "candidateId": "cand.e1.06267f48f4ef5700",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0017",
+      "fragmentRef": "frag.e1f1.0017",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1537,7 +1537,7 @@
     {
       "candidateId": "cand.e1.a87f41900ed7d18d",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0018",
+      "fragmentRef": "frag.e1f1.0018",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1735,7 +1735,7 @@
     {
       "candidateId": "cand.e1.fcd738578c7d8573",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0019",
+      "fragmentRef": "frag.e1f1.0019",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -1832,7 +1832,7 @@
     {
       "candidateId": "cand.e1.75f6b29bb58c259c",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0020",
+      "fragmentRef": "frag.e1f1.0020",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2115,7 +2115,7 @@
     {
       "candidateId": "cand.e1.7e6125bca19b0163",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0021",
+      "fragmentRef": "frag.e1f1.0021",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2212,7 +2212,7 @@
     {
       "candidateId": "cand.e1.cf0474cc397eee66",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0022",
+      "fragmentRef": "frag.e1f1.0022",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2406,7 +2406,7 @@
     {
       "candidateId": "cand.e1.562fbab6580db1b5",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0023",
+      "fragmentRef": "frag.e1f1.0023",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2600,7 +2600,7 @@
     {
       "candidateId": "cand.e1.fdb593a9de570c49",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0024",
+      "fragmentRef": "frag.e1f1.0024",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2697,7 +2697,7 @@
     {
       "candidateId": "cand.e1.1342449d726b97dd",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0025",
+      "fragmentRef": "frag.e1f1.0025",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2790,7 +2790,7 @@
     {
       "candidateId": "cand.e1.541f3e4211815afc",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0026",
+      "fragmentRef": "frag.e1f1.0026",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2883,7 +2883,7 @@
     {
       "candidateId": "cand.e1.b2513d2c6be2fda4",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0027",
+      "fragmentRef": "frag.e1f1.0027",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -2976,7 +2976,7 @@
     {
       "candidateId": "cand.e1.644f5df177a80f4f",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0028",
+      "fragmentRef": "frag.e1f1.0028",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3073,7 +3073,7 @@
     {
       "candidateId": "cand.e1.19b9467e3f9bc113",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0029",
+      "fragmentRef": "frag.e1f1.0029",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3170,7 +3170,7 @@
     {
       "candidateId": "cand.e1.ff7e49aef32bd19f",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0030",
+      "fragmentRef": "frag.e1f1.0030",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3267,7 +3267,7 @@
     {
       "candidateId": "cand.e1.399c8c3c09cc32ef",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0031",
+      "fragmentRef": "frag.e1f1.0031",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3360,7 +3360,7 @@
     {
       "candidateId": "cand.e1.0e75def084556a94",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0032",
+      "fragmentRef": "frag.e1f1.0032",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3453,7 +3453,7 @@
     {
       "candidateId": "cand.e1.326fb197fbf6fdb2",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0033",
+      "fragmentRef": "frag.e1f1.0033",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3546,7 +3546,7 @@
     {
       "candidateId": "cand.e1.160633733416fd44",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0034",
+      "fragmentRef": "frag.e1f1.0034",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3639,7 +3639,7 @@
     {
       "candidateId": "cand.e1.25e4b9d76d1da50b",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0035",
+      "fragmentRef": "frag.e1f1.0035",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3732,7 +3732,7 @@
     {
       "candidateId": "cand.e1.d3752a3d11f8472c",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0036",
+      "fragmentRef": "frag.e1f1.0036",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3825,7 +3825,7 @@
     {
       "candidateId": "cand.e1.e8746ad583ae58ea",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0037",
+      "fragmentRef": "frag.e1f1.0037",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -3918,7 +3918,7 @@
     {
       "candidateId": "cand.e1.711cc9c47539b504",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0038",
+      "fragmentRef": "frag.e1f1.0038",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4015,7 +4015,7 @@
     {
       "candidateId": "cand.e1.ea62ae34a9c0ec40",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0039",
+      "fragmentRef": "frag.e1f1.0039",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4103,7 +4103,7 @@
     {
       "candidateId": "cand.e1.61bf7ced3b984f5e",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0040",
+      "fragmentRef": "frag.e1f1.0040",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4200,7 +4200,7 @@
     {
       "candidateId": "cand.e1.ac1f53d2ed5adb31",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0041",
+      "fragmentRef": "frag.e1f1.0041",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4293,7 +4293,7 @@
     {
       "candidateId": "cand.e1.6bd63a9af49a8619",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0042",
+      "fragmentRef": "frag.e1f1.0042",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4390,7 +4390,7 @@
     {
       "candidateId": "cand.e1.96d8df1c39744040",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0043",
+      "fragmentRef": "frag.e1f1.0043",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4483,7 +4483,7 @@
     {
       "candidateId": "cand.e1.e2d59a9adbfd349e",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0044",
+      "fragmentRef": "frag.e1f1.0044",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4576,7 +4576,7 @@
     {
       "candidateId": "cand.e1.797be9345a957179",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0045",
+      "fragmentRef": "frag.e1f1.0045",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4669,7 +4669,7 @@
     {
       "candidateId": "cand.e1.197069b12a336ea6",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0046",
+      "fragmentRef": "frag.e1f1.0046",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4766,7 +4766,7 @@
     {
       "candidateId": "cand.e1.ed8c3905c41098c0",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0047",
+      "fragmentRef": "frag.e1f1.0047",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4859,7 +4859,7 @@
     {
       "candidateId": "cand.e1.5fd9781ca4b7df20",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0048",
+      "fragmentRef": "frag.e1f1.0048",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -4956,7 +4956,7 @@
     {
       "candidateId": "cand.e1.3a4090548ef1b167",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0049",
+      "fragmentRef": "frag.e1f1.0049",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5053,7 +5053,7 @@
     {
       "candidateId": "cand.e1.be74ce57fef74708",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0050",
+      "fragmentRef": "frag.e1f1.0050",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5150,7 +5150,7 @@
     {
       "candidateId": "cand.e1.7409b808fc491fa2",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0051",
+      "fragmentRef": "frag.e1f1.0051",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5243,7 +5243,7 @@
     {
       "candidateId": "cand.e1.7ab07800e4ef43c9",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0052",
+      "fragmentRef": "frag.e1f1.0052",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5344,7 +5344,7 @@
     {
       "candidateId": "cand.e1.e5af7ff35583244a",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0053",
+      "fragmentRef": "frag.e1f1.0053",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5437,7 +5437,7 @@
     {
       "candidateId": "cand.e1.98b07663635e3570",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0054",
+      "fragmentRef": "frag.e1f1.0054",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5534,7 +5534,7 @@
     {
       "candidateId": "cand.e1.a101b13ed06fe3aa",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0055",
+      "fragmentRef": "frag.e1f1.0055",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5631,7 +5631,7 @@
     {
       "candidateId": "cand.e1.f7df82ebab3e53ca",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0056",
+      "fragmentRef": "frag.e1f1.0056",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5728,7 +5728,7 @@
     {
       "candidateId": "cand.e1.c398a0a08930cc1d",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0057",
+      "fragmentRef": "frag.e1f1.0057",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5786,7 +5786,7 @@
     {
       "candidateId": "cand.e1.53f3792af2949958",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0058",
+      "fragmentRef": "frag.e1f1.0058",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5844,7 +5844,7 @@
     {
       "candidateId": "cand.e1.5778dd061e2de16e",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0059",
+      "fragmentRef": "frag.e1f1.0059",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5902,7 +5902,7 @@
     {
       "candidateId": "cand.e1.bb75a79c235de4b7",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0060",
+      "fragmentRef": "frag.e1f1.0060",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -5965,7 +5965,7 @@
     {
       "candidateId": "cand.e1.3d424b95d432e902",
       "targetKind": "claim",
-      "fragmentRef": "frag.e1.0061",
+      "fragmentRef": "frag.e1f1.0061",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6095,7 +6095,7 @@
     {
       "candidateId": "cand.e1.4b3d92c813d9e2b7",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0062",
+      "fragmentRef": "frag.e1f1.0062",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6152,7 +6152,7 @@
     {
       "candidateId": "cand.e1.eb7e31e06ab459c6",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0063",
+      "fragmentRef": "frag.e1f1.0063",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6209,7 +6209,7 @@
     {
       "candidateId": "cand.e1.3a33a39c9e68ddba",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0064",
+      "fragmentRef": "frag.e1f1.0064",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6271,7 +6271,7 @@
     {
       "candidateId": "cand.e1.08734a1460e8fe43",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0065",
+      "fragmentRef": "frag.e1f1.0065",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6333,7 +6333,7 @@
     {
       "candidateId": "cand.e1.ff1a85e196f11d82",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0066",
+      "fragmentRef": "frag.e1f1.0066",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6390,7 +6390,7 @@
     {
       "candidateId": "cand.e1.7a14e062af476a5f",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0067",
+      "fragmentRef": "frag.e1f1.0067",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6521,7 +6521,7 @@
     {
       "candidateId": "cand.e1.c77cfd8dfc408962",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0068",
+      "fragmentRef": "frag.e1f1.0068",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6595,7 +6595,7 @@
     {
       "candidateId": "cand.e1.d08348841157d20f",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0069",
+      "fragmentRef": "frag.e1f1.0069",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6669,7 +6669,7 @@
     {
       "candidateId": "cand.e1.087e55a2fd9fae94",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0070",
+      "fragmentRef": "frag.e1f1.0070",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6743,7 +6743,7 @@
     {
       "candidateId": "cand.e1.539667db41d19070",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0071",
+      "fragmentRef": "frag.e1f1.0071",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6891,7 +6891,7 @@
     {
       "candidateId": "cand.e1.c5d27260f725f58f",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0072",
+      "fragmentRef": "frag.e1f1.0072",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -6965,7 +6965,7 @@
     {
       "candidateId": "cand.e1.734fb93674b47ce7",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0073",
+      "fragmentRef": "frag.e1f1.0073",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7039,7 +7039,7 @@
     {
       "candidateId": "cand.e1.470bacad85fe96ec",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0074",
+      "fragmentRef": "frag.e1f1.0074",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7113,7 +7113,7 @@
     {
       "candidateId": "cand.e1.a66c2fe46b10ae8e",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0075",
+      "fragmentRef": "frag.e1f1.0075",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7187,7 +7187,7 @@
     {
       "candidateId": "cand.e1.7a9135b211657ac9",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0076",
+      "fragmentRef": "frag.e1f1.0076",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7261,7 +7261,7 @@
     {
       "candidateId": "cand.e1.a5de452cb2356d44",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0077",
+      "fragmentRef": "frag.e1f1.0077",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7335,7 +7335,7 @@
     {
       "candidateId": "cand.e1.8d68895197a68f1e",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0078",
+      "fragmentRef": "frag.e1f1.0078",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7409,7 +7409,7 @@
     {
       "candidateId": "cand.e1.a39b7365682a7ddd",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0079",
+      "fragmentRef": "frag.e1f1.0079",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7557,7 +7557,7 @@
     {
       "candidateId": "cand.e1.39c1d8a55f5e19db",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0080",
+      "fragmentRef": "frag.e1f1.0080",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7705,7 +7705,7 @@
     {
       "candidateId": "cand.e1.f0c9d6b058ee2477",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0081",
+      "fragmentRef": "frag.e1f1.0081",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7779,7 +7779,7 @@
     {
       "candidateId": "cand.e1.3fb622a482e1f089",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0082",
+      "fragmentRef": "frag.e1f1.0082",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7853,7 +7853,7 @@
     {
       "candidateId": "cand.e1.d648f4a315d527d0",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0083",
+      "fragmentRef": "frag.e1f1.0083",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -7927,7 +7927,7 @@
     {
       "candidateId": "cand.e1.3308596a9f3b73d1",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0084",
+      "fragmentRef": "frag.e1f1.0084",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8001,7 +8001,7 @@
     {
       "candidateId": "cand.e1.6249d36fa755860f",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0085",
+      "fragmentRef": "frag.e1f1.0085",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8075,7 +8075,7 @@
     {
       "candidateId": "cand.e1.117e7ac8939b5573",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0086",
+      "fragmentRef": "frag.e1f1.0086",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8149,7 +8149,7 @@
     {
       "candidateId": "cand.e1.01448203c2846632",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0087",
+      "fragmentRef": "frag.e1f1.0087",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8223,7 +8223,7 @@
     {
       "candidateId": "cand.e1.a3fe0f5cd419dcd5",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0088",
+      "fragmentRef": "frag.e1f1.0088",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8297,7 +8297,7 @@
     {
       "candidateId": "cand.e1.a3360c13e3b99c98",
       "targetKind": "source",
-      "fragmentRef": "frag.e1.0089",
+      "fragmentRef": "frag.e1f1.0089",
       "corpusFileRef": "corpus.f1.programmation-hypertrophie",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8371,7 +8371,7 @@
     {
       "candidateId": "cand.e1.5d18ff3665dabe79",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0001",
+      "fragmentRef": "frag.e1f2.0001",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8417,7 +8417,7 @@
     {
       "candidateId": "cand.e1.1e4671cd223972ae",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0002",
+      "fragmentRef": "frag.e1f2.0002",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8463,7 +8463,7 @@
     {
       "candidateId": "cand.e1.a45a2cee04488cba",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0003",
+      "fragmentRef": "frag.e1f2.0003",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8509,7 +8509,7 @@
     {
       "candidateId": "cand.e1.0a621552812e5999",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0004",
+      "fragmentRef": "frag.e1f2.0004",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8555,7 +8555,7 @@
     {
       "candidateId": "cand.e1.795aa7ccd93739d4",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0005",
+      "fragmentRef": "frag.e1f2.0005",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8607,7 +8607,7 @@
     {
       "candidateId": "cand.e1.ad421d14c785fd7e",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0006",
+      "fragmentRef": "frag.e1f2.0006",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8659,7 +8659,7 @@
     {
       "candidateId": "cand.e1.f3ead3923e99c6e5",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0007",
+      "fragmentRef": "frag.e1f2.0007",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8711,7 +8711,7 @@
     {
       "candidateId": "cand.e1.a3c87c337ad860ed",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0008",
+      "fragmentRef": "frag.e1f2.0008",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8763,7 +8763,7 @@
     {
       "candidateId": "cand.e1.1611c63a15b2549b",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0009",
+      "fragmentRef": "frag.e1f2.0009",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8815,7 +8815,7 @@
     {
       "candidateId": "cand.e1.e9fd0a774cd74cda",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0010",
+      "fragmentRef": "frag.e1f2.0010",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8867,7 +8867,7 @@
     {
       "candidateId": "cand.e1.33ac66873df121f2",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0011",
+      "fragmentRef": "frag.e1f2.0011",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8919,7 +8919,7 @@
     {
       "candidateId": "cand.e1.fef688962b3d36fc",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0012",
+      "fragmentRef": "frag.e1f2.0012",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -8971,7 +8971,7 @@
     {
       "candidateId": "cand.e1.f566d03a31607590",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0013",
+      "fragmentRef": "frag.e1f2.0013",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9023,7 +9023,7 @@
     {
       "candidateId": "cand.e1.5d51fd7e6e27bc52",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0014",
+      "fragmentRef": "frag.e1f2.0014",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9075,7 +9075,7 @@
     {
       "candidateId": "cand.e1.48c18380c5579b45",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0015",
+      "fragmentRef": "frag.e1f2.0015",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9127,7 +9127,7 @@
     {
       "candidateId": "cand.e1.71609597da14c747",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0016",
+      "fragmentRef": "frag.e1f2.0016",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9179,7 +9179,7 @@
     {
       "candidateId": "cand.e1.10b6ff05ce300dcb",
       "targetKind": "substitution-relation",
-      "fragmentRef": "frag.e1.0017",
+      "fragmentRef": "frag.e1f2.0017",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9231,7 +9231,7 @@
     {
       "candidateId": "cand.e1.669bcd3635543c6e",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0018",
+      "fragmentRef": "frag.e1f2.0018",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9288,7 +9288,7 @@
     {
       "candidateId": "cand.e1.d9f33edb6a3c6c21",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0018",
+      "fragmentRef": "frag.e1f2.0019",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9345,7 +9345,7 @@
     {
       "candidateId": "cand.e1.6a4455dfc0dd7662",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0019",
+      "fragmentRef": "frag.e1f2.0020",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9402,7 +9402,7 @@
     {
       "candidateId": "cand.e1.47f0e6420b3d396d",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0020",
+      "fragmentRef": "frag.e1f2.0021",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9459,7 +9459,7 @@
     {
       "candidateId": "cand.e1.1a23b71c860572a0",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0021",
+      "fragmentRef": "frag.e1f2.0022",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9516,7 +9516,7 @@
     {
       "candidateId": "cand.e1.8080e62b14912f60",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0022",
+      "fragmentRef": "frag.e1f2.0023",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9573,7 +9573,7 @@
     {
       "candidateId": "cand.e1.205c8f1dda58de33",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0023",
+      "fragmentRef": "frag.e1f2.0024",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9630,7 +9630,7 @@
     {
       "candidateId": "cand.e1.ff0e8516c3a9f900",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0024",
+      "fragmentRef": "frag.e1f2.0025",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9687,7 +9687,7 @@
     {
       "candidateId": "cand.e1.1294728284cbddff",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0025",
+      "fragmentRef": "frag.e1f2.0026",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9744,7 +9744,7 @@
     {
       "candidateId": "cand.e1.b5e6246a2bde87f9",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0026",
+      "fragmentRef": "frag.e1f2.0027",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9801,7 +9801,7 @@
     {
       "candidateId": "cand.e1.bf4376c016a49970",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0027",
+      "fragmentRef": "frag.e1f2.0028",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9858,7 +9858,7 @@
     {
       "candidateId": "cand.e1.b96473b43570d531",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0028",
+      "fragmentRef": "frag.e1f2.0029",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9915,7 +9915,7 @@
     {
       "candidateId": "cand.e1.b20f9cc3ad29435c",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0029",
+      "fragmentRef": "frag.e1f2.0030",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -9972,7 +9972,7 @@
     {
       "candidateId": "cand.e1.5e9becfb7f68a962",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0030",
+      "fragmentRef": "frag.e1f2.0031",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -10029,7 +10029,7 @@
     {
       "candidateId": "cand.e1.e1588bcd550ab9fb",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0031",
+      "fragmentRef": "frag.e1f2.0032",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -10143,7 +10143,7 @@
     {
       "candidateId": "cand.e1.ed805f19b148adc9",
       "targetKind": "unmapped_table_row",
-      "fragmentRef": "frag.e1.0032",
+      "fragmentRef": "frag.e1f2.0033",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -10262,7 +10262,7 @@
     {
       "candidateId": "cand.e1.f613c40a85f595d8",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0033",
+      "fragmentRef": "frag.e1f2.0034",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -10324,7 +10324,7 @@
     {
       "candidateId": "cand.e1.dfa6920455a6f66e",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0034",
+      "fragmentRef": "frag.e1f2.0035",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -10386,7 +10386,7 @@
     {
       "candidateId": "cand.e1.257b7596b89dcf74",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0035",
+      "fragmentRef": "frag.e1f2.0036",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",
@@ -10448,7 +10448,7 @@
     {
       "candidateId": "cand.e1.ddc8a33a455293b9",
       "targetKind": "evidence-conflict",
-      "fragmentRef": "frag.e1.0036",
+      "fragmentRef": "frag.e1f2.0037",
       "corpusFileRef": "corpus.f2.anatomie-biomecanique",
       "extraction": {
         "method": "deterministic_table_row",

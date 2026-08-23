@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { extractE1FromText } from '../../tools/extract-e1.mjs';
+import { extractE1FromCorpusFiles, extractE1FromText } from '../../tools/extract-e1.mjs';
 import { resolveCorpusFile } from '../../tools/resolve-corpus.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -40,4 +40,27 @@ test('F1 line 54 offsets match the golden fragment and reread the file bytes', (
     'Plus de séries hebdomadaires produisent en moyenne plus d’hypertrophie, avec rendements décroissants.'
   );
   assert.equal(row.payload.cells.find((c) => c.header === 'Sources principales').links.length, 3);
+
+  const refs = candidates.map((c) => c.fragmentRef);
+  assert.equal(refs.length, new Set(refs).size, 'fragmentRef dupliqué dans F1');
+});
+
+test('F1+F2 fragment refs stay unique across files', () => {
+  const config = JSON.parse(readFileSync(join(root, 'corpus/corpus-files.config.json'), 'utf8'));
+  const fragments = JSON.parse(readFileSync(join(root, 'fragments/fragments.json'), 'utf8')).fragments;
+  const files = [];
+  for (const id of ['corpus.f1.programmation-hypertrophie', 'corpus.f2.anatomie-biomecanique']) {
+    const f = config.files.find((x) => x.corpusFileId === id);
+    const hit = resolveCorpusFile(f, { packageRoot: root, repoRoot, archiveRef: config.archiveRef });
+    assert.ok(hit.bytes, id);
+    files.push({ corpusFileId: id, originalFilename: f.originalFilename, bytes: hit.bytes });
+  }
+  const { candidates, tables, diagnostics } = extractE1FromCorpusFiles({ files, fragments });
+  assert.equal(tables, 25);
+  assert.equal(candidates.length, 141);
+  assert.equal(diagnostics.length, 0);
+  const refs = candidates.map((c) => c.fragmentRef);
+  assert.equal(refs.length, new Set(refs).size);
+  const ids = candidates.map((c) => c.candidateId);
+  assert.equal(ids.length, new Set(ids).size);
 });

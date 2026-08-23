@@ -31,6 +31,9 @@ plutôt que de les déguiser en claims.
 
 ## Fragments E1 vs golden set
 
-15 lignes recollent un `frag.f1.*` / `frag.f2.*` existant. Les autres
-reçoivent un `frag.e1.NNNN` technique, **non** ajouté à `fragments.json`
-(ce fichier reste le golden set calculé par `make-fragments.mjs`).
+Les lignes recollent un `frag.f1.*` / `frag.f2.*` seulement si le fragment
+golden a **exactement** la même ligne de début et de fin. `frag.f2.0020`
+couvre L370–L371 : E1 extrait une candidate par ligne physique et lui
+donne un `frag.e1f1.NNNN` / `frag.e1f2.NNNN`, sans élargir le golden set.
+
+Ces identifiants techniques ne sont **pas** ajoutés à `fragments.json`.

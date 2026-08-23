@@ -132,6 +132,23 @@ test('same input yields the same candidateId and payload', () => {
   assert.match(a.candidates[0].candidateId, /^cand\.[a-z0-9-]+\.[0-9a-f]{8,}$/);
 });
 
+test('unmatched rows get distinct frag.e1 ids if a golden fragment spans several lines', () => {
+  const text = ['| Champ | Type |', '|---|---|', '| a | b |', '| c | d |'].join('\n');
+  const { candidates } = extract(text, {
+    fragments: [
+      {
+        fragmentId: 'frag.f2.0020',
+        corpusFileId: 'corpus.f1.programmation-hypertrophie',
+        startLine: 3,
+        endLine: 4,
+        blockType: 'table_row'
+      }
+    ]
+  });
+  assert.equal(candidates[0].fragmentRef, 'frag.e1f1.0001');
+  assert.equal(candidates[1].fragmentRef, 'frag.e1f1.0002');
+});
+
 test('reuses an existing golden fragment id for the same line', () => {
   const text = claimTable(['| Une affirmation. | Modéré |  |']);
   const { candidates } = extract(text, {
