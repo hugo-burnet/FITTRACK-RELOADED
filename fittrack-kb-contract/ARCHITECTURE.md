@@ -30,7 +30,7 @@ structurelle plutôt que documentaire :
 
 ```text
 fittrack-kb-contract/
-├── corpus/              empreinte des quatre fichiers ; la copie vit dans ../knowledge-base/corpus/
+├── corpus/              empreinte des quatre fichiers ; la copie vit sur archive/fittrack-kb-corpus
 ├── fragments/           tranches exactes : offsets octets, headingPath, hashes
 ├── candidates/          extractions non approuvées (vide à ce stade, contrat défini)
 ├── curated/             source de vérité — représentée ici par fixtures/golden-set

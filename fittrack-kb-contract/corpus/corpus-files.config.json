@@ -1,14 +1,12 @@
 {
-  "note": "Emplacement des quatre fichiers du corpus. Ils sont versionnés dans knowledge-base/corpus/, ce qui rend la régénération reproductible depuis un clone neuf : le chemin candidat est relatif à ce paquet.",
-  "whyCandidatePaths": "Le corpus a changé de dossier deux fois avant d être versionné, et a bien failli être perdu. Le chemin relatif au dépôt est l autorité. expectedContentHash garantit qu on ne régénère pas à partir d une copie différente.",
+  "note": "Les quatre fichiers du corpus vivent sur la branche orpheline archive/fittrack-kb-corpus, avec leurs noms d origine. Ce paquet n en garde que l empreinte et les fragments cités. make-fragments.mjs et les invariants les lisent par git show.",
+  "archiveRef": "archive/fittrack-kb-corpus",
+  "whyArchiveRef": "Le corpus a disparu de son dossier deux fois avant d être archivé. Le dupliquer dans le working tree reproduisait la même matière que la branche archive. expectedContentHash garantit qu on ne régénère pas à partir d une copie différente.",
   "files": [
     {
       "corpusFileId": "corpus.f1.programmation-hypertrophie",
       "shortLabel": "F1",
       "title": "Programmation hypertrophie — État des connaissances",
-      "candidatePaths": [
-        "../knowledge-base/corpus/f1-programmation-hypertrophie.md"
-      ],
       "expectedContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b",
       "mediaType": "text/markdown",
       "language": "fr",
@@ -19,9 +17,6 @@
       "corpusFileId": "corpus.f2.anatomie-biomecanique",
       "shortLabel": "F2",
       "title": "Anatomie, biomécanique et sélection d'exercices (hypertrophie)",
-      "candidatePaths": [
-        "../knowledge-base/corpus/f2-anatomie-biomecanique.md"
-      ],
       "expectedContentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685",
       "mediaType": "text/markdown",
       "language": "fr",
@@ -32,9 +27,6 @@
       "corpusFileId": "corpus.f3.coaching-clinique",
       "shortLabel": "F3",
       "title": "Base de connaissances — coaching musculation adaptatif",
-      "candidatePaths": [
-        "../knowledge-base/corpus/f3-coaching-clinique.md"
-      ],
       "expectedContentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202",
       "mediaType": "text/markdown",
       "language": "fr",
@@ -45,9 +37,6 @@
       "corpusFileId": "corpus.f4.schema-ia-coaching",
       "shortLabel": "F4",
       "title": "Schéma de données IA coaching",
-      "candidatePaths": [
-        "../knowledge-base/corpus/f4-schema-ia-coaching.json"
-      ],
       "expectedContentHash": "sha256:c5b04da70c69246ec2a7a95063d7c49518867f5076a67e9fe6f6353f8c2595c5",
       "mediaType": "application/json",
       "language": "fr",
@@ -55,5 +44,5 @@
       "originalFilename": "Schéma de données IA coaching.json"
     }
   ],
-  "originalFilenameNote": "Les fichiers ont été renommés en ASCII pour le dépôt : virgules, parenthèses, apostrophes et accents dans un chemin sont hostiles aux scripts et aux URL. originalFilename conserve le nom d origine, que le manifest publie."
+  "originalFilenameNote": "Nom d origine sur la branche archive. C est ce nom que git show utilise ; il n est pas déduit d un chemin local."
 }

@@ -4,17 +4,22 @@
 // renvoient NOT_TESTABLE avec la raison : le prompt exige d'indiquer clairement
 // toute contrainte non testée plutôt que de la présenter comme validée.
 
-import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { projectClaimToWikiEntry } from '../projections/claim-wiki-projection.mjs';
 import { contentHashOf } from '../tools/canonical.mjs';
+import { resolveCorpusFile } from '../tools/resolve-corpus.mjs';
 
 const sha256 = (s) => 'sha256:' + createHash('sha256').update(s, 'utf8').digest('hex');
 
-// Le corpus peut avoir changé de dossier : on résout le premier chemin
-// candidat existant, exactement comme le générateur de fragments.
-const resolveCorpusPath = (f) => (f?.candidatePaths ?? [f?.path]).find((p) => p && existsSync(p)) ?? null;
+const loadCorpus = (f, config, root) => {
+  if (!f) return { source: null, bytes: null, tried: [] };
+  return resolveCorpusFile(f, {
+    packageRoot: root,
+    repoRoot: join(root, '..'),
+    archiveRef: config?.archiveRef
+  });
+};
 
 // Champs qui se terminent par Ref sans désigner une entité de la KB. Les
 // exclure vaut mieux que de les renommer : subjectRef pointe une personne et
@@ -372,21 +377,22 @@ export function runInvariants({ root, instances, parsed, rel }) {
   // --- INV-011 Idempotence -------------------------------------------------
   {
     const config = parsed.get(join(root, 'corpus/corpus-files.config.json'));
-    const resolved = new Map((config?.files ?? []).map((f) => [f.corpusFileId, resolveCorpusPath(f)]));
-    const available = (config?.files ?? []).length > 0 && [...resolved.values()].every(Boolean);
+    const resolved = new Map((config?.files ?? []).map((f) => [f.corpusFileId, loadCorpus(f, config, root)]));
+    const available =
+      (config?.files ?? []).length > 0 && [...resolved.values()].every((hit) => hit.bytes);
     if (!available) {
       add(
         'INV-011',
         'Idempotence de la fragmentation',
         'NOT_TESTABLE',
-        'les fichiers du corpus ne sont pas accessibles depuis cette machine ; adapter corpus/corpus-files.config.json puis relancer'
+        'les fichiers du corpus ne sont pas accessibles (fetcher archive/fittrack-kb-corpus) ; relancer ensuite'
       );
     } else {
       const spec = parsed.get(join(root, 'fragments/fragment-spec.json'));
       const onDisk = parsed.get(join(root, 'fragments/fragments.json'));
       const problems = [];
       for (const fs of spec.fragments) {
-        const lines = readFileSync(resolved.get(fs.corpusFileId), 'utf8').split('\n');
+        const lines = resolved.get(fs.corpusFileId).bytes.toString('utf8').split('\n');
         const raw = lines.slice(fs.startLine - 1, fs.endLine).join('\n');
         const stored = onDisk.fragments.find((f) => f.fragmentId === fs.fragmentId);
         if (!stored) {
@@ -437,14 +443,18 @@ export function runInvariants({ root, instances, parsed, rel }) {
   // --- INV-013 Aucune perte pendant la migration clinique -------------------
   {
     const config = parsed.get(join(root, 'corpus/corpus-files.config.json'));
-    const f4Path = resolveCorpusPath(config?.files?.find((f) => f.corpusFileId === 'corpus.f4.schema-ia-coaching'));
+    const f4 = loadCorpus(
+      config?.files?.find((f) => f.corpusFileId === 'corpus.f4.schema-ia-coaching'),
+      config,
+      root
+    );
     const mapping = parsed.get(join(root, 'mappings/clinical-schema-migration.json'));
-    if (!f4Path) {
+    if (!f4.bytes) {
       add('INV-013', 'Aucune perte silencieuse dans la migration clinique', 'NOT_TESTABLE', 'fichier F4 inaccessible');
     } else if (!mapping) {
       add('INV-013', 'Aucune perte silencieuse dans la migration clinique', 'FAIL', 'mappings/clinical-schema-migration.json introuvable');
     } else {
-      const schema = JSON.parse(readFileSync(f4Path, 'utf8'));
+      const schema = JSON.parse(f4.bytes.toString('utf8'));
       const paths = new Set();
       flattenSchemaPaths(schema, '', paths);
       const covered = new Set(mapping.mappings.map((m) => m.sourcePath));

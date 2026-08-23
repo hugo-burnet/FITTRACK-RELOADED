@@ -66,10 +66,10 @@ entités portent des rattachements provisoires signalés en `pending_human_revie
 bien plus de références que ces dix sources n'en modélisent, et dire ce qui manque vaut mieux qu'un
 jeu complet en apparence.
 
-Le corpus, les prompts, la synthèse multi-IA et les trois rapports de phase 1 sont versionnés
-dans `knowledge-base/`. Le contrat les lit par un chemin relatif : la régénération complète
-fonctionne depuis un clone neuf. Le paquet lui-même ne contient toujours que l'empreinte et
-le texte des 77 fragments réellement cités.
+Le corpus, les prompts, la synthèse et les rapports de phase 1 sont sur les branches orphelines
+`archive/fittrack-kb-corpus` et `archive/rapport-multi-ia`. Le contrat les lit par `git show` :
+la régénération marche depuis un clone qui a fetch ces branches. Le paquet lui-même ne contient
+que l'empreinte et le texte des 77 fragments réellement cités.
 
 **Prochaine étape :** éprouver la granularité des claims sur la prose dense du rapport
 biomécanique, puis écrire l'extracteur.

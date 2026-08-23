@@ -13,30 +13,35 @@
 // concaténation des fragments reconstruit le fichier octet pour octet. Il
 // conserve les offsets bruts pour que la relecture soit toujours possible.
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, isAbsolute } from 'node:path';
+import { dirname, join } from 'node:path';
+import { resolveCorpusFile } from './resolve-corpus.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
+const repoRoot = join(root, '..');
 
 const sha256 = (buf) => 'sha256:' + createHash('sha256').update(buf).digest('hex');
 
 const config = JSON.parse(readFileSync(join(root, 'corpus/corpus-files.config.json'), 'utf8'));
 const spec = JSON.parse(readFileSync(join(root, 'fragments/fragment-spec.json'), 'utf8'));
 
-// Résolution du premier chemin candidat existant. Un chemin relatif est résolu
-// depuis la racine du paquet : c'est ce qui rend la régénération reproductible
-// depuis un clone neuf, sans dépendre de l'arborescence d'un poste.
-// expectedContentHash empêche de régénérer en silence à partir d'une copie
-// différente.
+// Le corpus vit sur archive/fittrack-kb-corpus. Un chemin local n'est qu'un
+// secours ; git show est le chemin normal. expectedContentHash empêche de
+// régénérer en silence à partir d'une copie différente.
 const missing = [];
 for (const f of config.files) {
-  const candidates = (f.candidatePaths ?? [f.path]).filter(Boolean);
-  f.path = candidates.map((p) => (isAbsolute(p) ? p : join(root, p))).find((p) => existsSync(p));
-  if (!f.path) {
-    f.triedPaths = candidates;
+  const hit = resolveCorpusFile(f, {
+    packageRoot: root,
+    repoRoot,
+    archiveRef: config.archiveRef
+  });
+  f.path = hit.source;
+  f.bytes = hit.bytes;
+  if (!hit.source) {
+    f.triedPaths = hit.tried;
     missing.push(f);
   }
 }
@@ -46,7 +51,7 @@ if (missing.length) {
     console.error('  - ' + f.corpusFileId);
     for (const p of f.triedPaths ?? []) console.error('      essayé : ' + p);
   }
-  console.error('\nAdapter corpus/corpus-files.config.json. Aucune sortie écrite.');
+  console.error('\nFetcher archive/fittrack-kb-corpus, ou adapter corpus/corpus-files.config.json. Aucune sortie écrite.');
   process.exit(2);
 }
 
@@ -55,7 +60,7 @@ const loaded = new Map();
 const manifestFiles = [];
 
 for (const f of config.files) {
-  const bytes = readFileSync(f.path);
+  const bytes = f.bytes;
   if (f.expectedContentHash && sha256(bytes) !== f.expectedContentHash) {
     console.error(
       `Le fichier ${f.corpusFileId} ne correspond pas au hash attendu.\n` +
@@ -83,9 +88,8 @@ for (const f of config.files) {
     corpusFileId: f.corpusFileId,
     shortLabel: f.shortLabel,
     title: f.title,
-    // Déclaré dans la configuration plutôt que déduit du chemin : les fichiers
-    // ont été renommés en ASCII pour le dépôt, et déduire le nom du chemin
-    // perdrait le nom d'origine que ce champ a précisément pour rôle de garder.
+    // Nom sur la branche archive, déclaré ici : le déduire d'un chemin git
+    // (`archive/…:fichier.md`) ou d'un checkout local le ferait disparaître.
     originalFilename: f.originalFilename ?? f.path.split(/[\\/]/).pop(),
     mediaType: f.mediaType,
     language: f.language,
@@ -104,7 +108,7 @@ const manifest = {
   manifestVersion: '1.0.0',
   generatedBy: 'tools/make-fragments.mjs',
   note:
-    'Hashes et tailles calculés sur les fichiers réels. Le corpus est versionné dans knowledge-base/corpus/, à côté de ce paquet et non dedans : le contrat décrit la connaissance, il ne la contient pas.',
+    'Hashes et tailles calculés sur les fichiers réels. Le corpus vit sur archive/fittrack-kb-corpus : le contrat décrit la connaissance, il ne la contient pas.',
   files: manifestFiles
 };
 

@@ -37,17 +37,14 @@ d'empêcher un schéma et un vocabulaire, ou un offset et un texte, de diverger 
 
 ## Le corpus n'est pas dans ce paquet
 
-Les quatre fichiers de recherche restent l'autorité et vivent **à côté**, dans
-[`../knowledge-base/corpus/`](../knowledge-base/corpus/). `corpus/corpus-files.config.json`
-en donne le chemin relatif et le hash attendu.
+Les quatre fichiers de recherche restent l'autorité et vivent sur la branche orpheline
+[`archive/fittrack-kb-corpus`](https://github.com/hugo-burnet/FITTRACK-RELOADED/tree/archive/fittrack-kb-corpus).
+Le paquet conserve leur **empreinte** et le **texte brut des 77 fragments réellement cités**. Il ne
+contient pas les fichiers complets.
 
-Le paquet conserve leur **empreinte** et le **texte brut des 77 fragments réellement cités**, sans quoi
-aucune provenance ne serait vérifiable. Il ne contient pas les fichiers complets.
-
-La régénération marche depuis un clone neuf : `make-fragments.mjs` résout le chemin relatif depuis la
-racine du paquet. Si le corpus a bougé, adapter `candidatePaths`. Si son contenu a changé, le script
-refuse de régénérer et l'explique : régénérer en silence produirait des fragments valides pointant vers
-un texte différent, et personne ne s'en apercevrait.
+`make-fragments.mjs` les lit par `git show` depuis cette branche (ou `origin/archive/fittrack-kb-corpus`
+après un fetch). Si le contenu a changé, le script refuse de régénérer : le hash attendu ne correspond
+plus. Régénérer en silence produirait des fragments valides pointant vers un texte différent.
 
 ## Où regarder en premier
 
