@@ -1,0 +1,917 @@
+{
+  "generatedBy": "tools/extract-e2.mjs",
+  "runId": "run.e2.a5eae7d9ae8e",
+  "diagnostics": [
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.bbadd751172a5c7f",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.64e4e2d5fbc1ed02",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.8a3c9c9dde8a3bf2",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.051c5c08b7bcd154",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.2d571d2b85c1886e",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.3b094a48379f421e",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.e55265adc1e7cf69",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.e9c5830841b25762",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.fc6e7d732346146e",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.796d46651c820592",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 58,
+      "rawValue": "Très faible comme seuil quantifiable",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.796d46651c820592",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 58,
+      "rawValue": "modélisation populationnelle",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.b40d20955b2c8581",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 72,
+      "rawValue": "Élevé, surtout ~30–85 % 1RM",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.f3e9eb5a18756d37",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 73,
+      "rawValue": "revue critique",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.06267f48f4ef5700",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 74,
+      "rawValue": "Synthèses",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.a87f41900ed7d18d",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 75,
+      "rawValue": "Modéré, largement inférentiel",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.fcd738578c7d8573",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 84,
+      "rawValue": "Modéré pour la tendance",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.75f6b29bb58c259c",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 85,
+      "rawValue": "étude aiguë",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.724d4ce2e01b6bd2",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 86,
+      "rawValue": "Validation observationnelle",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.7e6125bca19b0163",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 93,
+      "rawValue": "Élevé pour performance aiguë",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.cf0474cc397eee66",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 94,
+      "rawValue": "revue de récupération",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.860017a9164bb524",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 102,
+      "rawValue": "Modéré pour équivalence possible",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.860017a9164bb524",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 102,
+      "rawValue": "faible pour supériorité",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.b2513d2c6be2fda4",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 116,
+      "rawValue": "Élevé pour hypertrophie moyenne",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.b2513d2c6be2fda4",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 116,
+      "rawValue": "modéré pour muscles précis",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.19b9467e3f9bc113",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 118,
+      "rawValue": "Faible (mécanistique/pratique)",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.160633733416fd44",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 128,
+      "rawValue": "Élevé pour aigu",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.160633733416fd44",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 128,
+      "rawValue": "faible pour effet hypertrophique chronique",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.25e4b9d76d1da50b",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 134,
+      "rawValue": "Élevé pour principe",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.e8746ad583ae58ea",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 136,
+      "rawValue": "Modéré pour force",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.e8746ad583ae58ea",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 136,
+      "rawValue": "faible pour hypertrophie",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.711cc9c47539b504",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 137,
+      "rawValue": "Élevé qualitativement",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.711cc9c47539b504",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 137,
+      "rawValue": "faible pour algorithmes exacts",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.ea62ae34a9c0ec40",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 138,
+      "rawValue": "Modéré (pratique fondée sur preuve indirecte)",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.6bd63a9af49a8619",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 146,
+      "rawValue": "Modéré comme outil",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.6bd63a9af49a8619",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 146,
+      "rawValue": "faible comme avantage causal",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.96d8df1c39744040",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 152,
+      "rawValue": "Modéré pour ce protocole précis",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.e2d59a9adbfd349e",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 153,
+      "rawValue": "Modéré pour ce protocole",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.797be9345a957179",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 154,
+      "rawValue": "Très faible pour efficacité",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.197069b12a336ea6",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 155,
+      "rawValue": "Faible (pratique informée)",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.5fd9781ca4b7df20",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 162,
+      "rawValue": "Élevé par inférence",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.3a4090548ef1b167",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 170,
+      "rawValue": "Élevé pour aigu",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.3a4090548ef1b167",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 170,
+      "rawValue": "modéré pour chronologie",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.3a4090548ef1b167",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 170,
+      "rawValue": "essais aigus",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.be74ce57fef74708",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 171,
+      "rawValue": "Élevé qualitativement",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.be74ce57fef74708",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 171,
+      "rawValue": "revue récupération",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.7ab07800e4ef43c9",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 173,
+      "rawValue": "Modéré pour aigu",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.7ab07800e4ef43c9",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 173,
+      "rawValue": "faible pour hypertrophie longitudinale",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.7ab07800e4ef43c9",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 173,
+      "rawValue": "petite étude longitudinale",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.98b07663635e3570",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 180,
+      "rawValue": "Modéré (inférence convergente)",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_evidence_type",
+      "candidateId": "cand.e1.f7df82ebab3e53ca",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 182,
+      "rawValue": "Preuve indirecte + pratique",
+      "schema": "evidence-type"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.3d424b95d432e902",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 192,
+      "rawValue": "Élevé pour bénéfice",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "unknown_confidence_expression",
+      "candidateId": "cand.e1.3d424b95d432e902",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "startLine": 192,
+      "rawValue": "modéré pour dose",
+      "schema": "confidence-level / confidence-aspect"
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.e3bc28205d794ded",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.4b3d92c813d9e2b7",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.eb7e31e06ab459c6",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.3a33a39c9e68ddba",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.08734a1460e8fe43",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.ff1a85e196f11d82",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.7a14e062af476a5f",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.808bbc0487f95ec6",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.c77cfd8dfc408962",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.d08348841157d20f",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.087e55a2fd9fae94",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.539667db41d19070",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.25e29949f81336ca",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.c5d27260f725f58f",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.734fb93674b47ce7",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.470bacad85fe96ec",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a66c2fe46b10ae8e",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.7a9135b211657ac9",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a5de452cb2356d44",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.8d68895197a68f1e",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a39b7365682a7ddd",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.619b08001b5e7ca9",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.39c1d8a55f5e19db",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.5f11ed7fb4b2cd9b",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.f0c9d6b058ee2477",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.3fb622a482e1f089",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.d648f4a315d527d0",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.3308596a9f3b73d1",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.6249d36fa755860f",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.117e7ac8939b5573",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.01448203c2846632",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a3fe0f5cd419dcd5",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a3360c13e3b99c98",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "targetKind": "source",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.5d18ff3665dabe79",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.1e4671cd223972ae",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a45a2cee04488cba",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.0a621552812e5999",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.795aa7ccd93739d4",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.ad421d14c785fd7e",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.f3ead3923e99c6e5",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.a3c87c337ad860ed",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.1611c63a15b2549b",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.e9fd0a774cd74cda",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.33ac66873df121f2",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.fef688962b3d36fc",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.f566d03a31607590",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.5d51fd7e6e27bc52",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.48c18380c5579b45",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.71609597da14c747",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.10b6ff05ce300dcb",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "substitution-relation",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.669bcd3635543c6e",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.d9f33edb6a3c6c21",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.6a4455dfc0dd7662",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.47f0e6420b3d396d",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.1a23b71c860572a0",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.8080e62b14912f60",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.205c8f1dda58de33",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.ff0e8516c3a9f900",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.1294728284cbddff",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.b5e6246a2bde87f9",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.bf4376c016a49970",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.b96473b43570d531",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.b20f9cc3ad29435c",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.5e9becfb7f68a962",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.e1588bcd550ab9fb",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.97e8faaba5a4e8c9",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.ed805f19b148adc9",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "unmapped_table_row",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.c98efaf4040e5f30",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.f613c40a85f595d8",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.dfa6920455a6f66e",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.257b7596b89dcf74",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    },
+    {
+      "type": "skipped_not_claim_table",
+      "candidateId": "cand.e1.ddc8a33a455293b9",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "targetKind": "evidence-conflict",
+      "message": "E2 ne projette les six axes que sur les lignes d affirmation."
+    }
+  ]
+}

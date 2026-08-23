@@ -7,9 +7,11 @@
   "scripts": {
     "build": "node tools/make-fragments.mjs && node tools/build-vocabularies.mjs && node tools/build-derived.mjs && node tools/build-migration-doc.mjs",
     "extract:e1": "node tools/extract-e1.mjs",
+    "extract:e2": "node tools/extract-e2.mjs",
     "test:e1": "node --test tests/e1/*.test.mjs",
+    "test:e2": "node --test tests/e2/*.test.mjs",
     "validate": "node tests/validate.mjs",
-    "check": "npm run build && npm run test:e1 && npm run extract:e1 && npm run validate"
+    "check": "npm run build && npm run test:e1 && npm run extract:e1 && npm run test:e2 && npm run extract:e2 && npm run validate"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
