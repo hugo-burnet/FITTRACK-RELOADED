@@ -66,10 +66,10 @@ entités portent des rattachements provisoires signalés en `pending_human_revie
 bien plus de références que ces dix sources n'en modélisent, et dire ce qui manque vaut mieux qu'un
 jeu complet en apparence.
 
-Le corpus lui-même n'est **pas** dans le dépôt : le paquet ne conserve que son empreinte et le
-texte des 77 fragments réellement cités. Les fichiers vivent dans
-`Documents\RAPPORT MULTI IA\corpus\`, et `corpus/corpus-files.config.json` en porte les chemins et
-les hashes attendus.
+Le corpus, les prompts, la synthèse multi-IA et les trois rapports de phase 1 sont versionnés
+dans `knowledge-base/`. Le contrat les lit par un chemin relatif : la régénération complète
+fonctionne depuis un clone neuf. Le paquet lui-même ne contient toujours que l'empreinte et
+le texte des 77 fragments réellement cités.
 
 **Prochaine étape :** éprouver la granularité des claims sur la prose dense du rapport
 biomécanique, puis écrire l'extracteur.

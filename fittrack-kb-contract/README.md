@@ -37,15 +37,17 @@ d'empêcher un schéma et un vocabulaire, ou un offset et un texte, de diverger 
 
 ## Le corpus n'est pas dans ce paquet
 
-Les quatre fichiers de recherche restent l'autorité et vivent hors du contrat.
-`corpus/corpus-files.config.json` en donne les chemins candidats et le hash attendu.
+Les quatre fichiers de recherche restent l'autorité et vivent **à côté**, dans
+[`../knowledge-base/corpus/`](../knowledge-base/corpus/). `corpus/corpus-files.config.json`
+en donne le chemin relatif et le hash attendu.
 
 Le paquet conserve leur **empreinte** et le **texte brut des 77 fragments réellement cités**, sans quoi
 aucune provenance ne serait vérifiable. Il ne contient pas les fichiers complets.
 
-Si le corpus a bougé, adapter `candidatePaths`. Si son contenu a changé, `make-fragments.mjs` refuse de
-régénérer et l'explique : régénérer en silence produirait des fragments valides pointant vers un texte
-différent, et personne ne s'en apercevrait.
+La régénération marche depuis un clone neuf : `make-fragments.mjs` résout le chemin relatif depuis la
+racine du paquet. Si le corpus a bougé, adapter `candidatePaths`. Si son contenu a changé, le script
+refuse de régénérer et l'explique : régénérer en silence produirait des fragments valides pointant vers
+un texte différent, et personne ne s'en apercevrait.
 
 ## Où regarder en premier
 

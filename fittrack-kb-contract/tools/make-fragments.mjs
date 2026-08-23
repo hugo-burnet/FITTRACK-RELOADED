@@ -16,7 +16,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, isAbsolute } from 'node:path';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
@@ -26,20 +26,25 @@ const sha256 = (buf) => 'sha256:' + createHash('sha256').update(buf).digest('hex
 const config = JSON.parse(readFileSync(join(root, 'corpus/corpus-files.config.json'), 'utf8'));
 const spec = JSON.parse(readFileSync(join(root, 'fragments/fragment-spec.json'), 'utf8'));
 
-// Résolution du premier chemin candidat existant. Le corpus a déjà changé de
-// dossier une fois : une liste de candidats évite qu'un déplacement casse la
-// régénération, et expectedContentHash empêche de régénérer en silence à
-// partir d'une copie qui ne serait pas la bonne.
+// Résolution du premier chemin candidat existant. Un chemin relatif est résolu
+// depuis la racine du paquet : c'est ce qui rend la régénération reproductible
+// depuis un clone neuf, sans dépendre de l'arborescence d'un poste.
+// expectedContentHash empêche de régénérer en silence à partir d'une copie
+// différente.
 const missing = [];
 for (const f of config.files) {
-  f.path = (f.candidatePaths ?? [f.path]).find((p) => p && existsSync(p));
-  if (!f.path) missing.push(f);
+  const candidates = (f.candidatePaths ?? [f.path]).filter(Boolean);
+  f.path = candidates.map((p) => (isAbsolute(p) ? p : join(root, p))).find((p) => existsSync(p));
+  if (!f.path) {
+    f.triedPaths = candidates;
+    missing.push(f);
+  }
 }
 if (missing.length) {
   console.error('Fichiers du corpus introuvables :');
   for (const f of missing) {
     console.error('  - ' + f.corpusFileId);
-    for (const p of f.candidatePaths ?? []) console.error('      essayé : ' + p);
+    for (const p of f.triedPaths ?? []) console.error('      essayé : ' + p);
   }
   console.error('\nAdapter corpus/corpus-files.config.json. Aucune sortie écrite.');
   process.exit(2);
@@ -78,7 +83,10 @@ for (const f of config.files) {
     corpusFileId: f.corpusFileId,
     shortLabel: f.shortLabel,
     title: f.title,
-    originalFilename: f.path.split('/').pop(),
+    // Déclaré dans la configuration plutôt que déduit du chemin : les fichiers
+    // ont été renommés en ASCII pour le dépôt, et déduire le nom du chemin
+    // perdrait le nom d'origine que ce champ a précisément pour rôle de garder.
+    originalFilename: f.originalFilename ?? f.path.split(/[\\/]/).pop(),
     mediaType: f.mediaType,
     language: f.language,
     corpusDate: f.corpusDate,
@@ -96,7 +104,7 @@ const manifest = {
   manifestVersion: '1.0.0',
   generatedBy: 'tools/make-fragments.mjs',
   note:
-    'Hashes et tailles calculés sur les fichiers réels. Les fichiers du corpus ne sont pas copiés dans ce paquet ; seule leur empreinte l est.',
+    'Hashes et tailles calculés sur les fichiers réels. Le corpus est versionné dans knowledge-base/corpus/, à côté de ce paquet et non dedans : le contrat décrit la connaissance, il ne la contient pas.',
   files: manifestFiles
 };
 

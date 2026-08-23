@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.example/schemas/claim-v1.json",
+  "title": "Claim — unité atomique de connaissance FitTrack",
+  "description": "Schéma pour un claim extrait du corpus. Ne jamais augmenter artificiellement le niveau de certitude.",
+  "type": "object",
+  "required": ["id", "statement", "knowledgeType", "epistemicStatus", "confidence", "corpusFragments", "validationStatus"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^claim-[a-z0-9-]+$" },
+    "statement": { "type": "string", "minLength": 10 },
+    "knowledgeType": {
+      "enum": ["EVIDENCE", "EXPERT_PRACTICE", "HYPOTHESIS", "MECHANISTIC", "PRACTICAL_HEURISTIC"]
+    },
+    "epistemicStatus": {
+      "enum": [
+        "established",
+        "established_direction",
+        "probable",
+        "uncertain",
+        "controversial",
+        "mechanistic_only",
+        "expert_practice",
+        "absence_of_evidence"
+      ]
+    },
+    "confidence": {
+      "enum": ["high", "moderate", "low", "very_low", "high_for_direction_moderate_for_curve"]
+    },
+    "domain": {
+      "enum": ["programming", "biomechanics", "exercise_selection", "clinical_safety", "population"]
+    },
+    "population": { "type": ["string", "null"] },
+    "trainingStatus": {
+      "enum": ["untrained", "recreational", "intermediate", "advanced", "mixed", "unknown", null]
+    },
+    "intervention": { "type": ["string", "null"] },
+    "comparison": { "type": ["string", "null"] },
+    "outcome": { "type": ["string", "null"] },
+    "conditions": { "type": "array", "items": { "type": "string" } },
+    "exceptions": { "type": "array", "items": { "type": "string" } },
+    "limits": { "type": "array", "items": { "type": "string" } },
+    "practicalInterpretation": { "type": ["string", "null"] },
+    "cannotConclude": { "type": "array", "items": { "type": "string" } },
+    "evidenceHierarchy": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "position_stand",
+          "umbrella_review",
+          "systematic_review",
+          "meta_analysis",
+          "meta_regression",
+          "network_meta_analysis",
+          "rct",
+          "longitudinal",
+          "biomechanical",
+          "emg",
+          "expert_practice",
+          "narrative"
+        ]
+      }
+    },
+    "sourceIds": { "type": "array", "items": { "type": "string" } },
+    "contradictorySourceIds": { "type": "array", "items": { "type": "string" } },
+    "corpusFragments": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "relatedClaims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claimId", "relation"],
+        "properties": {
+          "claimId": { "type": "string" },
+          "relation": {
+            "enum": ["supports", "nuances", "contradicts", "depends_on", "specializes"]
+          }
+        }
+      }
+    },
+    "validationStatus": {
+      "enum": ["pending_human_review", "approved", "rejected", "needs_revision"]
+    },
+    "version": { "type": "string" },
+    "lastReviewed": { "type": ["string", "null"], "format": "date" }
+  },
+  "additionalProperties": false
+}

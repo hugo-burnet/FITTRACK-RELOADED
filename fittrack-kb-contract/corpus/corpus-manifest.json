@@ -1,7 +1,7 @@
 {
   "manifestVersion": "1.0.0",
   "generatedBy": "tools/make-fragments.mjs",
-  "note": "Hashes et tailles calculés sur les fichiers réels. Les fichiers du corpus ne sont pas copiés dans ce paquet ; seule leur empreinte l est.",
+  "note": "Hashes et tailles calculés sur les fichiers réels. Le corpus est versionné dans knowledge-base/corpus/, à côté de ce paquet et non dedans : le contrat décrit la connaissance, il ne la contient pas.",
   "files": [
     {
       "corpusFileId": "corpus.f1.programmation-hypertrophie",
