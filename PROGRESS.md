@@ -71,9 +71,8 @@ Le corpus, les prompts, la synthèse et les rapports de phase 1 sont sur les bra
 la régénération marche depuis un clone qui a fetch ces branches. Le paquet lui-même ne contient
 que l'empreinte et le texte des 77 fragments réellement cités.
 
-**E1, E2 et E3 sont amorcés** sur `feat/knowledge-base-v1` : tableaux → claims
-candidates → projection des six axes → occurrences de citation. Pas d'écriture
-dans `curated/`. E4–E5 restent ouverts.
+**E1 à E4 sont amorcés** sur `feat/knowledge-base-v1` : tableaux, axes, citations,
+puis parcours déterministe de F4. Pas d'écriture dans `curated/`. E5 reste ouvert.
 
 ## v1.3.1 — livrée et publiée
 

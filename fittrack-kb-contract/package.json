@@ -9,11 +9,13 @@
     "extract:e1": "node tools/extract-e1.mjs",
     "extract:e2": "node tools/extract-e2.mjs",
     "extract:e3": "node tools/extract-e3.mjs",
+    "extract:e4": "node tools/extract-e4.mjs",
     "test:e1": "node --test tests/e1/*.test.mjs",
     "test:e2": "node --test tests/e2/*.test.mjs",
     "test:e3": "node --test tests/e3/*.test.mjs",
+    "test:e4": "node --test tests/e4/*.test.mjs",
     "validate": "node tests/validate.mjs",
-    "check": "npm run build && npm run test:e1 && npm run extract:e1 && npm run test:e2 && npm run extract:e2 && npm run test:e3 && npm run extract:e3 && npm run validate"
+    "check": "npm run build && npm run test:e1 && npm run extract:e1 && npm run test:e2 && npm run extract:e2 && npm run test:e3 && npm run extract:e3 && npm run test:e4 && npm run extract:e4 && npm run validate"
   },
   "devDependencies": {
     "ajv": "^8.17.1",
