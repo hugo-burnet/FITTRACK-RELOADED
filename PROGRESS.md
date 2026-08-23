@@ -5,6 +5,74 @@
 **Dernière mise à jour :** 2026-08-23 (**v1.3.1 publiée. Le coach n'annonce plus « 3,5 → 0 kg » :
 il lit la charge de travail, pas la dégressive, et ne propose jamais une barre vide. Migration
 `version(11)` pour le journal déjà écrit. Le contrôle visuel du tutoriel sur téléphone reste dû**).
+La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
+exécutable, aucun code de l'application touché.
+
+## Knowledge Base — phase 2 : le contrat exécutable
+
+> Chantier **séparé de l'application**. Rien dans `src/` n'a changé, aucune dépendance n'a été
+> ajoutée au `package.json` de FitTrack : le paquet a le sien, isolé.
+
+Le corpus de recherche — quatre fichiers, 224 Ko — doit devenir une base de connaissances. La phase
+précédente avait produit trois rapports d'architecture (Claude, GPT, Grok) et leur comparaison. La
+phase 2 transforme cette convergence en **contrat testable**, avant d'écrire l'extracteur.
+
+`npm --prefix fittrack-kb-contract run validate` :
+
+| Contrôle | Résultat |
+|---|---|
+| Schemas JSON Schema 2020-12 | 48, tous les `$ref` résolus localement |
+| Vocabulaires contrôlés | 29, 212 termes, générés depuis une source unique |
+| Instances validées | 208 |
+| Cas devant échouer | 20, tous rejetés **pour la raison attendue** |
+| Invariants exécutables | 15 sur 15, 0 échec |
+
+### Ce qui a demandé le plus de soin
+
+**La provenance est calculée, pas saisie.** Les 77 fragments portent des offsets en octets — pas en
+caractères, le corpus est en français — recalculés depuis les fichiers réels puis **vérifiés par
+relecture du fichier aux offsets**. Écrire ces offsets à la main les aurait rendus faux à la
+première coquille corrigée, sans que rien ne le signale.
+
+**La migration du schéma clinique est prouvée, pas affirmée.** Un invariant énumère les chemins de
+champs **depuis le fichier d'origine** et exige une couverture exacte : **98 chemins, 98 couverts,
+0 manquant, 0 surnuméraire**. Si un champ disparaît un jour, la validation échoue.
+
+**Les garanties critiques sont portées par les schemas.** Une pratique experte ne peut pas prendre
+un statut de fait établi, une évaluation EMG ne peut pas afficher une confiance haute sur l'ampleur
+d'un effet, un « risque démontré » exige une donnée épidémiologique, une politique produit a
+`presentedAsMedicalTruth` constant à `false`. Ce ne sont pas des consignes de rédaction : les
+fixtures invalides le vérifient, et le validateur exige que chaque rejet vienne de la contrainte
+visée et non d'une coquille.
+
+**La frontière KB / policy / runtime est structurelle.** Le schéma clinique d'origine mélangeait la
+définition générale d'un axe de tolérance et l'observation datée d'une personne dans le même objet.
+Séparés : `testedLoad`, `symptomDuring`, `symptomAfter24h` et `irritability` partent au runtime, et
+un invariant échoue s'ils réapparaissent dans la KB.
+
+### Ce qui reste ouvert, volontairement
+
+- **Un conflit d'attribution bibliographique** — deux noms d'auteur pour la même méta-analyse
+  apparente, sans identifiant fort partagé — reste **non fusionné et escaladé**. Le corpus ne
+  permet pas de trancher, et la ressemblance de sujet ne suffit jamais.
+- **Deux contradictions scientifiques** sont marquées `open_by_design` : le corpus les présente
+  comme irréductibles en l'état des connaissances, les trancher serait une falsification.
+- **Six contraintes ne sont pas testées** à ce stade, dont l'idempotence du pipeline complet, qui
+  n'existe pas encore. Elles sont listées nommément dans `VALIDATION_REPORT.md` plutôt que
+  présentées comme validées.
+
+Le golden set est **destiné à la revue humaine, pas à la consommation par un coach**. Plusieurs
+entités portent des rattachements provisoires signalés en `pending_human_review` : le corpus cite
+bien plus de références que ces dix sources n'en modélisent, et dire ce qui manque vaut mieux qu'un
+jeu complet en apparence.
+
+Le corpus lui-même n'est **pas** dans le dépôt : le paquet ne conserve que son empreinte et le
+texte des 77 fragments réellement cités. Les fichiers vivent dans
+`Documents\RAPPORT MULTI IA\corpus\`, et `corpus/corpus-files.config.json` en porte les chemins et
+les hashes attendus.
+
+**Prochaine étape :** éprouver la granularité des claims sur la prose dense du rapport
+biomécanique, puis écrire l'extracteur.
 
 ## v1.3.1 — livrée et publiée
 
