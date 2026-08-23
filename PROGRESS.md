@@ -2,9 +2,33 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-23 (**le coach n'annonce plus « 3,5 → 0 kg » : il lit la charge
-de travail, pas la dégressive, et ne propose jamais une barre vide. Migration `version(11)` pour le
-journal déjà écrit. Le contrôle visuel du tutoriel sur téléphone reste dû**).
+**Dernière mise à jour :** 2026-08-23 (**v1.3.1 publiée. Le coach n'annonce plus « 3,5 → 0 kg » :
+il lit la charge de travail, pas la dégressive, et ne propose jamais une barre vide. Migration
+`version(11)` pour le journal déjà écrit. Le contrôle visuel du tutoriel sur téléphone reste dû**).
+
+## v1.3.1 — livrée et publiée
+
+| Version | Contenu | APK |
+|---|---|---|
+| **v1.3.1** (`b43f5d6`) | Le coach lit la charge de travail, jamais la dégressive ni zéro | `FitTrack-v1.3.1.apk`, 9,5 Mo |
+
+Corrective : rien de nouveau à l'écran, rien de retiré. Signée avec la vraie clé — le nom du fichier
+le dit, un APK d'essai s'appellerait `FitTrack-test-…` — donc elle met à jour une installation
+existante. `versionCode` 97, au-dessus du 94 de la v1.3.0. Publiée depuis l'onglet Actions
+(`workflow_dispatch` avec `release_tag`, run #97) : le tag est posé par `gh release create --target`
+sur le commit qui venait de passer lint, typecheck et les **2 116 tests**, jamais sur une tête de
+branche qui aurait bougé entre-temps.
+
+⚠️ **Migration Dexie `version(11)`** — les lignes du journal du coach déjà écrites à
+`nextLoadKg: 0` perdent leur chiffre et gardent leur constat. Rien d'autre n'est touché :
+`range_missed` uniquement, et zéro uniquement. `backfillBackupTables` fait le même geste sur un
+fichier de sauvegarde antérieur. Installer par-dessus la v1.3.0, sans désinstaller.
+
+**Checkpoint téléphone.** Terminer une séance avec une **dégressive** en dernière série sur un
+exercice dont le bas de fourchette a été manqué : la carte Coach doit annoncer la charge du **haut**
+(celle des séries de travail), un incrément en dessous — jamais celle de la dégressive, jamais
+« 0 kg ». Vérifier aussi qu'aucun objectif en attente ne propose 0 kg au démarrage de la séance
+suivante : c'est ce que la migration efface.
 
 ## Le coach lisait la dégressive comme charge de travail
 
