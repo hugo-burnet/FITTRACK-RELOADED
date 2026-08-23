@@ -22,7 +22,7 @@ describe('coachRecommendations repository', () => {
   beforeEach(resetDb);
 
   it('opens at schema version 10 with the coach journal table', async () => {
-    expect(db.verno).toBe(10);
+    expect(db.verno).toBe(11);
     expect(db.tables.map((table) => table.name)).toContain('coachRecommendations');
   });
 

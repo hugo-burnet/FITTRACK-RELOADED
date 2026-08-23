@@ -255,6 +255,48 @@ describe('backfillBackupTables', () => {
     });
   });
 
+  describe('v11 — l’allègement à zéro du journal du coach', () => {
+    const missed: BackupRow = {
+      id: 'reco-1',
+      exerciseId: 'lateral-raise',
+      code: 'range_missed',
+      status: 'pending',
+      nextLoadKg: 0,
+      evidence: [
+        { label: 'current_load_kg', value: 3.5 },
+        { label: 'next_load_kg', value: 0 },
+      ],
+    };
+
+    it('retire un 0 kg qui ne charge rien, sans toucher au constat', () => {
+      const migrated = backfillBackupTables(tables({ coachRecommendations: [missed] }), 10);
+
+      const row = migrated.coachRecommendations[0]!;
+      expect(row.nextLoadKg).toBeUndefined();
+      expect(row.evidence).toEqual([{ label: 'current_load_kg', value: 3.5 }]);
+    });
+
+    it('laisse un allègement qui charge vraiment quelque chose', () => {
+      const migrated = backfillBackupTables(
+        tables({ coachRecommendations: [{ ...missed, nextLoadKg: 77.5 }] }),
+        10,
+      );
+
+      expect(migrated.coachRecommendations[0]?.nextLoadKg).toBe(77.5);
+    });
+
+    it('garde le 0 kg d’une machine assistée dont l’assistance disparaît', () => {
+      const migrated = backfillBackupTables(
+        tables({
+          coachRecommendations: [{ ...missed, code: 'range_ceiling_reached' }],
+        }),
+        10,
+      );
+
+      expect(migrated.coachRecommendations[0]?.nextLoadKg).toBe(0);
+    });
+  });
+
   describe('la porte de version', () => {
     it('ne fait rien sur une sauvegarde déjà au schéma courant', () => {
       const source = tables({ exercises: [PULL_UP] });

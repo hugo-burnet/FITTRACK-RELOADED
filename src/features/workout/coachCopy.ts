@@ -71,14 +71,22 @@ function baseSignalMessage(signal: SignalLike): string {
           });
     }
     case 'range_missed': {
-      const weight = signal.nextLoadKg ?? evidenceValue(signal, 'next_load_kg') ?? 0;
+      const weight = resolvedNextLoadKg(signal);
       const current = evidenceValue(signal, 'current_load_kg') ?? 0;
-      const params = {
-        current: formatNumber(current),
-        weight: formatNumber(weight),
+      const observed = {
         floor: evidenceValue(signal, 'target_reps') ?? 0,
         low: evidenceValue(signal, 'low_reps') ?? 0,
         sessions: evidenceValue(signal, 'sessions') ?? 0,
+      };
+      // Rien de plus léger à proposer : le constat seul, jamais « 3,5 → 0 kg ».
+      // Le `?? 0` d'avant fabriquait ce zéro à partir d'une absence.
+      if (weight === undefined) {
+        return t('coach.range_missed_constat', observed);
+      }
+      const params = {
+        ...observed,
+        current: formatNumber(current),
+        weight: formatNumber(weight),
       };
       // Assistance again: backing off means *more* weight on the machine.
       return weight > current

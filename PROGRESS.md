@@ -2,9 +2,48 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-23 (**v1.3.0 publiée. Le tutoriel sait où il pointe : les
-missions ouvrent le bon écran, la surbrillance vise une commande, les blocs ont leur chapitre.
-Le contrôle visuel sur téléphone reste dû**).
+**Dernière mise à jour :** 2026-08-23 (**le coach n'annonce plus « 3,5 → 0 kg » : il lit la charge
+de travail, pas la dégressive, et ne propose jamais une barre vide. Migration `version(11)` pour le
+journal déjà écrit. Le contrôle visuel du tutoriel sur téléphone reste dû**).
+
+## Le coach lisait la dégressive comme charge de travail
+
+Relevé sur la séance **PUSH A du 23/08/2026**, écran de fin. Élévations latérales (poulie) faites
+à 5 kg × 15, 5 kg × 11 (échec), puis dégressive 3,5 kg × 15 — et la carte annonçait :
+
+> Élévations latérales (poulie) — **0 kg**
+> 3,5 → 0 kg car le bas de fourchette (12) a été manqué 2 séances de suite (descendu à 11).
+
+Deux défauts empilés sur un seul écran, et le second n'était visible que parce que le premier
+avait eu lieu :
+
+1. **`floorMiss` lisait `completedWorkingSets`**, c'est-à-dire toutes les séries hors échauffement.
+   La dégressive terminait la ligne, donc c'est *sa* charge qui devenait la charge de référence de
+   la séance : 3,5 kg pour un exercice travaillé à 5. `rangePartitionSignal` et
+   `intraSessionDropSignal` passaient déjà par `progressionSets` — dont le commentaire dit
+   exactement pourquoi (« a drop set […] is lighter *on purpose* ») ; la règle d'allègement était
+   la seule des trois à ne pas l'appeler. Elle l'appelle maintenant.
+2. **Un pas de 2,5 kg (défaut poulie) sous 3,5 kg retombe sur la grille à zéro.** `previousLoad`
+   plafonne à 0 — ce qui est juste pour un deload de bloc, où zéro est une charge —, mais un
+   *objectif* à 0 kg n'en est pas un : la carte affichait « 0 » en gros chiffre, et un doigt dessus
+   l'écrivait sur les séries restantes. `rangeMissedSignal` garde désormais le constat et
+   n'attache plus de proposition quand elle ne charge rien (`coach.range_missed_constat`).
+
+Avec le correctif, la même séance donne **5 → 2,5 kg** : la charge du haut, un incrément en
+dessous. La coupe reste franche parce que le pas par défaut d'une poulie est de 2,5 kg ; c'est
+réglable par exercice (`loadIncrementKg`), et ce n'est pas au moteur d'en décider.
+
+**Migration `version(11)`** — le journal avait déjà enregistré des lignes `range_missed` à
+`nextLoadKg: 0`, en attente et applicables. Elles perdent leur chiffre et gardent leur constat.
+Restreinte à `range_missed` : sur machine assistée, alléger veut dire *ajouter* du poids (jamais
+zéro), et un `range_ceiling_reached` à 0 kg y est une vraie étape — l'assistance qui disparaît.
+Même geste côté `backfillBackupTables`, pour un fichier de sauvegarde antérieur.
+
+**Ce qui n'a pas été touché, et pourquoi.** Sur la même séance, Pec fly (5 kg : 12, 10, 13 reps)
+affiche « Baisse de reps observée : 12 puis 10 (−2) ». Le chiffre est exact et la règle fait ce
+qu'elle décrit ; ce qu'elle ignore, c'est que la troisième série est remontée à 13, au-dessus de la
+première. Un creux rattrapé dans la séance n'est pas une chute — mais changer ça change la
+sémantique de `intra_session_drop`, pas un défaut de lecture. Laissé en question ouverte.
 
 ## v1.3.0 — livrée et publiée
 

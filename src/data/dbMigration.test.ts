@@ -1,6 +1,12 @@
 import Dexie from 'dexie';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { Exercise, Routine, Workout, WorkoutExercise } from './types';
+import type {
+  CoachRecommendation,
+  Exercise,
+  Routine,
+  Workout,
+  WorkoutExercise,
+} from './types';
 
 /**
  * The version 2 upgrade, run against a real version 1 database.
@@ -211,7 +217,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(10);
+    expect(db.verno).toBe(11);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -293,7 +299,7 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(10);
+    expect(db.verno).toBe(11);
 
     const week = await db.programWeeks.get('legacy-week');
     expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });
@@ -408,5 +414,107 @@ describe('migration version 8 → 9 (coefficient du poids du corps)', () => {
 
     expect((await db.exercises.get('band'))?.bodyweightLoadFactor).toBeUndefined();
     expect((await db.exercises.get('bench'))?.bodyweightLoadFactor).toBeUndefined();
+  });
+});
+
+describe('migration version 10 → 11 (allègement à zéro du coach)', () => {
+  afterEach(async () => {
+    const { db } = await import('./db');
+    await db.delete();
+  });
+
+  async function seedVersion10Recommendations(
+    rows: readonly CoachRecommendation[],
+  ): Promise<void> {
+    const legacy = new Dexie('fittrack');
+    legacy.version(1).stores(V1_STORES);
+    legacy.version(2).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(3).stores(V3_STORES);
+    legacy.version(4).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(5).stores({
+      coachRecommendations:
+        'id, exerciseId, status, [exerciseId+status], recommendedAt, deletedAt',
+    });
+    legacy.version(6).stores({
+      programs: 'id, status, startsAt, updatedAt, deletedAt',
+      programWeeks: 'id, programId, [programId+weekIndex], deletedAt',
+      programScheduleRevisions: 'id, programId, [programId+effectiveFromWeekIndex], deletedAt',
+      programScheduleEntries: 'id, revisionId, [revisionId+order], routineId, deletedAt',
+    });
+    for (const version of [7, 8, 9, 10]) {
+      legacy.version(version).upgrade(() => {
+        /* match FitTrackDB: no store change */
+      });
+    }
+    await legacy.open();
+    await legacy.table<CoachRecommendation>('coachRecommendations').bulkAdd([...rows]);
+    legacy.close();
+  }
+
+  const recommendation = (
+    overrides: Partial<CoachRecommendation>,
+  ): CoachRecommendation => ({
+    ...stamps,
+    id: 'reco',
+    exerciseId: 'lateral-raise',
+    code: 'range_missed',
+    recommendedAt: JULY,
+    evidence: [
+      { label: 'sessions', value: 2 },
+      { label: 'target_reps', value: 12 },
+      { label: 'low_reps', value: 11 },
+      { label: 'current_load_kg', value: 3.5 },
+      { label: 'next_load_kg', value: 0 },
+    ],
+    status: 'pending',
+    ...overrides,
+  });
+
+  it('retire les 0 kg qu’un allègement avait proposés', async () => {
+    await seedVersion10Recommendations([recommendation({ nextLoadKg: 0 })]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    const row = await db.coachRecommendations.get('reco');
+    expect(row?.nextLoadKg).toBeUndefined();
+    expect(row?.evidence.map((item) => item.label)).not.toContain('next_load_kg');
+    // Le constat survit : c'est le chiffre qui était faux, pas le manque.
+    expect(row?.evidence).toEqual(
+      expect.arrayContaining([{ label: 'current_load_kg', value: 3.5 }]),
+    );
+  });
+
+  it('laisse intact un allègement qui charge vraiment quelque chose', async () => {
+    await seedVersion10Recommendations([
+      recommendation({ id: 'real', nextLoadKg: 77.5 }),
+    ]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.coachRecommendations.get('real'))?.nextLoadKg).toBe(77.5);
+  });
+
+  it('garde le 0 kg d’une machine assistée dont l’assistance disparaît', async () => {
+    await seedVersion10Recommendations([
+      recommendation({
+        id: 'assisted',
+        code: 'range_ceiling_reached',
+        nextLoadKg: 0,
+        evidence: [{ label: 'next_load_kg', value: 0 }],
+      }),
+    ]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    const row = await db.coachRecommendations.get('assisted');
+    expect(row?.nextLoadKg).toBe(0);
+    expect(row?.evidence.map((item) => item.label)).toContain('next_load_kg');
   });
 });

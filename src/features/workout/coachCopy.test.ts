@@ -95,6 +95,21 @@ describe('coachSignalMessage — range missed', () => {
   it('reads as more assistance when the number goes up', () => {
     expect(coachSignalMessage(rangeMissed(40, 45))).toContain('Assistance 40 → 45 kg');
   });
+
+  it('states the miss without inventing a zero when no load is proposed', () => {
+    const message = coachSignalMessage({
+      code: 'range_missed',
+      evidence: [
+        { label: 'sessions', value: 2 },
+        { label: 'target_reps', value: 12 },
+        { label: 'low_reps', value: 11 },
+        { label: 'current_load_kg', value: 3.5 },
+      ],
+    });
+    expect(message).toContain('bas de fourchette (12)');
+    expect(message).not.toContain('0 kg');
+    expect(message).not.toContain('→');
+  });
 });
 
 describe('coachSignalMessage — phase intention copy', () => {

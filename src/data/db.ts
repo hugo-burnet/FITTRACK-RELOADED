@@ -293,6 +293,35 @@ export class FitTrackDB extends Dexie {
           if (flag !== undefined) row.exerciseIsUnilateral = flag;
         });
     });
+
+    /**
+     * Efface l'allègement à zéro qu'un `range_missed` a pu écrire au journal.
+     *
+     * Le moteur prenait la dégressive pour la charge de travail, puis retirait
+     * un incrément de *cette* charge-là : 3,5 kg moins un pas de 2,5 kg
+     * retombait sur la grille à 0. La ligne reste « en attente », et son chiffre
+     * s'applique d'un doigt aux séries restantes — charger zéro kilo n'est pas
+     * un objectif, c'est une barre vide. Le constat, lui, est vrai et reste.
+     *
+     * `range_missed` seul, et zéro seul. Sur une machine assistée, alléger veut
+     * dire *ajouter* du poids, donc jamais zéro ; et un `range_ceiling_reached`
+     * à 0 kg sur cette même machine est une vraie étape — l'assistance qui
+     * disparaît — qu'effacer serait une perte.
+     *
+     * Pas de `.stores()` : le champ n'est pas indexé.
+     */
+    this.version(11).upgrade(async (tx) => {
+      await tx
+        .table<CoachRecommendation>('coachRecommendations')
+        .toCollection()
+        .modify((row) => {
+          if (row.code !== 'range_missed' || row.nextLoadKg !== 0) return;
+          delete row.nextLoadKg;
+          if (Array.isArray(row.evidence)) {
+            row.evidence = row.evidence.filter((item) => item.label !== 'next_load_kg');
+          }
+        });
+    });
   }
 }
 

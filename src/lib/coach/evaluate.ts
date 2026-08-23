@@ -249,11 +249,18 @@ function sortNewestFirst(lines: readonly CoachExerciseLine[]): CoachExerciseLine
  * worst set under the prescribed minimum. `undefined` means "this session did
  * not miss", which includes every session the engine cannot read (no range, no
  * reps, no weight) — silence is the only honest answer there.
+ *
+ * Lit sur `progressionSets`, comme la partition de fourchette et la chute de
+ * reps — et pas sur toutes les séries de travail, ce qui était le défaut. Une
+ * dégressive terminait la ligne : c'est *elle* qui donnait `loadKg`, et le
+ * coach annonçait « 3,5 → 0 kg » sur un exercice travaillé à 5 kg. La charge de
+ * référence d'une séance est celle du haut, jamais celle qu'on a allégée exprès
+ * pour finir la série.
  */
 function floorMiss(
   line: CoachExerciseLine,
 ): { loadKg: number; lowReps: number; floor: number } | undefined {
-  const working = completedWorkingSets(line.sets);
+  const working = progressionSets(line);
   if (working.length === 0) return undefined;
 
   let worst: { reps: number; floor: number } | undefined;
@@ -303,17 +310,26 @@ function rangeMissedSignal(
   const proposed = previousLoad(latest!.loadKg, increment, line.measurementType);
   if (proposed === latest!.loadKg) return undefined;
 
+  const evidence: CoachEvidence[] = [
+    { label: 'sessions', value: MISSED_SESSIONS },
+    { label: 'target_reps', value: latest!.floor },
+    { label: 'low_reps', value: latest!.lowReps },
+    { label: 'current_load_kg', value: latest!.loadKg },
+  ];
+
+  // Alléger, c'est charger moins — pas ne rien charger. Un pas de 2,5 kg sous
+  // une charge de 3,5 kg retombe sur la grille à zéro, et « → 0 kg » n'est pas
+  // une consigne : c'est une barre vide affichée en gros chiffre sur la carte.
+  // Le constat reste — le bas de fourchette a bien été manqué deux fois — mais
+  // sans proposition chiffrée, il n'y a rien de plus léger à mettre.
+  const usable = proposed > 0;
+  if (usable) evidence.push({ label: 'next_load_kg', value: proposed });
+
   return {
     code: 'range_missed',
     exerciseId: line.exerciseId,
-    nextLoadKg: proposed,
-    evidence: [
-      { label: 'sessions', value: MISSED_SESSIONS },
-      { label: 'target_reps', value: latest!.floor },
-      { label: 'low_reps', value: latest!.lowReps },
-      { label: 'current_load_kg', value: latest!.loadKg },
-      { label: 'next_load_kg', value: proposed },
-    ],
+    ...(usable ? { nextLoadKg: proposed } : {}),
+    evidence,
     severity: SEVERITY.range_missed,
   };
 }

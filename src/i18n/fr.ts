@@ -436,6 +436,12 @@ const fr = {
       '{current} → {weight} kg car le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}).',
     range_missed_assist:
       'Assistance {current} → {weight} kg car le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}).',
+    /**
+     * Manque confirmé, mais l'allègement n'existe pas : un pas de plus sous la
+     * charge tombe à zéro. Constat sans flèche — une flèche promet un chiffre.
+     */
+    range_missed_constat:
+      'Le bas de fourchette ({floor}) a été manqué {sessions} séances de suite (descendu à {low}) : il n’y a rien de plus léger à charger, on garde la charge.',
     // Pas de flèche ici : « → » veut dire « fais ça » sur la carte d'objectif,
     // et une observation ne demande rien.
     intra_session_drop: 'Baisse de reps observée : {first} puis {low} (−{drop}).',

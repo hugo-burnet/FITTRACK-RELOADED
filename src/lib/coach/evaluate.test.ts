@@ -342,6 +342,100 @@ describe('range_missed', () => {
     expect(signals[0]).toMatchObject({ code: 'range_missed', nextLoadKg: 45 });
   });
 
+  // Séance réelle du 23/08/2026 : élévations latérales 5 kg × 15, 5 kg × 11
+  // (échec), puis dégressive 3,5 kg × 15. Le coach annonçait « 3,5 → 0 kg » —
+  // la charge de la dégressive prise pour la charge de travail, puis un pas de
+  // 2,5 kg retombant sur zéro. Deux défauts, un seul écran.
+  const lateralRaise = (workoutId: string, startedAt: number) =>
+    line({
+      exerciseId: 'lateral-raise',
+      workoutId,
+      workoutStartedAt: startedAt,
+      equipment: 'cable',
+      sets: [
+        set({
+          order: 0,
+          reps: 15,
+          weight: 5,
+          targetReps: 12,
+          targetRepsMax: 15,
+          performedAt: startedAt,
+        }),
+        set({
+          order: 1,
+          reps: 11,
+          weight: 5,
+          setType: 'failure',
+          targetReps: 12,
+          targetRepsMax: 15,
+          performedAt: startedAt + 120_000,
+        }),
+        set({
+          order: 2,
+          reps: 15,
+          weight: 3.5,
+          setType: 'dropset',
+          targetReps: 12,
+          targetRepsMax: 15,
+          performedAt: startedAt + 240_000,
+        }),
+      ],
+    });
+
+  it('backs off from the top load, not from the drop set that ended the session', () => {
+    const signals = evaluateCoach([
+      lateralRaise('w1', t0),
+      lateralRaise('w2', t0 + 3 * 86_400_000),
+    ]);
+
+    expect(signals).toEqual([
+      expect.objectContaining({
+        code: 'range_missed',
+        exerciseId: 'lateral-raise',
+        nextLoadKg: 2.5,
+      }),
+    ]);
+    expect(signals[0]!.evidence).toEqual(
+      expect.arrayContaining([
+        { label: 'current_load_kg', value: 5 },
+        { label: 'next_load_kg', value: 2.5 },
+      ]),
+    );
+  });
+
+  it('states the miss without a figure when one increment down lands at zero', () => {
+    const tooLightToBackOff = (workoutId: string, startedAt: number) =>
+      line({
+        exerciseId: 'lateral-raise',
+        workoutId,
+        workoutStartedAt: startedAt,
+        equipment: 'cable',
+        sets: [
+          set({
+            order: 0,
+            reps: 9,
+            weight: 3.5,
+            targetReps: 12,
+            targetRepsMax: 15,
+            performedAt: startedAt,
+          }),
+        ],
+      });
+
+    const signals = evaluateCoach([
+      tooLightToBackOff('w1', t0),
+      tooLightToBackOff('w2', t0 + 3 * 86_400_000),
+    ]);
+
+    const missed = signals.find((signal) => signal.code === 'range_missed');
+    expect(missed).toBeDefined();
+    expect(missed!.nextLoadKg).toBeUndefined();
+    expect(missed!.evidence.map((item) => item.label)).not.toContain('next_load_kg');
+    expect(missed!.evidence).toEqual(
+      expect.arrayContaining([{ label: 'current_load_kg', value: 3.5 }]),
+    );
+  });
+
   it('outranks the rep drop it necessarily comes with', () => {
     const signals = evaluateCoach([
       missedSession('w1', t0, 80),

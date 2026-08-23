@@ -53,7 +53,7 @@ import type { BackupRow, BackupTable } from './types';
  * imports this layer, and the cycle would be real. `schemaVersion.test.ts` in
  * `data/` asserts the two agree, so the constant cannot drift in silence.
  */
-export const CURRENT_SCHEMA_VERSION = 10;
+export const CURRENT_SCHEMA_VERSION = 11;
 
 /** `0` is what `parseBackup` writes when a file names no schema at all. */
 const UNKNOWN_SCHEMA_VERSION = 0;
@@ -219,6 +219,28 @@ function toVersion10(tables: Tables): Tables {
   });
 }
 
+/**
+ * Version 11 — l'allègement à zéro écrit au journal du coach.
+ *
+ * Même geste que la migration Dexie, et pour la même raison : une ligne « en
+ * attente » qui propose 0 kg s'applique d'un doigt aux séries restantes.
+ * Restreint à `range_missed` — un `range_ceiling_reached` à 0 kg sur machine
+ * assistée est l'étape où l'assistance disparaît, pas un défaut.
+ */
+function toVersion11(tables: Tables): Tables {
+  return mapTable(tables, 'coachRecommendations', (row) => {
+    if (row.code !== 'range_missed' || row.nextLoadKg !== 0) return row;
+    const cleaned = omit(row, ['nextLoadKg']);
+    if (!Array.isArray(cleaned.evidence)) return cleaned;
+    return {
+      ...cleaned,
+      evidence: (cleaned.evidence as { label?: unknown }[]).filter(
+        (item) => item?.label !== 'next_load_kg',
+      ),
+    };
+  });
+}
+
 /** Each backfill, and the schema version that first shipped it. */
 const BACKFILLS: readonly { version: number; apply: (tables: Tables) => Tables }[] = [
   { version: 2, apply: toVersion2 },
@@ -227,6 +249,7 @@ const BACKFILLS: readonly { version: number; apply: (tables: Tables) => Tables }
   { version: 8, apply: toVersion8 },
   { version: 9, apply: toVersion9 },
   { version: 10, apply: toVersion10 },
+  { version: 11, apply: toVersion11 },
 ];
 
 /**
