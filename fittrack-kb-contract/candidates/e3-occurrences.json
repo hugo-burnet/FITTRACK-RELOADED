@@ -1,0 +1,4726 @@
+{
+  "generatedBy": "tools/extract-e3.mjs",
+  "extractorVersion": "0.1.0-e3",
+  "runId": "run.e3.3814dcefce2b",
+  "extractedAt": "2026-08-23T00:00:00.000Z",
+  "e1RunId": "run.e1.6775abf7f702",
+  "note": "Occurrences de citation. Pas des Sources. resolvesToSourceRef est null. E1/E2 ne sont pas modifies.",
+  "candidates": [
+    {
+      "candidateId": "cand.e3.516f978391b31f2c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0001",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.f1.0001",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 65,
+        "startByte": 9200,
+        "endByte": 9265,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "assessmentCandidateId": "cand.e2.e143514cc2a5d5ca"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 9200,
+        "endByte": 9265
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.067b8eec84534e55",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0001",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2017",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197",
+        "markdown": "[Schoenfeld et al., 2017](https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197)",
+        "fragmentRef": "frag.f1.0001",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 67,
+        "endInCell": 160,
+        "startByte": 9267,
+        "endByte": 9360,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "assessmentCandidateId": "cand.e2.e143514cc2a5d5ca"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2017](https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197)",
+        "startByte": 9267,
+        "endByte": 9360
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.518b32e87adc3c16",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0001",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "ACSM, 2026",
+        "rawUrl": "https://acsm.org/resistance-training-guidelines-update-2026/",
+        "markdown": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "fragmentRef": "frag.f1.0001",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 2,
+        "startInCell": 162,
+        "endInCell": 236,
+        "startByte": 9362,
+        "endByte": 9436,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "assessmentCandidateId": "cand.e2.e143514cc2a5d5ca"
+      },
+      "verbatimSpan": {
+        "text": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "startByte": 9362,
+        "endByte": 9436
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.321a1eee6005a7fd",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0001",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Baz-Valle et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/",
+        "markdown": "[Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "fragmentRef": "frag.f1.0001",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "cellHeader": "Sources contradictoires / nuances",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 113,
+        "endInCell": 188,
+        "startByte": 9594,
+        "endByte": 9669,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.d7ca3563c886ee7b",
+        "assessmentCandidateId": "cand.e2.e143514cc2a5d5ca"
+      },
+      "verbatimSpan": {
+        "text": "[Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "startByte": 9594,
+        "endByte": 9669
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.acaf0d18a11cda1a",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0002",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Currier et al., 2026",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/",
+        "markdown": "[Currier et al., 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)",
+        "fragmentRef": "frag.f1.0002",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f92c3125731e98a6",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 10278,
+        "endByte": 10352,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f92c3125731e98a6",
+        "assessmentCandidateId": "cand.e2.1ba542b33122dd11"
+      },
+      "verbatimSpan": {
+        "text": "[Currier et al., 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)",
+        "startByte": 10278,
+        "endByte": 10352
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.18483c8ab0a8991f",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0002",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Bernárdez-Vázquez et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/",
+        "markdown": "[Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "fragmentRef": "frag.f1.0002",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f92c3125731e98a6",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 159,
+        "startByte": 10354,
+        "endByte": 10439,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f92c3125731e98a6",
+        "assessmentCandidateId": "cand.e2.1ba542b33122dd11"
+      },
+      "verbatimSpan": {
+        "text": "[Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "startByte": 10354,
+        "endByte": 10439
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.ee5fb5c88dcd8004",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0009",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Baz-Valle et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/",
+        "markdown": "[Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "fragmentRef": "frag.e1f1.0009",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.b550a86389a7fe4c",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 75,
+        "startByte": 11245,
+        "endByte": 11320,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.b550a86389a7fe4c",
+        "assessmentCandidateId": "cand.e2.73510264c505da2d"
+      },
+      "verbatimSpan": {
+        "text": "[Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "startByte": 11245,
+        "endByte": 11320
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.e145a9e79af92b3d",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0009",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2019",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6303131/",
+        "markdown": "[Schoenfeld et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6303131/)",
+        "fragmentRef": "frag.e1f1.0009",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.b550a86389a7fe4c",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 77,
+        "endInCell": 153,
+        "startByte": 11322,
+        "endByte": 11398,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.b550a86389a7fe4c",
+        "assessmentCandidateId": "cand.e2.73510264c505da2d"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6303131/)",
+        "startByte": 11322,
+        "endByte": 11398
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.2b44cc9a5e26f5fa",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0010",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0010",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f77ddafcbc12dedc",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 65,
+        "startByte": 12221,
+        "endByte": 12286,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f77ddafcbc12dedc",
+        "assessmentCandidateId": "cand.e2.d9df02ee18879bca"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 12221,
+        "endByte": 12286
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.a3b9a2134377ed8a",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0010",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0010",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f77ddafcbc12dedc",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 67,
+        "endInCell": 139,
+        "startByte": 12288,
+        "endByte": 12360,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f77ddafcbc12dedc",
+        "assessmentCandidateId": "cand.e2.d9df02ee18879bca"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 12288,
+        "endByte": 12360
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.de7e89e5575f0bc0",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0011",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA, 2021",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0011",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.796d46651c820592",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 13113,
+        "endByte": 13187,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.796d46651c820592",
+        "assessmentCandidateId": "cand.e2.2c91118ccfe28eea"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 13113,
+        "endByte": 13187
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.993648e8c1c7a633",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0011",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0011",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.796d46651c820592",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 141,
+        "startByte": 13189,
+        "endByte": 13254,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.796d46651c820592",
+        "assessmentCandidateId": "cand.e2.2c91118ccfe28eea"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 13189,
+        "endByte": 13254
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.c7ba429d8471e8f9",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0012",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2019",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906",
+        "markdown": "[Schoenfeld et al., 2019](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906)",
+        "fragmentRef": "frag.e1f1.0012",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.806666d624e12ddf",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 93,
+        "startByte": 14159,
+        "endByte": 14252,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.806666d624e12ddf",
+        "assessmentCandidateId": "cand.e2.f52b30294bfbbca9"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2019](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906)",
+        "startByte": 14159,
+        "endByte": 14252
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.c41add331140f712",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0012",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0012",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.806666d624e12ddf",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 95,
+        "endInCell": 160,
+        "startByte": 14254,
+        "endByte": 14319,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.806666d624e12ddf",
+        "assessmentCandidateId": "cand.e2.f52b30294bfbbca9"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 14254,
+        "endByte": 14319
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.096bd9aff7b253ac",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0013",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "ACSM, 2026",
+        "rawUrl": "https://acsm.org/resistance-training-guidelines-update-2026/",
+        "markdown": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "fragmentRef": "frag.e1f1.0013",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e01892cb025c9c5b",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 14933,
+        "endByte": 15007,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.e01892cb025c9c5b",
+        "assessmentCandidateId": "cand.e2.9cf8b62d226f81e2"
+      },
+      "verbatimSpan": {
+        "text": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "startByte": 14933,
+        "endByte": 15007
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.9bbf16eae6684a19",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0013",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA, 2021",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0013",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e01892cb025c9c5b",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 150,
+        "startByte": 15009,
+        "endByte": 15083,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.e01892cb025c9c5b",
+        "assessmentCandidateId": "cand.e2.9cf8b62d226f81e2"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 15009,
+        "endByte": 15083
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.0f4239d6a78bdc5c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0014",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0014",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.bb8f3f5c37473b14",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 65,
+        "startByte": 15697,
+        "endByte": 15762,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.bb8f3f5c37473b14",
+        "assessmentCandidateId": "cand.e2.5321585d41447998"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 15697,
+        "endByte": 15762
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.fa4463b365b34b36",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0015",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Lopez et al., 2021",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/",
+        "markdown": "[Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "fragmentRef": "frag.e1f1.0015",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.b40d20955b2c8581",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 71,
+        "startByte": 16619,
+        "endByte": 16690,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.b40d20955b2c8581",
+        "assessmentCandidateId": "cand.e2.f262639b69486699"
+      },
+      "verbatimSpan": {
+        "text": "[Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "startByte": 16619,
+        "endByte": 16690
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.6a5838212cc623fd",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0015",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Currier et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10579494/",
+        "markdown": "[Currier et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10579494/)",
+        "fragmentRef": "frag.e1f1.0015",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.b40d20955b2c8581",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 73,
+        "endInCell": 147,
+        "startByte": 16692,
+        "endByte": 16766,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.b40d20955b2c8581",
+        "assessmentCandidateId": "cand.e2.f262639b69486699"
+      },
+      "verbatimSpan": {
+        "text": "[Currier et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10579494/)",
+        "startByte": 16692,
+        "endByte": 16766
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.9974072ed91e6a96",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0016",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Lopez et al., 2021",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/",
+        "markdown": "[Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "fragmentRef": "frag.e1f1.0016",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f3e9eb5a18756d37",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 71,
+        "startByte": 17350,
+        "endByte": 17421,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f3e9eb5a18756d37",
+        "assessmentCandidateId": "cand.e2.b7e2c57606214202"
+      },
+      "verbatimSpan": {
+        "text": "[Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "startByte": 17350,
+        "endByte": 17421
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.657b4b77391634b7",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0016",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2021",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/",
+        "markdown": "[Schoenfeld et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/)",
+        "fragmentRef": "frag.e1f1.0016",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f3e9eb5a18756d37",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 73,
+        "endInCell": 149,
+        "startByte": 17423,
+        "endByte": 17499,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f3e9eb5a18756d37",
+        "assessmentCandidateId": "cand.e2.b7e2c57606214202"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/)",
+        "startByte": 17423,
+        "endByte": 17499
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.62d40d664f41dc87",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0017",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Lopez et al., 2021",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/",
+        "markdown": "[Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "fragmentRef": "frag.e1f1.0017",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.06267f48f4ef5700",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 71,
+        "startByte": 18023,
+        "endByte": 18094,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.06267f48f4ef5700",
+        "assessmentCandidateId": "cand.e2.3a5f013f51d943bb"
+      },
+      "verbatimSpan": {
+        "text": "[Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "startByte": 18023,
+        "endByte": 18094
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.bd68022b55bc9551",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0017",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Refalo et al., 2022",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2022.2080165",
+        "markdown": "[Refalo et al., 2022](https://www.tandfonline.com/doi/full/10.1080/02640414.2022.2080165)",
+        "fragmentRef": "frag.e1f1.0017",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.06267f48f4ef5700",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 73,
+        "endInCell": 162,
+        "startByte": 18096,
+        "endByte": 18185,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.06267f48f4ef5700",
+        "assessmentCandidateId": "cand.e2.3a5f013f51d943bb"
+      },
+      "verbatimSpan": {
+        "text": "[Refalo et al., 2022](https://www.tandfonline.com/doi/full/10.1080/02640414.2022.2080165)",
+        "startByte": 18096,
+        "endByte": 18185
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d88333355b0ce411",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0018",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2021",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/",
+        "markdown": "[Schoenfeld et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/)",
+        "fragmentRef": "frag.e1f1.0018",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a87f41900ed7d18d",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 76,
+        "startByte": 18808,
+        "endByte": 18884,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.a87f41900ed7d18d",
+        "assessmentCandidateId": "cand.e2.babd8bf1e9d8fc27"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7927075/)",
+        "startByte": 18808,
+        "endByte": 18884
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.cfa56aab021a204b",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0018",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA, 2021",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0018",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a87f41900ed7d18d",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 78,
+        "endInCell": 152,
+        "startByte": 18886,
+        "endByte": 18960,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.a87f41900ed7d18d",
+        "assessmentCandidateId": "cand.e2.babd8bf1e9d8fc27"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 18886,
+        "endByte": 18960
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.10bf8641894e8ea4",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0004",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Grgic et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/",
+        "markdown": "[Grgic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/)",
+        "fragmentRef": "frag.f1.0004",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.8db5f524749eb66e",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 71,
+        "startByte": 20180,
+        "endByte": 20251,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.8db5f524749eb66e",
+        "assessmentCandidateId": "cand.e2.5a1fdd8cde9d839e"
+      },
+      "verbatimSpan": {
+        "text": "[Grgic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/)",
+        "startByte": 20180,
+        "endByte": 20251
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.6600a6d5f4df2448",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0004",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Refalo et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/",
+        "markdown": "[Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/)",
+        "fragmentRef": "frag.f1.0004",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.8db5f524749eb66e",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 73,
+        "endInCell": 145,
+        "startByte": 20253,
+        "endByte": 20325,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.8db5f524749eb66e",
+        "assessmentCandidateId": "cand.e2.5a1fdd8cde9d839e"
+      },
+      "verbatimSpan": {
+        "text": "[Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/)",
+        "startByte": 20253,
+        "endByte": 20325
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.aeb7466a213805d5",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0004",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "ACSM, 2026",
+        "rawUrl": "https://acsm.org/resistance-training-guidelines-update-2026/",
+        "markdown": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "fragmentRef": "frag.f1.0004",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.8db5f524749eb66e",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 2,
+        "startInCell": 147,
+        "endInCell": 221,
+        "startByte": 20327,
+        "endByte": 20401,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.8db5f524749eb66e",
+        "assessmentCandidateId": "cand.e2.5a1fdd8cde9d839e"
+      },
+      "verbatimSpan": {
+        "text": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "startByte": 20327,
+        "endByte": 20401
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.068743fde02ae14f",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0019",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Refalo et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/",
+        "markdown": "[Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/)",
+        "fragmentRef": "frag.e1f1.0019",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.fcd738578c7d8573",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 21109,
+        "endByte": 21181,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.fcd738578c7d8573",
+        "assessmentCandidateId": "cand.e2.1dd4a6916e306d98"
+      },
+      "verbatimSpan": {
+        "text": "[Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/)",
+        "startByte": 21109,
+        "endByte": 21181
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.30e702369c477f3c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0019",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Ruple et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10161210/",
+        "markdown": "[Ruple et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10161210/)",
+        "fragmentRef": "frag.e1f1.0019",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.fcd738578c7d8573",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 74,
+        "endInCell": 146,
+        "startByte": 21183,
+        "endByte": 21255,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.fcd738578c7d8573",
+        "assessmentCandidateId": "cand.e2.1dd4a6916e306d98"
+      },
+      "verbatimSpan": {
+        "text": "[Ruple et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10161210/)",
+        "startByte": 21183,
+        "endByte": 21255
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.88a5d211d8ecdc4c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0020",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Refalo et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9908800/",
+        "markdown": "[Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9908800/)",
+        "fragmentRef": "frag.e1f1.0020",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.75f6b29bb58c259c",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 21921,
+        "endByte": 21993,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.75f6b29bb58c259c",
+        "assessmentCandidateId": "cand.e2.14cbab9aa4f0456e"
+      },
+      "verbatimSpan": {
+        "text": "[Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9908800/)",
+        "startByte": 21921,
+        "endByte": 21993
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.83a29512d996a925",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0020",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Morán-Navarro et al., 2017",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/28965198/",
+        "markdown": "[Morán-Navarro et al., 2017](https://pubmed.ncbi.nlm.nih.gov/28965198/)",
+        "fragmentRef": "frag.e1f1.0020",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.75f6b29bb58c259c",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 74,
+        "endInCell": 145,
+        "startByte": 21995,
+        "endByte": 22067,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.75f6b29bb58c259c",
+        "assessmentCandidateId": "cand.e2.14cbab9aa4f0456e"
+      },
+      "verbatimSpan": {
+        "text": "[Morán-Navarro et al., 2017](https://pubmed.ncbi.nlm.nih.gov/28965198/)",
+        "startByte": 21995,
+        "endByte": 22067
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.f59d7bb15d259a0e",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0005",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Steele et al., 2017",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5712461/",
+        "markdown": "[Steele et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5712461/)",
+        "fragmentRef": "frag.f1.0005",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.724d4ce2e01b6bd2",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 22633,
+        "endByte": 22705,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.724d4ce2e01b6bd2",
+        "assessmentCandidateId": "cand.e2.f201f49971e90ca8"
+      },
+      "verbatimSpan": {
+        "text": "[Steele et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5712461/)",
+        "startByte": 22633,
+        "endByte": 22705
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.6ba12bd5176dd6a0",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0006",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Singer et al., 2024",
+        "rawUrl": "https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full",
+        "markdown": "[Singer et al., 2024](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full)",
+        "fragmentRef": "frag.f1.0006",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.2fbb500c7d5f7255",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 91,
+        "startByte": 23564,
+        "endByte": 23655,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.2fbb500c7d5f7255",
+        "assessmentCandidateId": "cand.e2.9bb1e64dfed51ca6"
+      },
+      "verbatimSpan": {
+        "text": "[Singer et al., 2024](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full)",
+        "startByte": 23564,
+        "endByte": 23655
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d54ccc8375ccd65c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0021",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Singer et al., 2024",
+        "rawUrl": "https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full",
+        "markdown": "[Singer et al., 2024](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full)",
+        "fragmentRef": "frag.e1f1.0021",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7e6125bca19b0163",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 91,
+        "startByte": 24247,
+        "endByte": 24338,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.7e6125bca19b0163",
+        "assessmentCandidateId": "cand.e2.f827a058210f8f79"
+      },
+      "verbatimSpan": {
+        "text": "[Singer et al., 2024](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full)",
+        "startByte": 24247,
+        "endByte": 24338
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.e2bacdcb4f0e1429",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0021",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA, 2021",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0021",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7e6125bca19b0163",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 93,
+        "endInCell": 167,
+        "startByte": 24340,
+        "endByte": 24414,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.7e6125bca19b0163",
+        "assessmentCandidateId": "cand.e2.f827a058210f8f79"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 24340,
+        "endByte": 24414
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.1a822ceec5de7631",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0022",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA, 2021",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0022",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.cf0474cc397eee66",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 24909,
+        "endByte": 24983,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.cf0474cc397eee66",
+        "assessmentCandidateId": "cand.e2.41a0fbc8ce52650e"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 24909,
+        "endByte": 24983
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.ee82032901c429bb",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0022",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0022",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.cf0474cc397eee66",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 148,
+        "startByte": 24985,
+        "endByte": 25057,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.cf0474cc397eee66",
+        "assessmentCandidateId": "cand.e2.41a0fbc8ce52650e"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 24985,
+        "endByte": 25057
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.9860f7bb7e5e6873",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0019",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et Grgic, 2020",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/",
+        "markdown": "[Schoenfeld et Grgic, 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/)",
+        "fragmentRef": "frag.f1.0019",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.480cc5db4d436149",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 78,
+        "startByte": 25930,
+        "endByte": 26008,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.480cc5db4d436149",
+        "assessmentCandidateId": "cand.e2.5a377057857d131d"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et Grgic, 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/)",
+        "startByte": 25930,
+        "endByte": 26008
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.3483b4351259b28b",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0019",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "ACSM, 2026",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/",
+        "markdown": "[ACSM, 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)",
+        "fragmentRef": "frag.f1.0019",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.480cc5db4d436149",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 80,
+        "endInCell": 144,
+        "startByte": 26010,
+        "endByte": 26074,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.480cc5db4d436149",
+        "assessmentCandidateId": "cand.e2.5a377057857d131d"
+      },
+      "verbatimSpan": {
+        "text": "[ACSM, 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)",
+        "startByte": 26010,
+        "endByte": 26074
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.95e616df84584163",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0023",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Wolf et al., 2025",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/39959841/",
+        "markdown": "[Wolf et al., 2025](https://pubmed.ncbi.nlm.nih.gov/39959841/)",
+        "fragmentRef": "frag.e1f1.0023",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.562fbab6580db1b5",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 62,
+        "startByte": 26668,
+        "endByte": 26730,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.562fbab6580db1b5",
+        "assessmentCandidateId": "cand.e2.bfd31026ca319ecc"
+      },
+      "verbatimSpan": {
+        "text": "[Wolf et al., 2025](https://pubmed.ncbi.nlm.nih.gov/39959841/)",
+        "startByte": 26668,
+        "endByte": 26730
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.3e47eb29f37ef673",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0023",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "revue longueur musculaire 2025",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12869050/",
+        "markdown": "[revue longueur musculaire 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC12869050/)",
+        "fragmentRef": "frag.e1f1.0023",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.562fbab6580db1b5",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 64,
+        "endInCell": 148,
+        "startByte": 26732,
+        "endByte": 26816,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.562fbab6580db1b5",
+        "assessmentCandidateId": "cand.e2.bfd31026ca319ecc"
+      },
+      "verbatimSpan": {
+        "text": "[revue longueur musculaire 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC12869050/)",
+        "startByte": 26732,
+        "endByte": 26816
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d4078571399a96b9",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0007",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Wolf et al., 2025",
+        "rawUrl": "https://peerj.com/articles/18904",
+        "markdown": "[Wolf et al., 2025](https://peerj.com/articles/18904)",
+        "fragmentRef": "frag.f1.0007",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.860017a9164bb524",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 53,
+        "startByte": 27476,
+        "endByte": 27529,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.860017a9164bb524",
+        "assessmentCandidateId": "cand.e2.03bb22232058f86f"
+      },
+      "verbatimSpan": {
+        "text": "[Wolf et al., 2025](https://peerj.com/articles/18904)",
+        "startByte": 27476,
+        "endByte": 27529
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.c765580e0f84d303",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0007",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "méta-analyse 2026",
+        "rawUrl": "https://link.springer.com/10.1007/s11332-025-01586-5",
+        "markdown": "[méta-analyse 2026](https://link.springer.com/10.1007/s11332-025-01586-5)",
+        "fragmentRef": "frag.f1.0007",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.860017a9164bb524",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 55,
+        "endInCell": 128,
+        "startByte": 27531,
+        "endByte": 27605,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.860017a9164bb524",
+        "assessmentCandidateId": "cand.e2.03bb22232058f86f"
+      },
+      "verbatimSpan": {
+        "text": "[méta-analyse 2026](https://link.springer.com/10.1007/s11332-025-01586-5)",
+        "startByte": 27531,
+        "endByte": 27605
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.7f2930b45bd4bf2d",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0024",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2015",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+        "markdown": "[Schoenfeld et al., 2015](https://pubmed.ncbi.nlm.nih.gov/25601394/)",
+        "fragmentRef": "frag.e1f1.0024",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.fdb593a9de570c49",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 68,
+        "startByte": 28465,
+        "endByte": 28533,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.fdb593a9de570c49",
+        "assessmentCandidateId": "cand.e2.182dcfa6659dbcb6"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2015](https://pubmed.ncbi.nlm.nih.gov/25601394/)",
+        "startByte": 28465,
+        "endByte": 28533
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.e65f4771d5772aba",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0024",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Bernárdez-Vázquez et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/",
+        "markdown": "[Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "fragmentRef": "frag.e1f1.0024",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.fdb593a9de570c49",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 70,
+        "endInCell": 153,
+        "startByte": 28535,
+        "endByte": 28620,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.fdb593a9de570c49",
+        "assessmentCandidateId": "cand.e2.182dcfa6659dbcb6"
+      },
+      "verbatimSpan": {
+        "text": "[Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "startByte": 28535,
+        "endByte": 28620
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.4984fcd537ddf4f2",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0025",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2015",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+        "markdown": "[Schoenfeld et al., 2015](https://pubmed.ncbi.nlm.nih.gov/25601394/)",
+        "fragmentRef": "frag.e1f1.0025",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.1342449d726b97dd",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 68,
+        "startByte": 29134,
+        "endByte": 29202,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.1342449d726b97dd",
+        "assessmentCandidateId": "cand.e2.f0ddaa9a68ecc3e3"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2015](https://pubmed.ncbi.nlm.nih.gov/25601394/)",
+        "startByte": 29134,
+        "endByte": 29202
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.b487048cdabf93e9",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0026",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Androulakis Korakakis et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/",
+        "markdown": "[Androulakis Korakakis et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/)",
+        "fragmentRef": "frag.e1f1.0026",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.541f3e4211815afc",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 88,
+        "startByte": 29687,
+        "endByte": 29775,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.541f3e4211815afc",
+        "assessmentCandidateId": "cand.e2.873c5ef3770679f4"
+      },
+      "verbatimSpan": {
+        "text": "[Androulakis Korakakis et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/)",
+        "startByte": 29687,
+        "endByte": 29775
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.93587e60c9447f94",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0027",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Haugen et al., 2023",
+        "rawUrl": "https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4",
+        "markdown": "[Haugen et al., 2023](https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4)",
+        "fragmentRef": "frag.e1f1.0027",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.b2513d2c6be2fda4",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 107,
+        "startByte": 30677,
+        "endByte": 30784,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.b2513d2c6be2fda4",
+        "assessmentCandidateId": "cand.e2.633c249662b5dad6"
+      },
+      "verbatimSpan": {
+        "text": "[Haugen et al., 2023](https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4)",
+        "startByte": 30677,
+        "endByte": 30784
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.6bfcda77cde45c27",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0028",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Rosa et al., 2023",
+        "rawUrl": "https://www.ovid.com/10.1519/SSC.0000000000000720",
+        "markdown": "[Rosa et al., 2023](https://www.ovid.com/10.1519/SSC.0000000000000720)",
+        "fragmentRef": "frag.e1f1.0028",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.644f5df177a80f4f",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 70,
+        "startByte": 31406,
+        "endByte": 31476,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.644f5df177a80f4f",
+        "assessmentCandidateId": "cand.e2.c74ed2a424b2d241"
+      },
+      "verbatimSpan": {
+        "text": "[Rosa et al., 2023](https://www.ovid.com/10.1519/SSC.0000000000000720)",
+        "startByte": 31406,
+        "endByte": 31476
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.dd911d8627f26857",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0028",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Gentil et al., 2015",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4592763/",
+        "markdown": "[Gentil et al., 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4592763/)",
+        "fragmentRef": "frag.e1f1.0028",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.644f5df177a80f4f",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 72,
+        "endInCell": 144,
+        "startByte": 31478,
+        "endByte": 31550,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.644f5df177a80f4f",
+        "assessmentCandidateId": "cand.e2.c74ed2a424b2d241"
+      },
+      "verbatimSpan": {
+        "text": "[Gentil et al., 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4592763/)",
+        "startByte": 31478,
+        "endByte": 31550
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.b3bc0702a2e29e71",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0029",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA, 2021",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0029",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.19b9467e3f9bc113",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 32229,
+        "endByte": 32303,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.19b9467e3f9bc113",
+        "assessmentCandidateId": "cand.e2.712eb0ced1c6a075"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA, 2021](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 32229,
+        "endByte": 32303
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.9ba119f09be3568e",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0029",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Androulakis Korakakis et al., 2023",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/",
+        "markdown": "[Androulakis Korakakis et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/)",
+        "fragmentRef": "frag.e1f1.0029",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.19b9467e3f9bc113",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 164,
+        "startByte": 32305,
+        "endByte": 32393,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.19b9467e3f9bc113",
+        "assessmentCandidateId": "cand.e2.712eb0ced1c6a075"
+      },
+      "verbatimSpan": {
+        "text": "[Androulakis Korakakis et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/)",
+        "startByte": 32305,
+        "endByte": 32393
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.fb469e755c9ee2b1",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0030",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Kassiano et al., 2022",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/35438660/",
+        "markdown": "[Kassiano et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35438660/)",
+        "fragmentRef": "frag.e1f1.0030",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.ff7e49aef32bd19f",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 66,
+        "startByte": 32992,
+        "endByte": 33058,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.ff7e49aef32bd19f",
+        "assessmentCandidateId": "cand.e2.395fdf261d4e7d3d"
+      },
+      "verbatimSpan": {
+        "text": "[Kassiano et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35438660/)",
+        "startByte": 32992,
+        "endByte": 33058
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.077904ed4aa89305",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0030",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Baz-Valle et al., 2019",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6934277/",
+        "markdown": "[Baz-Valle et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6934277/)",
+        "fragmentRef": "frag.e1f1.0030",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.ff7e49aef32bd19f",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 68,
+        "endInCell": 143,
+        "startByte": 33060,
+        "endByte": 33135,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.ff7e49aef32bd19f",
+        "assessmentCandidateId": "cand.e2.395fdf261d4e7d3d"
+      },
+      "verbatimSpan": {
+        "text": "[Baz-Valle et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6934277/)",
+        "startByte": 33060,
+        "endByte": 33135
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.215363084a757417",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0031",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Kassiano et al., 2022",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/35438660/",
+        "markdown": "[Kassiano et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35438660/)",
+        "fragmentRef": "frag.e1f1.0031",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.399c8c3c09cc32ef",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 66,
+        "startByte": 33731,
+        "endByte": 33797,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.399c8c3c09cc32ef",
+        "assessmentCandidateId": "cand.e2.fc0a6039fb32db37"
+      },
+      "verbatimSpan": {
+        "text": "[Kassiano et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35438660/)",
+        "startByte": 33731,
+        "endByte": 33797
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.93bfb1b7e4774d1c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0032",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Nunes et al., 2021",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/32077380/",
+        "markdown": "[Nunes et al., 2021](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "fragmentRef": "frag.e1f1.0032",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.0e75def084556a94",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 63,
+        "startByte": 34619,
+        "endByte": 34682,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.0e75def084556a94",
+        "assessmentCandidateId": "cand.e2.d775fe945bf9685f"
+      },
+      "verbatimSpan": {
+        "text": "[Nunes et al., 2021](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "startByte": 34619,
+        "endByte": 34682
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.cc158f0a6bbad429",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0033",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Nunes et al., 2021",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/32077380/",
+        "markdown": "[Nunes et al., 2021](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "fragmentRef": "frag.e1f1.0033",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.326fb197fbf6fdb2",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 63,
+        "startByte": 35123,
+        "endByte": 35186,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.326fb197fbf6fdb2",
+        "assessmentCandidateId": "cand.e2.5a24b7116b06f199"
+      },
+      "verbatimSpan": {
+        "text": "[Nunes et al., 2021](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "startByte": 35123,
+        "endByte": 35186
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.f87ce81d6b542abf",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0034",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0034",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.160633733416fd44",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 35702,
+        "endByte": 35774,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.160633733416fd44",
+        "assessmentCandidateId": "cand.e2.1e2912dacec6f876"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 35702,
+        "endByte": 35774
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.17daa6adfe293bd8",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0035",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Plotkin et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9528903/",
+        "markdown": "[Plotkin et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9528903/)",
+        "fragmentRef": "frag.e1f1.0035",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.25e4b9d76d1da50b",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 73,
+        "startByte": 36629,
+        "endByte": 36702,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.25e4b9d76d1da50b",
+        "assessmentCandidateId": "cand.e2.bc3cc2fcccd8e137"
+      },
+      "verbatimSpan": {
+        "text": "[Plotkin et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9528903/)",
+        "startByte": 36629,
+        "endByte": 36702
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.7c87ba92854bca90",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0036",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0036",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d3752a3d11f8472c",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 65,
+        "startByte": 37293,
+        "endByte": 37358,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.d3752a3d11f8472c",
+        "assessmentCandidateId": "cand.e2.3c323fafb86329ae"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 37293,
+        "endByte": 37358
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.ea0663c85c1772f9",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0037",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Hickmott et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8762534/",
+        "markdown": "[Hickmott et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8762534/)",
+        "fragmentRef": "frag.e1f1.0037",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e8746ad583ae58ea",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 37910,
+        "endByte": 37984,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.e8746ad583ae58ea",
+        "assessmentCandidateId": "cand.e2.7e21fc35b1e9e8bb"
+      },
+      "verbatimSpan": {
+        "text": "[Hickmott et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8762534/)",
+        "startByte": 37910,
+        "endByte": 37984
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.0dca20e6215466cc",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0038",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "ACSM, 2026",
+        "rawUrl": "https://acsm.org/resistance-training-guidelines-update-2026/",
+        "markdown": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "fragmentRef": "frag.e1f1.0038",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.711cc9c47539b504",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 38608,
+        "endByte": 38682,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.711cc9c47539b504",
+        "assessmentCandidateId": "cand.e2.5f4e0f403b883a86"
+      },
+      "verbatimSpan": {
+        "text": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "startByte": 38608,
+        "endByte": 38682
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.ba522e5e71fe6700",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0038",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Behm et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10933173/",
+        "markdown": "[Behm et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10933173/)",
+        "fragmentRef": "frag.e1f1.0038",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.711cc9c47539b504",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 147,
+        "startByte": 38684,
+        "endByte": 38755,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.711cc9c47539b504",
+        "assessmentCandidateId": "cand.e2.5f4e0f403b883a86"
+      },
+      "verbatimSpan": {
+        "text": "[Behm et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10933173/)",
+        "startByte": 38684,
+        "endByte": 38755
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.1b5fb9aa58adec74",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0040",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Grgic et al., 2017",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5571788/",
+        "markdown": "[Grgic et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5571788/)",
+        "fragmentRef": "frag.e1f1.0040",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.61bf7ced3b984f5e",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 71,
+        "startByte": 40162,
+        "endByte": 40233,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.61bf7ced3b984f5e",
+        "assessmentCandidateId": "cand.e2.41f2f4f1793e356f"
+      },
+      "verbatimSpan": {
+        "text": "[Grgic et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5571788/)",
+        "startByte": 40162,
+        "endByte": 40233
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.ae4cf41e987646bd",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0040",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Moesgaard et al., 2022",
+        "rawUrl": "https://link.springer.com/10.1007/s40279-021-01636-1",
+        "markdown": "[Moesgaard et al., 2022](https://link.springer.com/10.1007/s40279-021-01636-1)",
+        "fragmentRef": "frag.e1f1.0040",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.61bf7ced3b984f5e",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 73,
+        "endInCell": 151,
+        "startByte": 40235,
+        "endByte": 40313,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.61bf7ced3b984f5e",
+        "assessmentCandidateId": "cand.e2.41f2f4f1793e356f"
+      },
+      "verbatimSpan": {
+        "text": "[Moesgaard et al., 2022](https://link.springer.com/10.1007/s40279-021-01636-1)",
+        "startByte": 40235,
+        "endByte": 40313
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d2bb07582e2d96dd",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0041",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Bartolomei et al., 2023",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/36727999/",
+        "markdown": "[Bartolomei et al., 2023](https://pubmed.ncbi.nlm.nih.gov/36727999/)",
+        "fragmentRef": "frag.e1f1.0041",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.ac1f53d2ed5adb31",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 68,
+        "startByte": 40918,
+        "endByte": 40986,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.ac1f53d2ed5adb31",
+        "assessmentCandidateId": "cand.e2.8aaada9d292528a6"
+      },
+      "verbatimSpan": {
+        "text": "[Bartolomei et al., 2023](https://pubmed.ncbi.nlm.nih.gov/36727999/)",
+        "startByte": 40918,
+        "endByte": 40986
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.6d2f0ddd887fbffa",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0042",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "ACSM, 2026",
+        "rawUrl": "https://acsm.org/resistance-training-guidelines-update-2026/",
+        "markdown": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "fragmentRef": "frag.e1f1.0042",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.6bd63a9af49a8619",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 41563,
+        "endByte": 41637,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.6bd63a9af49a8619",
+        "assessmentCandidateId": "cand.e2.64345ea6c1d91adb"
+      },
+      "verbatimSpan": {
+        "text": "[ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/)",
+        "startByte": 41563,
+        "endByte": 41637
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.2b93618054842e4d",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0042",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Bernárdez-Vázquez et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/",
+        "markdown": "[Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "fragmentRef": "frag.e1f1.0042",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.6bd63a9af49a8619",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 76,
+        "endInCell": 159,
+        "startByte": 41639,
+        "endByte": 41724,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.6bd63a9af49a8619",
+        "assessmentCandidateId": "cand.e2.64345ea6c1d91adb"
+      },
+      "verbatimSpan": {
+        "text": "[Bernárdez-Vázquez et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "startByte": 41639,
+        "endByte": 41724
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.67a3142d42a1f177",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0043",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Coleman et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/",
+        "markdown": "[Coleman et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/)",
+        "fragmentRef": "frag.e1f1.0043",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.96d8df1c39744040",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 74,
+        "startByte": 42515,
+        "endByte": 42589,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.96d8df1c39744040",
+        "assessmentCandidateId": "cand.e2.b5e8d723b1506460"
+      },
+      "verbatimSpan": {
+        "text": "[Coleman et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/)",
+        "startByte": 42515,
+        "endByte": 42589
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.6dfa11d4f4a5f501",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0044",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pancar et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41730991/",
+        "markdown": "[Pancar et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41730991/)",
+        "fragmentRef": "frag.e1f1.0044",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e2d59a9adbfd349e",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 64,
+        "startByte": 43243,
+        "endByte": 43307,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.e2d59a9adbfd349e",
+        "assessmentCandidateId": "cand.e2.5a345982e3c2b102"
+      },
+      "verbatimSpan": {
+        "text": "[Pancar et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41730991/)",
+        "startByte": 43243,
+        "endByte": 43307
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.06f0074d8946ec51",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0045",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Rogerson et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10948666/",
+        "markdown": "[Rogerson et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10948666/)",
+        "fragmentRef": "frag.e1f1.0045",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.797be9345a957179",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 75,
+        "startByte": 43908,
+        "endByte": 43983,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.797be9345a957179",
+        "assessmentCandidateId": "cand.e2.085da2de176ea661"
+      },
+      "verbatimSpan": {
+        "text": "[Rogerson et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10948666/)",
+        "startByte": 43908,
+        "endByte": 43983
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.04c4907bf55ce42a",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0046",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0046",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.197069b12a336ea6",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 44622,
+        "endByte": 44694,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.197069b12a336ea6",
+        "assessmentCandidateId": "cand.e2.3c0b79f5ec63d775"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 44622,
+        "endByte": 44694
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.1e2d5312cc0f3a11",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0046",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Rogerson et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10948666/",
+        "markdown": "[Rogerson et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10948666/)",
+        "fragmentRef": "frag.e1f1.0046",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.197069b12a336ea6",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 74,
+        "endInCell": 149,
+        "startByte": 44696,
+        "endByte": 44771,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.197069b12a336ea6",
+        "assessmentCandidateId": "cand.e2.3c0b79f5ec63d775"
+      },
+      "verbatimSpan": {
+        "text": "[Rogerson et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10948666/)",
+        "startByte": 44696,
+        "endByte": 44771
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.2348b5d85ddde148",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0047",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Ramos-Campo et al., 2024",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/38595233/",
+        "markdown": "[Ramos-Campo et al., 2024](https://pubmed.ncbi.nlm.nih.gov/38595233/)",
+        "fragmentRef": "frag.e1f1.0047",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.ed8c3905c41098c0",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 69,
+        "startByte": 45527,
+        "endByte": 45596,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.ed8c3905c41098c0",
+        "assessmentCandidateId": "cand.e2.409f39b3ac5fb6dc"
+      },
+      "verbatimSpan": {
+        "text": "[Ramos-Campo et al., 2024](https://pubmed.ncbi.nlm.nih.gov/38595233/)",
+        "startByte": 45527,
+        "endByte": 45596
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.1065062658f663d7",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0048",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Ramos-Campo et al., 2024",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/38595233/",
+        "markdown": "[Ramos-Campo et al., 2024](https://pubmed.ncbi.nlm.nih.gov/38595233/)",
+        "fragmentRef": "frag.e1f1.0048",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.5fd9781ca4b7df20",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 69,
+        "startByte": 46148,
+        "endByte": 46217,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.5fd9781ca4b7df20",
+        "assessmentCandidateId": "cand.e2.566e15869e9a08d9"
+      },
+      "verbatimSpan": {
+        "text": "[Ramos-Campo et al., 2024](https://pubmed.ncbi.nlm.nih.gov/38595233/)",
+        "startByte": 46148,
+        "endByte": 46217
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.0e43a59c7dba44bc",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0048",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Schoenfeld et al., 2019",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906",
+        "markdown": "[Schoenfeld et al., 2019](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906)",
+        "fragmentRef": "frag.e1f1.0048",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.5fd9781ca4b7df20",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 71,
+        "endInCell": 164,
+        "startByte": 46219,
+        "endByte": 46312,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.5fd9781ca4b7df20",
+        "assessmentCandidateId": "cand.e2.566e15869e9a08d9"
+      },
+      "verbatimSpan": {
+        "text": "[Schoenfeld et al., 2019](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906)",
+        "startByte": 46219,
+        "endByte": 46312
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.c10e6d13e59fb971",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0049",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0049",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.3a4090548ef1b167",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 47475,
+        "endByte": 47547,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.3a4090548ef1b167",
+        "assessmentCandidateId": "cand.e2.039222248f017bea"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 47475,
+        "endByte": 47547
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.8cd0b79bda483cb1",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0049",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Morán-Navarro et al., 2017",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/28965198/",
+        "markdown": "[Morán-Navarro et al., 2017](https://pubmed.ncbi.nlm.nih.gov/28965198/)",
+        "fragmentRef": "frag.e1f1.0049",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.3a4090548ef1b167",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 74,
+        "endInCell": 145,
+        "startByte": 47549,
+        "endByte": 47621,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.3a4090548ef1b167",
+        "assessmentCandidateId": "cand.e2.039222248f017bea"
+      },
+      "verbatimSpan": {
+        "text": "[Morán-Navarro et al., 2017](https://pubmed.ncbi.nlm.nih.gov/28965198/)",
+        "startByte": 47549,
+        "endByte": 47621
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.2364559c5f90a1dc",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0050",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Refalo et al., 2022",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2022.2080165",
+        "markdown": "[Refalo et al., 2022](https://www.tandfonline.com/doi/full/10.1080/02640414.2022.2080165)",
+        "fragmentRef": "frag.e1f1.0050",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.be74ce57fef74708",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 89,
+        "startByte": 48114,
+        "endByte": 48203,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.be74ce57fef74708",
+        "assessmentCandidateId": "cand.e2.f2620c4aa87fda3d"
+      },
+      "verbatimSpan": {
+        "text": "[Refalo et al., 2022](https://www.tandfonline.com/doi/full/10.1080/02640414.2022.2080165)",
+        "startByte": 48114,
+        "endByte": 48203
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.8d3294adda25fa6c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0050",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0050",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.be74ce57fef74708",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 91,
+        "endInCell": 163,
+        "startByte": 48205,
+        "endByte": 48277,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.be74ce57fef74708",
+        "assessmentCandidateId": "cand.e2.f2620c4aa87fda3d"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 48205,
+        "endByte": 48277
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.2d8c690af553bcff",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0051",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0051",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7409b808fc491fa2",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 48778,
+        "endByte": 48850,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.7409b808fc491fa2",
+        "assessmentCandidateId": "cand.e2.2a1ff995958cf201"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 48778,
+        "endByte": 48850
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.0a42ff5b9c46c1ef",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0052",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Saner et al., 2020",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7217042/",
+        "markdown": "[Saner et al., 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC7217042/)",
+        "fragmentRef": "frag.e1f1.0052",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7ab07800e4ef43c9",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 71,
+        "startByte": 49443,
+        "endByte": 49514,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.7ab07800e4ef43c9",
+        "assessmentCandidateId": "cand.e2.61d221cefee4d031"
+      },
+      "verbatimSpan": {
+        "text": "[Saner et al., 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC7217042/)",
+        "startByte": 49443,
+        "endByte": 49514
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.b8af073b55888dcd",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0052",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Lamon et al., 2021",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7785053/",
+        "markdown": "[Lamon et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7785053/)",
+        "fragmentRef": "frag.e1f1.0052",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7ab07800e4ef43c9",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 73,
+        "endInCell": 144,
+        "startByte": 49516,
+        "endByte": 49587,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.7ab07800e4ef43c9",
+        "assessmentCandidateId": "cand.e2.61d221cefee4d031"
+      },
+      "verbatimSpan": {
+        "text": "[Lamon et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7785053/)",
+        "startByte": 49516,
+        "endByte": 49587
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.13b24277848d7ffa",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0052",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Borba et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11390164/",
+        "markdown": "[Borba et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11390164/)",
+        "fragmentRef": "frag.e1f1.0052",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7ab07800e4ef43c9",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 2,
+        "startInCell": 146,
+        "endInCell": 218,
+        "startByte": 49589,
+        "endByte": 49661,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.7ab07800e4ef43c9",
+        "assessmentCandidateId": "cand.e2.61d221cefee4d031"
+      },
+      "verbatimSpan": {
+        "text": "[Borba et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11390164/)",
+        "startByte": 49589,
+        "endByte": 49661
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.e8c120941bfc2638",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0053",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0053",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e5af7ff35583244a",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 50326,
+        "endByte": 50398,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.e5af7ff35583244a",
+        "assessmentCandidateId": "cand.e2.fa7118d71a4b825a"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 50326,
+        "endByte": 50398
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.db3160140c5d4343",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0054",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Nunes et al., 2021",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/32077380/",
+        "markdown": "[Nunes et al., 2021](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "fragmentRef": "frag.e1f1.0054",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.98b07663635e3570",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 63,
+        "startByte": 51162,
+        "endByte": 51225,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.98b07663635e3570",
+        "assessmentCandidateId": "cand.e2.dbf9b6fb4411b60a"
+      },
+      "verbatimSpan": {
+        "text": "[Nunes et al., 2021](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "startByte": 51162,
+        "endByte": 51225
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.64cf549b4efd3bc7",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0054",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0054",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.98b07663635e3570",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 65,
+        "endInCell": 130,
+        "startByte": 51227,
+        "endByte": 51292,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.98b07663635e3570",
+        "assessmentCandidateId": "cand.e2.dbf9b6fb4411b60a"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 51227,
+        "endByte": 51292
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.7964edea4d134d49",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0055",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Bickel et al., 2011",
+        "rawUrl": "https://paulogentil.com/pdf/Exercise%20Dosing%20to%20Retain%20Resistance%20Training%20Adaptations%20in%20Young%20and%20Older%20Adults.pdf",
+        "markdown": "[Bickel et al., 2011](https://paulogentil.com/pdf/Exercise%20Dosing%20to%20Retain%20Resistance%20Training%20Adaptations%20in%20Young%20and%20Older%20Adults.pdf)",
+        "fragmentRef": "frag.e1f1.0055",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a101b13ed06fe3aa",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 160,
+        "startByte": 51803,
+        "endByte": 51963,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.a101b13ed06fe3aa",
+        "assessmentCandidateId": "cand.e2.20a90f4f79f939a1"
+      },
+      "verbatimSpan": {
+        "text": "[Bickel et al., 2011](https://paulogentil.com/pdf/Exercise%20Dosing%20to%20Retain%20Resistance%20Training%20Adaptations%20in%20Young%20and%20Older%20Adults.pdf)",
+        "startByte": 51803,
+        "endByte": 51963
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.5bdd9eedf72b583f",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0055",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Fyfe et al., 2022",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/34822137/",
+        "markdown": "[Fyfe et al., 2022](https://pubmed.ncbi.nlm.nih.gov/34822137/)",
+        "fragmentRef": "frag.e1f1.0055",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a101b13ed06fe3aa",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 162,
+        "endInCell": 224,
+        "startByte": 51965,
+        "endByte": 52027,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.a101b13ed06fe3aa",
+        "assessmentCandidateId": "cand.e2.20a90f4f79f939a1"
+      },
+      "verbatimSpan": {
+        "text": "[Fyfe et al., 2022](https://pubmed.ncbi.nlm.nih.gov/34822137/)",
+        "startByte": 51965,
+        "endByte": 52027
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.593ceb1c17e3622a",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0056",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Sousa et al., 2024",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0056",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f7df82ebab3e53ca",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 52585,
+        "endByte": 52657,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f7df82ebab3e53ca",
+        "assessmentCandidateId": "cand.e2.7555465eb8498224"
+      },
+      "verbatimSpan": {
+        "text": "[Sousa et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 52585,
+        "endByte": 52657
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.151f90ad21d29773",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0056",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.e1f1.0056",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f7df82ebab3e53ca",
+        "cellHeader": "Sources principales",
+        "occurrenceIndexInCell": 1,
+        "startInCell": 74,
+        "endInCell": 139,
+        "startByte": 52659,
+        "endByte": 52724,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.f7df82ebab3e53ca",
+        "assessmentCandidateId": "cand.e2.7555465eb8498224"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 52659,
+        "endByte": 52724
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.38551af40d00c009",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0060",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Refalo et al., 2025",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/40028215/",
+        "markdown": "[Refalo et al., 2025](https://pubmed.ncbi.nlm.nih.gov/40028215/)",
+        "fragmentRef": "frag.e1f1.0060",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.bb75a79c235de4b7",
+        "cellHeader": "Limites et application",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 61,
+        "endInCell": 125,
+        "startByte": 54305,
+        "endByte": 54369,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.bb75a79c235de4b7",
+        "assessmentCandidateId": "cand.e2.7b229f4cda9ecc12"
+      },
+      "verbatimSpan": {
+        "text": "[Refalo et al., 2025](https://pubmed.ncbi.nlm.nih.gov/40028215/)",
+        "startByte": 54305,
+        "endByte": 54369
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.83fdc764cc974cda",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0061",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Borde et al., 2024",
+        "rawUrl": "https://link.springer.com/10.1007/s40279-024-02123-z",
+        "markdown": "[Borde et al., 2024](https://link.springer.com/10.1007/s40279-024-02123-z)",
+        "fragmentRef": "frag.e1f1.0061",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.3d424b95d432e902",
+        "cellHeader": "Limites et application",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 54,
+        "endInCell": 128,
+        "startByte": 54732,
+        "endByte": 54806,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial",
+        "claimCandidateId": "cand.e1.3d424b95d432e902",
+        "assessmentCandidateId": "cand.e2.7284c16842d8793d"
+      },
+      "verbatimSpan": {
+        "text": "[Borde et al., 2024](https://link.springer.com/10.1007/s40279-024-02123-z)",
+        "startByte": 54732,
+        "endByte": 54806
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.ca331ef1b53a49e7",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0009",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Pelland et al., 2026",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.f1.0009",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e3bc28205d794ded",
+        "cellHeader": "Résultat dominant",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 52,
+        "endInCell": 117,
+        "startByte": 55128,
+        "endByte": 55193,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 55128,
+        "endByte": 55193
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.f099f842dc1781b2",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0009",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Baz-Valle et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/",
+        "markdown": "[Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "fragmentRef": "frag.f1.0009",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.e3bc28205d794ded",
+        "cellHeader": "Résultat contraire",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 81,
+        "endInCell": 156,
+        "startByte": 55282,
+        "endByte": 55357,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Baz-Valle et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "startByte": 55282,
+        "endByte": 55357
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.653becd49eec8433",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0064",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Wolf et al., 2025",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/39959841/",
+        "markdown": "[Wolf et al., 2025](https://pubmed.ncbi.nlm.nih.gov/39959841/)",
+        "fragmentRef": "frag.e1f1.0064",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.3a33a39c9e68ddba",
+        "cellHeader": "Résultat contraire",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 62,
+        "endInCell": 124,
+        "startByte": 56373,
+        "endByte": 56435,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Wolf et al., 2025](https://pubmed.ncbi.nlm.nih.gov/39959841/)",
+        "startByte": 56373,
+        "endByte": 56435
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d1ff6bab4d063221",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0065",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Baz-Valle et al., 2019",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6934277/",
+        "markdown": "[Baz-Valle et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6934277/)",
+        "fragmentRef": "frag.e1f1.0065",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.08734a1460e8fe43",
+        "cellHeader": "Résultat contraire",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 59,
+        "endInCell": 134,
+        "startByte": 56752,
+        "endByte": 56827,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Baz-Valle et al., 2019](https://pmc.ncbi.nlm.nih.gov/articles/PMC6934277/)",
+        "startByte": 56752,
+        "endByte": 56827
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.8dc93a6db1bd84c1",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0011",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Texte officiel PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/",
+        "markdown": "[Texte officiel PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)",
+        "fragmentRef": "frag.f1.0011",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.808bbc0487f95ec6",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 72,
+        "startByte": 59405,
+        "endByte": 59477,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Texte officiel PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)",
+        "startByte": 59405,
+        "endByte": 59477
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d3d3a99cf2f9c976",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0068",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "IUSCA",
+        "rawUrl": "https://journal.iusca.org/index.php/Journal/article/view/81",
+        "markdown": "[IUSCA](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "fragmentRef": "frag.e1f1.0068",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.c77cfd8dfc408962",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 68,
+        "startByte": 59685,
+        "endByte": 59753,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[IUSCA](https://journal.iusca.org/index.php/Journal/article/view/81)",
+        "startByte": 59685,
+        "endByte": 59753
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.0c0779aca5697aeb",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0069",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "fragmentRef": "frag.e1f1.0069",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d08348841157d20f",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 59952,
+        "endByte": 60008,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9302196/)",
+        "startByte": 59952,
+        "endByte": 60008
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.b53dc598244dd0a9",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0070",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10818109/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10818109/)",
+        "fragmentRef": "frag.e1f1.0070",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.087e55a2fd9fae94",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 57,
+        "startByte": 60194,
+        "endByte": 60251,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10818109/)",
+        "startByte": 60194,
+        "endByte": 60251
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.30aba26766059693",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0071",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10579494/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10579494/)",
+        "fragmentRef": "frag.e1f1.0071",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.539667db41d19070",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 57,
+        "startByte": 60467,
+        "endByte": 60524,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10579494/)",
+        "startByte": 60467,
+        "endByte": 60524
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.081933f232f98d74",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0010",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41343037/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "fragmentRef": "frag.f1.0010",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.25e29949f81336ca",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 60703,
+        "endByte": 60754,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/41343037/)",
+        "startByte": 60703,
+        "endByte": 60754
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.242b8ff280f98d34",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0072",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Publication",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197",
+        "markdown": "[Publication](https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197)",
+        "fragmentRef": "frag.e1f1.0072",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.c5d27260f725f58f",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 81,
+        "startByte": 60972,
+        "endByte": 61053,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Publication](https://www.tandfonline.com/doi/full/10.1080/02640414.2016.1210197)",
+        "startByte": 60972,
+        "endByte": 61053
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.13d19e3d9d9d097e",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0073",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "fragmentRef": "frag.e1f1.0073",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.734fb93674b47ce7",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 61254,
+        "endByte": 61310,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8884877/)",
+        "startByte": 61254,
+        "endByte": 61310
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.bead390b5f369010",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0074",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Publication",
+        "rawUrl": "https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906",
+        "markdown": "[Publication](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906)",
+        "fragmentRef": "frag.e1f1.0074",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.470bacad85fe96ec",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 81,
+        "startByte": 61508,
+        "endByte": 61589,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Publication](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906)",
+        "startByte": 61508,
+        "endByte": 61589
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.0d711e6bb77c4aca",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0075",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "fragmentRef": "frag.e1f1.0075",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a66c2fe46b10ae8e",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 61802,
+        "endByte": 61858,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)",
+        "startByte": 61802,
+        "endByte": 61858
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.f72d98954a642288",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0076",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/)",
+        "fragmentRef": "frag.e1f1.0076",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.7a9135b211657ac9",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 62067,
+        "endByte": 62123,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/)",
+        "startByte": 62067,
+        "endByte": 62123
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.dffde86146bed69f",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0077",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/)",
+        "fragmentRef": "frag.e1f1.0077",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a5de452cb2356d44",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 62302,
+        "endByte": 62358,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/)",
+        "startByte": 62302,
+        "endByte": 62358
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.a899d581837f9632",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0078",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Publication",
+        "rawUrl": "https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full",
+        "markdown": "[Publication](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full)",
+        "fragmentRef": "frag.e1f1.0078",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.8d68895197a68f1e",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 83,
+        "startByte": 62548,
+        "endByte": 62631,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Publication](https://www.frontiersin.org/articles/10.3389/fspor.2024.1429789/full)",
+        "startByte": 62548,
+        "endByte": 62631
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.8fede5235934e37a",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0079",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/)",
+        "fragmentRef": "frag.e1f1.0079",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a39b7365682a7ddd",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 62798,
+        "endByte": 62854,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/)",
+        "startByte": 62798,
+        "endByte": 62854
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.e83259e62af1c7bc",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0013",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/39959841/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/39959841/)",
+        "fragmentRef": "frag.f1.0013",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.619b08001b5e7ca9",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 63045,
+        "endByte": 63096,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/39959841/)",
+        "startByte": 63045,
+        "endByte": 63096
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.66abf2f59c52c736",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0080",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/25601394/)",
+        "fragmentRef": "frag.e1f1.0080",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.39c1d8a55f5e19db",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 63267,
+        "endByte": 63318,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/25601394/)",
+        "startByte": 63267,
+        "endByte": 63318
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.f8c03f33ee9074f8",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f1.0012",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Publication",
+        "rawUrl": "https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4",
+        "markdown": "[Publication](https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4)",
+        "fragmentRef": "frag.f1.0012",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.5f11ed7fb4b2cd9b",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 99,
+        "startByte": 63512,
+        "endByte": 63611,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Publication](https://bmcsportsscimedrehabil.biomedcentral.com/articles/10.1186/s13102-023-00713-4)",
+        "startByte": 63512,
+        "endByte": 63611
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.565d385800fd2032",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0081",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/32077380/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "fragmentRef": "frag.e1f1.0081",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.f0c9d6b058ee2477",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 63794,
+        "endByte": 63845,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/32077380/)",
+        "startByte": 63794,
+        "endByte": 63845
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.4e6d1569cdf5771e",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0082",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8762534/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8762534/)",
+        "fragmentRef": "frag.e1f1.0082",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.3fb622a482e1f089",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 64022,
+        "endByte": 64078,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC8762534/)",
+        "startByte": 64022,
+        "endByte": 64078
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.5d99e1448965383e",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0083",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9528903/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9528903/)",
+        "fragmentRef": "frag.e1f1.0083",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.d648f4a315d527d0",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 64231,
+        "endByte": 64287,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9528903/)",
+        "startByte": 64231,
+        "endByte": 64287
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d9b790409dcfa040",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0084",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5571788/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5571788/)",
+        "fragmentRef": "frag.e1f1.0084",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.3308596a9f3b73d1",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 56,
+        "startByte": 64467,
+        "endByte": 64523,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC5571788/)",
+        "startByte": 64467,
+        "endByte": 64523
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.3563d7e7dd42e274",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0085",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/38595233/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/38595233/)",
+        "fragmentRef": "frag.e1f1.0085",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.6249d36fa755860f",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 64734,
+        "endByte": 64785,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/38595233/)",
+        "startByte": 64734,
+        "endByte": 64785
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.3d24e9c8851fccd0",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0086",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/)",
+        "fragmentRef": "frag.e1f1.0086",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.117e7ac8939b5573",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 57,
+        "startByte": 64931,
+        "endByte": 64988,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/)",
+        "startByte": 64931,
+        "endByte": 64988
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.d5f79287e0b30afe",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0087",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/41730991/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/41730991/)",
+        "fragmentRef": "frag.e1f1.0087",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.01448203c2846632",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 65144,
+        "endByte": 65195,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/41730991/)",
+        "startByte": 65144,
+        "endByte": 65195
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.886c6c50e46429a5",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0088",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PubMed",
+        "rawUrl": "https://pubmed.ncbi.nlm.nih.gov/40028215/",
+        "markdown": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/40028215/)",
+        "fragmentRef": "frag.e1f1.0088",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a3fe0f5cd419dcd5",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 51,
+        "startByte": 65391,
+        "endByte": 65442,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PubMed](https://pubmed.ncbi.nlm.nih.gov/40028215/)",
+        "startByte": 65391,
+        "endByte": 65442
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.e83405eda3c9e85c",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f1.0089",
+      "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "PMC",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/",
+        "markdown": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "fragmentRef": "frag.e1f1.0089",
+        "corpusFileRef": "corpus.f1.programmation-hypertrophie",
+        "parentCandidateId": "cand.e1.a3360c13e3b99c98",
+        "cellHeader": "URL",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 0,
+        "endInCell": 57,
+        "startByte": 65651,
+        "endByte": 65708,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11057610/)",
+        "startByte": 65651,
+        "endByte": 65708
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.fc9383c124aedf77",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.f2.0014",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Plotkin et al., 2023",
+        "rawUrl": "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full",
+        "markdown": "[Plotkin et al., 2023](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full)",
+        "fragmentRef": "frag.f2.0014",
+        "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+        "parentCandidateId": "cand.e1.c98efaf4040e5f30",
+        "cellHeader": "Nuance ou contradiction",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 59,
+        "endInCell": 171,
+        "startByte": 92079,
+        "endByte": 92191,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Plotkin et al., 2023](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2023.1279170/full)",
+        "startByte": 92079,
+        "endByte": 92191
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.a240ec4dfb38abfd",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f2.0034",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Similar Regional Hypertrophy occlusion vasculaire",
+        "rawUrl": "https://journals.sagepub.com/doi/10.1177/19417381241287522",
+        "markdown": "[Similar Regional Hypertrophy occlusion vasculaire](https://journals.sagepub.com/doi/10.1177/19417381241287522)",
+        "fragmentRef": "frag.e1f2.0034",
+        "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+        "parentCandidateId": "cand.e1.f613c40a85f595d8",
+        "cellHeader": "Nuance ou contradiction",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 111,
+        "endInCell": 222,
+        "startByte": 92678,
+        "endByte": 92789,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Similar Regional Hypertrophy occlusion vasculaire](https://journals.sagepub.com/doi/10.1177/19417381241287522)",
+        "startByte": 92678,
+        "endByte": 92789
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.25ed9408567c076b",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f2.0035",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Heidel et al.",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/",
+        "markdown": "[Heidel et al.](https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/)",
+        "fragmentRef": "frag.e1f2.0035",
+        "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+        "parentCandidateId": "cand.e1.dfa6920455a6f66e",
+        "cellHeader": "Nuance ou contradiction",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 57,
+        "endInCell": 124,
+        "startByte": 93162,
+        "endByte": 93229,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Heidel et al.](https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/)",
+        "startByte": 93162,
+        "endByte": 93229
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.90928dc400651a31",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f2.0036",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Kojic et al., 2022",
+        "rawUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9737272/",
+        "markdown": "[Kojic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9737272/)",
+        "fragmentRef": "frag.e1f2.0036",
+        "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+        "parentCandidateId": "cand.e1.257b7596b89dcf74",
+        "cellHeader": "Nuance ou contradiction",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 107,
+        "endInCell": 178,
+        "startByte": 93725,
+        "endByte": 93796,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Kojic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9737272/)",
+        "startByte": 93725,
+        "endByte": 93796
+      },
+      "reviewState": "pending_human_review"
+    },
+    {
+      "candidateId": "cand.e3.75b113096d5cfe86",
+      "targetKind": "citation-occurrence",
+      "fragmentRef": "frag.e1f2.0037",
+      "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+      "extraction": {
+        "method": "deterministic_link_scan",
+        "runId": "run.e1.6775abf7f702",
+        "extractedAt": "2026-08-23T00:00:00.000Z",
+        "extractorVersion": "0.1.0-e3"
+      },
+      "payload": {
+        "rawLabel": "Kassiano et al., 2025",
+        "rawUrl": "https://link.springer.com/10.1007/s40279-024-02169-z",
+        "markdown": "[Kassiano et al., 2025](https://link.springer.com/10.1007/s40279-024-02169-z)",
+        "fragmentRef": "frag.e1f2.0037",
+        "corpusFileRef": "corpus.f2.anatomie-biomecanique",
+        "parentCandidateId": "cand.e1.ddc8a33a455293b9",
+        "cellHeader": "Nuance ou contradiction",
+        "occurrenceIndexInCell": 0,
+        "startInCell": 107,
+        "endInCell": 184,
+        "startByte": 94298,
+        "endByte": 94375,
+        "linkKind": "external",
+        "resolvesToSourceRef": null,
+        "resolutionStatus": "partial"
+      },
+      "verbatimSpan": {
+        "text": "[Kassiano et al., 2025](https://link.springer.com/10.1007/s40279-024-02169-z)",
+        "startByte": 94298,
+        "endByte": 94375
+      },
+      "reviewState": "pending_human_review"
+    }
+  ],
+  "stats": {
+    "e1CandidatesRead": 141,
+    "markdownLinksDetected": 129,
+    "occurrencesCreated": 129,
+    "linkedToClaims": 94,
+    "onNonClaims": 35,
+    "internalLinks": 0,
+    "otherLinks": 0,
+    "distinctUrls": 57,
+    "distinctLabels": 58,
+    "repeatedUrls": 33,
+    "diagnostics": 0
+  }
+}

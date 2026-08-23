@@ -3,8 +3,6 @@
 // Il ne reformule rien : les cellules restent le texte brut entre pipes.
 // Les liens sont extraits EN PLUS du brut, jamais à sa place.
 
-const LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
-
 export function isTableRow(line) {
   return line.trim().startsWith('|');
 }
@@ -26,11 +24,22 @@ export function splitTableRow(line) {
 }
 
 export function extractMarkdownLinks(raw) {
+  return locateMarkdownLinks(raw).map(({ label, url }) => ({ label, url }));
+}
+
+export function locateMarkdownLinks(raw) {
+  const text = raw ?? '';
   const links = [];
-  LINK_RE.lastIndex = 0;
+  const re = /\[([^\]]+)\]\(([^)]+)\)/g;
   let m;
-  while ((m = LINK_RE.exec(raw)) !== null) {
-    links.push({ label: m[1], url: m[2] });
+  while ((m = re.exec(text)) !== null) {
+    links.push({
+      label: m[1],
+      url: m[2],
+      markdown: m[0],
+      start: m.index,
+      end: m.index + m[0].length
+    });
   }
   return links;
 }
