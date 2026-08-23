@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.example/schemas/adaptive-strength-coaching-v1.json",
+  "title": "Base clinique pour coaching de musculation adaptatif",
+  "description": "Schéma de décision non diagnostique. Toute règle rouge prévaut sur les adaptations d'entraînement.",
+  "type": "object",
+  "required": ["schemaVersion", "conditionRecords", "globalSafetyRules"],
+  "properties": {
+    "schemaVersion": {"type": "string", "const": "1.0.0"},
+    "lastEvidenceReview": {"type": "string", "format": "date"},
+    "globalSafetyRules": {
+      "type": "object",
+      "required": ["redFlags", "zoneLogic", "disclaimer"],
+      "properties": {
+        "disclaimer": {"type": "string"},
+        "redFlags": {"type": "array", "items": {"$ref": "#/$defs/redFlag"}},
+        "zoneLogic": {
+          "type": "object",
+          "required": ["green", "orange", "red"],
+          "properties": {
+            "green": {"$ref": "#/$defs/zoneRule"},
+            "orange": {"$ref": "#/$defs/zoneRule"},
+            "red": {"$ref": "#/$defs/zoneRule"}
+          }
+        }
+      }
+    },
+    "conditionRecords": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/conditionRecord"}
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["id", "title", "year", "documentType", "url"],
+      "properties": {
+        "id": {"type": "string"},
+        "organizationAuthors": {"type": "string"},
+        "title": {"type": "string"},
+        "year": {"type": "integer", "minimum": 1900, "maximum": 2100},
+        "documentType": {
+          "enum": ["clinical_practice_guideline", "medical_body_recommendation", "consensus_statement", "systematic_review", "meta_analysis", "randomized_trial", "cohort", "biomechanical_study", "expert_practice"]
+        },
+        "doi": {"type": ["string", "null"]},
+        "pmid": {"type": ["string", "null"]},
+        "url": {"type": "string", "format": "uri"},
+        "population": {"type": "string"},
+        "isOld": {"type": "boolean"},
+        "notes": {"type": "string"}
+      }
+    },
+    "evidenceRating": {
+      "type": "object",
+      "required": ["level", "confidence", "directness"],
+      "properties": {
+        "level": {"enum": ["A_high", "B_moderate", "C_low", "D_very_low", "expert_practice"]},
+        "confidence": {"enum": ["high", "moderate", "low", "very_low"]},
+        "directness": {"enum": ["direct_clinical", "indirect_clinical", "biomechanical_only", "expert_only"]},
+        "rationale": {"type": "string"},
+        "sourceIds": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "redFlag": {
+      "type": "object",
+      "required": ["id", "question", "action", "urgency", "sourceIds"],
+      "properties": {
+        "id": {"type": "string"},
+        "question": {"type": "string"},
+        "positiveExamples": {"type": "array", "items": {"type": "string"}},
+        "action": {"enum": ["stop_and_emergency_assessment", "stop_and_urgent_medical_assessment", "prompt_professional_assessment"]},
+        "urgency": {"enum": ["emergency_now", "same_day", "prompt", "routine"]},
+        "sourceIds": {"type": "array", "items": {"type": "string"}},
+        "warning": {"type": "string"}
+      }
+    },
+    "zoneRule": {
+      "type": "object",
+      "required": ["criteria", "allowedActions", "forbiddenActions"],
+      "properties": {
+        "criteria": {"type": "array", "items": {"type": "string"}},
+        "allowedActions": {"type": "array", "items": {"type": "string"}},
+        "forbiddenActions": {"type": "array", "items": {"type": "string"}},
+        "referralThreshold": {"type": "string"}
+      }
+    },
+    "toleranceDimension": {
+      "type": "object",
+      "required": ["status", "basis"],
+      "properties": {
+        "status": {"enum": ["unknown", "tolerated", "conditionally_tolerated", "irritating", "not_tested", "avoid_pending_assessment"]},
+        "basis": {"enum": ["user_report", "observed_response", "clinician_instruction", "population_evidence", "unknown"]},
+        "testedRange": {"type": ["string", "null"]},
+        "testedLoad": {"type": ["string", "null"]},
+        "symptomDuring": {"type": ["number", "null"], "minimum": 0, "maximum": 10},
+        "symptomAfter24h": {"type": ["number", "null"], "minimum": 0, "maximum": 10},
+        "notes": {"type": "string"}
+      }
+    },
+    "modification": {
+      "type": "object",
+      "required": ["trigger", "action", "monitoring", "evidence"],
+      "properties": {
+        "trigger": {"type": "string"},
+        "action": {"type": "string"},
+        "doseChange": {
+          "type": "object",
+          "properties": {
+            "load": {"type": ["string", "null"]},
+            "sets": {"type": ["string", "null"]},
+            "repetitions": {"type": ["string", "null"]},
+            "rangeOfMotion": {"type": ["string", "null"]},
+            "tempo": {"type": ["string", "null"]},
+            "frequency": {"type": ["string", "null"]},
+            "rest": {"type": ["string", "null"]}
+          }
+        },
+        "monitoring": {"type": "string"},
+        "stopCriteria": {"type": "array", "items": {"type": "string"}},
+        "evidence": {"$ref": "#/$defs/evidenceRating"}
+      }
+    },
+    "conditionRecord": {
+      "type": "object",
+      "required": [
+        "condition", "description", "diagnosticCertaintyRequired", "symptoms",
+        "questionsToAsk", "redFlags", "movementSensitivity", "loadSensitivity",
+        "recommendedModifications", "contraindications", "referralThreshold",
+        "evidenceLevel", "sources", "uncertainty"
+      ],
+      "properties": {
+        "condition": {"type": "string"},
+        "aliases": {"type": "array", "items": {"type": "string"}},
+        "description": {"type": "string"},
+        "scope": {"enum": ["symptom_pattern", "known_diagnosis", "postoperative_state", "general_principle"]},
+        "diagnosticCertaintyRequired": {
+          "enum": ["none_symptom_based_only", "user_reported_prior_diagnosis", "professional_diagnosis_required", "postoperative_protocol_required"]
+        },
+        "diagnosticGuardrail": {"type": "string"},
+        "symptoms": {"type": "array", "items": {"type": "string"}},
+        "questionsToAsk": {"type": "array", "items": {"type": "string"}},
+        "redFlags": {"type": "array", "items": {"type": "string"}},
+        "irritability": {"enum": ["unknown", "low", "moderate", "high"]},
+        "movementSensitivity": {
+          "type": "object",
+          "additionalProperties": {"$ref": "#/$defs/toleranceDimension"}
+        },
+        "loadSensitivity": {"$ref": "#/$defs/toleranceDimension"},
+        "axialLoadTolerance": {"$ref": "#/$defs/toleranceDimension"},
+        "flexionTolerance": {"$ref": "#/$defs/toleranceDimension"},
+        "extensionTolerance": {"$ref": "#/$defs/toleranceDimension"},
+        "rotationTolerance": {"$ref": "#/$defs/toleranceDimension"},
+        "overheadTolerance": {"$ref": "#/$defs/toleranceDimension"},
+        "recommendedModifications": {"type": "array", "items": {"$ref": "#/$defs/modification"}},
+        "contraindications": {
+          "type": "array",
+          "description": "Réservé aux interdictions explicites, aux red flags ou aux consignes médicales; ne pas convertir une sensibilité fréquente en interdiction absolue.",
+          "items": {
+            "type": "object",
+            "required": ["action", "scope", "reason", "sourceIds"],
+            "properties": {
+              "action": {"type": "string"},
+              "scope": {"enum": ["absolute_until_assessed", "temporary", "clinician_order_only"]},
+              "reason": {"type": "string"},
+              "sourceIds": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "referralThreshold": {"type": "string"},
+        "progressionCriteria": {"type": "array", "items": {"type": "string"}},
+        "regressionCriteria": {"type": "array", "items": {"type": "string"}},
+        "evidenceLevel": {"$ref": "#/$defs/evidenceRating"},
+        "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+        "uncertainty": {"type": "array", "items": {"type": "string"}},
+        "expertPractice": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["statement", "label"],
+            "properties": {
+              "statement": {"type": "string"},
+              "label": {"const": "expert_practice"},
+              "rationale": {"type": "string"},
+              "sourceIds": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      }
+    }
+  }
+}
