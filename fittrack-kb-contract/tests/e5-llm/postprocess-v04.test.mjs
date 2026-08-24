@@ -89,6 +89,16 @@ test('one local citation attaches only to the sole eligible claim', () => {
   assert.equal(result.claims[0].citationAttributionState, 'ATTACHED');
 });
 
+test('a locally unique citation does not attach to an unresolved attribution', () => {
+  const input = fixtureUniqueLocalCitation();
+  input.claims[0].citationAttributionState = 'UNRESOLVED';
+
+  const result = postprocessClaims(input);
+
+  assert.deepEqual(result.claims[0].citationOccurrenceRefs, []);
+  assert.equal(result.claims[0].citationAttributionState, 'UNRESOLVED');
+});
+
 test('multiple claims or citations stay unresolved', () => {
   const result = postprocessClaims(fixtureAmbiguousCitation());
 
@@ -182,4 +192,5 @@ test('validation materializes deterministic resolutions after retaining claims',
   assert.equal(result.accepted, true);
   assert.equal(result.prediction.claims[0].epistemicStatus, 'practice_only');
   assert.equal(result.postprocess.resolutions[0].reason, 'deterministic_expert_practice_default');
+  assert.equal(result.claimAudit.claims[0].canonicalCandidate.epistemicStatus, null);
 });

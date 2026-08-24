@@ -475,10 +475,6 @@ function validateProviderClaimsIndividually({
         runConfig,
         claimRefOffset: sourceClaimIndex
       });
-      const audit = claimAudits.find(
-        (item) => item.technicalClaimRef === claimRefFor(sourceClaimIndex)
-      );
-      if (audit) audit.canonicalCandidate = validation.prediction?.claims[0] ?? audit.canonicalCandidate;
       return validation.prediction?.claims[0] ?? retainedCandidates[retainedIndex];
     });
   }

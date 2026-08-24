@@ -67,7 +67,10 @@ export function postprocessClaims({ claims, fragment, citationCatalog, coverageU
 
     const [claim] = localClaims;
     const [citation] = localCitations;
-    if (claim.citationOccurrenceRefs.length !== 0) continue;
+    if (
+      claim.citationOccurrenceRefs.length !== 0 ||
+      claim.citationAttributionState !== 'NOT_CITED'
+    ) continue;
 
     claim.citationOccurrenceRefs = [citation.candidateId];
     claim.citationAttributionState = 'ATTACHED';
