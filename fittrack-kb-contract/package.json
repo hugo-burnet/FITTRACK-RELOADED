@@ -12,15 +12,20 @@
     "extract:e4": "node tools/extract-e4.mjs",
     "extract:e5-p0": "node tools/extract-e5-p0.mjs",
     "build:e5-gold": "node tools/build-e5-gold.mjs",
+    "benchmark:e5-v0:dry-run": "node tools/run-e5-llm-benchmark.mjs --mode dry-run",
+    "benchmark:e5-v0:pilot": "node tools/run-e5-llm-benchmark.mjs --mode pilot",
+    "benchmark:e5-v0:full": "node tools/run-e5-llm-benchmark.mjs --mode full --approve-cost --pilot-approved",
+    "benchmark:e5-v0:evaluate": "node tools/evaluate-e5-llm-benchmark.mjs",
     "test:e1": "node --test tests/e1/*.test.mjs",
     "test:e2": "node --test tests/e2/*.test.mjs",
     "test:e3": "node --test tests/e3/*.test.mjs",
     "test:e4": "node --test tests/e4/*.test.mjs",
     "test:e5-p0": "node --test tests/e5-p0/*.test.mjs",
     "test:e5-gold": "node --test tests/e5-gold/*.test.mjs",
+    "test:e5-llm": "node --test tests/e5-llm/*.test.mjs",
     "validate:e5-gold": "node tools/validate-e5-gold.mjs",
     "validate": "node tests/validate.mjs",
-    "check": "npm run build && npm run test:e1 && npm run extract:e1 && npm run test:e2 && npm run extract:e2 && npm run test:e3 && npm run extract:e3 && npm run test:e4 && npm run extract:e4 && npm run extract:e5-p0 && npm run test:e5-p0 && npm run build:e5-gold && npm run test:e5-gold && npm run validate:e5-gold && npm run validate"
+    "check": "npm run build && npm run test:e1 && npm run extract:e1 && npm run test:e2 && npm run extract:e2 && npm run test:e3 && npm run extract:e3 && npm run test:e4 && npm run extract:e4 && npm run extract:e5-p0 && npm run test:e5-p0 && npm run build:e5-gold && npm run test:e5-gold && npm run validate:e5-gold && npm run test:e5-llm && npm run validate"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

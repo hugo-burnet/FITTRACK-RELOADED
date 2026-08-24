@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "fragmentCount": 100,
+  "split": {
+    "F2": 50,
+    "F3": 50
+  },
+  "goldenLeakChecks": 100,
+  "apiCalls": 0,
+  "costEstimate": {
+    "approximationMethod": "UTF-8 bytes / 4 for input; configured expected and hard maximum output tokens",
+    "approximateInputTokens": 179021,
+    "expectedOutputTokens": 100000,
+    "maximumOutputTokens": 450000,
+    "configuredRatesUsdPerMillionTokens": {
+      "input": 2,
+      "output": 8,
+      "basis": "benchmark configuration; verify provider pricing before approving the full run"
+    },
+    "expectedCostUsd": 1.158,
+    "maximumConfiguredCostUsd": 3.958
+  }
+}

@@ -1,7 +1,7 @@
 {
   "generatedAt": "2026-08-24",
   "totals": {
-    "jsonFiles": 121,
+    "jsonFiles": 125,
     "schemas": 48,
     "validInstances": 208,
     "invalidCases": 20,
@@ -12,7 +12,7 @@
     {
       "step": "1. Syntaxe JSON",
       "status": "PASS",
-      "detail": "121 fichiers JSON analysés, 0 erreur"
+      "detail": "125 fichiers JSON analysés, 0 erreur"
     },
     {
       "step": "2. Schemas",

@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/benchmark/e5/v0/prediction.schema.json",
+  "title": "E5-LLM benchmark v0 raw prediction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fragmentId", "annotationPrediction", "claims"],
+  "properties": {
+    "fragmentId": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+    "annotationPrediction": { "enum": ["ZERO_CLAIM", "CLAIMS"] },
+    "claims": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/claim" }
+    }
+  },
+  "$defs": {
+    "resolutionState": {
+      "enum": ["RESOLVED", "UNRESOLVED", "NOT_STATED", "NOT_APPLICABLE"]
+    },
+    "knowledgeTypeResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value", "reason"],
+      "properties": {
+        "state": { "$ref": "#/$defs/resolutionState" },
+        "value": {
+          "type": ["string", "null"],
+          "enum": [
+            "EVIDENCE",
+            "EXPERT_PRACTICE",
+            "HYPOTHESIS",
+            "ANATOMICAL_FACT",
+            "BIOMECHANICAL_OBSERVATION",
+            "EMG_OBSERVATION",
+            "MECHANISM",
+            "DEFINITION",
+            "MYTH_REFUTATION",
+            "PRODUCT_POLICY",
+            "MODELING_DECISION",
+            null
+          ]
+        },
+        "reason": { "type": ["string", "null"] }
+      }
+    },
+    "epistemicStatusResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value", "reason"],
+      "properties": {
+        "state": { "$ref": "#/$defs/resolutionState" },
+        "value": {
+          "type": ["string", "null"],
+          "enum": [
+            "established",
+            "established_direction",
+            "probable",
+            "uncertain",
+            "controversial",
+            "mechanistic_only",
+            "practice_only",
+            "absence_of_evidence",
+            "refuted",
+            null
+          ]
+        },
+        "reason": { "type": ["string", "null"] }
+      }
+    },
+    "directnessResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value", "reason"],
+      "properties": {
+        "state": { "$ref": "#/$defs/resolutionState" },
+        "value": {
+          "type": ["string", "null"],
+          "enum": [
+            "direct_clinical",
+            "indirect_clinical",
+            "biomechanical_only",
+            "expert_only",
+            "direct_hypertrophy_measured",
+            "emg_only",
+            "anatomical_cadaveric",
+            "imaging_descriptive",
+            "animal_model",
+            "mechanistic_hypothesis",
+            "qualitative_survey",
+            null
+          ]
+        },
+        "reason": { "type": ["string", "null"] }
+      }
+    },
+    "evidenceTypesResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value", "reason"],
+      "properties": {
+        "state": { "$ref": "#/$defs/resolutionState" },
+        "value": {
+          "type": ["array", "null"],
+          "items": {
+            "enum": [
+              "position_stand",
+              "clinical_practice_guideline",
+              "medical_body_recommendation",
+              "consensus_statement",
+              "umbrella_review",
+              "systematic_review",
+              "meta_analysis",
+              "meta_regression",
+              "network_meta_analysis",
+              "randomized_trial",
+              "within_participant_trial",
+              "cohort",
+              "cross_sectional_survey",
+              "biomechanical_study",
+              "cadaveric_study",
+              "emg_study",
+              "imaging_study",
+              "narrative_review",
+              "scoping_review",
+              "qualitative_study",
+              "expert_practice",
+              "unknown"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "reason": { "type": ["string", "null"] }
+      }
+    },
+    "confidenceResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value", "raw", "reason"],
+      "properties": {
+        "state": { "$ref": "#/$defs/resolutionState" },
+        "value": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["aspect", "confidence", "rationale"],
+            "properties": {
+              "aspect": {
+                "enum": [
+                  "direction",
+                  "magnitude",
+                  "dose_response_shape",
+                  "threshold",
+                  "distribution",
+                  "acute_effect",
+                  "chronic_effect",
+                  "generalization",
+                  "regional_specificity",
+                  "equivalence",
+                  "descriptive_accuracy"
+                ]
+              },
+              "confidence": { "enum": ["high", "moderate", "low", "very_low", "not_applicable"] },
+              "rationale": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "raw": { "type": ["string", "null"] },
+        "reason": { "type": ["string", "null"] }
+      }
+    },
+    "supportSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "occurrence"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "occurrence": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "assessmentDraft": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confidenceByAspect",
+        "directness",
+        "evidenceTypes",
+        "clinicalEvidenceLevel",
+        "hierarchyHint",
+        "supportsHypertrophySuperiority",
+        "supportsDemonstratedClinicalRisk"
+      ],
+      "properties": {
+        "confidenceByAspect": { "$ref": "#/$defs/confidenceResolution" },
+        "directness": { "$ref": "#/$defs/directnessResolution" },
+        "evidenceTypes": { "$ref": "#/$defs/evidenceTypesResolution" },
+        "clinicalEvidenceLevel": {
+          "type": ["string", "null"],
+          "enum": ["A_high", "B_moderate", "C_low", "D_very_low", null]
+        },
+        "hierarchyHint": { "enum": ["biomechanics", "clinical"] },
+        "supportsHypertrophySuperiority": { "type": "boolean" },
+        "supportsDemonstratedClinicalRisk": { "type": "boolean" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "technicalClaimRef",
+        "rawStatement",
+        "supportSpans",
+        "domain",
+        "knowledgeType",
+        "epistemicStatus",
+        "assessmentDraft",
+        "citationOccurrenceRefs",
+        "citationAttributionState",
+        "conditions",
+        "limitations",
+        "cannotConclude",
+        "unresolved",
+        "flags"
+      ],
+      "properties": {
+        "technicalClaimRef": { "type": "string", "pattern": "^tmp\\.claim\\.[0-9]{2}$" },
+        "rawStatement": { "type": "string", "minLength": 1 },
+        "supportSpans": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/supportSpan" }
+        },
+        "domain": { "enum": ["training", "anatomy", "biomechanics", "exercise", "clinical", "product"] },
+        "knowledgeType": { "$ref": "#/$defs/knowledgeTypeResolution" },
+        "epistemicStatus": { "$ref": "#/$defs/epistemicStatusResolution" },
+        "assessmentDraft": { "$ref": "#/$defs/assessmentDraft" },
+        "citationOccurrenceRefs": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^cand\\.e5-citation\\.[0-9a-f]{16}$" },
+          "uniqueItems": true
+        },
+        "citationAttributionState": { "enum": ["ATTACHED", "UNRESOLVED", "NOT_CITED"] },
+        "conditions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "cannotConclude": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "unresolved": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ambiguous_citation",
+              "clinical_content",
+              "red_flag_content",
+              "numeric_threshold",
+              "emg_content",
+              "biomechanical_risk_language",
+              "expert_practice",
+              "explicit_absence",
+              "possible_conflict",
+              "output_policy_content",
+              "modeling_content"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
