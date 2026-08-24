@@ -29,15 +29,17 @@ corpus, ainsi que la base tarifaire utilisée par l’estimation. Une exécution
 écrit le `config.json` auditable avec `runId`, dates, hashes, liste ordonnée des
 fragments, version modèle observée, usages et bilan des retries.
 
-La clé est lue depuis `OPENROUTER_API_KEY` ou, localement, depuis
-`.env.e5.local`. Ce fichier est ignoré par Git. La clé n’est jamais incluse dans
-les requêtes archivées, les logs ou les artefacts.
+La clé est lue exclusivement depuis la variable d’environnement
+`OPENROUTER_API_KEY`. Aucun fallback vers `OPENAI_API_KEY` ou vers un fichier
+local n’est autorisé. La clé n’est jamais incluse dans les requêtes archivées,
+les logs ou les artefacts.
 
 ## Commandes
 
 ```bash
 npm run test:e5-llm
 npm run benchmark:e5-v0:dry-run
+npm run benchmark:e5-v0:probe
 npm run benchmark:e5-v0:pilot
 npm run benchmark:e5-v0:full
 npm run benchmark:e5-v0:evaluate

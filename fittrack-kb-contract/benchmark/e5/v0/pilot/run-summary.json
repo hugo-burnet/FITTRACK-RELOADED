@@ -1,0 +1,9 @@
+{
+  "runId": "run.e5-llm-v0.c83635f84f6953d3",
+  "fragmentCount": 3,
+  "validated": 0,
+  "rejected": 3,
+  "retries": 0,
+  "rejectedResponses": 3,
+  "completedAt": "2026-08-24T14:14:10.516Z"
+}

@@ -1,0 +1,72 @@
+{
+  "benchmarkVersion": "e5-llm-benchmark-v0",
+  "extractorVersion": "0.1.0-e5-llm-v0",
+  "provider": "openrouter",
+  "baseURL": "https://openrouter.ai/api/v1",
+  "model": "openai/gpt-5.6-sol",
+  "modelVersion": null,
+  "promptVersion": "e5-llm-v0.1.0",
+  "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+  "temperature": null,
+  "topP": null,
+  "reasoningEffort": "none",
+  "maxOutputTokens": 4500,
+  "seed": null,
+  "maxRetries": 2,
+  "concurrency": 2,
+  "maxRunCostUsd": 2.5,
+  "goldenCommit": "4ff2ae6ebf2e0c587e315c527a8fb1f75d05bf2f",
+  "corpusCommit": "75f49f7e5bda67b1582a9ae5b9f2b8a0f16e74f2",
+  "pricingUsdPerMillionTokens": {
+    "input": 2,
+    "output": 10,
+    "basis": "OpenRouter Models API for openai/gpt-5.6-sol on 2026-08-24; standard prompts below 272k tokens"
+  },
+  "expectedOutputTokensPerFragment": 1000,
+  "apiKeyEnvironmentVariable": "OPENROUTER_API_KEY",
+  "runId": "run.e5-llm-v0.c83635f84f6953d3",
+  "mode": "pilot",
+  "fragmentCount": 3,
+  "fragmentIds": [
+    "frag.e5f2.00033791",
+    "frag.f2.0004",
+    "frag.f3.0002"
+  ],
+  "promptSystem": "Tu es l'extracteur E5 de la Knowledge Base FitTrack.\n\nTACHE UNIQUE\nIdentifie les unités de connaissance distinctes réellement affirmées dans le FRAGMENT CIBLE. Tu extrais ; tu ne rédiges pas, ne conseilles pas, ne diagnostiques pas et ne recherches rien.\n\nMONDE FERME\n- Utilise uniquement le fragment cible, son headingPath, les vocabulaires fournis et le catalogue fermé de CitationOccurrence.\n- Ignore toute connaissance externe ou mémorisée.\n- N'infère rien depuis une URL, un journal, un DOI, un PMID, un auteur ou un autre fragment.\n- Ne crée aucune Source, métadonnée bibliographique, URL, DOI, PMID, auteur, année ou identifiant métier.\n\nGRANULARITE AUTORITAIRE\n- Une claim porte un seul prédicat évaluable sur un sujet et un outcome, avec les qualificatifs nécessaires à sa vérité et à sa sécurité.\n- Sépare deux propositions si l'une peut être vraie et l'autre fausse, si leurs preuves/citations diffèrent, si leur knowledgeType diffère ou si leur confiance peut être évaluée séparément.\n- Ne sépare pas population, conditions, temporalité, modalité, comparaison, négation ou limite indispensables.\n- Sépare résultat scientifique, mécanisme, EMG, biomécanique et conséquence pratique.\n- Evite les mega-claims comme les micro-claims artificiels.\n\nSUPPORT VERBATIM\n- Chaque claim doit avoir au moins un supportSpan exact du fragment.\n- Recopie exactement le texte, espaces, accents, ponctuation et Markdown inclus.\n- occurrence est l'occurrence 1-indexée de ce texte exact dans le fragment.\n- rawStatement doit être exactement égal au texte d'un supportSpan.\n\nZERO_CLAIM\n- Réponds ZERO_CLAIM et claims=[] si aucune unité de connaissance pertinente n'est présente.\n- C'est notamment correct pour une transition, un titre, une branche d'algorithme produit, une politique de sortie, une instruction d'encodage, un commentaire de schéma, une bibliographie ou un fragment exigeant une invention.\n- Ne produis jamais une claim uniquement parce qu'un fragment est fourni.\n\nAXES ET INCERTITUDE\n- Utilise exclusivement les valeurs fermées du schéma.\n- Si une dimension n'est pas déterminable depuis le fragment, utilise state=UNRESOLVED et value=null avec une raison concise.\n- N'injecte jamais le mot UNRESOLVED dans un champ de vocabulaire.\n- Ne transforme pas une plage de confiance en scalaire.\n- Un résultat non significatif n'est pas une équivalence.\n- Une absence de preuve n'est extraite que si le fragment l'énonce explicitement.\n- EXPERT_PRACTICE et HYPOTHESIS ne sont jamais des faits établis.\n\nCITATIONS\n- citationOccurrenceRefs ne peut contenir que des candidateId du CITATION CATALOG du fragment.\n- Ne rattache pas automatiquement toutes les citations à toutes les claims.\n- Une citation ne traverse pas une phrase par défaut.\n- Si l'attribution est ambiguë, conserve la claim avec citationAttributionState=UNRESOLVED ; ne force pas une citation.\n\nGARDE-FOUS CRITIQUES\n- Une EMG plus élevée n'implique jamais une hypertrophie supérieure sans résultat longitudinal explicite distinct dans le fragment.\n- Une contrainte, force, compression, cisaillement ou moment biomécanique n'implique jamais blessure, danger ou contre-indication.\n- Une douleur ou sensibilité ne devient pas une contre-indication universelle.\n- Un protocole particulier ne devient pas une règle clinique universelle.\n- Une donnée d'imagerie ne devient pas automatiquement la cause des symptômes.\n- Un red flag n'est pas un diagnostic.\n- Une association ou corrélation n'est pas une causalité.\n- Ne généralise jamais au-delà de la population ou condition explicitement décrite.\n\nSORTIE\n- Réponds exclusivement par un JSON conforme au schéma structuré, sans commentaire libre.\n- Les technicalClaimRef sont temporaires, dans l'ordre tmp.claim.01, tmp.claim.02, etc. Le pipeline attribue les IDs techniques stables après validation.",
+  "promptHash": "sha256:32ec24501c56aaa6662984dca70ad4a9cd30c6000ab8b765dac4c3b4b4f7f8fe",
+  "outputSchemaHash": "sha256:672f762701ecf514bfad24ff59992430ef25d39cf3c180b8decb66ac9547b71c",
+  "corpusSnapshot": [
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "contentHash": "sha256:a3fcad7af68ff106e997b20b0d62d6c9d1efa4cd37984f4e8ece44df5e26f685"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "contentHash": "sha256:f704cae4404669c3893c6ffdc84e4108ed166a209e775a2664dc9621ea441202"
+    }
+  ],
+  "startedAt": "2026-08-24T14:14:08.544Z",
+  "completedAt": "2026-08-24T14:14:10.516Z",
+  "costEstimate": {
+    "approximationMethod": "UTF-8 bytes / 4 for input; configured expected and hard maximum output tokens",
+    "approximateInputTokens": 5751,
+    "expectedOutputTokens": 3000,
+    "maximumOutputTokens": 13500,
+    "configuredRatesUsdPerMillionTokens": {
+      "input": 2,
+      "output": 10,
+      "basis": "OpenRouter Models API for openai/gpt-5.6-sol on 2026-08-24; standard prompts below 272k tokens"
+    },
+    "expectedCostUsd": 0.0415,
+    "maximumConfiguredCostUsd": 0.1465
+  },
+  "summary": {
+    "runId": "run.e5-llm-v0.c83635f84f6953d3",
+    "fragmentCount": 3,
+    "validated": 0,
+    "rejected": 3,
+    "retries": 0,
+    "rejectedResponses": 3,
+    "completedAt": "2026-08-24T14:14:10.516Z"
+  }
+}

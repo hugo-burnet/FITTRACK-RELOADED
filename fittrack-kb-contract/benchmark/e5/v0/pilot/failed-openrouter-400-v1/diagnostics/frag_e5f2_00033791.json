@@ -1,0 +1,13 @@
+{
+  "fragmentId": "frag.e5f2.00033791",
+  "status": "REJECTED",
+  "diagnostics": [
+    {
+      "code": "PROVIDER_ERROR",
+      "critical": true,
+      "retryable": false,
+      "message": "openrouter_response_error:400:Provider returned error"
+    }
+  ],
+  "retryCount": 0
+}

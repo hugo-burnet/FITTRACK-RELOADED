@@ -8,7 +8,7 @@ import {
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createOpenAIAdapter, createOpenRouterAdapter } from './e5-llm/adapters.mjs';
+import { createOpenRouterAdapter } from './e5-llm/adapters.mjs';
 import { extractProseFragment } from './e5-llm/extractor.mjs';
 import { loadBenchmarkInputs, PILOT_FRAGMENT_IDS } from './e5-llm/inputs.mjs';
 import {
@@ -27,37 +27,9 @@ function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
 
-function readLocalEnvironmentVariable(name) {
-  const fromProcess = process.env[name]?.trim();
-  if (fromProcess) return fromProcess;
-  const localEnvironmentPath = join(root, '.env.e5.local');
-  if (!existsSync(localEnvironmentPath)) return null;
-  for (const rawLine of readFileSync(localEnvironmentPath, 'utf8').split(/\r?\n/u)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith('#')) continue;
-    const separator = line.indexOf('=');
-    if (separator < 1 || line.slice(0, separator).trim() !== name) continue;
-    let value = line.slice(separator + 1).trim();
-    if (
-      value.length >= 2 &&
-      ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'")))
-    ) {
-      value = value.slice(1, -1);
-    }
-    return value || null;
-  }
-  return null;
-}
-
 function createProviderAdapter(base, apiKey) {
-  if (base.provider === 'openrouter') {
-    return createOpenRouterAdapter({ apiKey, endpoint: base.endpoint });
-  }
-  if (base.provider === 'openai') {
-    return createOpenAIAdapter({ apiKey, endpoint: base.endpoint });
-  }
-  throw new Error(`unsupported_provider:${base.provider}`);
+  if (base.provider !== 'openrouter') throw new Error(`unsupported_provider:${base.provider}`);
+  return createOpenRouterAdapter({ apiKey, baseURL: base.baseURL });
 }
 
 function writeJson(path, value) {
@@ -98,6 +70,7 @@ function buildRunConfig(base, benchmark, inputs, mode) {
     topP: base.topP,
     maxOutputTokens: base.maxOutputTokens,
     seed: base.seed,
+    reasoningEffort: base.reasoningEffort,
     fragmentIds: orderedIds
   }).slice(0, 16);
   return {
@@ -222,7 +195,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   const runConfig = buildRunConfig(base, benchmark, selectedInputs, args.mode);
   const costEstimate = estimateCost(runConfig, promptInputs);
   const dryRun = {
-    status: 'PASS',
+    status: costEstimate.expectedCostUsd <= runConfig.maxRunCostUsd ? 'PASS' : 'STOP',
     fragmentCount: selectedInputs.length,
     split:
       args.mode === 'pilot'
@@ -230,18 +203,25 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
         : benchmark.counts,
     goldenLeakChecks: promptInputs.length,
     apiCalls: 0,
-    costEstimate
+    costEstimate,
+    maxRunCostUsd: runConfig.maxRunCostUsd
   };
   writeJson(join(benchmarkRoot, args.mode === 'pilot' ? 'pilot/dry-run.json' : 'dry-run.json'), dryRun);
   console.log(`Dry-run PASS: ${selectedInputs.length} fragments; aucune fuite GOLD; 0 appel API`);
   console.log(
     `Estimation configurée: $${costEstimate.expectedCostUsd} attendus; plafond théorique $${costEstimate.maximumConfiguredCostUsd}`
   );
+  console.log(`Plafond autorisé: $${runConfig.maxRunCostUsd}`);
+  if (dryRun.status === 'STOP') {
+    throw new Error(
+      `estimated_cost_exceeds_limit:${costEstimate.expectedCostUsd}:${runConfig.maxRunCostUsd}`
+    );
+  }
   if (args.mode === 'dry-run') return { runConfig, dryRun, results: [] };
   if (args.mode === 'full' && (!args.approveCost || !args.pilotApproved)) {
     throw new Error('full_run_requires_--approve-cost_and_--pilot-approved');
   }
-  const apiKey = readLocalEnvironmentVariable(base.apiKeyEnvironmentVariable);
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim() || null;
   const adapter = createProviderAdapter(base, apiKey);
   const outputRoot = args.mode === 'pilot' ? join(benchmarkRoot, 'pilot') : benchmarkRoot;
   assertOutputScope(outputRoot);
@@ -265,6 +245,10 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
         return result;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
+        const providerDiagnostic =
+          error instanceof Error && 'providerDiagnostic' in error
+            ? error.providerDiagnostic
+            : null;
         const failed = {
           fragmentId: item.fragment.fragmentId,
           status: 'REJECTED',
@@ -274,17 +258,14 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
               code: 'PROVIDER_ERROR',
               critical: true,
               retryable: false,
-              message
+              message,
+              providerDiagnostic
             }
           ],
           attempts: [
             {
               attempt: 0,
-              promptInput: buildPromptInput({
-                fragment: item.fragment,
-                citationCatalog: item.citationCatalog,
-                vocabularies: benchmark.vocabularies
-              }),
+              promptInput: null,
               rawResponse: '',
               providerResponse: null,
               responseId: null,
@@ -294,7 +275,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
               validation: {
                 accepted: false,
                 retryable: false,
-                diagnostics: [{ code: 'PROVIDER_ERROR', message }]
+                diagnostics: [{ code: 'PROVIDER_ERROR', message, providerDiagnostic }]
               }
             }
           ]

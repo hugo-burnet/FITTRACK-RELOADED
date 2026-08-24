@@ -255,9 +255,13 @@ test('benchmark config journals model, prompt, sampling, retries and immutable c
   );
   assert.equal(config.promptVersion, PROMPT_VERSION);
   assert.equal(config.provider, 'openrouter');
-  assert.equal(config.model, 'openai/gpt-4.1');
+  assert.equal(config.baseURL, 'https://openrouter.ai/api/v1');
+  assert.equal(config.model, 'openai/gpt-5.6-sol');
   assert.equal(config.apiKeyEnvironmentVariable, 'OPENROUTER_API_KEY');
-  assert.equal(config.temperature, 0);
+  assert.equal(config.temperature, null);
+  assert.equal(config.topP, null);
+  assert.equal(config.reasoningEffort, 'none');
+  assert.equal(config.maxRunCostUsd, 2.5);
   assert.equal(config.maxRetries, 2);
   assert.match(config.goldenCommit, /^[0-9a-f]{40}$/);
   assert.match(config.corpusCommit, /^[0-9a-f]{40}$/);
@@ -275,7 +279,7 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
         async json() {
           return {
             id: 'generation-test',
-            model: 'openai/gpt-4.1',
+            model: 'openai/gpt-5.6-sol',
             choices: [{ message: { content: '{"fragmentId":"frag.f2.0001"}' } }],
             usage: { prompt_tokens: 10, completion_tokens: 5 }
           };
@@ -287,7 +291,13 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
     systemPrompt: 'system',
     input: 'input',
     outputSchema: benchmark.predictionSchema,
-    runConfig: { ...runConfig, model: 'openai/gpt-4.1' }
+    runConfig: {
+      ...runConfig,
+      model: 'openai/gpt-5.6-sol',
+      temperature: null,
+      topP: null,
+      reasoningEffort: 'none'
+    }
   });
   const body = JSON.parse(request.options.body);
   assert.equal(request.endpoint, 'https://openrouter.ai/api/v1/chat/completions');
@@ -295,8 +305,67 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
   assert.equal(body.response_format.type, 'json_schema');
   assert.equal(body.response_format.json_schema.strict, true);
   assert.equal(body.provider.require_parameters, true);
+  assert.equal(body.reasoning.effort, 'none');
+  assert.equal(body.max_completion_tokens, runConfig.maxOutputTokens);
+  assert.equal(Object.hasOwn(body, 'max_tokens'), false);
+  assert.equal(Object.hasOwn(body, 'temperature'), false);
+  assert.equal(Object.hasOwn(body, 'top_p'), false);
+  assert.doesNotMatch(JSON.stringify(body.response_format.json_schema.schema), /uniqueItems/u);
   assert.equal(result.rawResponse, '{"fragmentId":"frag.f2.0001"}');
   assert.doesNotMatch(JSON.stringify(result.providerResponse), /secret-test-key/u);
+});
+
+test('OpenRouter adapter retains useful provider errors while redacting secrets and prompts', async () => {
+  const fakeOpenRouterKey = ['sk', 'or', 'v1', 'a'.repeat(24)].join('-');
+  const adapter = createOpenRouterAdapter({
+    apiKey: 'secret-test-key',
+    fetchImpl: async () => ({
+      ok: false,
+      status: 400,
+      headers: { get: (name) => name === 'x-request-id' ? 'request-test' : null },
+      async json() {
+        return {
+          error: {
+            message: `Invalid schema; Bearer secret-value ${fakeOpenRouterKey}`,
+            code: 'invalid_schema',
+            type: 'invalid_request_error',
+            metadata: {
+              provider_name: 'OpenAI',
+              upstream: 'uniqueItems is not permitted',
+              messages: [{ content: 'private prompt' }],
+              authorization: 'Bearer secret-value'
+            }
+          }
+        };
+      }
+    })
+  });
+  await assert.rejects(
+    adapter.generate({
+      systemPrompt: 'system',
+      input: 'input',
+      outputSchema: benchmark.predictionSchema,
+      runConfig: {
+        ...runConfig,
+        model: 'openai/gpt-5.6-sol',
+        reasoningEffort: 'none'
+      }
+    }),
+    (error) => {
+      assert.equal(error.providerDiagnostic.status, 400);
+      assert.equal(error.providerDiagnostic.code, 'invalid_schema');
+      assert.equal(error.providerDiagnostic.type, 'invalid_request_error');
+      assert.equal(error.providerDiagnostic.requestId, 'request-test');
+      assert.equal(error.providerDiagnostic.metadata.provider_name, 'OpenAI');
+      assert.equal(error.providerDiagnostic.metadata.messages, '[REDACTED]');
+      assert.equal(error.providerDiagnostic.metadata.authorization, '[REDACTED]');
+      assert.doesNotMatch(
+        JSON.stringify(error.providerDiagnostic),
+        new RegExp(`secret-value|${fakeOpenRouterKey}|private prompt`, 'u')
+      );
+      return true;
+    }
+  );
 });
 
 function metricClaim(start, end, rawStatement, options = {}) {

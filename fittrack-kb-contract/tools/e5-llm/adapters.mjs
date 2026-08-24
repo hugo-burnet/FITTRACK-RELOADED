@@ -19,14 +19,97 @@ function extractChatCompletionText(response) {
     .join('');
 }
 
-function stripSchemaMetadata(outputSchema) {
-  const {
-    $schema: _schemaDialect,
-    $id: _schemaId,
-    title: _schemaTitle,
-    ...providerSchema
-  } = outputSchema;
-  return providerSchema;
+function redactString(value) {
+  return value
+    .replace(/sk-or-v1-[A-Za-z0-9._~-]+/gu, '[REDACTED_OPENROUTER_KEY]')
+    .replace(/Bearer\s+[A-Za-z0-9._~+/=-]+/giu, 'Bearer [REDACTED]')
+    .slice(0, 4000);
+}
+
+function redactProviderValue(value, depth = 0) {
+  if (depth > 8) return '[REDACTED_DEPTH_LIMIT]';
+  if (typeof value === 'string') return redactString(value);
+  if (value === null || typeof value === 'number' || typeof value === 'boolean') return value;
+  if (Array.isArray(value)) {
+    return value.slice(0, 50).map((item) => redactProviderValue(item, depth + 1));
+  }
+  if (!value || typeof value !== 'object') return String(value);
+  const output = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (/authorization|api.?key|headers?|messages?|prompts?|request.?body|input/iu.test(key)) {
+      output[key] = '[REDACTED]';
+    } else {
+      output[key] = redactProviderValue(item, depth + 1);
+    }
+  }
+  return output;
+}
+
+function providerStructuredOutputSchema(outputSchema, root = true) {
+  if (Array.isArray(outputSchema)) {
+    return outputSchema.map((item) => providerStructuredOutputSchema(item, false));
+  }
+  if (!outputSchema || typeof outputSchema !== 'object') return outputSchema;
+  const output = {};
+  for (const [key, value] of Object.entries(outputSchema)) {
+    if (root && ['$schema', '$id', 'title'].includes(key)) continue;
+    // The OpenAI Structured Outputs subset does not list uniqueItems.
+    // Ajv still enforces uniqueness locally against the authoritative E5 schema.
+    if (key === 'uniqueItems') continue;
+    output[key] = providerStructuredOutputSchema(value, false);
+  }
+  return output;
+}
+
+async function readJsonResponse(httpResponse) {
+  if (typeof httpResponse.text === 'function') {
+    const body = await httpResponse.text();
+    if (!body) return {};
+    try {
+      return JSON.parse(body);
+    } catch {
+      return { error: { message: redactString(body), type: 'non_json_response' } };
+    }
+  }
+  return httpResponse.json();
+}
+
+function responseHeader(httpResponse, name) {
+  return typeof httpResponse.headers?.get === 'function'
+    ? httpResponse.headers.get(name)
+    : null;
+}
+
+function openRouterErrorDiagnostic(httpResponse, providerResponse) {
+  const error = providerResponse?.error ?? {};
+  return {
+    provider: 'openrouter',
+    status: httpResponse.status,
+    message: redactProviderValue(error.message ?? `HTTP ${httpResponse.status}`),
+    code: redactProviderValue(error.code ?? null),
+    type: redactProviderValue(error.type ?? null),
+    metadata: redactProviderValue(error.metadata ?? providerResponse?.metadata ?? null),
+    providerDetail: redactProviderValue(
+      error.provider ?? error.upstream ?? providerResponse?.provider ?? null
+    ),
+    requestId: redactProviderValue(
+      responseHeader(httpResponse, 'x-request-id') ??
+        responseHeader(httpResponse, 'x-openrouter-request-id') ??
+        providerResponse?.request_id ??
+        null
+    ),
+    responseId: redactProviderValue(providerResponse?.id ?? null)
+  };
+}
+
+export class OpenRouterHttpError extends Error {
+  constructor(diagnostic) {
+    super(
+      `openrouter_response_error:${diagnostic.status}:${diagnostic.code ?? diagnostic.type ?? 'unknown'}:${diagnostic.message}`
+    );
+    this.name = 'OpenRouterHttpError';
+    this.providerDiagnostic = diagnostic;
+  }
 }
 
 export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endpoint = 'https://api.openai.com/v1/responses' }) {
@@ -35,7 +118,7 @@ export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endp
   return {
     async generate({ systemPrompt, input, outputSchema, runConfig }) {
       const started = Date.now();
-      const providerSchema = stripSchemaMetadata(outputSchema);
+      const providerSchema = providerStructuredOutputSchema(outputSchema);
       const body = {
         model: runConfig.model,
         instructions: systemPrompt,
@@ -62,7 +145,7 @@ export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endp
         },
         body: JSON.stringify(body)
       });
-      const providerResponse = await httpResponse.json();
+      const providerResponse = await readJsonResponse(httpResponse);
       if (!httpResponse.ok) {
         const safeMessage = providerResponse?.error?.message ?? `HTTP ${httpResponse.status}`;
         throw new Error(`openai_response_error:${httpResponse.status}:${safeMessage}`);
@@ -83,7 +166,7 @@ export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endp
 export function createOpenRouterAdapter({
   apiKey,
   fetchImpl = globalThis.fetch,
-  endpoint = 'https://openrouter.ai/api/v1/chat/completions'
+  baseURL = 'https://openrouter.ai/api/v1'
 }) {
   if (!apiKey) throw new Error('OPENROUTER_API_KEY is required for provider=openrouter');
   if (typeof fetchImpl !== 'function') throw new Error('fetch implementation is required');
@@ -96,34 +179,39 @@ export function createOpenRouterAdapter({
           { role: 'system', content: systemPrompt },
           { role: 'user', content: input }
         ],
-        temperature: runConfig.temperature,
-        top_p: runConfig.topP,
-        max_tokens: runConfig.maxOutputTokens,
+        max_completion_tokens: runConfig.maxOutputTokens,
+        reasoning: {
+          effort: runConfig.reasoningEffort
+        },
         response_format: {
           type: 'json_schema',
           json_schema: {
             name: 'e5_llm_benchmark_prediction',
             strict: true,
-            schema: stripSchemaMetadata(outputSchema)
+            schema: providerStructuredOutputSchema(outputSchema)
           }
         },
         provider: {
           require_parameters: true
         }
       };
+      if (runConfig.temperature !== null && runConfig.temperature !== undefined) {
+        body.temperature = runConfig.temperature;
+      }
+      if (runConfig.topP !== null && runConfig.topP !== undefined) body.top_p = runConfig.topP;
       if (runConfig.seed !== null && runConfig.seed !== undefined) body.seed = runConfig.seed;
-      const httpResponse = await fetchImpl(endpoint, {
+      const httpResponse = await fetchImpl(`${baseURL.replace(/\/$/u, '')}/chat/completions`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-OpenRouter-Metadata': 'enabled'
         },
         body: JSON.stringify(body)
       });
-      const providerResponse = await httpResponse.json();
+      const providerResponse = await readJsonResponse(httpResponse);
       if (!httpResponse.ok) {
-        const safeMessage = providerResponse?.error?.message ?? `HTTP ${httpResponse.status}`;
-        throw new Error(`openrouter_response_error:${httpResponse.status}:${safeMessage}`);
+        throw new OpenRouterHttpError(openRouterErrorDiagnostic(httpResponse, providerResponse));
       }
       return {
         rawResponse: extractChatCompletionText(providerResponse),

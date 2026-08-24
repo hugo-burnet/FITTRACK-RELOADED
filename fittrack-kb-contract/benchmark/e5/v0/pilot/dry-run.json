@@ -14,10 +14,11 @@
     "maximumOutputTokens": 13500,
     "configuredRatesUsdPerMillionTokens": {
       "input": 2,
-      "output": 8,
-      "basis": "OpenRouter list price for openai/gpt-4.1; verify again before approving the full run"
+      "output": 10,
+      "basis": "OpenRouter Models API for openai/gpt-5.6-sol on 2026-08-24; standard prompts below 272k tokens"
     },
-    "expectedCostUsd": 0.0355,
-    "maximumConfiguredCostUsd": 0.1195
-  }
+    "expectedCostUsd": 0.0415,
+    "maximumConfiguredCostUsd": 0.1465
+  },
+  "maxRunCostUsd": 2.5
 }

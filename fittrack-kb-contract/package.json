@@ -13,6 +13,7 @@
     "extract:e5-p0": "node tools/extract-e5-p0.mjs",
     "build:e5-gold": "node tools/build-e5-gold.mjs",
     "benchmark:e5-v0:dry-run": "node tools/run-e5-llm-benchmark.mjs --mode dry-run",
+    "benchmark:e5-v0:probe": "node tools/probe-openrouter-structured-output.mjs",
     "benchmark:e5-v0:pilot": "node tools/run-e5-llm-benchmark.mjs --mode pilot",
     "benchmark:e5-v0:full": "node tools/run-e5-llm-benchmark.mjs --mode full --approve-cost --pilot-approved",
     "benchmark:e5-v0:evaluate": "node tools/evaluate-e5-llm-benchmark.mjs",

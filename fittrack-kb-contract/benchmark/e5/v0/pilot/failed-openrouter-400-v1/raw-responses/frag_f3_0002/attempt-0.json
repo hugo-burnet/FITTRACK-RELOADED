@@ -1,0 +1,21 @@
+{
+  "fragmentId": "frag.f3.0002",
+  "attempt": 0,
+  "promptInput": null,
+  "rawResponse": "",
+  "providerResponse": null,
+  "responseId": null,
+  "modelVersion": null,
+  "usage": null,
+  "latencyMs": null,
+  "validation": {
+    "accepted": false,
+    "retryable": false,
+    "diagnostics": [
+      {
+        "code": "PROVIDER_ERROR",
+        "message": "openrouter_response_error:400:Provider returned error"
+      }
+    ]
+  }
+}

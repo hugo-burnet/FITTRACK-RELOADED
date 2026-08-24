@@ -1,0 +1,37 @@
+{
+  "fragmentId": "frag.e5f2.00033791",
+  "status": "REJECTED",
+  "diagnostics": [
+    {
+      "code": "PROVIDER_ERROR",
+      "critical": true,
+      "retryable": false,
+      "message": "openrouter_response_error:400:400:Provider returned error",
+      "providerDiagnostic": {
+        "provider": "openrouter",
+        "status": 400,
+        "message": "Provider returned error",
+        "code": 400,
+        "type": null,
+        "metadata": {
+          "raw": "{\n  \"error\": {\n    \"message\": \"Invalid schema for response_format 'e5_llm_benchmark_prediction'. Please ensure it is a valid JSON Schema.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"text.format.schema\",\n    \"code\": \"invalid_json_schema\"\n  }\n}",
+          "provider_name": "Azure",
+          "is_byok": false,
+          "provider_error_code": "invalid_json_schema",
+          "previous_errors": [
+            {
+              "code": 400,
+              "message": "[REDACTED]",
+              "provider_name": "Azure",
+              "raw": "{\n  \"error\": {\n    \"message\": \"Invalid schema for response_format 'e5_llm_benchmark_prediction'. Please ensure it is a valid JSON Schema.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"text.format.schema\",\n    \"code\": \"invalid_json_schema\"\n  }\n}"
+            }
+          ]
+        },
+        "providerDetail": null,
+        "requestId": null,
+        "responseId": null
+      }
+    }
+  ],
+  "retryCount": 0
+}
