@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import Ajv2020 from 'ajv/dist/2020.js';
-import { providerPredictionToCanonical } from './provider-dto.mjs';
+import { auditCoverageLedger } from './coverage.mjs';
+import { providerClaimToCanonical, providerPredictionToCanonical } from './provider-dto.mjs';
 
 const RETRYABLE_CODES = new Set([
   'ANCHOR_NOT_FOUND',
@@ -222,6 +223,7 @@ export function validateProviderAndMaterialize({
   rawResponse,
   expectedFragment,
   citationCatalog,
+  coverageUnits,
   providerSchemaValidator,
   canonicalSchemaValidator,
   runConfig
@@ -231,6 +233,7 @@ export function validateProviderAndMaterialize({
     providerPrediction = JSON.parse(rawResponse);
   } catch (error) {
     return {
+      status: 'REJECTED',
       accepted: false,
       prediction: null,
       diagnostics: [
@@ -245,6 +248,7 @@ export function validateProviderAndMaterialize({
   }
   if (!providerSchemaValidator(providerPrediction)) {
     return {
+      status: 'REJECTED',
       accepted: false,
       prediction: null,
       diagnostics: [
@@ -256,6 +260,16 @@ export function validateProviderAndMaterialize({
       repairableClaimIndexes: [],
       providerPrediction
     };
+  }
+  if (coverageUnits !== undefined) {
+    return validateProviderClaimsIndividually({
+      providerPrediction,
+      expectedFragment,
+      citationCatalog,
+      coverageUnits,
+      canonicalSchemaValidator,
+      runConfig
+    });
   }
   let canonicalPrediction;
   try {
@@ -279,6 +293,7 @@ export function validateProviderAndMaterialize({
         })
       );
       return {
+        status: 'REJECTED',
         accepted: false,
         prediction: null,
         diagnostics,
@@ -297,6 +312,7 @@ export function validateProviderAndMaterialize({
     }
     const code = detail.code ?? 'SCHEMA_FAILURE';
     return {
+      status: 'REJECTED',
       accepted: false,
       prediction: null,
       diagnostics: [diagnostic(code, 'Provider DTO impossible à reconstruire canoniquement', { detail })],
@@ -314,8 +330,173 @@ export function validateProviderAndMaterialize({
   });
   return {
     ...result,
+    status: result.accepted ? 'VALIDATED' : 'REJECTED',
     repairableClaimIndexes: [],
     providerPrediction
+  };
+}
+
+function claimRefFor(index) {
+  return `tmp.claim.${String(index + 1).padStart(2, '0')}`;
+}
+
+function asClaimDiagnostic(item, claimRef) {
+  return item.claimRef === claimRef ? item : { ...item, claimRef };
+}
+
+function providerClaimAudit(claim, sourceClaimIndex, validation, fallbackDiagnostics = []) {
+  const claimRef = claimRefFor(sourceClaimIndex);
+  const diagnostics = (validation?.diagnostics ?? fallbackDiagnostics).map((item) =>
+    asClaimDiagnostic(item, claimRef)
+  );
+  return {
+    sourceClaimIndex,
+    technicalClaimRef: claimRef,
+    rawStatement: claim.supportAnchors?.[claim.rawStatementAnchorIndex] ?? null,
+    knowledgeType: {
+      state: claim.knowledgeTypeState,
+      value: claim.knowledgeType,
+      reason: claim.knowledgeTypeReason
+    },
+    epistemicStatus: {
+      state: claim.epistemicStatusState,
+      value: claim.epistemicStatus,
+      reason: claim.epistemicStatusReason
+    },
+    individuallyValid: validation?.accepted ?? false,
+    diagnostics,
+    canonicalCandidate: validation?.prediction?.claims[0] ?? null
+  };
+}
+
+function validateProviderClaimsIndividually({
+  providerPrediction,
+  expectedFragment,
+  citationCatalog,
+  coverageUnits,
+  canonicalSchemaValidator,
+  runConfig
+}) {
+  const claimAudits = [];
+  const repairableClaimIndexes = [];
+  const retainedProviderClaims = [];
+  const retainedCandidates = [];
+  const diagnostics = [];
+
+  providerPrediction.claims.forEach((providerClaim, sourceClaimIndex) => {
+    const claimRef = claimRefFor(sourceClaimIndex);
+    try {
+      const canonicalClaim = providerClaimToCanonical(
+        providerClaim,
+        sourceClaimIndex,
+        expectedFragment,
+        citationCatalog
+      );
+      const validation = validateAndMaterialize({
+        rawResponse: JSON.stringify({
+          fragmentId: expectedFragment.fragmentId,
+          annotationPrediction: 'CLAIMS',
+          claims: [canonicalClaim]
+        }),
+        expectedFragment,
+        citationCatalog,
+        schemaValidator: canonicalSchemaValidator,
+        runConfig,
+        claimRefOffset: sourceClaimIndex
+      });
+      const audit = providerClaimAudit(providerClaim, sourceClaimIndex, validation);
+      claimAudits.push(audit);
+      diagnostics.push(...audit.diagnostics);
+      if (audit.individuallyValid) {
+        retainedProviderClaims.push({
+          technicalClaimRef: claimRef,
+          coverageUnitIndexes: providerClaim.coverageUnitIndexes ?? []
+        });
+        retainedCandidates.push(audit.canonicalCandidate);
+      }
+    } catch (error) {
+      const detail =
+        error instanceof Error && 'providerDtoDiagnostic' in error
+          ? error.providerDtoDiagnostic
+          : { code: 'SCHEMA_FAILURE', message: error instanceof Error ? error.message : String(error) };
+      const details = detail.code === 'ANCHOR_RESOLUTION_FAILED' ? detail.diagnostics : [detail];
+      const claimDiagnostics = details.map((item) => {
+        if (item.code === 'ANCHOR_NOT_FOUND' || item.code === 'AMBIGUOUS_SUPPORT_ANCHOR') {
+          repairableClaimIndexes.push(sourceClaimIndex);
+        }
+        return diagnostic(item.code ?? 'SCHEMA_FAILURE', 'Claim individuellement non matérialisable', {
+          claimRef,
+          detail: item
+        });
+      });
+      const audit = providerClaimAudit(providerClaim, sourceClaimIndex, null, claimDiagnostics);
+      claimAudits.push(audit);
+      diagnostics.push(...audit.diagnostics);
+    }
+  });
+
+  const coverageAudit = auditCoverageLedger({
+    coverageUnits,
+    coverageLedger: providerPrediction.coverageLedger ?? [],
+    claims: retainedProviderClaims
+  });
+  for (const item of coverageAudit.diagnostics) {
+    diagnostics.push(diagnostic(item.code, 'Incohérence de couverture', { detail: item }, false));
+  }
+
+  const attempted = claimAudits.length;
+  const retained = retainedCandidates.length;
+  const filtered = attempted - retained;
+  if (filtered > 0) {
+    diagnostics.push(
+      diagnostic('CLAIM_FILTERED', 'Au moins une claim a été filtrée indépendamment', {
+        attempted,
+        retained,
+        filtered
+      }, false)
+    );
+  }
+  const annotationPrediction = retained > 0 ? 'CLAIMS' : 'ZERO_CLAIM';
+  if (providerPrediction.annotationPrediction !== annotationPrediction) {
+    diagnostics.push(
+      diagnostic('ANNOTATION_PREDICTION_MISMATCH', 'annotationPrediction provider incompatible avec les claims retenues', {
+        providerAnnotationPrediction: providerPrediction.annotationPrediction,
+        derivedAnnotationPrediction: annotationPrediction
+      }, false)
+    );
+  }
+  const partial = filtered > 0 || coverageAudit.diagnostics.length > 0 ||
+    providerPrediction.annotationPrediction !== annotationPrediction;
+  if (partial) {
+    diagnostics.push(
+      diagnostic('PARTIAL_VALIDATION', 'Validation partielle : les claims sûres sont conservées', {
+        attempted,
+        retained,
+        filtered,
+        coverageDiagnosticCount: coverageAudit.diagnostics.length
+      }, false)
+    );
+  }
+  const prediction = {
+    schemaVersion: runConfig.schemaVersion,
+    runId: runConfig.runId,
+    fragmentId: expectedFragment.fragmentId,
+    annotationPrediction,
+    claims: retainedCandidates.map((claim, index) => ({
+      ...claim,
+      technicalClaimRef: claimRefFor(index)
+    }))
+  };
+  return {
+    status: partial ? 'PARTIALLY_VALIDATED' : 'VALIDATED',
+    accepted: true,
+    prediction,
+    diagnostics,
+    claimAudit: { attempted, retained, filtered, claims: claimAudits },
+    coverageAudit,
+    repairableClaimIndexes: [...new Set(repairableClaimIndexes)],
+    providerPrediction,
+    retryable: false
   };
 }
 
@@ -404,7 +585,8 @@ export function validateAndMaterialize({
   expectedFragment,
   citationCatalog,
   schemaValidator,
-  runConfig
+  runConfig,
+  claimRefOffset = 0
 }) {
   const diagnostics = [];
   let parsed;
@@ -451,7 +633,10 @@ export function validateAndMaterialize({
   parsed.claims.forEach((claim, index) => {
     const claimRef = claim.technicalClaimRef;
     const diagnosticStart = diagnostics.length;
-    if (technicalRefs.has(claimRef) || claimRef !== `tmp.claim.${String(index + 1).padStart(2, '0')}`) {
+    if (
+      technicalRefs.has(claimRef) ||
+      claimRef !== `tmp.claim.${String(index + claimRefOffset + 1).padStart(2, '0')}`
+    ) {
       diagnostics.push(
         diagnostic('SCHEMA_FAILURE', 'technicalClaimRef dupliqué ou hors ordre', { claimRef, index })
       );
