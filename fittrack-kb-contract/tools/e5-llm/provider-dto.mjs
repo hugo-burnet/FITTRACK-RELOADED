@@ -1,4 +1,5 @@
-export const PROVIDER_DTO_VERSION = 'e5-provider-prediction-v1';
+export const PROVIDER_DTO_VERSION = 'e5-provider-prediction-v2';
+export const ANCHOR_REPAIR_DTO_VERSION = 'e5-provider-anchor-repair-v1';
 
 function cloneJson(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -69,9 +70,8 @@ export function createE5ProviderPredictionSchema(canonicalSchema) {
   const vocab = canonicalEnums(canonicalSchema);
   const resolutionState = enumSchema(vocab.resolutionState);
   const claim = requiredObject({
-    supportSpanStartBytes: stringArray({ type: 'integer', minimum: 0 }, { minItems: 1, maxItems: 6 }),
-    supportSpanEndBytes: stringArray({ type: 'integer', minimum: 1 }, { minItems: 1, maxItems: 6 }),
-    rawStatementSpanIndex: { type: 'integer', minimum: 0 },
+    supportAnchors: stringArray({ type: 'string', minLength: 1 }, { minItems: 1, maxItems: 6 }),
+    rawStatementAnchorIndex: { type: 'integer', minimum: 0 },
     domain: enumSchema(vocab.domain),
     knowledgeTypeState: cloneJson(resolutionState),
     knowledgeType: enumSchema(vocab.knowledgeType, { nullable: true }),
@@ -130,6 +130,57 @@ export function createE5ProviderPredictionSchema(canonicalSchema) {
   });
 }
 
+// Repair responses cannot rewrite claims or classifications: their interface
+// contains only the replacement anchors for explicitly identified claims.
+export function createE5AnchorRepairSchema() {
+  const repair = requiredObject({
+    claimIndex: { type: 'integer', minimum: 0 },
+    supportAnchors: stringArray({ type: 'string', minLength: 1 }, { minItems: 1, maxItems: 6 }),
+    rawStatementAnchorIndex: { type: 'integer', minimum: 0 }
+  });
+  return requiredObject({
+    repairs: {
+      type: 'array',
+      minItems: 1,
+      maxItems: 20,
+      items: { $ref: '#/$defs/repair' }
+    }
+  }, {
+    $defs: { repair }
+  });
+}
+
+export function mergeAnchorRepairs(providerPrediction, repairPrediction, repairableClaimIndexes) {
+  const expected = new Set(repairableClaimIndexes);
+  const seen = new Set();
+  const merged = cloneJson(providerPrediction);
+  for (const repair of repairPrediction.repairs) {
+    if (!expected.has(repair.claimIndex) || seen.has(repair.claimIndex)) {
+      throw new ProviderDtoError('anchor_repair_scope_invalid', {
+        code: 'ANCHOR_REPAIR_SCOPE_INVALID',
+        claimIndex: repair.claimIndex
+      });
+    }
+    if (repair.rawStatementAnchorIndex >= repair.supportAnchors.length) {
+      throw new ProviderDtoError('anchor_repair_raw_statement_index_invalid', {
+        code: 'PROVIDER_ANCHOR_INDEX_INVALID',
+        claimIndex: repair.claimIndex
+      });
+    }
+    seen.add(repair.claimIndex);
+    merged.claims[repair.claimIndex].supportAnchors = [...repair.supportAnchors];
+    merged.claims[repair.claimIndex].rawStatementAnchorIndex = repair.rawStatementAnchorIndex;
+  }
+  if (seen.size !== expected.size) {
+    throw new ProviderDtoError('anchor_repair_claim_missing', {
+      code: 'ANCHOR_REPAIR_SCOPE_INVALID',
+      expectedClaimIndexes: [...expected],
+      actualClaimIndexes: [...seen]
+    });
+  }
+  return merged;
+}
+
 function expectedHierarchy(fragment) {
   if (fragment.corpusFileId.startsWith('corpus.f2.')) return 'biomechanics';
   if (fragment.corpusFileId.startsWith('corpus.f3.')) return 'clinical';
@@ -146,7 +197,7 @@ function occurrencesOf(text, needle) {
     const index = text.indexOf(needle, from);
     if (index === -1) break;
     positions.push(index);
-    from = index + needle.length;
+    from = index + 1;
   }
   return positions;
 }
@@ -155,53 +206,59 @@ function byteOffset(text, charIndex) {
   return Buffer.byteLength(text.slice(0, charIndex), 'utf8');
 }
 
-function canonicalSpanToOffsets(fragment, span, path) {
+function assertCanonicalSpanIsUnique(fragment, span, path) {
   const positions = occurrencesOf(fragment.rawText, span.text);
-  const charStart = positions[span.occurrence - 1];
-  if (charStart === undefined) {
+  if (positions.length !== 1 || span.occurrence !== 1) {
     throw new ProviderDtoError('canonical_span_cannot_be_located', {
-      code: 'CANONICAL_SPAN_INVALID',
-      path
+      code: positions.length > 1 ? 'AMBIGUOUS_SUPPORT_ANCHOR' : 'CANONICAL_SPAN_INVALID',
+      path,
+      occurrenceCount: positions.length
     });
   }
-  const start = byteOffset(fragment.rawText, charStart);
-  return [start, start + Buffer.byteLength(span.text, 'utf8')];
+  return span.text;
 }
 
-function offsetsToCanonicalSpan(fragment, start, end, path) {
-  const bytes = Buffer.from(fragment.rawText, 'utf8');
-  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end <= start || end > bytes.length) {
-    throw new ProviderDtoError('provider_span_offsets_invalid', {
-      code: 'PROVIDER_SPAN_INVALID',
+function resolveUniqueAnchor(fragment, anchor, path, claimIndex, anchorIndex) {
+  const positions = occurrencesOf(fragment.rawText, anchor);
+  if (positions.length === 0) {
+    throw new ProviderDtoError('support_anchor_not_found', {
+      code: 'ANCHOR_NOT_FOUND',
       path,
-      start,
-      end,
-      fragmentByteLength: bytes.length
+      claimIndex,
+      anchorIndex,
+      anchor
     });
   }
-  const text = bytes.subarray(start, end).toString('utf8');
-  if (!text || Buffer.byteLength(text, 'utf8') !== end - start) {
-    throw new ProviderDtoError('provider_span_utf8_boundary_invalid', {
-      code: 'PROVIDER_SPAN_INVALID',
+  if (positions.length > 1) {
+    throw new ProviderDtoError('support_anchor_is_ambiguous', {
+      code: 'AMBIGUOUS_SUPPORT_ANCHOR',
       path,
-      start,
-      end
+      claimIndex,
+      anchorIndex,
+      anchor,
+      occurrenceCount: positions.length
     });
   }
-  const occurrences = occurrencesOf(fragment.rawText, text).map((charStart) => ({
-    start: byteOffset(fragment.rawText, charStart),
-    end: byteOffset(fragment.rawText, charStart) + Buffer.byteLength(text, 'utf8')
-  }));
-  const occurrenceIndex = occurrences.findIndex((item) => item.start === start && item.end === end);
-  if (occurrenceIndex === -1) {
-    throw new ProviderDtoError('provider_span_not_exact_fragment_slice', {
-      code: 'PROVIDER_SPAN_INVALID',
+  const charStart = positions[0];
+  const relativeStartByte = byteOffset(fragment.rawText, charStart);
+  const relativeEndByte = relativeStartByte + Buffer.byteLength(anchor, 'utf8');
+  const reread = Buffer.from(fragment.rawText, 'utf8')
+    .subarray(relativeStartByte, relativeEndByte)
+    .toString('utf8');
+  if (reread !== anchor) {
+    throw new ProviderDtoError('support_anchor_utf8_reread_failed', {
+      code: 'ANCHOR_NOT_FOUND',
       path,
-      start,
-      end
+      claimIndex,
+      anchorIndex,
+      anchor
     });
   }
-  return { text, occurrence: occurrenceIndex + 1 };
+  return {
+    span: { text: anchor, occurrence: 1 },
+    relativeStartByte,
+    relativeEndByte
+  };
 }
 
 function assertParallelArrays(values, path, { nullable = false } = {}) {
@@ -231,33 +288,62 @@ function resolution(state, value, reason) {
 // provider data plus deterministic fragment/catalog context.
 export function providerPredictionToCanonical(providerPrediction, fragment, citationCatalog) {
   const knownCitations = new Set(citationCatalog.map((item) => item.candidateId));
+  const anchorDiagnostics = [];
+  const resolvedClaims = providerPrediction.claims.map((claim, claimIndex) => {
+    const path = `#/claims/${claimIndex}`;
+    const resolvedAnchors = claim.supportAnchors.map((anchor, anchorIndex) => {
+      try {
+        return resolveUniqueAnchor(
+          fragment,
+          anchor,
+          `${path}/supportAnchors/${anchorIndex}`,
+          claimIndex,
+          anchorIndex
+        );
+      } catch (error) {
+        if (error instanceof ProviderDtoError) {
+          anchorDiagnostics.push(error.providerDtoDiagnostic);
+          return null;
+        }
+        throw error;
+      }
+    });
+    if (
+      !Number.isInteger(claim.rawStatementAnchorIndex) ||
+      claim.rawStatementAnchorIndex < 0 ||
+      claim.rawStatementAnchorIndex >= resolvedAnchors.length
+    ) {
+      throw new ProviderDtoError('provider_raw_statement_anchor_index_invalid', {
+        code: 'PROVIDER_ANCHOR_INDEX_INVALID',
+        path: `${path}/rawStatementAnchorIndex`,
+        claimIndex
+      });
+    }
+    if (resolvedAnchors.some((item) => item === null)) return null;
+    const rawStatement = resolvedAnchors[claim.rawStatementAnchorIndex].span.text;
+    const ordered = [...resolvedAnchors].sort(
+      (left, right) => left.relativeStartByte - right.relativeStartByte
+    );
+    for (let anchorIndex = 1; anchorIndex < ordered.length; anchorIndex += 1) {
+      if (ordered[anchorIndex].relativeStartByte < ordered[anchorIndex - 1].relativeEndByte) {
+        throw new ProviderDtoError('support_anchors_overlap', {
+          code: 'OVERLAPPING_SUPPORT_ANCHORS',
+          path: `${path}/supportAnchors`,
+          claimIndex
+        });
+      }
+    }
+    return { supportSpans: ordered.map((item) => item.span), rawStatement };
+  });
+  if (anchorDiagnostics.length > 0) {
+    throw new ProviderDtoError('provider_anchor_resolution_failed', {
+      code: 'ANCHOR_RESOLUTION_FAILED',
+      diagnostics: anchorDiagnostics
+    });
+  }
   const claims = providerPrediction.claims.map((claim, claimIndex) => {
     const path = `#/claims/${claimIndex}`;
-    assertParallelArrays([claim.supportSpanStartBytes, claim.supportSpanEndBytes], `${path}/supportSpans`);
-    if (!claim.supportSpanStartBytes.length) {
-      throw new ProviderDtoError('provider_claim_without_span', {
-        code: 'PROVIDER_SPAN_INVALID',
-        path
-      });
-    }
-    const supportSpans = claim.supportSpanStartBytes.map((start, spanIndex) =>
-      offsetsToCanonicalSpan(
-        fragment,
-        start,
-        claim.supportSpanEndBytes[spanIndex],
-        `${path}/supportSpans/${spanIndex}`
-      )
-    );
-    if (
-      !Number.isInteger(claim.rawStatementSpanIndex) ||
-      claim.rawStatementSpanIndex < 0 ||
-      claim.rawStatementSpanIndex >= supportSpans.length
-    ) {
-      throw new ProviderDtoError('provider_raw_statement_span_index_invalid', {
-        code: 'PROVIDER_SPAN_INVALID',
-        path: `${path}/rawStatementSpanIndex`
-      });
-    }
+    const { supportSpans, rawStatement } = resolvedClaims[claimIndex];
     assertParallelArrays(
       [claim.confidenceAspects, claim.confidenceLevels, claim.confidenceRationales],
       `${path}/confidenceByAspect`,
@@ -281,7 +367,7 @@ export function providerPredictionToCanonical(providerPrediction, fragment, cita
         }));
     return {
       technicalClaimRef: `tmp.claim.${String(claimIndex + 1).padStart(2, '0')}`,
-      rawStatement: supportSpans[claim.rawStatementSpanIndex].text,
+      rawStatement,
       supportSpans,
       domain: claim.domain,
       knowledgeType: resolution(
@@ -350,13 +436,13 @@ export function canonicalPredictionToProvider(canonicalPrediction, fragment) {
           claimIndex
         });
       }
-      const offsets = claim.supportSpans.map((span, spanIndex) =>
-        canonicalSpanToOffsets(fragment, span, `#/claims/${claimIndex}/supportSpans/${spanIndex}`)
+      const supportAnchors = claim.supportSpans.map((span, spanIndex) =>
+        assertCanonicalSpanIsUnique(fragment, span, `#/claims/${claimIndex}/supportSpans/${spanIndex}`)
       );
-      const rawStatementSpanIndex = claim.supportSpans.findIndex(
+      const rawStatementAnchorIndex = claim.supportSpans.findIndex(
         (span) => span.text === claim.rawStatement
       );
-      if (rawStatementSpanIndex === -1) {
+      if (rawStatementAnchorIndex === -1) {
         throw new ProviderDtoError('canonical_raw_statement_has_no_span', {
           code: 'CANONICAL_SPAN_INVALID',
           claimIndex
@@ -364,9 +450,8 @@ export function canonicalPredictionToProvider(canonicalPrediction, fragment) {
       }
       const confidence = claim.assessmentDraft.confidenceByAspect.value;
       return {
-        supportSpanStartBytes: offsets.map(([start]) => start),
-        supportSpanEndBytes: offsets.map(([, end]) => end),
-        rawStatementSpanIndex,
+        supportAnchors,
+        rawStatementAnchorIndex,
         domain: claim.domain,
         knowledgeTypeState: claim.knowledgeType.state,
         knowledgeType: claim.knowledgeType.value,

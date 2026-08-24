@@ -12,6 +12,8 @@ import { extractProseFragment } from './e5-llm/extractor.mjs';
 import { loadBenchmarkInputs, PILOT_FRAGMENT_IDS } from './e5-llm/inputs.mjs';
 import {
   createE5ProviderPredictionSchema,
+  createE5AnchorRepairSchema,
+  ANCHOR_REPAIR_DTO_VERSION,
   PROVIDER_DTO_VERSION
 } from './e5-llm/provider-dto.mjs';
 import { projectProviderSchema } from './e5-llm/provider-schema.mjs';
@@ -63,7 +65,7 @@ function stableHash(value) {
   return createHash('sha256').update(JSON.stringify(value), 'utf8').digest('hex');
 }
 
-function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProjection) {
+function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProjection, repairProjection) {
   if (base.promptVersion !== PROMPT_VERSION) {
     throw new Error(`prompt_version_mismatch:${base.promptVersion}:${PROMPT_VERSION}`);
   }
@@ -80,9 +82,14 @@ function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProje
     outputSchemaHash: sha256Text(JSON.stringify(benchmark.predictionSchema)),
     providerSchemaHash: sha256Text(JSON.stringify(providerProjection.providerSchema)),
     providerDtoVersion: PROVIDER_DTO_VERSION,
+    anchorRepairDtoVersion: ANCHOR_REPAIR_DTO_VERSION,
+    anchorRepairSchemaHash: sha256Text(JSON.stringify(repairProjection.providerSchema)),
     temperature: base.temperature,
     topP: base.topP,
     maxOutputTokens: base.maxOutputTokens,
+    maxRepairOutputTokens: base.maxRepairOutputTokens,
+    maxFullRetries: base.maxFullRetries,
+    maxAnchorRepairRetries: base.maxAnchorRepairRetries,
     seed: base.seed,
     reasoningEffort: base.reasoningEffort,
     fragmentIds: orderedIds
@@ -99,6 +106,8 @@ function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProje
     outputSchemaHash: sha256Text(JSON.stringify(benchmark.predictionSchema)),
     providerSchemaHash: sha256Text(JSON.stringify(providerProjection.providerSchema)),
     providerDtoVersion: PROVIDER_DTO_VERSION,
+    anchorRepairDtoVersion: ANCHOR_REPAIR_DTO_VERSION,
+    anchorRepairSchemaHash: sha256Text(JSON.stringify(repairProjection.providerSchema)),
     providerSchemaDroppedKeywords: providerProjection.providerSchemaDroppedKeywords,
     providerEnumTypesInjected: providerProjection.providerEnumTypesInjected,
     providerSchemaAssertions: providerProjection.providerSchemaAssertions,
@@ -158,6 +167,7 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
     writeJson(path, {
       fragmentId: result.fragmentId,
       attempt: attempt.attempt,
+      callType: attempt.callType,
       promptInput: attempt.promptInput,
       rawResponse: attempt.rawResponse,
       providerResponse: attempt.providerResponse,
@@ -180,8 +190,28 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
     fragmentId: result.fragmentId,
     status: result.status,
     diagnostics: result.diagnostics,
-    retryCount: Math.max(0, result.attempts.length - 1)
+    fullCallCount: result.attempts.filter((attempt) => attempt.callType === 'full').length,
+    repairCallCount: result.attempts.filter((attempt) => attempt.callType === 'repair').length,
+    usageByCallType: result.usageByCallType
   });
+}
+
+function emptyUsage() {
+  return { calls: 0, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 };
+}
+
+function aggregateUsage(results) {
+  const summary = { full: emptyUsage(), repair: emptyUsage(), total: emptyUsage() };
+  for (const result of results) {
+    for (const category of ['full', 'repair', 'total']) {
+      const usage = result.usageByCallType?.[category] ?? emptyUsage();
+      for (const key of ['calls', 'inputTokens', 'outputTokens', 'totalTokens', 'costUsd']) {
+        summary[category][key] += usage[key];
+      }
+      summary[category].costUsd = Number(summary[category].costUsd.toFixed(8));
+    }
+  }
+  return summary;
 }
 
 async function runWithConcurrency(items, concurrency, worker) {
@@ -203,6 +233,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   const benchmark = loadBenchmarkInputs(root);
   const providerPredictionSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema);
   const providerProjection = projectProviderSchema(providerPredictionSchema);
+  const anchorRepairSchema = createE5AnchorRepairSchema();
+  const repairProjection = projectProviderSchema(anchorRepairSchema);
   const selectedInputs =
     args.mode === 'pilot'
       ? PILOT_FRAGMENT_IDS.map((id) => benchmark.inputs.find((item) => item.fragment.fragmentId === id))
@@ -223,7 +255,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     benchmark,
     selectedInputs,
     args.mode,
-    providerProjection
+    providerProjection,
+    repairProjection
   );
   const costEstimate = estimateCost(runConfig, promptInputs);
   const dryRun = {
@@ -235,6 +268,11 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
         : benchmark.counts,
     goldenLeakChecks: promptInputs.length,
     apiCalls: 0,
+    repairPolicy: {
+      maxFullRetries: runConfig.maxFullRetries,
+      maxAnchorRepairRetries: runConfig.maxAnchorRepairRetries,
+      maxRepairOutputTokens: runConfig.maxRepairOutputTokens
+    },
     costEstimate,
     maxRunCostUsd: runConfig.maxRunCostUsd
   };
@@ -244,7 +282,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
       ? join(benchmarkRoot, 'runs', runConfig.runVariant)
       : benchmarkRoot;
   const dryRunPath = args.mode === 'dry-run'
-    ? join(benchmarkRoot, `dry-run.${runConfig.runVariant}.json`)
+    ? join(benchmarkRoot, `dry-run.${runConfig.runVariant}.${PROMPT_VERSION}.json`)
     : join(outputRoot, 'dry-run.json');
   writeJson(dryRunPath, dryRun);
   console.log(`Dry-run PASS: ${selectedInputs.length} fragments; aucune fuite GOLD; 0 appel API`);
@@ -305,6 +343,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
           attempts: [
             {
               attempt: 0,
+              callType: 'full',
               promptInput: null,
               rawResponse: '',
               providerResponse: null,
@@ -318,7 +357,12 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
                 diagnostics: [{ code: 'PROVIDER_ERROR', message, providerDiagnostic }]
               }
             }
-          ]
+          ],
+          usageByCallType: {
+            full: { calls: 1, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 },
+            repair: { calls: 0, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 },
+            total: { calls: 1, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 }
+          }
         };
         persistResult(outputRoot, failed);
         return failed;
@@ -326,16 +370,20 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     }
   );
   runConfig.completedAt = new Date().toISOString();
+  const usageByCallType = aggregateUsage(results);
   const summary = {
     runId: runConfig.runId,
     fragmentCount: results.length,
     validated: results.filter((item) => item.status === 'VALIDATED').length,
     rejected: results.filter((item) => item.status === 'REJECTED').length,
-    retries: results.reduce((sum, item) => sum + Math.max(0, item.attempts.length - 1), 0),
+    fullCalls: usageByCallType.full.calls,
+    repairCalls: usageByCallType.repair.calls,
+    retries: usageByCallType.repair.calls,
     rejectedResponses: results.reduce(
       (sum, item) => sum + item.attempts.filter((attempt) => !attempt.validation.accepted).length,
       0
     ),
+    usageByCallType,
     completedAt: runConfig.completedAt
   };
   writeJson(join(outputRoot, 'config.json'), { ...runConfig, costEstimate, summary });

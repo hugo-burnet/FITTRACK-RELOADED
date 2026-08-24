@@ -102,7 +102,7 @@ export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endp
   if (!apiKey) throw new Error('OPENAI_API_KEY is required for provider=openai');
   if (typeof fetchImpl !== 'function') throw new Error('fetch implementation is required');
   return {
-    async generate({ systemPrompt, input, outputSchema, runConfig }) {
+    async generate({ systemPrompt, input, outputSchema, runConfig, callType = 'full' }) {
       const started = Date.now();
       const { providerSchema } = projectProviderSchema(outputSchema);
       const body = {
@@ -116,7 +116,7 @@ export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endp
         text: {
           format: {
             type: 'json_schema',
-            name: 'e5_llm_benchmark_prediction',
+            name: callType === 'repair' ? 'e5_llm_anchor_repair' : 'e5_llm_benchmark_prediction',
             strict: true,
             schema: providerSchema
           }
@@ -157,7 +157,7 @@ export function createOpenRouterAdapter({
   if (!apiKey) throw new Error('OPENROUTER_API_KEY is required for provider=openrouter');
   if (typeof fetchImpl !== 'function') throw new Error('fetch implementation is required');
   return {
-    async generate({ systemPrompt, input, outputSchema, runConfig }) {
+    async generate({ systemPrompt, input, outputSchema, runConfig, callType = 'full' }) {
       const started = Date.now();
       const projection = projectProviderSchema(outputSchema);
       const body = {
@@ -173,7 +173,7 @@ export function createOpenRouterAdapter({
         response_format: {
           type: 'json_schema',
           json_schema: {
-            name: 'e5_llm_benchmark_prediction',
+            name: callType === 'repair' ? 'e5_llm_anchor_repair' : 'e5_llm_benchmark_prediction',
             strict: true,
             schema: projection.providerSchema
           }

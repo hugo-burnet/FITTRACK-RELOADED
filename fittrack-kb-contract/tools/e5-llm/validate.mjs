@@ -3,14 +3,8 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import { providerPredictionToCanonical } from './provider-dto.mjs';
 
 const RETRYABLE_CODES = new Set([
-  'INVALID_JSON',
-  'SCHEMA_FAILURE',
-  'INVALID_FRAGMENT_ID',
-  'WRONG_SPAN',
-  'SPAN_HALLUCINATION',
-  'INVENTED_CITATION',
-  'CITATION_BLEED',
-  'CLAIM_WITHOUT_SPAN'
+  'ANCHOR_NOT_FOUND',
+  'AMBIGUOUS_SUPPORT_ANCHOR'
 ]);
 
 const URL_RE = /https?:\/\/[^\s)\]}>"']+/giu;
@@ -244,7 +238,9 @@ export function validateProviderAndMaterialize({
           detail: error instanceof Error ? error.message : String(error)
         })
       ],
-      retryable: true
+      retryable: false,
+      repairableClaimIndexes: [],
+      providerPrediction: null
     };
   }
   if (!providerSchemaValidator(providerPrediction)) {
@@ -256,7 +252,9 @@ export function validateProviderAndMaterialize({
           schemaErrors: structuredClone(providerSchemaValidator.errors ?? [])
         })
       ],
-      retryable: true
+      retryable: false,
+      repairableClaimIndexes: [],
+      providerPrediction
     };
   }
   let canonicalPrediction;
@@ -271,25 +269,46 @@ export function validateProviderAndMaterialize({
       error instanceof Error && 'providerDtoDiagnostic' in error
         ? error.providerDtoDiagnostic
         : { message: error instanceof Error ? error.message : String(error) };
-    const code = detail.code === 'INVENTED_CITATION'
-      ? 'INVENTED_CITATION'
-      : detail.code === 'PROVIDER_SPAN_INVALID'
-        ? 'WRONG_SPAN'
-        : 'SCHEMA_FAILURE';
+    const anchorDetails = detail.code === 'ANCHOR_RESOLUTION_FAILED'
+      ? detail.diagnostics
+      : [];
+    if (anchorDetails.length > 0) {
+      const diagnostics = anchorDetails.map((item) =>
+        diagnostic(item.code, 'Support anchor impossible à reconstruire exactement', {
+          detail: item
+        })
+      );
+      return {
+        accepted: false,
+        prediction: null,
+        diagnostics,
+        retryable: diagnostics.every((item) => item.retryable),
+        repairableClaimIndexes: [...new Set(anchorDetails.map((item) => item.claimIndex))],
+        providerPrediction
+      };
+    }
+    const code = detail.code ?? 'SCHEMA_FAILURE';
     return {
       accepted: false,
       prediction: null,
       diagnostics: [diagnostic(code, 'Provider DTO impossible à reconstruire canoniquement', { detail })],
-      retryable: RETRYABLE_CODES.has(code)
+      retryable: false,
+      repairableClaimIndexes: [],
+      providerPrediction
     };
   }
-  return validateAndMaterialize({
+  const result = validateAndMaterialize({
     rawResponse: JSON.stringify(canonicalPrediction),
     expectedFragment,
     citationCatalog,
     schemaValidator: canonicalSchemaValidator,
     runConfig
   });
+  return {
+    ...result,
+    repairableClaimIndexes: [],
+    providerPrediction
+  };
 }
 
 export function validateAndMaterialize({

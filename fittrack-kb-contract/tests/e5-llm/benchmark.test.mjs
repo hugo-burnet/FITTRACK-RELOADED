@@ -34,7 +34,7 @@ const shortText = "une différence d'amplitude EMG entre deux exercices";
 const runConfig = {
   schemaVersion: '1.0.0-e5-llm-benchmark-prediction',
   runId: 'run.e5-llm-v0.test',
-  maxRetries: 2,
+  maxAnchorRepairRetries: 1,
   model: 'test-model',
   temperature: 0,
   topP: 1,
@@ -197,9 +197,9 @@ test('invented URL is rejected even in a free-text limitation', () => {
   assert.equal(result.retryable, false);
 });
 
-test('retry count is limited to the configured two retries', async () => {
+test('invalid JSON is rejected without regenerating the full prediction', async () => {
   const adapter = createReplayAdapter(
-    new Map([[sample.fragment.fragmentId, ['{', '{', '{']]])
+    new Map([[sample.fragment.fragmentId, ['{']]])
   );
   const result = await extractProseFragment(
     {
@@ -212,8 +212,8 @@ test('retry count is limited to the configured two retries', async () => {
     { modelAdapter: adapter }
   );
   assert.equal(result.status, 'REJECTED');
-  assert.equal(result.attempts.length, 3);
-  assert.deepEqual(result.attempts.map((item) => item.attempt), [0, 1, 2]);
+  assert.equal(result.attempts.length, 1);
+  assert.deepEqual(result.attempts.map((item) => item.callType), ['full']);
 });
 
 test('raw responses and exact prompts are persisted for audit', () => {
@@ -267,7 +267,8 @@ test('benchmark config journals model, prompt, sampling, retries and immutable c
   assert.equal(config.topP, null);
   assert.equal(config.reasoningEffort, 'minimal');
   assert.equal(config.maxRunCostUsd, 2.5);
-  assert.equal(config.maxRetries, 2);
+  assert.equal(config.maxFullRetries, 0);
+  assert.equal(config.maxAnchorRepairRetries, 1);
   assert.deepEqual(config.pricingUsdPerMillionTokens, {
     input: 1.25,
     output: 10,

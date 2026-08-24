@@ -278,12 +278,12 @@ test('unknown citation is rejected without correction', () => {
   assert.ok(result.diagnostics.some((item) => item.code === 'INVENTED_CITATION'));
 });
 
-test('invalid relative span is rejected before canonical materialization', () => {
+test('missing support anchor is rejected before canonical materialization', () => {
   const provider = canonicalPredictionToProvider(canonicalPrediction(), sample.fragment);
-  provider.claims[0].supportSpanEndBytes[0] = Buffer.byteLength(sample.fragment.rawText, 'utf8') + 1;
+  provider.claims[0].supportAnchors[0] = 'anchor absent du fragment';
   const result = validateProvider(provider);
   assert.equal(result.accepted, false);
-  assert.ok(result.diagnostics.some((item) => item.code === 'WRONG_SPAN'));
+  assert.ok(result.diagnostics.some((item) => item.code === 'ANCHOR_NOT_FOUND'));
 });
 
 test('absolute offsets are reconstructed from P0 fragment provenance', () => {

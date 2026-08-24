@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export const PROMPT_VERSION = 'e5-llm-v0.2.0';
+export const PROMPT_VERSION = 'e5-llm-v0.3.0';
 
 export const E5_SYSTEM_PROMPT = `Tu es l'extracteur E5 de la Knowledge Base FitTrack.
 
@@ -21,10 +21,11 @@ GRANULARITE AUTORITAIRE
 - Evite les mega-claims comme les micro-claims artificiels.
 
 SUPPORT VERBATIM
-- Chaque claim doit avoir au moins un intervalle exact dans supportSpanStartBytes/supportSpanEndBytes.
-- Les offsets sont relatifs au début UTF-8 de rawText, start inclus et end exclu.
-- rawStatementSpanIndex désigne l'intervalle qui devient rawStatement ; le pipeline relit le texte exact.
-- Ne génère ni texte de span, ni offsets absolus, ni provenance technique : le pipeline les reconstruit.
+- Chaque claim doit avoir au moins un extrait verbatim exact dans supportAnchors.
+- Chaque supportAnchor doit être une sous-chaîne exacte, non modifiée et unique de rawText.
+- Si un court extrait est répété, allonge-le avec son contexte verbatim jusqu'à le rendre unique ; ne fournis jamais de numéro d'occurrence.
+- rawStatementAnchorIndex désigne l'anchor qui devient rawStatement ; le pipeline relit le texte exact et calcule les coordonnées UTF-8.
+- Les anchors d'une même claim doivent être distincts et ne pas se chevaucher.
 
 ZERO_CLAIM
 - Réponds ZERO_CLAIM et claims=[] si aucune unité de connaissance pertinente n'est présente.
@@ -38,8 +39,12 @@ AXES ET INCERTITUDE
 - N'injecte jamais le mot UNRESOLVED dans un champ de vocabulaire.
 - Ne transforme pas une plage de confiance en scalaire.
 - Pour une confiance multi-aspect, confidenceAspects, confidenceLevels et confidenceRationales sont trois arrays parallèles de même longueur ; elles sont toutes null si confidenceState n'est pas RESOLVED.
-- Un résultat non significatif n'est pas une équivalence.
-- Une absence de preuve n'est extraite que si le fragment l'énonce explicitement.
+- DEFINITION décrit un protocole, un seuil, une convention ou un modèle rapporté.
+- PRODUCT_POLICY concerne exclusivement une règle du produit FitTrack ; un protocole scientifique ou clinique cité n'est pas une PRODUCT_POLICY.
+- Un résultat non significatif n'est jamais une démonstration d'équivalence.
+- Le statut absence_of_evidence exige que le fragment affirme explicitement une absence de preuve.
+- Une preuve faible, limitée, non significative ou incertaine relève de uncertain si aucune absence de preuve n'est explicitement affirmée ; elle n'est pas automatiquement absence_of_evidence.
+- Toute limite explicite sur ce que le résultat permet de conclure doit être conservée dans cannotConclude.
 - EXPERT_PRACTICE et HYPOTHESIS ne sont jamais des faits établis.
 
 CITATIONS
@@ -61,6 +66,16 @@ GARDE-FOUS CRITIQUES
 SORTIE
 - Réponds exclusivement par un JSON conforme au Provider DTO structuré, sans commentaire libre.
 - Ne génère aucun fragmentId, technicalClaimRef, claim ID, runId ou identifiant de provenance. Le pipeline les reconstruit après validation.`;
+
+export const E5_ANCHOR_REPAIR_SYSTEM_PROMPT = `Tu répares uniquement des supportAnchors E5 déjà produits.
+
+- Ne réécris aucune claim et ne modifies aucune classification, citation, condition, limitation ou conclusion.
+- Pour chaque claimIndex demandé, renvoie seulement des extraits verbatim exacts de rawText.
+- Chaque anchor doit apparaître exactement une fois dans rawText.
+- Si un anchor est absent, recopie le passage supportant la même claim sans le paraphraser.
+- Si un anchor est ambigu, allonge-le avec du contexte verbatim jusqu'à le rendre unique ; ne fournis pas de numéro d'occurrence.
+- Préserve le choix de rawStatement via rawStatementAnchorIndex.
+- Réponds exclusivement par un JSON conforme au DTO de réparation.`;
 
 export function sha256Text(value) {
   return `sha256:${createHash('sha256').update(value, 'utf8').digest('hex')}`;
@@ -89,6 +104,33 @@ export function buildPromptInput({ fragment, citationCatalog, vocabularies }) {
       },
       citationCatalog: citations,
       closedVocabularies
+    },
+    null,
+    2
+  );
+}
+
+export function buildAnchorRepairPrompt({ fragment, providerPrediction, diagnostics }) {
+  const claimIndexes = [...new Set(diagnostics.map((item) => item.detail?.claimIndex))]
+    .filter(Number.isInteger)
+    .sort((left, right) => left - right);
+  return JSON.stringify(
+    {
+      instruction: 'Répare uniquement les supportAnchors des claimIndex listés.',
+      rawText: fragment.rawText,
+      faultyClaims: claimIndexes.map((claimIndex) => ({
+        claimIndex,
+        supportAnchors: providerPrediction.claims[claimIndex].supportAnchors,
+        rawStatementAnchorIndex:
+          providerPrediction.claims[claimIndex].rawStatementAnchorIndex,
+        errors: diagnostics
+          .filter((item) => item.detail?.claimIndex === claimIndex)
+          .map((item) => ({
+            code: item.code,
+            anchorIndex: item.detail?.anchorIndex,
+            anchor: item.detail?.anchor
+          }))
+      }))
     },
     null,
     2

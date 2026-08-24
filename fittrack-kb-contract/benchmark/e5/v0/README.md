@@ -10,25 +10,34 @@ production et aucun outil de génération n’ouvre l’adjudication GOLD.
 Fragments E5-P0 + CitationOccurrences E5-P0
   → prompt fermé
   → adapter OpenRouter ou replay
-  → E5ProviderPrediction shallow (transport uniquement)
-  → validation Provider DTO
-  → adapter déterministe provider → canonique
+  → E5ProviderPrediction v2 (sémantique + anchors verbatim)
+  → matcher exact et unique ou réparation anchors ciblée
+  → calcul déterministe des coordonnées UTF-8
+  → adapter déterministe provider → canonique inchangé
   → validation canonique, spans, citations et guardrails
   → prédiction benchmark
   → comparateur GOLD séparé
 ```
 
-L’interface profonde est `extractProseFragment`. Elle cache le prompt, les
-retries techniques, la résolution des spans UTF-8, les contrôles de citations,
+L’interface profonde est `extractProseFragment`. Elle cache le prompt, l’unique
+réparation ciblée éventuelle, la résolution des spans UTF-8, les contrôles de citations,
 les guardrails et les IDs techniques. L’adapter OpenRouter et l’adapter replay sont
 les deux implémentations réelles du seam modèle.
 
 Le schéma de prédiction canonique reste l’autorité de validation locale. Le
 module `createE5ProviderPredictionSchema` en dérive uniquement les vocabulaires
-pour construire un DTO de transport à profondeur maximale 5. Les spans y sont
-des offsets UTF-8 parallèles et les confiances multi-aspect trois arrays
-parallèles ; `providerPredictionToCanonical` reconstruit ensuite sans réseau le
-schéma canonique, les textes, les IDs temporaires et le `fragmentId`.
+pour construire un DTO de transport à profondeur maximale 5. Les supports y sont
+des anchors textuels exacts qui doivent apparaître une seule fois dans le fragment ;
+les confiances multi-aspect restent trois arrays parallèles.
+`providerPredictionToCanonical` calcule ensuite sans réseau les coordonnées UTF-8,
+relit exactement les octets, rejette les overlaps et reconstruit le schéma canonique,
+les IDs temporaires et le `fragmentId`.
+
+Un anchor absent (`ANCHOR_NOT_FOUND`) ou répété
+(`AMBIGUOUS_SUPPORT_ANCHOR`) autorise au plus un second appel avec un petit DTO
+qui ne contient que les anchors des claims fautives. La fusion locale ne peut
+modifier ni claim, ni classification, ni citation. Toute autre erreur rejette la
+sortie sans régénération complète.
 
 `projectProviderSchema` applique enfin l’allowlist Structured Outputs au DTO,
 vérifie les limites Azure et journalise les contraintes retirées. `minLength`,
@@ -40,13 +49,14 @@ contrat métier ni une source utilisée par le comparateur GOLD.
 
 `config.gpt-5.json` est le profil principal et fixe explicitement
 `openrouter-openai-gpt-5`, le prompt, le schéma, les paramètres de sampling, le
-nombre maximal de retries, les commits GOLD et corpus, ainsi que la base
+politique de zéro retry complet et d’une réparation anchors au maximum, les commits GOLD et corpus, ainsi que la base
 tarifaire utilisée par l’estimation. `config.base.json` conserve le profil Sol
 historique avec ses tarifs observés, sans être utilisé par les commandes
 principales. Une exécution
 écrit le `config.json` auditable avec `runId`, dates, hashes, liste ordonnée des
-fragments, `configFile`, `runVariant`, modèle demandé/observé, usages et bilan
-des retries. Les artefacts pilote et run sont isolés par `runVariant`.
+fragments, `configFile`, `runVariant`, modèle demandé/observé, ainsi que les
+appels, tokens et coûts séparés entre génération complète et réparation. Les
+artefacts pilote et run sont isolés par `runVariant`.
 
 La clé est lue exclusivement depuis la variable d’environnement
 `OPENROUTER_API_KEY`. Aucun fallback vers `OPENAI_API_KEY` ou vers un fichier
@@ -86,9 +96,10 @@ benchmark/e5/v0/
   report.md
 ```
 
-Toutes les tentatives sont conservées. Une sortie techniquement invalide peut
-être réparée au plus deux fois ; un `UNRESOLVED` sémantique ou une violation de
-sûreté ne déclenche aucune optimisation du contenu.
+Tous les appels sont conservés avec `callType=full|repair`. Une génération
+complète n’est jamais rejouée. Seuls les anchors absents ou ambigus peuvent être
+réparés une fois ; un `UNRESOLVED` sémantique ou une violation de sûreté ne
+déclenche aucune optimisation du contenu.
 
 Les seuils viennent exclusivement du Design Review : ils ne sont pas ajustés
 après observation des résultats. Le comparateur principal est déterministe

@@ -1,19 +1,21 @@
 {
   "benchmarkVersion": "e5-llm-benchmark-v0",
-  "extractorVersion": "0.1.0-e5-llm-v0",
+  "extractorVersion": "0.2.0-e5-llm-v0.3",
   "provider": "openrouter",
   "baseURL": "https://openrouter.ai/api/v1",
   "runVariant": "openrouter-openai-gpt-5.6-sol",
   "model": "openai/gpt-5.6-sol",
   "modelVersion": null,
-  "promptVersion": "e5-llm-v0.2.0",
+  "promptVersion": "e5-llm-v0.3.0",
   "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
   "temperature": null,
   "topP": null,
   "reasoningEffort": "none",
   "maxOutputTokens": 4500,
   "seed": null,
-  "maxRetries": 2,
+  "maxFullRetries": 0,
+  "maxAnchorRepairRetries": 1,
+  "maxRepairOutputTokens": 1000,
   "concurrency": 2,
   "maxRunCostUsd": 2.5,
   "goldenCommit": "4ff2ae6ebf2e0c587e315c527a8fb1f75d05bf2f",
@@ -24,5 +26,6 @@
     "basis": "Observed OpenRouter probe billing for openai/gpt-5.6-sol on 2026-08-24"
   },
   "expectedOutputTokensPerFragment": 1000,
+  "expectedRepairOutputTokensPerFragment": 200,
   "apiKeyEnvironmentVariable": "OPENROUTER_API_KEY"
 }
