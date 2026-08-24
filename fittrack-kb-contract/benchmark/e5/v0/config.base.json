@@ -5,7 +5,7 @@
   "baseURL": "https://openrouter.ai/api/v1",
   "model": "openai/gpt-5.6-sol",
   "modelVersion": null,
-  "promptVersion": "e5-llm-v0.1.0",
+  "promptVersion": "e5-llm-v0.2.0",
   "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
   "temperature": null,
   "topP": null,

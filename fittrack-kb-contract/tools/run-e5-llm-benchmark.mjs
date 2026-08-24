@@ -12,6 +12,11 @@ import { createOpenRouterAdapter } from './e5-llm/adapters.mjs';
 import { extractProseFragment } from './e5-llm/extractor.mjs';
 import { loadBenchmarkInputs, PILOT_FRAGMENT_IDS } from './e5-llm/inputs.mjs';
 import {
+  createE5ProviderPredictionSchema,
+  PROVIDER_DTO_VERSION
+} from './e5-llm/provider-dto.mjs';
+import { projectProviderSchema } from './e5-llm/provider-schema.mjs';
+import {
   assertNoGoldenLeak,
   buildPromptInput,
   E5_SYSTEM_PROMPT,
@@ -53,7 +58,7 @@ function stableHash(value) {
   return createHash('sha256').update(JSON.stringify(value), 'utf8').digest('hex');
 }
 
-function buildRunConfig(base, benchmark, inputs, mode) {
+function buildRunConfig(base, benchmark, inputs, mode, providerProjection) {
   if (base.promptVersion !== PROMPT_VERSION) {
     throw new Error(`prompt_version_mismatch:${base.promptVersion}:${PROMPT_VERSION}`);
   }
@@ -66,6 +71,8 @@ function buildRunConfig(base, benchmark, inputs, mode) {
     promptVersion: base.promptVersion,
     promptHash: sha256Text(E5_SYSTEM_PROMPT),
     outputSchemaHash: sha256Text(JSON.stringify(benchmark.predictionSchema)),
+    providerSchemaHash: sha256Text(JSON.stringify(providerProjection.providerSchema)),
+    providerDtoVersion: PROVIDER_DTO_VERSION,
     temperature: base.temperature,
     topP: base.topP,
     maxOutputTokens: base.maxOutputTokens,
@@ -82,6 +89,11 @@ function buildRunConfig(base, benchmark, inputs, mode) {
     promptSystem: E5_SYSTEM_PROMPT,
     promptHash: sha256Text(E5_SYSTEM_PROMPT),
     outputSchemaHash: sha256Text(JSON.stringify(benchmark.predictionSchema)),
+    providerSchemaHash: sha256Text(JSON.stringify(providerProjection.providerSchema)),
+    providerDtoVersion: PROVIDER_DTO_VERSION,
+    providerSchemaDroppedKeywords: providerProjection.providerSchemaDroppedKeywords,
+    providerEnumTypesInjected: providerProjection.providerEnumTypesInjected,
+    providerSchemaAssertions: providerProjection.providerSchemaAssertions,
     corpusSnapshot: benchmark.sourceHashes.fragments,
     startedAt: new Date().toISOString(),
     completedAt: null
@@ -145,6 +157,9 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
       modelVersion: attempt.modelVersion,
       usage: attempt.usage,
       latencyMs: attempt.latencyMs,
+      providerSchemaDroppedKeywords: attempt.providerSchemaDroppedKeywords ?? null,
+      providerEnumTypesInjected: attempt.providerEnumTypesInjected ?? null,
+      providerSchemaAssertions: attempt.providerSchemaAssertions ?? null,
       validation: attempt.validation
     });
   }
@@ -178,6 +193,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   const args = argsOf(argv);
   const base = readJson(join(benchmarkRoot, 'config.base.json'));
   const benchmark = loadBenchmarkInputs(root);
+  const providerPredictionSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema);
+  const providerProjection = projectProviderSchema(providerPredictionSchema);
   const selectedInputs =
     args.mode === 'pilot'
       ? PILOT_FRAGMENT_IDS.map((id) => benchmark.inputs.find((item) => item.fragment.fragmentId === id))
@@ -192,7 +209,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     assertNoGoldenLeak(`${E5_SYSTEM_PROMPT}\n${prompt}`);
     return prompt;
   });
-  const runConfig = buildRunConfig(base, benchmark, selectedInputs, args.mode);
+  const runConfig = buildRunConfig(base, benchmark, selectedInputs, args.mode, providerProjection);
   const costEstimate = estimateCost(runConfig, promptInputs);
   const dryRun = {
     status: costEstimate.expectedCostUsd <= runConfig.maxRunCostUsd ? 'PASS' : 'STOP',
@@ -237,6 +254,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
             ...item,
             vocabularies: benchmark.vocabularies,
             predictionSchema: benchmark.predictionSchema,
+            providerPredictionSchema,
             runConfig
           },
           { modelAdapter: adapter }

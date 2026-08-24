@@ -12,6 +12,7 @@ import {
 } from '../../tools/e5-llm/evaluate.mjs';
 import { extractProseFragment } from '../../tools/e5-llm/extractor.mjs';
 import { loadBenchmarkInputs } from '../../tools/e5-llm/inputs.mjs';
+import { createE5ProviderPredictionSchema } from '../../tools/e5-llm/provider-dto.mjs';
 import {
   assertNoGoldenLeak,
   buildPromptInput,
@@ -26,6 +27,7 @@ import { persistResult, runBenchmark } from '../../tools/run-e5-llm-benchmark.mj
 
 const root = join(import.meta.dirname, '../..');
 const benchmark = loadBenchmarkInputs(root);
+const providerPredictionSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema);
 const sample = benchmark.inputs.find((item) => item.fragment.fragmentId === 'frag.f2.0001');
 const shortText = "une différence d'amplitude EMG entre deux exercices";
 const runConfig = {
@@ -203,6 +205,7 @@ test('retry count is limited to the configured two retries', async () => {
       ...sample,
       vocabularies: benchmark.vocabularies,
       predictionSchema: benchmark.predictionSchema,
+      providerPredictionSchema,
       runConfig
     },
     { modelAdapter: adapter }
@@ -280,7 +283,7 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
           return {
             id: 'generation-test',
             model: 'openai/gpt-5.6-sol',
-            choices: [{ message: { content: '{"fragmentId":"frag.f2.0001"}' } }],
+            choices: [{ message: { content: '{"annotationPrediction":"ZERO_CLAIM","claims":[]}' } }],
             usage: { prompt_tokens: 10, completion_tokens: 5 }
           };
         }
@@ -290,7 +293,7 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
   const result = await adapter.generate({
     systemPrompt: 'system',
     input: 'input',
-    outputSchema: benchmark.predictionSchema,
+    outputSchema: providerPredictionSchema,
     runConfig: {
       ...runConfig,
       model: 'openai/gpt-5.6-sol',
@@ -311,7 +314,11 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
   assert.equal(Object.hasOwn(body, 'temperature'), false);
   assert.equal(Object.hasOwn(body, 'top_p'), false);
   assert.doesNotMatch(JSON.stringify(body.response_format.json_schema.schema), /uniqueItems/u);
-  assert.equal(result.rawResponse, '{"fragmentId":"frag.f2.0001"}');
+  assert.doesNotMatch(JSON.stringify(body.response_format.json_schema.schema), /minLength/u);
+  assert.equal(body.response_format.json_schema.schema.properties.annotationPrediction.type, 'string');
+  assert.equal(result.rawResponse, '{"annotationPrediction":"ZERO_CLAIM","claims":[]}');
+  assert.ok(result.providerSchemaDroppedKeywords.some((item) => item.keyword === 'minLength'));
+  assert.equal(result.providerEnumTypesInjected.length, 0);
   assert.doesNotMatch(JSON.stringify(result.providerResponse), /secret-test-key/u);
 });
 
@@ -344,7 +351,7 @@ test('OpenRouter adapter retains useful provider errors while redacting secrets 
     adapter.generate({
       systemPrompt: 'system',
       input: 'input',
-      outputSchema: benchmark.predictionSchema,
+      outputSchema: providerPredictionSchema,
       runConfig: {
         ...runConfig,
         model: 'openai/gpt-5.6-sol',

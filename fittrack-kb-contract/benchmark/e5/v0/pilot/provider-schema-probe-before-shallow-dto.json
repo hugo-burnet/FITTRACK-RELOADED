@@ -1,0 +1,156 @@
+{
+  "status": "FAIL",
+  "provider": "openrouter",
+  "baseURL": "https://openrouter.ai/api/v1",
+  "requestedModel": "openai/gpt-5.6-sol",
+  "providerDiagnostic": {
+    "provider": "openrouter",
+    "status": 400,
+    "message": "Provider returned error",
+    "code": 400,
+    "type": null,
+    "metadata": {
+      "raw": "{\n  \"error\": {\n    \"message\": \"Invalid schema for response_format 'e5_llm_benchmark_prediction'. Please ensure it is a valid JSON Schema.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"text.format.schema\",\n    \"code\": \"invalid_json_schema\"\n  }\n}",
+      "provider_name": "Azure",
+      "is_byok": false,
+      "provider_error_code": "invalid_json_schema",
+      "previous_errors": [
+        {
+          "code": 400,
+          "message": "[REDACTED]",
+          "provider_name": "Azure",
+          "raw": "{\n  \"error\": {\n    \"message\": \"Invalid schema for response_format 'e5_llm_benchmark_prediction'. Please ensure it is a valid JSON Schema.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"text.format.schema\",\n    \"code\": \"invalid_json_schema\"\n  }\n}"
+        }
+      ]
+    },
+    "providerDetail": null,
+    "requestId": null,
+    "responseId": null,
+    "providerSchemaDroppedKeywords": [
+      {
+        "keyword": "$id",
+        "paths": [
+          "#/$id"
+        ]
+      },
+      {
+        "keyword": "$schema",
+        "paths": [
+          "#/$schema"
+        ]
+      },
+      {
+        "keyword": "maxItems",
+        "paths": [
+          "#/$defs/claim/properties/supportSpans/maxItems",
+          "#/properties/claims/maxItems"
+        ]
+      },
+      {
+        "keyword": "minItems",
+        "paths": [
+          "#/$defs/claim/properties/supportSpans/minItems"
+        ]
+      },
+      {
+        "keyword": "minLength",
+        "paths": [
+          "#/$defs/claim/properties/cannotConclude/items/minLength",
+          "#/$defs/claim/properties/conditions/items/minLength",
+          "#/$defs/claim/properties/limitations/items/minLength",
+          "#/$defs/claim/properties/rawStatement/minLength",
+          "#/$defs/claim/properties/unresolved/items/minLength",
+          "#/$defs/supportSpan/properties/text/minLength"
+        ]
+      },
+      {
+        "keyword": "minimum",
+        "paths": [
+          "#/$defs/supportSpan/properties/occurrence/minimum"
+        ]
+      },
+      {
+        "keyword": "pattern",
+        "paths": [
+          "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern",
+          "#/$defs/claim/properties/technicalClaimRef/pattern",
+          "#/properties/fragmentId/pattern"
+        ]
+      },
+      {
+        "keyword": "title",
+        "paths": [
+          "#/title"
+        ]
+      },
+      {
+        "keyword": "uniqueItems",
+        "paths": [
+          "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+          "#/$defs/claim/properties/flags/uniqueItems",
+          "#/$defs/evidenceTypesResolution/properties/value/uniqueItems"
+        ]
+      }
+    ],
+    "providerEnumTypesInjected": [
+      {
+        "path": "#/$defs/assessmentDraft/properties/hierarchyHint",
+        "inferredType": "string",
+        "enumSize": 2
+      },
+      {
+        "path": "#/$defs/claim/properties/citationAttributionState",
+        "inferredType": "string",
+        "enumSize": 3
+      },
+      {
+        "path": "#/$defs/claim/properties/domain",
+        "inferredType": "string",
+        "enumSize": 6
+      },
+      {
+        "path": "#/$defs/claim/properties/flags/items",
+        "inferredType": "string",
+        "enumSize": 11
+      },
+      {
+        "path": "#/$defs/confidenceResolution/properties/value/items/properties/aspect",
+        "inferredType": "string",
+        "enumSize": 11
+      },
+      {
+        "path": "#/$defs/confidenceResolution/properties/value/items/properties/confidence",
+        "inferredType": "string",
+        "enumSize": 5
+      },
+      {
+        "path": "#/$defs/evidenceTypesResolution/properties/value/items",
+        "inferredType": "string",
+        "enumSize": 22
+      },
+      {
+        "path": "#/$defs/resolutionState",
+        "inferredType": "string",
+        "enumSize": 4
+      },
+      {
+        "path": "#/properties/annotationPrediction",
+        "inferredType": "string",
+        "enumSize": 2
+      }
+    ],
+    "providerSchemaAssertions": {
+      "passed": true,
+      "maxDepth": 8,
+      "maxDepthLimit": 10,
+      "propertyCount": 45,
+      "propertyLimit": 5000,
+      "enumValueCount": 105,
+      "enumValueLimit": 1000,
+      "schemaStringLength": 2018,
+      "schemaStringLengthLimit": 120000,
+      "refsChecked": 13,
+      "errors": []
+    }
+  }
+}

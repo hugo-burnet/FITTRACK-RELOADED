@@ -10,8 +10,10 @@ production et aucun outil de génération n’ouvre l’adjudication GOLD.
 Fragments E5-P0 + CitationOccurrences E5-P0
   → prompt fermé
   → adapter OpenRouter ou replay
-  → réponse JSON structurée
-  → validation déterministe et guardrails
+  → E5ProviderPrediction shallow (transport uniquement)
+  → validation Provider DTO
+  → adapter déterministe provider → canonique
+  → validation canonique, spans, citations et guardrails
   → prédiction benchmark
   → comparateur GOLD séparé
 ```
@@ -20,6 +22,19 @@ L’interface profonde est `extractProseFragment`. Elle cache le prompt, les
 retries techniques, la résolution des spans UTF-8, les contrôles de citations,
 les guardrails et les IDs techniques. L’adapter OpenRouter et l’adapter replay sont
 les deux implémentations réelles du seam modèle.
+
+Le schéma de prédiction canonique reste l’autorité de validation locale. Le
+module `createE5ProviderPredictionSchema` en dérive uniquement les vocabulaires
+pour construire un DTO de transport à profondeur maximale 5. Les spans y sont
+des offsets UTF-8 parallèles et les confiances multi-aspect trois arrays
+parallèles ; `providerPredictionToCanonical` reconstruit ensuite sans réseau le
+schéma canonique, les textes, les IDs temporaires et le `fragmentId`.
+
+`projectProviderSchema` applique enfin l’allowlist Structured Outputs au DTO,
+vérifie les limites Azure et journalise les contraintes retirées. `minLength`,
+`uniqueItems`, les bornes d’arrays, les patterns et tous les invariants restent
+appliqués après génération par Ajv et les validations E5. Le DTO n’est ni un
+contrat métier ni une source utilisée par le comparateur GOLD.
 
 ## Configuration figée avant résultats
 

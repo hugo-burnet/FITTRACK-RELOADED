@@ -1,5 +1,5 @@
 import { assertNoGoldenLeak, buildPromptInput, E5_SYSTEM_PROMPT } from './prompt.mjs';
-import { createPredictionValidator, validateAndMaterialize } from './validate.mjs';
+import { createPredictionValidator, validateProviderAndMaterialize } from './validate.mjs';
 
 function retryPrompt(originalInput, diagnostics) {
   const errors = diagnostics.map((item) => ({ code: item.code, message: item.message }));
@@ -13,8 +13,16 @@ function retryPrompt(originalInput, diagnostics) {
 // Interface profonde unique : construction du prompt, retries techniques,
 // validation, offsets UTF-8, guardrails et matérialisation restent derrière ce seam.
 export async function extractProseFragment(input, { modelAdapter }) {
-  const { fragment, citationCatalog, vocabularies, predictionSchema, runConfig } = input;
-  const schemaValidator = createPredictionValidator(predictionSchema);
+  const {
+    fragment,
+    citationCatalog,
+    vocabularies,
+    predictionSchema,
+    providerPredictionSchema,
+    runConfig
+  } = input;
+  const canonicalSchemaValidator = createPredictionValidator(predictionSchema);
+  const providerSchemaValidator = createPredictionValidator(providerPredictionSchema);
   const initialInput = buildPromptInput({ fragment, citationCatalog, vocabularies });
   assertNoGoldenLeak(`${E5_SYSTEM_PROMPT}\n${initialInput}`);
   const attempts = [];
@@ -23,16 +31,17 @@ export async function extractProseFragment(input, { modelAdapter }) {
     const response = await modelAdapter.generate({
       systemPrompt: E5_SYSTEM_PROMPT,
       input: promptInput,
-      outputSchema: predictionSchema,
+      outputSchema: providerPredictionSchema,
       runConfig,
       fragmentId: fragment.fragmentId,
       attempt
     });
-    const validation = validateAndMaterialize({
+    const validation = validateProviderAndMaterialize({
       rawResponse: response.rawResponse,
       expectedFragment: fragment,
       citationCatalog,
-      schemaValidator,
+      providerSchemaValidator,
+      canonicalSchemaValidator,
       runConfig
     });
     attempts.push({
@@ -44,6 +53,9 @@ export async function extractProseFragment(input, { modelAdapter }) {
       modelVersion: response.modelVersion ?? null,
       usage: response.usage ?? null,
       latencyMs: response.latencyMs ?? null,
+      providerSchemaDroppedKeywords: response.providerSchemaDroppedKeywords ?? null,
+      providerEnumTypesInjected: response.providerEnumTypesInjected ?? null,
+      providerSchemaAssertions: response.providerSchemaAssertions ?? null,
       validation: {
         accepted: validation.accepted,
         retryable: validation.retryable,

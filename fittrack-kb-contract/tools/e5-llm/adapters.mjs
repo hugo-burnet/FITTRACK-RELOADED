@@ -1,3 +1,5 @@
+import { projectProviderSchema } from './provider-schema.mjs';
+
 function extractOutputText(response) {
   if (typeof response.output_text === 'string') return response.output_text;
   const parts = [];
@@ -41,22 +43,6 @@ function redactProviderValue(value, depth = 0) {
     } else {
       output[key] = redactProviderValue(item, depth + 1);
     }
-  }
-  return output;
-}
-
-function providerStructuredOutputSchema(outputSchema, root = true) {
-  if (Array.isArray(outputSchema)) {
-    return outputSchema.map((item) => providerStructuredOutputSchema(item, false));
-  }
-  if (!outputSchema || typeof outputSchema !== 'object') return outputSchema;
-  const output = {};
-  for (const [key, value] of Object.entries(outputSchema)) {
-    if (root && ['$schema', '$id', 'title'].includes(key)) continue;
-    // The OpenAI Structured Outputs subset does not list uniqueItems.
-    // Ajv still enforces uniqueness locally against the authoritative E5 schema.
-    if (key === 'uniqueItems') continue;
-    output[key] = providerStructuredOutputSchema(value, false);
   }
   return output;
 }
@@ -118,7 +104,7 @@ export function createOpenAIAdapter({ apiKey, fetchImpl = globalThis.fetch, endp
   return {
     async generate({ systemPrompt, input, outputSchema, runConfig }) {
       const started = Date.now();
-      const providerSchema = providerStructuredOutputSchema(outputSchema);
+      const { providerSchema } = projectProviderSchema(outputSchema);
       const body = {
         model: runConfig.model,
         instructions: systemPrompt,
@@ -173,6 +159,7 @@ export function createOpenRouterAdapter({
   return {
     async generate({ systemPrompt, input, outputSchema, runConfig }) {
       const started = Date.now();
+      const projection = projectProviderSchema(outputSchema);
       const body = {
         model: runConfig.model,
         messages: [
@@ -188,7 +175,7 @@ export function createOpenRouterAdapter({
           json_schema: {
             name: 'e5_llm_benchmark_prediction',
             strict: true,
-            schema: providerStructuredOutputSchema(outputSchema)
+            schema: projection.providerSchema
           }
         },
         provider: {
@@ -211,7 +198,11 @@ export function createOpenRouterAdapter({
       });
       const providerResponse = await readJsonResponse(httpResponse);
       if (!httpResponse.ok) {
-        throw new OpenRouterHttpError(openRouterErrorDiagnostic(httpResponse, providerResponse));
+        const diagnostic = openRouterErrorDiagnostic(httpResponse, providerResponse);
+        diagnostic.providerSchemaDroppedKeywords = projection.providerSchemaDroppedKeywords;
+        diagnostic.providerEnumTypesInjected = projection.providerEnumTypesInjected;
+        diagnostic.providerSchemaAssertions = projection.providerSchemaAssertions;
+        throw new OpenRouterHttpError(diagnostic);
       }
       return {
         rawResponse: extractChatCompletionText(providerResponse),
@@ -219,7 +210,10 @@ export function createOpenRouterAdapter({
         responseId: providerResponse.id ?? null,
         modelVersion: providerResponse.model ?? runConfig.model,
         usage: providerResponse.usage ?? null,
-        latencyMs: Date.now() - started
+        latencyMs: Date.now() - started,
+        providerSchemaDroppedKeywords: projection.providerSchemaDroppedKeywords,
+        providerEnumTypesInjected: projection.providerEnumTypesInjected,
+        providerSchemaAssertions: projection.providerSchemaAssertions
       };
     }
   };

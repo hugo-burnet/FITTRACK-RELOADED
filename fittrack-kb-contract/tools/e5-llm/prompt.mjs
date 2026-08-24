@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export const PROMPT_VERSION = 'e5-llm-v0.1.0';
+export const PROMPT_VERSION = 'e5-llm-v0.2.0';
 
 export const E5_SYSTEM_PROMPT = `Tu es l'extracteur E5 de la Knowledge Base FitTrack.
 
@@ -21,10 +21,10 @@ GRANULARITE AUTORITAIRE
 - Evite les mega-claims comme les micro-claims artificiels.
 
 SUPPORT VERBATIM
-- Chaque claim doit avoir au moins un supportSpan exact du fragment.
-- Recopie exactement le texte, espaces, accents, ponctuation et Markdown inclus.
-- occurrence est l'occurrence 1-indexée de ce texte exact dans le fragment.
-- rawStatement doit être exactement égal au texte d'un supportSpan.
+- Chaque claim doit avoir au moins un intervalle exact dans supportSpanStartBytes/supportSpanEndBytes.
+- Les offsets sont relatifs au début UTF-8 de rawText, start inclus et end exclu.
+- rawStatementSpanIndex désigne l'intervalle qui devient rawStatement ; le pipeline relit le texte exact.
+- Ne génère ni texte de span, ni offsets absolus, ni provenance technique : le pipeline les reconstruit.
 
 ZERO_CLAIM
 - Réponds ZERO_CLAIM et claims=[] si aucune unité de connaissance pertinente n'est présente.
@@ -33,9 +33,11 @@ ZERO_CLAIM
 
 AXES ET INCERTITUDE
 - Utilise exclusivement les valeurs fermées du schéma.
-- Si une dimension n'est pas déterminable depuis le fragment, utilise state=UNRESOLVED et value=null avec une raison concise.
+- Les axes sont aplatis dans le DTO : knowledgeTypeState/knowledgeType, epistemicStatusState/epistemicStatus, directnessState/directness et evidenceTypesState/evidenceTypes.
+- Si une dimension n'est pas déterminable depuis le fragment, utilise son champ State=UNRESOLVED et sa valeur=null avec une raison concise.
 - N'injecte jamais le mot UNRESOLVED dans un champ de vocabulaire.
 - Ne transforme pas une plage de confiance en scalaire.
+- Pour une confiance multi-aspect, confidenceAspects, confidenceLevels et confidenceRationales sont trois arrays parallèles de même longueur ; elles sont toutes null si confidenceState n'est pas RESOLVED.
 - Un résultat non significatif n'est pas une équivalence.
 - Une absence de preuve n'est extraite que si le fragment l'énonce explicitement.
 - EXPERT_PRACTICE et HYPOTHESIS ne sont jamais des faits établis.
@@ -57,8 +59,8 @@ GARDE-FOUS CRITIQUES
 - Ne généralise jamais au-delà de la population ou condition explicitement décrite.
 
 SORTIE
-- Réponds exclusivement par un JSON conforme au schéma structuré, sans commentaire libre.
-- Les technicalClaimRef sont temporaires, dans l'ordre tmp.claim.01, tmp.claim.02, etc. Le pipeline attribue les IDs techniques stables après validation.`;
+- Réponds exclusivement par un JSON conforme au Provider DTO structuré, sans commentaire libre.
+- Ne génère aucun fragmentId, technicalClaimRef, claim ID, runId ou identifiant de provenance. Le pipeline les reconstruit après validation.`;
 
 export function sha256Text(value) {
   return `sha256:${createHash('sha256').update(value, 'utf8').digest('hex')}`;

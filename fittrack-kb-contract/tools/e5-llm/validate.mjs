@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import Ajv2020 from 'ajv/dist/2020.js';
+import { providerPredictionToCanonical } from './provider-dto.mjs';
 
 const RETRYABLE_CODES = new Set([
   'INVALID_JSON',
@@ -221,6 +222,74 @@ function semanticGuardrails(fragment, claim, diagnostics) {
 export function createPredictionValidator(schema) {
   const ajv = new Ajv2020({ strict: false, allErrors: true, allowUnionTypes: true });
   return ajv.compile(schema);
+}
+
+export function validateProviderAndMaterialize({
+  rawResponse,
+  expectedFragment,
+  citationCatalog,
+  providerSchemaValidator,
+  canonicalSchemaValidator,
+  runConfig
+}) {
+  let providerPrediction;
+  try {
+    providerPrediction = JSON.parse(rawResponse);
+  } catch (error) {
+    return {
+      accepted: false,
+      prediction: null,
+      diagnostics: [
+        diagnostic('INVALID_JSON', 'Réponse provider non JSON', {
+          detail: error instanceof Error ? error.message : String(error)
+        })
+      ],
+      retryable: true
+    };
+  }
+  if (!providerSchemaValidator(providerPrediction)) {
+    return {
+      accepted: false,
+      prediction: null,
+      diagnostics: [
+        diagnostic('SCHEMA_FAILURE', 'Réponse non conforme au Provider DTO', {
+          schemaErrors: structuredClone(providerSchemaValidator.errors ?? [])
+        })
+      ],
+      retryable: true
+    };
+  }
+  let canonicalPrediction;
+  try {
+    canonicalPrediction = providerPredictionToCanonical(
+      providerPrediction,
+      expectedFragment,
+      citationCatalog
+    );
+  } catch (error) {
+    const detail =
+      error instanceof Error && 'providerDtoDiagnostic' in error
+        ? error.providerDtoDiagnostic
+        : { message: error instanceof Error ? error.message : String(error) };
+    const code = detail.code === 'INVENTED_CITATION'
+      ? 'INVENTED_CITATION'
+      : detail.code === 'PROVIDER_SPAN_INVALID'
+        ? 'WRONG_SPAN'
+        : 'SCHEMA_FAILURE';
+    return {
+      accepted: false,
+      prediction: null,
+      diagnostics: [diagnostic(code, 'Provider DTO impossible à reconstruire canoniquement', { detail })],
+      retryable: RETRYABLE_CODES.has(code)
+    };
+  }
+  return validateAndMaterialize({
+    rawResponse: JSON.stringify(canonicalPrediction),
+    expectedFragment,
+    citationCatalog,
+    schemaValidator: canonicalSchemaValidator,
+    runConfig
+  });
 }
 
 export function validateAndMaterialize({
