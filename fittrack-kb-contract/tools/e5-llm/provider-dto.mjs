@@ -1,5 +1,12 @@
 export const PROVIDER_DTO_VERSION = 'e5-provider-prediction-v3';
 export const LEGACY_PROVIDER_DTO_VERSION = 'e5-provider-prediction-v2';
+
+export function providerSchemaIncludesCoverage(providerSchema) {
+  return (
+    providerSchema?.required?.includes('coverageLedger') === true &&
+    providerSchema?.$defs?.claim?.required?.includes('coverageUnitIndexes') === true
+  );
+}
 export const ANCHOR_REPAIR_DTO_VERSION = 'e5-provider-anchor-repair-v1';
 
 const COVERAGE_DECISIONS = [

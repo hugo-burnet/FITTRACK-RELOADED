@@ -1,8 +1,10 @@
 import {
   createE5AnchorRepairSchema,
   mergeAnchorRepairs,
+  providerSchemaIncludesCoverage,
   ProviderDtoError
 } from './provider-dto.mjs';
+import { buildCoverageUnits } from './coverage.mjs';
 import {
   assertNoGoldenLeak,
   buildAnchorRepairPrompt,
@@ -103,6 +105,7 @@ function attemptRecord({ attempt, callType, promptInput, response, validation })
 
 function invalidRepair(code, message, detail = {}) {
   return {
+    status: 'REJECTED',
     accepted: false,
     prediction: null,
     diagnostics: [{ code, message, critical: true, retryable: false, ...detail }],
@@ -153,15 +156,35 @@ function parseAndMergeRepair({
 function resultOf(fragmentId, validation, attempts, runConfig) {
   return {
     fragmentId,
-    status: validation.accepted ? 'VALIDATED' : 'REJECTED',
-    prediction: validation.accepted ? validation.prediction : null,
+    status: validation.status,
+    prediction: validation.prediction,
     diagnostics: validation.diagnostics,
+    claimAudit: validation.claimAudit,
+    coverageAudit: validation.coverageAudit,
     partialAudit:
       validation.partialAudit ??
       attempts.find((attempt) => attempt.validation.partialAudit)?.validation.partialAudit ??
       null,
     attempts,
     usageByCallType: summarizeAttemptUsage(attempts, runConfig)
+  };
+}
+
+function retainPartialResultAfterRepairFailure(partialValidation, repairFailure) {
+  if (partialValidation.status !== 'PARTIALLY_VALIDATED') return repairFailure;
+  return {
+    ...partialValidation,
+    diagnostics: [
+      ...partialValidation.diagnostics,
+      {
+        code: 'REPAIR_FAILED',
+        message: 'La réparation ciblée a échoué ; les claims valides sont conservées',
+        critical: false,
+        retryable: false,
+        detail: repairFailure.diagnostics
+      }
+    ],
+    retryable: false
   };
 }
 
@@ -181,6 +204,9 @@ export async function extractProseFragment(input, { modelAdapter }) {
   const repairSchema = createE5AnchorRepairSchema();
   const repairSchemaValidator = createPredictionValidator(repairSchema);
   const fullPromptInput = buildPromptInput({ fragment, citationCatalog, vocabularies });
+  const coverageUnits = providerSchemaIncludesCoverage(providerPredictionSchema)
+    ? buildCoverageUnits(fragment)
+    : undefined;
   assertNoGoldenLeak(`${E5_SYSTEM_PROMPT}\n${fullPromptInput}`);
 
   const attempts = [];
@@ -199,6 +225,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
     citationCatalog,
     providerSchemaValidator,
     canonicalSchemaValidator,
+    coverageUnits,
     runConfig
   });
   attempts.push(attemptRecord({
@@ -208,7 +235,15 @@ export async function extractProseFragment(input, { modelAdapter }) {
     response: fullResponse,
     validation: fullValidation
   }));
-  if (fullValidation.accepted || !fullValidation.retryable) {
+  const canRepairPartial =
+    fullValidation.status === 'PARTIALLY_VALIDATED' &&
+    fullValidation.repairableClaimIndexes.length > 0;
+  const canRepairLegacyRejection =
+    coverageUnits === undefined &&
+    !fullValidation.accepted &&
+    fullValidation.retryable &&
+    fullValidation.repairableClaimIndexes.length > 0;
+  if (!canRepairPartial && !canRepairLegacyRejection) {
     return resultOf(fragment.fragmentId, fullValidation, attempts, runConfig);
   }
 
@@ -255,7 +290,12 @@ export async function extractProseFragment(input, { modelAdapter }) {
       response: { rawResponse: '', providerResponse: null, usage: null },
       validation
     }));
-    return resultOf(fragment.fragmentId, validation, attempts, runConfig);
+    return resultOf(
+      fragment.fragmentId,
+      retainPartialResultAfterRepairFailure(fullValidation, validation),
+      attempts,
+      runConfig
+    );
   }
   const repair = parseAndMergeRepair({
     rawResponse: repairResponse.rawResponse,
@@ -270,6 +310,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
         citationCatalog,
         providerSchemaValidator,
         canonicalSchemaValidator,
+        coverageUnits,
         runConfig
       })
     : repair;
@@ -280,5 +321,16 @@ export async function extractProseFragment(input, { modelAdapter }) {
     response: repairResponse,
     validation: finalValidation
   }));
-  return resultOf(fragment.fragmentId, finalValidation, attempts, runConfig);
+  const repairedClaimIndexes = new Set(fullValidation.repairableClaimIndexes);
+  const repairStillNeeded =
+    repair.accepted &&
+    finalValidation.repairableClaimIndexes?.some((claimIndex) => repairedClaimIndexes.has(claimIndex));
+  return resultOf(
+    fragment.fragmentId,
+    !repair.accepted || repairStillNeeded
+      ? retainPartialResultAfterRepairFailure(fullValidation, finalValidation)
+      : finalValidation,
+    attempts,
+    runConfig
+  );
 }
