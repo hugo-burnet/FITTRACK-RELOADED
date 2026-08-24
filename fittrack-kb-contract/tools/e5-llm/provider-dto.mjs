@@ -1,5 +1,13 @@
-export const PROVIDER_DTO_VERSION = 'e5-provider-prediction-v2';
+export const PROVIDER_DTO_VERSION = 'e5-provider-prediction-v3';
+export const LEGACY_PROVIDER_DTO_VERSION = 'e5-provider-prediction-v2';
 export const ANCHOR_REPAIR_DTO_VERSION = 'e5-provider-anchor-repair-v1';
+
+const COVERAGE_DECISIONS = [
+  'CLAIM_CONTENT',
+  'CONTEXT_ONLY',
+  'POLICY_ONLY',
+  'NO_QUALIFIABLE_PREDICATE'
+];
 
 function cloneJson(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -66,10 +74,20 @@ function canonicalEnums(canonicalSchema) {
 
 // Deep module interface: derive a transport-only schema from the canonical
 // vocabularies while keeping every transport node shallow enough for Azure.
-export function createE5ProviderPredictionSchema(canonicalSchema) {
+export function createE5ProviderPredictionSchema(
+  canonicalSchema,
+  { dtoVersion = PROVIDER_DTO_VERSION } = {}
+) {
+  if (dtoVersion !== PROVIDER_DTO_VERSION && dtoVersion !== LEGACY_PROVIDER_DTO_VERSION) {
+    throw new ProviderDtoError('provider_dto_version_unsupported', {
+      code: 'PROVIDER_DTO_VERSION_UNSUPPORTED',
+      dtoVersion
+    });
+  }
+  const includesCoverage = dtoVersion === PROVIDER_DTO_VERSION;
   const vocab = canonicalEnums(canonicalSchema);
   const resolutionState = enumSchema(vocab.resolutionState);
-  const claim = requiredObject({
+  const claimProperties = {
     supportAnchors: stringArray({ type: 'string', minLength: 1 }, { minItems: 1, maxItems: 6 }),
     rawStatementAnchorIndex: { type: 'integer', minimum: 0 },
     domain: enumSchema(vocab.domain),
@@ -117,17 +135,40 @@ export function createE5ProviderPredictionSchema(canonicalSchema) {
     cannotConclude: stringArray({ type: 'string', minLength: 1 }),
     unresolved: stringArray({ type: 'string', minLength: 1 }),
     flags: stringArray(enumSchema(vocab.flags), { uniqueItems: true })
-  });
-  return requiredObject({
+  };
+  if (includesCoverage) {
+    claimProperties.coverageUnitIndexes = {
+      type: 'array',
+      minItems: 1,
+      uniqueItems: true,
+      items: { type: 'integer', minimum: 0 }
+    };
+  }
+  const claim = requiredObject(claimProperties);
+  const defs = { claim };
+  const rootProperties = {
     annotationPrediction: enumSchema(vocab.annotationPrediction),
+    ...(includesCoverage
+      ? {
+          coverageLedger: {
+            type: 'array',
+            items: { $ref: '#/$defs/coverageLedgerEntry' }
+          }
+        }
+      : {}),
     claims: {
       type: 'array',
       maxItems: 20,
       items: { $ref: '#/$defs/claim' }
     }
-  }, {
-    $defs: { claim }
-  });
+  };
+  if (includesCoverage) {
+    defs.coverageLedgerEntry = requiredObject({
+      unitIndex: { type: 'integer', minimum: 0 },
+      decision: enumSchema(COVERAGE_DECISIONS)
+    });
+  }
+  return requiredObject(rootProperties, { $defs: defs });
 }
 
 // Repair responses cannot rewrite claims or classifications: their interface
@@ -284,56 +325,149 @@ function resolution(state, value, reason) {
   return { state, value, reason };
 }
 
-// Deep module interface: reconstruct the canonical raw prediction using only
-// provider data plus deterministic fragment/catalog context.
-export function providerPredictionToCanonical(providerPrediction, fragment, citationCatalog) {
+// Deep module interface: reconstruct one canonical claim using only provider
+// data plus deterministic fragment/catalog context. Transport-only coverage
+// fields intentionally never cross this boundary.
+export function providerClaimToCanonical(providerClaim, claimIndex, fragment, citationCatalog) {
   const knownCitations = new Set(citationCatalog.map((item) => item.candidateId));
   const anchorDiagnostics = [];
-  const resolvedClaims = providerPrediction.claims.map((claim, claimIndex) => {
-    const path = `#/claims/${claimIndex}`;
-    const resolvedAnchors = claim.supportAnchors.map((anchor, anchorIndex) => {
-      try {
-        return resolveUniqueAnchor(
-          fragment,
-          anchor,
-          `${path}/supportAnchors/${anchorIndex}`,
-          claimIndex,
-          anchorIndex
-        );
-      } catch (error) {
-        if (error instanceof ProviderDtoError) {
-          anchorDiagnostics.push(error.providerDtoDiagnostic);
-          return null;
-        }
-        throw error;
+  const path = `#/claims/${claimIndex}`;
+  const resolvedAnchors = providerClaim.supportAnchors.map((anchor, anchorIndex) => {
+    try {
+      return resolveUniqueAnchor(
+        fragment,
+        anchor,
+        `${path}/supportAnchors/${anchorIndex}`,
+        claimIndex,
+        anchorIndex
+      );
+    } catch (error) {
+      if (error instanceof ProviderDtoError) {
+        anchorDiagnostics.push(error.providerDtoDiagnostic);
+        return null;
       }
+      throw error;
+    }
+  });
+  if (
+    !Number.isInteger(providerClaim.rawStatementAnchorIndex) ||
+    providerClaim.rawStatementAnchorIndex < 0 ||
+    providerClaim.rawStatementAnchorIndex >= resolvedAnchors.length
+  ) {
+    throw new ProviderDtoError('provider_raw_statement_anchor_index_invalid', {
+      code: 'PROVIDER_ANCHOR_INDEX_INVALID',
+      path: `${path}/rawStatementAnchorIndex`,
+      claimIndex
     });
-    if (
-      !Number.isInteger(claim.rawStatementAnchorIndex) ||
-      claim.rawStatementAnchorIndex < 0 ||
-      claim.rawStatementAnchorIndex >= resolvedAnchors.length
-    ) {
-      throw new ProviderDtoError('provider_raw_statement_anchor_index_invalid', {
-        code: 'PROVIDER_ANCHOR_INDEX_INVALID',
-        path: `${path}/rawStatementAnchorIndex`,
+  }
+  if (anchorDiagnostics.length > 0) {
+    throw new ProviderDtoError('provider_anchor_resolution_failed', {
+      code: 'ANCHOR_RESOLUTION_FAILED',
+      diagnostics: anchorDiagnostics
+    });
+  }
+  const rawStatement = resolvedAnchors[providerClaim.rawStatementAnchorIndex].span.text;
+  const ordered = [...resolvedAnchors].sort(
+    (left, right) => left.relativeStartByte - right.relativeStartByte
+  );
+  for (let anchorIndex = 1; anchorIndex < ordered.length; anchorIndex += 1) {
+    if (ordered[anchorIndex].relativeStartByte < ordered[anchorIndex - 1].relativeEndByte) {
+      throw new ProviderDtoError('support_anchors_overlap', {
+        code: 'OVERLAPPING_SUPPORT_ANCHORS',
+        path: `${path}/supportAnchors`,
         claimIndex
       });
     }
-    if (resolvedAnchors.some((item) => item === null)) return null;
-    const rawStatement = resolvedAnchors[claim.rawStatementAnchorIndex].span.text;
-    const ordered = [...resolvedAnchors].sort(
-      (left, right) => left.relativeStartByte - right.relativeStartByte
-    );
-    for (let anchorIndex = 1; anchorIndex < ordered.length; anchorIndex += 1) {
-      if (ordered[anchorIndex].relativeStartByte < ordered[anchorIndex - 1].relativeEndByte) {
-        throw new ProviderDtoError('support_anchors_overlap', {
-          code: 'OVERLAPPING_SUPPORT_ANCHORS',
-          path: `${path}/supportAnchors`,
-          claimIndex
-        });
-      }
+  }
+  assertParallelArrays(
+    [
+      providerClaim.confidenceAspects,
+      providerClaim.confidenceLevels,
+      providerClaim.confidenceRationales
+    ],
+    `${path}/confidenceByAspect`,
+    { nullable: true }
+  );
+  for (const citationId of providerClaim.citationOccurrenceRefs) {
+    if (!knownCitations.has(citationId)) {
+      throw new ProviderDtoError('provider_citation_not_in_closed_catalog', {
+        code: 'INVENTED_CITATION',
+        path: `${path}/citationOccurrenceRefs`,
+        citationId
+      });
     }
-    return { supportSpans: ordered.map((item) => item.span), rawStatement };
+  }
+  const confidenceValue = providerClaim.confidenceAspects === null
+    ? null
+    : providerClaim.confidenceAspects.map((aspect, index) => ({
+        aspect,
+        confidence: providerClaim.confidenceLevels[index],
+        rationale: providerClaim.confidenceRationales[index]
+      }));
+  return {
+    technicalClaimRef: `tmp.claim.${String(claimIndex + 1).padStart(2, '0')}`,
+    rawStatement,
+    supportSpans: ordered.map((item) => item.span),
+    domain: providerClaim.domain,
+    knowledgeType: resolution(
+      providerClaim.knowledgeTypeState,
+      providerClaim.knowledgeType,
+      providerClaim.knowledgeTypeReason
+    ),
+    epistemicStatus: resolution(
+      providerClaim.epistemicStatusState,
+      providerClaim.epistemicStatus,
+      providerClaim.epistemicStatusReason
+    ),
+    assessmentDraft: {
+      confidenceByAspect: {
+        state: providerClaim.confidenceState,
+        value: confidenceValue,
+        raw: providerClaim.confidenceRaw,
+        reason: providerClaim.confidenceReason
+      },
+      directness: resolution(
+        providerClaim.directnessState,
+        providerClaim.directness,
+        providerClaim.directnessReason
+      ),
+      evidenceTypes: resolution(
+        providerClaim.evidenceTypesState,
+        providerClaim.evidenceTypes,
+        providerClaim.evidenceTypesReason
+      ),
+      clinicalEvidenceLevel: providerClaim.clinicalEvidenceLevel,
+      hierarchyHint: expectedHierarchy(fragment),
+      supportsHypertrophySuperiority: providerClaim.supportsHypertrophySuperiority,
+      supportsDemonstratedClinicalRisk: providerClaim.supportsDemonstratedClinicalRisk
+    },
+    citationOccurrenceRefs: [...providerClaim.citationOccurrenceRefs],
+    citationAttributionState: providerClaim.citationAttributionState,
+    conditions: [...providerClaim.conditions],
+    limitations: [...providerClaim.limitations],
+    cannotConclude: [...providerClaim.cannotConclude],
+    unresolved: [...providerClaim.unresolved],
+    flags: [...providerClaim.flags]
+  };
+}
+
+// Deep module interface: reconstruct the canonical raw prediction using only
+// provider data plus deterministic fragment/catalog context.
+export function providerPredictionToCanonical(providerPrediction, fragment, citationCatalog) {
+  const anchorDiagnostics = [];
+  const claims = providerPrediction.claims.map((claim, claimIndex) => {
+    try {
+      return providerClaimToCanonical(claim, claimIndex, fragment, citationCatalog);
+    } catch (error) {
+      if (
+        error instanceof ProviderDtoError &&
+        error.providerDtoDiagnostic.code === 'ANCHOR_RESOLUTION_FAILED'
+      ) {
+        anchorDiagnostics.push(...error.providerDtoDiagnostic.diagnostics);
+        return null;
+      }
+      throw error;
+    }
   });
   if (anchorDiagnostics.length > 0) {
     throw new ProviderDtoError('provider_anchor_resolution_failed', {
@@ -341,76 +475,6 @@ export function providerPredictionToCanonical(providerPrediction, fragment, cita
       diagnostics: anchorDiagnostics
     });
   }
-  const claims = providerPrediction.claims.map((claim, claimIndex) => {
-    const path = `#/claims/${claimIndex}`;
-    const { supportSpans, rawStatement } = resolvedClaims[claimIndex];
-    assertParallelArrays(
-      [claim.confidenceAspects, claim.confidenceLevels, claim.confidenceRationales],
-      `${path}/confidenceByAspect`,
-      { nullable: true }
-    );
-    for (const citationId of claim.citationOccurrenceRefs) {
-      if (!knownCitations.has(citationId)) {
-        throw new ProviderDtoError('provider_citation_not_in_closed_catalog', {
-          code: 'INVENTED_CITATION',
-          path: `${path}/citationOccurrenceRefs`,
-          citationId
-        });
-      }
-    }
-    const confidenceValue = claim.confidenceAspects === null
-      ? null
-      : claim.confidenceAspects.map((aspect, index) => ({
-          aspect,
-          confidence: claim.confidenceLevels[index],
-          rationale: claim.confidenceRationales[index]
-        }));
-    return {
-      technicalClaimRef: `tmp.claim.${String(claimIndex + 1).padStart(2, '0')}`,
-      rawStatement,
-      supportSpans,
-      domain: claim.domain,
-      knowledgeType: resolution(
-        claim.knowledgeTypeState,
-        claim.knowledgeType,
-        claim.knowledgeTypeReason
-      ),
-      epistemicStatus: resolution(
-        claim.epistemicStatusState,
-        claim.epistemicStatus,
-        claim.epistemicStatusReason
-      ),
-      assessmentDraft: {
-        confidenceByAspect: {
-          state: claim.confidenceState,
-          value: confidenceValue,
-          raw: claim.confidenceRaw,
-          reason: claim.confidenceReason
-        },
-        directness: resolution(
-          claim.directnessState,
-          claim.directness,
-          claim.directnessReason
-        ),
-        evidenceTypes: resolution(
-          claim.evidenceTypesState,
-          claim.evidenceTypes,
-          claim.evidenceTypesReason
-        ),
-        clinicalEvidenceLevel: claim.clinicalEvidenceLevel,
-        hierarchyHint: expectedHierarchy(fragment),
-        supportsHypertrophySuperiority: claim.supportsHypertrophySuperiority,
-        supportsDemonstratedClinicalRisk: claim.supportsDemonstratedClinicalRisk
-      },
-      citationOccurrenceRefs: [...claim.citationOccurrenceRefs],
-      citationAttributionState: claim.citationAttributionState,
-      conditions: [...claim.conditions],
-      limitations: [...claim.limitations],
-      cannotConclude: [...claim.cannotConclude],
-      unresolved: [...claim.unresolved],
-      flags: [...claim.flags]
-    };
-  });
   return {
     fragmentId: fragment.fragmentId,
     annotationPrediction: providerPrediction.annotationPrediction,

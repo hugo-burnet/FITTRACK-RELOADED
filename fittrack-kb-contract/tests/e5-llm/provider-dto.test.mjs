@@ -7,6 +7,7 @@ import { loadBenchmarkInputs } from '../../tools/e5-llm/inputs.mjs';
 import {
   canonicalPredictionToProvider,
   createE5ProviderPredictionSchema,
+  providerClaimToCanonical,
   providerPredictionToCanonical
 } from '../../tools/e5-llm/provider-dto.mjs';
 import { projectProviderSchema } from '../../tools/e5-llm/provider-schema.mjs';
@@ -18,7 +19,9 @@ import {
 const root = join(import.meta.dirname, '../..');
 const benchmark = loadBenchmarkInputs(root);
 const canonicalSchema = benchmark.predictionSchema;
-const providerSchema = createE5ProviderPredictionSchema(canonicalSchema);
+const providerSchema = createE5ProviderPredictionSchema(canonicalSchema, {
+  dtoVersion: 'e5-provider-prediction-v2'
+});
 const providerProjection = projectProviderSchema(providerSchema);
 const providerValidator = createPredictionValidator(providerSchema);
 const canonicalValidator = createPredictionValidator(canonicalSchema);
@@ -162,6 +165,63 @@ function goldAnnotationToCanonical(annotation, input) {
 test('provider schema maxDepth is at most five', () => {
   assert.equal(providerProjection.providerSchemaAssertions.maxDepth, 5);
   assert.equal(providerProjection.providerSchemaAssertions.maxDepthLimit, 5);
+});
+
+test('v3 requires a coverage ledger and non-empty unique coverage-unit indexes on claims', () => {
+  const v3 = createE5ProviderPredictionSchema(canonicalSchema, {
+    dtoVersion: 'e5-provider-prediction-v3'
+  });
+  const claimIndexes = v3.$defs.claim.properties.coverageUnitIndexes;
+
+  assert.deepEqual(v3.required, ['annotationPrediction', 'coverageLedger', 'claims']);
+  assert.equal(v3.$defs.claim.required.includes('coverageUnitIndexes'), true);
+  assert.deepEqual(claimIndexes, {
+    type: 'array',
+    minItems: 1,
+    uniqueItems: true,
+    items: { type: 'integer', minimum: 0 }
+  });
+  assert.deepEqual(v3.$defs.coverageLedgerEntry, {
+    type: 'object',
+    additionalProperties: false,
+    required: ['unitIndex', 'decision'],
+    properties: {
+      unitIndex: { type: 'integer', minimum: 0 },
+      decision: {
+        type: 'string',
+        enum: ['CLAIM_CONTENT', 'CONTEXT_ONLY', 'POLICY_ONLY', 'NO_QUALIFIABLE_PREDICATE']
+      }
+    }
+  });
+});
+
+test('v2 remains a coverage-free replay DTO', () => {
+  const v2 = createE5ProviderPredictionSchema(canonicalSchema, {
+    dtoVersion: 'e5-provider-prediction-v2'
+  });
+
+  assert.deepEqual(v2.required, ['annotationPrediction', 'claims']);
+  assert.equal(Object.hasOwn(v2.properties, 'coverageLedger'), false);
+  assert.equal(Object.hasOwn(v2.$defs.claim.properties, 'coverageUnitIndexes'), false);
+});
+
+test('a v3 claim materializes independently without coverage fields in the canonical claim', () => {
+  const provider = canonicalPredictionToProvider(canonicalPrediction(), sample.fragment);
+  const providerClaim = {
+    ...provider.claims[0],
+    coverageUnitIndexes: [0]
+  };
+
+  const canonical = providerClaimToCanonical(
+    providerClaim,
+    0,
+    sample.fragment,
+    sample.citationCatalog
+  );
+
+  assert.deepEqual(canonical, canonicalPrediction().claims[0]);
+  assert.equal(Object.hasOwn(canonical, 'coverageUnitIndexes'), false);
+  assert.equal(Object.hasOwn(canonical, 'coverageLedger'), false);
 });
 
 test('simple Provider DTO reconstructs a canonical-schema-valid prediction', () => {

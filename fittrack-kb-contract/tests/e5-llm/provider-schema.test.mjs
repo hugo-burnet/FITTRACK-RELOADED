@@ -120,12 +120,19 @@ test('provider-accepted output can still be rejected by canonical validation', (
 });
 
 test('shallow E5 Provider DTO passes Azure provider limits and ref assertions', () => {
-  const projection = projectProviderSchema(createE5ProviderPredictionSchema(canonicalE5Schema));
+  const v3 = createE5ProviderPredictionSchema(canonicalE5Schema, {
+    dtoVersion: 'e5-provider-prediction-v3'
+  });
+  const v2 = createE5ProviderPredictionSchema(canonicalE5Schema, {
+    dtoVersion: 'e5-provider-prediction-v2'
+  });
+  const projection = projectProviderSchema(v3);
   assert.equal(projection.providerSchemaAssertions.passed, true);
   assert.ok(projection.providerSchemaAssertions.maxDepth <= 5);
   assert.ok(projection.providerSchemaAssertions.propertyCount <= 5000);
   assert.ok(projection.providerSchemaAssertions.enumValueCount <= 1000);
   assert.ok(projection.providerSchemaAssertions.refsChecked > 0);
+  assert.ok(projectProviderSchema(v2).providerSchemaAssertions.maxDepth <= 5);
 });
 
 test('root anyOf is rejected locally before provider access', () => {
