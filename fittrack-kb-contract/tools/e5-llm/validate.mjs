@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { auditCoverageLedger } from './coverage.mjs';
+import { postprocessClaims } from './postprocess.mjs';
 import { providerClaimToCanonical, providerPredictionToCanonical } from './provider-dto.mjs';
 
 const RETRYABLE_CODES = new Set([
@@ -380,7 +381,8 @@ function validateProviderClaimsIndividually({
   const claimAudits = [];
   const repairableClaimIndexes = [];
   const retainedProviderClaims = [];
-  const retainedCandidates = [];
+  const retainedCanonicalClaims = [];
+  let retainedCandidates = [];
   const diagnostics = [];
 
   providerPrediction.claims.forEach((providerClaim, sourceClaimIndex) => {
@@ -412,6 +414,13 @@ function validateProviderClaimsIndividually({
           technicalClaimRef: claimRef,
           coverageUnitIndexes: providerClaim.coverageUnitIndexes ?? []
         });
+        retainedCanonicalClaims.push({
+          sourceClaimIndex,
+          claim: {
+            ...canonicalClaim,
+            coverageUnitIndexes: [...(providerClaim.coverageUnitIndexes ?? [])]
+          }
+        });
         retainedCandidates.push(audit.canonicalCandidate);
       }
     } catch (error) {
@@ -442,6 +451,36 @@ function validateProviderClaimsIndividually({
   });
   for (const item of coverageAudit.diagnostics) {
     diagnostics.push(diagnostic(item.code, 'Incohérence de couverture', { detail: item }, false));
+  }
+
+  const postprocess = postprocessClaims({
+    claims: retainedCanonicalClaims.map((item) => item.claim),
+    fragment: expectedFragment,
+    citationCatalog,
+    coverageUnits
+  });
+  if (postprocess.resolutions.length > 0) {
+    retainedCandidates = postprocess.claims.map((claim, retainedIndex) => {
+      const { coverageUnitIndexes, ...canonicalClaim } = claim;
+      const sourceClaimIndex = retainedCanonicalClaims[retainedIndex].sourceClaimIndex;
+      const validation = validateAndMaterialize({
+        rawResponse: JSON.stringify({
+          fragmentId: expectedFragment.fragmentId,
+          annotationPrediction: 'CLAIMS',
+          claims: [canonicalClaim]
+        }),
+        expectedFragment,
+        citationCatalog,
+        schemaValidator: canonicalSchemaValidator,
+        runConfig,
+        claimRefOffset: sourceClaimIndex
+      });
+      const audit = claimAudits.find(
+        (item) => item.technicalClaimRef === claimRefFor(sourceClaimIndex)
+      );
+      if (audit) audit.canonicalCandidate = validation.prediction?.claims[0] ?? audit.canonicalCandidate;
+      return validation.prediction?.claims[0] ?? retainedCandidates[retainedIndex];
+    });
   }
 
   const attempted = claimAudits.length;
@@ -494,6 +533,7 @@ function validateProviderClaimsIndividually({
     diagnostics,
     claimAudit: { attempted, retained, filtered, claims: claimAudits },
     coverageAudit,
+    postprocess,
     repairableClaimIndexes: [...new Set(repairableClaimIndexes)],
     providerPrediction,
     retryable: false
