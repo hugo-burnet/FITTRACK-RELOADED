@@ -1,0 +1,456 @@
+{
+  "schemaVersion": "1.0.0-e5-v04-holdout-30",
+  "dataset": "HOLDOUT-30",
+  "seed": "e5-v04-holdout-30",
+  "algorithm": "sha256_utf8(seed\\u0000corpusCommit\\u0000fragmentId), lexical strata, round_robin_15_per_corpus",
+  "corpusCommit": "75f49f7e5bda67b1582a9ae5b9f2b8a0f16e74f2",
+  "sourceHashes": {
+    "fragments": "sha256:1eb0bd856541f9a22ae397bd3361eda4862dcc722cb6ade89e09d2d80861fea4",
+    "citationCandidates": "sha256:d7d42a705a9f3a37b8bba90aa67f4c689b8ea07aae3b7b8c64d97141a7d97723",
+    "dev100": "sha256:186cee1b5a4df49dc6607aedcf25655c9657cb7fe63df7f63b81941798dfe141",
+    "v03Config": "sha256:7199a11015ecf66f96265b683ec50b4afdc0c9413f4bf799fbc97815f3976fae",
+    "v03Errors": "sha256:5cb4b99a27354ddc47721fce2a9469b1d2fdd1138f87e52ef692bec3d6af6c86",
+    "v03AuditSummary": "sha256:df35050d5a58df1d3fe7fef1d19f284972688723454185ec6a7d2698548bb8f3",
+    "annotations": "sha256:a2d4fc4534c18f7c3378d0415b5007a8ca961563cd566aa33c09c0ec4c39a306"
+  },
+  "excludedDev100Ids": [
+    "frag.e5f2.00000087",
+    "frag.e5f2.00000259",
+    "frag.e5f2.00005159",
+    "frag.e5f2.00011252",
+    "frag.e5f2.00018221",
+    "frag.e5f2.00025178",
+    "frag.e5f2.00026956",
+    "frag.e5f2.00028637",
+    "frag.e5f2.00030555",
+    "frag.e5f2.00033791",
+    "frag.e5f2.00034666",
+    "frag.e5f2.00035721",
+    "frag.e5f2.00037232",
+    "frag.e5f2.00038965",
+    "frag.e5f2.00040144",
+    "frag.e5f2.00041891",
+    "frag.e5f2.00042447",
+    "frag.e5f2.00043879",
+    "frag.e5f2.00044614",
+    "frag.e5f2.00049828",
+    "frag.e5f2.00066319",
+    "frag.e5f2.00072017",
+    "frag.e5f2.00075653",
+    "frag.e5f2.00078216",
+    "frag.e5f2.00083542",
+    "frag.e5f2.00084420",
+    "frag.e5f2.00085197",
+    "frag.e5f2.00085638",
+    "frag.e5f2.00085985",
+    "frag.e5f2.00086736",
+    "frag.e5f2.00091327",
+    "frag.e5f2.00095348",
+    "frag.e5f2.00095815",
+    "frag.e5f2.00096243",
+    "frag.e5f3.00000076",
+    "frag.e5f3.00000530",
+    "frag.e5f3.00000822",
+    "frag.e5f3.00002764",
+    "frag.e5f3.00003688",
+    "frag.e5f3.00003967",
+    "frag.e5f3.00006012",
+    "frag.e5f3.00006083",
+    "frag.e5f3.00010897",
+    "frag.e5f3.00011779",
+    "frag.e5f3.00011856",
+    "frag.e5f3.00012091",
+    "frag.e5f3.00012613",
+    "frag.e5f3.00013464",
+    "frag.e5f3.00013618",
+    "frag.e5f3.00013710",
+    "frag.e5f3.00013767",
+    "frag.e5f3.00014346",
+    "frag.e5f3.00014985",
+    "frag.e5f3.00019956",
+    "frag.e5f3.00020101",
+    "frag.e5f3.00020521",
+    "frag.e5f3.00023412",
+    "frag.e5f3.00025760",
+    "frag.e5f3.00028841",
+    "frag.e5f3.00029088",
+    "frag.e5f3.00029304",
+    "frag.e5f3.00030276",
+    "frag.e5f3.00030376",
+    "frag.e5f3.00030421",
+    "frag.e5f3.00030639",
+    "frag.e5f3.00035183",
+    "frag.e5f3.00035234",
+    "frag.e5f3.00035268",
+    "frag.e5f3.00035453",
+    "frag.e5f3.00035555",
+    "frag.e5f3.00040114",
+    "frag.e5f3.00040275",
+    "frag.e5f3.00040415",
+    "frag.e5f3.00045746",
+    "frag.e5f3.00046247",
+    "frag.e5f3.00046416",
+    "frag.e5f3.00046765",
+    "frag.e5f3.00046893",
+    "frag.e5f3.00047064",
+    "frag.f2.0001",
+    "frag.f2.0002",
+    "frag.f2.0003",
+    "frag.f2.0004",
+    "frag.f2.0005",
+    "frag.f2.0007",
+    "frag.f2.0008",
+    "frag.f2.0009",
+    "frag.f2.0010",
+    "frag.f2.0011",
+    "frag.f2.0012",
+    "frag.f2.0015",
+    "frag.f2.0021",
+    "frag.f2.0022",
+    "frag.f2.0023",
+    "frag.f2.0024",
+    "frag.f3.0001",
+    "frag.f3.0002",
+    "frag.f3.0003",
+    "frag.f3.0007",
+    "frag.f3.0023"
+  ],
+  "fragmentIds": [
+    "frag.e5f2.00006068",
+    "frag.e5f2.00007390",
+    "frag.e5f2.00022937",
+    "frag.e5f2.00022201",
+    "frag.e5f2.00024074",
+    "frag.e5f2.00027824",
+    "frag.e5f2.00008102",
+    "frag.e5f2.00009106",
+    "frag.e5f2.00009977",
+    "frag.e5f2.00011983",
+    "frag.e5f2.00013696",
+    "frag.f2.0019",
+    "frag.e5f2.00017228",
+    "frag.e5f2.00019023",
+    "frag.e5f2.00020958",
+    "frag.e5f3.00029864",
+    "frag.e5f3.00031016",
+    "frag.e5f3.00030560",
+    "frag.e5f3.00030168",
+    "frag.f3.0025",
+    "frag.e5f3.00035400",
+    "frag.e5f3.00040523",
+    "frag.e5f3.00040341",
+    "frag.e5f3.00045594",
+    "frag.e5f3.00045818",
+    "frag.e5f3.00046640",
+    "frag.e5f3.00046842",
+    "frag.e5f3.00003551",
+    "frag.e5f3.00003837",
+    "frag.e5f3.00004072"
+  ],
+  "selections": [
+    {
+      "fragmentId": "frag.e5f2.00006068",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.1 Pectoraux (pectoralis major, pectoralis minor)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:aaaf4492503eaef1428d140fbabcac1766eda8959788182acd53adb3972921ec"
+    },
+    {
+      "fragmentId": "frag.e5f2.00007390",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.1 Pectoraux (pectoralis major, pectoralis minor)",
+        "citationPresence": false,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:360b569cdd1d5933b43668c0e5bb2fec90a1fd9f85f3371eba4b499524982d73"
+    },
+    {
+      "fragmentId": "frag.e5f2.00022937",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.10 Fessiers (grand, moyen, petit fessier)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:446efa624bb9b8e89a90e243a4669c646034cd56f741f4eba85a23b76f0432dc"
+    },
+    {
+      "fragmentId": "frag.e5f2.00022201",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.10 Fessiers (grand, moyen, petit fessier)",
+        "citationPresence": true,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:109fb642fd722c93e443fd5b62b7d1ecf2709ffb32de34baca3d945eaaf3d1f4"
+    },
+    {
+      "fragmentId": "frag.e5f2.00024074",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.11 Adducteurs de hanche",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:778fd86effccac0d36fb518c3270243d290c26a8d6d8bf40020031e0699e2d20"
+    },
+    {
+      "fragmentId": "frag.e5f2.00027824",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.14 Érecteurs du rachis et multifidus",
+        "citationPresence": true,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:5f0b2efded1d5e568c7a3e399df5a94fec7230d9fce118afab2271cb8e0fc4e3"
+    },
+    {
+      "fragmentId": "frag.e5f2.00008102",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.2 Dorsaux (latissimus dorsi, grand rond, rhomboïdes)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:76974b82f916412391e2ca1681da770b9533f7082452990b132749d4a67330fb"
+    },
+    {
+      "fragmentId": "frag.e5f2.00009106",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.2 Dorsaux (latissimus dorsi, grand rond, rhomboïdes)",
+        "citationPresence": true,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:54c300e8de8d5923088b8532011da943c7f7725577023679391134fab9aceddf"
+    },
+    {
+      "fragmentId": "frag.e5f2.00009977",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.3 Trapèzes (portions supérieure, moyenne, inférieure)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:98c705a2305174741e705df01f3fb48b39d7fa222ec8b5cf694ac28d08f76e05"
+    },
+    {
+      "fragmentId": "frag.e5f2.00011983",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.4 Deltoïdes (antérieur, latéral, postérieur)",
+        "citationPresence": true,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:bf5dd1d44ebaf8e93de6d002717d77d0aa704cf05ef3b0754c7f179a1329b680"
+    },
+    {
+      "fragmentId": "frag.e5f2.00013696",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.5 Biceps brachii et brachial (brachialis)",
+        "citationPresence": true,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:17623a7dc030fe12a6c36c6253a5daa20ac97cd9ee7868b60685f920e23968cf"
+    },
+    {
+      "fragmentId": "frag.f2.0019",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.6 Triceps brachial (chefs long, latéral, médial)",
+        "citationPresence": true,
+        "utf8LengthTertile": "short"
+      },
+      "selectionHash": "sha256:76e7e3983fd200f442e8edf3df1df80549a084489cb03f68bdc932c2b76051f4"
+    },
+    {
+      "fragmentId": "frag.e5f2.00017228",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.7 Avant-bras (fléchisseurs et extenseurs du poignet, brachioradial)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:71646d6aeb89ad37f240a44250d14773bca97fa95379a31ba621e411a1794658"
+    },
+    {
+      "fragmentId": "frag.e5f2.00019023",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.8 Quadriceps (droit fémoral, vastes)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:8acaad331bc8ce1fe6a209516970fa8a9f09e8587c9cd9d2b2529a90c91645af"
+    },
+    {
+      "fragmentId": "frag.e5f2.00020958",
+      "corpus": "F2",
+      "stratum": {
+        "headingPath": "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie > 1. Anatomie fonctionnelle par groupe musculaire > 1.9 Ischio-jambiers (biceps fémoral, semi-tendineux, semi-membraneux)",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:84c91c00bda7c50374e6857a52bbdf67c30d1aca2e2fc0cdbf9b1d3d9d8cae4a"
+    },
+    {
+      "fragmentId": "frag.e5f3.00029864",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 10. Retour à l’entraînement et au sport",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:e9ecab01d834d72ada21597b0e832e6f72c11e435ad80955b9924826b5c1278d"
+    },
+    {
+      "fragmentId": "frag.e5f3.00031016",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 10. Retour à l’entraînement et au sport > Progression générique",
+        "citationPresence": false,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:7ff0bbe7958527bc0c14f2b21214ed1bd4adc044c7c1e7fb66a82e0136a65ff6"
+    },
+    {
+      "fragmentId": "frag.e5f3.00030560",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 10. Retour à l’entraînement et au sport > Progression générique",
+        "citationPresence": false,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:90a43f1e7e5535862acbba7fcc6545c90249d2708d6549fdaf9987b6fe14c811"
+    },
+    {
+      "fragmentId": "frag.e5f3.00030168",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 10. Retour à l’entraînement et au sport > Progression générique",
+        "citationPresence": false,
+        "utf8LengthTertile": "short"
+      },
+      "selectionHash": "sha256:2b70c54ae9299d163e6dab268c868f5b6aaff7f9c419b507d299a5a424c195d5"
+    },
+    {
+      "fragmentId": "frag.f3.0025",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 12. Règles de réponse conversationnelle > Formulation recommandée",
+        "citationPresence": false,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:8f42951bc486615b23e603fff394ef2b9561f2be00fad09b9c4dae3227b518d5"
+    },
+    {
+      "fragmentId": "frag.e5f3.00035400",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 12. Règles de réponse conversationnelle > Formulations interdites",
+        "citationPresence": false,
+        "utf8LengthTertile": "short"
+      },
+      "selectionHash": "sha256:0ebf93c72e2f133411881f8db4793a7dd482eba80b88db31df67acc4d34e4ca2"
+    },
+    {
+      "fragmentId": "frag.e5f3.00040523",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 14. Niveaux de preuve utilisés",
+        "citationPresence": true,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:05b046b8584be0e841eb476b6489b4aa91a708556a394a7037f6b58786e2fd70"
+    },
+    {
+      "fragmentId": "frag.e5f3.00040341",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 14. Niveaux de preuve utilisés",
+        "citationPresence": false,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:9674e039583c9076f712afc190d6c03ddc784e48370de12bae287bbfb5bb1b60"
+    },
+    {
+      "fragmentId": "frag.e5f3.00045594",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 16. Limites et gouvernance",
+        "citationPresence": false,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:3efecf740052f9d96b80616d5bceb6a3961562f4513d636ca8e5f00e34463920"
+    },
+    {
+      "fragmentId": "frag.e5f3.00045818",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 16. Limites et gouvernance",
+        "citationPresence": false,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:eb42f3dd05c6b1c5b8634b772e03fba077f9cace5556eef1d889bca7df93aed7"
+    },
+    {
+      "fragmentId": "frag.e5f3.00046640",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 17. Schéma de données",
+        "citationPresence": false,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:5d16b12797ffd28332cac1fd3ba6826cbfb09e10b6c7b6e4a5e6b4da8a0345b8"
+    },
+    {
+      "fragmentId": "frag.e5f3.00046842",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 17. Schéma de données",
+        "citationPresence": false,
+        "utf8LengthTertile": "short"
+      },
+      "selectionHash": "sha256:7168124839a9339338a43343d3709639b6f39b766766c8f1671182df3b0ae9ae"
+    },
+    {
+      "fragmentId": "frag.e5f3.00003551",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 2. Cadre de décision de l’IA > 2.1 Informations minimales à demander avant toute adaptation",
+        "citationPresence": false,
+        "utf8LengthTertile": "long"
+      },
+      "selectionHash": "sha256:fc13c914ca20c62761b7fb2fedc98be1cc2bb9fe0427bc590f8c09a485c3124f"
+    },
+    {
+      "fragmentId": "frag.e5f3.00003837",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 2. Cadre de décision de l’IA > 2.1 Informations minimales à demander avant toute adaptation",
+        "citationPresence": false,
+        "utf8LengthTertile": "medium"
+      },
+      "selectionHash": "sha256:3d8aeecb1d428e8478c131128a10d50cc61c50bb02a5700d8d91c4d9a7691264"
+    },
+    {
+      "fragmentId": "frag.e5f3.00004072",
+      "corpus": "F3",
+      "stratum": {
+        "headingPath": "Base de connaissances clinique pour un coaching de musculation adaptatif > 2. Cadre de décision de l’IA > 2.1 Informations minimales à demander avant toute adaptation",
+        "citationPresence": false,
+        "utf8LengthTertile": "short"
+      },
+      "selectionHash": "sha256:27c0715d54083f37655c45362cf5456287eb9427230834b72ff3004c6cc57f42"
+    }
+  ],
+  "counts": {
+    "F2": 15,
+    "F3": 15
+  }
+}

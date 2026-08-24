@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "1.0.0-e5-v04-dev-20",
+  "dataset": "DEV-20",
+  "algorithm": "bucket_priority_cycle; descending_error_count_then_fragmentId; ten_per_corpus",
+  "sourceHashes": {
+    "fragments": "sha256:1eb0bd856541f9a22ae397bd3361eda4862dcc722cb6ade89e09d2d80861fea4",
+    "citationCandidates": "sha256:d7d42a705a9f3a37b8bba90aa67f4c689b8ea07aae3b7b8c64d97141a7d97723",
+    "dev100": "sha256:186cee1b5a4df49dc6607aedcf25655c9657cb7fe63df7f63b81941798dfe141",
+    "v03Config": "sha256:7199a11015ecf66f96265b683ec50b4afdc0c9413f4bf799fbc97815f3976fae",
+    "v03Errors": "sha256:5cb4b99a27354ddc47721fce2a9469b1d2fdd1138f87e52ef692bec3d6af6c86",
+    "v03AuditSummary": "sha256:df35050d5a58df1d3fe7fef1d19f284972688723454185ec6a7d2698548bb8f3",
+    "annotations": "sha256:a2d4fc4534c18f7c3378d0415b5007a8ca961563cd566aa33c09c0ec4c39a306"
+  },
+  "bucketPriority": [
+    "partial_rejection",
+    "false_zero_claim",
+    "missed_claim",
+    "merged_claims",
+    "wrong_epistemic_status",
+    "citation_error",
+    "safety_violation",
+    "successful_zero_claim_witness",
+    "successful_nonempty_witness",
+    "residual_error_count"
+  ],
+  "fragmentIds": [
+    "frag.e5f2.00085985",
+    "frag.e5f2.00030555",
+    "frag.f2.0003",
+    "frag.f2.0004",
+    "frag.f2.0012",
+    "frag.e5f2.00038965",
+    "frag.e5f2.00000087",
+    "frag.e5f2.00085197",
+    "frag.e5f2.00044614",
+    "frag.e5f2.00083542",
+    "frag.e5f3.00025760",
+    "frag.e5f3.00013464",
+    "frag.e5f3.00029304",
+    "frag.f3.0001",
+    "frag.f3.0003",
+    "frag.f3.0002",
+    "frag.e5f3.00014346",
+    "frag.e5f3.00000076",
+    "frag.e5f3.00029088",
+    "frag.e5f3.00014985"
+  ],
+  "selections": [
+    {
+      "fragmentId": "frag.e5f2.00085985",
+      "corpus": "F2",
+      "bucket": "partial_rejection",
+      "errorCount": 3
+    },
+    {
+      "fragmentId": "frag.e5f2.00030555",
+      "corpus": "F2",
+      "bucket": "missed_claim",
+      "errorCount": 12
+    },
+    {
+      "fragmentId": "frag.f2.0003",
+      "corpus": "F2",
+      "bucket": "merged_claims",
+      "errorCount": 11
+    },
+    {
+      "fragmentId": "frag.f2.0004",
+      "corpus": "F2",
+      "bucket": "wrong_epistemic_status",
+      "errorCount": 10
+    },
+    {
+      "fragmentId": "frag.f2.0012",
+      "corpus": "F2",
+      "bucket": "citation_error",
+      "errorCount": 9
+    },
+    {
+      "fragmentId": "frag.e5f2.00038965",
+      "corpus": "F2",
+      "bucket": "safety_violation",
+      "errorCount": 9
+    },
+    {
+      "fragmentId": "frag.e5f2.00000087",
+      "corpus": "F2",
+      "bucket": "successful_zero_claim_witness",
+      "errorCount": 0
+    },
+    {
+      "fragmentId": "frag.e5f2.00085197",
+      "corpus": "F2",
+      "bucket": "successful_nonempty_witness",
+      "errorCount": 0
+    },
+    {
+      "fragmentId": "frag.e5f2.00044614",
+      "corpus": "F2",
+      "bucket": "residual_error_count",
+      "errorCount": 9
+    },
+    {
+      "fragmentId": "frag.e5f2.00083542",
+      "corpus": "F2",
+      "bucket": "partial_rejection",
+      "errorCount": 2
+    },
+    {
+      "fragmentId": "frag.e5f3.00025760",
+      "corpus": "F3",
+      "bucket": "partial_rejection",
+      "errorCount": 3
+    },
+    {
+      "fragmentId": "frag.e5f3.00013464",
+      "corpus": "F3",
+      "bucket": "false_zero_claim",
+      "errorCount": 2
+    },
+    {
+      "fragmentId": "frag.e5f3.00029304",
+      "corpus": "F3",
+      "bucket": "missed_claim",
+      "errorCount": 12
+    },
+    {
+      "fragmentId": "frag.f3.0001",
+      "corpus": "F3",
+      "bucket": "merged_claims",
+      "errorCount": 12
+    },
+    {
+      "fragmentId": "frag.f3.0003",
+      "corpus": "F3",
+      "bucket": "wrong_epistemic_status",
+      "errorCount": 6
+    },
+    {
+      "fragmentId": "frag.f3.0002",
+      "corpus": "F3",
+      "bucket": "citation_error",
+      "errorCount": 4
+    },
+    {
+      "fragmentId": "frag.e5f3.00014346",
+      "corpus": "F3",
+      "bucket": "safety_violation",
+      "errorCount": 4
+    },
+    {
+      "fragmentId": "frag.e5f3.00000076",
+      "corpus": "F3",
+      "bucket": "successful_zero_claim_witness",
+      "errorCount": 0
+    },
+    {
+      "fragmentId": "frag.e5f3.00029088",
+      "corpus": "F3",
+      "bucket": "successful_nonempty_witness",
+      "errorCount": 0
+    },
+    {
+      "fragmentId": "frag.e5f3.00014985",
+      "corpus": "F3",
+      "bucket": "residual_error_count",
+      "errorCount": 4
+    }
+  ],
+  "counts": {
+    "F2": 10,
+    "F3": 10
+  }
+}
