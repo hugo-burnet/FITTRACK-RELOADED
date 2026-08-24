@@ -2,9 +2,9 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-23 (**v1.3.1 publiée. Le coach n'annonce plus « 3,5 → 0 kg » :
-il lit la charge de travail, pas la dégressive, et ne propose jamais une barre vide. Migration
-`version(11)` pour le journal déjà écrit. Le contrôle visuel du tutoriel sur téléphone reste dû**).
+**Dernière mise à jour :** 2026-08-24 (**`feat/knowledge-base-v1` intégré dans `master` en
+fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-contract/`, dont les
+tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
 
@@ -71,7 +71,7 @@ Le corpus, les prompts, la synthèse et les rapports de phase 1 sont sur les bra
 la régénération marche depuis un clone qui a fetch ces branches. Le paquet lui-même ne contient
 que l'empreinte et le texte des 77 fragments réellement cités.
 
-**E1 à E4 sont amorcés** sur `feat/knowledge-base-v1` : tableaux, axes, citations,
+**E1 à E4 sont amorcés** sur `master` : tableaux, axes, citations,
 puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
 
 ### E5 v0.4 — checkpoint après la tâche 7 (2026-08-24)
@@ -87,10 +87,10 @@ implémentée et revue jusqu'au prompt, sans lancement payant :
 - dry-run DEV-100 : 100 fragments, zéro appel API, aucune fuite GOLD, estimation `1.3648 USD` ;
 - suite E5 au commit `1925642` : 129/129.
 
-Vérification de fin de session : typecheck et build FitTrack passent ; les 2 116 assertions Vitest
-passent. `npm run test:run` sort néanmoins avec le code 1 parce que Vitest collecte aussi les 24
-suites KB en `.mjs`, écrites pour `node:test`, puis les signale comme « No test suite found ».
-La suite officielle du sous-paquet reste `npm run test:e5-llm` depuis `fittrack-kb-contract/`.
+Vérification de fin de session : typecheck, `npm run test:run` (194 fichiers, 2 116 tests) et
+build FitTrack passent. Vitest exclut `fittrack-kb-contract/` — sans ça, il avale les 24 suites
+`.mjs` écrites pour `node --test` et le deploy GitHub Pages échoue. La suite officielle du
+sous-paquet reste `npm run test:e5-llm` depuis `fittrack-kb-contract/`.
 
 **Point de reprise : tâche 8** du plan
 `docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md` — rendre l'évaluation
