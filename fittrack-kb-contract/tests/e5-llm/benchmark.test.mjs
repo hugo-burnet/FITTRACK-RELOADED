@@ -19,6 +19,7 @@ import {
   E5_SYSTEM_PROMPT,
   PROMPT_VERSION
 } from '../../tools/e5-llm/prompt.mjs';
+import { assertModelReasoningConfig } from '../../tools/e5-llm/run-config.mjs';
 import {
   createPredictionValidator,
   validateAndMaterialize
@@ -254,20 +255,48 @@ test('raw responses and exact prompts are persisted for audit', () => {
 
 test('benchmark config journals model, prompt, sampling, retries and immutable commits', () => {
   const config = JSON.parse(
-    readFileSync(join(root, 'benchmark/e5/v0/config.base.json'), 'utf8')
+    readFileSync(join(root, 'benchmark/e5/v0/config.gpt-5.json'), 'utf8')
   );
   assert.equal(config.promptVersion, PROMPT_VERSION);
   assert.equal(config.provider, 'openrouter');
   assert.equal(config.baseURL, 'https://openrouter.ai/api/v1');
-  assert.equal(config.model, 'openai/gpt-5.6-sol');
+  assert.equal(config.runVariant, 'openrouter-openai-gpt-5');
+  assert.equal(config.model, 'openai/gpt-5');
   assert.equal(config.apiKeyEnvironmentVariable, 'OPENROUTER_API_KEY');
   assert.equal(config.temperature, null);
   assert.equal(config.topP, null);
-  assert.equal(config.reasoningEffort, 'none');
+  assert.equal(config.reasoningEffort, 'minimal');
   assert.equal(config.maxRunCostUsd, 2.5);
   assert.equal(config.maxRetries, 2);
+  assert.deepEqual(config.pricingUsdPerMillionTokens, {
+    input: 1.25,
+    output: 10,
+    basis: 'User-configured OpenRouter rates for openai/gpt-5 on 2026-08-24'
+  });
   assert.match(config.goldenCommit, /^[0-9a-f]{40}$/);
   assert.match(config.corpusCommit, /^[0-9a-f]{40}$/);
+
+  const solConfig = JSON.parse(
+    readFileSync(join(root, 'benchmark/e5/v0/config.base.json'), 'utf8')
+  );
+  assert.equal(solConfig.runVariant, 'openrouter-openai-gpt-5.6-sol');
+  assert.equal(solConfig.model, 'openai/gpt-5.6-sol');
+  assert.equal(solConfig.reasoningEffort, 'none');
+  assert.equal(solConfig.pricingUsdPerMillionTokens.input, 5);
+  assert.equal(solConfig.pricingUsdPerMillionTokens.output, 30);
+});
+
+test('reasoning effort is validated per model capability', () => {
+  assert.throws(
+    () => assertModelReasoningConfig({ model: 'openai/gpt-5', reasoningEffort: 'none' }),
+    /unsupported_reasoning_effort_for_model:openai\/gpt-5:none/u
+  );
+  assert.doesNotThrow(() =>
+    assertModelReasoningConfig({ model: 'openai/gpt-5', reasoningEffort: 'minimal' })
+  );
+  assert.doesNotThrow(() =>
+    assertModelReasoningConfig({ model: 'openai/gpt-5.6-sol', reasoningEffort: 'none' })
+  );
 });
 
 test('OpenRouter adapter sends strict JSON schema without exposing its API key', async () => {
@@ -282,7 +311,7 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
         async json() {
           return {
             id: 'generation-test',
-            model: 'openai/gpt-5.6-sol',
+            model: 'openai/gpt-5',
             choices: [{ message: { content: '{"annotationPrediction":"ZERO_CLAIM","claims":[]}' } }],
             usage: { prompt_tokens: 10, completion_tokens: 5 }
           };
@@ -296,10 +325,10 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
     outputSchema: providerPredictionSchema,
     runConfig: {
       ...runConfig,
-      model: 'openai/gpt-5.6-sol',
+      model: 'openai/gpt-5',
       temperature: null,
       topP: null,
-      reasoningEffort: 'none'
+      reasoningEffort: 'minimal'
     }
   });
   const body = JSON.parse(request.options.body);
@@ -308,7 +337,7 @@ test('OpenRouter adapter sends strict JSON schema without exposing its API key',
   assert.equal(body.response_format.type, 'json_schema');
   assert.equal(body.response_format.json_schema.strict, true);
   assert.equal(body.provider.require_parameters, true);
-  assert.equal(body.reasoning.effort, 'none');
+  assert.equal(body.reasoning.effort, 'minimal');
   assert.equal(body.max_completion_tokens, runConfig.maxOutputTokens);
   assert.equal(Object.hasOwn(body, 'max_tokens'), false);
   assert.equal(Object.hasOwn(body, 'temperature'), false);
@@ -542,5 +571,9 @@ test('dry-run covers exactly 100 manifest fragments with no API and writes nothi
   assert.equal(result.dryRun.fragmentCount, 100);
   assert.equal(result.dryRun.apiCalls, 0);
   assert.deepEqual(result.dryRun.split, { F2: 50, F3: 50 });
+  assert.equal(result.runConfig.configFile, 'config.gpt-5.json');
+  assert.equal(result.runConfig.runVariant, 'openrouter-openai-gpt-5');
+  assert.equal(result.runConfig.model, 'openai/gpt-5');
+  assert.equal(result.runConfig.reasoningEffort, 'minimal');
   assert.deepEqual(after, before);
 });

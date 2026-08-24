@@ -3,7 +3,6 @@ import { createHash } from 'node:crypto';
 import {
   existsSync,
   mkdirSync,
-  readFileSync,
   writeFileSync
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -17,6 +16,10 @@ import {
 } from './e5-llm/provider-dto.mjs';
 import { projectProviderSchema } from './e5-llm/provider-schema.mjs';
 import {
+  DEFAULT_RUN_CONFIG_FILE,
+  loadRunConfig
+} from './e5-llm/run-config.mjs';
+import {
   assertNoGoldenLeak,
   buildPromptInput,
   E5_SYSTEM_PROMPT,
@@ -27,10 +30,6 @@ import {
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
 const benchmarkRoot = join(root, 'benchmark/e5/v0');
-
-function readJson(path) {
-  return JSON.parse(readFileSync(path, 'utf8'));
-}
 
 function createProviderAdapter(base, apiKey) {
   if (base.provider !== 'openrouter') throw new Error(`unsupported_provider:${base.provider}`);
@@ -43,9 +42,15 @@ function writeJson(path, value) {
 }
 
 function argsOf(argv) {
-  const args = { mode: 'dry-run', approveCost: false, pilotApproved: false };
+  const args = {
+    mode: 'dry-run',
+    configFile: DEFAULT_RUN_CONFIG_FILE,
+    approveCost: false,
+    pilotApproved: false
+  };
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--mode') args.mode = argv[++index];
+    else if (argv[index] === '--config') args.configFile = argv[++index];
     else if (argv[index] === '--approve-cost') args.approveCost = true;
     else if (argv[index] === '--pilot-approved') args.pilotApproved = true;
     else throw new Error(`unknown_argument:${argv[index]}`);
@@ -58,7 +63,7 @@ function stableHash(value) {
   return createHash('sha256').update(JSON.stringify(value), 'utf8').digest('hex');
 }
 
-function buildRunConfig(base, benchmark, inputs, mode, providerProjection) {
+function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProjection) {
   if (base.promptVersion !== PROMPT_VERSION) {
     throw new Error(`prompt_version_mismatch:${base.promptVersion}:${PROMPT_VERSION}`);
   }
@@ -67,7 +72,9 @@ function buildRunConfig(base, benchmark, inputs, mode, providerProjection) {
     benchmarkVersion: base.benchmarkVersion,
     extractorVersion: base.extractorVersion,
     provider: base.provider,
+    runVariant: base.runVariant,
     model: base.model,
+    configFile,
     promptVersion: base.promptVersion,
     promptHash: sha256Text(E5_SYSTEM_PROMPT),
     outputSchemaHash: sha256Text(JSON.stringify(benchmark.predictionSchema)),
@@ -82,6 +89,7 @@ function buildRunConfig(base, benchmark, inputs, mode, providerProjection) {
   }).slice(0, 16);
   return {
     ...base,
+    configFile,
     runId: `run.e5-llm-v0.${runHash}`,
     mode,
     fragmentCount: inputs.length,
@@ -191,7 +199,7 @@ async function runWithConcurrency(items, concurrency, worker) {
 
 export async function runBenchmark(argv = process.argv.slice(2)) {
   const args = argsOf(argv);
-  const base = readJson(join(benchmarkRoot, 'config.base.json'));
+  const { config: base, configFile } = loadRunConfig(benchmarkRoot, args.configFile);
   const benchmark = loadBenchmarkInputs(root);
   const providerPredictionSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema);
   const providerProjection = projectProviderSchema(providerPredictionSchema);
@@ -209,7 +217,14 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     assertNoGoldenLeak(`${E5_SYSTEM_PROMPT}\n${prompt}`);
     return prompt;
   });
-  const runConfig = buildRunConfig(base, benchmark, selectedInputs, args.mode, providerProjection);
+  const runConfig = buildRunConfig(
+    base,
+    configFile,
+    benchmark,
+    selectedInputs,
+    args.mode,
+    providerProjection
+  );
   const costEstimate = estimateCost(runConfig, promptInputs);
   const dryRun = {
     status: costEstimate.expectedCostUsd <= runConfig.maxRunCostUsd ? 'PASS' : 'STOP',
@@ -223,7 +238,15 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     costEstimate,
     maxRunCostUsd: runConfig.maxRunCostUsd
   };
-  writeJson(join(benchmarkRoot, args.mode === 'pilot' ? 'pilot/dry-run.json' : 'dry-run.json'), dryRun);
+  const outputRoot = args.mode === 'pilot'
+    ? join(benchmarkRoot, 'pilot', runConfig.runVariant)
+    : args.mode === 'full'
+      ? join(benchmarkRoot, 'runs', runConfig.runVariant)
+      : benchmarkRoot;
+  const dryRunPath = args.mode === 'dry-run'
+    ? join(benchmarkRoot, `dry-run.${runConfig.runVariant}.json`)
+    : join(outputRoot, 'dry-run.json');
+  writeJson(dryRunPath, dryRun);
   console.log(`Dry-run PASS: ${selectedInputs.length} fragments; aucune fuite GOLD; 0 appel API`);
   console.log(
     `Estimation configurée: $${costEstimate.expectedCostUsd} attendus; plafond théorique $${costEstimate.maximumConfiguredCostUsd}`
@@ -240,7 +263,6 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   }
   const apiKey = process.env.OPENROUTER_API_KEY?.trim() || null;
   const adapter = createProviderAdapter(base, apiKey);
-  const outputRoot = args.mode === 'pilot' ? join(benchmarkRoot, 'pilot') : benchmarkRoot;
   assertOutputScope(outputRoot);
   writeJson(join(outputRoot, 'config.json'), { ...runConfig, costEstimate });
   const results = await runWithConcurrency(

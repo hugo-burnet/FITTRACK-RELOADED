@@ -38,11 +38,15 @@ contrat métier ni une source utilisée par le comparateur GOLD.
 
 ## Configuration figée avant résultats
 
-`config.base.json` fixe le provider, le modèle snapshot, le prompt, le schéma,
-les paramètres de sampling, le nombre maximal de retries, les commits GOLD et
-corpus, ainsi que la base tarifaire utilisée par l’estimation. Une exécution
+`config.gpt-5.json` est le profil principal et fixe explicitement
+`openrouter-openai-gpt-5`, le prompt, le schéma, les paramètres de sampling, le
+nombre maximal de retries, les commits GOLD et corpus, ainsi que la base
+tarifaire utilisée par l’estimation. `config.base.json` conserve le profil Sol
+historique avec ses tarifs observés, sans être utilisé par les commandes
+principales. Une exécution
 écrit le `config.json` auditable avec `runId`, dates, hashes, liste ordonnée des
-fragments, version modèle observée, usages et bilan des retries.
+fragments, `configFile`, `runVariant`, modèle demandé/observé, usages et bilan
+des retries. Les artefacts pilote et run sont isolés par `runVariant`.
 
 La clé est lue exclusivement depuis la variable d’environnement
 `OPENROUTER_API_KEY`. Aucun fallback vers `OPENAI_API_KEY` ou vers un fichier

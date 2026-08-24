@@ -8,21 +8,35 @@ import {
   providerPredictionToCanonical,
   PROVIDER_DTO_VERSION
 } from './e5-llm/provider-dto.mjs';
+import {
+  DEFAULT_RUN_CONFIG_FILE,
+  loadRunConfig
+} from './e5-llm/run-config.mjs';
 import { createPredictionValidator } from './e5-llm/validate.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
 const benchmarkRoot = join(root, 'benchmark/e5/v0');
-const artifactPath = join(benchmarkRoot, 'pilot/provider-schema-probe.json');
 
-function writeArtifact(value) {
+function writeArtifact(artifactPath, value) {
   mkdirSync(dirname(artifactPath), { recursive: true });
   if (existsSync(artifactPath)) throw new Error(`probe_artifact_exists:${artifactPath}`);
   writeFileSync(artifactPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
 
-async function probe() {
-  const config = JSON.parse(readFileSync(join(benchmarkRoot, 'config.base.json'), 'utf8'));
+function configFileOf(argv) {
+  if (argv.length === 0) return DEFAULT_RUN_CONFIG_FILE;
+  if (argv.length === 2 && argv[0] === '--config') return argv[1];
+  throw new Error(`invalid_probe_arguments:${argv.join(',')}`);
+}
+
+async function probe(argv = process.argv.slice(2)) {
+  const { config, configFile } = loadRunConfig(benchmarkRoot, configFileOf(argv));
+  const artifactPath = join(
+    benchmarkRoot,
+    'pilot',
+    `provider-schema-probe.${config.runVariant}.reasoning-${config.reasoningEffort}.json`
+  );
   const canonicalSchema = JSON.parse(
     readFileSync(join(benchmarkRoot, 'prediction.schema.json'), 'utf8')
   );
@@ -65,10 +79,15 @@ async function probe() {
       status: 'PASS',
       provider: config.provider,
       baseURL: config.baseURL,
+      runVariant: config.runVariant,
+      configFile,
       requestedModel: config.model,
+      reasoningEffortRequested: config.reasoningEffort,
       observedModel: result.modelVersion,
       responseId: result.responseId,
       usage: result.usage,
+      reasoningTokens: result.usage?.completion_tokens_details?.reasoning_tokens ?? null,
+      costUsd: result.usage?.cost ?? null,
       providerDtoVersion: PROVIDER_DTO_VERSION,
       providerSchemaDroppedKeywords: result.providerSchemaDroppedKeywords,
       providerEnumTypesInjected: result.providerEnumTypesInjected,
@@ -77,14 +96,17 @@ async function probe() {
       structuredOutputValidated: true,
       canonicalSchemaValidated: true
     };
-    writeArtifact(artifact);
+    writeArtifact(artifactPath, artifact);
     console.log(JSON.stringify(artifact));
   } catch (error) {
     const artifact = {
       status: 'FAIL',
       provider: config.provider,
       baseURL: config.baseURL,
+      runVariant: config.runVariant,
+      configFile,
       requestedModel: config.model,
+      reasoningEffortRequested: config.reasoningEffort,
       providerDiagnostic:
         error instanceof Error && 'providerDiagnostic' in error
           ? error.providerDiagnostic
@@ -96,7 +118,7 @@ async function probe() {
                   : null
             }
     };
-    writeArtifact(artifact);
+    writeArtifact(artifactPath, artifact);
     console.error(JSON.stringify(artifact));
     process.exitCode = 1;
   }
