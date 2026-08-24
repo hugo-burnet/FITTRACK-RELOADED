@@ -72,7 +72,31 @@ la régénération marche depuis un clone qui a fetch ces branches. Le paquet lu
 que l'empreinte et le texte des 77 fragments réellement cités.
 
 **E1 à E4 sont amorcés** sur `feat/knowledge-base-v1` : tableaux, axes, citations,
-puis parcours déterministe de F4. Pas d'écriture dans `curated/`. E5 reste ouvert.
+puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
+
+### E5 v0.4 — checkpoint après la tâche 7 (2026-08-24)
+
+Le benchmark GPT-5 v0.3 sur DEV-100 a refusé le passage aux 207 fragments. La reprise v0.4 est
+implémentée et revue jusqu'au prompt, sans lancement payant :
+
+- HOLDOUT-30 et DEV-20 sont figés avant les changements de protocole ;
+- segmentation UTF-8 et ledger de couverture déterministes ;
+- DTO provider v3, avec replay v2 conservé ;
+- validation claim par claim, post-traitements conservateurs et réparation ciblée ;
+- prompt `e5-llm-v0.4.0` orienté couverture, protections critiques v0.3 conservées ;
+- dry-run DEV-100 : 100 fragments, zéro appel API, aucune fuite GOLD, estimation `1.3648 USD` ;
+- suite E5 au commit `1925642` : 129/129.
+
+Vérification de fin de session : typecheck et build FitTrack passent ; les 2 116 assertions Vitest
+passent. `npm run test:run` sort néanmoins avec le code 1 parce que Vitest collecte aussi les 24
+suites KB en `.mjs`, écrites pour `node:test`, puis les signale comme « No test suite found ».
+La suite officielle du sous-paquet reste `npm run test:e5-llm` depuis `fittrack-kb-contract/`.
+
+**Point de reprise : tâche 8** du plan
+`docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md` — rendre l'évaluation
+status-aware et figer les gates. Les tâches 8 à 14 restent à faire. Aucun DEV-20, DEV-100 v0.4,
+HOLDOUT-30 ni run 207 n'a été lancé ; tout stage payant exige encore un dry-run et l'approbation
+explicite de l'utilisateur.
 
 ## v1.3.1 — livrée et publiée
 
