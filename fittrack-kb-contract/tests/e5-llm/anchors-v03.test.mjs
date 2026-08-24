@@ -9,6 +9,7 @@ import { loadBenchmarkInputs } from '../../tools/e5-llm/inputs.mjs';
 import {
   canonicalPredictionToProvider,
   createE5ProviderPredictionSchema,
+  LEGACY_PROVIDER_DTO_VERSION,
   mergeAnchorRepairs,
   providerPredictionToCanonical,
   PROVIDER_DTO_VERSION
@@ -23,7 +24,9 @@ const root = join(import.meta.dirname, '../..');
 const benchmark = loadBenchmarkInputs(root);
 const sample = benchmark.inputs.find((item) => item.fragment.fragmentId === 'frag.f2.0001');
 const anchor = "une différence d'amplitude EMG entre deux exercices";
-const providerSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema);
+const providerSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema, {
+  dtoVersion: LEGACY_PROVIDER_DTO_VERSION
+});
 const providerSchemaValidator = createPredictionValidator(providerSchema);
 const canonicalSchemaValidator = createPredictionValidator(benchmark.predictionSchema);
 const runConfig = {
@@ -227,7 +230,9 @@ test('13. reconstruction is deterministic across two runs', () => {
 });
 
 test('14. the model DTO requests anchors and no generated offsets', () => {
-  assert.equal(PROVIDER_DTO_VERSION, 'e5-provider-prediction-v2');
+  assert.equal(PROVIDER_DTO_VERSION, 'e5-provider-prediction-v3');
+  assert.equal(LEGACY_PROVIDER_DTO_VERSION, 'e5-provider-prediction-v2');
+  assert.equal(providerSchema.required.includes('coverageLedger'), false);
   assert.match(JSON.stringify(providerSchema), /supportAnchors/u);
   assert.doesNotMatch(JSON.stringify(providerSchema), /supportSpanStartBytes|supportSpanEndBytes/u);
   assert.doesNotMatch(E5_SYSTEM_PROMPT, /offset/iu);

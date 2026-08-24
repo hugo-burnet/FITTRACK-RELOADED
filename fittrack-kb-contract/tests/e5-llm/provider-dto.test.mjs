@@ -195,6 +195,13 @@ test('v3 requires a coverage ledger and non-empty unique coverage-unit indexes o
   });
 });
 
+test('omitting dtoVersion selects the v3 coverage DTO', () => {
+  const defaultSchema = createE5ProviderPredictionSchema(canonicalSchema);
+
+  assert.deepEqual(defaultSchema.required, ['annotationPrediction', 'coverageLedger', 'claims']);
+  assert.equal(defaultSchema.$defs.claim.required.includes('coverageUnitIndexes'), true);
+});
+
 test('v2 remains a coverage-free replay DTO', () => {
   const v2 = createE5ProviderPredictionSchema(canonicalSchema, {
     dtoVersion: 'e5-provider-prediction-v2'
