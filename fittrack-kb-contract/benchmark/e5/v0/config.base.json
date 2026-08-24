@@ -1,8 +1,9 @@
 {
   "benchmarkVersion": "e5-llm-benchmark-v0",
   "extractorVersion": "0.1.0-e5-llm-v0",
-  "provider": "openai",
-  "model": "gpt-4.1-2025-04-14",
+  "provider": "openrouter",
+  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+  "model": "openai/gpt-4.1",
   "modelVersion": null,
   "promptVersion": "e5-llm-v0.1.0",
   "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
@@ -17,8 +18,8 @@
   "pricingUsdPerMillionTokens": {
     "input": 2,
     "output": 8,
-    "basis": "benchmark configuration; verify provider pricing before approving the full run"
+    "basis": "OpenRouter list price for openai/gpt-4.1; verify again before approving the full run"
   },
   "expectedOutputTokensPerFragment": 1000,
-  "apiKeyEnvironmentVariable": "OPENAI_API_KEY"
+  "apiKeyEnvironmentVariable": "OPENROUTER_API_KEY"
 }

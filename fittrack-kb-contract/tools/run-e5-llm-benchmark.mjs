@@ -8,7 +8,7 @@ import {
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createOpenAIAdapter } from './e5-llm/adapters.mjs';
+import { createOpenAIAdapter, createOpenRouterAdapter } from './e5-llm/adapters.mjs';
 import { extractProseFragment } from './e5-llm/extractor.mjs';
 import { loadBenchmarkInputs, PILOT_FRAGMENT_IDS } from './e5-llm/inputs.mjs';
 import {
@@ -25,6 +25,39 @@ const benchmarkRoot = join(root, 'benchmark/e5/v0');
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
+}
+
+function readLocalEnvironmentVariable(name) {
+  const fromProcess = process.env[name]?.trim();
+  if (fromProcess) return fromProcess;
+  const localEnvironmentPath = join(root, '.env.e5.local');
+  if (!existsSync(localEnvironmentPath)) return null;
+  for (const rawLine of readFileSync(localEnvironmentPath, 'utf8').split(/\r?\n/u)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const separator = line.indexOf('=');
+    if (separator < 1 || line.slice(0, separator).trim() !== name) continue;
+    let value = line.slice(separator + 1).trim();
+    if (
+      value.length >= 2 &&
+      ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'")))
+    ) {
+      value = value.slice(1, -1);
+    }
+    return value || null;
+  }
+  return null;
+}
+
+function createProviderAdapter(base, apiKey) {
+  if (base.provider === 'openrouter') {
+    return createOpenRouterAdapter({ apiKey, endpoint: base.endpoint });
+  }
+  if (base.provider === 'openai') {
+    return createOpenAIAdapter({ apiKey, endpoint: base.endpoint });
+  }
+  throw new Error(`unsupported_provider:${base.provider}`);
 }
 
 function writeJson(path, value) {
@@ -208,9 +241,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   if (args.mode === 'full' && (!args.approveCost || !args.pilotApproved)) {
     throw new Error('full_run_requires_--approve-cost_and_--pilot-approved');
   }
-  if (base.provider !== 'openai') throw new Error(`unsupported_provider:${base.provider}`);
-  const apiKey = process.env[base.apiKeyEnvironmentVariable];
-  const adapter = createOpenAIAdapter({ apiKey });
+  const apiKey = readLocalEnvironmentVariable(base.apiKeyEnvironmentVariable);
+  const adapter = createProviderAdapter(base, apiKey);
   const outputRoot = args.mode === 'pilot' ? join(benchmarkRoot, 'pilot') : benchmarkRoot;
   assertOutputScope(outputRoot);
   writeJson(join(outputRoot, 'config.json'), { ...runConfig, costEstimate });

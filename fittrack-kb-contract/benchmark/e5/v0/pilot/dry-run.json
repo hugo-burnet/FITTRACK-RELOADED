@@ -15,7 +15,7 @@
     "configuredRatesUsdPerMillionTokens": {
       "input": 2,
       "output": 8,
-      "basis": "benchmark configuration; verify provider pricing before approving the full run"
+      "basis": "OpenRouter list price for openai/gpt-4.1; verify again before approving the full run"
     },
     "expectedCostUsd": 0.0355,
     "maximumConfiguredCostUsd": 0.1195

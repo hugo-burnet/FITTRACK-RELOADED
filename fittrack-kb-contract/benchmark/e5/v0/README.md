@@ -9,7 +9,7 @@ production et aucun outil de génération n’ouvre l’adjudication GOLD.
 ```text
 Fragments E5-P0 + CitationOccurrences E5-P0
   → prompt fermé
-  → adapter OpenAI ou replay
+  → adapter OpenRouter ou replay
   → réponse JSON structurée
   → validation déterministe et guardrails
   → prédiction benchmark
@@ -18,7 +18,7 @@ Fragments E5-P0 + CitationOccurrences E5-P0
 
 L’interface profonde est `extractProseFragment`. Elle cache le prompt, les
 retries techniques, la résolution des spans UTF-8, les contrôles de citations,
-les guardrails et les IDs techniques. L’adapter OpenAI et l’adapter replay sont
+les guardrails et les IDs techniques. L’adapter OpenRouter et l’adapter replay sont
 les deux implémentations réelles du seam modèle.
 
 ## Configuration figée avant résultats
@@ -29,8 +29,9 @@ corpus, ainsi que la base tarifaire utilisée par l’estimation. Une exécution
 écrit le `config.json` auditable avec `runId`, dates, hashes, liste ordonnée des
 fragments, version modèle observée, usages et bilan des retries.
 
-La clé est lue uniquement depuis `OPENAI_API_KEY`. Elle n’est jamais incluse
-dans les requêtes archivées, les logs ou les artefacts.
+La clé est lue depuis `OPENROUTER_API_KEY` ou, localement, depuis
+`.env.e5.local`. Ce fichier est ignoré par Git. La clé n’est jamais incluse dans
+les requêtes archivées, les logs ou les artefacts.
 
 ## Commandes
 

@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { createReplayAdapter } from '../../tools/e5-llm/adapters.mjs';
+import { createOpenRouterAdapter, createReplayAdapter } from '../../tools/e5-llm/adapters.mjs';
 import {
   alignPredictionToGolden,
   buildMetrics,
@@ -254,12 +254,49 @@ test('benchmark config journals model, prompt, sampling, retries and immutable c
     readFileSync(join(root, 'benchmark/e5/v0/config.base.json'), 'utf8')
   );
   assert.equal(config.promptVersion, PROMPT_VERSION);
-  assert.equal(config.provider, 'openai');
-  assert.match(config.model, /.+/);
+  assert.equal(config.provider, 'openrouter');
+  assert.equal(config.model, 'openai/gpt-4.1');
+  assert.equal(config.apiKeyEnvironmentVariable, 'OPENROUTER_API_KEY');
   assert.equal(config.temperature, 0);
   assert.equal(config.maxRetries, 2);
   assert.match(config.goldenCommit, /^[0-9a-f]{40}$/);
   assert.match(config.corpusCommit, /^[0-9a-f]{40}$/);
+});
+
+test('OpenRouter adapter sends strict JSON schema without exposing its API key', async () => {
+  let request;
+  const adapter = createOpenRouterAdapter({
+    apiKey: 'secret-test-key',
+    fetchImpl: async (endpoint, options) => {
+      request = { endpoint, options };
+      return {
+        ok: true,
+        status: 200,
+        async json() {
+          return {
+            id: 'generation-test',
+            model: 'openai/gpt-4.1',
+            choices: [{ message: { content: '{"fragmentId":"frag.f2.0001"}' } }],
+            usage: { prompt_tokens: 10, completion_tokens: 5 }
+          };
+        }
+      };
+    }
+  });
+  const result = await adapter.generate({
+    systemPrompt: 'system',
+    input: 'input',
+    outputSchema: benchmark.predictionSchema,
+    runConfig: { ...runConfig, model: 'openai/gpt-4.1' }
+  });
+  const body = JSON.parse(request.options.body);
+  assert.equal(request.endpoint, 'https://openrouter.ai/api/v1/chat/completions');
+  assert.equal(request.options.headers.Authorization, 'Bearer secret-test-key');
+  assert.equal(body.response_format.type, 'json_schema');
+  assert.equal(body.response_format.json_schema.strict, true);
+  assert.equal(body.provider.require_parameters, true);
+  assert.equal(result.rawResponse, '{"fragmentId":"frag.f2.0001"}');
+  assert.doesNotMatch(JSON.stringify(result.providerResponse), /secret-test-key/u);
 });
 
 function metricClaim(start, end, rawStatement, options = {}) {
