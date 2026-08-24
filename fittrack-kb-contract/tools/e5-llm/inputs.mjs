@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { buildCoverageUnits } from './coverage.mjs';
 
 function readJson(root, relativePath) {
   return JSON.parse(readFileSync(join(root, relativePath), 'utf8'));
@@ -33,7 +34,8 @@ export function loadBenchmarkInputs(root) {
     if (!fragment) throw new Error(`benchmark_fragment_missing:${fragmentId}`);
     return {
       fragment,
-      citationCatalog: citationsByFragment.get(fragmentId) ?? []
+      citationCatalog: citationsByFragment.get(fragmentId) ?? [],
+      coverageUnits: buildCoverageUnits(fragment)
     };
   });
   const counts = inputs.reduce(

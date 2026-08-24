@@ -420,7 +420,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     const prompt = buildPromptInput({
       fragment: item.fragment,
       citationCatalog: item.citationCatalog,
-      vocabularies: benchmark.vocabularies
+      vocabularies: benchmark.vocabularies,
+      coverageUnits: item.coverageUnits
     });
     assertNoGoldenLeak(`${E5_SYSTEM_PROMPT}\n${prompt}`);
     return prompt;

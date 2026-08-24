@@ -194,6 +194,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
   const {
     fragment,
     citationCatalog,
+    coverageUnits: inputCoverageUnits,
     vocabularies,
     predictionSchema,
     providerPredictionSchema,
@@ -203,10 +204,15 @@ export async function extractProseFragment(input, { modelAdapter }) {
   const providerSchemaValidator = createPredictionValidator(providerPredictionSchema);
   const repairSchema = createE5AnchorRepairSchema();
   const repairSchemaValidator = createPredictionValidator(repairSchema);
-  const fullPromptInput = buildPromptInput({ fragment, citationCatalog, vocabularies });
   const coverageUnits = providerSchemaIncludesCoverage(providerPredictionSchema)
-    ? buildCoverageUnits(fragment)
+    ? inputCoverageUnits ?? buildCoverageUnits(fragment)
     : undefined;
+  const fullPromptInput = buildPromptInput({
+    fragment,
+    citationCatalog,
+    vocabularies,
+    coverageUnits
+  });
   assertNoGoldenLeak(`${E5_SYSTEM_PROMPT}\n${fullPromptInput}`);
 
   const attempts = [];

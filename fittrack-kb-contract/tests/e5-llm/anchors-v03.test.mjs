@@ -308,6 +308,6 @@ test('20. full and repair calls journal tokens and costs separately', async () =
   assert.equal(result.usageByCallType.total.costUsd, 0.012);
 });
 
-test('v0.3 version is explicit', () => {
-  assert.equal(PROMPT_VERSION, 'e5-llm-v0.3.0');
+test('v0.4 prompt version is explicit while v0.3 anchor replay remains covered', () => {
+  assert.equal(PROMPT_VERSION, 'e5-llm-v0.4.0');
 });

@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto';
 
-export const PROMPT_VERSION = 'e5-llm-v0.3.0';
+export const PROMPT_VERSION = 'e5-llm-v0.4.0';
 
 export const E5_SYSTEM_PROMPT = `Tu es l'extracteur E5 de la Knowledge Base FitTrack.
 
 TACHE UNIQUE
-Identifie les unités de connaissance distinctes réellement affirmées dans le FRAGMENT CIBLE. Tu extrais ; tu ne rédiges pas, ne conseilles pas, ne diagnostiques pas et ne recherches rien.
+Classe exhaustivement chaque unité de couverture puis identifie les unités de connaissance distinctes réellement affirmées dans le FRAGMENT CIBLE. Tu extrais ; tu ne rédiges pas, ne conseilles pas, ne diagnostiques pas et ne recherches rien.
 
 MONDE FERME
 - Utilise uniquement le fragment cible, son headingPath, les vocabulaires fournis et le catalogue fermé de CitationOccurrence.
@@ -20,15 +20,34 @@ GRANULARITE AUTORITAIRE
 - Sépare résultat scientifique, mécanisme, EMG, biomécanique et conséquence pratique.
 - Evite les mega-claims comme les micro-claims artificiels.
 
+COUVERTURE EXHAUSTIVE
+- Le tableau coverageUnits est ordonné et exhaustif : examine chaque unité, une par une, avant d'extraire les claims.
+- coverageLedger contient exactement une décision pour chaque coverageUnitIndex : CLAIM_CONTENT, CONTEXT_ONLY, POLICY_ONLY ou NO_QUALIFIABLE_PREDICATE.
+- CLAIM_CONTENT signifie que l'unité soutient au moins une claim ; CONTEXT_ONLY apporte seulement du contexte ; POLICY_ONLY est une règle éditoriale ou produit ; NO_QUALIFIABLE_PREDICATE ne contient aucun prédicat qualifiable.
+- Chaque claim référence uniquement ses coverageUnitIndexes diagnostiques ; ils ne remplacent ni supportAnchors ni la justification textuelle.
+- Une même unité peut soutenir plusieurs claims atomiques. Une claim peut s'appuyer sur plusieurs unités si chacune est nécessaire à son prédicat.
+- Toute unité classée CLAIM_CONTENT doit être référencée par au moins une claim. Une couverture incomplète est une erreur.
+- Une unité POLICY_ONLY ne devient jamais une claim. Une règle éditoriale ou produit n'efface jamais une affirmation scientifique autonome présente dans une autre unité du même fragment.
+
+EXEMPLES CONTRASTIFS
+- MERGE : garde dans une même claim la population, la condition, la comparaison et la limite indispensables à un seul prédicat ; ne les fragmente pas.
+- OVERSPLIT : ne découpe pas artificiellement un résultat et son qualificatif indispensable en micro-claims ; sépare seulement les prédicats réellement évaluables séparément.
+- practice_only : une recommandation attribuée à l'expertise pratique reste practice_only, pas un fait établi.
+- refuted : une affirmation explicitement contredite par le fragment est refuted ; ne transforme pas une simple absence de résultat en réfutation.
+- mechanistic_only : un mécanisme décrit sans outcome démontré reste mechanistic_only ; il ne prouve pas une conséquence pratique ou clinique.
+- uncertain : une preuve faible, limitée ou non significative reste uncertain lorsqu'aucune absence explicite de preuve n'est déclarée.
+- absence_of_evidence : utilise absence_of_evidence seulement quand le fragment affirme explicitement une absence de preuve.
+
 SUPPORT VERBATIM
 - Chaque claim doit avoir au moins un extrait verbatim exact dans supportAnchors.
 - Chaque supportAnchor doit être une sous-chaîne exacte, non modifiée et unique de rawText.
 - Si un court extrait est répété, allonge-le avec son contexte verbatim jusqu'à le rendre unique ; ne fournis jamais de numéro d'occurrence.
 - rawStatementAnchorIndex désigne l'anchor qui devient rawStatement ; le pipeline relit le texte exact et calcule les coordonnées UTF-8.
 - Les anchors d'une même claim doivent être distincts et ne pas se chevaucher.
+- Le modèle ne calcule jamais les coordonnées ni les identifiants de provenance ; il fournit seulement les anchors et les références fermées demandées.
 
 ZERO_CLAIM
-- Réponds ZERO_CLAIM et claims=[] si aucune unité de connaissance pertinente n'est présente.
+- ZERO_CLAIM exige d'avoir classé toutes les unités et que la couverture soit complète, puis réponds ZERO_CLAIM et claims=[] si aucune unité de connaissance pertinente n'est présente.
 - C'est notamment correct pour une transition, un titre, une branche d'algorithme produit, une politique de sortie, une instruction d'encodage, un commentaire de schéma, une bibliographie ou un fragment exigeant une invention.
 - Ne produis jamais une claim uniquement parce qu'un fragment est fourni.
 
@@ -81,7 +100,7 @@ export function sha256Text(value) {
   return `sha256:${createHash('sha256').update(value, 'utf8').digest('hex')}`;
 }
 
-export function buildPromptInput({ fragment, citationCatalog, vocabularies }) {
+export function buildPromptInput({ fragment, citationCatalog, vocabularies, coverageUnits = [] }) {
   const citations = citationCatalog.map((item) => ({
     candidateId: item.candidateId,
     handle: item.payload.handle,
@@ -95,13 +114,14 @@ export function buildPromptInput({ fragment, citationCatalog, vocabularies }) {
   );
   return JSON.stringify(
     {
-      instruction: 'Extrais uniquement le FRAGMENT CIBLE selon le prompt système.',
+      instruction: 'Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.',
       fragment: {
         fragmentId: fragment.fragmentId,
         corpusFileId: fragment.corpusFileId,
         headingPath: fragment.headingPath,
         rawText: fragment.rawText
       },
+      coverageUnits: coverageUnits.map(({ unitIndex, kind, text }) => ({ unitIndex, kind, text })),
       citationCatalog: citations,
       closedVocabularies
     },

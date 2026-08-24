@@ -694,5 +694,16 @@ test('dry-run covers exactly 100 manifest fragments with no API and writes nothi
   assert.equal(result.runConfig.runVariant, 'openrouter-openai-gpt-5');
   assert.equal(result.runConfig.model, 'openai/gpt-5');
   assert.equal(result.runConfig.reasoningEffort, 'minimal');
+  const expectedInputTokens = benchmark.inputs.reduce(
+    (sum, item) =>
+      sum + Math.ceil(Buffer.byteLength(`${E5_SYSTEM_PROMPT}\n${buildPromptInput({
+        fragment: item.fragment,
+        citationCatalog: item.citationCatalog,
+        vocabularies: benchmark.vocabularies,
+        coverageUnits: item.coverageUnits
+      })}`, 'utf8') / 4),
+    0
+  );
+  assert.equal(result.dryRun.costEstimate.approximateInputTokens, expectedInputTokens);
   assert.deepEqual(after, before);
 });
