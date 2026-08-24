@@ -285,10 +285,20 @@ test('20. full and repair calls journal tokens and costs separately', async () =
   const result = await extractProseFragment(extractionInput(), { modelAdapter: adapter });
   assert.equal(result.status, 'VALIDATED');
   assert.deepEqual(result.usageByCallType.full, {
-    calls: 1, inputTokens: 100, outputTokens: 20, totalTokens: 120, costUsd: 0.01
+    calls: 1,
+    inputTokens: 100,
+    outputTokens: 20,
+    reasoningTokens: 0,
+    totalTokens: 120,
+    costUsd: 0.01
   });
   assert.deepEqual(result.usageByCallType.repair, {
-    calls: 1, inputTokens: 30, outputTokens: 10, totalTokens: 40, costUsd: 0.002
+    calls: 1,
+    inputTokens: 30,
+    outputTokens: 10,
+    reasoningTokens: 0,
+    totalTokens: 40,
+    costUsd: 0.002
   });
   assert.equal(result.usageByCallType.total.costUsd, 0.012);
 });

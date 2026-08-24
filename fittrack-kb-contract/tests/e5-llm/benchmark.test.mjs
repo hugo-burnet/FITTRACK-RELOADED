@@ -4,7 +4,11 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { createOpenRouterAdapter, createReplayAdapter } from '../../tools/e5-llm/adapters.mjs';
+import {
+  createLlamaCppAdapter,
+  createOpenRouterAdapter,
+  createReplayAdapter
+} from '../../tools/e5-llm/adapters.mjs';
 import {
   alignPredictionToGolden,
   buildMetrics,
@@ -24,7 +28,11 @@ import {
   createPredictionValidator,
   validateAndMaterialize
 } from '../../tools/e5-llm/validate.mjs';
-import { persistResult, runBenchmark } from '../../tools/run-e5-llm-benchmark.mjs';
+import {
+  createBudgetedAdapter,
+  persistResult,
+  runBenchmark
+} from '../../tools/run-e5-llm-benchmark.mjs';
 
 const root = join(import.meta.dirname, '../..');
 const benchmark = loadBenchmarkInputs(root);
@@ -195,6 +203,64 @@ test('invented URL is rejected even in a free-text limitation', () => {
   assert.equal(result.accepted, false);
   assert.ok(result.diagnostics.some((item) => item.code === 'INVENTED_SOURCE'));
   assert.equal(result.retryable, false);
+});
+
+test('a globally rejected fragment audits individually valid claims without accepting them', () => {
+  const valid = validClaim();
+  const invalidPolicy = validClaim({
+    technicalClaimRef: 'tmp.claim.02',
+    knowledgeType: resolution('RESOLVED', 'PRODUCT_POLICY')
+  });
+  const result = validate(responseWith([valid, invalidPolicy]));
+  assert.equal(result.accepted, false);
+  assert.equal(result.partialAudit.globalRejection, true);
+  assert.equal(result.partialAudit.rawClaimCount, 2);
+  assert.equal(result.partialAudit.individuallyValidClaimCount, 1);
+  assert.equal(result.partialAudit.individuallyInvalidClaimCount, 1);
+  assert.equal(result.partialAudit.claims[0].individuallyValid, true);
+  assert.equal(result.partialAudit.claims[1].individuallyValid, false);
+  assert.equal(result.prediction, null);
+});
+
+test('the runtime budget guard stops before a call that could exceed the cap', async () => {
+  let providerCalls = 0;
+  const provider = {
+    async generate() {
+      providerCalls += 1;
+      return {
+        rawResponse: '{}',
+        usage: { prompt_tokens: 10, completion_tokens: 10, cost: 0.01 }
+      };
+    }
+  };
+  const budget = createBudgetedAdapter(
+    provider,
+    {
+      maxRunCostUsd: 0.015,
+      maxOutputTokens: 1000,
+      pricingUsdPerMillionTokens: { input: 0, output: 10 }
+    },
+    () => {}
+  );
+  const request = {
+    systemPrompt: 'system',
+    input: 'input',
+    fragmentId: 'frag.test',
+    callType: 'full',
+    attempt: 0,
+    runConfig: {
+      maxOutputTokens: 1000,
+      pricingUsdPerMillionTokens: { input: 0, output: 10 }
+    }
+  };
+  await budget.adapter.generate(request);
+  await assert.rejects(
+    budget.adapter.generate(request),
+    (error) => error.budgetStop === true
+  );
+  assert.equal(providerCalls, 1);
+  assert.equal(budget.ledger.actualCostUsd, 0.01);
+  assert.equal(budget.ledger.stoppedBeforeCall.allowed, false);
 });
 
 test('invalid JSON is rejected without regenerating the full prediction', async () => {
@@ -403,6 +469,58 @@ test('OpenRouter adapter retains useful provider errors while redacting secrets 
       return true;
     }
   );
+});
+
+test('llama.cpp adapter preserves the logical DTO and disables thinking without model substitution', async () => {
+  let request;
+  const adapter = createLlamaCppAdapter({
+    baseURL: 'http://127.0.0.1:8080/v1/',
+    fetchImpl: async (endpoint, options) => {
+      request = { endpoint, options };
+      return {
+        ok: true,
+        status: 200,
+        async text() {
+          return JSON.stringify({
+            id: 'local-test',
+            model: 'Qwen3-1.7B',
+            choices: [{ message: { content: '{"annotationPrediction":"ZERO_CLAIM","claims":[]}' } }],
+            usage: { prompt_tokens: 12, completion_tokens: 4, total_tokens: 16 },
+            timings: { prompt_n: 12, predicted_n: 4, predicted_ms: 20 }
+          });
+        }
+      };
+    }
+  });
+  const result = await adapter.generate({
+    systemPrompt: 'system',
+    input: 'input',
+    outputSchema: providerPredictionSchema,
+    runConfig: {
+      ...runConfig,
+      model: 'Qwen3-1.7B',
+      enableThinking: false,
+      temperature: 0.7,
+      topP: 0.8,
+      topK: 20,
+      minP: 0,
+      presencePenalty: 1.5
+    }
+  });
+  const body = JSON.parse(request.options.body);
+  assert.equal(request.endpoint, 'http://127.0.0.1:8080/v1/chat/completions');
+  assert.equal(body.model, 'Qwen3-1.7B');
+  assert.equal(body.response_format.type, 'json_schema');
+  assert.equal(body.response_format.json_schema.strict, true);
+  assert.equal(body.chat_template_kwargs.enable_thinking, false);
+  assert.equal(body.temperature, 0.7);
+  assert.equal(body.top_p, 0.8);
+  assert.equal(body.top_k, 20);
+  assert.equal(body.min_p, 0);
+  assert.equal(body.presence_penalty, 1.5);
+  assert.equal(result.modelVersion, 'Qwen3-1.7B');
+  assert.equal(result.usage.cost, 0);
+  assert.equal(result.localMetrics.predicted_n, 4);
 });
 
 function metricClaim(start, end, rawStatement, options = {}) {

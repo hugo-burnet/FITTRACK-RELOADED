@@ -22,6 +22,10 @@ function tokenCount(usage, ...names) {
 function usageForAttempt(attempt, runConfig) {
   const inputTokens = tokenCount(attempt.usage, 'prompt_tokens', 'input_tokens');
   const outputTokens = tokenCount(attempt.usage, 'completion_tokens', 'output_tokens');
+  const reasoningTokens = tokenCount(
+    attempt.usage?.completion_tokens_details,
+    'reasoning_tokens'
+  );
   const totalTokens = tokenCount(attempt.usage, 'total_tokens') || inputTokens + outputTokens;
   const reportedCost = attempt.usage?.cost;
   const rates = runConfig.pricingUsdPerMillionTokens ?? { input: 0, output: 0 };
@@ -32,17 +36,32 @@ function usageForAttempt(attempt, runConfig) {
     calls: 1,
     inputTokens,
     outputTokens,
+    reasoningTokens,
     totalTokens,
     costUsd: Number((Number.isFinite(reportedCost) ? reportedCost : estimatedCost).toFixed(8))
   };
 }
 
 function emptyUsage() {
-  return { calls: 0, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 };
+  return {
+    calls: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    reasoningTokens: 0,
+    totalTokens: 0,
+    costUsd: 0
+  };
 }
 
 function addUsage(target, value) {
-  for (const key of ['calls', 'inputTokens', 'outputTokens', 'totalTokens', 'costUsd']) {
+  for (const key of [
+    'calls',
+    'inputTokens',
+    'outputTokens',
+    'reasoningTokens',
+    'totalTokens',
+    'costUsd'
+  ]) {
     target[key] += value[key];
   }
   target.costUsd = Number(target.costUsd.toFixed(8));
@@ -69,13 +88,15 @@ function attemptRecord({ attempt, callType, promptInput, response, validation })
     modelVersion: response.modelVersion ?? null,
     usage: response.usage ?? null,
     latencyMs: response.latencyMs ?? null,
+    localMetrics: response.localMetrics ?? null,
     providerSchemaDroppedKeywords: response.providerSchemaDroppedKeywords ?? null,
     providerEnumTypesInjected: response.providerEnumTypesInjected ?? null,
     providerSchemaAssertions: response.providerSchemaAssertions ?? null,
     validation: {
       accepted: validation.accepted,
       retryable: validation.retryable,
-      diagnostics: validation.diagnostics
+      diagnostics: validation.diagnostics,
+      partialAudit: validation.partialAudit ?? null
     }
   };
 }
@@ -135,6 +156,10 @@ function resultOf(fragmentId, validation, attempts, runConfig) {
     status: validation.accepted ? 'VALIDATED' : 'REJECTED',
     prediction: validation.accepted ? validation.prediction : null,
     diagnostics: validation.diagnostics,
+    partialAudit:
+      validation.partialAudit ??
+      attempts.find((attempt) => attempt.validation.partialAudit)?.validation.partialAudit ??
+      null,
     attempts,
     usageByCallType: summarizeAttemptUsage(attempts, runConfig)
   };
@@ -213,6 +238,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
       callType: 'repair'
     });
   } catch (error) {
+    if (error && typeof error === 'object' && error.budgetStop === true) throw error;
     const providerDiagnostic =
       error instanceof Error && 'providerDiagnostic' in error
         ? error.providerDiagnostic

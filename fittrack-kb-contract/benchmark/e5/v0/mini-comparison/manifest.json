@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0-e5-mini-comparison-manifest",
+  "benchmarkId": "e5-v0.3-gpt5-vs-qwen3-1.7b-mini-5",
+  "selectionState": "FROZEN_BEFORE_FIRST_MODEL_CALL",
+  "sourceCommit": "90a82d6b34e56288ac4cd0b771460bc945649c22",
+  "promptVersion": "e5-llm-v0.3.0",
+  "providerDtoVersion": "e5-provider-prediction-v2",
+  "goldVisibleDuringGeneration": false,
+  "selectionMethod": {
+    "historicalCases": "the three fragmentIds frozen for the previous pilot",
+    "newCases": "highest deterministic structural-difficulty score per F2/F3 among GOLD fragments absent from all previous pilot artifacts",
+    "difficultyFormula": "3*claimCount + 2*distinctCitationCount + unresolvedAxisCount + 2*cannotConcludeCount + limitationCount + min(3,floor(rawTextChars/300))",
+    "previousPilotMatchCheck": "PASS"
+  },
+  "fragmentIds": [
+    "frag.e5f2.00033791",
+    "frag.f2.0004",
+    "frag.f3.0002",
+    "frag.f2.0001",
+    "frag.e5f3.00014346"
+  ],
+  "cases": [
+    {
+      "fragmentId": "frag.e5f2.00033791",
+      "family": "F2",
+      "role": "historical_simple",
+      "rawTextHash": "sha256:4b04eb9ab8819c048343c013acbe7b8a8db06e3287926d5dbd45b484d4495772",
+      "citationCatalogHash": "sha256:2b5aeb5a4b05806766a3759ba7739e2966f172c27436d7b8da87133ec1a30555"
+    },
+    {
+      "fragmentId": "frag.f2.0004",
+      "family": "F2",
+      "role": "historical_multi_claim_multi_citation",
+      "rawTextHash": "sha256:bfdc0cc95d2d6253484178a8ff80a1a6e365dc0743dbf02c9a87739fdcfb9390",
+      "citationCatalogHash": "sha256:b4f631a358cc9aceaadc9ba28558630e9b6a0a826504a03fbbf0be209073c184"
+    },
+    {
+      "fragmentId": "frag.f3.0002",
+      "family": "F3",
+      "role": "historical_clinical_difficult",
+      "rawTextHash": "sha256:c28ea82989be19a7bc84fe3019a8322f93b54fcb6340729b9a260d936611b480",
+      "citationCatalogHash": "sha256:c92fc0a6c375e426b578c493df9ed93aac129ae7790f66f9036447d26c99e603"
+    },
+    {
+      "fragmentId": "frag.f2.0001",
+      "family": "F2",
+      "role": "new_f2_difficult",
+      "rawTextHash": "sha256:ea673d87252f8298dda672448bc12ee0805090b2c6cc4d827aeb401b32d8a999",
+      "citationCatalogHash": "sha256:177b05549fcc35faeb374344c63f36d3439ea7e7a61f3a1fee6fe81434dbb8bc"
+    },
+    {
+      "fragmentId": "frag.e5f3.00014346",
+      "family": "F3",
+      "role": "new_f3_difficult",
+      "rawTextHash": "sha256:803acb008f447d2e0157c848cdb3212ac570cb027a96c949bb554cc9bc0d44f6",
+      "citationCatalogHash": "sha256:96e8b5758b8e12f7a70e88227cbe0805a4f4349ce98c9c20f922c553042196be"
+    }
+  ]
+}

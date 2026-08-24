@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import {
   existsSync,
   mkdirSync,
+  readFileSync,
   writeFileSync
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createOpenRouterAdapter } from './e5-llm/adapters.mjs';
+import { createLlamaCppAdapter, createOpenRouterAdapter } from './e5-llm/adapters.mjs';
 import { extractProseFragment } from './e5-llm/extractor.mjs';
 import { loadBenchmarkInputs, PILOT_FRAGMENT_IDS } from './e5-llm/inputs.mjs';
 import {
@@ -31,16 +33,125 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
+const repositoryRoot = resolve(root, '..');
 const benchmarkRoot = join(root, 'benchmark/e5/v0');
+const miniComparisonRoot = join(benchmarkRoot, 'mini-comparison');
+const miniManifestPath = join(miniComparisonRoot, 'manifest.json');
 
 function createProviderAdapter(base, apiKey) {
-  if (base.provider !== 'openrouter') throw new Error(`unsupported_provider:${base.provider}`);
-  return createOpenRouterAdapter({ apiKey, baseURL: base.baseURL });
+  if (base.provider === 'openrouter') {
+    return createOpenRouterAdapter({ apiKey, baseURL: base.baseURL });
+  }
+  if (base.provider === 'llamacpp') {
+    return createLlamaCppAdapter({ baseURL: base.baseURL });
+  }
+  throw new Error(`unsupported_provider:${base.provider}`);
 }
 
 function writeJson(path, value) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function tokenCount(usage, ...names) {
+  for (const name of names) {
+    if (Number.isFinite(usage?.[name])) return usage[name];
+  }
+  return 0;
+}
+
+function actualResponseCost(response, runConfig) {
+  const usage = response.usage ?? {};
+  if (Number.isFinite(usage.cost)) return Number(usage.cost.toFixed(8));
+  const inputTokens = tokenCount(usage, 'prompt_tokens', 'input_tokens');
+  const outputTokens = tokenCount(usage, 'completion_tokens', 'output_tokens');
+  const rates = runConfig.pricingUsdPerMillionTokens;
+  return Number(
+    (
+      (inputTokens / 1_000_000) * rates.input +
+      (outputTokens / 1_000_000) * rates.output
+    ).toFixed(8)
+  );
+}
+
+export function conservativeCallCost({ systemPrompt, input, runConfig }) {
+  const approximateInputTokens = Math.ceil(
+    Buffer.byteLength(`${systemPrompt}\n${input}`, 'utf8') / 4
+  );
+  const maximumOutputTokens = runConfig.maxOutputTokens;
+  const rates = runConfig.pricingUsdPerMillionTokens;
+  return {
+    approximateInputTokens,
+    maximumOutputTokens,
+    estimateUsd: Number(
+      (
+        (approximateInputTokens / 1_000_000) * rates.input +
+        (maximumOutputTokens / 1_000_000) * rates.output
+      ).toFixed(8)
+    )
+  };
+}
+
+export function createBudgetedAdapter(adapter, runConfig, onLedgerChange) {
+  const ledger = {
+    schemaVersion: '1.0.0-e5-llm-budget-ledger',
+    capUsd: runConfig.maxRunCostUsd,
+    actualCostUsd: 0,
+    stoppedBeforeCall: null,
+    calls: []
+  };
+  onLedgerChange(ledger);
+  return {
+    ledger,
+    adapter: {
+      async generate(request) {
+        const conservative = conservativeCallCost(request);
+        const projectedUsd = Number(
+          (ledger.actualCostUsd + conservative.estimateUsd).toFixed(8)
+        );
+        const preflight = {
+          sequence: ledger.calls.length + 1,
+          fragmentId: request.fragmentId,
+          callType: request.callType,
+          attempt: request.attempt,
+          actualCostBeforeUsd: ledger.actualCostUsd,
+          conservativeNextCallEstimateUsd: conservative.estimateUsd,
+          projectedCostUsd: projectedUsd,
+          budgetRemainingBeforeUsd: Number(
+            (ledger.capUsd - ledger.actualCostUsd).toFixed(8)
+          ),
+          approximateInputTokens: conservative.approximateInputTokens,
+          maximumOutputTokens: conservative.maximumOutputTokens,
+          allowed: projectedUsd <= ledger.capUsd
+        };
+        if (!preflight.allowed) {
+          ledger.stoppedBeforeCall = preflight;
+          onLedgerChange(ledger);
+          const error = new Error(
+            `budget_stop_before_call:${ledger.actualCostUsd}:${conservative.estimateUsd}:${ledger.capUsd}`
+          );
+          error.budgetStop = true;
+          error.budgetPreflight = preflight;
+          throw error;
+        }
+        const response = await adapter.generate(request);
+        const actualCallCostUsd = actualResponseCost(response, request.runConfig);
+        ledger.actualCostUsd = Number(
+          (ledger.actualCostUsd + actualCallCostUsd).toFixed(8)
+        );
+        ledger.calls.push({
+          ...preflight,
+          actualCallCostUsd,
+          actualCostAfterUsd: ledger.actualCostUsd,
+          budgetRemainingAfterUsd: Number(
+            (ledger.capUsd - ledger.actualCostUsd).toFixed(8)
+          )
+        });
+        onLedgerChange(ledger);
+        return response;
+      }
+    }
+  };
 }
 
 function argsOf(argv) {
@@ -57,12 +168,54 @@ function argsOf(argv) {
     else if (argv[index] === '--pilot-approved') args.pilotApproved = true;
     else throw new Error(`unknown_argument:${argv[index]}`);
   }
-  if (!['dry-run', 'pilot', 'full'].includes(args.mode)) throw new Error(`invalid_mode:${args.mode}`);
+  if (!['dry-run', 'pilot', 'mini', 'full'].includes(args.mode)) throw new Error(`invalid_mode:${args.mode}`);
   return args;
+}
+
+function loadMiniComparisonInputs(benchmark) {
+  const manifest = JSON.parse(readFileSync(miniManifestPath, 'utf8'));
+  if (manifest.selectionState !== 'FROZEN_BEFORE_FIRST_MODEL_CALL') {
+    throw new Error('mini_manifest_not_frozen');
+  }
+  if (
+    manifest.promptVersion !== PROMPT_VERSION ||
+    manifest.providerDtoVersion !== PROVIDER_DTO_VERSION
+  ) {
+    throw new Error('mini_manifest_protocol_mismatch');
+  }
+  if (
+    manifest.fragmentIds.length !== 5 ||
+    new Set(manifest.fragmentIds).size !== 5 ||
+    manifest.cases.length !== 5
+  ) {
+    throw new Error('mini_manifest_requires_exactly_five_unique_fragments');
+  }
+  const caseById = new Map(manifest.cases.map((item) => [item.fragmentId, item]));
+  const selectedInputs = manifest.fragmentIds.map((id) => {
+    const input = benchmark.inputs.find((item) => item.fragment.fragmentId === id);
+    const manifestCase = caseById.get(id);
+    if (!input || !manifestCase) throw new Error(`mini_manifest_fragment_missing:${id}`);
+    if (sha256Text(input.fragment.rawText) !== manifestCase.rawTextHash) {
+      throw new Error(`mini_manifest_fragment_hash_mismatch:${id}`);
+    }
+    if (sha256Text(JSON.stringify(input.citationCatalog)) !== manifestCase.citationCatalogHash) {
+      throw new Error(`mini_manifest_citation_hash_mismatch:${id}`);
+    }
+    return input;
+  });
+  return { manifest, selectedInputs };
 }
 
 function stableHash(value) {
   return createHash('sha256').update(JSON.stringify(value), 'utf8').digest('hex');
+}
+
+function codeCommit() {
+  return execFileSync(
+    'git',
+    ['-c', `safe.directory=${repositoryRoot}`, 'rev-parse', 'HEAD'],
+    { cwd: repositoryRoot, encoding: 'utf8', windowsHide: true }
+  ).trim();
 }
 
 function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProjection, repairProjection) {
@@ -70,12 +223,14 @@ function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProje
     throw new Error(`prompt_version_mismatch:${base.promptVersion}:${PROMPT_VERSION}`);
   }
   const orderedIds = inputs.map((item) => item.fragment.fragmentId);
+  const currentCodeCommit = codeCommit();
   const runHash = stableHash({
     benchmarkVersion: base.benchmarkVersion,
     extractorVersion: base.extractorVersion,
     provider: base.provider,
     runVariant: base.runVariant,
     model: base.model,
+    codeCommit: currentCodeCommit,
     configFile,
     promptVersion: base.promptVersion,
     promptHash: sha256Text(E5_SYSTEM_PROMPT),
@@ -86,6 +241,10 @@ function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProje
     anchorRepairSchemaHash: sha256Text(JSON.stringify(repairProjection.providerSchema)),
     temperature: base.temperature,
     topP: base.topP,
+    topK: base.topK,
+    minP: base.minP,
+    presencePenalty: base.presencePenalty,
+    enableThinking: base.enableThinking,
     maxOutputTokens: base.maxOutputTokens,
     maxRepairOutputTokens: base.maxRepairOutputTokens,
     maxFullRetries: base.maxFullRetries,
@@ -97,6 +256,7 @@ function buildRunConfig(base, configFile, benchmark, inputs, mode, providerProje
   return {
     ...base,
     configFile,
+    codeCommit: currentCodeCommit,
     runId: `run.e5-llm-v0.${runHash}`,
     mode,
     fragmentCount: inputs.length,
@@ -175,6 +335,7 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
       modelVersion: attempt.modelVersion,
       usage: attempt.usage,
       latencyMs: attempt.latencyMs,
+      localMetrics: attempt.localMetrics ?? null,
       providerSchemaDroppedKeywords: attempt.providerSchemaDroppedKeywords ?? null,
       providerEnumTypesInjected: attempt.providerEnumTypesInjected ?? null,
       providerSchemaAssertions: attempt.providerSchemaAssertions ?? null,
@@ -190,6 +351,7 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
     fragmentId: result.fragmentId,
     status: result.status,
     diagnostics: result.diagnostics,
+    partialAudit: result.partialAudit ?? null,
     fullCallCount: result.attempts.filter((attempt) => attempt.callType === 'full').length,
     repairCallCount: result.attempts.filter((attempt) => attempt.callType === 'repair').length,
     usageByCallType: result.usageByCallType
@@ -197,7 +359,14 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
 }
 
 function emptyUsage() {
-  return { calls: 0, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 };
+  return {
+    calls: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    reasoningTokens: 0,
+    totalTokens: 0,
+    costUsd: 0
+  };
 }
 
 function aggregateUsage(results) {
@@ -205,7 +374,14 @@ function aggregateUsage(results) {
   for (const result of results) {
     for (const category of ['full', 'repair', 'total']) {
       const usage = result.usageByCallType?.[category] ?? emptyUsage();
-      for (const key of ['calls', 'inputTokens', 'outputTokens', 'totalTokens', 'costUsd']) {
+      for (const key of [
+        'calls',
+        'inputTokens',
+        'outputTokens',
+        'reasoningTokens',
+        'totalTokens',
+        'costUsd'
+      ]) {
         summary[category][key] += usage[key];
       }
       summary[category].costUsd = Number(summary[category].costUsd.toFixed(8));
@@ -235,10 +411,10 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   const providerProjection = projectProviderSchema(providerPredictionSchema);
   const anchorRepairSchema = createE5AnchorRepairSchema();
   const repairProjection = projectProviderSchema(anchorRepairSchema);
-  const selectedInputs =
-    args.mode === 'pilot'
-      ? PILOT_FRAGMENT_IDS.map((id) => benchmark.inputs.find((item) => item.fragment.fragmentId === id))
-      : benchmark.inputs;
+  const mini = args.mode === 'mini' ? loadMiniComparisonInputs(benchmark) : null;
+  const selectedInputs = args.mode === 'pilot'
+    ? PILOT_FRAGMENT_IDS.map((id) => benchmark.inputs.find((item) => item.fragment.fragmentId === id))
+    : mini?.selectedInputs ?? benchmark.inputs;
   if (selectedInputs.some((item) => !item)) throw new Error('pilot_fragment_missing');
   const promptInputs = selectedInputs.map((item) => {
     const prompt = buildPromptInput({
@@ -262,9 +438,16 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   const dryRun = {
     status: costEstimate.expectedCostUsd <= runConfig.maxRunCostUsd ? 'PASS' : 'STOP',
     fragmentCount: selectedInputs.length,
-    split:
-      args.mode === 'pilot'
-        ? { F2: 2, F3: 1 }
+    split: args.mode === 'pilot'
+      ? { F2: 2, F3: 1 }
+      : args.mode === 'mini'
+        ? selectedInputs.reduce(
+            (counts, item) => {
+              counts[item.fragment.corpusFileId.startsWith('corpus.f2.') ? 'F2' : 'F3'] += 1;
+              return counts;
+            },
+            { F2: 0, F3: 0 }
+          )
         : benchmark.counts,
     goldenLeakChecks: promptInputs.length,
     apiCalls: 0,
@@ -278,6 +461,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   };
   const outputRoot = args.mode === 'pilot'
     ? join(benchmarkRoot, 'pilot', runConfig.runVariant)
+    : args.mode === 'mini'
+      ? join(miniComparisonRoot, 'runs', runConfig.runVariant)
     : args.mode === 'full'
       ? join(benchmarkRoot, 'runs', runConfig.runVariant)
       : benchmarkRoot;
@@ -299,80 +484,111 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   if (args.mode === 'full' && (!args.approveCost || !args.pilotApproved)) {
     throw new Error('full_run_requires_--approve-cost_and_--pilot-approved');
   }
-  const apiKey = process.env.OPENROUTER_API_KEY?.trim() || null;
-  const adapter = createProviderAdapter(base, apiKey);
+  runConfig.configuredConcurrency = runConfig.concurrency;
+  runConfig.executionConcurrency = args.mode === 'full' ? 1 : runConfig.concurrency;
+  const apiKey = base.provider === 'openrouter'
+    ? process.env.OPENROUTER_API_KEY?.trim() || null
+    : null;
+  const providerAdapter = createProviderAdapter(base, apiKey);
   assertOutputScope(outputRoot);
   writeJson(join(outputRoot, 'config.json'), { ...runConfig, costEstimate });
-  const results = await runWithConcurrency(
-    selectedInputs,
-    runConfig.concurrency,
-    async (item, index) => {
-      console.log(`[${index + 1}/${selectedInputs.length}] ${item.fragment.fragmentId}`);
-      try {
-        const result = await extractProseFragment(
+  const budget = createBudgetedAdapter(providerAdapter, runConfig, (ledger) => {
+    writeJson(join(outputRoot, 'budget-ledger.json'), ledger);
+  });
+  async function runOne(item, index) {
+    console.log(`[${index + 1}/${selectedInputs.length}] ${item.fragment.fragmentId}`);
+    try {
+      const result = await extractProseFragment(
+        {
+          ...item,
+          vocabularies: benchmark.vocabularies,
+          predictionSchema: benchmark.predictionSchema,
+          providerPredictionSchema,
+          runConfig
+        },
+        { modelAdapter: budget.adapter }
+      );
+      persistResult(outputRoot, result);
+      return result;
+    } catch (error) {
+      if (error && typeof error === 'object' && error.budgetStop === true) throw error;
+      const message = error instanceof Error ? error.message : String(error);
+      const providerDiagnostic =
+        error instanceof Error && 'providerDiagnostic' in error
+          ? error.providerDiagnostic
+          : null;
+      const failedUsage = emptyUsage();
+      failedUsage.calls = 1;
+      const failed = {
+        fragmentId: item.fragment.fragmentId,
+        status: 'REJECTED',
+        prediction: null,
+        partialAudit: null,
+        diagnostics: [
           {
-            ...item,
-            vocabularies: benchmark.vocabularies,
-            predictionSchema: benchmark.predictionSchema,
-            providerPredictionSchema,
-            runConfig
-          },
-          { modelAdapter: adapter }
-        );
-        persistResult(outputRoot, result);
-        return result;
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        const providerDiagnostic =
-          error instanceof Error && 'providerDiagnostic' in error
-            ? error.providerDiagnostic
-            : null;
-        const failed = {
-          fragmentId: item.fragment.fragmentId,
-          status: 'REJECTED',
-          prediction: null,
-          diagnostics: [
-            {
-              code: 'PROVIDER_ERROR',
-              critical: true,
-              retryable: false,
-              message,
-              providerDiagnostic
-            }
-          ],
-          attempts: [
-            {
-              attempt: 0,
-              callType: 'full',
-              promptInput: null,
-              rawResponse: '',
-              providerResponse: null,
-              responseId: null,
-              modelVersion: null,
-              usage: null,
-              latencyMs: null,
-              validation: {
-                accepted: false,
-                retryable: false,
-                diagnostics: [{ code: 'PROVIDER_ERROR', message, providerDiagnostic }]
-              }
-            }
-          ],
-          usageByCallType: {
-            full: { calls: 1, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 },
-            repair: { calls: 0, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 },
-            total: { calls: 1, inputTokens: 0, outputTokens: 0, totalTokens: 0, costUsd: 0 }
+            code: 'PROVIDER_ERROR',
+            critical: true,
+            retryable: false,
+            message,
+            providerDiagnostic
           }
-        };
-        persistResult(outputRoot, failed);
-        return failed;
+        ],
+        attempts: [
+          {
+            attempt: 0,
+            callType: 'full',
+            promptInput: null,
+            rawResponse: '',
+            providerResponse: null,
+            responseId: null,
+            modelVersion: null,
+            usage: null,
+            latencyMs: null,
+            validation: {
+              accepted: false,
+              retryable: false,
+              diagnostics: [{ code: 'PROVIDER_ERROR', message, providerDiagnostic }],
+              partialAudit: null
+            }
+          }
+        ],
+        usageByCallType: {
+          full: { ...failedUsage },
+          repair: emptyUsage(),
+          total: { ...failedUsage }
+        }
+      };
+      persistResult(outputRoot, failed);
+      return failed;
+    }
+  }
+  const results = [];
+  let budgetStop = null;
+  if (args.mode === 'full') {
+    for (let index = 0; index < selectedInputs.length; index += 1) {
+      try {
+        results.push(await runOne(selectedInputs[index], index));
+      } catch (error) {
+        if (!(error && typeof error === 'object' && error.budgetStop === true)) throw error;
+        budgetStop = error.budgetPreflight ?? { message: error.message };
+        console.log(`STOP budget avant fragment ${selectedInputs[index].fragment.fragmentId}`);
+        break;
       }
     }
-  );
+  } else {
+    results.push(
+      ...(await runWithConcurrency(
+        selectedInputs,
+        runConfig.executionConcurrency,
+        runOne
+      ))
+    );
+  }
   runConfig.completedAt = new Date().toISOString();
   const usageByCallType = aggregateUsage(results);
   const summary = {
     runId: runConfig.runId,
+    requestedFragmentCount: selectedInputs.length,
     fragmentCount: results.length,
     validated: results.filter((item) => item.status === 'VALIDATED').length,
     rejected: results.filter((item) => item.status === 'REJECTED').length,
@@ -383,6 +599,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
       (sum, item) => sum + item.attempts.filter((attempt) => !attempt.validation.accepted).length,
       0
     ),
+    budgetStop,
+    budget: budget.ledger,
     usageByCallType,
     completedAt: runConfig.completedAt
   };

@@ -13,6 +13,7 @@ import {
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const benchmarkRoot = join(root, 'benchmark/e5/v0');
+const defaultOutputRoot = join(benchmarkRoot, 'runs', 'openrouter-openai-gpt-5');
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
@@ -73,7 +74,120 @@ function qualitativeSamples(fragmentResults) {
   return { best: ordered.slice(0, 5), worst: worst.slice(0, 5), granular, citations, clinical, safety };
 }
 
-function reportMarkdown(config, metrics, errors, passResult, samples) {
+function auditSummary(runRecords, fragmentResults, errors, config, metrics) {
+  const repairRecords = runRecords.filter((record) =>
+    record.attempts.some((attempt) => attempt.callType === 'repair')
+  );
+  const repairReasons = {};
+  for (const record of repairRecords) {
+    const full = record.attempts.find((attempt) => attempt.callType === 'full');
+    for (const diagnostic of full?.validation?.diagnostics ?? []) {
+      repairReasons[diagnostic.code] = (repairReasons[diagnostic.code] ?? 0) + 1;
+    }
+  }
+  const rejectionReasons = {};
+  for (const record of runRecords.filter((item) => item.status === 'REJECTED')) {
+    for (const diagnostic of record.diagnostics) {
+      rejectionReasons[diagnostic.code] = (rejectionReasons[diagnostic.code] ?? 0) + 1;
+    }
+  }
+  const partialAudits = runRecords
+    .filter((record) => record.status === 'REJECTED' && record.partialAudit)
+    .map((record) => ({ fragmentId: record.fragmentId, ...record.partialAudit }));
+  const providerClaims = [];
+  for (const record of runRecords) {
+    const full = record.attempts.find((attempt) => attempt.callType === 'full');
+    try {
+      const parsed = JSON.parse(full?.rawResponse ?? '');
+      const prompt = JSON.parse(full?.promptInput ?? '{}');
+      const fragmentText = prompt.fragment?.rawText ?? '';
+      for (const claim of parsed.claims ?? []) {
+        providerClaims.push({ fragmentId: record.fragmentId, fragmentText, claim });
+      }
+    } catch {
+      // Invalid JSON is already represented in diagnostics.
+    }
+  }
+  const productPolicyClaims = providerClaims.filter(({ claim }) =>
+    ['PRODUCT_POLICY', 'MODELING_DECISION'].includes(claim.knowledgeType)
+  );
+  const causalPattern = /\b(?:caus\w*|provoqu\w*|entra[îi]ne\w*|responsable de)\b/iu;
+  const causalityInventions = fragmentResults.flatMap((fragment) =>
+    fragment.pairs.filter(
+      (pair) =>
+        causalPattern.test(pair.prediction.rawStatement) &&
+        !causalPattern.test(pair.golden.rawStatement)
+    ).map((pair) => ({ fragmentId: fragment.fragmentId, claim: pair.prediction.rawStatement }))
+  );
+  const referralPattern = /\b(?:consulter|consultation|médecin|professionnel de santé|urgence|référer|orienter)\b/iu;
+  const inventedReferrals = providerClaims.filter(({ claim, fragmentText }) => {
+    const freeText = JSON.stringify({
+      conditions: claim.conditions,
+      limitations: claim.limitations,
+      cannotConclude: claim.cannotConclude,
+      unresolved: claim.unresolved,
+      knowledgeTypeReason: claim.knowledgeTypeReason,
+      epistemicStatusReason: claim.epistemicStatusReason,
+      directnessReason: claim.directnessReason,
+      evidenceTypesReason: claim.evidenceTypesReason
+    });
+    const match = freeText.match(referralPattern)?.[0];
+    return Boolean(match) && !fragmentText.toLocaleLowerCase('fr').includes(match.toLocaleLowerCase('fr'));
+  });
+  const usage = config.summary.usageByCallType;
+  const completedFragments = config.summary.fragmentCount;
+  const totalCostUsd = usage.total.costUsd;
+  return {
+    partialRejections: {
+      fragmentsWithIndividuallyValidClaims: partialAudits.filter(
+        (item) => item.individuallyValidClaimCount > 0
+      ).length,
+      individuallyValidClaimsInsideRejectedFragments: partialAudits.reduce(
+        (sum, item) => sum + item.individuallyValidClaimCount,
+        0
+      ),
+      individuallyInvalidClaimsInsideRejectedFragments: partialAudits.reduce(
+        (sum, item) => sum + item.individuallyInvalidClaimCount,
+        0
+      ),
+      fragments: partialAudits
+    },
+    repairs: {
+      calls: usage.repair.calls,
+      ratePerFullCall: usage.full.calls ? usage.repair.calls / usage.full.calls : 0,
+      successfulFragments: repairRecords.filter((record) => record.status === 'VALIDATED').length,
+      successRate: repairRecords.length
+        ? repairRecords.filter((record) => record.status === 'VALIDATED').length / repairRecords.length
+        : null,
+      reasons: repairReasons
+    },
+    rejectionReasons,
+    safetyExtensions: {
+      productPolicyIncorrectlyExtracted: productPolicyClaims.length,
+      inventedCausality: causalityInventions.length,
+      populationGeneralization:
+        (metrics.GLOBAL.nuanceConservation.population.applicable ?? 0) -
+        (metrics.GLOBAL.nuanceConservation.population.conserved ?? 0),
+      inventedReferral: inventedReferrals.length
+    },
+    cost: {
+      fullUsd: usage.full.costUsd,
+      repairUsd: usage.repair.costUsd,
+      totalUsd: totalCostUsd,
+      meanPerCompletedFragmentUsd: completedFragments ? totalCostUsd / completedFragments : null,
+      projected207Usd: completedFragments ? (totalCostUsd / completedFragments) * 207 : null,
+      fullInputTokens: usage.full.inputTokens,
+      fullOutputTokens: usage.full.outputTokens,
+      fullReasoningTokens: usage.full.reasoningTokens,
+      repairInputTokens: usage.repair.inputTokens,
+      repairOutputTokens: usage.repair.outputTokens,
+      repairReasoningTokens: usage.repair.reasoningTokens
+    },
+    errorsByCategory: errorDistribution(errors)
+  };
+}
+
+function reportMarkdown(config, metrics, errors, passResult, samples, audit) {
   const sections = ['GLOBAL', 'F2', 'F3']
     .map((scope) => {
       const item = metrics[scope];
@@ -90,6 +204,7 @@ function reportMarkdown(config, metrics, errors, passResult, samples) {
         ['ZERO_CLAIM recall', item.zeroClaim.recall],
         ['ZERO_CLAIM accuracy', item.zeroClaim.accuracy],
         ['ZERO_CLAIM false-positive claim rate', item.zeroClaim.falsePositiveClaimRate],
+        ['ZERO_CLAIM false-negative rate', item.zeroClaim.falseNegativeRate],
         ['Support span correctness', item.spans.supportSpanCorrectness],
         ['Mean span overlap', item.spans.meanMatchedOverlap],
         ['Span hallucination rate', item.spans.spanHallucinationRate],
@@ -99,7 +214,8 @@ function reportMarkdown(config, metrics, errors, passResult, samples) {
         ['knowledgeType accuracy', item.classification.knowledgeTypeAccuracy],
         ['epistemicStatus accuracy', item.classification.epistemicStatusAccuracy],
         ['UNRESOLVED preservation', item.unresolved.preservationRate],
-        ['UNRESOLVED forced rate', item.unresolved.forcedRate]
+        ['UNRESOLVED forced rate', item.unresolved.forcedRate],
+        ['cannotConclude fidelity', item.cannotConclude.preservationRate]
       ];
       return `### ${scope}\n\n| Metric | Value |\n|---|---:|\n${rows
         .map(([name, value]) => `| ${name} | ${fmt(value)} |`)
@@ -114,10 +230,10 @@ function reportMarkdown(config, metrics, errors, passResult, samples) {
     .join('\n');
   const list = (items) => (items.length ? items.map(exampleLine).join('\n') : '- Aucun cas.')
   const usage = config.summary?.usageByCallType ?? {};
-  return `# E5-LLM BENCHMARK v0\n\n## Implementation\n\n- Run ID: \`${config.runId}\`\n- Provider/model: \`${config.provider}\` / \`${config.model}\`\n- Prompt: \`${config.promptVersion}\` (\`${config.promptHash}\`)\n- Temperature/top_p/max output: ${config.temperature} / ${config.topP} / ${config.maxOutputTokens}\n- Full retries: ${config.maxFullRetries}; targeted anchor repairs: ${config.maxAnchorRepairRetries}\n- Full calls/tokens/cost: ${usage.full?.calls ?? 'n/a'} / ${usage.full?.totalTokens ?? 'n/a'} / $${usage.full?.costUsd ?? 'n/a'}\n- Repair calls/tokens/cost: ${usage.repair?.calls ?? 'n/a'} / ${usage.repair?.totalTokens ?? 'n/a'} / $${usage.repair?.costUsd ?? 'n/a'}\n- Golden commit: \`${config.goldenCommit}\`\n- Corpus commit: \`${config.corpusCommit}\`\n- Rejected responses: ${metrics.GLOBAL.rejectedFragments}\n\n## Metrics\n\n${sections}\n\n## Safety\n\n- Hallucinations: ${metrics.GLOBAL.safety.hallucinationCount} (${fmt(metrics.GLOBAL.safety.hallucinationRate)})\n- Unsupported inference: ${metrics.GLOBAL.safety.unsupportedInferenceCount} (${fmt(metrics.GLOBAL.safety.unsupportedInferenceRate)})\n- Evidence inflation: ${metrics.GLOBAL.safety.evidenceInflationCount}\n- EMG → hypertrophy violations: ${metrics.GLOBAL.safety.emgHypertrophyViolations}\n- Biomechanics → risk violations: ${metrics.GLOBAL.safety.biomechanicsRiskLeaps}\n- Clinical overreach: ${metrics.F3.safety.clinicalOverreachCount}\n- Invented diagnoses: ${metrics.GLOBAL.safety.inventedDiagnosisCount}\n- Invented citations/sources: ${metrics.GLOBAL.safety.inventedCitationCount} / ${metrics.GLOBAL.safety.inventedSourceCount}\n\n## Error taxonomy\n\n| Category | Count |\n|---|---:|\n${distribution}\n\n## Qualitative sample\n\n### 5 best examples\n\n${list(samples.best)}\n\n### 5 worst examples\n\n${list(samples.worst)}\n\n### Granularity cases\n\n${list(samples.granular)}\n\n### Citation cases\n\n${list(samples.citations)}\n\n### F3 clinical cases\n\n${list(samples.clinical)}\n\n### All safety violations\n\n${list(samples.safety)}\n\n## Frozen gates\n\n| Gate | Actual | Threshold | Result |\n|---|---:|---:|---|\n${gates}\n\n## Conclusion\n\nE5-LLM v0 PASSES benchmark thresholds: ${passResult.pass ? 'YES' : 'NO'}\n`;
+  return `# E5-LLM v0.3 — 100 GOLD\n\n## Run\n\n- Run ID: \`${config.runId}\`\n- Code commit: \`${config.codeCommit}\`\n- Provider/model/reasoning: \`${config.provider}\` / \`${config.model}\` / \`${config.reasoningEffort}\`\n- Prompt: \`${config.promptVersion}\` (\`${config.promptHash}\`)\n- Provider DTO: \`${config.providerDtoVersion}\`\n- Fragments attempted/validated/rejected: ${config.summary.fragmentCount} / ${config.summary.validated} / ${config.summary.rejected}\n- Full retries: ${config.maxFullRetries}; targeted anchor repairs: ${config.maxAnchorRepairRetries}\n- Golden commit: \`${config.goldenCommit}\`\n- Corpus commit: \`${config.corpusCommit}\`\n\n## Metrics\n\n${sections}\n\n## Repairs\n\n- Full calls: ${usage.full?.calls ?? 'n/a'}\n- Repair calls: ${audit.repairs.calls}\n- Repair rate: ${fmt(audit.repairs.ratePerFullCall)}\n- Successful fragments after repair: ${audit.repairs.successfulFragments}\n- Repair success rate: ${fmt(audit.repairs.successRate)}\n- Repair reasons: ${JSON.stringify(audit.repairs.reasons)}\n\n## Cost\n\n- Full input/output/reasoning tokens: ${audit.cost.fullInputTokens} / ${audit.cost.fullOutputTokens} / ${audit.cost.fullReasoningTokens}\n- Repair input/output/reasoning tokens: ${audit.cost.repairInputTokens} / ${audit.cost.repairOutputTokens} / ${audit.cost.repairReasoningTokens}\n- Full/repair/total cost: $${audit.cost.fullUsd} / $${audit.cost.repairUsd} / $${audit.cost.totalUsd}\n- Mean cost per completed fragment: $${audit.cost.meanPerCompletedFragmentUsd}\n- Projected cost for 207 fragments: $${audit.cost.projected207Usd}\n\n## Partial-fragment rejection audit\n\n- Rejected fragments retaining individually valid claims: ${audit.partialRejections.fragmentsWithIndividuallyValidClaims}\n- Individually valid claims inside rejected fragments: ${audit.partialRejections.individuallyValidClaimsInsideRejectedFragments}\n- Individually invalid claims inside rejected fragments: ${audit.partialRejections.individuallyInvalidClaimsInsideRejectedFragments}\n- Global rejection reasons: ${JSON.stringify(audit.rejectionReasons)}\n\n## Safety\n\n- Hallucinations: ${metrics.GLOBAL.safety.hallucinationCount} (${fmt(metrics.GLOBAL.safety.hallucinationRate)})\n- Unsupported inference: ${metrics.GLOBAL.safety.unsupportedInferenceCount} (${fmt(metrics.GLOBAL.safety.unsupportedInferenceRate)})\n- Evidence inflation: ${metrics.GLOBAL.safety.evidenceInflationCount}\n- Invented causality: ${audit.safetyExtensions.inventedCausality}\n- Population generalization: ${audit.safetyExtensions.populationGeneralization}\n- EMG → hypertrophy violations: ${metrics.GLOBAL.safety.emgHypertrophyViolations}\n- Biomechanics → risk violations: ${metrics.GLOBAL.safety.biomechanicsRiskLeaps}\n- Clinical overreach: ${metrics.F3.safety.clinicalOverreachCount}\n- Universalization: ${metrics.GLOBAL.safety.universalizationCount}\n- Invented diagnoses: ${metrics.GLOBAL.safety.inventedDiagnosisCount}\n- Invented referrals: ${audit.safetyExtensions.inventedReferral}\n- PRODUCT_POLICY/MODELING_DECISION extracted: ${audit.safetyExtensions.productPolicyIncorrectlyExtracted}\n- Invented citations/sources: ${metrics.GLOBAL.safety.inventedCitationCount} / ${metrics.GLOBAL.safety.inventedSourceCount}\n\n## EpistemicStatus confusion matrix\n\n\`\`\`json\n${JSON.stringify(metrics.GLOBAL.classification.epistemicStatusConfusionMatrix, null, 2)}\n\`\`\`\n\n## Error taxonomy\n\n| Category | Count |\n|---|---:|\n${distribution}\n\n## Qualitative sample\n\n### 5 best examples\n\n${list(samples.best)}\n\n### 5 worst examples\n\n${list(samples.worst)}\n\n### Granularity cases\n\n${list(samples.granular)}\n\n### Citation cases\n\n${list(samples.citations)}\n\n### F3 clinical cases\n\n${list(samples.clinical)}\n\n### All safety violations\n\n${list(samples.safety)}\n\n## Frozen gates\n\n| Gate | Actual | Threshold | Result |\n|---|---:|---:|---|\n${gates}\n\n## Conclusion\n\nE5 v0.3 ready for full 207-fragment candidate extraction: ${passResult.pass ? 'YES' : 'NO'}\n`;
 }
 
-export function evaluateBenchmark(outputRoot = benchmarkRoot) {
+export function evaluateBenchmark(outputRoot = defaultOutputRoot) {
   const config = readJson(join(outputRoot, 'config.json'));
   if (config.fragmentCount !== 100) throw new Error(`full_benchmark_requires_100_fragments:${config.fragmentCount}`);
   const adjudicated = readJson(join(root, 'golden/e5/adjudication/adjudicated.json'));
@@ -138,6 +254,7 @@ export function evaluateBenchmark(outputRoot = benchmarkRoot) {
       status: prediction.status,
       prediction: prediction.prediction,
       diagnostics: diagnostics.diagnostics,
+      partialAudit: diagnostics.partialAudit ?? null,
       attempts
     };
   });
@@ -145,6 +262,7 @@ export function evaluateBenchmark(outputRoot = benchmarkRoot) {
   const metrics = buildMetrics(result.fragmentResults);
   const passResult = benchmarkPass(metrics);
   const samples = qualitativeSamples(result.fragmentResults);
+  const audit = auditSummary(runRecords, result.fragmentResults, result.errors, config, metrics);
   writeJson(join(outputRoot, 'metrics.json'), metrics);
   writeJson(join(outputRoot, 'errors.json'), {
     schemaVersion: '1.0.0-e5-llm-benchmark-errors',
@@ -153,8 +271,13 @@ export function evaluateBenchmark(outputRoot = benchmarkRoot) {
     errors: result.errors
   });
   writeJson(join(outputRoot, 'qualitative-samples.json'), samples);
-  writeFileSync(join(outputRoot, 'report.md'), reportMarkdown(config, metrics, result.errors, passResult, samples), 'utf8');
-  return { metrics, errors: result.errors, passResult, samples };
+  writeJson(join(outputRoot, 'audit-summary.json'), audit);
+  writeFileSync(
+    join(outputRoot, 'report.md'),
+    reportMarkdown(config, metrics, result.errors, passResult, samples, audit),
+    'utf8'
+  );
+  return { metrics, errors: result.errors, passResult, samples, audit };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

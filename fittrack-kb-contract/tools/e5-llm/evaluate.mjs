@@ -390,6 +390,9 @@ function metricsForScope(fragmentResults, scope) {
   let knowledgeCorrect = 0;
   let epistemicComparable = 0;
   let epistemicCorrect = 0;
+  const knowledgeTypeConfusionMatrix = {};
+  const epistemicStatusConfusionMatrix = {};
+  const cannotConclude = { applicableClaims: 0, preservedClaims: 0, goldenItems: 0, predictedItems: 0 };
   const unresolved = { goldenAxes: 0, preserved: 0, forced: 0 };
   const conservation = {
     negation: { applicable: 0, conserved: 0 },
@@ -407,10 +410,28 @@ function metricsForScope(fragmentResults, scope) {
     if (pair.golden.knowledgeType !== undefined) {
       knowledgeComparable += 1;
       if (pair.prediction.knowledgeType === pair.golden.knowledgeType) knowledgeCorrect += 1;
+      const goldenValue = pair.golden.knowledgeType ?? 'null';
+      const predictedValue = pair.prediction.knowledgeType ?? 'null';
+      knowledgeTypeConfusionMatrix[goldenValue] ??= {};
+      knowledgeTypeConfusionMatrix[goldenValue][predictedValue] =
+        (knowledgeTypeConfusionMatrix[goldenValue][predictedValue] ?? 0) + 1;
     }
     if (pair.golden.epistemicStatus !== undefined) {
       epistemicComparable += 1;
       if (pair.prediction.epistemicStatus === pair.golden.epistemicStatus) epistemicCorrect += 1;
+      const goldenValue = pair.golden.epistemicStatus ?? 'null';
+      const predictedValue = pair.prediction.epistemicStatus ?? 'null';
+      epistemicStatusConfusionMatrix[goldenValue] ??= {};
+      epistemicStatusConfusionMatrix[goldenValue][predictedValue] =
+        (epistemicStatusConfusionMatrix[goldenValue][predictedValue] ?? 0) + 1;
+    }
+    const goldenCannotConclude = pair.golden.cannotConclude ?? [];
+    if (goldenCannotConclude.length > 0) {
+      const predictedCannotConclude = pair.prediction.cannotConclude ?? [];
+      cannotConclude.applicableClaims += 1;
+      cannotConclude.goldenItems += goldenCannotConclude.length;
+      cannotConclude.predictedItems += predictedCannotConclude.length;
+      if (predictedCannotConclude.length > 0) cannotConclude.preservedClaims += 1;
     }
     for (const axis of ['knowledgeType', 'epistemicStatus', 'confidenceByAspect', 'directness', 'evidenceTypes']) {
       if (pair.golden.axisResolution[axis]?.state !== 'UNRESOLVED') continue;
@@ -449,6 +470,8 @@ function metricsForScope(fragmentResults, scope) {
   const predictedZero = fragments.filter((item) => item.predictedZero).length;
   const zeroTp = fragments.filter((item) => item.goldenZero && item.predictedZero).length;
   const zeroTn = fragments.filter((item) => !item.goldenZero && !item.predictedZero).length;
+  const zeroFalseNegative = fragments.filter((item) => item.goldenZero && !item.predictedZero).length;
+  const nonZeroFalseNegative = fragments.filter((item) => !item.goldenZero && item.predictedZero).length;
   const errors = fragments.flatMap((item) => item.errors);
   const categoryCount = (category) => errors.filter((item) => item.category === category).length;
   const attemptedClaims = fragments.reduce((sum, item) => sum + item.attemptedClaimCount, 0);
@@ -502,10 +525,12 @@ function metricsForScope(fragmentResults, scope) {
       recall: divide(zeroTp, goldenZero, predictedZero === 0 ? 1 : 0),
       accuracy: divide(zeroTp + zeroTn, fragments.length, 0),
       falsePositiveClaimRate: divide(
-        fragments.filter((item) => item.goldenZero && !item.predictedZero).length,
+        zeroFalseNegative,
         goldenZero,
         0
-      )
+      ),
+      falseNegativeCount: nonZeroFalseNegative,
+      falseNegativeRate: divide(nonZeroFalseNegative, fragments.length - goldenZero, 0)
     },
     spans: {
       deterministicallyValidClaims: predicted,
@@ -524,6 +549,7 @@ function metricsForScope(fragmentResults, scope) {
       truePositive: citationTp,
       falsePositive: citationFp,
       falseNegative: citationFn,
+      omissionCount: citationFn,
       precision: citationPrecision,
       recall: citationRecall,
       f1: f1(citationPrecision, citationRecall),
@@ -533,13 +559,23 @@ function metricsForScope(fragmentResults, scope) {
     classification: {
       knowledgeTypeAccuracy: divide(knowledgeCorrect, knowledgeComparable, null),
       knowledgeTypeComparable: knowledgeComparable,
+      knowledgeTypeConfusionMatrix,
       epistemicStatusAccuracy: divide(epistemicCorrect, epistemicComparable, null),
-      epistemicStatusComparable: epistemicComparable
+      epistemicStatusComparable: epistemicComparable,
+      epistemicStatusConfusionMatrix
     },
     unresolved: {
       ...unresolved,
       preservationRate: divide(unresolved.preserved, unresolved.goldenAxes, null),
       forcedRate: divide(unresolved.forced, unresolved.goldenAxes, null)
+    },
+    cannotConclude: {
+      ...cannotConclude,
+      preservationRate: divide(
+        cannotConclude.preservedClaims,
+        cannotConclude.applicableClaims,
+        null
+      )
     },
     nuanceConservation: Object.fromEntries(
       Object.entries(conservation).map(([name, value]) => [

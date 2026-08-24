@@ -284,7 +284,15 @@ export function validateProviderAndMaterialize({
         diagnostics,
         retryable: diagnostics.every((item) => item.retryable),
         repairableClaimIndexes: [...new Set(anchorDetails.map((item) => item.claimIndex))],
-        providerPrediction
+        providerPrediction,
+        partialAudit: auditProviderClaimsIndividually({
+          providerPrediction,
+          expectedFragment,
+          citationCatalog,
+          canonicalSchemaValidator,
+          runConfig,
+          globalDiagnostics: diagnostics
+        })
       };
     }
     const code = detail.code ?? 'SCHEMA_FAILURE';
@@ -308,6 +316,86 @@ export function validateProviderAndMaterialize({
     ...result,
     repairableClaimIndexes: [],
     providerPrediction
+  };
+}
+
+function auditProviderClaimsIndividually({
+  providerPrediction,
+  expectedFragment,
+  citationCatalog,
+  canonicalSchemaValidator,
+  runConfig,
+  globalDiagnostics = []
+}) {
+  const claims = providerPrediction.claims.map((claim, claimIndex) => {
+    try {
+      const canonical = providerPredictionToCanonical(
+        { annotationPrediction: 'CLAIMS', claims: [claim] },
+        expectedFragment,
+        citationCatalog
+      );
+      const validation = validateAndMaterialize({
+        rawResponse: JSON.stringify(canonical),
+        expectedFragment,
+        citationCatalog,
+        schemaValidator: canonicalSchemaValidator,
+        runConfig
+      });
+      const audit = validation.partialAudit?.claims[0] ?? null;
+      return {
+        sourceClaimIndex: claimIndex,
+        technicalClaimRef: `tmp.claim.${String(claimIndex + 1).padStart(2, '0')}`,
+        rawStatement: claim.supportAnchors?.[claim.rawStatementAnchorIndex] ?? null,
+        knowledgeType: {
+          state: claim.knowledgeTypeState,
+          value: claim.knowledgeType,
+          reason: claim.knowledgeTypeReason
+        },
+        epistemicStatus: {
+          state: claim.epistemicStatusState,
+          value: claim.epistemicStatus,
+          reason: claim.epistemicStatusReason
+        },
+        individuallyValid: validation.accepted,
+        diagnostics: validation.diagnostics,
+        canonicalCandidate: validation.prediction?.claims[0] ?? audit?.canonicalCandidate ?? null
+      };
+    } catch (error) {
+      const detail =
+        error instanceof Error && 'providerDtoDiagnostic' in error
+          ? error.providerDtoDiagnostic
+          : { code: 'SCHEMA_FAILURE', message: error instanceof Error ? error.message : String(error) };
+      return {
+        sourceClaimIndex: claimIndex,
+        technicalClaimRef: `tmp.claim.${String(claimIndex + 1).padStart(2, '0')}`,
+        rawStatement: claim.supportAnchors?.[claim.rawStatementAnchorIndex] ?? null,
+        knowledgeType: {
+          state: claim.knowledgeTypeState,
+          value: claim.knowledgeType,
+          reason: claim.knowledgeTypeReason
+        },
+        epistemicStatus: {
+          state: claim.epistemicStatusState,
+          value: claim.epistemicStatus,
+          reason: claim.epistemicStatusReason
+        },
+        individuallyValid: false,
+        diagnostics: [
+          diagnostic(detail.code ?? 'SCHEMA_FAILURE', 'Claim individuellement non matérialisable', {
+            detail
+          })
+        ],
+        canonicalCandidate: null
+      };
+    }
+  });
+  return {
+    globalRejection: true,
+    rawClaimCount: providerPrediction.claims.length,
+    individuallyValidClaimCount: claims.filter((item) => item.individuallyValid).length,
+    individuallyInvalidClaimCount: claims.filter((item) => !item.individuallyValid).length,
+    globalDiagnostics,
+    claims
   };
 }
 
@@ -359,8 +447,10 @@ export function validateAndMaterialize({
   const citationsById = new Map(citationCatalog.map((item) => [item.candidateId, item]));
   const technicalRefs = new Set();
   const materializedClaims = [];
+  const claimAudits = [];
   parsed.claims.forEach((claim, index) => {
     const claimRef = claim.technicalClaimRef;
+    const diagnosticStart = diagnostics.length;
     if (technicalRefs.has(claimRef) || claimRef !== `tmp.claim.${String(index + 1).padStart(2, '0')}`) {
       diagnostics.push(
         diagnostic('SCHEMA_FAILURE', 'technicalClaimRef dupliqué ou hors ordre', { claimRef, index })
@@ -369,6 +459,15 @@ export function validateAndMaterialize({
     technicalRefs.add(claimRef);
     if (!claim.supportSpans.length) {
       diagnostics.push(diagnostic('CLAIM_WITHOUT_SPAN', 'Claim sans support span', { claimRef }));
+      claimAudits.push({
+        technicalClaimRef: claimRef,
+        rawStatement: claim.rawStatement,
+        knowledgeType: claim.knowledgeType,
+        epistemicStatus: claim.epistemicStatus,
+        individuallyValid: false,
+        diagnostics: diagnostics.slice(diagnosticStart),
+        canonicalCandidate: null
+      });
       return;
     }
     const spans = [];
@@ -454,7 +553,7 @@ export function validateAndMaterialize({
         cannotConclude: claim.cannotConclude
       })
     )}`;
-    materializedClaims.push({
+    const materializedClaim = {
       candidateId,
       technicalClaimRef: claimRef,
       rawStatement: claim.rawStatement,
@@ -483,10 +582,30 @@ export function validateAndMaterialize({
       unresolved: claim.unresolved,
       flags: claim.flags,
       reviewState: 'pending_human_review'
+    };
+    materializedClaims.push(materializedClaim);
+    const claimDiagnostics = diagnostics.slice(diagnosticStart);
+    claimAudits.push({
+      technicalClaimRef: claimRef,
+      rawStatement: claim.rawStatement,
+      knowledgeType: claim.knowledgeType,
+      epistemicStatus: claim.epistemicStatus,
+      individuallyValid: claimDiagnostics.every((item) => !item.critical),
+      diagnostics: claimDiagnostics,
+      canonicalCandidate: materializedClaim
     });
   });
   const critical = diagnostics.filter((item) => item.critical);
   const accepted = critical.length === 0;
+  const globalDiagnostics = diagnostics.filter((item) => !item.claimRef);
+  const partialAudit = {
+    globalRejection: !accepted,
+    rawClaimCount: parsed.claims.length,
+    individuallyValidClaimCount: claimAudits.filter((item) => item.individuallyValid).length,
+    individuallyInvalidClaimCount: claimAudits.filter((item) => !item.individuallyValid).length,
+    globalDiagnostics,
+    claims: claimAudits
+  };
   return {
     accepted,
     prediction: accepted
@@ -499,6 +618,7 @@ export function validateAndMaterialize({
         }
       : null,
     diagnostics,
+    partialAudit,
     retryable: critical.length > 0 && critical.every((item) => item.retryable)
   };
 }

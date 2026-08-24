@@ -167,9 +167,6 @@ export function createOpenRouterAdapter({
           { role: 'user', content: input }
         ],
         max_completion_tokens: runConfig.maxOutputTokens,
-        reasoning: {
-          effort: runConfig.reasoningEffort
-        },
         response_format: {
           type: 'json_schema',
           json_schema: {
@@ -182,6 +179,9 @@ export function createOpenRouterAdapter({
           require_parameters: true
         }
       };
+      if (runConfig.reasoningEffort !== null && runConfig.reasoningEffort !== undefined) {
+        body.reasoning = { effort: runConfig.reasoningEffort };
+      }
       if (runConfig.temperature !== null && runConfig.temperature !== undefined) {
         body.temperature = runConfig.temperature;
       }
@@ -211,6 +211,81 @@ export function createOpenRouterAdapter({
         modelVersion: providerResponse.model ?? runConfig.model,
         usage: providerResponse.usage ?? null,
         latencyMs: Date.now() - started,
+        providerSchemaDroppedKeywords: projection.providerSchemaDroppedKeywords,
+        providerEnumTypesInjected: projection.providerEnumTypesInjected,
+        providerSchemaAssertions: projection.providerSchemaAssertions
+      };
+    }
+  };
+}
+
+export function createLlamaCppAdapter({
+  fetchImpl = globalThis.fetch,
+  baseURL = 'http://127.0.0.1:8080/v1'
+} = {}) {
+  if (typeof fetchImpl !== 'function') throw new Error('fetch implementation is required');
+  return {
+    async generate({ systemPrompt, input, outputSchema, runConfig, callType = 'full' }) {
+      const started = Date.now();
+      const projection = projectProviderSchema(outputSchema);
+      const body = {
+        model: runConfig.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: input }
+        ],
+        max_tokens: runConfig.maxOutputTokens,
+        response_format: {
+          type: 'json_schema',
+          json_schema: {
+            name: callType === 'repair' ? 'e5_llm_anchor_repair' : 'e5_llm_benchmark_prediction',
+            strict: true,
+            schema: projection.providerSchema
+          }
+        },
+        chat_template_kwargs: {
+          enable_thinking: runConfig.enableThinking ?? false
+        }
+      };
+      if (runConfig.temperature !== null && runConfig.temperature !== undefined) {
+        body.temperature = runConfig.temperature;
+      }
+      if (runConfig.topP !== null && runConfig.topP !== undefined) body.top_p = runConfig.topP;
+      if (runConfig.topK !== null && runConfig.topK !== undefined) body.top_k = runConfig.topK;
+      if (runConfig.minP !== null && runConfig.minP !== undefined) body.min_p = runConfig.minP;
+      if (runConfig.presencePenalty !== null && runConfig.presencePenalty !== undefined) {
+        body.presence_penalty = runConfig.presencePenalty;
+      }
+      if (runConfig.seed !== null && runConfig.seed !== undefined) body.seed = runConfig.seed;
+      const httpResponse = await fetchImpl(
+        `${baseURL.replace(/\/$/u, '')}/chat/completions`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }
+      );
+      const providerResponse = await readJsonResponse(httpResponse);
+      if (!httpResponse.ok) {
+        const message = providerResponse?.error?.message ?? `HTTP ${httpResponse.status}`;
+        throw new Error(`llamacpp_response_error:${httpResponse.status}:${message}`);
+      }
+      const usage = providerResponse.usage ?? {
+        prompt_tokens: providerResponse.timings?.prompt_n ?? 0,
+        completion_tokens: providerResponse.timings?.predicted_n ?? 0,
+        total_tokens:
+          (providerResponse.timings?.prompt_n ?? 0) +
+          (providerResponse.timings?.predicted_n ?? 0),
+        cost: 0
+      };
+      return {
+        rawResponse: extractChatCompletionText(providerResponse),
+        providerResponse,
+        responseId: providerResponse.id ?? null,
+        modelVersion: providerResponse.model ?? runConfig.model,
+        usage: { ...usage, cost: 0 },
+        latencyMs: Date.now() - started,
+        localMetrics: providerResponse.timings ?? null,
         providerSchemaDroppedKeywords: projection.providerSchemaDroppedKeywords,
         providerEnumTypesInjected: projection.providerEnumTypesInjected,
         providerSchemaAssertions: projection.providerSchemaAssertions
