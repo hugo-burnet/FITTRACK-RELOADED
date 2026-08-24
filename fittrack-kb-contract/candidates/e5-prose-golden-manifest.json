@@ -1,0 +1,1380 @@
+{
+  "generatedBy": "tools/extract-e5-p0.mjs",
+  "selectionVersion": "1.0.0-e5-golden-manifest",
+  "note": "Manifest non annoté. Il stabilise 50 fragments F2 et 50 fragments F3 pour annotation humaine ; aucune claim ni réponse attendue n est générée.",
+  "annotationStatus": "unannotated",
+  "requirements": {
+    "totalFragments": 100,
+    "perCorpusFile": {
+      "F2": 50,
+      "F3": 50
+    },
+    "minimumZeroClaim": 20,
+    "minimumHighRiskClinical": 20,
+    "minimumMultipleCitations": 15,
+    "minimumEmgBiomechanicsMechanism": 15,
+    "minimumNumericThresholds": 10,
+    "minimumContradictionOrExplicitAbsence": 10,
+    "minimumExpertPractice": 10,
+    "note": "Ces catégories doivent être confirmées manuellement ; P0 ne décide pas quels claims existent."
+  },
+  "fragments": [
+    {
+      "fragmentId": "frag.f2.0001",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 13,
+      "endLine": 13,
+      "startByte": 1604,
+      "endByte": 2733,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "0. Méthode et langage de certitude",
+        "0.1 Hiérarchie des preuves appliquée"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.f2.0003",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 76,
+      "endLine": 76,
+      "startByte": 15948,
+      "endByte": 17150,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "1. Anatomie fonctionnelle par groupe musculaire",
+        "1.6 Triceps brachial (chefs long, latéral, médial)"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.f2.0004",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 138,
+      "endLine": 138,
+      "startByte": 32542,
+      "endByte": 33761,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+        "2.5 Poids libres vs machines : preuve directe d'hypertrophie"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.f2.0008",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 216,
+      "endLine": 216,
+      "startByte": 48955,
+      "endByte": 49809,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "6. Contraintes articulaires par articulation",
+        "6.2 Coude"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.e5f2.00083542",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 353,
+      "endLine": 353,
+      "startByte": 83542,
+      "endByte": 84418,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "9. Retour empirique des praticiens *evidence-based*"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.e5f2.00000259",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 5,
+      "endLine": 5,
+      "startByte": 259,
+      "endByte": 887,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0002",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 11,
+      "endLine": 11,
+      "startByte": 973,
+      "endByte": 1602,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "0. Méthode et langage de certitude",
+        "0.1 Hiérarchie des preuves appliquée"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00026956",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 110,
+      "endLine": 110,
+      "startByte": 26956,
+      "endByte": 27777,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "1. Anatomie fonctionnelle par groupe musculaire",
+        "1.13 Abdominaux (droit de l'abdomen, obliques, transverse)"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00028637",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 122,
+      "endLine": 122,
+      "startByte": 28637,
+      "endByte": 29526,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+        "2.1 Principe général : moment externe vs moment interne"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00034666",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 150,
+      "endLine": 150,
+      "startByte": 34666,
+      "endByte": 35679,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "3. Longueur musculaire et hypertrophie régionale",
+        "3.1 Le principe de l'entraînement à grande longueur musculaire"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0021",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 176,
+      "endLine": 176,
+      "startByte": 40855,
+      "endByte": 41855,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "4. Amplitude de mouvement (ROM)",
+        "4.1 État des lieux"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00044614",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 198,
+      "endLine": 198,
+      "startByte": 44614,
+      "endByte": 45550,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "5. Stabilité",
+        "5.3 Interprétation pour l'hypertrophie"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0023",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 210,
+      "endLine": 210,
+      "startByte": 47313,
+      "endByte": 48297,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "6. Contraintes articulaires par articulation",
+        "6.1 Épaule"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00066319",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 284,
+      "endLine": 284,
+      "startByte": 66319,
+      "endByte": 66548,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "7. Analyse par familles d'exercices",
+        "7.4 Biceps"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0011",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 332,
+      "endLine": 332,
+      "startByte": 79867,
+      "endByte": 80728,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "8. Substitutions d'exercices : logique et critères",
+        "8.2 Trois niveaux d'équivalence"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00085197",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 357,
+      "endLine": 357,
+      "startByte": 85197,
+      "endByte": 85637,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "9. Retour empirique des praticiens *evidence-based*"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00091327",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 387,
+      "endLine": 387,
+      "startByte": 91327,
+      "endByte": 91745,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "10. Schéma de données générique pour une base d'exercices"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0015",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 401,
+      "endLine": 401,
+      "startByte": 94525,
+      "endByte": 95274,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "11. Contradictions majeures et lacunes de preuve explicites"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00095348",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 407,
+      "endLine": 407,
+      "startByte": 95348,
+      "endByte": 95581,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "12. Règles de prudence pour l'encodage de la base de données"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00000087",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 3,
+      "endLine": 3,
+      "startByte": 87,
+      "endByte": 257,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00005159",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 36,
+      "endLine": 36,
+      "startByte": 5159,
+      "endByte": 5953,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "0. Méthode et langage de certitude",
+        "0.4 Limites transversales"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00011252",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 60,
+      "endLine": 60,
+      "startByte": 11252,
+      "endByte": 11981,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "1. Anatomie fonctionnelle par groupe musculaire",
+        "1.4 Deltoïdes (antérieur, latéral, postérieur)"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0024",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 126,
+      "endLine": 126,
+      "startByte": 29570,
+      "endByte": 30525,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+        "2.2 Poids libres (haltères, barres)"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00038965",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 166,
+      "endLine": 166,
+      "startByte": 38965,
+      "endByte": 40076,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "3. Longueur musculaire et hypertrophie régionale",
+        "3.3 Muscles biarticulaires : implication directe pour la sélection d'exercices"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00042447",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 182,
+      "endLine": 182,
+      "startByte": 42447,
+      "endByte": 42825,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "4. Amplitude de mouvement (ROM)",
+        "4.2 Interprétation pratique"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0005",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 190,
+      "endLine": 190,
+      "startByte": 42878,
+      "endByte": 43824,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "5. Stabilité",
+        "5.1 Principe général"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0007",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 212,
+      "endLine": 212,
+      "startByte": 48299,
+      "endByte": 48938,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "6. Contraintes articulaires par articulation",
+        "6.1 Épaule"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00075653",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 312,
+      "endLine": 312,
+      "startByte": 75653,
+      "endByte": 76632,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "7. Analyse par familles d'exercices",
+        "7.8 Fessiers"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0012",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 334,
+      "endLine": 334,
+      "startByte": 80730,
+      "endByte": 81814,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "8. Substitutions d'exercices : logique et critères",
+        "8.2 Trois niveaux d'équivalence"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00084420",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 355,
+      "endLine": 355,
+      "startByte": 84420,
+      "endByte": 84774,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "9. Retour empirique des praticiens *evidence-based*"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00086736",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 365,
+      "endLine": 365,
+      "startByte": 86736,
+      "endByte": 87221,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "10. Schéma de données générique pour une base d'exercices"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00095815",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 409,
+      "endLine": 409,
+      "startByte": 95815,
+      "endByte": 96042,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "12. Règles de prudence pour l'encodage de la base de données"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00018221",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 84,
+      "endLine": 84,
+      "startByte": 18221,
+      "endByte": 19021,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "1. Anatomie fonctionnelle par groupe musculaire",
+        "1.8 Quadriceps (droit fémoral, vastes)"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00030555",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 130,
+      "endLine": 130,
+      "startByte": 30555,
+      "endByte": 31504,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+        "2.3 Câbles et poulies"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00037232",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 159,
+      "endLine": 159,
+      "startByte": 37232,
+      "endByte": 37604,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "3. Longueur musculaire et hypertrophie régionale",
+        "3.2 Preuves directes chez l'humain"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00041891",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 180,
+      "endLine": 180,
+      "startByte": 41891,
+      "endByte": 42445,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "4. Amplitude de mouvement (ROM)",
+        "4.2 Interprétation pratique"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00043879",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 194,
+      "endLine": 194,
+      "startByte": 43879,
+      "endByte": 44567,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "5. Stabilité",
+        "5.2 Poids libres vs machines pour la stabilité"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0009",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 226,
+      "endLine": 226,
+      "startByte": 51658,
+      "endByte": 52403,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "6. Contraintes articulaires par articulation",
+        "6.4 Rachis (cervical, thoracique, lombaire)"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00072017",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 302,
+      "endLine": 302,
+      "startByte": 72017,
+      "endByte": 72982,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "7. Analyse par familles d'exercices",
+        "7.7 Ischio-jambiers"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00078216",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 326,
+      "endLine": 326,
+      "startByte": 78216,
+      "endByte": 79044,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "8. Substitutions d'exercices : logique et critères",
+        "8.1 Principe général"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00085985",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 359,
+      "endLine": 359,
+      "startByte": 85985,
+      "endByte": 86663,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "9. Retour empirique des praticiens *evidence-based*"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00096243",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 411,
+      "endLine": 411,
+      "startByte": 96243,
+      "endByte": 96449,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "12. Règles de prudence pour l'encodage de la base de données"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00025178",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 106,
+      "endLine": 106,
+      "startByte": 25178,
+      "endByte": 26890,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "1. Anatomie fonctionnelle par groupe musculaire",
+        "1.12 Mollets (gastrocnémien, soléaire)"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00033791",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 142,
+      "endLine": 142,
+      "startByte": 33791,
+      "endByte": 34535,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "2. Profils de résistance : poids libres, machines, câbles, élastiques",
+        "2.6 Bandes élastiques"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00035721",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 154,
+      "endLine": 154,
+      "startByte": 35721,
+      "endByte": 35865,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "3. Longueur musculaire et hypertrophie régionale",
+        "3.2 Preuves directes chez l'humain"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00040144",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 174,
+      "endLine": 174,
+      "startByte": 40144,
+      "endByte": 40853,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "4. Amplitude de mouvement (ROM)",
+        "4.1 État des lieux"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00049828",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 220,
+      "endLine": 220,
+      "startByte": 49828,
+      "endByte": 50621,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "6. Contraintes articulaires par articulation",
+        "6.3 Poignet"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0022",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 294,
+      "endLine": 294,
+      "startByte": 68219,
+      "endByte": 69280,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "7. Analyse par familles d'exercices",
+        "7.6 Quadriceps"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f2.0010",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 330,
+      "endLine": 330,
+      "startByte": 79084,
+      "endByte": 79865,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "8. Substitutions d'exercices : logique et critères",
+        "8.2 Trois niveaux d'équivalence"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f2.00085638",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "startLine": 358,
+      "endLine": 358,
+      "startByte": 85638,
+      "endByte": 85984,
+      "headingPath": [
+        "Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie",
+        "9. Retour empirique des praticiens *evidence-based*"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f3.0001",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 11,
+      "endLine": 11,
+      "startByte": 1559,
+      "endByte": 2027,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "1. Résumé opérationnel"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.f3.0002",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 12,
+      "endLine": 12,
+      "startByte": 2028,
+      "endByte": 2420,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "1. Résumé opérationnel"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.f3.0007",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 53,
+      "endLine": 53,
+      "startByte": 6731,
+      "endByte": 7097,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "3. Red flags : moteur d’arrêt prioritaire"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.e5f3.00012613",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 90,
+      "endLine": 90,
+      "startByte": 12613,
+      "endByte": 13342,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "5. Tendinopathies : synthèse transversale"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.e5f3.00014985",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 109,
+      "endLine": 109,
+      "startByte": 14985,
+      "endByte": 15570,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "6. Rachis lombaire",
+        "6.1 Principes communs"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.e5f3.00025760",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 152,
+      "endLine": 152,
+      "startByte": 25760,
+      "endByte": 26245,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "8. Coude et poignet"
+      ],
+      "selectionReason": "design_review_anchor"
+    },
+    {
+      "fragmentId": "frag.e5f3.00000076",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 3,
+      "endLine": 3,
+      "startByte": 76,
+      "endByte": 143,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f3.0003",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 13,
+      "endLine": 13,
+      "startByte": 2421,
+      "endByte": 2763,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "1. Résumé opérationnel"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00003967",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 26,
+      "endLine": 26,
+      "startByte": 3967,
+      "endByte": 4071,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "2. Cadre de décision de l’IA",
+        "2.1 Informations minimales à demander avant toute adaptation"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00010897",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 72,
+      "endLine": 72,
+      "startByte": 10897,
+      "endByte": 11255,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "4. Douleur, irritabilité et surveillance",
+        "4.1 Ce qui est soutenu"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00013618",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 98,
+      "endLine": 98,
+      "startByte": 13618,
+      "endByte": 13709,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "5. Tendinopathies : synthèse transversale"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00014346",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 107,
+      "endLine": 107,
+      "startByte": 14346,
+      "endByte": 14983,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "6. Rachis lombaire",
+        "6.1 Principes communs"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00023412",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 140,
+      "endLine": 140,
+      "startByte": 23412,
+      "endByte": 23770,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "7. Épaule"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00029304",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 167,
+      "endLine": 167,
+      "startByte": 29304,
+      "endByte": 29814,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "9. Genou",
+        "Squat, leg press et leg extension"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00030639",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 182,
+      "endLine": 182,
+      "startByte": 30639,
+      "endByte": 31014,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "10. Retour à l’entraînement et au sport",
+        "Progression générique"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00035268",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 213,
+      "endLine": 213,
+      "startByte": 35268,
+      "endByte": 35322,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "12. Règles de réponse conversationnelle",
+        "Formulations interdites"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00035555",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 221,
+      "endLine": 221,
+      "startByte": 35555,
+      "endByte": 35660,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "13. Matrice de connaissances par problème"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00040275",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 245,
+      "endLine": 245,
+      "startByte": 40275,
+      "endByte": 40340,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "14. Niveaux de preuve utilisés"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00045746",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 282,
+      "endLine": 282,
+      "startByte": 45746,
+      "endByte": 45817,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "16. Limites et gouvernance"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00047064",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 301,
+      "endLine": 301,
+      "startByte": 47064,
+      "endByte": 47235,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "17. Schéma de données"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.f3.0023",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 5,
+      "endLine": 5,
+      "startByte": 145,
+      "endByte": 498,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00002764",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 14,
+      "endLine": 14,
+      "startByte": 2764,
+      "endByte": 3201,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "1. Résumé opérationnel"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00006083",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 44,
+      "endLine": 44,
+      "startByte": 6083,
+      "endByte": 6134,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "2. Cadre de décision de l’IA",
+        "2.3 Hiérarchie de modification"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00011779",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 81,
+      "endLine": 81,
+      "startByte": 11779,
+      "endByte": 11855,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "4. Douleur, irritabilité et surveillance",
+        "4.2 Algorithme prudent"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00013767",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 101,
+      "endLine": 101,
+      "startByte": 13767,
+      "endByte": 14294,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "5. Tendinopathies : synthèse transversale"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00020521",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 129,
+      "endLine": 129,
+      "startByte": 20521,
+      "endByte": 20703,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "6. Rachis lombaire",
+        "6.3 Exercices usuels"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00029088",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 166,
+      "endLine": 166,
+      "startByte": 29088,
+      "endByte": 29303,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "9. Genou",
+        "Squat, leg press et leg extension"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00030376",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 178,
+      "endLine": 178,
+      "startByte": 30376,
+      "endByte": 30420,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "10. Retour à l’entraînement et au sport",
+        "Progression générique"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00035453",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 217,
+      "endLine": 217,
+      "startByte": 35453,
+      "endByte": 35506,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "12. Règles de réponse conversationnelle",
+        "Formulations interdites"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00040415",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 247,
+      "endLine": 247,
+      "startByte": 40415,
+      "endByte": 40521,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "14. Niveaux de preuve utilisés"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00046416",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 287,
+      "endLine": 287,
+      "startByte": 46416,
+      "endByte": 46610,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "16. Limites et gouvernance"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00046765",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 294,
+      "endLine": 294,
+      "startByte": 46765,
+      "endByte": 46841,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "17. Schéma de données"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00000530",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 9,
+      "endLine": 9,
+      "startByte": 530,
+      "endByte": 821,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "1. Résumé opérationnel"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00006012",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 42,
+      "endLine": 42,
+      "startByte": 6012,
+      "endByte": 6035,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "2. Cadre de décision de l’IA",
+        "2.3 Hiérarchie de modification"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00011856",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 82,
+      "endLine": 82,
+      "startByte": 11856,
+      "endByte": 11954,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "4. Douleur, irritabilité et surveillance",
+        "4.2 Algorithme prudent"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00013710",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 99,
+      "endLine": 99,
+      "startByte": 13710,
+      "endByte": 13765,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "5. Tendinopathies : synthèse transversale"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00020101",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 126,
+      "endLine": 126,
+      "startByte": 20101,
+      "endByte": 20254,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "6. Rachis lombaire",
+        "6.3 Exercices usuels"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00028841",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 165,
+      "endLine": 165,
+      "startByte": 28841,
+      "endByte": 29087,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "9. Genou",
+        "Squat, leg press et leg extension"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00030421",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 179,
+      "endLine": 179,
+      "startByte": 30421,
+      "endByte": 30559,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "10. Retour à l’entraînement et au sport",
+        "Progression générique"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00035234",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 212,
+      "endLine": 212,
+      "startByte": 35234,
+      "endByte": 35267,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "12. Règles de réponse conversationnelle",
+        "Formulations interdites"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00040114",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 243,
+      "endLine": 243,
+      "startByte": 40114,
+      "endByte": 40189,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "14. Niveaux de preuve utilisés"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00046247",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 286,
+      "endLine": 286,
+      "startByte": 46247,
+      "endByte": 46415,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "16. Limites et gouvernance"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00046893",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 296,
+      "endLine": 296,
+      "startByte": 46893,
+      "endByte": 46931,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "17. Schéma de données"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00000822",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 10,
+      "endLine": 10,
+      "startByte": 822,
+      "endByte": 1558,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "1. Résumé opérationnel"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00003688",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 24,
+      "endLine": 24,
+      "startByte": 3688,
+      "endByte": 3836,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "2. Cadre de décision de l’IA",
+        "2.1 Informations minimales à demander avant toute adaptation"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00012091",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 84,
+      "endLine": 84,
+      "startByte": 12091,
+      "endByte": 12185,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "4. Douleur, irritabilité et surveillance",
+        "4.2 Algorithme prudent"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00013464",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 95,
+      "endLine": 95,
+      "startByte": 13464,
+      "endByte": 13529,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "5. Tendinopathies : synthèse transversale"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00019956",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 125,
+      "endLine": 125,
+      "startByte": 19956,
+      "endByte": 20100,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "6. Rachis lombaire",
+        "6.3 Exercices usuels"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00030276",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 177,
+      "endLine": 177,
+      "startByte": 30276,
+      "endByte": 30375,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "10. Retour à l’entraînement et au sport",
+        "Progression générique"
+      ],
+      "selectionReason": "deterministic_stratified"
+    },
+    {
+      "fragmentId": "frag.e5f3.00035183",
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "startLine": 211,
+      "endLine": 211,
+      "startByte": 35183,
+      "endByte": 35233,
+      "headingPath": [
+        "Base de connaissances clinique pour un coaching de musculation adaptatif",
+        "12. Règles de réponse conversationnelle",
+        "Formulations interdites"
+      ],
+      "selectionReason": "deterministic_stratified"
+    }
+  ]
+}

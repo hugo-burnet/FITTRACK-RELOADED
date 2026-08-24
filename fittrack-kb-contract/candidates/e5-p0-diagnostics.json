@@ -1,0 +1,5611 @@
+{
+  "generatedBy": "tools/extract-e5-p0.mjs",
+  "extractorVersion": "0.1.0-e5-p0",
+  "runId": "run.e5-p0.bbd2a1e54407",
+  "fragmentationDiagnostics": [],
+  "citationDiagnostics": [
+    {
+      "severity": "info",
+      "code": "internal_markdown_link",
+      "fragmentId": "frag.e5f2.00000259",
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "occurrenceOrder": 1,
+      "rawValue": "[*Programmation de l'entraînement en résistance pour l'hypertrophie musculaire*](./programmation-hypertrophie-etat-connaissances.pplx.md)",
+      "message": "Renvoi interne conservé comme occurrence non résolue, jamais comme Source."
+    }
+  ],
+  "excludedZones": [
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 1,
+      "endLine": 1,
+      "startByte": 0,
+      "endByte": 86,
+      "byteLength": 86,
+      "textHash": "sha256:191c9937531c2e2ccbe5e939c55e4715bb785b579636a5b5b95354a92992964c"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 2,
+      "endLine": 2,
+      "startByte": 86,
+      "endByte": 87,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 257,
+      "endByte": 258,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 4,
+      "endLine": 4,
+      "startByte": 258,
+      "endByte": 259,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 887,
+      "endByte": 888,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 6,
+      "endLine": 6,
+      "startByte": 888,
+      "endByte": 889,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 7,
+      "endLine": 7,
+      "startByte": 889,
+      "endByte": 928,
+      "byteLength": 39,
+      "textHash": "sha256:d89389e5408c74687018d6323eaf76c1d291041e514b7412e840d1783ee552bf"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 8,
+      "endLine": 8,
+      "startByte": 928,
+      "endByte": 929,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 9,
+      "endLine": 9,
+      "startByte": 929,
+      "endByte": 972,
+      "byteLength": 43,
+      "textHash": "sha256:8c8c32a0e085d8bc16e0bd61c46902413bdf9a656885ae29022d565348eb0f0d"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 10,
+      "endLine": 10,
+      "startByte": 972,
+      "endByte": 973,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 1602,
+      "endByte": 1603,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 12,
+      "endLine": 12,
+      "startByte": 1603,
+      "endByte": 1604,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 2733,
+      "endByte": 2734,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 14,
+      "endLine": 14,
+      "startByte": 2734,
+      "endByte": 2735,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 15,
+      "endLine": 15,
+      "startByte": 2735,
+      "endByte": 2764,
+      "byteLength": 29,
+      "textHash": "sha256:882948d7f14907e91e5a608dda58a3d51670b2508fe4d2b464925f57d6a5de76"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 16,
+      "endLine": 16,
+      "startByte": 2764,
+      "endByte": 2765,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_table_e1",
+      "startLine": 17,
+      "endLine": 22,
+      "startByte": 2765,
+      "endByte": 3673,
+      "byteLength": 908,
+      "textHash": "sha256:e5761f9f60210e181fdf4e1f0e65bdfb5052aea9f32d8c10f64571793db89e52"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 23,
+      "endLine": 23,
+      "startByte": 3673,
+      "endByte": 3674,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 24,
+      "endLine": 24,
+      "startByte": 3674,
+      "endByte": 3751,
+      "byteLength": 77,
+      "textHash": "sha256:5650f2ff334ec155945a7f08dc537e2ce25e3bd6b34732403e2d6cfd4bdedbd2"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 25,
+      "endLine": 25,
+      "startByte": 3751,
+      "endByte": 3752,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_table_e1",
+      "startLine": 26,
+      "endLine": 32,
+      "startByte": 3752,
+      "endByte": 5127,
+      "byteLength": 1375,
+      "textHash": "sha256:e9163ffb15213e24456c503b628f7f71f72fbe798f8773f64e7aa3aeb72c4cf3"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 33,
+      "endLine": 33,
+      "startByte": 5127,
+      "endByte": 5128,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 34,
+      "endLine": 34,
+      "startByte": 5128,
+      "endByte": 5158,
+      "byteLength": 30,
+      "textHash": "sha256:e837a0d8cdac6a9a97e678d01b81db50e5359f99085f6fd98fe5877b98d4a11a"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 35,
+      "endLine": 35,
+      "startByte": 5158,
+      "endByte": 5159,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 5953,
+      "endByte": 5954,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 37,
+      "endLine": 37,
+      "startByte": 5954,
+      "endByte": 5955,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 38,
+      "endLine": 38,
+      "startByte": 5955,
+      "endByte": 5959,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 39,
+      "endLine": 39,
+      "startByte": 5959,
+      "endByte": 5960,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 40,
+      "endLine": 40,
+      "startByte": 5960,
+      "endByte": 6011,
+      "byteLength": 51,
+      "textHash": "sha256:3539dae2a980554b903beba234da5d875b0165a28c75d3fdc14bfc04183feec4"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 41,
+      "endLine": 41,
+      "startByte": 6011,
+      "endByte": 6012,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 42,
+      "endLine": 42,
+      "startByte": 6012,
+      "endByte": 6067,
+      "byteLength": 55,
+      "textHash": "sha256:fa11fff25159ff1483820d321928a95ab3c8c27aa72556916267d20aebf91913"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 43,
+      "endLine": 43,
+      "startByte": 6067,
+      "endByte": 6068,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 7388,
+      "endByte": 7389,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 45,
+      "endLine": 45,
+      "startByte": 7389,
+      "endByte": 7390,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 8039,
+      "endByte": 8040,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 47,
+      "endLine": 47,
+      "startByte": 8040,
+      "endByte": 8041,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 48,
+      "endLine": 48,
+      "startByte": 8041,
+      "endByte": 8101,
+      "byteLength": 60,
+      "textHash": "sha256:c11ba9e0049fcf84b6acf697f8d38c78fd470cf3ecff6049aca2332d759e4b9b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 49,
+      "endLine": 49,
+      "startByte": 8101,
+      "endByte": 8102,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 9104,
+      "endByte": 9105,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 51,
+      "endLine": 51,
+      "startByte": 9105,
+      "endByte": 9106,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 9911,
+      "endByte": 9912,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 53,
+      "endLine": 53,
+      "startByte": 9912,
+      "endByte": 9913,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 54,
+      "endLine": 54,
+      "startByte": 9913,
+      "endByte": 9976,
+      "byteLength": 63,
+      "textHash": "sha256:eb8325e661fb52dd4deefd2b3a56e1af0a9e8633f9955e3982ea05c132e8c27b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 55,
+      "endLine": 55,
+      "startByte": 9976,
+      "endByte": 9977,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 11194,
+      "endByte": 11195,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 57,
+      "endLine": 57,
+      "startByte": 11195,
+      "endByte": 11196,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 58,
+      "endLine": 58,
+      "startByte": 11196,
+      "endByte": 11251,
+      "byteLength": 55,
+      "textHash": "sha256:5daea10e007142c16b5887ef2744ff9e492fa17cdfdb75de17ae8d2156838a49"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 59,
+      "endLine": 59,
+      "startByte": 11251,
+      "endByte": 11252,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 11981,
+      "endByte": 11982,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 61,
+      "endLine": 61,
+      "startByte": 11982,
+      "endByte": 11983,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 12865,
+      "endByte": 12866,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 63,
+      "endLine": 63,
+      "startByte": 12866,
+      "endByte": 12867,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 64,
+      "endLine": 64,
+      "startByte": 12867,
+      "endByte": 12915,
+      "byteLength": 48,
+      "textHash": "sha256:1a02e8714348ec6f560d232aab07e74299b6c84f8426346915f2cf91503632c6"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 65,
+      "endLine": 65,
+      "startByte": 12915,
+      "endByte": 12916,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13694,
+      "endByte": 13695,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 67,
+      "endLine": 67,
+      "startByte": 13695,
+      "endByte": 13696,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 14591,
+      "endByte": 14592,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 69,
+      "endLine": 69,
+      "startByte": 14592,
+      "endByte": 14593,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 15418,
+      "endByte": 15419,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 71,
+      "endLine": 71,
+      "startByte": 15419,
+      "endByte": 15420,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 72,
+      "endLine": 72,
+      "startByte": 15420,
+      "endByte": 15477,
+      "byteLength": 57,
+      "textHash": "sha256:ad275bcad731261cd2163f584aeba833f35284df6a99d668190603311e8fc0ff"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 73,
+      "endLine": 73,
+      "startByte": 15477,
+      "endByte": 15478,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 15946,
+      "endByte": 15947,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 75,
+      "endLine": 75,
+      "startByte": 15947,
+      "endByte": 15948,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 17150,
+      "endByte": 17151,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 77,
+      "endLine": 77,
+      "startByte": 17151,
+      "endByte": 17152,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 78,
+      "endLine": 78,
+      "startByte": 17152,
+      "endByte": 17227,
+      "byteLength": 75,
+      "textHash": "sha256:020e4a94ae140438554c04b61eb5f0dfa3367213286f11afe65a4e6c27d589fc"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 79,
+      "endLine": 79,
+      "startByte": 17227,
+      "endByte": 17228,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 18174,
+      "endByte": 18175,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 81,
+      "endLine": 81,
+      "startByte": 18175,
+      "endByte": 18176,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 82,
+      "endLine": 82,
+      "startByte": 18176,
+      "endByte": 18220,
+      "byteLength": 44,
+      "textHash": "sha256:f9d4aee669ed953b63ef8488bcd8cd9cbb52a9de38b013f2299887225010098e"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 83,
+      "endLine": 83,
+      "startByte": 18220,
+      "endByte": 18221,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 19021,
+      "endByte": 19022,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 85,
+      "endLine": 85,
+      "startByte": 19022,
+      "endByte": 19023,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20048,
+      "endByte": 20049,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 87,
+      "endLine": 87,
+      "startByte": 20049,
+      "endByte": 20050,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 88,
+      "endLine": 88,
+      "startByte": 20050,
+      "endByte": 20125,
+      "byteLength": 75,
+      "textHash": "sha256:8b717ff5ded73914b009cb3e370fda78b584cd7b92d79603823648ac39d8a17d"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 89,
+      "endLine": 89,
+      "startByte": 20125,
+      "endByte": 20126,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20956,
+      "endByte": 20957,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 91,
+      "endLine": 91,
+      "startByte": 20957,
+      "endByte": 20958,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 22150,
+      "endByte": 22151,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 93,
+      "endLine": 93,
+      "startByte": 22151,
+      "endByte": 22152,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 94,
+      "endLine": 94,
+      "startByte": 22152,
+      "endByte": 22200,
+      "byteLength": 48,
+      "textHash": "sha256:1a005f5bee875abdfe26a49b63b6e993e6cc8ff5e38c97f872c301a07a84be6d"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 95,
+      "endLine": 95,
+      "startByte": 22200,
+      "endByte": 22201,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 22935,
+      "endByte": 22936,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 97,
+      "endLine": 97,
+      "startByte": 22936,
+      "endByte": 22937,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 24041,
+      "endByte": 24042,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 99,
+      "endLine": 99,
+      "startByte": 24042,
+      "endByte": 24043,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 100,
+      "endLine": 100,
+      "startByte": 24043,
+      "endByte": 24073,
+      "byteLength": 30,
+      "textHash": "sha256:4c78f1f8cd5080e5009cde39a98f8ea308d1a38c1809d92c2934d10b05f364be"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 101,
+      "endLine": 101,
+      "startByte": 24073,
+      "endByte": 24074,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 25130,
+      "endByte": 25131,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 103,
+      "endLine": 103,
+      "startByte": 25131,
+      "endByte": 25132,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 104,
+      "endLine": 104,
+      "startByte": 25132,
+      "endByte": 25177,
+      "byteLength": 45,
+      "textHash": "sha256:abb7723145717aab9f881184924995e2666fd43fde1f6e2687cc771888083cf4"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 105,
+      "endLine": 105,
+      "startByte": 25177,
+      "endByte": 25178,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 26890,
+      "endByte": 26891,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 107,
+      "endLine": 107,
+      "startByte": 26891,
+      "endByte": 26892,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 108,
+      "endLine": 108,
+      "startByte": 26892,
+      "endByte": 26955,
+      "byteLength": 63,
+      "textHash": "sha256:e6307662a81a085fb357b68a766e9ad87cdd2369a0dec460d196624acb6bf4d0"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 109,
+      "endLine": 109,
+      "startByte": 26955,
+      "endByte": 26956,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 27777,
+      "endByte": 27778,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 111,
+      "endLine": 111,
+      "startByte": 27778,
+      "endByte": 27779,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 112,
+      "endLine": 112,
+      "startByte": 27779,
+      "endByte": 27823,
+      "byteLength": 44,
+      "textHash": "sha256:db368c092752b8584e78c0a43d3fc95d8aff25d5ff0a8cfc609a470b79cd2a63"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 113,
+      "endLine": 113,
+      "startByte": 27823,
+      "endByte": 27824,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 28490,
+      "endByte": 28491,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 115,
+      "endLine": 115,
+      "startByte": 28491,
+      "endByte": 28492,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 116,
+      "endLine": 116,
+      "startByte": 28492,
+      "endByte": 28496,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 117,
+      "endLine": 117,
+      "startByte": 28496,
+      "endByte": 28497,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 118,
+      "endLine": 118,
+      "startByte": 28497,
+      "endByte": 28573,
+      "byteLength": 76,
+      "textHash": "sha256:5adff191f5a45fc8ca62903836c75f435e53631b5e26b68811fdeb1aa9edc684"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 119,
+      "endLine": 119,
+      "startByte": 28573,
+      "endByte": 28574,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 120,
+      "endLine": 120,
+      "startByte": 28574,
+      "endByte": 28636,
+      "byteLength": 62,
+      "textHash": "sha256:a7f4c5ff319cb4cebb7900cb299b33d582bdc25afb23a8e189075a362614d123"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 121,
+      "endLine": 121,
+      "startByte": 28636,
+      "endByte": 28637,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 29526,
+      "endByte": 29527,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 123,
+      "endLine": 123,
+      "startByte": 29527,
+      "endByte": 29528,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 124,
+      "endLine": 124,
+      "startByte": 29528,
+      "endByte": 29569,
+      "byteLength": 41,
+      "textHash": "sha256:77a5e659bb4cdc39d4593a851a48a5fa0237f0ca35c398b726bdf6058744ccf7"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 125,
+      "endLine": 125,
+      "startByte": 29569,
+      "endByte": 29570,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30525,
+      "endByte": 30526,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 127,
+      "endLine": 127,
+      "startByte": 30526,
+      "endByte": 30527,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 128,
+      "endLine": 128,
+      "startByte": 30527,
+      "endByte": 30554,
+      "byteLength": 27,
+      "textHash": "sha256:d2377702ca43d9543f678ee985f486a5ee37abb856bb698e3a77414bb4c291f7"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 129,
+      "endLine": 129,
+      "startByte": 30554,
+      "endByte": 30555,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 31504,
+      "endByte": 31505,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 131,
+      "endLine": 131,
+      "startByte": 31505,
+      "endByte": 31506,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 132,
+      "endLine": 132,
+      "startByte": 31506,
+      "endByte": 31555,
+      "byteLength": 49,
+      "textHash": "sha256:454e8677e984547bf66eabef0a13b5763cbbe688630619e151089404d0881b49"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 133,
+      "endLine": 133,
+      "startByte": 31555,
+      "endByte": 31556,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 32474,
+      "endByte": 32475,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 135,
+      "endLine": 135,
+      "startByte": 32475,
+      "endByte": 32476,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 136,
+      "endLine": 136,
+      "startByte": 32476,
+      "endByte": 32541,
+      "byteLength": 65,
+      "textHash": "sha256:f8df3284c708cd1106c7764ecf9539db38e51bd679bba95b9193d25d40791631"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 137,
+      "endLine": 137,
+      "startByte": 32541,
+      "endByte": 32542,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 33761,
+      "endByte": 33762,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 139,
+      "endLine": 139,
+      "startByte": 33762,
+      "endByte": 33763,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 140,
+      "endLine": 140,
+      "startByte": 33763,
+      "endByte": 33790,
+      "byteLength": 27,
+      "textHash": "sha256:50dc2956d8129ea4ee976e1f37ff66742af94bb46e085aad01d70626d3f07c59"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 141,
+      "endLine": 141,
+      "startByte": 33790,
+      "endByte": 33791,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 34535,
+      "endByte": 34536,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 143,
+      "endLine": 143,
+      "startByte": 34536,
+      "endByte": 34537,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 144,
+      "endLine": 144,
+      "startByte": 34537,
+      "endByte": 34541,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 145,
+      "endLine": 145,
+      "startByte": 34541,
+      "endByte": 34542,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 146,
+      "endLine": 146,
+      "startByte": 34542,
+      "endByte": 34595,
+      "byteLength": 53,
+      "textHash": "sha256:d4c7c84767b70edcda082fa12f9b9ff0c4ed84ed16db0eb9e23ac59660f209db"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 147,
+      "endLine": 147,
+      "startByte": 34595,
+      "endByte": 34596,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 148,
+      "endLine": 148,
+      "startByte": 34596,
+      "endByte": 34665,
+      "byteLength": 69,
+      "textHash": "sha256:a0a8f259085d756b3e83805f75f33ff5ce4433a7d18e8a25afd5f47a1ad0cf55"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 149,
+      "endLine": 149,
+      "startByte": 34665,
+      "endByte": 34666,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35679,
+      "endByte": 35680,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 151,
+      "endLine": 151,
+      "startByte": 35680,
+      "endByte": 35681,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 152,
+      "endLine": 152,
+      "startByte": 35681,
+      "endByte": 35720,
+      "byteLength": 39,
+      "textHash": "sha256:b993397f1fc38e0b57c6d4a64a1991c5bac2c8d0fd902315f2fda0398ea5eb84"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 153,
+      "endLine": 153,
+      "startByte": 35720,
+      "endByte": 35721,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35865,
+      "endByte": 35866,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 155,
+      "endLine": 155,
+      "startByte": 35866,
+      "endByte": 35867,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 36285,
+      "endByte": 36286,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 36617,
+      "endByte": 36618,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 37231,
+      "endByte": 37232,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 37604,
+      "endByte": 37605,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 38029,
+      "endByte": 38030,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 161,
+      "endLine": 161,
+      "startByte": 38030,
+      "endByte": 38031,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 38878,
+      "endByte": 38879,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 163,
+      "endLine": 163,
+      "startByte": 38879,
+      "endByte": 38880,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 164,
+      "endLine": 164,
+      "startByte": 38880,
+      "endByte": 38964,
+      "byteLength": 84,
+      "textHash": "sha256:3cc62a1542fe3da0e317cf48ac924337093c38104e40ebf37ba139e63e7e87f3"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 165,
+      "endLine": 165,
+      "startByte": 38964,
+      "endByte": 38965,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40076,
+      "endByte": 40077,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 167,
+      "endLine": 167,
+      "startByte": 40077,
+      "endByte": 40078,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 168,
+      "endLine": 168,
+      "startByte": 40078,
+      "endByte": 40082,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 169,
+      "endLine": 169,
+      "startByte": 40082,
+      "endByte": 40083,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 170,
+      "endLine": 170,
+      "startByte": 40083,
+      "endByte": 40118,
+      "byteLength": 35,
+      "textHash": "sha256:81aa322b4d7b0a1a23b11a76973f6a527dc796f44c57f7492ae8efb2cf4c7d20"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 171,
+      "endLine": 171,
+      "startByte": 40118,
+      "endByte": 40119,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 172,
+      "endLine": 172,
+      "startByte": 40119,
+      "endByte": 40143,
+      "byteLength": 24,
+      "textHash": "sha256:fcb1826976ab77f2a96e6f0ddb10bd428e7ba78ff6e06978d74b7ce7555090c9"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 173,
+      "endLine": 173,
+      "startByte": 40143,
+      "endByte": 40144,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40853,
+      "endByte": 40854,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 175,
+      "endLine": 175,
+      "startByte": 40854,
+      "endByte": 40855,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 41855,
+      "endByte": 41856,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 177,
+      "endLine": 177,
+      "startByte": 41856,
+      "endByte": 41857,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 178,
+      "endLine": 178,
+      "startByte": 41857,
+      "endByte": 41890,
+      "byteLength": 33,
+      "textHash": "sha256:29e5d7e3e5d5127aa6679a7a9ca44c566fb3b280988d676d9063c02819f8f8e2"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 179,
+      "endLine": 179,
+      "startByte": 41890,
+      "endByte": 41891,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 42445,
+      "endByte": 42446,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 181,
+      "endLine": 181,
+      "startByte": 42446,
+      "endByte": 42447,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 42825,
+      "endByte": 42826,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 183,
+      "endLine": 183,
+      "startByte": 42826,
+      "endByte": 42827,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 184,
+      "endLine": 184,
+      "startByte": 42827,
+      "endByte": 42831,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 185,
+      "endLine": 185,
+      "startByte": 42831,
+      "endByte": 42832,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 186,
+      "endLine": 186,
+      "startByte": 42832,
+      "endByte": 42849,
+      "byteLength": 17,
+      "textHash": "sha256:9bbea2b3bf33663a981091ee8a2ae92151988e50680e39a0917102f57c8cf83c"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 187,
+      "endLine": 187,
+      "startByte": 42849,
+      "endByte": 42850,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 188,
+      "endLine": 188,
+      "startByte": 42850,
+      "endByte": 42877,
+      "byteLength": 27,
+      "textHash": "sha256:2e662d9d9acd04ed5d34a0a694dad326bd3471ed6892d515d59ddc6d0d777465"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 189,
+      "endLine": 189,
+      "startByte": 42877,
+      "endByte": 42878,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 43824,
+      "endByte": 43825,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 191,
+      "endLine": 191,
+      "startByte": 43825,
+      "endByte": 43826,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 192,
+      "endLine": 192,
+      "startByte": 43826,
+      "endByte": 43878,
+      "byteLength": 52,
+      "textHash": "sha256:5adc166801d369659a2ff78b39d8687cbd0490d6d294b9903572d2421e15e4f8"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 193,
+      "endLine": 193,
+      "startByte": 43878,
+      "endByte": 43879,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 44567,
+      "endByte": 44568,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 195,
+      "endLine": 195,
+      "startByte": 44568,
+      "endByte": 44569,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 196,
+      "endLine": 196,
+      "startByte": 44569,
+      "endByte": 44613,
+      "byteLength": 44,
+      "textHash": "sha256:40505dc6cd4ac42402ecfc9757ab0c9e9def0b0ae5dee28afb3c094c4b47d8ea"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 197,
+      "endLine": 197,
+      "startByte": 44613,
+      "endByte": 44614,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 45550,
+      "endByte": 45551,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 199,
+      "endLine": 199,
+      "startByte": 45551,
+      "endByte": 45552,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 200,
+      "endLine": 200,
+      "startByte": 45552,
+      "endByte": 45556,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 201,
+      "endLine": 201,
+      "startByte": 45556,
+      "endByte": 45557,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 202,
+      "endLine": 202,
+      "startByte": 45557,
+      "endByte": 45605,
+      "byteLength": 48,
+      "textHash": "sha256:f4eb317341290d23f6d217e15450916ae8ece023604b157d329cbd8e1c0a240d"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 203,
+      "endLine": 203,
+      "startByte": 45605,
+      "endByte": 45606,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46172,
+      "endByte": 46173,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 205,
+      "endLine": 205,
+      "startByte": 46173,
+      "endByte": 46174,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 206,
+      "endLine": 206,
+      "startByte": 46174,
+      "endByte": 46190,
+      "byteLength": 16,
+      "textHash": "sha256:47c0fd4c3fbc57ca1e74cfe9dbb414d9fc27c7c47b15619790aa3457770b8e82"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 207,
+      "endLine": 207,
+      "startByte": 46190,
+      "endByte": 46191,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 47311,
+      "endByte": 47312,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 209,
+      "endLine": 209,
+      "startByte": 47312,
+      "endByte": 47313,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 48297,
+      "endByte": 48298,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 211,
+      "endLine": 211,
+      "startByte": 48298,
+      "endByte": 48299,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 48938,
+      "endByte": 48939,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 213,
+      "endLine": 213,
+      "startByte": 48939,
+      "endByte": 48940,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 214,
+      "endLine": 214,
+      "startByte": 48940,
+      "endByte": 48954,
+      "byteLength": 14,
+      "textHash": "sha256:c0d08644be8dbe5c089ad82f639f8dbcbe387f1738bb550aa6e7c5831c666749"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 215,
+      "endLine": 215,
+      "startByte": 48954,
+      "endByte": 48955,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 49809,
+      "endByte": 49810,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 217,
+      "endLine": 217,
+      "startByte": 49810,
+      "endByte": 49811,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 218,
+      "endLine": 218,
+      "startByte": 49811,
+      "endByte": 49827,
+      "byteLength": 16,
+      "textHash": "sha256:285c68af62215cbe393834839f55d6d086f588d680c2febc7fdd26a4f7125a47"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 219,
+      "endLine": 219,
+      "startByte": 49827,
+      "endByte": 49828,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 50621,
+      "endByte": 50622,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 221,
+      "endLine": 221,
+      "startByte": 50622,
+      "endByte": 50623,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 222,
+      "endLine": 222,
+      "startByte": 50623,
+      "endByte": 50671,
+      "byteLength": 48,
+      "textHash": "sha256:f466fab8dda2c7bda67a2c867ebf099f8e698dd001602fcaaa76419674eb1793"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 223,
+      "endLine": 223,
+      "startByte": 50671,
+      "endByte": 50672,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 51656,
+      "endByte": 51657,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 225,
+      "endLine": 225,
+      "startByte": 51657,
+      "endByte": 51658,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 52403,
+      "endByte": 52404,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 227,
+      "endLine": 227,
+      "startByte": 52404,
+      "endByte": 52405,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 52795,
+      "endByte": 52796,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 229,
+      "endLine": 229,
+      "startByte": 52796,
+      "endByte": 52797,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 230,
+      "endLine": 230,
+      "startByte": 52797,
+      "endByte": 52812,
+      "byteLength": 15,
+      "textHash": "sha256:57ccb2a075a7318b0a305cc3401b96ff02af512b62196ff842098734a04c907b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 231,
+      "endLine": 231,
+      "startByte": 52812,
+      "endByte": 52813,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 53417,
+      "endByte": 53418,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 233,
+      "endLine": 233,
+      "startByte": 53418,
+      "endByte": 53419,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 234,
+      "endLine": 234,
+      "startByte": 53419,
+      "endByte": 53433,
+      "byteLength": 14,
+      "textHash": "sha256:1c10aab0d71e8518fc80702078efb333277514bd2538d25ec46702d9fabc99d1"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 235,
+      "endLine": 235,
+      "startByte": 53433,
+      "endByte": 53434,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 54725,
+      "endByte": 54726,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 237,
+      "endLine": 237,
+      "startByte": 54726,
+      "endByte": 54727,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 238,
+      "endLine": 238,
+      "startByte": 54727,
+      "endByte": 54744,
+      "byteLength": 17,
+      "textHash": "sha256:ca70672ea2dc70c015c97b05828171aaf071beefa4f37d19adffd675b9b1fb4d"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 239,
+      "endLine": 239,
+      "startByte": 54744,
+      "endByte": 54745,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 55211,
+      "endByte": 55212,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 241,
+      "endLine": 241,
+      "startByte": 55212,
+      "endByte": 55213,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 242,
+      "endLine": 242,
+      "startByte": 55213,
+      "endByte": 55217,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 243,
+      "endLine": 243,
+      "startByte": 55217,
+      "endByte": 55218,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 244,
+      "endLine": 244,
+      "startByte": 55218,
+      "endByte": 55257,
+      "byteLength": 39,
+      "textHash": "sha256:a0feb8c7814ffd6d06988153cf0a1904b2539af2d5f196dac2f3fc73fcb80265"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 245,
+      "endLine": 245,
+      "startByte": 55257,
+      "endByte": 55258,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 55684,
+      "endByte": 55685,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 247,
+      "endLine": 247,
+      "startByte": 55685,
+      "endByte": 55686,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 248,
+      "endLine": 248,
+      "startByte": 55686,
+      "endByte": 55704,
+      "byteLength": 18,
+      "textHash": "sha256:48dd1ca62be5319adfe5dbe17b99850ff76704c792ca5d4f2c704f5533ae6da6"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 249,
+      "endLine": 249,
+      "startByte": 55704,
+      "endByte": 55705,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 56941,
+      "endByte": 56942,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 251,
+      "endLine": 251,
+      "startByte": 56942,
+      "endByte": 56943,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 57413,
+      "endByte": 57414,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 253,
+      "endLine": 253,
+      "startByte": 57414,
+      "endByte": 57415,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 57930,
+      "endByte": 57931,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 255,
+      "endLine": 255,
+      "startByte": 57931,
+      "endByte": 57932,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 58327,
+      "endByte": 58328,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 257,
+      "endLine": 257,
+      "startByte": 58328,
+      "endByte": 58329,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 58789,
+      "endByte": 58790,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 259,
+      "endLine": 259,
+      "startByte": 58790,
+      "endByte": 58791,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 59508,
+      "endByte": 59509,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 261,
+      "endLine": 261,
+      "startByte": 59509,
+      "endByte": 59510,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 262,
+      "endLine": 262,
+      "startByte": 59510,
+      "endByte": 59522,
+      "byteLength": 12,
+      "textHash": "sha256:f61fd3fbca4a124d8d6144014d832e1370c4771acb3f3dccc99c9b7c6c5cd3f4"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 263,
+      "endLine": 263,
+      "startByte": 59522,
+      "endByte": 59523,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 60838,
+      "endByte": 60839,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 265,
+      "endLine": 265,
+      "startByte": 60839,
+      "endByte": 60840,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 61568,
+      "endByte": 61569,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 267,
+      "endLine": 267,
+      "startByte": 61569,
+      "endByte": 61570,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 61947,
+      "endByte": 61948,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 269,
+      "endLine": 269,
+      "startByte": 61948,
+      "endByte": 61949,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 270,
+      "endLine": 270,
+      "startByte": 61949,
+      "endByte": 61966,
+      "byteLength": 17,
+      "textHash": "sha256:7d3945c04d97dd115ce8d8ae171d52fcabf2c34c3e756c35ffb05e442743983c"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 271,
+      "endLine": 271,
+      "startByte": 61966,
+      "endByte": 61967,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 63022,
+      "endByte": 63023,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 273,
+      "endLine": 273,
+      "startByte": 63023,
+      "endByte": 63024,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 63842,
+      "endByte": 63843,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 275,
+      "endLine": 275,
+      "startByte": 63843,
+      "endByte": 63844,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 64673,
+      "endByte": 64674,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 277,
+      "endLine": 277,
+      "startByte": 64674,
+      "endByte": 64675,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 278,
+      "endLine": 278,
+      "startByte": 64675,
+      "endByte": 64690,
+      "byteLength": 15,
+      "textHash": "sha256:1037517806597ba3cdcc6ece14b06476b2a5194a45437ba07e86f0c08def59e1"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 279,
+      "endLine": 279,
+      "startByte": 64690,
+      "endByte": 64691,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 65614,
+      "endByte": 65615,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 281,
+      "endLine": 281,
+      "startByte": 65615,
+      "endByte": 65616,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 66317,
+      "endByte": 66318,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 283,
+      "endLine": 283,
+      "startByte": 66318,
+      "endByte": 66319,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 66548,
+      "endByte": 66549,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 285,
+      "endLine": 285,
+      "startByte": 66549,
+      "endByte": 66550,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 67054,
+      "endByte": 67055,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 287,
+      "endLine": 287,
+      "startByte": 67055,
+      "endByte": 67056,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 288,
+      "endLine": 288,
+      "startByte": 67056,
+      "endByte": 67072,
+      "byteLength": 16,
+      "textHash": "sha256:0491494467997a048ea3b10dd3ed6cc1938bd085cac7945779906d841fc699d0"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 289,
+      "endLine": 289,
+      "startByte": 67072,
+      "endByte": 67073,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 68197,
+      "endByte": 68198,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 291,
+      "endLine": 291,
+      "startByte": 68198,
+      "endByte": 68199,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 292,
+      "endLine": 292,
+      "startByte": 68199,
+      "endByte": 68218,
+      "byteLength": 19,
+      "textHash": "sha256:3ba3dd71f256af2869627c7ee32d5717a3fe697a1fd60de7565acc39f872a8ae"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 293,
+      "endLine": 293,
+      "startByte": 68218,
+      "endByte": 68219,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 69280,
+      "endByte": 69281,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 295,
+      "endLine": 295,
+      "startByte": 69281,
+      "endByte": 69282,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 71279,
+      "endByte": 71280,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 297,
+      "endLine": 297,
+      "startByte": 71280,
+      "endByte": 71281,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 71990,
+      "endByte": 71991,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 299,
+      "endLine": 299,
+      "startByte": 71991,
+      "endByte": 71992,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 300,
+      "endLine": 300,
+      "startByte": 71992,
+      "endByte": 72016,
+      "byteLength": 24,
+      "textHash": "sha256:1927f170a3932866d9c2eb04ea38258b8fab79e954d7ddf062d741f55d0f2e29"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 301,
+      "endLine": 301,
+      "startByte": 72016,
+      "endByte": 72017,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 72982,
+      "endByte": 72983,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 303,
+      "endLine": 303,
+      "startByte": 72983,
+      "endByte": 72984,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 74019,
+      "endByte": 74020,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 305,
+      "endLine": 305,
+      "startByte": 74020,
+      "endByte": 74021,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 74504,
+      "endByte": 74505,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 307,
+      "endLine": 307,
+      "startByte": 74505,
+      "endByte": 74506,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 308,
+      "endLine": 308,
+      "startByte": 74506,
+      "endByte": 74523,
+      "byteLength": 17,
+      "textHash": "sha256:51b150fbd2f04cd3a915bd6b08fe8ed09eb70996b1778fbbb677b47e337f2e60"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 309,
+      "endLine": 309,
+      "startByte": 74523,
+      "endByte": 74524,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 75651,
+      "endByte": 75652,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 311,
+      "endLine": 311,
+      "startByte": 75652,
+      "endByte": 75653,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 76632,
+      "endByte": 76633,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 313,
+      "endLine": 313,
+      "startByte": 76633,
+      "endByte": 76634,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 77006,
+      "endByte": 77007,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 315,
+      "endLine": 315,
+      "startByte": 77007,
+      "endByte": 77008,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 316,
+      "endLine": 316,
+      "startByte": 77008,
+      "endByte": 77024,
+      "byteLength": 16,
+      "textHash": "sha256:b9e64b36de077c88e28c84117fc0470922f3df6e99afb06b62148f20328fe566"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 317,
+      "endLine": 317,
+      "startByte": 77024,
+      "endByte": 77025,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 78125,
+      "endByte": 78126,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 319,
+      "endLine": 319,
+      "startByte": 78126,
+      "endByte": 78127,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 320,
+      "endLine": 320,
+      "startByte": 78127,
+      "endByte": 78131,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 321,
+      "endLine": 321,
+      "startByte": 78131,
+      "endByte": 78132,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 322,
+      "endLine": 322,
+      "startByte": 78132,
+      "endByte": 78187,
+      "byteLength": 55,
+      "textHash": "sha256:bce73af8858eb52ac3caf43eab7353695ae95805d079a4389cd4b43ac3343c87"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 323,
+      "endLine": 323,
+      "startByte": 78187,
+      "endByte": 78188,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 324,
+      "endLine": 324,
+      "startByte": 78188,
+      "endByte": 78215,
+      "byteLength": 27,
+      "textHash": "sha256:f7abc43c20f42cea67ad93260438cdebe1cfc3f225258138415414e4083e3675"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 325,
+      "endLine": 325,
+      "startByte": 78215,
+      "endByte": 78216,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 79044,
+      "endByte": 79045,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 327,
+      "endLine": 327,
+      "startByte": 79045,
+      "endByte": 79046,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 328,
+      "endLine": 328,
+      "startByte": 79046,
+      "endByte": 79083,
+      "byteLength": 37,
+      "textHash": "sha256:06a270414d25f684701f6a4ad226b388cda7f3ff1e082350e16181d9eaece98c"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 329,
+      "endLine": 329,
+      "startByte": 79083,
+      "endByte": 79084,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 79865,
+      "endByte": 79866,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 331,
+      "endLine": 331,
+      "startByte": 79866,
+      "endByte": 79867,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 80728,
+      "endByte": 80729,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 333,
+      "endLine": 333,
+      "startByte": 80729,
+      "endByte": 80730,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 81814,
+      "endByte": 81815,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 335,
+      "endLine": 335,
+      "startByte": 81815,
+      "endByte": 81816,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 336,
+      "endLine": 336,
+      "startByte": 81816,
+      "endByte": 81874,
+      "byteLength": 58,
+      "textHash": "sha256:b5f2821a5349f4c89550490df63e8ac81b403e0725674392c3d20100e428bc28"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 337,
+      "endLine": 337,
+      "startByte": 81874,
+      "endByte": 81875,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_table_e1",
+      "startLine": 338,
+      "endLine": 347,
+      "startByte": 81875,
+      "endByte": 83480,
+      "byteLength": 1605,
+      "textHash": "sha256:fd34ef5d5c03e1ca234157605b0130a278c321fdceb45c2f708f2d9fab1cdff4"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 348,
+      "endLine": 348,
+      "startByte": 83480,
+      "endByte": 83481,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 349,
+      "endLine": 349,
+      "startByte": 83481,
+      "endByte": 83485,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 350,
+      "endLine": 350,
+      "startByte": 83485,
+      "endByte": 83486,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 351,
+      "endLine": 351,
+      "startByte": 83486,
+      "endByte": 83541,
+      "byteLength": 55,
+      "textHash": "sha256:5dbbad970c326ae844ee58796c0469d9579fa4bbce3fefdfd11ab70bfce32e64"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 352,
+      "endLine": 352,
+      "startByte": 83541,
+      "endByte": 83542,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 84418,
+      "endByte": 84419,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 354,
+      "endLine": 354,
+      "startByte": 84419,
+      "endByte": 84420,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 84774,
+      "endByte": 84775,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 85196,
+      "endByte": 85197,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 85637,
+      "endByte": 85638,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 85984,
+      "endByte": 85985,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 86663,
+      "endByte": 86664,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 360,
+      "endLine": 360,
+      "startByte": 86664,
+      "endByte": 86665,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 361,
+      "endLine": 361,
+      "startByte": 86665,
+      "endByte": 86669,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 362,
+      "endLine": 362,
+      "startByte": 86669,
+      "endByte": 86670,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 363,
+      "endLine": 363,
+      "startByte": 86670,
+      "endByte": 86735,
+      "byteLength": 65,
+      "textHash": "sha256:2b74db6cdb86eae885952c04475074e0162dd6a181d43de04f2e76c1e2004d73"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 364,
+      "endLine": 364,
+      "startByte": 86735,
+      "endByte": 86736,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 87221,
+      "endByte": 87222,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 366,
+      "endLine": 366,
+      "startByte": 87222,
+      "endByte": 87223,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_table_e1",
+      "startLine": 367,
+      "endLine": 385,
+      "startByte": 87223,
+      "endByte": 91326,
+      "byteLength": 4103,
+      "textHash": "sha256:a761ab12ec348b609efb9b435e9788d3d89d4c1345989cbc42d19cf2b3b00d7f"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 386,
+      "endLine": 386,
+      "startByte": 91326,
+      "endByte": 91327,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 91745,
+      "endByte": 91746,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 388,
+      "endLine": 388,
+      "startByte": 91746,
+      "endByte": 91747,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 389,
+      "endLine": 389,
+      "startByte": 91747,
+      "endByte": 91751,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 390,
+      "endLine": 390,
+      "startByte": 91751,
+      "endByte": 91752,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 391,
+      "endLine": 391,
+      "startByte": 91752,
+      "endByte": 91815,
+      "byteLength": 63,
+      "textHash": "sha256:0dac37f75c46ff8b8500a342472750e4c9b30c89fc18b2f92f09560dabfe3475"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 392,
+      "endLine": 392,
+      "startByte": 91815,
+      "endByte": 91816,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_table_e1",
+      "startLine": 393,
+      "endLine": 399,
+      "startByte": 91816,
+      "endByte": 94524,
+      "byteLength": 2708,
+      "textHash": "sha256:44281b4d78a16243f441d09232f6b19747e42e84606f089ec68a9f656c7285e7"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 400,
+      "endLine": 400,
+      "startByte": 94524,
+      "endByte": 94525,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 95274,
+      "endByte": 95275,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 402,
+      "endLine": 402,
+      "startByte": 95275,
+      "endByte": 95276,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_thematic_break",
+      "startLine": 403,
+      "endLine": 403,
+      "startByte": 95276,
+      "endByte": 95280,
+      "byteLength": 4,
+      "textHash": "sha256:f52d711103d50a437830c6fbcd04fb4bab49a0f82f6d26d1c791c6e8488dd090"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 404,
+      "endLine": 404,
+      "startByte": 95280,
+      "endByte": 95281,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_heading",
+      "startLine": 405,
+      "endLine": 405,
+      "startByte": 95281,
+      "endByte": 95347,
+      "byteLength": 66,
+      "textHash": "sha256:ad3646085194bcb20651a48a2e2a71540d50cf956671b5cea687e585a2477938"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "excluded_blank_lines",
+      "startLine": 406,
+      "endLine": 406,
+      "startByte": 95347,
+      "endByte": 95348,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 95581,
+      "endByte": 95582,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 95814,
+      "endByte": 95815,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 96042,
+      "endByte": 96043,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 96242,
+      "endByte": 96243,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 96449,
+      "endByte": 96450,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f2.anatomie-biomecanique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 96688,
+      "endByte": 96689,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 1,
+      "endLine": 1,
+      "startByte": 0,
+      "endByte": 75,
+      "byteLength": 75,
+      "textHash": "sha256:afe0360e79a535bfff1b6b81ad69671797b853c712173166b99f46b60fdfaeef"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 2,
+      "endLine": 2,
+      "startByte": 75,
+      "endByte": 76,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 143,
+      "endByte": 144,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 4,
+      "endLine": 4,
+      "startByte": 144,
+      "endByte": 145,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 498,
+      "endByte": 499,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 6,
+      "endLine": 6,
+      "startByte": 499,
+      "endByte": 500,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 7,
+      "endLine": 7,
+      "startByte": 500,
+      "endByte": 529,
+      "byteLength": 29,
+      "textHash": "sha256:96a659d16f74bf3ea7dc070da2e8927163d518dfd50f22b7bac0a9d355fb2e44"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 8,
+      "endLine": 8,
+      "startByte": 529,
+      "endByte": 530,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 821,
+      "endByte": 822,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 1558,
+      "endByte": 1559,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 2027,
+      "endByte": 2028,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 2420,
+      "endByte": 2421,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 2763,
+      "endByte": 2764,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3201,
+      "endByte": 3202,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 15,
+      "endLine": 15,
+      "startByte": 3202,
+      "endByte": 3203,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 16,
+      "endLine": 16,
+      "startByte": 3203,
+      "endByte": 3238,
+      "byteLength": 35,
+      "textHash": "sha256:edc7a1b23432aa8fb5e4bb2af41b4ccae8dbf0dc7053d94575291b8717aa70fb"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 17,
+      "endLine": 17,
+      "startByte": 3238,
+      "endByte": 3239,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 18,
+      "endLine": 18,
+      "startByte": 3239,
+      "endByte": 3305,
+      "byteLength": 66,
+      "textHash": "sha256:c23c3ba90e3e25f6ef5be997850a9b72a4fb1c3e07824eb9eb77fe9788822005"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 19,
+      "endLine": 19,
+      "startByte": 3305,
+      "endByte": 3306,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3378,
+      "endByte": 3379,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3459,
+      "endByte": 3460,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3550,
+      "endByte": 3551,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3687,
+      "endByte": 3688,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3836,
+      "endByte": 3837,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 3966,
+      "endByte": 3967,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 4071,
+      "endByte": 4072,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 4120,
+      "endByte": 4121,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 28,
+      "endLine": 28,
+      "startByte": 4121,
+      "endByte": 4122,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 29,
+      "endLine": 29,
+      "startByte": 4122,
+      "endByte": 4146,
+      "byteLength": 24,
+      "textHash": "sha256:7932612f048c7ae83d2e3a51c566ba4a052c9bcf7b91c7ce04df9d6dba28a04f"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 30,
+      "endLine": 30,
+      "startByte": 4146,
+      "endByte": 4147,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 31,
+      "endLine": 35,
+      "startByte": 4147,
+      "endByte": 5860,
+      "byteLength": 1713,
+      "textHash": "sha256:079727226c8aaa96924076835710cd8f9fd5fc3103a45648875b7397cbf3cb1f"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 36,
+      "endLine": 36,
+      "startByte": 5860,
+      "endByte": 5861,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 37,
+      "endLine": 37,
+      "startByte": 5861,
+      "endByte": 5897,
+      "byteLength": 36,
+      "textHash": "sha256:749e7516342c43d6d347bf1ed59da598896f1693273354c072bbb8ea3d276a26"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 38,
+      "endLine": 38,
+      "startByte": 5897,
+      "endByte": 5898,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 5949,
+      "endByte": 5950,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 40,
+      "endLine": 40,
+      "startByte": 5950,
+      "endByte": 5951,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6011,
+      "endByte": 6012,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6035,
+      "endByte": 6036,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6082,
+      "endByte": 6083,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6134,
+      "endByte": 6135,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6185,
+      "endByte": 6186,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6233,
+      "endByte": 6234,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6292,
+      "endByte": 6293,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 48,
+      "endLine": 48,
+      "startByte": 6293,
+      "endByte": 6294,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 6680,
+      "endByte": 6681,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 50,
+      "endLine": 50,
+      "startByte": 6681,
+      "endByte": 6682,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 51,
+      "endLine": 51,
+      "startByte": 6682,
+      "endByte": 6730,
+      "byteLength": 48,
+      "textHash": "sha256:7348fbf0300271ba80e1a94e55a9e8b87db7698a7ca5697e4ca0726032efb304"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 52,
+      "endLine": 52,
+      "startByte": 6730,
+      "endByte": 6731,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 7097,
+      "endByte": 7098,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 54,
+      "endLine": 54,
+      "startByte": 7098,
+      "endByte": 7099,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 55,
+      "endLine": 64,
+      "startByte": 7099,
+      "endByte": 10261,
+      "byteLength": 3162,
+      "textHash": "sha256:2feffe0dffb7b966058a65e4a6a9bc046cd571c931996c94a533dae52bb13796"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 65,
+      "endLine": 65,
+      "startByte": 10261,
+      "endByte": 10262,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 66,
+      "endLine": 66,
+      "startByte": 10262,
+      "endByte": 10307,
+      "byteLength": 45,
+      "textHash": "sha256:51f653c12bc10bdc71fc5ca2125e3ad7b854999aa1749825a150ec8abc6e42b5"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 67,
+      "endLine": 67,
+      "startByte": 10307,
+      "endByte": 10308,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 68,
+      "endLine": 68,
+      "startByte": 10308,
+      "endByte": 10335,
+      "byteLength": 27,
+      "textHash": "sha256:ce409698f3719dbf921d32845062012da547026218487ddbcc8d63af586205f9"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 69,
+      "endLine": 69,
+      "startByte": 10335,
+      "endByte": 10336,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 10647,
+      "endByte": 10648,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 10896,
+      "endByte": 10897,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 11255,
+      "endByte": 11256,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 73,
+      "endLine": 73,
+      "startByte": 11256,
+      "endByte": 11257,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 74,
+      "endLine": 74,
+      "startByte": 11257,
+      "endByte": 11284,
+      "byteLength": 27,
+      "textHash": "sha256:93b1165024662036042de73736ebf0fad62ab3a1c51919e19cabafe53414a68c"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 75,
+      "endLine": 75,
+      "startByte": 11284,
+      "endByte": 11285,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 11777,
+      "endByte": 11778,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 80,
+      "endLine": 80,
+      "startByte": 11778,
+      "endByte": 11779,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 11855,
+      "endByte": 11856,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 11954,
+      "endByte": 11955,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 12090,
+      "endByte": 12091,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 12185,
+      "endByte": 12186,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 85,
+      "endLine": 85,
+      "startByte": 12186,
+      "endByte": 12187,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 12564,
+      "endByte": 12565,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 87,
+      "endLine": 87,
+      "startByte": 12565,
+      "endByte": 12566,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 88,
+      "endLine": 88,
+      "startByte": 12566,
+      "endByte": 12612,
+      "byteLength": 46,
+      "textHash": "sha256:6d7de1809303da3200519677b5bf581d79253e71985ec5ce71761db6832a33cc"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 89,
+      "endLine": 89,
+      "startByte": 12612,
+      "endByte": 12613,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13342,
+      "endByte": 13343,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 91,
+      "endLine": 91,
+      "startByte": 13343,
+      "endByte": 13344,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13367,
+      "endByte": 13368,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 93,
+      "endLine": 93,
+      "startByte": 13368,
+      "endByte": 13369,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13463,
+      "endByte": 13464,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13529,
+      "endByte": 13530,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13584,
+      "endByte": 13585,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13617,
+      "endByte": 13618,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13709,
+      "endByte": 13710,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 13765,
+      "endByte": 13766,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 100,
+      "endLine": 100,
+      "startByte": 13766,
+      "endByte": 13767,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 14294,
+      "endByte": 14295,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 102,
+      "endLine": 102,
+      "startByte": 14295,
+      "endByte": 14296,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 103,
+      "endLine": 103,
+      "startByte": 14296,
+      "endByte": 14318,
+      "byteLength": 22,
+      "textHash": "sha256:baca5c8d71bb9821196091186a7bba4ee04cb8d97f785b5ee76c7dd93c2683a2"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 104,
+      "endLine": 104,
+      "startByte": 14318,
+      "endByte": 14319,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 105,
+      "endLine": 105,
+      "startByte": 14319,
+      "endByte": 14345,
+      "byteLength": 26,
+      "textHash": "sha256:6e580ed545a89d540e5ebe77313d1eae90768336fec60f06d11e8591a1d67b21"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 106,
+      "endLine": 106,
+      "startByte": 14345,
+      "endByte": 14346,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 14983,
+      "endByte": 14984,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 108,
+      "endLine": 108,
+      "startByte": 14984,
+      "endByte": 14985,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 15570,
+      "endByte": 15571,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 110,
+      "endLine": 110,
+      "startByte": 15571,
+      "endByte": 15572,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 111,
+      "endLine": 111,
+      "startByte": 15572,
+      "endByte": 15614,
+      "byteLength": 42,
+      "textHash": "sha256:9355570bdc86d3f1039c418ee34d87007280c297cc9b392f1591dd9ff15cb651"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 112,
+      "endLine": 112,
+      "startByte": 15614,
+      "endByte": 15615,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 113,
+      "endLine": 120,
+      "startByte": 15615,
+      "endByte": 19609,
+      "byteLength": 3994,
+      "textHash": "sha256:11614922e410be8c565e02297fe91fd8d3938b297104c4e706f4c95a195326f1"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 121,
+      "endLine": 121,
+      "startByte": 19609,
+      "endByte": 19610,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 122,
+      "endLine": 122,
+      "startByte": 19610,
+      "endByte": 19635,
+      "byteLength": 25,
+      "textHash": "sha256:61f255ed5493dc99ca493dc388a40140055e7cdd1b24df49cb194fb2f86ecd53"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 123,
+      "endLine": 123,
+      "startByte": 19635,
+      "endByte": 19636,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 19955,
+      "endByte": 19956,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20100,
+      "endByte": 20101,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20254,
+      "endByte": 20255,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20398,
+      "endByte": 20399,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20520,
+      "endByte": 20521,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 20703,
+      "endByte": 20704,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 130,
+      "endLine": 130,
+      "startByte": 20704,
+      "endByte": 20705,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 131,
+      "endLine": 131,
+      "startByte": 20705,
+      "endByte": 20719,
+      "byteLength": 14,
+      "textHash": "sha256:1a67bd01e9d263e328aeef6c80ccbcef72dc5124038fbe15f7f76caacbdcd8b4"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 132,
+      "endLine": 132,
+      "startByte": 20719,
+      "endByte": 20720,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 133,
+      "endLine": 138,
+      "startByte": 20720,
+      "endByte": 23411,
+      "byteLength": 2691,
+      "textHash": "sha256:aa4831da7f19331ad3cccc3db5fb28494a3f05aa3f49509a8a40549e0267f30f"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 139,
+      "endLine": 139,
+      "startByte": 23411,
+      "endByte": 23412,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 23770,
+      "endByte": 23771,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 141,
+      "endLine": 141,
+      "startByte": 23771,
+      "endByte": 23772,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 142,
+      "endLine": 142,
+      "startByte": 23772,
+      "endByte": 23795,
+      "byteLength": 23,
+      "textHash": "sha256:193b8547909422c86da9a093e124734ee75716afc0f519aa82ed5fd215a4e836"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 143,
+      "endLine": 143,
+      "startByte": 23795,
+      "endByte": 23796,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 144,
+      "endLine": 150,
+      "startByte": 23796,
+      "endByte": 25759,
+      "byteLength": 1963,
+      "textHash": "sha256:9000bc2500a7b61dae45ae5e072c8e698e8b48324c8c9115381d63c7dbd37147"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 151,
+      "endLine": 151,
+      "startByte": 25759,
+      "endByte": 25760,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 26245,
+      "endByte": 26246,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 153,
+      "endLine": 153,
+      "startByte": 26246,
+      "endByte": 26247,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 154,
+      "endLine": 154,
+      "startByte": 26247,
+      "endByte": 26259,
+      "byteLength": 12,
+      "textHash": "sha256:9aee97c8267d4be01c894cd9834b64dbd6d28272677dde370bf924611115e0ca"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 155,
+      "endLine": 155,
+      "startByte": 26259,
+      "endByte": 26260,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 156,
+      "endLine": 161,
+      "startByte": 26260,
+      "endByte": 28801,
+      "byteLength": 2541,
+      "textHash": "sha256:5cd1f7f4bb7acf52eea3b8cbf615a3494080037c1f06d952cad7cca65ae78960"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 162,
+      "endLine": 162,
+      "startByte": 28801,
+      "endByte": 28802,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 163,
+      "endLine": 163,
+      "startByte": 28802,
+      "endByte": 28840,
+      "byteLength": 38,
+      "textHash": "sha256:0053aabb8c5b172f0f13579e3cc3e4a54f45f5e1fbd34ba86917c4301c0ab5d1"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 164,
+      "endLine": 164,
+      "startByte": 28840,
+      "endByte": 28841,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 29087,
+      "endByte": 29088,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 29303,
+      "endByte": 29304,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 29814,
+      "endByte": 29815,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 168,
+      "endLine": 168,
+      "startByte": 29815,
+      "endByte": 29816,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 169,
+      "endLine": 169,
+      "startByte": 29816,
+      "endByte": 29863,
+      "byteLength": 47,
+      "textHash": "sha256:f32a5fcf4abf20e54f98f9d22c0edaaf55dcc2a942cf481193f618fec1f6a6bc"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 170,
+      "endLine": 170,
+      "startByte": 29863,
+      "endByte": 29864,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30137,
+      "endByte": 30138,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 172,
+      "endLine": 172,
+      "startByte": 30138,
+      "endByte": 30139,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 173,
+      "endLine": 173,
+      "startByte": 30139,
+      "endByte": 30167,
+      "byteLength": 28,
+      "textHash": "sha256:c12f281e5ac3d7a35f56afbba1a1973f10db45addd42c9c30b6ad5c410c8af10"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 174,
+      "endLine": 174,
+      "startByte": 30167,
+      "endByte": 30168,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30214,
+      "endByte": 30215,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30275,
+      "endByte": 30276,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30375,
+      "endByte": 30376,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30420,
+      "endByte": 30421,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30559,
+      "endByte": 30560,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 30637,
+      "endByte": 30638,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 181,
+      "endLine": 181,
+      "startByte": 30638,
+      "endByte": 30639,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 31014,
+      "endByte": 31015,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 183,
+      "endLine": 183,
+      "startByte": 31015,
+      "endByte": 31016,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 31317,
+      "endByte": 31318,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 185,
+      "endLine": 185,
+      "startByte": 31318,
+      "endByte": 31319,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 186,
+      "endLine": 186,
+      "startByte": 31319,
+      "endByte": 31359,
+      "byteLength": 40,
+      "textHash": "sha256:c9c98041b29d8d4e65c9f6b589db3d50e4e8b999f37ea8b6bc114d7b2105f596"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 187,
+      "endLine": 187,
+      "startByte": 31359,
+      "endByte": 31360,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 188,
+      "endLine": 201,
+      "startByte": 31360,
+      "endByte": 34612,
+      "byteLength": 3252,
+      "textHash": "sha256:7f09769d42b6c723885eab6a958b75c9449f9438fdfd28f5b687e7189d6559de"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 202,
+      "endLine": 202,
+      "startByte": 34612,
+      "endByte": 34613,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 203,
+      "endLine": 203,
+      "startByte": 34613,
+      "endByte": 34658,
+      "byteLength": 45,
+      "textHash": "sha256:be32a33dcf46daba915195a6d089747ed9b3e80713cdc40ae7fc273781ee75dc"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 204,
+      "endLine": 204,
+      "startByte": 34658,
+      "endByte": 34659,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 205,
+      "endLine": 205,
+      "startByte": 34659,
+      "endByte": 34688,
+      "byteLength": 29,
+      "textHash": "sha256:3244b7b239600ffb07ed5afec8f12d187c6f1b1ddbd051e8bb88ab1c991e178e"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 206,
+      "endLine": 206,
+      "startByte": 34688,
+      "endByte": 34689,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35152,
+      "endByte": 35153,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 208,
+      "endLine": 208,
+      "startByte": 35153,
+      "endByte": 35154,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 209,
+      "endLine": 209,
+      "startByte": 35154,
+      "endByte": 35182,
+      "byteLength": 28,
+      "textHash": "sha256:706bcc42604b604712c92c5819e0fccc4d1ae10c9c050e495b01ee1b99395884"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 210,
+      "endLine": 210,
+      "startByte": 35182,
+      "endByte": 35183,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35233,
+      "endByte": 35234,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35267,
+      "endByte": 35268,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35322,
+      "endByte": 35323,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35361,
+      "endByte": 35362,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35399,
+      "endByte": 35400,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35452,
+      "endByte": 35453,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35506,
+      "endByte": 35507,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 218,
+      "endLine": 218,
+      "startByte": 35507,
+      "endByte": 35508,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 219,
+      "endLine": 219,
+      "startByte": 35508,
+      "endByte": 35554,
+      "byteLength": 46,
+      "textHash": "sha256:0b0129c46543b2196a60f8ac9dcc05571cbe59ea20ae0d103853281919e5dacf"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 220,
+      "endLine": 220,
+      "startByte": 35554,
+      "endByte": 35555,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 35660,
+      "endByte": 35661,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 222,
+      "endLine": 222,
+      "startByte": 35661,
+      "endByte": 35662,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_table_out_of_scope",
+      "startLine": 223,
+      "endLine": 239,
+      "startByte": 35662,
+      "endByte": 40077,
+      "byteLength": 4415,
+      "textHash": "sha256:676eeb9ab970dfab0aa5eeaa02ecca71ae673bdf43c2acc995914ecd855f71f3"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 240,
+      "endLine": 240,
+      "startByte": 40077,
+      "endByte": 40078,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 241,
+      "endLine": 241,
+      "startByte": 40078,
+      "endByte": 40113,
+      "byteLength": 35,
+      "textHash": "sha256:1a0ce4cccb345d08bcc182bf6487c23c71664607084fcd064ccabf9d2577217c"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 242,
+      "endLine": 242,
+      "startByte": 40113,
+      "endByte": 40114,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40189,
+      "endByte": 40190,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40274,
+      "endByte": 40275,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40340,
+      "endByte": 40341,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40414,
+      "endByte": 40415,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40521,
+      "endByte": 40522,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 248,
+      "endLine": 248,
+      "startByte": 40522,
+      "endByte": 40523,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 40906,
+      "endByte": 40907,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 250,
+      "endLine": 250,
+      "startByte": 40907,
+      "endByte": 40908,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 251,
+      "endLine": 251,
+      "startByte": 40908,
+      "endByte": 40949,
+      "byteLength": 41,
+      "textHash": "sha256:244f931540f32797777dc5b82fad141894cd70f6c0fed26edc01942b20d5bbe5"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 252,
+      "endLine": 252,
+      "startByte": 40949,
+      "endByte": 40950,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_bibliographic_registry",
+      "startLine": 253,
+      "endLine": 276,
+      "startByte": 40950,
+      "endByte": 45467,
+      "byteLength": 4517,
+      "textHash": "sha256:451ae554057ab9035d6e31cc98125e4740f5147c2a8967972843b66199652ba9"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 277,
+      "endLine": 277,
+      "startByte": 45467,
+      "endByte": 45468,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 278,
+      "endLine": 278,
+      "startByte": 45468,
+      "endByte": 45498,
+      "byteLength": 30,
+      "textHash": "sha256:e436ea7052f7bf71ef6c8ce007ec6fbc3e02df613f94508753cdcbf93a091ce4"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 279,
+      "endLine": 279,
+      "startByte": 45498,
+      "endByte": 45499,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 45593,
+      "endByte": 45594,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 45745,
+      "endByte": 45746,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 45817,
+      "endByte": 45818,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 45896,
+      "endByte": 45897,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46081,
+      "endByte": 46082,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46246,
+      "endByte": 46247,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46415,
+      "endByte": 46416,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46610,
+      "endByte": 46611,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 288,
+      "endLine": 288,
+      "startByte": 46611,
+      "endByte": 46612,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_heading",
+      "startLine": 289,
+      "endLine": 289,
+      "startByte": 46612,
+      "endByte": 46639,
+      "byteLength": 27,
+      "textHash": "sha256:87a770685bf955ceffce4be3552e3255064ebaa72c710b1def124e50f3808776"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 290,
+      "endLine": 290,
+      "startByte": 46639,
+      "endByte": 46640,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46725,
+      "endByte": 46726,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 292,
+      "endLine": 292,
+      "startByte": 46726,
+      "endByte": 46727,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46764,
+      "endByte": 46765,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46841,
+      "endByte": 46842,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46892,
+      "endByte": 46893,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46931,
+      "endByte": 46932,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 46996,
+      "endByte": 46997,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 47022,
+      "endByte": 47023,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 47062,
+      "endByte": 47063,
+      "byteLength": 1
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "excluded_blank_lines",
+      "startLine": 300,
+      "endLine": 300,
+      "startByte": 47063,
+      "endByte": 47064,
+      "byteLength": 1,
+      "textHash": "sha256:01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "corpusFileId": "corpus.f3.coaching-clinique",
+      "reason": "structural_separator",
+      "startLine": null,
+      "endLine": null,
+      "startByte": 47235,
+      "endByte": 47236,
+      "byteLength": 1
+    }
+  ],
+  "uncoveredZones": [],
+  "overlaps": [],
+  "schemaViolations": [],
+  "invariantViolations": [],
+  "stats": {
+    "fragments": 207,
+    "eligibleProseBytes": 100669,
+    "coveredFragmentBytes": 100669,
+    "coveragePercent": 100,
+    "occurrences": 133,
+    "distinctUrls": 115,
+    "duplicateUrlOccurrences": 18,
+    "internalLinks": 1,
+    "unclassifiedLinks": 132,
+    "coverageHoles": 0,
+    "overlaps": 0,
+    "schemaViolations": 0,
+    "invariantViolations": 0
+  }
+}
