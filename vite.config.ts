@@ -61,7 +61,14 @@ export default defineConfig(({ mode }) => {
       maxWorkers: 2,
       setupFiles: ['./src/test/setup.ts'],
       // Prevent tests in local agent worktrees from running twice.
-      exclude: [...configDefaults.exclude, '**/.claude/**', '**/.worktrees/**'],
+      // fittrack-kb-contract uses `node --test`, not vitest. Without this,
+      // `npm run test:run` ingests its *.test.mjs files and fails CI deploy.
+      exclude: [
+        ...configDefaults.exclude,
+        '**/.claude/**',
+        '**/.worktrees/**',
+        'fittrack-kb-contract/**',
+      ],
     },
   };
 });
