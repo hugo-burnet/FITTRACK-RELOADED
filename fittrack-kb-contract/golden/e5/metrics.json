@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0.0-e5-gold-metrics",
+  "global": {
+    "fragmentCount": 100,
+    "claimCount": 186,
+    "meanClaimsPerFragment": 1.86,
+    "medianClaimsPerFragment": 2,
+    "zeroClaimFragments": 32,
+    "unresolvedFragmentStatuses": 0,
+    "fragmentsWithAnyUnresolvedAxis": 31,
+    "claimsWithUnresolvedAxis": 71,
+    "unresolvedAxisCount": 144,
+    "needsAdjudicationBeforeAdjudication": 7,
+    "fragmentsByCorpus": {
+      "F2": 50,
+      "F3": 50
+    },
+    "claimsByCorpus": {
+      "F2": 123,
+      "F3": 63
+    },
+    "knowledgeType": {
+      "MYTH_REFUTATION": 18,
+      "EMG_OBSERVATION": 13,
+      "EVIDENCE": 53,
+      "BIOMECHANICAL_OBSERVATION": 34,
+      "EXPERT_PRACTICE": 40,
+      "UNRESOLVED": 3,
+      "HYPOTHESIS": 13,
+      "ANATOMICAL_FACT": 6,
+      "MECHANISM": 2,
+      "DEFINITION": 4
+    },
+    "epistemicStatus": {
+      "refuted": 18,
+      "UNRESOLVED": 26,
+      "probable": 28,
+      "practice_only": 42,
+      "uncertain": 18,
+      "absence_of_evidence": 12,
+      "mechanistic_only": 18,
+      "established": 17,
+      "established_direction": 7
+    },
+    "claimsWithCitations": 76,
+    "claimsWithoutCitations": 110,
+    "citationLinks": 88,
+    "meanCitationsPerClaim": 0.4731182795698925
+  },
+  "doubleAnnotation": {
+    "fragmentCount": 30,
+    "exactClaimCountAgreement": 0.7666666666666667,
+    "exactClaimCountAgreementFragments": 23,
+    "meanAbsoluteClaimCountDifference": 0.4,
+    "zeroClaimAgreement": 1,
+    "zeroClaimComparableFragments": 1,
+    "alignedClaimCount": 86,
+    "exactSpanAgreement": 0.7906976744186046,
+    "knowledgeTypeAgreement": 0.9529411764705882,
+    "knowledgeTypeComparableClaims": 85,
+    "epistemicStatusAgreement": 0.9315068493150684,
+    "epistemicStatusComparableClaims": 73,
+    "citationAttributionAgreement": 0.9186046511627907,
+    "disagreementFragmentCount": 27,
+    "disagreementDimensionCounts": {
+      "claim_count": 7,
+      "spans_and_granularity": 20,
+      "citation_attribution": 12,
+      "knowledge_type": 9,
+      "epistemic_status": 12,
+      "zero_claim": 0,
+      "unresolved": 17
+    },
+    "decisionCount": 27,
+    "primaryOnlyResolutionCount": 2,
+    "totalAdjudicationDecisionCount": 29,
+    "principalDisagreementReasons": [
+      {
+        "dimension": "spans_and_granularity",
+        "count": 20
+      },
+      {
+        "dimension": "unresolved",
+        "count": 17
+      },
+      {
+        "dimension": "citation_attribution",
+        "count": 12
+      },
+      {
+        "dimension": "epistemic_status",
+        "count": 12
+      },
+      {
+        "dimension": "knowledge_type",
+        "count": 9
+      },
+      {
+        "dimension": "claim_count",
+        "count": 7
+      },
+      {
+        "dimension": "zero_claim",
+        "count": 0
+      }
+    ]
+  }
+}

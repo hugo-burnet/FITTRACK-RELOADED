@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fittrack.local/kb/golden/e5/annotation.schema.json",
+  "title": "E5 GOLD fragment annotations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "annotatorId", "annotationRole", "annotations"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0-e5-gold" },
+    "annotatorId": { "type": "string", "minLength": 1 },
+    "annotationRole": { "enum": ["primary", "independent_secondary", "adjudicated"] },
+    "annotations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fragmentAnnotation" }
+    }
+  },
+  "$defs": {
+    "resolutionState": {
+      "enum": ["RESOLVED", "UNRESOLVED", "NOT_STATED", "NOT_APPLICABLE"]
+    },
+    "axisResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": { "$ref": "#/$defs/resolutionState" },
+        "value": {},
+        "raw": {},
+        "reason": { "type": "string" },
+        "rationaleSpan": { "type": "string" },
+        "resolvedBy": { "enum": ["human_annotation", "deterministic_rule"] }
+      }
+    },
+    "supportSpan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "relativeStartByte",
+        "relativeEndByte",
+        "absoluteStartByte",
+        "absoluteEndByte"
+      ],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "relativeStartByte": { "type": "integer", "minimum": 0 },
+        "relativeEndByte": { "type": "integer", "minimum": 1 },
+        "absoluteStartByte": { "type": "integer", "minimum": 0 },
+        "absoluteEndByte": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "confidenceByAspect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aspect", "confidence"],
+      "properties": {
+        "aspect": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceAspect"
+        },
+        "confidence": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/confidenceLevel"
+        },
+        "rationale": { "type": "string" }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "confidenceByAspect": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/confidenceByAspect" },
+          "uniqueItems": true
+        },
+        "directness": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/directness"
+        },
+        "evidenceTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/evidenceType"
+          },
+          "uniqueItems": true
+        },
+        "clinicalEvidenceLevel": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/clinicalEvidenceLevel"
+        },
+        "hierarchyHint": { "enum": ["biomechanics", "clinical"] },
+        "supportsHypertrophySuperiority": { "type": "boolean" },
+        "supportsDemonstratedClinicalRisk": { "type": "boolean" }
+      }
+    },
+    "expectedClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "goldenClaimId",
+        "rawStatement",
+        "supportSpans",
+        "domain",
+        "citationOccurrenceIds",
+        "cannotConclude",
+        "limitations",
+        "axisResolution"
+      ],
+      "properties": {
+        "goldenClaimId": {
+          "type": "string",
+          "pattern": "^gold\\.e5\\.[a-z0-9-]+\\.[0-9]{2}$"
+        },
+        "rawStatement": { "type": "string", "minLength": 1 },
+        "canonicalStatement": { "type": "string", "minLength": 1 },
+        "supportSpans": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/supportSpan" }
+        },
+        "domain": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/domain"
+        },
+        "knowledgeType": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/knowledgeType"
+        },
+        "epistemicStatus": {
+          "$ref": "https://fittrack.local/kb/schemas/common/vocab.schema.json#/$defs/epistemicStatus"
+        },
+        "assessment": { "$ref": "#/$defs/assessment" },
+        "axisResolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "knowledgeType",
+            "epistemicStatus",
+            "confidenceByAspect",
+            "directness",
+            "evidenceTypes",
+            "hierarchyHint"
+          ],
+          "properties": {
+            "knowledgeType": { "$ref": "#/$defs/axisResolution" },
+            "epistemicStatus": { "$ref": "#/$defs/axisResolution" },
+            "confidenceByAspect": { "$ref": "#/$defs/axisResolution" },
+            "directness": { "$ref": "#/$defs/axisResolution" },
+            "evidenceTypes": { "$ref": "#/$defs/axisResolution" },
+            "hierarchyHint": { "$ref": "#/$defs/axisResolution" }
+          }
+        },
+        "citationOccurrenceIds": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^cand\\.e5-citation\\.[0-9a-f]{16}$" },
+          "uniqueItems": true
+        },
+        "citationAttributionState": {
+          "enum": ["ATTACHED", "UNRESOLVED", "NOT_CITED"]
+        },
+        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "cannotConclude": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "ambiguities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ambiguous_citation",
+              "clinical_content",
+              "red_flag_content",
+              "numeric_threshold",
+              "emg_content",
+              "biomechanical_risk_language",
+              "expert_practice",
+              "explicit_absence",
+              "possible_conflict",
+              "output_policy_content",
+              "modeling_content"
+            ]
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "fragmentAnnotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fragmentId", "annotationStatus", "expectedClaims"],
+      "properties": {
+        "fragmentId": { "type": "string", "pattern": "^frag\\.[a-z0-9]+\\.[0-9]+$" },
+        "annotationStatus": {
+          "enum": ["annotated", "zero_claim", "unresolved", "needs_adjudication"]
+        },
+        "expectedClaims": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/expectedClaim" }
+        },
+        "zeroClaimReason": { "type": "string", "minLength": 1 },
+        "ambiguities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "annotationNotes": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "annotationStatus": { "const": "zero_claim" } } },
+          "then": {
+            "required": ["zeroClaimReason"],
+            "properties": { "expectedClaims": { "maxItems": 0 } }
+          }
+        },
+        {
+          "if": { "properties": { "annotationStatus": { "const": "annotated" } } },
+          "then": { "properties": { "expectedClaims": { "minItems": 1 } } }
+        },
+        {
+          "if": {
+            "properties": {
+              "annotationStatus": { "enum": ["unresolved", "needs_adjudication"] }
+            }
+          },
+          "then": { "required": ["ambiguities"] }
+        }
+      ]
+    }
+  }
+}

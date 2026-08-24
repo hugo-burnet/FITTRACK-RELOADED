@@ -1,0 +1,289 @@
+{
+  "schemaVersion": "1.0.0-e5-gold-adjudication",
+  "comparedAnnotators": [
+    "annotator_A",
+    "annotator_B"
+  ],
+  "comparisonMethod": "Exact claim counts and ZERO_CLAIM status; greedy maximum span-overlap alignment for span, knowledgeType, epistemicStatus and citation-set agreement.",
+  "doubleAnnotationDecisionCount": 27,
+  "primaryOnlyResolutionCount": 2,
+  "totalDecisionCount": 29,
+  "disagreements": [
+    {
+      "fragmentId": "frag.f2.0001",
+      "dimensions": [
+        "unresolved"
+      ],
+      "selected": "B",
+      "justification": "Les quatre claims et citations sont identiques ; l'ambiguïté de portée de la règle générale est déjà portée au niveau de la claim et ne justifie pas un statut fragment needs_adjudication."
+    },
+    {
+      "fragmentId": "frag.f2.0003",
+      "dimensions": [
+        "spans_and_granularity",
+        "citation_attribution"
+      ],
+      "selected": "CUSTOM",
+      "justification": "Le span mécanistique court de B est plus atomique, tandis que le span de résultat et l'absence de citation sur les conseils chez A évitent fusion et citation bleed."
+    },
+    {
+      "fragmentId": "frag.f2.0004",
+      "dimensions": [
+        "spans_and_granularity"
+      ],
+      "selected": "B",
+      "justification": "Les spans B conservent les statistiques, la durée et les comparateurs nécessaires à la portée des deux résultats."
+    },
+    {
+      "fragmentId": "frag.e5f2.00026956",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status"
+      ],
+      "selected": "CUSTOM",
+      "justification": "La claim supplémentaire de B duplique un sous-span déjà contenu dans sa claim suivante ; le découpage A évite ce double comptage."
+    },
+    {
+      "fragmentId": "frag.e5f2.00028637",
+      "dimensions": [
+        "spans_and_granularity"
+      ],
+      "selected": "A",
+      "justification": "Le span A isole le résultat sur la variation non linéaire des bras de levier sans embarquer la présentation de l'étude."
+    },
+    {
+      "fragmentId": "frag.e5f2.00034666",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status",
+        "unresolved"
+      ],
+      "selected": "CUSTOM",
+      "justification": "Trois unités suffisent ; le principe qualitatif final est une relation de cohérence, tandis que la sarcomérogenèse observée doit être typée MECHANISM."
+    },
+    {
+      "fragmentId": "frag.f2.0021",
+      "dimensions": [
+        "spans_and_granularity",
+        "epistemic_status"
+      ],
+      "selected": "A",
+      "justification": "A conserve dans la claim de synthèse l'hétérogénéité explicitement énoncée et adopte le statut prudent uncertain."
+    },
+    {
+      "fragmentId": "frag.e5f2.00044614",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status",
+        "unresolved"
+      ],
+      "selected": "CUSTOM",
+      "justification": "La phrase sur la méta-analyse porte un résultat distinct et ne doit pas disparaître faute de CitationOccurrence dans le fragment."
+    },
+    {
+      "fragmentId": "frag.f2.0023",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status"
+      ],
+      "selected": "CUSTOM",
+      "justification": "B sépare correctement la sollicitation, le risque supposé, la population indirecte et l'extrapolation ; les citations groupées restent explicitement ambiguës."
+    },
+    {
+      "fragmentId": "frag.f2.0005",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status"
+      ],
+      "selected": "B",
+      "justification": "La conclusion mécanistique sur la redistribution de l'effort est une cinquième affirmation explicite, distincte des deux observations EMG et du résultat de force."
+    },
+    {
+      "fragmentId": "frag.f2.0007",
+      "dimensions": [
+        "spans_and_granularity"
+      ],
+      "selected": "A",
+      "justification": "Le span A est le prédicat comparatif minimal ; B fusionne la présentation méthodologique avec le résultat."
+    },
+    {
+      "fragmentId": "frag.e5f2.00072017",
+      "dimensions": [
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status"
+      ],
+      "selected": "B",
+      "justification": "La phrase finale réfute explicitement l'inférence EMG vers hypertrophie ; la qualifier de claim MYTH_REFUTATION est préférable à extraire « preuve récente, niveau modéré »."
+    },
+    {
+      "fragmentId": "frag.f2.0022",
+      "dimensions": [
+        "epistemic_status"
+      ],
+      "selected": "A",
+      "justification": "Le fragment ne justifie pas de forcer un statut probable sur l'association force ni sur l'observation EMG ; A laisse ces axes non résolus."
+    },
+    {
+      "fragmentId": "frag.f3.0001",
+      "dimensions": [
+        "spans_and_granularity",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Les deux annotations convergent ; A conserve le connecteur « voire » qui borne l'avantage antalgique comme extension du résultat comparable."
+    },
+    {
+      "fragmentId": "frag.f3.0002",
+      "dimensions": [
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Claims et citations sont identiques ; A conserve la résolution d'axes la plus conforme à l'exemple normatif du Design Review."
+    },
+    {
+      "fragmentId": "frag.f3.0007",
+      "dimensions": [
+        "spans_and_granularity",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "La différence porte sur une frontière de ponctuation ; A fournit le span minimal sans modifier le sens."
+    },
+    {
+      "fragmentId": "frag.e5f3.00012613",
+      "dimensions": [
+        "spans_and_granularity",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Le span A conserve le sujet « Le principe commun » et reste autonome ; les trois résultats sourcés sont identiques."
+    },
+    {
+      "fragmentId": "frag.e5f3.00014985",
+      "dimensions": [
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Les claims sont identiques ; A conserve les limites transversales avec la claim d'absence de preuve."
+    },
+    {
+      "fragmentId": "frag.e5f3.00025760",
+      "dimensions": [
+        "spans_and_granularity",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Le connecteur « avec » conserve le rattachement de la règle d'acceptabilité au consensus cité."
+    },
+    {
+      "fragmentId": "frag.f3.0003",
+      "dimensions": [
+        "spans_and_granularity",
+        "citation_attribution",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "La citation soutient directement la fréquence des signes d'imagerie, pas nécessairement le garde-fou général initial ; A évite cette propagation."
+    },
+    {
+      "fragmentId": "frag.e5f3.00010897",
+      "dimensions": [
+        "citation_attribution",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "La citation du consensus suit la seconde phrase et ne doit pas être propagée à la règle de seuil de la première phrase."
+    },
+    {
+      "fragmentId": "frag.e5f3.00014346",
+      "dimensions": [
+        "knowledge_type",
+        "epistemic_status",
+        "unresolved"
+      ],
+      "selected": "B",
+      "justification": "« Aucune méthode n'est nécessaire pour tous » décrit la portée de la recommandation APTA ; EVIDENCE/established_direction est plus fidèle que MYTH_REFUTATION/refuted."
+    },
+    {
+      "fragmentId": "frag.e5f3.00023412",
+      "dimensions": [
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Les claims concordent ; les axes non énoncés peuvent rester non résolus sans maintenir le fragment en needs_adjudication."
+    },
+    {
+      "fragmentId": "frag.e5f3.00029304",
+      "dimensions": [
+        "spans_and_granularity",
+        "citation_attribution",
+        "epistemic_status",
+        "unresolved"
+      ],
+      "selected": "A",
+      "justification": "Les citations terminales ont des portées distinctes et ne soutiennent pas directement les deux observations de profil mécanique ; A évite ce citation bleed et reste prudent sur leur statut."
+    },
+    {
+      "fragmentId": "frag.e5f3.00030639",
+      "dimensions": [
+        "spans_and_granularity",
+        "unresolved"
+      ],
+      "selected": "CUSTOM",
+      "justification": "La recommandation de reprise, sa justification sur la tolérance et l'absence de pourcentage universel sont trois unités indépendantes."
+    },
+    {
+      "fragmentId": "frag.e5f3.00002764",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status",
+        "unresolved"
+      ],
+      "selected": "CUSTOM",
+      "justification": "La priorité sur le coaching est une politique produit ; l'orientation, la précision imparfaite des signes et leur interprétation contextuelle restent trois claims distinctes."
+    },
+    {
+      "fragmentId": "frag.e5f3.00000822",
+      "dimensions": [
+        "claim_count",
+        "spans_and_granularity",
+        "citation_attribution",
+        "knowledge_type",
+        "epistemic_status",
+        "unresolved"
+      ],
+      "selected": "CUSTOM",
+      "justification": "Le prédicat n'apparaît qu'une fois : dupliquer six fois le même rawStatement pour forcer un mapping citation-population créerait de faux claims."
+    }
+  ],
+  "primaryOnlyResolutions": [
+    {
+      "fragmentId": "frag.e5f2.00066319",
+      "justification": "La claim est réelle mais son outcome sous-jacent n'est pas nommé ; conserver des axes UNRESOLVED est préférable à forcer EMG, biomécanique ou hypertrophie."
+    },
+    {
+      "fragmentId": "frag.e5f2.00075653",
+      "justification": "La portée groupée de la méta-analyse est incohérente avec la proposition sur moyen/petit fessiers ; l'attribution est laissée UNRESOLVED sans supprimer la claim textuelle."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0-e5-gold-manifest",
+  "status": "ready_for_e5_llm_benchmark",
+  "p0BaseCommit": "de76716c88d6f53207e0d45ea6d3bf7c584fc114",
+  "designReviewRef": "references/E5-DESIGN-REVIEW.md",
+  "designReviewHash": "sha256:20c907a43a6551c7c1f319d6c7095192029753f61d3230dcab90abada2ba817b",
+  "selectionManifestRef": "../../candidates/e5-prose-golden-manifest.json",
+  "proseFragmentsRef": "../../candidates/e5-prose-fragments.json",
+  "citationOccurrencesRef": "../../candidates/e5-prose-citation-occurrences.json",
+  "annotationSchemaRef": "annotation.schema.json",
+  "primaryAnnotationRef": "annotations/annotator-a.json",
+  "secondaryAnnotationRef": "annotations/annotator-b.json",
+  "adjudicatedAnnotationRef": "adjudication/adjudicated.json",
+  "metricsRef": "metrics.json",
+  "fragmentCount": 100,
+  "perCorpusFile": {
+    "F2": 50,
+    "F3": 50
+  },
+  "doubleAnnotatedFragmentCount": 30,
+  "multipleCitationFragmentCount": 12,
+  "sourceArtifactHashes": {
+    "selectionManifest": "sha256:186cee1b5a4df49dc6607aedcf25655c9657cb7fe63df7f63b81941798dfe141",
+    "proseFragments": "sha256:1eb0bd856541f9a22ae397bd3361eda4862dcc722cb6ade89e09d2d80861fea4",
+    "citationOccurrences": "sha256:d7d42a705a9f3a37b8bba90aa67f4c689b8ea07aae3b7b8c64d97141a7d97723"
+  },
+  "benchmarkDimensions": [
+    "claim_precision",
+    "claim_recall",
+    "claim_f1",
+    "exact_or_near_match_granularity",
+    "span_support_correctness",
+    "citation_precision",
+    "citation_recall",
+    "knowledge_type_accuracy",
+    "epistemic_status_accuracy",
+    "zero_claim_accuracy",
+    "hallucination_rate",
+    "unsupported_inference_rate",
+    "clinical_overreach_rate"
+  ],
+  "designReviewFindings": [
+    "The fixed P0 manifest contains 12 fragments with multiple CitationOccurrences, below the Design Review target of 15; the selection was not changed after P0.",
+    "Coordinated predicates with one shared subject can be impossible to split atomically while keeping every rawStatement autonomous and verbatim.",
+    "Grouped terminal citations can preserve the claim while leaving individual claim-to-occurrence attribution UNRESOLVED."
+  ]
+}
