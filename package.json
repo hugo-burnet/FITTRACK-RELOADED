@@ -20,7 +20,8 @@
     "bench:records": "vitest bench src/data/repositories/personalRecords.bench.ts --run",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "voice:generate": "node scripts/generate-voice.mjs"
+    "voice:generate": "node scripts/generate-voice.mjs",
+    "kb:build-index": "node scripts/build-knowledge-index.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",

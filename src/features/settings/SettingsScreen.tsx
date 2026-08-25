@@ -149,6 +149,12 @@ export function SettingsScreen() {
               disabled={standalone}
               onClick={() => void install()}
             />
+            <ListRow
+              title={t('settings.knowledgeLink')}
+              subtitle={t('settings.knowledgeHint')}
+              trailing={<ChevronRightIcon />}
+              onClick={() => void navigate('/knowledge')}
+            />
           </div>
           {shownOutcome !== null && (
             <p

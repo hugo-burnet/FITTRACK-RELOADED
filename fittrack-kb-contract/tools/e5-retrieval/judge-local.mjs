@@ -6,9 +6,11 @@
 // existe pour itérer vite — vingt minutes par mesure en WebAssembly rendaient toute
 // exploration impraticable.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { buildIndex, search } from '../e5-llm/retrieval.mjs';
 import { fileURLToPath } from 'node:url';
+import { projectClaimContext } from './context-projection.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '../..');
@@ -21,7 +23,23 @@ const TOP_K = 4;
 // On recupere large puis on reclasse : c est tout l interet du reranking.
 const CANDIDATES = 12;
 
-const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
+const sha256 = (value) => `sha256:${createHash('sha256').update(value).digest('hex')}`;
+
+async function ollamaModelMetadata(names) {
+  try {
+    const response = await fetch(`${OLLAMA}/api/tags`);
+    if (!response.ok) return [];
+    const models = (await response.json()).models ?? [];
+    return names.map((name) => {
+      const found = models.find((model) => model.name === name || model.model === name);
+      return found
+        ? { id: name, digest: found.digest ?? null, modifiedAt: found.modified_at ?? null }
+        : { id: name, digest: null, modifiedAt: null };
+    });
+  } catch {
+    return names.map((id) => ({ id, digest: null, modifiedAt: null }));
+  }
+}
 
 async function embed(model, input) {
   const response = await fetch(`${OLLAMA}/api/embed`, {
@@ -57,29 +75,6 @@ async function generate(model, prompt, think, maxTokens) {
 // « conclut a l absence de difference entre les deux approches » — lesquelles ?
 // Un modele a qui on donne quatre fragments pareils DOIT combler les trous pour
 // repondre, et combler un trou c est fabriquer. On lui rend donc la phrase entiere.
-const SENTENCE_EDGE = /[.!?\n]/u;
-
-function hydrate(claim, fragment) {
-  const span = (claim.supportSpans ?? [])[0];
-  if (!span || !fragment) return claim.rawStatement.replace(/\s+/gu, ' ');
-  const bytes = Buffer.from(fragment.rawText, 'utf8');
-  // Remonter au début de la phrase, puis descendre jusqu'à sa fin, sans jamais sortir
-  // du fragment : le contexte rendu vient du corpus, il n'est pas reconstruit.
-  let start = span.relativeStartByte;
-  while (start > 0 && !SENTENCE_EDGE.test(bytes.slice(start - 1, start).toString('utf8'))) {
-    start -= 1;
-  }
-  let end = span.relativeEndByte;
-  while (end < bytes.length && !SENTENCE_EDGE.test(bytes.slice(end, end + 1).toString('utf8'))) {
-    end += 1;
-  }
-  return bytes
-    .slice(start, Math.min(end + 1, bytes.length))
-    .toString('utf8')
-    .replace(/\s+/gu, ' ')
-    .trim();
-}
-
 function dot(a, b) {
   let sum = 0;
   for (let i = 0; i < a.length; i += 1) sum += a[i] * b[i];
@@ -187,19 +182,26 @@ export function buildPrompt(question, claims, variant = 'v2') {
 }
 
 export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b', variant = 'v2', think = true, context = false, hybrid = false, reranked = false, outputPath } = {}) {
-  const corpus = readJson(join(root, 'candidates/e5-corpus.json'));
-  const fragments = readJson(join(root, 'candidates/e5-prose-fragments.json'));
-  const questions = readJson(join(root, 'benchmark/e5-retrieval/questions-30.json'));
+  const corpusPath = join(root, 'candidates/e5-corpus.json');
+  const fragmentsPath = join(root, 'candidates/e5-prose-fragments.json');
+  const questionsPath = join(root, 'benchmark/e5-retrieval/questions-30.json');
+  const corpusSource = readFileSync(corpusPath, 'utf8');
+  const fragmentsSource = readFileSync(fragmentsPath, 'utf8');
+  const questionsSource = readFileSync(questionsPath, 'utf8');
+  const corpus = JSON.parse(corpusSource);
+  const fragments = JSON.parse(fragmentsSource);
+  const questions = JSON.parse(questionsSource);
   const fragmentById = new Map(fragments.fragments.map((f) => [f.fragmentId, f]));
   const headings = new Map(
     fragments.fragments.map((fragment) => [fragment.fragmentId, (fragment.headingPath ?? []).join(' > ')])
   );
 
   const claims = corpus.claims
-    .map((claim) => ({
+    .map((claim, claimIndex) => ({
+      claimId: claim.claimId ?? `${claim.fragmentId}:${claimIndex + 1}`,
       fragmentId: claim.fragmentId,
       text: context
-        ? hydrate(claim, fragmentById.get(claim.fragmentId))
+        ? projectClaimContext(claim, fragmentById.get(claim.fragmentId)).retrievalText
         : claim.rawStatement.replace(/\s+/gu, ' ')
     }))
     .filter((claim) => claim.text.length >= MIN_LEN);
@@ -260,7 +262,35 @@ export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b'
     console.log(`${question.questionId} ${refused ? 'REFUS ' : 'répond'} ${question.text.slice(0, 52)}`);
   }
 
-  const document = { embedModel, chatModel, variant, think, context, hybrid, reranked, topK: TOP_K, minLen: MIN_LEN, indexed: claims.length, results };
+  const modelMetadata = await ollamaModelMetadata([embedModel, chatModel]);
+  const document = {
+    schemaVersion: '1.0.0-retrieval-run',
+    createdAt: new Date().toISOString(),
+    runtime: {
+      node: process.version,
+      platform: process.platform,
+      architecture: process.arch,
+      ollamaUrl: OLLAMA,
+    },
+    data: {
+      corpusHash: sha256(corpusSource),
+      fragmentsHash: sha256(fragmentsSource),
+      questionsHash: sha256(questionsSource),
+    },
+    models: modelMetadata,
+    generation: { variant, think },
+    retrieval: {
+      context,
+      hybrid,
+      reranked,
+      topK: TOP_K,
+      candidates: CANDIDATES,
+      rrfK: RRF_K,
+      minLength: MIN_LEN,
+      indexedClaims: claims.length,
+    },
+    results,
+  };
   if (outputPath) {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, `${JSON.stringify(document, null, 2)}\n`, 'utf8');

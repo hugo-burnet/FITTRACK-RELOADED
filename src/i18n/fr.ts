@@ -1243,6 +1243,44 @@ const fr = {
     submitSave: 'Enregistrer',
   },
 
+  knowledge: {
+    title: 'Base de preuves',
+    evidenceOnlyLabel: 'Extraits seulement',
+    intro:
+      'Pose une question pour retrouver des passages du corpus embarqué. FitTrack affiche les sources trouvées sans rédiger de conseil à leur place.',
+    uncalibratedNotice:
+      'Aucun seuil de réponse sûre n’est encore validé : les résultats sont des pistes à vérifier, pas une réponse.',
+    queryLabel: 'Ta question',
+    queryPlaceholder: 'Ex. : l’EMG prédit-elle l’hypertrophie ?',
+    searchAction: 'Chercher dans les preuves',
+    idleHint: 'La recherche reste sur cet appareil et fonctionne sans réseau.',
+    emptyQueryTitle: 'Écris une question',
+    emptyQueryBody: 'Quelques mots précis suffisent pour parcourir le corpus.',
+    refusalLabel: 'Refus',
+    noEvidenceTitle: 'Aucune preuve lexicale retrouvée',
+    noEvidenceBody:
+      'Le corpus embarqué ne contient aucun passage avec les termes recherchés. FitTrack ne complète pas les blancs.',
+    resultsTitle: 'Passages retrouvés',
+    resultCountOne: '{count} preuve',
+    resultCountMany: '{count} preuves',
+    proofNumber: 'Preuve {rank}',
+    exactQuote: 'Citation exacte',
+    limitTitle: 'Ce que cet écran ne fait pas',
+    limitBody:
+      'Il ne pose ni diagnostic, ni programme personnalisé, ni conclusion médicale. Un extrait peut être exact tout en étant insuffisant pour ton cas.',
+    status: {
+      unqualified: 'Cadre non qualifié',
+      absenceOfEvidence: 'Absence de preuve',
+      established: 'Établi dans le corpus',
+      establishedDirection: 'Direction établie',
+      mechanisticOnly: 'Mécanistique seulement',
+      practiceOnly: 'Pratique seulement',
+      probable: 'Probable',
+      refuted: 'Réfuté',
+      uncertain: 'Incertain',
+    },
+  },
+
   settings: {
     title: 'Réglages',
 
@@ -1269,6 +1307,8 @@ const fr = {
     installUnavailable: 'Déjà installée, ou à ajouter depuis le menu du navigateur.',
     offlineReady: 'Prête pour le hors-ligne : l’app démarre sans réseau.',
     offlinePending: 'Copie hors-ligne en cours de préparation.',
+    knowledgeLink: 'Base de preuves',
+    knowledgeHint: 'Retrouve des extraits du corpus embarqué, sans réponse inventée.',
 
     appearanceSection: 'Apparence',
     theme: 'Thème',

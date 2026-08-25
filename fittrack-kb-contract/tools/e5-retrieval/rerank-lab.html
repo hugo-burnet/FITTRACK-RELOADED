@@ -30,17 +30,40 @@
 
 <script type="module">
 import { pipeline, env, AutoTokenizer, AutoModelForSequenceClassification } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6';
+import { projectClaimContext } from './context-projection.mjs';
 env.allowLocalModels = false;
 
 const MIN_LEN = 60;
 const CANDIDATES = 12;
 const TOP_K = 4;
 const RRF_K = 60;
+const TRANSFORMERS_VERSION = '3.7.6';
+const EMBEDDING_MODEL = {
+  id: 'Xenova/multilingual-e5-small',
+  revision: '761b726dd34fb83930e26aab4e9ac3899aa1fa78',
+  dtype: 'q8'
+};
+const RERANKER_MODEL = {
+  id: 'onnx-community/bge-reranker-v2-m3-ONNX',
+  revision: 'a3046abee880d6e78833e4e885939754355156bd',
+  dtype: 'q8',
+  languages: 'multilingual'
+};
 
 const status = document.getElementById('status');
 const out = document.getElementById('out');
 const say = (m) => { status.textContent = m; console.log(m); };
 const dot = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; };
+const sha256 = async (text) => {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return `sha256:${[...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')}`;
+};
+const fetchJsonWithHash = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`fetch_failed:${url}:${response.status}`);
+  const source = await response.text();
+  return { document: JSON.parse(source), hash: await sha256(source) };
+};
 
 // BM25 minimal, replie les accents et coupe les elisions — le francais l'impose.
 const STOP = new Set(['le','la','les','un','une','des','du','de','et','ou','a','au','aux','en','que','qui','pour','par','sur','dans','avec','sans','est','sont','je','tu','il','on','ce','plus','moins','si','ne','pas','mais','donc','vraiment','juste','tout','quoi','fait','faire','ai','vous']);
@@ -78,33 +101,30 @@ function rrf(rankings, limit) {
   return [...s.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]).slice(0, limit).map(([i]) => i);
 }
 
-function hydrate(claim, fragment) {
-  const span = (claim.supportSpans ?? [])[0];
-  if (!span || !fragment) return claim.rawStatement.replace(/\s+/gu, ' ');
-  const bytes = new TextEncoder().encode(fragment.rawText);
-  const dec = new TextDecoder();
-  const edge = /[.!?\n]/u;
-  let a = span.relativeStartByte;
-  while (a > 0 && !edge.test(dec.decode(bytes.slice(a - 1, a)))) a--;
-  let b = span.relativeEndByte;
-  while (b < bytes.length && !edge.test(dec.decode(bytes.slice(b, b + 1)))) b++;
-  return dec.decode(bytes.slice(a, Math.min(b + 1, bytes.length))).replace(/\s+/gu, ' ').trim();
-}
-
 try {
   say('corpus…');
-  const corpus = await (await fetch('./lab/corpus.json')).json();
-  const fragments = await (await fetch('./lab/fragments.json')).json();
-  const questions = await (await fetch('./lab/questions.json')).json();
+  const corpusSource = await fetchJsonWithHash('./lab/corpus.json');
+  const fragmentsSource = await fetchJsonWithHash('./lab/fragments.json');
+  const questionsSource = await fetchJsonWithHash('./lab/questions.json');
+  const corpus = corpusSource.document;
+  const fragments = fragmentsSource.document;
+  const questions = questionsSource.document;
   const fragById = new Map(fragments.fragments.map((f) => [f.fragmentId, f]));
   const headings = new Map(fragments.fragments.map((f) => [f.fragmentId, (f.headingPath || []).join(' › ')]));
 
   const claims = corpus.claims
-    .map((c) => ({ fragmentId: c.fragmentId, text: hydrate(c, fragById.get(c.fragmentId)) }))
+    .map((c, index) => ({
+      claimId: c.claimId ?? `${c.fragmentId}:${index + 1}`,
+      fragmentId: c.fragmentId,
+      text: projectClaimContext(c, fragById.get(c.fragmentId)).retrievalText,
+    }))
     .filter((c) => c.text.length >= MIN_LEN);
 
   say('embeddings…');
-  const embed = await pipeline('feature-extraction', 'Xenova/multilingual-e5-small', { dtype: 'q8' });
+  const embed = await pipeline('feature-extraction', EMBEDDING_MODEL.id, {
+    dtype: EMBEDDING_MODEL.dtype,
+    revision: EMBEDDING_MODEL.revision
+  });
   const vectors = [];
   for (let i = 0; i < claims.length; i += 8) {
     const batch = claims.slice(i, i + 8).map((c) => `passage: ${headings.get(c.fragmentId) ?? ''} ${c.text}`);
@@ -114,8 +134,13 @@ try {
   const qVec = (await embed(questions.questions.map((q) => `query: ${q.text}`), { pooling: 'mean', normalize: true })).tolist();
 
   say('cross-encoder (téléchargement)…');
-  const tokenizer = await AutoTokenizer.from_pretrained('Xenova/bge-reranker-base');
-  const reranker = await AutoModelForSequenceClassification.from_pretrained('Xenova/bge-reranker-base', { dtype: 'q8' });
+  const tokenizer = await AutoTokenizer.from_pretrained(RERANKER_MODEL.id, {
+    revision: RERANKER_MODEL.revision
+  });
+  const reranker = await AutoModelForSequenceClassification.from_pretrained(RERANKER_MODEL.id, {
+    dtype: RERANKER_MODEL.dtype,
+    revision: RERANKER_MODEL.revision
+  });
 
   const results = [];
   for (let qi = 0; qi < questions.questions.length; qi++) {
@@ -152,7 +177,26 @@ try {
       ranked.map((h) => `<div class="hit"><span class="sc">${h.rerankScore}</span> ${h.text.slice(0, 130)}</div>`).join('') + '</div>');
   }
 
-  window.__rerank = { model: 'Xenova/bge-reranker-base', candidates: CANDIDATES, topK: TOP_K, results };
+  window.__rerank = {
+    schemaVersion: '1.0.0-retrieval-run',
+    createdAt: new Date().toISOString(),
+    runtime: { transformersVersion: TRANSFORMERS_VERSION, userAgent: navigator.userAgent },
+    data: {
+      corpusHash: corpusSource.hash,
+      fragmentsHash: fragmentsSource.hash,
+      questionsHash: questionsSource.hash
+    },
+    models: { embedding: EMBEDDING_MODEL, reranker: RERANKER_MODEL },
+    retrieval: {
+      minLength: MIN_LEN,
+      candidates: CANDIDATES,
+      topK: TOP_K,
+      rrfK: RRF_K,
+      indexedClaims: claims.length,
+      scoreSemantics: 'ranking-only; raw logits are not calibrated across queries'
+    },
+    results
+  };
   // Ecrire tout de suite : une mesure qui ne vit que dans window disparait au premier
   // rechargement, et la relancer coute dix minutes de calcul.
   await fetch('/lab/save?name=rerank-crossencoder.json', {
