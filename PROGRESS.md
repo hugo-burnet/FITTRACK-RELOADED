@@ -173,12 +173,39 @@ Défaut trouvé et corrigé au passage : `evaluateBenchmark` notait les 20 fragm
 annotations GOLD, transformant les 80 absents en rejets. Le premier rapport annonçait 80 rejets et
 un rappel de 0,2204. Corrigé et verrouillé par un test.
 
+### Plafond inter-annotateur mesuré (2026-08-25)
+
+Question posée après l'échec de DEV-20 : les seuils du Design Review sont-ils seulement
+atteignables ? Mesuré à coût nul, en comparant les annotateurs A et B **avec le comparateur qui
+note le modèle**, sur les 30 fragments doublement annotés. Détail dans
+`fittrack-kb-contract/benchmark/e5/v0/AGREEMENT-CEILING.md`, commande `npm run measure:e5-agreement`.
+
+Il faut séparer deux familles d'axes, ce qu'on ne faisait pas :
+
+**Axes bien définis, où les humains convergent** — `knowledgeType` 0,95, `epistemicStatus` 0,91,
+rappel 0,91, fusion 0,028. Le modèle y est loin derrière : 0,69, 0,50, 0,71, 0,25. Ces écarts sont
+réels et réductibles. Ce n'est pas de la subjectivité, c'est un défaut du protocole d'extraction.
+
+**Axes où les humains ne convergent pas** — `unresolvedPreservation` à 0,57 contre un seuil de
+0,90. Deux annotateurs entraînés ne s'accordent qu'une fois sur deux sur le moment où un axe doit
+rester `UNRESOLVED`. Gater cet axe revient à noter du bruit, et le problème est dans la consigne
+d'annotation, pas dans le modèle. Idem pour les seuils de citation (0,97 / 0,90 contre 0,845
+d'accord humain) et la précision de claim (0,95 contre 0,914).
+
+Sur les citations, le modèle **bat** les humains : 1,0000 de précision contre 0,9020 d'accord
+inter-annotateur sur les 11 fragments communs. Les citations sont fermées et vérifiables — il n'a
+pas à juger, il a à recopier.
+
+L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
+0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
+
 **Point de reprise : décision de protocole, pas exécution.** Le plan impose l'arrêt avant DEV-100
 et une nouvelle estimation plus une nouvelle approbation pour tout pilote payant supplémentaire.
-Les options sont de retoucher le prompt v0.4 pour récupérer la précision sans perdre le rappel
-gagné, d'assouplir des seuils de pilote qui n'ont jamais été calibrés sur un lot volontairement
-difficile, ou de payer DEV-100 malgré l'échec du pilote en assumant que DEV-20 n'est pas
-représentatif. Aucune de ces trois n'est une décision technique.
+La mesure du plafond inter-annotateur, faite juste après et consignée plus bas, a tranché une
+partie de la question : quatre seuils sont au-dessus de l'accord humain et doivent être revus,
+mais les axes où le modèle échoue le plus — `knowledgeType`, `epistemicStatus`, rappel, fusion —
+sont ceux où les humains convergent. Le travail restant est donc du protocole d'extraction, pas
+de l'assouplissement de seuils.
 
 Rien d'autre n'a été lancé : ni DEV-100 v0.4, ni HOLDOUT-30, ni run 207. Estimations restantes,
 à zéro appel : DEV-100 `1,3648 USD`, HOLDOUT-30 `0,4129 USD`. À savoir avant d'approuver DEV-100 :
