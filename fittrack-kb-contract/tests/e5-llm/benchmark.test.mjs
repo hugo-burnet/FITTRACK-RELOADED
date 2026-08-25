@@ -23,7 +23,10 @@ import {
   E5_SYSTEM_PROMPT,
   PROMPT_VERSION
 } from '../../tools/e5-llm/prompt.mjs';
-import { assertModelReasoningConfig } from '../../tools/e5-llm/run-config.mjs';
+import {
+  assertModelReasoningConfig,
+  GPT5_REASONING_EFFORTS
+} from '../../tools/e5-llm/run-config.mjs';
 import {
   createPredictionValidator,
   validateAndMaterialize
@@ -331,7 +334,9 @@ test('benchmark config journals model, prompt, sampling, retries and immutable c
   assert.equal(config.apiKeyEnvironmentVariable, 'OPENROUTER_API_KEY');
   assert.equal(config.temperature, null);
   assert.equal(config.topP, null);
-  assert.equal(config.reasoningEffort, 'minimal');
+  // L'effort n'est plus epingle : GPT-5 fabrique le corpus, il n'a pas a etre bride
+  // au niveau du modele embarque. Ce qui reste garde, c'est qu'il soit valide.
+  assert.ok(GPT5_REASONING_EFFORTS.includes(config.reasoningEffort), config.reasoningEffort);
   assert.equal(config.maxRunCostUsd, 2.5);
   assert.equal(config.maxFullRetries, 0);
   assert.equal(config.maxAnchorRepairRetries, 1);
@@ -358,9 +363,13 @@ test('reasoning effort is validated per model capability', () => {
     () => assertModelReasoningConfig({ model: 'openai/gpt-5', reasoningEffort: 'none' }),
     /unsupported_reasoning_effort_for_model:openai\/gpt-5:none/u
   );
-  assert.doesNotThrow(() =>
-    assertModelReasoningConfig({ model: 'openai/gpt-5', reasoningEffort: 'minimal' })
-  );
+  // GPT-5 fabrique le corpus, il n'est pas le modèle embarqué. Il n'a aucune raison
+  // d'être bridé au niveau du petit modèle qui apprendra dessus.
+  for (const effort of ['minimal', 'low', 'medium', 'high']) {
+    assert.doesNotThrow(() =>
+      assertModelReasoningConfig({ model: 'openai/gpt-5', reasoningEffort: effort })
+    );
+  }
   assert.doesNotThrow(() =>
     assertModelReasoningConfig({ model: 'openai/gpt-5.6-sol', reasoningEffort: 'none' })
   );
@@ -693,7 +702,11 @@ test('dry-run covers exactly 100 manifest fragments with no API and writes nothi
   assert.equal(result.runConfig.configFile, 'config.gpt-5.json');
   assert.equal(result.runConfig.runVariant, 'openrouter-openai-gpt-5');
   assert.equal(result.runConfig.model, 'openai/gpt-5');
-  assert.equal(result.runConfig.reasoningEffort, 'minimal');
+  // L'invariant qui compte : le run journalise exactement ce que la config demande.
+  assert.equal(
+    result.runConfig.reasoningEffort,
+    JSON.parse(readFileSync(join(root, 'benchmark/e5/v0/config.gpt-5.json'), 'utf8')).reasoningEffort
+  );
   const expectedInputTokens = benchmark.inputs.reduce(
     (sum, item) =>
       sum + Math.ceil(Buffer.byteLength(`${E5_SYSTEM_PROMPT}\n${buildPromptInput({

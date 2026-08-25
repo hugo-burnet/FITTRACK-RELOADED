@@ -10,12 +10,12 @@
   "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
   "temperature": null,
   "topP": null,
-  "reasoningEffort": "minimal",
-  "maxOutputTokens": 4500,
+  "reasoningEffort": "medium",
+  "maxOutputTokens": 12000,
   "seed": null,
   "maxFullRetries": 0,
   "maxAnchorRepairRetries": 1,
-  "maxRepairOutputTokens": 1000,
+  "maxRepairOutputTokens": 4000,
   "concurrency": 2,
   "maxRunCostUsd": 2.5,
   "goldenCommit": "4ff2ae6ebf2e0c587e315c527a8fb1f75d05bf2f",
@@ -25,7 +25,7 @@
     "output": 10,
     "basis": "User-configured OpenRouter rates for openai/gpt-5 on 2026-08-24"
   },
-  "expectedOutputTokensPerFragment": 1000,
-  "expectedRepairOutputTokensPerFragment": 200,
+  "expectedOutputTokensPerFragment": 5500,
+  "expectedRepairOutputTokensPerFragment": 1500,
   "apiKeyEnvironmentVariable": "OPENROUTER_API_KEY"
 }
