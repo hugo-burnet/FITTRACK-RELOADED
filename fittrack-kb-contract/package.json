@@ -20,6 +20,7 @@
     "benchmark:e5-v0:mini:evaluate": "node tools/evaluate-e5-mini-comparison.mjs",
     "benchmark:e5-v0:full": "node tools/run-e5-llm-benchmark.mjs --mode full --config config.gpt-5.json --approve-cost --pilot-approved",
     "benchmark:e5-v0:evaluate": "node tools/evaluate-e5-llm-benchmark.mjs",
+    "benchmark:e5-v04:replay-v03": "node tools/replay-e5-v03-run.mjs",
     "test:e1": "node --test tests/e1/*.test.mjs",
     "test:e2": "node --test tests/e2/*.test.mjs",
     "test:e3": "node --test tests/e3/*.test.mjs",

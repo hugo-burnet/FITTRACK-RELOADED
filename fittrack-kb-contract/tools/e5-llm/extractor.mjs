@@ -198,6 +198,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
     vocabularies,
     predictionSchema,
     providerPredictionSchema,
+    legacyClaimSalvage = false,
     runConfig
   } = input;
   const canonicalSchemaValidator = createPredictionValidator(predictionSchema);
@@ -232,6 +233,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
     providerSchemaValidator,
     canonicalSchemaValidator,
     coverageUnits,
+    legacyClaimSalvage,
     runConfig
   });
   attempts.push(attemptRecord({
@@ -317,6 +319,7 @@ export async function extractProseFragment(input, { modelAdapter }) {
         providerSchemaValidator,
         canonicalSchemaValidator,
         coverageUnits,
+        legacyClaimSalvage,
         runConfig
       })
     : repair;

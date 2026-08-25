@@ -227,7 +227,8 @@ export function validateProviderAndMaterialize({
   coverageUnits,
   providerSchemaValidator,
   canonicalSchemaValidator,
-  runConfig
+  runConfig,
+  legacyClaimSalvage = false
 }) {
   let providerPrediction;
   try {
@@ -270,6 +271,20 @@ export function validateProviderAndMaterialize({
       coverageUnits,
       canonicalSchemaValidator,
       runConfig
+    });
+  }
+  // Chemin du replay v0.3 : sauvetage claim par claim sur un DTO legacy, sans
+  // contrôle de couverture. C'est ce qui rend la comparaison lisible — même modèle,
+  // même prompt, mêmes réponses, seule la validation change.
+  if (legacyClaimSalvage) {
+    return validateProviderClaimsIndividually({
+      providerPrediction,
+      expectedFragment,
+      citationCatalog,
+      coverageUnits: [],
+      canonicalSchemaValidator,
+      runConfig,
+      enforceCoverage: false
     });
   }
   let canonicalPrediction;
@@ -376,7 +391,8 @@ function validateProviderClaimsIndividually({
   citationCatalog,
   coverageUnits,
   canonicalSchemaValidator,
-  runConfig
+  runConfig,
+  enforceCoverage = true
 }) {
   const claimAudits = [];
   const repairableClaimIndexes = [];
@@ -444,11 +460,15 @@ function validateProviderClaimsIndividually({
     }
   });
 
-  const coverageAudit = auditCoverageLedger({
-    coverageUnits,
-    coverageLedger: providerPrediction.coverageLedger ?? [],
-    claims: retainedProviderClaims
-  });
+  // Le DTO v2 n'a jamais porté de ledger : exiger la couverture d'une réponse v0.3
+  // inventerait un échec rétroactif que le modèle n'avait aucun moyen d'éviter.
+  const coverageAudit = enforceCoverage
+    ? auditCoverageLedger({
+        coverageUnits,
+        coverageLedger: providerPrediction.coverageLedger ?? [],
+        claims: retainedProviderClaims
+      })
+    : { diagnostics: [], coveredUnitIndexes: [], enforced: false };
   for (const item of coverageAudit.diagnostics) {
     diagnostics.push(diagnostic(item.code, 'Incohérence de couverture', { detail: item }, false));
   }
