@@ -74,7 +74,7 @@ que l'empreinte et le texte des 77 fragments réellement cités.
 **E1 à E4 sont amorcés** sur `master` : tableaux, axes, citations,
 puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
 
-### E5 v0.4 — checkpoint après la tâche 7 (2026-08-24)
+### E5 v0.4 — checkpoint après la tâche 8 (2026-08-25)
 
 Le benchmark GPT-5 v0.3 sur DEV-100 a refusé le passage aux 207 fragments. La reprise v0.4 est
 implémentée et revue jusqu'au prompt, sans lancement payant :
@@ -85,18 +85,32 @@ implémentée et revue jusqu'au prompt, sans lancement payant :
 - validation claim par claim, post-traitements conservateurs et réparation ciblée ;
 - prompt `e5-llm-v0.4.0` orienté couverture, protections critiques v0.3 conservées ;
 - dry-run DEV-100 : 100 fragments, zéro appel API, aucune fuite GOLD, estimation `1.3648 USD` ;
-- suite E5 au commit `1925642` : 129/129.
+- évaluation status-aware et gates gelées par étage ;
+- suite E5 : 141/141 ; suite complète du contrat : 253/253.
 
 Vérification de fin de session : typecheck, `npm run test:run` (194 fichiers, 2 116 tests) et
 build FitTrack passent. Vitest exclut `fittrack-kb-contract/` — sans ça, il avale les 24 suites
 `.mjs` écrites pour `node --test` et le deploy GitHub Pages échoue. La suite officielle du
 sous-paquet reste `npm run test:e5-llm` depuis `fittrack-kb-contract/`.
 
-**Point de reprise : tâche 8** du plan
-`docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md` — rendre l'évaluation
-status-aware et figer les gates. Les tâches 8 à 14 restent à faire. Aucun DEV-20, DEV-100 v0.4,
-HOLDOUT-30 ni run 207 n'a été lancé ; tout stage payant exige encore un dry-run et l'approbation
-explicite de l'utilisateur.
+La tâche 8 fait entrer trois choses dans les métriques. Le dénominateur « tenté » vient désormais
+de `claimAudit.attempted` : filtrer une claim dangereuse la faisait auparavant disparaître du taux
+d'hallucination, donc plus le filtre marchait, meilleur paraissait le score. Une validation
+partielle ne compte plus comme un rejet global. Et `benchmarkPass` prend un étage : DEV-20 aux
+seuils du pilote (0,90 / 0,80, sécurité critique, zéro rejet), DEV-100 aux gates gelées plus
+`knowledgeType`, `epistemicStatus`, UNRESOLVED et `cannotConclude`, HOLDOUT-30 où une métrique
+N/A ne passe que si la même gate a été mesurée et franchie sur DEV-100. Un replay ne reçoit jamais
+de verdict de mise en production.
+
+Piège d'environnement : `fittrack-kb-contract/` a son propre `node_modules`. Dans un worktree neuf
+il faut y lancer `npm ci`, sinon les 24 suites `node --test` échouent sur un `ajv` introuvable —
+ce qui ressemble à une régression du contrat alors que rien n'est cassé.
+
+**Point de reprise : tâche 9** du plan
+`docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md` — la preuve de replay v0.3
+sans appel API. Les tâches 9 à 14 restent à faire. Aucun DEV-20, DEV-100 v0.4, HOLDOUT-30 ni run
+207 n'a été lancé ; tout stage payant exige encore un dry-run et l'approbation explicite de
+l'utilisateur.
 
 ## v1.3.1 — livrée et publiée
 
