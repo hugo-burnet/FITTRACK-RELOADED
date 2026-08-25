@@ -177,11 +177,21 @@ export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b'
 
   const results = [];
   for (const [index, question] of questions.questions.entries()) {
-    const top = vectors
+    // Dédupliquer sur le texte réellement fourni au modèle. Sans ça, l'hydratation
+    // rend identiques plusieurs claims extraites de la même phrase : 120 affirmations
+    // récupérées ne donnaient que 77 textes distincts, et trois questions recevaient
+    // quatre fois la même. Le modèle croyait avoir quatre sources, il en avait une.
+    const seen = new Set();
+    const top = [];
+    for (const candidate of vectors
       .map((vector, claimIndex) => ({ claimIndex, score: dot(queryVectors[index], vector) }))
-      .sort((left, right) => right.score - left.score)
-      .slice(0, TOP_K)
-      .map(({ claimIndex, score }) => ({ ...claims[claimIndex], score: Number(score.toFixed(4)) }));
+      .sort((left, right) => right.score - left.score)) {
+      const claim = claims[candidate.claimIndex];
+      if (seen.has(claim.text)) continue;
+      seen.add(claim.text);
+      top.push({ ...claim, score: Number(candidate.score.toFixed(4)) });
+      if (top.length === TOP_K) break;
+    }
 
     const answer = await generate(chatModel, buildPrompt(question.text, top, variant), think);
     const refused = /HORS_CORPUS/i.test(answer);

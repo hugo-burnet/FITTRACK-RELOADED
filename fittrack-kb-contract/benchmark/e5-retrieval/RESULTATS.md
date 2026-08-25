@@ -265,3 +265,71 @@ Si l'hydratation se confirme utile, elle change ce que le corpus doit exporter :
 seulement l'extrait verbatim et ses coordonnées, mais aussi **la phrase porteuse**. Les
 coordonnées sont déjà là (`supportSpans`), donc c'est une projection à ajouter, pas une
 extraction à refaire — aucun appel payant.
+
+---
+
+# Verdict après revue humaine des réponses
+
+L'hydratation a d'abord été testée avec un défaut : plusieurs claims extraites de la même
+phrase deviennent identiques une fois hydratées. 120 affirmations récupérées ne donnaient
+que **77 textes distincts**, et trois questions recevaient quatre fois la même. Le modèle
+croyait disposer de quatre sources, il en avait une. Corrigé par déduplication sur le
+texte réellement fourni.
+
+| | Refus justes | Recopie la question | Dérive lexicale |
+|---|---:|---:|---:|
+| Fragments bruts | 2 / 9 | 5 / 27 | 42 % |
+| Phrases entières, avec doublons | 1 / 9 | 4 / 28 | 44 % |
+| Phrases entières, dédupliquées | 2 / 9 | 5 / 27 | 50 % |
+
+**L'hydratation ne change rien.** L'hypothèse de la cause racine — des affirmations
+illisibles hors contexte — était juste sur le constat et fausse sur la conséquence : leur
+rendre leur phrase n'améliore aucune mesure.
+
+## Ce que la revue humaine montre
+
+Lecture des réponses avec les connaissances du domaine, ce qu'aucune métrique automatique
+ici ne sait faire.
+
+**Erreurs anatomiques inventées.** Le tirage vertical décrit comme sollicitant « principalement
+le triceps » — c'est de la flexion de coude, donc biceps et brachial ; le triceps y est
+antagoniste. Les élévations latérales expliquées par « les chefs latéral et médial », qui
+sont ceux du triceps, sans rapport avec le deltoïde. Le « chef long » d'une extension
+triceps attribué au biceps.
+
+**Attribution croisée.** Une propriété décrite pour les haltères — « impose l'essentiel de
+la difficulté externe en fin de course » — recopiée telle quelle à propos d'une machine
+convergente.
+
+**Recommandations fabriquées.** « Je laisse tomber l'exercice » n'est dans aucune
+affirmation. Sur une douleur de coude, le corpus contient au contraire une affirmation sur
+la substitution d'exercice ; elle n'a pas été retrouvée.
+
+**Une réponse dangereuse**, dans la version non dédupliquée : l'affirmation « le développé
+couché impose des charges musculo-squelettiques substantielles à l'épaule » — un constat de
+risque — retournée en « il est recommandé de sortir la poitrine à fond pour maximiser la
+charge musculo-squelettique ».
+
+Sur les quinze premières réponses : **une fidèle et utile, un refus justifié, une
+acceptable**. Les douze autres sont hors sujet, incohérentes ou fabriquées.
+
+## La contrainte réelle
+
+Ce n'est ni le prompt, ni le corpus, ni la recherche. **Qwen3-1.7B ne sait pas produire
+une réponse fidèle en français à partir de ce matériel.** Il choisit mal parmi quatre
+affirmations, transfère une propriété d'un sujet à un autre, se trompe d'anatomie, invente
+des recommandations, ou recopie la question.
+
+Six configurations mesurées — deux modèles, trois prompts, avec et sans réflexion, avec et
+sans contexte — aucune n'approche l'utilisable.
+
+## La conséquence architecturale
+
+Si le modèle embarqué ne peut pas générer sans fabriquer, **il ne faut pas le faire
+générer**. La recherche seule reste exploitable : afficher les affirmations retrouvées
+telles quelles, avec leur ancrage source, sans reformulation.
+
+Cette architecture est sûre **par construction** : rien n'est produit, donc rien ne peut
+être inventé. Elle ne demande plus qu'une chose fonctionne — la recherche — au lieu de
+deux. Et elle rend au lecteur le rôle que le modèle exécute mal : décider si l'affirmation
+répond à sa question.

@@ -1,0 +1,852 @@
+{
+  "embedModel": "bge-m3",
+  "chatModel": "qwen3:1.7b",
+  "variant": "v1",
+  "think": false,
+  "context": true,
+  "topK": 4,
+  "minLen": 60,
+  "indexed": 404,
+  "results": [
+    {
+      "questionId": "q.01",
+      "question": "Sur le développé couché je dois vraiment sortir la poitrine à fond ou juste garder les omoplates serrées ?",
+      "refused": false,
+      "answer": "[2] Une comparaison directe de l'activation musculaire entre développé couché barre et écarté haltères (dumbbell flyes) chez des hommes entraînés documente des différences de sollicitation liées à la trajectoire et au bras de levier différents entre les deux exercices.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00046191",
+          "text": "Le développé couché impose des charges musculo-squelettiques substantielles à l'épaule ; une étude biomécanique comparant plusieurs variantes techniques du développé couché (largeur de prise, cambrure) quantifie les charges à l'épaule et discute du risque potentiel de blessure sans pouvoir établir de lien causal direct faute de données longitudinales de blessure appariées ([Effects of bench press technique variations on musculoskeletal shoulder loads, 2024](https://pmc.",
+          "score": 0.553
+        },
+        {
+          "fragmentId": "frag.e5f2.00060840",
+          "text": "Le rowing poitrine appuyée réduit la demande de stabilisation lombaire par rapport au rowing barre penché en éliminant le maintien isométrique du tronc en flexion de hanche — conséquence biomécanique directe de la suppression du bras de levier du tronc, **niveau de preuve : biomécanique de premier principe, élevé** pour le principe, sans étude d'hypertrophie comparative dédiée identifiée.",
+          "score": 0.5474
+        },
+        {
+          "fragmentId": "frag.e5f2.00057415",
+          "text": "5) ne trouve pas de différence d'hypertrophie entre modalités ; à défaut de données spécifiques au développé couché en particulier, cette conclusion générale s'applique par extension raisonnable (**niveau modéré**), le choix devant reposer sur la stabilité souhaitée, le confort d'épaule et la préférence individuelle plutôt que sur une supériorité intrinsèque démontrée.",
+          "score": 0.5439
+        },
+        {
+          "fragmentId": "frag.e5f2.00056943",
+          "text": "** Une comparaison directe de l'activation musculaire entre développé couché barre et écarté haltères (dumbbell flyes) chez des hommes entraînés en résistance documente des différences de sollicitation liées à la trajectoire et au bras de levier différents entre les deux exercices ([A Comparison of Muscle Activation between Barbell Bench Press and Dumbbell Flyes, 2020](https://pmc.",
+          "score": 0.5322
+        }
+      ]
+    },
+    {
+      "questionId": "q.02",
+      "question": "Si je sens surtout mes épaules sur les pecs ça veut dire que mon mouvement est mauvais ?",
+      "refused": false,
+      "answer": "Si je sens surtout mes épaules sur les pecs, cela peut indiquer que le mouvement est mal effectué, ce qui est en cohérence avec l'affirmation [1], qui mentionne que le mouvement place l'épaule en extension et étire le chef long du biceps.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00065616",
+          "text": "** Ce mouvement place l'épaule en extension, ce qui étire le chef long du biceps à l'épaule tout en maintenant une tension câble en position finale de flexion du coude (contraction raccourcie du muscle au niveau du coude) — combinaison de profil de résistance et de longueur musculaire cohérente avec les principes des sections 2 et 3, sans étude d'hypertrophie dédiée spécifiquement identifiée à ce nom d'exercice précis dans cette recherche (nom populaire récent, littérature scientifique en retard sur la terminologie de pratique).",
+          "score": 0.5758
+        },
+        {
+          "fragmentId": "frag.f2.0007",
+          "text": "Une analyse biomécanique dédiée aux exercices de développé (chest exercises) quantifie les moments articulaires à l'épaule, au coude et au poignet et trouve que les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché ([Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints, 2022](https://pmc.",
+          "score": 0.5748
+        },
+        {
+          "fragmentId": "frag.e5f2.00049828",
+          "text": "L'analyse biomécanique des exercices de développé montre des moments au poignet mesurables mais généralement inférieurs à ceux de l'épaule et du coude dans les mouvements étudiés ([Chest Exercises: Movement and Loading, 2022](https://pmc.",
+          "score": 0.5699
+        },
+        {
+          "fragmentId": "frag.e5f2.00085985",
+          "text": "** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.",
+          "score": 0.5568
+        }
+      ]
+    },
+    {
+      "questionId": "q.03",
+      "question": "Entre développé incliné haltères et machine convergente tu choisirais quoi pour prendre des pecs ?",
+      "refused": false,
+      "answer": "[4] Entre développé incliné haltères et machine convergente, la machine convergente est plus adaptée pour prendre des pecs, car elle impose l'essentiel de la difficulté externe en fin de course, ce qui favorise une activation musculaire plus efficace des muscles pecs.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00031556",
+          "text": "Les machines à came (leg extension, machines convergentes de développé, pec deck) sont conçues pour faire correspondre la résistance externe à la courbe de force théorique du muscle ou du groupe musculaire ciblé sur l'amplitude de mouvement, dans le but de maintenir une charge relative constante.",
+          "score": 0.616
+        },
+        {
+          "fragmentId": "frag.e5f2.00043879",
+          "text": "Une étude comparant l'activation musculaire et la cinématique du développé couché unilatéral sur surface stable contre instable, avec un ou deux haltères, illustre concrètement comment le degré de stabilité modifie la sollicitation ([Differences in Unilateral Chest Press Activation, Stable vs Unstable](https://peerj.",
+          "score": 0.5457
+        },
+        {
+          "fragmentId": "frag.e5f2.00056943",
+          "text": "** Une comparaison directe de l'activation musculaire entre développé couché barre et écarté haltères (dumbbell flyes) chez des hommes entraînés en résistance documente des différences de sollicitation liées à la trajectoire et au bras de levier différents entre les deux exercices ([A Comparison of Muscle Activation between Barbell Bench Press and Dumbbell Flyes, 2020](https://pmc.",
+          "score": 0.544
+        },
+        {
+          "fragmentId": "frag.f2.0024",
+          "text": "Cela crée des courbes de résistance caractéristiques : par exemple, un développé couché haltères impose l'essentiel de la difficulté externe en fin de course (bras tendus, quand le poids est loin du point d'appui vertical) alors qu'un curl haltère debout impose l'essentiel de la difficulté au milieu de l'amplitude, lorsque l'avant-bras est horizontal.",
+          "score": 0.528
+        }
+      ]
+    },
+    {
+      "questionId": "q.04",
+      "question": "J'ai mal au coude sur les extensions triceps au-dessus de la tête mais pas en pushdown, je laisse tomber l'exo ou je peux modifier un truc ?",
+      "refused": false,
+      "answer": "Je laisse tomber l'exercice, car l'extensions au-dessus de la tête ciblent préférentiellement le chef long du biceps à l'épaule, ce qui peut causer des douleurs au coude en raison de l'étirement et de la tension câble.  \n[2][4]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.f2.0012",
+          "text": "Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations ([Nunes et al.",
+          "score": 0.6324
+        },
+        {
+          "fragmentId": "frag.e5f2.00067073",
+          "text": "Les chefs latéral et médial, mono-articulaires, ne bénéficient pas de cet effet de position d'épaule et sont sollicités de façon comparable dans la plupart des variantes d'extension du coude, qu'elles soient overhead ou non — **niveau de preuve : biomécanique + essai contrôlé pour le chef long (modéré à élevé), extrapolation pour les chefs latéral/médial (modéré)**.",
+          "score": 0.618
+        },
+        {
+          "fragmentId": "frag.f2.0003",
+          "text": "Conséquence pratique : les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long.",
+          "score": 0.6118
+        },
+        {
+          "fragmentId": "frag.e5f2.00065616",
+          "text": "** Ce mouvement place l'épaule en extension, ce qui étire le chef long du biceps à l'épaule tout en maintenant une tension câble en position finale de flexion du coude (contraction raccourcie du muscle au niveau du coude) — combinaison de profil de résistance et de longueur musculaire cohérente avec les principes des sections 2 et 3, sans étude d'hypertrophie dédiée spécifiquement identifiée à ce nom d'exercice précis dans cette recherche (nom populaire récent, littérature scientifique en retard sur la terminologie de pratique).",
+          "score": 0.6037
+        }
+      ]
+    },
+    {
+      "questionId": "q.05",
+      "question": "Est-ce que ça sert vraiment de changer d'exercices régulièrement ou si un exo marche je peux le garder pendant 1 an ?",
+      "refused": true,
+      "answer": "HORS_CORPUS",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00042447",
+          "text": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+          "score": 0.4969
+        },
+        {
+          "fragmentId": "frag.f3.0022",
+          "text": "Une baisse de symptômes immédiate n’est pas le seul objectif : la trajectoire sur 24–48 h, la fonction et la progression de capacité comptent davantage.",
+          "score": 0.4962
+        },
+        {
+          "fragmentId": "frag.f3.0002",
+          "text": "** Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie ([Sprague et al.",
+          "score": 0.4961
+        },
+        {
+          "fragmentId": "frag.f2.0005",
+          "text": "La stabilité requise par un exercice — support du torse, base d'appui, guidage de la trajectoire par une machine ou un rail — détermine dans quelle mesure l'effort du pratiquant doit être partagé entre la production de force du muscle cible et la stabilisation posturale/articulaire. Une revue systématique et méta-analyse des études EMG sur l'entraînement en instabilité trouve que les surfaces instables augmentent l'activation des muscles stabilisateurs du tronc mais **diminuent généralement l'activation du muscle agoniste principal** et la force produite, comparé à un exercice équivalent sur surface stable ([Effects of unstable training on muscle activation: systematic review and meta-analysis, 2025](https://peerj.",
+          "score": 0.4924
+        }
+      ]
+    },
+    {
+      "questionId": "q.06",
+      "question": "Pour prendre du dos vaut mieux chercher à mettre lourd ou vraiment ralentir et sentir le muscle ?",
+      "refused": false,
+      "answer": "[1] Pour prendre du dos, il vaut mieux chercher à mettre lourd ou vraiment ralentir et sentir le muscle.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00061570",
+          "text": "** Le pull-over sollicite le grand dorsal en extension d'épaule pure à coude fixe, avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête) — configuration cohérente avec le principe de longueur musculaire, sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.",
+          "score": 0.5812
+        },
+        {
+          "fragmentId": "frag.e5f3.00011285",
+          "text": "**Pendant :** arrêter immédiatement si douleur brutale inhabituelle, perte de force, instabilité franche, symptôme neurologique croissant ou red flag. Sinon, une gêne stable et tolérable peut mener à une réduction graduée plutôt qu’à l’arrêt total.",
+          "score": 0.5466
+        },
+        {
+          "fragmentId": "frag.e5f3.00011285",
+          "text": "**Après :** noter la réponse immédiate, le soir, le lendemain et jusqu’à 48 h si le symptôme est retardé.",
+          "score": 0.5426
+        },
+        {
+          "fragmentId": "frag.e5f2.00060840",
+          "text": "Le rowing poitrine appuyée réduit la demande de stabilisation lombaire par rapport au rowing barre penché en éliminant le maintien isométrique du tronc en flexion de hanche — conséquence biomécanique directe de la suppression du bras de levier du tronc, **niveau de preuve : biomécanique de premier principe, élevé** pour le principe, sans étude d'hypertrophie comparative dédiée identifiée.",
+          "score": 0.5395
+        }
+      ]
+    },
+    {
+      "questionId": "q.07",
+      "question": "Quand je fais du tirage vertical je sens mes avant-bras avant mon dos, c'est normal ?",
+      "refused": false,
+      "answer": "Quand je fais du tirage vertical je sens mes avant-bras avant mon dos, c'est normal : [1].",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00061570",
+          "text": "** Le pull-over sollicite le grand dorsal en extension d'épaule pure à coude fixe, avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête) — configuration cohérente avec le principe de longueur musculaire, sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.",
+          "score": 0.5685
+        },
+        {
+          "fragmentId": "frag.e5f2.00060840",
+          "text": "Le rowing poitrine appuyée réduit la demande de stabilisation lombaire par rapport au rowing barre penché en éliminant le maintien isométrique du tronc en flexion de hanche — conséquence biomécanique directe de la suppression du bras de levier du tronc, **niveau de preuve : biomécanique de premier principe, élevé** pour le principe, sans étude d'hypertrophie comparative dédiée identifiée.",
+          "score": 0.5685
+        },
+        {
+          "fragmentId": "frag.e5f2.00017228",
+          "text": "La rotation de l'avant-bras (pronation/supination) modifie l'activité relative des fléchisseurs et extenseurs du poignet, ce qui a des implications pour les exercices de préhension et de curl de poignet ([Effects of forearm rotation on wrist flexor and extensor activities, 2025](https://pmc.",
+          "score": 0.5666
+        },
+        {
+          "fragmentId": "frag.e5f2.00058329",
+          "text": "** Ces variantes d'isolation en adduction horizontale d'épaule permettent, via le câble notamment, de maintenir une tension en position d'adduction complète (contraction raccourcie) que les haltères perdent en fin de mouvement (bras de levier gravitationnel proche de zéro) — différence de profil de résistance documentée en section 2.",
+          "score": 0.5501
+        }
+      ]
+    },
+    {
+      "questionId": "q.08",
+      "question": "Les tractions c'est vraiment mieux que le tirage poulie pour la masse ou c'est juste plus stylé ?",
+      "refused": false,
+      "answer": "[2] Le tirage poulie est plus stylé que les tractions, mais la standardisation de la mesure de progression est meilleure avec les machines, notamment pour la stabilité et le confort.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00030555",
+          "text": "C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée, bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale (voir 2.",
+          "score": 0.5069
+        },
+        {
+          "fragmentId": "frag.e5f2.00085638",
+          "text": "- **Standardisation de la mesure de progression :** les exercices sur machine ou guidés (Smith machine, presse) sont souvent préférés pour le suivi longitudinal de la charge car ils réduisent la variabilité de trajectoire d'une séance à l'autre par rapport aux poids libres — *expert_practice*, plausible mécaniquement, non quantifié.",
+          "score": 0.5011
+        },
+        {
+          "fragmentId": "frag.e5f2.00030555",
+          "text": "Un système de câble/poulie impose une tension relativement constante le long du câble (aux frottements de poulie près), mais le moment résultant à l'articulation varie tout de même avec l'angle formé entre le câble et le segment corporel. Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule.",
+          "score": 0.4924
+        },
+        {
+          "fragmentId": "frag.f2.0004",
+          "text": "Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle plutôt que sur une supposée supériorité universelle d'une modalité.",
+          "score": 0.49
+        }
+      ]
+    },
+    {
+      "questionId": "q.09",
+      "question": "Je dois descendre jusqu'où sur un squat si plus bas mon bassin commence à partir bizarrement ?",
+      "refused": false,
+      "answer": "[2] Descendre jusqu'où sur un squat lorsque le bassin commence à partir bizarrement dépend de la mobilité, du but et de la charge, et est souvent dosé par une profondeur partielle ou une assistance.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00028841",
+          "text": "Restreindre l’avancée du genou déplace une partie de la demande vers hanche/tronc; l’adéquation dépend de la mobilité, du but, de la charge et des symptômes.",
+          "score": 0.5742
+        },
+        {
+          "fragmentId": "frag.e5f3.00029088",
+          "text": "- **Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées; utiliser une box, une profondeur partielle ou une assistance peut doser cette demande.",
+          "score": 0.5718
+        },
+        {
+          "fragmentId": "frag.e5f3.00020521",
+          "text": "- **Charge axiale :** passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante, sans supposer que la compression est la cause.",
+          "score": 0.5557
+        },
+        {
+          "fragmentId": "frag.f2.0011",
+          "text": "Exemple : squat classique vs leg press — même fonction quadriceps dominante, mais le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press, et une extension de hanche concomitante qui sollicite davantage les fessiers et ischio-jambiers en synergie. Ce sont des substitutions raisonnables pour l'hypertrophie du quadriceps (aucune étude ne démontrant de supériorité franche de l'un sur l'autre pour ce muscle spécifiquement dans les données identifiées), mais pas interchangeables pour l'objectif de force spécifique au squat ni pour la demande lombaire.",
+          "score": 0.5472
+        }
+      ]
+    },
+    {
+      "questionId": "q.10",
+      "question": "Si un exercice me donne aucune courbature mais que je progresse dessus il marche quand même ?",
+      "refused": false,
+      "answer": "Il faut reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué.  \n[1]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00030639",
+          "text": "**Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué.",
+          "score": 0.5687
+        },
+        {
+          "fragmentId": "frag.e5f3.00030639",
+          "text": "**Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué. Aucun pourcentage universel de reprise n’est soutenu pour toutes populations; toute règle « 50 % » ou « +10 % par semaine » doit être étiquetée comme heuristique de programmation, non recommandation clinique.",
+          "score": 0.5686
+        },
+        {
+          "fragmentId": "frag.e5f3.00031016",
+          "text": "**Critères fonctionnels :** tâches quotidiennes stables, amplitude utile, force et contrôle suffisants pour la demande, absence d’aggravation progressive, confiance, exposition réussie aux exigences spécifiques. Un seul test, une seule asymétrie ou l’absence totale de douleur ne suffit pas.",
+          "score": 0.5503
+        },
+        {
+          "fragmentId": "frag.f2.0005",
+          "text": "La stabilité requise par un exercice — support du torse, base d'appui, guidage de la trajectoire par une machine ou un rail — détermine dans quelle mesure l'effort du pratiquant doit être partagé entre la production de force du muscle cible et la stabilisation posturale/articulaire. Une revue systématique et méta-analyse des études EMG sur l'entraînement en instabilité trouve que les surfaces instables augmentent l'activation des muscles stabilisateurs du tronc mais **diminuent généralement l'activation du muscle agoniste principal** et la force produite, comparé à un exercice équivalent sur surface stable ([Effects of unstable training on muscle activation: systematic review and meta-analysis, 2025](https://peerj.",
+          "score": 0.5489
+        }
+      ]
+    },
+    {
+      "questionId": "q.11",
+      "question": "Pour les élévations latérales faut monter jusqu'à la hauteur des épaules ou un peu plus haut ?",
+      "refused": false,
+      "answer": "[4] Pour les élévations latérales, il faut monter jusqu'à la hauteur des épaules ou un peu plus haut.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00067073",
+          "text": "Les chefs latéral et médial, mono-articulaires, ne bénéficient pas de cet effet de position d'épaule et sont sollicités de façon comparable dans la plupart des variantes d'extension du coude, qu'elles soient overhead ou non — **niveau de preuve : biomécanique + essai contrôlé pour le chef long (modéré à élevé), extrapolation pour les chefs latéral/médial (modéré)**.",
+          "score": 0.5916
+        },
+        {
+          "fragmentId": "frag.e5f2.00058329",
+          "text": "** Ces variantes d'isolation en adduction horizontale d'épaule permettent, via le câble notamment, de maintenir une tension en position d'adduction complète (contraction raccourcie) que les haltères perdent en fin de mouvement (bras de levier gravitationnel proche de zéro) — différence de profil de résistance documentée en section 2.",
+          "score": 0.5911
+        },
+        {
+          "fragmentId": "frag.e5f3.00023412",
+          "text": "Pour les élévations latérales, presses et rotations, la réponse clinique prime sur un angle prétendument parfait.",
+          "score": 0.5888
+        },
+        {
+          "fragmentId": "frag.e5f2.00065616",
+          "text": "** Ce mouvement place l'épaule en extension, ce qui étire le chef long du biceps à l'épaule tout en maintenant une tension câble en position finale de flexion du coude (contraction raccourcie du muscle au niveau du coude) — combinaison de profil de résistance et de longueur musculaire cohérente avec les principes des sections 2 et 3, sans étude d'hypertrophie dédiée spécifiquement identifiée à ce nom d'exercice précis dans cette recherche (nom populaire récent, littérature scientifique en retard sur la terminologie de pratique).",
+          "score": 0.5785
+        }
+      ]
+    },
+    {
+      "questionId": "q.12",
+      "question": "J'ai l'impression qu'un côté pousse plus fort que l'autre au développé, je fais quoi avec ça ?",
+      "refused": false,
+      "answer": "[4] Une étude montre que l'hypertrophie est distincte entre les exercices de développé, donc il est possible que le développé soit adapté pour améliorer la hypertrophie, mais il ne faut pas confondre l'hypertrophie avec la force.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00069282",
+          "text": "Une méta-analyse comparant hypertrophie et adaptations de force entre entraînement unilatéral et bilatéral conclut à l'**absence de différence significative d'hypertrophie** entre les deux approches (ES −0,21, IC95 % −3,56 à 3,13, p = 0,57), tout en confirmant une spécificité claire des gains de force (le bilatéral favorise la force bilatérale, l'unilatéral favorise la force unilatérale) ([Kassiano et al.",
+          "score": 0.5804
+        },
+        {
+          "fragmentId": "frag.e5f3.00028841",
+          "text": "Restreindre l’avancée du genou déplace une partie de la demande vers hanche/tronc; l’adéquation dépend de la mobilité, du but, de la charge et des symptômes.",
+          "score": 0.5707
+        },
+        {
+          "fragmentId": "frag.e5f2.00049828",
+          "text": "La charge au poignet varie fortement selon la prise (barre droite, barre EZ, haltères, poignées neutres) et l'exercice. L'analyse biomécanique des exercices de développé montre des moments au poignet mesurables mais généralement inférieurs à ceux de l'épaule et du coude dans les mouvements étudiés ([Chest Exercises: Movement and Loading, 2022](https://pmc.",
+          "score": 0.5648
+        },
+        {
+          "fragmentId": "frag.e5f2.00064691",
+          "text": "** Un essai comparant directement les adaptations de croissance musculaire et de force entre preacher curl et incline curl chez des sujets entraînés apporte une preuve directe d'hypertrophie distincte de l'EMG ([Distinct muscle growth and strength adaptations after preacher and incline biceps curls, 2025](http://www.",
+          "score": 0.5613
+        }
+      ]
+    },
+    {
+      "questionId": "q.13",
+      "question": "C'est grave si je triche un tout petit peu sur les dernières reps de curl ?",
+      "refused": false,
+      "answer": "C'est grave si je triche un tout petit peu sur les dernières reps de curl, car cela peut affecter la progression et la qualité de l'hypertrophie, selon l'affirmation [2].",
+      "retrieved": [
+        {
+          "fragmentId": "frag.f3.0013",
+          "text": "**Important :** « 0–3/10 » est une règle pratique conservatrice fréquente, mais non un seuil clinique universel validé.",
+          "score": 0.4659
+        },
+        {
+          "fragmentId": "frag.e5f2.00041891",
+          "text": "Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné. Les répétitions partielles réalisées en position **allongée** peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+          "score": 0.4581
+        },
+        {
+          "fragmentId": "frag.e5f3.00019636",
+          "text": "Un trap-bar, rack pull ou kettlebell élevé peut réduire l’exigence d’amplitude; c’est une option, pas une correction universelle.",
+          "score": 0.4523
+        },
+        {
+          "fragmentId": "frag.e5f3.00011285",
+          "text": "**Après :** noter la réponse immédiate, le soir, le lendemain et jusqu’à 48 h si le symptôme est retardé.",
+          "score": 0.4464
+        }
+      ]
+    },
+    {
+      "questionId": "q.14",
+      "question": "Entre 6-8 reps et 10-15 reps ça change vraiment quelque chose pour prendre du muscle ?",
+      "refused": false,
+      "answer": "[2] Ajuster hauteur de départ, stance, barre/charge, tempo, répétitions, proximité de l’échase et amplitude. Un trap-bar, rack pull ou kettlebell élevé peut réduire l’exigence d’amplitude; c’est une option, pas une correction universelle.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00019636",
+          "text": "Un trap-bar, rack pull ou kettlebell élevé peut réduire l’exigence d’amplitude; c’est une option, pas une correction universelle.",
+          "score": 0.5443
+        },
+        {
+          "fragmentId": "frag.e5f3.00019636",
+          "text": "Ajuster hauteur de départ, stance, barre/charge, tempo, répétitions, proximité de l’échec et amplitude. Un trap-bar, rack pull ou kettlebell élevé peut réduire l’exigence d’amplitude; c’est une option, pas une correction universelle.",
+          "score": 0.5433
+        },
+        {
+          "fragmentId": "frag.e5f2.00064691",
+          "text": "** Un essai comparant directement les adaptations de croissance musculaire et de force entre preacher curl et incline curl chez des sujets entraînés apporte une preuve directe d'hypertrophie distincte de l'EMG ([Distinct muscle growth and strength adaptations after preacher and incline biceps curls, 2025](http://www.",
+          "score": 0.5379
+        },
+        {
+          "fragmentId": "frag.e5f2.00064691",
+          "text": "Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie ([Placing Greater Torque at Shorter or Longer Muscle Lengths?",
+          "score": 0.5241
+        }
+      ]
+    },
+    {
+      "questionId": "q.15",
+      "question": "Comment je sais si une douleur c'est juste le muscle qui travaille ou un truc que je devrais arrêter ?",
+      "refused": false,
+      "answer": "Si une douleur est due à un échauffement normal et tolérable, elle peut être acceptable, mais si elle est brutale, intense, ou accompagnée de symptômes neurologiques, il est préférable d'arrêter immédiatement. Cela correspond à l'affirmation [1].",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00011285",
+          "text": "**Pendant :** arrêter immédiatement si douleur brutale inhabituelle, perte de force, instabilité franche, symptôme neurologique croissant ou red flag. Sinon, une gêne stable et tolérable peut mener à une réduction graduée plutôt qu’à l’arrêt total.",
+          "score": 0.6762
+        },
+        {
+          "fragmentId": "frag.e5f3.00010336",
+          "text": "- La douleur pendant l’exercice n’impose pas toujours l’arrêt dans les douleurs musculosquelettiques chroniques; les essais ayant autorisé une douleur encadrée n’ont pas montré de moins bons résultats à moyen ou long terme ([Smith et al.",
+          "score": 0.6578
+        },
+        {
+          "fragmentId": "frag.e5f3.00011285",
+          "text": "**Avant :** relever douleur de base, fonction et symptôme neurologique éventuel.",
+          "score": 0.6107
+        },
+        {
+          "fragmentId": "frag.e5f3.00010897",
+          "text": "- Le seuil doit être abaissé quand l’irritabilité est élevée : douleur au repos, réaction avec faible charge, amplitude très sensible, aggravation durable ou perte de fonction. Le consensus de Berne propose une progression selon irritabilité et réponse symptomatique ([Consensus de Berne 2022](https://www.",
+          "score": 0.6073
+        }
+      ]
+    },
+    {
+      "questionId": "q.16",
+      "question": "Sur le rowing faut vraiment ramener les épaules en arrière à chaque rep ou ça enlève du travail aux dorsaux ?",
+      "refused": false,
+      "answer": "[1] Oui, le rowing poitrine appuyée réduit la demande de stabilisation lombaire par rapport au rowing barre penché, ce qui peut être interprété comme un \"ramassage des épaules en arrière\" en termes de charge sur les dorsaux, selon l'analyse biomécanique de premier principe.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00060840",
+          "text": "Le rowing poitrine appuyée réduit la demande de stabilisation lombaire par rapport au rowing barre penché en éliminant le maintien isométrique du tronc en flexion de hanche — conséquence biomécanique directe de la suppression du bras de levier du tronc, **niveau de preuve : biomécanique de premier principe, élevé** pour le principe, sans étude d'hypertrophie comparative dédiée identifiée.",
+          "score": 0.6149
+        },
+        {
+          "fragmentId": "frag.e5f2.00060840",
+          "text": "** La largeur de prise en rowing barre penché modifie l'activation du grand dorsal selon une analyse comparative dédiée ([Optimising Lat Activation: Grip Width in the Bent-Over Barbell Row](https://journals.",
+          "score": 0.5991
+        },
+        {
+          "fragmentId": "frag.e5f3.00020255",
+          "text": "- **Rowing :** banc incliné ou chest-supported row si le maintien penché fatigue ou irrite; réintroduire le rowing libre selon la capacité.",
+          "score": 0.5844
+        },
+        {
+          "fragmentId": "frag.e5f2.00063844",
+          "text": "**Reverse fly, reverse pec deck.** Ciblent le deltoïde postérieur et les rotateurs externes/rétracteurs scapulaires en extension et rotation externe d'épaule horizontale ; une étude EMG des muscles de la ceinture scapulaire pendant des exercices de rotation externe documente l'implication conjointe du deltoïde postérieur et de l'infra-épineux ([Electromyographic Analysis of the Shoulder Girdle Musculature During External Rotation Exercises](https://pmc.",
+          "score": 0.5425
+        }
+      ]
+    },
+    {
+      "questionId": "q.17",
+      "question": "Si je monte les reps mais pas le poids pendant plusieurs semaines je progresse quand même ?",
+      "refused": false,
+      "answer": "Si je monte les reps but pas le poids pendant plusieurs semaines je progresse quand même, c'est en accord avec l'affirmation [1], qui indique que après interruption sans douleur, il est nécessaire de reprendre sous le volume et l'intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00030639",
+          "text": "**Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué. Aucun pourcentage universel de reprise n’est soutenu pour toutes populations; toute règle « 50 % » ou « +10 % par semaine » doit être étiquetée comme heuristique de programmation, non recommandation clinique.",
+          "score": 0.5679
+        },
+        {
+          "fragmentId": "frag.e5f3.00030639",
+          "text": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations; toute règle « 50 % » ou « +10 % par semaine » doit être étiquetée comme heuristique de programmation, non recommandation clinique.",
+          "score": 0.5476
+        },
+        {
+          "fragmentId": "frag.f2.0004",
+          "text": "Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que **chaque modalité produit un gain de force supérieur dans son propre mode de test** (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, **mais aucune différence significative d'hypertrophie entre les deux modalités** (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al.",
+          "score": 0.5465
+        },
+        {
+          "fragmentId": "frag.f3.0022",
+          "text": "Une baisse de symptômes immédiate n’est pas le seul objectif : la trajectoire sur 24–48 h, la fonction et la progression de capacité comptent davantage.",
+          "score": 0.5438
+        }
+      ]
+    },
+    {
+      "questionId": "q.18",
+      "question": "Pour les triceps, pushdown corde + dips ça suffit ou il manque forcément un exo bras au-dessus de la tête ?",
+      "refused": false,
+      "answer": "[2] Le pushdown corde + dips sollicite le triceps, mais il manque un exo bras au-dessus de la tête pour cibler spécifiquement le chef long, selon les affirmations.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.f2.0012",
+          "text": "Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations ([Nunes et al.",
+          "score": 0.6329
+        },
+        {
+          "fragmentId": "frag.f2.0003",
+          "text": "Conséquence pratique : les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long.",
+          "score": 0.5983
+        },
+        {
+          "fragmentId": "frag.e5f2.00067073",
+          "text": "Les chefs latéral et médial, mono-articulaires, ne bénéficient pas de cet effet de position d'épaule et sont sollicités de façon comparable dans la plupart des variantes d'extension du coude, qu'elles soient overhead ou non — **niveau de preuve : biomécanique + essai contrôlé pour le chef long (modéré à élevé), extrapolation pour les chefs latéral/médial (modéré)**.",
+          "score": 0.5862
+        },
+        {
+          "fragmentId": "frag.e5f2.00061570",
+          "text": "** Le pull-over sollicite le grand dorsal en extension d'épaule pure à coude fixe, avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête) — configuration cohérente avec le principe de longueur musculaire, sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.",
+          "score": 0.5816
+        }
+      ]
+    },
+    {
+      "questionId": "q.19",
+      "question": "Pourquoi sur certaines machines je peux mettre beaucoup plus lourd alors que j'ai l'impression de moins travailler ?",
+      "refused": false,
+      "answer": "La sensation subjective de contraction peut se dissocier de l'activation EMG mesurée, ce qui explique pourquoi sur certaines machines on peut mettre plus de poids sans ressentir une activité musculaire aussi intense.  \n[2]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00084420",
+          "text": "- **Facilité d'installation et de progression :** les exercices sur machine ou en câble sont généralement plus rapides à installer et permettent des incréments de charge plus fins (empilement de plaques, poulies réglables), ce qui facilite la surcharge progressive à petite échelle — *expert_practice*, plausible mais non quantifié par essai.",
+          "score": 0.5576
+        },
+        {
+          "fragmentId": "frag.e5f2.00085985",
+          "text": "** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.",
+          "score": 0.5569
+        },
+        {
+          "fragmentId": "frag.f2.0004",
+          "text": "Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que **chaque modalité produit un gain de force supérieur dans son propre mode de test** (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, **mais aucune différence significative d'hypertrophie entre les deux modalités** (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al.",
+          "score": 0.5533
+        },
+        {
+          "fragmentId": "frag.e5f2.00044614",
+          "text": "Une instabilité excessive peut réduire la charge utilisable et détourner l'effort vers des muscles stabilisateurs non ciblés. **Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse de la section 2.",
+          "score": 0.5456
+        }
+      ]
+    },
+    {
+      "questionId": "q.20",
+      "question": "Les séries jusqu'à l'échec c'est utile pour la masse ou ça fatigue juste pour rien ?",
+      "refused": false,
+      "answer": "Les séries jusqu'à l'échec sont utiles pour la masse, car elles favorisent la croissance musculaire et la réparation tissulaire, même si elles peuvent être fatiguantes.  \n[1]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00084775",
+          "text": "- **Stabilité et fatigue inutile :** privilégier une stabilité suffisante pour que le muscle cible, non l'équilibre, limite la série lors des phases de forte fatigue accumulée ou de gros volume (ex.",
+          "score": 0.5292
+        },
+        {
+          "fragmentId": "frag.e5f2.00084775",
+          "text": "- **Stabilité et fatigue inutile :** privilégier une stabilité suffisante pour que le muscle cible, non l'équilibre, limite la série lors des phases de forte fatigue accumulée ou de gros volume (ex. préférer le rowing poitrine appuyée à un rowing barre penché en fin de séance) — *expert_practice*, cohérent avec le principe de la section 5.",
+          "score": 0.5267
+        },
+        {
+          "fragmentId": "frag.f3.0001",
+          "text": "** Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation ([Smith et al.",
+          "score": 0.4561
+        },
+        {
+          "fragmentId": "frag.e5f3.00031016",
+          "text": "Un seul test, une seule asymétrie ou l’absence totale de douleur ne suffit pas.",
+          "score": 0.4535
+        }
+      ]
+    },
+    {
+      "questionId": "q.21",
+      "question": "Je fais comment pour savoir si j'ai trop de volume sur un muscle ?",
+      "refused": false,
+      "answer": "Je dois vérifier la hypertrophie régionale du muscle en mesurant l'augmentation de volume et en comparant les résultats avec des exercices ou modes de charge similaires, en citant les affirmations [1] et [4].",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00038031",
+          "text": "** La direction générale (la grande longueur musculaire tend à égaler ou dépasser la courte longueur pour l'hypertrophie régionale) est cohérente à travers plusieurs essais indépendants et plusieurs muscles, mais (a) les résultats ne sont pas uniformes selon la modalité de charge, (b) les échantillons sont petits, (c) les mécanismes ne sont pas confirmés chez l'humain in vivo à l'échelle du sarcomère, et (d) l'ampleur de l'effet et sa généralisation à tous les muscles et exercices restent incertaines.",
+          "score": 0.6002
+        },
+        {
+          "fragmentId": "frag.e5f2.00037232",
+          "text": "- Un essai comparant un entraînement à intensité modérée en amplitude partielle à grande longueur contre un entraînement à haute intensité en amplitude complète trouve des adaptations architecturales et hypertrophiques similaires ([Moderate Intensity Partial ROM at Long Length vs High Intensity Full ROM](https://journals.",
+          "score": 0.5947
+        },
+        {
+          "fragmentId": "frag.e5f2.00035867",
+          "text": "- Un essai comparant l'entraînement isométrique à grande longueur musculaire à l'entraînement isotonique en amplitude complète pour le quadriceps chez des sujets entraînés en résistance trouve des effets différentiels sur l'hypertrophie régionale du quadriceps fémoral ([Effects of Long Muscle Length Isometric vs Full ROM Training, quadriceps, 2025](https://cdnsciencepub.",
+          "score": 0.5849
+        },
+        {
+          "fragmentId": "frag.f2.0015",
+          "text": "7) ; hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+          "score": 0.5847
+        }
+      ]
+    },
+    {
+      "questionId": "q.22",
+      "question": "Si je fais mes pecs 2 fois par semaine c'est forcément mieux qu'une seule grosse séance ?",
+      "refused": true,
+      "answer": "HORS_CORPUS",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00029304",
+          "text": "Les deux chaînes sont recommandées pour la PFP ([CPG PFP 2019](https://www.",
+          "score": 0.4935
+        },
+        {
+          "fragmentId": "frag.e5f2.00064691",
+          "text": "** Un essai comparant directement les adaptations de croissance musculaire et de force entre preacher curl et incline curl chez des sujets entraînés apporte une preuve directe d'hypertrophie distincte de l'EMG ([Distinct muscle growth and strength adaptations after preacher and incline biceps curls, 2025](http://www.",
+          "score": 0.4836
+        },
+        {
+          "fragmentId": "frag.f2.0001",
+          "text": "L'étude la plus directement illustrative de ce principe compare hip thrust et squat : l'EMG du hip thrust dépasse largement celle du squat pour le grand fessier (moyenne 69,5 % contre 29,4 % de la contraction volontaire maximale, pics 172 % contre 84,9 %), mais neuf semaines d'entraînement à volume égalisé produisent une hypertrophie fessière quasiment identique en IRM dans les trois régions du grand fessier, sans corrélation fiable entre l'amplitude EMG et la croissance mesurée ([Plotkin et al.",
+          "score": 0.481
+        },
+        {
+          "fragmentId": "frag.e5f2.00041891",
+          "text": "Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné. Les répétitions partielles réalisées en position **allongée** peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+          "score": 0.4782
+        }
+      ]
+    },
+    {
+      "questionId": "q.23",
+      "question": "Sur le leg curl j'ai tendance à décoller un peu les hanches quand ça devient dur, c'est mauvais ?",
+      "refused": false,
+      "answer": "La décollation des hanches lors du leg curl peut être associée à une position de hanche inappropriée, ce qui peut affecter la longueur des ischio-jambiers biarticulaires et ainsi la manière de contraction. Cela pourrait être mauvais pour une hypertrophie régionale précise.  \n[1]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00072017",
+          "text": "** La position de hanche diffère entre ces deux variantes (hanche fléchie en position assise, hanche en extension relative en position couchée sur le ventre), ce qui modifie la longueur des ischio-jambiers biarticulaires au début du mouvement. Une étude récente sur l'activation régionale des ischio-jambiers pendant le leg curl à différents angles de flexion de hanche et sa dissociation de la sensation subjective de contraction apporte une preuve directe et nuancée sur ce sujet, montrant que la sensation perçue ne coïncide pas nécessairement avec l'activation mesurée par région ([Region-specific hamstring activation and dissociation from subjective contraction sensation, leg curl, hip flexion angles, 2026](https://link.",
+          "score": 0.6103
+        },
+        {
+          "fragmentId": "frag.f2.0012",
+          "text": "Autre exemple : leg curl assis (hanche fléchie) vs leg curl couché (hanche neutre/étendue) — même muscle nominal, mais position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement. Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise (par exemple prioriser le chef long du triceps ou la portion proximale des ischio-jambiers).",
+          "score": 0.5742
+        },
+        {
+          "fragmentId": "frag.e5f3.00019956",
+          "text": "- **Leg press :** utile si le torse soutenu est mieux toléré; limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite.",
+          "score": 0.5701
+        },
+        {
+          "fragmentId": "frag.e5f2.00072017",
+          "text": "Une étude récente sur l'activation régionale des ischio-jambiers pendant le leg curl à différents angles de flexion de hanche et sa dissociation de la sensation subjective de contraction apporte une preuve directe et nuancée sur ce sujet, montrant que la sensation perçue ne coïncide pas nécessairement avec l'activation mesurée par région ([Region-specific hamstring activation and dissociation from subjective contraction sensation, leg curl, hip flexion angles, 2026](https://link.",
+          "score": 0.5602
+        }
+      ]
+    },
+    {
+      "questionId": "q.24",
+      "question": "Je sens jamais mes pecs sur les dips, ça veut dire que ça sert à rien de les faire pour les pecs ?",
+      "refused": true,
+      "answer": "[H2] Je sens jamais mes pecs sur les dips, ça veut dire que ça sert à rien de les faire pour les pecs ?  \n**HORS_CORPUS**",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00085985",
+          "text": "1186/s13102-026-01910-7)) — la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.",
+          "score": 0.4648
+        },
+        {
+          "fragmentId": "frag.e5f2.00057932",
+          "text": "** Sollicite fortement le triceps et la portion sterno-costale du grand pectoral en fin de course inférieure (position étirée du pectoral), avec une flexion importante d'épaule en bas de mouvement — configuration cohérente avec le principe de longueur musculaire (section 3) bien qu'aucune étude d'hypertrophie régionale dédiée aux dips n'ait été identifiée spécifiquement.",
+          "score": 0.4534
+        },
+        {
+          "fragmentId": "frag.e5f2.00007390",
+          "text": "Le petit pectoral, souvent négligé, stabilise et abaisse la scapula ; il n'est pas une cible d'hypertrophie volontaire dans la pratique courante.",
+          "score": 0.439
+        },
+        {
+          "fragmentId": "frag.e5f3.00046082",
+          "text": "- Les rubriques poignet, épitrochléalgie, biceps et triceps ont peu de CPG directes; les propositions doivent rester `expert_practice` ou extrapolation explicite.",
+          "score": 0.4377
+        }
+      ]
+    },
+    {
+      "questionId": "q.25",
+      "question": "Est-ce qu'un exercice peut être très bon en théorie mais juste pas adapté à ma morphologie ?",
+      "refused": false,
+      "answer": "Une exercice peut être très bon en théorie mais juste pas adapté à ma morphologie, car les affirmations indiquent que l'amplitude complète reste une règle par défaut et que les répétitions partielles en position allongée peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00066550",
+          "text": "**Une étude testant l'entraînement dans l'amplitude initiale (position allongée) contre l'amplitude finale (position raccourcie) du curl trouve de meilleures adaptations musculaires dans le groupe entraîné en position initiale/allongée** ([Training in the Initial Range of Motion Promotes Greater Muscle Adaptations, arm curl](https://pmc.",
+          "score": 0.6127
+        },
+        {
+          "fragmentId": "frag.e5f2.00042447",
+          "text": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+          "score": 0.5951
+        },
+        {
+          "fragmentId": "frag.e5f2.00041891",
+          "text": "Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné. Les répétitions partielles réalisées en position **allongée** peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+          "score": 0.5939
+        },
+        {
+          "fragmentId": "frag.e5f2.00041891",
+          "text": "**Ce qu'on peut conclure (niveau modéré à élevé) :** l'amplitude complète reste une règle par défaut solide et sans inconvénient démontré pour la plupart des exercices et pratiquants. Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné.",
+          "score": 0.5911
+        }
+      ]
+    },
+    {
+      "questionId": "q.26",
+      "question": "J'ai un mouvement où je progresse plus depuis 1 mois mais tous les autres montent, je change l'exo ou j'insiste ?",
+      "refused": false,
+      "answer": "[3] changer l'exo ou insister : la progression est due à une amélioration de la mobilité ou de la technique, donc il est approprié de changer l'exo pour éviter la surcharge et de rester dans les limites de la mobilité.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f3.00028841",
+          "text": "Restreindre l’avancée du genou déplace une partie de la demande vers hanche/tronc; l’adéquation dépend de la mobilité, du but, de la charge et des symptômes.",
+          "score": 0.5323
+        },
+        {
+          "fragmentId": "frag.e5f3.00029304",
+          "text": "Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension; certaines machines à came modifient ce profil.",
+          "score": 0.5166
+        },
+        {
+          "fragmentId": "frag.e5f3.00029088",
+          "text": "- **Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées; utiliser une box, une profondeur partielle ou une assistance peut doser cette demande.",
+          "score": 0.5162
+        },
+        {
+          "fragmentId": "frag.e5f3.00030276",
+          "text": "augmenter d’abord une seule variable — répétitions, séries, charge, amplitude ou vitesse;",
+          "score": 0.5129
+        }
+      ]
+    },
+    {
+      "questionId": "q.27",
+      "question": "Pour prendre des épaules larges je dois surtout spam les élévations latérales ou les développés comptent beaucoup aussi ?",
+      "refused": false,
+      "answer": "La réponse est : **Les développés comptent beaucoup**.  \n[2]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00067073",
+          "text": "Les chefs latéral et médial, mono-articulaires, ne bénéficient pas de cet effet de position d'épaule et sont sollicités de façon comparable dans la plupart des variantes d'extension du coude, qu'elles soient overhead ou non — **niveau de preuve : biomécanique + essai contrôlé pour le chef long (modéré à élevé), extrapolation pour les chefs latéral/médial (modéré)**.",
+          "score": 0.5787
+        },
+        {
+          "fragmentId": "frag.e5f2.00061570",
+          "text": "** Le pull-over sollicite le grand dorsal en extension d'épaule pure à coude fixe, avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête) — configuration cohérente avec le principe de longueur musculaire, sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.",
+          "score": 0.5712
+        },
+        {
+          "fragmentId": "frag.f2.0022",
+          "text": "gov/articles/PMC9737272/)), le vaste latéral montrant l'association la plus forte avec le gain de force. Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées ([Leg Press vs.",
+          "score": 0.5693
+        },
+        {
+          "fragmentId": "frag.e5f2.00046191",
+          "text": "Le développé couché impose des charges musculo-squelettiques substantielles à l'épaule ; une étude biomécanique comparant plusieurs variantes techniques du développé couché (largeur de prise, cambrure) quantifie les charges à l'épaule et discute du risque potentiel de blessure sans pouvoir établir de lien causal direct faute de données longitudinales de blessure appariées ([Effects of bench press technique variations on musculoskeletal shoulder loads, 2024](https://pmc.",
+          "score": 0.5681
+        }
+      ]
+    },
+    {
+      "questionId": "q.28",
+      "question": "Si je réduis l'amplitude pour éviter une douleur mais que je peux continuer à charger, ça reste intéressant pour l'hypertrophie ?",
+      "refused": false,
+      "answer": "Si je réduis l'amplitude pour éviter une douleur mais que je peux continuer à charger, ça reste intéressant pour l'hypertrophie ?  \n[1]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00041891",
+          "text": "**Ce qu'on peut conclure (niveau modéré à élevé) :** l'amplitude complète reste une règle par défaut solide et sans inconvénient démontré pour la plupart des exercices et pratiquants. Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné.",
+          "score": 0.6729
+        },
+        {
+          "fragmentId": "frag.e5f2.00041891",
+          "text": "Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné. Les répétitions partielles réalisées en position **allongée** peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+          "score": 0.6361
+        },
+        {
+          "fragmentId": "frag.e5f2.00042447",
+          "text": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+          "score": 0.6107
+        },
+        {
+          "fragmentId": "frag.e5f2.00058329",
+          "text": "** Ces variantes d'isolation en adduction horizontale d'épaule permettent, via le câble notamment, de maintenir une tension en position d'adduction complète (contraction raccourcie) que les haltères perdent en fin de mouvement (bras de levier gravitationnel proche de zéro) — différence de profil de résistance documentée en section 2.",
+          "score": 0.6096
+        }
+      ]
+    },
+    {
+      "questionId": "q.29",
+      "question": "Quand on dit \"bonne technique\", c'est quoi en vrai ? Parce que deux mecs peuvent faire le même exo complètement différemment et les deux ont l'air propres.",
+      "refused": false,
+      "answer": "Quand on dit \"bonne technique\", c'est une approche de la technique qui vise à maximiser l'efficacité, la sécurité et la confortabilité, en tenant compte des facteurs comme la stabilité, le confort et la préférence individuelle, plutôt que de se baser sur une supériorité universelle d'une modalité.  \n[4]",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00085985",
+          "text": "** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.",
+          "score": 0.482
+        },
+        {
+          "fragmentId": "frag.f2.0012",
+          "text": "Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations ([Nunes et al.",
+          "score": 0.481
+        },
+        {
+          "fragmentId": "frag.f2.0015",
+          "text": "7) ; hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+          "score": 0.4801
+        },
+        {
+          "fragmentId": "frag.f2.0004",
+          "text": "Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle plutôt que sur une supposée supériorité universelle d'une modalité.",
+          "score": 0.4733
+        }
+      ]
+    },
+    {
+      "questionId": "q.30",
+      "question": "Si je devais garder seulement 5-6 exercices pour prendre un max de masse, tu garderais lesquels ?",
+      "refused": false,
+      "answer": "Hip thrust : option pour entraîner les extenseurs de hanche avec moins de demande de maintien debout; ajuster l’extension terminale si sensible.",
+      "retrieved": [
+        {
+          "fragmentId": "frag.e5f2.00067073",
+          "text": "6 organise cette famille : les exercices plaçant l'épaule en flexion complète (overhead extension, skull crusher incliné bras verticaux) étirent le chef long et produisent une hypertrophie de ce chef supérieure aux exercices bras le long du corps ou en légère extension d'épaule (pushdown, kickback) ([Nunes et al.",
+          "score": 0.5153
+        },
+        {
+          "fragmentId": "frag.e5f3.00019636",
+          "text": "Ajuster hauteur de départ, stance, barre/charge, tempo, répétitions, proximité de l’échec et amplitude. Un trap-bar, rack pull ou kettlebell élevé peut réduire l’exigence d’amplitude; c’est une option, pas une correction universelle.",
+          "score": 0.5065
+        },
+        {
+          "fragmentId": "frag.e5f3.00020101",
+          "text": "- **Hip thrust :** option pour entraîner les extenseurs de hanche avec moins de demande de maintien debout; ajuster l’extension terminale si sensible.",
+          "score": 0.5033
+        },
+        {
+          "fragmentId": "frag.e5f2.00022937",
+          "text": "Une méta-analyse de 2025 sur l'hypertrophie du grand fessier en réponse à l'entraînement en résistance (12 études) trouve un effet modéré (SMD 0,71) toutes modalités confondues, avec un effet similaire pour les protocoles mono-exercice et les protocoles combinés ; elle conclut que le hip thrust en amplitude complète, le squat (parallèle ou complet), la presse à cuisses et les extensions de hanche à genou fléchi contribuent tous de façon significative à l'hypertrophie du grand fessier ([Impact of resistance training on gluteus maximus hypertrophy, 2025, *Front Physiol*](https://www.",
+          "score": 0.5024
+        }
+      ]
+    }
+  ]
+}
