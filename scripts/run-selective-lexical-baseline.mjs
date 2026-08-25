@@ -12,6 +12,7 @@ const option = (name, fallback) => {
   const index = args.indexOf(`--${name}`);
   return index === -1 ? fallback : args[index + 1];
 };
+const TOP_K = 4;
 const split = option('split', 'DEV').toUpperCase();
 if (!['DEV', 'CAL', 'TEST'].includes(split)) {
   throw new Error(`Partition invalide : ${split}`);
@@ -51,8 +52,10 @@ try {
   const { searchEvidence } = await vite.ssrLoadModule(
     '/src/features/knowledge/searchEvidence.ts',
   );
+  // Passé explicitement : ce banc compare des runs a topK = 4 et doit rester
+  // comparable a ceux deja enregistres, meme si le defaut du produit a change.
   const results = questions.map((question) => {
-    const outcome = searchEvidence(question.text);
+    const outcome = searchEvidence(question.text, TOP_K);
     return {
       questionId: question.questionId,
       question: question.text,
@@ -95,7 +98,7 @@ try {
       implementation: 'src/features/knowledge/searchEvidence.ts',
       method: 'BM25 lexical baseline',
       calibrationStatus: evidenceDocument.calibration.status,
-      topK: 4,
+      topK: TOP_K,
       scoreSemantics: 'ranking-only; candidate presence is not corpus coverage',
     },
     summary: {

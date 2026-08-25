@@ -1,4 +1,5 @@
 import indexDocument from './evidence-index.json';
+import { normalizeGymTerm } from './frenchGymVocabulary';
 
 export type EpistemicStatus =
   | 'absence_of_evidence'
@@ -94,7 +95,10 @@ export function tokenizeEvidenceText(text: string): string[] {
     .toLowerCase()
     .replace(/['’]/gu, ' ')
     .split(/[^a-z0-9]+/u)
-    .filter((word) => word.length >= 2 && !STOP_WORDS.has(word));
+    .filter((word) => word.length >= 2 && !STOP_WORDS.has(word))
+    // Appliqué aux deux côtés — questions et affirmations indexées — donc les
+    // termes appariés restent comparables : c'est un repli, pas une expansion.
+    .map(normalizeGymTerm);
 }
 
 const documents = evidenceIndex.claims.map((claim) => tokenizeEvidenceText(claim.retrievalText));
@@ -106,7 +110,13 @@ for (const tokens of documents) {
 }
 const averageLength = documents.reduce((sum, tokens) => sum + tokens.length, 0) / documents.length;
 
-export function searchEvidence(query: string, limit = 4): EvidenceSearchOutcome {
+// Huit et non quatre. Quatre était le bon chiffre pour un système qui prétend
+// répondre : on ne jette pas douze passages à quelqu'un qui attend une réponse.
+// Ce n'est pas ce que fait cet écran — il montre où lire. Mesuré sur les 31
+// questions DEV dont la réponse est dans le corpus (scripts/score-evidence-search.mjs) :
+// rappel 23/31 à quatre candidats, 27/31 à huit, 29/31 à douze. Huit dépasse
+// donc la fusion dense + lexicale mesurée à 26/31, sans embarquer de modèle.
+export function searchEvidence(query: string, limit = 8): EvidenceSearchOutcome {
   const terms = [...new Set(tokenizeEvidenceText(query))];
   if (terms.length === 0) return { kind: 'EMPTY_QUERY', candidates: [] };
 
