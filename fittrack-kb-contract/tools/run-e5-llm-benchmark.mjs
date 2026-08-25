@@ -163,7 +163,8 @@ export function createBudgetedAdapter(adapter, runConfig, onLedgerChange) {
 const STAGE_BY_MODE = {
   'dev-20': 'DEV_20',
   'dev-100': 'DEV_100',
-  'holdout-30': 'HOLDOUT_30'
+  'holdout-30': 'HOLDOUT_30',
+  'corpus-107': 'CORPUS_107'
 };
 
 function argsOf(argv) {
@@ -176,7 +177,8 @@ function argsOf(argv) {
     dev100Frozen: false,
     stage: null,
     manifest: null,
-    resume: false
+    resume: false,
+    corpusExtraction: false
   };
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--mode') args.mode = argv[++index];
@@ -188,9 +190,10 @@ function argsOf(argv) {
     else if (argv[index] === '--dev20-approved') args.dev20Approved = true;
     else if (argv[index] === '--dev100-frozen') args.dev100Frozen = true;
     else if (argv[index] === '--resume') args.resume = true;
+    else if (argv[index] === '--corpus-extraction') args.corpusExtraction = true;
     else throw new Error(`unknown_argument:${argv[index]}`);
   }
-  const modes = ['dry-run', 'pilot', 'mini', 'full', 'dev-20', 'dev-100', 'holdout-30'];
+  const modes = ['dry-run', 'pilot', 'mini', 'full', 'dev-20', 'dev-100', 'holdout-30', 'corpus-107'];
   if (!modes.includes(args.mode)) throw new Error(`invalid_mode:${args.mode}`);
   if (!args.stage) args.stage = STAGE_BY_MODE[args.mode] ?? null;
   return args;
@@ -502,7 +505,8 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     stageRequirements
       ? {
           manifestPath: args.manifest ?? stageRequirements.manifest,
-          expectedCounts: stageRequirements.counts
+          expectedCounts: stageRequirements.counts,
+          production: stageRequirements.production === true
         }
       : {}
   );

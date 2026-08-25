@@ -6,10 +6,11 @@ import { buildCoverageUnits } from './coverage.mjs';
 const DEFAULT_MANIFEST = 'candidates/e5-prose-golden-manifest.json';
 const MAX_STAGE_FRAGMENTS = 100;
 
-// Aucun etage v0.4 ne peut declencher l extraction des 207 candidats : c est la
-// sortie de production, elle appartient au second plan et a une approbation
-// separee. Le plafond vit ici pour qu un mode ajoute plus tard ne puisse pas le
-// contourner en silence.
+// Le plafond de 100 fragments protège les étages de MESURE : aucun d'eux ne peut
+// glisser vers une extraction de masse parce que quelqu'un a pointé le mauvais
+// manifeste. Une extraction de production le dépasse légitimement, mais elle doit
+// alors déclarer sa taille dans son étage et exiger son propre drapeau — ce que
+// `CORPUS_107` fait plus bas.
 export const STAGE_REQUIREMENTS = {
   DEV_20: {
     manifest: 'benchmark/e5/v0/manifests/dev-20.json',
@@ -31,11 +32,24 @@ export const STAGE_REQUIREMENTS = {
     counts: { F2: 15, F3: 15 },
     approvals: ['approveCost', 'dev20Approved', 'dev100Frozen'],
     outputRoot: (runId) => join('runs', 'holdout-30', runId)
+  },
+  // Extraction de production, pas un benchmark : les 107 fragments qui n'ont pas
+  // d'annotation humaine. Elle dépasse le plafond des étages de mesure, donc elle le
+  // déclare et exige son propre drapeau — un étage de benchmark ne peut pas glisser
+  // vers une extraction de masse par accident.
+  CORPUS_107: {
+    manifest: 'benchmark/e5/v0/manifests/corpus-107.json',
+    fragmentCount: 107,
+    counts: { F2: 59, F3: 48 },
+    approvals: ['approveCost', 'corpusExtraction'],
+    production: true,
+    outputRoot: (runId) => join('corpus', runId)
   }
 };
 
 export const APPROVAL_FLAGS = {
   approveCost: '--approve-cost',
+  corpusExtraction: '--corpus-extraction',
   dev20Approved: '--dev20-approved',
   dev100Frozen: '--dev100-frozen'
 };
@@ -103,7 +117,10 @@ export function loadBenchmarkInputs(root, options = {}) {
 
   const orderedIds = manifestFragmentIds(manifest);
   const expectedTotal = expectedCounts.F2 + expectedCounts.F3;
-  if (orderedIds.length > MAX_STAGE_FRAGMENTS) {
+  // Le plafond ne se lève que sur déclaration explicite d'un étage de production.
+  // Le déduire des compteurs attendus le rendrait contournable par n'importe quel
+  // appelant qui passe un grand nombre — ce qui n'est plus un garde-fou.
+  if (orderedIds.length > MAX_STAGE_FRAGMENTS && !options.production) {
     throw new Error(`benchmark_stage_cannot_exceed_100_fragments:${orderedIds.length}`);
   }
   const seen = new Set();

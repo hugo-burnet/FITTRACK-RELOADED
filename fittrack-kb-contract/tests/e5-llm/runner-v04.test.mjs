@@ -120,8 +120,19 @@ test('a holdout overlapping DEV-100 is refused', () => {
   }
 });
 
-test('no v0.4 stage may select the full 207 candidates', () => {
-  assert.equal(Object.values(STAGE_REQUIREMENTS).every((item) => item.fragmentCount <= 100), true);
+test('no measurement stage may select the full 207 candidates', () => {
+  // Le plafond protege les etages de MESURE. Une extraction de production peut le
+  // depasser, mais seulement en se declarant comme telle et en exigeant son propre
+  // drapeau — un benchmark ne peut pas glisser vers une extraction de masse.
+  for (const [name, stage] of Object.entries(STAGE_REQUIREMENTS)) {
+    if (stage.production) {
+      assert.ok(stage.approvals.includes('corpusExtraction'), name);
+      assert.ok(stage.fragmentCount < 207, name);
+      continue;
+    }
+    assert.ok(stage.fragmentCount <= 100, name);
+    assert.equal(stage.approvals.includes('corpusExtraction'), false, name);
+  }
   const { directory, path } = tempManifest({
     schemaVersion: '1.0.0-e5-v04-oversized',
     dataset: 'OVERSIZED',
@@ -296,4 +307,35 @@ test('persistResult never rewrites a reused fragment', () => {
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
+});
+
+test('the 100-fragment cap only lifts on an explicit production declaration', () => {
+  // Le deduire des compteurs attendus le rendrait contournable par tout appelant qui
+  // passe un grand nombre. Seule la declaration d etage le leve.
+  const corpus = readJson(join(root, 'benchmark/e5/v0/manifests/corpus-107.json'));
+  assert.throws(
+    () =>
+      loadBenchmarkInputs(root, {
+        manifestPath: 'benchmark/e5/v0/manifests/corpus-107.json',
+        expectedCounts: corpus.counts
+      }),
+    /benchmark_stage_cannot_exceed_100_fragments:107/
+  );
+  const loaded = loadBenchmarkInputs(root, {
+    manifestPath: 'benchmark/e5/v0/manifests/corpus-107.json',
+    expectedCounts: corpus.counts,
+    production: true
+  });
+  assert.equal(loaded.inputs.length, 107);
+});
+
+test('the corpus manifest records which fragments came from the blind holdout', () => {
+  // Utiliser le holdout dans le corpus supprime la validation independante. C est une
+  // porte a sens unique : le manifeste garde de quoi la rouvrir.
+  const corpus = readJson(join(root, 'benchmark/e5/v0/manifests/corpus-107.json'));
+  assert.equal(corpus.holdoutFragmentIds.length, 30);
+  assert.equal(
+    corpus.holdoutFragmentIds.every((id) => corpus.fragmentIds.includes(id)),
+    true
+  );
 });
