@@ -352,6 +352,10 @@ export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
     status: result.status,
     diagnostics: result.diagnostics,
     partialAudit: result.partialAudit ?? null,
+    // Sans l'audit ici, l'évaluation ne peut pas retrouver les claims filtrées :
+    // elles ne sont dans aucune prédiction, et le dénominateur de sécurité s'effondre.
+    claimAudit: result.claimAudit ?? null,
+    coverageAudit: result.coverageAudit ?? null,
     fullCallCount: result.attempts.filter((attempt) => attempt.callType === 'full').length,
     repairCallCount: result.attempts.filter((attempt) => attempt.callType === 'repair').length,
     usageByCallType: result.usageByCallType

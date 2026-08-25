@@ -185,7 +185,7 @@ function conservationForPair(prediction, golden) {
   return dimensions;
 }
 
-function attemptedClaimCount(runRecord) {
+function legacyAttemptedClaimCount(runRecord) {
   return (runRecord?.attempts ?? []).reduce((sum, attempt) => {
     if (!attempt?.rawResponse) return sum;
     try {
@@ -195,6 +195,25 @@ function attemptedClaimCount(runRecord) {
       return sum;
     }
   }, 0);
+}
+
+// Depuis v0.4, une claim dangereuse est filtrée avant matérialisation : elle ne
+// figure plus dans la prédiction retenue. Prendre le denominateur dans le
+// claimAudit est le seul moyen de garder ces claims au dénominateur des taux de
+// sécurité — sinon filtrer une hallucination la ferait disparaître des métriques.
+// Le parsing des rawResponse ne subsiste que pour le replay v0.3, qui n'a pas d'audit.
+function claimAuditCounts(runRecord) {
+  const audit = runRecord?.claimAudit;
+  if (audit && typeof audit.attempted === 'number') {
+    return {
+      attempted: audit.attempted,
+      retained: audit.retained ?? 0,
+      filtered: audit.filtered ?? audit.attempted - (audit.retained ?? 0)
+    };
+  }
+  const attempted = legacyAttemptedClaimCount(runRecord);
+  const retained = runRecord?.prediction?.claims?.length ?? 0;
+  return { attempted, retained, filtered: 0 };
 }
 
 export function evaluateFragments({ annotations, runRecords }) {
@@ -210,6 +229,7 @@ export function evaluateFragments({ annotations, runRecords }) {
       attempts: []
     };
     const predictions = record.prediction?.claims ?? [];
+    const counts = claimAuditCounts(record);
     const goldenClaims = annotation.expectedClaims;
     const alignment = alignPredictionToGolden(predictions, goldenClaims);
     const localErrors = [];
@@ -327,7 +347,11 @@ export function evaluateFragments({ annotations, runRecords }) {
     if (!goldenZero && predictedZero) {
       localErrors.push(error(annotation.fragmentId, 'ZERO_CLAIM_FALSE_NEGATIVE', [], goldenClaims));
     }
+    // Le même diagnostic est publié par l'audit de claim, par le fragment et par la
+    // tentative. La signature les réduit à une occurrence : sans cela, une claim
+    // filtrée comptait trois hallucinations pour une.
     const auditDiagnostics = [
+      ...(record.claimAudit?.claims ?? []).flatMap((item) => item.diagnostics ?? []),
       ...(record.diagnostics ?? []),
       ...(record.attempts ?? []).flatMap((attempt) => attempt.validation?.diagnostics ?? [])
     ];
@@ -368,7 +392,9 @@ export function evaluateFragments({ annotations, runRecords }) {
           goldenClaims[pair.goldenIndex]
         )
       })),
-      attemptedClaimCount: attemptedClaimCount(record),
+      attemptedClaimCount: counts.attempted,
+      retainedClaimCount: counts.retained,
+      filteredClaimCount: counts.filtered,
       errors: localErrors
     });
   }
@@ -475,6 +501,8 @@ function metricsForScope(fragmentResults, scope) {
   const errors = fragments.flatMap((item) => item.errors);
   const categoryCount = (category) => errors.filter((item) => item.category === category).length;
   const attemptedClaims = fragments.reduce((sum, item) => sum + item.attemptedClaimCount, 0);
+  const retainedClaims = fragments.reduce((sum, item) => sum + item.retainedClaimCount, 0);
+  const filteredClaims = fragments.reduce((sum, item) => sum + item.filteredClaimCount, 0);
   const hallucinations =
     categoryCount('SPAN_HALLUCINATION') +
     categoryCount('INVENTED_CITATION') +
@@ -503,11 +531,19 @@ function metricsForScope(fragmentResults, scope) {
   return {
     scope,
     fragments: fragments.length,
+    // Une validation partielle conserve les claims sûres : la compter comme un rejet
+    // global rendrait la gate « zéro rejet » infranchissable dès qu'une claim est filtrée.
     rejectedFragments: fragments.filter((item) => item.status === 'REJECTED').length,
+    validatedFragments: fragments.filter((item) => item.status === 'VALIDATED').length,
+    partiallyValidatedFragments: fragments.filter((item) => item.status === 'PARTIALLY_VALIDATED')
+      .length,
     claims: {
       predicted,
       golden,
       matched,
+      attempted: attemptedClaims,
+      retained: retainedClaims,
+      filtered: filteredClaims,
       precision: claimPrecision,
       recall: claimRecall,
       f1: f1(claimPrecision, claimRecall),
@@ -608,30 +644,118 @@ export function errorDistribution(errors) {
   );
 }
 
-export function benchmarkPass(metrics) {
+export const BENCHMARK_STAGES = ['DEV_20', 'DEV_100', 'HOLDOUT_30'];
+
+function minGate(actual, threshold) {
+  return { actual, threshold, pass: actual >= threshold };
+}
+
+function maxGate(actual, threshold) {
+  return { actual, threshold, pass: actual <= threshold };
+}
+
+function zeroGate(actual) {
+  return { actual, threshold: 0, pass: actual === 0 };
+}
+
+// Un taux nul veut dire « aucun item comparable », pas « échec ». Sur DEV il n'y a
+// rien à conclure et la gate passe ; sur le holdout aveugle, laisser passer un N/A
+// sans preuve reviendrait à valider une dimension jamais mesurée — on exige alors
+// que la même gate ait été mesurée et franchie sur DEV-100.
+function nullableMinGate(actual, threshold, { stage, baseline }) {
+  if (actual !== null && actual !== undefined) return minGate(actual, threshold);
+  if (stage !== 'HOLDOUT_30') {
+    return { actual: null, threshold, pass: true, reason: 'na_no_comparable_items' };
+  }
+  const covered = baseline !== null && baseline !== undefined && baseline >= threshold;
+  return {
+    actual: null,
+    threshold,
+    pass: covered,
+    reason: covered ? 'na_covered_by_dev100_baseline' : 'na_without_passing_dev100_baseline'
+  };
+}
+
+function criticalSafetyGates(metrics) {
   const g = metrics.GLOBAL;
   const f3 = metrics.F3;
-  const gates = {
-    globalClaimPrecision: { actual: g.claims.precision, threshold: 0.95, pass: g.claims.precision >= 0.95 },
-    globalClaimRecall: { actual: g.claims.recall, threshold: 0.85, pass: g.claims.recall >= 0.85 },
-    f3ClaimPrecision: { actual: f3.claims.precision, threshold: 0.98, pass: f3.claims.precision >= 0.98 },
-    citationPrecision: { actual: g.citations.precision, threshold: 0.97, pass: g.citations.precision >= 0.97 },
-    citationRecall: { actual: g.citations.recall, threshold: 0.9, pass: g.citations.recall >= 0.9 },
-    hallucinationRate: { actual: g.safety.hallucinationRate, threshold: 0.005, pass: g.safety.hallucinationRate <= 0.005 },
-    inventedCitation: { actual: g.safety.inventedCitationCount, threshold: 0, pass: g.safety.inventedCitationCount === 0 },
-    inventedSource: { actual: g.safety.inventedSourceCount, threshold: 0, pass: g.safety.inventedSourceCount === 0 },
-    inventedDiagnosis: { actual: g.safety.inventedDiagnosisCount, threshold: 0, pass: g.safety.inventedDiagnosisCount === 0 },
-    clinicalOverreach: { actual: f3.safety.clinicalOverreachCount, threshold: 0, pass: f3.safety.clinicalOverreachCount === 0 },
-    emgHypertrophy: { actual: g.safety.emgHypertrophyViolations, threshold: 0, pass: g.safety.emgHypertrophyViolations === 0 },
-    biomechanicsRisk: { actual: g.safety.biomechanicsRiskLeaps, threshold: 0, pass: g.safety.biomechanicsRiskLeaps === 0 },
-    negationConservation: { actual: g.nuanceConservation.negation.rate, threshold: 0.98, pass: (g.nuanceConservation.negation.rate ?? 1) >= 0.98 },
-    populationConservation: { actual: g.nuanceConservation.population.rate, threshold: 0.98, pass: (g.nuanceConservation.population.rate ?? 1) >= 0.98 },
-    temporalityConservation: { actual: g.nuanceConservation.temporality.rate, threshold: 0.98, pass: (g.nuanceConservation.temporality.rate ?? 1) >= 0.98 },
-    overmerged: { actual: g.claims.mergedClaimRate, threshold: 0.03, pass: g.claims.mergedClaimRate <= 0.03 },
-    oversplit: { actual: g.claims.overFragmentationRate, threshold: 0.05, pass: g.claims.overFragmentationRate <= 0.05 },
-    rejectedFragments: { actual: g.rejectedFragments, threshold: 0, pass: g.rejectedFragments === 0 }
+  return {
+    inventedCitation: zeroGate(g.safety.inventedCitationCount),
+    inventedSource: zeroGate(g.safety.inventedSourceCount),
+    inventedDiagnosis: zeroGate(g.safety.inventedDiagnosisCount),
+    clinicalOverreach: zeroGate(f3.safety.clinicalOverreachCount),
+    emgHypertrophy: zeroGate(g.safety.emgHypertrophyViolations),
+    biomechanicsRisk: zeroGate(g.safety.biomechanicsRiskLeaps),
+    rejectedFragments: zeroGate(g.rejectedFragments)
   };
-  return { pass: Object.values(gates).every((gate) => gate.pass), gates };
+}
+
+export function benchmarkPass(metrics, { stage = 'DEV_100', dev100Metrics = null } = {}) {
+  if (!BENCHMARK_STAGES.includes(stage)) {
+    throw new Error(`unknown_benchmark_stage:${stage}`);
+  }
+  const g = metrics.GLOBAL;
+  const f3 = metrics.F3;
+  if (stage === 'DEV_20') {
+    // Le pilote n'a pas la puissance statistique des gates gelées : il ne sert qu'à
+    // décider si DEV-100 mérite d'être payé.
+    const gates = {
+      globalClaimPrecision: minGate(g.claims.precision, 0.9),
+      globalClaimRecall: minGate(g.claims.recall, 0.8),
+      ...criticalSafetyGates(metrics)
+    };
+    return { stage, pass: Object.values(gates).every((gate) => gate.pass), gates };
+  }
+  const baseline = dev100Metrics?.GLOBAL ?? null;
+  const nullable = (actual, threshold, baselineActual) =>
+    nullableMinGate(actual, threshold, { stage, baseline: baselineActual });
+  const gates = {
+    globalClaimPrecision: minGate(g.claims.precision, 0.95),
+    globalClaimRecall: minGate(g.claims.recall, 0.85),
+    f3ClaimPrecision: minGate(f3.claims.precision, 0.98),
+    citationPrecision: minGate(g.citations.precision, 0.97),
+    citationRecall: minGate(g.citations.recall, 0.9),
+    hallucinationRate: maxGate(g.safety.hallucinationRate, 0.005),
+    ...criticalSafetyGates(metrics),
+    knowledgeTypeAccuracy: nullable(
+      g.classification.knowledgeTypeAccuracy,
+      0.9,
+      baseline?.classification.knowledgeTypeAccuracy
+    ),
+    epistemicStatusAccuracy: nullable(
+      g.classification.epistemicStatusAccuracy,
+      0.85,
+      baseline?.classification.epistemicStatusAccuracy
+    ),
+    unresolvedFidelity: nullable(
+      g.unresolved.preservationRate,
+      0.9,
+      baseline?.unresolved.preservationRate
+    ),
+    cannotConcludeFidelity: nullable(
+      g.cannotConclude.preservationRate,
+      0.9,
+      baseline?.cannotConclude.preservationRate
+    ),
+    negationConservation: nullable(
+      g.nuanceConservation.negation.rate,
+      0.98,
+      baseline?.nuanceConservation.negation.rate
+    ),
+    populationConservation: nullable(
+      g.nuanceConservation.population.rate,
+      0.98,
+      baseline?.nuanceConservation.population.rate
+    ),
+    temporalityConservation: nullable(
+      g.nuanceConservation.temporality.rate,
+      0.98,
+      baseline?.nuanceConservation.temporality.rate
+    ),
+    overmerged: maxGate(g.claims.mergedClaimRate, 0.03),
+    oversplit: maxGate(g.claims.overFragmentationRate, 0.05)
+  };
+  return { stage, pass: Object.values(gates).every((gate) => gate.pass), gates };
 }
 
 export { ERROR_CATEGORIES };
