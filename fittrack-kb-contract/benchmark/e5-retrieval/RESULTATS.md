@@ -397,3 +397,62 @@ sujet.
 Le seuil de refus ne peut pas être fixé sur ces données. Il demande un étiquetage en
 aveugle, question par question : *le corpus contient-il de quoi répondre, oui ou non*,
 décidé sans voir le score.
+
+## L'étiquetage en aveugle — la seule mesure valable de la chaîne
+
+Hugo a étiqueté les 30 questions score masqué, ordre brouillé, avec un critère plus strict
+que la consigne : *O = l'extrait apporte réellement de quoi répondre ; parler du même
+exercice ou du même muscle ne suffit pas*. Il a corrigé q.23 de O vers N à la relecture,
+dans le sens qui le désavantage.
+
+**5 utiles sur 30.**
+
+### Le classement porte un vrai signal
+
+**AUC = 0,832**, IC 95 % de Hanley-McNeil **[0,601 ; 1,000]**. Le signal est réel — mais
+l'intervalle est large parce qu'il n'y a que 5 positifs, et sa borne basse frôle le hasard.
+Aucune décision ne devrait s'appuyer sur la valeur ponctuelle.
+
+Quatre des cinq extraits utiles sont dans les six premiers rangs sur trente :
+
+| rang | question | score | |
+|---|---|---|---|
+| 1 | q.28 amplitude réduite | +1,437 | **utile** |
+| 2 | q.03 incliné vs convergente | −0,219 | **utile** (faible, assumé) |
+| 3 | q.15 douleur ou blessure | −0,275 | **utile** |
+| 4 | q.21 trop de volume | −0,290 | |
+| 5 | q.17 monter les reps | −0,419 | |
+| 6 | q.18 chef long du triceps | −0,527 | **utile** |
+| … | | | |
+| 24 | q.24 pecs sur les dips | −5,073 | **utile** |
+
+### Le seuil, lui, n'est pas exploitable
+
+À −0,275 : précision 1,00, rappel 0,60 — trois questions répondues, trois réponses justes.
+Mais cette précision parfaite repose sur **trois points, dont deux signalés incertains** par
+l'étiqueteur lui-même. Si q.03 bascule, elle tombe à 0,67. Le seuil n'est pas robuste et ne
+doit pas être figé sur ces données.
+
+### q.24 : l'échec instructif
+
+Le reclasseur a choisi **le bon extrait** pour cette question — celui qui dit que les dips
+sollicitent fortement le grand pectoral malgré le ressenti. Puis il l'a noté −5,073, au
+milieu du bruit.
+
+Le classement *à l'intérieur* d'une question était juste ; c'est la comparaison *entre*
+questions qui échoue. Les logits d'un cross-encoder ne sont pas calibrés d'une requête à
+l'autre — on lui demandait quelque chose pour quoi il n'a pas été entraîné. Ce n'est pas un
+défaut de modèle qu'un modèle plus gros corrigerait.
+
+## Le plafond réel : le corpus répond à 5 questions sur 30
+
+C'est le résultat qui compte, et il rend les précédents secondaires. **Même une recherche
+parfaite, avec un seuil parfait, rendrait 5 réponses sur 30.**
+
+La cause est un décalage de genre. Le corpus est un document de biomécanique et de lecture
+de preuve : bras de levier, EMG, méta-analyses, niveaux de confiance. Les questions sont des
+questions de coaching : *je stagne depuis un mois, je change ou j'insiste ? un côté pousse
+plus fort, je fais quoi ? combien de reps ?* Les deux parlent de musculation et ne se
+recouvrent presque pas.
+
+Tout le travail de recherche menait à faire trouver des réponses qui ne sont pas là.
