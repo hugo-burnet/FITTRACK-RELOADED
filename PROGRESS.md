@@ -74,7 +74,7 @@ que l'empreinte et le texte des 77 fragments réellement cités.
 **E1 à E4 sont amorcés** sur `master` : tableaux, axes, citations,
 puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
 
-### E5 v0.4 — checkpoint après la tâche 8 (2026-08-25)
+### E5 v0.4 — checkpoint après la tâche 12 (2026-08-25)
 
 Le benchmark GPT-5 v0.3 sur DEV-100 a refusé le passage aux 207 fragments. La reprise v0.4 est
 implémentée et revue jusqu'au prompt, sans lancement payant :
@@ -86,12 +86,14 @@ implémentée et revue jusqu'au prompt, sans lancement payant :
 - prompt `e5-llm-v0.4.0` orienté couverture, protections critiques v0.3 conservées ;
 - dry-run DEV-100 : 100 fragments, zéro appel API, aucune fuite GOLD, estimation `1.3648 USD` ;
 - évaluation status-aware et gates gelées par étage ;
-- suite E5 : 141/141 ; suite complète du contrat : 253/253.
+- replay v0.3 hors ligne, runner piloté par manifeste, outillage du holdout aveugle ;
+- suite E5 : 169/169 ; suite complète du contrat : 281/281.
 
-Vérification de fin de session : typecheck, `npm run test:run` (194 fichiers, 2 116 tests) et
-build FitTrack passent. Vitest exclut `fittrack-kb-contract/` — sans ça, il avale les 24 suites
-`.mjs` écrites pour `node --test` et le deploy GitHub Pages échoue. La suite officielle du
-sous-paquet reste `npm run test:e5-llm` depuis `fittrack-kb-contract/`.
+Vérification de fin de session : typecheck, `npm run test:run` (194 fichiers, 2 116 tests),
+build FitTrack, `npm run check` (48 schémas, 208 instances, 15 invariants), `npm run validate:e5-gold`
+(100 fragments, 186 claims, inchangée) : tout passe. Vitest exclut `fittrack-kb-contract/` — sans ça,
+il avale les suites `.mjs` écrites pour `node --test` et le deploy GitHub Pages échoue. La suite
+officielle du sous-paquet reste `npm run test:e5-llm` depuis `fittrack-kb-contract/`.
 
 La tâche 8 fait entrer trois choses dans les métriques. Le dénominateur « tenté » vient désormais
 de `claimAudit.attempted` : filtrer une claim dangereuse la faisait auparavant disparaître du taux
@@ -102,15 +104,48 @@ seuils du pilote (0,90 / 0,80, sécurité critique, zéro rejet), DEV-100 aux ga
 N/A ne passe que si la même gate a été mesurée et franchie sur DEV-100. Un replay ne reçoit jamais
 de verdict de mise en production.
 
-Piège d'environnement : `fittrack-kb-contract/` a son propre `node_modules`. Dans un worktree neuf
-il faut y lancer `npm ci`, sinon les 24 suites `node --test` échouent sur un `ajv` introuvable —
-ce qui ressemble à une régression du contrat alors que rien n'est cassé.
+La tâche 9 mesure ce que le sauvetage vaut, hors ligne et sans un dollar : les 100 réponses v0.3
+déjà payées sont rejouées à travers le validateur v0.4. Même modèle, même prompt, mêmes réponses,
+seule la validation change. Les **26 rejets globaux tombent à 0**, les claims GOLD appariées passent
+de 111 à 129 — 18 récupérées — le rappel de 0,5968 à 0,6935 et la précision de 0,8102 à 0,8217.
+Vérifié fragment par fragment : aucun n'a perdu une sœur valide. Le plan prévoyait 17 récupérations
+et un rappel ~0,6882 ; l'écart est en faveur du sauvetage.
 
-**Point de reprise : tâche 9** du plan
-`docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md` — la preuve de replay v0.3
-sans appel API. Les tâches 9 à 14 restent à faire. Aucun DEV-20, DEV-100 v0.4, HOLDOUT-30 ni run
-207 n'a été lancé ; tout stage payant exige encore un dry-run et l'approbation explicite de
-l'utilisateur.
+Pour que ce replay mesure v0.4 au lieu de la reproduire, `validate.mjs` a gagné un chemin
+`legacyClaimSalvage` : le DTO v2 ne portait pas de ledger de couverture, donc le sauvetage claim par
+claim ne lui était pas accessible. Exiger la couverture d'une réponse v0.3 inventerait un échec que
+le modèle n'avait aucun moyen d'éviter.
+
+La tâche 10 fait décider le manifeste, plus le mode. Les approbations sont vérifiées **avant** la
+construction de l'adaptateur provider, pour qu'un étage non approuvé ne puisse pas échouer après
+avoir déjà dépensé un appel. Aucun étage v0.4 ne peut sélectionner plus de 100 fragments : les 207
+sont la sortie de production et relèvent du second plan. La tâche 11 prépare le holdout aveugle —
+outillage seulement, rien n'est créé sous `golden/`, et le validateur rejette toute clé qui ne peut
+venir que d'une exécution de modèle.
+
+Deux pièges d'environnement, tous deux liés à Windows :
+
+1. `fittrack-kb-contract/` a son propre `node_modules`. Dans un worktree neuf il faut y lancer
+   `npm ci`, sinon les suites `node --test` échouent sur un `ajv` introuvable — ce qui ressemble à
+   une régression du contrat alors que rien n'est cassé.
+2. Les manifestes ont été gelés depuis un checkout LF. Les hashes source sont donc vérifiés après
+   normalisation des fins de ligne, et `npm run check` réécrit une soixantaine de fichiers sur un
+   checkout CRLF, dont `golden/e5/manifest.json` via un `designReviewHash` calculé sur les octets
+   bruts. **Ces réécritures ne sont pas à indexer** : `git checkout -- fittrack-kb-contract/` après
+   le check. Sans cette note, la réparation évidente serait de regénérer les manifestes, ce qui
+   détruirait le gel qu'ils garantissent.
+
+**Point de reprise : tâche 13** du plan
+`docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md`. Les tâches 1 à 12 sont
+faites ; **les tâches 13 et 14 sont les premiers étages payants et attendent une approbation
+explicite**. Rien n'a été lancé : ni DEV-20, ni DEV-100 v0.4, ni HOLDOUT-30, ni run 207. Aucun
+appel API n'a été émis de toute la session.
+
+Estimations de dry-run, toutes à zéro appel : DEV-20 `0,2752 USD`, DEV-100 `1,3648 USD`,
+HOLDOUT-30 `0,4129 USD`, soit `2,05 USD` attendus pour les trois. À savoir avant d'approuver : le
+plafond **théorique** de DEV-100 est `4,8648 USD`, presque le double du `maxRunCostUsd` de
+`2,50 USD`. Le dry-run passe parce qu'il compare le coût attendu au plafond ; un run qui déraperait
+sur les tokens de sortie serait arrêté en cours par le budget, pas avant.
 
 ## v1.3.1 — livrée et publiée
 
