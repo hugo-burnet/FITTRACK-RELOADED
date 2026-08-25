@@ -199,7 +199,56 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
-### DEV-20 v0.4.2 (2026-08-25) — verdict NO, et **le plateau est atteint**
+### DEV-20 v0.4.3 avec réflexion (2026-08-25) — 7 barrières sur 9, le plateau était faux
+
+Le plafond annoncé après v0.4.2 — « l'itération de prompt est terminée » — était vrai **pour un
+modèle sans réflexion**. GPT-5 était bridé à `reasoningEffort: minimal` depuis le début, pour une
+comparaison avec Qwen3-1.7B qui n'a jamais eu lieu. Or GPT-5 n'est pas le produit : il fabrique le
+corpus dont Qwen3-1.7B sera l'élève, sur téléphone. Brider le professeur au niveau de l'élève ne
+rend pas l'élève meilleur.
+
+Débridé, puis le prompt réajusté pour le nouveau régime (`e5-llm-v0.4.3`) :
+
+| Axe | v0.4.2 sans réfl. | v0.4.2 + réfl. | **v0.4.3 + réfl.** | Seuil |
+|---|---:|---:|---:|---:|
+| rappel | 0,6949 | 0,8644 | **0,9153** | 0,80 ✅ |
+| sur-fusion | 0,1176 | 0,1216 | **0,0159** | 0,03 ✅ |
+| précision | 0,8039 | 0,6892 | **0,8571** | 0,90 |
+| sur-découpage | 0,0847 | 0,2542 | **0,1017** | 0,05 |
+| précision citation | 0,8824 | 0,7308 | **0,9000** | 0,97 |
+| `epistemicStatus` | 0,5000 | 0,3958 | 0,4314 | 0,85 |
+| `knowledgeType` | 0,7805 | 0,8400 | 0,7547 | 0,90 |
+| UNRESOLVED | 0,6786 | 0,8411 | 0,7838 | 0,90 |
+
+Deux enseignements. La réflexion **débloque le rappel** — premier seuil franchi de toute la
+session, jamais approché par trois passes de prompt. Et elle a d'abord fait exploser le
+sur-découpage à 0,2542, parce que la consigne « coupe aux articulations » ajoutée en v0.4.1 était
+une béquille pour un modèle qui ne réfléchissait pas ; une fois qu'il réfléchit, elle le fait
+tomber de l'autre côté.
+
+v0.4.3 remplace cette règle par les cas d'échec réellement observés : ne jamais détacher d'une
+affirmation les valeurs statistiques qui l'étayent (« SMD −0,210 », « p = 0,064 »), son fondement
+épistémique, ni un complément contrastif qui n'a de sens que relativement. Résultat : les claims
+produites passent de 74 à 63 pour 59 attendues, et **la sur-fusion tombe à 0,0159 — elle franchit
+même le seuil strict de DEV-100**, contre 0,2292 au départ. Quatorze fois mieux.
+
+**Il reste deux barrières.** La précision à 0,8571 contre 0,90 — le seul écart métrique, et il est
+faible. Et un débordement clinique : sur `frag.e5f3.00025760`, le modèle tente « douleur définie
+par l'acceptabilité du patient plutôt que par un chiffre universel ». **La claim est filtrée et
+n'atteint pas la sortie** — le garde-fou fonctionne — mais c'est un comportement qui n'apparaît
+qu'avec la réflexion, dans les deux runs qui l'activent. À ne pas expliquer par la métrique : le
+modèle tente réellement quelque chose de dangereux qu'il ne tentait pas avant.
+
+Question de fond soulevée, non tranchée : la gate compte les tentatives, pas les fuites. C'est le
+choix de la tâche 8 — filtrer ne doit pas flatter le score. Mais un système qui bloque une claim
+dangereuse ne devrait peut-être pas être noté comme s'il l'avait publiée. **Je ne redéfinis pas
+cette gate après qu'un run l'a ratée** ; c'est un arbitrage à faire à froid.
+
+Reste stable : 0 rejet, 0 hallucination, 0 invention, **négation 23/23**.
+
+Coût : `1,1716 USD`. Total de la session : **3,53 USD**.
+
+### DEV-20 v0.4.2 (2026-08-25) — verdict NO, et **le plateau est atteint pour un modèle bridé**
 
 Troisième run payant, `run.e5-llm-v0.01e5a48c0eb7ca20`, 21 appels, **0,2347 USD**. Total dépensé
 sur la session : **0,703 USD**.
