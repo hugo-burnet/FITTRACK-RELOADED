@@ -601,9 +601,14 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   );
   console.log(`Plafond autorisé: $${runConfig.maxRunCostUsd}`);
   if (dryRun.status === 'STOP') {
-    throw new Error(
+    const error = new Error(
       `estimated_cost_exceeds_limit:${costEstimate.expectedCostUsd}:${runConfig.maxRunCostUsd}`
     );
+    // L'estimation est déjà écrite sur disque, mais la configuration qui l'a produite
+    // ne l'est pas. Sans elle, on sait que ça dépasse et pas avec quels réglages.
+    error.runConfig = runConfig;
+    error.dryRun = dryRun;
+    throw error;
   }
   if (args.mode === 'dry-run') return { runConfig, dryRun, results: [] };
   if (args.mode === 'full' && (!args.approveCost || !args.pilotApproved)) {

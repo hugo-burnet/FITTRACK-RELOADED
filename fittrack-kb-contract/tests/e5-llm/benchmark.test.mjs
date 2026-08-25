@@ -694,7 +694,14 @@ test('EMG to hypertrophy and biomechanics to risk are hard rejections', () => {
 test('dry-run covers exactly 100 manifest fragments with no API and writes nothing in curated', async () => {
   const curated = join(root, 'curated');
   const before = hashTree(curated);
-  const result = await runBenchmark(['--mode', 'dry-run']);
+  // Le dry-run sort en STOP si l'estimation dépasse `maxRunCostUsd`. C'est un
+  // arbitrage budgétaire de l'utilisateur, pas une propriété du dry-run : ce test
+  // garde ce que le dry-run promet — zéro appel, rien d'écrit dans curated — quel
+  // que soit le plafond configuré.
+  const result = await runBenchmark(['--mode', 'dry-run']).catch((error) => {
+    if (!/^estimated_cost_exceeds_limit:/u.test(error.message)) throw error;
+    return { runConfig: error.runConfig, dryRun: error.dryRun, results: [] };
+  });
   const after = hashTree(curated);
   assert.equal(result.dryRun.fragmentCount, 100);
   assert.equal(result.dryRun.apiCalls, 0);
