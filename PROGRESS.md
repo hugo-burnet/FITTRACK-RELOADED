@@ -199,6 +199,39 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### DEV-20 v0.4.2 (2026-08-25) — verdict NO, et **le plateau est atteint**
+
+Troisième run payant, `run.e5-llm-v0.01e5a48c0eb7ca20`, 21 appels, **0,2347 USD**. Total dépensé
+sur la session : **0,703 USD**.
+
+| Axe | v0.4.0 | v0.4.1 | v0.4.2 | Seuil |
+|---|---:|---:|---:|---:|
+| UNRESOLVED preservation | 0,5060 | 0,5222 | **0,6786** | 0,90 |
+| sur-résolutions réelles | 41 | 43 | **27** | sur 84 axes |
+| sur-fusion | 0,2292 | 0,1400 | **0,1176** | 0,03 |
+| précision | 0,8542 | 0,8600 | **0,8039** | 0,90 |
+| rappel | 0,6949 | 0,7288 | **0,6949** | 0,80 |
+| sur-découpage | 0,0508 | 0,0678 | **0,0847** | 0,05 |
+| précision citation | 0,9412 | 1,0000 | **0,8824** | 0,97 |
+
+La consigne « dans le doute, abstiens-toi » a fait exactement ce qu'on lui demandait : les
+sur-résolutions tombent de 43 à 27, soit **−37 %**. Et elle a dégradé la précision, le rappel, le
+découpage et les citations.
+
+**C'est le troisième run de suite où le même schéma se répète** : une instruction ciblée améliore
+sa cible et casse une voisine. v0.4.1 réparait la fusion et aggravait le découpage ; v0.4.2 répare
+l'abstention et aggrave la précision. Le budget d'attention du prompt est saturé — ajouter une
+règle en déplace une autre.
+
+**Nommons le plafond : l'itération de prompt est terminée.** Continuer coûte 0,25 USD par passe
+pour déplacer les chiffres latéralement. Ce qui reste à gagner ne viendra pas d'une consigne de
+plus.
+
+Ce qui tient, pour la troisième fois consécutive : zéro rejet global, zéro hallucination, zéro
+citation, source ou diagnostic inventé, zéro débordement clinique, et **négation conservée à 100 %
+sur les trois runs** (19/19, 16/16, 14/14) — après correction d'une fausse alerte de la métrique,
+qui exigeait la réutilisation littérale de la particule de négation au lieu de mesurer la polarité.
+
 ### Bug de spécification : le prompt et la GOLD ne parlaient pas la même langue (2026-08-25)
 
 Le schéma déclare quatre états de résolution — `RESOLVED`, `UNRESOLVED`, `NOT_STATED`,
