@@ -66,3 +66,63 @@ Le « je ne sais pas » ne peut pas venir d'un score de recherche. Il devra veni
 la piste la plus plausible étant de retrouver généreusement puis de demander au modèle
 génératif lui-même si les affirmations retrouvées répondent réellement à la question, avec
 le droit de refuser. C'est un mécanisme différent, à écrire et à mesurer.
+
+---
+
+# Le refus par le modèle — première mesure
+
+Puisque aucun score de recherche ne distingue une question couverte d'une question hors
+périmètre, la piste restante était de laisser le **modèle génératif** trancher : on lui
+donne les 4 affirmations les plus proches et le droit explicite de répondre
+`HORS_CORPUS`.
+
+Mesuré le 2026-08-25, entièrement dans le navigateur. Modèle : `Qwen2.5-0.5B-Instruct`
+quantisé en q4, index de 337 affirmations (fragments courts écartés).
+
+## Résultat : le 0,5 B ne sait pas le faire
+
+| | |
+|---|---|
+| Refuse à raison (hors périmètre) | **4 / 9** |
+| Refuse à tort (dans le périmètre) | **8 / 21** |
+| Répond quand il le doit | 13 / 21 |
+| Aurait dû refuser | 5 / 9 |
+
+Il refuse 44 % des questions hors périmètre et 38 % des questions couvertes. **C'est à
+peine mieux que le hasard** : la décision ne porte pas d'information.
+
+Deux exemples qui montrent le mode d'échec :
+
+- « je sens surtout mes épaules sur les pecs » → **HORS_CORPUS**, alors que la recherche
+  lui avait donné *la sensation subjective peut se dissocier de l'activation EMG mesurée*,
+  qui répond exactement.
+- « entre 6-8 reps et 10-15 reps » → répond en citant *le retour est un continuum :
+  participation modifiée, retour à l'entraînement…*, une affirmation sur la reprise après
+  blessure. Hors sujet, affirmé avec assurance.
+
+## Ce que ça prouve, et ce que ça ne prouve pas
+
+Ça prouve qu'un modèle de 0,5 milliard de paramètres est trop petit pour cette décision.
+
+Ça ne dit **rien** sur Qwen3-1.7B, la cible réelle — trois fois plus gros. Le mécanisme
+lui-même n'est pas invalidé : il est écrit, mesurable, et la mesure est reproductible en
+une commande.
+
+## Ce qui bloque la suite
+
+Tester la vraie cible demande un runtime local. Aucun n'est installé sur la machine — ni
+llama.cpp, ni ollama. En WebAssembly, les 30 jugements ont pris une vingtaine de minutes
+avec un 0,5 B ; un 1,7 B en prendrait plus d'une heure.
+
+Avec un runtime local, la même mesure prend deux minutes et devient itérable.
+
+## Comment rejouer
+
+```bash
+node fittrack-kb-contract/tools/e5-retrieval/serve-lab.mjs 5210
+# puis ouvrir http://localhost:5210/judge-lab.html
+# ?model=... pour changer de modèle
+```
+
+Le serveur est volontairement minimal et sans dépendance : le serveur de dev Vite
+rechargeait la page dès qu'un fichier bougeait, et a tué un index à 320 sur 337.

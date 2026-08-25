@@ -52,3 +52,8 @@ Z-Anatomy/
 # Prises brutes de la voix, en PCM. Gardées pour qu'un bug d'analyse ne coûte
 # jamais une seconde génération ; sans valeur une fois les mp3 écrits.
 .voice-cache/
+
+# Banc d essai local : copies temporaires servies par le dev server
+public/lab/
+public/judge-lab.html
+public/embed-lab.html

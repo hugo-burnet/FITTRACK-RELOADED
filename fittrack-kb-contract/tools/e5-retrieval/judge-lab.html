@@ -1,0 +1,126 @@
+<!-- Banc d'essai du refus : le modele genératif juge lui-meme si les affirmations
+     retrouvees repondent a la question, avec le droit explicite de refuser.
+     C'est la reponse au constat mesure precedemment : aucun score de recherche ne
+     distingue une question couverte d'une question hors perimetre.
+
+     Tout tourne dans le navigateur — environnement reel du telephone.
+     Pour l'executer : copier dans public/ avec les JSON sous public/lab/, puis ouvrir
+     /FITTRACK-RELOADED/judge-lab.html. Volontairement HORS de public/ : ne doit pas
+     partir dans le build de la PWA.
+-->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Banc d'essai — le modèle sait-il refuser ?</title>
+<style>
+  body { font: 14px/1.55 system-ui, sans-serif; margin: 2rem; max-width: 62rem; }
+  #status { font-family: ui-monospace, monospace; padding: .75rem; background: #f2f4f2; border-radius: 4px; }
+  .q { border-top: 1px solid #ddd; padding-top: .7rem; margin-top: .7rem; }
+  .ans { margin-left: 1rem; color: #333; }
+  .refus { color: #9A5F22; font-weight: 700; }
+  .ok { color: #2F5D50; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>Le modèle sait-il refuser ?</h1>
+<div id="status">initialisation…</div>
+<div id="out"></div>
+
+<script type="module">
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6';
+env.allowLocalModels = false;
+
+const MODEL = new URLSearchParams(location.search).get('model') || 'onnx-community/Qwen2.5-0.5B-Instruct';
+const TOP_K = 4;
+// Ecarter les fragments trop courts : mesure precedente, ils se placent au milieu de
+// l'espace semantique et attirent n'importe quelle question.
+const MIN_LEN = 60;
+
+const status = document.getElementById('status');
+const out = document.getElementById('out');
+const say = (m) => { status.textContent = m; console.log(m); };
+const dot = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; };
+
+// Le refus doit etre un jeton exact, pas une tournure a interpreter : on mesure une
+// decision, pas une politesse.
+function buildPrompt(question, claims) {
+  const list = claims.map((c, i) => `[${i + 1}] ${c.text}`).join('\n');
+  return `Tu réponds à une question de musculation en t'appuyant UNIQUEMENT sur les affirmations ci-dessous, extraites d'un corpus vérifié.
+
+AFFIRMATIONS DISPONIBLES
+${list}
+
+QUESTION
+${question}
+
+RÈGLES
+- Si les affirmations ne traitent pas du sujet de la question, réponds exactement : HORS_CORPUS
+- Sinon, réponds en une seule phrase, en citant entre crochets les numéros utilisés.
+- N'ajoute jamais une information absente des affirmations.
+
+RÉPONSE`;
+}
+
+try {
+  say('chargement du corpus…');
+  const corpus = await (await fetch('./lab/corpus.json')).json();
+  const fragments = await (await fetch('./lab/fragments.json')).json();
+  const questions = await (await fetch('./lab/questions.json')).json();
+  const headings = new Map(fragments.fragments.map((f) => [f.fragmentId, (f.headingPath || []).join(' › ')]));
+
+  say('modèle d\'embedding…');
+  const embed = await pipeline('feature-extraction', 'Xenova/multilingual-e5-small', { dtype: 'q8' });
+
+  const claims = corpus.claims
+    .map((c) => ({ fragmentId: c.fragmentId, text: c.rawStatement.replace(/\s+/g, ' ') }))
+    .filter((c) => c.text.length >= MIN_LEN);
+
+  const vectors = [];
+  for (let i = 0; i < claims.length; i += 8) {
+    const batch = claims.slice(i, i + 8).map((c) => `passage: ${headings.get(c.fragmentId) ?? ''} ${c.text}`);
+    vectors.push(...(await embed(batch, { pooling: 'mean', normalize: true })).tolist());
+    say(`index : ${Math.min(i + 8, claims.length)} / ${claims.length}`);
+  }
+
+  const queryVectors = (await embed(
+    questions.questions.map((q) => `query: ${q.text}`),
+    { pooling: 'mean', normalize: true }
+  )).tolist();
+
+  say(`chargement du modèle génératif ${MODEL} (peut prendre plusieurs minutes)…`);
+  const generate = await pipeline('text-generation', MODEL, { dtype: 'q4' });
+
+  const results = [];
+  for (let qi = 0; qi < questions.questions.length; qi += 1) {
+    const q = questions.questions[qi];
+    const top = vectors
+      .map((v, ci) => ({ ci, score: dot(queryVectors[qi], v) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, TOP_K)
+      .map(({ ci }) => claims[ci]);
+
+    const messages = [{ role: 'user', content: buildPrompt(q.text, top) }];
+    const output = await generate(messages, { max_new_tokens: 90, do_sample: false });
+    const raw = output[0].generated_text;
+    const answer = (Array.isArray(raw) ? raw.at(-1).content : String(raw)).trim();
+    const refused = /HORS_CORPUS/i.test(answer);
+
+    results.push({ questionId: q.questionId, question: q.text, refused, answer, retrieved: top.map((c) => c.text) });
+    say(`jugement : ${qi + 1} / ${questions.questions.length}`);
+
+    out.insertAdjacentHTML('beforeend',
+      `<div class="q"><strong>${q.questionId}</strong> ${q.question ?? q.text}` +
+      `<div class="ans ${refused ? 'refus' : 'ok'}">${refused ? 'REFUS' : answer.slice(0, 220)}</div></div>`);
+  }
+
+  window.__judge = { model: MODEL, topK: TOP_K, minLen: MIN_LEN, indexed: claims.length, results };
+  say(`terminé — ${results.length} jugements, ${results.filter((r) => r.refused).length} refus`);
+} catch (error) {
+  say(`ERREUR : ${error?.message ?? error}`);
+  console.error(error);
+  window.__error = String(error?.stack ?? error);
+}
+</script>
+</body>
+</html>
