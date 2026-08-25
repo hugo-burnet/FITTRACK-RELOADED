@@ -338,9 +338,24 @@ export function evaluateBenchmark(outputRoot = defaultOutputRoot, options = {}) 
   return { metrics, errors: result.errors, passResult, samples, audit };
 }
 
+function argsOf(argv) {
+  const args = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    if (argv[index] === '--output') args.output = argv[++index];
+    else if (argv[index] === '--stage') args.stage = argv[++index];
+    else if (argv[index] === '--dev100-metrics') args.dev100MetricsPath = argv[++index];
+    else throw new Error(`unknown_argument:${argv[index]}`);
+  }
+  return args;
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    const result = evaluateBenchmark();
+    const args = argsOf(process.argv.slice(2));
+    const result = evaluateBenchmark(args.output ?? defaultOutputRoot, {
+      stage: args.stage,
+      dev100Metrics: args.dev100MetricsPath ? readJson(args.dev100MetricsPath) : undefined
+    });
     console.log(
       result.passResult.replay
         ? 'E5-LLM replay: non-regression check only, no release verdict.'

@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "stage": "HOLDOUT_30",
+  "manifestPath": "benchmark/e5/v0/manifests/holdout-30.json",
+  "fragmentCount": 30,
+  "split": {
+    "F2": 15,
+    "F3": 15
+  },
+  "goldenLeakChecks": 30,
+  "apiCalls": 0,
+  "repairPolicy": {
+    "maxFullRetries": 0,
+    "maxAnchorRepairRetries": 1,
+    "maxRepairOutputTokens": 1000
+  },
+  "costEstimate": {
+    "approximationMethod": "UTF-8 bytes / 4 for input; configured expected and hard maximum output tokens",
+    "approximateInputTokens": 90329,
+    "expectedOutputTokens": 30000,
+    "maximumOutputTokens": 135000,
+    "configuredRatesUsdPerMillionTokens": {
+      "input": 1.25,
+      "output": 10,
+      "basis": "User-configured OpenRouter rates for openai/gpt-5 on 2026-08-24"
+    },
+    "expectedCostUsd": 0.4129,
+    "maximumConfiguredCostUsd": 1.4629
+  },
+  "maxRunCostUsd": 2.5
+}

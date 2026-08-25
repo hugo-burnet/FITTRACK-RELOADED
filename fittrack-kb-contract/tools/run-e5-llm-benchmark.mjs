@@ -11,7 +11,12 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createLlamaCppAdapter, createOpenRouterAdapter } from './e5-llm/adapters.mjs';
 import { extractProseFragment } from './e5-llm/extractor.mjs';
-import { loadBenchmarkInputs, PILOT_FRAGMENT_IDS } from './e5-llm/inputs.mjs';
+import {
+  APPROVAL_FLAGS,
+  loadBenchmarkInputs,
+  PILOT_FRAGMENT_IDS,
+  STAGE_REQUIREMENTS
+} from './e5-llm/inputs.mjs';
 import {
   createE5ProviderPredictionSchema,
   createE5AnchorRepairSchema,
@@ -154,22 +159,65 @@ export function createBudgetedAdapter(adapter, runConfig, onLedgerChange) {
   };
 }
 
+const STAGE_BY_MODE = {
+  'dev-20': 'DEV_20',
+  'dev-100': 'DEV_100',
+  'holdout-30': 'HOLDOUT_30'
+};
+
 function argsOf(argv) {
   const args = {
     mode: 'dry-run',
     configFile: DEFAULT_RUN_CONFIG_FILE,
     approveCost: false,
-    pilotApproved: false
+    pilotApproved: false,
+    dev20Approved: false,
+    dev100Frozen: false,
+    stage: null,
+    manifest: null
   };
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--mode') args.mode = argv[++index];
     else if (argv[index] === '--config') args.configFile = argv[++index];
+    else if (argv[index] === '--stage') args.stage = argv[++index];
+    else if (argv[index] === '--manifest') args.manifest = argv[++index];
     else if (argv[index] === '--approve-cost') args.approveCost = true;
     else if (argv[index] === '--pilot-approved') args.pilotApproved = true;
+    else if (argv[index] === '--dev20-approved') args.dev20Approved = true;
+    else if (argv[index] === '--dev100-frozen') args.dev100Frozen = true;
     else throw new Error(`unknown_argument:${argv[index]}`);
   }
-  if (!['dry-run', 'pilot', 'mini', 'full'].includes(args.mode)) throw new Error(`invalid_mode:${args.mode}`);
+  const modes = ['dry-run', 'pilot', 'mini', 'full', 'dev-20', 'dev-100', 'holdout-30'];
+  if (!modes.includes(args.mode)) throw new Error(`invalid_mode:${args.mode}`);
+  if (!args.stage) args.stage = STAGE_BY_MODE[args.mode] ?? null;
   return args;
+}
+
+function holdoutGoldValidated(benchmarkRootPath) {
+  const marker = join(benchmarkRootPath, 'holdout-30', 'validation.json');
+  if (!existsSync(marker)) return false;
+  try {
+    return JSON.parse(readFileSync(marker, 'utf8')).status === 'VALIDATED';
+  } catch {
+    return false;
+  }
+}
+
+// Toutes les approbations sont verifiees AVANT la construction de l adaptateur
+// provider : un etage non approuve ne doit pas pouvoir echouer apres avoir deja
+// depense un appel.
+export function assertStageApprovals(stage, args, benchmarkRootPath = benchmarkRoot) {
+  const requirements = STAGE_REQUIREMENTS[stage];
+  if (!requirements) throw new Error(`unknown_benchmark_stage:${stage}`);
+  for (const approval of requirements.approvals) {
+    if (!args[approval]) {
+      throw new Error(`stage_requires_approval:${stage}:${APPROVAL_FLAGS[approval]}`);
+    }
+  }
+  if (stage === 'HOLDOUT_30' && !holdoutGoldValidated(benchmarkRootPath)) {
+    throw new Error('holdout_gold_not_validated');
+  }
+  return true;
 }
 
 function loadMiniComparisonInputs(benchmark) {
@@ -410,15 +458,39 @@ async function runWithConcurrency(items, concurrency, worker) {
 export async function runBenchmark(argv = process.argv.slice(2)) {
   const args = argsOf(argv);
   const { config: base, configFile } = loadRunConfig(benchmarkRoot, args.configFile);
-  const benchmark = loadBenchmarkInputs(root);
+  const stageRequirements = args.stage ? STAGE_REQUIREMENTS[args.stage] : null;
+  if (args.stage && !stageRequirements) throw new Error(`unknown_benchmark_stage:${args.stage}`);
+  const benchmark = loadBenchmarkInputs(
+    root,
+    stageRequirements
+      ? {
+          manifestPath: args.manifest ?? stageRequirements.manifest,
+          expectedCounts: stageRequirements.counts
+        }
+      : {}
+  );
+  // Le prompt et le DTO du code font foi. Une config qui en epingle d autres a ete
+  // ecrite pour une autre version de l extracteur : la laisser passer produirait un
+  // run dont on ne saurait plus dire quel protocole il mesure.
+  if (base.promptVersion && base.promptVersion !== PROMPT_VERSION) {
+    throw new Error(`config_prompt_version_mismatch:${base.promptVersion}:${PROMPT_VERSION}`);
+  }
+  if (base.providerDtoVersion && base.providerDtoVersion !== PROVIDER_DTO_VERSION) {
+    throw new Error(
+      `config_provider_dto_version_mismatch:${base.providerDtoVersion}:${PROVIDER_DTO_VERSION}`
+    );
+  }
   const providerPredictionSchema = createE5ProviderPredictionSchema(benchmark.predictionSchema);
   const providerProjection = projectProviderSchema(providerPredictionSchema);
   const anchorRepairSchema = createE5AnchorRepairSchema();
   const repairProjection = projectProviderSchema(anchorRepairSchema);
   const mini = args.mode === 'mini' ? loadMiniComparisonInputs(benchmark) : null;
-  const selectedInputs = args.mode === 'pilot'
-    ? PILOT_FRAGMENT_IDS.map((id) => benchmark.inputs.find((item) => item.fragment.fragmentId === id))
-    : mini?.selectedInputs ?? benchmark.inputs;
+  // Le manifeste decide, pas le mode : un etage ne peut pas elargir sa selection.
+  const selectedInputs = stageRequirements
+    ? benchmark.inputs
+    : args.mode === 'pilot'
+      ? PILOT_FRAGMENT_IDS.map((id) => benchmark.inputs.find((item) => item.fragment.fragmentId === id))
+      : mini?.selectedInputs ?? benchmark.inputs;
   if (selectedInputs.some((item) => !item)) throw new Error('pilot_fragment_missing');
   const promptInputs = selectedInputs.map((item) => {
     const prompt = buildPromptInput({
@@ -442,8 +514,12 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   const costEstimate = estimateCost(runConfig, promptInputs);
   const dryRun = {
     status: costEstimate.expectedCostUsd <= runConfig.maxRunCostUsd ? 'PASS' : 'STOP',
+    stage: args.stage ?? null,
+    manifestPath: stageRequirements ? benchmark.manifestPath : null,
     fragmentCount: selectedInputs.length,
-    split: args.mode === 'pilot'
+    split: stageRequirements
+      ? benchmark.counts
+      : args.mode === 'pilot'
       ? { F2: 2, F3: 1 }
       : args.mode === 'mini'
         ? selectedInputs.reduce(
@@ -464,15 +540,22 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
     costEstimate,
     maxRunCostUsd: runConfig.maxRunCostUsd
   };
-  const outputRoot = args.mode === 'pilot'
-    ? join(benchmarkRoot, 'pilot', runConfig.runVariant)
-    : args.mode === 'mini'
-      ? join(miniComparisonRoot, 'runs', runConfig.runVariant)
-    : args.mode === 'full'
-      ? join(benchmarkRoot, 'runs', runConfig.runVariant)
-      : benchmarkRoot;
+  // La racine porte l etage et le runId : un run audite n est jamais ecrase par le
+  // suivant, et persistResult refuse deja d ecrire sur un artefact existant.
+  const outputRoot = stageRequirements && args.mode !== 'dry-run'
+    ? join(benchmarkRoot, stageRequirements.outputRoot(runConfig.runId))
+    : args.mode === 'pilot'
+      ? join(benchmarkRoot, 'pilot', runConfig.runVariant)
+      : args.mode === 'mini'
+        ? join(miniComparisonRoot, 'runs', runConfig.runVariant)
+        : args.mode === 'full'
+          ? join(benchmarkRoot, 'runs', runConfig.runVariant)
+          : benchmarkRoot;
   const dryRunPath = args.mode === 'dry-run'
-    ? join(benchmarkRoot, `dry-run.${runConfig.runVariant}.${PROMPT_VERSION}.json`)
+    ? join(
+        benchmarkRoot,
+        `dry-run.${args.stage ? `${args.stage}.` : ''}${runConfig.runVariant}.${PROMPT_VERSION}.json`
+      )
     : join(outputRoot, 'dry-run.json');
   writeJson(dryRunPath, dryRun);
   console.log(`Dry-run PASS: ${selectedInputs.length} fragments; aucune fuite GOLD; 0 appel API`);
@@ -489,6 +572,7 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   if (args.mode === 'full' && (!args.approveCost || !args.pilotApproved)) {
     throw new Error('full_run_requires_--approve-cost_and_--pilot-approved');
   }
+  if (stageRequirements) assertStageApprovals(args.stage, args);
   runConfig.configuredConcurrency = runConfig.concurrency;
   runConfig.executionConcurrency = args.mode === 'full' ? 1 : runConfig.concurrency;
   const apiKey = base.provider === 'openrouter'
