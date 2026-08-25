@@ -1,0 +1,207 @@
+{
+  "fragmentId": "frag.e5f2.00043879",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00043879",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.53b2817c42b6917e",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une comparaison EMG et cinématique de squats unilatéraux sous différentes conditions de stabilité montre des différences d'activation et de contrôle moteur selon le niveau de stabilité requis",
+        "supportSpans": [
+          {
+            "text": "Une comparaison EMG et cinématique de squats unilatéraux sous différentes conditions de stabilité montre des différences d'activation et de contrôle moteur selon le niveau de stabilité requis",
+            "relativeStartByte": 0,
+            "relativeEndByte": 198,
+            "absoluteStartByte": 43879,
+            "absoluteEndByte": 44077
+          },
+          {
+            "text": "[Kinematic and EMG Comparison of Unilateral Squats Under Different Stabilities](http://www.thieme-connect.de/DOI/DOI?10.1055/a-1195-1039)",
+            "relativeStartByte": 200,
+            "relativeEndByte": 337,
+            "absoluteStartByte": 44079,
+            "absoluteEndByte": 44216
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "EMG and kinematic comparison implies biomechanical measures, not clinical outcomes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study",
+              "emg_study"
+            ],
+            "reason": "Explicitly mentions EMG and kinematic comparison study."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Statement reports differences in activation (EMG) and motor control across stability conditions."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No explicit strength or certainty qualifiers provided."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "EMG and kinematic comparison implies biomechanical measures, not clinical outcomes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study",
+              "emg_study"
+            ],
+            "reason": "Explicitly mentions EMG and kinematic comparison study."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.3b83d077892029de"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "emg_content",
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.4a4ce845571f34ef",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une étude comparant l'activation musculaire et la cinématique du développé couché unilatéral sur surface stable contre instable, avec un ou deux haltères, illustre concrètement comment le degré de stabilité modifie la sollicitation",
+        "supportSpans": [
+          {
+            "text": "Une étude comparant l'activation musculaire et la cinématique du développé couché unilatéral sur surface stable contre instable, avec un ou deux haltères, illustre concrètement comment le degré de stabilité modifie la sollicitation",
+            "relativeStartByte": 340,
+            "relativeEndByte": 581,
+            "absoluteStartByte": 44219,
+            "absoluteEndByte": 44460
+          },
+          {
+            "text": "[Differences in Unilateral Chest Press Activation, Stable vs Unstable](https://peerj.com/articles/1365)",
+            "relativeStartByte": 583,
+            "relativeEndByte": 686,
+            "absoluteStartByte": 44462,
+            "absoluteEndByte": 44565
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Focuses on activation and kinematics; no clinical outcomes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study",
+              "emg_study"
+            ],
+            "reason": "Mentions activation (EMG proxy) and kinematics comparison study."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Describes observed changes in activation and kinematics with stability levels in unilateral chest press."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No explicit certainty descriptors in the fragment."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Focuses on activation and kinematics; no clinical outcomes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study",
+              "emg_study"
+            ],
+            "reason": "Mentions activation (EMG proxy) and kinematics comparison study."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.7a7b63c156a7ef59"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "emg_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

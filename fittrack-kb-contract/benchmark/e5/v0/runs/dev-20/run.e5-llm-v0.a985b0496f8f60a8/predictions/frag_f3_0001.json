@@ -1,0 +1,543 @@
+{
+  "fragmentId": "frag.f3.0001",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.a985b0496f8f60a8",
+    "fragmentId": "frag.f3.0001",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.a3f943da98aaded7",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».",
+        "supportSpans": [
+          {
+            "text": "« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».",
+            "relativeStartByte": 5,
+            "relativeEndByte": 91,
+            "absoluteStartByte": 1564,
+            "absoluteEndByte": 1650
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.ea419b7d9e3bda92",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Des exercices tolérablement douloureux peuvent produire des résultats comparables",
+        "supportSpans": [
+          {
+            "text": "Des exercices tolérablement douloureux peuvent produire des résultats comparables",
+            "relativeStartByte": 94,
+            "relativeEndByte": 177,
+            "absoluteStartByte": 1653,
+            "absoluteEndByte": 1736
+          },
+          {
+            "text": "dans certaines douleurs chroniques",
+            "relativeStartByte": 229,
+            "relativeEndByte": 263,
+            "absoluteStartByte": 1788,
+            "absoluteEndByte": 1822
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c1f9eef136b9ebeb"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "exercices tolérablement douloureux",
+          "certaines douleurs chroniques"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.aa3d88f82b4a4b75",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "voire un petit avantage antalgique à court terme dans certaines douleurs chroniques",
+        "supportSpans": [
+          {
+            "text": "Des exercices tolérablement douloureux",
+            "relativeStartByte": 94,
+            "relativeEndByte": 133,
+            "absoluteStartByte": 1653,
+            "absoluteEndByte": 1692
+          },
+          {
+            "text": "voire un petit avantage antalgique à court terme dans certaines douleurs chroniques",
+            "relativeStartByte": 179,
+            "relativeEndByte": 263,
+            "absoluteStartByte": 1738,
+            "absoluteEndByte": 1822
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c1f9eef136b9ebeb"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "exercices tolérablement douloureux",
+          "certaines douleurs chroniques",
+          "court terme"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.4277c91b23219b1c",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "sans supériorité durable démontrée",
+        "supportSpans": [
+          {
+            "text": "Des exercices tolérablement douloureux",
+            "relativeStartByte": 94,
+            "relativeEndByte": 133,
+            "absoluteStartByte": 1653,
+            "absoluteEndByte": 1692
+          },
+          {
+            "text": "sans supériorité durable démontrée",
+            "relativeStartByte": 265,
+            "relativeEndByte": 303,
+            "absoluteStartByte": 1824,
+            "absoluteEndByte": 1862
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c1f9eef136b9ebeb"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "exercices tolérablement douloureux",
+          "durable"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a4119c72c72d2900",
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "ce n’est ni une obligation d’avoir mal",
+        "supportSpans": [
+          {
+            "text": "ce n’est ni une obligation d’avoir mal",
+            "relativeStartByte": 305,
+            "relativeEndByte": 347,
+            "absoluteStartByte": 1864,
+            "absoluteEndByte": 1906
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content",
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.db7e70b4f914eb80",
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "ni une permission d’ignorer une aggravation",
+        "supportSpans": [
+          {
+            "text": "ni une permission d’ignorer une aggravation",
+            "relativeStartByte": 348,
+            "relativeEndByte": 393,
+            "absoluteStartByte": 1907,
+            "absoluteEndByte": 1952
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content",
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "fragmentId": "frag.f3.0012",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.f3.0012",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.3b1531712a74fd3e",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "la règle était au plus 5/10 pendant ou immédiatement après, avec retour au niveau pré-activité le lendemain matin",
+        "supportSpans": [
+          {
+            "text": "Dans un essai pilote de tendinopathie patellaire",
+            "relativeStartByte": 2,
+            "relativeEndByte": 50,
+            "absoluteStartByte": 10650,
+            "absoluteEndByte": 10698
+          },
+          {
+            "text": "la règle était au plus 5/10 pendant ou immédiatement après, avec retour au niveau pré-activité le lendemain matin",
+            "relativeStartByte": 52,
+            "relativeEndByte": 171,
+            "absoluteStartByte": 10700,
+            "absoluteEndByte": 10819
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.d2243fdefc92862d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "tendinopathie patellaire"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

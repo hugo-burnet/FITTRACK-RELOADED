@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.f2.0003",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.f2.0003\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"1. Anatomie fonctionnelle par groupe musculaire\",\n      \"1.6 Triceps brachial (chefs long, latéral, médial)\"\n    ],\n    \"rawText\": \"Ce point anatomique a une conséquence directement démontrée par un essai contrôlé : l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines ([Nunes et al., 2022, *Eur J Sport Sci*](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)). **Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)** — l'un des exemples les plus solides de tout ce rapport reliant position articulaire, longueur musculaire et hypertrophie régionale mesurée. Conséquence pratique : les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Ce point anatomique a une conséquence directement démontrée par un essai contrôlé : l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines ([Nunes et al.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \", 2022, *Eur J Sport Sci*](https://onlinelibrary.\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"wiley.\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"com/doi/10.\"\n    },\n    {\n      \"unitIndex\": 4,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"1080/17461391.\"\n    },\n    {\n      \"unitIndex\": 5,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"2022.\"\n    },\n    {\n      \"unitIndex\": 6,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"2100279)).\"\n    },\n    {\n      \"unitIndex\": 7,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"**Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)** — l'un des exemples les plus solides de tout ce rapport reliant position articulaire, longueur musculaire et hypertrophie régionale mesurée.\"\n    },\n    {\n      \"unitIndex\": 8,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Conséquence pratique : les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long.\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.c26ca4cf801ca5ab\",\n      \"handle\": \"cit.f2.0003.01\",\n      \"rawLabel\": \"Nunes et al., 2022, *Eur J Sport Sci*\",\n      \"markdown\": \"[Nunes et al., 2022, *Eur J Sport Sci*](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)\",\n      \"relativeStartByte\": 459,\n      \"relativeEndByte\": 565\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":2,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":3,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":4,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":5,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":6,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":7,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":8,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Outcome hypertrophie comparée entre positions d'exercice, rapporté avec citation.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Essai contrôlé unique rapporté; direction claire (overhead > neutre) mais magnitude non précisément quantifiée.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"direction\",\"regional_specificity\",\"chronic_effect\"],\"confidenceLevels\":[\"high\",\"moderate\",\"moderate\"],\"confidenceRationales\":[\"Direction explicitement indiquée et condition contrôlée (volume/effort égalisés).\",\"Spécifique au chef long; une seule étude mais cohérence biomécanique mentionnée.\",\"Effet observé sur plusieurs semaines (hypertrophie).\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Le texte affirme une preuve directe d'hypertrophie régionale.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"randomized_trial\"],\"evidenceTypesReason\":\"Mention d'un essai contrôlé unique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":true,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.c26ca4cf801ca5ab\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"volume et effort égalisés\",\"plusieurs semaines\",\"comparaison overhead vs bras le long du corps\"],\"limitations\":[\"Essai contrôlé unique\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"**Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)**\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Le texte qualifie explicitement la nature de la preuve.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established\",\"epistemicStatusReason\":\"Affirmé comme preuve directe avec niveau modéré à élevé.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"direction\",\"regional_specificity\",\"descriptive_accuracy\"],\"confidenceLevels\":[\"high\",\"high\",\"moderate\"],\"confidenceRationales\":[\"Preuve directe mentionnée.\",\"Spécifique à l'hypertrophie régionale.\",\"Niveau modéré à élevé mais basé sur un essai unique.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Le passage stipule preuve directe d'hypertrophie régionale.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"randomized_trial\"],\"evidenceTypesReason\":\"Qualifié d'essai contrôlé unique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"UNRESOLVED\",\"conditions\":[],\"limitations\":[\"Essai contrôlé unique\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[7]},{\"supportAnchors\":[\"les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Formulée comme 'Conséquence pratique' et ciblage préférentiel en pratique d'entraînement.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Conseil pratique dérivé de la preuve; pas un essai direct sur ce résultat exact.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"direction\",\"generalization\",\"regional_specificity\"],\"confidenceLevels\":[\"moderate\",\"low\",\"moderate\"],\"confidenceRationales\":[\"Direction du ciblage préférentiel cohérente avec la preuve précédente.\",\"Généralisation à divers exercices spécifiques.\",\"Spécificité chef long vs autres chefs.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Décrite comme conséquence pratique, non comme résultat direct mesuré.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Libellée comme pratique/conséquence pratique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"mêmes types d'exercices listés\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[8]}]}",
+  "providerResponse": {
+    "id": "gen-1787643552-C9qVeY66VqYIehNbLhSE",
+    "object": "chat.completion",
+    "created": 1787643552,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":2,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":3,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":4,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":5,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":6,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":7,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":8,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Outcome hypertrophie comparée entre positions d'exercice, rapporté avec citation.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Essai contrôlé unique rapporté; direction claire (overhead > neutre) mais magnitude non précisément quantifiée.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"direction\",\"regional_specificity\",\"chronic_effect\"],\"confidenceLevels\":[\"high\",\"moderate\",\"moderate\"],\"confidenceRationales\":[\"Direction explicitement indiquée et condition contrôlée (volume/effort égalisés).\",\"Spécifique au chef long; une seule étude mais cohérence biomécanique mentionnée.\",\"Effet observé sur plusieurs semaines (hypertrophie).\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Le texte affirme une preuve directe d'hypertrophie régionale.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"randomized_trial\"],\"evidenceTypesReason\":\"Mention d'un essai contrôlé unique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":true,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.c26ca4cf801ca5ab\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"volume et effort égalisés\",\"plusieurs semaines\",\"comparaison overhead vs bras le long du corps\"],\"limitations\":[\"Essai contrôlé unique\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"**Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)**\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Le texte qualifie explicitement la nature de la preuve.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established\",\"epistemicStatusReason\":\"Affirmé comme preuve directe avec niveau modéré à élevé.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"direction\",\"regional_specificity\",\"descriptive_accuracy\"],\"confidenceLevels\":[\"high\",\"high\",\"moderate\"],\"confidenceRationales\":[\"Preuve directe mentionnée.\",\"Spécifique à l'hypertrophie régionale.\",\"Niveau modéré à élevé mais basé sur un essai unique.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Le passage stipule preuve directe d'hypertrophie régionale.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"randomized_trial\"],\"evidenceTypesReason\":\"Qualifié d'essai contrôlé unique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"UNRESOLVED\",\"conditions\":[],\"limitations\":[\"Essai contrôlé unique\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[7]},{\"supportAnchors\":[\"les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Formulée comme 'Conséquence pratique' et ciblage préférentiel en pratique d'entraînement.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Conseil pratique dérivé de la preuve; pas un essai direct sur ce résultat exact.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"direction\",\"generalization\",\"regional_specificity\"],\"confidenceLevels\":[\"moderate\",\"low\",\"moderate\"],\"confidenceRationales\":[\"Direction du ciblage préférentiel cohérente avec la preuve précédente.\",\"Généralisation à divers exercices spécifiques.\",\"Spécificité chef long vs autres chefs.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Décrite comme conséquence pratique, non comme résultat direct mesuré.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Libellée comme pratique/conséquence pratique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"mêmes types d'exercices listés\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[8]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjUahaAwvDJqRQ0FAD_jMeaIBSScLxXbG83MW449XS2DyR_YxXIw9JQt9m2kFYGPqynEdyWVhXKCiL2baUWC4Lh2KL4GMBjErYe4dZbQe5iM66M3M5b9sXxP9VoyyENMhsUw2SJPbxRbrXax7n4q4aG5S9ZpofIAAK7RUkRSZxNw27jlBiOZ40cH8wFXS9aZBBDBCebPMAvyMjMSxWGR6ewj8NUgkjRI-LrwqsvAmBfkbznmmp0lYCpDYY8qTVy81mFwvZHZtxa3k3ae0pyEnwyck3UWNLfpEHV9SrMGFKVRird9F1_hB2GacyoHlrMvkIguBjjWChIiMAyf2o-MysxOkav_B4cpT8jVNn3tGk8JJGAjlvXhQOzOnl2m-F0kgV961blGWXQHS8Bcg4xdHrGV8v36tmOxsvnto4pf0FRQ5f3iSEW1Pay09wp2OXGwqNKzHYYH_7qiY5f3xpfmKwSaIaZLXX1DNT3gELo7O6nOYox1tFZG3OXewm4ZK_mpT9JfzsJaMyNdllJX6r-HQTd2LTZXN9mFlfSLqTkypRbr7rZwXvBRoqBBJOLFfMSq7dAhHqSFqZGaneMb4bgW6QI_HL1PIhLPwqsO2jyzpaWGCI-L5IzX8vgLivFHtOrNDwV0ss9NK0HV3r0Bnq8FRdNieDTbGTi8na2iuS4dPj-2xOVGK8IYsZCe5puMN6vo3ZmHaRgqm3Urf0AOiPRJhn9p_j6YcMxecbP792rkKBIVQCxb8gGgdxQvtNUjR1NMzsmMiLfxkXHr8tOIHWL_UynvoZHKoVHIEZ1gqHMFAKhoDYfANra6L9CtaLoo1CGV11KXBXjTCnmJCOXitZHfAIPVhhRmeGH4Se63xRyhnL9Z7Snl4vOn7B_pWoxuuk3a4RvR8ymuLDZSv8tWyyAsrFwp5aYeV6mhMOnjH29tQKyLDQ0_qI-siu0o6gFUHkiMcqyNd.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_04d9c94445c42c00016a8d46a1b65481949dc8be300b2ba989",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4326,
+      "completion_tokens": 1336,
+      "total_tokens": 5662,
+      "cost": 0.0158875,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0158875,
+        "upstream_inference_prompt_cost": 0.0025275,
+        "upstream_inference_completions_cost": 0.01336
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787643552-C9qVeY66VqYIehNbLhSE",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4326,
+    "completion_tokens": 1336,
+    "total_tokens": 5662,
+    "cost": 0.0158875,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2560,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0158875,
+      "upstream_inference_prompt_cost": 0.0025275,
+      "upstream_inference_completions_cost": 0.01336
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 16204,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

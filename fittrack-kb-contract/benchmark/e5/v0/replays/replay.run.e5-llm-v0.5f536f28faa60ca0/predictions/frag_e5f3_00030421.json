@@ -1,0 +1,102 @@
+{
+  "fragmentId": "frag.e5f3.00030421",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00030421",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.234ef7c17fbee5b1",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "5. réintroduire efforts proches de l’échec, vitesse, sauts, changements de direction ou gestes overhead en dernier lorsque pertinents;",
+        "supportSpans": [
+          {
+            "text": "5. réintroduire efforts proches de l’échec, vitesse, sauts, changements de direction ou gestes overhead en dernier lorsque pertinents;",
+            "relativeStartByte": 0,
+            "relativeEndByte": 138,
+            "absoluteStartByte": 30421,
+            "absoluteEndByte": 30559
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Directive de pratique sans référence à des données cliniques ou expérimentales."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Aucune citation ni étude mentionnée ; relève d’une recommandation pratique."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Instruction pratique de progression clinique, sans données probantes citées."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Directive de pratique sans référence à des données cliniques ou expérimentales."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Aucune citation ni étude mentionnée ; relève d’une recommandation pratique."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "dans une progression générique de retour à l’entraînement/sport",
+          "réintroduction en dernier",
+          "uniquement lorsque pertinent pour l’athlète/activité"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

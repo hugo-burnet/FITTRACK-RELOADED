@@ -1,0 +1,543 @@
+{
+  "fragmentId": "frag.e5f2.00044614",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 4,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Lien mécanistique/pratique entre stabilité et facteur limitant."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Le texte précise un niveau faible à modéré et en grande partie mécanistique/pratique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.6002b1966785d755",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé.",
+          "supportSpans": [
+            {
+              "text": "une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé.",
+              "relativeStartByte": 98,
+              "relativeEndByte": 319,
+              "absoluteStartByte": 44712,
+              "absoluteEndByte": 44933
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Niveau faible à modéré indiqué dans le texte."
+                }
+              ],
+              "raw": "niveau faible à modéré",
+              "reason": "Confiance directionnelle modérée d'après l'énoncé."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Énoncé mécanistique/pratique sans mesure directe de l'hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Le fragment l’attribue à un raisonnement mécanistique/pratique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Lien mécanistique/pratique entre stabilité et facteur limitant."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Le texte précise un niveau faible à modéré et en grande partie mécanistique/pratique."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Niveau faible à modéré indiqué dans le texte."
+                }
+              ],
+              "raw": "niveau faible à modéré",
+              "reason": "Confiance directionnelle modérée d'après l'énoncé."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Énoncé mécanistique/pratique sans mesure directe de l'hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Le fragment l’attribue à un raisonnement mécanistique/pratique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "stabilité suffisante ; objectif hypertrophie du muscle visé"
+          ],
+          "limitations": [
+            "niveau faible à modéré ; mécanistique/pratique"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une instabilité excessive peut réduire la charge utilisable",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Relation mécanistique entre instabilité, charge utilisable et répartition d'effort."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Formulation prudente (« peut ») et cadre mécanistique/pratique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.e6a39cc77a2663b7",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une instabilité excessive peut réduire la charge utilisable",
+          "supportSpans": [
+            {
+              "text": "Une instabilité excessive peut réduire la charge utilisable",
+              "relativeStartByte": 320,
+              "relativeEndByte": 381,
+              "absoluteStartByte": 44934,
+              "absoluteEndByte": 44995
+            },
+            {
+              "text": "et détourner l'effort vers des muscles stabilisateurs non ciblés.",
+              "relativeStartByte": 382,
+              "relativeEndByte": 449,
+              "absoluteStartByte": 44996,
+              "absoluteEndByte": 45063
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "low",
+                  "rationale": "Formulation conditionnelle et absence de mesure directe."
+                }
+              ],
+              "raw": null,
+              "reason": "Prudence et mécanisme non validé directement."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Effets proposés sans résultats d’hypertrophie directs."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Ancrage pratique/mécanistique implicite dans le fragment."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Relation mécanistique entre instabilité, charge utilisable et répartition d'effort."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Formulation prudente (« peut ») et cadre mécanistique/pratique."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "low",
+                  "rationale": "Formulation conditionnelle et absence de mesure directe."
+                }
+              ],
+              "raw": null,
+              "reason": "Prudence et mécanisme non validé directement."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Effets proposés sans résultats d’hypertrophie directs."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Ancrage pratique/mécanistique implicite dans le fragment."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "instabilité excessive"
+          ],
+          "limitations": [
+            "formulation prudente ; dépend de la tâche et du contexte"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Refutation d’une supériorité systématique."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Le texte affirme qu'on ne peut pas conclure à une supériorité et cite une absence de différence."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.b54a6e7543f26d1f",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie",
+          "supportSpans": [
+            {
+              "text": "**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie",
+              "relativeStartByte": 450,
+              "relativeEndByte": 593,
+              "absoluteStartByte": 45064,
+              "absoluteEndByte": 45207
+            },
+            {
+              "text": "la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation.",
+              "relativeStartByte": 598,
+              "relativeEndByte": 772,
+              "absoluteStartByte": 45212,
+              "absoluteEndByte": 45386
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "equivalence",
+                  "confidence": "moderate",
+                  "rationale": "Mention d'une méta-analyse et d'une absence de différence."
+                }
+              ],
+              "raw": null,
+              "reason": "Appui sur synthèse citée dans le fragment."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Absence de différence d’hypertrophie mentionnée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": "La phrase mentionne explicitement une méta-analyse."
+            },
+            "clinicalEvidenceLevel": "B_moderate",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Refutation d’une supériorité systématique."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Le texte affirme qu'on ne peut pas conclure à une supériorité et cite une absence de différence."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "equivalence",
+                  "confidence": "moderate",
+                  "rationale": "Mention d'une méta-analyse et d'une absence de différence."
+                }
+              ],
+              "raw": null,
+              "reason": "Appui sur synthèse citée dans le fragment."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Absence de différence d’hypertrophie mentionnée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": "La phrase mentionne explicitement une méta-analyse."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "comparaison machines guidées vs poids libres ; hypertrophie"
+          ],
+          "limitations": [
+            "ne généralise pas au-delà des contextes de la méta-analyse"
+          ],
+          "cannotConclude": [
+            "supériorité systématique des machines"
+          ],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Positionne la stabilité comme facteur indirect agissant via technique/charge."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Aucune preuve directe d’un effet indépendant sur l’hypertrophie est revendiquée."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.838d64f8df0c3061",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.",
+          "supportSpans": [
+            {
+              "text": "La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.",
+              "relativeStartByte": 773,
+              "relativeEndByte": 936,
+              "absoluteStartByte": 45387,
+              "absoluteEndByte": 45550
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Synthèse basée sur mécanismes et constat d’absence d’effet direct démontré."
+                }
+              ],
+              "raw": null,
+              "reason": "Formulation déductive prudente."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Décrit un rôle indirect sans preuve directe d’hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Cadre mécanistique/pratique du fragment."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Positionne la stabilité comme facteur indirect agissant via technique/charge."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Aucune preuve directe d’un effet indépendant sur l’hypertrophie est revendiquée."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Synthèse basée sur mécanismes et constat d’absence d’effet direct démontré."
+                }
+              ],
+              "raw": null,
+              "reason": "Formulation déductive prudente."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Décrit un rôle indirect sans preuve directe d’hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Cadre mécanistique/pratique du fragment."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [
+            "pas un déterminant direct et indépendant démontré"
+          ],
+          "cannotConclude": [
+            "effet direct indépendant de la stabilité sur l’hypertrophie"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4138,
+      "outputTokens": 1549,
+      "reasoningTokens": 0,
+      "totalTokens": 5687,
+      "costUsd": 0.0174945
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4138,
+      "outputTokens": 1549,
+      "reasoningTokens": 0,
+      "totalTokens": 5687,
+      "costUsd": 0.0174945
+    }
+  }
+}

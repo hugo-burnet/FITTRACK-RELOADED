@@ -1,0 +1,186 @@
+{
+  "fragmentId": "frag.e5f2.00020958",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00020958",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.1f091cb3f7b8e581",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "apporte des données biomécaniques directes sur les différences de sollicitation",
+        "supportSpans": [
+          {
+            "text": "apporte des données biomécaniques directes sur les différences de sollicitation",
+            "relativeStartByte": 462,
+            "relativeEndByte": 544,
+            "absoluteStartByte": 21420,
+            "absoluteEndByte": 21502
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Observation issue d’une seule étude biomécanique, sans direction ni ampleur précisées"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.ad9d260d1f927231"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.cba797e366e04fad",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Un essai randomisé en cours compare directement l'effet d'un programme à biais hanche contre un programme à biais genou sur la morphologie du biceps fémoral, la force et la performance de sprint",
+        "supportSpans": [
+          {
+            "text": "Un essai randomisé en cours compare directement l'effet d'un programme à biais hanche contre un programme à biais genou sur la morphologie du biceps fémoral, la force et la performance de sprint",
+            "relativeStartByte": 670,
+            "relativeEndByte": 868,
+            "absoluteStartByte": 21628,
+            "absoluteEndByte": 21826
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "La claim décrit un protocole, pas un résultat"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": "Description d’un protocole d’essai randomisé en cours"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Fait descriptif explicite et cité (protocole publié)"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "La claim décrit un protocole, pas un résultat"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.72eeb23f29147129"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "Résultats non publiés; ne permet aucune conclusion d’efficacité pour l’instant"
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f3.00013369",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00013369\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"5. Tendinopathies : synthèse transversale\"\n    ],\n    \"rawText\": \"1. réduire temporairement les pics de charge très irritants, sans désentraînement complet;\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"1. réduire temporairement les pics de charge très irritants, sans désentraînement complet;\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"réduire temporairement les pics de charge très irritants, sans désentraînement complet;\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Formulation prescriptive sans citation, présentée comme principe de conduite.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation pratique non appuyée par des données citées.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil applicatif sans données rapportées.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Aucune étude citée; énoncé de pratique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"tendinopathies\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787664616-mvLZw59uLm8gXoezK2lu",
+    "object": "chat.completion",
+    "created": 1787664616,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"réduire temporairement les pics de charge très irritants, sans désentraînement complet;\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Formulation prescriptive sans citation, présentée comme principe de conduite.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation pratique non appuyée par des données citées.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil applicatif sans données rapportées.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Aucune étude citée; énoncé de pratique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"tendinopathies\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": "**Clarifying practice guidance**\n\nI’m identifying that it’s not about effect but rather a prescription. The instructions allow practice-only claims as expert recommendations. It's important to determine if one or more claims exist: reducing peaks and avoiding complete detraining. I wonder if they can be treated separately. Can \"reduce peaks\" be true if \"avoid detraining\" is false? Since these are practice recommendations, I see that “sans désentraînement complet” is a qualifier, meaning they can indeed function as separate claims.**Evaluating recommendation claims**\n\nI’m considering whether each recommendation can stand alone. Yes, they can! They’re linked with a comma, and \"without complete detraining\" modifies the action. The guideline suggests never detaching an assertion that's related. However, \"without complete detraining\" could qualify as an independent practice claim. It seems to function as a general management principle. While I see the merit in keeping them together, I think it's best to state one unified recommendation: \"In tendinopathy management, temporarily reduce load spikes without complete detraining.\"**Defining support anchors and citations**\n\nI’m thinking about ensuring the substring is present and unique. The line includes \"1. réduire temporairement les pics de charge très irritants, sans désentraînement complet;\". It would be safer to use the main phrase as my anchor because it's unique after \"1. \". \n\nI’ll only use one support anchor, so I'll set the index to 0. Since there are no citations, I'll classify citation attribution as NOT_CITED and set the domain to \"clinical\" since it's about tendinopathy management. I'll also flag this as \"expert_practice,\" marking it as a practice recommendation, but the clinical evidence level isn't appropriate here.**Determining evidence levels and states**\n\nI’m considering the clinical evidence levels, which are typically marked A/B, but here I think it makes sense to leave that field null and set the state to UNRESOLVED because it’s not determinable. Since this is expert practice and not direct evidence-grade, I'll go with that.\n\nFor confidence states, since this is an expert recommendation, I should set the confidence state to UNRESOLVED and keep the epistemic status as practice_only. I’ll ensure the directness state is marked as RESOLVED because it’s clear this is expert advice.**Finalizing claim details**\n\nI need to set the EvidenceTypesState to RESOLVED with [\"expert_practice\"] and the KnowledgeTypeState the same way. The EpistemicStatusState will also be RESOLVED with \"practice_only.\" For the boolean fields like supportsHypertrophySuperiority, I think I can omit that since it's not relevant.\n\nSince this pertains to tendinopathies, I'll include that condition field for clarity. The anchor needs to be an exact substring, which I'll ensure is unique. \n\nI'll choose \"clinical\" as the domain, since the context points that way. I won't add citations, so citationAttributionState will be NOT_CITED. Now I’ll finalize the JSON structure for the claim.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Clarifying practice guidance**\n\nI’m identifying that it’s not about effect but rather a prescription. The instructions allow practice-only claims as expert recommendations. It's important to determine if one or more claims exist: reducing peaks and avoiding complete detraining. I wonder if they can be treated separately. Can \"reduce peaks\" be true if \"avoid detraining\" is false? Since these are practice recommendations, I see that “sans désentraînement complet” is a qualifier, meaning they can indeed function as separate claims.**Evaluating recommendation claims**\n\nI’m considering whether each recommendation can stand alone. Yes, they can! They’re linked with a comma, and \"without complete detraining\" modifies the action. The guideline suggests never detaching an assertion that's related. However, \"without complete detraining\" could qualify as an independent practice claim. It seems to function as a general management principle. While I see the merit in keeping them together, I think it's best to state one unified recommendation: \"In tendinopathy management, temporarily reduce load spikes without complete detraining.\"**Defining support anchors and citations**\n\nI’m thinking about ensuring the substring is present and unique. The line includes \"1. réduire temporairement les pics de charge très irritants, sans désentraînement complet;\". It would be safer to use the main phrase as my anchor because it's unique after \"1. \". \n\nI’ll only use one support anchor, so I'll set the index to 0. Since there are no citations, I'll classify citation attribution as NOT_CITED and set the domain to \"clinical\" since it's about tendinopathy management. I'll also flag this as \"expert_practice,\" marking it as a practice recommendation, but the clinical evidence level isn't appropriate here.**Determining evidence levels and states**\n\nI’m considering the clinical evidence levels, which are typically marked A/B, but here I think it makes sense to leave that field null and set the state to UNRESOLVED because it’s not determinable. Since this is expert practice and not direct evidence-grade, I'll go with that.\n\nFor confidence states, since this is an expert recommendation, I should set the confidence state to UNRESOLVED and keep the epistemic status as practice_only. I’ll ensure the directness state is marked as RESOLVED because it’s clear this is expert advice.**Finalizing claim details**\n\nI need to set the EvidenceTypesState to RESOLVED with [\"expert_practice\"] and the KnowledgeTypeState the same way. The EpistemicStatusState will also be RESOLVED with \"practice_only.\" For the boolean fields like supportsHypertrophySuperiority, I think I can omit that since it's not relevant.\n\nSince this pertains to tendinopathies, I'll include that condition field for clarity. The anchor needs to be an exact substring, which I'll ensure is unique. \n\nI'll choose \"clinical\" as the domain, since the context points that way. I won't add citations, so citationAttributionState will be NOT_CITED. Now I’ll finalize the JSON structure for the claim.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZkHr3ci4G0Iqe9HWUcspPMXz1rw4MmRcAHRg_wBRr0G6vN6Wk7-nUB8pWKzsTacDNvWzoPMb2vwGoG5DHaMqtqWz96AepZDkaaS7GZ4L0MZADXKcmEUJ26RnErAcN1QIves_LgAPRDGoHksmc6Vcs604McZpb8LP_tNxq7ccMFoPR-9KsIXnmvJpiCf6g_7-0r0sgU4pAMJr8SYbP7L1yy9gMMaCyPc_U_XFfGct7dJeAgpeifsdNopmCrU2BrZlfoxBLzGGsLU2l2NGkTRWprn784oowOf6jOid5eO04vhxPhqsIJlnSxY8JdBn-v382f8_-kQNEdAvx1d2moSZeJu6F8z91jCHIU6_6zKW6-7SEtbqtl_OfCd-mtP6XtiXSQ_MYmVJYGZ8SLC60fn5js6_yUeS6vy_0ltr5DNP-PLtD5zaJ2WqzBMdu6WKcJL4qFvK0MhW7IcbnHUB8kyewu-dQjZWy-AbuKKTc51RlEV8cCHzprLD_lwB9xa9pMV2f_OvCEMTXWSAyJpguu8k3YN5JRaCWGoj9u-b2QpAYu9Q9miE9n6WEYkypRGB5ztVhab7Lzcr1Pd-fyYVD8z3NvoljoSHGiDUx1fDICRPQnWo-7tq6tWpIpt1JK0Wr98p85ouW8WBqfjYolOYt347f16FYGzxBmVwc7OtMFOqQ6ALfM6XrtHA_biGOSez_SBJOScLbrbJygTryvl99kVWzEMgdQ357ZD_eXLOb1uyv2c5k86vTEhkUgSUsLbf0V78CZyC0udoVAlc6p0cLdp2kNLBDsOdyqzqnXb5oADCpNrO9BroarxDIJJnoZ8tu-u6PZn7F568mlPxJT17hZT2drdWANA3IEDAAMnch26LLqb9_jmaVzOuRUxQpRSUleA2wTLv1kz2S9GQ0rkrhe_VNBazedyLitKG5Z5bphSuzESwT0xmvACUzlR54tKnJrL7wdQMzEyVr0__mKi5cSotItlUW0lItWNwgWnnjLxMK77vaTqbV9bqCqTd5AQciqvmYy4-2iCWgzchCVMaUEPMDbgmV40tm-CwPOYQEowS456Mj_DM9VNU3DfVjsLJPmspNc6WVxWVozky9q5Vjf1YrjRM2ERQbEU2Hw6X9PRVO5h_lIBFEEQqR9FyZCEX23JXW3WWVDSRFDcBPn4b0IVCMhw1e5fX2lUjLpvCbSCEmLRGFbe_iMjA0yXilM_d_C2roAkmvsSA2gx6tB_B5tXg4F0JX1t9pYausf_j0u--yY5tSCe7aDtnNbf4E7WpeQ478G6Xua0GuUp4TMwxQ-l4P8TqJf19hPwkbrVJqpGASi3h9LUmLm_Iym23SLSJZGLPBQnpIlBPYbpvPhDmNMoDM6qYp50zKjaB7vbuFkOZJGDrIMBOtoawfRCpu6yWa8lWbu7EZmAKH4ZS0XHWqufxZ7Ktx7rrOEJ_U1qzBKQY7QTDrEpMaVRVvteMKDdhFxyTHSlk6mrpP7ZyKoFZ_ifxFCDQye6Bcf0DvYftme8ZKX-yE1LN_mkJl_o6melvng3THUqH9NjjPf2-u-Z2xbwRkhzNzWDmIl3t44fdMAAO2D4fLVDEcwuwFxcuVGGys0qagdKQYsl_xmYIPy587F0LUAGFH0D7iPG0CwHphglyuWk-U2aOZa9kueOFgzv6R_dcRJ1tBvXsUXRWQPLXGC8S8m7QDAziYJ-pU26c2V4258Io1eg63LXQjzkgi_UcRk7zHBN2fVq4o9LAV53zFYubfAAa3XtCuEYYrQ_BLVuY4aWbgYRWPWKq7GWS0CjQDUVP_3wXhCc4Wf54LuLcTKpDPxpSWHa6K1HI93IlceT16cBoT1fC01ZajLYgX16wViCkJ9UtFnQjavrbP4t2f67c1maiOnFtFxy_ku8ogMMyU9YkUJZLq_G7SVQHoOJnFvnO7I6yXtSJ-CkgGp428c1woAP-kHOBWskJxYZjTU0MuWzItAs2MtTmANl_tHTZP8Cd4dNfWSISibm0aLIP4r3Ac2ooYxcglR2vKIYoJCyTCPygr0nrKBZ9fcxUObKnlXvTMg1eshBzDDNWIz8s54Xv5hqhxqL3j2d20u7f9Tzk3YGbd1EFEyDC_GBqsXFicCY0T1ObCtl0Cjzf5KVdwgLZE5kRZEaql3qlhTKIA3tcXkAjchSR9_gBPFLhYkwJo_1WRRyXF2T-J9TNV9xCZYbyooUxRlGtShkGuT8CuOcJ1KfakaXVhFPHpy9zt9dMMAIgbRR_5T-q8VG-CWBDVH5X31PSJxPQEfFYhs8ago4ga9V8nnsnYZ77vV3R65UXNXBdesSR9lPVQLdZss5vUIpHo4YsnCEljNUX-HXCYcaDHSOen9z62USIWb0niO2s2q_htxLYCdhgzJ7aiINOiNlF35LnpyS5MofWXUhRlXtr2_JjMyWUBm-oUgon3hrhp7pPmDb6Zi_ni2i5xmihIiTBXnnLm8Hb8oO9F0y0cBpo8OSJYqankXCLTV_9QapT2Fse3i1fMSKhGeAI6T44D2O7SCZWLCmFXRXzUn5AyV6kwYONvhgqAdZRgTXYTcTdxIYNjSSXTysNekhnO9H0Qyyqrzl75h9zyGdfObnCYXiAQalCDZgLthqhRwLJuYjHJpU4-HjdFLk_T_EZZwPtbPGNPAzz56YqIyLEWVku4zj2e8UbSSLMNeN25md-pkIPW7jT21-WgutxYRL8Ur6e2cs6XekE0QVBEsXCYJJGIBeNsfAMK7k9RiaxD8NXh3AKy9z4GUrZZdnKpIUfC5m239vEfgqNByiaIWr6M3aQ5mIMhf66pHNWMX28zOKeBuzGO8ME42kJvDtAcMEDA6P9eo6myLlMEtP8CBthxPfp5zJTbqjzgItJkC1EdmJi3VylWRBPR82Lnnv2RrB5SmqnDnUSBpkX7DX7b4vg4V7tf_icYzRdgBDzTBowMffhjGocmqocNGukzHnMC0NUS9IRQ-7E5qrwWBcBFX-GkpvPY8DeSnn5diI1LqZzFcftDEN2rOy1cnfVd-ulouWuoAflzcZY1enLpq5RCUKP3YSQ3-1dBTGYWNvhN68LvEm5BbzhcTChjsfMi4mj6tTtMCguIJbN7yBm4FdZFQvvodREvJ-SVMqZBqgXpOn7JFKJrZht2JxqzqhsvE1U6p5TrGI4OaVI6lq05F62vjmDhZHAjtsigYuaYWnyKx9dcgQGun2GV253r1Vnrq7utKuQab9KBV5950W63QzCwoN0e2zNcg2zBfdHg3XvEDIUkISOTaGBcHAkkT0cNg1vBN905eli0otjgl6R9zmQFzV6vueNw7innWURXsU6tbnT1cvbK0TiCWtd64QdaFLHn3_g056sq18CtDOVMOELDbpeoGkgvW1ZR01RUOpBBlljipTXNizy4KCgiYe6izpy6UDwFIn-ZhTzYhyCeMzGLJo-a1sromjJXLSpHybtv6tQxEP0gj0s4FZ5LRZ7G-zJoGku5YJ1nKuuPy6_UgDoEoR-4YqjIV9yyM00lKyPjCi4TGz6ntD_byalll1mfBy4ptS99EA0_Vo8t_TGuDRbroU82XSY2-AhYJmrvqX5FmNtTsI39tzzVsqpBqUor_KbZSyNDJzOdgLz-MCI-9_0BQT_Mmiix46fdh5vsDlGKrIFhcRXWVHW4sJC7hRpcHRMkK5QeVbujhdb4P0cMQd8fzP-qV7Pd7cJ2UNKEU0PfLBLTB-jZfZKMRdcJ9i-qg2eIAJRLPMNf1CyG1Q3Y6aKnwYIvd-bnmBY99fDSNyIkP-BPRt9V51y98ucxBjjenQ5xvPpf2lRRv3W8Z2kTSBhb0s4ycidyN7Jy_O26bNKTXZh_kIwR4Bf6Pff90xLET_QMGlvKdpTBSkCCaY57VgzPowJmYyt7ceKGMzQuDnNBwph4McpXqzPdb4kdoZBbsOEUQxSwGo-pb2DdMe8kDUETJ1XOWng00qnxtaHBfEA0v1ljHogTSMiwvsssFVDpZ3HRhAb1_fuk3pP9lSWBWyMV0nL6elDHzfBxqJKKGS7QetL8WnvlivT8dR2wgSpuKdsNxCQS6oY3O3ofkKpeqApdZ6eIHiaeO0QwidfFhS3ExwXr6-TdGmpzZeLVu0UG-ByyE9N0eOzJRVBbwXiYHwdEZgwLgDh_MgQ-XI7j46Bw0v0RYonSgWEBTbEyTXBSnIT5RB4ZSRBRn3Q2_qd6RrhaYR57u-pF33EDuDDV8MF8lL0sM-ldObPWXU3GO6eqb35hIJNYpMqhu2CIQpTPQe_LUDx2kU7qlWgF-ZLNxv0FL-zWNErL9XMHAun766zVVP_swTMxBlF8YW1jlSWO6EaDstU5ERbcaMrbsOcf6F0gOEJ_2UpF71FuGDAzfUO7S6sd2vg6mHXwCkJ6bneiea8wu-fWnCZPhxP9r2v4OzMWqJeRf-mX8BVEtOw4gM7LXCbqnIpHBfn4e_66dn8MBjCw77cNjKSyStXyWEgBPwQYrUHIiIrJGUPm_mRIVWvCLdakvOnwGyZ17uFNwTjhJ3ECHXJ0BHTWrnCBn1lfvmEf5Upakgo3STe38u4BS4KbyZIH9vETQR5RQezh8g3t0FcTPUyqts1DN2yfVDoKrj2dCzJJrJdEFD8y48wOSgNMJKKgl2MGsr8Wt2764LymMoqpSECCYyfSFcFg0wxbTpA5obsAGAMnCss6N6dQSV6lLV6XccqPMxcLJdT7dReugTrCnvGsN0rhimHCIWfeNhe7fnFusIRW117c16HIHHyBulwDsC-NwiHw9zLLrPTla2kzq6VE5WMSaik45-O6ICRPlnFXFuHpqGwBzMorUsRlfSUDrt16lrzYd4pjr8hQQvfUt1WTVce_lqkUqPSQuWQUNp640FwQnBYsqmeQY1fiPHpF7aee1piudtAbv_Dd2qrWkTtgnMPJ9vplGVBGeSTkEUwX94A-6FGR-2uLT8Vin3B_RyN7N5QiyjE3IHu39yxO3thcVI3DRIuAPPcDoghCGL7dZ38qwoAkl8Abv9BjU5Nu55rB_LaLATDiNocnJgVfPBblXGC5mR-adHlvaFQgEq75cxXbKwJiMlaqaJ3RS-4JnPLmGi_yWS8-5GgAUrVBfiFPmBTWUEIstqu2DZOdHRHQDRkwJnMyv4WWEvcgUtCTbQpMD39VROZtX_k1KduAZr51TrYwbFuE0JKWxsThLi3IP4ByigkaNcjp6V2-x4tUV_q5kDEL5csIP1VYcWf6EIiqrOofMVpVt1gCjYtRAETUlQUI9JqRZNzQOg2BBaZYLzgciilS1JZYiGyW90eXb1Rb2CiOeU-AW12JSctbS--paJ9gmiuivA0AOI_UfqSLInZ-Bh_DKjdBQAmw7Kz5s9q6e0xIghvQl_2hF6ulneaBQacQZMO1XjMES4Hdea2kKkDnDXHzW8ITA8ciPOhS3IpaZ_WBylTQBJqG_jsW7GYNwndHVkZU3KDUoaaTdU4dTe4rPrJOByVbpod23C8wf9pf4jFzCyg5Xa5QyAcTaKVFfFfi1tyThUsxeHNXxHNYI4rNV_TPV3NXJZlEct0EeyPc0x-3qjGPLQBvqeVExgrOqiyiqNA80GsnrSH2BpQ4wcBcaIZUwCN_LlYd6DxipkJ4epfHFHSmoEXI4jPQNI4LTipw7FDpiZAAg22nUKzk_jv4rmyk1uF-gGZWbR33r43xnqXLRmz7HEAoi_bJN-eYgPZhUsqVHeMM4QDpBaRwYBVzFyv0ZjqrwD7R-zvtFepDDlDzlBG10aJ6Ou2Js4bnodYD2PWGadwsfUS6mZ3ydYxUU86PC6EI__ANkaAg5J8cQlafNGGK9vYCLnXmJhcm_TEay6ZHgFt1XF0__ahp6aEtTCkQe2M6-c2bv0GjWXIbtJn4a9fTgedoIYbE0-bNH0WJ4hxN0dxRNyn30HwOvEJmPKXRXY8l8yEu5r3mZsI5vn-6IGCa9EXMJB9bkTIZgt2KFB8xFmfU7pBuvgmgqehTA_4N1heF_6pf7mz_45cq388NSMw1gXmZ5kJeWne5txOkC-DOxBrMUDzRDvPEm-XSWLa1vhSLL0deDeTrTJ1PuV97LEkTBjckNJNMbyq9o1NdqHkYWVcxA5NOT98u-DjKTGlUThYS8v0ljNiZVJiSfxDZNCBA2QWbLQp4l-DZ9A7vwQcb-J_eG09hL7YeBgPEw0yUJNkLm-vw4oB_eXt0340LrRkOGKQDjgeQJr1czsqcdAeJo1qs72KGl_1SMHB9Kt-P7NbYYvFkMXxJhCmVPRVpcb3T4AnBNCWZkdt8-L1Ka3GHzpCu2HT11CCjjFT3h9euurjMIwRDYfVjw8IYO4QQIfKnpRUpkzAIMoaBroHHpEYU2bhpI8H-NOnrc5Tybr3SiSto42OYTSYuASLEqGcRbBDG2iWFNPn10q1SfcvHuFqXlVUIpLBHjJ9vbyJ1AWy4vR1907a-EbJwf3pDrf-9FvBo-deGUPBs3SuIVHJ6GZOOURyUGXHFwc-gJ9d-9wd9VAXMJ1G5ot0GKuJBeqM-U6RaJwxIBMkLpb_NcOay1o2TzD2H9GzgAVc-7UEi6WR4elETjKN1IEoygHl1x__GgQmL2ZTkj0ng1fhzpxFnF3ASN5cVjHtbH9k3s1upSLS9O1JHpfd73D1LUUHdBsM_JZNMmjOJbpMNkSQH8ENcLLzd2-5-97HvW7-IgGVdpZj0gi9H-pGOvURqurNzrKjlEzeABPKcnVFzDXcymMl3lvjfGF5TmAdwUhs-VaFus3U97ROTVDAX55IsINsln-FYLZJqUQnRBPjPN2943ldp--4bkxdWwDVZ9PB1Krr1jdsxLumCeaeV9oklfazZkMQivO8s2ZpwTqSkAuiFB-PzeSDrGhXCWlLeHFk9K0qF4hXgK95PTZNbWke0sMNdUARZ5cdVkksJjIAzwCBt9Qtyj5Zy3yAL_4ZkFPtErgZJxu_layyif5v4NC59JOexArxl5s2afy7PtHiFVe5f3XzIfxDZtv7Tvrlg0vtKYIwrTQ4iquCxudB1C-FTuRsYduREHRyEozsHPHsFgflk-y3m4ztBfKnLE5SHdTrYqYSrawwrRH2ai5_Ppz9fQ_lb9Io760JlPmGOz3GdKKfZlgKEif1BH7DRvVjiAMBylueEVpnMZzX1xzw06HX5arofKrR59yB6n05KwtfpqiQPJolsNh3Y7In0b3A0O0zPFqUDyrTYRQsvyhJSZ-Ln4TCJTwbVoyGXh0W9c7Ga0Kv9eaddyRZUL7t1lMrBBCqR5AyG_d0NKVlaHy2yvr0x2OKh8Qtp_0ADTHrkUAuErsBWDdeKIw1AUfCltJHZLOhBjqyosbQyuUo4fE7GlDxYbxfZcygJcvOnINcpcXPmx6gtAr3HidKEHIr7ZFEkdD-eDI4XM7ek2dz2TZjSF7wlkqcv9hlQLDXxltbFyjzTWu9EhjPN_YQRMJmg6WHI6xm5V3T2KteFPdxCx_ftxuZF_Z00ek2xqFkHWWoI2r0lS76SvcIpVkHf0V692LmCt0BEtkh1aoeSUrQrzA4oqqlHQFUZrBgOGG2o4VmjYQ3cgWpOEPExuKu0vBIS-5oxj1Bs0A5CN9UZ8IxLSJszulGKZ-nrp-CK-XI7p8EhaNFXSmATy-68-V5e-NY6g_1YVrPvDsPzPiedfmz5xgZvQbuNukqMbn3mU8b-PSIPxxhQZ517IL9IIM8lntG-P3QkrETBCcDLIxDHs5FahsmU69Q1uf7BCPH_TgBNSSd_XLIkdhUw1_eEQg8Q4SLiajbrPvimEUANpeJbezN16Jip5xQBx-71IFNoVoZQ871t4a-yWqBtvQ_XDkt8KOFtWVX7qiqKnly15RLg5Ci7-QfcpADfbKZ5vjuc6-gREBI63s12gBG6aOo7fCs-s3UfO8YvDJ4cjcPzTOwXQiT_wCBpcBJEf2mtCV2ITHqdjq_jCfQGY84Mr6heN1FEnxcdlPFGfRU3e6ya2oOzkRGgOewTboMZGEMcroEEFI-TbrIh74Ho2vPUKtHbUFaCL6epv8CqY02Auu6fyC9s_9YtGX-omm5K_Ec5eXf0Jnq_damhkTDS295z1zKVV0wpxtEHWHbolV1lXjiza_HpULRBbs6V3kB2bmwdWJ25Oo-CEg1Qk0XDYJOAWPCh7HYABvplE1_OG6SvlyH-CnsxDyFFiXj1YXtGTr7TmrxnGGZKu3GUa6aXfXS9lBisGvLuuVlEwFpQ3YWZcplkMe0hqyO18VvyAIavhQtXeMxqxa-NylkVqXHvEo6sAmt6CFdBmjZjgVSHjLE7RepbX6uOZMbavfLAoomXCYGvnD_Rosiag5VQkV2tZmQagQFCViTLDl_66qUDIuM2bXt722pcCJlnbaMVB6ZvdWzUuwg4-OfYp-gDyx0QdswTEqiNCzUWIy-lxnuURkQWtuPZ7udOlzoAshOajTnfgntF0VqtE4NUKIzyozuaa-2OK1NCJCylOktMIzli0FPXnikTeTjHtHG2K6cAHvPr5PcI4EQIkrt-xbVdjKOCvRui5FtW0PGajiS7E3cd9BcoHAIbe_ylhjmBSlBa7NLwPZ8YZu7CK36keWRpmwTPFow4eYSzuV3LUhtCeasZ0AFPMdyAvup7bRpuyVtcDs5PIFngTSvW2yUoKt-e4HYsjDwJKqhjdXJe8-tfA9tYs53e-Xu4fLI2JSbRZzeXEbc1sVg_VSmYXHCk5DIbCvt4It0RSG4DSp-RNW6eXKTWBMwFJfUumBLn80hCOlOAnlZkNqAlX9ObrT_KjnaaFT36FiX-7pDDJA98bXwK4HH_vlVvQFWFd6VbfUtaeMSvhqmg5GiYBzvIe6b1THm7LPUz_s5dKvd3e_TQZsjxZ0vnXz4ThEpwL6wHRnKbC1T7h7rIdLTpNOZbX8wlwWdHE5EmJ80_i5C1rr2W-5r9tg5bgoPhqu4SusAP79m16Ezx38U-FdNY7ZZ7zHrWhcUgpP27cLJrjq0EkuAlKDcBh0seFXHMTjA61KNv9RMiy6z_Vztlnt9_5Vj8AVIKPS6X_QNxDic1b7UdTyywFePOCWNdQhXfYx8SWwx4UlGCcs3bWH0f2y7Ihl8UIQlh5VDXqthPzlXYcWJyZSOyh-_hH1Rg13Jy_2mdhX7SlN_Nu_kbJ1SjNsulyzn7e7bRMClqv_-MTTH-j8EH2OHmjEL8VpFgwgKFSpKNRBRvD_vbzIkehRLg0awW68FTKGlAW8ZE8Yz57t5w8pFtROqPPt943L6lHnyl87-YeoMiLx-1L_6Luin3QwCgXTAVl16bG2mm0C1dkUcCThOEJXORNgAsU4oIFV1rwFN-7YP4oKY2Nc9pivHAaZaCb9xI_TPAXKl-Fo5sKwVQvGckXQ1hyIKm--y8fSmRAYzt3i1cuw0oE397SOT1y5oLtUORmK52GUBMHPW5OhHr1p0BvVc002x4J4apKaFEq3fC8RstIkMm7x33jn4EywLrrU6wY5Q9PmE8rZFVdO-efuBimvH_HQN2DmRLwXrV66NRLjLgKDqcW3sIMzXru5wUOCeyBsDne2JClJg2G1Qw-JeneF3lGF3civlDqUj2lz66n5_TjpqFWPquI10aOWZKeSMnCeGk9-iEr9yRUox3d3PQ3Uwoy0s5zglnoVAOMhqegCXFcbwdXiOl2wyzZS5OFG3Xnaw1pj-jaUT0I5hgaFL35lGAZgLhVaplbAMXrBKXtnC50AmNgy97t3BAm7BtC18JMICeRBcyIA4BpMu0UiHjXvV2vS-lUGHDZg5_meHhJO1Mt_F7qBlGvLKzTaO8BbvslPGUrjmOR9HxQBdfshqq6M5CWk6vqIVZwh6mK-rMlT3QLNSB4L2gA65bpiawAipLQUuA-E6FUNbcNGCJH4q6PRC6t7nJQjP8R-rxU_fP2ORvJ_nLs1usNpbdZvoNcZJztZ3OsO1Cw29eEJrvvlVqQIxpUL_zdjYzBA5BAfrsZ5_2LXsi_wvqYLsa166vTDTf2FbFUo88XGJR7Jti9QMw8m_JV5pzZtvuU2NSXFTUj1kak6wQhI2sSmesspII56JW4JtdvVcdTT3pHPezdXFZrNnex467P7pKiNMMo-kRJRDLI-SviCipRUoSv_dBQCDT9GurjNiOO0or4V9FQZixmvalxnIWHiNtGN6L21i20YP53mL5ZvLFJeLHuibUP3Hk9ELWyWbXkk0hkr1JHry4tW8BCZ3LithuafGGDuufTe2RxkCuD3PfJJ9BqdLweUc_g-VY-53Kcpp7fLph_oCIVXbxGeXen6_hKfkSxBwywXjuBl4x4pXJKRGyIDmtsaZSLKkD4S34Y-7tAArjBDWrVp8PQyDZ-xOZ4Pp8h6naOUwyt25DkCLwHTWuneWGeB_qaK-caMOdE5OpflzpekbQgd_phyzjp-1BW8ZC--hMOYKhd22TJ6vA4V2tZfyvJJAF5YJTeSWK6L7bi2-YpiAcDqMhxVOJ2KllQkbLEN66DGQGCn2DFvytlEJT6ZvYBU48VWmZ9RD8GZKWOFlbk241M-WxKRy9Mj8s6JpE6B7AH-OEZNH4UfcPj_qZvOA9nh9GPl_MdYgMuP70Zf_ws30JoYgbpRWx03zPimxxkcpqphiqQR5Olm9Nyp550Z4xr6avn_vXrLJoj7H4VdwY9vLTkJlWo5ZrUwTRQMVnIqSBX46Bw9Xw6co8ajcFia8oKb71n9O0jZtNpc2W5s5UKw4stRgYl_nCCCgFRZgrngN-aoCiE7AoFIBOj-KJA8UaA2SyKVwIN3GTKtjiHAfqbH_rx2ZSsECvcvgOhz7f_7TrzrDX15A46tdp0VY0fXEfzKv2Xa9p2DJ_tAFWUy63y28uSirnq4BZNxvD_rbA1YmhK8kfVq5CTSK3H7ioaxXFqs7g9_1-xSEd6JSBSZBtXp5YLcPfX2wGS1ONFFADt_bfFGZj3wR0oeb-Eigt46vtSEhPQldvrLeNVrdjCdHdb7KpT4jPcNLv9UUqfHwOab84bFn7_l0820bEfuf2oMsltoYbnYJ4oQ77mt1YGXMEY8fZo175LrK4aRx594BoZQ9oVOfmzRto01BKpWT_5wpelzK5_HIhGJ6PcHqqPwssy_eMSgxiKk_KUbvKEVp6eB1S5rwGYWTZgvyGMs-ZHD8Z5TnSF2o5g-zLaPOiRZiJOsOpZpZ9qXzlvhHGo3leI83okV43SVEiaXmSTZYDGI2ZNVxg6sY05KlmdvW3WxY7UI1eLi1PjgECPJwdCioulJHLkBDloMjQCeJ4dD52MUfMEif7lDmp3gZh_uC4R67DgwYjT0C_m9rDSbldwqNTNzEo6LMW495qO-Yx6A_8prSnAsydE0P4k_Nr2rsgh31o44-vf1MyGZyNCoit5SU1tgaQvziki7lJgpyTzLBsm1IvClBW-jcIgJ98qsJS6OZC6eyrAmGubYNpEPe64PToA_YLGy_39aXjOK_FnMj5v2e8b51AtduT2_LOpVH5ZurC3ftsHDSHmocWtA-isAuHLrUZ8uOb8kNXCB939KmvwAwto-gX_xArI7VhFM-BqBPwVkB-SZpCVzOmpFTynQ4udmQ_PrmCY1EoRMkCOEs17rTPJJBZa0GXLqKpLYBHo3AtMFrM40sROqHGSV3MXlyn4xspdPgII53dqvTOx_XFZxLbG9Kc9bBIopW4BSud8kXVr883jOQ5nzKYb7JhlOTO9FNJKmBprnBJuiJQ5474NV9764L04Au-Sx_hKcCiOTZRUsc-aSqXpjyP3c.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_04aefea255863a80016a8d98ed39e481969b89e886d11b222b",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4276,
+      "completion_tokens": 1993,
+      "total_tokens": 6269,
+      "cost": 0.021387,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.021387,
+        "upstream_inference_prompt_cost": 0.001457,
+        "upstream_inference_completions_cost": 0.01993
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1664,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787664616-mvLZw59uLm8gXoezK2lu",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4276,
+    "completion_tokens": 1993,
+    "total_tokens": 6269,
+    "cost": 0.021387,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.021387,
+      "upstream_inference_prompt_cost": 0.001457,
+      "upstream_inference_completions_cost": 0.01993
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1664,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 33088,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "fragmentId": "frag.e5f3.00013464",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.e5f3.00013464",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.cfd12933cddcb23f",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "introduire une contraction tolérée, isométrique ou isotone;",
+        "supportSpans": [
+          {
+            "text": "introduire une contraction tolérée, isométrique ou isotone;",
+            "relativeStartByte": 3,
+            "relativeEndByte": 65,
+            "absoluteStartByte": 13467,
+            "absoluteEndByte": 13529
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "tendinopathies"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "fragmentId": "frag.e5f2.00044614",
+  "status": "REJECTED",
+  "diagnostics": [
+    {
+      "code": "INVALID_JSON",
+      "message": "Réponse provider non JSON",
+      "critical": true,
+      "retryable": false,
+      "detail": "Unterminated string in JSON at position 7036 (line 1 column 7037)"
+    }
+  ],
+  "partialAudit": null,
+  "claimAudit": null,
+  "coverageAudit": null,
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4242,
+      "outputTokens": 12000,
+      "reasoningTokens": 10240,
+      "totalTokens": 16242,
+      "costUsd": 0.1219905
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4242,
+      "outputTokens": 12000,
+      "reasoningTokens": 10240,
+      "totalTokens": 16242,
+      "costUsd": 0.1219905
+    }
+  }
+}

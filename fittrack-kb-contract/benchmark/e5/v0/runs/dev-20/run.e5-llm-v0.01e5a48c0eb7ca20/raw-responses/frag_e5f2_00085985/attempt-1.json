@@ -1,0 +1,156 @@
+{
+  "fragmentId": "frag.e5f2.00085985",
+  "attempt": 1,
+  "callType": "repair",
+  "promptInput": "{\n  \"instruction\": \"Répare uniquement les supportAnchors des claimIndex listés.\",\n  \"rawText\": \"- **Sensation musculaire (« mind-muscle connection »).** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.springer.com/10.1186/s13102-026-01910-7)) — la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\",\n  \"faultyClaims\": [\n    {\n      \"claimIndex\": 1,\n      \"supportAnchors\": [\n        \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 0,\n          \"anchor\": \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"\n        }\n      ]\n    }\n  ]\n}",
+  "rawResponse": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"— la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"],\"rawStatementAnchorIndex\":0}]}",
+  "providerResponse": {
+    "id": "gen-1787648466-8CuiLAKnB9mt6AzH3ttH",
+    "object": "chat.completion",
+    "created": 1787648466,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"— la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"],\"rawStatementAnchorIndex\":0}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVnUkvN82sIHSw0VzthpztzAM-X85LQGczFHTHjFqx51HCQtqocr67LA9XA8H_9SLSXQFn8lSogfx8p0JVsbRlQ3J77CaBxAlHOWGEvmPx4lbOoOIpEyJe7JvgzT16vMP5fIJAFA3nVMb5735AjStSGruFY2YT4zUBBDZU1bhBoMfWTn-3XESc8J_tcw8CuSNNvhvy2ubO3qrCCAXVhxugJMS3Qu8h_uQ0gVuxGSGR5QuEUhiIOBpbCI9MqFS9nligSTg6yEq2hMtJLfgEod2qiYGPOJp9Q67TB5LthE0w9tE7RvQYMYVoXYdVu4AHusM4w7VRKOuF0nAFZAswIozrfkroBYecf47LBiZ4TL11-ZHq_P4iSYb6jz8q-BwCnU7RE8rCaXoKElCKoz-v9hdGgn7zAVjhW3Gtws73vATlqDbNOQHZU99FXTR6C9rtkTfzONZa33Y-z90Z6-LPhyQKYo_TEwmnHtjCGD9YpCv2GtnbpBQhAsHpp-vgVqa1NhlTuETz1Mxme5GstB-LIvkFtubdCuPk7kCE-tmZ60EhAmM90n4Kyn2jA4Y4PDPBbY49z_bxgvfo_CzoGXU_e7IQVnti5ldsTSLsumVQCBvEWesAwWcVnfiIph7M5HC0yo3D2q9K8sRhVS_qmSK0MjyynEEB5a1WDjLCPJkIzAOFPDhqEWnzNKWtRdCFFKJn-CDiheP7bOJOWPBh5T15PRU11G91w_OFeeD0vrzmilX4qpAgsk_uo69jra5oITzEmA1Y3yJLhmD7gfjtn3ARDJ7Sg1eRErH_TQvJkPWU0lD2CrmtlkAuf8clFUI2p-w21iLHAJqkxXMqeTmcFArTPZDe1iBvxMi3bFdMpRHhP-7uJA7uHtKwezEJY5y5oBPu0OptSnmcEIpSUl7N6cQ-1rCRMie0Yia4v5jkQGSrjQR5FlAZ0E95hYO2UqusIxRUZ24Y_w.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0e43e7f05c269243016a8d59d39fa481979e2730fab97b0920",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 551,
+      "completion_tokens": 83,
+      "total_tokens": 634,
+      "cost": 0.00151875,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00151875,
+        "upstream_inference_prompt_cost": 0.00068875,
+        "upstream_inference_completions_cost": 0.00083
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787648466-8CuiLAKnB9mt6AzH3ttH",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 551,
+    "completion_tokens": 83,
+    "total_tokens": 634,
+    "cost": 0.00151875,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00151875,
+      "upstream_inference_prompt_cost": 0.00068875,
+      "upstream_inference_completions_cost": 0.00083
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 2645,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/maxItems",
+        "#/properties/repairs/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/minItems",
+        "#/properties/repairs/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/repair/properties/claimIndex/minimum",
+        "#/$defs/repair/properties/rawStatementAnchorIndex/minimum"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 4,
+    "propertyLimit": 5000,
+    "enumValueCount": 0,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 60,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 1,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

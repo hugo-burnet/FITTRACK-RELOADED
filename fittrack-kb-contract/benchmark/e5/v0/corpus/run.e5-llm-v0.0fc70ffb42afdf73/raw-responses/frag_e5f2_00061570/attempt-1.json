@@ -1,0 +1,162 @@
+{
+  "fragmentId": "frag.e5f2.00061570",
+  "attempt": 1,
+  "callType": "repair",
+  "promptInput": "{\n  \"instruction\": \"Répare uniquement les supportAnchors des claimIndex listés.\",\n  \"rawText\": \"**Machines de rowing, pull-over.** Le pull-over sollicite le grand dorsal en extension d'épaule pure à coude fixe, avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête) — configuration cohérente avec le principe de longueur musculaire, sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.\",\n  \"faultyClaims\": [\n    {\n      \"claimIndex\": 1,\n      \"supportAnchors\": [\n        \"avec une position d’étirement importante en début de mouvement (bras au-dessus de la tête)\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 0,\n          \"anchor\": \"avec une position d’étirement importante en début de mouvement (bras au-dessus de la tête)\"\n        }\n      ]\n    },\n    {\n      \"claimIndex\": 3,\n      \"supportAnchors\": [\n        \"sans preuve directe d’hypertrophie régionale spécifique identifiée pour cet exercice précis.\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 0,\n          \"anchor\": \"sans preuve directe d’hypertrophie régionale spécifique identifiée pour cet exercice précis.\"\n        }\n      ]\n    }\n  ]\n}",
+  "rawResponse": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête)\"],\"rawStatementAnchorIndex\":0},{\"claimIndex\":3,\"supportAnchors\":[\"sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.\"],\"rawStatementAnchorIndex\":0}]}",
+  "providerResponse": {
+    "id": "gen-1787663783-auk2eXUswvT0Fh749qlJ",
+    "object": "chat.completion",
+    "created": 1787663783,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête)\"],\"rawStatementAnchorIndex\":0},{\"claimIndex\":3,\"supportAnchors\":[\"sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis.\"],\"rawStatementAnchorIndex\":0}]}",
+          "refusal": null,
+          "reasoning": "**Adjusting support anchors**\n\nI need to create a repair JSON where the supportAnchors match the rawText exactly, ensuring each anchor appears only once. My focus is solely on fixing the anchors without rewriting claims. The rawText details the mechanics of a rowing exercise and its corresponding musculoskeletal effects. I see there's a mistake with apostrophes and the use of hyphens that don’t match. I’ll compare and update the faulty anchors to ensure they align properly.**Verifying text accuracy**\n\nLet’s verify the exact text. The raw passage includes, \"avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête)\", and I notice that the anchor uses a curly apostrophe instead. I need to ensure the anchor appears exactly once and matches the substring. I confirm that this phrase does appear only once. \n\nFor the next part, \"sans preuve directe d’hypertrophie régionale spécifique identifiée pour cet exercice précis,\" the same issue arises with the curly apostrophe. I’ll replace it with a straight apostrophe and confirm it ends with a period. Plus, I must keep the rawStatementAnchorIndex as 0.**Ensuring accurate support anchors**\n\nFor the DTO, I need to gather specific information for each claimIndex, which includes the claimIndex, supportAnchors as an array of strings, and rawStatementAnchorIndex. I confirm that \"sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis\" appears exactly once, which is good. The same goes for \"avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête),\" which also appears once.\n\nI need to ensure I only copy from the raw text and not paraphrase. I'll focus only on claimIndexes 1 and 3 for the JSON format and ensure that we include the necessary repairs without modifying other components. The developer's instruction about absent anchors isn't relevant since we can find exact strings. Now, let’s produce this!**Finalizing JSON for anchors**\n\nI need to clarify that if an anchor is ambiguous, it should be supplemented with additional context until it becomes unique, but that's unnecessary here since the anchors are already unique. I want to make sure that \"Machines de rowing, pull-over.\" isn't included if it's not needed, and I’ll only focus on the specified phrases.\n\nI also need to double-check punctuation, particularly for \"au-dessus,\" which is good in the raw text. I remember there's \"d'épaule\" mentioned, but my focus is solely on the specific phrases provided. \n\nNow, I’ll produce the JSON. It should have a top-level key \"repairs\" with an array of objects, each containing claimIndex, supportAnchors, and rawStatementAnchorIndex. I recall that each claim had one anchor in the input, so I’ll maintain that count. Finally, I’ll ensure the formatting meets JSON standards with exact double quotes. Let’s proceed with writing!",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Adjusting support anchors**\n\nI need to create a repair JSON where the supportAnchors match the rawText exactly, ensuring each anchor appears only once. My focus is solely on fixing the anchors without rewriting claims. The rawText details the mechanics of a rowing exercise and its corresponding musculoskeletal effects. I see there's a mistake with apostrophes and the use of hyphens that don’t match. I’ll compare and update the faulty anchors to ensure they align properly.**Verifying text accuracy**\n\nLet’s verify the exact text. The raw passage includes, \"avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête)\", and I notice that the anchor uses a curly apostrophe instead. I need to ensure the anchor appears exactly once and matches the substring. I confirm that this phrase does appear only once. \n\nFor the next part, \"sans preuve directe d’hypertrophie régionale spécifique identifiée pour cet exercice précis,\" the same issue arises with the curly apostrophe. I’ll replace it with a straight apostrophe and confirm it ends with a period. Plus, I must keep the rawStatementAnchorIndex as 0.**Ensuring accurate support anchors**\n\nFor the DTO, I need to gather specific information for each claimIndex, which includes the claimIndex, supportAnchors as an array of strings, and rawStatementAnchorIndex. I confirm that \"sans preuve directe d'hypertrophie régionale spécifique identifiée pour cet exercice précis\" appears exactly once, which is good. The same goes for \"avec une position d'étirement importante en début de mouvement (bras au-dessus de la tête),\" which also appears once.\n\nI need to ensure I only copy from the raw text and not paraphrase. I'll focus only on claimIndexes 1 and 3 for the JSON format and ensure that we include the necessary repairs without modifying other components. The developer's instruction about absent anchors isn't relevant since we can find exact strings. Now, let’s produce this!**Finalizing JSON for anchors**\n\nI need to clarify that if an anchor is ambiguous, it should be supplemented with additional context until it becomes unique, but that's unnecessary here since the anchors are already unique. I want to make sure that \"Machines de rowing, pull-over.\" isn't included if it's not needed, and I’ll only focus on the specified phrases.\n\nI also need to double-check punctuation, particularly for \"au-dessus,\" which is good in the raw text. I remember there's \"d'épaule\" mentioned, but my focus is solely on the specific phrases provided. \n\nNow, I’ll produce the JSON. It should have a top-level key \"repairs\" with an array of objects, each containing claimIndex, supportAnchors, and rawStatementAnchorIndex. I recall that each claim had one anchor in the input, so I’ll maintain that count. Finally, I’ll ensure the formatting meets JSON standards with exact double quotes. Let’s proceed with writing!",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZW3ssW35s6G7_7U8Vx7LLZ5v5uADcZ08K-Dj43L7kfYXjtPLnvlYH8VfFCOWaznQ7in4vVadyO_Ex41PRK1_WKjvuzh0XtZgQ6EX6W-tiSaSR3HhPaluhoRdrO0abfXbG2QMZPZ16KOa5q_z4vvySHEX1kj0J-0F7seJ7saK83D4IAVyLrh877qO1P074XXDsCgtGOhwxATFQaktC8t208tVAh_IpzZZJa2llcW2UvFVkhMxGAgMI8ECDgwOi84R5pbrgsG4b_4-o5MP6HaJLAhE-pA3T6DtMC1VJPyEC-B4iObn55Ttm0x7DfHMw7U--Cex_zpHR8T-Bs0Q6TJ6k76Q_PCES1FhE8nGMZzYlZIHwRqQ-0OqOmhuFqdvSdY74gG1MgDjRdWSP2zAKYmQXM5FxnunRyE2g36Bja-b6R4ydGQ_8GudP2dOmPGv-TtiWniIn4EJunZMTHjpDdEgUH5ydt88Wzf5VFSDbKzYkJD3Q3ogiI4K4a2EBfeJqHg6Jb0ARWACpGYNTX3q1d8NVohE7gMRVw4X94UyTvfzrKw19-Sosx511NyzU_Zn0MntaYCYL3XKzlCWCggPIbDQWCkgOagFh9Ao02xfa0cB-pYAn62gCITajhiYcQx4-MIJPtZ4yAWs-SP1hoTH1NDi8W8RXnCXFwuFrbXpo24e7I6PPsRzg9naM2Z-4v9Xz59Nbm8yHfNMKQhJN-gqfREmAhIE4lgM_KyVWSMj8JT3t9mdVWNjak-8vjHjbb7eo9WhsTDddMYYkqeLHwZ6-LpFI7CDfHbIKDXYdqai_oKhzEsl0rSZav71oiTeoSLQEX7t1WTs57uQpCY-lZwtoGfKXsirkT7tX6CzsopgjQaMGagbUo6a5ApnDFjeyShdQP-OumZxaUWvj3iTYF_Si2UNjcyosvlmBusw19eLNNjkerUlEnEXqi8j3CisckWKocvpAkOcDrCN4QAQ5xL3qyxPidwLr-8mla8IhUQVixz6pwDoM4dsSr8d9qZG4P2zFlGplGBos3TiNIS3F8Kk6gSlkgt6s_O00tXExMP93Ze8wDqlS2zryfLU7FT1abRDPIX62-liWkQ6UhR_xrnUdAUicV6p0CCPATl32IjIvobbOXyoVbURe25v3FrsSzkibqZdf0yJUGglEbGwfn_bpfallwTXS3ArxyzLg6fqC1EZWj-tRdPBDf8ReQz-3joQxNWv-nNoOGQV9nv9HgOICx7YeMUZ2Vf8A-8AB5dwtE8ATC2GG8vSrfNU_OgN-CeA1aXpQtaCwKlSPtGfNyxvM59zduyYyPSnR8_FT9ziilROlgEDqrrEbnvS6z9SmwNAevHBtF8I5ZVlxTwo--MvHR0ijNeXKecONbZvnSbpoJyBvikkhTo9wUSdWduH9U81P8ksfILAtPHd5U_4TQnWxywJDR-Hmb53UznPGcdTmSgiocr7xcKvpTAaraaXpiHGdr4bdkWalLKN4zRIlW1ZAnj4Z_R0FuAnicTq_7RyKgPU2qiWsm_A58-yP5f5hN5esNNRgfdj4Kp_Ycj08wI-w1HdnNvGlQ46DLbcpFv3YNSAamTHeTZ8BwBCv4ZLwFF-mPPG2BC4BhV8mWSm0Mp7ORikOap3xFl_ji0t5ORzl2IyomiPttu36PNY14lOFVgU6CLCP4KnOCw3Uh1xL7-ACG8APQInUD34I6eiunxwb7_WBFX07oBKi1IfDiNJg-wsF70xwFEltQITWOSnxdb0hQse432e5VO-XPvUJEiNjkwtiH8B_qR8-83v1tcz055p7ScwJNeDg-xCwlvgpY1Vjg0ekz3BKDl5C4xGzq3No2vhh_pMOfkr4O1HP0crSAaJ71yWPZzvvyIGf_PfahEmwLDBFJ2y8r8qqbP33EC2w3CldNcqUVaJEx8MDz10jFl9Mv2BcfpWUssx-uSgCxJDNcKv-KrG8cMJy6vH7K0Y10FcfGANT8yn-ieiK-8UqXohLthJRRLOvUAKJqXy9xI0IiWXnQ-yEH-tcES56Y_KYT14SpwljAaPk3o6D7ybzcSlWfmSzmx9gyyAcuPEFUFbsdqep9GqcAul9VD6W2n5ngfGA2vo6EUcq1TjDYVIHFV3y-y7d2ezwzFNm5q6Is1Pely6igQbvq1LF36TxGlC6zKnseaCDk3BR_97GFdmf9QjoLbDaAfuz44-S2fYPXZKGqCPzW5HVUNAERr--i7AjJt98_Eg2cEyrkE4e7rF4aD7rBR841k2hvLOMywq9V9zUK9a5vGvputoCguOfmgDU5QeFUy7UuGAa25KFnDfNWGcV5l4v1e8--ZK_carc8tki5Ym6lBBsNTXo2zMK5Y8GMucGlKDo-wyYxElwHQyBsKa7FFLoVqbhkAaveZ3lH7UVHTiPACI7adjruOP3RFlYcOH6a-DfKMAltQobQCglc-lLTYHOjRwmZnLxRTXVlJw9oUgGE5CEzbME6vjBYnuMO5oF3QjPlMOjbTrMGBRguM5O6ONvK6RejGzyKWfDKI5MSPrWDZegT9jB8qmAPidzHy3EEjeMQDR7T715qYE6-xqu08qvvMBivIPLtMl3AJBzLcc4KjBh14TFn-WdlEOjXoY7DWl_W9ZeT66Hjjr69ZWhnMhVzm8BwU7r-2vfhEI_N413hGgp3kV8s1OoqQrw3aTiflUI-dPYcY30mAztxfrWxE9rMOh2mcZRw7vksAmUezrld259gmZ_2ewJQ-ecjkaO5pEno9oIX2D2awslhOaaMxDiCrNPIPbuBmBoywfgCDUenNilkNygE7v0hXzRB-4Y8EbozcY3s9KDKahQpXYReyqU2McOr4W_VwCmCqxut5brBOEJJHJBd-ozz3CaIWqbMoDEA25x6Wq_kCGEBw2RMOD9gTr9x1QUlEdk_b4ydDybYsZP75GHX0xE7ZyIWFDElfRZu583z9tg3cNvvJ4DiNJ7kp9-KipHSBDY9S81j9upvwJR8gHisw9rzadKy4XhfBv6I2bYLEHUq_f8yWRSTh-AC65vPQfJiT3tpCE7lLII3t16_YaETEw9ZMmizg5jRnCz5cSgUMUU7P2Q9XWGeZ3fWdU7JZgHdjc32CuIu5lnQGp0xKWrdFeIMlBNWA4cA_fjZI_UQQmKFtD5uup3wi1EuwKFZrSrhmYZY4k7z_SqA8_0LrD7NphqGPssy6JMqm3GDunjv1cj7NlaXbyRT4jZq744g5Q6mgRmY1-QGMrUT76OSVuoq2bAfgzeMLKC6xMhsIe7uLdKYFRrkEfE_LKs0FUdyuPVTb4JPYmhgau1GnVfwoGhDpKu0865LyyEYh_F_CZA4PvZfUN9b8g0mAyXQwOIbpJzpOKZ09boSpq--pG_1rXJ3PBbKbjjHvcl2N6JVSddwpPJaG8Bn_NBgc5r1uTgEM4WVpUZYO90Ue12P4sWalUq6DE1PryGaO0NqlY25jg-POc9lqjW74MsxW7BSUJe_8dChwMnHmItWLBbzIYItjWPJ2Q8_ZPJ4_kKhDiwKTGJfDezE-yQNinF8AP3zSMPMgOhVX3WNb7Yj1_G3TKDo5bfZctKh8f7j7n8diHkra48uq520fxhHx8i0XTVQHOjNjRQCxBOn0VOjK5ahL1iPzM4kXg41gnCOFeFAH2U3Sr9PFpBA9rtREmOmI9-yrkDmSwroe3x_MX2TQAUeR1pf4pvUFcwWgh_fYxcvO0d1uJsThnCm2FNp7f1wj_Ny3KAAmYMZEgz3C3kigOCFUvfKZRuWcrjPgvIS-LNN1EbdTr6RMyPeGL8RPf33Vx21YlPD__v2BZqYtI-BgYTlG3WG9yi-TMSBMai9jEnlISOKwYjQco3iqK2kHjNkpGDg-jhjhX7XKfGkWKtwGMCvcr85y8K_1FsQ2D09Kp1_C7qWUM4KROBDdXL47XQZnd0GJOQfE2JtBybiOCm1BTiUiNr2G4LT2xVYhaHaawIsrjH4CN5uprlJv5vYkJv8sbVVkjUEvHI2OORdfkGcc7AmI6ctUbBVZdwkKpm42zPsjzTNVVjYenkwHvW6ElVqBsfne3gz3inc5EyxfQq8vBocI7ajPBHikbxVqxyZLL5sv_wSxZFoytR4M5hgb2Ga8iVibe0Ryj-fLoTRr8F4RYO5RTtKJKA0g53JKg7-WFDnECo-UZ0pDn7hp-2n7b-cw95F7ewD5b8BWoyBWnyeFhl7aNgehEfwJctHTMpxlsnBK19iP-FS2viQojIv_tiH1VvG0VQ2aTHdqjdrtwOJnqgstiOHMQTx80MS9dRl-0q-6TRNlMyQCUDJloH_DMeSSB-DcN119I-YtTl8WYuiO5FtdbI5TgEibZ64GL7BprXc8JbMWGctvpraf0jdbexpY0TByxn7MUdaYT70pTKWUUlIxQQKaRDZvWPEKtO5tD9mX2gd_F3_eVT5GmaGvl1lqImZTOJtnMO1JjdO_wFljKGk5EABegy_aq0flqSQLbYBEx-Xa37yHSTWYlTzf6ChfNooYDy-ldZRBmAkWlwMa2J2dXpNbI8TqwU7pvuCYYubmMxhbSOr1gprDOjO58EvyvrkPKczcLFvrWoHPw08TYGBQic52sxF5ZuL9xkYfjKJbv40gd1M5IbzaMrrFghUwZG-dxKSI8C89BC3Yq358z5Aan1rrTslfja5_2nWTzmzsFWL9MjY1TlSmzeVWcOe5-y8VcMvekD768XZ5_OIBTlv1wA3BEDzVpl-00MVUVbaF6sAzNnptMdll2AYm6PWpICoVp5bl9WXI1KIrmFSQ-3a7ZWa7LRUBj8k2u_kHP0Tz__sETlXamZagkFICZptIX4qa-b1f_Qtfii94PCraiGpKoLrtgLlnkmcaBgtrNOmnMEOZqe8aKbevMR9Xl3k4EFDhrvs15NGXWKCHabsRnVQYOVw0q7ceWxFNhzrMdiRYVA17P_OVmBC5zuODVZQI8vzP5XjCXWbTYOMhlDbCE94y_WXhlkl5qtOpj6znP5dtE72SQXkud8UVTVRTeVldoKr14eK5IHfS05IQTDkZ6vxwhH_RWTEmJWmtM0kpVjCcgPhy-xalchxf8t8ioQkWk3vUvg5Zi46FlRVH5j-RFeDTacjdEybO3x8oaZ80w-__iM3WLVO44ql0v1sLz0ZWBC6JtEhuGxGSyBBaEkwKwpVxfXUmKXCnuhljVompQSSDh8KGXpJBxyJVkCUNGiSrBHKQdswZOhyI2qZBjzUa_SMJuN159zfDcdIzXa44UKIapc0Oryp-Q-S61C9kiPYVtd5XGW05dtAGwmOm1mB_X1hn3V1CMYsKyTc-6PaMaIFBAqQfI0bgo-wt4PijHy6JhBr3pokhxjZi8TNTiSvHgTVCyVhuT6aQ_HNaZmEiZwfcjNljwpOUj4lselsqxy25mraKKGmaMsxQiJCR0E1zgS-Cmt1hG9z-ITxz2LNTljn7PJSPS0i-R0NEkKL3YeOM8VEZQKcZpvTU8WuPyNGHq9tcq5Wf5qnUeAhjiYXrX8NKBUcD41OgdkMrjFqKp7qhW3oxCJXpZoFHJ39RVxxGk9CQdI3juc5S1afwap8F1VRGYg3hcLLFw0Ktnq5ND49S5RLpU6aVUvaTVuKbXyriUjMH4JgVREicN6SCfPJzjdihSEgARvnkT0LBG_C3X90uwmtait5zGuJkbSF7y0XmmLLTgVQ-pfwzyd516JLApQMAF6wFPGi0Z6XQImA7byz3p-GJU8ZuEAJsDVR4RLN7bcESf-6d55fvr8ZFCBGZwooSiIZiTlLuN52NWF8EsIz_iL1eFoICrdI-tGR9abHoj4mPDr2xEG9Iblr6vynVt4fDHQMvdIK9P7Rj5pdwZ4ookailtsXUhc3ByXba8fRyg3ym0KAsZ6u69lRT_oCE28jbkV7_dNJNvy-oP-EKNaPCOYLi4fxGswlEFhFa6uFs2bEB5eglSF4dQaCT7q8Ci9RhYR8xsRR9z7rfaMi7Nx3g4p5cLl_OOJFOYjgNr1nH7sjIdoUbl3mtGmWpOzP57rl3vQo=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0b5dde958b2b3182016a8d95a99454819392f91bb3af353164",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 566,
+      "completion_tokens": 902,
+      "total_tokens": 1468,
+      "cost": 0.0097275,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0097275,
+        "upstream_inference_prompt_cost": 0.0007075,
+        "upstream_inference_completions_cost": 0.00902
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 768,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787663783-auk2eXUswvT0Fh749qlJ",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 566,
+    "completion_tokens": 902,
+    "total_tokens": 1468,
+    "cost": 0.0097275,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0097275,
+      "upstream_inference_prompt_cost": 0.0007075,
+      "upstream_inference_completions_cost": 0.00902
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 768,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 16429,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/maxItems",
+        "#/properties/repairs/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/minItems",
+        "#/properties/repairs/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/repair/properties/claimIndex/minimum",
+        "#/$defs/repair/properties/rawStatementAnchorIndex/minimum"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 4,
+    "propertyLimit": 5000,
+    "enumValueCount": 0,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 60,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 1,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

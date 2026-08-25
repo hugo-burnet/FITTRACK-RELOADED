@@ -1,0 +1,155 @@
+{
+  "fragmentId": "frag.e5f2.00066550",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "**Une étude testant l'entraînement dans l'amplitude initiale (position allongée) contre l'amplitude finale (position raccourcie) du curl trouve de meilleures adaptations musculaires dans le groupe entraîné en position initiale/allongée**",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Résultat d'étude rapporté dans le texte."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Une étude avec mention d'un niveau de preuve modéré soutient une direction supérieure pour l'amplitude initiale."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f33e8d737ff7686c",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "**Une étude testant l'entraînement dans l'amplitude initiale (position allongée) contre l'amplitude finale (position raccourcie) du curl trouve de meilleures adaptations musculaires dans le groupe entraîné en position initiale/allongée**",
+          "supportSpans": [
+            {
+              "text": "**Une étude testant l'entraînement dans l'amplitude initiale (position allongée) contre l'amplitude finale (position raccourcie) du curl trouve de meilleures adaptations musculaires dans le groupe entraîné en position initiale/allongée**",
+              "relativeStartByte": 0,
+              "relativeEndByte": 243,
+              "absoluteStartByte": 66550,
+              "absoluteEndByte": 66793
+            },
+            {
+              "text": "**preuve directe d'hypertrophie, niveau modéré**",
+              "relativeStartByte": 389,
+              "relativeEndByte": 439,
+              "absoluteStartByte": 66939,
+              "absoluteEndByte": 66989
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Le texte précise \"preuve directe d'hypertrophie\"."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": "B_moderate",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": true,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Résultat d'étude rapporté dans le texte."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Une étude avec mention d'un niveau de preuve modéré soutient une direction supérieure pour l'amplitude initiale."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Le texte précise \"preuve directe d'hypertrophie\"."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.26f33ba7a41c4e62"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "amplitude initiale (position allongée) vs amplitude finale (position raccourcie) du curl"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4619,
+      "outputTokens": 3139,
+      "reasoningTokens": 2688,
+      "totalTokens": 7758,
+      "costUsd": 0.03327575
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4619,
+      "outputTokens": 3139,
+      "reasoningTokens": 2688,
+      "totalTokens": 7758,
+      "costUsd": 0.03327575
+    }
+  }
+}

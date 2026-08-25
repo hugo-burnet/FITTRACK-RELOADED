@@ -1,0 +1,161 @@
+{
+  "fragmentId": "frag.e5f2.00085197",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Présenté explicitement comme « expert_practice » et fondé sur l’observation clinique individuelle, non sur une preuve populationnelle."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Pratique déclarée, sans preuve populationnelle; qualifiée d’expert_practice."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.372d2d4998d70c44",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+          "supportSpans": [
+            {
+              "text": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+              "relativeStartByte": 39,
+              "relativeEndByte": 257,
+              "absoluteStartByte": 85236,
+              "absoluteEndByte": 85454
+            },
+            {
+              "text": "fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle — *expert_practice*",
+              "relativeStartByte": 259,
+              "relativeEndByte": 371,
+              "absoluteStartByte": 85456,
+              "absoluteEndByte": 85568
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Fondée sur l’observation clinique individuelle plutôt que sur une preuve populationnelle."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Identifiée dans le texte comme « expert_practice »."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Présenté explicitement comme « expert_practice » et fondé sur l’observation clinique individuelle, non sur une preuve populationnelle."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Pratique déclarée, sans preuve populationnelle; qualifiée d’expert_practice."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Fondée sur l’observation clinique individuelle plutôt que sur une preuve populationnelle."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Identifiée dans le texte comme « expert_practice »."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "en cas d'inconfort persistant"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "à ne jamais présenter comme une règle universelle de sécurité"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4430,
+      "outputTokens": 4544,
+      "reasoningTokens": 4096,
+      "totalTokens": 8974,
+      "costUsd": 0.0486735
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4430,
+      "outputTokens": 4544,
+      "reasoningTokens": 4096,
+      "totalTokens": 8974,
+      "costUsd": 0.0486735
+    }
+  }
+}

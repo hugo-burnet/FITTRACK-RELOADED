@@ -1,0 +1,102 @@
+{
+  "fragmentId": "frag.e5f2.00085197",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.e5f2.00085197",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.e2e554b3133dca24",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*, fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+        "supportSpans": [
+          {
+            "text": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*, fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+            "relativeStartByte": 39,
+            "relativeEndByte": 349,
+            "absoluteStartByte": 85236,
+            "absoluteEndByte": 85546
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Basée sur l’observation clinique individuelle des coachs."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Déclarée comme pratique d’experts evidence-based."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Le fragment qualifie explicitement cette approche comme expert_practice et basée sur l’observation clinique individuelle."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Le texte précise l’absence de preuve populationnelle et un fondement d’observation clinique individuelle."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Basée sur l’observation clinique individuelle des coachs."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Déclarée comme pratique d’experts evidence-based."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "en cas d'inconfort persistant"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "ne doit jamais être présenté comme une règle universelle de sécurité"
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

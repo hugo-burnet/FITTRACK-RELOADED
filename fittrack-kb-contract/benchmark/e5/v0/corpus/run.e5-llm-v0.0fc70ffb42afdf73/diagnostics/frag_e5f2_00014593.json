@@ -1,0 +1,448 @@
+{
+  "fragmentId": "frag.e5f2.00014593",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 4,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "une épaule en extension (comme au preacher curl) allonge le chef long au niveau du coude",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.84032621f7cb8d51",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "une épaule en extension (comme au preacher curl) allonge le chef long au niveau du coude",
+          "supportSpans": [
+            {
+              "text": "une épaule en extension (comme au preacher curl) allonge le chef long au niveau du coude",
+              "relativeStartByte": 94,
+              "relativeEndByte": 183,
+              "absoluteStartByte": 14687,
+              "absoluteEndByte": 14776
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "une épaule fléchie (comme à l'incline curl, bras derrière le tronc) l'étire davantage au niveau de l'épaule",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.089ae3b0b682aeda",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "une épaule fléchie (comme à l'incline curl, bras derrière le tronc) l'étire davantage au niveau de l'épaule",
+          "supportSpans": [
+            {
+              "text": "une épaule fléchie (comme à l'incline curl, bras derrière le tronc) l'étire davantage au niveau de l'épaule",
+              "relativeStartByte": 185,
+              "relativeEndByte": 298,
+              "absoluteStartByte": 14778,
+              "absoluteEndByte": 14891
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Une étude cadavre récente documente le changement morphologique du biceps pendant la rotation de l'épaule",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.6518d23ce67aa70f",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Une étude cadavre récente documente le changement morphologique du biceps pendant la rotation de l'épaule",
+          "supportSpans": [
+            {
+              "text": "Une étude cadavre récente documente le changement morphologique du biceps pendant la rotation de l'épaule",
+              "relativeStartByte": 300,
+              "relativeEndByte": 408,
+              "absoluteStartByte": 14893,
+              "absoluteEndByte": 15001
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "cadaveric_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "cadaveric_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.4919f9f9d07463ca"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "une étude d'élastographie montre des changements de module de cisaillement régional du biceps selon la longueur musculaire imposée par différents exercices de flexion du coude",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.7de903d87bccbff7",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "une étude d'élastographie montre des changements de module de cisaillement régional du biceps selon la longueur musculaire imposée par différents exercices de flexion du coude",
+          "supportSpans": [
+            {
+              "text": "une étude d'élastographie montre des changements de module de cisaillement régional du biceps selon la longueur musculaire imposée par différents exercices de flexion du coude",
+              "relativeStartByte": 532,
+              "relativeEndByte": 712,
+              "absoluteStartByte": 15125,
+              "absoluteEndByte": 15305
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "imaging_descriptive",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "imaging_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "imaging_descriptive",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "imaging_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.f0790974d8a8f902"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4975,
+      "outputTokens": 6688,
+      "reasoningTokens": 5632,
+      "totalTokens": 11663,
+      "costUsd": 0.06921075
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4975,
+      "outputTokens": 6688,
+      "reasoningTokens": 5632,
+      "totalTokens": 11663,
+      "costUsd": 0.06921075
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f3.00029088",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00029088\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"9. Genou\",\n      \"Squat, leg press et leg extension\"\n    ],\n    \"rawText\": \"- **Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées; utiliser une box, une profondeur partielle ou une assistance peut doser cette demande.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- **Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées; utiliser une box, une profondeur partielle ou une assistance peut doser cette demande.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"Squat\",\"jusqu’aux amplitudes étudiées\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"utiliser une box, une profondeur partielle ou une assistance peut doser cette demande\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"Squat\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787658499-6wqCBf87OR5em2zQX9lV",
+    "object": "chat.completion",
+    "created": 1787658499,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"Squat\",\"jusqu’aux amplitudes étudiées\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"utiliser une box, une profondeur partielle ou une assistance peut doser cette demande\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"Squat\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjYEwKwYtvO0HsJmNkjAompbj2rquDiGZQN72uRLOdbIj9HfTae3U9TNpyaqri2-zm7N7goOKuXd7CXyVZB8dyShzlSUm0c1TbedFaFe4OFeoZHWOfOtGukXZ2PN_CJbuBMscWF8s3XCI5-cUOCS-W-0LeSoxrSnRERfu51coV6y77Ou0QCDjLT87Rh0VuBAAjoI2XGDDip9gpOAHaZPFepoqlRr6PcvSSVBxFeYBL_uUithaClVvTyFbftEgXiPhkwqAp1caRA360y-pk6uxjBXEtO4GUIvKXpH5HdzDIhwv_tMKSoG8MSaqoYht__MHlADvWnPepbOPmzpw0ztS8mcI2UUVJ8IpcL366aKzxFu8i9_hPDX5PVs-w-7Ws12QY-FpAsbSZDNUN5H2AwnvWOQg1Ee8w9_4rUxwIlLmydENM9k7z7eom6GDY5IxhYqfX0SpbxhAcLbXDAgXZcQVsCb0SAqc7H-uM13QZliV-mYsY0B2O6ipp4wR40pGqv3hoClJCKR_E1dfoFwqorTxaxdufhwEfmDkAg7aBFbD48phUtPNBdL2Ya_m2vmnQFhSfavCAhua9iT8AdPcQdPZY5lkqziqIUXX-6sZUCSHpQRWQ50zCeBTDBUVH-VcZS1H-W0fm5HkMYYl7htw04LRRTVAAk8YXC5wMooz2ayyWgdtwpDgdPB4FlQNoc_Tg34SxFXUgrz3kuzQIf5Ie51XZEZnZtIIUklpLfU-L7AxjjGnCDhVZblJu4g5dJPCWqo79puRKnUHZ2XtMlCLFR61-NjwlPfbQeykb3WacXvin7hAr8aW-GsotEjjuJSgJx5m4bSS2AvDl876joe4yvaBr-iGdjkGo-Yv7HtcczzEFGsVU0pZOraeDp-UA-iTr_Jed_fWAIG5NaXZi42EcIanN04sSnS8oAPi8VfwU0e_g_7dsoRCKxbaRzxybOrrgaOAdvuOg7bRYTVSoiGQZNVyZAnhRTnrgL1WNcDH6qudGZR4XuPPgdiRUB4j3PnUnEPjTRWROYMTmT5RlKpYQbKIVPdoD9E9RpePk2MaQWjJ1i6UkuqVBiOXbisTOrpu1P1XyNp7yhiMOhBUEwSRkxHwxHgt1rL3iIusdT_oIRRt8ETnYpAB1cSp7TpXh_wOs9XzOlVgnl8bBI_QhA5urO6OMdwIA-gcyOOSw9gDh-tRJnP_DSq1XUZWG3xD1Wog_ZZutFnTtgCRhV8SRwX1lMm-_vEVDthE-mu_1UFcRNZJ34bzypYRnAJPTpXsL5evbuv45cXbjT4_ApvWhPW9myDu_IGDg3GeR-WSHJzBpp3tZsToKWknz-RylqvuxY_yDTloxZqtrYsid5pUr_pivzyQIaiiqwcREpVWpO_6-_Gb_GAjd-8ODCSvzY2kb1hVh3zsXyQlZ8cLuZTYfdVgLSr32zjYkTtuAoIbjYMOhHvkVPscnOisy-inPzP3csMFAfPRKwoIzCDonQNwfcHFcR302_V1cu3ZXas1STR1FGsK8_jp-snF8SSOogb7mpoem56VdxsbRaTrjKCdhXR0-2oqRMZxrJqKCXz5Vzl7LECD-fUueQFtCGKH4NEZvCiGVcbmq5G-V1a3s-7EipIxjjUvUaYnwqMpmd2UXtGJ-GVG-wvYaVPPrDZj9mlKeXfL68uYW25-oWOfEuKnd4ziTup_O5gZxalq5ZdMnbaJh_0oFXYAvQCg1AfZJHAatxMFakSJoPpEdcCjh3UE1pSgiJF7c7_r6ZGS3DOu7nO4r_huW26UM0G3TBkayiiEiQByqtmyCx6DxlHuwIQXpLJ8TfhseENS7ug9-6NEai8Df4HJ6MF62UksvepMtoTX2MYkwxO68JyaNr4NbQyYGFgtX5oLBPm8OfUi67eS6q3PE1T0o-r-VJG-Sm7dadO3n0ruv1PwglNwXJMW6xlMreiv9M6k0VI3xJmuv5pQNhbn726sy7qsX_LmMIp7vvk002KQhMKGWXnccok9YNBsBimmx3Qou1MgMPUk65BkZAvvX6KVBBRX2y63mk3fgPG2ZeeQz137wcpHc-tmKX0ZJN6IQ1bTPySoPkCbgHl0sKlZzJwiq55JSNNBcFW4AcjeG-XFbj4ZLCQWAu3gHkNgfNgWMuRiHBj_NLHS46gT4HK2XeShoJMwpcmtgTngjGuGVnIoTTVR1gbToSxgv-4S-gVOw7SP5aHBfRNhdMFuKXEqZ-viTx7WIiXdbFFO6AptkIRioIa9dMKXYEvkNMvcd2uiGpYehTx8xHnWPgZQG655ByoIn2GN7kTAdvotVqjN_pAnaVpCSAZd0_753HHw98ezKi9EA_0yK1WWHOyR-N1agxRoNfiWjdRN5W8rLAu3dOIVBtLK7MIUltMLeVW1Spp6MC8AEdXT2VGHOAz6cwJkobgqkgZDN5wvP5G8Ly32BPzipy6Obe0Y_znh9XPXmIq1bLIlp848M2LS85AtRftGpyK2v67J-G9DiHAIaip1add7xfSp3RW2pBMnQov87RWNzpeEdidDCSHcfk22ZLPbN3EP9wkyyN7b5_HtfHxLvag9mB82U9fvsYbXWNG8ei9gSlrutBF6Elg0OxQEt8BqZqTKWt9Vj_27238vEQ4UY-tin42vk6aNpSO9dpIO3nG6c5a4MLxEJy0B9x0TUsJLkLJIkuZHE5JHUIyPZJFD2D1Eu6DeOT7Epv4gVHB9GUnS-mQZLcBPTuBCjOSQf6u7SOxVSzQrmIxeQL1zOsYCYbae8Za6dgRhJf_fMQUa2Ecsgp8MbUKHrTvmeoiFcOd_YVXqxroLwbWdzr8zceL4G9Iaq9NxQ0EnqgTWQjh2LDRO6A3s1hrD05n0jSfnL1bZCc8oggMqDbtSIwlS6-k_IU3Ec97uirMJhyzQ3JULUU3_xj47q355h1xO5SzmkXboJG5q8okcBTmXVivXMsdbgP0jDrB8LB8h5bZ1rPjmbKdYVBmc50QH9LkMd8gYIWcWbZ6H4WBs9RNj-aHqPwqS37g2YulZFHjrhEgzm7v4Eb5ltmdQLeqxvFaoWfSeBGtAkbf1v90JqHpsnDagM1g-eEw1_YiqweiusY6Y-DJlC5i6xBl4eifIAK9ThZyBGRZSdpGMn5aJk8JIp6xRB2l87J8N6KzPtYAWDwrhReb5oS61Yl5j3OBM0rtWyKxyj_aZV6mFU8-pRPEV7KtvdhkCPdh4U1Oh_G0Tuo_LdElZV8XbmEF4X7IbcdRirfDGBSJecvYU34YxzFSvhDagSa2-DSlmUE5nWiRYTXRpuyNrrZfTSm4gAcVNWxXxPjFsdFNi5JW8csnxNK-LMrUoRNKl5_8sA0h8fDPjGkzF-Av-wKGYB2fSIrOipFQ3mJelGeF4ii0diZLKZWMIPjfZtP9kW_q3O2BjzX2lZwEVGtFJwjFb1jjnW1J6VqvhUgBS0WSuMz7I8g53ff0x5AW5Nttn3xm1U-Tmp9n8Yb0H8GQX3VpPnl1qIPyPokBjSugEqzo3jtRdhoBB09qsfkMFtWO0ZQ24V78RVRlPg-fcPE6aNrDIj4beRhXaMT_K6g5Ea7cEbWP-zVAtVLsjJecgG0mowpqvSNwmADUqyM3PpCmpjooVU2gjRlRWBP5rPHEvKPwHoW8gsNQayLC7zpEjBmLGHbWZuFt8JJ7klkmi26WlfkXnnK7Dj22yho1pgKmdz5DYLJesGBnlp_fYscnzKpAhr108SUfzA2w21NYaeNzvD22KzlSbXDvhXw4tiAKx-cgro6xxbdMvv5SOBR03zwxRDkZn2v8eZ_XSzSLfV7AwTuewzz_MpOcA_zF7OzD8yrgrEs42H3oz0S4KMPS2ApTYoMjOTybJtmgF8u_A1_Q0Gt9EbMVXX9DJtUzNEV1gwtTX5P8yq6nRIQC7kzHQzG-v093JIGm2n0ey4DixjGRl5sX6p3stRSsk6z5Jm_lW2dAF5FFmREVjTfoVoq2dIe_NoQwykFR6igaestpp4VB05jXBfy7MXZdJvp9dAmbmE7tOZ-fKm7WkG_q5J2Tdf94TswMKIq4sYFAXO21jOmc2VXJFeddV_ehF53HfMrOzb2FQFlr2Dm4QsIqdYA4tnP8xVlCzGvEWOF0fhBtjfPeg0shjD2QJB-DxZmMix4Q0deE-VV8JU_8UncnVS54D6GX0TfHXGtlGME7Eeg_1LbHjcOTsigHQZ89BlofHsh4BZjzBJAZO6bud_GqCKOXLnYvc2hj94aESc4DTQ-FhyBFqT5lSQkOs16X2PCuDl95JN3edf6jbHbLI2QR8V-JSlluMYF9ZTu4JSPmXK7tsJBcmH-sOwjvVYD8Ay3pME4VagQSLIA0HWjAHW9rzKXr6HL5JJyuigt8dSeuipGgUY_AoSsumYfnw1wKP-_C8SqbPQoGjD75UOLgiJLUCIrLQJq0xeNCXzmdsNc4_FAvEqa5TqqOfHVO8_H6QDr4b5mmaXEFO9R_J7zoD1fUikOORP3-CkKUU0OiBv7dt_RQiWxubNU38x2CnFsOLZzLQZa7I9Xmw6s6yeNAoThpGtpzkSDs_KgUOD8MK2ZLKvqjynDYcIfmZnLTVcOcNVDlM-Dv7ZKyZ6icYdQUwamg4AJ6XYCpyfcJHlROLnltY-2DZuHAFbvG4RaAMBMtLxsr6Kv3qF_z-mkSPNwV4dAE07mTNOT9qXCNLhmqn874-38HlujNkuUkBDd2KxwQKLz8ElF1OFlcoWNRPk19g-ARyWpqtmhZ9EsaZvAOfyEggkZHmVlhX9fPxsSzUyO0e5CGGiwlDMjITnOehOHWkwDAPoHKzoOgTfmOSiuvLnxgKQ4WM-DY6kHy2TAOeYMwrJeIpH17w_eKrfNop3NyzCq12a8kbJEVq2-R3UMlAfjkANnjAwVaxCGCJCR6ciAHb4SL5jCbzvzO1JZT2oZc6wLwO6eCc9oom7X6Lv_oBnNuCQ8jBSV78Pjr_kY-PX7cAIx2dqc5aGeaJuNL3onMXqvL7FwswJf95YGWBdXWJBjwmUSbvsQNNgk2Q9Tt0MChQ1B2V7UZQaf_XWSs6jZPIpTx_HcekIJRPAW3eOTVaQ-KARdz2tFyMo8JzgY49beeIIBZmVHllW-8nZZsDq5UPn68hj7-dM_fL6PDfDFt2gYVVDGpZ2ymI-tWi-9NQpkqCqPu0Ce39zeLQfQMQnOegMbFFaCAzbwosaRxaK8Wcnx9lbepetbbvH0EGg-ygcEwf_CrSncZu2nON73KuLZRF1B5LPAvmYJg8OpL9kXnq2zJ0UiIag7sZG1YIJGcLO9OYT_Ekw4fulZcu7VdH3wK7f-gGzy6Nl4MXol0nL57ARn1dTPJ1iH0lXX19sdH1iQVwaoUY3ib7dXg4sz56xFhEk3X0iSeRQAhurAwtYVOrzERP3wP91GYR-7tvfckeA0xAoWEfl1D0ODXDIN0glFoya93Dds0ugJhFUOkafiOO9zHkwslWSyKGyKawA2NU3v6SuXp2vZfAestqsqhu5DlVGQ4RVBYn6jYlkcs1k5_FCis60zx_Zd3f6tlZf-gkdxWCfcne1HfGcCim7Wb1UI6hhgjI8jfpabZVXEfhwsz9TiusryWa5wnweMgc9pQ0WEmLzK0oEVnY7NGJqFH0ab2srRZo7Y9F7OTEDthWppm-laqxinByPl4evi5uedRFZg0xpqBeMnQrokZRSlB-9V33ae-wpDTMuBxHk_4YoBNmycJTw_yDMNSNZxW0r5W2MAYMHj3ylZlDfZ1ZrB-OdE7Co2OKtkuMHjMtDpV4caX1qcHNtRql-wB_qiFZG10qXM9XF9Cvcc3o6lGL3FvaAzQ1shhvne98jxr9-TaT2SlJ9OGbmWLsG3GVVLftJY5A4aLGryiqOy5ySyyaAuyjh2O_E5rtwp3PG1K3bE4ndanvopnUn9HycUuExvaBJoHqbsEhmSC26Do8iSzbtJVFPfwmTK-yK0WyVWe0pm_EvJ3E3VIyLW6cCN7BdkIMVXaJs49HmVUyFqZZ3X7-l5lTuI1lKSHuFiKinlZseRm1XscyZmDACVzofDSWSCw8STv4Ual7dJhVFHRHjp64ETBtJNC8h9VOIT7DxiN7iumyz9pWHYuLoKzsYMOdfSKgEDhIilQn1NtZ0hAonUcY6-ETFOm0WS4GhFq2Opk7g8iBuSduZU-1gd2chBDG9PYHWe1NQT-d5hoTd8ApT6Bx1UzxcV0Tlpm5wrn70ig9ZkCzYpk-17Bb-7b8kMcYUUn4-Bp1Xa59_RtrDa7g4uu6GSslwbhnFePo3qwf_3-9G3tns5ikZtZvPDa02ZXWaSwjRYa9h-UpZUHhEJxEEMuLWNcLNphmBY9I69VVAR1F_Ew0ZyGHqWfkw-_VAf3SLWul71toYMsPy7TzjF6xLAP8QcC_hZionzXfH3K7Xx8QLApLbmq0JC-W-WS5MCyDkoCp7sFxq7b390_ju2Ml7tyf554JuE2zdGV5MkvqXCrg-cWOAOoErIS1gR-p6SPCJQwD_2rZ-ThqUdFadVbEHzs-DBNg0v5-z_XFiAq5up6jUigqdSpMAFRVApOHNKP6Ne1rDauVG9nO6jKgHLMMielnpLsmn6WlWTgPKQej7rvSTyTlEH5xIwZ_MGs1IwJe1-CAeVx6J4K1K_Y3-C1762Ewwk487cBRgp-gDs_3mZg5c--jOsShKPbyEgYuEidrzz9fMMkOKR_32gH0luDbj5nEKPDF-KTcUL82SCDGZPEtQ0SxMGjG8HiFbpWKjASz3wBfbRRfuqdqH6n1of3VhYjkzZlCbkGbbcUfXxp228zbCi-cCSplEoVHZqMc1oOazr-adJbpugiRN4ktO9uSOCMfBU3Atn2FvdYxZBmjceay76IlYIgJf-P4o7mdiNW9nemhbzv4hkI-mA-RZtj-E9LyNxw3wNZ7Ox-G9KyCA4DAOjL4rOX2f80EN5lugEfBOC-lmiRrlCz0BnEKuoFF96j1G7SRguTXpolATtXl5JY3wAQgTYPKxaG8K_ZasIc8y_ve3pgz2PAJQFS9isKI6eCQ9fK-Zsi9ngZ2T3fnRMTZB0b7VreKBChaSte7BJmiz7JP64aVbD9NGdUloKrffZ2_uicSwUcC0E218tbM-MvFi3rhAmRaNzby9pM4Hf5CcuIhbC3UQPVcZs0JR24bPGvDi0P9O6A4CUBufkGBfpC36N00YcIpmnzBzibBqKgITdN_mAdRVXR6cme90fSjoDQ7EaRuOCKt8DLAawyGtFvY5PUoyocsLekeEEjWm7ybPR8OrZMmEkUdUjunPXzWXjWryVelt6DFHQ5nnzglXteCZrz48PvVuvRsBym2EFNKks6VMjV26kFN-ZcXB1qjNkY30QIO-drDp1shtAemPQN1xPGiNtS27tUxMYUbSOyQSVeTFaFPN5RJgvG4GrPZq8OVS1Zv817NF7YjOpooWJPFvbdBqONd5n3KkEi2k41qDC-4_3-t7GGcqsPOcPh5WdZ2eMfB77abLosfmmBLonS7sQpJByAKLmxccMpRAZDy8n63inlKmUtaSdJkeXAY7jUYx9uzjrj7S4hw-n3eg6S4kaMslcbb2annT-zuihCn4V2u-FFs3QYu1Zvva3msC_3JD_VdYkuh2kXYnIGkE-gaIUFr5b5FwWQ3ZXMG-VnVqhgihUhCtYu9CN5Lg874qhtR1lFr_bv-WqU9bTvyWSoGpLT0JxidmQ3rJ0d7IaPAivFoqqaJGzT4NGgBNtKXuAsVL1ii2Nq-gqo7OcBnYr263ZBeTW7TF8UXz8YPn_3ksQpebkTzCcRY9lKDIxka5sGtau0hoAzYZqpdPVjC9lxNZNO4x_Z-LVADkcHUyff2K7JhaZZxnEGjUcqX6PRa_4rl7x4n-yj6n8C4YKyzSZgL4JnnJTkJ_A8fHbGah-Y3Mer1DIT9qFwKMDJeVmjcXdMl-awaCnFSn1piL_mWd3qbfo_Nq-AOvkNOYvkWdSy-oBR3ccOTe7_mkdHx7LZ-wXho_T8I05Y07X3F3Dc2aHJVnddnReptZkIXmYWv92JjB_Pqz6_iGqp67EH_TVtKzt6VIQttrjB8BhjBntm10-FcE-VthIGhRS07eiS1qLRn4i9zhjblvhzM0D2qmSqADlUtEVd8XTYBjW31Hue6llQy9B4I7sAhgXTjYNvcF51vSn4xQxlxPv7kPC-8BYw4cVPvLw_HST5L7YieAYAJCbM2pUnzlQLAHhbBHMNZJpUY_lCDQrtIYkIMUccIQZf2-gTqAFOA4cjefrPQ7XdwE5Jw0p7HjC6nYnoA7W0X6OzXVxvhexp-kPw-U12LD5Wj9P7Jal3YRlrJvN0SAHjlHRRuxEqWw4hTlnmYN7huren_eqfqB98Y0_0tYLrd-yMoZS5dIuVTml2tHdh1Ihyl53k22EOmWy9AZtKcM9rzDRoWsQB5G3ylx6FWDkx30a88znd2wtBoMlcId6kbLQQkyQBgaAi8GwtbsMRv_IeX08enL0TcdyJLhpelPdyrjNS7IBf89N-1hQnEn7vDj6MHhF63uaiavhMjDGS7XZkNq3V2UFDLgq1BNWo4_Ix-BLgKa_R9ilL1ZnMAu66kpxGtL5jFLQ0hxg0Nxz0eNhv33GTt-L1TknRP38s_IpVrTwdTwu5EII9V-ZB-fy7CZv63s3Gt4lbitXpdPf_McjL-anEq-7LPcbt9Cec-xDY99-9_nIiEpumBxLW2eOb8ShuOxuF2S-380581zmVDqtIqHw4O0sCS0eXLKMexOXpWu9iEyObl0KgMHsoObtTINJKMTBAYE9ruLvrbjhHc3otGM35H25eF54hFbeLsBzgs5tQ5e1WmxbbeVst-gqkrdiLkw_Z3Nk8cxCVb30INswUENisKxQlgfK3nb2E3F5ci0jjn6A2TFHLSGWRfhv-6cdHiZ_sN36boE7EWUW1B7gd6H2k4KoRgvxPhcqSypxfu8C1RNJ1JThSLWDPZD2ZPRsboLHrumTitX64QIvrIOBaxkg_ShTP6ziM34cIb2S7K-LmfyFStrj4ksLDBgSX2FLGW-D6nZgqz0A618et6S9NHWH5TbspZfpNASfftSLqYyPVyZ5LEjYeYh_BzMzScnPRUb9mr6HDABdMG6o79lyKHSz0sHrqkM8RHpUERS9uwkVuA2ROkdp7SHFmPTXsHyk3nFqhSzQ9WAWFxiZ4ynB0IGjJOUR-owodLLByogUE65oTGCKP3xTwHrpTOjK7lbfmc3CtstrBY0jJ6L_zL7vYqIAot9OrhuI8iQxDxK9bjMUDLoBMPYKmVhEKqPl4-DYVMJE680HIUak2ttZnxme64hQmkio_57kR2uU61_z7qVWcRf-91JLHs8AsymaAL_pOWzXWUGkLBW8XLlR46-WunUzlQvKv1Ab61XCV4KoO7iSJmtI8OaxiCCEUFVh1AnhWTR7OUS1twO2YW2e_V8siXxif5BHvssKjSA_T_0pVDfET0qNEGqgjhg9FtH0jld7-Zvb-eTZSPlTWdVkhfndas-QwGm3neA3VYnjfrOorBMYnrnP47fbMxaf4DiTE0BVUyFtXQMSGrSlTtRY4EoSKRYNccAkY0Lt-uCMIeNxaBBPGIJ5nu7y7nGCcpo0qyFlfj0oEACo9W1DzuTOhq8KH0LRDLUcCVKE6L9aRCWPrq9Uzhq07sXZ2ONUptl9aIqiimLuncHRju6-guHdzECIE06mpQLI630Rs9djdJznx9TFkixFjXPBSb0c9s01CvebBZqWztdui-RLC_zpHyiSpYKmfZWF1_6_BJiITZTwS-pnlXor6KFslx_xvvIozTrEGkBJf3UfeS5nxQ6cVaUOu-E4zFyqbHOG7R0Ok9lE4wk-VbAtAOMpYmTbRAAbykDuZZQwyH-B2b-OQDy9F0wplioJWyD_41wV7-pY-dkd96VeuSOANwqNeVlhEEvwGNjzsA0fi3NpENkKq3g7X6pl4V8T6Gj0xaEhvbu1s6WWMVqtQGyc6eAczbocmB3GAbw55I66N99K-waIkbQ-vqxQW46gLV3rL9UNhX3nXJE3L08VPWnYrGSizfPvVJJuIwKp9GySGD5eC_BQ4M4aJaUuwNmjccJgMUasy0gfF8XbooPPYuEdP2cnPZmchcLcXdZhIrXyGdMwpev8BEr_TaLsh4zSFNlaacNBDcJLe2hANTVwt9rL1Mz-R-bP87NLP0GxK7Idie-zba1oc7CtPDHGxVaEGX_1woadX9gFh5Iow-ElMQIjb1yfJ6jvBgGPBgWg2bwDQ9mIsbAbUk5L-76RsD_yWKn3OQ43xZQEFdfyVsV2lHYqVhudk3JwPC_BN33NIoJcYtalB-jCnBBTz_ATXnXeoSKqiNpWrwgdR7U_QtpvtiKYuSuGsA_UiwVw773Yw0NBViLzSdE3sKhhgwHAgCTsJkhwDhSPnanXSg9IGlMt5uIOeQ_2xccUb-byWv_E8pOspgJcdAa3OSwpzbEagPLWZGle_F5SnyrHxD_ySvigCRT0zHUNxAh_pLmAaTU1MZ-WFmvT5TstlDBWRGVPsY1b0PX8Jxs2AQO3feFVjzL999VzgePJ_fZxjJq1SOq-YVROmN0E-q47E2g8UsiGTyXl2jzEoh5Ca5r3HxcyEi3Vwd6vHVePS6G7FQiC9xmkfeRpgbfBI-Z3loxrONN4GKRapfVc4ZVLUKO6qxCrc10Wt0duKuco90rfDtRSWnsJje9mM-WjJIbUNcn1nzRjfBrJANoo4uSQnJ4ojRampY8_PzQ8Tz-XkMQodlOxr55jdLusZWn4OFIxc5NqwGkToPt7lgWAmEUeBbevU7g-YpBUzX9zzfxs2zmjrIoRWir81YSU4XU6ns_mO_hTf15VjXT7cIkJWVZX2Oc6-kKU3DRLms3XgVa80ZVkEvCdOVKGHr7Q8vxXZSa5x9-404xdMfHImefSIFr7UTJrjugKbgLVbvOJ9xl4Mb1gVK7mIQoK5rq5v6qQj5tgGUJVSO9qZR3LxxLHszIvyXfe7RaWd_TovqOGVfUKLuMAXO8dQVnXk8UHkI0Ea4iPDNuNE3RBzhZRkwBrJk3nxvZ1R6i5A8WOgEphG8GRqpWO3sFdb19_hxhOmFxTfVOSW_n22DlqeKS-iMvkUQKj46JkKfPojiqtY0ytFd0OwIc5k4tQ_8ne4fIeGgduyH1awOBDQiGPqOwlN-kCY_2qyrNoxWFKmes1AXDEk2ftBhcvqnR4yX6chOMpgR9-J8i0RuhYVOFVn1BFXP1u55yN7HN_ibC-eDyS0BqWvMIiAP1DOpQAL4k8s9AaJ0LUxnelUP9ZuGUu2YyL4nUvgs8WzUqv_0dopah_TyDI7yoesWcqfb0EP5EdPkJ7XKDYgWTh9gUzMTb0-pV-vaqgmdJOvufTaF22U1TSnhgcS6ALSjbYfUnmCUJqLFp4UnD4bdJ9PSHvC_9zB1C3njYRrMooBLpYN5f9yLZy1Q7OxzPzta2ALbHVCS4n01FxJNDHa2plz8PiK6YjlM4oSwALW1tQVVHAiLs1a5-J0P7eVJNf4nwMTpH5jSqgjc9vlI2QcldlZs-YofbrvHowyOucwoH6dKykRfn4v_e8R_NntcyJFzSGTJqgSbK1_uNmtz3MjbJXVPKAL8HCmL2_Dr7khCgLX6ygY4U9PgP0xUigXBj162Ss7HSqW4AsB0B3t1KrTwpCoGPlDN2ovdz5iZK8b54YmG3NGFuJApsMcS1EOvH_iIMNDK97-I4tWtRDsHUnvT3AkK7Agl9LwdS4DpeC5oiMRkXFrM0TwMXbJj5mhSJ_yeRTt7sin68OrVFcrtf62zGKbXzIUq3Ptbe4KDQat6KNvkyrV84AeL4Hdxqa6iYWsM6PC47mlxxUTwhVrXBt-rgSO-Pv0reBAkc8Bhl7OQ5ALBO-3QCqIhmIbBnVgCxwu2MAq6_IX9dHLYSXGBhjYtXzbGSnIKtQVjcSGAZE9q2TRXflAyq22rHh31WIzWT946vqBr77Ya_sCRWOGH1vfMvAL_Q1LUEqPYxAw2FTsvd-9OZAzkmuzluui2HRtYjuiQFJynYO8O14AL_aHuFAe6brVyAnp-V7A2F3P0jS7ehszkZarWcn5DBQsQdDZtDvO6PEFVXw9CLTs4NLCRpZJn9yHvA0nWMD8Ny1bC8VqUyy-2dki5AdhdsQ53TKjBoafjgf_KDej0GgtAygUUmRCyrGebLt0mLBlLOYwq4BXeJn0eOh6FKGMffTL4lL2QCD2D8xe-_k2mskCDfGROjksCjUkecloHQq46e981z8-P-598s8pw9Wn_4b5p5O-qmXhfj5krAJv33qitgj5gvmKiVqrmzss8ck3-sQmmQB8v-xCamjuDli5b7oXpLeeUz07QKnmk66tUFnCmmgMV9wl6C3rXUSddmR-2ucyPfcqZYfaJn0_VQPVXBhSpALUI2Fk79yqAzTUg4SIOjH88OuSYe-AcB3D8kLMAUMjDO2FZHIp0sdkGBFNDuipzLoMl3whglNJloinKJiQaKnokyCr1qafPr0uvWZTl8TQ6aZ5-i5QtZ44SshK_Ofjh90vB4a3j2o9pBE_qZu7JXFCyzaoFbTs7ztkf9k1-G1Kaf3MB4dWaV0hn2kQVTGQA9VTLgXnCL4OJipHbshyT3f13QJ0PiVbgMOp678-MOaWW_lcMTeC2mtaCa5XTktXQT5BiKxO11cuNyQCwZA4cIX0HZ5fM0A6VHwkzFjYYLS4lNNq5X1jvhF1A9NjTmWYyDx9fDhN5uEMpntzLDnLhfCqVAm6pM80-RO4JSAo7wmMrZKTIWwHY34euU9H-K_UlevL_OzGlcUUv0B_R8ln4rMSM_qcoettXa_xecg5Q1yC655Pf-n_9fY2iqolrW6J2ALDuRvkXtIZqNnMX2USZLQRLUz63FzmHuDjXKZLj5Gohp_sEUuwgKFH8X4_E3SIonJbp7N_III6oQA3p3VqZ8tLUFj49F5qK7qNeQ1ZoKSQC0MUIP_o_EKiWijO3y4gEIMQEJsTBzzvYgzyu7C7orUYHRoQowpqSn7M8sasjpgQLTPFOlDnWOspdZqL4r0z0q4klYfBVmnHhiQdvkcBwNbEAp0CIb7skQEmcn79jSp69nVxm2-c9adFMFYXs8r-Y1fLBlSwiuTthAINr_Yu7yTjvVLRNFpwk0Vs_Usr_DYjXiO06pKMA7UXAum8fS-UxmjtecFSjDF2sTR0VUhLulTkRz214WHdu0jyqL7SWNAA6kJScHP0K3jG3vvffBCvZ-2rekijWcQu5vmHOfiDIcFt92EWnlh4XCLwizpD0SzJ3q0AtisAUM9bHon_K3gRKlcTeL13J0oWuQz8qC17wnfksmiUK5N1hqJDBcqPBbH7rYo_Pcm_MOM6nz9K4n9VmyAQpxJoLu-7_VNEpgaRcxaL3XJja-tXXUTOYMAipyrYV-ln4G8TcVUT1PXp0Gp-zx1yNUcXy6Ettcr8_AHSXG-VH6G8zRw-wRKdBjwSW8Q36UgISEYOadYwNkOviUzOQxc4gb8Y1JeKSeuGfuuSk-Vz8uuPJvkYFjkDbV9TFqLW4rd0Gtopvr-7VyKTMGjd6qXak-xFKFEBZOzPAq9OeL_eBx7JADQKAQuW_AvGIXC5YN10WXcancMG5zO6L51_IFiZ10WenJbwSvidMOswxjbjBJBG8I70qvLBwc2MBNwssob5_GkHspaMHzFVd_-spHY_uc5IwzZ63RETIwC69JJAfWAZofuChcZWk-bXKq5a6A497-MzWUhwxTDSeKUTz6jqHFPdGJcwm8tboZbmME4Z-aIf9uQsYgveAEwxjYoxVvmV0dczk21l2lZajX3tp16rkVyWaTfsTDbiQ8PjxdRGToA-ffwAjrJbnQA0n8NP-EuwrDj8cPdhC8K90nCS09q-aoyUqP3GhK-rF8jqBht_fsZLnK4tkkgazP5codhtnD5mxtC1lHtRxcwf4mozEDF27BBr-NEny1U4m-ECZTDEK1UyRPhqSJU6DGtiZKM05lOSNDlQYKj41ImJWQodIujojcpeY-MIOOxaMgnasELrizsHdF5zgOyfFXE1aSgsDRdxXZnUVn3xA-lVm3rze1KjiH00BsMfe5GWYgWkxfPFdRpUCJewifFrpYhyIB_4nt90ocpkG4XWdQNLnkEib3qasExzZTemi0-67kalM8vgfM1vzZ90pvPHRzPbpyKBcsHUSgI-nBZc1mO9j_l13XbzE7nCmJQYuDpdh9XGVR1TYV4yl32-hacN9tZys5z2MIO1G4ZCuyK_bHEmS22B_j0QH3-SwfXW613L5OsbMa-RkogxQqlViUulScRTA3mQINpO-e3ShZfV7vCeN4wNjYio2-t4MuNwO938F3KTv-2c_oCVuJraEImejzmP66MAgzM34xI6ewMUF9h_BytOu60XihDZ57oxZ4FDZ5xVIkIZ4jvllGRlR4t6f7QYBMCPOpCA6bEztdKewODmXwL1GzsTnmi-i04v_N3eFsz2Nki2IwlSxojYX6YnY_aAEnmORBU4alG2OVZ24pxlo_OT8oalxHPnpyuDTWykM_efBGFP7VJO-P9-t89UX6NLo88R56BzZbeFe1Gio77uSB-0sD3VY7efIp7mt1-9TOMJ52svhIJ9FCuEh7Mq9kN4fq7yWGaMW11YPk2ZyEuQ2gSlIdGlQ1LMbq7OVGjr7X78zjCl23rdq7SxWMAiNRNBAjsaH0KDhS7fj3GiitKW1oQxsrGeRcopRKEHsRlxyDrO5VAe8SRwcgjpA7cur_5A6Q1W1Q4vMLvJVT9f3AGvx1S1cAzxtsZxMwXRt9frhsUATEInF8vimd0_2d5yCEQvc-242XiO-Ir6RnYMRCK9yLjxPcLORxnnfDzBXE0ykPNAFJR1dY3YHjHmJ_WI2mUH6W8cb_edKMcEpaZvc9ByS6RLu_68WcZDqJo3P6QzE_VToT_rW4LwbHuOru8GYjzz62tnqQwpdjB6mJBIbqNp-H0h_QKVqD5FEyJqTcxfGen6PrbWsn-E8QRIUFLjv3WLCFYL6ZBoGNvpVZWz6nTCm8UsT8y3KNBOZU0wCwVFCIstVHETn6bAlQ7l5xwZPUrNnB-cFvtQjefxfsnPok15_b_TpI1yatW9fsLW14afnS7Wbgj2vgJ11R1KNtTDcpfLOmTKIdXlsVpZFHZpsexjlnvFIcDpI342upMZ7joZpGA2C_lllxmkiomS0M9176B0MM4gFplyd7N_jkfkyOJoPb3-nIl8HbIJxts6iuxvyweTcBUvU30vjTGlsD4NMgOszVZ0C7vdw-a_MAiEoj5MWF1Kd9nZmSOP1Rp6fj1yjc2XekvtFYsXhKfvrJkM30S4dVTE_LJkzTfdPmYWOoDwrVI8KNmKbyG3a9QY68zcH9fhvUQZMmcoS0nLWDtvz82bpTIfsW-wgfDx_jTfP554rC7shVjpP1GSISIN9MMYdXCbt3IXPtq3iQck3s28MQj27Ewvoz3IXXd-pX78HghzxKZih6JSOJqfhupSMoB-ffmZVoinrPRl0OSw8MZb3H17iW7PuI5oYLDRXZu3F4V0KVGD_teBI140BMVYGH7y74cmZws7mKdc1WWmkmcy83qeewhX7sMu0a7mjS9nEaQ2RQBEAuEEpB2sM4Lwdi3u2rHfJC0FYBh9YlvVD5CbsyzL_aGAMJmt4ZYe0Xcau9vBwO4scznzUKSgGtZyCPRmuAmCRkPs1jufcUjibiTfC6e1a-hHQZ1RUGcxzGFzrL9LBU8mjJVI8ffKHY0O-kXQXIHNZZlpH2TZ63wLqN2bHqhZ7l89tiF9FmkLnUjzmRE418ZHEJnAFFXubKLmeeIbXpTVEfZ8oQVGjuh5PRKoZ5JiQYjsql2TQwchKPUonWYNStqL98ykA4exVHIGuf5VENgPqinjqTDcPakMIJ4P_UA37g9XsRxYT6HM7O9_gChx-knxcOpmgz3kCAaGOb8m5jAP9RnAecwh1QwRqoshVLf-LhjtHghWJg9MqK13GjRa78CGyrkdZi4jkOIexg3GJSGT_xEnOkto4GmH-mlyD9ky3iAuUNcGlZjq3zlVFxz1QDI0W6pEyghi3aiJtaowAmPEVv3pR6qef6QyhBTTH96wyowhTlqNCdZooLMueFyLhfpKhaJ4Y5gkjq6RWbSN0rQ7LJQn33P5QWEVIzzzTje86ZeRqa5e-M5W-AmFNdfZvahte8aS28v-dzsWJhEuueOHqtMSbn8fbS5tHMjlGL_qzIXLUk99Y25clwnGuoN4R3DV1Darp26zc72UKduojiAQPxDTd4F_5RiliNRqIxRJ9naKJD6m_r28hAgmp8PeVMzaAbFQrML8-CvNHVaIxj0g11pBauM0HlQ3sebjpziWBjr9IoDEJP7Pra0dgNQtFNJhiZGEKosXh4zmIV7cTC1J6fMLA0W7qnq7y9qvoQRbM34BEiVvrIKEIzJwboXFBAq3Bw-M-r9tXfAGEc-3JcHi7TJWeFWOAzRpDvXcTFuLnpS91qvxWrv-VkT-v8jU5wqVOeljrcDG55X8zDiKeLzRjz6Hqgn0dwY9O8whwY9B4nOVIWhvKZ9tZlSW8D07w-YMb9Mn1UE8sb78HeFs=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_02badb9c640e723e016a8d81059f1c81958741494ea20da044",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4333,
+      "completion_tokens": 3012,
+      "total_tokens": 7345,
+      "cost": 0.03078425,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 4224,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.03078425,
+        "upstream_inference_prompt_cost": 0.00066425,
+        "upstream_inference_completions_cost": 0.03012
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2432,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787658499-6wqCBf87OR5em2zQX9lV",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4333,
+    "completion_tokens": 3012,
+    "total_tokens": 7345,
+    "cost": 0.03078425,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 4224,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.03078425,
+      "upstream_inference_prompt_cost": 0.00066425,
+      "upstream_inference_completions_cost": 0.03012
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 2432,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 48385,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

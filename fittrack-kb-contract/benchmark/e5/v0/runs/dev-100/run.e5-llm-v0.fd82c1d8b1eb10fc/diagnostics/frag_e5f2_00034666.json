@@ -1,0 +1,493 @@
+{
+  "fragmentId": "frag.e5f2.00034666",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 4,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l'entraînement réalisé lorsque le muscle est en **position étirée/allongée** produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "HYPOTHESIS",
+          "reason": "Le texte présente explicitement cette proposition comme une hypothèse explorée."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Présentée comme une hypothèse en exploration, sans preuve concluante dans cette unité."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.7ecebaf710c3a645",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "l'entraînement réalisé lorsque le muscle est en **position étirée/allongée** produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés.",
+          "supportSpans": [
+            {
+              "text": "Un ensemble croissant de littérature explore l'hypothèse que",
+              "relativeStartByte": 0,
+              "relativeEndByte": 62,
+              "absoluteStartByte": 34666,
+              "absoluteEndByte": 34728
+            },
+            {
+              "text": "l'entraînement réalisé lorsque le muscle est en **position étirée/allongée** produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés.",
+              "relativeStartByte": 63,
+              "relativeEndByte": 285,
+              "absoluteStartByte": 34729,
+              "absoluteEndByte": 34951
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "HYPOTHESIS",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "HYPOTHESIS",
+              "reason": "Le texte présente explicitement cette proposition comme une hypothèse explorée."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Présentée comme une hypothèse en exploration, sans preuve concluante dans cette unité."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "à volume et effort égalisés"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Description d'un mécanisme proposé de signalisation anabolique activée par tension à grande longueur."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Mécanisme rapporté sans démonstration d'outcomes humains directs dans ce fragment."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5de8b3ebc6ea9a84",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur",
+          "supportSpans": [
+            {
+              "text": "Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement",
+              "relativeStartByte": 286,
+              "relativeEndByte": 385,
+              "absoluteStartByte": 34952,
+              "absoluteEndByte": 35051
+            },
+            {
+              "text": "l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur",
+              "relativeStartByte": 397,
+              "relativeEndByte": 520,
+              "absoluteStartByte": 35063,
+              "absoluteEndByte": 35186
+            },
+            {
+              "text": "— **preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné**",
+              "relativeStartByte": 708,
+              "relativeEndByte": 866,
+              "absoluteStartByte": 35374,
+              "absoluteEndByte": 35532
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "animal_model",
+              "reason": "\"preuve mécanistique et translationnelle depuis des modèles animaux\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "narrative_review"
+              ],
+              "reason": "Mention explicite d'une revue narrative."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Description d'un mécanisme proposé de signalisation anabolique activée par tension à grande longueur."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Mécanisme rapporté sans démonstration d'outcomes humains directs dans ce fragment."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "animal_model",
+              "reason": "\"preuve mécanistique et translationnelle depuis des modèles animaux\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "narrative_review"
+              ],
+              "reason": "Mention explicite d'une revue narrative."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.d2cea0ce1a8a2a0f"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "niveau faible pour une application quantitative directe chez l'humain entraîné"
+          ],
+          "cannotConclude": [
+            "Application quantitative directe chez l'humain entraîné non établie."
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "la sarcomérogenèse en série observée dans des modèles animaux",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Observation mécanistique d'adaptations (sarcomérogenèse en série) liée à l'étirement."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Observation en modèles animaux sans outcome humain direct ici."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.8444d0f637543999",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "la sarcomérogenèse en série observée dans des modèles animaux",
+          "supportSpans": [
+            {
+              "text": "Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement",
+              "relativeStartByte": 286,
+              "relativeEndByte": 385,
+              "absoluteStartByte": 34952,
+              "absoluteEndByte": 35051
+            },
+            {
+              "text": "la sarcomérogenèse en série observée dans des modèles animaux",
+              "relativeStartByte": 525,
+              "relativeEndByte": 591,
+              "absoluteStartByte": 35191,
+              "absoluteEndByte": 35257
+            },
+            {
+              "text": "— **preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné**",
+              "relativeStartByte": 708,
+              "relativeEndByte": 866,
+              "absoluteStartByte": 35374,
+              "absoluteEndByte": 35532
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "animal_model",
+              "reason": "Observation explicitement en modèles animaux."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "narrative_review"
+              ],
+              "reason": "Mention explicite d'une revue narrative."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Observation mécanistique d'adaptations (sarcomérogenèse en série) liée à l'étirement."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Observation en modèles animaux sans outcome humain direct ici."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "animal_model",
+              "reason": "Observation explicitement en modèles animaux."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "narrative_review"
+              ],
+              "reason": "Mention explicite d'une revue narrative."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.d2cea0ce1a8a2a0f"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "niveau faible pour une application quantitative directe chez l'humain entraîné"
+          ],
+          "cannotConclude": [
+            "Application quantitative directe chez l'humain entraîné non établie."
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Énoncé d'une cohérence avec plusieurs essais humains."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Cohérence qualitative rapportée avec plusieurs essais, sans synthèse formelle ici."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.a4dd1949d9a1f67d",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.",
+          "supportSpans": [
+            {
+              "text": "bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.",
+              "relativeStartByte": 868,
+              "relativeEndByte": 1013,
+              "absoluteStartByte": 35534,
+              "absoluteEndByte": 35679
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Énoncé d'une cohérence avec plusieurs essais humains."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Cohérence qualitative rapportée avec plusieurs essais, sans synthèse formelle ici."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4840,
+      "outputTokens": 8218,
+      "reasoningTokens": 6848,
+      "totalTokens": 13058,
+      "costUsd": 0.084342
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4840,
+      "outputTokens": 8218,
+      "reasoningTokens": 6848,
+      "totalTokens": 13058,
+      "costUsd": 0.084342
+    }
+  }
+}

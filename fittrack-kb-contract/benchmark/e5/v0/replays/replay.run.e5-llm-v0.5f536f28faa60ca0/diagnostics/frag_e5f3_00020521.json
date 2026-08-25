@@ -1,0 +1,128 @@
+{
+  "fragmentId": "frag.e5f3.00020521",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "- **Charge axiale :** passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante, sans supposer que la compression est la cause.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Formulation de recommandation pratique clinique sans citation."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le degré de certitude n’est pas indiqué."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.fe793a2c312c79e8",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "- **Charge axiale :** passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante, sans supposer que la compression est la cause.",
+          "supportSpans": [
+            {
+              "text": "- **Charge axiale :** passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante, sans supposer que la compression est la cause.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 182,
+              "absoluteStartByte": 20521,
+              "absoluteEndByte": 20703
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans données rapportées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune étude citée, énoncé de pratique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Formulation de recommandation pratique clinique sans citation."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le degré de certitude n’est pas indiqué."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans données rapportées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune étude citée, énoncé de pratique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "rachis lombaire douloureux ou irrité",
+            "réduction de charge axiale"
+          ],
+          "limitations": [
+            "ne suppose pas que la compression est la cause"
+          ],
+          "cannotConclude": [
+            "la compression est la cause de l’irritation"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

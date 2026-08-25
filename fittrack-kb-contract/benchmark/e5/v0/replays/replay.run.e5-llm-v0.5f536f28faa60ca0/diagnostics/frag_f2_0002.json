@@ -1,0 +1,118 @@
+{
+  "fragmentId": "frag.f2.0002",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Ce rapport applique strictement la hiérarchie suivante, de la preuve la plus forte à la plus faible : (1) études longitudinales mesurant directement l'hypertrophie (IRM, échographie, TDM) ou la force ; (2) revues systématiques et méta-analyses ; (3) études biomécaniques (dynamique inverse, modélisation musculo-squelettique) ; (4) études d'imagerie ou de mesures anatomiques (architecture musculaire, cadavres) ; (5) données de bras de levier (moment arms) et de mécanique articulaire ; (6) électromyographie de surface (EMG) ; (7) avis convergents d'experts *evidence-based* lorsque les données directes manquent.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Le fragment énonce une hiérarchie/protocole d'évaluation des preuves appliqué par le rapport."
+        },
+        "epistemicStatus": {
+          "state": "NOT_APPLICABLE",
+          "value": null,
+          "reason": "Il s'agit d'une règle méthodologique, pas d'un résultat empirique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.47d493e830879b44",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Ce rapport applique strictement la hiérarchie suivante, de la preuve la plus forte à la plus faible : (1) études longitudinales mesurant directement l'hypertrophie (IRM, échographie, TDM) ou la force ; (2) revues systématiques et méta-analyses ; (3) études biomécaniques (dynamique inverse, modélisation musculo-squelettique) ; (4) études d'imagerie ou de mesures anatomiques (architecture musculaire, cadavres) ; (5) données de bras de levier (moment arms) et de mécanique articulaire ; (6) électromyographie de surface (EMG) ; (7) avis convergents d'experts *evidence-based* lorsque les données directes manquent.",
+          "supportSpans": [
+            {
+              "text": "Ce rapport applique strictement la hiérarchie suivante, de la preuve la plus forte à la plus faible : (1) études longitudinales mesurant directement l'hypertrophie (IRM, échographie, TDM) ou la force ; (2) revues systématiques et méta-analyses ; (3) études biomécaniques (dynamique inverse, modélisation musculo-squelettique) ; (4) études d'imagerie ou de mesures anatomiques (architecture musculaire, cadavres) ; (5) données de bras de levier (moment arms) et de mécanique articulaire ; (6) électromyographie de surface (EMG) ; (7) avis convergents d'experts *evidence-based* lorsque les données directes manquent.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 629,
+              "absoluteStartByte": 973,
+              "absoluteEndByte": 1602
+            }
+          ],
+          "domain": "product",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Règle de hiérarchie des preuves, non une preuve spécifique."
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Pas une étude mais une convention méthodologique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Le fragment énonce une hiérarchie/protocole d'évaluation des preuves appliqué par le rapport."
+            },
+            "epistemicStatus": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Il s'agit d'une règle méthodologique, pas d'un résultat empirique."
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Règle de hiérarchie des preuves, non une preuve spécifique."
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Pas une étude mais une convention méthodologique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "modeling_content",
+            "output_policy_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

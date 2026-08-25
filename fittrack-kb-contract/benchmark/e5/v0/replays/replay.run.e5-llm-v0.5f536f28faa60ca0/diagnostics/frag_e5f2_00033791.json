@@ -1,0 +1,336 @@
+{
+  "fragmentId": "frag.e5f2.00033791",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f48e114508699f55",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée)",
+          "supportSpans": [
+            {
+              "text": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée)",
+              "relativeStartByte": 0,
+              "relativeEndByte": 158,
+              "absoluteStartByte": 33791,
+              "absoluteEndByte": 33949
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "No explicit study type cited for this observation."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "No explicit study type cited for this observation."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Described as low-level EMG evidence."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.9c06af7b73289e55",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique",
+          "supportSpans": [
+            {
+              "text": "Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique",
+              "relativeStartByte": 223,
+              "relativeEndByte": 452,
+              "absoluteStartByte": 34014,
+              "absoluteEndByte": 34243
+            },
+            {
+              "text": "— preuve EMG, niveau faible, utile surtout pour raisonner sur le profil de résistance plutôt que pour établir une hiérarchie d'efficacité.",
+              "relativeStartByte": 599,
+              "relativeEndByte": 744,
+              "absoluteStartByte": 34390,
+              "absoluteEndByte": 34535
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Described as low-level EMG evidence."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.8754ca02170001b9"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "exercices mono-articulaires du haut du corps"
+          ],
+          "limitations": [
+            "niveau faible",
+            "utile surtout pour raisonner sur le profil de résistance plutôt que pour établir une hiérarchie d'efficacité"
+          ],
+          "cannotConclude": [
+            "n'établit pas une hiérarchie d'efficacité"
+          ],
+          "unresolved": [],
+          "flags": [
+            "emg_content",
+            "ambiguous_citation"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "l'inverse potentiel d'un poids libre dans certains mouvements.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Qualifies as a potential inverse; uncertainty not explicitly graded."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.98b73326f44df144",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "l'inverse potentiel d'un poids libre dans certains mouvements.",
+          "supportSpans": [
+            {
+              "text": "l'inverse potentiel d'un poids libre dans certains mouvements.",
+              "relativeStartByte": 160,
+              "relativeEndByte": 222,
+              "absoluteStartByte": 33951,
+              "absoluteEndByte": 34013
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Mechanistic qualitative statement without explicit evidence type."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "No explicit evidence type attached."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Qualifies as a potential inverse; uncertainty not explicitly graded."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Mechanistic qualitative statement without explicit evidence type."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "No explicit evidence type attached."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "certains mouvements"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

@@ -1,0 +1,269 @@
+{
+  "fragmentId": "frag.e5f2.00072017",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La position de hanche diffère entre ces deux variantes (hanche fléchie en position assise, hanche en extension relative en position couchée sur le ventre)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le statut n'est pas explicitement qualifié."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c7b0541522e70d29",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "La position de hanche diffère entre ces deux variantes (hanche fléchie en position assise, hanche en extension relative en position couchée sur le ventre)",
+          "supportSpans": [
+            {
+              "text": "La position de hanche diffère entre ces deux variantes (hanche fléchie en position assise, hanche en extension relative en position couchée sur le ventre)",
+              "relativeStartByte": 31,
+              "relativeEndByte": 188,
+              "absoluteStartByte": 72048,
+              "absoluteEndByte": 72205
+            },
+            {
+              "text": "ce qui modifie la longueur des ischio-jambiers biarticulaires au début du mouvement.",
+              "relativeStartByte": 190,
+              "relativeEndByte": 275,
+              "absoluteStartByte": 72207,
+              "absoluteEndByte": 72292
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune étude spécifique citée pour cette observation."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le statut n'est pas explicitement qualifié."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune étude spécifique citée pour cette observation."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une étude récente sur l'activation régionale des ischio-jambiers pendant le leg curl à différents angles de flexion de hanche et sa dissociation de la sensation subjective de contraction apporte une preuve directe et nuancée sur ce sujet, montrant que la sensation perçue ne coïncide pas nécessairement avec l'activation mesurée par région",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Le texte qualifie la preuve comme \"niveau modéré\"."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.73035011f505c6af",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une étude récente sur l'activation régionale des ischio-jambiers pendant le leg curl à différents angles de flexion de hanche et sa dissociation de la sensation subjective de contraction apporte une preuve directe et nuancée sur ce sujet, montrant que la sensation perçue ne coïncide pas nécessairement avec l'activation mesurée par région",
+          "supportSpans": [
+            {
+              "text": "Une étude récente sur l'activation régionale des ischio-jambiers pendant le leg curl à différents angles de flexion de hanche et sa dissociation de la sensation subjective de contraction apporte une preuve directe et nuancée sur ce sujet, montrant que la sensation perçue ne coïncide pas nécessairement avec l'activation mesurée par région",
+              "relativeStartByte": 276,
+              "relativeEndByte": 626,
+              "absoluteStartByte": 72293,
+              "absoluteEndByte": 72643
+            },
+            {
+              "text": "([Region-specific hamstring activation and dissociation from subjective contraction sensation, leg curl, hip flexion angles, 2026](https://link.springer.com/10.1186/s13102-026-01910-7))",
+              "relativeStartByte": 627,
+              "relativeEndByte": 812,
+              "absoluteStartByte": 72644,
+              "absoluteEndByte": 72829
+            },
+            {
+              "text": "— **preuve EMG régionale récente, niveau modéré**, avec l'avertissement habituel que l'EMG ne prouve pas l'hypertrophie régionale correspondante.",
+              "relativeStartByte": 813,
+              "relativeEndByte": 965,
+              "absoluteStartByte": 72830,
+              "absoluteEndByte": 72982
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "moderate",
+                  "rationale": "Étude EMG régionale récente mentionnée."
+                },
+                {
+                  "aspect": "regional_specificity",
+                  "confidence": "moderate",
+                  "rationale": "Observation porte sur l'activation par région."
+                }
+              ],
+              "raw": "preuve EMG régionale récente, niveau modéré",
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Le texte qualifie la preuve comme \"niveau modéré\"."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "moderate",
+                  "rationale": "Étude EMG régionale récente mentionnée."
+                },
+                {
+                  "aspect": "regional_specificity",
+                  "confidence": "moderate",
+                  "rationale": "Observation porte sur l'activation par région."
+                }
+              ],
+              "raw": "preuve EMG régionale récente, niveau modéré",
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.ffdc005a36bf405b"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "L'EMG ne prouve pas l'hypertrophie régionale correspondante."
+          ],
+          "cannotConclude": [
+            "Ne permet pas de conclure à une hypertrophie régionale."
+          ],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

@@ -1,0 +1,350 @@
+{
+  "fragmentId": "frag.e5f2.00038965",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.e0a31c9c10d65f6f",
+    "fragmentId": "frag.e5f2.00038965",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.01d095eb7efd6a48",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "un muscle biarticulaire (droit fémoral, ischio-jambiers biarticulaires, chef long du triceps, chef long du biceps, gastrocnémien, grand dorsal dans une moindre mesure) peut être placé en position **plus ou moins étirée** en manipulant simultanément l'angle des deux articulations qu'il traverse, ce qu'un muscle mono-articulaire ne permet pas.",
+        "supportSpans": [
+          {
+            "text": "un muscle biarticulaire (droit fémoral, ischio-jambiers biarticulaires, chef long du triceps, chef long du biceps, gastrocnémien, grand dorsal dans une moindre mesure) peut être placé en position **plus ou moins étirée** en manipulant simultanément l'angle des deux articulations qu'il traverse, ce qu'un muscle mono-articulaire ne permet pas.",
+            "relativeStartByte": 118,
+            "relativeEndByte": 468,
+            "absoluteStartByte": 39083,
+            "absoluteEndByte": 39433
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Non spécifié dans le fragment."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Non spécifié dans le fragment."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.7a5716dce6e90a25",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "étirer les ischio-jambiers en combinant flexion de hanche et extension de genou (RDL) plutôt qu'en flexion de genou isolée assise",
+        "supportSpans": [
+          {
+            "text": "étirer les ischio-jambiers en combinant flexion de hanche et extension de genou (RDL) plutôt qu'en flexion de genou isolée assise",
+            "relativeStartByte": 526,
+            "relativeEndByte": 658,
+            "absoluteStartByte": 39491,
+            "absoluteEndByte": 39623
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.b36d4dabaebc1994",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "étirer le chef long du triceps en combinant flexion d'épaule et flexion de coude (extension overhead)",
+        "supportSpans": [
+          {
+            "text": "étirer le chef long du triceps en combinant flexion d'épaule et flexion de coude (extension overhead)",
+            "relativeStartByte": 661,
+            "relativeEndByte": 764,
+            "absoluteStartByte": 39626,
+            "absoluteEndByte": 39729
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a10984d1ad2b83d5",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "étirer le droit fémoral en combinant extension de hanche et flexion de genou (fentes arrière, leg curl debout avec hanche en extension)",
+        "supportSpans": [
+          {
+            "text": "étirer le droit fémoral en combinant extension de hanche et flexion de genou (fentes arrière, leg curl debout avec hanche en extension)",
+            "relativeStartByte": 767,
+            "relativeEndByte": 905,
+            "absoluteStartByte": 39732,
+            "absoluteEndByte": 39870
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

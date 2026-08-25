@@ -1,0 +1,922 @@
+{
+  "fragmentId": "frag.e5f2.00069282",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "CLAIM_UNIT_REFERENCE_INVALID",
+      "message": "Incohérence de couverture",
+      "critical": false,
+      "retryable": false,
+      "detail": {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "claimRef": "tmp.claim.05",
+        "unitIndex": 4
+      }
+    },
+    {
+      "code": "CLAIM_UNIT_REFERENCE_INVALID",
+      "message": "Incohérence de couverture",
+      "critical": false,
+      "retryable": false,
+      "detail": {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "claimRef": "tmp.claim.06",
+        "unitIndex": 4
+      }
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 8,
+      "retained": 8,
+      "filtered": 0,
+      "coverageDiagnosticCount": 2
+    }
+  ],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 8,
+    "retained": 8,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Version unilatérale imposant une demande de stabilité et d'équilibre supplémentaire par rapport au squat bilatéral",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.0f585c2c054e6ff3",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Version unilatérale imposant une demande de stabilité et d'équilibre supplémentaire par rapport au squat bilatéral",
+          "supportSpans": [
+            {
+              "text": "Version unilatérale imposant une demande de stabilité et d'équilibre supplémentaire par rapport au squat bilatéral",
+              "relativeStartByte": 40,
+              "relativeEndByte": 159,
+              "absoluteStartByte": 69322,
+              "absoluteEndByte": 69441
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "un étirement plus marqué du droit fémoral et des fléchisseurs de hanche de la jambe arrière selon la position de fente",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c9d5b9fc106a641f",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "un étirement plus marqué du droit fémoral et des fléchisseurs de hanche de la jambe arrière selon la position de fente",
+          "supportSpans": [
+            {
+              "text": "un étirement plus marqué du droit fémoral et des fléchisseurs de hanche de la jambe arrière selon la position de fente",
+              "relativeStartByte": 166,
+              "relativeEndByte": 289,
+              "absoluteStartByte": 69448,
+              "absoluteEndByte": 69571
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "documente l'impact de la stabilité sur la sollicitation",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.9264e9aaca2271b5",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "documente l'impact de la stabilité sur la sollicitation",
+          "supportSpans": [
+            {
+              "text": "Une étude sur l'effet de dispositifs d'instabilité du pied arrière",
+              "relativeStartByte": 291,
+              "relativeEndByte": 360,
+              "absoluteStartByte": 69573,
+              "absoluteEndByte": 69642
+            },
+            {
+              "text": "documente l'impact de la stabilité sur la sollicitation",
+              "relativeStartByte": 438,
+              "relativeEndByte": 494,
+              "absoluteStartByte": 69720,
+              "absoluteEndByte": 69776
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.968ec21192ad22d5"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "une étude sur l'activation musculaire ciblée selon la position du tronc et l'exécution en suspension",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.b096ff9fef98c840",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "une étude sur l'activation musculaire ciblée selon la position du tronc et l'exécution en suspension",
+          "supportSpans": [
+            {
+              "text": "une étude sur l'activation musculaire ciblée selon la position du tronc et l'exécution en suspension",
+              "relativeStartByte": 638,
+              "relativeEndByte": 741,
+              "absoluteStartByte": 69920,
+              "absoluteEndByte": 70023
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.88374c14918b2dd1"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "conclut à l'**absence de différence significative d'hypertrophie** entre les deux approches",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Résultat non significatif dans une méta-analyse avec données limitées et modèle instable."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.066837e1b7b001d2",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "conclut à l'**absence de différence significative d'hypertrophie** entre les deux approches",
+          "supportSpans": [
+            {
+              "text": "conclut à l'**absence de différence significative d'hypertrophie** entre les deux approches",
+              "relativeStartByte": 1051,
+              "relativeEndByte": 1144,
+              "absoluteStartByte": 70333,
+              "absoluteEndByte": 70426
+            },
+            {
+              "text": "ES −0,21, IC95 % −3,56 à 3,13, p = 0,57",
+              "relativeStartByte": 1146,
+              "relativeEndByte": 1190,
+              "absoluteStartByte": 70428,
+              "absoluteEndByte": 70472
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis",
+                "systematic_review"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": "B_moderate",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Résultat non significatif dans une méta-analyse avec données limitées et modèle instable."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis",
+                "systematic_review"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.f2ba9fb198c672df"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "seulement 9 études incluses",
+            "modèle jugé instable par les auteurs eux-mêmes faute de données suffisantes"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 5,
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "spécificité claire des gains de force (le bilatéral favorise la force bilatérale, l'unilatéral favorise la force unilatérale)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Direction cohérente rapportée par la méta-analyse."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.bc866efdde47dcbd",
+          "technicalClaimRef": "tmp.claim.06",
+          "rawStatement": "spécificité claire des gains de force (le bilatéral favorise la force bilatérale, l'unilatéral favorise la force unilatérale)",
+          "supportSpans": [
+            {
+              "text": "spécificité claire des gains de force (le bilatéral favorise la force bilatérale, l'unilatéral favorise la force unilatérale)",
+              "relativeStartByte": 1216,
+              "relativeEndByte": 1347,
+              "absoluteStartByte": 70498,
+              "absoluteEndByte": 70629
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis",
+                "systematic_review"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": "B_moderate",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Direction cohérente rapportée par la méta-analyse."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis",
+                "systematic_review"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.f2ba9fb198c672df"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 6,
+        "technicalClaimRef": "tmp.claim.07",
+        "rawStatement": "le split squat réduit généralement la charge axiale comprimant le rachis",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.eb5a9921831a1106",
+          "technicalClaimRef": "tmp.claim.07",
+          "rawStatement": "le split squat réduit généralement la charge axiale comprimant le rachis",
+          "supportSpans": [
+            {
+              "text": "le split squat réduit généralement la charge axiale comprimant le rachis",
+              "relativeStartByte": 1802,
+              "relativeEndByte": 1877,
+              "absoluteStartByte": 71084,
+              "absoluteEndByte": 71159
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 7,
+        "technicalClaimRef": "tmp.claim.08",
+        "rawStatement": "le choix entre squat bilatéral et split squat/Bulgarian split squat pour l'hypertrophie peut reposer sur la préférence, la disponibilité, la demande lombaire",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Conseil pratique sans preuve directe citée pour cette recommandation."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c51c6eb718b77402",
+          "technicalClaimRef": "tmp.claim.08",
+          "rawStatement": "le choix entre squat bilatéral et split squat/Bulgarian split squat pour l'hypertrophie peut reposer sur la préférence, la disponibilité, la demande lombaire",
+          "supportSpans": [
+            {
+              "text": "le choix entre squat bilatéral et split squat/Bulgarian split squat pour l'hypertrophie peut reposer sur la préférence, la disponibilité, la demande lombaire",
+              "relativeStartByte": 1639,
+              "relativeEndByte": 1800,
+              "absoluteStartByte": 70921,
+              "absoluteEndByte": 71082
+            },
+            {
+              "text": "plutôt que sur une supériorité hypertrophique démontrée de l'un sur l'autre",
+              "relativeStartByte": 1916,
+              "relativeEndByte": 1996,
+              "absoluteStartByte": 71198,
+              "absoluteEndByte": 71278
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Conseil pratique sans preuve directe citée pour cette recommandation."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [
+      {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "claimRef": "tmp.claim.05",
+        "unitIndex": 4
+      },
+      {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "claimRef": "tmp.claim.06",
+        "unitIndex": 4
+      }
+    ],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 5724,
+      "outputTokens": 11474,
+      "reasoningTokens": 9216,
+      "totalTokens": 17198,
+      "costUsd": 0.118007
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 5724,
+      "outputTokens": 11474,
+      "reasoningTokens": 9216,
+      "totalTokens": 17198,
+      "costUsd": 0.118007
+    }
+  }
+}

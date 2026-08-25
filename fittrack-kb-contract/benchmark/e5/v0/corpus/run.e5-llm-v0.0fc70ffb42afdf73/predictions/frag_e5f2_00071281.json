@@ -1,0 +1,338 @@
+{
+  "fragmentId": "frag.e5f2.00071281",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00071281",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.c53728df3c9b0717",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Exercice mono-articulaire isolant le quadriceps sans intervention du droit fémoral en configuration bi-articulaire (la hanche reste fléchie et fixe)",
+        "supportSpans": [
+          {
+            "text": "Exercice mono-articulaire isolant le quadriceps sans intervention du droit fémoral en configuration bi-articulaire (la hanche reste fléchie et fixe)",
+            "relativeStartByte": 19,
+            "relativeEndByte": 169,
+            "absoluteStartByte": 71300,
+            "absoluteEndByte": 71450
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.cc0ff374c60d1c62",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "ce qui limite l'insuffisance active du droit fémoral",
+        "supportSpans": [
+          {
+            "text": "ce qui limite l'insuffisance active du droit fémoral",
+            "relativeStartByte": 171,
+            "relativeEndByte": 224,
+            "absoluteStartByte": 71452,
+            "absoluteEndByte": 71505
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.d23477e0014af5f8",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "peut permettre de le cibler à une longueur différente de celle atteinte en squat",
+        "supportSpans": [
+          {
+            "text": "peut permettre de le cibler à une longueur différente de celle atteinte en squat",
+            "relativeStartByte": 228,
+            "relativeEndByte": 310,
+            "absoluteStartByte": 71509,
+            "absoluteEndByte": 71591
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.e2371ceb7932697d",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "Une étude sur le changement de mode de contraction du quadriceps pendant l'extension dynamique du genou à charges croissantes documente le comportement du muscle sur l'amplitude",
+        "supportSpans": [
+          {
+            "text": "Une étude sur le changement de mode de contraction du quadriceps pendant l'extension dynamique du genou à charges croissantes documente le comportement du muscle sur l'amplitude",
+            "relativeStartByte": 378,
+            "relativeEndByte": 557,
+            "absoluteStartByte": 71659,
+            "absoluteEndByte": 71838
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1b300db1c3ad0669"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

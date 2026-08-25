@@ -1,0 +1,301 @@
+{
+  "fragmentId": "frag.e5f2.00034666",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00034666",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.821501f6a55c1b22",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un ensemble croissant de littérature explore l'hypothèse que l'entraînement réalisé lorsque le muscle est en **position étirée/allongée** produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés.",
+        "supportSpans": [
+          {
+            "text": "Un ensemble croissant de littérature explore l'hypothèse que l'entraînement réalisé lorsque le muscle est en **position étirée/allongée** produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés.",
+            "relativeStartByte": 0,
+            "relativeEndByte": 285,
+            "absoluteStartByte": 34666,
+            "absoluteEndByte": 34951
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "HYPOTHESIS",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de design d'étude ni mesure directe mentionnés dans cette phrase."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type d'étude non spécifié pour cette affirmation."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "HYPOTHESIS",
+            "reason": "Le texte qualifie explicitement cela d'hypothèse explorée par la littérature."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Présenté comme une hypothèse en exploration, sans conclusion ferme."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de design d'étude ni mesure directe mentionnés dans cette phrase."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type d'étude non spécifié pour cette affirmation."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.185bd482046d8a26",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement, notamment l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur, et la sarcomérogenèse en série observée dans des modèles animaux",
+        "supportSpans": [
+          {
+            "text": "Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement, notamment l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur, et la sarcomérogenèse en série observée dans des modèles animaux",
+            "relativeStartByte": 286,
+            "relativeEndByte": 591,
+            "absoluteStartByte": 34952,
+            "absoluteEndByte": 35257
+          },
+          {
+            "text": "— **preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné**",
+            "relativeStartByte": 708,
+            "relativeEndByte": 866,
+            "absoluteStartByte": 35374,
+            "absoluteEndByte": 35532
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "moderate",
+                "rationale": "Cohérence mécanistique suggérant que la tension à grande longueur est un stimulus important."
+              },
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "Faible applicabilité quantitative à l'humain entraîné indiquée par le texte."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "animal_model",
+            "reason": "Mention explicite d'observations et preuves depuis des modèles animaux."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review",
+              "biomechanical_study",
+              "cadaveric_study",
+              "unknown"
+            ],
+            "reason": "Le texte mentionne une revue narrative et des modèles animaux ; types spécifiques sous-jacents non détaillés."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": "Décrit des mécanismes proposés et observations animales."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Le texte précise qu'il s'agit de preuve mécanistique/translationnelle issue de modèles animaux, faible pour application directe."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "moderate",
+                "rationale": "Cohérence mécanistique suggérant que la tension à grande longueur est un stimulus important."
+              },
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "Faible applicabilité quantitative à l'humain entraîné indiquée par le texte."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "animal_model",
+            "reason": "Mention explicite d'observations et preuves depuis des modèles animaux."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review",
+              "biomechanical_study",
+              "cadaveric_study",
+              "unknown"
+            ],
+            "reason": "Le texte mentionne une revue narrative et des modèles animaux ; types spécifiques sous-jacents non détaillés."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.d2cea0ce1a8a2a0f"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [
+          "niveau faible pour une application quantitative directe chez l'humain entraîné"
+        ],
+        "cannotConclude": [
+          "application quantitative directe chez l'humain entraîné"
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.aeee927f27cde7c7",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.",
+        "supportSpans": [
+          {
+            "text": "bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.",
+            "relativeStartByte": 868,
+            "relativeEndByte": 1013,
+            "absoluteStartByte": 35534,
+            "absoluteEndByte": 35679
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "probable",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Fait référence à essais humains en cohérence avec le principe ; présume mesures hypertrophiques."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Les types d'essais ne sont pas explicités ici."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirme cohérence avec des essais humains (preuve)."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "probable",
+            "reason": "Cohérence qualitative rapportée, sans détails quantitatifs."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Fait référence à essais humains en cohérence avec le principe ; présume mesures hypertrophiques."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Les types d'essais ne sont pas explicités ici."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [
+          "Nature exacte et détails des essais humains non fournis ici."
+        ],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

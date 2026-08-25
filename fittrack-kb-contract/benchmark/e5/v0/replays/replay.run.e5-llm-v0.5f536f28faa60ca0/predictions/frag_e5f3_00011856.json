@@ -1,0 +1,101 @@
+{
+  "fragmentId": "frag.e5f3.00011856",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00011856",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.57f543233db0b47a",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "- hausse modeste et revenue au niveau de base au lendemain → maintenir ou réduire légèrement;",
+        "supportSpans": [
+          {
+            "text": "- hausse modeste et revenue au niveau de base au lendemain → maintenir ou réduire légèrement;",
+            "relativeStartByte": 0,
+            "relativeEndByte": 98,
+            "absoluteStartByte": 11856,
+            "absoluteEndByte": 11954
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "Non spécifié dans le fragment."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation pratique sans données citées."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Aucune étude ou guideline citée, format d’algorithme prudent."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Instruction d’algorithme clinique/pratique sur l’ajustement de charge selon la réponse douloureuse."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "Non spécifié dans le fragment."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation pratique sans données citées."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Aucune étude ou guideline citée, format d’algorithme prudent."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "hausse modeste de la douleur et revenue au niveau de base au lendemain"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content",
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

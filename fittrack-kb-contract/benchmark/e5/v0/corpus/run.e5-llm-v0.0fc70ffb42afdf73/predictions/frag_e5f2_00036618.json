@@ -1,0 +1,186 @@
+{
+  "fragmentId": "frag.e5f2.00036618",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00036618",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.42f403664c6575f7",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une étude comparant l'hypertrophie régionale des fléchisseurs du coude entre entraînement à faible charge avec occlusion vasculaire à courte vs longue longueur musculaire ne trouve **pas** de différence significative d'hypertrophie régionale entre les deux conditions",
+        "supportSpans": [
+          {
+            "text": "Une étude comparant l'hypertrophie régionale des fléchisseurs du coude entre entraînement à faible charge avec occlusion vasculaire à courte vs longue longueur musculaire ne trouve **pas** de différence significative d'hypertrophie régionale entre les deux conditions",
+            "relativeStartByte": 2,
+            "relativeEndByte": 277,
+            "absoluteStartByte": 36620,
+            "absoluteEndByte": 36895
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Hypertrophie régionale mesurée directement dans l'étude humaine."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Le type d'étude spécifique n'est pas précisé dans le fragment."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Résultat d'une étude rapporté explicitement."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Résultat d'une seule étude; absence de différence significative ne prouve pas l'équivalence."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Hypertrophie régionale mesurée directement dans l'étude humaine."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Le type d'étude spécifique n'est pas précisé dans le fragment."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.ab122cebd98174a7"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "fléchisseurs du coude",
+          "entraînement à faible charge",
+          "occlusion vasculaire",
+          "courte vs longue longueur musculaire"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.9e25e5d0ddae681e",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "la supériorité de la grande longueur n'est pas universelle selon la modalité de charge (ici occlusion vasculaire à charge très faible)",
+        "supportSpans": [
+          {
+            "text": "la supériorité de la grande longueur n'est pas universelle selon la modalité de charge (ici occlusion vasculaire à charge très faible)",
+            "relativeStartByte": 473,
+            "relativeEndByte": 612,
+            "absoluteStartByte": 37091,
+            "absoluteEndByte": 37230
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Énoncé interprétatif/éditorial dérivé du résultat, pas une mesure directe supplémentaire."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Le texte réfute l'universalité d'une règle générale (supériorité de la grande longueur)."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Conclusion interprétative fondée sur un cas de charge spécifique (BFR à très faible charge)."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Énoncé interprétatif/éditorial dérivé du résultat, pas une mesure directe supplémentaire."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [
+          "modalité de charge",
+          "occlusion vasculaire à charge très faible"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

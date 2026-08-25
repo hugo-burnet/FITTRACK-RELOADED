@@ -1,0 +1,531 @@
+{
+  "fragmentId": "frag.e5f2.00005159",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 5,
+    "retained": 5,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La majorité des études d'imagerie régionale et de biomécanique porte sur de petits échantillons (souvent moins de 20 à 40 sujets), majoritairement de jeunes hommes non entraînés ou récréativement entraînés, sur des durées de 6 à 12 semaines.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Affirme des caractéristiques méthodologiques observées dans la littérature."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le degré d'étendue ou de certitude n'est pas explicité."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f17715a926daa4ef",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "La majorité des études d'imagerie régionale et de biomécanique porte sur de petits échantillons (souvent moins de 20 à 40 sujets), majoritairement de jeunes hommes non entraînés ou récréativement entraînés, sur des durées de 6 à 12 semaines.",
+          "supportSpans": [
+            {
+              "text": "La majorité des études d'imagerie régionale et de biomécanique porte sur de petits échantillons (souvent moins de 20 à 40 sujets), majoritairement de jeunes hommes non entraînés ou récréativement entraînés, sur des durées de 6 à 12 semaines.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 255,
+              "absoluteStartByte": 5159,
+              "absoluteEndByte": 5414
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Portée générale sur des études d'imagerie/biomécanique, non spécifiée."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune étude précise ni type explicite n'est cité."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Affirme des caractéristiques méthodologiques observées dans la littérature."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le degré d'étendue ou de certitude n'est pas explicité."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Portée générale sur des études d'imagerie/biomécanique, non spécifiée."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune étude précise ni type explicite n'est cité."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "petits échantillons",
+            "jeunes hommes non entraînés ou récréativement entraînés",
+            "durées de 6 à 12 semaines"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les données EMG comparatives entre exercices sont nombreuses mais hétérogènes en méthodologie (normalisation, placement des électrodes, phase du mouvement analysée).",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": "Observation sur l'hétérogénéité méthodologique des données EMG comparatives."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Pas de qualification de certitude fournie."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.06cded1fae8e098a",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Les données EMG comparatives entre exercices sont nombreuses mais hétérogènes en méthodologie (normalisation, placement des électrodes, phase du mouvement analysée).",
+          "supportSpans": [
+            {
+              "text": "Les données EMG comparatives entre exercices sont nombreuses mais hétérogènes en méthodologie (normalisation, placement des électrodes, phase du mouvement analysée).",
+              "relativeStartByte": 256,
+              "relativeEndByte": 428,
+              "absoluteStartByte": 5415,
+              "absoluteEndByte": 5587
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Porte spécifiquement sur des données EMG."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Mention explicite de données EMG."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": "Observation sur l'hétérogénéité méthodologique des données EMG comparatives."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de qualification de certitude fournie."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Porte spécifiquement sur des données EMG."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Mention explicite de données EMG."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "comparatives entre exercices",
+            "hétérogènes en méthodologie"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Les données de moment arms et de forces articulaires proviennent souvent de modèles musculo-squelettiques ou de cadavres, extrapolés à des humains vivants en mouvement dynamique.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Décrit l'origine des données biomécaniques et leur extrapolation."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Aucune qualification de certitude."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.9ea1665c0753a0c8",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Les données de moment arms et de forces articulaires proviennent souvent de modèles musculo-squelettiques ou de cadavres, extrapolés à des humains vivants en mouvement dynamique.",
+          "supportSpans": [
+            {
+              "text": "Les données de moment arms et de forces articulaires proviennent souvent de modèles musculo-squelettiques ou de cadavres, extrapolés à des humains vivants en mouvement dynamique.",
+              "relativeStartByte": 429,
+              "relativeEndByte": 611,
+              "absoluteStartByte": 5588,
+              "absoluteEndByte": 5770
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Concerne des modèles/cadavres et extrapolation biomécanique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study",
+                "cadaveric_study"
+              ],
+              "reason": "Mention de modèles musculo-squelettiques et de cadavres."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Décrit l'origine des données biomécaniques et leur extrapolation."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune qualification de certitude."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Concerne des modèles/cadavres et extrapolation biomécanique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study",
+                "cadaveric_study"
+              ],
+              "reason": "Mention de modèles musculo-squelettiques et de cadavres."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "extrapolés à des humains vivants en mouvement dynamique"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "Peu d'études suivent des athlètes très avancés ou des femmes en nombre suffisant.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Affirme une rareté d'études pour certaines populations."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le niveau de certitude n'est pas précisé."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.7fa54f556ab76517",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "Peu d'études suivent des athlètes très avancés ou des femmes en nombre suffisant.",
+          "supportSpans": [
+            {
+              "text": "Peu d'études suivent des athlètes très avancés ou des femmes en nombre suffisant.",
+              "relativeStartByte": 612,
+              "relativeEndByte": 697,
+              "absoluteStartByte": 5771,
+              "absoluteEndByte": 5856
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Population cible sans précisions sur le type d'étude."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type d'étude non précisé."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Affirme une rareté d'études pour certaines populations."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le niveau de certitude n'est pas précisé."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Population cible sans précisions sur le type d'étude."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type d'étude non précisé."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "athlètes très avancés",
+            "femmes en nombre suffisant"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "Ces limites s'appliquent à l'ensemble du document et ne sont pas répétées à chaque section.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Établit une portée/transversalité des limites pour le document."
+        },
+        "epistemicStatus": {
+          "state": "NOT_STATED",
+          "value": null,
+          "reason": "Instruction éditoriale, pas un résultat empirique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.918fdfa581934fe5",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "Ces limites s'appliquent à l'ensemble du document et ne sont pas répétées à chaque section.",
+          "supportSpans": [
+            {
+              "text": "Ces limites s'appliquent à l'ensemble du document et ne sont pas répétées à chaque section.",
+              "relativeStartByte": 698,
+              "relativeEndByte": 794,
+              "absoluteStartByte": 5857,
+              "absoluteEndByte": 5953
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_STATED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_STATED",
+              "value": null,
+              "reason": "Non applicable à un résultat scientifique."
+            },
+            "evidenceTypes": {
+              "state": "NOT_STATED",
+              "value": null,
+              "reason": "Instruction éditoriale."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Établit une portée/transversalité des limites pour le document."
+            },
+            "epistemicStatus": {
+              "state": "NOT_STATED",
+              "value": null,
+              "reason": "Instruction éditoriale, pas un résultat empirique."
+            },
+            "confidenceByAspect": {
+              "state": "NOT_STATED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_STATED",
+              "value": null,
+              "reason": "Non applicable à un résultat scientifique."
+            },
+            "evidenceTypes": {
+              "state": "NOT_STATED",
+              "value": null,
+              "reason": "Instruction éditoriale."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "output_policy_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

@@ -1,0 +1,246 @@
+{
+  "fragmentId": "frag.e5f2.00054745",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Peu de données biomécaniques dédiées à la charge de cheville en musculation pure (mollets, squat) ont été identifiées au-delà du contexte clinique (arthrose, prothèses, rupture du tendon d'Achille) — **lacune de preuve explicite**.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5cf9cb23e216dc95",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Peu de données biomécaniques dédiées à la charge de cheville en musculation pure (mollets, squat) ont été identifiées au-delà du contexte clinique (arthrose, prothèses, rupture du tendon d'Achille) — **lacune de preuve explicite**.",
+          "supportSpans": [
+            {
+              "text": "Peu de données biomécaniques dédiées à la charge de cheville en musculation pure (mollets, squat) ont été identifiées au-delà du contexte clinique (arthrose, prothèses, rupture du tendon d'Achille) — **lacune de preuve explicite**.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 243,
+              "absoluteStartByte": 54745,
+              "absoluteEndByte": 54988
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les données disponibles sur la contribution différentielle gastrocnémien/soléaire selon l'angle du genou (section 1.12) restent la source biomécanique la plus directement transférable à la programmation des mollets.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.8cdc481ff7bf43c2",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Les données disponibles sur la contribution différentielle gastrocnémien/soléaire selon l'angle du genou (section 1.12) restent la source biomécanique la plus directement transférable à la programmation des mollets.",
+          "supportSpans": [
+            {
+              "text": "Les données disponibles sur la contribution différentielle gastrocnémien/soléaire selon l'angle du genou (section 1.12) restent la source biomécanique la plus directement transférable à la programmation des mollets.",
+              "relativeStartByte": 244,
+              "relativeEndByte": 466,
+              "absoluteStartByte": 54989,
+              "absoluteEndByte": 55211
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4500,
+      "outputTokens": 3323,
+      "reasoningTokens": 2688,
+      "totalTokens": 7823,
+      "costUsd": 0.034967
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4500,
+      "outputTokens": 3323,
+      "reasoningTokens": 2688,
+      "totalTokens": 7823,
+      "costUsd": 0.034967
+    }
+  }
+}

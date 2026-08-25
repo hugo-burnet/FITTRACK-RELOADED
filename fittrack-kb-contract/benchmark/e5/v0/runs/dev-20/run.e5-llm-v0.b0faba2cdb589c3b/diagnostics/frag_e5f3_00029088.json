@@ -1,0 +1,260 @@
+{
+  "fragmentId": "frag.e5f3.00029088",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Describes change in patellofemoral demand with squat depth"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Uses hedge 'généralement' indicating typical but not absolute effect"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d55e43c38e36867a",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées",
+          "supportSpans": [
+            {
+              "text": "une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées",
+              "relativeStartByte": 14,
+              "relativeEndByte": 127,
+              "absoluteStartByte": 29102,
+              "absoluteEndByte": 29215
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Outcome is biomechanical demand, not clinical outcomes"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "No citations provided"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Describes change in patellofemoral demand with squat depth"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Uses hedge 'généralement' indicating typical but not absolute effect"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Outcome is biomechanical demand, not clinical outcomes"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "No citations provided"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Squat",
+            "jusqu’aux amplitudes étudiées"
+          ],
+          "limitations": [
+            "Formulation probabiliste 'généralement'"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "utiliser une box, une profondeur partielle ou une assistance peut doser cette demande",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Actionable coaching tactic without cited evidence"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Presented as practical option rather than proven outcome"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.45a6f7225331ecda",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "utiliser une box, une profondeur partielle ou une assistance peut doser cette demande",
+          "supportSpans": [
+            {
+              "text": "utiliser une box, une profondeur partielle ou une assistance peut doser cette demande",
+              "relativeStartByte": 129,
+              "relativeEndByte": 214,
+              "absoluteStartByte": 29217,
+              "absoluteEndByte": 29302
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "No empirical evidence cited; coaching practice statement"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Explicitly practice guidance"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Actionable coaching tactic without cited evidence"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Presented as practical option rather than proven outcome"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "No empirical evidence cited; coaching practice statement"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Explicitly practice guidance"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Squat"
+          ],
+          "limitations": [
+            "Modality examples limited to box, profondeur partielle, assistance"
+          ],
+          "cannotConclude": [
+            "Ne démontre pas un effet clinique ni une réduction de risque"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 3499,
+      "outputTokens": 637,
+      "reasoningTokens": 0,
+      "totalTokens": 4136,
+      "costUsd": 0.00771975
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 3499,
+      "outputTokens": 637,
+      "reasoningTokens": 0,
+      "totalTokens": 4136,
+      "costUsd": 0.00771975
+    }
+  }
+}

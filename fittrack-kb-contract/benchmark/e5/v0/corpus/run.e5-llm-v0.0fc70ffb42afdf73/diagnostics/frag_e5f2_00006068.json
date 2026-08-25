@@ -1,0 +1,477 @@
+{
+  "fragmentId": "frag.e5f2.00006068",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 4,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le grand pectoral se subdivise fonctionnellement en une portion **claviculaire** (fibres supérieures, orientées obliquement vers le bas et le dehors) et une portion **sterno-costale** (fibres moyennes et inférieures, orientées plus horizontalement puis obliquement vers le haut).",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.17c090653fa05cda",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Le grand pectoral se subdivise fonctionnellement en une portion **claviculaire** (fibres supérieures, orientées obliquement vers le bas et le dehors) et une portion **sterno-costale** (fibres moyennes et inférieures, orientées plus horizontalement puis obliquement vers le haut).",
+          "supportSpans": [
+            {
+              "text": "Le grand pectoral se subdivise fonctionnellement en une portion **claviculaire** (fibres supérieures, orientées obliquement vers le bas et le dehors) et une portion **sterno-costale** (fibres moyennes et inférieures, orientées plus horizontalement puis obliquement vers le haut).",
+              "relativeStartByte": 0,
+              "relativeEndByte": 283,
+              "absoluteStartByte": 6068,
+              "absoluteEndByte": 6351
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une étude de 2026 utilisant l'EMG pour distinguer ces deux régions pendant le développé couché concentrique confirme des patterns d'activation distincts entre les fibres claviculaires et sternales selon la phase du mouvement",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.e51f00049d356d82",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une étude de 2026 utilisant l'EMG pour distinguer ces deux régions pendant le développé couché concentrique confirme des patterns d'activation distincts entre les fibres claviculaires et sternales selon la phase du mouvement",
+          "supportSpans": [
+            {
+              "text": "Une étude de 2026 utilisant l'EMG pour distinguer ces deux régions pendant le développé couché concentrique confirme des patterns d'activation distincts entre les fibres claviculaires et sternales selon la phase du mouvement",
+              "relativeStartByte": 284,
+              "relativeEndByte": 513,
+              "absoluteStartByte": 6352,
+              "absoluteEndByte": 6581
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.b97f93918eec4d4c"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "développé couché concentrique",
+            "selon la phase du mouvement"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "cohérent avec des rôles biomécaniques différenciés selon l'angle du bras",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.db0504492b475f11",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "cohérent avec des rôles biomécaniques différenciés selon l'angle du bras",
+          "supportSpans": [
+            {
+              "text": "cohérent avec des rôles biomécaniques différenciés selon l'angle du bras",
+              "relativeStartByte": 515,
+              "relativeEndByte": 592,
+              "absoluteStartByte": 6583,
+              "absoluteEndByte": 6660
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "UNRESOLVED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "l'élastographie par ondes de cisaillement montre des propriétés matérielles différentes entre régions fibreuses du grand pectoral",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.dba547d9e50693ea",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "l'élastographie par ondes de cisaillement montre des propriétés matérielles différentes entre régions fibreuses du grand pectoral",
+          "supportSpans": [
+            {
+              "text": "l'élastographie par ondes de cisaillement montre des propriétés matérielles différentes entre régions fibreuses du grand pectoral",
+              "relativeStartByte": 758,
+              "relativeEndByte": 893,
+              "absoluteStartByte": 6826,
+              "absoluteEndByte": 6961
+            },
+            {
+              "text": "appuyant l'idée de sous-unités fonctionnelles distinctes plutôt que d'un muscle homogène",
+              "relativeStartByte": 895,
+              "relativeEndByte": 987,
+              "absoluteStartByte": 6963,
+              "absoluteEndByte": 7055
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "regional_specificity",
+                  "confidence": "moderate",
+                  "rationale": "niveau de confiance modéré à élevé pour l'existence de sous-régions"
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "imaging_descriptive",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "imaging_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "regional_specificity",
+                  "confidence": "moderate",
+                  "rationale": "niveau de confiance modéré à élevé pour l'existence de sous-régions"
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "imaging_descriptive",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "imaging_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.f378984682ad11b6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "preuve de type anatomique/imagerie"
+          ],
+          "cannotConclude": [
+            "faible pour toute règle d'entraînement dérivée sans données longitudinales correspondantes"
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 5160,
+      "outputTokens": 7427,
+      "reasoningTokens": 6208,
+      "totalTokens": 12587,
+      "costUsd": 0.076832
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 5160,
+      "outputTokens": 7427,
+      "reasoningTokens": 6208,
+      "totalTokens": 12587,
+      "costUsd": 0.076832
+    }
+  }
+}

@@ -1,0 +1,686 @@
+{
+  "fragmentId": "frag.e5f2.00011983",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 6,
+    "retained": 6,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "le **faisceau antérieur** réalise la flexion et la rotation interne de l'épaule et contribue à l'adduction horizontale",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.25dbb1f19335eafb",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "le **faisceau antérieur** réalise la flexion et la rotation interne de l'épaule et contribue à l'adduction horizontale",
+          "supportSpans": [
+            {
+              "text": "le **faisceau antérieur** réalise la flexion et la rotation interne de l'épaule et contribue à l'adduction horizontale",
+              "relativeStartByte": 26,
+              "relativeEndByte": 148,
+              "absoluteStartByte": 12009,
+              "absoluteEndByte": 12131
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "le **faisceau latéral** est le moteur principal de l'abduction pure",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.420df3b516a5c067",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "le **faisceau latéral** est le moteur principal de l'abduction pure",
+          "supportSpans": [
+            {
+              "text": "le **faisceau latéral** est le moteur principal de l'abduction pure",
+              "relativeStartByte": 151,
+              "relativeEndByte": 219,
+              "absoluteStartByte": 12134,
+              "absoluteEndByte": 12202
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "le **faisceau postérieur** réalise l'extension, la rotation externe et l'adduction horizontale",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d8e9b7857ade97c3",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "le **faisceau postérieur** réalise l'extension, la rotation externe et l'adduction horizontale",
+          "supportSpans": [
+            {
+              "text": "le **faisceau postérieur** réalise l'extension, la rotation externe et l'adduction horizontale",
+              "relativeStartByte": 222,
+              "relativeEndByte": 318,
+              "absoluteStartByte": 12205,
+              "absoluteEndByte": 12301
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "rôle de stabilisateur de trajectoire documenté aussi en développé militaire, section 5.4",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.1bbab5b03cfc3388",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "rôle de stabilisateur de trajectoire documenté aussi en développé militaire, section 5.4",
+          "supportSpans": [
+            {
+              "text": "le **faisceau postérieur**",
+              "relativeStartByte": 222,
+              "relativeEndByte": 249,
+              "absoluteStartByte": 12205,
+              "absoluteEndByte": 12232
+            },
+            {
+              "text": "rôle de stabilisateur de trajectoire documenté aussi en développé militaire, section 5.4",
+              "relativeStartByte": 320,
+              "relativeEndByte": 412,
+              "absoluteStartByte": 12303,
+              "absoluteEndByte": 12395
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "en développé militaire"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "Une étude EMG chez des pratiquants de musculation montre que l'activation du deltoïde moyen (latéral) pendant l'abduction diminue significativement quand l'angle du coude se referme de 180° à 120° chez les hommes",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c526c9c7975add5d",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "Une étude EMG chez des pratiquants de musculation montre que l'activation du deltoïde moyen (latéral) pendant l'abduction diminue significativement quand l'angle du coude se referme de 180° à 120° chez les hommes",
+          "supportSpans": [
+            {
+              "text": "Une étude EMG chez des pratiquants de musculation montre que l'activation du deltoïde moyen (latéral) pendant l'abduction diminue significativement quand l'angle du coude se referme de 180° à 120° chez les hommes",
+              "relativeStartByte": 415,
+              "relativeEndByte": 633,
+              "absoluteStartByte": 12398,
+              "absoluteEndByte": 12616
+            },
+            {
+              "text": "— preuve EMG, niveau faible, échantillon réduit, résultat sexuellement différencié non expliqué.",
+              "relativeStartByte": 778,
+              "relativeEndByte": 882,
+              "absoluteStartByte": 12761,
+              "absoluteEndByte": 12865
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.4b1075aabd15a284"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "pendant l'abduction",
+            "angle du coude de 180° à 120°",
+            "chez des pratiquants de musculation",
+            "chez les hommes"
+          ],
+          "limitations": [
+            "niveau faible",
+            "échantillon réduit",
+            "résultat sexuellement différencié non expliqué"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 5,
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "sans différence significative chez les femmes de l'échantillon",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.ebebe327e8388e84",
+          "technicalClaimRef": "tmp.claim.06",
+          "rawStatement": "sans différence significative chez les femmes de l'échantillon",
+          "supportSpans": [
+            {
+              "text": "sans différence significative chez les femmes de l'échantillon",
+              "relativeStartByte": 635,
+              "relativeEndByte": 699,
+              "absoluteStartByte": 12618,
+              "absoluteEndByte": 12682
+            },
+            {
+              "text": "— preuve EMG, niveau faible, échantillon réduit, résultat sexuellement différencié non expliqué.",
+              "relativeStartByte": 778,
+              "relativeEndByte": 882,
+              "absoluteStartByte": 12761,
+              "absoluteEndByte": 12865
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.4b1075aabd15a284"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "chez des pratiquants de musculation",
+            "chez les femmes de l'échantillon"
+          ],
+          "limitations": [
+            "niveau faible",
+            "échantillon réduit",
+            "résultat sexuellement différencié non expliqué"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4867,
+      "outputTokens": 8118,
+      "reasoningTokens": 6400,
+      "totalTokens": 12985,
+      "costUsd": 0.08337575
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4867,
+      "outputTokens": 8118,
+      "reasoningTokens": 6400,
+      "totalTokens": 12985,
+      "costUsd": 0.08337575
+    }
+  }
+}

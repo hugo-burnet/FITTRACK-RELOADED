@@ -1,0 +1,305 @@
+{
+  "fragmentId": "frag.e5f3.00014985",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.b0faba2cdb589c3b",
+    "fragmentId": "frag.e5f3.00014985",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.558b01c3c0dc3a4b",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La compression, le cisaillement ou le moment externe décrivent une demande mécanique, mais ne donnent pas à eux seuls un seuil clinique de dommage.",
+        "supportSpans": [
+          {
+            "text": "La compression, le cisaillement ou le moment externe décrivent une demande mécanique, mais ne donnent pas à eux seuls un seuil clinique de dommage.",
+            "relativeStartByte": 0,
+            "relativeEndByte": 150,
+            "absoluteStartByte": 14985,
+            "absoluteEndByte": 15135
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Affirmation de nature mécanistique sans preuve clinique directe."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune source explicitement attachée à cette phrase."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": "Décrit la nature mécanique des grandeurs et l'absence de seuil clinique intrinsèque."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Énonce un mécanisme et une limite, sans outcome clinique démontré."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Affirmation de nature mécanistique sans preuve clinique directe."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune source explicitement attachée à cette phrase."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [
+          "Ne fournit pas de seuil clinique; mécanisme sans preuve outcome."
+        ],
+        "cannotConclude": [
+          "Ne permet pas d’inférer un seuil clinique de dommage."
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.097b186c599f34f3",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.",
+        "supportSpans": [
+          {
+            "text": "La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.",
+            "relativeStartByte": 151,
+            "relativeEndByte": 259,
+            "absoluteStartByte": 15136,
+            "absoluteEndByte": 15244
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Sans source scientifique reliée dans le fragment."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Correspond à une pratique/considération d’expertise."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Énumération de facteurs considérés pertinents sans preuve citée."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Assertion de pratique/considérations cliniques sans appui empirique direct cité."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Sans source scientifique reliée dans le fragment."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Correspond à une pratique/considération d’expertise."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.02b0e84f2dfa7632",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie; les charges étudiées étaient toutefois souvent légères et les données surtout transversales",
+        "supportSpans": [
+          {
+            "text": "Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie; les charges étudiées étaient toutefois souvent légères et les données surtout transversales",
+            "relativeStartByte": 260,
+            "relativeEndByte": 507,
+            "absoluteStartByte": 15245,
+            "absoluteEndByte": 15492
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "Charges souvent légères et données surtout transversales limitent la généralisation."
+              },
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "moderate",
+                "rationale": "Synthèse narrative de l’absence de preuve avec limites décrites."
+              }
+            ],
+            "raw": null,
+            "reason": "Limites méthodologiques réduisent la certitude et la généralisabilité."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Portant sur risque de lombalgie in vivo."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": "Mention d’une revue; type exact non précisé mais classé comme revue systématique par défaut de revue probante."
+          },
+          "clinicalEvidenceLevel": "B_moderate",
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Affirme l’absence de preuve crédible pour un facteur de risque présumé."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": "Le texte explicite une absence de preuve crédible in vivo."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "Charges souvent légères et données surtout transversales limitent la généralisation."
+              },
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "moderate",
+                "rationale": "Synthèse narrative de l’absence de preuve avec limites décrites."
+              }
+            ],
+            "raw": null,
+            "reason": "Limites méthodologiques réduisent la certitude et la généralisabilité."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Portant sur risque de lombalgie in vivo."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": "Mention d’une revue; type exact non précisé mais classé comme revue systématique par défaut de revue probante."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.97d5e335856e2df6"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "Pendant le soulèvement",
+          "Flexion lombaire accrue"
+        ],
+        "limitations": [
+          "Charges souvent légères",
+          "Données surtout transversales"
+        ],
+        "cannotConclude": [
+          "Ne démontre pas que la flexion accrue augmente le risque de lombalgie.",
+          "Ne permet pas d’inférer un effet sous charges lourdes ou en longitudinal."
+        ],
+        "unresolved": [],
+        "flags": [
+          "ambiguous_citation",
+          "clinical_content",
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

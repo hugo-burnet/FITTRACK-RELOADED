@@ -1,0 +1,440 @@
+{
+  "fragmentId": "frag.e5f2.00057932",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00057932",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.f17b6e34a16c9881",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Sollicite fortement le triceps",
+        "supportSpans": [
+          {
+            "text": "Sollicite fortement le triceps",
+            "relativeStartByte": 10,
+            "relativeEndByte": 40,
+            "absoluteStartByte": 57942,
+            "absoluteEndByte": 57972
+          },
+          {
+            "text": "en fin de course inférieure (position étirée du pectoral)",
+            "relativeStartByte": 88,
+            "relativeEndByte": 148,
+            "absoluteStartByte": 58020,
+            "absoluteEndByte": 58080
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Déduction pratique sur l’exercice, sans donnée instrumentée."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Description de sollicitation musculaire sans mesure ou citation."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Observation pratique rapportée, non appuyée par des mesures EMG ou des essais."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Déduction pratique sur l’exercice, sans donnée instrumentée."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "en fin de course inférieure (position étirée du pectoral)"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.1b1f70e125559ff1",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Sollicite fortement le triceps et la portion sterno-costale du grand pectoral",
+        "supportSpans": [
+          {
+            "text": "Sollicite fortement le triceps et la portion sterno-costale du grand pectoral",
+            "relativeStartByte": 10,
+            "relativeEndByte": 87,
+            "absoluteStartByte": 57942,
+            "absoluteEndByte": 58019
+          },
+          {
+            "text": "en fin de course inférieure (position étirée du pectoral)",
+            "relativeStartByte": 88,
+            "relativeEndByte": 148,
+            "absoluteStartByte": 58020,
+            "absoluteEndByte": 58080
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Déduction pratique sur l’exercice, sans donnée instrumentée."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Description de sollicitation musculaire sans mesure ou citation."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Observation pratique rapportée, non appuyée par des mesures EMG ou des essais."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Déduction pratique sur l’exercice, sans donnée instrumentée."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "en fin de course inférieure (position étirée du pectoral)"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.e3eb69dced2522b0",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "avec une flexion importante d'épaule en bas de mouvement",
+        "supportSpans": [
+          {
+            "text": "avec une flexion importante d'épaule en bas de mouvement",
+            "relativeStartByte": 150,
+            "relativeEndByte": 207,
+            "absoluteStartByte": 58082,
+            "absoluteEndByte": 58139
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Observation de posture/articulation sans outcome clinique ou hypertrophique direct."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation cinématique décrite textuellement."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Observation descriptive sans source instrumentale citée."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Observation de posture/articulation sans outcome clinique ou hypertrophique direct."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "en bas de mouvement"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.20ebdfd2bb0e1155",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "configuration cohérente avec le principe de longueur musculaire (section 3)",
+        "supportSpans": [
+          {
+            "text": "configuration cohérente avec le principe de longueur musculaire (section 3)",
+            "relativeStartByte": 212,
+            "relativeEndByte": 288,
+            "absoluteStartByte": 58144,
+            "absoluteEndByte": 58220
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Application d’un principe mécanistique à la configuration décrite."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": "Lien mécanistique proposé (principe de longueur)."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Énoncé mécanistique sans preuve outcome."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Application d’un principe mécanistique à la configuration décrite."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.be6b0a5b684564b8",
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "aucune étude d'hypertrophie régionale dédiée aux dips n'ait été identifiée spécifiquement",
+        "supportSpans": [
+          {
+            "text": "aucune étude d'hypertrophie régionale dédiée aux dips n'ait été identifiée spécifiquement",
+            "relativeStartByte": 297,
+            "relativeEndByte": 394,
+            "absoluteStartByte": 58229,
+            "absoluteEndByte": 58326
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Directness non applicable à un constat d’absence de preuve."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Énoncé sur l’état de la preuve (absence)."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": "Absence explicitement déclarée d’études dédiées."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Directness non applicable à un constat d’absence de preuve."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

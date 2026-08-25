@@ -1,0 +1,449 @@
+{
+  "fragmentId": "frag.f2.0003",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.b28b106e39491fc7",
+    "fragmentId": "frag.f2.0003",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.2b9c6ebabf93a797",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines",
+        "supportSpans": [
+          {
+            "text": "l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines",
+            "relativeStartByte": 89,
+            "relativeEndByte": 457,
+            "absoluteStartByte": 16037,
+            "absoluteEndByte": 16405
+          },
+          {
+            "text": "([Nunes et al., 2022, *Eur J Sport Sci*](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279))",
+            "relativeStartByte": 458,
+            "relativeEndByte": 566,
+            "absoluteStartByte": 16406,
+            "absoluteEndByte": 16514
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Direction explicitly stated (overhead > neutral for long head)."
+              },
+              {
+                "aspect": "magnitude",
+                "confidence": "moderate",
+                "rationale": "Described as substantially more important but without exact numbers."
+              },
+              {
+                "aspect": "chronic_effect",
+                "confidence": "moderate",
+                "rationale": "Effect over several weeks training."
+              },
+              {
+                "aspect": "regional_specificity",
+                "confidence": "high",
+                "rationale": "Specific to long head hypertrophy."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Described as direct hypertrophy evidence over weeks."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": "Described as controlled trial; precise design unspecified."
+          },
+          "clinicalEvidenceLevel": "B_moderate",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": true,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Reports a controlled trial outcome on hypertrophy difference between overhead vs neutral elbow extensions."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "Single controlled trial with clear directional effect stated."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Direction explicitly stated (overhead > neutral for long head)."
+              },
+              {
+                "aspect": "magnitude",
+                "confidence": "moderate",
+                "rationale": "Described as substantially more important but without exact numbers."
+              },
+              {
+                "aspect": "chronic_effect",
+                "confidence": "moderate",
+                "rationale": "Effect over several weeks training."
+              },
+              {
+                "aspect": "regional_specificity",
+                "confidence": "high",
+                "rationale": "Specific to long head hypertrophy."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Described as direct hypertrophy evidence over weeks."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": "Described as controlled trial; precise design unspecified."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c26ca4cf801ca5ab"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "Overhead elbow extension vs neutral; volume and effort equalized; several weeks training."
+        ],
+        "limitations": [
+          "Single controlled trial."
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.6ddb0f7c4790204e",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "**Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)**",
+        "supportSpans": [
+          {
+            "text": "**Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)**",
+            "relativeStartByte": 568,
+            "relativeEndByte": 734,
+            "absoluteStartByte": 16516,
+            "absoluteEndByte": 16682
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Described as proof of regional hypertrophy."
+              },
+              {
+                "aspect": "distribution",
+                "confidence": "moderate",
+                "rationale": "Moderate-to-high level noted."
+              },
+              {
+                "aspect": "regional_specificity",
+                "confidence": "high",
+                "rationale": "Explicitly regional."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Called direct proof of regional hypertrophy."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": "Referenced as controlled trial; single study."
+          },
+          "clinicalEvidenceLevel": "B_moderate",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Explicit classification of evidence strength and nature."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Stated as direct proof with moderate-to-high level."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Described as proof of regional hypertrophy."
+              },
+              {
+                "aspect": "distribution",
+                "confidence": "moderate",
+                "rationale": "Moderate-to-high level noted."
+              },
+              {
+                "aspect": "regional_specificity",
+                "confidence": "high",
+                "rationale": "Explicitly regional."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Called direct proof of regional hypertrophy."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": "Referenced as controlled trial; single study."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [
+          "Based on a single controlled trial with coherent biomechanical mechanism."
+        ],
+        "limitations": [
+          "Single study; classification within text as moderate-to-high."
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.752e429b6c2e263d",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long",
+        "supportSpans": [
+          {
+            "text": "les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long",
+            "relativeStartByte": 904,
+            "relativeEndByte": 1042,
+            "absoluteStartByte": 16852,
+            "absoluteEndByte": 16990
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "A practical exercise selection statement."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Labeled as consequence pratique."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Practical consequence phrased as targeting recommendation derived from evidence."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Stated as practical targeting guidance."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "A practical exercise selection statement."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Labeled as consequence pratique."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "Exercise variation: overhead extensions / skull crushers with vertical arms."
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.1e78af692c42a64e",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long",
+        "supportSpans": [
+          {
+            "text": "tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long",
+            "relativeStartByte": 1044,
+            "relativeEndByte": 1201,
+            "absoluteStartByte": 16992,
+            "absoluteEndByte": 17149
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "No direct measurement cited for this specific allocation within this sentence."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Labeled as practical consequence."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Practical allocation of muscle emphasis."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Presented as practical consequence rather than measured hypertrophy outcome here."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "No direct measurement cited for this specific allocation within this sentence."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Labeled as practical consequence."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "Pushdowns and neutral-position extensions; no extra long head stretch."
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

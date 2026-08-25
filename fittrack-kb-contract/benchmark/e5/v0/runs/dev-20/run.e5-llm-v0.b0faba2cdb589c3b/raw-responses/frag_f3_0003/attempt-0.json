@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.f3.0003",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.f3.0003\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"1. Résumé opérationnel\"\n    ],\n    \"rawText\": \"5. **L’imagerie ne dicte pas seule la programmation.** Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique ([Brinjikji et al., 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4464797/)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"5. **L’imagerie ne dicte pas seule la programmation.** Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique ([Brinjikji et al., 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4464797/)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.bb0b9f62a20d045d\",\n      \"handle\": \"cit.f3.0003.01\",\n      \"rawLabel\": \"Brinjikji et al., 2015\",\n      \"markdown\": \"[Brinjikji et al., 2015](https://pmc.ncbi.nlm.nih.gov/articles/PMC4464797/)\",\n      \"relativeStartByte\": 265,\n      \"relativeEndByte\": 340\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"L’imagerie ne dicte pas seule la programmation.\",\"Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique\"],\"rawStatementAnchorIndex\":1,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Directive clinique pratique explicitement formulée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation pratique sans résultat clinique quantifié dans le fragment.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil pratique sans mesure clinique directe dans ce texte.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulation normative issue du texte.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"programmation de musculation adaptative\",\"interprétation d’imagerie\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques\",\"augmentent avec l’âge\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Énoncé factuel sur la prévalence et son évolution avec l’âge.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Le niveau d’assurance n’est pas précisé dans le fragment.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"imaging_descriptive\",\"directnessReason\":\"Observation descriptive liée à des constats d’imagerie.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Le type exact d’étude n’est pas spécifié dans le texte.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.bb0b9f62a20d045d\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"personnes asymptomatiques\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787643627-YbIvtNKMkKvbMtcVzaUA",
+    "object": "chat.completion",
+    "created": 1787643627,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"L’imagerie ne dicte pas seule la programmation.\",\"Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique\"],\"rawStatementAnchorIndex\":1,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Directive clinique pratique explicitement formulée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation pratique sans résultat clinique quantifié dans le fragment.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil pratique sans mesure clinique directe dans ce texte.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulation normative issue du texte.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"programmation de musculation adaptative\",\"interprétation d’imagerie\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques\",\"augmentent avec l’âge\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Énoncé factuel sur la prévalence et son évolution avec l’âge.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Le niveau d’assurance n’est pas précisé dans le fragment.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"imaging_descriptive\",\"directnessReason\":\"Observation descriptive liée à des constats d’imagerie.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Le type exact d’étude n’est pas spécifié dans le texte.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.bb0b9f62a20d045d\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"personnes asymptomatiques\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjUbsZ12gUVnFwj7xzO3GUBY3yUKNdc8stMfv-cBgYbCZctHxkt7TFes3iKe47UCAxbm1QC3TO8hm0wlMlh5vUhp2LbIuYN_rCfgra3CqC_ioaIDFCgPOHjVk5v-0yhj6nEJvuXiO3Oek7p3RmHxB8y2xEFHlY-jaDYVLGcr4mLoZWZ-u7cfy-3nx9iT7GVBCBn2jj3Z6hy0VvIS7JZrwi2GyiynoSkMo5KFjG4i36DKIrc92qyymlUJlfapaJ9hwu3V3-jRQER2N53p5j-vCuBOn4TiWRJLbTTHccatq4MJ4vrVakERcxh-Yw39E98BB3X7aFQLtj7ne0yNl8y3DMuQIfA0_pvNc9DG97solnqOnxdP2m1pWas9jjuSoyx1cb5Jne0jwuEAcVaFREfxZFDCbtP66rmdJJ_c2o71GMC-d7Jjz45CXKNdCK0ebsO_KQSb309Ey2a3q5gU-FUIbbsexQytM9U7xNdjVpSW6CCtfQIFnJrWeEkO72T2nuZJC-no2RvqRGIRtZfQAcwW73BkOcolLWvwlHmN98_QXPUFFccUP8yujBVIjWhrytbWqK17N_SX_joaj5QQsE4hvJQslXxOy7HTO7fEjmTr_OXt2wchbxjd_xn-7DROf3JPihyBqohdt_AGukH8el3C6KIdewauOHaXRCpKI60V8KXlNYcCa0SJzkhBQEAYf4anB4dPK8AKARznlQBPGPEkF3I1obpVRQIE52qsYMMnNUMLaNT1D8BSZXVKrRE0_B897zj5KQ7pxNEa5J04VVPVrv0xsIwjkrFRPdU0GbPVeCd_Jp0uTk51TN9RLry4YrMcs-DAgp1QG29m-rYiOdEQDlLHC68JlRe207wMi5Ywbs1_OEjTkQvzvp2rf7s2-HZdToPe_jpQAJ7jW1BcdsIM6MtL-BV0rKnHR59OXeDXOfHmDkmNzcnfLnN8G2n2r51zP_R7H.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0f5f1290c3260a11016a8d46ec9a988195becd5200210205bb",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3683,
+      "completion_tokens": 674,
+      "total_tokens": 4357,
+      "cost": 0.00846375,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00846375,
+        "upstream_inference_prompt_cost": 0.00172375,
+        "upstream_inference_completions_cost": 0.00674
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787643627-YbIvtNKMkKvbMtcVzaUA",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 3683,
+    "completion_tokens": 674,
+    "total_tokens": 4357,
+    "cost": 0.00846375,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2560,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00846375,
+      "upstream_inference_prompt_cost": 0.00172375,
+      "upstream_inference_completions_cost": 0.00674
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 8520,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

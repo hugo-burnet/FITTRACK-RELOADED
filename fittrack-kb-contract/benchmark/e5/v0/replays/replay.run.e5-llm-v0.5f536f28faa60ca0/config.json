@@ -1,0 +1,24 @@
+{
+  "sourceRunId": "run.e5-llm-v0.5f536f28faa60ca0",
+  "sourcePromptVersion": "e5-llm-v0.3.0",
+  "sourceProviderDtoVersion": "e5-provider-prediction-v2",
+  "replayPromptVersion": "e5-llm-v0.4.0",
+  "fragmentCount": 100,
+  "apiCalls": 0,
+  "costUsd": 0,
+  "statuses": {
+    "validated": 74,
+    "partiallyValidated": 26,
+    "rejected": 0
+  },
+  "claimAudit": {
+    "attempted": 188,
+    "retained": 157,
+    "filtered": 31
+  },
+  "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+  "provider": "replay",
+  "replay": true,
+  "stage": "REPLAY",
+  "sourceRunRoot": "C:\\Users\\e6\\Documents\\Codex\\2026-08-24\\tu-reprends-le-travail-sur-fittrack\\work\\FITTRACK-RELOADED\\fittrack-kb-contract\\benchmark\\e5\\v0\\runs\\openrouter-openai-gpt-5"
+}

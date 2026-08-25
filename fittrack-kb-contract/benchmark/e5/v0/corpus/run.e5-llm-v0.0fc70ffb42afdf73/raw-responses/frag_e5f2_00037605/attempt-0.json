@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f2.00037605",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00037605\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"3. Longueur musculaire et hypertrophie régionale\",\n      \"3.2 Preuves directes chez l'humain\"\n    ],\n    \"rawText\": \"- Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée ([Regional Hypertrophy: Exercises at Long and Short Muscle Lengths in Women, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10407320/)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée ([Regional Hypertrophy: Exercises at Long and Short Muscle Lengths in Women, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10407320/)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.3a35215e439fcec8\",\n      \"handle\": \"cit.f2.00037605.01\",\n      \"rawLabel\": \"Regional Hypertrophy: Exercises at Long and Short Muscle Lengths in Women, 2023\",\n      \"markdown\": \"[Regional Hypertrophy: Exercises at Long and Short Muscle Lengths in Women, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10407320/)\",\n      \"relativeStartByte\": 289,\n      \"relativeEndByte\": 422\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.3a35215e439fcec8\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"femmes récréativement entraînées\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787662986-lDrAMPE05wxIwvKhDaIi",
+    "object": "chat.completion",
+    "created": 1787662986,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.3a35215e439fcec8\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"femmes récréativement entraînées\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": "**Classifying claims in exercise study**\n\nI need to classify and extract claims from a bullet sentence about a study on regional hypertrophy comparing long and short muscle length exercises in recreationally trained women. The sentence indicates direct evidence of differentiated effects based on exercise length and muscle region. So, the claim is that a study provides evidence of these effects. However, I need to ensure I keep the context within the domain of training and define the knowledge type as either EVIDENCE or DEFINITION.**Examining evidence in study claim**\n\nThis statement discusses a study that claims to provide direct evidence of differential effects based on muscle length and measured region. It suggests there’s evidence supporting these differences, but doesn’t specify which regions have larger effects. The phrasing indicates it's a claim regarding evidence. Now, I need to determine the knowledge type, which could be either EVIDENCE or DEFINITION. It seems like it should lean toward EVIDENCE, but I’m also thinking about the epistemic status, considering if it's established or not and how that impacts the interpretation.**Analyzing evidence in a study**\n\nThis is about one study that claims to provide additional direct evidence, but it’s not necessarily pointing to multiple pieces of converging evidence. The term \"supplémentaire\" suggests it builds on previous findings without ensuring convergence. The primary claim here is that the study provides evidence of differential effects, not about the direction or magnitude of those effects. Since it's just one study, I’m leaning toward classifying the epistemic status as uncertain, given it doesn’t indicate a stable direction. They do present it assertively, stating it provides direct evidence.**Classifying evidence types**\n\nAccording to the guidelines, for a single study, I think \"uncertain\" is the right classification since it doesn’t show convergence. Although the text presents it as direct evidence, I realize that the classification of epistemic status operates independently. The \"directness\" dimension can describe the hypertrophy measured, but for EvidenceTypes like \"randomized trial\" or \"within participant trial,\" I can't determine specifics just from the fragment. It seems best to set evidenceTypesState as UNRESOLVED and evidenceTypes to null to avoid any speculation.**Finalizing JSON structure**\n\nThe sentence mentions \"apporte une preuve directe supplémentaire,\" indicating it's direct evidence, but since it’s just one study, I’m considering setting the epistemicStatusState to UNRESOLVED. The fragment doesn’t strongly assert its claims, so I’ll go with that. When it comes to evidenceTypes, we'll also mark it as UNRESOLVED. I’ll create a claims array, including \"citationOccurrenceRefs\" with the provided citation, and include the population, \"femmes récréativement entraînées,\" in the claim. The knowledge type will be EVIDENCE, and I'll ensure all JSON fields comply with the specified schema before finalizing.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Classifying claims in exercise study**\n\nI need to classify and extract claims from a bullet sentence about a study on regional hypertrophy comparing long and short muscle length exercises in recreationally trained women. The sentence indicates direct evidence of differentiated effects based on exercise length and muscle region. So, the claim is that a study provides evidence of these effects. However, I need to ensure I keep the context within the domain of training and define the knowledge type as either EVIDENCE or DEFINITION.**Examining evidence in study claim**\n\nThis statement discusses a study that claims to provide direct evidence of differential effects based on muscle length and measured region. It suggests there’s evidence supporting these differences, but doesn’t specify which regions have larger effects. The phrasing indicates it's a claim regarding evidence. Now, I need to determine the knowledge type, which could be either EVIDENCE or DEFINITION. It seems like it should lean toward EVIDENCE, but I’m also thinking about the epistemic status, considering if it's established or not and how that impacts the interpretation.**Analyzing evidence in a study**\n\nThis is about one study that claims to provide additional direct evidence, but it’s not necessarily pointing to multiple pieces of converging evidence. The term \"supplémentaire\" suggests it builds on previous findings without ensuring convergence. The primary claim here is that the study provides evidence of differential effects, not about the direction or magnitude of those effects. Since it's just one study, I’m leaning toward classifying the epistemic status as uncertain, given it doesn’t indicate a stable direction. They do present it assertively, stating it provides direct evidence.**Classifying evidence types**\n\nAccording to the guidelines, for a single study, I think \"uncertain\" is the right classification since it doesn’t show convergence. Although the text presents it as direct evidence, I realize that the classification of epistemic status operates independently. The \"directness\" dimension can describe the hypertrophy measured, but for EvidenceTypes like \"randomized trial\" or \"within participant trial,\" I can't determine specifics just from the fragment. It seems best to set evidenceTypesState as UNRESOLVED and evidenceTypes to null to avoid any speculation.**Finalizing JSON structure**\n\nThe sentence mentions \"apporte une preuve directe supplémentaire,\" indicating it's direct evidence, but since it’s just one study, I’m considering setting the epistemicStatusState to UNRESOLVED. The fragment doesn’t strongly assert its claims, so I’ll go with that. When it comes to evidenceTypes, we'll also mark it as UNRESOLVED. I’ll create a claims array, including \"citationOccurrenceRefs\" with the provided citation, and include the population, \"femmes récréativement entraînées,\" in the claim. The knowledge type will be EVIDENCE, and I'll ensure all JSON fields comply with the specified schema before finalizing.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZKoa0gXXT1p9n74HO_8lRCmXMtuCcML_4CQf0v_gpX7VVALd-E1vkF3B4ioNizDs7dl30XNiZ4GuxVTk6X4bUmnO0FhRdgMclnSpaYTjhz1hLyHVLdcI9KnfB1LzTzDAwo0RsVF4z1jBkR-WpgMEuniVH6rzm0eohoGSMO_RZCZiJlhz5NlsxueMcboIVMi2Ecu48Jw9ZQjxDr5L5meZJTnB-QAv0uZRqOQMHjMj658yIxPghbkJPkSj9oovxX0Cm9CDGnmRDd42RqfghmTPV1B5QzPIaEa1JPA4Yihw2tyZk3DUhMteG8IdWh0uyYkzMQfMjhaz1iQcqmebGLmGVy7hQxjZAGMIZ-PzdFPhF9p5BxzRYo7ez5U-ajqhwNS_RQlIxve3Jc4M28BQR56aHlP7pbjkq_kko4-QIBHaNn_7enzJb5_tvlEZ-9enaKQFuHiYAsM6vpWqVjltjI-dIU0bLKBl1-oSu1vnA93y_r9kCGMois78MerZPEZJQN2uO7lZS_O_E6Qt3ryQxN2WV81nFlDJCacOEWI1ol4lQP4ZD0nqEDA2K0K8S3yDojvsD2adEPEgBYBdaZEE3aLXl9uy4rwRubm4Od4PT5gOmpjz84ZNIBMLWa_xhvCjsF_x7fqfzpqdxGEd7zB5XGnZEDCocBjwbo7Xli4g7zgvYHseeXntJWoxTuKqKZ666zDLwe30DD5Lby7SvwPjwuuq9O048uPvHwj4iRyqSkkxiXX7ccNtc8Mc4HWlN9ISntCGx7ccNviAY--Hu7Lg7slKxxh_A4znob_ykRoBZru0fbwmf3R4oXPIoRk25c69rK55UEvF0OC4IeM-xaHNVMdgtrTfunJPk4yPuHBefdZID_JSrLR8J5BqSMuTOsMt7HLzvHR1aF3OiS-hejCn8wdxER76XdsNho1gofRayQyb4A4OlU61J7-IUk80gCYMpanTA_GHGjJx3EslNBlBxRhtnVMgmsmTWFnSJz05VgUtJMZR3RcBY0O8xh52zLYKpJOCSUPUAxhtTbBSzpEF2zLHdxEvU9kscHKGnqrnjbkuQGE9ER0n2RyodlMYwOKocI8hVzA8gra0N-dyDG1-tTcFJ3N6n7CH_MYAEt60JN7gyy-KBA7v6wtSBkePElPwqxU-zM7I0pOxXvq_Y59gaggF09Wb0Q2lEbCQIjRbX69OWwl5c9ysRIuScH-FI_RNI8MHJ3r1Xo62s0Ojgj6EeC-zxfTNwFxRXLiwkvyl3EKLqBEkhmrXN4u5PeZm6FZfO-xAua3Kn9w8PPGx4hNW5B_eM-ya1NbMyaMVON97_X1DaHkpvnOok7ZJWFMILhf6TxwkbJeZ7uoWJj_zEW6ghEFedJyP7SZBGH81MssDr-wFj29oUUaTyO2XTnLS132iiyF3IYRgdcINz_kiANArMRjMNgTtPwwQKRcemdqFqH60d1GI3eOTdnGE_7bD_Yy03tvk31Coc4A5WqMzqJnmgzFZR2RZBBMvKUFsPPEHKiz4Ef5LKjfDaT92rN_Rw_-iz4aWW70Wo_Fu5OhAHR4eEBKEHWp4hn5SuXnDttvHnOH6Mns9Ob2JJJQpDzmYGzUVBSQo2wz8NMCVK-GBC6qHO_ma9TEdhNvIrKG-yWwBGaRiBXSbNDoU3TZZrQIhpfMFpiK2vOXa3hr5rraYUzs8rNQgegULcC9rrC0EWBbxWJ2KdbZNWW1uKR_tt__w-HwJtesG72OXJQ_ks2OUBSP7ExQge0CcB0XrEkJVsGQcVc19ttuspkljxtwIc1meNc4txYp6B3Tnby0a103GgCXnOsBvUiXfgoSzVY6Mou08RBgFhE4vgEtz4_tnV6he9CNKbpKlRXQ_uU3j7kYqMznfxLzWUf9YzxImfXz7ETslrIsOkv5qzOkqiHwC-Bm5vk1pgoL6SNj-EIAcxE_9anW8DPvQjuLVbhCIZ5bSdVNK6-jotsL2zBPnlwHElZdX8ObMruhneB-zSyg5Y5JSJLV6I_yxzd1hwAkOEZoec7eg8FTn5qMurhcWwcxXPP9tARlVQhIKUhl-gDpbRwGx9KHk4NXo6yXQbrEJAvM3csnLmmnYMK2bYr6ErkQDE8CPaCbvmQJyXK--iKr1oiELhO68g5YTFZy3xweom9gZeh3Xr8abqIHewXahymTPIWfeV5-pskG3EisnLy1xf5-5c61M3TuABUS0pDGu-5P2lyx7-7mCcPxdEwy2ov-rwAWUEGPzB_0WqpspiZwyqAmApLJBBiUdBnknnp26JwvnJvDYoytqJaUVTBF_YWIsksllIUevpwm9CwXlZpKLPjTTWciesK31VjTl1INjmK1rtriPNi9ZheYd5EWQ0T-twztccCC-noOtjmXmuk4vScZzkCGKvu7i5r7pXnJ5XsXB_GTooRjzi66ZywirB3d8nw5Om7ipIJAy1J2m6OZ16vULY1mCoXNu7Z0K2yAk8LPRL2La9BUDoIWhZovSLnD_W4PBZZ1gHIgwEGlZb3iMqM6MZwlWnpk1FMNMtIOwcGMvwigXf4rIrCYiuNWxWTPGLlDCXKqVzQGpGOXMLEOb4uKgdY3xScaEUpb2Bn0VKRmGNQryFQMU5y00kaOPOp-rxB6DC8x8Ioyb0r8qG2Rl5aDhmICfWS5St96aFq9ZHeZRmY7QqrdGcZErXDF79NkYiIVoTkQpyHNm6eH8HGY9BYVgLC-50I2-6AbAQ9mmzKf7A0enp1ii5-TqK-B5zaIIZOdWXwVcNGQZe2-XZUkobbiUgCoNuv4cWiLQCf0h4YbTfGSw-QAQN76togVKEs_c4l9PdKnTRSh4jY20BB_uQEqNQB69Mv3r0BA0jP9qa_VY8aCnKtZnB9Qh2WM4_Rs-A0b3GlFIrgpOBQn0H6RL3rd2UuUXZh2EHzMhsc_Gi9v-2whSd4nKb62kmZUmQPZcWKy4gcvop-l19XexgbLQaHQWiovJczMlgU0Ae9N6C9LJxcD1JU4UJYoZ5O2LqZWkmB8PWM13IGtczxarVQaF396k37wxxFDvdY1WEgMLZG0qoZdYVD9PD-rG4bpPC3pQPw-_z9nuLGYQVnpY1bOgVFG5dRpOdvhCpfINHo9Dj3T6ytN5AmQQmHvQOABCIy9laQLz_VE7uQ-l3h6O-8V2B45j7Dr5pFJDyDt-puehDVMFzyIi8CRzipq5JL9HrccXRa_K8BHawnLBcAOv6WgUzcVhU-d_u_praouIoXeF_xoCI3HIsqo8-cdTasFz3ecvz2JObcvXL7usW9kbIvRprwSQFrXHnzt5D2qkpk_upQycRs8zDQ8mtx-56E24UJ3HBI7RHkus1AF1HvFYhNX2vGFeANHPSeDQJK0dZRlu6LvQWwDYnuPb6jSj1QaipyGhn-rvlVEhJRnFj8AcN3ZbzS0ZNeV6oPddszlXqpdW6vrQVa-bsMylQ_b-XF4WoInCSoEqKtSWZpg0bDFGl98FBxEkIgDBSvgTrjWuNNUHVuJBxE0_hbjOTtoawBVQkT3zNN6ugVt55sKHpaLkDM5JjGxbDO910xEKk1giD1NpyN7AfQrhfT5Exr9DGZLkgeQAe3dUe42Qzf8yjBv6HadxGwjLUIKUdFH_uB4TvayTaK44bOfa8iwO6-Iu6ggRYUnuJ4eqmLst7tyRIB_RhDt8S-lcfjtq4Zi7eQwa8zYWTevDuWZPMCLzGgP7IhGCfj39cVnFYuqp1F1sdP0af9LtRrVvhW_rOITk2wlYayc26ITsTTP6F3rAiY9_9wxRO9NX7_H3S9WksNsD4yrCQ6RDsdCmlRqojxy_swM2j0yhudeDxNCaNdkphkr-CMWzNknBYTaUcQ6CTySDLAitDNApEzfKGp_wwEwtZP5BPT1B0S8Xp3HATls5TZQekecaBuGecT-yhlaqEzn7tFNAx2Fm0UYbjNclzI-qFuo0ANsLAD77wSyWNvo9s6fTRstIiPZYXTTEY7c80eKH3dxuBOwJXkD13yJDxfxIANUi1WkRyfwGuz4vcP0q5OTTQ6qpBd6y3jQ3vk1PTs8vBU63iscP2LswmzwfPz-gKhk6ggcQIjq_Tm6g-Y29_gsoud5e4c83nidMKm_uaEkYWE9WtCdqWGUnv_3jjLmxafNgj-lBDl_nsNQUzyRn5ED34cNxbrkD8mi3_tNal9BWRFHeTi9LjGR-fJkR7IIukqTO9My7CSQqmLKsw4gf_BB-FJvh_y2ft3NLK8-T1pdvfEugMLG2LjONIhourjZzKGhKgd8jt1Pw2VfvGkA4AIC7Gbo-2F7x7mUA3i4RSsWasN2IbHeXUrH0DOhOIy7JXlEUAb3quTcNqCkbpV3ydWigFW_VZMLiiPIuudLtGcmJaB6Rzm74FWWSO8zpbnLKZk5gbIAmX4ukF8SP4BLzj-N-OPBGIvvOz1pj6pBfvjncgYoum2aN0qyNBihYiY_NMJUA-YunNRVKN034c2Pxv9rbPg9DUI4geV3E9pBL5nT7L-MSzaOj4uBGVeT3o2yINBe0d1zNHWQB0qZjd9ezB1rh30Xv-lajTQY5KRw5bIfRA0uBKPvJhV-U_wKB6I1RVf22WuAbVEruT1HML74_23bjKeDANryqdNqj3e4ZWxYu8o5_WFOUHmKbgFQdptL4xMB4MTURaZ4fmo2OgtgYO3g7TONMBl3Y2cyHw05gharAz0qZyYkIuvdZznh4rm6PR8H2BmTGMXzIlWRZy7uAl5HJ02T_GZl1Ifh4BaftjzF05tSDNDlanvCF7nwc8ydWxgHbyjep_26Cq9APM7uMWpCYAPVahPonCy0V9pFD5EGrtoOzBi8xu71-AnlZOtmipIVEfzb-hOmJAAOLQMZlol2EMLLmVcNiteW2DmlP1yFa1VeFnTRzIW6v9-HyfQ8xEZFKd74PpnFLM556n8nFu6kKGYwLF0vEfkWztZ7-hjLGnYBP01vAuoGemA5IYJx8h8K04fEXK9PzAu1DRIVonPjpkgnYO4MVv8uGwo9V7eGkdPsSLaLaRavSIWIn50XOymcQZ-MqL_7AZjqWP2mAbnqqHyiFMrW3WpGhH9TiLqpAklfBj8wCM78zqEb-h3n3eSwDvkybM4Vjd6TEcRzCTotLh0g7yZ19pc9t1jXDisJtuHIk16UJPQcB1GuHRMZHZKfA_kbEM4LVvHQW-KJNa0tiXhyZj9-eOCYf-Cfx900JsxbnrGdwFAH9Ku98gG_j3pDHq_s3fYfQ_RU4mSGjVlhLEyTsCbCrf88ln9fNNZxtgQbaHzfAZTRhNS6kainXMd951POjyFF5zKjllG4puXovW-4Ui9xfjvMFd7MlYn_596txKPYJfaezyGx1TbnF0RXOccRxnqWoGpjoz2Hq9_GiWGWoG7Yd7AHWX4EUcBpBSb5gsWuqweKquKnThJr4E-tgXg4AThUDzvZnfvVRD2eUft_9maYWm6ZRHWgk5UzuXpwdrpkT2WhAdd6XpGLbM_3-EcdIWsklivVfqp6jQQ-T64Oxg-f_AzWaQ2WHSmpVKcUPVHgzBpBuPbdu2gM_YY-4QoEOqqSfIVxX_Pr3XyAYwIhsfv1I0D1abticJlD1NSPDHLrKbv927CJffOxlYidM-hHUVPmAAn-QZdHVXnv3ELOPJD6sFOELtvJTtnQyzOvX0qgjUS8MYlXWPqMoIWL-DllE0TA4i3b4DyR4ToFqMNG-yYryvY8u3KZNcljYViBBLvw19TXIdJulh_QEaOvr0ImkLJMNmJgMgTJM31vGjWKsKpARzXsi-ZkuKpvMDX28jbIm8TWm0zn7S3-k8hsKEoarQ9mqZroPzgtRy7BO8hCuBeFB-P41qO_eAcdQ38Mb4_maI7z1SyEHARZgmmEmw8iDAD5AY1CDcOf3oGoNz5-kuJNXmj6rE7SGeGpTGbtYMPsvyPgsWLYP91RPisXEfmzJ1EMIyvXVWezde3Te2mWFbjzdck6lATTAyfAiMBjqHJQZ5ZqgjHvQeSqBbmCW1yFcXTb8wNmhLLkm-sOcDDrmafjYgJhjLjWVwFji4BQuFbvqZYwUSwGv3GFp39dVmknaG7BugbY22_-VlPedkyCArZMPwwcXu3yibqSvnu-uMijkKtJ_tDznmHCawtKSKwSkrMuI5I5dnANZYr9xuojLK1GWCs4EM3HdUPOs4MNRtEhjMhC9e6HR_jOBs-I9hGsI0ABTFT6x5fOIrgk8RH2vi7c1uHRy86bGjd4S643bz0qguPV0ba1Z_mSTxk9UXyPElPdYj_yVrZIkjMff-Mmq9ChlYjS8IVA2QlN-pzmGs3igFnSdb_BRwlgpLrz9wZ7EYkcj58l5D1Lx2P3L5HAWJxHSvLsLKq7rj4VkBnsC336C9xzpg6S3JANvxMFWYAAU6pNLPiO05PLm674mSVXOC_tIk5krPDPz-BqLjjNCMOsZJbGJUWn4Bcdi-05NKxsiwH1-68DxaMF-VgJwoTJVsSUmlJzRosDctxBPY8f4M8x6ZqkuTWxwPgk55unl_dwTjoM8jWWnyQUted0wbAn2waNVSXJQt83dOXx-amyIsv4OafbDYNO9ueDiMS1Qjuy1YS-VSHyRRivxKJX3dDwSbmlo89VRZFm9hU2jKMigZVU5UZSHCkmYO5kU8j3ONF5DpwyYOFbi1w0xxCs6Sv3KrhzLPek-cDP_RguZ_zTdVPR1ggAb1PeC1kBdeBLOg7qAwDw34UNhqaaC-RPFKHrJLC8iMjVvI2pwSDaIXiqCV8-0PMnvuI9_XNeLBA_N6iab7PJBNF2A-PNelk7w_IZ8wudrD8TwyaidTfsJG_QOxbMhDYs4J43VvaFgB5o4o8pmhqEXDKj7tLaDvTgei3azMyf7ga-yxG1HWseC3hGwug4bPr2ZsXvPiyvxaEkb192DIR-wxsDzJNWri7EAz7pj7fLlJii3vFOqgvqLEv7x8IH7EV0lV_Q6qziBXvrpXdL2a6fnu2a9xS8v9tspkxUNHNBOBsXN4bNj9WO9FwWy8pzl0bWML4BvtX8eltZ1zKHaKfgQZf3aXfpKoV7ds7CaPS4C9cLEOuzS9cHnKzPWUsbYevblxyrBq79JbnS8Ve2eoWKFe_jhhNZ-IYBAL6VtCEG7zHtHM3snt7Vjw6P617QOLJ7o3w7rzzOh7CFVKbwkq-qBc36w8nM7lUdU0b4gSaO1g_XEHW2T_kvSYAdIfm-DjdppHoSxX5CJDJBu0KGI813m8NcTI7yoXxrBGDJEuBFEx4UrmcYfuESpLSg9Gg0vM06ENZtSJ4wf3QQykVnASNezB_WyZ60YX_AHbWCcvzJSfpOr0oH-9FnKDHuTAgHMlZSL5B1f04jECmJBWx7_mc0OodkQos3glwH92ox_1HZ_LqyGjyrvockkYqoLm2VHRtRSY2ceuTXTUae97dY-WwAP9wnjcet4gYMpEZsg09LrW9zokV0EV30cr1zmq86JJpzSOcGkYq3QfWHt5ZrVsq8G26T1KePIxCu2pD3lEknYa-0Qoh5R4aOAI_3FTFQ5Z8L3TioSqe3TsUxFKr2GbPiD88zoj5dH_SNQdYDzG2c7BDSiHfVUC53yrTwhnjM4DReEdFksrj-YXBPrYxbOrffRW22qAHjCUNsgHPSQDTr6epCGC0UXzwPQiYFKPAvkbsr5pqR-arSHeFTio_t3sSUfzlz1JqYZ8a-eFYTUjFZpur_UQUg219sydplMhBGRXkX2RVs1Vigig-NATBwFVyhwFbDaz9j-eIHSqgVhKRWMcvUYVbD02_qNlQ_c8c2MYFrZLbBYBqawrMUUjfH-sct52jg1BgW_f4scdOUcyMyyKrlOHWWfCob4WvckOtxYP7mLG3AnhtPo6ZBN165891n6OqOOitJ3ZR-3YJ-9sQcin_bhH-APMDvePEjocMuJljcNMrIk8qvtUc7QEfxdH2duUPgcs1GLG9bPQ0fGQQ_5N6fUac_XpaLckgA4BLXu0TIOPQ59ov7AGGTgfLGZ_xhHPAHric5ajVmWxkJfgIPkv-4tFX5g9TDiDDFgwuENkAIfCZPIhS8-OmN2NXxTmCpppXgMDqHvuv3eKlG_Vk-90geJZpNroV7GYTx_NCxExfW8sD-ngplwRxSfqqZw8oDtHN-zk03wYfvXtZBjUBmzl94JD5Jtcnk3J4vQdxgFCylr7SIWpobjH1f1g_ezeBCNVO3F_h0yuhUYzLi6SQVFm_eE9vTkjzHOWfKc0UvW6V3bKwpS-2YpTU08f1G_Galxo1vwUmrqnaNiT3AHPby9_U36e_KiJkCQ9ktrqtwi857JgGlV-d41f_PLmaLgdRlBVVO8S3L7duBOmWf0V9n_SeJUxg4SvXuKhX4n7mYIYOPUxC_WtbV2dVrHx_SR84ZXPdo2S9O8hirYqQvXqrzNeZ1pVn1H4DmuJ11CsKYx52cywY0ZnzzZg5nbMoM3frKu7NpVRyAyaXd9riVjJst6G5jLjDkGAc2hlbnGGJUIgFQiMmSvieQNbQ_K-83GsnYBgShR4_2nVTFjDowHiW1EAV9lrEnfFfFVBOjgCYBy5b97mwXbRhNtuW4uMu6U19BEbXwnDCZaotiZGKxvHo8GZKvZeAkTWdAvKqXS5iR-y60poxNnmgH5uUN8PvIwVrBrqlANtr2C0AlZgj654lhXpVwkjU7baoo2lWDv3vxi2z2HKMZh2v9kYFBE6J54J9AIpIlvytlsdcFETL8pyH8-EC0UosBFqp4btSbm7uehVNQTuevbFGpQZBtIHCGJ8W0QZpRSa8iNsS0uXApr3DIhV5vG9Ztr5kaWtg1VRpzNViBgXYY3GdH8gm2OYflI7gPomKiyhJhq3YzYy8T4JLncWRKvqhn5S6wWQljvmeVbo-r1S5AZBQO1p35dheBzzSvw6RBIHuB-nI8mkz_gDgz5GUKFXInPKjBPgxsb0Ioj4KgMSZDS4-TuANNuKRmVp-cIFUw8R9I9s8vqNvh3oeWYzhvrlyiuVvZk3JJWE9Ix2-8sVLl3TN3rjHItkwkvFaBPHyQAQPuo20n8iyYpdvp8Rb6w2usc6dqAbS7yK_iLqFc-O75JgqDhl1qKS6lruHtvs-fuuG-T8lQBLKUDVyFhf3dAS9XieLOhajk1iJpn60wVUJVLO2jk34FaTYPAhcD6Nl3u6Fx0zLCMmERwRtiCpxb_xW-hjSHaZ66Uygjtx5T3JOtTaXvL4Xxsab_dFc_x7B2VVFcLs0gADIO2Rq3yISKsKpIItnEHw5I-hHJbMTHjNK4t_ZAU5OkvIa2r-B97phWAlpfKLh7Mit4ibSPn3MWJuFfl8T95DZnO0chF2HBt_WRgBGfsTLmUKup8vPuOijGhO5iluHxt4Nm1AK5Dqau_s89ukVXz05E_PjFeKt_x9LhUTPTL1kyHugdos3j6mRvRrU9O5k31zuvUEoJePbQzFN10a-af_H9yIVL60Vh6V09kWXVBjtqlCOSTSm1zjk-HmBcGuWhLOKp1eUKLbrJ1ifAUikQcp_7U6LTGq_THvBK57W33LOeThK03E7JEnyNniaP4i7nof6QBtFuWn4RYzH6j5Ccar7WcBnJtQskCoRxcikFM6dXSu5vDkHWxXDTGzFDXglUygDJ26R5VzgRzT_Ho4v-ICehW16q1XxaVl7056P66p_GkwyhWKwjTYiM_iGlXak32D1WFZlLidlpJUOFfcfkm7G-qpBeQPtZ8XRDKZDoHyX6MLhboOV2oN0oWhdEGHPMurz5E4uGyIfgouT1hHqsA6pxtiDRjq1c_TPfVNpCz2SQPpMsUESjzgwhGoS1CAn4D4L32UEjvZsNeAqe6xt0iYqbpQRxg2nbLyQ_oBp6VaqlswhJGLHGE8pbm7K2KDKhJ0Peg00ZpbN8ZcUbFjBtZVWrmYqlfphwwrCvf4-tRFaFF0Vz68D-DfLXoP5MwuYtPEZhstuMOii4QloKw-_kbeYVpkwe3l-jKU1hfVSXgqLfmcYrBfCcV73V0YZV41O2UoWd13RENT-0Pq-o4Xeoi3JU-2HKWA4QtprIB4drUlDz0XbWtv1ECyyax92beGe6x65ucyOF1pJL9SzDcTlxexBJYqvr2hU5bGHAOmgM34J8LlrdOTIoPo9DsWJqWYW6SYFBvsZSNbSntnyNn6ccF_i0OJbbxiAxw1LsCJhkvagifyq2Z8Mnzc7K7hfkB9T-grafm_g0GMJaCSZyrW3LflqTQ6QHYlfCB1evBGfurO_XzfGUMh-rsxeRWupfb4WjD8i6xS9ar4r4WuP68Djc5y11oRI30BU9E4bPso7VzNZiw9M0pq8HaiU1REG_CdNE-r4VSQg2Cl8IeQ3mRjVZLu6yZ7QA41Nspv7XxTxjQioXKHWWpbW9QbKzb8rdfjaqsY9RIXK9wbEWLr4ZdHVLrrL4YlBv1q1Kf9StEWkfauLmKF_XuY_0awPE3LY5oeJFQhRL_rcCrZQ4WGyX5bc7987OeuftKN3z4_YoriYjT8NqJGMGf5s-QM8E8eOdDIAydNO9tbBbaJKD3Gzak16nwlIF63cPVFe0YeZRvJm1lAN_3qVwFDk8T7PWqLuGXwg1or22dfyaBEd_jy8MNU3rFTffpYO0-BZjO76iF4TwAzvqT0aw20g2ZFNSd2euvcBpp1QRvIuthVk1oWQ9ouLdjRqFvNDuhmJRjtiDj7wsR2OnfBlcP5Uy8aB_51gwpCUdkMjvTsJgaB-lpix5vGdFN4-xD7kl0uCzPQeOidSKxLk3lFVUEgirLICLG07jZ_jM447ryxyDMNFp0SdD-i0Qbjc4tmaomJsTQX5po_isUqpCe484A-nSBEW0I241bNWhcryrp64BQeXKPwhw6kWe8D5DviWmzdRe33x6J2TdtbTB2FStyGcEpRenv4Ziez3-fRjnXvj5TnhzoZG3iUy0Hp9tWocc_3xGyFw14ltMyoNNokWAGIQvhHEzTQK8asHHxZe6Ga7LImHIrbNJ03wAHAJVtaOGmelb1jJnxl4v1YlWlc8v8F2DqczU7Rk5EoOZsV0ome0oJrO75ULRz2SlirgNbP49IiEZaCID_1aDfBhJEXWfNVvudi5BIKWo2C4V0sPNzaPZgGxa3xWSHUvspGad2VSjU6vxzeqHKu5639L--7avXQ0BdXR7XPW3WGGarc-wVxcBvsH-NBbRTXp-UaMpSliuKtu2pE0z3a43wJmUiiiA198-WHBvqp51ZPTT_8VdH03KbVoQfbyLfZ6g3Z-9TZGkj1WTNJoq4eCqZw8Z7b_6S63-mfe4T7TawReKEvrfprYNWmzXBW1gibnsd_EJLT1Xkn6lOMS2a2HoF9gNVpDZG5DHahpsTF3Cj4_5FGwf1bzDFxbWCY4YA3yd29yI0LSgmaJQll8Yil03vDUmAaY5rlFlEyMqbUapzNXsl45iTfb8rbPccW7plOrmS8_HOqBPHLi412g_89bAiSG-x7oJ5XGdp6sU8Z48ysSdAcMYnGGqZu4rz0LsZNz_XoDKh7kbS2wEZMKaN8IM0-Vc8qHiTBQskx-fNa5jmLglEWv7Z7T6rPJaL0XzZVoVZR8PS431jggNMAC2XxFHJJ2pFN4Wu_lpu8lVQRR9MxIvS44NpO1cad1FDD6v-reMyQmpRfSM-H7-70jRsoUyhBu0tlkKQqMxRzB0HIOilOe2wOlLDl1gRPAA-MIt_FldN4DcrP0tYx6Sar2ECytIn3UEcD7eTOHEKW7I7V_jxfQjcIP7FX8psveI_AaJvFQDudIkKuYJTo23B3gpckt6CA7rH0skXO63AJZ-1eZXyg0LClBPqPdX8yAOIxTUjw7wpB4XQPtoLou5kfYu7p7QJo1Ez4qz0c1yzmAY8op7W7Kx-YAkVTfSkGysazDlyHQ9cotxJZJzyP5FyOOnlLjhw_fRF9-JfN7z9BDmbTpm6cV1X7a8TjI4URJvYRl2larc3m4edhV84of5tCxuVMMpX1vBMmpvQ4P10tAnmvx5GWqwvQ5tkhd_IHfkMLO0vGfpSnuReBpBHX1ys7SLv01916StpMnbAIn18Oj2IZg5eGYS4oZUV1TRgf_0mPMccCETIBPouENtDOQ2nHOS1K-JkcPfn9HvWN0C_o_xm_20JRJ_vRC5QhaCI22NtOxLz8n3_WXkxD6YpR6LxEJ15GYf9edkR1TmFngy85cTKiBizfRxihKgXEynKCJ8sUwOTjBfv1okpvDvGbcomUohmwIfRs-9H6nA1SzohXrNbmXQthanRmz7mbyco-56AFnkPQGiIlgPwTuCJbTDPnScZ94STLYd0it_NcL7Ihc-sYl5aDQW9iC5uA3ytprSOo_Kf-wI_YBxzZ9b3ruY3WXSdMnBt_2k71Huk0wPgwgEnHl12-UfxVq0ZUqt3g5FsIoJ5sbBMzU2brtJpI783i0BTYSpYbcmpkYampRxENI6QboNebYfGJf2EzuBZmdWoRW-XG_kwK8zJyCsA2VcNk8xneolOx7BvfjLiPb6SmlKQvkeg-lsByLIMeVWHv8ckWt5FfsbKHjJQvbGoF5Zn8A0iloDQbzU0tw34VybqO0c7biassnLyScUAvvC14uvR-aH0PEk9pMhI6rgCiR0Q29ccmUt-nddsU8MLNgUqldYIHiV4qksTxjYJEfrWTM5yC1VAXVLcFVeOCEo82kuXAv0pUAa9U0PpjdOmSghG2VA2FRpB--3KdcqlG4M-ffVdnJEra50ZH5VVi1l16IyZ0Vgp7BpwBM4JXraHqooIN8F0GFuqqn6XnNpG6TbXC3cKtX1BtWIRRryek9x5tgBLbKQ-eqg6zsAT7XTbLkJNdbYMuOstnea5-JPNaMRQAyVzXD6uY228Y1az0_G1G1jnR6GjrndDgPErzcOf0P2xTL0whJHuwad0myG7y7gIcjUXFO16kaQqiNUs8VaWJ9ZXUA9zllry2D-VcnIJPFseBi9-NAiBDZ8OGEtS1IVZMvQww0EUOXCu3Iie9qG-1d-cnGgFluy6_txL3lpvUTDJKjbs1E8uStENsDbfthLcoNkrF_P51Ij10ktVzurX4LqOEDk3WkTKBXD1BUqJ4k6UorbUVx0O-dIzZe3JLLfY9R8xzo5j7ss9GZue_SMqyzLivFvUwn2saT4ip2uKqmNAi2LNxHrYN_svmh0Vyf0WLrIxUONVspARi6fukQ4qfA1qtB_8lYFbYP5yP1Q3viXvszU1MdfKU6skpNkItrTDcQENw0YqLNFTdqk6sevcRW02aK16_8V3Uul8KqyA26WG8SIeXeqdGKVlG45bxsT44QMreuLRh2Si4vhLsDmFmZEr4TyNEkxlji3FL0RmL1J307BHEOSc-dV2-V9ifDzFP068RZfGktkjqrcHqHp8ObZmHFODchMelILjvh9fkM3icNWyxHaol7nvEz5LtlmSNvoVS7XQTkAKGfpEVjBqUeTPWkz2iD7TEAn8GUsbjpJHM16DzwCNDC5_DaqgFVCSY9mVmp2atIYgfh6QiLRPF-tkiDQPBO68FWkaOpCES70BJr0wNWa7Fvu5rq_WshqFkKpW8K38Ysy2NuS87RlME4GsrpOYcZraFas1M974FdkcfkHbHajMoKVZyR6Hu_T5B8zlarZ65QCrHza2d1QImQoBzwON1zY8OC_JcWt9YKA1K0LY_Anztf47dZdC0xtMvaG9ufZsElBLM0s4fSkvKSMuHQG7eY_le7kRdHAgDCz9ECb1VFyNLfmPo24_MmGGbLNsoE5fGg8KSiAhUXO6g9QDg0kpNz4Vik1htslTTDIt8h1cfgQibuMKhiN0Cn9BsHExzVJXwONgpYwnBvJJRm-uJU7s7Wo_3cqWqHzJiU4DlJyOTVTUkNbBpz48iVsUuKi4ZxBAtzVwbbcut-YVLVzNKD7g8PMxkm3MDqblDJlyFjCMXxoc5t-ByzKV7p8B4lqVzpHidTe11mjgQRmdeEXypVi1a6NqW-bCiVo1XOKFs_JTWMnN43WTXvMHHJLhUhtm_JG5Y_RS6VGOivITV5ZVkHsuRVhMEBPa8XCqBp1DHBTcmliIjhOakbMf_vP6jcWP6yliYWZqwn2tXOBoBM5Huw0L2xEjaYVnFQ4QylW4L2fNoSQDXllpw_w1c8qzthSE1Y0lvfFtgN6KqNjwW4bhu135T_gIDCy-2jBt-P3cb-317BNzPMvr0VN_r36s1rNXAuS_GvAnrDpqhLtTXsG4J2dTBBjhuQQK2Ez9XYw2yZQ7UbuBDodGEKjJgI-ny9FxvRctoYf2WrvHbzIxkmfzgdI4lVFRl08NgJ1YMt7tfoefPLyDU_S0oyhuRTKmRDLGWBhbBIMxP3u6G4yeoI-T3ajASKYPSGYiJlGBzG26N259rxT4Cn-1cAiLkSigPynkEdKHMd1mICB4VILoA_OQldD55upcel8TQYrw4fN2vOA7Z3xxeveHcGo8k49pFOzmvn8i-Bj9IU997P9YHB6GJC_bikEOkIeV-hZlO4qPwrXzyY4Hbnp4ngpYF0JQ2inqOTEL1GCnxpaGo4mKfQjJOcNsyjeGl-et7VP7V-hIbgYQbxOr2HAbG3o3YuRnIEg6L8sSRh0P6cEwRlqffbsAfjYnpCJOl-xRzJ1AijFD0WIGqZ3F0Ur4JqGz_fl8wVaDvWK3EBmDiGcJH-P9gBPC7I4Pc_-CkGz-do_HWTR6bDQytpILOzLmnAJVNFBx059gkoFxPgqe8yMuSlRwjxhUMLcBxoPSMIJLOQRL4LvGVol_koeQoxds3rq9J9L-DSGUxJcl6vSVV_6BgXWnQjpYmqQSlDhDvRa0t9VeLCDzynn--SzNoLt9z1LtrXPgHwBnFGSTf5YDXF4xxJYLvnJr7uAbqjjB1gNf2YruB5bAIe_X6s3f3FTWh9ek8ePy-yPQBdRoof8ly5oz4EVhkulgY6pB4_WiLo7DotvKSFAEFhUpwR8jAcn9GbgmR1XepvOWEJSuhn0DleUOCmyhnmHcGfJ3B4wDkjmSW9E--0QcunLPp59q7CNQPqh5F9S5LCljm5Bi1pq5lOz01e1QOSgoOOUSpWMJmi5ls3DFl-aVPwxgDolgirN201zlRMjbnFtP__hJ3AIhXLBdEv7z3zStUA6EMY7zgZOUeyoIfZErbV6OfAy2EVDjupJZ6hcXpo1KszgnEjNMvaHIHD0mwoSEF-l3NQdOkPjw8D--Wr3i_ctmQjQN7pZnICCZ2vjkswiYxL8f38xjgSK5ya73yc1vz2v0Sfb2vqwRvWEo4kg74P9pwmuMexz70eeOC_xDaZYi71uthn98y6tQTy1ZEN3CCgBZ3aCdy-FCJq1VzIsKnYCfOT_tOh8GK4hugL6164lSSYcZ47nJR4VCw4To4XWdy5QDkolDRiiU_9NWgBJKiti0rajwowz7s4ONxujoe7tpvMA-J5O5HMNR5wjxTx_ffQiFOIFtQbBuCOaSR_SuqQ5aXEwuA0YDuvACslzE8gh9lNbbvvL3Ujw1Vn09KJ6YuGVM_wkuaTzkZ53qNfciBIK4oq_mO2dEac4qY3heaMFTxfMGdMV3oaI1_MAkFba94ziP_m17qf6M-7vTs5q7-r5Kx7joco3YicxQBNvaBLhAEMFG2-xeOBeOK216EzAvZjU1A1KZgHc1STUrR4CDPaGYAW9lk5Z6g3kv2Q8pvWzPeRUonWsemheXU7oudM8ZMiAjY9MYQdEtX1dhmVKOeeE_ZqtvDLPlA1OYVf1w693o_xfRWhT__UvSADERYODdEbSLMMSqfkEpko4qcbESgoCKe6PH2sl6qtP92Xr8GVPGqXCtyCI5l13W4s7TrewY8Vacr1teHz1NdEH_2BXXLe_9AJM_rlUOsnF_4IVFhDVoNO6gqmTRH9roMHrUqfh3_fn-H-EVTLtAHbBFWOWp25gaR63pGIM1Yc6YYtPJSEV9hklrHIvZL10SZbD5Qf8RfyT3SbyCDsluGgdwKdC93j2XmowIRcE3a19X7vAbdqnJsRAIxVKmPM4_0Lv38aCdFkOrn3WVCdfr13VG5gjGJ1NaTBXWy-_eNVZHRX8H2xTDBjaxv-EZp-1gVpnJE9eji40fwXxUWo8nBWVP4-aNhc_WLa8feByV-KOR1k6xNFEbHv1CmWhpr_dUvSxJya-g8sUsObeJuSDRKepQVXaVvjc8aCOb8ICOoEJS5tpMkh6SbexbnPlvehbT_fMwGvETKU63fYK6TYuIllhR3Xo-TuzUnd6KNPr-SY54e9YmRSOrFzXyZ8-zyFs88vvRxACgzxsXKMOW21T3OI5sKnqz1IQek135sZqLOfHsHhs5dP9AG5KLN0LG_2EDoMF96O7-QXbt9V5iFJmjle2B_1KgAhKhnhTwo6sxBnfTgHwCgXIrqx8gvZJIOaY9SYM4cf9JnVe8WhHFbmAO8OCJQ04njD49pANKxbG-2XUr0uKx0aCj9Dgx18l1--0tUs7H7WB-Qyy87Qmt7xC8c9hEydvPTEL-s3mtulBQ3VPe0VGGhhECSrwYswWgFCZm9FYlIeiQBs8-MqiuC7a_27Yp653hZHEkWyjqmc0SO_cmzFqPc48ziasQvYaKV8t9UUmzpaGxVChdqMllm5nw0il9hYGbrKqEeKfg0TA-_dZznSWy5XS9i_Z3AmmBsq9yurmKUSOG2chPT2C1cvALOZzG2NQQxlMZ0TcIOnA44Gg3_ZuM1J1uxYOmx3dxkx33SYov3qTPpc8EQNJFP9SOQ9zdkN2_VPSO-ga4mqrJV9yfyKLBQA5PxtX2Yx_3E-i6Zgko0s98eL_DB7bZ4Jjsp9cCHmZHyhOnnGrUE59ZcgX2uR9Cukn18I737_0I28wIXMQHvh3Bm6prXwhoWAezDeMHRbPv0D03dm2hhJ5Hf_wPvesYSKmNRoYDUl_X8UavUsLkOrPQ6Hg4NoFPT6VyfXO5QfNZW3xHhs2RFmfNQetfExjusLnlCQ9TfPQBwMl0D_1yE9wdv4X6I6FRqcZnm1Zra1SaPrXcXWJJaEtCMVVp6mF1UbsoG4yYh2oR2soZqm4CMU42E7fUgPt-7Fzka3zu_s4gz90Sxho21WTth6iVBFiy57uNRQuKlqrnT7kpkBtc01fZohSBQg8OlvCJw==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0d3f48d6af9072b7016a8d928c202c8197910574b0ed8ccc27",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4583,
+      "completion_tokens": 2769,
+      "total_tokens": 7352,
+      "cost": 0.02953075,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.02953075,
+        "upstream_inference_prompt_cost": 0.00184075,
+        "upstream_inference_completions_cost": 0.02769
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2432,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787662986-lDrAMPE05wxIwvKhDaIi",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4583,
+    "completion_tokens": 2769,
+    "total_tokens": 7352,
+    "cost": 0.02953075,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.02953075,
+      "upstream_inference_prompt_cost": 0.00184075,
+      "upstream_inference_completions_cost": 0.02769
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 2432,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 30511,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

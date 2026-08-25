@@ -1,0 +1,386 @@
+{
+  "fragmentId": "frag.e5f3.00014346",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.e5f3.00014346",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.66f470229837d894",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général",
+        "supportSpans": [
+          {
+            "text": "Pour la lombalgie chronique",
+            "relativeStartByte": 0,
+            "relativeEndByte": 27,
+            "absoluteStartByte": 14346,
+            "absoluteEndByte": 14373
+          },
+          {
+            "text": "l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général",
+            "relativeStartByte": 29,
+            "relativeEndByte": 176,
+            "absoluteStartByte": 14375,
+            "absoluteEndByte": 14522
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Texte indique une recommandation APTA"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Recommandation d’un organisme médical citée explicitement"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Déclaration explicite de recommandation"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Texte indique une recommandation APTA"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.db13b05020d9cd68"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "lombalgie chronique"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.2f5589ed6060dff4",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "aucune méthode n’est nécessaire pour tous",
+        "supportSpans": [
+          {
+            "text": "Pour la lombalgie chronique",
+            "relativeStartByte": 0,
+            "relativeEndByte": 27,
+            "absoluteStartByte": 14346,
+            "absoluteEndByte": 14373
+          },
+          {
+            "text": "aucune méthode n’est nécessaire pour tous",
+            "relativeStartByte": 178,
+            "relativeEndByte": 223,
+            "absoluteStartByte": 14524,
+            "absoluteEndByte": 14569
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Attribué à APTA 2021"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Recommandation/norme d’un organisme médical"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Énoncé normatif explicite"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Attribué à APTA 2021"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.db13b05020d9cd68"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "lombalgie chronique"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.82acb500843950ce",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire",
+        "supportSpans": [
+          {
+            "text": "L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire",
+            "relativeStartByte": 290,
+            "relativeEndByte": 409,
+            "absoluteStartByte": 14636,
+            "absoluteEndByte": 14755
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Texte attribué à l’OMS 2023"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Recommandation d’un organisme international"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Énoncé explicite de recommandation"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Texte attribué à l’OMS 2023"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.9306bf2f305a3ed6"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "lombalgie chronique primaire"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.34e914cdabdc3baf",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags",
+        "supportSpans": [
+          {
+            "text": "L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags",
+            "relativeStartByte": 479,
+            "relativeEndByte": 580,
+            "absoluteStartByte": 14825,
+            "absoluteEndByte": 14926
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Texte attribué à ACR"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Recommandation d’un organisme médical (ACR)"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Énoncé de non-pertinence/appropriateness explicite"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique directe"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "medical_body_recommendation"
+            ],
+            "reason": "Texte attribué à ACR"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.5d8a519fce6f7204"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "lombalgie non compliquée sans red flags"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

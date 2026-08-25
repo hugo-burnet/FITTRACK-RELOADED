@@ -1,0 +1,79 @@
+{
+  "statuses": {
+    "validated": 17,
+    "partiallyValidated": 3,
+    "rejected": 0
+  },
+  "claimAudit": {
+    "attempted": 66,
+    "retained": 63,
+    "filtered": 3
+  },
+  "coverage": {
+    "fragmentsWithDiagnostics": 1,
+    "diagnosticCount": 1,
+    "byCode": {
+      "CLAIM_CONTENT_WITHOUT_CLAIM": 1
+    }
+  },
+  "partialRejections": {
+    "fragmentsWithIndividuallyValidClaims": 0,
+    "individuallyValidClaimsInsideRejectedFragments": 0,
+    "individuallyInvalidClaimsInsideRejectedFragments": 0,
+    "fragments": []
+  },
+  "repairs": {
+    "calls": 0,
+    "ratePerFullCall": 0,
+    "successfulFragments": 0,
+    "successRate": null,
+    "reasons": {}
+  },
+  "rejectionReasons": {},
+  "safetyExtensions": {
+    "productPolicyIncorrectlyExtracted": 0,
+    "inventedCausality": 1,
+    "populationGeneralization": 2,
+    "inventedReferral": 0
+  },
+  "cost": {
+    "fullUsd": 1.17162,
+    "repairUsd": 0,
+    "totalUsd": 1.17162,
+    "meanPerCompletedFragmentUsd": 0.05858100000000001,
+    "projected207Usd": 12.126267000000002,
+    "fullInputTokens": 87408,
+    "fullOutputTokens": 112284,
+    "fullReasoningTokens": 93184,
+    "repairInputTokens": 0,
+    "repairOutputTokens": 0,
+    "repairReasoningTokens": 0
+  },
+  "errorsByCategory": {
+    "MISSED_CLAIM": 5,
+    "EXTRA_CLAIM": 9,
+    "MERGED_CLAIMS": 1,
+    "OVER_FRAGMENTATION": 6,
+    "WRONG_SPAN": 14,
+    "SPAN_HALLUCINATION": 0,
+    "WRONG_CITATION": 6,
+    "CITATION_BLEED": 0,
+    "INVENTED_CITATION": 0,
+    "WRONG_KNOWLEDGE_TYPE": 13,
+    "WRONG_EPISTEMIC_STATUS": 29,
+    "UNRESOLVED_FORCED": 24,
+    "EVIDENCE_INFLATION": 10,
+    "UNSUPPORTED_INFERENCE": 0,
+    "EMG_HYPERTROPHY_LEAP": 0,
+    "BIOMECHANICS_RISK_LEAP": 0,
+    "CLINICAL_OVERREACH": 1,
+    "INVENTED_DIAGNOSIS": 0,
+    "ZERO_CLAIM_FALSE_POSITIVE": 0,
+    "ZERO_CLAIM_FALSE_NEGATIVE": 0,
+    "INVENTED_SOURCE": 0,
+    "INVALID_JSON": 0,
+    "SCHEMA_FAILURE": 0,
+    "PROVIDER_ERROR": 0,
+    "MISSING_PREDICTION": 0
+  }
+}

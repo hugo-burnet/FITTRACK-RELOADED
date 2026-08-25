@@ -1,0 +1,213 @@
+{
+  "fragmentId": "frag.e5f2.00038965",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00038965\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"3. Longueur musculaire et hypertrophie régionale\",\n      \"3.3 Muscles biarticulaires : implication directe pour la sélection d'exercices\"\n    ],\n    \"rawText\": \"Le principe de longueur musculaire s'articule naturellement avec la biarticularité déjà documentée en section 1 : un muscle biarticulaire (droit fémoral, ischio-jambiers biarticulaires, chef long du triceps, chef long du biceps, gastrocnémien, grand dorsal dans une moindre mesure) peut être placé en position **plus ou moins étirée** en manipulant simultanément l'angle des deux articulations qu'il traverse, ce qu'un muscle mono-articulaire ne permet pas. C'est la base biomécanique de règles pratiques comme : étirer les ischio-jambiers en combinant flexion de hanche et extension de genou (RDL) plutôt qu'en flexion de genou isolée assise ; étirer le chef long du triceps en combinant flexion d'épaule et flexion de coude (extension overhead) ; étirer le droit fémoral en combinant extension de hanche et flexion de genou (fentes arrière, leg curl debout avec hanche en extension). Ce raisonnement est une **extrapolation biomécanique de niveau modéré**, solidement ancrée dans l'anatomie mais testée directement seulement pour certains muscles (triceps, quadriceps partiellement).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Le principe de longueur musculaire s'articule naturellement avec la biarticularité déjà documentée en section 1 : un muscle biarticulaire (droit fémoral, ischio-jambiers biarticulaires, chef long du triceps, chef long du biceps, gastrocnémien, grand dorsal dans une moindre mesure) peut être placé en position **plus ou moins étirée** en manipulant simultanément l'angle des deux articulations qu'il traverse, ce qu'un muscle mono-articulaire ne permet pas.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"C'est la base biomécanique de règles pratiques comme : étirer les ischio-jambiers en combinant flexion de hanche et extension de genou (RDL) plutôt qu'en flexion de genou isolée assise ; étirer le chef long du triceps en combinant flexion d'épaule et flexion de coude (extension overhead) ; étirer le droit fémoral en combinant extension de hanche et flexion de genou (fentes arrière, leg curl debout avec hanche en extension).\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Ce raisonnement est une **extrapolation biomécanique de niveau modéré**, solidement ancrée dans l'anatomie mais testée directement seulement pour certains muscles (triceps, quadriceps partiellement).\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"un muscle biarticulaire (droit fémoral, ischio-jambiers biarticulaires, chef long du triceps, chef long du biceps, gastrocnémien, grand dorsal dans une moindre mesure) peut être placé en position **plus ou moins étirée** en manipulant simultanément l'angle des deux articulations qu'il traverse\",\"ce qu'un muscle mono-articulaire ne permet pas\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Observation biomécanique sur la possibilité de moduler la longueur via deux articulations\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established\",\"epistemicStatusReason\":\"Affirmé comme base anatomico-biomécanique générale\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Description biomécanique sans outcome clinique ou hypertrophique direct\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Aucune source citée dans le fragment\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"C'est la base biomécanique de règles pratiques comme : étirer les ischio-jambiers en combinant flexion de hanche et extension de genou (RDL) plutôt qu'en flexion de genou isolée assise\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Règles pratiques basées sur une base biomécanique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Présenté comme règle pratique dérivée de la biomécanique\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil pratique sans mesure directe rapportée\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulé comme règle pratique\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"étirer le chef long du triceps en combinant flexion d'épaule et flexion de coude (extension overhead)\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Règle pratique spécifique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Conseil pratique sans preuve directe citée\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur raisonnement biomécanique\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Règle pratique\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"étirer le droit fémoral en combinant extension de hanche et flexion de genou (fentes arrière, leg curl debout avec hanche en extension)\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Règle pratique spécifique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Conseil pratique sans preuve directe citée\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur raisonnement biomécanique\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Règle pratique\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"Ce raisonnement est une **extrapolation biomécanique de niveau modéré**, solidement ancrée dans l'anatomie mais testée directement seulement pour certains muscles (triceps, quadriceps partiellement).\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MECHANISM\",\"knowledgeTypeReason\":\"Déclare le statut d'extrapolation biomécanique et son ancrage anatomique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Reconnaît qu'il s'agit d'une extrapolation avec tests directs limités\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"mechanistic_hypothesis\",\"directnessReason\":\"Extrapolation mécanistique avec tests directs limités\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Aucune source citée\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[\"testée directement seulement pour certains muscles (triceps, quadriceps partiellement)\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"modeling_content\"],\"coverageUnitIndexes\":[2]}]}",
+  "providerResponse": {
+    "id": "gen-1787643572-jfnxh8EMLHUmDNA9AnMu",
+    "object": "chat.completion",
+    "created": 1787643572,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"un muscle biarticulaire (droit fémoral, ischio-jambiers biarticulaires, chef long du triceps, chef long du biceps, gastrocnémien, grand dorsal dans une moindre mesure) peut être placé en position **plus ou moins étirée** en manipulant simultanément l'angle des deux articulations qu'il traverse\",\"ce qu'un muscle mono-articulaire ne permet pas\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Observation biomécanique sur la possibilité de moduler la longueur via deux articulations\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established\",\"epistemicStatusReason\":\"Affirmé comme base anatomico-biomécanique générale\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Description biomécanique sans outcome clinique ou hypertrophique direct\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Aucune source citée dans le fragment\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"C'est la base biomécanique de règles pratiques comme : étirer les ischio-jambiers en combinant flexion de hanche et extension de genou (RDL) plutôt qu'en flexion de genou isolée assise\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Règles pratiques basées sur une base biomécanique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Présenté comme règle pratique dérivée de la biomécanique\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil pratique sans mesure directe rapportée\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulé comme règle pratique\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"étirer le chef long du triceps en combinant flexion d'épaule et flexion de coude (extension overhead)\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Règle pratique spécifique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Conseil pratique sans preuve directe citée\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur raisonnement biomécanique\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Règle pratique\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"étirer le droit fémoral en combinant extension de hanche et flexion de genou (fentes arrière, leg curl debout avec hanche en extension)\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Règle pratique spécifique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Conseil pratique sans preuve directe citée\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur raisonnement biomécanique\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Règle pratique\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"Ce raisonnement est une **extrapolation biomécanique de niveau modéré**, solidement ancrée dans l'anatomie mais testée directement seulement pour certains muscles (triceps, quadriceps partiellement).\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MECHANISM\",\"knowledgeTypeReason\":\"Déclare le statut d'extrapolation biomécanique et son ancrage anatomique\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Reconnaît qu'il s'agit d'une extrapolation avec tests directs limités\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"mechanistic_hypothesis\",\"directnessReason\":\"Extrapolation mécanistique avec tests directs limités\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Aucune source citée\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[\"testée directement seulement pour certains muscles (triceps, quadriceps partiellement)\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"modeling_content\"],\"coverageUnitIndexes\":[2]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjUa2h3WqvC9-OdcqKmWtoWVKd1I1jqf3xQDpmFIbgPJMmT2v59brl0t1qMFVC2T11n2_nvkq2e4cQU1kS19vMvE1N_EpXuWeyGf-zqnC05Yj0MhETn5lVPVXsVXnsm7ERLkHUdJXAs0_96SGp1xF-ekcRErVG1vokhOeV9MonHc5w76BKKzpX2edwoCsXpiomb5KcJ5jW8LjlYkCPpR2x3vhPqJ44ECKptMaa86ot22b7Ai7iBthyH2-RYlEQxzXTH6uEXi7umYewdKGZlHcUSBHKaBxnfgWaLjsXrp0Qbedc2dHmp_LqSe6s7LBGm518SeqNMPrtaJtosukWMnL8A5CHgIEcsnhHznlxUpfbpvAIcoAcQ1Rk1yieXNs6QCFKcJbb5dO2HxXbMEmIDzyiGGVKcD1sI8vztOXFxCyGBngHmNsjsfzOOlx6ElwXnndxv7-NbG5mYa8dDJGh8oacbEZXUZO3-dAgH8RlrLkLuaSUatRrnsIe4mrg2UudV6NmYt32Xr3CxHf2MStCNpWd-xMnVIxQuZ88B5xtPLdReBzspq46GogWYcWlPe7ZdFs80TEGxqkFdGI7tsPLv7DcaVRSV25I6N_wPG5k8UAmMUsgOqLCQThBZOTDHugvmDnhh4BdgfYfZqVngiblQHTNnaAd4miyq_hsOHsM__BN_8Vqcqg_PrQccO-lEF5llM7n6s5Eug8yq3BI_R6jklDQGsRNwvZNLfhLZ1luCmqNBWRD8NDQR6IK6ZbqvxtxH-icGZKExji_8zjbw8nubHpyjf212XRrvYKX4MLLS4JgWpxmciaxGvvAuv18UvhfYDyLhl68D2Dsm1JVLk4IHGvpFe60jShuqr4qE77gUCNCd5rEAbVd9Ixn8DoEBP-xnx47WMo5boNVHWt6H_sr92tUjD_eW4s-qXM-7Lgz4pJ1M2GlJ7oN8ZdmO4sZDSKWNe7q-r2svJAP0nAfpjCuwpoOZHtDA==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0e5f3adf7530e7ff016a8d46b647188197ba901025dd57dd05",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4035,
+      "completion_tokens": 1590,
+      "total_tokens": 5625,
+      "cost": 0.01806375,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.01806375,
+        "upstream_inference_prompt_cost": 0.00216375,
+        "upstream_inference_completions_cost": 0.0159
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787643572-jfnxh8EMLHUmDNA9AnMu",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4035,
+    "completion_tokens": 1590,
+    "total_tokens": 5625,
+    "cost": 0.01806375,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2560,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.01806375,
+      "upstream_inference_prompt_cost": 0.00216375,
+      "upstream_inference_completions_cost": 0.0159
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 18486,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [
+      {
+        "code": "EVIDENCE_INFLATION",
+        "message": "Le statut durcit un modal ou une incertitude verbatim",
+        "critical": true,
+        "retryable": false,
+        "claimRef": "tmp.claim.01"
+      },
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "message": "Incohérence de couverture",
+        "critical": false,
+        "retryable": false,
+        "detail": {
+          "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+          "unitIndex": 0
+        }
+      },
+      {
+        "code": "CLAIM_FILTERED",
+        "message": "Au moins une claim a été filtrée indépendamment",
+        "critical": false,
+        "retryable": false,
+        "attempted": 5,
+        "retained": 4,
+        "filtered": 1
+      },
+      {
+        "code": "PARTIAL_VALIDATION",
+        "message": "Validation partielle : les claims sûres sont conservées",
+        "critical": false,
+        "retryable": false,
+        "attempted": 5,
+        "retained": 4,
+        "filtered": 1,
+        "coverageDiagnosticCount": 1
+      }
+    ],
+    "partialAudit": null
+  }
+}

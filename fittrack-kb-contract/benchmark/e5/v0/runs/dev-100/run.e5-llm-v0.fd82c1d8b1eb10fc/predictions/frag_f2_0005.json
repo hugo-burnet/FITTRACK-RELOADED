@@ -1,0 +1,196 @@
+{
+  "fragmentId": "frag.f2.0005",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.f2.0005",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.d35d4dc29007bead",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "détermine dans quelle mesure l'effort du pratiquant doit être partagé entre la production de force du muscle cible et la stabilisation posturale/articulaire.",
+        "supportSpans": [
+          {
+            "text": "détermine dans quelle mesure l'effort du pratiquant doit être partagé entre la production de force du muscle cible et la stabilisation posturale/articulaire.",
+            "relativeStartByte": 131,
+            "relativeEndByte": 291,
+            "absoluteStartByte": 43009,
+            "absoluteEndByte": 43169
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.bf876a9e2f57d1fa",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "**diminuent généralement l'activation du muscle agoniste principal** et la force produite",
+        "supportSpans": [
+          {
+            "text": "Une revue systématique et méta-analyse des études EMG",
+            "relativeStartByte": 292,
+            "relativeEndByte": 348,
+            "absoluteStartByte": 43170,
+            "absoluteEndByte": 43226
+          },
+          {
+            "text": "**diminuent généralement l'activation du muscle agoniste principal** et la force produite",
+            "relativeStartByte": 484,
+            "relativeEndByte": 575,
+            "absoluteStartByte": 43362,
+            "absoluteEndByte": 43453
+          },
+          {
+            "text": "comparé à un exercice équivalent sur surface stable",
+            "relativeStartByte": 577,
+            "relativeEndByte": 631,
+            "absoluteStartByte": 43455,
+            "absoluteEndByte": 43509
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review",
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review",
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c912c0efbdc07ea5"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "surfaces instables vs surface stable"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

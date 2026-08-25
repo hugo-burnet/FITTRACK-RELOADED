@@ -1,0 +1,351 @@
+{
+  "fragmentId": "frag.e5f3.00030639",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs,",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandation pratique pour la reprise après interruption sans douleur"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Conseil de pratique sans preuve populationnelle citée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.a8eebacca96140a7",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs,",
+          "supportSpans": [
+            {
+              "text": "Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs,",
+              "relativeStartByte": 2,
+              "relativeEndByte": 94,
+              "absoluteStartByte": 30641,
+              "absoluteEndByte": 30733
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil d’expertise sans appui d’essai cité"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas de citation; guidance de pratique"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandation pratique pour la reprise après interruption sans douleur"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Conseil de pratique sans preuve populationnelle citée"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil d’expertise sans appui d’essai cité"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas de citation; guidance de pratique"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Après interruption sans douleur"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "car la tolérance à la charge et aux courbatures a diminué.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Raison mécanistique/physiologique avancée pour la recommandation"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Énoncé mécanistique sans outcome démontré"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.ef32fbc0c86ddef3",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "car la tolérance à la charge et aux courbatures a diminué.",
+          "supportSpans": [
+            {
+              "text": "car la tolérance à la charge et aux courbatures a diminué.",
+              "relativeStartByte": 95,
+              "relativeEndByte": 156,
+              "absoluteStartByte": 30734,
+              "absoluteEndByte": 30795
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Raisonnement mécanistique sans données cliniques citées"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type de preuve non spécifié"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Raison mécanistique/physiologique avancée pour la recommandation"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Énoncé mécanistique sans outcome démontré"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Raisonnement mécanistique sans données cliniques citées"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type de preuve non spécifié"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Après interruption sans douleur"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Réfutation d’une règle universelle de reprise"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Le fragment affirme l’absence de soutien pour une règle universelle"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.6296bc81a1853328",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations",
+          "supportSpans": [
+            {
+              "text": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations",
+              "relativeStartByte": 157,
+              "relativeEndByte": 235,
+              "absoluteStartByte": 30796,
+              "absoluteEndByte": 30874
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Affirmation sans citation directe"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Non attribué"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Réfutation d’une règle universelle de reprise"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Le fragment affirme l’absence de soutien pour une règle universelle"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Affirmation sans citation directe"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Non attribué"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4433,
+      "outputTokens": 6973,
+      "reasoningTokens": 6080,
+      "totalTokens": 11406,
+      "costUsd": 0.07138325
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4433,
+      "outputTokens": 6973,
+      "reasoningTokens": 6080,
+      "totalTokens": 11406,
+      "costUsd": 0.07138325
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "fragmentId": "frag.e5f2.00085197",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.e0a31c9c10d65f6f",
+    "fragmentId": "frag.e5f2.00085197",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.59e85f41a66b75a0",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+        "supportSpans": [
+          {
+            "text": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+            "relativeStartByte": 39,
+            "relativeEndByte": 257,
+            "absoluteStartByte": 85236,
+            "absoluteEndByte": 85454
+          },
+          {
+            "text": "fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+            "relativeStartByte": 259,
+            "relativeEndByte": 349,
+            "absoluteStartByte": 85456,
+            "absoluteEndByte": 85546
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "en cas d'inconfort persistant"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "à ne jamais présenter comme une règle universelle de sécurité"
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

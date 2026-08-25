@@ -1,0 +1,255 @@
+{
+  "fragmentId": "frag.e5f3.00000530",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Adapter une exposition, pas interdire une anatomie.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Règle de pratique sans citation."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Énoncé normatif de pratique, sans preuve rapportée."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.cf936a8684e080a4",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Adapter une exposition, pas interdire une anatomie.",
+          "supportSpans": [
+            {
+              "text": "Adapter une exposition, pas interdire une anatomie.",
+              "relativeStartByte": 5,
+              "relativeEndByte": 56,
+              "absoluteStartByte": 535,
+              "absoluteEndByte": 586
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil de pratique clinique sans données rapportées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune citation associée ; guidance experte."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Règle de pratique sans citation."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Énoncé normatif de pratique, sans preuve rapportée."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil de pratique clinique sans données rapportées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune citation associée ; guidance experte."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "La décision doit partir de la réponse individuelle à une tâche — localisation et comportement des symptômes, irritabilité, amplitude, charge, volume, vitesse, lendemain de séance — plutôt que du seul nom d’une lésion.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Règle de décision clinique décrite comme pratique."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Recommandation de pratique sans preuve citée."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f73aa963d11b7d26",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "La décision doit partir de la réponse individuelle à une tâche — localisation et comportement des symptômes, irritabilité, amplitude, charge, volume, vitesse, lendemain de séance — plutôt que du seul nom d’une lésion.",
+          "supportSpans": [
+            {
+              "text": "La décision doit partir de la réponse individuelle à une tâche — localisation et comportement des symptômes, irritabilité, amplitude, charge, volume, vitesse, lendemain de séance — plutôt que du seul nom d’une lésion.",
+              "relativeStartByte": 59,
+              "relativeEndByte": 291,
+              "absoluteStartByte": 589,
+              "absoluteEndByte": 821
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Avis de pratique sans données présentées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas de références ; guidance experte."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Règle de décision clinique décrite comme pratique."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Recommandation de pratique sans preuve citée."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Avis de pratique sans données présentées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas de références ; guidance experte."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4348,
+      "outputTokens": 3426,
+      "reasoningTokens": 2816,
+      "totalTokens": 7774,
+      "costUsd": 0.035807
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4348,
+      "outputTokens": 3426,
+      "reasoningTokens": 2816,
+      "totalTokens": 7774,
+      "costUsd": 0.035807
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f3.00045594",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00045594\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"16. Limites et gouvernance\"\n    ],\n    \"rawText\": \"- Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"UNRESOLVED\",\"knowledgeType\":null,\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"UNRESOLVED\",\"directness\":null,\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787664997-FCdd7MIldhNBMOq13xfk",
+    "object": "chat.completion",
+    "created": 1787664997,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"UNRESOLVED\",\"knowledgeType\":null,\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"UNRESOLVED\",\"directness\":null,\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": "**Evaluating schema options**\n\nThe schema provides reason fields, which are optional. It's okay to leave them null. The directness and evidence types appear unresolved, while clinical evidence level is null. Since there are no citations, we set the citation attribution state to NOT_CITED. Fields like \"supportsHypertrophy\" and \"supportsDemonstratedClinicalRisk\" are defined as boolean but aren't required. We can choose to omit these if unnecessary. For the conditions fields, while it's not required to capture underrepresented populations, we could include strings if relevant.**Clarifying claims and structuring data**\n\nIt's helpful to keep records, but since the fragment is integral to the claim, we can leave the specified fields. The confidence state is unresolved, but there's no \"cannot conclude.\" I need to ensure compliance by providing JSON with annotation prediction as \"CLAIMS.\" There’s one claim in the clinical domain with an appropriate coverage ledger length. Although the claim covers four underrepresented categories, we should avoid oversplitting into separate claims unless the text distinctly states so. Instead, we’ll maintain it as one claim with support anchors being exact substrings.**Structuring JSON for clinical content**\n\nI need to include the phrase \"Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau\" as the anchor, ensuring that the raw statement anchor index is 0. The focus is on clinical trials, making the \"clinical\" domain appropriate. I’ll classify the coverage unit decision as CLAIM_CONTENT and will produce the JSON accordingly. I need to validate that flags may include \"clinical_content\" without adding excess. Confidence fields should avoid \"UNRESOLVED,\" so I’ll set state fields to UNRESOLVED and the values to null, while establishing unique support anchors. Finally, “annotationPrediction” will be set as \"CLAIMS.\" Time to finalize the JSON!**Finalizing the JSON structure**\n\nI need to double-check the \"rawStatementAnchorIndex,\" making sure it's zero-based for the support anchors array. Yes, we should include \"coverageLedger,\" and for \"citationOccurrenceRefs,\" I'll provide an empty array, as required by the schema. The \"citationAttributionState\" will be set to \"NOT_CITED\" since there are no citations. I also need to ensure the anchor is non-overlapping, and I'll avoid the leading dash in \"Les essais...\" to keep it unique. I'll add \"coverageUnitIndexes\" with a value of [0] and then craft the final JSON!",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Evaluating schema options**\n\nThe schema provides reason fields, which are optional. It's okay to leave them null. The directness and evidence types appear unresolved, while clinical evidence level is null. Since there are no citations, we set the citation attribution state to NOT_CITED. Fields like \"supportsHypertrophy\" and \"supportsDemonstratedClinicalRisk\" are defined as boolean but aren't required. We can choose to omit these if unnecessary. For the conditions fields, while it's not required to capture underrepresented populations, we could include strings if relevant.**Clarifying claims and structuring data**\n\nIt's helpful to keep records, but since the fragment is integral to the claim, we can leave the specified fields. The confidence state is unresolved, but there's no \"cannot conclude.\" I need to ensure compliance by providing JSON with annotation prediction as \"CLAIMS.\" There’s one claim in the clinical domain with an appropriate coverage ledger length. Although the claim covers four underrepresented categories, we should avoid oversplitting into separate claims unless the text distinctly states so. Instead, we’ll maintain it as one claim with support anchors being exact substrings.**Structuring JSON for clinical content**\n\nI need to include the phrase \"Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau\" as the anchor, ensuring that the raw statement anchor index is 0. The focus is on clinical trials, making the \"clinical\" domain appropriate. I’ll classify the coverage unit decision as CLAIM_CONTENT and will produce the JSON accordingly. I need to validate that flags may include \"clinical_content\" without adding excess. Confidence fields should avoid \"UNRESOLVED,\" so I’ll set state fields to UNRESOLVED and the values to null, while establishing unique support anchors. Finally, “annotationPrediction” will be set as \"CLAIMS.\" Time to finalize the JSON!**Finalizing the JSON structure**\n\nI need to double-check the \"rawStatementAnchorIndex,\" making sure it's zero-based for the support anchors array. Yes, we should include \"coverageLedger,\" and for \"citationOccurrenceRefs,\" I'll provide an empty array, as required by the schema. The \"citationAttributionState\" will be set to \"NOT_CITED\" since there are no citations. I also need to ensure the anchor is non-overlapping, and I'll avoid the leading dash in \"Les essais...\" to keep it unique. I'll add \"coverageUnitIndexes\" with a value of [0] and then craft the final JSON!",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZqRw3MhzTBpMOBWfhSDCKjJOJnQqZa69nGXNqL-l3jUfOplk171794Q2Ge4y1W1kwL0iZzre0YwTRr1OjzKG9yDsWxl3owBfv5SMM8HXVrUfPUSPZAXLv1vbbyTfRv0WZheCw0_y92zCdxjfT4Uk9VPvDz891-jvVHZTuayGh9Xrbc1jGGWP3nsfNnHcw0FWMfgCCBijtGStbUP6TOczMU_YxSf0PbhRikGPfxbdWdI7g68dCljhd3gGsN_RGxPNJHoFt_jmD70wenesJVLZUcnRGxGXnmfJHfqeS3F2MaHCQQJ420Yc7xmQdAGr0eSwpwXHykqPeByRQfoZ4syZwXcLrXmFNlVuUf9AASdlR6c7j9v9Sb4R2_fbjPLIJsYSOtkaa5Er82UFIZbsYXWvRrQXTY808_vf_Lgt9vjhmD5UWsUfIx-FDUDVK3snr-TaiwAwFDHzqrLX6T0u5vv4teXUTl9UknAX_X8QDX0QfGjGHb1nIKOIhESrkFiVucLAMf3SiywGJaipWIOYjd4Mz9FpMili7J3KE6TizteOuqq5ZqPCWk_3BNr0w1y5Bo0K5HfSikdnlI8YKYCI6-s80v23RL-Ma_Lm5vPW2GoQmREjnh1vmrWSQ4RYA9WoIv34JiLW4tUQyOHRRhwCivB7gH1sjPaZUDvvL4GNIjERP8zmnoLP5DUPWMcy4cBRLxO8GyUXem_6r6dvuvRsSEiE50-akfJYECqBFgMDwdWPwo1Qub7Vnl5qfaO1NkDjrj3fD0k-c9QgDalF_DVUlnNy4PXo_CjqHjEiUoeX9zKWFGWJlF5mSu9LA5UY4gkBZkPcTCyfwb7FLyvlCxKeOcabIC3oU8zeCEVaBImwrKMhz-EYHo_4g6AgTviytYTKmZ2lciDNrHE-6qWIotD477R0cjz7z7XeFu_KI9UiyUcpQ0rSyr_QufKrsnNy26xYn4jfrBJ7GnM0WsBINuJqxKq21-yVf8mdy26oRkHDAouhQ2sdxg5Ayat_v4UI2oRUKEMJbdvO9FivBLHlV9sTc3-waraCBXW4VGUJudLwa8WYJUSEFyOEtHNTzPOIRgbDZKv1bLvhIM_tEn87rivJSbbhN-OVdMyLidHGTk_1XUkwC1ZsoyR1K30twnqMOtBu83n4HjVNHwyq3F5qCYXmavQFxzVD5Lq5q1TdFntgqPrOR0kfEhzgSLtGwndZBiz4f8mbexwOv9ExdMSn31JBQ3mz1so4T43HKbw7yYYyW1NaRi6FZyREyhePzvLUJ2R_bJh2AXX_ciwyixr5LV25dmE0GAQVVHlLfGXGjiYi9o2QuIQ3lGWggXUkOZbpp9jKtCekeXpoqrSGeajUtxmhILZwGeWnK_jlwNp6BiqczlS6j0JLaM95NAAzU1g93EQMQbei93i-AHOGdygYOC3bnNfl5etTdvH4zaYKGnkk_M_Rgvm1-VsSfa8zpoHtsRSM7OGckG_ZRKL_AUxBp0eFytAFSpKzGEB0KMgWiXIJoxSUgBB5CUp4S1ERhhecgxuSreXHIq9RCSrul0cP1HF3mZbhoKlMIpHerTs6AZmmVWRxme9iutwE7GEO1rQJZJhUq_SYvGVxo8rrZhfjqs63H7-GQuldqEYiuphPWftxOFXGSWHnCH2Ht5m9NXRnwWXYfvRZM-Dqw7Cq1Yus3FH8TPaowLM4IZWb-zB1Yujf08WJOIhUycp-TWdpyLPlU9yhS8X284Ni3fXuxrp6YAJUigr-PA8ttVg9ubA1uJds7k2PC33WipavKODyyW-kboGYXewrc90FPQ8S_7lu3g07O-MXsR_N91xtnrTCgGkXFQ19tkziNHN19dz_kNdJfqhONTsSnk0TWsnUOaJIiPO8_sKKqgxbM3aTGlSQXhpkUEHmnfLLTgnakFFkHJAQUXoJFZXlwE_uy-8hOSTvGCcTTQjF_qrDzp9-fhrXmG-nIMwpcnq4RvB4MztMjPNvaPq8hqT8OjHjDYA1aALywKa8ed8eDYXHLninWby31b5BJYF9CaD_iQ85r_G_tmOVTDWh1-BhNu5cGXuAbnUFJg4vIrnibav2qcEtR74T5QAHDrFMjch2GpodlomXGKaMcho4zOeTy8hfLGrv-TWDYjdDseBwDgrNRy2JnuG252V-ZKQPU5MZN5vyGUzZC5WkvPFHdC79puHW-lLaeepDiZkRKXceYueuBOESkl-VxM4KPp8vNSkc2X2vKE7RTI8xa5PmuWYQl9Um6nPhBE9ZfcFdr78DTva7eLtXj3-f8KVjqYmBwsJehPYKlwdhU33MZJ95n8umGN5gSnDYA9rIaucVna8iElW8R0jfWiYmVngPHDjg8G9cKX0pbxkC_K0grCQVoTyMwUVWWDUKTAm2Glnd4q6aKTCmy4lviP2wFSbk5CtgbmkTxwbWld7IUJKobpZtYits20aFUFh3a9hedFZngztu4LYsIxVvMaT3Xr_bZV8CnPSfvR8djHn-DMRm15ick0NZlvdRdWNOoYUoRxbmo8Ay7ve9pyxU-wOTqNQCOwVEmkEi7G1pz6rgkRfjJ-di7X4dR8L_RCukQ0OZiZIe4381MLWW-mxHMym68RuSjDrBnxgqwseMc1P4iGSz_A7UuJq-TJYLl-M0GVbHFioo5FMplPjY4KRuXXT2NPBNPm85q738AtQimOcJTsPyue2AIIQST5gxgJUcpOWvDlth1xabEtmvGaPOebgCTzulbTFpIMB8-y9Wdjhd7tcsA-yIxHUHSo0vuiB0L6JcjdPIyKwYIq95hVFSjRr52NcKt_NHhkegukwGbL7VtNHtC4a_upxZm3rTwfVCeSdn92mlbkSi60tr9YbRnl-jELaptYBG4s0WT70FTuyvvhuzxcBpAIpu_ruISC5EL5YHNng72fCs_Adlu3xbzhoYebCQ7Y1CQL-yPVASXrvZBOxHZeMRMLyagzn6mh1thLGWM1jSo8Ie7j12lSM79p_we0XsCwfibaSuy5fcUz0ffaOkvwGigw24BwGpiGZJicidTRKI1xOltsse8SD7vwb3lho2GcGZVdt8Z78f8V_qzF0MFG-qIANct4CH4KpMQvmd14O7xDkKDfkwf-jaqTGhmyuqDcP7qBPDJx2jwFQ3GUMtp1HA0yLaYayBT2ylaj2ATSp0gwVjNg1TkmjxDp8Pdl68IOpoIiHOuiaIQpHUORzI_4uhFXITa4ADmOVKsRMfgYORqgc0KPGEjZq30892dN3ZopPDeR4_Wa3OwKSHmbzlpdIW7U4SLfy3R9N2DwprrV4o0qIyN3DJYnZbcyy1_jnldZhrIJB0ybyIN5RLRemnVuHk5eJrAFppJJ3gbZ3yHUt0TOSJOB9D7fyYIFQjMjFwVg478HzfgMlewqZ7urY6il7kteHjPBVipo-jUQKrQAJRjqlD2yk85McpjwbnawQ3jgKbxA3QjD84yzKEAa--EKhzLrEk022rBuhTsauhcv4dKTZQIaKDGBfcuw-mWFyQVBq1PlQP_cZg1_UQzNHFBCrcOseZhhaH4QvGWDuj6d376Yt6v-9P3ix8A5XmOUd9s4zD2npmpnNK1o7bO02POsjhYellU2UNqTbpD3EYZSkGCaPVzrGbepwaMooK2FdbeATm_qijhJeGZ9VoLEjOf08_dkC3W73Mja9yygIxxsMHO1HKa0Qbrx99FwyuFAdYwgHxmPmEEqBdOkfViXyLjdNZtR_aIp2jwPgX88eEuyQmb2T-2Z2MWXc3dz4WUjxs6HN2Bn6wZY58chweX3Pu3J8xPMXEQtMKlK7INzDFg4IUCdwVu-dwE1BKhnA5_NchVp8-1j4LLmIuzJY97sZZDl9Lme8Wwp-qeJjwkP_c6p886MxFQHk8i1XiRZByeXCPMn-X0rjYwu4Q5lpBdFp0hkx8kumOyMcQwKmh4vXm4mXsuKwsvYLDuyhK7z-6v06NXeMEHt5UMz_fSl8IC1KI6tpSn79y6FzAPRnDvpt3BS1UDgnRCktxcEg4sup_UzZE0w4zx9o0ScSAi7uqaJ-NIlOP-BuAPag9m8hfpe6-mx-tYbgQ6sRA4DnbFy4iEZskmNjv-Cp7h-U_OINSPNBapuaAN5Bmk7oA5YCn3xBPTjjC7Af1XXybc-tO22lsYVx4XWcTLEWQG8a-GaLpXLmfuCbi2S2S13eWpfA10IPFWmgZ7_I0QiRxXcAmt9Kk1SAEgzjsBrbywUeThVre7Z4mOY2dWOsVHNf5St69xPVz1CYTO-RPCzccJGVJxuD8nM91UTUMuSjK7rPvrSrRyJMdSXSDVQmmNQJ8-dylRXUXYShApoKtdfaf9Qmo9TT5xOIg8hkkLVMiDoNK9VPQzEq3X0e8Avvy90G0Y9n6-A1AYgrM2bN80lD4-KkQjgraEG0xg8_R6_UxwLIZ1sJ44UxG7m_J6uIDW_0QbKZp-vI5OdKE2zdijg8dJ1bPtCSvH1u1m0yFWSiJ4UTSFM9Pbk5xFvEW6s5CrqNbtaWXjw5UuoJ8uw0KqLAnYpIkDXk-KRoPmFMkI20D-f8wtL8gBwNrba6Li6lBEZcBVSYLvga8n277tHjefBRgtMu-O64WIRUmPh-5j4gM6IgbN3MBVPrCXPH6ixCF94bjMk1SuNrchXa5Geke9sS15ESE9mOXEFFNBDtjQbBEb6HCoHAagd7jPN7KUyg8KdwYt3j9xyWPsWWQvEaGoAV9dVdGcndYcuDkye3ahjycVF99ZOZVOiPjIBLGMB01w_bGI7BYNgnmBgl7cYmO7Zs5rIsQ7_WOdtSNx85CJS6fLYU_ix_BbQJwq0AI34b9y4GuFk6ienGx-ffrjgQGStXJ-JXo4Om9hc0LRyJFkd_YfNj6SwIGR5kDzctv3hDWsh_xAJeI_rUIIKLTQ-ouqxA1hHrvMXWic-wKNc0GVRMga4KX7aQdxyMWAKX1S5hnMhVxQFSfGndkjrA0J5nDtjARm5gZ9h0qu760QfCYRlpXbT8UbaiW9qL9HVvYAIsuQKrZEfKMAXjcahQAicc3Z4f-KxoA6gsSd3TVRFywlNslEd4P59dcY-iAZMchpHsKyDa3OA9v4ZNXCN_Lu0quoKCRyh7zScMXfuya8KCcMg1FdrX3NXtTXZEzYDrfLJd40k2sLe7FQVOJf0P0eO25qlRuPe65to3EDcW1fa_jjouXO-_xI4Sh48h30bZOsdzhxKFMWiQGtXzT6Ef25VAv05YpxhwwG3ANbDs8oyizMHadIAmXhykqlH5Asz9Yejsk7OelCAn1yG8364E9e9Mnjy1rCu3z3pnL4lP9PEihKD-pRKJ-DVBsvQWnI3AKfmfXdUduRDhci3F7iPXsZYFCEfaPIl18Eh08JmaLXHdTJvxClpFs59X6rzLtSSTZJsDBlOFKTmkwGrNi4aQ7QqGLH9FJjfzV7QL46m82yu0l7r3xBUavb54UWwqvR8Lgkrsui02gdYMPylMpmEPPgFV44UCWJd7ZRT0G65ERG7znJgC0CLEj-8N4b0rcBqWhSkaUmvhbrDgd47SNk6bDpOHvlXpwf0Q7eKeTP84HxeX4wb5D-7nLPJgSdNurKISG1nxgu6Peh0-osVcGu3LcOXkzOwxYy4J07MIj7zZB4vt5dqm-Kdmay-QKjBF8C0MYndy1uJJStnkEOPlYEPLXp8o9FT_7EJZHrADl4m7vWQ-MaXupMZhdQ5KAP7_U6kCx0G24UvLEpNHbqQDd1B7sYDRksYcvADDO4THtymZB4jkVZpZA2JKCbtF69iJP3uV2CCDVLfpc1VNTfW5kW9KVlcM4_TyTwyIlLMLccprGQBsUw2x4LyAOJBwB-BBLibg-SGV3SeqcCUkycRpTMRvRr22Hv8kcysI_nE3TUdjqlfQGUYRyNiVdPkWn8a16YnjTaasZ40XxgjlW5NI-cagDLHvDJssp_0TyoIKJxIdokzRgJjI0mNyhyXdI6rlQxs-r6xmWK4VBuAPk3StW4QYAJ6pNxObXoWvp--5XqaGZAhfNsgvj1_0Twaxj1lJpYZN5zeqbeUxf7nT5xZq0F2p69zDhsqs4vXNjgRdDnv9sfNKLCceQla1ZMbi-QYMNfvngVZerSXFKaV19crHQ9IFwbV9J8WUY0c7i3HV5NjAQFOHBwD56UKDOIHKrcol-ce1E4kQr7e0eV3g8JLLk0RsZ4NXGrBWruy5h5Swkp47TwzpMFyuW0hYGTDqJsRGVe07-sj-XP60-J4-KI4y2t3uVyyBE5iUS3ups3LD0CbVQZvqcldfazx4quP2JcTJWLesBnS8khFQZLd9V9EfoXnwmKyHbdBSpju75thOXYu0EJHnUs2m2ng7PCb3bOUbodTIXIIl5fLffIQOJBSydGliPrpvVtRyggvew7bZVI4s5uvZre2XxCJAt1QUBvwj51gOTX-jDDM3ZNh2zR5CjQ3EPuFaJELv5ravvf_L7l5SlNdKlFgXPmAlw9qMOGzcFHVHeO9P6Thd_WlFaT1U3kX9UV0bLHM5IVnGHfW2_qrP2vjeJ8OMyUcNDRaF1VeTkCMcULgWpj5JN1vn-S9ljUrr9_eUjO40PsjhcmK4M0m5HmpuxXP9tlCBNcaMGTDDwUAMq7-VeEtqk6E6N5MoimXW3TsR3X_a7Hp4uT7G879_-q3-kcWGcSP3JM2pU7zXh4KuA_cXfksJLW1TK_VDuq3stS7OUG8J8le7J57bGLAaKa4wFGeWIcFEgYWm6F2LmDr2l3Lhevwkis6WV7ycZ3DCFRxoRBmYFipHmVz78uPI1jALHMLolnTU9z_8fw5JdnbqKbIsPra2F72BEZ8ZQJg8ilYjWUwp30XpY0MMhVDXtwVYcwoldmzp2twzWRlZ3iIgEJBbxWauxNJiHEaJLCYOvOktBlquE72u6fGuhK0OOI4mbI1iWq__Hw9UxrIJkwabL2yT6XGPznljSTwwGTCD-YdNXKwXMA5Rg3it6Z9C805DE2hGHJf7XJwsoLI8C3jYfG0GerKe99DLjxiborhwrZmbWNVPVmhyMYahWfDFG2Jl5sO67Xu7UMWC7pAQsDfxzb8jQB6nysM4UbjH2tVnVbPn_-9wstc3nEFw0dNvZHZLzxthK7dwygpPcM6vy2jvm69M_QUsfbQAHKM0UCTZZXLnuht6fBD_ACwc7ZDsVlOgNKWo_RMBH3P_zOnK-IGhoX45NUORNnvFjRO8v3Q-_7LWNFB8JgSDXLgFahQHRKN0A_-Rer0xsMvy_8viuMnjHZHHzXFStJKryd6e647spriEXYceth6olfaBBkIcu9YFTjmRs3Wnt3DYbky2n4p91SK_-Je08pF2Rag5EPvbZ2fBjdky-ZfVjLAZRCxVDAVMkRypHtRphV96BDUAJSh75VVKUW6rsSVTSyu1pNw08Nwj5Er2N8Wtrx591R9HsGikfv-qpd7Q4gTzGsPO_Dyr-ZENNJ3H-1qs9f1E-wJXTiA5QKacGIdlrDcSgbOBbzPVrKwVo_LO_kprIO8m7CfofLSHBDlM9hQWY0NJRPvGTeKAskxbajxfj9kTCCrRpnNgEq9sctclLoNqkQnurqKbeOKWupeb0Ei4qTxdRacpJOu8rx5kA2HovLqXJUiPo2M-wFOb7civMgxLeVJ1bO0DiO8UyLS7YErOgmoHPzxOKtVIYd3KFjaBwUwCLjABbcUTYMUmiDRzlzu6sZFmzkrrUDKfx0d3DH9dJdRkCyOxisJz5uoPA_4teQxSZ-owc7-FiC5MQVqmPobupjcLkISaQcL0uJJ3Bk59-MQed3lYIwreiPrYUSmwypmZ0HT4x3hFtaGwQ2ei4x74w_ZjJkKdIEXbrEjJYXZoTdmpNh-tHjPbpeb4PEOIrh0_vA6BdPoGrwl73Gttfn8WWb9jfLW9EQ06p1S8Slx906jqW5SCC3oXefE4Tzmp-OtH7dj3QtegU_yN8ARkz-EPLekxHGV4aHHyBoxBBbeh2n_XEScnaM-VLj9mwnHb5HhDEKOO-Gdtgf3M2iSO_2efAiBIPcDetbrJxiRO3AUJyZEQEofkwE0J1vOZrb9syFUUYTkgxfnT8plOo4Gj-0QdWBL0aVnzmYzWYVM4almI7nnH0-BvGA4cF-fdItVvjlD1P4HasdcPBA7fgWYvxAWZ24ht9jpCKnJyd0d7ssZXPvuPpndO-Rz7D6Ag4SNWQVQCbsWH5EOAROM7eyBHRPAg05KM3tpbo2yTg8l9hEbP8h7VMHqNdZaDbBfk2DihKGPGIAxwU2-MLac3TK6xCoyl9AbGU9wRwPQJwGEcg2ns80WUKt_5aDQqDM9Bgzd4Fs5uQDppOOiRmzK--il669HZzJRjpr_0A5ceqOuHMyI6EN0A6YKEQ3wnQsVH9BYjGm-DaAJBp9ucejpz_J0zzpzY44KgTP_S7gbw1hZcf7Qa5GQspbszyg2kYhbsp5qnSWyNXBtFL7iBFCPg3fPhy57xI7RBYrPoetpSKZg7yFvp7XYg_kuSnuEwT2gE4f2b_H8bglHijtgCI4H01qQxtvkmdWorCPT0UJKYrdvkaA2W3yG9enIOA6EW81LoaixsuoR20SCt5xDffm87nPUvY-aJvmHJXVRCEgtkM8xBPAwNVK4rHEmGClBrJ4dKPsM9Bjf8jwwd_62s0AswbJto-0pxoyuJVxM1E-O-6Y0EmYIxpYXbWBD0iDYYWsEUyUrK16H8_KphHfffV7P0_k2oRQgug262CcOww2RJpDLXw0xbq4HVFC-odlzjXC0pnE4FLcafhohIt_LBaMwTNdC328WSwb3qlTMrY1VmkOUUV9Yzw2pRliIal9yNx1PMsg81-MHH3jUCY2iDtsLn4geDl2liBCB79o8W28-Rnbmvwn4F853paW6UPBTB_9pfi8S4Y6jGcM-TZ1ed8g8xm8QJnXzWEQjLeWKq223dVBrnjcA8jMbW_x2Q69-fJ_gPDYHu97O60Jsl-eCxng8OOFK2NjaTuOpiVeDAOVJpnPSiisYLkTvmXJmonRsGQbfZLCFPy3uJa9jTb2nBqMihVrvF5alRtX0SQVzOZ1diPg-Ql6OGyhF48Ph88owIXJZS7rA80GyBeXqhcH3Via4kR_tyMbMHYL5zVD5xfz3SttqfmdQ_8X5oeVUhdhJOH9yyAXSyQw9_S1AvJ8D9f2vEjDDc9qTIOTu1pGNNSdsrcXWmyAhdv_hS0TiUbuFqQKe2SVSZmYTAUhstNHTrn525xwYr0m3T8xwEs1uA5RQmDML4bR-c3YybhbrMXupQtOxgeKSOHgbRjRWrimyWRS-VPdjHwCYOv-jdhFOcGsJwuXM4umH2thSwrcjFjEufVsmD8K50fjRc_VjLqcV_BUxH3uagOHw0ZE2N7LIHG6O4k4nMfLAKU4-dJiAuLO8rh6IXpOScN-3i83d7w4hitta55vR7fqLYBTg-oaZUXgyF7W5txkCo9ndLVwMTmehtAJ7bsI_L62MLN2xrVoXlkfNeKaT4PoZqxvJkXOVAIaCnpgjdFzUonsjgd0jPgqwIJPdnJ4eG7lQW0okq1mjFEBOZntTcqK2WOPVd7CLJn0LWjOUrLHOKOQLIvO4vb86LWL1WGK4Qd0JkDvBX1-oFgb4bMnRc44hYqpHoqgVsxdH-j5qmm4wwyEr7gDo-T7l0NWB_iIHBTpkd2W1cty2tqrK4Qu2xS02nH5ZTRTC1qKlEV7RIHVmVvjPWl99ev-uwE23kBukWseTg5sx7tNf7f90_Ana443_URr-eNRYV-RsP2_z5sbunrztBw8fsdQ0OgFgVTekVVlHTBEbWrm_gelFwB2Xj3I0uHbtlkI6qiGeJNX29LalMKOLb2btHuK1fW4zj59J4Bm3rOvej55ixDb0ck6qYxGb3yNyHjOOcNa2ibGapRcsUKuZaeQmORKchWmioEE5czt9FDSc8QaVgJLM-yAIAjCPVukZe9wGRzmQ2bspFqiK8xikb_Er0ILIAve4BZLQeuKeJuZGcjGBGWDsrW7WRuSvLQ5WennSeoagbi-JGwNr9WMa6W0H6utOeXibhSBmep9uTBuMOTH-bTeiO1REjz2NT_DBS-mYbSGrazsYo0M_YZuIyAYV0daho-NQj4U8iXviDaRs45S3dewnWX927tJ4dkGlvvT3O--g3FnJ23pL57jIra3ury5Qzz34DgYt7iDhrZmWoDJdlYo9uclJi3y_Lt0lbJru7OAa8cQ6ICiFx6LHhb9wEquZWMJoTBtMVhiAZvr411jtWJtD1Foh-ljG4eNaVH_c04RqLH_KS5cLrcuPKS3F1QbiGBajl-nSs-PVUWHoDeL3zgdeiQLYtGyyEbXYz0kSKyOlwO55wn1R5i_MZRiPOzdk-JhCI-2jnrxj4-ano9vs1m8OsZrsUuCB6MZfsFn04ERVpf720lpJ13W9yYzrA1sONDh50tqt-kPakxarR1IH3KzNl9Cbyc0lzhmPCnJnUNBk7VaAXY9lzQesfRfYgfQmjzWxaWWVouwWVut3C_MXoZ9iHNns5QZModPnepcqnPFaOG8YBZCpbYd3W-obN9YyIuI0Po9Vgc5rZW3J1MnwTmOmOA-7ef5Wxz9Ps4hEO8KARVQgAhOyT2tNgikL8kIF6TQcD3mOQQttxEBPjbqLJPQODsv6yiwlo5rcefVSRFVjrVIcTWnVyvTL9w0mjky8WYZoNKzJCbl8YuMBYheKEgIpG7fQ6GOs_psElnPJZ1X_69gPdWlWOP8nTzOnl5lxDevcP-okm-DUBQuPQR2p-7CPK2uWgPMr_3woUgYY8qa-NLEZW3if7DgOxx2z5JoFkKAlG_0_BrOOGfSNRBeAMm8QfSuGQKkqUXh8xYHLytXJoJ135stn83xOPhywDjmf8o6YzLq8MEe7IoCn8i4sIDt2isZCTBtQOof4OxmssJmsO5nSku1UXUY9s9u8MSbP4UFB-pae4XtfHIZGaFPFJT_TZoBbZm9uUgEN0MbaJAaN_k_n0nrdQ4kZuTXhl5K-LkQdFWvlq2osKJxAn8v6XuP9VFgYYutOXa7d9lT4VdVr3O4C65v1KbCKJSotg9XKsdhePSmVdVK9EbbTVl0R2ECRx9t3imjzeUlQqB0ZxTdphE9b5D2n73fMkIhufm1rOWdlE3KN0iaZT0npB2HnzQeMPTSjIWcKQ9bA64WiMSQse3XeXYGQ2SJbQkRVrygO9gZDuRR9SU2MBeKPwaZ2X5-d733pQ1OPCFxBxooAO6FCU65CEWk0uXVZXdZSLGIPgk8X3VD_4sBJ5cWBL679HDfDfC20-R4yeqWAeRQBhndCkO6Dz4jIN7zIi6R-1_K-DqaV4pzP7jMdoBScYk7LQiKxbEcr_i-C5Rw48LhZYqCAc2o5vmZVTFc3s9p8Z20mkDlOxuHmD8FMuCUGnfPal7omfsLWAHwSyGWaX3o6orfEFRCVTLKHT00_EfM4nrM-PvJz8vmNPkhTZwDddPnFtaQC9LlrOJs8n2TmLFWTmjGOfGzPt9kkCk_SZGuaTEmikfQy6b3rHGbFxjtiyhjELtrmNRsrcD_zqeZ3vIeevECnPZbNyJ__a9jhY8vWDl429VAszSUk2CbYWJX0qloG1N-_e011mqmsMItfjgVqEFOSzn_zJFdM9Tt9D1B9Vgdr9t_0k8rNHDHOWgo1wga7nls5yi0H3snQtQRQwaE_ppWzLHtfgCO2U7qJAIVacNqBairhGCCsQ6NQmi1Ql7gvY8_1KjZQefK7kla6s_sb6XfKjdHTIHZgWwOidcl-HYCPZF12zJhxlB6uXVzDsJR_F2RnSrOWmSSLz0oYGW9WHP22-nhrxN-7qfZ4BX0qzst5bLmDl_fwB-pFQ5Tjoa1fIMhxoIqDomeKedr1_l20TIF5zLu6SVTycBur-BC0VLj5qfWAZJD0IDCqpIwBHHiEIeQbjTSZmY20iYMrnOX6z411ziwx44gpAQ01VraceN05V2GkUzryMqVbBobAdmn6rxUtEZUzLJ7bCjpDZLYbJobJlEzHLSo43OASc7rsqOe3Igq9BeW2n9JDNd9K_mozqJLzHHpj93Qtu3-XcHqPXFZ9ytedwJLni3Smr-LeVkAduIV6cPnRb-bkJVSpF1y-LnLIQS_CRYhKdbTDMBIzH2AYAPXm7jQDCYjTfUaiXZYj-Vt4I5s1bK_1n3V9h1SH0OxaCnN2PEeftS6uywQWy2laD9L5d_W5Ra13VxFHRM6DQ7BzgK1JMoDxTKsnNPYD3aCiusx8QlPjBWEFBaUIuzhvpk2CofrloziQZ8zXd2gnnV5BXzCd3a7w2qOo0a9KQAWMJxgqpayy-ii2BigezxlJI9QQLhUlWFnbWS8jPy-K7Sq7EoZI2ANOjnoioQqj_Ak-V_On0G3grZc6TbZNXH_Ni0nk4blIkI8p8K7SudsCJxJTIhgz2_mDF3V8qTdQ9zJyQ242suHcWMfc2hJL8zKKES6dmDKi-BhBLxtUVjVyb8WXdTMZoR1zN_itSJL_JKflwtNYxBQggpK04VPsR0E1bDMJZ4ec3PgRqiTG5v2IVVV7nhyqB1sl1PSLy4NdFgjQswU815vThomYAKMoSf7cKr4qW5OCzGxWCVvNIOCF2uGYGOspjEtP6X5tdoc-o3yv9QFwuKCBIAEuDRxCixRsPbPPqi7EpExNR-EFrAFxUnTmH8q2u696rHT4xVCv9YC6qP7hb5e0JIeEsvVLydAEVHIVtNGfdIUBuxgA5sdP0yHnzOQnjuizo72MRrG8aDLjU_t_Fu72xCryaSqdnqRKPNa8haZnQ2TVcfjh9SSz-H2ayGEJbagAvDuUpVmsPzZmCBNn_Ese8z7t4Wc3gb7vmzXE26zIpS9W7aB9kEzVJrFO7zw==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0e439bb5f05de0de016a8d9a6721d08193931deaca6b2c0af0",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4299,
+      "completion_tokens": 2144,
+      "total_tokens": 6443,
+      "cost": 0.02292575,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.02292575,
+        "upstream_inference_prompt_cost": 0.00148575,
+        "upstream_inference_completions_cost": 0.02144
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1856,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787664997-FCdd7MIldhNBMOq13xfk",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4299,
+    "completion_tokens": 2144,
+    "total_tokens": 6443,
+    "cost": 0.02292575,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.02292575,
+      "upstream_inference_prompt_cost": 0.00148575,
+      "upstream_inference_completions_cost": 0.02144
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1856,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 48610,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

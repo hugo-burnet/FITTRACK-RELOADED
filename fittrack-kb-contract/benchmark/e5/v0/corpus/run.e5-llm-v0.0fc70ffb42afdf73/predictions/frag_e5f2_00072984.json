@@ -1,0 +1,187 @@
+{
+  "fragmentId": "frag.e5f2.00072984",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00072984",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.bf14f8bb0f69f5ec",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Ces mouvements sollicitent préférentiellement les ischio-jambiers biarticulaires en position étirée à la hanche, cohérent avec le principe de longueur musculaire.",
+        "supportSpans": [
+          {
+            "text": "Ces mouvements sollicitent préférentiellement les ischio-jambiers biarticulaires en position étirée à la hanche, cohérent avec le principe de longueur musculaire.",
+            "relativeStartByte": 34,
+            "relativeEndByte": 202,
+            "absoluteStartByte": 73018,
+            "absoluteEndByte": 73186
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Observation de sollicitation musculaire sans mesure d’hypertrophie ou d’issue clinique."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation de recrutement musculaire liée à une configuration articulaire et à un type de mouvement."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Observation de sollicitation musculaire sans mesure d’hypertrophie ou d’issue clinique."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "Hip hinge",
+          "Romanian deadlift",
+          "position étirée à la hanche"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a45d644a3bc71714",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "situe le RDL et les mouvements de hanche parmi les plus favorables à un ratio élevé (dominance ischio-jambiers)",
+        "supportSpans": [
+          {
+            "text": "situe le RDL et les mouvements de hanche parmi les plus favorables à un ratio élevé (dominance ischio-jambiers)",
+            "relativeStartByte": 327,
+            "relativeEndByte": 441,
+            "absoluteStartByte": 73311,
+            "absoluteEndByte": 73425
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EMG_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": "Issue EMG (ratio d’activation) sans données d’hypertrophie ou cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "emg_study"
+            ],
+            "reason": "Mention explicite d’un ratio d’activation entre groupes musculaires lors d’exercices."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EMG_OBSERVATION",
+            "reason": "Rapport d’un résultat d’activation musculaire relative (ratio H/Q) entre exercices."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": "Issue EMG (ratio d’activation) sans données d’hypertrophie ou cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "emg_study"
+            ],
+            "reason": "Mention explicite d’un ratio d’activation entre groupes musculaires lors d’exercices."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.8eb7a499739bc4c6"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "Romanian deadlift (RDL)",
+          "mouvements de hanche"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "emg_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "fragmentId": "frag.e5f3.00029088",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation biomécanique sur la demande fémoro-patellaire selon la profondeur de flexion"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Formulation avec \"généralement\" et limite \"jusqu’aux amplitudes étudiées\""
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.57550f2a05e315c8",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées",
+          "supportSpans": [
+            {
+              "text": "Squat :** une flexion plus profonde augmente généralement la demande fémoro-patellaire jusqu’aux amplitudes étudiées",
+              "relativeStartByte": 4,
+              "relativeEndByte": 127,
+              "absoluteStartByte": 29092,
+              "absoluteEndByte": 29215
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Concerne une demande articulaire biomécanique, pas un résultat clinique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation biomécanique sur la demande fémoro-patellaire selon la profondeur de flexion"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Formulation avec \"généralement\" et limite \"jusqu’aux amplitudes étudiées\""
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Concerne une demande articulaire biomécanique, pas un résultat clinique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Squat",
+            "flexion plus profonde",
+            "jusqu’aux amplitudes étudiées"
+          ],
+          "limitations": [
+            "Limité aux amplitudes étudiées"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "utiliser une box, une profondeur partielle ou une assistance peut doser cette demande",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandation pratique pour moduler la demande"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Formulation possibiliste \"peut\" sans preuve citée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d896b4ae8db0569b",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "utiliser une box, une profondeur partielle ou une assistance peut doser cette demande",
+          "supportSpans": [
+            {
+              "text": "utiliser une box, une profondeur partielle ou une assistance peut doser cette demande",
+              "relativeStartByte": 129,
+              "relativeEndByte": 214,
+              "absoluteStartByte": 29217,
+              "absoluteEndByte": 29302
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans données citées"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune source scientifique associée, ton de conseil"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandation pratique pour moduler la demande"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Formulation possibiliste \"peut\" sans preuve citée"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans données citées"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune source scientifique associée, ton de conseil"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Squat",
+            "usage d’une box, profondeur partielle ou assistance"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

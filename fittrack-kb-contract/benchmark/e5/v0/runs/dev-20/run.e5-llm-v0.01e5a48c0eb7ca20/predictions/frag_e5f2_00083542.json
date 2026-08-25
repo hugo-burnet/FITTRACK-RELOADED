@@ -1,0 +1,118 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.01e5a48c0eb7ca20",
+    "fragmentId": "frag.e5f2.00083542",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.66f6364b5216278b",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+        "supportSpans": [
+          {
+            "text": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+            "relativeStartByte": 156,
+            "relativeEndByte": 263,
+            "absoluteStartByte": 83698,
+            "absoluteEndByte": 83805
+          },
+          {
+            "text": "avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+            "relativeStartByte": 265,
+            "relativeEndByte": 359,
+            "absoluteStartByte": 83807,
+            "absoluteEndByte": 83901
+          },
+          {
+            "text": "— **preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**",
+            "relativeStartByte": 491,
+            "relativeEndByte": 640,
+            "absoluteStartByte": 84033,
+            "absoluteEndByte": 84182
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": "D_very_low",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.13c064ac2a25902d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [
+          "niveau très faible pour toute affirmation causale"
+        ],
+        "cannotConclude": [
+          "ne permet pas d'inférer des relations causales"
+        ],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

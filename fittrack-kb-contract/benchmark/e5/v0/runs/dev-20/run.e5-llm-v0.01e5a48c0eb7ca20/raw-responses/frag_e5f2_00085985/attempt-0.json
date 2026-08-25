@@ -1,0 +1,210 @@
+{
+  "fragmentId": "frag.e5f2.00085985",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00085985\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"9. Retour empirique des praticiens *evidence-based*\"\n    ],\n    \"rawText\": \"- **Sensation musculaire (« mind-muscle connection »).** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.springer.com/10.1186/s13102-026-01910-7)) — la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- **Sensation musculaire (« mind-muscle connection »).** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.springer.com/10.1186/s13102-026-01910-7)) — la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.71402607369ba956\",\n      \"handle\": \"cit.f2.00085985.01\",\n      \"rawLabel\": \"Region-specific hamstring activation dissociation from subjective sensation, 2026\",\n      \"markdown\": \"[Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.springer.com/10.1186/s13102-026-01910-7)\",\n      \"relativeStartByte\": 399,\n      \"relativeEndByte\": 536\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Rapport attribué aux coachs (pratique experte).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Observation rapportée par des praticiens, non corroborée par données expérimentales ici.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur retour de coachs.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\" Témoignages/observations de coachs.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"isolation\",\"fin d'amplitude\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EMG_OBSERVATION\",\"knowledgeTypeReason\":\"Relation entre sensation subjective et activation EMG par région.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Le niveau de certitude n'est pas précisé au-delà de la confirmation par une étude.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"emg_only\",\"directnessReason\":\"Observation basée sur mesure EMG et sensation subjective.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"emg_study\"],\"evidenceTypesReason\":\"Mention d'une étude évaluant activation EMG.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.71402607369ba956\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"emg_content\",\"explicit_absence\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Négation d'une croyance: sensation perçue comme mesure fiable d'activation/hypertrophie.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Formulation catégorique fondée sur étude citée et principe énoncé.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"emg_only\",\"directnessReason\":\"Appuyé par dissociation EMG-sensation; pas de données hypertrophie directes.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"emg_study\"],\"evidenceTypesReason\":\"Basé sur étude EMG citée.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.71402607369ba956\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[\"La conclusion sur l'hypertrophie n'est pas démontrée directement.\"],\"cannotConclude\":[\"Ne prouve pas que la sensation est inversement corrélée à l'activation ou à l'hypertrophie.\"],\"unresolved\":[],\"flags\":[\"emg_content\",\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787648452-Z4iQB1XPPJfDqbd7mUiY",
+    "object": "chat.completion",
+    "created": 1787648452,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Rapport attribué aux coachs (pratique experte).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Observation rapportée par des praticiens, non corroborée par données expérimentales ici.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur retour de coachs.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\" Témoignages/observations de coachs.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"isolation\",\"fin d'amplitude\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EMG_OBSERVATION\",\"knowledgeTypeReason\":\"Relation entre sensation subjective et activation EMG par région.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Le niveau de certitude n'est pas précisé au-delà de la confirmation par une étude.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"emg_only\",\"directnessReason\":\"Observation basée sur mesure EMG et sensation subjective.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"emg_study\"],\"evidenceTypesReason\":\"Mention d'une étude évaluant activation EMG.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.71402607369ba956\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"emg_content\",\"explicit_absence\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Négation d'une croyance: sensation perçue comme mesure fiable d'activation/hypertrophie.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Formulation catégorique fondée sur étude citée et principe énoncé.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"emg_only\",\"directnessReason\":\"Appuyé par dissociation EMG-sensation; pas de données hypertrophie directes.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"emg_study\"],\"evidenceTypesReason\":\"Basé sur étude EMG citée.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.71402607369ba956\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[\"La conclusion sur l'hypertrophie n'est pas démontrée directement.\"],\"cannotConclude\":[\"Ne prouve pas que la sensation est inversement corrélée à l'activation ou à l'hypertrophie.\"],\"unresolved\":[],\"flags\":[\"emg_content\",\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVnHgA6-_WSmI1ZQ2JAs3MvrSnKsFsbEA2dYMblAzvRvtn1T7tukuz_JN2aOQQrdzE0x2A4qzNiyPATRLfsxzguI9K33bRB5BkDPGCIzqVNWirMnpRa6Pzq0oNW5la0cwYkCu7gRhXM6m9U72cytFmHE3_4v4AnfpW8WGq8VIGiMJD1bZOWzApDgZ9m-luwitXWO-Y5xWZSBAmWbtsnRVHMKUDl6AEcfhEX526s0Eoh1ihVQSZRxCEr5dQsr0VzKi6EpqCumxPR8xu553gKgKvp5aMr45YNeMhYxTgImvsMHD8ThpBh1wbAhFvxXnhHCL6M4JBMTiiBG5SX-9SzsAbzt_CGEvets9gflUPb89dA7O9ZOvCFVFMrpn5mHaO7ri-9RYJsqfy7d0rPxNve8Y9lD-KKF2PJ-Wb2Pn18ynPgoaA6V-iVEyadelMHNk5AXm7lqVG_Hs6X8L1l1qO740_oVxenM6Ui4FIt_iPGhyv8B7tUVVUuvfawhrBe2KBEgJp-xv5sdriO9h8jxqAKLDrkwCUHL7Pnl4oyLZjYzaAa9R_Y1qkCxhTCbFhyaO8m8oadrRmp9AQhuDQNwd7Yq9cxYt4ycrYcrvGvVUUicGH8SlkGPXsMVodTWCkgPLvSZIiKqiLoNNBkxFX0jihZm8f1BSRqnb1U0vHA3U5XluHj1wqJLp7apJb5Mq7cnKLZCDEykA6XS6WoTt7F5qW6GyCxQb-UfieMWn318hA6sxx2_fSLtYjQLOUcAMoH0IrAPmYdki3xwQjttCtIAEZcgyIVF3kDrWBI3oq8mgeoFEIUaQ_KfDdhOnxAL9qbgChe8WqK7_NBnfq1mrjzS-9MvnlX-jl2e5bEmMfqgEEclr0BHRs80Q7E5yy4sbGZcDD2to7iUeQ9NAa1o-Gs4R1_On9Jofod7wl6_yu_vGQWQZpTHOa8UNCMPwlcXQb5YKX8WgFI6F1rYlEpNT91m-zF9WAf9eQ==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0ad5ed5b0a053138016a8d59c770c881908a3935708c012888",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4178,
+      "completion_tokens": 1030,
+      "total_tokens": 5208,
+      "cost": 0.0122105,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2944,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0122105,
+        "upstream_inference_prompt_cost": 0.0019105,
+        "upstream_inference_completions_cost": 0.0103
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787648452-Z4iQB1XPPJfDqbd7mUiY",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4178,
+    "completion_tokens": 1030,
+    "total_tokens": 5208,
+    "cost": 0.0122105,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2944,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0122105,
+      "upstream_inference_prompt_cost": 0.0019105,
+      "upstream_inference_completions_cost": 0.0103
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 14179,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [
+      {
+        "code": "ANCHOR_NOT_FOUND",
+        "message": "Claim individuellement non matérialisable",
+        "critical": true,
+        "retryable": true,
+        "claimRef": "tmp.claim.02",
+        "detail": {
+          "code": "ANCHOR_NOT_FOUND",
+          "path": "#/claims/1/supportAnchors/0",
+          "claimIndex": 1,
+          "anchorIndex": 0,
+          "anchor": "Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire"
+        }
+      },
+      {
+        "code": "CLAIM_FILTERED",
+        "message": "Au moins une claim a été filtrée indépendamment",
+        "critical": false,
+        "retryable": false,
+        "attempted": 3,
+        "retained": 2,
+        "filtered": 1
+      },
+      {
+        "code": "PARTIAL_VALIDATION",
+        "message": "Validation partielle : les claims sûres sont conservées",
+        "critical": false,
+        "retryable": false,
+        "attempted": 3,
+        "retained": 2,
+        "filtered": 1,
+        "coverageDiagnosticCount": 0
+      }
+    ],
+    "partialAudit": null
+  }
+}

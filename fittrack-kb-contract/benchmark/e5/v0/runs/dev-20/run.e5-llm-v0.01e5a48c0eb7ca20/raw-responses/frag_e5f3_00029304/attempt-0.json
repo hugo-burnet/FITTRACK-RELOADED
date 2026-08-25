@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f3.00029304",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00029304\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"9. Genou\",\n      \"Squat, leg press et leg extension\"\n    ],\n    \"rawText\": \"- **Leg extension :** ce n’est pas « mauvais pour les genoux ». Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension; certaines machines à came modifient ce profil. Ajuster amplitude et charge selon symptômes. Les deux chaînes sont recommandées pour la PFP ([CPG PFP 2019](https://www.jospt.org/doi/10.2519/jospt.2019.0302)); les profils biomécaniques ne prouvent pas une lésion clinique ([Willy & Meira, 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC5095941/)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- **Leg extension :** ce n’est pas « mauvais pour les genoux ». Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension; certaines machines à came modifient ce profil. Ajuster amplitude et charge selon symptômes. Les deux chaînes sont recommandées pour la PFP ([CPG PFP 2019](https://www.jospt.org/doi/10.2519/jospt.2019.0302)); les profils biomécaniques ne prouvent pas une lésion clinique ([Willy & Meira, 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC5095941/)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.6dba11447ad738d6\",\n      \"handle\": \"cit.f3.00029304.01\",\n      \"rawLabel\": \"CPG PFP 2019\",\n      \"markdown\": \"[CPG PFP 2019](https://www.jospt.org/doi/10.2519/jospt.2019.0302)\",\n      \"relativeStartByte\": 303,\n      \"relativeEndByte\": 368\n    },\n    {\n      \"candidateId\": \"cand.e5-citation.2528e8e8fb4afc48\",\n      \"handle\": \"cit.f3.00029304.02\",\n      \"rawLabel\": \"Willy & Meira, 2016\",\n      \"markdown\": \"[Willy & Meira, 2016](https://pmc.ncbi.nlm.nih.gov/articles/PMC5095941/)\",\n      \"relativeStartByte\": 436,\n      \"relativeEndByte\": 508\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"ce n’est pas « mauvais pour les genoux »\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Affirme qu'une croyance est fausse.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Degré de certitude non précisé.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"UNRESOLVED\",\"directness\":null,\"directnessReason\":\"Non spécifié.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Pas d'attribution explicite à une source pour cette phrase.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Observation du profil de demande mécanique.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Intensité et généralisation non précisées.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Énonce un profil mécanique sans outcome clinique.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Pas de source explicitement liée.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"certaines machines à came modifient ce profil\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Observation d'une variation de profil mécanique due à la came.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Degré et direction non précisés.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Observation mécanique sans outcome clinique.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Pas de source explicitement liée.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Ajuster amplitude et charge selon symptômes\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Instruction pratique sans preuve citée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation de pratique.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil pratique non adossé à un essai.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulation prescriptive sans citation.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Les deux chaînes sont recommandées pour la PFP\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Recommandation issue d'une CPG.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Niveau de certitude non indiqué dans l'extrait.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Recommandation clinique pour PFP.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"clinical_practice_guideline\"],\"evidenceTypesReason\":\"Mention explicite CPG.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.6dba11447ad738d6\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"PFP\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"les profils biomécaniques ne prouvent pas une lésion clinique\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Réfutation d'une inférence courante de causalité clinique à partir de biomécanique.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"absence_of_evidence\",\"epistemicStatusReason\":\"Affirme explicitement l'absence de preuve.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"indirect_clinical\",\"directnessReason\":\"Énonce la non-preuve de translation biomécanique vers clinique.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type précis non indiqué; source narrative probable.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.2528e8e8fb4afc48\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[\"Les profils biomécaniques ne suffisent pas à établir une lésion clinique.\"],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\",\"ambiguous_citation\"] ,\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787648525-I7IWIVeihp2DOc4eFezF",
+    "object": "chat.completion",
+    "created": 1787648525,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"ce n’est pas « mauvais pour les genoux »\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Affirme qu'une croyance est fausse.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Degré de certitude non précisé.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"UNRESOLVED\",\"directness\":null,\"directnessReason\":\"Non spécifié.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Pas d'attribution explicite à une source pour cette phrase.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Observation du profil de demande mécanique.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Intensité et généralisation non précisées.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Énonce un profil mécanique sans outcome clinique.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Pas de source explicitement liée.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"certaines machines à came modifient ce profil\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Observation d'une variation de profil mécanique due à la came.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Degré et direction non précisés.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Observation mécanique sans outcome clinique.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Pas de source explicitement liée.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Ajuster amplitude et charge selon symptômes\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Instruction pratique sans preuve citée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation de pratique.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Conseil pratique non adossé à un essai.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulation prescriptive sans citation.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Les deux chaînes sont recommandées pour la PFP\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Recommandation issue d'une CPG.\",\"epistemicStatusState\":\"UNRESOLVED\",\"epistemicStatus\":null,\"epistemicStatusReason\":\"Niveau de certitude non indiqué dans l'extrait.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Recommandation clinique pour PFP.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"clinical_practice_guideline\"],\"evidenceTypesReason\":\"Mention explicite CPG.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.6dba11447ad738d6\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"PFP\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"] ,\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"les profils biomécaniques ne prouvent pas une lésion clinique\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Réfutation d'une inférence courante de causalité clinique à partir de biomécanique.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"absence_of_evidence\",\"epistemicStatusReason\":\"Affirme explicitement l'absence de preuve.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"indirect_clinical\",\"directnessReason\":\"Énonce la non-preuve de translation biomécanique vers clinique.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type précis non indiqué; source narrative probable.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.2528e8e8fb4afc48\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[\"Les profils biomécaniques ne suffisent pas à établir une lésion clinique.\"],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\",\"ambiguous_citation\"] ,\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVoOL2dSLf3ym7r96y1Ht-gfV0RJITBwrdKG0izOsiBujALf-I4VxDkQP2WLE1uerSFhjthIkptFEBVaPnQY543P2fgUVsKYfmSYX3Qa6CM0dbxIRitkUoR2uO1_piGHbsheMUNhQ1Z-BhMei6naEyvvAy89lLST-riJx7yPRFrg-Z7_55itrfVU2ze11E0qBASb6EQib0wZ0FJmwE37-rAuwIMJDbSY6lykwf9H2ZZH-erwZJXSpqfAaaHjEYy1NDcuZI1dItOGgYyvV8skW7tak9EcsBDHUT5R_3NQx1Gz2LX_NBJGdN4hAJr-YRQkBVj-1e_g8KVj3RD97n9V6ewzQe6UnaROYg0mi3G4BC5e0IeUEbw_U--z598kKvWlZ8_i5IFlH141IsVtt3wxVJ8HCjslThCtkJz3sCklD8CgjwaLlLVO1yYM0rs0PbcVyPKVceLMDT1xHhN0H9NHvlqwIRDCoX1OlFpKxXhFGCwQN8KwtuN1Uk3UHPdlbsufbjzYbEhbNtLuf0c7KYEEv494zbtVreqgbQV48qV0cA2RGiOehpK3iLPZUh1HhTIV242FysMZHi9RQ-RRUn5UtHq3umC0sLnMCPICikKUfbelMqjXbkititUj0JEQxXhGmUmBcNAG_4wbKAEMvwEUv4wsRscrh6LhSRX5cvxe8S9AjdI5NBwwN651kTQHXDjKCFbQ6c2e90akIhoCGlmS7mjscguC8W1kVj7h8s5-LQCgfpxbpsUSCTUltg-R85VSQdLcR2nu0kwC5LIuAzaJ3TzxV5CFAEGpGEia_3HyKatFjwuDvn-yBr5O5GPgPQOFEqf8sZpLFOlAvT-Mjz9AKljaxhdBa9moQGiW2E7OdwbbXTVDuqxDs3Pu8AAO7RYIr_oLZCNRf5_MUImSX2ZgMn3P5xXU8aIibledQFFydDXydvO9FqUHfK-UH5nn9NduSDoK.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_058bacebb7492737016a8d5a0e8a348193bdad1917d266eed5",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4240,
+      "completion_tokens": 1663,
+      "total_tokens": 5903,
+      "cost": 0.018618,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2944,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.018618,
+        "upstream_inference_prompt_cost": 0.001988,
+        "upstream_inference_completions_cost": 0.01663
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787648525-I7IWIVeihp2DOc4eFezF",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4240,
+    "completion_tokens": 1663,
+    "total_tokens": 5903,
+    "cost": 0.018618,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2944,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.018618,
+      "upstream_inference_prompt_cost": 0.001988,
+      "upstream_inference_completions_cost": 0.01663
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 26018,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

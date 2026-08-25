@@ -1,0 +1,205 @@
+{
+  "fragmentId": "frag.f2.0023",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0023",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.0c4536be39121f05",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le développé militaire (overhead press) et les élévations latérales sollicitent fortement le complexe de la coiffe des rotateurs à des amplitudes d'abduction élevées",
+        "supportSpans": [
+          {
+            "text": "Le développé militaire (overhead press) et les élévations latérales sollicitent fortement le complexe de la coiffe des rotateurs à des amplitudes d'abduction élevées",
+            "relativeStartByte": 0,
+            "relativeEndByte": 173,
+            "absoluteStartByte": 47313,
+            "absoluteEndByte": 47486
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description de sollicitation musculaire/articulaire, sans résultat clinique direct"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de type d'étude explicitement rattaché à cette observation"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation biomécanique décrite dans le texte"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Formulé sans données quantitatives ni preuve causale directe"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description de sollicitation musculaire/articulaire, sans résultat clinique direct"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de type d'étude explicitement rattaché à cette observation"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.63dcdb2f2a0e0630",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "une zone anatomiquement associée à un risque supposé (et non démontré de façon causale en musculation récréative) de conflit sous-acromial par analogie avec la littérature sur les athlètes de sports de lancer",
+        "supportSpans": [
+          {
+            "text": "une zone anatomiquement associée à un risque supposé (et non démontré de façon causale en musculation récréative) de conflit sous-acromial par analogie avec la littérature sur les athlètes de sports de lancer",
+            "relativeStartByte": 175,
+            "relativeEndByte": 393,
+            "absoluteStartByte": 47488,
+            "absoluteEndByte": 47706
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "very_low",
+                "rationale": "Généralisation par analogie indiquée comme très faible pour cette population"
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "indirect_clinical",
+            "reason": "Inférence depuis populations d'athlètes de lancer vers musculation"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": "Deux revues systématiques citées pour les athlètes de lancer"
+          },
+          "clinicalEvidenceLevel": "D_very_low",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Le texte précise qu'un lien causal n'est pas démontré en musculation récréative"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Lien présenté comme supposé et non démontré"
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "very_low",
+                "rationale": "Généralisation par analogie indiquée comme très faible pour cette population"
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "indirect_clinical",
+            "reason": "Inférence depuis populations d'athlètes de lancer vers musculation"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": "Deux revues systématiques citées pour les athlètes de lancer"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.3a033ed6c17d5188",
+          "cand.e5-citation.387bef6af9d96c23"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "musculation récréative",
+          "amplitudes d'abduction élevées"
+        ],
+        "limitations": [
+          "Association par analogie, non causale",
+          "Population source différente (athlètes de lancer)"
+        ],
+        "cannotConclude": [
+          "Ne permet pas d'affirmer un risque causal en musculation récréative"
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language",
+          "ambiguous_citation",
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "fragmentId": "frag.e5f2.00077025",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "le mollet debout (genou tendu) sollicite davantage le gastrocnémien en position mécaniquement favorable",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Présenté comme cohérent avec un principe biomécanique (section 1.12) sans preuve directe citée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.432ccb930c36107c",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "le mollet debout (genou tendu) sollicite davantage le gastrocnémien en position mécaniquement favorable",
+          "supportSpans": [
+            {
+              "text": "le mollet debout (genou tendu) sollicite davantage le gastrocnémien en position mécaniquement favorable",
+              "relativeStartByte": 121,
+              "relativeEndByte": 226,
+              "absoluteStartByte": 77146,
+              "absoluteEndByte": 77251
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Présenté comme cohérent avec un principe biomécanique (section 1.12) sans preuve directe citée"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "genou tendu"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "le mollet assis ou la presse à cuisses jambes fléchies (genou fléchi) désavantage le gastrocnémien et reporte relativement la charge sur le soléaire.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Inférence mécanique sur la redistribution gastrocnémien/soléaire selon l’angle du genou"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.e657b53399b1a094",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "le mollet assis ou la presse à cuisses jambes fléchies (genou fléchi) désavantage le gastrocnémien et reporte relativement la charge sur le soléaire.",
+          "supportSpans": [
+            {
+              "text": "le mollet assis ou la presse à cuisses jambes fléchies (genou fléchi) désavantage le gastrocnémien et reporte relativement la charge sur le soléaire.",
+              "relativeStartByte": 239,
+              "relativeEndByte": 394,
+              "absoluteStartByte": 77264,
+              "absoluteEndByte": 77419
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Inférence mécanique sur la redistribution gastrocnémien/soléaire selon l’angle du genou"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "genou fléchi"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Une étude sur l'entraînement mono- et multi-articulaire du triceps sural trouve une activation du fléchisseur plantaire globalement similaire entre certaines modalités mono- et multi-articulaires chez des hommes entraînés en résistance",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Résultat d’une seule étude rapporté sans synthèse"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.614b6871a1b7e1ae",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Une étude sur l'entraînement mono- et multi-articulaire du triceps sural trouve une activation du fléchisseur plantaire globalement similaire entre certaines modalités mono- et multi-articulaires chez des hommes entraînés en résistance",
+          "supportSpans": [
+            {
+              "text": "Une étude sur l'entraînement mono- et multi-articulaire du triceps sural trouve une activation du fléchisseur plantaire globalement similaire entre certaines modalités mono- et multi-articulaires chez des hommes entraînés en résistance",
+              "relativeStartByte": 395,
+              "relativeEndByte": 637,
+              "absoluteStartByte": 77420,
+              "absoluteEndByte": 77662
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Résultat d’une seule étude rapporté sans synthèse"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.703c2c9c0c76a291"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "hommes entraînés en résistance"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "la distinction mono/multi-articulaire (genou impliqué ou non dans le mouvement global) n'est pas identique à la distinction d'angle de genou fixe (tendu vs fléchi) traitée en 1.12",
+            "ce résultat ne contredit pas directement le principe gastrocnémien/soléaire selon l'angle du genou"
+          ],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4983,
+      "outputTokens": 6639,
+      "reasoningTokens": 5632,
+      "totalTokens": 11622,
+      "costUsd": 0.06873075
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4983,
+      "outputTokens": 6639,
+      "reasoningTokens": 5632,
+      "totalTokens": 11622,
+      "costUsd": 0.06873075
+    }
+  }
+}

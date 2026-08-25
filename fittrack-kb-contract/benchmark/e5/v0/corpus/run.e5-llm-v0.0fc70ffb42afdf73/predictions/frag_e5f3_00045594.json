@@ -1,0 +1,94 @@
+{
+  "fragmentId": "frag.e5f3.00045594",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f3.00045594",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.b776b8641c6ba898",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau.",
+        "supportSpans": [
+          {
+            "text": "Les essais sous-représentent parfois les personnes âgées fragiles, les comorbidités, les traumatismes aigus et les sportifs de très haut niveau.",
+            "relativeStartByte": 2,
+            "relativeEndByte": 151,
+            "absoluteStartByte": 45596,
+            "absoluteEndByte": 45745
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": null,
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

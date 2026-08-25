@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f2.00085197",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00085197\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"9. Retour empirique des praticiens *evidence-based*\"\n    ],\n    \"rawText\": \"- **Confort articulaire individuel :** substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*, fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle — *expert_practice*, à ne jamais présenter comme une règle universelle de sécurité.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- **Confort articulaire individuel :** substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*, fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle — *expert_practice*, à ne jamais présenter comme une règle universelle de sécurité.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*\",\"fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle\",\"*expert_practice*, à ne jamais présenter comme une règle universelle de sécurité\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Le texte attribue explicitement cette pratique aux coachs evidence-based et la qualifie d'expert_practice.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Présenté comme pratique répandue fondée sur observation clinique individuelle, sans preuve populationnelle.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur pratique d'experts et observation clinique individuelle.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Le fragment explicite expert_practice.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"en cas d'inconfort persistant\"],\"limitations\":[\"fondée sur observation clinique individuelle; non basée sur preuve populationnelle\"],\"cannotConclude\":[\"Ne constitue pas une règle universelle de sécurité.\"],\"unresolved\":[],\"flags\":[\"expert_practice\",\"possible_conflict\",\"output_policy_content\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787646499-Jc4iyt7Omk0xaY9tUZjk",
+    "object": "chat.completion",
+    "created": 1787646499,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*\",\"fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle\",\"*expert_practice*, à ne jamais présenter comme une règle universelle de sécurité\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Le texte attribue explicitement cette pratique aux coachs evidence-based et la qualifie d'expert_practice.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Présenté comme pratique répandue fondée sur observation clinique individuelle, sans preuve populationnelle.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Basé sur pratique d'experts et observation clinique individuelle.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Le fragment explicite expert_practice.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"en cas d'inconfort persistant\"],\"limitations\":[\"fondée sur observation clinique individuelle; non basée sur preuve populationnelle\"],\"cannotConclude\":[\"Ne constitue pas une règle universelle de sécurité.\"],\"unresolved\":[],\"flags\":[\"expert_practice\",\"possible_conflict\",\"output_policy_content\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVIlKBjyaKcyWnwFMT5ML2LHHSU5xqFehQmfh72H7iCgCyLiB--ME_LcMDhFk0ZXA8EFHGstpbS1KYbRuNGifO0rSMqBIjiJCBFqj4DKSlnPAWdf98IK78yMta0VvnMB6AxoUq7qPs3u2DSNHISYsUN1LeZSFkq-dnB6i13FMHGvxtGsJAe0XEw_ImkQcZWWYmecTrNfRvFqc22Xic62hWHSoiYCoLfhXw2-zXeDdR0una2qhiLoDoRlxtvkDiG4XTvb9Ae8cUhkCRB64Vp1TWr8YrJZiuSxXQ6nC8QJ3UJdkbOEelg4kYMczwXj8-s9Nou9_j18Y3hQ7cmehR0h67qENMmiOOGAaUZK2qNAdj3lIaVbvOzy1KTBZT_fgbU5iE-Ibo15dE-UW870OJyhYVCEy1UAyOUa1FmLlDvsNAcm3useHnZPObVNdtfBkzrnApe6MLdiREMBHiZZc3FCl36l--7ti2EHANT5mOc0o22uNXove_fL0tz8eINZATFM2uZh7BZqVUgNDLnxkR9MFHp8qAITqEkZuoMnpigdtAs4CRj3G4KgE8hNJvqwEoJoBZ0evVR0zGLJ6tT252pAZVHJr5Qtq4lax15Tob595388rtO1O6sgRJBErq9hQEk0P-Ojo1vIT40PMejhzGHlVehp6nDHwEKNJqmE5qezuPFKJDJEfkqvCtn16vLfo9e2OmIcX0UWpBaFCL2gQ_b7LVVR47dLKX7faiboTpLKw0XR-tsv-t_HwpM2A2tjB1NCLnyNvWCvmGZdoBxIqAHMBVp4h9IOgeY4E-fJg4Mni6JDffOkTfgUcQ77KGO7IPW4z_h7FZILbWex9tA8PBPvJhQi-CqYrDLPhXDh9o9UWsBYik1aFNdq5UAs78gf_WCgSZj3hx3yP0yVMgAz7iJeu4gYH4iY26jjr9M0uMEywXrTHr4QF1-R4fRHVyw7v5w4t5f4.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0a545636288d868d016a8d5224e32081958301442685eed370",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3823,
+      "completion_tokens": 446,
+      "total_tokens": 4269,
+      "cost": 0.00607075,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2816,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00607075,
+        "upstream_inference_prompt_cost": 0.00161075,
+        "upstream_inference_completions_cost": 0.00446
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646499-Jc4iyt7Omk0xaY9tUZjk",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 3823,
+    "completion_tokens": 446,
+    "total_tokens": 4269,
+    "cost": 0.00607075,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2816,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00607075,
+      "upstream_inference_prompt_cost": 0.00161075,
+      "upstream_inference_completions_cost": 0.00446
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 6623,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

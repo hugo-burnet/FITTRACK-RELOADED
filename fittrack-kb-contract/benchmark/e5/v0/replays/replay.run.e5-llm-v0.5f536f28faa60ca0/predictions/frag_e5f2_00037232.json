@@ -1,0 +1,102 @@
+{
+  "fragmentId": "frag.e5f2.00037232",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00037232",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.bc303edd935638e5",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un essai comparant un entraînement à intensité modérée en amplitude partielle à grande longueur contre un entraînement à haute intensité en amplitude complète trouve des adaptations architecturales et hypertrophiques similaires",
+        "supportSpans": [
+          {
+            "text": "Un essai comparant un entraînement à intensité modérée en amplitude partielle à grande longueur contre un entraînement à haute intensité en amplitude complète trouve des adaptations architecturales et hypertrophiques similaires",
+            "relativeStartByte": 2,
+            "relativeEndByte": 239,
+            "absoluteStartByte": 37234,
+            "absoluteEndByte": 37471
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Le fragment rapporte un résultat d'essai mais sans détails de taille d'effet, significativité ou précision."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.e129f4d3477086ee"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "Le résultat d'équivalence n'est pas quantifié ni justifié statistiquement dans le fragment."
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

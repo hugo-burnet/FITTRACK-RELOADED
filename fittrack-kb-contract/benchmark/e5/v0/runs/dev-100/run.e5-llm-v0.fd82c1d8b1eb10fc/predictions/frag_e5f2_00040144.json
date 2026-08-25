@@ -1,0 +1,197 @@
+{
+  "fragmentId": "frag.e5f2.00040144",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.e5f2.00040144",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.a710349d0c47fa08",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle",
+        "supportSpans": [
+          {
+            "text": "trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle",
+            "relativeStartByte": 112,
+            "relativeEndByte": 217,
+            "absoluteStartByte": 40256,
+            "absoluteEndByte": 40361
+          },
+          {
+            "text": "en particulier lorsque la partielle est réalisée en position **raccourcie** du muscle",
+            "relativeStartByte": 219,
+            "relativeEndByte": 306,
+            "absoluteStartByte": 40363,
+            "absoluteEndByte": 40450
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": true,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.86007a6b5a3833e7"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "comparaison: amplitude complète vs amplitude partielle",
+          "partielle réalisée en position raccourcie"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.19788b89e3275754",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "ce n'est pas l'amplitude en tant que telle mais la **position de longueur atteinte** qui semble déterminante",
+        "supportSpans": [
+          {
+            "text": "ce constat est confirmé et affiné par les données plus récentes de longueur musculaire (section 3.2)",
+            "relativeStartByte": 476,
+            "relativeEndByte": 580,
+            "absoluteStartByte": 40620,
+            "absoluteEndByte": 40724
+          },
+          {
+            "text": "ce n'est pas l'amplitude en tant que telle mais la **position de longueur atteinte** qui semble déterminante",
+            "relativeStartByte": 599,
+            "relativeEndByte": 708,
+            "absoluteStartByte": 40743,
+            "absoluteEndByte": 40852
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "déterminant: position de longueur atteinte plutôt que l'amplitude en soi"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

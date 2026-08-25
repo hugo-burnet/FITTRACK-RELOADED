@@ -1,0 +1,231 @@
+{
+  "fragmentId": "frag.e5f2.00059523",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "ANCHOR_NOT_FOUND",
+      "message": "Claim individuellement non matérialisable",
+      "critical": true,
+      "retryable": true,
+      "claimRef": "tmp.claim.01",
+      "detail": {
+        "code": "ANCHOR_NOT_FOUND",
+        "path": "#/claims/0/supportAnchors/1",
+        "claimIndex": 0,
+        "anchorIndex": 1,
+        "anchor": "faible pour toute traduction directe en supériorité hypertrophique d'une prise particulière"
+      }
+    },
+    {
+      "code": "ANCHOR_NOT_FOUND",
+      "message": "Claim individuellement non matérialisable",
+      "critical": true,
+      "retryable": true,
+      "claimRef": "tmp.claim.02",
+      "detail": {
+        "code": "ANCHOR_NOT_FOUND",
+        "path": "#/claims/1/supportAnchors/3",
+        "claimIndex": 1,
+        "anchorIndex": 3,
+        "anchor": "faible pour toute traduction directe en supériorité hypertrophique d'une prise particulière"
+      }
+    },
+    {
+      "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+      "message": "Incohérence de couverture",
+      "critical": false,
+      "retryable": false,
+      "detail": {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "unitIndex": 1
+      }
+    },
+    {
+      "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+      "message": "Incohérence de couverture",
+      "critical": false,
+      "retryable": false,
+      "detail": {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "unitIndex": 3
+      }
+    },
+    {
+      "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+      "message": "Incohérence de couverture",
+      "critical": false,
+      "retryable": false,
+      "detail": {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "unitIndex": 4
+      }
+    },
+    {
+      "code": "CLAIM_FILTERED",
+      "message": "Au moins une claim a été filtrée indépendamment",
+      "critical": false,
+      "retryable": false,
+      "attempted": 2,
+      "retained": 0,
+      "filtered": 2
+    },
+    {
+      "code": "ANNOTATION_PREDICTION_MISMATCH",
+      "message": "annotationPrediction provider incompatible avec les claims retenues",
+      "critical": false,
+      "retryable": false,
+      "providerAnnotationPrediction": "CLAIMS",
+      "derivedAnnotationPrediction": "ZERO_CLAIM"
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 2,
+      "retained": 0,
+      "filtered": 2,
+      "coverageDiagnosticCount": 3
+    },
+    {
+      "code": "REPAIR_FAILED",
+      "message": "La réparation ciblée a échoué ; les claims valides sont conservées",
+      "critical": false,
+      "retryable": false,
+      "detail": [
+        {
+          "code": "ANCHOR_REPAIR_INVALID_JSON",
+          "message": "Réparation non JSON",
+          "critical": true,
+          "retryable": false,
+          "detail": "Unterminated string in JSON at position 811 (line 1 column 812)"
+        }
+      ]
+    }
+  ],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 0,
+    "filtered": 2,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une comparaison EMG haute densité entre lat pulldown poitrine (front) et nuque (back) trouve des patterns d'excitation spatiale différenciés dans les moteurs primaires du dos entre les deux variantes",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": null
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "ANCHOR_NOT_FOUND",
+            "message": "Claim individuellement non matérialisable",
+            "critical": true,
+            "retryable": true,
+            "claimRef": "tmp.claim.01",
+            "detail": {
+              "code": "ANCHOR_NOT_FOUND",
+              "path": "#/claims/0/supportAnchors/1",
+              "claimIndex": 0,
+              "anchorIndex": 1,
+              "anchor": "faible pour toute traduction directe en supériorité hypertrophique d'une prise particulière"
+            }
+          }
+        ],
+        "canonicalCandidate": null
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une étude sur l'effet de la largeur de prise en pronation sur la force maximale, l'inclinaison du buste et l'activité musculaire au lat pulldown trouve des différences liées à la largeur",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": null
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "ANCHOR_NOT_FOUND",
+            "message": "Claim individuellement non matérialisable",
+            "critical": true,
+            "retryable": true,
+            "claimRef": "tmp.claim.02",
+            "detail": {
+              "code": "ANCHOR_NOT_FOUND",
+              "path": "#/claims/1/supportAnchors/3",
+              "claimIndex": 1,
+              "anchorIndex": 3,
+              "anchor": "faible pour toute traduction directe en supériorité hypertrophique d'une prise particulière"
+            }
+          }
+        ],
+        "canonicalCandidate": null
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "unitIndex": 1
+      },
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "unitIndex": 3
+      },
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "unitIndex": 4
+      }
+    ],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 1,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 5520,
+      "outputTokens": 7207,
+      "reasoningTokens": 6400,
+      "totalTokens": 12727,
+      "costUsd": 0.075082
+    },
+    "repair": {
+      "calls": 1,
+      "inputTokens": 969,
+      "outputTokens": 4000,
+      "reasoningTokens": 3776,
+      "totalTokens": 4969,
+      "costUsd": 0.04121125
+    },
+    "total": {
+      "calls": 2,
+      "inputTokens": 6489,
+      "outputTokens": 11207,
+      "reasoningTokens": 10176,
+      "totalTokens": 17696,
+      "costUsd": 0.11629325
+    }
+  }
+}

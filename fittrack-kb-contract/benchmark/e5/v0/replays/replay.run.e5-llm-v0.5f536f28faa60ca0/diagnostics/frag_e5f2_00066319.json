@@ -1,0 +1,119 @@
+{
+  "fragmentId": "frag.e5f2.00066319",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation d’activation/préférence musculaire relative liée à une prise spécifique"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le fragment n’indique pas le degré de certitude"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.0eed80f9fe756d5c",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial",
+          "supportSpans": [
+            {
+              "text": "La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial",
+              "relativeStartByte": 39,
+              "relativeEndByte": 142,
+              "absoluteStartByte": 66358,
+              "absoluteEndByte": 66461
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le fragment ne précise pas si cela provient d’EMG, biomécanique ou autre"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation exploitable fournie"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation d’activation/préférence musculaire relative liée à une prise spécifique"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le fragment n’indique pas le degré de certitude"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le fragment ne précise pas si cela provient d’EMG, biomécanique ou autre"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation exploitable fournie"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Cette observation ne démontre pas une supériorité hypertrophique ni d’activation absolue"
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

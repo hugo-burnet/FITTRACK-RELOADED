@@ -1,0 +1,190 @@
+{
+  "fragmentId": "frag.e5f2.00085985",
+  "attempt": 1,
+  "callType": "repair",
+  "promptInput": "{\n  \"instruction\": \"Répare uniquement les supportAnchors des claimIndex listés.\",\n  \"rawText\": \"- **Sensation musculaire (« mind-muscle connection »).** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.springer.com/10.1186/s13102-026-01910-7)) — la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\",\n  \"faultyClaims\": [\n    {\n      \"claimIndex\": 1,\n      \"supportAnchors\": [\n        \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\",\n        \"la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 0,\n          \"anchor\": \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"\n        }\n      ]\n    }\n  ]\n}",
+  "rawResponse": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"— la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire\",\"la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"],\"rawStatementAnchorIndex\":0}]}",
+  "providerResponse": {
+    "id": "gen-1787646458-mEwrHPoaaQdg0Xx5v4lq",
+    "object": "chat.completion",
+    "created": 1787646458,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"— la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire\",\"la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\"],\"rawStatementAnchorIndex\":0}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVH7jOv6aSa3fwCqZA5OsXtyt0_elE-VCiLiEr-wL2Jyp5NoW8R67KOe44faNHjTBtv1RnuwGjMeszHvZ4-JRAapQUExqFPYUUNSQ6m93IVBvgzX21pORG_1tF3ZBqYStmmdsybDUsKSVmFGSZhG8hG4mMrrBQc32PB_CrLoj2J9f6UUF4alAzdfdtQsvbZnwRoBSfqcdtVUk6ThL97QzU4VBOJiVeF6_6fNhP4KRJFodvjq3fnxKbAJoW9WOWA8TFoPAlxRmdOcqmSGG65ueAKIWLhCUYMqM9OtkJiD1cNmR7NUMzENvYFKWAFEhvOduCWYabaIHtumY89D0NmSYyji5_7odx3NUEp1bwJEUzD-0xy_c7LxLSZXZ6EeIY9MOeP0-6iya5i6BPSrH5xZhs1RjLaVGbdnEMQ3KSOyvoXz0XEIS7Wc_t6U50gFHmdCfJIgx2Am3cfnqLwwhzuicGfLpjR_bmCW8o0ITCjVGUsE_vOeZG0uRs-a3vgBJR6rkvbkc0QjI5vgXG16QxuKNWyItHt-6B6TR13I5hSE7UGO_2gYi4UPB34-A1gd5za7_Mg1kzc6u1qm0MQRY6OOqOJwXySPfonwo_6mICnr85gtqk-Gk6UwzA2vWndYMfp71Ih5LcTl9tq8zeGEdfK1D0KNQqTFncV-jwy9GVaXB5cxNv6JBBKlF4eaVL5M-Uo1x-hLWQa38Rwkx7e4ZI2EwNTRKcZHIZ0-ZfbaovmQbYZzCnTVlT_IFhjL9izLZpn5HCO3_UnqJ3xgjU0JFM3NLkRm_4zN9Mfzh9ZAig4-AiH5ItHQ6242lU8GAP9RXwWEa5clVYps7l4p-fATeLUCNxdjf2aSZd-VW1-vdrGZZt38so4BqoMXO3Osm_hxA-GZH9RdbzRMpkymiWemWDVs3FoQ5ebsqoNaiBhTSDTRTvmRblLmZmcqTqx750dCQeqkVFlG.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_02d26cd42912f20b016a8d51fbb9208193888fb2f56aac12d5",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 585,
+      "completion_tokens": 106,
+      "total_tokens": 691,
+      "cost": 0.00179125,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00179125,
+        "upstream_inference_prompt_cost": 0.00073125,
+        "upstream_inference_completions_cost": 0.00106
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646458-mEwrHPoaaQdg0Xx5v4lq",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 585,
+    "completion_tokens": 106,
+    "total_tokens": 691,
+    "cost": 0.00179125,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00179125,
+      "upstream_inference_prompt_cost": 0.00073125,
+      "upstream_inference_completions_cost": 0.00106
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 2159,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/maxItems",
+        "#/properties/repairs/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/minItems",
+        "#/properties/repairs/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/repair/properties/claimIndex/minimum",
+        "#/$defs/repair/properties/rawStatementAnchorIndex/minimum"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 4,
+    "propertyLimit": 5000,
+    "enumValueCount": 0,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 60,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 1,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [
+      {
+        "code": "ANCHOR_NOT_FOUND",
+        "message": "Claim individuellement non matérialisable",
+        "critical": true,
+        "retryable": true,
+        "claimRef": "tmp.claim.02",
+        "detail": {
+          "code": "ANCHOR_NOT_FOUND",
+          "path": "#/claims/1/supportAnchors/0",
+          "claimIndex": 1,
+          "anchorIndex": 0,
+          "anchor": "— la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire"
+        }
+      },
+      {
+        "code": "CLAIM_FILTERED",
+        "message": "Au moins une claim a été filtrée indépendamment",
+        "critical": false,
+        "retryable": false,
+        "attempted": 3,
+        "retained": 2,
+        "filtered": 1
+      },
+      {
+        "code": "PARTIAL_VALIDATION",
+        "message": "Validation partielle : les claims sûres sont conservées",
+        "critical": false,
+        "retryable": false,
+        "attempted": 3,
+        "retained": 2,
+        "filtered": 1,
+        "coverageDiagnosticCount": 0
+      }
+    ],
+    "partialAudit": null
+  }
+}

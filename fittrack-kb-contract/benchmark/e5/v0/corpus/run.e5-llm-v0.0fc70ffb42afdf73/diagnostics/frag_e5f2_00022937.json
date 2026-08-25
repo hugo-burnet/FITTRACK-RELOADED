@@ -1,0 +1,1022 @@
+{
+  "fragmentId": "frag.e5f2.00022937",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 9,
+    "retained": 9,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "trouve un effet modéré (SMD 0,71) toutes modalités confondues",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f538ceeb4c78534f",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "trouve un effet modéré (SMD 0,71) toutes modalités confondues",
+          "supportSpans": [
+            {
+              "text": "trouve un effet modéré (SMD 0,71) toutes modalités confondues",
+              "relativeStartByte": 121,
+              "relativeEndByte": 185,
+              "absoluteStartByte": 23058,
+              "absoluteEndByte": 23122
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.dfba46dbf63020e3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "toutes modalités confondues"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "avec un effet similaire pour les protocoles mono-exercice et les protocoles combinés",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.4bca234159a7d265",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "avec un effet similaire pour les protocoles mono-exercice et les protocoles combinés",
+          "supportSpans": [
+            {
+              "text": "avec un effet similaire pour les protocoles mono-exercice et les protocoles combinés",
+              "relativeStartByte": 187,
+              "relativeEndByte": 272,
+              "absoluteStartByte": 23124,
+              "absoluteEndByte": 23209
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.dfba46dbf63020e3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "protocoles mono-exercice",
+            "protocoles combinés"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "le hip thrust en amplitude complète",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5ba59c6680c4aba0",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "le hip thrust en amplitude complète",
+          "supportSpans": [
+            {
+              "text": "le hip thrust en amplitude complète",
+              "relativeStartByte": 292,
+              "relativeEndByte": 328,
+              "absoluteStartByte": 23229,
+              "absoluteEndByte": 23265
+            },
+            {
+              "text": "contribuent tous de façon significative à l'hypertrophie du grand fessier",
+              "relativeStartByte": 430,
+              "relativeEndByte": 505,
+              "absoluteStartByte": 23367,
+              "absoluteEndByte": 23442
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.dfba46dbf63020e3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "amplitude complète"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "le squat (parallèle ou complet)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.51f95352715ea494",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "le squat (parallèle ou complet)",
+          "supportSpans": [
+            {
+              "text": "le squat (parallèle ou complet)",
+              "relativeStartByte": 330,
+              "relativeEndByte": 362,
+              "absoluteStartByte": 23267,
+              "absoluteEndByte": 23299
+            },
+            {
+              "text": "contribuent tous de façon significative à l'hypertrophie du grand fessier",
+              "relativeStartByte": 430,
+              "relativeEndByte": 505,
+              "absoluteStartByte": 23367,
+              "absoluteEndByte": 23442
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.dfba46dbf63020e3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "parallèle ou complet"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "la presse à cuisses",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5bf18656dbac1558",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "la presse à cuisses",
+          "supportSpans": [
+            {
+              "text": "la presse à cuisses",
+              "relativeStartByte": 364,
+              "relativeEndByte": 384,
+              "absoluteStartByte": 23301,
+              "absoluteEndByte": 23321
+            },
+            {
+              "text": "contribuent tous de façon significative à l'hypertrophie du grand fessier",
+              "relativeStartByte": 430,
+              "relativeEndByte": 505,
+              "absoluteStartByte": 23367,
+              "absoluteEndByte": 23442
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.dfba46dbf63020e3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 5,
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "les extensions de hanche à genou fléchi",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.2e8115afedbdc076",
+          "technicalClaimRef": "tmp.claim.06",
+          "rawStatement": "les extensions de hanche à genou fléchi",
+          "supportSpans": [
+            {
+              "text": "les extensions de hanche à genou fléchi",
+              "relativeStartByte": 388,
+              "relativeEndByte": 429,
+              "absoluteStartByte": 23325,
+              "absoluteEndByte": 23366
+            },
+            {
+              "text": "contribuent tous de façon significative à l'hypertrophie du grand fessier",
+              "relativeStartByte": 430,
+              "relativeEndByte": 505,
+              "absoluteStartByte": 23367,
+              "absoluteEndByte": 23442
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "meta_analysis"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.dfba46dbf63020e3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "genou fléchi"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 6,
+        "technicalClaimRef": "tmp.claim.07",
+        "rawStatement": "montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c1b976cd943e8abd",
+          "technicalClaimRef": "tmp.claim.07",
+          "rawStatement": "montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé",
+          "supportSpans": [
+            {
+              "text": "montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé",
+              "relativeStartByte": 832,
+              "relativeEndByte": 924,
+              "absoluteStartByte": 23769,
+              "absoluteEndByte": 23861
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.890b7c0c97dd9229"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "à volume égalisé"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 7,
+        "technicalClaimRef": "tmp.claim.08",
+        "rawStatement": "avec un avantage du squat pour le quadriceps",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.0cea9a0cdccdf397",
+          "technicalClaimRef": "tmp.claim.08",
+          "rawStatement": "avec un avantage du squat pour le quadriceps",
+          "supportSpans": [
+            {
+              "text": "avec un avantage du squat pour le quadriceps",
+              "relativeStartByte": 926,
+              "relativeEndByte": 970,
+              "absoluteStartByte": 23863,
+              "absoluteEndByte": 23907
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.890b7c0c97dd9229"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "à volume égalisé"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 8,
+        "technicalClaimRef": "tmp.claim.09",
+        "rawStatement": "avec un avantage du squat pour le quadriceps et les adducteurs",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d2bb856988392bc7",
+          "technicalClaimRef": "tmp.claim.09",
+          "rawStatement": "avec un avantage du squat pour le quadriceps et les adducteurs",
+          "supportSpans": [
+            {
+              "text": "avec un avantage du squat pour le quadriceps et les adducteurs",
+              "relativeStartByte": 926,
+              "relativeEndByte": 988,
+              "absoluteStartByte": 23863,
+              "absoluteEndByte": 23925
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.890b7c0c97dd9229"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "à volume égalisé"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 5218,
+      "outputTokens": 9540,
+      "reasoningTokens": 7104,
+      "totalTokens": 14758,
+      "costUsd": 0.0980345
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 5218,
+      "outputTokens": 9540,
+      "reasoningTokens": 7104,
+      "totalTokens": 14758,
+      "costUsd": 0.0980345
+    }
+  }
+}

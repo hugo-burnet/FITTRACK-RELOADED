@@ -1,0 +1,283 @@
+{
+  "fragmentId": "frag.f3.0003",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.01e5a48c0eb7ca20",
+    "fragmentId": "frag.f3.0003",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.027623285b39e759",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "L’imagerie ne dicte pas seule la programmation.",
+        "supportSpans": [
+          {
+            "text": "L’imagerie ne dicte pas seule la programmation.",
+            "relativeStartByte": 5,
+            "relativeEndByte": 54,
+            "absoluteStartByte": 2426,
+            "absoluteEndByte": 2475
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation pratique sans outcome clinique mesuré."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Énoncé de pratique; pas de description d'étude."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Directive pratique sur l'usage de l'imagerie dans la programmation clinique."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Formulation prescriptive sans preuve chiffrée; relève d'une règle de pratique."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation pratique sans outcome clinique mesuré."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Énoncé de pratique; pas de description d'étude."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "L'énoncé ne fournit pas de preuve comparative ou d'effet clinique mesuré."
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.f477bf4ca349fc6b",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge",
+        "supportSpans": [
+          {
+            "text": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge",
+            "relativeStartByte": 57,
+            "relativeEndByte": 192,
+            "absoluteStartByte": 2478,
+            "absoluteEndByte": 2613
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "imaging_descriptive",
+            "reason": "Observation descriptive issue d'imagerie."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "imaging_study"
+            ],
+            "reason": "Référence à une étude d'imagerie; citation fournie."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Énoncé factuel sur la prévalence et la variation avec l'âge."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le degré d'établissement n'est pas explicitement qualifié dans le fragment."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "imaging_descriptive",
+            "reason": "Observation descriptive issue d'imagerie."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "imaging_study"
+            ],
+            "reason": "Référence à une étude d'imagerie; citation fournie."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.bb0b9f62a20d045d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "personnes asymptomatiques"
+        ],
+        "limitations": [
+          "Énoncé général sans chiffres; dépend des définitions de signes dégénératifs."
+        ],
+        "cannotConclude": [
+          "La fréquence ne démontre pas de relation causale avec les symptômes."
+        ],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.0a9e2f8294a917f5",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "ils doivent être corrélés aux symptômes et à l’examen clinique",
+        "supportSpans": [
+          {
+            "text": "ils doivent être corrélés aux symptômes et à l’examen clinique",
+            "relativeStartByte": 194,
+            "relativeEndByte": 263,
+            "absoluteStartByte": 2615,
+            "absoluteEndByte": 2684
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation pratique."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Énoncé de pratique; pas de résultat d'étude."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Recommandation de corréler les résultats d'imagerie à la clinique."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Directive de pratique sans démonstration d'effet clinique."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation pratique."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Énoncé de pratique; pas de résultat d'étude."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "La recommandation n'établit pas un bénéfice clinique mesuré."
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice",
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

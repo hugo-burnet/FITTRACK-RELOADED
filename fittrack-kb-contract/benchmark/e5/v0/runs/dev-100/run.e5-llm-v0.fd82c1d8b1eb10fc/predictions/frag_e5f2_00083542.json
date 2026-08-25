@@ -1,0 +1,109 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.e5f2.00083542",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.574737fb48c70636",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+        "supportSpans": [
+          {
+            "text": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+            "relativeStartByte": 156,
+            "relativeEndByte": 263,
+            "absoluteStartByte": 83698,
+            "absoluteEndByte": 83805
+          },
+          {
+            "text": "avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+            "relativeStartByte": 265,
+            "relativeEndByte": 359,
+            "absoluteStartByte": 83807,
+            "absoluteEndByte": 83901
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": "Le texte précise « preuve qualitative/enquête »."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": "Étude qualitative explicitée."
+          },
+          "clinicalEvidenceLevel": "D_very_low",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Constat empirique rapporté par une étude qualitative."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Résultat issu d’une unique enquête qualitative, niveau très faible indiqué par le texte."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": "Le texte précise « preuve qualitative/enquête »."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": "Étude qualitative explicitée."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.13c064ac2a25902d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "coachs de bodybuilding"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "affirmation causale"
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

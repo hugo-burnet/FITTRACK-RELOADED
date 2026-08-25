@@ -1,0 +1,338 @@
+{
+  "fragmentId": "frag.f2.0022",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Ces variantes polyarticulaires sollicitent l'ensemble du quadriceps de façon relativement homogène selon l'étude d'hypertrophie régionale du squat déjà citée",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Affirmations attribuées à une étude citée"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré d’établissement non précisé dans le fragment"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.ad97bd853ea4e998",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Ces variantes polyarticulaires sollicitent l'ensemble du quadriceps de façon relativement homogène selon l'étude d'hypertrophie régionale du squat déjà citée",
+          "supportSpans": [
+            {
+              "text": "Ces variantes polyarticulaires sollicitent l'ensemble du quadriceps de façon relativement homogène selon l'étude d'hypertrophie régionale du squat déjà citée",
+              "relativeStartByte": 47,
+              "relativeEndByte": 211,
+              "absoluteStartByte": 68266,
+              "absoluteEndByte": 68430
+            },
+            {
+              "text": "le vaste latéral montrant l'association la plus forte avec le gain de force",
+              "relativeStartByte": 287,
+              "relativeEndByte": 363,
+              "absoluteStartByte": 68506,
+              "absoluteEndByte": 68582
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type de mesure non explicitement indiqué pour chaque sous-résultat"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type d’étude non précisé"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Affirmations attribuées à une étude citée"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré d’établissement non précisé dans le fragment"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type de mesure non explicitement indiqué pour chaque sous-résultat"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type d’étude non précisé"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.47bb4d2d4f9c68ae"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": "Comparaison EMG et RPE mentionnée"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Niveau d’assurance non indiqué"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.35e7abe4e1d9787d",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées",
+          "supportSpans": [
+            {
+              "text": "Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées",
+              "relativeStartByte": 365,
+              "relativeEndByte": 556,
+              "absoluteStartByte": 68584,
+              "absoluteEndByte": 68775
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Observation d’activation EMG"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Étude EMG citée"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": "Comparaison EMG et RPE mentionnée"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Niveau d’assurance non indiqué"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Observation d’activation EMG"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Étude EMG citée"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.ba3ee2b6d8ba70be"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Une activation EMG similaire n’implique pas une hypertrophie équivalente"
+          ],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Une étude testant si le squat classique produit une hypertrophie régionale différenciée entre les chefs du quadriceps ne trouve pas de différence significative entre eux dans son échantillon",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Résultat d’étude rapporté"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Force probante non détaillée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.0aa56549573be1be",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Une étude testant si le squat classique produit une hypertrophie régionale différenciée entre les chefs du quadriceps ne trouve pas de différence significative entre eux dans son échantillon",
+          "supportSpans": [
+            {
+              "text": "Une étude testant si le squat classique produit une hypertrophie régionale différenciée entre les chefs du quadriceps ne trouve pas de différence significative entre eux dans son échantillon",
+              "relativeStartByte": 670,
+              "relativeEndByte": 866,
+              "absoluteStartByte": 68889,
+              "absoluteEndByte": 69085
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Résultat d’hypertrophie régionale"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type d’étude non précisé"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Résultat d’étude rapporté"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Force probante non détaillée"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Résultat d’hypertrophie régionale"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type d’étude non précisé"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.7bbb1bafbd944e3a"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "échantillon de l’étude"
+          ],
+          "limitations": [
+            "résultat non significatif; peut être sous-alimenté"
+          ],
+          "cannotConclude": [
+            "Ne démontre pas l’équivalence stricte entre chefs du quadriceps"
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

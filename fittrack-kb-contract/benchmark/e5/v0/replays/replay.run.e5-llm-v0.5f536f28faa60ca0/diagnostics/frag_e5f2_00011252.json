@@ -1,0 +1,326 @@
+{
+  "fragmentId": "frag.e5f2.00011252",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le deltoïde est composé de trois faisceaux aux orientations de fibres et aux bras de levier distincts.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": "Décrit la structure du muscle deltoïde."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le statut épistémique n'est pas explicitement indiqué."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.124af451a5fc1bd0",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Le deltoïde est composé de trois faisceaux aux orientations de fibres et aux bras de levier distincts.",
+          "supportSpans": [
+            {
+              "text": "Le deltoïde est composé de trois faisceaux aux orientations de fibres et aux bras de levier distincts.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 104,
+              "absoluteStartByte": 11252,
+              "absoluteEndByte": 11356
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Affirmation anatomique descriptive sans données cliniques."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source spécifique citée pour cette phrase."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": "Décrit la structure du muscle deltoïde."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le statut épistémique n'est pas explicitement indiqué."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Affirmation anatomique descriptive sans données cliniques."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source spécifique citée pour cette phrase."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une analyse tridimensionnelle continue des bras de levier musculaires de l'épaule (modélisation) montre que ces bras de levier varient fortement et de façon non linéaire selon la position angulaire de l'épaule dans les trois plans",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation issue d'une analyse/modélisation biomécanique."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Le texte affirme une variation forte et non linéaire avec la position."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.a5142e2fcdc20ef4",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une analyse tridimensionnelle continue des bras de levier musculaires de l'épaule (modélisation) montre que ces bras de levier varient fortement et de façon non linéaire selon la position angulaire de l'épaule dans les trois plans",
+          "supportSpans": [
+            {
+              "text": "Une analyse tridimensionnelle continue des bras de levier musculaires de l'épaule (modélisation) montre que ces bras de levier varient fortement et de façon non linéaire selon la position angulaire de l'épaule dans les trois plans",
+              "relativeStartByte": 105,
+              "relativeEndByte": 340,
+              "absoluteStartByte": 11357,
+              "absoluteEndByte": 11592
+            },
+            {
+              "text": "([Three-dimensional continuous muscle moment arm maps, 2025](https://linkinghub.elsevier.com/retrieve/pii/S0021929025000727))",
+              "relativeStartByte": 341,
+              "relativeEndByte": 466,
+              "absoluteStartByte": 11593,
+              "absoluteEndByte": 11718
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Dérivé d'une analyse biomécanique/modélisation, sans résultats cliniques."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence explicite à une analyse de bras de levier musculaires."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation issue d'une analyse/modélisation biomécanique."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Le texte affirme une variation forte et non linéaire avec la position."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Dérivé d'une analyse biomécanique/modélisation, sans résultats cliniques."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence explicite à une analyse de bras de levier musculaires."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.048b25250c849a98"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "— preuve biomécanique de haute qualité méthodologique, niveau élevé pour le principe général que le bras de levier de chaque faisceau change avec l'angle articulaire",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Évaluation de la qualité de preuve et principe général rapporté."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Affirme que le bras de levier de chaque faisceau change avec l'angle articulaire."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.88c1bbc7c696ec90",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "— preuve biomécanique de haute qualité méthodologique, niveau élevé pour le principe général que le bras de levier de chaque faisceau change avec l'angle articulaire",
+          "supportSpans": [
+            {
+              "text": "— preuve biomécanique de haute qualité méthodologique, niveau élevé pour le principe général que le bras de levier de chaque faisceau change avec l'angle articulaire",
+              "relativeStartByte": 467,
+              "relativeEndByte": 641,
+              "absoluteStartByte": 11719,
+              "absoluteEndByte": 11893
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe fondé sur preuve biomécanique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "La phrase n'associe pas explicitement la référence ici."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Évaluation de la qualité de preuve et principe général rapporté."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Affirme que le bras de levier de chaque faisceau change avec l'angle articulaire."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe fondé sur preuve biomécanique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "La phrase n'associe pas explicitement la référence ici."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "UNRESOLVED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

@@ -1,0 +1,144 @@
+{
+  "fragmentId": "frag.e5f2.00035721",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Plusieurs essais contrôlés récents apportent des preuves directes d'hypertrophie régionale liée à la longueur musculaire d'entraînement :",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Affirme l'existence de preuves issues d'essais contrôlés."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Affirme plusieurs essais contrôlés, sans synthèse ni détails quantitatifs."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.37a717c112bdabf7",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Plusieurs essais contrôlés récents apportent des preuves directes d'hypertrophie régionale liée à la longueur musculaire d'entraînement :",
+          "supportSpans": [
+            {
+              "text": "Plusieurs essais contrôlés récents apportent des preuves directes d'hypertrophie régionale liée à la longueur musculaire d'entraînement :",
+              "relativeStartByte": 0,
+              "relativeEndByte": 144,
+              "absoluteStartByte": 35721,
+              "absoluteEndByte": 35865
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Mention explicite de \"preuves directes d'hypertrophie régionale\"."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "\"essais contrôlés\" sans précision (randomisation inconnue)."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Affirme l'existence de preuves issues d'essais contrôlés."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Affirme plusieurs essais contrôlés, sans synthèse ni détails quantitatifs."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Mention explicite de \"preuves directes d'hypertrophie régionale\"."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "\"essais contrôlés\" sans précision (randomisation inconnue)."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4330,
+      "outputTokens": 3334,
+      "reasoningTokens": 2944,
+      "totalTokens": 7664,
+      "costUsd": 0.0348645
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4330,
+      "outputTokens": 3334,
+      "reasoningTokens": 2944,
+      "totalTokens": 7664,
+      "costUsd": 0.0348645
+    }
+  }
+}

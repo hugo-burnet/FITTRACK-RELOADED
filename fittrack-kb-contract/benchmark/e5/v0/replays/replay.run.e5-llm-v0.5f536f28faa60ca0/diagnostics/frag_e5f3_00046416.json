@@ -1,0 +1,79 @@
+{
+  "fragmentId": "frag.e5f3.00046416",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "UNSUPPORTED_INFERENCE",
+      "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+      "critical": true,
+      "retryable": false,
+      "claimRef": "tmp.claim.01"
+    },
+    {
+      "code": "CLAIM_FILTERED",
+      "message": "Au moins une claim a été filtrée indépendamment",
+      "critical": false,
+      "retryable": false,
+      "attempted": 1,
+      "retained": 0,
+      "filtered": 1
+    },
+    {
+      "code": "ANNOTATION_PREDICTION_MISMATCH",
+      "message": "annotationPrediction provider incompatible avec les claims retenues",
+      "critical": false,
+      "retryable": false,
+      "providerAnnotationPrediction": "CLAIMS",
+      "derivedAnnotationPrediction": "ZERO_CLAIM"
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 1,
+      "retained": 0,
+      "filtered": 1,
+      "coverageDiagnosticCount": 0
+    }
+  ],
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 0,
+    "filtered": 1,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "- Les sorties de l’IA devraient être auditées pour sur-réassurance, diagnostics implicites, restrictions définitives injustifiées, omission de red flags et dérive des seuils numériques.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "PRODUCT_POLICY",
+          "reason": "Instruction normative de gouvernance du produit."
+        },
+        "epistemicStatus": {
+          "state": "NOT_APPLICABLE",
+          "value": null,
+          "reason": "Règle produit, pas une affirmation scientifique."
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_INFERENCE",
+            "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+            "critical": true,
+            "retryable": false,
+            "claimRef": "tmp.claim.01"
+          }
+        ],
+        "canonicalCandidate": null
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

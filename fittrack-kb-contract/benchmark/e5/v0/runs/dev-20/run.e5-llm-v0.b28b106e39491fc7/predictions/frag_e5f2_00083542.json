@@ -1,0 +1,131 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.b28b106e39491fc7",
+    "fragmentId": "frag.e5f2.00083542",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.eee650aaa1b62484",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+        "supportSpans": [
+          {
+            "text": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+            "relativeStartByte": 156,
+            "relativeEndByte": 263,
+            "absoluteStartByte": 83698,
+            "absoluteEndByte": 83805
+          },
+          {
+            "text": "avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+            "relativeStartByte": 265,
+            "relativeEndByte": 359,
+            "absoluteStartByte": 83807,
+            "absoluteEndByte": 83901
+          },
+          {
+            "text": "**preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**",
+            "relativeStartByte": 495,
+            "relativeEndByte": 640,
+            "absoluteStartByte": 84037,
+            "absoluteEndByte": 84182
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "low",
+                "rationale": "Qualitative/enquête with very low level for causal claims; mapping consensus only."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": "Explicitly a qualitative/enquête study."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": "Explicitly stated."
+          },
+          "clinicalEvidenceLevel": "D_very_low",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "The sentence reports findings from a qualitative study."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Qualitative survey with very low level for causal claims indicates limited certainty."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "low",
+                "rationale": "Qualitative/enquête with very low level for causal claims; mapping consensus only."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": "Explicitly a qualitative/enquête study."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": "Explicitly stated."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.13c064ac2a25902d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [
+          "Very low level for any causal claim; utility limited to mapping practice consensus."
+        ],
+        "cannotConclude": [
+          "Causal relationships cannot be concluded."
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice",
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

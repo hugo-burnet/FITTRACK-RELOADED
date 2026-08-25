@@ -1,0 +1,352 @@
+{
+  "fragmentId": "frag.e5f2.00063024",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00063024",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.0b200594f0ffb959",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une étude expérimentale compare directement l'hypertrophie du deltoïde latéral entre élévations latérales haltères et câbles",
+        "supportSpans": [
+          {
+            "text": "Une étude expérimentale compare directement l'hypertrophie du deltoïde latéral entre élévations latérales haltères et câbles",
+            "relativeStartByte": 60,
+            "relativeEndByte": 193,
+            "absoluteStartByte": 63084,
+            "absoluteEndByte": 63217
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Le texte précise une comparaison directe d'hypertrophie."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Le type précis d'étude (randomisée, etc.) n'est pas indiqué."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Déclaration explicite de l'existence d'une étude expérimentale comparant deux variantes."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Le texte précise une comparaison directe d'hypertrophie."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Le type précis d'étude (randomisée, etc.) n'est pas indiqué."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.2f285b05049b454c"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.bdc47dce5dccc252",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "l'une des rares comparaisons directes d'hypertrophie (plutôt que d'EMG seule) entre deux variantes d'un même mouvement d'isolation",
+        "supportSpans": [
+          {
+            "text": "l'une des rares comparaisons directes d'hypertrophie (plutôt que d'EMG seule) entre deux variantes d'un même mouvement d'isolation",
+            "relativeStartByte": 347,
+            "relativeEndByte": 479,
+            "absoluteStartByte": 63371,
+            "absoluteEndByte": 63503
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "La comparaison mentionnée porte explicitement sur l'hypertrophie directe."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Pas de typologie d'étude précisée pour l'affirmation de rareté."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation sur la rareté des comparaisons directes d'hypertrophie entre variantes."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Rareté non quantifiée et sans source distincte explicite."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "La comparaison mentionnée porte explicitement sur l'hypertrophie directe."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Pas de typologie d'étude précisée pour l'affirmation de rareté."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "ambiguous_citation"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.f5a3d12014b37157",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Le câble permet de maintenir une tension en position basse (bras le long du corps, deltoïde raccourci)",
+        "supportSpans": [
+          {
+            "text": "Le câble permet de maintenir une tension en position basse (bras le long du corps, deltoïde raccourci)",
+            "relativeStartByte": 589,
+            "relativeEndByte": 693,
+            "absoluteStartByte": 63613,
+            "absoluteEndByte": 63717
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description du comportement mécanique, pas d'issue hypertrophique mesurée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Observation biomécanique rapportée dans le texte."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation du profil de résistance mécanique du câble."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Observation mécanique sans outcome longitudinal associé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description du comportement mécanique, pas d'issue hypertrophique mesurée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Observation biomécanique rapportée dans le texte."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.5f99fdb3e6a73571",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "l'haltère perd sa résistance gravitationnelle",
+        "supportSpans": [
+          {
+            "text": "l'haltère perd sa résistance gravitationnelle",
+            "relativeStartByte": 698,
+            "relativeEndByte": 745,
+            "absoluteStartByte": 63722,
+            "absoluteEndByte": 63769
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description du comportement mécanique, pas d'issue hypertrophique mesurée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Observation biomécanique rapportée dans le texte."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation du profil de résistance gravitationnelle de l'haltère."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Observation mécanique sans outcome longitudinal associé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description du comportement mécanique, pas d'issue hypertrophique mesurée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Observation biomécanique rapportée dans le texte."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

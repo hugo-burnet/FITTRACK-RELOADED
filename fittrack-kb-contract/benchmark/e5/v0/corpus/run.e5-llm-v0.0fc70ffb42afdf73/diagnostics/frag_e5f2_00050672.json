@@ -1,0 +1,273 @@
+{
+  "fragmentId": "frag.e5f2.00050672",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "les forces musculaires du tronc et les charges rachidiennes pendant un soulevé de terre lourd varient fortement selon la personnalisation du modèle, l'enveloppement musculaire et le rythme lombo-pelvien utilisés dans la modélisation",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Variabilité des charges issue d'une modélisation biomécanique selon les choix de modèle."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Le texte souligne l'incertitude et ne cite qu’une étude spécifique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.db403cc02a7fa4a3",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "les forces musculaires du tronc et les charges rachidiennes pendant un soulevé de terre lourd varient fortement selon la personnalisation du modèle, l'enveloppement musculaire et le rythme lombo-pelvien utilisés dans la modélisation",
+          "supportSpans": [
+            {
+              "text": "les forces musculaires du tronc et les charges rachidiennes pendant un soulevé de terre lourd varient fortement selon la personnalisation du modèle, l'enveloppement musculaire et le rythme lombo-pelvien utilisés dans la modélisation",
+              "relativeStartByte": 98,
+              "relativeEndByte": 334,
+              "absoluteStartByte": 50770,
+              "absoluteEndByte": 51006
+            },
+            {
+              "text": "ce qui souligne l'incertitude des estimations de charge absolue même dans des études biomécaniques sophistiquées",
+              "relativeStartByte": 336,
+              "relativeEndByte": 452,
+              "absoluteStartByte": 51008,
+              "absoluteEndByte": 51124
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation provenant d'une modélisation biomécanique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence à une étude de modélisation biomécanique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Variabilité des charges issue d'une modélisation biomécanique selon les choix de modèle."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Le texte souligne l'incertitude et ne cite qu’une étude spécifique."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation provenant d'une modélisation biomécanique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence à une étude de modélisation biomécanique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.074bf21f4f8bcbab"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "soulevé de terre lourd"
+          ],
+          "limitations": [
+            "Forte dépendance aux choix de modélisation (personnalisation du modèle, enveloppement musculaire, rythme lombo-pelvien)."
+          ],
+          "cannotConclude": [
+            "Des estimations de charge absolue précises et fiables."
+          ],
+          "unresolved": [],
+          "flags": [
+            "modeling_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Un modèle biomécanique dédié à l'évaluation de la compression axiale, du cisaillement et du moment de flexion lombaires pendant des mouvements olympiques sélectionnés",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Description d’un modèle et de son objet d’évaluation."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Niveau de solidité non précisé par le fragment."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5fa2d3549fc81d12",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Un modèle biomécanique dédié à l'évaluation de la compression axiale, du cisaillement et du moment de flexion lombaires pendant des mouvements olympiques sélectionnés",
+          "supportSpans": [
+            {
+              "text": "Un modèle biomécanique dédié à l'évaluation de la compression axiale, du cisaillement et du moment de flexion lombaires pendant des mouvements olympiques sélectionnés",
+              "relativeStartByte": 586,
+              "relativeEndByte": 760,
+              "absoluteStartByte": 51258,
+              "absoluteEndByte": 51432
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Portée méthodologique et biomécanique uniquement."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence à un modèle biomécanique appliqué aux mouvements olympiques."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Description d’un modèle et de son objet d’évaluation."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Niveau de solidité non précisé par le fragment."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Portée méthodologique et biomécanique uniquement."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence à un modèle biomécanique appliqué aux mouvements olympiques."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.157ea373fd2955c6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "mouvements olympiques sélectionnés"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "modeling_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4991,
+      "outputTokens": 6499,
+      "reasoningTokens": 5696,
+      "totalTokens": 11490,
+      "costUsd": 0.06734075
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4991,
+      "outputTokens": 6499,
+      "reasoningTokens": 5696,
+      "totalTokens": 11490,
+      "costUsd": 0.06734075
+    }
+  }
+}

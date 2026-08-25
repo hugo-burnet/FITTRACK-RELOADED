@@ -1,0 +1,306 @@
+{
+  "fragmentId": "frag.f2.0008",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0008",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.64702ce0012aae35",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Peu d'études biomécaniques dédiées quantifient directement la charge au coude pendant les exercices de triceps (skull crusher, extension overhead) en musculation récréative ;",
+        "supportSpans": [
+          {
+            "text": "Peu d'études biomécaniques dédiées quantifient directement la charge au coude pendant les exercices de triceps (skull crusher, extension overhead) en musculation récréative ;",
+            "relativeStartByte": 0,
+            "relativeEndByte": 180,
+            "absoluteStartByte": 48955,
+            "absoluteEndByte": 49135
+          },
+          {
+            "text": "Il s'agit d'une **lacune de preuve identifiée**",
+            "relativeStartByte": 420,
+            "relativeEndByte": 468,
+            "absoluteStartByte": 49375,
+            "absoluteEndByte": 49423
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Discussion sur mesures biomécaniques directes absentes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study",
+              "narrative_review",
+              "expert_practice"
+            ],
+            "reason": "Mention de rareté d'études biomécaniques et description narrative."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Affirme une lacune de preuve concernant une croyance courante."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": "Le texte affirme explicitement une lacune de preuve et peu d'études directes."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Discussion sur mesures biomécaniques directes absentes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study",
+              "narrative_review",
+              "expert_practice"
+            ],
+            "reason": "Mention de rareté d'études biomécaniques et description narrative."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "musculation récréative",
+          "exercices de triceps (skull crusher, extension overhead)"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "Absence de mesures directes en contexte de musculation empêche de conclure sur la charge au coude pour ces exercices."
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language",
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.12c96568ac71dffc",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "la littérature disponible sur la charge au coude provient principalement du contexte du lancer au baseball, peu généralisable ([Biomechanics of the elbow during baseball pitching](http://www.jospt.org/doi/10.2519/jospt.1993.17.6.274))",
+        "supportSpans": [
+          {
+            "text": "la littérature disponible sur la charge au coude provient principalement du contexte du lancer au baseball, peu généralisable ([Biomechanics of the elbow during baseball pitching](http://www.jospt.org/doi/10.2519/jospt.1993.17.6.274))",
+            "relativeStartByte": 181,
+            "relativeEndByte": 418,
+            "absoluteStartByte": 49136,
+            "absoluteEndByte": 49373
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "probable",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Concerne études biomécaniques dans le baseball."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Référence biomécanique citée."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Décrit la provenance principale de la littérature existante."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "probable",
+            "reason": "Formulation qualifiée 'principalement' et 'peu généralisable'."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Concerne études biomécaniques dans le baseball."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Référence biomécanique citée."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c606a5fa04358b7b"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "charge au coude",
+          "contexte du lancer au baseball"
+        ],
+        "limitations": [
+          "peu généralisable"
+        ],
+        "cannotConclude": [
+          "Les résultats du baseball ne se généralisent pas aisément à la musculation récréative."
+        ],
+        "unresolved": [],
+        "flags": [
+          "ambiguous_citation"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.7fe8db893a4bd59f",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "l'affirmation courante selon laquelle le skull crusher ou l'extension overhead imposerait une contrainte particulière au coude repose largement sur un raisonnement biomécanique de premier principe (moment de flexion élevé en bras de levier long) plutôt que sur une mesure directe publiée en contexte de musculation — **niveau de preuve très faible, largement inférentiel**.",
+        "supportSpans": [
+          {
+            "text": "l'affirmation courante selon laquelle le skull crusher ou l'extension overhead imposerait une contrainte particulière au coude repose largement sur un raisonnement biomécanique de premier principe (moment de flexion élevé en bras de levier long) plutôt que sur une mesure directe publiée en contexte de musculation — **niveau de preuve très faible, largement inférentiel**.",
+            "relativeStartByte": 471,
+            "relativeEndByte": 854,
+            "absoluteStartByte": 49426,
+            "absoluteEndByte": 49809
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Basé sur raisonnement mécanique sans données directes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice",
+              "narrative_review"
+            ],
+            "reason": "Affirmation sur base de raisonnement et synthèse narrative."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Conteste une croyance courante en soulignant l'absence de mesures directes."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Repos majoritairement sur raisonnement de premier principe, non sur mesures directes."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Basé sur raisonnement mécanique sans données directes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice",
+              "narrative_review"
+            ],
+            "reason": "Affirmation sur base de raisonnement et synthèse narrative."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "exercices de triceps (skull crusher, extension overhead)",
+          "musculation récréative"
+        ],
+        "limitations": [
+          "absence de mesures directes publiées"
+        ],
+        "cannotConclude": [
+          "On ne peut pas affirmer une contrainte particulière au coude sans mesures directes en musculation."
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language",
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

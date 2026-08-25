@@ -1,0 +1,148 @@
+{
+  "fragmentId": "frag.e5f3.00023412",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le terme historique « impingement » ne prouve pas qu’un tissu est mécaniquement “écrasé” par toute élévation.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "refuted",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.29d5f7bfe3c0cef2",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Le terme historique « impingement » ne prouve pas qu’un tissu est mécaniquement “écrasé” par toute élévation.",
+          "supportSpans": [
+            {
+              "text": "Le terme historique « impingement » ne prouve pas qu’un tissu est mécaniquement “écrasé” par toute élévation.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 122,
+              "absoluteStartByte": 23412,
+              "absoluteEndByte": 23534
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "refuted",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "refuted",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4448,
+      "outputTokens": 3383,
+      "reasoningTokens": 3072,
+      "totalTokens": 7831,
+      "costUsd": 0.035502
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4448,
+      "outputTokens": 3383,
+      "reasoningTokens": 3072,
+      "totalTokens": 7831,
+      "costUsd": 0.035502
+    }
+  }
+}

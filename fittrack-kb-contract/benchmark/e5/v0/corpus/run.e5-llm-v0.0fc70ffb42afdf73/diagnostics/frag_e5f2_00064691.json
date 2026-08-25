@@ -1,0 +1,293 @@
+{
+  "fragmentId": "frag.e5f2.00064691",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "CLAIM_UNIT_REFERENCE_INVALID",
+      "message": "Incohérence de couverture",
+      "critical": false,
+      "retryable": false,
+      "detail": {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "claimRef": "tmp.claim.02",
+        "unitIndex": 3
+      }
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 2,
+      "retained": 2,
+      "filtered": 0,
+      "coverageDiagnosticCount": 1
+    }
+  ],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "apporte une preuve directe d'hypertrophie distincte de l'EMG",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Le texte affirme l'existence d'un essai fournissant une preuve directe sur l'hypertrophie pour cette comparaison d'exercices."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Pas de résultat directionnel ou quantitatif rapporté dans le fragment."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.7316dfe0414a10a0",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "apporte une preuve directe d'hypertrophie distincte de l'EMG",
+          "supportSpans": [
+            {
+              "text": "Un essai comparant directement les adaptations de croissance musculaire et de force entre preacher curl et incline curl chez des sujets entraînés",
+              "relativeStartByte": 46,
+              "relativeEndByte": 193,
+              "absoluteStartByte": 64737,
+              "absoluteEndByte": 64884
+            },
+            {
+              "text": "apporte une preuve directe d'hypertrophie distincte de l'EMG",
+              "relativeStartByte": 194,
+              "relativeEndByte": 254,
+              "absoluteStartByte": 64885,
+              "absoluteEndByte": 64945
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "\"apporte une preuve directe d'hypertrophie distincte de l'EMG\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": "La nature exacte de l'essai n'est pas précisée dans le fragment."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Le texte affirme l'existence d'un essai fournissant une preuve directe sur l'hypertrophie pour cette comparaison d'exercices."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de résultat directionnel ou quantitatif rapporté dans le fragment."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "\"apporte une preuve directe d'hypertrophie distincte de l'EMG\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": "La nature exacte de l'essai n'est pas précisée dans le fragment."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.1726e4ed935edc50"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Le texte décrit un essai qui teste directement une hypothèse sur force et hypertrophie."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Aucun résultat ou direction d'effet n'est rapporté."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.33471849f361631f",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie",
+          "supportSpans": [
+            {
+              "text": "Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie",
+              "relativeStartByte": 539,
+              "relativeEndByte": 784,
+              "absoluteStartByte": 65230,
+              "absoluteEndByte": 65475
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "\"teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": "Type d'étude non précisé."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Le texte décrit un essai qui teste directement une hypothèse sur force et hypertrophie."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucun résultat ou direction d'effet n'est rapporté."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "\"teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": "Type d'étude non précisé."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.65845f5539296bd3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [
+      {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "claimRef": "tmp.claim.02",
+        "unitIndex": 3
+      }
+    ],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 5045,
+      "outputTokens": 5765,
+      "reasoningTokens": 4992,
+      "totalTokens": 10810,
+      "costUsd": 0.06395625
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 5045,
+      "outputTokens": 5765,
+      "reasoningTokens": 4992,
+      "totalTokens": 10810,
+      "costUsd": 0.06395625
+    }
+  }
+}

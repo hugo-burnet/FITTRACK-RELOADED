@@ -1,0 +1,338 @@
+{
+  "fragmentId": "frag.e5f2.00028637",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La difficulté ressentie à un instant donné du mouvement dépend du rapport entre le **moment de force externe** (produit par la charge et son bras de levier par rapport à l'articulation) et le **moment de force interne** (produit par le muscle et son bras de levier anatomique, qui varie lui-même avec l'angle articulaire).",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Énonce une relation mécanistique entre moments externe et interne et la difficulté ressentie."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": "Présenté comme principe général explicite."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.bfd8eb500120021b",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "La difficulté ressentie à un instant donné du mouvement dépend du rapport entre le **moment de force externe** (produit par la charge et son bras de levier par rapport à l'articulation) et le **moment de force interne** (produit par le muscle et son bras de levier anatomique, qui varie lui-même avec l'angle articulaire).",
+          "supportSpans": [
+            {
+              "text": "La difficulté ressentie à un instant donné du mouvement dépend du rapport entre le **moment de force externe** (produit par la charge et son bras de levier par rapport à l'articulation) et le **moment de force interne** (produit par le muscle et son bras de levier anatomique, qui varie lui-même avec l'angle articulaire).",
+              "relativeStartByte": 0,
+              "relativeEndByte": 328,
+              "absoluteStartByte": 28637,
+              "absoluteEndByte": 28965
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe biomécanique sans résultats cliniques."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune attribution explicite à une étude précise pour cette phrase."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Énonce une relation mécanistique entre moments externe et interne et la difficulté ressentie."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": "Présenté comme principe général explicite."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe biomécanique sans résultats cliniques."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune attribution explicite à une étude précise pour cette phrase."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une cartographie tridimensionnelle continue des bras de levier de l'épaule montre que ces bras de levier internes varient de façon non linéaire et parfois importante sur l'amplitude de mouvement",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation rapportée sur la variation des bras de levier internes basée sur cartographie."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": "Présenté comme constat de la cartographie."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.b8bb0406ac00e237",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une cartographie tridimensionnelle continue des bras de levier de l'épaule montre que ces bras de levier internes varient de façon non linéaire et parfois importante sur l'amplitude de mouvement",
+          "supportSpans": [
+            {
+              "text": "Une cartographie tridimensionnelle continue des bras de levier de l'épaule montre que ces bras de levier internes varient de façon non linéaire et parfois importante sur l'amplitude de mouvement",
+              "relativeStartByte": 329,
+              "relativeEndByte": 526,
+              "absoluteStartByte": 28966,
+              "absoluteEndByte": 29163
+            },
+            {
+              "text": "([Three-dimensional continuous muscle moment arm maps, 2025](https://linkinghub.elsevier.com/retrieve/pii/S0021929025000727))",
+              "relativeStartByte": 527,
+              "relativeEndByte": 652,
+              "absoluteStartByte": 29164,
+              "absoluteEndByte": 29289
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation biomécanique de bras de levier."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence à une cartographie biomécanique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation rapportée sur la variation des bras de levier internes basée sur cartographie."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": "Présenté comme constat de la cartographie."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation biomécanique de bras de levier."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "Référence à une cartographie biomécanique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.08f1787eb97af7ab"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "— ce principe biomécanique de base est **solidement établi** pour l'épaule et généralisable par analogie anatomique à d'autres articulations, même si des cartographies aussi détaillées n'existent pas pour chaque articulation.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Affirme le statut établi d'un principe biomécanique et sa généralisabilité par analogie."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": "Texte affirme solidement établi."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.61ad9a0c58083875",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "— ce principe biomécanique de base est **solidement établi** pour l'épaule et généralisable par analogie anatomique à d'autres articulations, même si des cartographies aussi détaillées n'existent pas pour chaque articulation.",
+          "supportSpans": [
+            {
+              "text": "— ce principe biomécanique de base est **solidement établi** pour l'épaule et généralisable par analogie anatomique à d'autres articulations, même si des cartographies aussi détaillées n'existent pas pour chaque articulation.",
+              "relativeStartByte": 653,
+              "relativeEndByte": 889,
+              "absoluteStartByte": 29290,
+              "absoluteEndByte": 29526
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "generalization",
+                  "confidence": "moderate",
+                  "rationale": "Généralisable par analogie, avec absence de cartographies détaillées pour toutes les articulations."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe biomécanique sans mesure clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "La phrase ne rattache pas explicitement des études spécifiques pour toutes les articulations."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Affirme le statut établi d'un principe biomécanique et sa généralisabilité par analogie."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": "Texte affirme solidement établi."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "generalization",
+                  "confidence": "moderate",
+                  "rationale": "Généralisable par analogie, avec absence de cartographies détaillées pour toutes les articulations."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe biomécanique sans mesure clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "La phrase ne rattache pas explicitement des études spécifiques pour toutes les articulations."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [
+            "même si des cartographies aussi détaillées n'existent pas pour chaque articulation"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

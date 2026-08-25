@@ -1,0 +1,270 @@
+{
+  "fragmentId": "frag.f3.0003",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Directive clinique pratique explicitement formulée."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Recommandation pratique sans résultat clinique quantifié dans le fragment."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.698c2109e209fed9",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique",
+          "supportSpans": [
+            {
+              "text": "L’imagerie ne dicte pas seule la programmation.",
+              "relativeStartByte": 5,
+              "relativeEndByte": 54,
+              "absoluteStartByte": 2426,
+              "absoluteEndByte": 2475
+            },
+            {
+              "text": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques et augmentent avec l’âge; ils doivent être corrélés aux symptômes et à l’examen clinique",
+              "relativeStartByte": 57,
+              "relativeEndByte": 263,
+              "absoluteStartByte": 2478,
+              "absoluteEndByte": 2684
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans mesure clinique directe dans ce texte."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Formulation normative issue du texte."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Directive clinique pratique explicitement formulée."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Recommandation pratique sans résultat clinique quantifié dans le fragment."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans mesure clinique directe dans ce texte."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Formulation normative issue du texte."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "programmation de musculation adaptative",
+            "interprétation d’imagerie"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Énoncé factuel sur la prévalence et son évolution avec l’âge."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le niveau d’assurance n’est pas précisé dans le fragment."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.614a98b86639f9de",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques",
+          "supportSpans": [
+            {
+              "text": "Bombements, protrusions et autres signes dégénératifs sont fréquents chez les personnes asymptomatiques",
+              "relativeStartByte": 57,
+              "relativeEndByte": 164,
+              "absoluteStartByte": 2478,
+              "absoluteEndByte": 2585
+            },
+            {
+              "text": "augmentent avec l’âge",
+              "relativeStartByte": 168,
+              "relativeEndByte": 192,
+              "absoluteStartByte": 2589,
+              "absoluteEndByte": 2613
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "imaging_descriptive",
+              "reason": "Observation descriptive liée à des constats d’imagerie."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le type exact d’étude n’est pas spécifié dans le texte."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Énoncé factuel sur la prévalence et son évolution avec l’âge."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le niveau d’assurance n’est pas précisé dans le fragment."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "imaging_descriptive",
+              "reason": "Observation descriptive liée à des constats d’imagerie."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le type exact d’étude n’est pas spécifié dans le texte."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.bb0b9f62a20d045d"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "personnes asymptomatiques"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 3683,
+      "outputTokens": 674,
+      "reasoningTokens": 0,
+      "totalTokens": 4357,
+      "costUsd": 0.00846375
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 3683,
+      "outputTokens": 674,
+      "reasoningTokens": 0,
+      "totalTokens": 4357,
+      "costUsd": 0.00846375
+    }
+  }
+}

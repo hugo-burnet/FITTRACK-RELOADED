@@ -1,0 +1,160 @@
+{
+  "fragmentId": "frag.e5f2.00074021",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une étude compare directement l'activité musculaire de la jambe et de la hanche entre back squat, soulevé de terre roumain et hip thrust barre pendant l'extension de hanche",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.b505dc42de098e6a",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Une étude compare directement l'activité musculaire de la jambe et de la hanche entre back squat, soulevé de terre roumain et hip thrust barre pendant l'extension de hanche",
+          "supportSpans": [
+            {
+              "text": "Une étude compare directement l'activité musculaire de la jambe et de la hanche entre back squat, soulevé de terre roumain et hip thrust barre pendant l'extension de hanche",
+              "relativeStartByte": 46,
+              "relativeEndByte": 221,
+              "absoluteStartByte": 74067,
+              "absoluteEndByte": 74242
+            },
+            {
+              "text": "Comparison Between Back Squat, Romanian Deadlift, and Barbell Hip Thrust for Leg and Hip Muscle Activities",
+              "relativeStartByte": 224,
+              "relativeEndByte": 330,
+              "absoluteStartByte": 74245,
+              "absoluteEndByte": 74351
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.e113704b3408d748"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4656,
+      "outputTokens": 4720,
+      "reasoningTokens": 4352,
+      "totalTokens": 9376,
+      "costUsd": 0.049132
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4656,
+      "outputTokens": 4720,
+      "reasoningTokens": 4352,
+      "totalTokens": 9376,
+      "costUsd": 0.049132
+    }
+  }
+}

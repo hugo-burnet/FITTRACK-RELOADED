@@ -1,0 +1,659 @@
+{
+  "fragmentId": "frag.e5f3.00029304",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 6,
+    "retained": 6,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "ce n’est pas « mauvais pour les genoux »",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Affirme qu'une croyance est fausse."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré de certitude non précisé."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f0ed418df6ba1f62",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "ce n’est pas « mauvais pour les genoux »",
+          "supportSpans": [
+            {
+              "text": "ce n’est pas « mauvais pour les genoux »",
+              "relativeStartByte": 22,
+              "relativeEndByte": 66,
+              "absoluteStartByte": 29326,
+              "absoluteEndByte": 29370
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Non spécifié."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'attribution explicite à une source pour cette phrase."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Affirme qu'une croyance est fausse."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré de certitude non précisé."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Non spécifié."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'attribution explicite à une source pour cette phrase."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation du profil de demande mécanique."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Intensité et généralisation non précisées."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.6af922c66495424f",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension",
+          "supportSpans": [
+            {
+              "text": "Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension",
+              "relativeStartByte": 68,
+              "relativeEndByte": 157,
+              "absoluteStartByte": 29372,
+              "absoluteEndByte": 29461
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Énonce un profil mécanique sans outcome clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de source explicitement liée."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation du profil de demande mécanique."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Intensité et généralisation non précisées."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Énonce un profil mécanique sans outcome clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de source explicitement liée."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "certaines machines à came modifient ce profil",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation d'une variation de profil mécanique due à la came."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré et direction non précisés."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.76a4815f7842d386",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "certaines machines à came modifient ce profil",
+          "supportSpans": [
+            {
+              "text": "certaines machines à came modifient ce profil",
+              "relativeStartByte": 159,
+              "relativeEndByte": 205,
+              "absoluteStartByte": 29463,
+              "absoluteEndByte": 29509
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation mécanique sans outcome clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de source explicitement liée."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation d'une variation de profil mécanique due à la came."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré et direction non précisés."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation mécanique sans outcome clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de source explicitement liée."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "Ajuster amplitude et charge selon symptômes",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Instruction pratique sans preuve citée."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Recommandation de pratique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.1a6e784f4c77f581",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "Ajuster amplitude et charge selon symptômes",
+          "supportSpans": [
+            {
+              "text": "Ajuster amplitude et charge selon symptômes",
+              "relativeStartByte": 207,
+              "relativeEndByte": 251,
+              "absoluteStartByte": 29511,
+              "absoluteEndByte": 29555
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique non adossé à un essai."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Formulation prescriptive sans citation."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Instruction pratique sans preuve citée."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Recommandation de pratique."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique non adossé à un essai."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Formulation prescriptive sans citation."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "Les deux chaînes sont recommandées pour la PFP",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Recommandation issue d'une CPG."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Niveau de certitude non indiqué dans l'extrait."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.1a249b0e88190d24",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "Les deux chaînes sont recommandées pour la PFP",
+          "supportSpans": [
+            {
+              "text": "Les deux chaînes sont recommandées pour la PFP",
+              "relativeStartByte": 253,
+              "relativeEndByte": 301,
+              "absoluteStartByte": 29557,
+              "absoluteEndByte": 29605
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": "Recommandation clinique pour PFP."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "clinical_practice_guideline"
+              ],
+              "reason": "Mention explicite CPG."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Recommandation issue d'une CPG."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Niveau de certitude non indiqué dans l'extrait."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": "Recommandation clinique pour PFP."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "clinical_practice_guideline"
+              ],
+              "reason": "Mention explicite CPG."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.6dba11447ad738d6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "PFP"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "clinical_content",
+            "output_policy_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 5,
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "les profils biomécaniques ne prouvent pas une lésion clinique",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Réfutation d'une inférence courante de causalité clinique à partir de biomécanique."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Affirme explicitement l'absence de preuve."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.9826cc49501cbaef",
+          "technicalClaimRef": "tmp.claim.06",
+          "rawStatement": "les profils biomécaniques ne prouvent pas une lésion clinique",
+          "supportSpans": [
+            {
+              "text": "les profils biomécaniques ne prouvent pas une lésion clinique",
+              "relativeStartByte": 371,
+              "relativeEndByte": 434,
+              "absoluteStartByte": 29675,
+              "absoluteEndByte": 29738
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "indirect_clinical",
+              "reason": "Énonce la non-preuve de translation biomécanique vers clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type précis non indiqué; source narrative probable."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Réfutation d'une inférence courante de causalité clinique à partir de biomécanique."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Affirme explicitement l'absence de preuve."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "indirect_clinical",
+              "reason": "Énonce la non-preuve de translation biomécanique vers clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type précis non indiqué; source narrative probable."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.2528e8e8fb4afc48"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Les profils biomécaniques ne suffisent pas à établir une lésion clinique."
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language",
+            "ambiguous_citation"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4240,
+      "outputTokens": 1663,
+      "reasoningTokens": 0,
+      "totalTokens": 5903,
+      "costUsd": 0.018618
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4240,
+      "outputTokens": 1663,
+      "reasoningTokens": 0,
+      "totalTokens": 5903,
+      "costUsd": 0.018618
+    }
+  }
+}

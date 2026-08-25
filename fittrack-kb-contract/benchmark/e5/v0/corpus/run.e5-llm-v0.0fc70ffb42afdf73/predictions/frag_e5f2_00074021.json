@@ -1,0 +1,107 @@
+{
+  "fragmentId": "frag.e5f2.00074021",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00074021",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.b505dc42de098e6a",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une étude compare directement l'activité musculaire de la jambe et de la hanche entre back squat, soulevé de terre roumain et hip thrust barre pendant l'extension de hanche",
+        "supportSpans": [
+          {
+            "text": "Une étude compare directement l'activité musculaire de la jambe et de la hanche entre back squat, soulevé de terre roumain et hip thrust barre pendant l'extension de hanche",
+            "relativeStartByte": 46,
+            "relativeEndByte": 221,
+            "absoluteStartByte": 74067,
+            "absoluteEndByte": 74242
+          },
+          {
+            "text": "Comparison Between Back Squat, Romanian Deadlift, and Barbell Hip Thrust for Leg and Hip Muscle Activities",
+            "relativeStartByte": 224,
+            "relativeEndByte": 330,
+            "absoluteStartByte": 74245,
+            "absoluteEndByte": 74351
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "emg_study"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "emg_study"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.e113704b3408d748"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "emg_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

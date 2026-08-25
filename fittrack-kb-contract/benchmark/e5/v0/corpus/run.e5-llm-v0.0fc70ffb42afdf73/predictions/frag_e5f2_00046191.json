@@ -1,0 +1,288 @@
+{
+  "fragmentId": "frag.e5f2.00046191",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00046191",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.7f91cad24156b19b",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le développé couché impose des charges musculo-squelettiques substantielles à l'épaule",
+        "supportSpans": [
+          {
+            "text": "Le développé couché impose des charges musculo-squelettiques substantielles à l'épaule",
+            "relativeStartByte": 0,
+            "relativeEndByte": 91,
+            "absoluteStartByte": 46191,
+            "absoluteEndByte": 46282
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Énoncé de charge musculo-squelettique et mention d’une étude biomécanique."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Le texte mentionne une étude biomécanique quantifiant les charges."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation explicite de charge mécanique à l’épaule durant le développé couché."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Énoncé de charge musculo-squelettique et mention d’une étude biomécanique."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Le texte mentionne une étude biomécanique quantifiant les charges."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.53fc5cdefd3b516e",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "discute du risque potentiel de blessure sans pouvoir établir de lien causal direct faute de données longitudinales de blessure appariées",
+        "supportSpans": [
+          {
+            "text": "discute du risque potentiel de blessure sans pouvoir établir de lien causal direct faute de données longitudinales de blessure appariées",
+            "relativeStartByte": 250,
+            "relativeEndByte": 389,
+            "absoluteStartByte": 46441,
+            "absoluteEndByte": 46580
+          },
+          {
+            "text": "absence de preuve directe de risque de blessure démontré",
+            "relativeStartByte": 596,
+            "relativeEndByte": 654,
+            "absoluteStartByte": 46787,
+            "absoluteEndByte": 46845
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Seules des données biomécaniques sont mentionnées; pas de données longitudinales de blessure."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Référence à une étude biomécanique."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Énoncé sur l’état de la preuve concernant le risque de blessure."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": "Absence de preuve directe explicitement déclarée."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Seules des données biomécaniques sont mentionnées; pas de données longitudinales de blessure."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Référence à une étude biomécanique."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.2524aff885588c8d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [
+          "faute de données longitudinales de blessure appariées"
+        ],
+        "cannotConclude": [
+          "lien causal direct entre variantes techniques du développé couché et blessure"
+        ],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence",
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.beb7e4c3a71c732c",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "souligne également l'absence de consensus fort sur les seuils de charge associés à un risque accru",
+        "supportSpans": [
+          {
+            "text": "souligne également l'absence de consensus fort sur les seuils de charge associés à un risque accru",
+            "relativeStartByte": 852,
+            "relativeEndByte": 953,
+            "absoluteStartByte": 47043,
+            "absoluteEndByte": 47144
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "indirect_clinical",
+            "reason": "Revue narrative portant sur le risque et la biomécanique, sans preuve clinique directe de seuils."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review"
+            ],
+            "reason": "Le texte qualifie la source de revue narrative."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Évaluation de l’état de consensus sur des seuils de charge liés au risque."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Le texte signale une absence de consensus fort, indiquant une incertitude."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "indirect_clinical",
+            "reason": "Revue narrative portant sur le risque et la biomécanique, sans preuve clinique directe de seuils."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review"
+            ],
+            "reason": "Le texte qualifie la source de revue narrative."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.fd2519d6c75fe08f"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "seuils précis de charge associés à un risque accru pendant le développé couché"
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

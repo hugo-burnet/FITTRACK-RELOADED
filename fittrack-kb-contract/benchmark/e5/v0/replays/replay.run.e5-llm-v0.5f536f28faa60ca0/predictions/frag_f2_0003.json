@@ -1,0 +1,337 @@
+{
+  "fragmentId": "frag.f2.0003",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0003",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.ee63796744fd5cc1",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines",
+        "supportSpans": [
+          {
+            "text": "l'entraînement en extension du coude réalisé en **position bras au-dessus de la tête (overhead)**, qui étire le chef long au niveau de l'épaule pendant l'exercice, produit une hypertrophie substantiellement plus importante du chef long que le même exercice réalisé bras le long du corps (position neutre), à volume et effort égalisés sur plusieurs semaines",
+            "relativeStartByte": 89,
+            "relativeEndByte": 457,
+            "absoluteStartByte": 16037,
+            "absoluteEndByte": 16405
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Effet directionnel clair: overhead > neutre pour chef long"
+              },
+              {
+                "aspect": "magnitude",
+                "confidence": "moderate",
+                "rationale": "Terme 'substantiellement' suggère ampleur notable dans essai contrôlé"
+              },
+              {
+                "aspect": "regional_specificity",
+                "confidence": "moderate",
+                "rationale": "Spécificité régionale (chef long) explicitement mesurée"
+              },
+              {
+                "aspect": "chronic_effect",
+                "confidence": "moderate",
+                "rationale": "Effet observé sur plusieurs semaines (chronique)"
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": "B_moderate",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": true,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Effet directionnel clair: overhead > neutre pour chef long"
+              },
+              {
+                "aspect": "magnitude",
+                "confidence": "moderate",
+                "rationale": "Terme 'substantiellement' suggère ampleur notable dans essai contrôlé"
+              },
+              {
+                "aspect": "regional_specificity",
+                "confidence": "moderate",
+                "rationale": "Spécificité régionale (chef long) explicitement mesurée"
+              },
+              {
+                "aspect": "chronic_effect",
+                "confidence": "moderate",
+                "rationale": "Effet observé sur plusieurs semaines (chronique)"
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.c26ca4cf801ca5ab"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "à volume et effort égalisés",
+          "plusieurs semaines"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.45ec74b7bc15aeb1",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)",
+        "supportSpans": [
+          {
+            "text": "Il s'agit ici d'une preuve directe d'hypertrophie régionale (niveau modéré à élevé, essai contrôlé unique mais mécanisme biomécanique cohérent et fort)",
+            "relativeStartByte": 570,
+            "relativeEndByte": 732,
+            "absoluteStartByte": 16518,
+            "absoluteEndByte": 16680
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "regional_specificity",
+                "confidence": "high",
+                "rationale": "Hypertrophie régionale directement mesurée"
+              },
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "moderate",
+                "rationale": "Niveau modéré à élevé mentionné, essai contrôlé unique"
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": "B_moderate",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "regional_specificity",
+                "confidence": "high",
+                "rationale": "Hypertrophie régionale directement mesurée"
+              },
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "moderate",
+                "rationale": "Niveau modéré à élevé mentionné, essai contrôlé unique"
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [
+          "essai contrôlé unique"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.452729bc1a2d9420",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long",
+        "supportSpans": [
+          {
+            "text": "les extensions au-dessus de la tête (overhead extension, skull crusher incliné bras verticaux) ciblent préférentiellement le chef long, tandis que les pushdowns et extensions bras le long du corps sollicitent davantage les chefs latéral et médial sans étirement supplémentaire du chef long",
+            "relativeStartByte": 904,
+            "relativeEndByte": 1201,
+            "absoluteStartByte": 16852,
+            "absoluteEndByte": 17149
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "statuses": {
+    "validated": 18,
+    "partiallyValidated": 2,
+    "rejected": 0
+  },
+  "claimAudit": {
+    "attempted": 50,
+    "retained": 48,
+    "filtered": 2
+  },
+  "coverage": {
+    "fragmentsWithDiagnostics": 1,
+    "diagnosticCount": 1,
+    "byCode": {
+      "CLAIM_CONTENT_WITHOUT_CLAIM": 1
+    }
+  },
+  "partialRejections": {
+    "fragmentsWithIndividuallyValidClaims": 0,
+    "individuallyValidClaimsInsideRejectedFragments": 0,
+    "individuallyInvalidClaimsInsideRejectedFragments": 0,
+    "fragments": []
+  },
+  "repairs": {
+    "calls": 1,
+    "ratePerFullCall": 0.05,
+    "successfulFragments": 0,
+    "successRate": 0,
+    "reasons": {
+      "ANCHOR_NOT_FOUND": 1,
+      "CLAIM_FILTERED": 1,
+      "PARTIAL_VALIDATION": 1
+    }
+  },
+  "rejectionReasons": {},
+  "safetyExtensions": {
+    "productPolicyIncorrectlyExtracted": 0,
+    "inventedCausality": 1,
+    "populationGeneralization": 0,
+    "inventedReferral": 0
+  },
+  "cost": {
+    "fullUsd": 0.2284095,
+    "repairUsd": 0.00223125,
+    "totalUsd": 0.23064075,
+    "meanPerCompletedFragmentUsd": 0.0115320375,
+    "projected207Usd": 2.3871317625,
+    "fullInputTokens": 77462,
+    "fullOutputTokens": 17939,
+    "fullReasoningTokens": 0,
+    "repairInputTokens": 585,
+    "repairOutputTokens": 150,
+    "repairReasoningTokens": 0
+  },
+  "errorsByCategory": {
+    "MISSED_CLAIM": 18,
+    "EXTRA_CLAIM": 7,
+    "MERGED_CLAIMS": 11,
+    "OVER_FRAGMENTATION": 3,
+    "WRONG_SPAN": 20,
+    "SPAN_HALLUCINATION": 0,
+    "WRONG_CITATION": 4,
+    "CITATION_BLEED": 0,
+    "INVENTED_CITATION": 0,
+    "WRONG_KNOWLEDGE_TYPE": 13,
+    "WRONG_EPISTEMIC_STATUS": 18,
+    "UNRESOLVED_FORCED": 41,
+    "EVIDENCE_INFLATION": 6,
+    "UNSUPPORTED_INFERENCE": 0,
+    "EMG_HYPERTROPHY_LEAP": 0,
+    "BIOMECHANICS_RISK_LEAP": 0,
+    "CLINICAL_OVERREACH": 0,
+    "INVENTED_DIAGNOSIS": 0,
+    "ZERO_CLAIM_FALSE_POSITIVE": 0,
+    "ZERO_CLAIM_FALSE_NEGATIVE": 0,
+    "INVENTED_SOURCE": 0,
+    "INVALID_JSON": 0,
+    "SCHEMA_FAILURE": 0,
+    "PROVIDER_ERROR": 0,
+    "MISSING_PREDICTION": 0
+  }
+}

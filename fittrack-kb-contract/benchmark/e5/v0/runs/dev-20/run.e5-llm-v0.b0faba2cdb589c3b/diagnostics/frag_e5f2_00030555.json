@@ -1,0 +1,375 @@
+{
+  "fragmentId": "frag.e5f2.00030555",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "impose une tension relativement constante le long du câble (aux frottements de poulie près)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Décrit des effets mécaniques du système câble/poulie sur tension et moment articulaire."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": "Présenté comme un fait biomécanique général sans modalisation d'incertitude."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.4d58b9ed0e5d1b09",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "impose une tension relativement constante le long du câble (aux frottements de poulie près)",
+          "supportSpans": [
+            {
+              "text": "impose une tension relativement constante le long du câble (aux frottements de poulie près)",
+              "relativeStartByte": 29,
+              "relativeEndByte": 122,
+              "absoluteStartByte": 30584,
+              "absoluteEndByte": 30677
+            },
+            {
+              "text": "le moment résultant à l'articulation varie tout de même avec l'angle formé entre le câble et le segment corporel",
+              "relativeStartByte": 129,
+              "relativeEndByte": 246,
+              "absoluteStartByte": 30684,
+              "absoluteEndByte": 30801
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": "Aucun énoncé de niveau de confiance chiffré."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation biomécanique sans outcome clinique ou hypertrophique direct."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation ni type d'étude spécifié."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Décrit des effets mécaniques du système câble/poulie sur tension et moment articulaire."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": "Présenté comme un fait biomécanique général sans modalisation d'incertitude."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": "Aucun énoncé de niveau de confiance chiffré."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Observation biomécanique sans outcome clinique ou hypertrophique direct."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation ni type d'étude spécifié."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [
+            "Aux frottements de poulie près"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Propriété mécanique des câbles vs poids libres et conséquence sur profil de résistance."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": "Affirmé comme propriété générale avec exemple explicatif."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.0841edc185497df8",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre",
+          "supportSpans": [
+            {
+              "text": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre",
+              "relativeStartByte": 248,
+              "relativeEndByte": 404,
+              "absoluteStartByte": 30803,
+              "absoluteEndByte": 30959
+            },
+            {
+              "text": "par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule",
+              "relativeStartByte": 409,
+              "relativeEndByte": 643,
+              "absoluteStartByte": 30964,
+              "absoluteEndByte": 31198
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": "Pas de quantification d'incertitude."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Porté sur mécanique de résistance, pas d’issue clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source indiquée."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Propriété mécanique des câbles vs poids libres et conséquence sur profil de résistance."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": "Affirmé comme propriété générale avec exemple explicatif."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": "Pas de quantification d'incertitude."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Porté sur mécanique de résistance, pas d’issue clinique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source indiquée."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Affirme un avantage biomécanique documenté concernant la continuité de tension à une longueur musculaire."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established",
+          "reason": "Présenté comme documenté et factuel."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.adf4511428f39835",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée",
+          "supportSpans": [
+            {
+              "text": "C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée",
+              "relativeStartByte": 645,
+              "relativeEndByte": 801,
+              "absoluteStartByte": 31200,
+              "absoluteEndByte": 31356
+            },
+            {
+              "text": "bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale",
+              "relativeStartByte": 803,
+              "relativeEndByte": 937,
+              "absoluteStartByte": 31358,
+              "absoluteEndByte": 31492
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": "Niveau de confiance non spécifié."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Concerne la tension musculaire et le profil mécanique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de citations dans le fragment."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Affirme un avantage biomécanique documenté concernant la continuité de tension à une longueur musculaire."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established",
+              "reason": "Présenté comme documenté et factuel."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": "Niveau de confiance non spécifié."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Concerne la tension musculaire et le profil mécanique."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de citations dans le fragment."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "notamment en position raccourcie/contractée"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "Traduction en supériorité hypertrophique nette par rapport aux poids libres non démontrée de façon générale"
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language",
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 3920,
+      "outputTokens": 1145,
+      "reasoningTokens": 0,
+      "totalTokens": 5065,
+      "costUsd": 0.01635
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 3920,
+      "outputTokens": 1145,
+      "reasoningTokens": 0,
+      "totalTokens": 5065,
+      "costUsd": 0.01635
+    }
+  }
+}

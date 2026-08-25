@@ -1,0 +1,97 @@
+{
+  "fragmentId": "frag.e5f3.00046082",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f3.00046082",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.f941e0bdb29e9ee2",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Les rubriques poignet, épitrochléalgie, biceps et triceps ont peu de CPG directes",
+        "supportSpans": [
+          {
+            "text": "Les rubriques poignet, épitrochléalgie, biceps et triceps ont peu de CPG directes",
+            "relativeStartByte": 2,
+            "relativeEndByte": 85,
+            "absoluteStartByte": 46084,
+            "absoluteEndByte": 46167
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": null,
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Statement about scarcity of clinical practice guidelines; not a product rule itself."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "poignet",
+          "épitrochléalgie",
+          "biceps",
+          "triceps"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

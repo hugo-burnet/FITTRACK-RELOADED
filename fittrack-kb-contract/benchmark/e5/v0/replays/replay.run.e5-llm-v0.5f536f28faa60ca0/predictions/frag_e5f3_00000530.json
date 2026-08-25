@@ -1,0 +1,108 @@
+{
+  "fragmentId": "frag.e5f3.00000530",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00000530",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.2e51ade50842ef6e",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La décision doit partir de la réponse individuelle à une tâche — localisation et comportement des symptômes, irritabilité, amplitude, charge, volume, vitesse, lendemain de séance — plutôt que du seul nom d’une lésion.",
+        "supportSpans": [
+          {
+            "text": "Adapter une exposition, pas interdire une anatomie.",
+            "relativeStartByte": 5,
+            "relativeEndByte": 56,
+            "absoluteStartByte": 535,
+            "absoluteEndByte": 586
+          },
+          {
+            "text": "La décision doit partir de la réponse individuelle à une tâche — localisation et comportement des symptômes, irritabilité, amplitude, charge, volume, vitesse, lendemain de séance — plutôt que du seul nom d’une lésion.",
+            "relativeStartByte": 59,
+            "relativeEndByte": 291,
+            "absoluteStartByte": 589,
+            "absoluteEndByte": 821
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation de pratique sans étude citée"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Pas de citations ni de données empiriques"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Formulation normative de pratique clinique sans données rapportées"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Recommandation de pratique sans étude citée"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Pas de citations ni de données empiriques"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "Décision clinique en musculation adaptative"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content",
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,294 @@
+{
+  "fragmentId": "frag.f2.0021",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.f2.0021",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.3713ce7411e1ed61",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions",
+        "supportSpans": [
+          {
+            "text": "compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions",
+            "relativeStartByte": 60,
+            "relativeEndByte": 249,
+            "absoluteStartByte": 40915,
+            "absoluteEndByte": 41104
+          },
+          {
+            "text": "— **preuve directe d'hypertrophie de niveau modéré** (essai contrôlé mais échantillon limité, muscles et exercices spécifiques du haut du corps)",
+            "relativeStartByte": 392,
+            "relativeEndByte": 545,
+            "absoluteStartByte": 41247,
+            "absoluteEndByte": 41400
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial",
+              "within_participant_trial"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": "B_moderate",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial",
+              "within_participant_trial"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.424e50e70e773a55"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "sujets entraînés",
+          "répétitions partielles en position allongée vs amplitude complète",
+          "muscles/exercices du haut du corps"
+        ],
+        "limitations": [
+          "échantillon limité",
+          "muscles et exercices spécifiques du haut du corps"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.ad8f0e3c2fdb001e",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "confirme l'absence de supériorité générale de l'amplitude complète lorsque la partielle est réalisée à grande longueur",
+        "supportSpans": [
+          {
+            "text": "confirme l'absence de supériorité générale de l'amplitude complète lorsque la partielle est réalisée à grande longueur",
+            "relativeStartByte": 652,
+            "relativeEndByte": 778,
+            "absoluteStartByte": 41507,
+            "absoluteEndByte": 41633
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le type d’issue (p. ex. hypertrophie) n’est pas explicitement précisé pour cette méta-analyse dans le fragment."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review",
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le type d’issue (p. ex. hypertrophie) n’est pas explicitement précisé pour cette méta-analyse dans le fragment."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review",
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.40b2fe19ffc586b3"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "partielle réalisée à grande longueur"
+        ],
+        "limitations": [
+          "hétérogénéité des protocoles inclus"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.9aed96a4ac9d64c3",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "tout en soulignant l'hétérogénéité des protocoles inclus",
+        "supportSpans": [
+          {
+            "text": "tout en soulignant l'hétérogénéité des protocoles inclus",
+            "relativeStartByte": 780,
+            "relativeEndByte": 841,
+            "absoluteStartByte": 41635,
+            "absoluteEndByte": 41696
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review",
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review",
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.40b2fe19ffc586b3"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.f2.0004",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.f2.0004\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"2. Profils de résistance : poids libres, machines, câbles, élastiques\",\n      \"2.5 Poids libres vs machines : preuve directe d'hypertrophie\"\n    ],\n    \"rawText\": \"Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que **chaque modalité produit un gain de force supérieur dans son propre mode de test** (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, **mais aucune différence significative d'hypertrophie entre les deux modalités** (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al. / free-weight vs machine meta-analysis, *BMC Sports Sci Med Rehabil*](https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/)). **Ceci est une preuve directe d'hypertrophie de niveau modéré à élevé** (méta-analyse, mais nombre limité d'études d'hypertrophie disponibles, ce que les auteurs signalent eux-mêmes comme une limite appelant à la prudence). Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle plutôt que sur une supposée supériorité universelle d'une modalité.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que **chaque modalité produit un gain de force supérieur dans son propre mode de test** (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, **mais aucune différence significative d'hypertrophie entre les deux modalités** (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"/ free-weight vs machine meta-analysis, *BMC Sports Sci Med Rehabil*](https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/)).\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"**Ceci est une preuve directe d'hypertrophie de niveau modéré à élevé** (méta-analyse, mais nombre limité d'études d'hypertrophie disponibles, ce que les auteurs signalent eux-mêmes comme une limite appelant à la prudence).\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle plutôt que sur une supposée supériorité universelle d'une modalité.\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.02cf57ff924cbbd8\",\n      \"handle\": \"cit.f2.0004.01\",\n      \"rawLabel\": \"Heidel et al. / free-weight vs machine meta-analysis, *BMC Sports Sci Med Rehabil*\",\n      \"markdown\": \"[Heidel et al. / free-weight vs machine meta-analysis, *BMC Sports Sci Med Rehabil*](https://pmc.ncbi.nlm.nih.gov/articles/PMC10426227/)\",\n      \"relativeStartByte\": 595,\n      \"relativeEndByte\": 731\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":3,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"chaque modalité produit un gain de force supérieur dans son propre mode de test\",\"un résultat cohérent avec le principe de spécificité\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Résultat d'une méta-analyse rapporté.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Direction claire: supériorité spécifique au mode de test; cohérent avec spécificité.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Comparaison d'entraînement avec outcome de force.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"meta_analysis\"],\"evidenceTypesReason\":\"Le texte mentionne une méta-analyse.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.02cf57ff924cbbd8\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"tests de force évalués dans le même mode que l'entraînement\"],\"limitations\":[\"tendance en faveur des machines pour les tests sur machines (p = 0,064)\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"mais aucune différence significative d'hypertrophie entre les deux modalités\",\"sur des interventions de 9 semaines en moyenne\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Résultat d'une méta-analyse rapporté.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"uncertain\",\"epistemicStatusReason\":\"Non-différence rapportée avec IC large; prudence implicite.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"equivalence\",\"magnitude\"],\"confidenceLevels\":[\"low\",\"low\"],\"confidenceRationales\":[\"Non-différence statistique ne prouve pas équivalence; IC large.\",\"SMD proche de 0 avec IC large.\"],\"confidenceRaw\":\"SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751\",\"confidenceReason\":\"Valeurs numériques indiquées.\",\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Outcome hypertrophie direct.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"meta_analysis\"],\"evidenceTypesReason\":\"Le texte mentionne une méta-analyse.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.02cf57ff924cbbd8\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"interventions de 9 semaines en moyenne\"],\"limitations\":[\"nombre limité d'études d'hypertrophie disponibles (mentionné plus loin)\"],\"cannotConclude\":[\"Équivalence stricte entre modalités non démontrée.\"],\"unresolved\":[],\"flags\":[\"explicit_absence\"],\"coverageUnitIndexes\":[0,2]},{\"supportAnchors\":[\"Ceci est une preuve directe d'hypertrophie de niveau modéré à élevé\",\"méta-analyse, mais nombre limité d'études d'hypertrophie disponibles, ce que les auteurs signalent eux-mêmes comme une limite appelant à la prudence\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"DEFINITION\",\"knowledgeTypeReason\":\"Qualification du niveau de preuve rapportée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"probable\",\"epistemicStatusReason\":\"Niveau modéré à élevé mentionné avec prudence due aux limites.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Concerne preuve directe d'hypertrophie.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"meta_analysis\"],\"evidenceTypesReason\":\"Mention explicite.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"UNRESOLVED\",\"conditions\":[],\"limitations\":[\"nombre limité d'études d'hypertrophie disponibles\",\"prudence recommandée par les auteurs\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"modeling_content\"],\"coverageUnitIndexes\":[2]},{\"supportAnchors\":[\"Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Conclusion pratique non directement testée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation pratique fondée sur jugement.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Guidance pratique sans essai direct.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulation de conclusion pratique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"objectif hypertrophie\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[3]}]}",
+  "providerResponse": {
+    "id": "gen-1787646462-x2kkSIH0eNcjdEOeGPdA",
+    "object": "chat.completion",
+    "created": 1787646462,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":3,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"chaque modalité produit un gain de force supérieur dans son propre mode de test\",\"un résultat cohérent avec le principe de spécificité\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Résultat d'une méta-analyse rapporté.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Direction claire: supériorité spécifique au mode de test; cohérent avec spécificité.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Comparaison d'entraînement avec outcome de force.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"meta_analysis\"],\"evidenceTypesReason\":\"Le texte mentionne une méta-analyse.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.02cf57ff924cbbd8\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"tests de force évalués dans le même mode que l'entraînement\"],\"limitations\":[\"tendance en faveur des machines pour les tests sur machines (p = 0,064)\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"mais aucune différence significative d'hypertrophie entre les deux modalités\",\"sur des interventions de 9 semaines en moyenne\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Résultat d'une méta-analyse rapporté.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"uncertain\",\"epistemicStatusReason\":\"Non-différence rapportée avec IC large; prudence implicite.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"equivalence\",\"magnitude\"],\"confidenceLevels\":[\"low\",\"low\"],\"confidenceRationales\":[\"Non-différence statistique ne prouve pas équivalence; IC large.\",\"SMD proche de 0 avec IC large.\"],\"confidenceRaw\":\"SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751\",\"confidenceReason\":\"Valeurs numériques indiquées.\",\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Outcome hypertrophie direct.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"meta_analysis\"],\"evidenceTypesReason\":\"Le texte mentionne une méta-analyse.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.02cf57ff924cbbd8\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"interventions de 9 semaines en moyenne\"],\"limitations\":[\"nombre limité d'études d'hypertrophie disponibles (mentionné plus loin)\"],\"cannotConclude\":[\"Équivalence stricte entre modalités non démontrée.\"],\"unresolved\":[],\"flags\":[\"explicit_absence\"],\"coverageUnitIndexes\":[0,2]},{\"supportAnchors\":[\"Ceci est une preuve directe d'hypertrophie de niveau modéré à élevé\",\"méta-analyse, mais nombre limité d'études d'hypertrophie disponibles, ce que les auteurs signalent eux-mêmes comme une limite appelant à la prudence\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"DEFINITION\",\"knowledgeTypeReason\":\"Qualification du niveau de preuve rapportée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"probable\",\"epistemicStatusReason\":\"Niveau modéré à élevé mentionné avec prudence due aux limites.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Concerne preuve directe d'hypertrophie.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"meta_analysis\"],\"evidenceTypesReason\":\"Mention explicite.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"UNRESOLVED\",\"conditions\":[],\"limitations\":[\"nombre limité d'études d'hypertrophie disponibles\",\"prudence recommandée par les auteurs\"],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"modeling_content\"],\"coverageUnitIndexes\":[2]},{\"supportAnchors\":[\"Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Conclusion pratique non directement testée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation pratique fondée sur jugement.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Guidance pratique sans essai direct.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Formulation de conclusion pratique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"objectif hypertrophie\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[3]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVH_a3R6wzhvwiK2eGv7ISRpn6a2Gnn8W2jzO1PaK4teDrOvCODDWGjO58mHA5njpgceNR0XZsX9P5YrMlff1jbArrkYq2wy0vzTqhS8qY-2b6PpOrXLIfDvEfHFe5-QdC0eaJHUi3ouE13hpy11bTtBOWk0O_zTtIxO0sHxv1iYWV8CgINttVhQ53nlypo-xa-ehw_SKtBlR-CxoEU-n88sa3_At0bujmuZ-tlQ3mD_8HXhXDxKTE00fuZ_WfP50QNfFAeetPuPFcrkbbodwm5A5mZuRQ8RTPmtKCtDU9SrCJUYSVvX0vDzHPVU0pZTQI67ENTXJhnrY0ogNS_ZuGTBdLWd-T-NgPK2Y7cqZ7uoF7gqfWzAsavp8NGRXuSB3BoFC0XcRZcA2cs4U2qc9MiJ7abw-qmFuOuyo4LhlIt4rNo9le5N8zEKHi4UiCjuvrGd7Z88oim7nAn0Q-XSIq_Jxd8sXhBfv3bC1MK3rJjCjII_hwhC906ouU5QgPdOdikc1i0g64BPHzEuO7i6DFlryvj_4NBPsBjnmDEZTQDDgHhQ5Z5T5j6la5c65v-32ST-poiJeFaZyQnCWKoJrKlkZbsz8An1GecfEzi0BXiqc3gKjhCxfUIq3AEx0bCb1hbiYh8X6k9Vixm_WrUGTOy1Ei30Opfdi0Vrar2tlBuEOnfcAEJjyrLsNf8uvXWMiq7BaDzQLb4uxcxKKmGQD29q6aibxXFmZwExUPaMVuChfQgRSCYh_0aFYmTWSvMeT1aZWjyMges0z6ftXrge1YFKSeBRh2E_W4Y_v9TvjMlWLmHp9InHIc10NIzizFMWaTyCfYewbiDiV-L7sgAhgW6Y_urlJQ4Ry0NT03MQa6KgmSv9KU1oHltJ6prpOpTekccT5dzzhtKB4NGfPWUl7i3BAfzeV3z_dO9cNS_PWNxuBJ6d-pKPneoMczXhcpz5CJ0wY5-GfswLFiS-7ekoQUe76A==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_014036deec7361e4016a8d51ffb00c8195ba5c9c722a7b7e1f",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4467,
+      "completion_tokens": 1420,
+      "total_tokens": 5887,
+      "cost": 0.01661575,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2816,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.01661575,
+        "upstream_inference_prompt_cost": 0.00241575,
+        "upstream_inference_completions_cost": 0.0142
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646462-x2kkSIH0eNcjdEOeGPdA",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4467,
+    "completion_tokens": 1420,
+    "total_tokens": 5887,
+    "cost": 0.01661575,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2816,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.01661575,
+      "upstream_inference_prompt_cost": 0.00241575,
+      "upstream_inference_completions_cost": 0.0142
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 17380,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

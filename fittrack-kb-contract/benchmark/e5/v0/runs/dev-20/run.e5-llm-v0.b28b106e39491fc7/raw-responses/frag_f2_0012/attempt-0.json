@@ -1,0 +1,198 @@
+{
+  "fragmentId": "frag.f2.0012",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.f2.0012\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"8. Substitutions d'exercices : logique et critères\",\n      \"8.2 Trois niveaux d'équivalence\"\n    ],\n    \"rawText\": \"**Substitutions seulement partiellement équivalentes.** Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale. Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations ([Nunes et al., 2022](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)). Autre exemple : leg curl assis (hanche fléchie) vs leg curl couché (hanche neutre/étendue) — même muscle nominal, mais position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement. Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise (par exemple prioriser le chef long du triceps ou la portion proximale des ischio-jambiers).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"**Substitutions seulement partiellement équivalentes.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"** Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale.\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations ([Nunes et al.\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"kind\": \"SENTENCE\",\n      \"text\": \", 2022](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)).\"\n    },\n    {\n      \"unitIndex\": 4,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Autre exemple : leg curl assis (hanche fléchie) vs leg curl couché (hanche neutre/étendue) — même muscle nominal, mais position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement.\"\n    },\n    {\n      \"unitIndex\": 5,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise (par exemple prioriser le chef long du triceps ou la portion proximale des ischio-jambiers).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.1cb73570ada2b3fd\",\n      \"handle\": \"cit.f2.0012.01\",\n      \"rawLabel\": \"Nunes et al., 2022\",\n      \"markdown\": \"[Nunes et al., 2022](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)\",\n      \"relativeStartByte\": 536,\n      \"relativeEndByte\": 623\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":3,\"decision\":\"NO_QUALIFIABLE_PREDICATE\"},{\"unitIndex\":4,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":5,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MECHANISM\",\"knowledgeTypeReason\":\"Mechanistic modulation of regional hypertrophy by muscle length/biarticular differences.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Uses probabilistic language without direct outcome data within this sentence.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"mechanistic_hypothesis\",\"directnessReason\":\"Mechanistic rationale rather than direct hypertrophy measurement in this sentence.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"General statement without explicit study citation in this unit.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"modeling_content\",\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Describes differential muscle length due to shoulder position.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Presented as a straightforward biomechanical difference.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Biomechanical description, not outcome.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"No explicit biomechanical study citation tied solely to this clause.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[2]},{\"supportAnchors\":[\"avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Claims direct evidence of differential hypertrophy across configurations.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Described as direct evidence of differential outcome.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Explicitly states direct hypertrophy evidence.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"randomized_trial\"],\"evidenceTypesReason\":\"Implied experimental comparison; specific study cited in adjacent unit.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.1cb73570ada2b3fd\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"ambiguous_citation\"],\"coverageUnitIndexes\":[2,3]},{\"supportAnchors\":[\"position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Biomechanical effect of hip position on hamstring length.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Mechanistic description without outcome evidence.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"No direct outcomes claimed.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"No citation linked to this statement.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[4]},{\"supportAnchors\":[\"Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Normative guidance on exercise substitution.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Framed as a practice recommendation.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommendation rather than outcome evidence.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Editorial guidance tone.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"lorsque l'objectif est une hypertrophie régionale précise\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[5]}]}",
+  "providerResponse": {
+    "id": "gen-1787646479-1y6dcRKQ8UlhBoQMX6sv",
+    "object": "chat.completion",
+    "created": 1787646479,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":3,\"decision\":\"NO_QUALIFIABLE_PREDICATE\"},{\"unitIndex\":4,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":5,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MECHANISM\",\"knowledgeTypeReason\":\"Mechanistic modulation of regional hypertrophy by muscle length/biarticular differences.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Uses probabilistic language without direct outcome data within this sentence.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"mechanistic_hypothesis\",\"directnessReason\":\"Mechanistic rationale rather than direct hypertrophy measurement in this sentence.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"General statement without explicit study citation in this unit.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"modeling_content\",\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Describes differential muscle length due to shoulder position.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Presented as a straightforward biomechanical difference.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"Biomechanical description, not outcome.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"No explicit biomechanical study citation tied solely to this clause.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[2]},{\"supportAnchors\":[\"avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"Claims direct evidence of differential hypertrophy across configurations.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Described as direct evidence of differential outcome.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_hypertrophy_measured\",\"directnessReason\":\"Explicitly states direct hypertrophy evidence.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"randomized_trial\"],\"evidenceTypesReason\":\"Implied experimental comparison; specific study cited in adjacent unit.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.1cb73570ada2b3fd\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"ambiguous_citation\"],\"coverageUnitIndexes\":[2,3]},{\"supportAnchors\":[\"position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"BIOMECHANICAL_OBSERVATION\",\"knowledgeTypeReason\":\"Biomechanical effect of hip position on hamstring length.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Mechanistic description without outcome evidence.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"biomechanical_only\",\"directnessReason\":\"No direct outcomes claimed.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"No citation linked to this statement.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[],\"coverageUnitIndexes\":[4]},{\"supportAnchors\":[\"Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Normative guidance on exercise substitution.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Framed as a practice recommendation.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommendation rather than outcome evidence.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Editorial guidance tone.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"lorsque l'objectif est une hypertrophie régionale précise\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[5]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVIRmVmSdwu2Ur-zyQPBH0uWeYaWSJhdb19T3fra8da-j7kviX04ma7bE69Q-kL-vQ4Y-tYBWG5SThTEV61bYf43W2hkRvdoUqJBcpk8Uj7w4DmtaiHx2e_nK8mHnZv347_wlZ0eMog2a88JyBCOcclsi1XxZVE5mK7MBghS6uFsjVBkCxiUw55Rh6sLV2euLSq52av2EweW5GkAvjJfHqfBXv1rlApH8Wsv6w2dvxZbaW4r4e8tW_EdLRONedhqm5c_faD0BhrqqXsTiXoJJ22tC-Fk9WWhziBuTstS_4OZ45YoJVqtD8919uvNr7EiFRBi9Q_jv488TuEaYxshoLaV5I5fBF3AjHiHdjTfeBhUefjHArKclgYYpDxbbeVSfBShxuuVRHOoML9MPYHkNk2nEszTeymAYivVCHqkSRqgztRZaOkNgeejjmyYryf11GvrW_gO_AsSM5m8_noNpbH4QlgAWvy400YgxzYRwcz8qMicux2mOTojBM45tz4ZX9qTvTKo0NA0Fgqq81FCFwxNI7IvujIaxEXMf7bZTpNa_VJVPqo-V9X5bW049LFSglPAqq48WNwsNAXHAde464Iu2h-p6Oxw7s5ayH0X9hqycF1trli3JN7zIBR3k50ArwoKuNkwU-m4HF76Gtb18-0wC1TrWB06Yx3bDRhSnMHkWfHSzFp8TcaI-IiY8hxyMcit1vOK8ngLubeX_w-v1u9XlsP8LSzjAYIfJbjSZfu4H_dNn0r_4twKlV17ueGEe1udw8PlNSfxrRjJ7XGZfOMsZtPACdep6ucAriTQHbGcL3TZJfQxHzy6_vOBgjy-GUNe5n5gb7Lcvqu_wm0RnDLNDEboQ-pUWn9n341pd1Xef863pptC9iNk-z7GzjQ5gWrSOWvlzCoIemmixSjOI_s3Ui2rqqJXzZ66bXx3nykJuJm6I0dyIPmHlMStHORxeHS4.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_000f270d6bd1eb03016a8d521158748190b8d9436e423ff8da",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4412,
+      "completion_tokens": 1499,
+      "total_tokens": 5911,
+      "cost": 0.017337,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2816,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.017337,
+        "upstream_inference_prompt_cost": 0.002347,
+        "upstream_inference_completions_cost": 0.01499
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646479-1y6dcRKQ8UlhBoQMX6sv",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4412,
+    "completion_tokens": 1499,
+    "total_tokens": 5911,
+    "cost": 0.017337,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2816,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.017337,
+      "upstream_inference_prompt_cost": 0.002347,
+      "upstream_inference_completions_cost": 0.01499
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 19486,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [
+      {
+        "code": "CLAIM_UNIT_REFERENCE_INVALID",
+        "message": "Incohérence de couverture",
+        "critical": false,
+        "retryable": false,
+        "detail": {
+          "code": "CLAIM_UNIT_REFERENCE_INVALID",
+          "claimRef": "tmp.claim.03",
+          "unitIndex": 3
+        }
+      },
+      {
+        "code": "PARTIAL_VALIDATION",
+        "message": "Validation partielle : les claims sûres sont conservées",
+        "critical": false,
+        "retryable": false,
+        "attempted": 5,
+        "retained": 5,
+        "filtered": 0,
+        "coverageDiagnosticCount": 1
+      }
+    ],
+    "partialAudit": null
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "fragmentId": "frag.f3.0002",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.b28b106e39491fc7",
+    "fragmentId": "frag.f3.0002",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.a9a56d5c3368e19b",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie",
+        "supportSpans": [
+          {
+            "text": "Les seuils numériques ne sont pas universels.",
+            "relativeStartByte": 5,
+            "relativeEndByte": 51,
+            "absoluteStartByte": 2033,
+            "absoluteEndByte": 2079
+          },
+          {
+            "text": "Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie",
+            "relativeStartByte": 54,
+            "relativeEndByte": 315,
+            "absoluteStartByte": 2082,
+            "absoluteEndByte": 2343
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "La nature exacte des preuves du protocole cité n'est pas détaillée dans l'extrait."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type d'étude non explicitement indiqué."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Texte réfute l'universalité des seuils numériques et précise la portée limitée d'un protocole."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "Énoncé normatif soutenu par un exemple précis et une citation; direction établie (non universalité)."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "La nature exacte des preuves du protocole cité n'est pas détaillée dans l'extrait."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type d'étude non explicitement indiqué."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1c793d3b304a122b"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "Protocole de recherche de surveillance de la douleur dans certains essais tendineux"
+        ],
+        "limitations": [
+          "Exemple limité à certains essais tendineux; non généralisable à toute douleur ou pathologie"
+        ],
+        "cannotConclude": [
+          "Que ce seuil soit une règle universelle pour toutes douleurs/pathologies"
+        ],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.53311897cd8108b2",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain",
+        "supportSpans": [
+          {
+            "text": "Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain",
+            "relativeStartByte": 54,
+            "relativeEndByte": 213,
+            "absoluteStartByte": 2082,
+            "absoluteEndByte": 2241
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "threshold",
+                "confidence": "moderate",
+                "rationale": "Seuil numérique explicite (5/10)."
+              },
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "moderate",
+                "rationale": "Description factuelle du protocole."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Paramètre d'un protocole clinique dans des essais tendineux."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type d'étude non explicitement indiqué."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": "Décrit une règle/paramètre d'un protocole de recherche."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Paramètre protocolaire rapporté de manière descriptive."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "threshold",
+                "confidence": "moderate",
+                "rationale": "Seuil numérique explicite (5/10)."
+              },
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "moderate",
+                "rationale": "Description factuelle du protocole."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Paramètre d'un protocole clinique dans des essais tendineux."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type d'étude non explicitement indiqué."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1c793d3b304a122b"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "Certains essais tendineux",
+          "Pendant ou juste après l'exercice",
+          "Retour au niveau de base le lendemain"
+        ],
+        "limitations": [
+          "Paramètre propre à un protocole de recherche; non généralisable."
+        ],
+        "cannotConclude": [
+          "Qu'un tel seuil convienne à d'autres pathologies ou contextes"
+        ],
+        "unresolved": [],
+        "flags": [
+          "numeric_threshold"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

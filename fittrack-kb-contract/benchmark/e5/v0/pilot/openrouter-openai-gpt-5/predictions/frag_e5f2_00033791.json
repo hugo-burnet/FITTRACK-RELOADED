@@ -1,0 +1,277 @@
+{
+  "fragmentId": "frag.e5f2.00033791",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.7b20510d49684f1a",
+    "fragmentId": "frag.e5f2.00033791",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.7f35b0829e9ef1b0",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée)",
+        "supportSpans": [
+          {
+            "text": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée)",
+            "relativeStartByte": 0,
+            "relativeEndByte": 158,
+            "absoluteStartByte": 33791,
+            "absoluteEndByte": 33949
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Observation du profil de résistance, sans outcome clinique."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Propriété mécanique décrite explicitement pour les bandes élastiques."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Énoncé factuel sans réserve dans le fragment."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Observation du profil de résistance, sans outcome clinique."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "position raccourcie",
+          "position étirée"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.ed1ccd48811d484c",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "l'inverse potentiel d'un poids libre dans certains mouvements.",
+        "supportSpans": [
+          {
+            "text": "l'inverse potentiel d'un poids libre dans certains mouvements.",
+            "relativeStartByte": 160,
+            "relativeEndByte": 222,
+            "absoluteStartByte": 33951,
+            "absoluteEndByte": 34013
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "probable",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Comparaison biomécanique de profils de résistance."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Comparaison du profil de résistance des bandes avec celui des poids libres."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "probable",
+            "reason": "Formulation avec condition (« dans certains mouvements ») et notion de potentiel."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Comparaison biomécanique de profils de résistance."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "certains mouvements"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.47a2af4cf84ca184",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique",
+        "supportSpans": [
+          {
+            "text": "Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique",
+            "relativeStartByte": 223,
+            "relativeEndByte": 452,
+            "absoluteStartByte": 34014,
+            "absoluteEndByte": 34243
+          },
+          {
+            "text": "— preuve EMG, niveau faible, utile surtout pour raisonner sur le profil de résistance plutôt que pour établir une hiérarchie d'efficacité.",
+            "relativeStartByte": 599,
+            "relativeEndByte": 744,
+            "absoluteStartByte": 34390,
+            "absoluteEndByte": 34535
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EMG_OBSERVATION",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": "Donnée EMG sans mesure de résultat clinique ou hypertrophie."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "emg_study"
+            ],
+            "reason": "Étude EMG explicitement citée."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EMG_OBSERVATION",
+            "reason": "Observation EMG de différences d'activation entre modalités d'exercice."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Le fragment précise un « niveau faible » pour cette preuve EMG."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": "Donnée EMG sans mesure de résultat clinique ou hypertrophie."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "emg_study"
+            ],
+            "reason": "Étude EMG explicitement citée."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.8754ca02170001b9"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "exercices mono-articulaires du haut du corps",
+          "bandes élastiques contre poids libres"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "établir une hiérarchie d'efficacité"
+        ],
+        "unresolved": [],
+        "flags": [
+          "emg_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

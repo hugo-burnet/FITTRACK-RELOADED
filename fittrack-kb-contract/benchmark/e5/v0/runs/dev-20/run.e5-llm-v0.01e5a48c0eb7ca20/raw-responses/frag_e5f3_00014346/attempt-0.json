@@ -1,0 +1,262 @@
+{
+  "fragmentId": "frag.e5f3.00014346",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00014346\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"6. Rachis lombaire\",\n      \"6.1 Principes communs\"\n    ],\n    \"rawText\": \"Pour la lombalgie chronique, l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général; aucune méthode n’est nécessaire pour tous ([APTA 2021](https://www.jospt.org/doi/10.2519/jospt.2021.0304)). L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire ([OMS 2023](https://www.who.int/publications/i/item/9789240081789)). L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags ([ACR](https://acsearch.acr.org/docs/69483/narrative/)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Pour la lombalgie chronique, l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général; aucune méthode n’est nécessaire pour tous ([APTA 2021](https://www.jospt.org/doi/10.2519/jospt.2021.0304)).\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire ([OMS 2023](https://www.who.int/publications/i/item/9789240081789)).\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags ([ACR](https://acsearch.acr.org/docs/69483/narrative/)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.db13b05020d9cd68\",\n      \"handle\": \"cit.f3.00014346.01\",\n      \"rawLabel\": \"APTA 2021\",\n      \"markdown\": \"[APTA 2021](https://www.jospt.org/doi/10.2519/jospt.2021.0304)\",\n      \"relativeStartByte\": 225,\n      \"relativeEndByte\": 287\n    },\n    {\n      \"candidateId\": \"cand.e5-citation.9306bf2f305a3ed6\",\n      \"handle\": \"cit.f3.00014346.02\",\n      \"rawLabel\": \"OMS 2023\",\n      \"markdown\": \"[OMS 2023](https://www.who.int/publications/i/item/9789240081789)\",\n      \"relativeStartByte\": 411,\n      \"relativeEndByte\": 476\n    },\n    {\n      \"candidateId\": \"cand.e5-citation.5d8a519fce6f7204\",\n      \"handle\": \"cit.f3.00014346.03\",\n      \"rawLabel\": \"ACR\",\n      \"markdown\": \"[ACR](https://acsearch.acr.org/docs/69483/narrative/)\",\n      \"relativeStartByte\": 582,\n      \"relativeEndByte\": 635\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Recommandation d'un organisme (APTA) rapportée comme politique/guide.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Énonce des recommandations cliniques, non un résultat d'étude.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommandation d'un organisme, sans données d'essais présentées.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"clinical_practice_guideline\"],\"evidenceTypesReason\":\"APTA 2021 est une ligne directrice clinique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.db13b05020d9cd68\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie chronique\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"aucune méthode n’est nécessaire pour tous\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Énoncé de principe de guideline (non universalité d'une méthode).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Principe de recommandation, pas un résultat empirique.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Position d'un organisme.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"clinical_practice_guideline\"],\"evidenceTypesReason\":\"Attribué à APTA 2021.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.db13b05020d9cd68\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie chronique\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Recommandation d'un organisme international (OMS).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation sans données incluses ici.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommandation institutionnelle.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"medical_body_recommendation\"],\"evidenceTypesReason\":\"Position/recommandation OMS.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.9306bf2f305a3ed6\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie chronique primaire\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Recommandation/appropriateness criteria (ACR).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Critère d'usage clinique, pas un résultat empirique présenté.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommandation d'un collège de radiologie.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"medical_body_recommendation\"],\"evidenceTypesReason\":\"Appropriateness Criteria ACR.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.5d8a519fce6f7204\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie non compliquée sans red flags\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[2]}]}",
+  "providerResponse": {
+    "id": "gen-1787648559-gDEb7P8BJk2pqVlzuBTx",
+    "object": "chat.completion",
+    "created": 1787648559,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Recommandation d'un organisme (APTA) rapportée comme politique/guide.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Énonce des recommandations cliniques, non un résultat d'étude.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommandation d'un organisme, sans données d'essais présentées.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"clinical_practice_guideline\"],\"evidenceTypesReason\":\"APTA 2021 est une ligne directrice clinique.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.db13b05020d9cd68\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie chronique\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"aucune méthode n’est nécessaire pour tous\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Énoncé de principe de guideline (non universalité d'une méthode).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Principe de recommandation, pas un résultat empirique.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Position d'un organisme.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"clinical_practice_guideline\"],\"evidenceTypesReason\":\"Attribué à APTA 2021.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.db13b05020d9cd68\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie chronique\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Recommandation d'un organisme international (OMS).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Recommandation sans données incluses ici.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommandation institutionnelle.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"medical_body_recommendation\"],\"evidenceTypesReason\":\"Position/recommandation OMS.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.9306bf2f305a3ed6\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie chronique primaire\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"PRODUCT_POLICY\",\"knowledgeTypeReason\":\"Recommandation/appropriateness criteria (ACR).\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Critère d'usage clinique, pas un résultat empirique présenté.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Recommandation d'un collège de radiologie.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"medical_body_recommendation\"],\"evidenceTypesReason\":\"Appropriateness Criteria ACR.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.5d8a519fce6f7204\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"lombalgie non compliquée sans red flags\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"clinical_content\",\"output_policy_content\"],\"coverageUnitIndexes\":[2]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVoxZZYm8h-xTLPNhdyN-J7vik9LObLrBDQh89e0rFjgzdnWUl2N0gf7VU_iNii3oNGqNS7414ATr0qQauqimxdelsyxdY764l2pga8HMf1VyZkFwg_pZQ_eRkn19eikMh0iAD8KJYeupy168IPu-52Fyw_GjKNoH1qn4aQLN7KUCqAcOjg3OupKOeXjLMXzqhEEp0YiuJdaPmPMkcn7jNBLnnG-TC8RLHdvK0lmLEb3sQxXgMJTrTcbr21UMJiYRFVfRBGKTZLAmIx4boYEs6JdQ2sVP3uJ38EcqOQ4zaPNH83q_D-IwaD4EqgwhG8EbmgfazyiI4FLk87u3T5RXMcycvqX9OedFwsFwu_Wzv5i-hQnlGTlWY10nUDSVXPWliT7UlaRFxCY2e0rCu2cNOZ0HHkYdmii6yNJGmdTnYrkbc7hia7Q-P2C0KU8HhlYZTh3ilYA8nlsSrAIaMLX3FUgcjkiSn1egnSm9aso2c71JUF0uRytX0UrspSwVoPwDZkhVDKw_DSF5VFdsCtmPbYHftyIHCKe0jrH202n1I8aslZgTD8gRP37ZJeyhnfWHRWSU6Ow8Tj8PaSgJ_RSFiBup77E10MLw45YQvtT-M5jG_l7EJmt44BnS6nYx7gB48KlvrLUr_GD46g9UQGGqthuJsubeGt6ZIAjAUMYdC_IYyazesTkxUSJpxfDu4GnJo4pz6JpHw0jNIHdhAgX1HLunsdyHblK7-03S0YRzGsbd7IvBnrgl_V5LU4Tqw1pQz3aZvP4aQEcTcAlLU5Sdmr5nQliaKDurpLfAkU86mQJbwXuO1Vne1B9rtFHvfPhWxes2RyiqhuPJN8X9eAIwGGT26FoKLaGwdIZzbilKmhVLzj2pLvKe4boEnL8w3CcBv1CAukJA539Zf1kf446fGFIBc8sKPCsMo-FV7PAG3JQ3J9blxs9xz45U5LNqn4IFfWh.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_00c175c019ec0f93016a8d5a3135788193b6831c5e88ed2ae4",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4424,
+      "completion_tokens": 1258,
+      "total_tokens": 5682,
+      "cost": 0.014798,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2944,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.014798,
+        "upstream_inference_prompt_cost": 0.002218,
+        "upstream_inference_completions_cost": 0.01258
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787648559-gDEb7P8BJk2pqVlzuBTx",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4424,
+    "completion_tokens": 1258,
+    "total_tokens": 5682,
+    "cost": 0.014798,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2944,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.014798,
+      "upstream_inference_prompt_cost": 0.002218,
+      "upstream_inference_completions_cost": 0.01258
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 14499,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [
+      {
+        "code": "UNSUPPORTED_INFERENCE",
+        "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+        "critical": true,
+        "retryable": false,
+        "claimRef": "tmp.claim.01"
+      },
+      {
+        "code": "UNSUPPORTED_INFERENCE",
+        "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+        "critical": true,
+        "retryable": false,
+        "claimRef": "tmp.claim.02"
+      },
+      {
+        "code": "UNSUPPORTED_INFERENCE",
+        "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+        "critical": true,
+        "retryable": false,
+        "claimRef": "tmp.claim.03"
+      },
+      {
+        "code": "UNSUPPORTED_INFERENCE",
+        "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+        "critical": true,
+        "retryable": false,
+        "claimRef": "tmp.claim.04"
+      },
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "message": "Incohérence de couverture",
+        "critical": false,
+        "retryable": false,
+        "detail": {
+          "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+          "unitIndex": 0
+        }
+      },
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "message": "Incohérence de couverture",
+        "critical": false,
+        "retryable": false,
+        "detail": {
+          "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+          "unitIndex": 1
+        }
+      },
+      {
+        "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+        "message": "Incohérence de couverture",
+        "critical": false,
+        "retryable": false,
+        "detail": {
+          "code": "CLAIM_CONTENT_WITHOUT_CLAIM",
+          "unitIndex": 2
+        }
+      },
+      {
+        "code": "CLAIM_FILTERED",
+        "message": "Au moins une claim a été filtrée indépendamment",
+        "critical": false,
+        "retryable": false,
+        "attempted": 4,
+        "retained": 0,
+        "filtered": 4
+      },
+      {
+        "code": "ANNOTATION_PREDICTION_MISMATCH",
+        "message": "annotationPrediction provider incompatible avec les claims retenues",
+        "critical": false,
+        "retryable": false,
+        "providerAnnotationPrediction": "CLAIMS",
+        "derivedAnnotationPrediction": "ZERO_CLAIM"
+      },
+      {
+        "code": "PARTIAL_VALIDATION",
+        "message": "Validation partielle : les claims sûres sont conservées",
+        "critical": false,
+        "retryable": false,
+        "attempted": 4,
+        "retained": 0,
+        "filtered": 4,
+        "coverageDiagnosticCount": 3
+      }
+    ],
+    "partialAudit": null
+  }
+}

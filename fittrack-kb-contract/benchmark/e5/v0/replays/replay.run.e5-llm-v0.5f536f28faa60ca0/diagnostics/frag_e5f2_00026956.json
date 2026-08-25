@@ -1,0 +1,618 @@
+{
+  "fragmentId": "frag.e5f2.00026956",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 6,
+    "retained": 6,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le grand droit de l'abdomen réalise la **flexion du tronc**",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": "Action anatomique décrite pour un muscle spécifique"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le fragment ne précise pas le degré de certitude"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c2497c283d7b9b8e",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Le grand droit de l'abdomen réalise la **flexion du tronc**",
+          "supportSpans": [
+            {
+              "text": "Le grand droit de l'abdomen réalise la **flexion du tronc**",
+              "relativeStartByte": 0,
+              "relativeEndByte": 60,
+              "absoluteStartByte": 26956,
+              "absoluteEndByte": 27016
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Description anatomique fonctionnelle"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune attribution explicite à une étude particulière"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": "Action anatomique décrite pour un muscle spécifique"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le fragment ne précise pas le degré de certitude"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Description anatomique fonctionnelle"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune attribution explicite à une étude particulière"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "les obliques externes et internes réalisent la **flexion latérale**",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": "Fonction déclarée des obliques"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré de certitude non indiqué"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.96f6a0978196d8d9",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "les obliques externes et internes réalisent la **flexion latérale**",
+          "supportSpans": [
+            {
+              "text": "les obliques externes et internes réalisent la **flexion latérale**",
+              "relativeStartByte": 63,
+              "relativeEndByte": 132,
+              "absoluteStartByte": 27019,
+              "absoluteEndByte": 27088
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Fonction anatomique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'étude rattachée"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": "Fonction déclarée des obliques"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré de certitude non indiqué"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Fonction anatomique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'étude rattachée"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "les obliques externes et internes réalisent la **flexion latérale** et la **rotation du tronc**",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": "Fonction déclarée des obliques"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré de certitude non indiqué"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.113250a33ca75105",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "les obliques externes et internes réalisent la **flexion latérale** et la **rotation du tronc**",
+          "supportSpans": [
+            {
+              "text": "les obliques externes et internes réalisent la **flexion latérale** et la **rotation du tronc**",
+              "relativeStartByte": 63,
+              "relativeEndByte": 160,
+              "absoluteStartByte": 27019,
+              "absoluteEndByte": 27116
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Fonction anatomique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'étude rattachée"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": "Fonction déclarée des obliques"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré de certitude non indiqué"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Fonction anatomique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'étude rattachée"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "le transverse de l'abdomen agit principalement comme stabilisateur de la pression intra-abdominale plutôt que comme moteur de mouvement",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "ANATOMICAL_FACT",
+          "reason": "Rôle fonctionnel déclaré"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré de certitude non indiqué"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.8840785f4185367a",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "le transverse de l'abdomen agit principalement comme stabilisateur de la pression intra-abdominale plutôt que comme moteur de mouvement",
+          "supportSpans": [
+            {
+              "text": "le transverse de l'abdomen agit principalement comme stabilisateur de la pression intra-abdominale plutôt que comme moteur de mouvement",
+              "relativeStartByte": 163,
+              "relativeEndByte": 299,
+              "absoluteStartByte": 27119,
+              "absoluteEndByte": 27255
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "ANATOMICAL_FACT",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Description anatomique fonctionnelle"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'attribution explicite"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "ANATOMICAL_FACT",
+              "reason": "Rôle fonctionnel déclaré"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré de certitude non indiqué"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Description anatomique fonctionnelle"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas d'attribution explicite"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "Une analyse architecturale des muscles de la paroi abdominale humaine documente des implications fonctionnelles directement liées à l'architecture de chaque muscle",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation architecturale avec implications fonctionnelles"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le degré de certitude n'est pas précisé"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.15f8f268c8aec30a",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "Une analyse architecturale des muscles de la paroi abdominale humaine documente des implications fonctionnelles directement liées à l'architecture de chaque muscle",
+          "supportSpans": [
+            {
+              "text": "Une analyse architecturale des muscles de la paroi abdominale humaine documente des implications fonctionnelles directement liées à l'architecture de chaque muscle",
+              "relativeStartByte": 301,
+              "relativeEndByte": 466,
+              "absoluteStartByte": 27257,
+              "absoluteEndByte": 27422
+            }
+          ],
+          "domain": "anatomy",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Analyse architecturale de muscles humains"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "cadaveric_study"
+              ],
+              "reason": "L'expression 'analyse architecturale des muscles de la paroi abdominale humaine' suggère une étude anatomique"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation architecturale avec implications fonctionnelles"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le degré de certitude n'est pas précisé"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "anatomical_cadaveric",
+              "reason": "Analyse architecturale de muscles humains"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "cadaveric_study"
+              ],
+              "reason": "L'expression 'analyse architecturale des muscles de la paroi abdominale humaine' suggère une étude anatomique"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.2a28c5f0b581556c"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "ambiguous_citation"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 5,
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "une étude EMG montre une activité différentielle des régions du transverse de l'abdomen pendant la rotation du tronc",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": "Observation d'EMG rapportée"
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le fragment ne qualifie pas la solidité des preuves"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c26b3af78cac6c17",
+          "technicalClaimRef": "tmp.claim.06",
+          "rawStatement": "une étude EMG montre une activité différentielle des régions du transverse de l'abdomen pendant la rotation du tronc",
+          "supportSpans": [
+            {
+              "text": "une étude EMG montre une activité différentielle des régions du transverse de l'abdomen pendant la rotation du tronc",
+              "relativeStartByte": 587,
+              "relativeEndByte": 707,
+              "absoluteStartByte": 27543,
+              "absoluteEndByte": 27663
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Observation EMG"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Mention explicite d'une étude EMG"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": "Observation d'EMG rapportée"
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le fragment ne qualifie pas la solidité des preuves"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Observation EMG"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Mention explicite d'une étude EMG"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.f036e4fac1fa698e"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "pendant la rotation du tronc"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

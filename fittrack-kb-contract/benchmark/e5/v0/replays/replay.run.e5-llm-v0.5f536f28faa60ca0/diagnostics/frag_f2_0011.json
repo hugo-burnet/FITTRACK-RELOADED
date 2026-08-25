@@ -1,0 +1,442 @@
+{
+  "fragmentId": "frag.f2.0011",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 4,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "**Substitutions acceptables.** Deux exercices partageant le pattern de mouvement et le muscle principal, mais différant sur une dimension significative (longueur musculaire dominante, biarticularité exploitée différemment, demande lombaire).",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Énonce une règle de classification des substitutions acceptables."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Présenté comme une règle pratique sans citation."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.747383823c2efaf3",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "**Substitutions acceptables.** Deux exercices partageant le pattern de mouvement et le muscle principal, mais différant sur une dimension significative (longueur musculaire dominante, biarticularité exploitée différemment, demande lombaire).",
+          "supportSpans": [
+            {
+              "text": "**Substitutions acceptables.** Deux exercices partageant le pattern de mouvement et le muscle principal, mais différant sur une dimension significative (longueur musculaire dominante, biarticularité exploitée différemment, demande lombaire).",
+              "relativeStartByte": 0,
+              "relativeEndByte": 245,
+              "absoluteStartByte": 79867,
+              "absoluteEndByte": 80112
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Guideline pratique sans données directes citées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune étude citée; règle d'expérience."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Énonce une règle de classification des substitutions acceptables."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Présenté comme une règle pratique sans citation."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Guideline pratique sans données directes citées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune étude citée; règle d'expérience."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Substitutions entre deux exercices partageant pattern et muscle principal; diffèrent sur une dimension comme longueur musculaire dominante, biarticularité, demande lombaire"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "modeling_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Exemple : squat classique vs leg press — même fonction quadriceps dominante, mais le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press, et une extension de hanche concomitante qui sollicite davantage les fessiers et ischio-jambiers en synergie.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Décrit des différences mécaniques entre squat et leg press."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le fragment n'indique pas le niveau d'établissement."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.834c304719b06751",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Exemple : squat classique vs leg press — même fonction quadriceps dominante, mais le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press, et une extension de hanche concomitante qui sollicite davantage les fessiers et ischio-jambiers en synergie.",
+          "supportSpans": [
+            {
+              "text": "Exemple : squat classique vs leg press — même fonction quadriceps dominante, mais le squat impose une charge axiale rachidienne et une demande de stabilisation du tronc absente en leg press, et une extension de hanche concomitante qui sollicite davantage les fessiers et ischio-jambiers en synergie.",
+              "relativeStartByte": 246,
+              "relativeEndByte": 548,
+              "absoluteStartByte": 80113,
+              "absoluteEndByte": 80415
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de données expérimentales citées."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source explicite."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Décrit des différences mécaniques entre squat et leg press."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le fragment n'indique pas le niveau d'établissement."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de données expérimentales citées."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source explicite."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Comparaison squat vs leg press"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "Les différences mécaniques n'impliquent pas une supériorité hypertrophique"
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Ce sont des substitutions raisonnables pour l'hypertrophie du quadriceps (aucune étude ne démontrant de supériorité franche de l'un sur l'autre pour ce muscle spécifiquement dans les données identifiées)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Juge de raisonnabilité basée sur pratique et absence de preuve de supériorité."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Basé sur jugement pratique; mention d'absence de preuve sans citer."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.925bc2666dfb57bd",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Ce sont des substitutions raisonnables pour l'hypertrophie du quadriceps (aucune étude ne démontrant de supériorité franche de l'un sur l'autre pour ce muscle spécifiquement dans les données identifiées)",
+          "supportSpans": [
+            {
+              "text": "Ce sont des substitutions raisonnables pour l'hypertrophie du quadriceps (aucune étude ne démontrant de supériorité franche de l'un sur l'autre pour ce muscle spécifiquement dans les données identifiées)",
+              "relativeStartByte": 549,
+              "relativeEndByte": 759,
+              "absoluteStartByte": 80416,
+              "absoluteEndByte": 80626
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Assertion pratique sans étude citée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas de citations; conclusion pratique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Juge de raisonnabilité basée sur pratique et absence de preuve de supériorité."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Basé sur jugement pratique; mention d'absence de preuve sans citer."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Assertion pratique sans étude citée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas de citations; conclusion pratique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Objectif: hypertrophie du quadriceps; exercices: squat et leg press"
+          ],
+          "limitations": [
+            "Basé sur absence d'évidence identifiée, non une démonstration d'équivalence"
+          ],
+          "cannotConclude": [
+            "Supériorité franche de l'un ou de l'autre pour l'hypertrophie du quadriceps"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "mais pas interchangeables pour l'objectif de force spécifique au squat ni pour la demande lombaire.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Conseil pratique sur non-interchangeabilité selon objectifs."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Pas d'étude citée; recommandation pratique."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.91a6698b7388a543",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "mais pas interchangeables pour l'objectif de force spécifique au squat ni pour la demande lombaire.",
+          "supportSpans": [
+            {
+              "text": "mais pas interchangeables pour l'objectif de force spécifique au squat ni pour la demande lombaire.",
+              "relativeStartByte": 761,
+              "relativeEndByte": 861,
+              "absoluteStartByte": 80628,
+              "absoluteEndByte": 80728
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Sans données expérimentales."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune source; règle pratique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Conseil pratique sur non-interchangeabilité selon objectifs."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Pas d'étude citée; recommandation pratique."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Sans données expérimentales."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune source; règle pratique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "Objectif: force spécifique au squat; considération: demande lombaire"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f3.00040341",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00040341\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"14. Niveaux de preuve utilisés\"\n    ],\n    \"rawText\": \"- **D — très faible :** biomécanique seule, opinion ou extrapolation.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- **D — très faible :** biomécanique seule, opinion ou extrapolation.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"POLICY_ONLY\"}],\"claims\":[]}",
+  "providerResponse": {
+    "id": "gen-1787664917-u3SSTNX0anwHsnsgT613",
+    "object": "chat.completion",
+    "created": 1787664917,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"POLICY_ONLY\"}],\"claims\":[]}",
+          "refusal": null,
+          "reasoning": "**Analyzing evidence classification**\n\nI need to classify coverage units and extract claims from the fragment under \"14. Niveaux de preuve utilisés.\" The text defines a level D rating as very low, described as \"biomechanics only, opinion, or extrapolation.\" This is part of the evidence levels policy related to FitTrack's knowledge base. While classifying as POLICY_ONLY seems appropriate, I’m a bit unsure if I should include product policy definitions, given the instructions clarify that policy content doesn't count as a claim.**Clarifying claim classification**\n\nI’m grappling with how to distinguish between a product policy and a scientific claim. An editorial or product rule doesn't erase a standalone scientific assertion found elsewhere in the same fragment. My understanding is that PRODUCT_POLICY refers specifically to rules associated with FitTrack, but I’m unsure if it can also be classified as a claim. The guidance indicates that POLICY_ONLY refers purely to rules and should not be extracted as claims. This is quite confusing!**Deciding on claim extraction**\n\nI’m figuring out that we shouldn’t extract any claims here; instead, we’ll go for zero claims. But we still need to ensure coverage is complete while classifying the unit as POLICY_ONLY. The guidance implies that if there are no knowledge claims, we should set ZERO_CLAIM to indicate that no claims are present. The Provider DTO wants either ZERO_CLAIM or CLAIMS, so I'll confirm we are using ZERO_CLAIM with an empty claims list. But I must ensure that no claims reference coverage units at all.**Preparing JSON output**\n\nI'm set to generate a JSON output with annotationPrediction as ZERO_CLAIM. The coverageLedger will contain one entry where the unitIndex is 0 and the decision is POLICY_ONLY, with no claims included. I'll make sure that the coverageUnits only has one item, just to double-check everything. It's important we stick to the instruction that says \"SORTIE - exclusively JSON.\" Alright, let's proceed with this output!",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Analyzing evidence classification**\n\nI need to classify coverage units and extract claims from the fragment under \"14. Niveaux de preuve utilisés.\" The text defines a level D rating as very low, described as \"biomechanics only, opinion, or extrapolation.\" This is part of the evidence levels policy related to FitTrack's knowledge base. While classifying as POLICY_ONLY seems appropriate, I’m a bit unsure if I should include product policy definitions, given the instructions clarify that policy content doesn't count as a claim.**Clarifying claim classification**\n\nI’m grappling with how to distinguish between a product policy and a scientific claim. An editorial or product rule doesn't erase a standalone scientific assertion found elsewhere in the same fragment. My understanding is that PRODUCT_POLICY refers specifically to rules associated with FitTrack, but I’m unsure if it can also be classified as a claim. The guidance indicates that POLICY_ONLY refers purely to rules and should not be extracted as claims. This is quite confusing!**Deciding on claim extraction**\n\nI’m figuring out that we shouldn’t extract any claims here; instead, we’ll go for zero claims. But we still need to ensure coverage is complete while classifying the unit as POLICY_ONLY. The guidance implies that if there are no knowledge claims, we should set ZERO_CLAIM to indicate that no claims are present. The Provider DTO wants either ZERO_CLAIM or CLAIMS, so I'll confirm we are using ZERO_CLAIM with an empty claims list. But I must ensure that no claims reference coverage units at all.**Preparing JSON output**\n\nI'm set to generate a JSON output with annotationPrediction as ZERO_CLAIM. The coverageLedger will contain one entry where the unitIndex is 0 and the decision is POLICY_ONLY, with no claims included. I'll make sure that the coverageUnits only has one item, just to double-check everything. It's important we stick to the instruction that says \"SORTIE - exclusively JSON.\" Alright, let's proceed with this output!",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZofnTEzJlMMy_QEp8I-phdPbwCUiqaPXHCgSISKL_i5hA39CSaSFZ3nulOAooQVaZLgvEbxxxiIt3oXgq-s1hWAQ13O4QsWZGwyk35KMSL89xNuXBN00XBpXxblKasL_wIKrwEKK5539nDYeBopi9QTmoGFTVrIMAo1eD0we7PHNKmkUwBCUpTffr3zXm7_JLjpRlNfBafrFVtXTVtlnsbLEXk_UYkiZq3OegKj0-r9T2tJ_fTZ5xvGaNc1i71cHgT9Gw2DF2YLynsnmBDPMxmRmG6lckMGLMbcdh-mgrPVdwJ6N8XMNCuCJ7U3QzwB2awlpv2kwWEeu6tKqNtKaCEow7tV6463dNKDc9sN9T2Nbx5G1otuhJO2XOCXkSpnSo8Bj1CSfeIh0GY1ltHV8YkpZ7alnUnF9o7YaLxn59BY78prfMhon7QeCJndsv7J89PHVNVxUBvKch2AQ1j5cc_jBD_oqxWBwqtScds-3NMV8zkxGa12maECqWJL9SL6Y26CehHHJ9lTwolagRSNwPGo0W27V0aLtIAlUYAECzS2-VN5OjKPfdG11HQHyxWAU6Q1_yf8_SZmB-uKFDxUwZ4nKzXK13uVtsLld5eH560YlqGk6zkxMjMxMVnSsLW4ba1P45Qba_HARw2OrQZh_t1AERiOfyVPd9Tqb2Mtzoz_Rg2vWCJdJxk7r4oaLSPJqcDDSsMCVYFrX4QyjU0EEKWdEEfFWqoiGOuTpt8m3Qp39OH4Ouh8RKZ77WBBFrCjDgIYuylHYOFjc25vF7MzMRJJO-n6UCKNhb-Na-NeCoOryw_1u3ol6X8CqLNzieN9Qd0JKLoeYzghMzakVaNurQ4f1OR2A_1d18yV_OBsGw3UYNlb_jDS2VUWPZc2nMKHWBPDQnlF0H180alzgs4EtDWoOsuKad83-5t4LRwWzQOgsR8nqFz2Z-_cMqvOXYiW8n-jeBuQuB2NjruhuJsmfxXxPS0iW5HI5RUWHti8SuRJkDhsfQuPpHiy9zgFNJPs6IpP_RjkSPnR5WWZ_bCBd95rgXMDOSTrp49hopz6VgfQw8g4mX26-aNHuX1S_YQEkbe9OBdQb93AEnjRauy4C4Sajp81w34YtKGh8wcN6loXymyYe89hYjX104L7uOzz1JsjmItGl4pToiFVXctvuhRAfU8tSWgwrsJINOPlJCuc4Sm5PgdBE7s6L6pKJpEDYvGUNj36aKsAS8tRxdFaXDG6DVNIrovgKklwLpuwXRhfTVEUnO2zxwb9Xb5_DBlHNtMcoNRuoW-S5dXIXhWAgZuCpBLwAKPqBAjtthzlFsJ9srIVFnsbEXQ9B-yDhuP7LPMTbq4XR1K3dS0ClfPBqLDcPjBMyBWb2tLwx5npKkO5WyuMTODzvDON9McnuuufXyhU7D4KF9nopmqwKbn7e1h15izj934svxMsIX8xGyBUidPlz7Tg7g64VuVDXaE5kmiCmkRh2MYgsFxyeR94EeV7wBPaLEi7fXRFcPAkBgIDviYHNgGZ4WCEZpzJo9-uEuFG_nCJAkTiChf1TyqBU_5w0q07oD-9v6LhQBmndjC-bsjQl_VcH21uXVAo6Kw21EL7__KC09c7nLfOwQmpJGYhfM6jo1RVI1OhSyqZ_bqhvaAd3ohSyqez9ApyK1MDCa2x77UgPCNr56Pr5CbSNs-wZOkuT56O5XCYQi24rg0hSD84bs2wK7aJQdfSpulLLgvTHQBBkGj0iNPycvSUws6T4u1CVWwzNKhStDHLbBd3Z2--4eHbIUsvcjO2DqpAqOtWZK76EoTL2FNGv0WmV8E1ymmA9LALq3ADH3PEETtaA-E50czUS2KYlFccCwgv1OhxAYJeL0be-ZF63Kw4p5AGnxqPTtGn_9dH8uqH0a2iqsYz2cx3gSPcNCpOK3Q64aHl0dtubIBgb-7UWBuSvf1gjp-d6K2oVHO1BIGMjoYkv-GU5KmXkFXdARTgd_cdVFAfsGNaKPp39mkmd5SJqoCuFw6YqMeHkjzT8rSdscpKF63d5Q3Tz5FXB_aB7crNL7BUfdUgwYMU7wDcaLYNnHm5j0k0hMkXhGU-23gKz8z59mTdJiAi8zEsBd6cFFyba38ITZVKhLuS2vqg_8Tkmk3DKyux60DP0t4ZWlUsxUl4sqOB96IbPyV69_fib9OqVCvuPdodb235ZkqIfLaQWp7dwoElDjdwpy2jL2DRgHZVrQNY5tZQIF61FdpGADaU3LfD0MG9bTAFm7Kip1SCJn1Ml0TkN-vd26LoUohiJ0v6s-_lNbXRvVYlvCN6ROH3i7uCSsFVs4g_YcEPIFEKeV5L-B_0gu-WYQqNZHTHPV7bufymEBES2UTUTtGv-hncQbWMNFCCtAKs3CaWRQ6h8y2YDmfA3s6Olxr20vmQa-uuvVfIZpMAvGnudYHs7fY3i-keg0keDDIBB4kvMnUVpMJR4bllzbW-pOizLExCqaX0Rj_JgTvDvsvW-CWK3kTuYakR3h6eMo5bJnRt_hK7yQdQatHsLRUmeswx0sIONYDQxd4b74c9nqigb33hETRv6zSSnfrBT0apak5k8o8R0y4ygqxB23cFaDSN9zKtHmoDx4LpZtqmc0MAEm3bBAWxrvLWdkflrU_U_JHC48uzzzw-aZ77QP7ZbRz5g4b7ZBi5MO60TFY_2e_j_V96bg4lFmu3iYAKu5t0hZ50mt79DpVqI_rzMgzOlkGeVuifnKov2U3Qlxa3aWqyqJJdG6-HK7Qbfiw9Ja-eidYiKlFssNBcq9yxFc9282BKZ5SblfMms_QypUWTDGPEnB9XkqykGupCnlzCCQCsiyUupK7mzfsTCWsjROj51e1loGZaXpSSKJBkACkQmolGTX6qsN_HCJlyYAqsKu8TpUlhF5xDhfi72IL83m6F1Fm2ZM7K1L5GR-Vojn9_QAzH5uCeBxOlyUY0PLll1-lZ-ju75c7MIgTKp1ppWE6KLxVjpaLgjUfKUK16WGgrj6n-L9Ny8I6NfCk8ahpw6R59vWaYBBh7auka8vAf5R9DMcucfv7KX_AZzVYS701lfzAXS8q7X-ql7FgJwvsGdYNft0wtBYICVdzV0n3JmqLbeCYDjDsrTc_dfq-3mb3pV9sBkgtAXOBJpnBH4h9VRKkx0wGcJmIGF-F3e8NARcUeIXBn2yipEkamwxr1O2Ip-mCc_lUNgLe5XEBMIICVCEZCjCYZbPgWX_C_EPXbEEXhzg8u5RXPVlWKAIaY_6ysRG5wOBAybJIQEJEgEOhNdItDH5ap-k7Fl4NtESTqDmXLYOxrhpQR35o3CIPX6P_g8LeDqLkma0W7_gK5qX1dQP1jjpxVJ89MsvO9hayEn0nmzIhT7Ul39TX_YA7S-lwsz1kMzUO6_P5QpxGNV7R4JwdJW1y_rp2Qm2xXNPkKLmPuyF9Fb-6uysYf7kbuFXXqyywPocWaNQ6ce1N9xGglsV4dF4bR4wB4P7mjqtczPukfZAGShPfrXhDJ-viyAXz6M2XRt5AMctArfzNVVLpfKLRHbIMJLeqJcSwjaKgzRESnp6zq9A7nYLGU3m_TzdqeATWUQzZRGpi6xslk1A4ZzgwrBpkJVNoXr-OkWlLzf25PrygFB8efjaBfRX_7FSC43ZljPcctBUpLSR-A52z1zVl3T6ICzko2HMPi0BaYulkH0T1NPWdtA-ITEBpvrrboZ6bUGR1L_Sg73IGFuvA8W21arVYgg_4kR25jPg-8hYtXp6AxXGou_9Ba62WP9s9I6RjwKYTotOPjLHSpZLzIMHHduxQxL4DR5iqhI3djarvF5RxOpe-jA6ypqgh52LlfnmOEpwopYh8hX36A7tH8G7EF4RiybWFqMCmAqfqEyP-wsYREKQk19a1S7cut0IXwb-CZgTAjk5tqoigEK98-xsr2NNDpihvv5nFIXMyIb4pU4AJ265a-jT8lOwDfFSuOE2zELWv8ZBAsWPnnOouEipOGQ_2SjRAMo77cr_FuIa8uTPh6MfN9sG4D77Xkv3gQ9VbFv4BDrIWaL1eYTo5e-O_IOA7LaZ-4wvht8DmRhwJJkkIXaEYu9FuUEhEIPrvO4KHeRzPuNTyBX6dMMZ2adC5QEfr1Pd3PSrV9pB-cr1C_SqEeDlSFbywK3MtFgR_oI1OceYyM97x0OvrJ1vIsNvF8gFFExHhoeKOfSMfXd0kLi1_upyHx0r2XizYIFfxAODyBLLaTqFfoT0wijEanZkR1f31Iw6QWCWQNIWIYrMtkKV_mqXuJpSoxoH5Zq9GuxEV84Nl3fRn0eKm3OZChepM6eeHPMEuaFpx1kqyJM89GSQYx0hJ9OP0DMI1DTRAWuMydPKfWFcHU81oS_Nhu1e2GSzKMuXxberw2Co0YY2yv0Zuk_2ulHg00NdTypjpwmSUYQQV2NkwBuCo099PMosoe8KLxCCSJ3-QgrhPOGvPActWbwLhYGtUXc_6IWUGra7CViDxGiV6WHQgZEOBvkSwla__CSLrs2zvi_UzWLpf854dL4up5kuMNqVHsoByy-EnKGh4hJqFURudnpG5AB9YoInyo2at_FD8Yi2J8WxLuINUvAOKjPwVZAs4-AxZ241oDxupnuCkiGae-5JQ4ZjhKEddlMd4K0eAxG3-aHZ3u450GoFbZ2qUExo6vzhvzdp7prYL0Ewpzg9YgEAOZxCpdRKUb4oFHyHl0gtm5aMSYi6zwGKPwpVxb-kyt-7EAyFEkKJ23h7PujjxD0U85PTRZTagyJlKVJPi7V0w_fsVUjYwBAc19sK2o_ifg88JgHVDZtMGdqIrWHret7NLb-mgApdarqfE6C7swQcjjfGnSJR-1DrnpMl3haHu0ud1z0hPEBzIkuqTYDgkHwIGN9lWv7b4kkZD7fBLpytIzFwIqCjxyjFPwylYSJBmeviIRq1rWV1PqT0P79Z6CownQqEd8laIg7nGfI1hfJcOEPov5IKkqh5Op6XVb07PEzjs1BV6ulWVUPlyqEBiMuLWIa-4oKuyXBEEnD7cnt867jeah5gRySwEuiaiqQ3SRlGg_yrWylRciSArUeCExEQskH3I3yFf6_ljooQy38kBtitE8EH6VA3EQV7pCKVGcKKoP6irUm2jWxQq-iOMP1yVFTkKYRgosqRiMIRmCcRsB4Rif6cVoxfGBXCVRNu6RxAI5fKMjKbwbykhEidSBz68kmnuLWbmExHocLEvDIw==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_09a35f69985e767b016a8d9a169eb88197ba30c651062f8144",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4270,
+      "completion_tokens": 689,
+      "total_tokens": 4959,
+      "cost": 0.0083395,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0083395,
+        "upstream_inference_prompt_cost": 0.0014495,
+        "upstream_inference_completions_cost": 0.00689
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 640,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787664917-u3SSTNX0anwHsnsgT613",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4270,
+    "completion_tokens": 689,
+    "total_tokens": 4959,
+    "cost": 0.0083395,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0083395,
+      "upstream_inference_prompt_cost": 0.0014495,
+      "upstream_inference_completions_cost": 0.00689
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 640,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 12910,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

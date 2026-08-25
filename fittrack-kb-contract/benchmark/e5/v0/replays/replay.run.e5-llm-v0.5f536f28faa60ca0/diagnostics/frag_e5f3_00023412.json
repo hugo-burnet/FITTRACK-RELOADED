@@ -1,0 +1,277 @@
+{
+  "fragmentId": "frag.e5f3.00023412",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "UNSUPPORTED_INFERENCE",
+      "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+      "critical": true,
+      "retryable": false,
+      "claimRef": "tmp.claim.02"
+    },
+    {
+      "code": "CLAIM_FILTERED",
+      "message": "Au moins une claim a été filtrée indépendamment",
+      "critical": false,
+      "retryable": false,
+      "attempted": 3,
+      "retained": 2,
+      "filtered": 1
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 3,
+      "retained": 2,
+      "filtered": 1,
+      "coverageDiagnosticCount": 0
+    }
+  ],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 2,
+    "filtered": 1,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le terme historique « impingement » ne prouve pas qu’un tissu est mécaniquement “écrasé” par toute élévation.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Affirme qu'un terme historique ne prouve pas un mécanisme mécanique généralisé."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le niveau de certitude n'est pas précisé."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c855ab1f497c8a7b",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Le terme historique « impingement » ne prouve pas qu’un tissu est mécaniquement “écrasé” par toute élévation.",
+          "supportSpans": [
+            {
+              "text": "Le terme historique « impingement » ne prouve pas qu’un tissu est mécaniquement “écrasé” par toute élévation.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 122,
+              "absoluteStartByte": 23412,
+              "absoluteEndByte": 23534
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source ou type de preuve spécifié."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Affirme qu'un terme historique ne prouve pas un mécanisme mécanique généralisé."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le niveau de certitude n'est pas précisé."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source ou type de preuve spécifié."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Ne permet pas de conclure qu’une élévation écrase mécaniquement un tissu."
+          ],
+          "unresolved": [],
+          "flags": [
+            "clinical_content",
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "L’IA doit utiliser « douleur liée à l’élévation » ou le diagnostic rapporté, sans inférer le mécanisme.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "PRODUCT_POLICY",
+          "reason": "Règle explicite sur le libellé/inférence que l’IA doit appliquer."
+        },
+        "epistemicStatus": {
+          "state": "NOT_APPLICABLE",
+          "value": null,
+          "reason": "Politique produit, pas une vérité scientifique."
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_INFERENCE",
+            "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+            "critical": true,
+            "retryable": false,
+            "claimRef": "tmp.claim.02"
+          }
+        ],
+        "canonicalCandidate": null
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Pour les élévations latérales, presses et rotations, la réponse clinique prime sur un angle prétendument parfait.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandation/priorisation de pratique clinique."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Présenté comme une règle de pratique, sans données citées."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.4afab78f23f6d3da",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Pour les élévations latérales, presses et rotations, la réponse clinique prime sur un angle prétendument parfait.",
+          "supportSpans": [
+            {
+              "text": "Pour les élévations latérales, presses et rotations, la réponse clinique prime sur un angle prétendument parfait.",
+              "relativeStartByte": 240,
+              "relativeEndByte": 358,
+              "absoluteStartByte": 23652,
+              "absoluteEndByte": 23770
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de source clinique ou étude indiquée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Énoncé de pratique sans référence."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandation/priorisation de pratique clinique."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Présenté comme une règle de pratique, sans données citées."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de source clinique ou étude indiquée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Énoncé de pratique sans référence."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "clinical_content",
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

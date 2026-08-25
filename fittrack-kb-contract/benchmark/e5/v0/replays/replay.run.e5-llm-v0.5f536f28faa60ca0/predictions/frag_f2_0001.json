@@ -1,0 +1,192 @@
+{
+  "fragmentId": "frag.f2.0001",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0001",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.77cfa6cb01d81e43",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "L'EMG de surface mesure une activité électrique moyennée et globale, pas la tension mécanique par fibre, ni le recrutement des unités motrices profondes, ni la durée sous tension à une longueur donnée.",
+        "supportSpans": [
+          {
+            "text": "L'EMG de surface mesure une activité électrique moyennée et globale, pas la tension mécanique par fibre, ni le recrutement des unités motrices profondes, ni la durée sous tension à une longueur donnée.",
+            "relativeStartByte": 188,
+            "relativeEndByte": 397,
+            "absoluteStartByte": 1792,
+            "absoluteEndByte": 2001
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "No explicit confidence qualifiers provided."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": "Describes EMG measurement properties."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No explicit citation for this definitional statement."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": "Defines what surface EMG measures and explicitly what it does not."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Presented as standard definitional scope of surface EMG."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "No explicit confidence qualifiers provided."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "emg_only",
+            "reason": "Describes EMG measurement properties."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No explicit citation for this definitional statement."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "emg_content",
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.9afe5025bfc66424",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "l'EMG du hip thrust dépasse largement celle du squat pour le grand fessier (moyenne 69,5 % contre 29,4 % de la contraction volontaire maximale, pics 172 % contre 84,9 %), mais neuf semaines d'entraînement à volume égalisé produisent une hypertrophie fessière quasiment identique en IRM dans les trois régions du grand fessier, sans corrélation fiable entre l'amplitude EMG et la croissance mesurée",
+        "supportSpans": [
+          {
+            "text": "l'EMG du hip thrust dépasse largement celle du squat pour le grand fessier (moyenne 69,5 % contre 29,4 % de la contraction volontaire maximale, pics 172 % contre 84,9 %), mais neuf semaines d'entraînement à volume égalisé produisent une hypertrophie fessière quasiment identique en IRM dans les trois régions du grand fessier, sans corrélation fiable entre l'amplitude EMG et la croissance mesurée",
+            "relativeStartByte": 485,
+            "relativeEndByte": 891,
+            "absoluteStartByte": 2089,
+            "absoluteEndByte": 2495
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "No explicit confidence grading provided."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Hypertrophy assessed via MRI after training."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": "Describes a training comparison with equalized volume over nine weeks."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Reports comparative EMG and hypertrophy outcomes from a specific study."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "States observed dissociation between higher EMG and similar hypertrophy."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "No explicit confidence grading provided."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Hypertrophy assessed via MRI after training."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "randomized_trial"
+            ],
+            "reason": "Describes a training comparison with equalized volume over nine weeks."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.ed7e5bec1319486d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "population and protocol details not specified beyond volume-equalized nine-week training."
+        ],
+        "limitations": [
+          "Single comparative study context.",
+          "Exact randomization not explicitly stated in text."
+        ],
+        "cannotConclude": [
+          "Higher EMG does not predict greater hypertrophy in this context."
+        ],
+        "unresolved": [],
+        "flags": [
+          "emg_content",
+          "biomechanical_risk_language",
+          "ambiguous_citation"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

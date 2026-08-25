@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00083542\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"9. Retour empirique des praticiens *evidence-based*\"\n    ],\n    \"rawText\": \"Une étude qualitative interrogeant des coachs de bodybuilding sur leurs pratiques et les comparant aux recommandations de la littérature *evidence-based* documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible ([Bodybuilding Coaching Strategies Meet Evidence-Based Recommendations, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10299204/)) — **preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**. Sur cette base et sur les principes biomécaniques établis dans ce rapport, les recommandations pratiques suivantes sont explicitement classées comme **expert_practice**, c'est-à-dire non validées par un essai contrôlé dédié :\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Une étude qualitative interrogeant des coachs de bodybuilding sur leurs pratiques et les comparant aux recommandations de la littérature *evidence-based* documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible ([Bodybuilding Coaching Strategies Meet Evidence-Based Recommendations, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10299204/)) — **preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Sur cette base et sur les principes biomécaniques établis dans ce rapport, les recommandations pratiques suivantes sont explicitement classées comme **expert_practice**, c'est-à-dire non validées par un essai contrôlé dédié :\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.13c064ac2a25902d\",\n      \"handle\": \"cit.f2.00083542.01\",\n      \"rawLabel\": \"Bodybuilding Coaching Strategies Meet Evidence-Based Recommendations, 2023\",\n      \"markdown\": \"[Bodybuilding Coaching Strategies Meet Evidence-Based Recommendations, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10299204/)\",\n      \"relativeStartByte\": 361,\n      \"relativeEndByte\": 489\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"POLICY_ONLY\"}],\"claims\":[{\"supportAnchors\":[\"documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée\",\"avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible\",\"**preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"The sentence reports findings from a qualitative study.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"uncertain\",\"epistemicStatusReason\":\"Qualitative survey with very low level for causal claims indicates limited certainty.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"descriptive_accuracy\"],\"confidenceLevels\":[\"low\"],\"confidenceRationales\":[\"Qualitative/enquête with very low level for causal claims; mapping consensus only.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"qualitative_survey\",\"directnessReason\":\"Explicitly a qualitative/enquête study.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"qualitative_study\"],\"evidenceTypesReason\":\"Explicitly stated.\",\"clinicalEvidenceLevel\":\"D_very_low\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.13c064ac2a25902d\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[\"Very low level for any causal claim; utility limited to mapping practice consensus.\"],\"cannotConclude\":[\"Causal relationships cannot be concluded.\"],\"unresolved\":[],\"flags\":[\"expert_practice\",\"explicit_absence\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787646506-4qSyWGa2JCDMT7AwfOxV",
+    "object": "chat.completion",
+    "created": 1787646506,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"POLICY_ONLY\"}],\"claims\":[{\"supportAnchors\":[\"documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée\",\"avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible\",\"**preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**\"],\"rawStatementAnchorIndex\":0,\"domain\":\"training\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":\"The sentence reports findings from a qualitative study.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"uncertain\",\"epistemicStatusReason\":\"Qualitative survey with very low level for causal claims indicates limited certainty.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"descriptive_accuracy\"],\"confidenceLevels\":[\"low\"],\"confidenceRationales\":[\"Qualitative/enquête with very low level for causal claims; mapping consensus only.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"qualitative_survey\",\"directnessReason\":\"Explicitly a qualitative/enquête study.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"qualitative_study\"],\"evidenceTypesReason\":\"Explicitly stated.\",\"clinicalEvidenceLevel\":\"D_very_low\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.13c064ac2a25902d\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[],\"limitations\":[\"Very low level for any causal claim; utility limited to mapping practice consensus.\"],\"cannotConclude\":[\"Causal relationships cannot be concluded.\"],\"unresolved\":[],\"flags\":[\"expert_practice\",\"explicit_absence\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVIr7R-q0zsHU6y2lrOi6vyIUMcQyJIaz7sWtzXqx56OBCy2aQUGQtkamG4G_jcZUiYLg3HPT4GrkxLZV2nQ09tO1HW_8qyhhyB6MDVZHmVBEpYz70ZhGm2paDrjLbUuuxOFFSowzVAeHk64JwuKQBDSJ-feuJncpvLiuHaR3yPuQbFmJHwR3ReGFw2QEnYSKKhOB_Rm48erCai2FZC10Ms9DBNMsajM2pmG1-xP5TEjSbuAVMXB7LNpIRKuOgSXd7zvoU5it7nI1BcaJ84nT6FpsUWtLrGM14NI0vUmBzJVW8cK7Q90phg2tKfkzxxXOrdqWVX6KVw-WPe2O2METjFBmcnmC41LS9AF7ZCGfpSE9T-Y-XSA-6Y-VE9tX7jRt8VFF5NkhPWi5ZRjnESFJcm1tSIMEEGZC_rmAT7GrUhMF2-loenRW8clLnJnBzBZcoHaaRC-pMyaFkd-mFKqUJ12h9rXOGTu7P-rMD67zXPRWhOmaocb7BOwT6Qza35Tyfen3e-kfPQBSHkElro7GvI9vtfl9zTmMYQOFcXlmgpQ2ALtFhMaBXmkqLpl5mDnV28540GWaT-Jpo8xsqXoR8xFzBmKqHHoanTt2zmTH_6trRUGqSlB-QyBBy83_P1hCYrgFwyrlTUIrsW-zZCSvrWEekyTntbVmqNZtluvaRpv1rYT-2RLnQblEW6Cb8OF5iQSp7G_PnH4o5DwG9BXh52dTkA9tfo7WWzITAd2n36Gsla8GYCXHxbN3UZbnbGrZmzdrVeO6z7Yypk8NV154PeGbHp9XvMkiwFfIvyBGmkOS-dvcnbCGaUfU8qceDieL9js8m3BQCqsgESV8CbOZVsY60ZZD32stJ4sMuau7JOnfJZckqV9H-sH0LftYcleE8O8Z0TmNijszu6qzPQvIVhzJmdNQwc-tMxF79y4fkb1OTd9xLKKJQ_mcJEg-mzF2rEU.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0deab1f49f32b9b7016a8d522b60248190ab7a75b65bbf1d4c",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4126,
+      "completion_tokens": 429,
+      "total_tokens": 4555,
+      "cost": 0.0062795,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2816,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0062795,
+        "upstream_inference_prompt_cost": 0.0019895,
+        "upstream_inference_completions_cost": 0.00429
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646506-4qSyWGa2JCDMT7AwfOxV",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4126,
+    "completion_tokens": 429,
+    "total_tokens": 4555,
+    "cost": 0.0062795,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2816,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0062795,
+      "upstream_inference_prompt_cost": 0.0019895,
+      "upstream_inference_completions_cost": 0.00429
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 6309,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

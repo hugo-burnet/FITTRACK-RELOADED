@@ -1,0 +1,363 @@
+{
+  "fragmentId": "frag.e5f2.00030555",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.01e5a48c0eb7ca20",
+    "fragmentId": "frag.e5f2.00030555",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.031755b47be8ad36",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un système de câble/poulie impose une tension relativement constante le long du câble (aux frottements de poulie près)",
+        "supportSpans": [
+          {
+            "text": "Un système de câble/poulie impose une tension relativement constante le long du câble (aux frottements de poulie près)",
+            "relativeStartByte": 0,
+            "relativeEndByte": 122,
+            "absoluteStartByte": 30555,
+            "absoluteEndByte": 30677
+          },
+          {
+            "text": "le moment résultant à l'articulation varie tout de même avec l'angle formé entre le câble et le segment corporel",
+            "relativeStartByte": 129,
+            "relativeEndByte": 246,
+            "absoluteStartByte": 30684,
+            "absoluteEndByte": 30801
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.051706f6e32140e9",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité",
+        "supportSpans": [
+          {
+            "text": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité",
+            "relativeStartByte": 248,
+            "relativeEndByte": 333,
+            "absoluteStartByte": 30803,
+            "absoluteEndByte": 30888
+          },
+          {
+            "text": "ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule.",
+            "relativeStartByte": 335,
+            "relativeEndByte": 644,
+            "absoluteStartByte": 30890,
+            "absoluteEndByte": 31199
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.65b23e326b964d9a",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée",
+        "supportSpans": [
+          {
+            "text": "C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée",
+            "relativeStartByte": 645,
+            "relativeEndByte": 801,
+            "absoluteStartByte": 31200,
+            "absoluteEndByte": 31356
+          },
+          {
+            "text": "bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale",
+            "relativeStartByte": 803,
+            "relativeEndByte": 937,
+            "absoluteStartByte": 31358,
+            "absoluteEndByte": 31492
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.6abf6fad7747b376",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale",
+        "supportSpans": [
+          {
+            "text": "bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale",
+            "relativeStartByte": 803,
+            "relativeEndByte": 937,
+            "absoluteStartByte": 31358,
+            "absoluteEndByte": 31492
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "de façon générale"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "supériorité hypertrophique nette par rapport aux poids libres"
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

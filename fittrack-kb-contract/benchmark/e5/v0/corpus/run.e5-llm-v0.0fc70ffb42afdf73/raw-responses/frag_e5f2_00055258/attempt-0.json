@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f2.00055258",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00055258\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"7. Analyse par familles d'exercices\"\n    ],\n    \"rawText\": \"Cette section applique les principes des sections 1 à 6 à des familles d'exercices concrètes, avec le niveau de preuve associé à chaque affirmation. Le format complet par exercice individuel (le schéma de données de la section 10) sera renseigné progressivement pour plusieurs centaines d'exercices dans une base de données séparée ; cette section fournit la synthèse rédigée nécessaire pour amorcer ce travail.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Cette section applique les principes des sections 1 à 6 à des familles d'exercices concrètes, avec le niveau de preuve associé à chaque affirmation.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Le format complet par exercice individuel (le schéma de données de la section 10) sera renseigné progressivement pour plusieurs centaines d'exercices dans une base de données séparée ; cette section fournit la synthèse rédigée nécessaire pour amorcer ce travail.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":1,\"decision\":\"CONTEXT_ONLY\"}],\"claims\":[]}",
+  "providerResponse": {
+    "id": "gen-1787663305-oOEwQ4DGnlsoUnSfwCA3",
+    "object": "chat.completion",
+    "created": 1787663305,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":1,\"decision\":\"CONTEXT_ONLY\"}],\"claims\":[]}",
+          "refusal": null,
+          "reasoning": "**Analyzing product policy**\n\nI'm considering the second sentence, which mentions \"sera renseigné progressivement.\" It seems to relate to a product plan, but I'm noticing that they define PRODUCT_POLICY strictly as rules for FitTrack. The phrase I found might not fit neatly as a rule—it feels more like a scheduled note. So, I think it's best to treat this as context only. Let's finalize my thoughts here!",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Analyzing product policy**\n\nI'm considering the second sentence, which mentions \"sera renseigné progressivement.\" It seems to relate to a product plan, but I'm noticing that they define PRODUCT_POLICY strictly as rules for FitTrack. The phrase I found might not fit neatly as a rule—it feels more like a scheduled note. So, I think it's best to treat this as context only. Let's finalize my thoughts here!",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZPRhxVlbgjREtPsl79_LfEFWvewnr626siyOyBCqP1bKcdhIC8jIu6X4EpkT40ro2K4-1r9fiWykcM-O9zzNtL776bs5kuctlfCIGQbQ23CDqxfsRHOVCFm8PdbIDvnL4s8im2au47np3gKw8LJbBRDu2hO-REEGCmQs6Htp2ogs7F8MljXEuwDgM3vJsJLfrnCE3m1Bd5tJndy-xddVzNqPg4fay7JzyTcyrksSVMac5W3TTWibpvbqEyHTv_JGlL3R7LEngN9PNf-qCtvpv-5IHiSbKtyYBMiRb-U0M1Et1MiRvDxVNqyLmzLnH1YYfwgdrM1bmMhmqCpDwQ8U6197q0HNv48VN4b2MJQtbqjaIW-8z4D_pzCPnST70y2vm6OcBYCxN-TjVteFu1Uy3AQ1pLeCLN36aRe617dRJQR7FQT2fvHUblCe6pcwcYuYM_Czrx6Vt0WEyfB0p9bzb0tGhmEtMJG34qBlvUQUC5yosbaidptCKzte5K_TyLKB9s093qyAOGTPJlN3N1MQCC0XPoUkbfeStA2IMH_UjqZIZQqAbkc7ZMJb-qVZVKZqPaalHLPRMb26C2-CqO13VAcZuzgOPsRWC8kzZvz85QKEjL-joBzU_yYiWknbM0mW8LVjEufOlUhDL-iFMLaqb6akaliP0ZnrRjMsXwo2MVmP43CueypIsu2ar1MpyzJ9kVpNCYZ4K04Y7tOzluVzmikkvv85G2dd26eCp8QvmTxxUg4znNuBa6baffbmiAtrvCb034IkMAPt_1S52XxhxwkXrRsVrd10qWlgN3ivDpfzdasbfeXJpnP9Jl6L9gbHEgAQyfc4v-CTG3_o2UUG0_wnTtI_aC0vOy0BoNC7KoSTEDb058MnpgxUCD45DAS4cuctDjzWLylyXWL_Rfo4sMoKrCRmw6V-hcR-RFmHvNHWK943h3JYdtPF5wjV-EMTo4XU1bqYNYQNvthaJ0ndfEWz71Xro-8QUZv7M8-psEX29eYC9QnZfEtBd0h0eMwy8sG6ysC7wrQRbqWfe2fIFezQOIrF7Vk7dpGu02xODpZN34XuiyTNGxdf1-8MZb4O1VkZ0bSY0VRR9EWJ2zB1E7FXhAEjthvtXu9awVN7dAWCR0kkj_tz2UWdNpR14fTS55ErwwI9z9nN8ihCgKdkGAWYAHQT_RjkpYQUpuQK8R3ZrBLTT3eRh53ozkGJij1jkdxz-7pSCIilFoizhcRhxPs_F8aCwmGjJo81sEEAQGvYFRoFFaputCVsIZTpZS92PhOwbzxg1V7JEGVS5Zgd4MZDp3OgoAqj6fGBGgruPkvbSw0EqvN-13e4hXjLjv8JjjrfJ-qHu1P5eS2R2Uo0x5oGEGUzSTlhzKzoaymI0d2l7FnkiK1BijIz1GWsaxinmmJLTR2qcY4SDFciAoYQCZcB8jOQ0tXD2VjdI-UFjw5qeRqCTu-_4_fMb3Zr_aVNoRTqdLOahTmA5cT-jTqmTmmQYTQjDAX4zAe8VLiV-UBVi7JSKRqu7SVtc3oIWXkSncTU3AsKXeFfXf4HkpdiugMn9pyPXdm7Cmr-rvvbFhb9zMeFVljMheFM8fezI1h4DTELQbctXQQtUglWFIhxxYx6zwWv0uuYR-L4MC5ZKaKNv16Vif3hHSKNajSLB4Mgxhf5VdGlMmcjl7L4-ZdfzY3TugbbQ8I8H65WfbZSdee7ElpzOSD4OUHox0YQUo1hYPnrvDLIFa1mZBx7flR1Mh1gSwl3DZGPwxhoAw21l3xG9RHLbR2cXR3VZWnyzMC7X73UYF47JnCtaAI1ih0ju-nsrUgaTvzTVaOckXaHW3cHG19LEATI9DbNe7JvqcfXTWuMeDx7lhpH7PCOfgsyjl58SRGlJJh0qr1PXr3URrllf6K5fVuKBAv4EYKcxiORH8bnhI90fHBl4G8ArwxT7nWXQ6FIwAa7zdIfc8XOHSn035b39enEL6_GA-8KEVgH8LerHHKsDN6RFYsy9KVdMi9_A6XKC_uc1zjzzDiCWqIlGZ35v7KwfvSrxCFQ1m0WLBCj7m7cPLUrXJk0RvROgvTSMr5s_3Q7qeg625HjAVI6bEsMjLBXdP1SOpMpjlgGnbKhAQ__IL6yt5PkZO6DpqJ_-MElssIw1kIi9ddaZXvCl5nFF0lt0tqmCVB0V2ojCU2jCeMZZ1JXEsea7pHF11CfO59oeknrfHI8F_61tVrDl0Bymphj765SfdYTiy0xav1166m5lfb8hso0TyZOSQHw6k3dDA1p0QmSGkcMSzBDifYm9ETeN1biep9i7P7ZN0oVZynVYMuQ_SSuyFmU6ACBNynaFAf-klFBP5hTd6RkNaLd06Sxuk08E-du87W6mhcnzOKx9lDWshJQwA3SMiT26Fq3bykuMuLFyAag6WAHbusMrzGbfTmU0rAdv1qPTZXbfVPCfx_AwuJcyFto2McN4isICfuc-CaBxrcadEN51dZsDpcJmkVEuix0BEkQvon9-3h2j2BZzJUIJSxjw3KzXbdHfwuehADQ8Gfss1uU0AhtODgVE6p0RUJAE2Ovdfkue5AbRvVkV4VPIr2ycQc721Hi2zJ_zlOjjWTOPPrDUiQeIPtm4dPibhPcngAlUObfODtHe_D5nb-cLrcrnIUTvM13qcG6TZ4o1PYGOavZvPdcmhCiK_Wi53PbdNA-QAyESr4zEwMYE56Y9JKymVmjN8g2QRjXFZYDv06Jgn-iw24TcKWpBx5jUeCcQYLexF-NJ-z8OS5uJZIVq5Pqgya_Cilz6UqYIRaPQKVymHZeMpqSS6wIw81Q9HpjNuPVpVrl9Pc3JC74UDWysG3ROFV1zL6ki9wLoFdZ8rzDhvHtGqsYsLIaEULSd5rlGVVSXdM6FQgcfmSeHy5womOufQL_pLn3UktI0Ap7u57CPnDaDyZ65QMvX5M4h_Xk0bd_cjGUtiXFwWFNydETmvaYVGKPYku7QdJ0eiF5n6Dsf62UtD87SeXHiCnSMK_JNNiIccjkudDIl1MBuuX6kgXcHiZVYNPeHeFprqkGRwDT4CnwMmtFM-gx2TemLDqjn5SRGog4kLJZMtOUpFZvXFiuGJBcJ7ZYOamyqAZMPub2mXqENI23dlxu4w2FL0Z7KKwAUQUaAnzCT-VRrhFe1fUV8iHErDCMM1JsPWHPa3giUHklgLzy9EdvhB1scjSr2uucLksdmO4w2SVdvgiYaf4uC2L4f-J7DRUBojctul8ID98ivy0ZCJr4bd0nboAKePocrxpxc0b9QtxdBtCd8zAUpJ2uzcuWKaD6N4eYYMV0Scx2r38hNl2mtPpHimJ87ou05UOeDNqzexI5Oz3fRwK6OiavCeaB5YA0fWuoEJPsyeJvw-mwobbNv1BxLtCxGAhisv3XbzNdLEjJ2X2QwnRoly1ugTccJHSaXvzy0ALo_sRNzKIs68eXkfZE2A0vu_0G02DcImLQcAxpZyJoyt5O4qCZoYXcVm_Njy_amq66ybi2nlNcwCttn9nr9YTvsbopoW9vl0Pq403it_rS4YDprcLdPhxeo221l2WFPcNRsWPGv_L4HkbECirC7OJN2N261mYYdIPQSR5uUVegnbA4bA0P7L3xqy3okpwn3WZmjz4kPFpV7Y5qhUV4M8h_AXrX3GY0VP2DdFXMzq6nUnXrbYKTRdITv3JYK605EImd-_xsjY0UVsxDDdUCKKtsZprp_JUfSnxqNcwoxtOvbZVfu67Sn36L5eQaS2EAXxqfb8KbKVQ4yyWuZrpUeiLOnIAC2aTp_rIkoV4gPZyyzcnJOD7uQBlYhzi0ABs7CCjvaibsLRqVzLp3Q4U3OCmduQ8m__JfJD4ObGT_aOsHIKlqldbtoTI88GXYaHCUxGfvuVUHYNISi-Vpq0HoI02rFiaQl-lI84abl_1-4utuK4iPgsPN4sAwgdFEkaa-n3Y_2nJKbAZS4miOfD3_lbimjjqWRSTLH0jYJfyKn8YgM1ALGAB_idOexIeHT0VGQEYOEf6PFnHo8N8mokffxDsGtCFdI2ZdDoVSMK7MuvDM3FowDpw0Q==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_080c82cbc0b71d4d016a8d93cb620c8196a611fe5f41c16868",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4445,
+      "completion_tokens": 549,
+      "total_tokens": 4994,
+      "cost": 0.00715825,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00715825,
+        "upstream_inference_prompt_cost": 0.00166825,
+        "upstream_inference_completions_cost": 0.00549
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 448,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787663305-oOEwQ4DGnlsoUnSfwCA3",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4445,
+    "completion_tokens": 549,
+    "total_tokens": 4994,
+    "cost": 0.00715825,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00715825,
+      "upstream_inference_prompt_cost": 0.00166825,
+      "upstream_inference_completions_cost": 0.00549
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 448,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 8734,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

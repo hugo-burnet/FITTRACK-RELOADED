@@ -1,0 +1,271 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.43c0fdc382e72c67",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+          "supportSpans": [
+            {
+              "text": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée",
+              "relativeStartByte": 156,
+              "relativeEndByte": 263,
+              "absoluteStartByte": 83698,
+              "absoluteEndByte": 83805
+            },
+            {
+              "text": "preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique",
+              "relativeStartByte": 497,
+              "relativeEndByte": 638,
+              "absoluteStartByte": 84039,
+              "absoluteEndByte": 84180
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": "D_very_low",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.13c064ac2a25902d"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "preuve qualitative/enquête",
+            "utile uniquement pour cartographier le consensus de pratique"
+          ],
+          "cannotConclude": [
+            "niveau très faible pour toute affirmation causale"
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.99d962e8a85193b5",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+          "supportSpans": [
+            {
+              "text": "avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+              "relativeStartByte": 265,
+              "relativeEndByte": 359,
+              "absoluteStartByte": 83807,
+              "absoluteEndByte": 83901
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": "D_very_low",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.13c064ac2a25902d"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "preuve qualitative/enquête",
+            "utile uniquement pour cartographier le consensus de pratique"
+          ],
+          "cannotConclude": [
+            "niveau très faible pour toute affirmation causale"
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4733,
+      "outputTokens": 4900,
+      "reasoningTokens": 4224,
+      "totalTokens": 9633,
+      "costUsd": 0.05261225
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4733,
+      "outputTokens": 4900,
+      "reasoningTokens": 4224,
+      "totalTokens": 9633,
+      "costUsd": 0.05261225
+    }
+  }
+}

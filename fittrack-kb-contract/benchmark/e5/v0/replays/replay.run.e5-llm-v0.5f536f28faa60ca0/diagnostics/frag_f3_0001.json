@@ -1,0 +1,374 @@
+{
+  "fragmentId": "frag.f3.0001",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Affirme qu’une interprétation commune (douleur=dommage) n’est pas automatiquement vraie."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le degré de certitude n’est pas explicitement indiqué."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.53f726d943de9a01",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».",
+          "supportSpans": [
+            {
+              "text": "« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».",
+              "relativeStartByte": 5,
+              "relativeEndByte": 91,
+              "absoluteStartByte": 1564,
+              "absoluteEndByte": 1650
+            },
+            {
+              "text": "Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation",
+              "relativeStartByte": 94,
+              "relativeEndByte": 393,
+              "absoluteStartByte": 1653,
+              "absoluteEndByte": 1952
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le niveau de directness n’est pas explicité pour cette affirmation générale."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune attribution de type de preuve explicite à cette sous-proposition."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Affirme qu’une interprétation commune (douleur=dommage) n’est pas automatiquement vraie."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le degré de certitude n’est pas explicitement indiqué."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le niveau de directness n’est pas explicité pour cette affirmation générale."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune attribution de type de preuve explicite à cette sous-proposition."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Affirme des effets cliniques comparables et un petit avantage antalgique à court terme, avec limite sur la durabilité."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Pas de niveau de certitude explicité."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f25d5d79be314b12",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée",
+          "supportSpans": [
+            {
+              "text": "Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée",
+              "relativeStartByte": 94,
+              "relativeEndByte": 303,
+              "absoluteStartByte": 1653,
+              "absoluteEndByte": 1862
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Direction générale (comparables/avantage à court terme) exprimée de façon prudente."
+                },
+                {
+                  "aspect": "acute_effect",
+                  "confidence": "moderate",
+                  "rationale": "Effet antalgique à court terme mentionné explicitement."
+                },
+                {
+                  "aspect": "chronic_effect",
+                  "confidence": "low",
+                  "rationale": "Absence de supériorité durable démontrée implique incertitude pour le long terme."
+                },
+                {
+                  "aspect": "equivalence",
+                  "confidence": "low",
+                  "rationale": "Terme \"comparables\" sans démonstration d’équivalence statistique."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le texte n’indique pas la nature exacte des données (p.ex. essais cliniques)."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Une citation est fournie mais son type n’est pas précisé dans l’énoncé."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Affirme des effets cliniques comparables et un petit avantage antalgique à court terme, avec limite sur la durabilité."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de niveau de certitude explicité."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Direction générale (comparables/avantage à court terme) exprimée de façon prudente."
+                },
+                {
+                  "aspect": "acute_effect",
+                  "confidence": "moderate",
+                  "rationale": "Effet antalgique à court terme mentionné explicitement."
+                },
+                {
+                  "aspect": "chronic_effect",
+                  "confidence": "low",
+                  "rationale": "Absence de supériorité durable démontrée implique incertitude pour le long terme."
+                },
+                {
+                  "aspect": "equivalence",
+                  "confidence": "low",
+                  "rationale": "Terme \"comparables\" sans démonstration d’équivalence statistique."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le texte n’indique pas la nature exacte des données (p.ex. essais cliniques)."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Une citation est fournie mais son type n’est pas précisé dans l’énoncé."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.c1f9eef136b9ebeb"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "certaines douleurs chroniques"
+          ],
+          "limitations": [
+            "tolérablement douloureux",
+            "à court terme"
+          ],
+          "cannotConclude": [
+            "Pas de supériorité durable démontrée"
+          ],
+          "unresolved": [],
+          "flags": [
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Énonce une règle pratique/éthique de conduite plutôt qu’un résultat scientifique."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Aucun degré de certitude indiqué."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.85e4229f31de46e2",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation",
+          "supportSpans": [
+            {
+              "text": "ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation",
+              "relativeStartByte": 305,
+              "relativeEndByte": 393,
+              "absoluteStartByte": 1864,
+              "absoluteEndByte": 1952
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Il s’agit d’un conseil pratique, pas d’une donnée clinique directe."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de type de preuve identifiable pour cette norme pratique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Énonce une règle pratique/éthique de conduite plutôt qu’un résultat scientifique."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucun degré de certitude indiqué."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Il s’agit d’un conseil pratique, pas d’une donnée clinique directe."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Pas de type de preuve identifiable pour cette norme pratique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "clinical_content",
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

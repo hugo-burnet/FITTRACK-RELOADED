@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f3.00019956",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00019956\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"6. Rachis lombaire\",\n      \"6.3 Exercices usuels\"\n    ],\n    \"rawText\": \"- **Leg press :** utile si le torse soutenu est mieux toléré; limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- **Leg press :** utile si le torse soutenu est mieux toléré; limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"utile si le torse soutenu est mieux toléré\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"si le torse soutenu est mieux toléré\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\",\"clinical_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"si la flexion hanche/lombaire en fin d’amplitude irrite\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\",\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787658744-uKf1PIrXLfkylqpFjGaC",
+    "object": "chat.completion",
+    "created": 1787658744,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"utile si le torse soutenu est mieux toléré\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"si le torse soutenu est mieux toléré\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\",\"clinical_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"si la flexion hanche/lombaire en fin d’amplitude irrite\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\",\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": "**Evaluating claims for JSON schema**\n\nI need to produce JSON according to the e5_llm_benchmark_prediction schema. First, I have to classify the coverage unit and extract claims. The fragment I have is in French about leg press advice. It suggests that using the leg press is beneficial if the torso is supported, and I should limit the depth if hip or lumbar flexion at the end range causes irritation. I need to determine if this falls under clinical or exercise domains, likely leaning towards clinical.**Extracting claims for clinic guidance**\n\nThe French phrase suggests that for patients with low back issues, using the leg press with torso support is beneficial. However, this recommendation is conditional, as it states \"if torso supported is better tolerated.\" I believe this falls under the clinical domain, with a knowledge type of EXPERT_PRACTICE and an epistemic status of practice only. \n\nI need to define two atomic claims: the first states that the leg press is useful if the torso is supported; the second recommends limiting depth if hip or lumbar flexion irritates. Each claim needs specific text anchors for clarity.**Including coverage details in schema**\n\nI need to include the coverage ledger for unit index 0, marking the decision as CLAIM_CONTENT. The claims will reference coverage unit indexes that include [0]. It makes sense to capture conditions in the schema, like \"si le torse soutenu est mieux toléré\" and \"si la flexion hanche/lombaire en fin d’amplitude irrite\" as helpful text. \n\nFor confidence states, I’ll set them to default values. I’ll use knowledgeTypeState and epistemicStatusState as RESOLVED with expert practice. The clinicalEvidenceLevel can be null as it applies to claims with evidence. As for flags, I can include \"clinical_content\" as it fits the definition.**Clarifying schema requirements**\n\nThe property \"SupportsHypertrophySuperiority\" is marked as boolean in the schema, but it's not required, meaning it can be omitted or set to false. I think it might be safer to include it even if it’s not necessary.\n\nFor \"citationOccurrenceRefs,\" it's fine to include it as an empty array since it's not required. I need to ensure \"citationAttributionState\" is set to \"NOT_CITED\" as there are no citations present. \n\nLastly, I should find unique anchor substrings for the claims. For Claim 1, I can use \"utile si le torse soutenu est mieux toléré\" as the anchor.**Constructing claims JSON**\n\nI need to finalize the JSON, ensuring all elements are properly captured. The anchors I've chosen must be unique substrings: one for \"utile si le torse soutenu est mieux toléré\" and another for \"limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite.\" It’s important they aren't overlapping within the same claim, though some repetition across claims is allowed.\n\nFor the domain, I'll classify it as \"clinical.\" The confidence states need to be RESOLVED, along with the inclusion of citationAttributionState as \"NOT_CITED.\" All related arrays, like conditions and coverageUnitIndexes, will be added.\n\nLet's compile everything into the final JSON seamlessly, ensuring to meet all specified requirements while accurately capturing conditions and evidence types.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Evaluating claims for JSON schema**\n\nI need to produce JSON according to the e5_llm_benchmark_prediction schema. First, I have to classify the coverage unit and extract claims. The fragment I have is in French about leg press advice. It suggests that using the leg press is beneficial if the torso is supported, and I should limit the depth if hip or lumbar flexion at the end range causes irritation. I need to determine if this falls under clinical or exercise domains, likely leaning towards clinical.**Extracting claims for clinic guidance**\n\nThe French phrase suggests that for patients with low back issues, using the leg press with torso support is beneficial. However, this recommendation is conditional, as it states \"if torso supported is better tolerated.\" I believe this falls under the clinical domain, with a knowledge type of EXPERT_PRACTICE and an epistemic status of practice only. \n\nI need to define two atomic claims: the first states that the leg press is useful if the torso is supported; the second recommends limiting depth if hip or lumbar flexion irritates. Each claim needs specific text anchors for clarity.**Including coverage details in schema**\n\nI need to include the coverage ledger for unit index 0, marking the decision as CLAIM_CONTENT. The claims will reference coverage unit indexes that include [0]. It makes sense to capture conditions in the schema, like \"si le torse soutenu est mieux toléré\" and \"si la flexion hanche/lombaire en fin d’amplitude irrite\" as helpful text. \n\nFor confidence states, I’ll set them to default values. I’ll use knowledgeTypeState and epistemicStatusState as RESOLVED with expert practice. The clinicalEvidenceLevel can be null as it applies to claims with evidence. As for flags, I can include \"clinical_content\" as it fits the definition.**Clarifying schema requirements**\n\nThe property \"SupportsHypertrophySuperiority\" is marked as boolean in the schema, but it's not required, meaning it can be omitted or set to false. I think it might be safer to include it even if it’s not necessary.\n\nFor \"citationOccurrenceRefs,\" it's fine to include it as an empty array since it's not required. I need to ensure \"citationAttributionState\" is set to \"NOT_CITED\" as there are no citations present. \n\nLastly, I should find unique anchor substrings for the claims. For Claim 1, I can use \"utile si le torse soutenu est mieux toléré\" as the anchor.**Constructing claims JSON**\n\nI need to finalize the JSON, ensuring all elements are properly captured. The anchors I've chosen must be unique substrings: one for \"utile si le torse soutenu est mieux toléré\" and another for \"limiter la profondeur si la flexion hanche/lombaire en fin d’amplitude irrite.\" It’s important they aren't overlapping within the same claim, though some repetition across claims is allowed.\n\nFor the domain, I'll classify it as \"clinical.\" The confidence states need to be RESOLVED, along with the inclusion of citationAttributionState as \"NOT_CITED.\" All related arrays, like conditions and coverageUnitIndexes, will be added.\n\nLet's compile everything into the final JSON seamlessly, ensuring to meet all specified requirements while accurately capturing conditions and evidence types.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjYISk68xZBKzbLOduYdsBnaw9uEdWOdxlCjVRcAmoa5kI2Wo2Sza5yquDOetETog_wES_ipJu9ZRkzNzrbNeg2VrrUcpue_LFydDzMef94qsv629PdEig9i88JcDHDojMqUHjpj5pyuzwjBuIPtjMeTS7B9Bm2ci7p94Ofo5wS64J99aCpT-Wo8zlWI7LFcDGquTV3BQ2dpAlnqU6U6ec3uZG0i95Q4_bohy0RC5G5lXkYgNPbjNxy9WidJ-Lvmvq85jxEze-Z-qrzBORdcvi21Hgv7VgvjcYnM-PhZVIlw4gClvaTDE-iUaLhn0qM_dG9ozKjWyTuzVRx-LS1YsM7iCgbCeGlv-2hLEmihoAkuySlyllymDdFO4ukfthwoebZw2h8EpJXlrJGvXRf1sbwsJWo1F64EhaV5UrLxDNR7_kEWya3RKLIbHnMdNlNWsSdgFwoeicmW4a5AgcSZ0CZSrEG516NOh6zsDEf3_d9RRoTcoJ93RAa7ymxORiVK-j7RcNpwO4-W0SIYgfXeNESdTJKdD3ZuqpzLf2K07cthV8JIrtRxH9S15z15sAuaNIoK9VnvvdkqCGpQepYjZG5jAG2ycnNTD0cbHLSx4x3vu8S68sedg5W975zQKu9h84eKBRWrEEjKjDPHJ4YYbI-p63Am6WuYYCh9Z_9nedyjM5MuoAuHX5F3eT3qpHy9ll_iqRHAOgHeEGOUetsSCJX2oJ7s6SBW-xaGOpt96U97CbbI-gkRxCz2v5-7Idk6gTSdQF2r9-uOwIAvY1eZDiYqQFoxMbkR008nRUkTsnOx8IgstyPORt9AFcCZPDnsaAV2XkTuomfCHAFJP1rmLP0zECteiIan38mM8ieaYC_Bd23Svq98DJN7BpZzNPryN9oNfZ4WlqQa45x1bl95e09tHVd-lvey1GPvVLHe1pU0Yh-HNIxzNqPP3TuXEhfsW_yXai_8qzE9gIlBcpyhdFkDrsFBlylENuwz2nkst54qsts_Fh0zttXfVKaKvudWVjVFe-IURLIfNQ6CgYplEX550lO646XbjglDhk3YSzYPR-mig32Raoz_QrL9qKoTLQtRNKAxFJKzDdXKRNAi8iWIe0dlB3cbOhz9UnrBhCn7i170H3g-jtLDECABn7IxZEub6BY24M4J0aAQpvFNJWaiCgNiR95a6GGB4IZ3_6Gz9hpnO07CTQEsiB5xYplK2B6LsRX0PdosNQXCc6uaWSbPhz6sdhzhAgsC5-CdsNSqAPuHb-cowYS_wnj35kOBqa4SL3mk3OmC8ukhqheGSPVCfBOw_z6OiVowcckjK_3pxZMU7wu90HsL9TupnyMDIt84LB6Ja7mrhqrO5eKcrDtqDkri1mYLdfnWVu9awrxrPR1moRAs5voGd7uSb8bF0J0FFV6mcN_T7ytDxx6HeKvqqDBqUQHAIOgDTdyrUTbhhp4d2SUbppj-GaKJpJo-G4tG2RLuRb4VduXnIo4tdYEdahoXKIzRVKkZ5xrvlXjLQQXiak64ynpqPVPSuAqSdXltVrUnSLlINqxk3DL7ALcF52f3EbcJFrTsoegvxO_sE0NA5Cxf8XMDn-7EL15PwfKwoN2QXjLGiHS6vAjNkV0rk3Of-rQFiOPgjvbx2ziCrqJ9hFjxPv6lmKs9rmxMPhhL0AUIiy3p97EyY6OBU-MbgI5AIy7-p0MSw2RMlgUQoYLmUR2cbcFLh56_16RHQmtcle2VONbbJc53Ea_FNgrS2zilbGFQpFfrwaBqxFJd9ayCNxniM0O5oWP-Ij6SgHGr8dzT_vDEEjtcWrSkQCG-Sfnurc56ydaq7AmHEvGomXgixrLyxWy8m7mdWsedMo7Df6Cat6zD5Wyjfaj94wdbRdTQ1t2ubfK8Iads_XDZirDD0hOSABYocZQu_fdhp1rRDz_KDH2NrVxAEKdHyvvEyCSqJ5t7J92O0guyPUw9R-Ip1k_0mvnGoQWusC7HieFYZ-u6FuJ-cRwUHhwT3NG4WPD165YCViLIet8oSAN5VvVjlwJXfgAw2ZYAqx_rp2KJ0j5Onn3MyZ9hxi7g08IVn55MAEAlz56Ih24j0ruIA93vCF2MVMUUgQxnbIA8XhCNKMZxa5lr3TofjF_JDXeI1LxZ21rjA_oqtdB4hwyWPkmoFXFMkgBPg_vPyL4_Wlqk9zfbxaKom-fypcGUYMGxIFw2GZfgu7by2TRs2FmcIiSVP3qjuPggDyWMO3qY9CPoWdfiWhgiuLuFdbL6duA-v2RxAHy3UYXxqLtO2igctW6shQPRcIbX36UDIyedssDqYJEUt8T6apcjPl-IVr17D4qzR9aQ02-FYP4eHBWAEUVnM7hlTQcv1Ni2dRWJMMzmAf9XmWuYGwm6RPlRMpUfeq6TWu_hDm4Xy5vraE2vCsrDmMrrbdjACJKiDHBJw79J8t9oK2lV11V3sGdhPbjR-xCXXci0qDcILoPsHtP80Gzz0qjmvxJxjqeEgI3FpR-XpQa1NMOIasm-YHzsanKO24B7_vMBFiCCSYPpXvgpWe5RRsGVXborkdetYnEzW_rJZPClWDNtIdJy25AjT2VtZVH5xbLxQL5WRxm_9lEcQKnpVf4y1L-5ZWQHNRLGAMRPzXMU7mJggpfKNvgB88KDEKYdTT3EvKaMlxmNcsFm5h8XWUtyXE1dH0zOErrq3oiIR2_w_umNQAuj5xMbQs29irg3widPXCtnq5rixOHH-TtdegxYRMITgMpnEML2exzHYYnvauYOwkYlzGsQrYFaiyVQBkaOzIGj2kTKxk98XMca_8rb2Bh14vllCFxUCgOuRu7OJFwLXTNy0dwUWLhbzcZWV4_6nrdA-sYwLJ827KYssph12sIlFSVWN7p1Yh3BvIIOYVd27og8cg5Q0RpmDyE_SiFznHhI78t6r936_-e0x_0iUUE-bUMOqGH1n0vIELwUo6KBGvEA5xWVyrEHvos4nB4WH4tLgF9oQD_OrR4xG_2GC4XZIZwQZDd0ENyb_o1O8jtz7si8mT9lnb7A0KcBUDEWmedQ7CPkiT6Rlbp87VUqTa9LzagQIg9wuTKLM9d9CLTRMpoiq-1-zrWQZHGN4S1TGHrn8eGsoqmrlvoLQCuVWYFxk74x7RB9HMeK7Sc-ua6cyEtVn09JPw5wp4hHGMfexdHFaXZgRUWl6C5Ov9so0ArBQYdHVJtLOR84S_Wc5Gx9URSHTyvQoKfZv-BsEBY4F3rh94MuabB4tYkH9yjgKhsKIDHScR50bJQalomPS0Ah5YxreTfR5QP8tT7P-nAjxNRXSNmLspJS2DJQpw5nRZM2D2OoObHPTbNWChb7apUO8eD0mOMxYm3CJ61UCNj4IcqcWnpZPzMDjwNMDPSFr801lm-4GwA7g-5rJz0P0mFl9siKb8AjEeYugH88dRBMhAO46W95Ek1NEkCmpsshvGAb0hfyxQ6j7osFpP7riK3loULCRc8xfeYn9y5V3xE_BplcxbVMgpQjKyYR8t0OUN1YziE_gHh2dh92PHv-UJ5lFbItqlgGxau2KTwfYQGN0ED_11P1UpAAbxwz2JdKwTCBWkzu6dMRefFamW5YM-E_rn8soDNeE3Cm_QMxbe1qBtgzuJncMzLPV30MUL0u3j-gaCv3myfkI2GMd_oG5FhHG59SSzoiGqHczfeOGtfgs_F-bJ2l5PBv0FoOjf3Rs3lk6GpIsMtLexQhGkOyGzwi1FUTaHTOCy3901Mfc0anIOOjtIb48LzgeowggxaOQFaauRPsPKbaEkvtThIUibM011LJrCiEKJiuD__H24e_wTgNH95_EXJNVUDVs2B4svmyTm9jCiFBcHokpPo1uh5Z0galJC3q60NRHbxZ4zs7THBpDeMkbjqAVS9D7tryMNlTNdXidn8q2mMFitqX1xkCOV9_ijjeyMgKJY11v-BCS2bm924fA8kls-kuriVubjbMQanb59LFVJzlMYkU9zv8yuzLU7abh05ZN2YfaEX-ZEGiHMO5I6oK2RQ6XVzQEDvs5P-xq00S4iRrMNTC0GmA4id7fnn0EaWsqmeo5EccBNXVcEKILIfrwBW4Nrv7krzhwl8nKA7NevfJJL4SGTRi-Yi7bvykWvQ5WRQfo5spRSbFcWrpNg5YF3lmEYluuOx-pUqEvU47HhqPeMeR6SAWTDrGmXPF1EO9n00SD3g5yeZyaGKaKyO-n3mfnXOO-95HPxvqFTdSBLRebMfukImilzXao7cwvGv-S4RUSysOTd5gva3qIzya8hRAzkrWIkggTmI1qIHgxKQQLjqhNycanc882kTUm29Zi_2yRkzw4TJSzaP2cL7rrXAbQ9_vjhqX8q99J13uckWTYp6b02CZd044hTy8H5ISAYv-oeQjOaNI91Ftqn7sUv4SdkjhUkUzSV3reERII6YB_3RV4WsNiJ-WEqZIAgVLREZdHQqure5Aav81h3G4Z3YOr_u_JZTYedQBhouuC-BQJ4GDeC4e0Lp_bRxSl_zGniY2cyQGg642ePLkhkVdAqOovD7LcNUhHXr9mkcIy1lnZQ6TjbJd0enEs_039WligOe4Bo102LVSLnQycqb6rzHSEhJSp8_G2VnFYOrOMLOYuCmUxSAmyCL84w8c_amRII38SqK8DeXl_g3p4j0lXuj46B4SSaUAaMGuGX5K2NaZkimdNsFO13wOxwEh0PX5_sQODPm4sA-v-G4CPgNV2fNMwq02a91dXBNmu9nKOZg6t1cjrij5xVR__HCDhdBd5A8ylHSiDph6uS3vg6jg843WkDI1Ouj2kGpMrFhFuuOkqH4K1f99WiwEbltq-5teYDSiM-b0ZwMZ_EUUbyOmLZtFa-v9lGON2hw7oZNVUYqKAoe2U52PawePjGTmx2Rg1oDA0onMKCkt98LQNAXCg2nesa_TVLoBkH8NJavNB8dykz1sUpBaLlstUFzYufmtFa-p6JxzVGBwQ50HbB2w0uJNodcjSzW2YkG_vcny0HBhFliujNj3HOcexUItcUr17JtjdqElZJP9J-32uSUq6Wlx0XufMgnRJQZglBZitd_z7tODFt71OWTIWYD6SM58qlNkGlCNkkSINseg5xn2f1nnE2qD0zGKzbOT7vN2yWEDqhbelVdOE2CJVehHBDF5AbpDLhbQotMeC7YxSGUGlZvmMRL5twftegeiKckBecItUyyLkUAu0CF5QKFOkEEhBK83q2Ho7mzyWt1ppHgvwhZ8wzV6BZ351AIcBiVSs7TuS_7Lqo_l166RxnSHB7rhlHEo5HX6WBYzDM0AHMmYr5vqwUBZDW9UdO-rIDiZkDG1vjpvofV77HXz_gUi-fCczQBohjsguprDwBeehAxaK-HGWtivJPeiNofu_ZtcMNl2VU3zJ1B4L1tlfmSIh6lhwYZJ3XCDKdg9BG_3Bf6eAS3G3mFqw5J54-_87Z7CJqZEkmPGCvCb1BxA2eYUEYwgxONxJHCd3mJwTJqYRY0c-MqGp-aT1BZGnW5xqhha21VU31B2C7HwaCYWoKvxVFXZD0Jf7J9TOr8gLJ10Xo5Sxdk2LiWuqRLZwvr4DxGLKRZzOFemjdzw-A_A2Ttxq09Z8cMx4i7c30wv2FL01uJPVH7g0L8a8iNwQ6uujT4-2xx_H5Fo29957-OeYOTSQDGpJPWbIe2fVPEKaoQYtTOM_v3HUjIW1J-xwpk64NqNnXPXydayXidXpdgmhA5GMZpNYS8fHF7_RoyC3rV10OKm7WLA-L5U5Ea2GxsjLVWW72ksKWJH_5rawewkElJBAkD2tkhmLNv57fQKjnkPmz2P2QBU91rKJoxAZmOsVchDnyIb2Glpx2juTM0NlV_OQnh8AoHRelXZa46cZOFqNgMVXlMl8tN5XEZQHujD6btf9zQMti9OYmf14i0tGkp92e1CfU22RX1vn8M33Jg71r4yKtDjX2li_OqI-6m1PNcCJqgDdDZJ3ym5P5VSXN-WTzbSX7J5aTvCW7_DZ94aXzzhawHQbRgPYkt5EEKsAqOjLhYx82Roz6EUt33rA2fAeBpRKLNkKZdK9ZYuUfWNxjNtzygoQLmJmoFg23mtqfeq2xowMFHqmlVraC7Ggq1-kQUZfpU6fr4ZO0i4W_4X-HNtAmrKyDslGtjeDPXQR-HeKtxfieP7DYXU6-YaYJusYQ7Q48ruv2P0W2GgJyW9tmqFbAUrQ5cbUXLFVZ3-m7Kd6ZUP9GOnjrIH2LTYO_2CgPCN9Y2F8kxJQ-bnWJDgB4Fq1FFE4otOhGmokC_QG7PC_Au13-S4YBmT-N8Q5sPxR-z-z0lXudBJ5lhoF-bAnZMHsw3wKzcEnEKDVyS2IltOpuIGCLPM7OhIjr9xSpHtAVJVfm-uG70cyKq9Bw-vKHXjhQnuIDCOqxeZ8itsS7lvEtejo30bK6wtOxdwlXheEw4xN5_2j-pVszSNRocBvPPYCkRXm1p-9gt6N8fhy99bVCI-bzccLnEeEIYEaTLWe2_qZTsYYUDfWzi1FvAV02GLcJqxKZQuuk47lYHu5szPtcPgPpWQLIOCkg42FGr78mxxRhyRNstg0MkktUftJdcC0MOoYiQnw-yBdr5Ttzs2ytdLo_-sgfR6jGjYMkogH8wWdSglrtyGOFtws5mA2nkG_vsrDlo9R25HKtgdvahTXhK4B4FbB4UdvUnd-iYqvlxwgwLII6Ddn0DH0a8HFwmpL-W6fP_eHAwIsr3jV75TKNL7-PqaJ1_jjCIAIdDuxq9lQnHndfcY1Ptt9xS-MhgaKDIdUfdAsHgj5j1prOmBhlIH20P9Iz9wp76_nC7shX46sCks68AEsBCbdCYqaciHPYHsfhXg5TK5spDgtzNU-mZxFzsD1al_7R9NLf0Utt1zhkZ8LZOhtozYouvbWB5sEW72S_ahs-sHe-6vpI9AIswCmdGiFn4OQ81c3FtuvBKwLGyHA3bs72Hly2Ac0R-TvjSBHMkPXaolPMZVjunOkDoBLLq2RwYF3T-B3NhX1j7hRHisKj-gSza24LrSRxmXRSSYpuyQ7WWzryxBWgDeDDyPMv9GhDV0V-wmmYjUeojdy0ozqtUtb-XV3WexkkdBsxPa6ELUtsMScUOj4PZfifh3ch-3JwsHmNOYp6dkWo3K_MnzTI3gHy0jzCDtWNpw-8DG7wxAMGn7iB6uOY_unDfPwfOEssxX9Xo_WTw0Rv4Iip3ibFo9fuK7ryQ1mwlBisF4NQpzzqqeQ4zN6alXFsxi8WGqluIJ0uPw86zF1ytu0UMsxUF3ypL4v365HRZi-K8tBCizjgWov3HWNmY45Hf-HnggJPONM4jz90-p8Cq7Ww7YQbiqF3gB8fvZUtiSwrnz0faH_vFgiLURfQcINwXB4qBQsFSzRjUQTIb-QLxyPnE8vF35wAF2h5llwck4IH9zyInPxB42YQV-aAkbIwxV5K37Hqpv0zG69XDVS7t7qmOacQfxQsO7IabM3gEn1Jnp6gzYyVpgfdnbol1_oDKFUdWmtn192m9LHiD3mkOL-ZPWQFAaLrXEeL1doCHZoZ9ltZ6UxxDZrQVis47Oea2OT5TOg1_7fTWPA9dOG2GLZ91glMumnq9TfYt_vWiJp2GOccBe5MiogR0ap3gmjov9JIaD4I25ec9y-Uz9OCtEBYt_Qe__ua5z1SND933uHJjRe1LR4CI84yowOTjuhC01c1VuoNk1OwcV1BYH3lScJMR9eppUHQRsLAAqkfOgyxnHKp-uen8SQO-vdST5H4eQNoBAUU1C6t7GFSay_9aCVuwqSN_Pda3hBl2QCrOrQuGTgSG1rqY8oSZ1xD_tZWD6dJUNz4csmj-O_gNEfDIIn6BcZ3nS1caVZiKYEnpqJx5WTExAZPseFzB5TYXfJxnz27lu1t_6iwmmdnM6fsgDG2Y6RHgztS-HQJBDXUtw4bssbJWPOgVLjFOtaF06FONvynpwvFNewjZURPV_psBnhiuY6SZXH4AcJghAwH8uGPZX27gndoud-FYix5PY5xMdFI95_9WSgWJWrqz-wTf1fLzXBl7tj_2lX-yTbrE4US7JP4ldVhQCzJ_6gveCfcEcUOgPA7kUSvePvDlyxa5_6xg_DD5E1TCr76d2FlbWW3FIqLsnjrP4XvYrRsn6kAm6LBtyuUjEJ9A4_dKFLzPsDGrTrdWSBhG5qrRQQ373BsOFpZC3hZs3pcToSiE7AZQcA4lPDycoo--KnRjMPmkPWDyOaWGpibVPB6yBnbA-Ashp4NILwnsC92Wls6nw3Hwe16ckBJVIP1M_7yASosxeAKHDdMPjp0WaxN8F6TLsSY8XJUQmYksNI7CM0SjGsGAc5PLfI-_eWHUqJHQ1RoZvmqcNrnqOn49fLwS7MoAFU1bvgnUEAB3asVwZZ-9jdCO_6Oe65N7nGZFQ18huyigqcyQSZFMG60mbPatMAl6pswA8YJXKbGtCaSIopVqzzXooJulClGbZKm-SAx3UQ91DEW3lmV6mMIEGcP8-NGtnbz6U6lAeDtBXhZuBgeJfWwjj_oxk_7H8MLh8VyA80qM5ZVBtLLEYTUTzPLHBzO0SMZcxsQ7Qsf5-rJCYQWGNWO2t3G2YUjX72gKpuNhN0_mhfEuvY_8cyhavvWCTn3tE94Fn1lM5LpFRZ5XIos4C61sLmLAzaQvN3eqJg8immhzIb0MPw61acESCfsXEhAsoJrmH4OS25uqePwINSFLUz1aWXkXOVSLfNreLMqivVoB-54t-QBj3j2bzZ_NGdvKEgPIHVA2YZD0pEdQPTbhi9kZWhd7FscmhA8i3zBSgH98GKZKZSPaPAlI8gTnxTt9XSxWD4-yGLEEL6qHOQ6ivMPkwqIFlRbUMr_rdXjf2D20rPSpxLQ9ne0ySCdDbD9cRgi1WPWalFpxJgVPZpYiKkZDhTrkNaHTAv-ReG1UXruNoDPkjhLxXZVvgqDy0UQVLmVxRMUFJWere8XrLeDnTu4iD-niwsBPKSDxAD6eO6NPpHYIFkcncvdubUeYV__fewEkeZMqxy-74YYBfTTvjLL9VT0YGCkIuK1kTjV69fT6GIyld4JRKWxwQ6rVdEYNrVC1FcDcST-fxYLRrUwxeKlBvY2TfS1hux8fblQUcn7FqhkTS01IN0spEJ5NrnUtjTPVvrO8SieK3YSQTKwNGCB_cSkNxzpsY0_9M_EMvG9U_kWAduaCQicD2yQeMQAmQrNNPBmgiqME9eprwzHof6-AcWAiMTWStUVfzLggZ8TxlEciCmx_kgvhUecyZCdScoFup6m81G0LUVicrRiZ6SPdBW7Sm4fXsPiJ1xYX2FaLu4ajI8OZTGfPQj9wezVMbxIcDIx63k2wfqmoznZ5mZMY8qeZbAsAAGdx6XBBqMfr8k7WjNz7wNQO-sM7CPqufrdxAzxYCIwCDeGWtJgggKLKsQIE-Z4XldHBRw8qj34uTPnrxA7JMvnOTXl71v1-CJxoQgKZm7DldgP38urjza8DHZWhJ9lfPozHRkgLDGY7RjbCh3_uLC200Z0aYIkqYWgqz6mZb5Zh9v1wO0tijtpTCfYJ7D5YBSPTJ9TbWUhu18FPqgFPTaJaAd3FO0PGDMCYI7-IxL_eUiV9zw5BKaXGWo1CTuwNEtHBvyIP2MJ75tUOIXS_mHB44MpGjaU8D_eRXnoGQ3-IOnxGDNHihTBQK0mkH9Pn29u-o6aEpwBBH2ZIBy1EBvxQR_s9L0wxsN7980SOmY2X_pNv8Sa_l-vGYxZ1crBmqvUjxumMWXZa7Y8Y3ANhZFaZpQNbL0AHAJd6eVvc13_fNMf2Pb3s2yZuhSnov0IUTgAvWnMiQg-fFPSvT6Qq8l1rNiLZMYpTraayr-rFhUZNTAJwsOrddj57-kkxH3mCGh3X944BTVeFFSK40JLX6NhoiJV1L9Whn8R9h9sgevdyoRCDUvWZaAzqBYh0HDcjEkohB8tEGQbvBTjrzvM36JPecPk0qu1bT6relXMZoWJE_fu2O-lJ9kwgURvwqA8yCcYe5HCirOmZmK1QflvE-512TGvQ_LD1vnGgDlP53ry6qtH5QTxLuPCWwb834Vu24HDReVCtiafN-Cl5DOUm_hHNtZo8BOIMGOP9VmeKOCtU3oWdvpWOeeqjBlxlha05if5AbaA0sM4e1oJR6OG-9AHgyL27W35xXhNe3Vuf_c8AHzNiSUXsYrJXoxDJ78RQqbO0V6sPV-DPjdJzrKL1-C2csCP2vPNsUbA96HIF3rje26rUbK3lRtkdYwRadnGAVH0u6w0bKSOL8HVjeBMtoUTbh0d-VAgS1cf6ZZaibRQART7uhHFG5KMfyfzstZYUpEuEAplRSu__bfEsT7rtGktIYXiYkSzI6lrMv10fYB_u_DI3wpVRoWnHZXbYWwzgwxzVwYmia0MRhJS6j47iVY5aDVbDuBUCBwvRrV08SpJDTe0cByuUclTDOXJ6ImbrAje8yxIRkqDLZIyh4fHZas4mUo2LlpWQmtHTb4Y9za0IHoid4IEF4_8Y5_gegnwxeB7AIlPjLSxgbNkPWRl16L-m7dt22QT636II-CM5FiZ1oL8Ivq0-CO5D_UVng-Bu5ZmL4VAoSZHOWjpACLUAfEr3jRiWm-0GSgFhR7r68qJxmiz3Azox7I3L-nun4zUOWQYsgXK3P65UzTi1GEdw3I9iIzNMCiSgw8b7Lq9P74Qb05muZd7FWA-_Hjy_oY8vuha3x96J1nb-sX6xCgv0A-K01ku4jjFtGeD_SRRmd66KvA8lHU6b0v0SiMe71BYs5RqA8CL9-QqYSDlo08RQG6GhD1F3mvlB9e9MGen5oPDKPjSaeRSqGHNfqqIU9Yr3kbtiuldnJGgPNZ6BoGuqm-DBUydp4AXXhjUEMt_b-EzMKAZ0GLt7Ap4wzAAgIHHPb16zOWm1i2F6ei_zVe3J2kF17GHQ1PD8VdFKK-kl6PeigYOxcUZPyxt6nM3N9kwS-Xbyo_MYP4mNSjRNUqQuEk8CzOkrsq-Vf88onEH0TNiOFt10YYCQESOhqbnUsTarwF53aLmRwPxkofFKVkcnMEYLvW_VzWS5VdYxbim8sZ7iNb3gmimgsneQYekrleQuIL8tMqP7wMceSDe5MbVAJWsDzu_z9Ojcy3ap5D2VS1ovuxF--N7F5bL0BkbM_sRKF0V8XAwZNaOt5dQ6CqPY4VtSx_AQtQCK972tG3n5t9NMp2Bg0AEhQEWQSqyL7XegzrPaqPW-tV68kRJjLsDdU6gldtycHwmaiaUOk_XVA1G7gwPv3j8MGz8tjlDr0dukF7ByzVOtJ9PMmBqUG4WkZ-tQTIJDPuh7y1ASyMwJKvEWbGPiI5pliFxE1JboObXEFksTj9jaOhOHerWfG52zZxJZtp7F6q9sjUArt4eKpWl8YpKQPCUj5r8zyC-Apa0W5_jykt0H_XutwPJgE-CTos-u4II2o5W3893GDiKa83g9yHvEfQufOfLqY6WzRisSfqR5EwXbq25-iFhXH7nJs4u_soIS3ZS_woCaNOxT8dvrKjoYJ60jFAHEGXUq6MazbdqIUVlIKhT0BWXhe5obkcRkr29_s4X3WSc4kuop51Yid0dPKjLCK8qJdAnciva2r8pFal6uETKwuo3X2JnWr9u0hgArzSsmqzqDr0IRGoIe3UY-oqYonA5hiipqxADiv58QXdow8p_IYtQvQBhItBkArd6L0phkQdFRBeRqHRftJas5I_bESmG-guaxC3ZNtshlyy4qmQtSO3zrICv-7ieDx1Tozd6sC-EDi5yQDTeIls8GMLqtZxD35CojW234quR5ld6ZVIn0ISm8gGOWQi7nJHnECSOkOKBfY51SQJJ8g8JZE7iLWYf6OHafvER8wqgTgcEDp9QNESaAU_2tEmjzrkX0xN52AdNMxVnh2OYIFrr5sWgMJ2ok6kgYg7r3ocxSHfO1f7VtyIewWf5HlKOkzU5xLUngCh-wBfUnjoWzCRljAzSdpxhRqTBecCx7RU5rzlKTY8AkymC0LGVtRlliJAPvUISpOHt6OsE2diWN_IXJ3tKDEn7co3yXcw6wstIjgVvpuDrObyGWwZN83Bn0gc9HPoBEscbBkq2TCMzeM2hcmsCVb3o7dhR-95t7602mq_IZTLkChdLHFlRTvFoYSTez0dUPyQWaWlI3KPXQqWbdPEQsBhiFkoZHkFo2CqC2uVGBhsK-vLGL2O7Klt3NUchyCGLa2IbJUkIZBdEkkfOhQ_tFYC-9LI4HOWetifefXm-36JB9eePc0zw4THozUOxJpCGIwuTwYasdZArb9RMuc7VoUDmGMl1W6-EWPy6KvbPFAvvmnJwldBFGZM-5me0tsZA06A7NnVZ3DbIlWf1SUZBeoGzhM9L7P6Rrq55MAw9QvNfqRsOsMFjiKRRZzs_Pn4DThchlu8TrZGT6TXXGmu7Ds9Ss31Zk8jU1vwHziyntlCoLdcqMdYlo2wuij3kO4UMuGFao4dw4JwVFvNUmBYNM5qu59iY2nBlwwDSct1dzgW9KZuBmO2tlyjjukkRgF_tkXptxr5qlNg6tf30CCU4FfmEtg4EJ55n7FvDkJcruaCgCHgVlGPTEuBLuDK8CVYuL-pZo6Owrldg6h6cSGhpbRfkUQYCum1wMgwVl4NcYTObUL4w1FSlz9kffi4CL-zdKAvK6vAYzpeh_-SM233_cHbIcjlxZCkcALQAouGW4Pn1jHvqH2NeKKCOXnHXFA4g67Y61Q0aVdpdYFEdX7PUDkUOch0fvQKVgqXzvXR-G_uGWup3lgZkAs1CsdP_wNSvfkRsss24Kwo-g3FQhH7RG_xknN3olTWolUiv7zxXSmMJNOxWjmt-Lud6lBUwc1wU0CuupnrSu9Ughfqeak-SsHVSgJfKwcjKiJhRJg6ak1BLg4X4uHD_4gYl3eozbZpViA4Z8QZ5KZoQjs0cQF4V4ylfW0-Cn3z6SGxQnU8KRQh7xuu-H2NYORYs9OtY6EViziYrNxhWA5H8MZ6ySDJJ40eTUo8H190nYuURNyU1bjK8rmm0MrEOwN-FBir8HGJiVl6k_bwZTXcOYG3aOnaKggo-020t1kiMr2dTm_CXagVXByre9SFo2fhkLzNns06TcqD40ILqU1imNU5vPL-Kt71VzgRX25GfKimDLIlLIEwwNmL9WaktDeKAfLw8GT1zoIJbddtsQwS1j213KAl8XPbOW1-FhK8wZBmxbnx-cNc3u6KU8MY25vEQmvwVNY8GI2xYEx52KXmgSRmkQFHCVNlV0gzS64d3SRM4IJJq6VlvnrZAg4DA7s9dSV1CH-9c6hHVOxoKg5Np9AZOkTPiZzYUR2EfEXQksnYZooCsT_oUE1LK8m1k1YROa7-kbxMfIcdLwpYiUnrNBPuYu16O3Bwlkd8hCjldtvnqcVR7zzGsOuYhDBy_q5kGw_puWgA2UEXj1Xg3HgF2XQBrS_lURoAJQgzaNpexQwsxrX2ACmc-pyMWkIn9VQef6hBIFs5IdsME7zNSEXvi214OXokh4w82vWbTpB9ICnCMlxw7INwdCb4ndrcVWOPAPDhmKQRePnJEgzPRahag_WseYiVopzhb0xrC08SnxKSvO_PegSzrR5wmlpXnBAOX8UtzMhg2qAjSMDzNdCWVvRd6ZIchzQcLcv4rc5ULBQ4Kwr-HNTEumOdGb6jvjKL1-KeRi1IIgjVCaWxL4PXqBaROTG7auDCedLcWpc7qnDdR39qeXYnEN3KCoTpP9hwLpIHe_wK29sEl6xGCbvIjR_goRiOAsd6yX5oNxRZzp-pmAN-l2eL_BeCVOk23TecreCswzRQjpnuMHvmsCZ2P3WcblR6qnlYWY_DVteOrkZ3jas-nK-51OH2GT9UicQsjbTrDqYgzsJtCSdvFbpKJIvYPPj9M5_lWMDh109Yh3UHK6gwUmHYpQjKXbzQ5ABUaAJ5GUHGoA_T9DaogLmu2OCH6iBpxdCr2HcB5RmbDgiz0mnf48aC0ohgLr5Ikz9LgZ6IMV6brl8XXvvh9IDkZj82Qv2mD4ILjDsQQ-hKh6CsDkZVVGzZDFI25A==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_04c11dfa346a1d9a016a8d81fa5a388195a4fa65ae34843ad5",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4317,
+      "completion_tokens": 2617,
+      "total_tokens": 6934,
+      "cost": 0.02767825,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.02767825,
+        "upstream_inference_prompt_cost": 0.00150825,
+        "upstream_inference_completions_cost": 0.02617
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2048,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787658744-uKf1PIrXLfkylqpFjGaC",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4317,
+    "completion_tokens": 2617,
+    "total_tokens": 6934,
+    "cost": 0.02767825,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.02767825,
+      "upstream_inference_prompt_cost": 0.00150825,
+      "upstream_inference_completions_cost": 0.02617
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 2048,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 29833,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f3.00014985",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00014985\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"6. Rachis lombaire\",\n      \"6.1 Principes communs\"\n    ],\n    \"rawText\": \"La compression, le cisaillement ou le moment externe décrivent une demande mécanique, mais ne donnent pas à eux seuls un seuil clinique de dommage. La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent. Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie; les charges étudiées étaient toutefois souvent légères et les données surtout transversales ([Saraceni et al., 2020](https://www.jospt.org/doi/10.2519/jospt.2020.9218)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"La compression, le cisaillement ou le moment externe décrivent une demande mécanique, mais ne donnent pas à eux seuls un seuil clinique de dommage.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie; les charges étudiées étaient toutefois souvent légères et les données surtout transversales ([Saraceni et al.\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"kind\": \"SENTENCE\",\n      \"text\": \", 2020](https://www.\"\n    },\n    {\n      \"unitIndex\": 4,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"jospt.\"\n    },\n    {\n      \"unitIndex\": 5,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"org/doi/10.\"\n    },\n    {\n      \"unitIndex\": 6,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"2519/jospt.\"\n    },\n    {\n      \"unitIndex\": 7,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"2020.\"\n    },\n    {\n      \"unitIndex\": 8,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"9218)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.97d5e335856e2df6\",\n      \"handle\": \"cit.f3.00014985.01\",\n      \"rawLabel\": \"Saraceni et al., 2020\",\n      \"markdown\": \"[Saraceni et al., 2020](https://www.jospt.org/doi/10.2519/jospt.2020.9218)\",\n      \"relativeStartByte\": 509,\n      \"relativeEndByte\": 583\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":3,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":4,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":5,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":6,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":7,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":8,\"decision\":\"CONTEXT_ONLY\"}],\"claims\":[{\"supportAnchors\":[\"La compression, le cisaillement ou le moment externe décrivent une demande mécanique, mais ne donnent pas à eux seuls un seuil clinique de dommage.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MECHANISM\",\"knowledgeTypeReason\":\"Décrit la nature mécanique des grandeurs et l'absence de seuil clinique intrinsèque.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Énonce un mécanisme et une limite, sans outcome clinique démontré.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"mechanistic_hypothesis\",\"directnessReason\":\"Affirmation de nature mécanistique sans preuve clinique directe.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Aucune source explicitement attachée à cette phrase.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[\"Ne fournit pas de seuil clinique; mécanisme sans preuve outcome.\"],\"cannotConclude\":[\"Ne permet pas d’inférer un seuil clinique de dommage.\"],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Énumération de facteurs considérés pertinents sans preuve citée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Assertion de pratique/considérations cliniques sans appui empirique direct cité.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Sans source scientifique reliée dans le fragment.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Correspond à une pratique/considération d’expertise.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie; les charges étudiées étaient toutefois souvent légères et les données surtout transversales\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Affirme l’absence de preuve crédible pour un facteur de risque présumé.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"absence_of_evidence\",\"epistemicStatusReason\":\"Le texte explicite une absence de preuve crédible in vivo.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"generalization\",\"descriptive_accuracy\"],\"confidenceLevels\":[\"low\",\"moderate\"],\"confidenceRationales\":[\"Charges souvent légères et données surtout transversales limitent la généralisation.\",\"Synthèse narrative de l’absence de preuve avec limites décrites.\"],\"confidenceRaw\":null,\"confidenceReason\":\"Limites méthodologiques réduisent la certitude et la généralisabilité.\",\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Portant sur risque de lombalgie in vivo.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"systematic_review\"],\"evidenceTypesReason\":\"Mention d’une revue; type exact non précisé mais classé comme revue systématique par défaut de revue probante.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.97d5e335856e2df6\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"Pendant le soulèvement\",\"Flexion lombaire accrue\"],\"limitations\":[\"Charges souvent légères\",\"Données surtout transversales\"],\"cannotConclude\":[\"Ne démontre pas que la flexion accrue augmente le risque de lombalgie.\",\"Ne permet pas d’inférer un effet sous charges lourdes ou en longitudinal.\"],\"unresolved\":[],\"flags\":[\"ambiguous_citation\",\"clinical_content\",\"explicit_absence\"],\"coverageUnitIndexes\":[2]}]}",
+  "providerResponse": {
+    "id": "gen-1787643647-altkbLwlK5RHyJ1YZV33",
+    "object": "chat.completion",
+    "created": 1787643647,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":2,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":3,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":4,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":5,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":6,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":7,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":8,\"decision\":\"CONTEXT_ONLY\"}],\"claims\":[{\"supportAnchors\":[\"La compression, le cisaillement ou le moment externe décrivent une demande mécanique, mais ne donnent pas à eux seuls un seuil clinique de dommage.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"biomechanics\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MECHANISM\",\"knowledgeTypeReason\":\"Décrit la nature mécanique des grandeurs et l'absence de seuil clinique intrinsèque.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"mechanistic_only\",\"epistemicStatusReason\":\"Énonce un mécanisme et une limite, sans outcome clinique démontré.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"mechanistic_hypothesis\",\"directnessReason\":\"Affirmation de nature mécanistique sans preuve clinique directe.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Aucune source explicitement attachée à cette phrase.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[\"Ne fournit pas de seuil clinique; mécanisme sans preuve outcome.\"],\"cannotConclude\":[\"Ne permet pas d’inférer un seuil clinique de dommage.\"],\"unresolved\":[],\"flags\":[\"biomechanical_risk_language\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":\"Énumération de facteurs considérés pertinents sans preuve citée.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":\"Assertion de pratique/considérations cliniques sans appui empirique direct cité.\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":\"Sans source scientifique reliée dans le fragment.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":\"Correspond à une pratique/considération d’expertise.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]},{\"supportAnchors\":[\"Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie; les charges étudiées étaient toutefois souvent légères et les données surtout transversales\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Affirme l’absence de preuve crédible pour un facteur de risque présumé.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"absence_of_evidence\",\"epistemicStatusReason\":\"Le texte explicite une absence de preuve crédible in vivo.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"generalization\",\"descriptive_accuracy\"],\"confidenceLevels\":[\"low\",\"moderate\"],\"confidenceRationales\":[\"Charges souvent légères et données surtout transversales limitent la généralisation.\",\"Synthèse narrative de l’absence de preuve avec limites décrites.\"],\"confidenceRaw\":null,\"confidenceReason\":\"Limites méthodologiques réduisent la certitude et la généralisabilité.\",\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Portant sur risque de lombalgie in vivo.\",\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"systematic_review\"],\"evidenceTypesReason\":\"Mention d’une revue; type exact non précisé mais classé comme revue systématique par défaut de revue probante.\",\"clinicalEvidenceLevel\":\"B_moderate\",\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.97d5e335856e2df6\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"Pendant le soulèvement\",\"Flexion lombaire accrue\"],\"limitations\":[\"Charges souvent légères\",\"Données surtout transversales\"],\"cannotConclude\":[\"Ne démontre pas que la flexion accrue augmente le risque de lombalgie.\",\"Ne permet pas d’inférer un effet sous charges lourdes ou en longitudinal.\"],\"unresolved\":[],\"flags\":[\"ambiguous_citation\",\"clinical_content\",\"explicit_absence\"],\"coverageUnitIndexes\":[2]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjUcCjGTi2SM34zuwsavLTfcrAK8qgTySNgQWJ_hP7qc8kPbt26KlMUPDcbysVK4EX-ihSpkE_bXLywfEJO_A90Ju8ndvpgWjp33HbKIjsOHFwmWLcQhoCqNzeheWpnLGCoE57vtC7uJR-3nTk9U7VJ32O5dHw7BX93PvwrFqyp-rYtByj8ojLWwMqkLbvllHCFZOIt9e085vHgJOHUHQKohk0ZjWBGFwJ3ssOLzON2ZPpj6Ar0FWNVpGWUZ6ovBOThgUeiy3Oc2nbS9SGHgTbI_DjC-AGM7A76BC30iRP49DTc1vpPuYy0leCJKz_lGhtb77UCOQK0eCxnM4TY0yc1lVuLOnZGDwWPFINXrYl1spitV53w5ifexPo22gomEPbKvJsHi8rrYzibBFDLSJGc-6Y1jAMgkRwNkGkaARUvIvsvkAyvTpFzqaZ9B2XzdFyirm0EJrPiy5JLyjeGxyqoV6Xgq70W8pV6xTUjgBrhiAVBND9Pjur-MsxmB8e9RagbY8XdZtf9F0vj5jsItZbhCyMpCXbIzlaLJuGTSqxRE4Tmk4U-sPNuQ9cTdp5V8FPUQMiNyfdnk85XM1J5NQPoqHkla6sxIdvJ0rr0qsc63BLA151-qqQ9TLDnekl3qYcvICeebNesFPv0VmF2AjKoHlOC3I8DeZThZHpBSKcp5s04HZiQuFSSu961MIH-a0ylUU8Hj1fWen8lvOKI1QrOw3Xenhc5Olp5cq2imlpneppCnSQlyKttlWgK3aLezqgfLPwk5Nhk6oCxXX0hsYwEfgqMgqvbcA2Rzoc6JQOs_An9Y_bj0gVbKMdCGhR2isbGew1bNAT4T-3lfulg_X07KrqvSU94Pn1rlrd1DLrHUuHXJzKW_UteQcOW2vcvrVqtvWgcDDA2FBnzcekyJOYTZy_Z4FqJITqH40IP5ktRTbxziZrixGaTr6bLkIY5cbXJ9KrO3QAm_QOtfh9q97WbcVKg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_03da0c92cea54181016a8d47021cd8819680eb6040aeaf092d",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4018,
+      "completion_tokens": 1206,
+      "total_tokens": 5224,
+      "cost": 0.0140585,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2688,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0140585,
+        "upstream_inference_prompt_cost": 0.0019985,
+        "upstream_inference_completions_cost": 0.01206
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787643647-altkbLwlK5RHyJ1YZV33",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4018,
+    "completion_tokens": 1206,
+    "total_tokens": 5224,
+    "cost": 0.0140585,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2688,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0140585,
+      "upstream_inference_prompt_cost": 0.0019985,
+      "upstream_inference_completions_cost": 0.01206
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 18835,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

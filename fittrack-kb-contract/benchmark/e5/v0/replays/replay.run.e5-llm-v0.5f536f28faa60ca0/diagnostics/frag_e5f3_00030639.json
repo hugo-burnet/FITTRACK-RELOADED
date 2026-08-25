@@ -1,0 +1,275 @@
+{
+  "fragmentId": "frag.e5f3.00030639",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "UNSUPPORTED_INFERENCE",
+      "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+      "critical": true,
+      "retryable": false,
+      "claimRef": "tmp.claim.03"
+    },
+    {
+      "code": "CLAIM_FILTERED",
+      "message": "Au moins une claim a été filtrée indépendamment",
+      "critical": false,
+      "retryable": false,
+      "attempted": 3,
+      "retained": 2,
+      "filtered": 1
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 3,
+      "retained": 2,
+      "filtered": 1,
+      "coverageDiagnosticCount": 0
+    }
+  ],
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 2,
+    "filtered": 1,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "**Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandation pratique de reprise après interruption sans douleur."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Degré d'établissement non précisé."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.fca813b64bb7000d",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "**Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué.",
+          "supportSpans": [
+            {
+              "text": "**Après interruption sans douleur :** reprendre sous le volume et l’intensité antérieurs, car la tolérance à la charge et aux courbatures a diminué.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 156,
+              "absoluteStartByte": 30639,
+              "absoluteEndByte": 30795
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans référence à données cliniques spécifiques."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune citation, ton prescriptif pratique."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandation pratique de reprise après interruption sans douleur."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Degré d'établissement non précisé."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Conseil pratique sans référence à données cliniques spécifiques."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune citation, ton prescriptif pratique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "après interruption sans douleur"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations;",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Affirme l'absence de règle universelle de pourcentage de reprise."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Le texte affirme explicitement qu'aucun pourcentage universel n’est soutenu."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d6cb9d88fda6c543",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations;",
+          "supportSpans": [
+            {
+              "text": "Aucun pourcentage universel de reprise n’est soutenu pour toutes populations;",
+              "relativeStartByte": 157,
+              "relativeEndByte": 236,
+              "absoluteStartByte": 30796,
+              "absoluteEndByte": 30875
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type de preuve non spécifié."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source indiquée."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Affirme l'absence de règle universelle de pourcentage de reprise."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Le texte affirme explicitement qu'aucun pourcentage universel n’est soutenu."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Type de preuve non spécifié."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source indiquée."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "toutes populations"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "toute règle « 50 % » ou « +10 % par semaine » doit être étiquetée comme heuristique de programmation, non recommandation clinique.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "PRODUCT_POLICY",
+          "reason": "Instruction d'étiquetage dans le produit FitTrack."
+        },
+        "epistemicStatus": {
+          "state": "NOT_APPLICABLE",
+          "value": null,
+          "reason": "Règle de produit, pas un énoncé scientifique."
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "UNSUPPORTED_INFERENCE",
+            "message": "Une politique produit ou décision de modélisation doit être ZERO_CLAIM en E5 v0",
+            "critical": true,
+            "retryable": false,
+            "claimRef": "tmp.claim.03"
+          }
+        ],
+        "canonicalCandidate": null
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

@@ -1,0 +1,100 @@
+{
+  "fragmentId": "frag.e5f3.00010336",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f3.00010336",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.38639b5bbea3a702",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "les essais ayant autorisé une douleur encadrée n’ont pas montré de moins bons résultats à moyen ou long terme",
+        "supportSpans": [
+          {
+            "text": "les essais ayant autorisé une douleur encadrée n’ont pas montré de moins bons résultats à moyen ou long terme",
+            "relativeStartByte": 120,
+            "relativeEndByte": 236,
+            "absoluteStartByte": 10456,
+            "absoluteEndByte": 10572
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Résultats d’essais cliniques sur des outcomes à moyen/long terme."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le type précis d’étude n’est pas précisé dans le fragment."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Énonce un résultat d’essais cliniques sur les outcomes."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Formulation en non-infériorité (« n’ont pas montré de moins bons résultats ») sans preuve d’équivalence explicite."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Résultats d’essais cliniques sur des outcomes à moyen/long terme."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le type précis d’étude n’est pas précisé dans le fragment."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.93c1cb8e0ae0fc0b"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "douleurs musculosquelettiques chroniques",
+          "à moyen ou long terme",
+          "douleur encadrée"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

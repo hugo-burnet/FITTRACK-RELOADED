@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.f3.0001",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.f3.0001\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"1. Résumé opérationnel\"\n    ],\n    \"rawText\": \"3. **« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».** Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation ([Smith et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"3. **« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».** Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation ([Smith et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.c1f9eef136b9ebeb\",\n      \"handle\": \"cit.f3.0001.01\",\n      \"rawLabel\": \"Smith et al., 2017\",\n      \"markdown\": \"[Smith et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/)\",\n      \"relativeStartByte\": 395,\n      \"relativeEndByte\": 466\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».\",\"Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"probable\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non précisé dans l'extrait\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.c1f9eef136b9ebeb\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"douleurs chroniques\",\"exercices tolérablement douloureux\"],\"limitations\":[\"avantage antalgique à court terme\",\"sans supériorité durable démontrée\"],\"cannotConclude\":[\"pas de supériorité durable\"],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"uncertain\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non précisé\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.c1f9eef136b9ebeb\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"douleurs chroniques\",\"exercices tolérablement douloureux\"],\"limitations\":[\"avantage antalgique à court terme\",\"sans supériorité durable démontrée\"],\"cannotConclude\":[\"pas de supériorité durable\"],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"douleurs chroniques\",\"exercices tolérablement douloureux\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\",\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787643615-YF7T4Rkxk6u0W7lScclU",
+    "object": "chat.completion",
+    "created": 1787643615,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».\",\"Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"probable\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non précisé dans l'extrait\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.c1f9eef136b9ebeb\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"douleurs chroniques\",\"exercices tolérablement douloureux\"],\"limitations\":[\"avantage antalgique à court terme\",\"sans supériorité durable démontrée\"],\"cannotConclude\":[\"pas de supériorité durable\"],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EVIDENCE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"uncertain\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":null,\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non précisé\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.c1f9eef136b9ebeb\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"douleurs chroniques\",\"exercices tolérablement douloureux\"],\"limitations\":[\"avantage antalgique à court terme\",\"sans supériorité durable démontrée\"],\"cannotConclude\":[\"pas de supériorité durable\"],\"unresolved\":[],\"flags\":[\"clinical_content\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[\"douleurs chroniques\",\"exercices tolérablement douloureux\"],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\",\"clinical_content\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjUbg2Av5VuL4P07vfMDv4VNFbvgYj5ESZO2VhkxAEzD6yab41__DxoTONzcj9CaBUEeDZT9N_E5YfIyN57Xfbunk39Ttje1zy2w7ws4xKWmen6LQi5wIYdzHfdrL1dY1jBaOqNbGBHXAhgGTNxXIzcDl8g7-kuAL4AOS7bhN4muP4agqP1UwRj0YAiJikXKwh9vCwHo8-WbKfk4FvlL9EFeto1kspHkomkyoLZWnbRuvL36zAzPj0BWuQakT06OhDelbSRdtwNnWwhhqWoGbPJgMCBBohbSVIofy0E9fXqVuDIlBoWHaLkm5R9G6zXa4eE33I37h-Ty6_hEI-RBS3N60HeM2Wytt-kxqNRY_7AnS2LhBpJMFFNokNYl13YQ-M5PPJaYo-l8QfALGx5nZedyffij22AbMBhuaXMkK5JA3eXEKxKibTYbUxhsZ1RLTXyKi_h--njJiM1qrnrIzfm4RMfuUsJiKOq1Qb_lWznm4h6Y0Cl_QlbRD0bm6BcpchTKgG4ktl0O6ZBRtjkUFQdTevyz1C0GK1LwJ9zSlEnheEtg9go_N2NeU1AvY0k3rf-yrPWgjwDD3dh-4yaNCNxmZFW2UT2wpvwzDtmiZuEEJIuhgfOCET9MOjBIG0STzlebR0V5Jmtf6DI6-XuXa3in-JZrh-nQgiP9GWcg5bVsQY-oRrnOmigVMgP8FvsLP5zBJQ6F1US_xPgpPcSgrYRb35-DsVeWxnbJVgQZ8mqlbSrkINHmnAzrtQW1w2w-KhPwLMIDyq5MahZ8w42Bh7tvFhfjHF0hEZdp4knFrz8m1qEGXxdJYq5SuLDDz6WfDzhnqWrXWJeIJQ_YvoowIia5yKO7SsznsAd_CzjUPVpkrN266g_3b0laEl1e_5tVzVpmI_PP1bOA6jY8ged19CuOG2C9eSfhyaAOEGiFyUet-mnJN3WvgllTn3NO3zndLImCO.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0ddacdb42309b24a016a8d46e0bed0819484fbf81ecb080ea2",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3716,
+      "completion_tokens": 950,
+      "total_tokens": 4666,
+      "cost": 0.011265,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.011265,
+        "upstream_inference_prompt_cost": 0.001765,
+        "upstream_inference_completions_cost": 0.0095
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787643615-YF7T4Rkxk6u0W7lScclU",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 3716,
+    "completion_tokens": 950,
+    "total_tokens": 4666,
+    "cost": 0.011265,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2560,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.011265,
+      "upstream_inference_prompt_cost": 0.001765,
+      "upstream_inference_completions_cost": 0.0095
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 11724,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

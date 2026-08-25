@@ -1,0 +1,383 @@
+{
+  "fragmentId": "frag.e5f2.00025178",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00025178",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.3bcbbcb0ec2b3700",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le **gastrocnémien** est **biarticulaire** (fléchisseur plantaire de cheville et fléchisseur de genou)",
+        "supportSpans": [
+          {
+            "text": "Le **gastrocnémien** est **biarticulaire** (fléchisseur plantaire de cheville et fléchisseur de genou)",
+            "relativeStartByte": 0,
+            "relativeEndByte": 105,
+            "absoluteStartByte": 25178,
+            "absoluteEndByte": 25283
+          },
+          {
+            "text": "tandis que le **soléaire** est **mono-articulaire** (fléchisseur plantaire de cheville uniquement)",
+            "relativeStartByte": 107,
+            "relativeEndByte": 207,
+            "absoluteStartByte": 25285,
+            "absoluteEndByte": 25385
+          }
+        ],
+        "domain": "anatomy",
+        "knowledgeType": "ANATOMICAL_FACT",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "anatomical_cadaveric",
+            "reason": "Anatomical characterization"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No explicit evidence type cited for this sentence"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "ANATOMICAL_FACT",
+            "reason": "Anatomical description of joint crossings and actions"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Stated as anatomical fact"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "anatomical_cadaveric",
+            "reason": "Anatomical characterization"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No explicit evidence type cited for this sentence"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.4ea18e8923816264",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Cette différence anatomique a une conséquence biomécanique directement démontrée : la contribution relative du gastrocnémien et du soléaire au couple de flexion plantaire varie selon l'angle du genou, le gastrocnémien étant désavantagé mécaniquement (raccourci, donc moins capable de produire de la tension) lorsque le genou est fléchi, ce qui reporte la charge relative vers le soléaire",
+        "supportSpans": [
+          {
+            "text": "Cette différence anatomique a une conséquence biomécanique directement démontrée : la contribution relative du gastrocnémien et du soléaire au couple de flexion plantaire varie selon l'angle du genou, le gastrocnémien étant désavantagé mécaniquement (raccourci, donc moins capable de produire de la tension) lorsque le genou est fléchi, ce qui reporte la charge relative vers le soléaire",
+            "relativeStartByte": 209,
+            "relativeEndByte": 610,
+            "absoluteStartByte": 25387,
+            "absoluteEndByte": 25788
+          },
+          {
+            "text": "[Gastrocnemius and Soleus Muscle Contributions to Ankle Plantar Flexion Torque, angle genou/cheville](https://gavinpublishers.com/articles/research-article/Sports-Injuries-Medicine/gastrocnemius-and-soleus-muscle-contributions-to-ankle-plantar-flexion-torque-as-a-function-of-ankle-and-knee-angle)",
+            "relativeStartByte": 612,
+            "relativeEndByte": 909,
+            "absoluteStartByte": 25790,
+            "absoluteEndByte": 26087
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Biomechanical demonstration re: torque contributions"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Single cited biomechanical source"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Describes torque contributions varying with knee angle"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "Claimed as directly demonstrated with specified direction"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Biomechanical demonstration re: torque contributions"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Single cited biomechanical source"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.f710dba38d921300"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "varie selon l'angle du genou",
+          "gastrocnémien désavantagé lorsque le genou est fléchi"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.b00c40580ff334bb",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Cette logique biomécanique est largement acceptée dans la pratique *evidence-based*",
+        "supportSpans": [
+          {
+            "text": "cohérente avec la pratique répandue consistant à privilégier le mollet debout (genou tendu, gastrocnémien en position longue et fonctionnelle) pour le gastrocnémien et le mollet assis ou la presse à cuisses jambes fléchies (genou fléchi, gastrocnémien raccourci et mécaniquement désavantagé) pour isoler davantage le soléaire",
+            "relativeStartByte": 971,
+            "relativeEndByte": 1310,
+            "absoluteStartByte": 26149,
+            "absoluteEndByte": 26488
+          },
+          {
+            "text": "Cette logique biomécanique est largement acceptée dans la pratique *evidence-based*",
+            "relativeStartByte": 1312,
+            "relativeEndByte": 1397,
+            "absoluteStartByte": 26490,
+            "absoluteEndByte": 26575
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Practice-based claim"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Identified as practice-based evidence"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Describes widespread practice and acceptance"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Practice-based statement without longitudinal proof"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Practice-based claim"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Identified as practice-based evidence"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "genou tendu pour solliciter gastrocnémien",
+          "genou fléchi pour isoler davantage le soléaire"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.ab8384c3c0eca5a2",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "bien que peu d'essais longitudinaux d'hypertrophie régionale du mollet comparant directement ces deux configurations d'angle de genou aient été identifiés dans cette recherche — la prescription reste donc une **extrapolation biomécanique plausible (niveau modéré), pas une preuve longitudinale directe**.",
+        "supportSpans": [
+          {
+            "text": "bien que peu d'essais longitudinaux d'hypertrophie régionale du mollet comparant directement ces deux configurations d'angle de genou aient été identifiés dans cette recherche — la prescription reste donc une **extrapolation biomécanique plausible (niveau modéré), pas une preuve longitudinale directe**.",
+            "relativeStartByte": 1399,
+            "relativeEndByte": 1712,
+            "absoluteStartByte": 26577,
+            "absoluteEndByte": 26890
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Labelled extrapolation from biomechanics, not longitudinal evidence"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Absence of trials; no specific evidence cited"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Explicitly states lack of longitudinal hypertrophy trials; clarifies extrapolation"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": "Explicit statement of few identified trials and not direct proof"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Labelled extrapolation from biomechanics, not longitudinal evidence"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": "Absence of trials; no specific evidence cited"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [
+          "peu d'essais longitudinaux d'hypertrophie régionale du mollet comparant directement ces deux configurations"
+        ],
+        "cannotConclude": [
+          "pas une preuve longitudinale directe"
+        ],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

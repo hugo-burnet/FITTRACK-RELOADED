@@ -1,0 +1,162 @@
+{
+  "fragmentId": "frag.e5f3.00020521",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Conseil de modification d’exercice formulé sans données citées."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Énoncé normatif de pratique, non appuyé par une preuve rapportée."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.cdfe2adcf42fcc41",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante",
+          "supportSpans": [
+            {
+              "text": "passer temporairement du squat barre au belt squat, split squat ou presse peut réduire une exposition irritante",
+              "relativeStartByte": 22,
+              "relativeEndByte": 134,
+              "absoluteStartByte": 20543,
+              "absoluteEndByte": 20655
+            },
+            {
+              "text": "sans supposer que la compression est la cause",
+              "relativeStartByte": 136,
+              "relativeEndByte": 181,
+              "absoluteStartByte": 20657,
+              "absoluteEndByte": 20702
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Recommandation pratique sans étude citée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune citation ; guidance d’expert."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Conseil de modification d’exercice formulé sans données citées."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Énoncé normatif de pratique, non appuyé par une preuve rapportée."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Recommandation pratique sans étude citée."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune citation ; guidance d’expert."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "temporairement",
+            "belt squat, split squat ou presse en alternative au squat barre"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "que la compression est la cause"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4317,
+      "outputTokens": 4189,
+      "reasoningTokens": 3776,
+      "totalTokens": 8506,
+      "costUsd": 0.04339825
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4317,
+      "outputTokens": 4189,
+      "reasoningTokens": 3776,
+      "totalTokens": 8506,
+      "costUsd": 0.04339825
+    }
+  }
+}

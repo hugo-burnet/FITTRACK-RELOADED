@@ -1,0 +1,451 @@
+{
+  "fragmentId": "frag.e5f3.00029304",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00029304",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.f1af377c298d725e",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "- **Leg extension :** ce n’est pas « mauvais pour les genoux ».",
+        "supportSpans": [
+          {
+            "text": "- **Leg extension :** ce n’est pas « mauvais pour les genoux ».",
+            "relativeStartByte": 0,
+            "relativeEndByte": 67,
+            "absoluteStartByte": 29304,
+            "absoluteEndByte": 29371
+          },
+          {
+            "text": "les profils biomécaniques ne prouvent pas une lésion clinique",
+            "relativeStartByte": 371,
+            "relativeEndByte": 434,
+            "absoluteStartByte": 29675,
+            "absoluteEndByte": 29738
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Portée clinique générale sans précisions d’étude"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de rattachement clair à une citation unique"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Affirme que la leg extension n’est pas mauvaise et que les profils biomécaniques ne prouvent pas une lésion"
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau d’assurance non précisé"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Portée clinique générale sans précisions d’étude"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de rattachement clair à une citation unique"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.5aa1072d94e704e5",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension; certaines machines à came modifient ce profil.",
+        "supportSpans": [
+          {
+            "text": "Avec une résistance fixée à la jambe, la demande peut augmenter près de l’extension; certaines machines à came modifient ce profil.",
+            "relativeStartByte": 68,
+            "relativeEndByte": 206,
+            "absoluteStartByte": 29372,
+            "absoluteEndByte": 29510
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description biomécanique sans outcome clinique direct"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune étude citée pour cette phrase"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation du profil de demande mécanique et de l’effet d’une came"
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Degré d’étayage non indiqué"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Description biomécanique sans outcome clinique direct"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune étude citée pour cette phrase"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "Ne permet pas d’inférer une lésion clinique"
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.2bdec1d4adbf979d",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Ajuster amplitude et charge selon symptômes.",
+        "supportSpans": [
+          {
+            "text": "Ajuster amplitude et charge selon symptômes.",
+            "relativeStartByte": 207,
+            "relativeEndByte": 252,
+            "absoluteStartByte": 29511,
+            "absoluteEndByte": 29556
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Conseil pratique non référencé"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Instruction pratique sans citation"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Recommandation pratique sans référence explicite"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Conseil pratique non référencé"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Instruction pratique sans citation"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "selon symptômes"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.3d51c25b069ca403",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "Les deux chaînes sont recommandées pour la PFP ([CPG PFP 2019]",
+        "supportSpans": [
+          {
+            "text": "Les deux chaînes sont recommandées pour la PFP ([CPG PFP 2019]",
+            "relativeStartByte": 253,
+            "relativeEndByte": 317,
+            "absoluteStartByte": 29557,
+            "absoluteEndByte": 29621
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique pour PFP"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Mention explicite d’un CPG"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Appui sur un CPG pour une recommandation clinique"
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Force de recommandation non précisée dans l’extrait"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandation clinique pour PFP"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Mention explicite d’un CPG"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.6dba11447ad738d6"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "PFP"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a194faa5652b7eed",
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "les profils biomécaniques ne prouvent pas une lésion clinique ([Willy & Meira, 2016]",
+        "supportSpans": [
+          {
+            "text": "les profils biomécaniques ne prouvent pas une lésion clinique ([Willy & Meira, 2016]",
+            "relativeStartByte": 371,
+            "relativeEndByte": 457,
+            "absoluteStartByte": 29675,
+            "absoluteEndByte": 29761
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "indirect_clinical",
+            "reason": "Lien entre biomécanique et lésion nié, support indirect"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review"
+            ],
+            "reason": "Type d’étude non explicitement indiqué; maintien possible d’ambiguïté"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": "Affirme la non-preuve clinique à partir de profils biomécaniques"
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Degré de certitude non précisé"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "indirect_clinical",
+            "reason": "Lien entre biomécanique et lésion nié, support indirect"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review"
+            ],
+            "reason": "Type d’étude non explicitement indiqué; maintien possible d’ambiguïté"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.2528e8e8fb4afc48"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "Les profils biomécaniques ne permettent pas d’inférer une lésion clinique"
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

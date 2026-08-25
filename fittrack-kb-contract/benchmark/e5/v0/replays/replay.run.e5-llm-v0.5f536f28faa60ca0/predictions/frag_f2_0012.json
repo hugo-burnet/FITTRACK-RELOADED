@@ -1,0 +1,282 @@
+{
+  "fragmentId": "frag.f2.0012",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0012",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.41080fc228c45ec9",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale.",
+        "supportSpans": [
+          {
+            "text": "Substitutions seulement partiellement équivalentes.",
+            "relativeStartByte": 2,
+            "relativeEndByte": 54,
+            "absoluteStartByte": 80732,
+            "absoluteEndByte": 80784
+          },
+          {
+            "text": "Deux exercices partageant une fonction musculaire large mais différant sur la longueur musculaire dominante ou la biarticularité de façon qui module probablement l'hypertrophie régionale.",
+            "relativeStartByte": 57,
+            "relativeEndByte": 248,
+            "absoluteStartByte": 80787,
+            "absoluteEndByte": 80978
+          },
+          {
+            "text": "Ces paires ne devraient pas être présentées comme interchangeables lorsque l'objectif est une hypertrophie régionale précise",
+            "relativeStartByte": 862,
+            "relativeEndByte": 991,
+            "absoluteStartByte": 81592,
+            "absoluteEndByte": 81721
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "No direct outcome data tied to this general rule within fragment"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Practice statement"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Guidance on substitution equivalence and interchangeability"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Presented as practice guidance rather than a quantified effect"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "No direct outcome data tied to this general rule within fragment"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Practice statement"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "Objectif: hypertrophie régionale précise"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.1fd9e0ed7a254335",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations",
+        "supportSpans": [
+          {
+            "text": "Exemple : pushdown triceps vs extension overhead — même muscle nominal (triceps), mais l'overhead étire spécifiquement le chef long à l'épaule alors que le pushdown ne le fait pas, avec une preuve directe d'hypertrophie différentielle du chef long entre les deux configurations",
+            "relativeStartByte": 249,
+            "relativeEndByte": 534,
+            "absoluteStartByte": 80979,
+            "absoluteEndByte": 81264
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Explicitly refers to direct differential hypertrophy evidence"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Study design not specified in fragment"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Claims direct evidence of differential hypertrophy between two configurations"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "States direct evidence of differential hypertrophy of the long head"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Explicitly refers to direct differential hypertrophy evidence"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Study design not specified in fragment"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1cb73570ada2b3fd"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.535d01cd35e615ca",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Autre exemple : leg curl assis (hanche fléchie) vs leg curl couché (hanche neutre/étendue) — même muscle nominal, mais position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement.",
+        "supportSpans": [
+          {
+            "text": "Autre exemple : leg curl assis (hanche fléchie) vs leg curl couché (hanche neutre/étendue) — même muscle nominal, mais position de hanche différente modulant la longueur des ischio-jambiers biarticulaires en début de mouvement.",
+            "relativeStartByte": 626,
+            "relativeEndByte": 861,
+            "absoluteStartByte": 81356,
+            "absoluteEndByte": 81591
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Describes mechanical length changes, not outcomes"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No study type specified"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Observation about joint position altering muscle length of biarticular hamstrings"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Mechanistic/biomechanical statement without outcome data"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Describes mechanical length changes, not outcomes"
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No study type specified"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "Début de mouvement"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

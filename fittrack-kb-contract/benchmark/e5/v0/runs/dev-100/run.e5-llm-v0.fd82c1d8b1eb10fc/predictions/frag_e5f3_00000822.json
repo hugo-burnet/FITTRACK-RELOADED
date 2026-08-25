@@ -1,0 +1,638 @@
+{
+  "fragmentId": "frag.e5f3.00000822",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.e5f3.00000822",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.05ec7ea7740a0f71",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "L’exercice est généralement une composante de première intention.",
+        "supportSpans": [
+          {
+            "text": "L’exercice est généralement une composante de première intention.",
+            "relativeStartByte": 5,
+            "relativeEndByte": 75,
+            "absoluteStartByte": 827,
+            "absoluteEndByte": 897
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques pour des pathologies spécifiques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Le fragment mentionne des recommandations/CPG (APTA, AAOS)."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Énoncé général fondé sur des recommandations cliniques listées dans la même unité."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le fragment ne précise pas le niveau de convergence ou de certitude."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques pour des pathologies spécifiques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Le fragment mentionne des recommandations/CPG (APTA, AAOS)."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a049c0dd9a21c49f",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les recommandations soutiennent l’exercice pour la lombalgie chronique",
+        "supportSpans": [
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique",
+            "relativeStartByte": 78,
+            "relativeEndByte": 150,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 972
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation explicite sur le soutien par des recommandations."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau de preuve non précisé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.74576bec668a04f0"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "lombalgie chronique"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.2edd722b65de9bd4",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe",
+        "supportSpans": [
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe",
+            "relativeStartByte": 78,
+            "relativeEndByte": 181,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 1003
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation explicite sur le soutien par des recommandations."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau de preuve non précisé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.de3fd03b4fcca391"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "tendinopathie de la coiffe"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.7b1fb5fef015fff9",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale",
+        "supportSpans": [
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale",
+            "relativeStartByte": 78,
+            "relativeEndByte": 212,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 1034
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation explicite sur le soutien par des recommandations."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau de preuve non précisé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.05975ca374952a2f"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "épicondylalgie latérale"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.8e9b0b1d3ec1691d",
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire",
+        "supportSpans": [
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire",
+            "relativeStartByte": 78,
+            "relativeEndByte": 243,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 1065
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation explicite sur le soutien par des recommandations."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau de preuve non précisé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.76e6da4d2004c295"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "douleur fémoro-patellaire"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.d8547223b8f4be84",
+        "technicalClaimRef": "tmp.claim.06",
+        "rawStatement": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire, la tendinopathie d’Achille",
+        "supportSpans": [
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire, la tendinopathie d’Achille",
+            "relativeStartByte": 78,
+            "relativeEndByte": 273,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 1095
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation explicite sur le soutien par des recommandations."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau de preuve non précisé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.215ce6bb5cbc42f3"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "tendinopathie d’Achille"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.eb8a956904c6a10d",
+        "technicalClaimRef": "tmp.claim.07",
+        "rawStatement": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire, la tendinopathie d’Achille et l’arthrose du genou",
+        "supportSpans": [
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire, la tendinopathie d’Achille et l’arthrose du genou",
+            "relativeStartByte": 78,
+            "relativeEndByte": 298,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 1120
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation explicite sur le soutien par des recommandations."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau de preuve non précisé."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Recommandations cliniques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Citations APTA/AAOS listées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.7f8f850f3bdf4a2c"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "arthrose du genou"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

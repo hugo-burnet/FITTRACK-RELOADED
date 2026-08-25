@@ -1,0 +1,297 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Qualitative study result described."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Qualitative survey with low causal strength."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.a28d7063c6f733d6",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+          "supportSpans": [
+            {
+              "text": "documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+              "relativeStartByte": 156,
+              "relativeEndByte": 359,
+              "absoluteStartByte": 83698,
+              "absoluteEndByte": 83901
+            },
+            {
+              "text": "[Bodybuilding Coaching Strategies Meet Evidence-Based Recommendations, 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC10299204/)",
+              "relativeStartByte": 361,
+              "relativeEndByte": 489,
+              "absoluteStartByte": 83903,
+              "absoluteEndByte": 84031
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "low",
+                  "rationale": "Qualitative, small-scope context; not causal."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": "Described as qualitative study interviewing coaches."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": "Explicitly labeled qualitative/enquête."
+            },
+            "clinicalEvidenceLevel": "D_very_low",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Qualitative study result described."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Qualitative survey with low causal strength."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "low",
+                  "rationale": "Qualitative, small-scope context; not causal."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": "Described as qualitative study interviewing coaches."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": "Explicitly labeled qualitative/enquête."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.13c064ac2a25902d"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "Qualitative design; not causal; practice-vs-evidence alignment may vary by domain."
+          ],
+          "cannotConclude": [
+            "Cannot infer causal effectiveness from correspondence; does not establish superiority of either practice or literature."
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "— **preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Characterizes evidence level and purpose."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Not causal; only descriptive mapping of practice consensus."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.304441c3c7e6026e",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "— **preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**",
+          "supportSpans": [
+            {
+              "text": "— **preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique**",
+              "relativeStartByte": 491,
+              "relativeEndByte": 640,
+              "absoluteStartByte": 84033,
+              "absoluteEndByte": 84182
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "low",
+                  "rationale": "Explicitly states very low level for causal claims."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": "Explicitly qualitative/enquête."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": "Explicitly qualitative/enquête."
+            },
+            "clinicalEvidenceLevel": "D_very_low",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Characterizes evidence level and purpose."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Not causal; only descriptive mapping of practice consensus."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "low",
+                  "rationale": "Explicitly states very low level for causal claims."
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "qualitative_survey",
+              "reason": "Explicitly qualitative/enquête."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "qualitative_study"
+              ],
+              "reason": "Explicitly qualitative/enquête."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [
+            "Only for mapping practice consensus."
+          ],
+          "cannotConclude": [
+            "Cannot support causal assertions."
+          ],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4007,
+      "outputTokens": 779,
+      "reasoningTokens": 0,
+      "totalTokens": 4786,
+      "costUsd": 0.00977475
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4007,
+      "outputTokens": 779,
+      "reasoningTokens": 0,
+      "totalTokens": 4786,
+      "costUsd": 0.00977475
+    }
+  }
+}

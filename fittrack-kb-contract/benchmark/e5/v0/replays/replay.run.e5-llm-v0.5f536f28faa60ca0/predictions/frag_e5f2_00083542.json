@@ -1,0 +1,116 @@
+{
+  "fragmentId": "frag.e5f2.00083542",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00083542",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.2c6125a751845b6c",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une étude qualitative interrogeant des coachs de bodybuilding sur leurs pratiques et les comparant aux recommandations de la littérature *evidence-based* documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+        "supportSpans": [
+          {
+            "text": "Une étude qualitative interrogeant des coachs de bodybuilding sur leurs pratiques et les comparant aux recommandations de la littérature *evidence-based* documente une correspondance globalement bonne mais imparfaite entre pratique de terrain et preuve publiée, avec des domaines où l'expérience pratique dépasse ou diverge de la littérature disponible",
+            "relativeStartByte": 0,
+            "relativeEndByte": 359,
+            "absoluteStartByte": 83542,
+            "absoluteEndByte": 83901
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "low",
+                "rationale": "The fragment labels it as qualitative with very low level for causal claims; used to map practice consensus."
+              }
+            ],
+            "raw": "preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique",
+            "reason": "Author-provided limitation reduces confidence in causal inference; descriptive mapping only."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": "It is a qualitative interview-based survey of coaches."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": "Explicitly described as an étude qualitative/enquête."
+          },
+          "clinicalEvidenceLevel": "D_very_low",
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "The sentence reports findings of a qualitative study."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Qualitative study indicates patterns but not causal certainty; text notes imperfection and divergence."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "descriptive_accuracy",
+                "confidence": "low",
+                "rationale": "The fragment labels it as qualitative with very low level for causal claims; used to map practice consensus."
+              }
+            ],
+            "raw": "preuve qualitative/enquête, niveau très faible pour toute affirmation causale, utile uniquement pour cartographier le consensus de pratique",
+            "reason": "Author-provided limitation reduces confidence in causal inference; descriptive mapping only."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "qualitative_survey",
+            "reason": "It is a qualitative interview-based survey of coaches."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "qualitative_study"
+            ],
+            "reason": "Explicitly described as an étude qualitative/enquête."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.13c064ac2a25902d"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [
+          "Correspondence is globally good but imperfect; some domains diverge or surpass literature; qualitative study."
+        ],
+        "cannotConclude": [
+          "Does not support causal claims; only maps consensus of practice."
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "stage": "DEV_20",
+  "manifestPath": "benchmark/e5/v0/manifests/dev-20.json",
+  "fragmentCount": 20,
+  "split": {
+    "F2": 10,
+    "F3": 10
+  },
+  "goldenLeakChecks": 20,
+  "apiCalls": 0,
+  "repairPolicy": {
+    "maxFullRetries": 0,
+    "maxAnchorRepairRetries": 1,
+    "maxRepairOutputTokens": 1000
+  },
+  "costEstimate": {
+    "approximationMethod": "UTF-8 bytes / 4 for input; configured expected and hard maximum output tokens",
+    "approximateInputTokens": 60121,
+    "expectedOutputTokens": 20000,
+    "maximumOutputTokens": 90000,
+    "configuredRatesUsdPerMillionTokens": {
+      "input": 1.25,
+      "output": 10,
+      "basis": "User-configured OpenRouter rates for openai/gpt-5 on 2026-08-24"
+    },
+    "expectedCostUsd": 0.2752,
+    "maximumConfiguredCostUsd": 0.9752
+  },
+  "maxRunCostUsd": 2.5
+}

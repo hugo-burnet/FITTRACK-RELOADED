@@ -1,0 +1,112 @@
+{
+  "fragmentId": "frag.e5f2.00018221",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00018221",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.08c3812d5741a5c9",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Cette distinction anatomique fondamentale a une conséquence biomécanique majeure : le droit fémoral subit une **insuffisance active** lorsque la hanche est fléchie en même temps que le genou est étendu (car il est simultanément étiré à la hanche et raccourci au genou), ce qui limite sa capacité à produire une force maximale dans cette configuration — un principe documenté depuis longtemps en anatomie clinique du quadriceps",
+        "supportSpans": [
+          {
+            "text": "Cette distinction anatomique fondamentale a une conséquence biomécanique majeure : le droit fémoral subit une **insuffisance active** lorsque la hanche est fléchie en même temps que le genou est étendu (car il est simultanément étiré à la hanche et raccourci au genou), ce qui limite sa capacité à produire une force maximale dans cette configuration — un principe documenté depuis longtemps en anatomie clinique du quadriceps",
+            "relativeStartByte": 254,
+            "relativeEndByte": 695,
+            "absoluteStartByte": 18475,
+            "absoluteEndByte": 18916
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Consistent biomechanical principle of active insufficiency."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Functional biomechanical description without clinical outcome."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review"
+            ],
+            "reason": "Single cited anatomical/clinical anatomy source."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "Describes functional outcome due to muscle biarticular nature and active insufficiency."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "Presented as long-documented principle."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "high",
+                "rationale": "Consistent biomechanical principle of active insufficiency."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "Functional biomechanical description without clinical outcome."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "narrative_review"
+            ],
+            "reason": "Single cited anatomical/clinical anatomy source."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.59f06d40f0604733"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

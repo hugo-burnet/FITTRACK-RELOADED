@@ -1,0 +1,17 @@
+{
+  "fragmentId": "frag.f3.0023",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 0,
+    "retained": 0,
+    "filtered": 0,
+    "claims": []
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

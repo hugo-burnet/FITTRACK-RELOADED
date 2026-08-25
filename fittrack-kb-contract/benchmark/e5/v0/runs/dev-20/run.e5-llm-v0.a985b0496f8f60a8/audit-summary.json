@@ -1,0 +1,79 @@
+{
+  "statuses": {
+    "validated": 18,
+    "partiallyValidated": 1,
+    "rejected": 1
+  },
+  "claimAudit": {
+    "attempted": 75,
+    "retained": 74,
+    "filtered": 1
+  },
+  "coverage": {
+    "fragmentsWithDiagnostics": 0,
+    "diagnosticCount": 0,
+    "byCode": {}
+  },
+  "partialRejections": {
+    "fragmentsWithIndividuallyValidClaims": 0,
+    "individuallyValidClaimsInsideRejectedFragments": 0,
+    "individuallyInvalidClaimsInsideRejectedFragments": 0,
+    "fragments": []
+  },
+  "repairs": {
+    "calls": 0,
+    "ratePerFullCall": 0,
+    "successfulFragments": 0,
+    "successRate": null,
+    "reasons": {}
+  },
+  "rejectionReasons": {
+    "INVALID_JSON": 1
+  },
+  "safetyExtensions": {
+    "productPolicyIncorrectlyExtracted": 0,
+    "inventedCausality": 0,
+    "populationGeneralization": 2,
+    "inventedReferral": 0
+  },
+  "cost": {
+    "fullUsd": 1.305572,
+    "repairUsd": 0,
+    "totalUsd": 1.305572,
+    "meanPerCompletedFragmentUsd": 0.06527859999999999,
+    "projected207Usd": 13.512670199999999,
+    "fullInputTokens": 83048,
+    "fullOutputTokens": 126757,
+    "fullReasoningTokens": 104192,
+    "repairInputTokens": 0,
+    "repairOutputTokens": 0,
+    "repairReasoningTokens": 0
+  },
+  "errorsByCategory": {
+    "MISSED_CLAIM": 8,
+    "EXTRA_CLAIM": 23,
+    "MERGED_CLAIMS": 9,
+    "OVER_FRAGMENTATION": 15,
+    "WRONG_SPAN": 23,
+    "SPAN_HALLUCINATION": 0,
+    "WRONG_CITATION": 6,
+    "CITATION_BLEED": 0,
+    "INVENTED_CITATION": 0,
+    "WRONG_KNOWLEDGE_TYPE": 8,
+    "WRONG_EPISTEMIC_STATUS": 29,
+    "UNRESOLVED_FORCED": 17,
+    "EVIDENCE_INFLATION": 4,
+    "UNSUPPORTED_INFERENCE": 0,
+    "EMG_HYPERTROPHY_LEAP": 0,
+    "BIOMECHANICS_RISK_LEAP": 0,
+    "CLINICAL_OVERREACH": 1,
+    "INVENTED_DIAGNOSIS": 0,
+    "ZERO_CLAIM_FALSE_POSITIVE": 0,
+    "ZERO_CLAIM_FALSE_NEGATIVE": 0,
+    "INVENTED_SOURCE": 0,
+    "INVALID_JSON": 1,
+    "SCHEMA_FAILURE": 0,
+    "PROVIDER_ERROR": 0,
+    "MISSING_PREDICTION": 0
+  }
+}

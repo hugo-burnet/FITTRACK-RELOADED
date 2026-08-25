@@ -1,0 +1,185 @@
+{
+  "fragmentId": "frag.e5f2.00078216",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00078216",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.633bd769178f04c6",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.",
+        "supportSpans": [
+          {
+            "text": "Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.",
+            "relativeStartByte": 0,
+            "relativeEndByte": 171,
+            "absoluteStartByte": 78216,
+            "absoluteEndByte": 78387
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Conseil procédural sans données citées."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Aucune citation ; guidance experte implicite."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Formulation prescriptive de pratique d'entraînement sans citation."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Conseil procédural sans données citées."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Aucune citation ; guidance experte implicite."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.0b19ec0c56ad0f67",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).",
+        "supportSpans": [
+          {
+            "text": "Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).",
+            "relativeStartByte": 172,
+            "relativeEndByte": 828,
+            "absoluteStartByte": 78388,
+            "absoluteEndByte": 79044
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Cadre procédural sans données empiriques citées."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Pas de citations ; cadre issu de pratique experte."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": "Liste structurée de dimensions constituant un cadre/protocole de substitution."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le niveau d'établissement n'est pas indiqué."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Cadre procédural sans données empiriques citées."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Pas de citations ; cadre issu de pratique experte."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice",
+          "modeling_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

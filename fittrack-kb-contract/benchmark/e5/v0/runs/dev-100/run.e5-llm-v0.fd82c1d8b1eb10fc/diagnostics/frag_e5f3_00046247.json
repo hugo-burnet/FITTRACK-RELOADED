@@ -1,0 +1,46 @@
+{
+  "fragmentId": "frag.e5f3.00046247",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 0,
+    "retained": 0,
+    "filtered": 0,
+    "claims": []
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4303,
+      "outputTokens": 498,
+      "reasoningTokens": 448,
+      "totalTokens": 4801,
+      "costUsd": 0.00647075
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4303,
+      "outputTokens": 498,
+      "reasoningTokens": 448,
+      "totalTokens": 4801,
+      "costUsd": 0.00647075
+    }
+  }
+}

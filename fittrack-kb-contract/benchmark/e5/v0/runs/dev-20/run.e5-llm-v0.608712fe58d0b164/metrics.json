@@ -1,0 +1,483 @@
+{
+  "schemaVersion": "1.0.0-e5-llm-benchmark-metrics",
+  "matchingStrategy": {
+    "primary": "deterministic byte-span overlap",
+    "secondary": "local normalized-token Jaccard and closed citation overlap",
+    "threshold": "spanOverlap >= 0.20, weighted score >= 0.25, compatible negation signature",
+    "llmJudge": false
+  },
+  "GLOBAL": {
+    "scope": "GLOBAL",
+    "fragments": 20,
+    "rejectedFragments": 0,
+    "validatedFragments": 17,
+    "partiallyValidatedFragments": 3,
+    "claims": {
+      "predicted": 66,
+      "golden": 59,
+      "matched": 54,
+      "attempted": 68,
+      "retained": 66,
+      "filtered": 2,
+      "precision": 0.8181818181818182,
+      "recall": 0.9152542372881356,
+      "f1": 0.8640000000000001,
+      "meanPredictedPerFragment": 3.3,
+      "meanGoldenPerFragment": 2.95,
+      "exactClaimCountAccuracy": 0.6,
+      "overFragmentationRate": 0.11864406779661017,
+      "mergedClaimRate": 0.06060606060606061
+    },
+    "zeroClaim": {
+      "golden": 2,
+      "predicted": 2,
+      "truePositive": 2,
+      "precision": 1,
+      "recall": 1,
+      "accuracy": 1,
+      "falsePositiveClaimRate": 0,
+      "falseNegativeCount": 0,
+      "falseNegativeRate": 0
+    },
+    "spans": {
+      "deterministicallyValidClaims": 66,
+      "supportSpanCorrectness": 0.75,
+      "meanMatchedOverlap": 0.8358868962080171,
+      "spanHallucinationRate": 0
+    },
+    "citations": {
+      "truePositive": 18,
+      "falsePositive": 2,
+      "falseNegative": 8,
+      "omissionCount": 8,
+      "precision": 0.9,
+      "recall": 0.6923076923076923,
+      "f1": 0.7826086956521738,
+      "inventedCitationCount": 0,
+      "crossFragmentCitationCount": 0
+    },
+    "classification": {
+      "knowledgeTypeAccuracy": 0.8301886792452831,
+      "knowledgeTypeComparable": 53,
+      "knowledgeTypeConfusionMatrix": {
+        "BIOMECHANICAL_OBSERVATION": {
+          "BIOMECHANICAL_OBSERVATION": 10,
+          "EXPERT_PRACTICE": 3
+        },
+        "EXPERT_PRACTICE": {
+          "EXPERT_PRACTICE": 10,
+          "EVIDENCE": 1
+        },
+        "EVIDENCE": {
+          "EVIDENCE": 16
+        },
+        "HYPOTHESIS": {
+          "MECHANISM": 2,
+          "EVIDENCE": 1
+        },
+        "MYTH_REFUTATION": {
+          "MYTH_REFUTATION": 6,
+          "DEFINITION": 1,
+          "EXPERT_PRACTICE": 1
+        },
+        "EMG_OBSERVATION": {
+          "EMG_OBSERVATION": 1
+        },
+        "DEFINITION": {
+          "DEFINITION": 1
+        }
+      },
+      "epistemicStatusAccuracy": 0.49019607843137253,
+      "epistemicStatusComparable": 51,
+      "epistemicStatusConfusionMatrix": {
+        "practice_only": {
+          "practice_only": 10,
+          "null": 1
+        },
+        "probable": {
+          "established_direction": 3,
+          "uncertain": 3,
+          "null": 2
+        },
+        "uncertain": {
+          "uncertain": 5,
+          "absence_of_evidence": 1
+        },
+        "mechanistic_only": {
+          "mechanistic_only": 2,
+          "absence_of_evidence": 1,
+          "practice_only": 3
+        },
+        "refuted": {
+          "refuted": 5,
+          "null": 2,
+          "practice_only": 1
+        },
+        "established": {
+          "null": 5
+        },
+        "absence_of_evidence": {
+          "absence_of_evidence": 2
+        },
+        "established_direction": {
+          "established": 4,
+          "established_direction": 1
+        }
+      }
+    },
+    "unresolved": {
+      "goldenAxes": 114,
+      "preserved": 89,
+      "forced": 25,
+      "vocabularyOnly": 66,
+      "preservationRate": 0.7807017543859649,
+      "forcedRate": 0.21929824561403508
+    },
+    "cannotConclude": {
+      "applicableClaims": 28,
+      "preservedClaims": 3,
+      "goldenItems": 29,
+      "predictedItems": 3,
+      "preservationRate": 0.10714285714285714
+    },
+    "nuanceConservation": {
+      "negation": {
+        "applicable": 20,
+        "conserved": 20,
+        "rate": 1
+      },
+      "population": {
+        "applicable": 7,
+        "conserved": 6,
+        "rate": 0.8571428571428571
+      },
+      "temporality": {
+        "applicable": 8,
+        "conserved": 7,
+        "rate": 0.875
+      }
+    },
+    "safety": {
+      "hallucinationCount": 0,
+      "hallucinationRate": 0,
+      "unsupportedInferenceCount": 12,
+      "unsupportedInferenceRate": 0.18181818181818182,
+      "evidenceInflationCount": 8,
+      "emgHypertrophyViolations": 0,
+      "biomechanicsRiskLeaps": 0,
+      "clinicalOverreachCount": 1,
+      "clinicalOverreachRate": 0.015151515151515152,
+      "inventedDiagnosisCount": 0,
+      "inventedCitationCount": 0,
+      "inventedSourceCount": 0,
+      "universalizationCount": 1
+    }
+  },
+  "F2": {
+    "scope": "F2",
+    "fragments": 10,
+    "rejectedFragments": 0,
+    "validatedFragments": 8,
+    "partiallyValidatedFragments": 2,
+    "claims": {
+      "predicted": 33,
+      "golden": 32,
+      "matched": 28,
+      "attempted": 34,
+      "retained": 33,
+      "filtered": 1,
+      "precision": 0.8484848484848485,
+      "recall": 0.875,
+      "f1": 0.8615384615384615,
+      "meanPredictedPerFragment": 3.3,
+      "meanGoldenPerFragment": 3.2,
+      "exactClaimCountAccuracy": 0.6,
+      "overFragmentationRate": 0.09375,
+      "mergedClaimRate": 0.12121212121212122
+    },
+    "zeroClaim": {
+      "golden": 1,
+      "predicted": 1,
+      "truePositive": 1,
+      "precision": 1,
+      "recall": 1,
+      "accuracy": 1,
+      "falsePositiveClaimRate": 0,
+      "falseNegativeCount": 0,
+      "falseNegativeRate": 0
+    },
+    "spans": {
+      "deterministicallyValidClaims": 33,
+      "supportSpanCorrectness": 0.6764705882352942,
+      "meanMatchedOverlap": 0.7948797137851457,
+      "spanHallucinationRate": 0
+    },
+    "citations": {
+      "truePositive": 5,
+      "falsePositive": 0,
+      "falseNegative": 3,
+      "omissionCount": 3,
+      "precision": 1,
+      "recall": 0.625,
+      "f1": 0.7692307692307693,
+      "inventedCitationCount": 0,
+      "crossFragmentCitationCount": 0
+    },
+    "classification": {
+      "knowledgeTypeAccuracy": 0.7777777777777778,
+      "knowledgeTypeComparable": 27,
+      "knowledgeTypeConfusionMatrix": {
+        "BIOMECHANICAL_OBSERVATION": {
+          "BIOMECHANICAL_OBSERVATION": 7,
+          "EXPERT_PRACTICE": 3
+        },
+        "EXPERT_PRACTICE": {
+          "EXPERT_PRACTICE": 4
+        },
+        "EVIDENCE": {
+          "EVIDENCE": 7
+        },
+        "HYPOTHESIS": {
+          "MECHANISM": 2,
+          "EVIDENCE": 1
+        },
+        "MYTH_REFUTATION": {
+          "MYTH_REFUTATION": 2
+        },
+        "EMG_OBSERVATION": {
+          "EMG_OBSERVATION": 1
+        }
+      },
+      "epistemicStatusAccuracy": 0.48,
+      "epistemicStatusComparable": 25,
+      "epistemicStatusConfusionMatrix": {
+        "practice_only": {
+          "practice_only": 4
+        },
+        "probable": {
+          "established_direction": 2,
+          "uncertain": 2,
+          "null": 1
+        },
+        "uncertain": {
+          "uncertain": 3
+        },
+        "mechanistic_only": {
+          "mechanistic_only": 2,
+          "absence_of_evidence": 1,
+          "practice_only": 3
+        },
+        "refuted": {
+          "refuted": 2
+        },
+        "established": {
+          "null": 4
+        },
+        "absence_of_evidence": {
+          "absence_of_evidence": 1
+        }
+      }
+    },
+    "unresolved": {
+      "goldenAxes": 57,
+      "preserved": 43,
+      "forced": 14,
+      "vocabularyOnly": 24,
+      "preservationRate": 0.7543859649122807,
+      "forcedRate": 0.24561403508771928
+    },
+    "cannotConclude": {
+      "applicableClaims": 12,
+      "preservedClaims": 3,
+      "goldenItems": 12,
+      "predictedItems": 3,
+      "preservationRate": 0.25
+    },
+    "nuanceConservation": {
+      "negation": {
+        "applicable": 7,
+        "conserved": 7,
+        "rate": 1
+      },
+      "population": {
+        "applicable": 1,
+        "conserved": 1,
+        "rate": 1
+      },
+      "temporality": {
+        "applicable": 4,
+        "conserved": 3,
+        "rate": 0.75
+      }
+    },
+    "safety": {
+      "hallucinationCount": 0,
+      "hallucinationRate": 0,
+      "unsupportedInferenceCount": 5,
+      "unsupportedInferenceRate": 0.15151515151515152,
+      "evidenceInflationCount": 3,
+      "emgHypertrophyViolations": 0,
+      "biomechanicsRiskLeaps": 0,
+      "clinicalOverreachCount": 0,
+      "clinicalOverreachRate": 0,
+      "inventedDiagnosisCount": 0,
+      "inventedCitationCount": 0,
+      "inventedSourceCount": 0,
+      "universalizationCount": 0
+    }
+  },
+  "F3": {
+    "scope": "F3",
+    "fragments": 10,
+    "rejectedFragments": 0,
+    "validatedFragments": 9,
+    "partiallyValidatedFragments": 1,
+    "claims": {
+      "predicted": 33,
+      "golden": 27,
+      "matched": 26,
+      "attempted": 34,
+      "retained": 33,
+      "filtered": 1,
+      "precision": 0.7878787878787878,
+      "recall": 0.9629629629629629,
+      "f1": 0.8666666666666665,
+      "meanPredictedPerFragment": 3.3,
+      "meanGoldenPerFragment": 2.7,
+      "exactClaimCountAccuracy": 0.6,
+      "overFragmentationRate": 0.14814814814814814,
+      "mergedClaimRate": 0
+    },
+    "zeroClaim": {
+      "golden": 1,
+      "predicted": 1,
+      "truePositive": 1,
+      "precision": 1,
+      "recall": 1,
+      "accuracy": 1,
+      "falsePositiveClaimRate": 0,
+      "falseNegativeCount": 0,
+      "falseNegativeRate": 0
+    },
+    "spans": {
+      "deterministicallyValidClaims": 33,
+      "supportSpanCorrectness": 0.8235294117647058,
+      "meanMatchedOverlap": 0.8800484772788022,
+      "spanHallucinationRate": 0
+    },
+    "citations": {
+      "truePositive": 13,
+      "falsePositive": 2,
+      "falseNegative": 5,
+      "omissionCount": 5,
+      "precision": 0.8666666666666667,
+      "recall": 0.7222222222222222,
+      "f1": 0.7878787878787877,
+      "inventedCitationCount": 0,
+      "crossFragmentCitationCount": 0
+    },
+    "classification": {
+      "knowledgeTypeAccuracy": 0.8846153846153846,
+      "knowledgeTypeComparable": 26,
+      "knowledgeTypeConfusionMatrix": {
+        "EVIDENCE": {
+          "EVIDENCE": 9
+        },
+        "MYTH_REFUTATION": {
+          "MYTH_REFUTATION": 4,
+          "DEFINITION": 1,
+          "EXPERT_PRACTICE": 1
+        },
+        "EXPERT_PRACTICE": {
+          "EXPERT_PRACTICE": 6,
+          "EVIDENCE": 1
+        },
+        "DEFINITION": {
+          "DEFINITION": 1
+        },
+        "BIOMECHANICAL_OBSERVATION": {
+          "BIOMECHANICAL_OBSERVATION": 3
+        }
+      },
+      "epistemicStatusAccuracy": 0.5,
+      "epistemicStatusComparable": 26,
+      "epistemicStatusConfusionMatrix": {
+        "probable": {
+          "uncertain": 1,
+          "established_direction": 1,
+          "null": 1
+        },
+        "refuted": {
+          "refuted": 3,
+          "null": 2,
+          "practice_only": 1
+        },
+        "practice_only": {
+          "practice_only": 6,
+          "null": 1
+        },
+        "uncertain": {
+          "absence_of_evidence": 1,
+          "uncertain": 2
+        },
+        "established": {
+          "null": 1
+        },
+        "absence_of_evidence": {
+          "absence_of_evidence": 1
+        },
+        "established_direction": {
+          "established": 4,
+          "established_direction": 1
+        }
+      }
+    },
+    "unresolved": {
+      "goldenAxes": 57,
+      "preserved": 46,
+      "forced": 11,
+      "vocabularyOnly": 42,
+      "preservationRate": 0.8070175438596491,
+      "forcedRate": 0.19298245614035087
+    },
+    "cannotConclude": {
+      "applicableClaims": 16,
+      "preservedClaims": 0,
+      "goldenItems": 17,
+      "predictedItems": 0,
+      "preservationRate": 0
+    },
+    "nuanceConservation": {
+      "negation": {
+        "applicable": 13,
+        "conserved": 13,
+        "rate": 1
+      },
+      "population": {
+        "applicable": 6,
+        "conserved": 5,
+        "rate": 0.8333333333333334
+      },
+      "temporality": {
+        "applicable": 4,
+        "conserved": 4,
+        "rate": 1
+      }
+    },
+    "safety": {
+      "hallucinationCount": 0,
+      "hallucinationRate": 0,
+      "unsupportedInferenceCount": 7,
+      "unsupportedInferenceRate": 0.21212121212121213,
+      "evidenceInflationCount": 5,
+      "emgHypertrophyViolations": 0,
+      "biomechanicsRiskLeaps": 0,
+      "clinicalOverreachCount": 1,
+      "clinicalOverreachRate": 0.030303030303030304,
+      "inventedDiagnosisCount": 0,
+      "inventedCitationCount": 0,
+      "inventedSourceCount": 0,
+      "universalizationCount": 1
+    }
+  }
+}

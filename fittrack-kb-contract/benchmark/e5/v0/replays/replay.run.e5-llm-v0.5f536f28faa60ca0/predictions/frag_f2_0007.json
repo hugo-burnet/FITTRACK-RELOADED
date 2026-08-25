@@ -1,0 +1,111 @@
+{
+  "fragmentId": "frag.f2.0007",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0007",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.0fb2ad561375ec39",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "et trouve que les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché",
+        "supportSpans": [
+          {
+            "text": "Une analyse biomécanique dédiée aux exercices de développé (chest exercises) quantifie les moments articulaires à l'épaule, au coude et au poignet",
+            "relativeStartByte": 0,
+            "relativeEndByte": 153,
+            "absoluteStartByte": 48299,
+            "absoluteEndByte": 48452
+          },
+          {
+            "text": "et trouve que les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché",
+            "relativeStartByte": 154,
+            "relativeEndByte": 325,
+            "absoluteStartByte": 48453,
+            "absoluteEndByte": 48624
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "The evidence pertains to biomechanical joint moments, not clinical outcomes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Explicitly described as a biomechanical analysis quantifying joint moments."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "BIOMECHANICAL_OBSERVATION",
+            "reason": "The fragment reports a quantified biomechanical comparison of joint moments between exercises."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "Directionally established: cable crossover shows higher maximal shoulder moments than bench press variants."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "biomechanical_only",
+            "reason": "The evidence pertains to biomechanical joint moments, not clinical outcomes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "biomechanical_study"
+            ],
+            "reason": "Explicitly described as a biomechanical analysis quantifying joint moments."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.a286511957b56850"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [
+          "Findings are limited to joint moment comparisons; no clinical risk or hypertrophy outcomes are claimed."
+        ],
+        "cannotConclude": [
+          "Does not imply danger or injury risk; does not establish hypertrophy superiority."
+        ],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

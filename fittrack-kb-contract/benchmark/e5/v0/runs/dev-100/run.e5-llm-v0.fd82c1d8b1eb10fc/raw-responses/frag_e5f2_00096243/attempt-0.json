@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f2.00096243",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00096243\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"12. Règles de prudence pour l'encodage de la base de données\"\n    ],\n    \"rawText\": \"5. **Les champs `progressionPotential` et `practicalNotes` sont intrinsèquement subjectifs** ; les marquer systématiquement `expert_practice` dans les métadonnées de la fiche, jamais comme fait établi.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"5. **Les champs `progressionPotential` et `practicalNotes` sont intrinsèquement subjectifs** ; les marquer systématiquement `expert_practice` dans les métadonnées de la fiche, jamais comme fait établi.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"POLICY_ONLY\"}],\"claims\":[]}",
+  "providerResponse": {
+    "id": "gen-1787657400-8i2VMVQK4EjZE10hQ3cU",
+    "object": "chat.completion",
+    "created": 1787657400,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"POLICY_ONLY\"}],\"claims\":[]}",
+          "refusal": null,
+          "reasoning": "**Considering criteria for claims**\n\nI'm trying to figure out if a unit containing a rule and subjective statement should be marked as CLAIM_CONTENT or POLICY_ONLY. CLAIM_CONTENT indicates there's at least one claim present and there's a predicate that helps. But is it a scientific claim if it discusses product metadata without citations? I think we can treat it as PRODUCT_POLICY instead. Since our schema allows for PRODUCT_POLICY knowledge types, the bullet points indicate we shouldn't create a claim for a rule.**Evaluating policy and claims**\n\nThis indicates that POLICY_ONLY units shouldn't generate claims. However, if a claim exists in the unit, it should be labeled as CLAIM_CONTENT. The bullet mentions that POLICY_ONLY is an editorial or product rule. Now, I need to determine if the unit is purely policy or contains a claim. The phrase about subjectivity certainly seems like a claim, but should it be classified as PRODUCT_POLICY, or maybe even a DEFINITION? I'm contemplating whether we should extract that as a claim based on typical expectations around policy and subjectivity.**Analyzing unit classifications**\n\nThe instructions state that I should extract information without drafting. They indicate I shouldn't create a claim just because a fragment is present. However, there's claim content here. Yet, it seems like this unit might be labeled as POLICY_ONLY because it's purely editorial. The phrase \"sont intrinsèquement subjectifs\" contains a predicate, which complicates things. They prefer \"product policy\" to remain unclassified as a claim, but since this unit contains a claim-worthy predicate, shouldn't it be classified as CLAIM_CONTENT, meaning a claim must be produced?**Classifying knowledge types**\n\nI need to determine if \"intrinsèquement subjectifs\" should be classified as PRODUCT_POLICY, DEFINITION, or EXPERT_PRACTICE, given that it relates to internal metadata fields in a product classification domain. It could fit under PRODUCT_POLICY because there's a product rule suggesting we mark certain fields as `expert_practice`. However, they mention that a unit marked POLICY_ONLY can't become a claim. This means if I label it as POLICY_ONLY, I won't be able to produce claims. My inclination is to classify it as POLICY_ONLY and go with a ZERO_CLAIM array.**Deciding on classification and claims**\n\nThe phrase \"Les champs ... sont intrinsèquement subjectifs\" seems more like editorial commentary than a product rule. While the guidelines suggest that editorial rules don’t negate scientific claims in separate units, there's no separate unit here. It’s tricky because the classification must consider the whole unit. I should label it as POLICY_ONLY and assign a ZERO_CLAIM. Though, the vocabulary hints at allowing claims for product policies, it seems the coverage classification is meant to avoid producing claims. For safety, I'll stick with POLICY_ONLY. \n\nI’ll set up the coverage ledger with one entry for unitIndex 0 as POLICY_ONLY, with annotationPrediction of ZERO_CLAIM. I'll ensure everything aligns with the requirements and deliver it accordingly!",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Considering criteria for claims**\n\nI'm trying to figure out if a unit containing a rule and subjective statement should be marked as CLAIM_CONTENT or POLICY_ONLY. CLAIM_CONTENT indicates there's at least one claim present and there's a predicate that helps. But is it a scientific claim if it discusses product metadata without citations? I think we can treat it as PRODUCT_POLICY instead. Since our schema allows for PRODUCT_POLICY knowledge types, the bullet points indicate we shouldn't create a claim for a rule.**Evaluating policy and claims**\n\nThis indicates that POLICY_ONLY units shouldn't generate claims. However, if a claim exists in the unit, it should be labeled as CLAIM_CONTENT. The bullet mentions that POLICY_ONLY is an editorial or product rule. Now, I need to determine if the unit is purely policy or contains a claim. The phrase about subjectivity certainly seems like a claim, but should it be classified as PRODUCT_POLICY, or maybe even a DEFINITION? I'm contemplating whether we should extract that as a claim based on typical expectations around policy and subjectivity.**Analyzing unit classifications**\n\nThe instructions state that I should extract information without drafting. They indicate I shouldn't create a claim just because a fragment is present. However, there's claim content here. Yet, it seems like this unit might be labeled as POLICY_ONLY because it's purely editorial. The phrase \"sont intrinsèquement subjectifs\" contains a predicate, which complicates things. They prefer \"product policy\" to remain unclassified as a claim, but since this unit contains a claim-worthy predicate, shouldn't it be classified as CLAIM_CONTENT, meaning a claim must be produced?**Classifying knowledge types**\n\nI need to determine if \"intrinsèquement subjectifs\" should be classified as PRODUCT_POLICY, DEFINITION, or EXPERT_PRACTICE, given that it relates to internal metadata fields in a product classification domain. It could fit under PRODUCT_POLICY because there's a product rule suggesting we mark certain fields as `expert_practice`. However, they mention that a unit marked POLICY_ONLY can't become a claim. This means if I label it as POLICY_ONLY, I won't be able to produce claims. My inclination is to classify it as POLICY_ONLY and go with a ZERO_CLAIM array.**Deciding on classification and claims**\n\nThe phrase \"Les champs ... sont intrinsèquement subjectifs\" seems more like editorial commentary than a product rule. While the guidelines suggest that editorial rules don’t negate scientific claims in separate units, there's no separate unit here. It’s tricky because the classification must consider the whole unit. I should label it as POLICY_ONLY and assign a ZERO_CLAIM. Though, the vocabulary hints at allowing claims for product policies, it seems the coverage classification is meant to avoid producing claims. For safety, I'll stick with POLICY_ONLY. \n\nI’ll set up the coverage ledger with one entry for unitIndex 0 as POLICY_ONLY, with annotationPrediction of ZERO_CLAIM. I'll ensure everything aligns with the requirements and deliver it accordingly!",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjXzPyP1LaGAqIyJzjogRfwNxksXLbB0RQWpq2k7HuuMxPi9j9gJ2U6zKvDDxJkk5NPIKhUSdwAqhgY5o2H-j8LkBUK9uwbfoZyQfhbuoafCUn-UDRiW4zxPuD4uPeQC21ZLuoP6WrlgzTkrZdADe9p_WWHCP0I1y6qmfQXN3h9aa_L4oB1JPenfQIhj26Z8J2qMPjup_dYUvFyw4f7p8G-MBTIxLW08Mp-hjT3egozYc7iQzOLwqRVGOR3Q5sOV4dP_UP7MPEnwNTPmUyAm0ndi7zvCUaK6X0W5gLREu4Ii60nRJfqHVqCsMhsRt45o7QqXSUA-Avmf6ROTiQVDfKh0P26MWj5bqJKOv1UD7qTCDHLLQDsjRHzTOk11O8Hb1rtiYneZMc-mooksJMstryXqM9ZcZEB3lLXnJRJliT38RSakWTvvNC_QJQD_6doxiggLNwJtHqONffy-1fPuBs43gzKH5VPUpsE7vJbBMIOjI562lJZ-sxWAg1JBu-_CST3I4b9tUCSo6KWX5lkmo9RKlT2SSUBQroSMaUTD4ESEK8cykkzsMjnDZtiMzAQlJJNeNuv-nlEKW7li8bNIUlln6fX1iUMsglxUCap1g902-aSYAVEYBOrgTUjGXiahGLcBDP9ObFJknrniye7YssdN2G7KldSir1hQKhbezbngAmnIICthibyTKEFi0A6H-L-UFC6vH_h_j8lWMvJo7D_p6DxEwlV_93QMXFVxRFde3JhhMpdK9yeOwe7ENEvCuGBCIRTCai5tQtfdSXX7ilReaI65Mm6zLNtIZVBH9MZpZNipR8pfcbgSUmjQETTKxozh9mN_hM6RWeZWQl3z-h1hYRHjbj2R6QfJwswlZZ-xLys1hcQrL63p5cyhPcopiKf456xkiQfhecI0kjVNALPGUEacYTYrJgd8-OnJFLqzZjs80d6N_-9KvY-hp6pupHrcN3suspu7PmrdRCWFvl00_VuCHzqJ98Mw1z8zXkN1X-FbP9RFp-iyJn0Lkfa0LOrzZjLqTVdsEgSuwjrYi-rXk5V492VWm5hMo9UdpzIMw0uX18E7ixcCJG5aQhDSTxjlD5O5KwgkigaQH0HKkEL1xyeTRFvfnOHM7TI9l-tDKCXbpDvBacop8LPbRt9AyCKiozs5r1mA3Q8KZMEmUcHrqRuGhGCcEgL0jzAFvHa8Ve6zpWv5ecjMt_H-7N_EKinQLSOmhaa4ZLfhTXKQeHWwOrthl8stm6r38Gwl1MoU5kk5XmF_JlX2bKLXVoYQF8jX_Y2DYpJtyaJogXwjl0ggEhvI0f7NTyWNs8H8Z43fU44XOd4HyuztJNXZuObFSUUJ4XHVINrErjgcSAXTOGpIVkYaB1ytb9LCoZB-2v4ypkkQQ2VxJWOh3p0TrDAEAoVsyoTdMlB6u536cUjj2U5oUKwHi72-YvZB-XM61CS3nasyWpdqabnwNA1BlraZGXLukjt5gQMTY3efqzwNeWRoToAZh8lrvD3QeB0LvJXq5styqkDrLpk6PeEVY37-zHIItjXRxDGm7rm-CAfjjUX9c9oYEM79D2Kopa9Z2MKPMUoG68-JU4MNXY73kAoDHPV3WYgwltcBPPGfZIiZ3uQ4bcSyQ0mCLpctLxjgg5AarNG_Aw1GtF8awZcardIz0GyNPy8AzBwgRxB9R1eNJyKR1sZ1pDbcImuy0SoRRaNKk5vtx59IXATWpv7SHOQFkQL9Hxn8QfaCG9fy_1Qe8H8ZkTzz3YB-WiyiYwX3WmhBT-icK7DWjwd-jm9nnm2d6DX_Jh9UNB6baEj0ojFYSI_JDdVSfFudfC6InG50SM_wLVAZbsKj5YiK7_p38hLLL9i5Mr2Sc9AmKMrj07HXcopgTR9ZdREbi3fvOSrDq0RQ4-ya5nYO9eXre2bMout0_OR-RJyjf6OayGTRFSBxhVSSlwHfuRzqWQPKpIVRWJsMIoiKKQljyu3DWGEC93Vc7yGD2gmXIBp2b4MQKHy5IEDpuX4Girc69CNVvYGiEVbmx3n_xAvo6ArfUqndWaWkQRlhptYPMs9yE0NICfkt2K_YiuaYDnEPhItROr8YQRqazmEVs_n02Az5bS4TH2wxNJHhzne-mK2DFZ95mWy_01C1rfJN6s90joeY-oNLlHcU5ONFcKpS4Qgmj79A5rcLPVdGZ87y0mvV7Gc2Y77eE3VjQZhfo5xPr0_jVQcNXiNzEYoSu_0NTIp_LJSNw9yuqOhLe7ezXFBV-Z37CBd2hOzSE05ngS_EkdpCdLIHBj-KOEccKOkOfTfBPoml4uKqcQEbignJnNB4i-GH-uwKg_y9WPjCrQ8movNiRAt6epVbRsMIYfZDmY1MxLbcnlfxYuPT0no60fd7LakAAi3xJBpnyBBduGtCCjcQGFIPqiAFJBoUvltmcAaf83pTYKQ-2Bh4gu5j46qEvPyY5nZzYELWQOjshaQGmI2JMqVsXX-yXL2j1jUlyZRVRBWNx6ooGyJ2E2F8ydHwI5CP3oY6ULiHcySRsO4w-ILAHxFOYyRStQiPcvPGuhaJz7Y1yqqaNJ0Hm6Yef2VCwOx_olg_KxYYMFngrC2Xdp9MD-TPc871l0z5YCutqT6G0dpRDZYpqUEignQrGZiefUvkKe6ljf0Ncq-V1_zMVq5zV9PoQ9gHhkEzpj7fS4QkNf-Fwe32AKKS4zURU2SKFXxyeApnNUUHrRXU2-NkffAQxXFed3hfRbePpzZ-E7FA_mhfsAhB_drrpH-VEsZHIz2O__Gv_gvieT4V_lZAwa1h-9YRVkDNfAd_-35VezKbt7GV0Qr3W2TjyNyi_oMa27_n4QVbBaPawZjQwlP2hmxfeE80xusbVrrQYY8qlssSrOhx9o6_95CCfLGsCmjQafB3WNcjnUC-wvElymhqBom09aZab5ezMFTytJL4aZxR_chn-QkgrRf_1ueeHqd5CG_SCkLa3qKuo1eLX79MYZU2kFKRS-efH8yDSKNvP7gu-e9nVeGx56U1KPaiMmOJhSAQ_EmQKnzQF92q_0A1CFRqDacdq-2RoKN_nuDXc1tlkuytVJaQeJgvGji_3rAIWTwPqKWE-CdkYKG_8jg6xQJa7jWpQD1IA0nd7-y_M7L-B0erT4c99g0YUPgb1tHhKEhT_eisUtcmhFcXvYcxcZDruAUo2GHAEc2B1--qZtS9Apc9zH9ndWYg-rD5RsyTUGWqbDnrv8GTtw2N3_WytNjbs5WimsQdQyWvGopZ9IRwpgd6F-CzbwuhHdwXNSU6-6u0W4Al1jR4yXlytgOX5qwxnNVABPaJtLSNIqPBNrnzFY0SuoETvnIYgGBWqu9rqk8CaUnRj6zIklzYSjSJhSvmsVNgatzrNQx8-8luXYipagHtyIpgPJObZGlzoSeDy_VkEJfF84roGQq0TPV5aupdvJxEuVUpgQUS6kgLBS5GeUDi-xf8SlARz8529dmicCQ0no9aHY1OR2XgBgTpndKS1nXHtOn1jDgANajcisK2BMs9BIyKjadrG-TxI3pw3HG1PjScHpuGWaNKReCbOULJ19ASOnDmt3lw1wQJ6e9u4t_7ZkRxP7_GID4HhSH2P1olcu0ZmB2XgveTHYr_4K82VIV94pNU5TUekk1k1AaU8XWBhXqeCeaNoQNDdmd43oB14Jj9oyzBrhFfgPWx_DE3MlPco7jRQB4j_MXhxSYnshkjSJ8YIr0Y5jcEqwaCy4W0nOCmxmxBjTFekWZBBD6lYFo3H-2a_q4V6yUkoFU56CjZMl9IJtZLi-lkbtV-bEtZXSUJzwWjrB0JV0bh-YHtVkpDwiDn7BTGlR7X5c5rHzvdwXVFOMkc0fSWyFvJTtKCPKkhuLdSKWNiDy3q4Ca4ScmNlx-zfa_lRPG12VAx0aLKp-i5WgYRDNYK--AVIZo7XskhfC6FrpN5YMldjW0Llg1L1y9yk83mN7ZG4vdtspA4IVf2hnpqsmA1oNJTyrvieFtdjW_VEKYUOcTIiNubxZxVGj6Ib0-Wmlw375Psj6B08DXTFG8fCW9lVrwZ8IQjKfJpS8seZrt8V1h3pUtUGszSbtHRGkNIH6vfRgIKwWOknUK9pzWN11o5hYfiiugWCddn_UvuGhKKjFYR54vlx7ImD0tgGNcZeRV5yTYKpBnouxZ1Gkfq_gJXhDxrExtYaePYy2qZ5Zs7KmJrJnqSKSXU5A0oYbSW-uOWvt1x7sN9jgylN1d-XBi9vbjIuK0Py2P96oOxt8lqFGPFAot1BqTi_3Muz-5U8-SQVTYAl6uf0Fzf-cucIFJDGkdiTPgciORNtdlEdahnYAeudaM5j0bLQ41cx3M3k1Il0_JQ5AvGXwYJTsAeAeQ3kEIQkGD62pqq_Mgbs-2w631JS6RiIflYGetY04NPZIPUIa0X8i2hTZgT-D2mPhOhVSvEZbtFl5He64NkSsfegs24IvKv7-sanPs5vrbkJBYBllMgAaj_EnUd4fhNZjH8cmBn7-_hpr6esy2df_FGNDqWk73HPIXCmmjEvRpPbTosFjEvcQ9m9-9t1-NPkXNKXJ6Mkn4kvl-sFTEM0xMevkvudGOBC8NGdE2bgEgOcgcxpl4FhGT3ZKeAN5cp9j8ET7rBIAdmFfh0ySAw_lGdR06XW01ej-qa21zBJKSquLWV648U0Plmd5NoRx-XbyVTUlmG7mCRpvlKIdKAaC_W4PbMknp6aa3xN9JRfW1N3zCthr6EgtryH9pg1fMFZwcuN8Jc336rdS9wRCKhLQaP4buDSnMUa2C0C2GxMYzI_W3f5zeITm7pGM30y8F4LySU9wgJ9p70AYKkAf4fpYWrVFY0plfkwXyZOx1lDjkZ4isV09mK_DHPh8gErMuydfaS8KzdzkuAjOQ8uX_KXWrVXjAwZfLNQHYgFol_kaxu46tE3PkeuOtFOwK17IEE0X0K1BBVApV40AXCs_14XoLO3bXsQI7esJJ2gSJVG9O2uQkvLG8YsNA6pGG_Vr3D30_Fq0r_qL-hPKWAETFjcKlCe7ZMrVaoibChD_qDt3NLnVvz5ZZi8oPneXaIdK8KwPX36W1SXpuzQ82W3nUAMCXiCGZlWsG51aTMP8DCGn_c4doEQ5_ShZADT7ohiO3LYMaE0mG7p0440t5WuUWC2n5-k8oUm2Xzr8l_ascDAyF4_gnCJCZtK1CqW4wM90ygqlepgciT6iuBLST-VQrN3gTIyBA_I82cbQUG_qPoSLo50gHWi0rUJDNhO3EaVMALEjubh_N0mlUKJ2C_c1F7_mWdhP613E8ptlKICyH-trQC1Gx1EYYlhyf8RuZjp_2jF-KUc0TTo98nxZ_iI2ih1F29jl_EsriDBZDmJkuCCpXlK-nBve6CklO2gwBJn-_-zNWlz-CJSNx-JWOtUR43c57cWzM0j_-EJCz3J9Svk-NlKeHe4_IGLhjB8iL4We3XS0_uqwhCXUccBKUHf-SmRPxu6pbEqcjyZHvDvBnK6Q23FYX927bX4A-NwY6PTp9XRje67VnKEsLUYGRtnQ5NFFMnsdJPQlG7IWohHjamPyv26nsfZInQvEqJDsLNIddBOJzgK7BCpvTVf3wjawBvBcJVo3k-8soMfmAEeckRj1AO2B25XQg7hLNQ0OxzsiLv7xKh14a3mK2QcsR981pNOtyL4KBVUMC5VlyoTUKpjO-eSYFo-j0upIU9szCA4UnuClvCwXXvWVTnMrtgG8fLksCrmKJEe-JKdfTJYaHF_BglP0CLf6QTaE1zpFoOXITGOhPrMJxA6CqOYCyOUEgm-Vf7aF9NMdNOShb4TgRX2RnqsSiqkYhdBNUmYtbPy5CH2NKMZ6ftel2eKwNFIMhNHoxFItgr476bKvdL11d-85oVUJxrq6bI6UDx4-6dD1yXrzjJV5tSf_KpQ1fs1muwgxvaJ3WdHmWotisE1bTnRCJyocPwUSw9G6mGTEmbr65aKWzreNkQGwDQzXdVs2vVio5B5mQNr9YX2Yyj-9EzvZl6sza9vumuJMOrkQ2sbzPmkti8DtyzgWRKmUhl3jAyy1P-e29HbFMx8JD9kxkLBZqIhIptzoZp39v2nhZeFg_9dnE_u9JnhQigbaglmDnzmsWtS1dnULelRjaeN0IpPmWx4E3owLYeD2cvhYx49uxfpynBBSQ-NiUpR5RANaXG2UXRmEAFk8IBOBToUbyiSPyZNMU0M-sgsyjPYF2uR0SVTCR_oPKJhtpGmY6J0O9DlRp3xDTwR0bsrA8_IvbCqvPIVATrWRlWYvnwqyIqKh-QlvJ8RZL82-k1byGKqrB4Q8DhdnVZif1WglnWtzuExs1vDvFZfOTMxU6sB4stx5pxFWdYGJbRufg0v1uq_wuwyc1UIwst3_nm_-OXhAsb5_VmVgJiT76RxKzWE0Qws4VcsC9FHO_BITFm5om-ewPHhtgE8uxkcINgBVIYG4cFzlggN_qm8GPfTI4lGtzZzZFPgg0troBs3oBlkUUpv99jD9AhdEdqtTCnc8ZNgF0gPw5OUdKR7dxt0OVsBIa5ueCqOthLI0TwovtBvsK4qggA5o38GpikdXJD52qzEmjUTcBYxsMUZgLYTN7G889Ca-h-CMab0HZGTBrcyOwyP6iz7oxHoyC8tz3BNun5cJD2duINHROG-rrBLM1r6nIrKbsu5bVygOXphLgt2dffEfRhfSjkPlV2_0kq5yIru8UBHda8inlj6wxIJJlALVrSN1sYnM8Nm-6oYrYVpgNoZcWEVlyTgPd2YWoFRdEUpBjtqEzowigfVtXGaWIdA6ymcBRlo7D227YiVFwHyDP9vNSz0AQcyzgARoT5eQVtRYCYgGmbtEatP_Dun9vEJ6Dh3WiVqvwZXQXjDvgaiiGCIZ-rk0rHFURxfUmfoJMDXEf6jkbDQ8YkiSOF9t68WC7y7TA1R6OHWBlS1fu8A2tpEVZ34b9uYSsp346i-yNAzIQksMF3ktNjhVjR3Dg7kOabzPDalZCyvdRUoLFizGVSRMlgX8TwvLfISTZ7kmxclUenIbcdMabpxxwhcjZhkDGQdc6Kl8jPE4OFq5W05azPzgZPOEdQoKCWdAVKoUbXJP2b0-kyO6IL_cziZeASEOuqwKaXbB1j8EIdGkcjkI_ddn-DnFXgWRN8lh8djvUcKENTNl9wmSd0R1eGONN-z3XZv20d5e44iu89N4fNGnU5B8jyTOKeq40vY0PSBVGT9_-rkM74JKLaNJAGe_i-moshuVSwuQkeK2_vV7nYsVhyx2HcTKOjm5scPneORQpmDxuxJH-v-V0kl11wwZHee-G_uHWabvj7DsP32Z8fzwopQuL0s7uzMqHp_ClWYe0dmhf8chwmQ3U5XukSZpGkzmTKH53IrlgqJBDqXZGCmYcdZuQLgtglFBWkYhLoeR9iQLeF58OmAXtPIXuCRkTcQUydvb7uj3eQHEwuzcJX7xRLYzH1JyWZU_DPN008ug9HWnhhULyi2CmitMdrNgLqx_4Mi_c2DfEqSzZjxHVBKG9tpncQe7Eu5bjBS9WEEd8zcz_g3Pu4tzwB_y_nJswN_3-yK2E1702u3pgoBsfpqtlXJ7UbmMOHbhuWXwbEgn8Nl97RfCazy0VixCIKGmNP6nZTwt9C1A0CmB0YWRjw_vhSWK2-b3Vw4OZyR5RYIJ40TnZVXBtUc3AhW3hokubs6ZmQaLlZlDZsPsQHk1Gj97w4m8-2fsLEp0NaJfX1qToD1OP2jKRpMDZxf8HfkYE2y0TI53iBjCbKfTkRYT_As5JGjJG_6f2Go6PlY8fNqLBo3kKeLy9h1BYWp_fFCg4Yx7o8-ftva8zFIM4gp5mkyqJ7bnLxOW8TxuJfoJxgxH2mETsje-o1FqxZLqJpjKZ-rkNAo6O2V12m5MdfgNamluU5Sal2fvZ1LYwQuvTzb7b9xP6M7BBaxbsf6CaxX_C53fAVrmW6SWifXHaaTymyXD5HAwuGrbKVB3XnvsH5GeDDzUWKimzd-x0MC2_32LQyGk3Y7Ro7PyF54YKtUBgaZPvCQDLHRR5uHtudVAdWK73LxHgYAlKISp95QoBhzogerT0H07vUWKW3-UGBwYKs2C4NVY9F6kGqfAPCqiGzdpk68E4tiYvhZmxSeerEJEnCI8eKIe6A78oWWQfZO28rtNWYT3j81jSBzmLXIchKJkYSqQjwlwu_uZ3MmWOIMF36RXoax95X1SI9JcToQDNjHl_wXZObH6IZWywmn7ieGMhZbhwszCgtSW4N0m3djZ4Xxwh0ERWH7wETBHm_aVMGiGSpmtzSLXvVJ_ERHuh26T-GaAxdszeEOP2-YwMq3oC1s2ZE73jZ945ycXD4lB1ASq_oV0jkiDQu7GZvx_eWD48qF65rt6j7IuQ4xft9r3R7E0ldex9fILoPAyiNN67LJzBKN-iA4huwbESiSh5XHC5Ah2HIC3lmFYvjJK7v5BHhZB6YTJB24AIsYDnl8dHoKwtE85y82GgjF68eNSWZGBjEQHuz9QpUh-GDPQsn1HPHxD2lm9YWAYHbK6kktrsL8MFnq8GTIMmsvmd0Yp1KXz6Hs9i1AmHi421desW2q3PcIX8hrzsEmoEPgz6lOvHRFYpSMjv9hI82D2xhe9o4tE-9uMQwSqJ_09Y7h2Y5g2WSYb6Eqyk7LNJcaQc_OTjxtgPNciBNDoTtpXlY1yKk2LmjYFaH7qflPtwtO62MWzNcHKaC8ndjgsP9eiDyLpaNGaWdifXdlVKAYpGIsfs5LqYLmV-Zo9XVBemz-AD2hIR1Jansf5LmmXL6E8eYJ1Qgdq4JiyMww6GhKM_0UOKP9v4TzTe6lSTP2aqdYFubvFPEEUfqI6TanDZGpESYryHJ0MuViepq8OMcBpnHfAV8vZEgd6xz2fwwpS_5aPt2LQyO1p7d0f6nXsILkABQdtOE0PrNxrivAqcsUB6-JJKIHP-rmBNMi6HGbrQq2VH5vWDHleMgulR9Qwi9rGnZvWL45rtzwXUkx4M_7edlgpASSLIrnddiMKdHOOxp6nneEHybGQpUcXxbwU2KcjreMJx1ackbCB70HHr7hEkQRnaHbiWAZrjnttHrBc3shiOXa15a0cDeBCJuOQxevTV9PSPWG8T05Nq9nNkCtUEtTnFy2eGwn-kUigDn7A-CzVUBrZq6wf1zRiByodPz2yiQK1a-28sJboFSu2fztn-gzfErPbQLmUZphBnB-GgsR8QwVXzdO55x9l_LlYSpKtzA8S28QUJKKAjOtzpx7ercos6QxI4fpvpsEoL1sPXTqoxR3S-xo2nybTOASY45vJXJ3y5XlCHeauf6ohS-pKlVVVaVVkYtyCOYOgskFJvZX8knSMag8_R5LMlaMp2LnT-jQIGXqQkj19eVUepfWBmoed6A6YBl5VwqtavgziVZcZlayLBfb03gbV05kMP0f_veu4mllRQqjFcbujz_9shqU6Sj90zRmi9KFc5ZmyJNUDhAlmmJodUpHRZCkk9k-KZvhQ9CCdlWiSp7jIH17L8o42ky8YAetVpYCxzm03zkO0YrbZOSazvsgFEtqdB2X8gn691OQyj7kcvHtFLje7o_6uhN3QLEK_N-U9wAJ2_YmZWhoYGdzSp63AtOB7N9uVavaxA6d5yBPFqd6np0nwRD-tu_KdHzz2AKYLAvSxtT7EBB5D93nxwLJeO0K9wTUTl5s8fk4Xz8C9hYZzjP_9_ywUCbLIVhqz_tR_XWRPQHDfNImQQ4LcMR_98nE7E5ORloTSFtOnBKmC1amx51LYzYeYClS7IhI0A9QwJoFhJvjP5xfEr243mZSWkQja-Bg0wkbpgdxSABUmqXBcD5lcrbpNvoBhKUe9omKKUbYQqbvy-EYN9mPU8DPM4fDimObwsSci_p5x43ls8tA_CVIHhRtEozSOTVvRrmX6zFOh0V8fhf5O3AfF7oTOuqRk19C2IdWNX-UDbPi6eMvzQVZqTspxOTV5TFVBz5QNpgxLOaay9Wni2A31qjRy0We3o3AoHh6i8h53qflT9DhNIPkICPjMMFbQApS1YxuZodWzS4T-N1xgffaZT_7yj9dZDnt92gfd63WdRInaCrUokMU3Rk0kDdq-5oj6nEiVRM6S3cs5bL-qm6iMHAJvezv5c5DZZFEFP--rdl80Q0jLSsa7kwQk13wkzoskWp9Gwy3dbwSJJla4naFhdglFj6QFshU6kaUorh1jAW_bmT9c-qj02rpeXxs5WoXkk5pWd0M1ILXe4At4nTKb_bZKVzMvMRDpcKKsj6Tu0h-ACtHHNrp1ED-_QGcpsV7bcg7jVI2XkTR_TyCr6Nrru2tGOjfoR_SbU7aizNpHVJSL9qXH8v2kX5sBZqgY_HMYyKperI_NcGrUvWNk-eLCoUGWUhlCP7CMb_sH-0eia87jmBYAcySWcViAj7WkysCOpTqglVhsFXxJI645xRMRluHiEn2ufixC6_jmcF9ig3FMPc7tlkJiNo-b16Ra9kZ00wNzqqIg-vj0vP4Z4NStzp3teC5moMDVlDmHtQPZyEmmnREiKLQFBNodCXpDAfn3993dL1DoyevKYUsjRiLKAdWjspBHBjoSAHV99v9DKUHW9RNPmDYAE5uZwYPTjjmLc0rm_Y9W86aURFxQ5GwxOqpOFUkFDKorUIR29fqKkKZvTIbe4snnCADdNh6SyANNz72-h3RvUakjywdWHJqSqsGd5I2isi3wGXf9IhbLqq7altOrxH6pCdqKjaDzgC3--nFxzn9jCyJsplY_OlPqlmH2ITWV8RIiw0hcThQGcWhU0bXoESMWYXY3CDVQXhupvRZSOlHY6dwtAw8qv-54LrYZWKt-xKRQdfSKq8duHbuEaS1bfZEW2p9DwGdt2geWgCUDtHGhAANctUy1lLTj67dK3NfoyieXZp2QOtuc9F-B9ba4zlK2ZkPXogWLyEwxbrWiLT_Qm0oARTJaNqenjZWpAUX8gj1t_9zHKgNA0jqtZSocwUa6D6FnsNjsRNHriSvpCBi8rZvNUwGfckhD8uvRBiuzulopJBtSQHoJymKG3nTgX_ri_3vD9HKajXj-t-RjflaYNAuxP3BL-55hiSPywzqidWbBgE3I1HvqdFCY46KJVHLBeQETMUuNPbFXTbxSmMWREgtFTNHec2_Mp4TIwmFzgPQU0Z64B8atjtq9BQKscsdUOaZo5dPQFlE0OiZuydNI-DGYnp5lD4Z1xZIvumSTGRCkkS4GQpiZ2Tk7dhUSHLBdlts2NkzLMdkTJaCgYH2I4dzpfQ7kQUOfGjbJoaZnIrRRGGEy9AXjhh5eXGXiFfFtPa_unifvS6h6ayKJgsuKP9PLkSWZZM2mwGRHtrk0orHL5H8mOWicHywwTW-lZ1Ti2TgRhCYnMcDXZdP96mUFKUJn9zfNKI-mR7c-JJY8LrWJxl_CdX6VK4GfZ50aOYamZ75lzRa_Yt3kgYpB4PXW1beuEvKyjmIhniIvQNA4b06MZYwfeXH1v5IL_Av-8_Q_Cz_qO4n4t8RUV1_RNXOeYZtsr_e__Jkmh_c8Ua1UbJlDJ4dFHEzEiyk6Qh7fFS84VxDNO10cJaRTb12GX6DEyicztpz4AwuyZbjf2N97YFYEt9APVYFv-RXgktvjmenK9Jiyoqd0ezVvcWzTXFap3lik4f6B7-ttRrpTWeOQkI_jwm6oV8Pcc2ZOw4O5WaemMbBlifg3YwSOD8dfPla_mSqrPd456Lj25eDIay7wpAB-Izd4royzuCpYgGzXPKftvTKrNeEBNsVxjQF1HZ9F2JJIZMm8FTcBMjCvfsQm4Elk6Y3tBLFT40s9n0wBDMdpTE8CyAQ8CMYw1-GnZYm0Hfn1xRh_tppyXu41lFDxUlk_4Mbwmxf1tWaJvuZs4uOxC4Zs70pc2sV4mcCtUrAKwY7DhpM6ERIiE0PHFVNSxInfFwFCxns23yalW6rE7rFlxjrHkHv7q236KXdY4by1aNT8hNUloZCPl9FUHGWkaCxY8ds2vAOCfzX9wtda1r7Z6L_H0rEbdzlJOWICd8bMOyyuCLsOGFdJVlbI6Ujl1DDaV_gMsijcTSVZ4fFLIL8BDDvnMlx05VuVOIdzMuwelAi2H_f8AR-2WLRlYDX7koheWdRan_LQ4ON7PaZiAt_6GWm6tuB42WNZPq-dZ4laEzTn9dQJyplqI092WHmli1wxSgLxIbsAomqaZX2cGfJ0MplMJ195XdCjzMSj3QuuzH4FYg40mr4cT_fs-j6fGdQN6BGCze7WhIm5JoNa2_WZp35Sjll4a34ae5MHONIjsmeV17WU-bW8MT3pj_WMQB18DBMOmpUw4GL0DDCkZgwVnbufjZsdvQDcmJ9RMGgPvnM2ZwOw2z40nGIaY_IxY4jiXEcYABAeoogUdcXyqryWew2-nsH_s7aAMo59yD70tmg8Lm4Z76GeFh7UIpzzQMZeURyeR1yohrr8p5SPX_N5Jybj8U1XBiRBoaCej_y8PImv4GSSqpPbhPSR1XAFTPD8GyWUgNB54OoBE-zHRbm-S6hNaSORMRcQOLVyqwmEoQDHTwo0V5qYkehsWGB6j4HyZCo2JNKAvPBF_La0yE8oWo7LQouuz7BttyF9FJdd3qk6TajDBKNyXG-VwNnj_9UCtBvACS38REcf5yGFQ==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_014bf6af25b302f4016a8d7cba2d4481959210cd1d8da25f29",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4353,
+      "completion_tokens": 1849,
+      "total_tokens": 6202,
+      "cost": 0.02004325,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.02004325,
+        "upstream_inference_prompt_cost": 0.00155325,
+        "upstream_inference_completions_cost": 0.01849
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1792,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787657400-8i2VMVQK4EjZE10hQ3cU",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4353,
+    "completion_tokens": 1849,
+    "total_tokens": 6202,
+    "cost": 0.02004325,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.02004325,
+      "upstream_inference_prompt_cost": 0.00155325,
+      "upstream_inference_completions_cost": 0.01849
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1792,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 23707,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

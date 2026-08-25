@@ -1,0 +1,467 @@
+{
+  "fragmentId": "frag.f2.0024",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 4,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Avec un poids libre soumis à la gravité, le moment externe est maximal lorsque le segment est horizontal (bras de levier de la charge maximal par rapport à la verticale de la gravité)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation biomécanique générale sur moment externe avec gravité"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Principe mécanique de levier sous gravité présenté comme général"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.8fcdfd16f97109dc",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Avec un poids libre soumis à la gravité, le moment externe est maximal lorsque le segment est horizontal (bras de levier de la charge maximal par rapport à la verticale de la gravité)",
+          "supportSpans": [
+            {
+              "text": "Avec un poids libre soumis à la gravité, le moment externe est maximal lorsque le segment est horizontal (bras de levier de la charge maximal par rapport à la verticale de la gravité)",
+              "relativeStartByte": 0,
+              "relativeEndByte": 187,
+              "absoluteStartByte": 29570,
+              "absoluteEndByte": 29757
+            },
+            {
+              "text": "et diminue vers zéro lorsque le segment est vertical.",
+              "relativeStartByte": 188,
+              "relativeEndByte": 242,
+              "absoluteStartByte": 29758,
+              "absoluteEndByte": 29812
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "high",
+                  "rationale": "Direction du changement du moment selon l'orientation"
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "high",
+                  "rationale": "Description qualitative du maximum horizontal et minimum vertical"
+                }
+              ],
+              "raw": "niveau de confiance élevé pour le principe général",
+              "reason": "Le texte explicite un haut niveau de confiance pour le principe général"
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe mécanique sans données cliniques"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation biomécanique générale sur moment externe avec gravité"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Principe mécanique de levier sous gravité présenté comme général"
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "high",
+                  "rationale": "Direction du changement du moment selon l'orientation"
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "high",
+                  "rationale": "Description qualitative du maximum horizontal et minimum vertical"
+                }
+              ],
+              "raw": "niveau de confiance élevé pour le principe général",
+              "reason": "Le texte explicite un haut niveau de confiance pour le principe général"
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe mécanique sans données cliniques"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Cela crée des courbes de résistance caractéristiques : par exemple, un développé couché haltères impose l'essentiel de la difficulté externe en fin de course (bras tendus, quand le poids est loin du point d'appui vertical)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation de profil de résistance pour un exercice spécifique"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Exemple explicatif sans données quantitatives"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.9b13c708d2122b5a",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Cela crée des courbes de résistance caractéristiques : par exemple, un développé couché haltères impose l'essentiel de la difficulté externe en fin de course (bras tendus, quand le poids est loin du point d'appui vertical)",
+          "supportSpans": [
+            {
+              "text": "Cela crée des courbes de résistance caractéristiques : par exemple, un développé couché haltères impose l'essentiel de la difficulté externe en fin de course (bras tendus, quand le poids est loin du point d'appui vertical)",
+              "relativeStartByte": 243,
+              "relativeEndByte": 473,
+              "absoluteStartByte": 29813,
+              "absoluteEndByte": 30043
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Description mécanique de l'exercice"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation de profil de résistance pour un exercice spécifique"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Exemple explicatif sans données quantitatives"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Description mécanique de l'exercice"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "alors qu'un curl haltère debout impose l'essentiel de la difficulté au milieu de l'amplitude, lorsque l'avant-bras est horizontal.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": "Observation de profil de résistance pour un exercice spécifique"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "probable",
+          "reason": "Exemple explicatif sans données quantitatives"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.fced180e8fb24eca",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "alors qu'un curl haltère debout impose l'essentiel de la difficulté au milieu de l'amplitude, lorsque l'avant-bras est horizontal.",
+          "supportSpans": [
+            {
+              "text": "alors qu'un curl haltère debout impose l'essentiel de la difficulté au milieu de l'amplitude, lorsque l'avant-bras est horizontal.",
+              "relativeStartByte": 474,
+              "relativeEndByte": 606,
+              "absoluteStartByte": 30044,
+              "absoluteEndByte": 30176
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "probable",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Description mécanique de l'exercice"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": "Observation de profil de résistance pour un exercice spécifique"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "probable",
+              "reason": "Exemple explicatif sans données quantitatives"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Description mécanique de l'exercice"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "Cette dépendance à la gravité signifie que le « point difficile » de l'exercice dépend de l'orientation du corps par rapport à la verticale, pas uniquement de l'anatomie musculaire — un principe biomécanique de base, niveau de confiance élevé pour le principe général, mais application spécifique à documenter exercice par exercice.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Lien mécanistique entre gravité, orientation et point difficile"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Présenté comme principe de base avec haut niveau de confiance"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.7f403e3bbf824cf2",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "Cette dépendance à la gravité signifie que le « point difficile » de l'exercice dépend de l'orientation du corps par rapport à la verticale, pas uniquement de l'anatomie musculaire — un principe biomécanique de base, niveau de confiance élevé pour le principe général, mais application spécifique à documenter exercice par exercice.",
+          "supportSpans": [
+            {
+              "text": "Cette dépendance à la gravité signifie que le « point difficile » de l'exercice dépend de l'orientation du corps par rapport à la verticale, pas uniquement de l'anatomie musculaire — un principe biomécanique de base, niveau de confiance élevé pour le principe général, mais application spécifique à documenter exercice par exercice.",
+              "relativeStartByte": 607,
+              "relativeEndByte": 955,
+              "absoluteStartByte": 30177,
+              "absoluteEndByte": 30525
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "generalization",
+                  "confidence": "high",
+                  "rationale": "Principe général à haut niveau de confiance"
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "high",
+                  "rationale": "Description du dépendance à l'orientation"
+                }
+              ],
+              "raw": "niveau de confiance élevé pour le principe général, mais application spécifique à documenter exercice par exercice",
+              "reason": "Texte explicite haut niveau de confiance général et limite pour applications spécifiques"
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe biomécanique théorique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Lien mécanistique entre gravité, orientation et point difficile"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Présenté comme principe de base avec haut niveau de confiance"
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "generalization",
+                  "confidence": "high",
+                  "rationale": "Principe général à haut niveau de confiance"
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "high",
+                  "rationale": "Description du dépendance à l'orientation"
+                }
+              ],
+              "raw": "niveau de confiance élevé pour le principe général, mais application spécifique à documenter exercice par exercice",
+              "reason": "Texte explicite haut niveau de confiance général et limite pour applications spécifiques"
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Principe biomécanique théorique"
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune citation fournie"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "application spécifique à documenter exercice par exercice"
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

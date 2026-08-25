@@ -1,0 +1,172 @@
+{
+  "fragmentId": "frag.f2.0007",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "BIOMECHANICAL_OBSERVATION",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "résultat significatif d’une analyse biomécanique unique, présenté comme preuve biomécanique directe de niveau modéré"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.2b3ace4762feb122",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché",
+          "supportSpans": [
+            {
+              "text": "les exercices de poulie (cable crossover) imposent des moments maximaux à l'épaule significativement plus élevés que les variantes de développé couché",
+              "relativeStartByte": 168,
+              "relativeEndByte": 325,
+              "absoluteStartByte": 48467,
+              "absoluteEndByte": 48624
+            },
+            {
+              "text": "— **preuve biomécanique directe, niveau modéré**",
+              "relativeStartByte": 461,
+              "relativeEndByte": 514,
+              "absoluteStartByte": 48760,
+              "absoluteEndByte": 48813
+            },
+            {
+              "text": "sans préjuger d'un danger.",
+              "relativeStartByte": 612,
+              "relativeEndByte": 639,
+              "absoluteStartByte": 48911,
+              "absoluteEndByte": 48938
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "BIOMECHANICAL_OBSERVATION",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "\"preuve biomécanique directe\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "\"Une analyse biomécanique\""
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "BIOMECHANICAL_OBSERVATION",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "résultat significatif d’une analyse biomécanique unique, présenté comme preuve biomécanique directe de niveau modéré"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "\"preuve biomécanique directe\""
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "biomechanical_study"
+              ],
+              "reason": "\"Une analyse biomécanique\""
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.a286511957b56850"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "comparaison: exercices de poulie (cable crossover) vs variantes de développé couché",
+            "joint: épaule",
+            "mesure: moment articulaire maximal"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "sans préjuger d'un danger"
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4674,
+      "outputTokens": 3945,
+      "reasoningTokens": 3520,
+      "totalTokens": 8619,
+      "costUsd": 0.0414045
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4674,
+      "outputTokens": 3945,
+      "reasoningTokens": 3520,
+      "totalTokens": 8619,
+      "costUsd": 0.0414045
+    }
+  }
+}

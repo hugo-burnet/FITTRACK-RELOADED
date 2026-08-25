@@ -1,0 +1,415 @@
+{
+  "fragmentId": "frag.e5f3.00025760",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "CLINICAL_OVERREACH",
+      "message": "Universalisation clinique non prudente",
+      "critical": true,
+      "retryable": false,
+      "claimRef": "tmp.claim.04"
+    },
+    {
+      "code": "CLAIM_FILTERED",
+      "message": "Au moins une claim a été filtrée indépendamment",
+      "critical": false,
+      "retryable": false,
+      "attempted": 4,
+      "retained": 3,
+      "filtered": 1
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 4,
+      "retained": 3,
+      "filtered": 1,
+      "coverageDiagnosticCount": 0
+    }
+  ],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 3,
+    "filtered": 1,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Formulation pratique sans preuve explicite rattachée au segment."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Proposition de pratique (« peut être adjointe ») non reliée explicitement à la citation."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.88af84f6ce73827b",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies",
+          "supportSpans": [
+            {
+              "text": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies",
+              "relativeStartByte": 90,
+              "relativeEndByte": 170,
+              "absoluteStartByte": 25850,
+              "absoluteEndByte": 25930
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Énoncé de pratique clinique sans preuve populationnelle détaillée dans le fragment."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Énoncé pratique non explicitement attribué à la source citée."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Formulation pratique sans preuve explicite rattachée au segment."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Proposition de pratique (« peut être adjointe ») non reliée explicitement à la citation."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Énoncé de pratique clinique sans preuve populationnelle détaillée dans le fragment."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Énoncé pratique non explicitement attribué à la source citée."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "UNRESOLVED",
+          "conditions": [
+            "certaines épicondylalgies"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "ne remplace pas la progression de charge",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Règle de pratique explicitée sans rattachement direct à une étude."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Guidage pratique (« ne remplace pas ») sans niveau de preuve explicité."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.2466ca5f570f0175",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "ne remplace pas la progression de charge",
+          "supportSpans": [
+            {
+              "text": "ne remplace pas la progression de charge",
+              "relativeStartByte": 177,
+              "relativeEndByte": 217,
+              "absoluteStartByte": 25937,
+              "absoluteEndByte": 25977
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Énoncé de pratique clinique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas d’attribution explicite au consensus dans cette sous-proposition."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Règle de pratique explicitée sans rattachement direct à une étude."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Guidage pratique (« ne remplace pas ») sans niveau de preuve explicité."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Énoncé de pratique clinique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Pas d’attribution explicite au consensus dans cette sous-proposition."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "UNRESOLVED",
+          "conditions": [
+            "épicondylalgies"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Rapport d’un contenu de consensus."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le niveau de certitude n’est pas précisé dans le fragment."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.9ebe2ad270cfa1b7",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse",
+          "supportSpans": [
+            {
+              "text": "un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse",
+              "relativeStartByte": 219,
+              "relativeEndByte": 314,
+              "absoluteStartByte": 25979,
+              "absoluteEndByte": 26074
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": "Contenu clinique d’un consensus."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "consensus_statement"
+              ],
+              "reason": "Le fragment mentionne explicitement un consensus."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Rapport d’un contenu de consensus."
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Le niveau de certitude n’est pas précisé dans le fragment."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": "Contenu clinique d’un consensus."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "consensus_statement"
+              ],
+              "reason": "Le fragment mentionne explicitement un consensus."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.1b8b3f44f6dd20d6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "avec douleur définie par l’acceptabilité du patient plutôt que par un chiffre universel",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Définition opérationnelle de la douleur dans le cadre du consensus."
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": "Le fragment ne précise pas la solidité de cette définition au-delà du consensus."
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "CLINICAL_OVERREACH",
+            "message": "Universalisation clinique non prudente",
+            "critical": true,
+            "retryable": false,
+            "claimRef": "tmp.claim.04"
+          }
+        ],
+        "canonicalCandidate": null
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4349,
+      "outputTokens": 5486,
+      "reasoningTokens": 4224,
+      "totalTokens": 9835,
+      "costUsd": 0.05669625
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4349,
+      "outputTokens": 5486,
+      "reasoningTokens": 4224,
+      "totalTokens": 9835,
+      "costUsd": 0.05669625
+    }
+  }
+}

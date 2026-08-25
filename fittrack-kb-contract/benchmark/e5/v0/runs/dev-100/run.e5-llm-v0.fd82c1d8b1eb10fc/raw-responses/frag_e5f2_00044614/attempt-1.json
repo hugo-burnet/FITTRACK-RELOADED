@@ -1,0 +1,162 @@
+{
+  "fragmentId": "frag.e5f2.00044614",
+  "attempt": 1,
+  "callType": "repair",
+  "promptInput": "{\n  \"instruction\": \"Répare uniquement les supportAnchors des claimIndex listés.\",\n  \"rawText\": \"**Ce qu'on peut conclure (niveau faible à modéré, en grande partie mécanistique/pratique) :** une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé. Une instabilité excessive peut réduire la charge utilisable et détourner l'effort vers des muscles stabilisateurs non ciblés. **Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation. La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.\",\n  \"faultyClaims\": [\n    {\n      \"claimIndex\": 3,\n      \"supportAnchors\": [\n        \"Ce qu'on ne peut PAS conclure : qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 0,\n          \"anchor\": \"Ce qu'on ne peut PAS conclure : qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie\"\n        }\n      ]\n    }\n  ]\n}",
+  "rawResponse": "{\"repairs\":[{\"claimIndex\":3,\"supportAnchors\":[\"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie\"],\"rawStatementAnchorIndex\":0}]}",
+  "providerResponse": {
+    "id": "gen-1787656507-QHTYJryV5wnQkoNEJYeY",
+    "object": "chat.completion",
+    "created": 1787656507,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"repairs\":[{\"claimIndex\":3,\"supportAnchors\":[\"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie\"],\"rawStatementAnchorIndex\":0}]}",
+          "refusal": null,
+          "reasoning": "**Analyzing stability in training**\n\nExcessive instability can decrease usable load and shift effort to non-target stabilizer muscles. However, we can't conclude that maximum stability (like with guided machines) is always better than free weights for hypertrophy. The meta-analysis in section 2.5 finds no significant difference in hypertrophy between free weights and machines, even with clear differences in stabilization demand. So, stability influences technique and usable load but isn't a direct and independent determinant of hypertrophy.**Clarifying the anchor text**\n\nI need to establish that the conclusion cannot be made that maximum stability (using guided machines) is always better than free weights for hypertrophy. However, the raw text indicates that the meta-analysis in section 2.5 shows no significant difference in hypertrophy between free weights and machines, despite clear differences in stabilization demand. It seems like the anchor text is missing some punctuation and formatting, specifically the bold markers and proper colons. I'll need to correct this!**Ensuring accurate anchor text**\n\nI've noticed that the raw text contains \"**Ce qu'on ne peut PAS conclure :**\", and it seems the anchor needs to include the correct punctuation and spacing to match it exactly. The instructions specify that each anchor should appear verbatim once in the raw text, and if an anchor isn't found, I should use the exact passage supporting that claim without any paraphrasing. It looks like I need to ensure I include the Markdown formatting, with the leading \"**\" as well.**Selecting the correct anchor snippet**\n\nI'm looking for a unique anchor snippet and I have an option: \"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie.\" I see this exact string appears once, followed by \"— la méta-analyse...\" So, I need to confirm there's a space after the bold markers. The raw text shows that space after the closing \"**\". To ensure an exact match, I should include that space in the anchor: \"… :** qu'une …\".**Formulating the correct anchor snippet**\n\nI need to type out the anchor as: \"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie,\" including the Markdown markers. I've checked for any ambiguity, and there's only one instance of \"Ce qu'on ne peut PAS conclure.\"\n\nI’ll preserve the rawStatementAnchorIndex at 0 and claimIndex as 3. Since the selected anchor appears exactly once in the raw text, I can confirm it meets the requirement. Now, I’ll return the JSON without any extraneous elements.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Analyzing stability in training**\n\nExcessive instability can decrease usable load and shift effort to non-target stabilizer muscles. However, we can't conclude that maximum stability (like with guided machines) is always better than free weights for hypertrophy. The meta-analysis in section 2.5 finds no significant difference in hypertrophy between free weights and machines, even with clear differences in stabilization demand. So, stability influences technique and usable load but isn't a direct and independent determinant of hypertrophy.**Clarifying the anchor text**\n\nI need to establish that the conclusion cannot be made that maximum stability (using guided machines) is always better than free weights for hypertrophy. However, the raw text indicates that the meta-analysis in section 2.5 shows no significant difference in hypertrophy between free weights and machines, despite clear differences in stabilization demand. It seems like the anchor text is missing some punctuation and formatting, specifically the bold markers and proper colons. I'll need to correct this!**Ensuring accurate anchor text**\n\nI've noticed that the raw text contains \"**Ce qu'on ne peut PAS conclure :**\", and it seems the anchor needs to include the correct punctuation and spacing to match it exactly. The instructions specify that each anchor should appear verbatim once in the raw text, and if an anchor isn't found, I should use the exact passage supporting that claim without any paraphrasing. It looks like I need to ensure I include the Markdown formatting, with the leading \"**\" as well.**Selecting the correct anchor snippet**\n\nI'm looking for a unique anchor snippet and I have an option: \"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie.\" I see this exact string appears once, followed by \"— la méta-analyse...\" So, I need to confirm there's a space after the bold markers. The raw text shows that space after the closing \"**\". To ensure an exact match, I should include that space in the anchor: \"… :** qu'une …\".**Formulating the correct anchor snippet**\n\nI need to type out the anchor as: \"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie,\" including the Markdown markers. I've checked for any ambiguity, and there's only one instance of \"Ce qu'on ne peut PAS conclure.\"\n\nI’ll preserve the rawStatementAnchorIndex at 0 and claimIndex as 3. Since the selected anchor appears exactly once in the raw text, I can confirm it meets the requirement. Now, I’ll return the JSON without any extraneous elements.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjXlQr2enRsELxHtFRX3aRd9_pYwIT5vmTVa6M1uuEU8LlkH-mZnxFrEIsJRrBCeDW9FVdV2Mx0E2ssXAWzpZjUI3scSd5efQtJsLM1nwdDlLvv5t1w0QjFAiD0PdkgKLr_9efkasLms3rYchsJiOpVqG-ff2GPZK-5OeB4Y4hDKkUyNnpDWmf2ecYiUvrm4LBd3rjuWtPWeTDxv8M3e0DQ2j66UsYJmx0N1aABxuB3gefOD7tSlFXN6KVi7xtntKp_x7MVNxQObhIppQvUWiq2ZKdlWWAB9W6ZFzy9WGl1scEUdoQ_V_qw1OAbcnmMekj95rEFcIJLVoYkrpQAsgewPThWbhH7dgtObhTIqGvvVOGn7idZf27EqrRcP-k5h40PK_n0aRO394zPrLmYBfFxlg622r8MUucY16OROXe8bfZUxRQ1HQNc0QuTLO36EweRKLo3sZKe6OeXPD8t7dhZwx0vd5nHoNUgS8aMEs8r9nQp6e0FYD3Eial7tBkYqT16QbSEWG-WFoSZgtSaOJIBIm98JrZmmWP6r4ADCgGF-FFz6lPbg1XGtPJQVKOw3WNNJsmoWFLw2feNbfWJIBVCXjcmCh3MHlS5J3R26ZDPSS6J2y88Eo705_ppfXUbT19IUFk9AwWrjEWUg9Erw-t21-l3mQ4GE2ftv5soEDasVg4tSRRYa-cgT2ZP_bVGkReWFf9Bks95q58Ozp8i7kg5DPp_ACYgfJ2Z7LfhXrUaHz2MqadOAVDoeCzNUPIOCbN3f5cQB14Uhb4FyRo64b-OZJRX_W4Rl-_dD-vy6PKv7U1sHeGworWTnPohlmsjYbWNyKG_dzcK6wKCZu1sQRiZzzsMqYZwt43c4KhxjjzYsyEXQH0nGDErU7qk6YZRk1yAIxEnzWB2wg73ig04BbVP5p_MMg_hncwYnnjKEVjiubVmPHcj_uXJHFsfi9foRma0kDEMDlKKBQbIRbb1gj0zHfcQ-Kq3aha--Y9NrK6z1v195IJHDF6O51_kwrv206WtGqAUhlLT8-rbXcZgzwYTbtSrGWfTp8d_kPSiub61AE2LG_JVVD22tKq74CqWxDj2IySiuTgDbmaKgwGB0Yk-xWuvsHM_PRSkxkMwjCvqfpN5J9vLL71gvDnmE3C_bUaikBMNDeITrDz49I_KYDbA6OKV96tYWa76uDG_lOw_OEEuGzeBa0LRc2d_hMsS7EUoPwI1OzHxIC-QFF_SNCCCL9NIcx4c-ZJJ32oT1yUXnISaw8e7fNZmbbfzjRewrw7XGkOuBWsAQ6rc69rlk2yBNPWEfW5jx0ChWTmu3-5pQpLss6Rz8LfxrM97R0NpHImIXuNDLfVm_7wc_ojkXZrPaS965oFYDS9GtObedl-FtVEjBhd12gOuTMH6rKWiD76fUysq4x-XUgeTLymLTdqZS8uQ5qcLLTLrLymFQ0RhdnS5mtVo8os7x6cdLuH4opeX5tm3JFIe7Cs7skefhTOgP_2F-rranQ6KAqXsaOGm9utrhUPgsz3ewRS9ZILKU9aHnPl9uk3cCp6i2bZ6CZPBLfNInmf6og1VmWPbyw7sZSnvSTuOhqFz_rEyj8k2aAh4N8sEnDeymVv0pDf2h7mNbeJqRIu-PEIqOD-HSo0j2TT1e9sK_6mKxZ_c-Om6Sk_xTkfYdSeoxgxMkUDa9C-Gyoyt3lEw13LS5dFc-kGGtOCjYrF8xy0hyECuKBMEmNYfS4MkpbTFhKNejIUe4EOZyQFX1EmEFo--CsX2GJXOZUL22ziq-wuMRFxvfN4JWDxsfuz241WbYS-ibPzDOQWVYrUTrEaVeHo2LtdEqZ7My0LgOfhW38V3VNfpoLbx0Ve8D5w5CE2Ui_zgYuf8bwQ3igK2t4inFNf_YLsGgbb9lVgAluYLHmqekxgULOzBQqoDnQeeSZXw1EMMUR9v8fF0oB0LL-cJT9Tu6ucs_oLkB4OUXIXIcFwhDje6Ia8JWjqwj4nmgkghzH5b31COCDfeU7pGmarJ_t6noLd94Fu9WBwncr36BlhGOPMGWtdzSK2VDwoEj-rPQGybySfupNH0qiTsfaOABd6n29cQCssHpBOLimyfSaUXnYRNjxmcnDVcHuqUnmUfDfFe6OVSzRU_uMVUYn7fLJnjzqwC_32VmKM2hL1nm45Mxg7JmIX7PwfsmkpacugmjUaKxYgvBOX50T1j5Mdc7QATGtSetkvlITZG-GHu7BESE30dcwZ5pBB3hGnpwFccTEKxNrzxJrVP9Ew-y1TfPIN3bhbR4djZU6w4AIfxGZKLbbuOHqmnP73cuMj3cP5sBQwL0zyyySs0ubkV-VOMrzfmxE0s73A1bK91iwU0O58_8FXHbUGP0Vn4JBOLEvh1lb7nan20iH1RvPLyxDfh0huRyIQ4zqxyLqzcnrq_pBZwSTJwfPyixWjNExByJPlbnmNQmRj-GhCnfu7beLkcSuSe6cOOOlE_Zm06M8-qV7-NTkHFD6Jbe_QBSPEN6P7TUP35XMFALvu-CUNTeH-WqRwcyiyyWroCNFJq5WX4a4jlQ3aoitzamXv-ovQ-9uD6QJgbHxVUJYEHdl7Dl0ddG2Hy12rZVmU2HFDL3V5ip1i1d3HVO5_rc8YspV87d_b6OqCgYi8tck5JR45qE_UBCNu00Z-4lvLzmxfNnGrLG40CxZxRmNQ0Jg-EQvmcy4Cn33PqBZ_5SQfwtzNB_STGui54Wk06Y_AOTmCl4p_hAAxjyATk2StpAWGMRpe8WTbHJo34PPCzWWl29raCwsN8HtkmMXEVYEy4cjRoQsssXHX-P7mq7Ertfc9rtl5DFUfF6uTV2Kp5S0Gp07MXyLccaNTLBRqawdqLMJUFybdj9aKRSue1oIPKYZHnJY78nuoljwdakweSjmkhyBC00doP0uUkmT3j1DH5sn_yEEmgIeeW-Cm5k3MHkBlA3Vy66SoXqSILvYlRmHpU7up8YPNTseMpFyOQLM7FS91dkn17GgJyKcTHpDa0z7FfN6Y0iCfu2UCkPx_54lJZW-z_2V4K52AMkpKwe4ZJkQsuQXn7He5yGvX-jdwfdHqfp78-x8k5ZBKIZhQ07xPG7Y1pha0b8BGBJNFyECeYaUujP1ErItbMT8KyuHD5N_2wxWuGZjtIE8CTQmaS02KnTgPu6Umxrvi_FoNu665PzZlRJI8MkXAHTiMSdU1br8sLwxbAAvl_RsOVEiro4Mny3RVYe1W-okN6DdBWE2A-BI1a6WueoS9ZLrKHDzoabfWeawy6zTz1rOsSYD5i69qtEHT1Ql_DBZ7sF0lDCkTLe5D1Br6BOnUpfFd01SjLxKvH3uAPfX9FRruHpSOWPxujcwF1UjV8UzodCqJi37IFWXnAENOTqv9IjfvMrHZ2aqzmofH6ZIAOFuN7HkejvfcnhGOty59i3ge5u8I50dwplt5yOyuFNAZkUc9BBFDs43bH_tVKa-LiNUqjvsxuBF5rjvRsAsy-jI4Hz4DNpUOZVwsN-99eKK0o_vTHUOUGUPwsKqdlwwBeRJnLGpGd0Q7KYwAakdUD__vHQbdTQAKlaH4UgWlgJV04BJXhaiQUFfIIlC-JSaGoTg88PHUS9shdRR678nwjMZetOtsXd45iRbMLmV4OjLGNqcXgKnujJ6uyDJNxNZypP5YYm3VmnvgSG644eM96SGKiiDg1NhbsNT8VgeJlQjBdOkG_7J8ot4y9V0_-SCfjOnpeyKPu8URRFHH2IvxzZoKfmIZcWSXTO7Ti-CSl1uvBrrJmBb2oFTclezXzK5GsYxy4QUs_0Zllhe_rEJAhPdv7rTAduoL_NKr8yDgrG5oiDwSUPMt5OZMU2N76K8Oe4T6-iM4yfRvHghDcx5eZL2mVcKz9ytZgcO_WX8PVD7bbRoF-36O4ZUEtviBe5gOnpSLOYO0ZGpLDKl1iJbXSAV4OB3n25vQ128PGKhOBtQ5PnbUe-YPGGVU3FXm87YEYegytdo0QhHomEsQkbxOcd1fv3avtpArf0eLd4zDIp_02wprWxzb4XtgPpPy9LSeHhM1hs20zEEjzrUAmXD9rwG3saDhFyvkKmyV_RqXD97gSIh5A9d4kAizzB_mhtJVXOpZ4gTqzFkZA9a5MfNm4_vD1M1uKX7WpWcCCJmOboc23630v4LpbTD4d69CSYgkYdSDex4gZ-gbat_1IE_3FGXpbyF_9J9DjEcxjowjWJXNzkPC4WTyCuHKZx4wNvGypTUbDQzccgDM7AT_KO9DwZ8gBu_TftvkowbbnuQy59-_qvpdXafXhgOP2FfgwnOhiVY_iHmvEYBCSJ-LUdKLxtSnZquPKq-eM8T2U9Fk0Ns1H2GRCvdIFNhOw43iKQ3NJS4_gY8Y6xG-48nkpV6z89S7CTiZAhFdLUVRQFbaepETgj3DNiRR8cFaaALJ7msM4RhVpkVthGax1otmdn281j-8WAJpM9re8nei3ukgr7Jvt3adUpfujj7DkfMtdJnIN8emptTS9yIVk9i6nucb3KbTIb9Lg0BltN39ZFIaMhaVhJBKNiLfNlce6H7ngG3cEWNM6nZcBaqZd42okEGxyTI399nmv670TvoZGo5YkrY4H7ma8_Px5VGPDDGvCKAxSlKM0FXA0QO3JrZ3KFILtpH1WDXKrGW2a2KP5kFxkDiUlCf-u2HWk3mx4zL2-41387agwxpnGOuoYLaO6lYt9uuEYfrtpGAT8sY4AGjRaedbwhxvi_nsZqkWig17GtHW6RBAmVbNKb4D_XRVyUwwalaiTURs73WvnrMW_Tck04gRc1iIMjNC2Y4dMp1edQzZsz52DNZRpTN63eIQ1hgtbcAV3-Vm8TwwHQc1SWmFrgMT2P6xgGaSeC4YQ09ioAeo1gfgnf4py45y64sCfZvf4JhdRT7M0abCOVlMUJtbd912pQ8E5jLEBJa2sfdD0tDYczRlkr5Xoa8fvdranHEzbv5qGy6lnvWjT_1Eegl1_ATQSm1I67lnvTlwyEhcoQcBPdEclnOV56Ot4zMcKmZunj55fn3c6sgTQb7LtrF_yBkK9YOsDr_a8LEjxZE1o_u3A_i5Msu-y8bt4TrqhGwXi_DLUB9fvuYWm0mLzLZED7UzKFTan7NFs2g0S8Gk--9CdYJ2NWErjWcJBDOQfJGR1GmbJjcfDFM2VkBOeXBoTWP7mdhYgF2H1jqvZ7cVetBMxzHI-ZK9g1TPchMryZRt6WgPHTXbmLklvTgKGG3CvrddJKsrgT871PauWVtRe1nCyGBFPzfYUsZpf2eJECmgpP9bGsd7fo-UrxQjgos-EfcYyrB-JmbGKqRfm0LuI0qv0S3qOHgNc95F36fL16hFgQEKE9-FoGSJc-hGka8vqRDVBQJ9JHoM7LtRvdpRcKps3fp_QnXiDa5uIEC6jMoOHeQcSG4rBm4uPJhGd_S-xXVM7fJ7TrIFt5hv9g9nGkYSKPFt0hB1_lz6GWTPaWnfjQ9qyVEC6dtx3gTur_zksvDm1osy64OMg6E60aAFxYHjXvA2Xfb8xrsZojBGjfPkWS4XpeHKKNVqpDJdAw6jqcyGILekF8jHNESP_MVkMIHme4oGJIYutSJJvkLVfpt1Lj5861PJODa2xWUpAqJWdHFp0Rc-7gTf1lnkmXUALoPVd5I13jU59WFWuysg9Pm_Bcfb7m6a6brPi-emehwACsdFcJdlpdDOcHiUxwXa-Un3ASHtAGe-WWJx0QdcbeNBnIl8uIhy5jhkdRBAZnjTPvoYvKOJUXAKx7wclRTU_LpTaHhyB7JkiRZj0qDrP2kbHqoCt6GqxUOkbQ19tpfgbGL8tV41dEszIv60agOLcZqEEYFpQapopnoWHwmUAxJ7EYxXBMdXACV8D54YaDUipXBT5AI7-HMIrErnWjSJApGOSVqou1cxYlBF4QcKi_ddso7kvpZ5_Y1Xe3vOXWB__ccRWofZow57zXDHxhkVUJBrHTAONtkmHLbbjS64pcJTd8LC8BcnGyrqpgCC3qGl_ll5AIr49F7qDzAuj319Mo-89rj1iwqRtjmTghFrJdkvhfiNYVkVLgUH89fV-swPctjMasejhizjUl_PdVkBOzL_8UBhPGzelDEzE1lNJvD34P1agsiPOUsAKtn3J_VmKfRcsxAC6IaaaCrUussPLB8amVZM9Itap5Bx0vM6e8ByWCY4VvPgSZq5kEdJRPb-kkDcc8YsJEWp1x5PIpeduULjv-wGSVyJv-zy_TuIM_w2q_RUviEMnKpq4I-QO1MzDrmxwbM6y0lmKHR7o1aJttEv6_kA1bbn-IBdVIYBXadPaUq_zOTU8ERcROrtnaEtVASz6iQUcwQWapvJKsH9H8h3An62tOyAq8PoOcvA9Xfc3o3e8iOaM42vpu8eTcdp8UqdLzvnD6UxcX0GCEtasTzBiC4Ofe59rE2YmG5Tz_AseWZUksMkel6KBClqv1qvZQckT9E5dNzNqrYklfNubhLu0b4bY12NDzGpRG-pHBSLPGI6OJxPBYdjZB4Qj3e_7dJjvKU74xsdbz4SLLokh7OGI5uP7H5I-k7ttgKFDGxokkilPvItpXnXl8b9nP3m6wZBREjbwyTlx-700MGoVeNbT9a3vgeo8_D-Lp4OaF5mYMhcYx-Np-NR69qtqeFf5gCfK-8mEEa3Z1k4OyoLAqL-vbcN3lM9shLqkhPq6e-e35vacf2b8RQeU-3DyCniSV9noQUQMxTdJFGkEXxdq9YF7Mj14Jhm5n0OUoOaRZ-SJIFRgup9ylbTsyUGNq4xtSPRe8Ru8Hul5rXb--j38CK9lPyXD_ftuuZ7Q6LUCbpVJuUvyqNiwww9wfZXAroO4uz7wUc0CeM5PQVNQhdbawOokK_4sBteiMdLv9GwL9OGITXZt9Z37Re-Z8XHe2bt5mQ1pBdfUa9jACy7mFqTXNSTmpwOcku4r3AA2ojRFpsp7aNzZL0NqM2nAez6pB_kOZS7XjjphajOUiC7KH7XWEY39-HY7CbQ9JMjfo2RCpDZDcugtbi2NWbiE7QiLmADodj0BWCbN0-TaECGs1TV91UO0f8_i6mjbJLo1nmLiWLty_UA8Gcbpn6TM1ttAsadDPnF_GxkH0zsjYQRJ_7UJVGb3AtUvPlu2W-94Ru7cYfXa0Ugy6aha_T8jlGuA2LUzzR8JTLgC9sM4bzNdpXhp2fqaUYeNb7JRndmoyZG01785ZWSA5du6efojmEaIncuFTGydBmYy4_5PXFZv9Py8KndmTQOut2qxYCJdeDynFHnb-0j3gf5z9yNQSPnQd3J3v-qdK_6ucmZF5bGRDHeFNADdBfA1G7xSivF8dccQOq8lrbcoUNmNFU49owIHNP1IwIMcdC0k41neXvHASYDc4bVg9OdkswcTjCBYljDvfWkIrcRU8orqEovxKrMjKxrdfOZpFVq43cI3fN600R2UC1BwUbDxq4Ardi0zWE4112_jVv809JD85Qqm6F_5HZDU-JdJnuQ6Fmp-qdyEycwjB29T-QrbjxcozGd53M6Fcp10SwqaHHGO2xw7EH7IQHYMj6i7y5JfdEwpZs3u9_d9aElCUQMQJntQTTk1DooYsDDuMO50BSOa775LS39GWQ9w_Kc4fgWtazADlFeEly-qc9wP84plPTiKK4JoiJiDWfhn0RuQ14Slwbi6pr9ZDS99PqbZV5wwWkGpVV2vZ6t8LB0Yi8z93xpfM2PbowY1KIl4r6l8vly02kaqQr2W5d8s0-xPV3MYcTqCbMV_prRsFCY8UtyamnJJxxOB565Qfak1gwBwsOnO1Iq2AaE40UFi1gp-n4kM3PGiQAEDkY_Tm2E3YNRKThUcMCH-pZ_WZPqmsFXbVheH6lcSnq17y0OpHvqvHsCa4grHQqn83uA3B8xo1QHc_WrVuSqkAxLyu9ocB5KcTdm5JmtR4SbXDCehLrgI6mSDFd9lEZzNKibCwrq4FOLNFHYh3WJo1i-YIq0yYm7qdsaFDZ1swTggXCI9_QPU8ULugdVLd-Ml34rDDf7HyYtmpWSxBUkmZKTrknnMd8kfHTmUVB_h7WtnQsDNJSV2XlprYvIMBBLXAcF8qQ49xpFPCoXrGJxOxM2Y0apWWaApQ6VS9HvRzOGTyTN1yBQrmS_6sFZ343O117qIle1y_eAHjwHc1ZjIDM5P1xpuqGy-gMane8THIIf2Z9GAVPPKjorR1MwespmOlv0YFQDoshVxgmrrqW9IORjC2nFFunYpHdfzE7lSVhhvrL-Ku9IWdzTP_mipQkFMjvEy_9uLB5LO7uOP_s6Ufd-_nY6WNfAjcj0Uw4G3ixmDLIdk-RutxHg7133iuFewjhPqF1i5vCsj_ih2fjEeU3nRMlRZVNE4bhehNDoXqzJs01MLD-40nn9y8OU5nXpE_CXjgaR_Dh-2GSfxIzKGxeMPPMSpjWVZpXTwanw0Xni5CHsP3KzfD6vrUl8CWeRUMDgCcEThChzL62f0gja3uPp5dkPoqp46cMWHINKsiEbbe5VFAZTaqDaJXzRShhcYnrRLiUOZTT8GlVsAU8tYvbE_hteT7QAgCVD4Mgz0LFTkjK3lZoE7DXOvIigmbf0-djj0N7dRe8S7xzC80EUDzjszvXBxGLTh9v40qqvMjdVRp78G_wtMKkGMzgla6tzEcosFU2Z7vcWoqmI4LbZn1-nS94g4uQQQglLcI5V5nCs8_efZOfxh2E768NxWWV2hX80wEqf3m-9uG5gak_ZxRKuenAr92YVeS3Q4WLkV6X4gQRxD1SBsWSM_2phirqCJwAQMRgJBzAm0yyIMCVAlaJo_6eAIdYQ4c1Aw38In062s6cASGacVJOf47fg3pYFgs1zDKymh_eTEkAb7gRFwGtE7czC_R8HfqaA3haFoG4Ql3EXfjDMYymMCP5aGlCF5mihJv4OK3hQCKpXTDep9p2N_FL6LFEc7IIu1MKb_cyrEAMuFklGH1nfUkOdgq1Wxvh5BYZ5-plo1BvFIImHqIEyFYZrPUsTnTtoHiaHDS_8BXAtY7Gs1l0sFlM5VqMczJnTd6PR6MsdTIWjy9GUSKB1tZLtTp7ABLfR_mKdW0MAKQOsih8SFBGBk18tHOw7bX0fn7wQWHnS8iy3C4UULjpgTWLZKJnE2xuwNnENmeTEREo6AdCau3aUEAWo2LnG_AZgxu_7q-NtDjsuZtrShZwqUNuYI_9A65Kz9aLbeXRG9iMcIEK-muJICaUGsZjMHnI-GKRRhOD2jYnZNlmUjBWWYbJrSXEg6iieHRCi9pcGHCegnFErJgEE9NKg_ighWocLxaOxQVmwXVaBjR_s-CYjxY2b7OJUzsru6mgwxxyt7-f-jSIyjO64Oh0FFuGUvBgQ86FqkYI_ks87xRlofg33x98n2Dx0BeVevmS9-vwQAMYXe01d9ri6TxV6M040BTD.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0c11dea24cd06b77016a8d793cd92c8195bbaae34f89ea6e9e",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 615,
+      "completion_tokens": 1453,
+      "total_tokens": 2068,
+      "cost": 0.01529875,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.01529875,
+        "upstream_inference_prompt_cost": 0.00076875,
+        "upstream_inference_completions_cost": 0.01453
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1344,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787656507-QHTYJryV5wnQkoNEJYeY",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 615,
+    "completion_tokens": 1453,
+    "total_tokens": 2068,
+    "cost": 0.01529875,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.01529875,
+      "upstream_inference_prompt_cost": 0.00076875,
+      "upstream_inference_completions_cost": 0.01453
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1344,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 21292,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/maxItems",
+        "#/properties/repairs/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/minItems",
+        "#/properties/repairs/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/repair/properties/claimIndex/minimum",
+        "#/$defs/repair/properties/rawStatementAnchorIndex/minimum"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 4,
+    "propertyLimit": 5000,
+    "enumValueCount": 0,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 60,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 1,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

@@ -1,0 +1,567 @@
+{
+  "fragmentId": "frag.f2.0015",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 5,
+    "retained": 5,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "contraintes précises au coude en musculation récréative (section 6.2)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Absence de preuve explicitement signalée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5111763e8b155457",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "contraintes précises au coude en musculation récréative (section 6.2)",
+          "supportSpans": [
+            {
+              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) :",
+              "relativeStartByte": 2,
+              "relativeEndByte": 109,
+              "absoluteStartByte": 94527,
+              "absoluteEndByte": 94634
+            },
+            {
+              "text": "contraintes précises au coude en musculation récréative (section 6.2)",
+              "relativeStartByte": 112,
+              "relativeEndByte": 184,
+              "absoluteStartByte": 94637,
+              "absoluteEndByte": 94709
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Absence de preuve explicitement signalée"
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Ne pas combler par extrapolation dans la base de données"
+          ],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence",
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "lien longitudinal direct entre charge lombaire modélisée et incidence de blessure en musculation (section 6.4)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Absence de preuve explicitement signalée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f73f819aac3433b1",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "lien longitudinal direct entre charge lombaire modélisée et incidence de blessure en musculation (section 6.4)",
+          "supportSpans": [
+            {
+              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) :",
+              "relativeStartByte": 2,
+              "relativeEndByte": 109,
+              "absoluteStartByte": 94527,
+              "absoluteEndByte": 94634
+            },
+            {
+              "text": "lien longitudinal direct entre charge lombaire modélisée et incidence de blessure en musculation (section 6.4)",
+              "relativeStartByte": 187,
+              "relativeEndByte": 299,
+              "absoluteStartByte": 94712,
+              "absoluteEndByte": 94824
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Absence de preuve explicitement signalée"
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Ne pas combler par extrapolation dans la base de données"
+          ],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence",
+            "biomechanical_risk_language",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "contraintes cervicales/thoraciques spécifiques aux exercices de musculation (section 6.4)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Absence de preuve explicitement signalée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.30f987caab32d3c8",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "contraintes cervicales/thoraciques spécifiques aux exercices de musculation (section 6.4)",
+          "supportSpans": [
+            {
+              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) :",
+              "relativeStartByte": 2,
+              "relativeEndByte": 109,
+              "absoluteStartByte": 94527,
+              "absoluteEndByte": 94634
+            },
+            {
+              "text": "contraintes cervicales/thoraciques spécifiques aux exercices de musculation (section 6.4)",
+              "relativeStartByte": 302,
+              "relativeEndByte": 392,
+              "absoluteStartByte": 94827,
+              "absoluteEndByte": 94917
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Absence de preuve explicitement signalée"
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Ne pas combler par extrapolation dans la base de données"
+          ],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence",
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "charge de cheville en musculation pure hors contexte clinique (section 6.7)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Absence de preuve explicitement signalée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.6808e42c7a07ff63",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "charge de cheville en musculation pure hors contexte clinique (section 6.7)",
+          "supportSpans": [
+            {
+              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) :",
+              "relativeStartByte": 2,
+              "relativeEndByte": 109,
+              "absoluteStartByte": 94527,
+              "absoluteEndByte": 94634
+            },
+            {
+              "text": "charge de cheville en musculation pure hors contexte clinique (section 6.7)",
+              "relativeStartByte": 395,
+              "relativeEndByte": 470,
+              "absoluteStartByte": 94920,
+              "absoluteEndByte": 94995
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Absence de preuve explicitement signalée"
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Ne pas combler par extrapolation dans la base de données"
+          ],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence",
+            "biomechanical_risk_language",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 4,
+        "technicalClaimRef": "tmp.claim.05",
+        "rawStatement": "hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MYTH_REFUTATION",
+          "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Absence de preuve explicitement signalée"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.f26c6333bcdd7a0d",
+          "technicalClaimRef": "tmp.claim.05",
+          "rawStatement": "hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+          "supportSpans": [
+            {
+              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) :",
+              "relativeStartByte": 2,
+              "relativeEndByte": 109,
+              "absoluteStartByte": 94527,
+              "absoluteEndByte": 94634
+            },
+            {
+              "text": "hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+              "relativeStartByte": 473,
+              "relativeEndByte": 749,
+              "absoluteStartByte": 94998,
+              "absoluteEndByte": 95274
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "MYTH_REFUTATION",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MYTH_REFUTATION",
+              "reason": "Fragment déclare explicitement une lacune de preuve à ne pas extrapoler"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Absence de preuve explicitement signalée"
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [
+            "Seul un raisonnement biomécanique de premier principe est actuellement disponible"
+          ],
+          "cannotConclude": [
+            "Ne pas combler par extrapolation dans la base de données"
+          ],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence",
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

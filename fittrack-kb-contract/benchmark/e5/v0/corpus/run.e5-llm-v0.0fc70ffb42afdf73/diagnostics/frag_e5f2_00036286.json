@@ -1,0 +1,279 @@
+{
+  "fragmentId": "frag.e5f2.00036286",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d610260595de671e",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+          "supportSpans": [
+            {
+              "text": "Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que",
+              "relativeStartByte": 2,
+              "relativeEndByte": 94,
+              "absoluteStartByte": 36288,
+              "absoluteEndByte": 36380
+            },
+            {
+              "text": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+              "relativeStartByte": 95,
+              "relativeEndByte": 238,
+              "absoluteStartByte": 36381,
+              "absoluteEndByte": 36524
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.1ef0c88d608f1d16"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "sujets entraînés",
+            "fléchisseurs du coude",
+            "8 semaines",
+            "amplitude partielle à grande longueur musculaire",
+            "comparée à amplitude complète"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d0bb1d6a93f00803",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+          "supportSpans": [
+            {
+              "text": "Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que",
+              "relativeStartByte": 2,
+              "relativeEndByte": 94,
+              "absoluteStartByte": 36288,
+              "absoluteEndByte": 36380
+            },
+            {
+              "text": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+              "relativeStartByte": 95,
+              "relativeEndByte": 238,
+              "absoluteStartByte": 36381,
+              "absoluteEndByte": 36524
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "unknown"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.1ef0c88d608f1d16"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "sujets entraînés",
+            "fléchisseurs du coude",
+            "8 semaines",
+            "amplitude partielle à grande longueur musculaire",
+            "comparée à amplitude complète"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4550,
+      "outputTokens": 4629,
+      "reasoningTokens": 3968,
+      "totalTokens": 9179,
+      "costUsd": 0.0480895
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4550,
+      "outputTokens": 4629,
+      "reasoningTokens": 3968,
+      "totalTokens": 9179,
+      "costUsd": 0.0480895
+    }
+  }
+}

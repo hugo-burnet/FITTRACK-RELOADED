@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f2.00000259",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00000259\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\"\n    ],\n    \"rawText\": \"Ce document est le complément biomécanique et anatomique du rapport [*Programmation de l'entraînement en résistance pour l'hypertrophie musculaire*](./programmation-hypertrophie-etat-connaissances.pplx.md) déjà présent dans ce projet. Là où ce dernier traite des variables de programmation (volume, fréquence, charge, proximité de l'échec, périodisation), le présent rapport traite de **ce qui se passe à l'intérieur de l'exercice** : quels muscles travaillent, pourquoi, dans quelles conditions mécaniques, avec quelles contraintes articulaires, et comment un exercice peut légitimement en remplacer un autre.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Ce document est le complément biomécanique et anatomique du rapport [*Programmation de l'entraînement en résistance pour l'hypertrophie musculaire*](.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"/programmation-hypertrophie-etat-connaissances.\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"pplx.\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"md) déjà présent dans ce projet.\"\n    },\n    {\n      \"unitIndex\": 4,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Là où ce dernier traite des variables de programmation (volume, fréquence, charge, proximité de l'échec, périodisation), le présent rapport traite de **ce qui se passe à l'intérieur de l'exercice** : quels muscles travaillent, pourquoi, dans quelles conditions mécaniques, avec quelles contraintes articulaires, et comment un exercice peut légitimement en remplacer un autre.\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.9c6247f5f3b8091e\",\n      \"handle\": \"cit.f2.00000259.01\",\n      \"rawLabel\": \"*Programmation de l'entraînement en résistance pour l'hypertrophie musculaire*\",\n      \"markdown\": \"[*Programmation de l'entraînement en résistance pour l'hypertrophie musculaire*](./programmation-hypertrophie-etat-connaissances.pplx.md)\",\n      \"relativeStartByte\": 70,\n      \"relativeEndByte\": 209\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":1,\"decision\":\"NO_QUALIFIABLE_PREDICATE\"},{\"unitIndex\":2,\"decision\":\"NO_QUALIFIABLE_PREDICATE\"},{\"unitIndex\":3,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":4,\"decision\":\"CONTEXT_ONLY\"}],\"claims\":[]}",
+  "providerResponse": {
+    "id": "gen-1787656210-QyI7xb0mHZXHTm4uIkHQ",
+    "object": "chat.completion",
+    "created": 1787656210,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":1,\"decision\":\"NO_QUALIFIABLE_PREDICATE\"},{\"unitIndex\":2,\"decision\":\"NO_QUALIFIABLE_PREDICATE\"},{\"unitIndex\":3,\"decision\":\"CONTEXT_ONLY\"},{\"unitIndex\":4,\"decision\":\"CONTEXT_ONLY\"}],\"claims\":[]}",
+          "refusal": null,
+          "reasoning": "**Extracting and classifying claims**\n\nI need to do an E5 extraction. The fragment feels more like a preface. I should classify the coverage units and extract any atomic claims. The raw text has a paragraph in French, which is formatted incorrectly because a link got split across sentence tokens. The last sentence outlines the scope, describing programming variables and their effects, but it's more contextual than factual. I realize it's not a scientific claim; it serves as editorial context.**Classifying coverage units**\n\nI need to classify the coverage ledger for each unit. First, I encounter an incomplete sentence due to a split link; this seems to be an editorial statement about the document’s context, likely categorized as CONTEXT_ONLY. \n\nThe next fragments are link path segments without predicates, which I’ll classify as NO_QUALIFIABLE_PREDICATE. The last segment indicates that the report is already part of the project, but it also serves as editorial context rather than a knowledge claim. So, I’ll classify that as CONTEXT_ONLY as well.**Classifying the report scope**\n\nIn examining unit 4, I see it describes the scope as more contentful but still editorial rather than making biomechanical claims. It mentions what the report will address about exercises, such as which muscles are involved and why, but it doesn't assert a factual claim. Therefore, I'll classify it as CONTEXT_ONLY. \n\nSince there are no knowledge claims in this report, I need to ensure the coverage ledger reflects a total of zero claims and returns a JSON output indicating ZERO_CLAIM with an empty claims array. I'll also include necessary decisions for each unit index in the coverage ledger.**Finalizing coverage ledger**\n\nI need to provide the coverage ledger accurately and ensure there are no extraneous fields. Specifically for Unit 3, it simply states that the document exists in the project, which doesn't count as a knowledge claim, so it will be classified as CONTEXT_ONLY. \n\nI should also note that there is a citation catalog with candidates for the link, but since there are zero claims, those won’t be attributed. Now, I’ll produce and deliver the final JSON output for the coverage ledger.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Extracting and classifying claims**\n\nI need to do an E5 extraction. The fragment feels more like a preface. I should classify the coverage units and extract any atomic claims. The raw text has a paragraph in French, which is formatted incorrectly because a link got split across sentence tokens. The last sentence outlines the scope, describing programming variables and their effects, but it's more contextual than factual. I realize it's not a scientific claim; it serves as editorial context.**Classifying coverage units**\n\nI need to classify the coverage ledger for each unit. First, I encounter an incomplete sentence due to a split link; this seems to be an editorial statement about the document’s context, likely categorized as CONTEXT_ONLY. \n\nThe next fragments are link path segments without predicates, which I’ll classify as NO_QUALIFIABLE_PREDICATE. The last segment indicates that the report is already part of the project, but it also serves as editorial context rather than a knowledge claim. So, I’ll classify that as CONTEXT_ONLY as well.**Classifying the report scope**\n\nIn examining unit 4, I see it describes the scope as more contentful but still editorial rather than making biomechanical claims. It mentions what the report will address about exercises, such as which muscles are involved and why, but it doesn't assert a factual claim. Therefore, I'll classify it as CONTEXT_ONLY. \n\nSince there are no knowledge claims in this report, I need to ensure the coverage ledger reflects a total of zero claims and returns a JSON output indicating ZERO_CLAIM with an empty claims array. I'll also include necessary decisions for each unit index in the coverage ledger.**Finalizing coverage ledger**\n\nI need to provide the coverage ledger accurately and ensure there are no extraneous fields. Specifically for Unit 3, it simply states that the document exists in the project, which doesn't count as a knowledge claim, so it will be classified as CONTEXT_ONLY. \n\nI should also note that there is a citation catalog with candidates for the link, but since there are zero claims, those won’t be attributed. Now, I’ll produce and deliver the final JSON output for the coverage ledger.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjXgeXHis0A1N4gycywjD-8h8VLs7QZ23s7t9lMNL7fU4ybYgPuvMmzX8Pt8hh9avNA57AQKlohjtQeD2o-gw7xI55HVXU-Suw3WOk5xgfRd-Gah-4YLPDn7c6T9DrOmjMFH2PtIBs3GEDx8NPDKujNYiUIcvt9VfiDsppClOxvmDEgAkLbSCZ2jRXtR2tpXSRgV-bVOfc1BSEkbiyckkQKVPgrzSSIt1cBqh1AbJhV6MXxotIT87HcQRKLltU3Z2HkVOGh2jKIEGbbT9iPAz5EOiZVDpSvoaelLg_H7m3-mC_AldyviLKolk9MIScdohdevoMfHCqdxyxuo0kt_8SbwvLz1XAhWsLAbcNL5K0vF6XcGGTFOGV0-GGLQ7W1aZJ8RxNjB1fSgtFWGuQGXvPRfwDQj7iPMTSlS6skvTEIBNGZ7TC4lY-PG0K8MzqWgRCuCb54DRTpFi3X3acikJS75ZX3I0sh3R9m20kQeaqvf6AnlUClPs0Bj3-XnjWj9z-RF3YBtTSnTHfCgqELNk86PnEab33ZK0LS_BdOva0KNoCRGHzWxcobobxDCcQex9dij2KJqRJYImSc_3ifj7b3OE-rOaKcPbxOaac87lLSDqezw1Os_glPfvoZbsRdg_TUTmamdzDMNXfXO_zHbaufQ-_BpzQLZNzA3s8WIHB8WTCx1kQUKCYO4GThPmXLGWDvXtOE9-CsmATRt4dwjdFiiuQq5LffulrMy4U2xaiVLmMafqCOzmQfow2svDvN23KlZew1y3LdwJzeobJYhdBwwQFtEqOtkWRfRERj49NKfgqmFSA_joLItFl_Xb26l2bQHK6_Zt8SACmsYVG1E2PkYgKcXmOai422zB05gDkDn0yBvsOgaovDhcCHIYcqv0iKzYSYwaD4MIRGeV30hIfpJ_tzy943DPZCkl0yyRVmBhfTmPtuK1HE7rZ4eGH7OBNjb559DJ9D2GXCO2zSntq4AamjaXYH4pymboKVOzXl2K661QJxgiysdtqdm6Cdc3sAYdZuHE8rwlcTPTbiRj8QKNX_35MzBgw84eJp3LfVrtGEzPJmlYqCXhoIsl_-LLMcKc2KA2at99ajGgpMLd-1VmrL2vOtBmtx_X183nTk7R_88NW8wVVNyAHVQM7UT18XTWjv2Vy_OnUTMiAob3sSzCOIhfGy5Q09oRwA6JUcQ6Ge8N2JBVvtNl_hw0rFbIPI8b9i6akhbZ9e3-WveYjRfeUMata5uSBc8g-14xpccv99tenB_s6eFhDAAY2px7JHDMN0msc6SJz385a9nPhS1klfLLxbj4OC9TIIKEbe1Wom63IuyrLW9yQU3JytiD6PqdCcaSZWuZbch-15bAXd4luQNtUgjtJT67B-rbD_c6ZnqNaMFk76C4RpfB3AFiLOEDGsXXWniS6POLw4oVa2Cs0BcyXxbhr4gJa8Bo4a42BiJ6ergH1lRgEvZwPlq1VIHPc6F4nwjjrT2j-Oh5ZDtMQDpdC8S0Z4WBJVamh49s6DK0AQ0jHy83p4piVO0MnScS4XryHBPAm5ggHyarmQ9E31OYGM4FU2CC3dxA5yG2g5KFoMcwMlqejeYkopYAHHk0JJrfuCMmURBZ3MqiyjKokNZFnAjGp4FoN_yAtoYIPJ7b5yhTURk78mnMMw0ZmsLr1EV6dNsk47oElIudarFpRxtniKTFZ--XDL3EKctk98-vmhQtjfRT26d8WFLWZNyJ5WrdPkWNjgTO62zUSDrqzP3MXrNIE6KAwDFG6I1Nqk83PrV1hsDZz2iGcX8pGl40QNe7Dp7Wa7w3WFMbbmZ7ShmTNBko4GTuzOtYrYRAcR6FqNZoG_BOSgki4d2134kJg2uLs_Ow8kvbk9zDb6Y9SCfzMuhqHOhpE98j9S9sjazcX46EAXWPGFdbh4kDdtWYOF3pfxzBAieX4iEqAZvH0ENTKu7ma3Gb32ERdC9dCNLF16ApyarhwWFqFduSK-DXUp9Vz6iKLWEQLt3Oowidan-CV2cIFHXEl7bfq_56F5liouQltvgGUWfu2G_GVyLa0Uh4cZhSzOwbustY9Z1tIOm0si5pzOG1KFmUQtrisqqqeLZxwRsSHc8cdXTptWXbOwlpxIzkz8z7gzIV6Zl1IJxQto_Il248cL7KvXxK8B4P_yXeRV-RorW4ILklNCXf4aLsusTormoAVqvn69-0o_SJSrt3ApHQVI7vwyiw3nwMMMFM30Hc5BUjXHoQ5bycTryJWMNcK5DXBwq-7Zfi72-mUOzxMpXlJXCjGhHKjxmfSy31M2EKMVZeEBrtR0jn6vwglU8qgkTI3Ocg6QX_Vuzdfzn_y5zDbAsewaGjrzIrWpUU_xDs2HsFVk7__FWSVa7gX1YR9DrX3XbtGreT7ydJ69w3lYdLECswFda-t_ikHfS-sHSCtJEfvtQJftATD5RWBk4_zIbVk6sPBSeDKY3VKpfS2cfoTMwPYMGgE2ql-TnYz9Tl9bYoAyGjiA1_EHN4usxfh_gDWwux10ORwiYV2whJjJISVJOuS-5ULOiMgQrUpufSrp9S1zWVJtgPgy0uE3TdcoiN0ASWs29nkCiwNoxdX3-zotZ9fI4dpjAoC2SHhkPqR4f4mN330_TuDmkSA_2G6lWPgPSrm2vW9FP_MCspCsA0W3gaBPbzMThrMQSc1cjgW7Dvhb176V-6JR2GjTESrxtXrgE0k5M3Kv8jjuZKTllr_08fVUkoQ1HaIZMBuEnLbF0VpDjFl4jnFAPzQczQcw4U49TsFpWSao8JFFEXTFztyJPLf5dpHphYuvQhh79UD7uw1l5O-X7vg3MljPIQDDNCVA790AMAWeV13DInTh1w0-zHIidFqBHhebVmPaYmafkpdG9x6xO2FuCAecVGAP_uHb7FnjKyslmqMW3Cso8yg63WFIbdSU50wgqjPNxJFrHVISIg0XLgqhVLexSQqLO-GDJqJ0Ssep30iSXLlrMrS8jUqkxj3wpmYA61VKXAEYufHsbah8u5k4Qy4eq8tXEZTPrSuD3I9RSFfGKEucWo4flwYlLCUI90NOGsKZatR2IHENQNemYLnYdg32Z9Yr9oG3TyXEXvlQB_r9Mk8TfgNxoaiebNuEFZnMFM52i_IhF3b69IjFaOzbng6cyLBMirmW8-MFL53eayFQo8ScGOdZ56Zprpkmr10iSHhC20hUhUGXjoO1AOYHCTCvE484j-WAYjCA4QJwzWJWn_2tQ-CLLLyDLJ-c4Nh3NguL-qhLcr_xZiNS8U5XD_NUcBf4przp5vxNNtwv59B2JXU7qhHIJVBPg8C-fdsvFKcl_oy4YI7XKh_JICF4irVGlVaL4ZZn16dOmFgIL9ubJMX9OmYmae_zofJiDayr1mXw3ku8j0TXccK371mOhr-JbPfiZ4izA3FOElUrFMHe3Eh_-0dvc8DvcVJudvVZfP6ZFRa6ivXkDpF2kNt6Smligd4U6UR4F9atwTGUvgWahxJo-5qoCHw0_gIKne4_DnNnqg4pFo2wsVCKFAmglMANE_-hdtVD5XMQQC26Ohi33BjpkBXrTeLYa5R2IZ3-c0QYxivENJpF-gRyj_iXR8snFUpns4dt55-wmlqHBNr4xsD5ZOxLIbZZfNaua17_8Jh7EYw1NcFP09V5CRlvBEruo-0bysR9Z9KziEAIxPosZVI1cxeHR3-TiDT2JkuIp3wJrSkFUCpHtprzysCqZt5BA6KS8xOaNC9qON6DU_8FcuwBt34FABHCG2iILdMDRKix0tzcPe1q0ggq6_y7HNHxnE-LnjdV3_f6fIed7vzge_XeLvOVcl8PgNlPq7PVOUlgYWiAMflaLiWWX__BAeJh86TeKzWHfLS7sMkUwQz3wVe7qr9Vkk71gstux7umBtfbPb_TA2xBsN7raZjGmg4-Txu0rvtuBBGa78RNNdMaFexdOJbnlBPnA-Jy4mnzBoDGFos7kvQk8UH5z49bPmLGiKxSVe-ncUlrQ-3Bj26b62hSKWG6QBxPgAfpMw3WxYw5cXoBHeizRwsTFZ9XtoFSGoOW_YLx3CqN3ueUhGmg8ohfi06XVOd7ve18SSysps0R5SlXekDPVdoFZ6baAfEKtCAlpKBqWGdmPpigLkcDkwqWgHOegmBr_gbOBytq_0y696vui_hqhlRt31aXd8tMNljv4TWb-9EoeYzJ5XIbEOTkk6s6issdYSDqPHX_hWZbcKvvDEt4NR4310VRaxgO8spq66G3X4zjXkulYqBEk6cvH26PY_dYwws6Ppy7rM1psYDuVQUW3JHunf-c5kLC-Y3ZRapCw16TFwsn_ztH2HnyW3ErraBdTkGCC10S0f399GGMprRfB5WhN1zVYwsPd30ufkUbhm-CgjkAVgXM-QFr1bIo0aCZzv56pQCgeXTGrY525tTD2x_5ocO_C3mWudxOYu4qM8PsOF4E2y4KVJKib3gPEw05iWyN0i_08hzEqYAenQeq75HK26wWXQ3wVsYKqJKWtT6074tzTU73_vGeKBWfSCGuad9ruPX-dpDNV4z3rw_JXIfZilC_bagwsoQxl1wIJVvkgPOVfj5r378CiB5UmfLptJFEkNlrxUDlIHPeTDBrIzSBEJOFPTGJUdDanrQUk39ugOqut1z8_HbhGsZxyCfCiW-5Wk4UesZIl_gjfPkAB6lSGMbaZStm6-B_ysb5LoK_Ag7PsLWhKtMM6a4YfAyxtuvMur-kIVgn4cS1fwi8hZElW0Zr9iGVKJKt9moqOLlYgvMsJOLS3jrRpumipVc4GOZI_pBOiy5zdxpET9K0TXNiN9U5NC_Xj27yA1SCzWKEeml4pD4SfjQqSZ99ltVkEKrXXmxPmx1WBXQQGlWYXwtMAHv2L0aDy4QU_aAhKFjtScUfeqw3hg0xy5L9XIZA60C3FQUYWhnwrNA8P5vBf8-nxyekfh4K1dErGgG9l1J-UlFw6qntNolUy4GF-vxZ_wyp-ORPoeX6JAb0HZcWQwlwq0ryKlz0-nWikArhSODXCQvA0TgKXJN0wgbSSYesB2sSL_jR_nYUSQcliLKzMsktQlJsiNaqyOcAH_HCmJEM25gvrUtLWLfaFDtkQTXL_wIENgJkP4YMI-0-giAzU7v8-4_gWL-L5AA1ye5bB6nWlBkL2nKbnbpcP5EWmbVFTmt17xTid8dJU8Uz_8GV8DgS1hd1UL2c4c1wnkPzrlFssrIeIzMJKm01eaJFKrJeX1loRKsez4K0ObkPkXzf-aKwb4bJ74bksutStyoGQ3JKYbfO2dG1ez2iz1bHkOi1zSwDGlyLFvUYFakvqO6gh_qNnsiGN7TycBp8fpbon_4rrbaYh4j0-oAP8mvXSEodJA5jLIQLygfUBo2-1x_LISlNy4MV_RqatTvKofK_U40wFBsH8XcdPx2ZHTId0baTrlmH0Yg5jXrNFy0lu13LtlRYiVa0w-dT25IfP08ZLhWOUsp0FSLhBObuIJxgNJaAnpbJcRBaXq6JdNY727ZIpzWI8v3sMQmGE0C0v3YCzb87hednPhFrI7nRvIVal6skSwygbfgTvYknsoFtSzOd-9Bm-I.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_05530eed92059c4c016a8d7813c2c08195a5354560167976a5",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4749,
+      "completion_tokens": 839,
+      "total_tokens": 5588,
+      "cost": 0.01043825,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.01043825,
+        "upstream_inference_prompt_cost": 0.00204825,
+        "upstream_inference_completions_cost": 0.00839
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 704,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787656210-QyI7xb0mHZXHTm4uIkHQ",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4749,
+    "completion_tokens": 839,
+    "total_tokens": 5588,
+    "cost": 0.01043825,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.01043825,
+      "upstream_inference_prompt_cost": 0.00204825,
+      "upstream_inference_completions_cost": 0.00839
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 704,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 12572,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

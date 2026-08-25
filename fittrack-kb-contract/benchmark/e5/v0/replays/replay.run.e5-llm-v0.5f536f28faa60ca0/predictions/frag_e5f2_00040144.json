@@ -1,0 +1,184 @@
+{
+  "fragmentId": "frag.e5f2.00040144",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00040144",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.f9bf277ecabb5076",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une revue systématique de référence sur l'effet de l'amplitude de mouvement sur le développement musculaire trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle, en particulier lorsque la partielle est réalisée en position **raccourcie** du muscle",
+        "supportSpans": [
+          {
+            "text": "Une revue systématique de référence sur l'effet de l'amplitude de mouvement sur le développement musculaire trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle, en particulier lorsque la partielle est réalisée en position **raccourcie** du muscle",
+            "relativeStartByte": 0,
+            "relativeEndByte": 306,
+            "absoluteStartByte": 40144,
+            "absoluteEndByte": 40450
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Effect on muscle development (hypertrophy) reported from review."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": "Cited as a systematic review."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": true,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Explicit reference to a systematic review reporting findings."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": "The fragment asserts a general advantage direction from a systematic review."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Effect on muscle development (hypertrophy) reported from review."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "systematic_review"
+            ],
+            "reason": "Cited as a systematic review."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.86007a6b5a3833e7"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "advantage generally in favor of full ROM vs partial ROM; especially when partial is performed in shortened position"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "biomechanical_risk_language"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.90ed0bf9f5a095cf",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "ce constat est confirmé et affiné par les données plus récentes de longueur musculaire (section 3.2), qui montrent que ce n'est pas l'amplitude en tant que telle mais la **position de longueur atteinte** qui semble déterminante.",
+        "supportSpans": [
+          {
+            "text": "ce constat est confirmé et affiné par les données plus récentes de longueur musculaire (section 3.2), qui montrent que ce n'est pas l'amplitude en tant que telle mais la **position de longueur atteinte** qui semble déterminante.",
+            "relativeStartByte": 476,
+            "relativeEndByte": 709,
+            "absoluteStartByte": 40620,
+            "absoluteEndByte": 40853
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "probable",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Directness of the newer data not specified in the fragment."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No specific study type cited for the newer data in this fragment."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "States confirmation by more recent muscle length data."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "probable",
+            "reason": "Language 'semble déterminante' indicates less certainty."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Directness of the newer data not specified in the fragment."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "No specific study type cited for the newer data in this fragment."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "position of muscle length reached is determinant rather than ROM per se"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

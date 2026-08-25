@@ -1,0 +1,276 @@
+{
+  "fragmentId": "frag.f2.0008",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.fd82c1d8b1eb10fc",
+    "fragmentId": "frag.f2.0008",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.fbcbbd70adb643f6",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Peu d'études biomécaniques dédiées quantifient directement la charge au coude pendant les exercices de triceps (skull crusher, extension overhead) en musculation récréative",
+        "supportSpans": [
+          {
+            "text": "Peu d'études biomécaniques dédiées quantifient directement la charge au coude pendant les exercices de triceps (skull crusher, extension overhead) en musculation récréative",
+            "relativeStartByte": 0,
+            "relativeEndByte": 178,
+            "absoluteStartByte": 48955,
+            "absoluteEndByte": 49133
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le fragment ne précise pas le type de preuve employé pour établir cette cartographie (au-delà d’un constat)."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune typologie explicite attribuée à cette affirmation."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Etat des lieux de la littérature déclaré dans le fragment."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le fragment indique une rareté (« Peu d'études ») sans qualifier formellement le statut épistémique."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le fragment ne précise pas le type de preuve employé pour établir cette cartographie (au-delà d’un constat)."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune typologie explicite attribuée à cette affirmation."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [
+          "exercices de triceps (skull crusher, extension overhead) en musculation récréative"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.834cceb5d56cbed4",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "la littérature disponible sur la charge au coude provient principalement du contexte du lancer au baseball, peu généralisable",
+        "supportSpans": [
+          {
+            "text": "la littérature disponible sur la charge au coude provient principalement du contexte du lancer au baseball, peu généralisable",
+            "relativeStartByte": 181,
+            "relativeEndByte": 309,
+            "absoluteStartByte": 49136,
+            "absoluteEndByte": 49264
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Appréciation de généralisabilité sans spécification méthodologique détaillée."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "La citation présente dans la phrase ne permet pas une attribution non ambiguë."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Description de la source principale de la littérature et de sa généralisabilité."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le fragment n’indique pas la solidité de cette assertion au-delà de l’énoncé descriptif."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Appréciation de généralisabilité sans spécification méthodologique détaillée."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "La citation présente dans la phrase ne permet pas une attribution non ambiguë."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [
+          "contexte du lancer au baseball"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.e544409c3996471c",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "l'affirmation courante selon laquelle le skull crusher ou l'extension overhead imposerait une contrainte particulière au coude repose largement sur un raisonnement biomécanique de premier principe",
+        "supportSpans": [
+          {
+            "text": "Il s'agit d'une **lacune de preuve identifiée**",
+            "relativeStartByte": 420,
+            "relativeEndByte": 468,
+            "absoluteStartByte": 49375,
+            "absoluteEndByte": 49423
+          },
+          {
+            "text": "l'affirmation courante selon laquelle le skull crusher ou l'extension overhead imposerait une contrainte particulière au coude repose largement sur un raisonnement biomécanique de premier principe",
+            "relativeStartByte": 471,
+            "relativeEndByte": 669,
+            "absoluteStartByte": 49426,
+            "absoluteEndByte": 49624
+          },
+          {
+            "text": "plutôt que sur une mesure directe publiée en contexte de musculation",
+            "relativeStartByte": 721,
+            "relativeEndByte": 791,
+            "absoluteStartByte": 49676,
+            "absoluteEndByte": 49746
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Base invoquée: raisonnement biomécanique de premier principe, non mesure directe."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas d’attribution non ambiguë à un type d’étude spécifique pour cette meta-affirmation."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Le fragment qualifie la base probante de l’affirmation courante."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": "Le texte déclare explicitement une lacune de preuve et l’absence de mesure directe publiée pour étayer l’affirmation."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": "Base invoquée: raisonnement biomécanique de premier principe, non mesure directe."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas d’attribution non ambiguë à un type d’étude spécifique pour cette meta-affirmation."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [
+          "skull crusher; extension overhead; contexte musculation"
+        ],
+        "limitations": [
+          "niveau de preuve très faible, largement inférentiel"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

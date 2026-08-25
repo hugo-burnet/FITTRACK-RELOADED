@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f2.00044614",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00044614\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"5. Stabilité\",\n      \"5.3 Interprétation pour l'hypertrophie\"\n    ],\n    \"rawText\": \"**Ce qu'on peut conclure (niveau faible à modéré, en grande partie mécanistique/pratique) :** une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé. Une instabilité excessive peut réduire la charge utilisable et détourner l'effort vers des muscles stabilisateurs non ciblés. **Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation. La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"**Ce qu'on peut conclure (niveau faible à modéré, en grande partie mécanistique/pratique) :** une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Une instabilité excessive peut réduire la charge utilisable et détourner l'effort vers des muscles stabilisateurs non ciblés.\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"**Ce qu'on ne peut PAS conclure :** qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation.\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\n  \"annotationPrediction\": \"CLAIMS\",\n  \"coverageLedger\": [\n    {\n      \"unitIndex\": 0,\n      \"decision\": \"CLAIM_CONTENT\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"decision\": \"CLAIM_CONTENT\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"decision\": \"CLAIM_CONTENT\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"decision\": \"CLAIM_CONTENT\"\n    }\n  ],\n  \"claims\": [\n    {\n      \"supportAnchors\": [\n        \"une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MECHANISM\",\n      \"knowledgeTypeReason\": \"Le texte présente une relation mécanistique/pratique sur la limitation de la série.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"mechanistic_only\",\n      \"epistemicStatusReason\": \"Le niveau indiqué est faible à modéré et « en grande partie mécanistique/pratique ».\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"mechanistic_hypothesis\",\n      \"directnessReason\": \"Énoncé mécanistique sans démonstration directe d'hypertrophie.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"expert_practice\"\n      ],\n      \"evidenceTypesReason\": \"Le fragment qualifie la conclusion de mécanistique/pratique.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"NOT_CITED\",\n      \"conditions\": [\n        \"stabilité suffisante\",\n        \"objectif: hypertrophie du muscle visé\"\n      ],\n      \"limitations\": [],\n      \"cannotConclude\": [],\n      \"unresolved\": [],\n      \"flags\": [\n        \"expert_practice\",\n        \"biomechanical_risk_language\",\n        \"modeling_content\"\n      ],\n      \"coverageUnitIndexes\": [\n        0\n      ]\n    },\n    {\n      \"supportAnchors\": [\n        \"Une instabilité excessive peut réduire la charge utilisable\",\n        \"et détourner l'effort vers des muscles stabilisateurs non ciblés\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MECHANISM\",\n      \"knowledgeTypeReason\": \"Relation mécanistique/pratique entre instabilité et conséquences sur charge et recrutement.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"mechanistic_only\",\n      \"epistemicStatusReason\": \"Formulation prudente (« peut ») et cadre mécanistique/pratique.\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"mechanistic_hypothesis\",\n      \"directnessReason\": \"Hypothèse mécanistique sans mesure directe d'hypertrophie.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"expert_practice\"\n      ],\n      \"evidenceTypesReason\": \"Présentée comme mécanistique/pratique.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"NOT_CITED\",\n      \"conditions\": [\n        \"instabilité excessive\"\n      ],\n      \"limitations\": [],\n      \"cannotConclude\": [],\n      \"unresolved\": [],\n      \"flags\": [\n        \"expert_practice\"\n      ],\n      \"coverageUnitIndexes\": [\n        1\n      ]\n    },\n    {\n      \"supportAnchors\": [\n        \"la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MYTH_REFUTATION\",\n      \"knowledgeTypeReason\": \"Affirme qu'on ne peut pas conclure à la supériorité de la stabilité maximale; mention d'une méta-analyse sans différence.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"absence_of_evidence\",\n      \"epistemicStatusReason\": \"Énonce explicitement une absence de différence trouvée par une méta-analyse.\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"direct_hypertrophy_measured\",\n      \"directnessReason\": \"La phrase se réfère à une méta-analyse d'hypertrophie.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"meta_analysis\"\n      ],\n      \"evidenceTypesReason\": \"Méta-analyse mentionnée.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"UNRESOLVED\",\n      \"conditions\": [\n        \"comparaison: poids libres vs machines\"\n      ],\n      \"limitations\": [],\n      \"cannotConclude\": [\n        \"supériorité systématique des machines guidées pour l'hypertrophie\"\n      ],\n      \"unresolved\": [],\n      \"flags\": [\n        \"ambiguous_citation\"\n      ],\n      \"coverageUnitIndexes\": [\n        2\n      ]\n    },\n    {\n      \"supportAnchors\": [\n        \"La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MECHANISM\",\n      \"knowledgeTypeReason\": \"Énonce un rôle mécanistique sur technique/charge et nie un déterminant direct démontré.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"mechanistic_only\",\n      \"epistemicStatusReason\": \"Indique influence mécanistique sans preuve directe d'effet sur hypertrophie.\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"mechanistic_hypothesis\",\n      \"directnessReason\": \"Position mécanistique sur la stabilité.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"expert_practice\"\n      ],\n      \"evidenceTypesReason\": \"Présenté comme mécanistique/pratique.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"NOT_CITED\",\n      \"conditions\": [],\n      \"limitations\": [],\n      \"cannotConclude\": [],\n      \"unresolved\": [],\n      \"flags\": [\n        \"expert_practice\",\n        \"modeling_content\"\n      ],\n      \"coverageUnitIndexes\": [\n        3\n      ]\n    }\n  ]\n}",
+  "providerResponse": {
+    "id": "gen-1787648503-Wi54jZ7FRbEzViO6nt6B",
+    "object": "chat.completion",
+    "created": 1787648503,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"annotationPrediction\": \"CLAIMS\",\n  \"coverageLedger\": [\n    {\n      \"unitIndex\": 0,\n      \"decision\": \"CLAIM_CONTENT\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"decision\": \"CLAIM_CONTENT\"\n    },\n    {\n      \"unitIndex\": 2,\n      \"decision\": \"CLAIM_CONTENT\"\n    },\n    {\n      \"unitIndex\": 3,\n      \"decision\": \"CLAIM_CONTENT\"\n    }\n  ],\n  \"claims\": [\n    {\n      \"supportAnchors\": [\n        \"une stabilité suffisante permet au muscle cible, plutôt qu'à l'équilibre ou à la coordination, de devenir le facteur limitant de la série — condition généralement recherchée pour l'hypertrophie du muscle visé\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MECHANISM\",\n      \"knowledgeTypeReason\": \"Le texte présente une relation mécanistique/pratique sur la limitation de la série.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"mechanistic_only\",\n      \"epistemicStatusReason\": \"Le niveau indiqué est faible à modéré et « en grande partie mécanistique/pratique ».\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"mechanistic_hypothesis\",\n      \"directnessReason\": \"Énoncé mécanistique sans démonstration directe d'hypertrophie.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"expert_practice\"\n      ],\n      \"evidenceTypesReason\": \"Le fragment qualifie la conclusion de mécanistique/pratique.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"NOT_CITED\",\n      \"conditions\": [\n        \"stabilité suffisante\",\n        \"objectif: hypertrophie du muscle visé\"\n      ],\n      \"limitations\": [],\n      \"cannotConclude\": [],\n      \"unresolved\": [],\n      \"flags\": [\n        \"expert_practice\",\n        \"biomechanical_risk_language\",\n        \"modeling_content\"\n      ],\n      \"coverageUnitIndexes\": [\n        0\n      ]\n    },\n    {\n      \"supportAnchors\": [\n        \"Une instabilité excessive peut réduire la charge utilisable\",\n        \"et détourner l'effort vers des muscles stabilisateurs non ciblés\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MECHANISM\",\n      \"knowledgeTypeReason\": \"Relation mécanistique/pratique entre instabilité et conséquences sur charge et recrutement.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"mechanistic_only\",\n      \"epistemicStatusReason\": \"Formulation prudente (« peut ») et cadre mécanistique/pratique.\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"mechanistic_hypothesis\",\n      \"directnessReason\": \"Hypothèse mécanistique sans mesure directe d'hypertrophie.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"expert_practice\"\n      ],\n      \"evidenceTypesReason\": \"Présentée comme mécanistique/pratique.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"NOT_CITED\",\n      \"conditions\": [\n        \"instabilité excessive\"\n      ],\n      \"limitations\": [],\n      \"cannotConclude\": [],\n      \"unresolved\": [],\n      \"flags\": [\n        \"expert_practice\"\n      ],\n      \"coverageUnitIndexes\": [\n        1\n      ]\n    },\n    {\n      \"supportAnchors\": [\n        \"la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MYTH_REFUTATION\",\n      \"knowledgeTypeReason\": \"Affirme qu'on ne peut pas conclure à la supériorité de la stabilité maximale; mention d'une méta-analyse sans différence.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"absence_of_evidence\",\n      \"epistemicStatusReason\": \"Énonce explicitement une absence de différence trouvée par une méta-analyse.\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"direct_hypertrophy_measured\",\n      \"directnessReason\": \"La phrase se réfère à une méta-analyse d'hypertrophie.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"meta_analysis\"\n      ],\n      \"evidenceTypesReason\": \"Méta-analyse mentionnée.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"UNRESOLVED\",\n      \"conditions\": [\n        \"comparaison: poids libres vs machines\"\n      ],\n      \"limitations\": [],\n      \"cannotConclude\": [\n        \"supériorité systématique des machines guidées pour l'hypertrophie\"\n      ],\n      \"unresolved\": [],\n      \"flags\": [\n        \"ambiguous_citation\"\n      ],\n      \"coverageUnitIndexes\": [\n        2\n      ]\n    },\n    {\n      \"supportAnchors\": [\n        \"La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"domain\": \"training\",\n      \"knowledgeTypeState\": \"RESOLVED\",\n      \"knowledgeType\": \"MECHANISM\",\n      \"knowledgeTypeReason\": \"Énonce un rôle mécanistique sur technique/charge et nie un déterminant direct démontré.\",\n      \"epistemicStatusState\": \"RESOLVED\",\n      \"epistemicStatus\": \"mechanistic_only\",\n      \"epistemicStatusReason\": \"Indique influence mécanistique sans preuve directe d'effet sur hypertrophie.\",\n      \"confidenceState\": \"UNRESOLVED\",\n      \"confidenceAspects\": null,\n      \"confidenceLevels\": null,\n      \"confidenceRationales\": null,\n      \"confidenceRaw\": null,\n      \"confidenceReason\": null,\n      \"directnessState\": \"RESOLVED\",\n      \"directness\": \"mechanistic_hypothesis\",\n      \"directnessReason\": \"Position mécanistique sur la stabilité.\",\n      \"evidenceTypesState\": \"RESOLVED\",\n      \"evidenceTypes\": [\n        \"expert_practice\"\n      ],\n      \"evidenceTypesReason\": \"Présenté comme mécanistique/pratique.\",\n      \"clinicalEvidenceLevel\": null,\n      \"supportsHypertrophySuperiority\": false,\n      \"supportsDemonstratedClinicalRisk\": false,\n      \"citationOccurrenceRefs\": [],\n      \"citationAttributionState\": \"NOT_CITED\",\n      \"conditions\": [],\n      \"limitations\": [],\n      \"cannotConclude\": [],\n      \"unresolved\": [],\n      \"flags\": [\n        \"expert_practice\",\n        \"modeling_content\"\n      ],\n      \"coverageUnitIndexes\": [\n        3\n      ]\n    }\n  ]\n}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVn51aFMi_hH_L7AGoCJ6bbGuWwDhhmeHJ9YWg165ibJ4uvpq4OGeS1Pcz2XQnk81rqxqZJkpXX0vv_HrQ7DxbEVl_btVwtxk3wPfgyzOmemfq1W0AtQrWqweq0-1oj5lzu6qDC2XPP1b2BitVScsR22KbllxrqJARlkrw2ITvXJRU0NGyhBkQrHGXHxtjxGtpYQFloozxy-3MEQF53KimyhgFBH6sS76li_7CHDQc2_sZSG270q_RLckEjYNy5JyDrFCKmpiOcGkmpk6r0z8twuVryMcNIc3zm4UDLCjuPadFt8Xlx77huNIJweUmBWt30ubGlEbiieUJAr9rUXfIK5dEy3IkoDgi18FFgfJU3rAB-DGoUhhWw010tx-R1S_Aj1fNFYIMMvSE2SYgEwofZGSQ10EkQ-zahM-U0Z3tuSOVvk4yRbLiQnTNRmdyOQKZz4IayaxAsTuTsdKodrHfjcD9tYJIOt1IpAnUeQL_hv0tURZZDOUdzsXrde1OAWuFBRo809LetYyZ-vbkNWjIAp6ovtnAUSD9akdf7EFu4UqjpJfwE1Zt26yySMhmW60BIzbdhiJnjg9dhuFGI0iaCJjeWGdjR-lY7Necayf6QHruLIOudsJ2PSzafUPDuIJv7tODxxrVncpx19MjNqXWiOSyegLWe8uTaeeewakjf5u1SByPiZqifOFQSRkB-H0PLBLwfs-1QFpEtYMHKYuA1oin_PiD_So7ZFRumT_hLnLCGCg0AQXQ6dOHiC76KuDSYzK-DtlqcXxXpUMemboYjcHJsFM-lqUIkHwAt7BveLldVoaRqpBswEJw9BYuukXNlRImgM-Qne_8IxwVtCWPGBMYKBntTBYYTc60IVOfgQnySEPaE9f5sxRoxgtbI4YSweBsqwm34MwEPGASto3HSupp7qvh_gumOE9Dz2imWSGeFAlFPFnggPbqADxxggO3C8.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_0911381baa86aa8b016a8d59f912b48195adc4122b26d10f90",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4242,
+      "completion_tokens": 1840,
+      "total_tokens": 6082,
+      "cost": 0.0203905,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2944,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0203905,
+        "upstream_inference_prompt_cost": 0.0019905,
+        "upstream_inference_completions_cost": 0.0184
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787648503-Wi54jZ7FRbEzViO6nt6B",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4242,
+    "completion_tokens": 1840,
+    "total_tokens": 6082,
+    "cost": 0.0203905,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2944,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0203905,
+      "upstream_inference_prompt_cost": 0.0019905,
+      "upstream_inference_completions_cost": 0.0184
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 21802,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

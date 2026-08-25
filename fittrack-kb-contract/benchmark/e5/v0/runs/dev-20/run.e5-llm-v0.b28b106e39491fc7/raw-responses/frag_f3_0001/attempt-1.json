@@ -1,0 +1,156 @@
+{
+  "fragmentId": "frag.f3.0001",
+  "attempt": 1,
+  "callType": "repair",
+  "promptInput": "{\n  \"instruction\": \"Répare uniquement les supportAnchors des claimIndex listés.\",\n  \"rawText\": \"3. **« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».** Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation ([Smith et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5739826/)).\",\n  \"faultyClaims\": [\n    {\n      \"claimIndex\": 0,\n      \"supportAnchors\": [\n        \"« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».\",\n        \"Des exercices tolérablement douloureux peuvent produce des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 1,\n          \"anchor\": \"Des exercices tolérablement douloureux peuvent produce des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée\"\n        }\n      ]\n    }\n  ]\n}",
+  "rawResponse": "{\"repairs\":[{\"claimIndex\":0,\"supportAnchors\":[\"« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».\",\"Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation\"],\"rawStatementAnchorIndex\":0}]}",
+  "providerResponse": {
+    "id": "gen-1787646538-YJCXPCwzDB6mA9wBp4XG",
+    "object": "chat.completion",
+    "created": 1787646538,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"repairs\":[{\"claimIndex\":0,\"supportAnchors\":[\"« Douleur pendant l’exercice » n’équivaut pas automatiquement à « dommage ».\",\"Des exercices tolérablement douloureux peuvent produire des résultats comparables, voire un petit avantage antalgique à court terme dans certaines douleurs chroniques, sans supériorité durable démontrée; ce n’est ni une obligation d’avoir mal ni une permission d’ignorer une aggravation\"],\"rawStatementAnchorIndex\":0}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVJMZ_0Ez699cQxUpbFS3UYi2Ye-kanIIm1Rl4UaQf8qyFcf6etb5ifbnHW4sC52vgGMS2T6Zsq_ETbAQe1yO_B52ioBc1x5fk7bsiuunPNanW3oVeFFvDIB9s1GvlaUsW_uA2170TxRpdS201iPqDXcIrdLYfmn6OK6wUtPCO-KA0LTmEl1eb6UK8mmxVOOIRATkQHBCTZiw-rL2z0dzcCMCAyo6REN2ZCDZg9cJM2JrE3DqkKxgA7ErGcr4L1oU9zOVHUXm3PeNnGwfxcZUqFcHHhm3rrZh006V8LrPLrdPmSeQvomlRSG-0c1K0Uucz85CjFCl_k9AFEzEVyaTojeTsKlBNmq7t2XZ8WA1pjOyPUzfJmmDGcu1JtQtxZusX2x4BTpLyz20etN6hsSq1OYYpmkRWk4AbtC8oKyG1-CZHLzdcB1ehzJScUrh-Rast2LIjBQ_vqISP-uLi5XHNzF7uNyDSWfrvM1xU90WkLeEvXXVYHFek0TmHaRMMqdN3BA-U8OcTQQ5YcOKvh-YS7B2grUfGp1KrXm3iYgv_xGV_9x9d835w0CMBnsPV_MZh0Vl-289_I6ELGqGxxdRBDMT2iwtbTq1_HUbKMTlcip6mRXtpUbc7YVXN6H5revJNXgMVtRoxCndJvq11LvFw8KNsCXIxCKmrdwKyiGNgpk3hCWWLCMEDaQICqW9F7TYgWfCdgEmgeKjKdAFVamuck2Xf448PhdfAxvaf-p1oGRgf9mQYaNClCAJQyRXQfA3aYagu0oFLS4_0rUcbDbDSLyPMuIinn_Gk8ODb8kJezxr2jf_IFr0uh9VTBGcjqDacSvvAJUw70nAprdiiH1P8CM-4Fxeti08bB2jgwDQPuL9bVbMJd-K46Mvx7DmxKDoOa-Z3aFGjQBVBE24K1GtT40uqsvjlAHy6-cUsq1-lXFBVdEAe0awSWSffIqTlWaKquI.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_09aabbeb6db620e1016a8d524c69b08195a0b8f8118b36107a",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 553,
+      "completion_tokens": 128,
+      "total_tokens": 681,
+      "cost": 0.00197125,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.00197125,
+        "upstream_inference_prompt_cost": 0.00069125,
+        "upstream_inference_completions_cost": 0.00128
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646538-YJCXPCwzDB6mA9wBp4XG",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 553,
+    "completion_tokens": 128,
+    "total_tokens": 681,
+    "cost": 0.00197125,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00197125,
+      "upstream_inference_prompt_cost": 0.00069125,
+      "upstream_inference_completions_cost": 0.00128
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 2927,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/maxItems",
+        "#/properties/repairs/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/minItems",
+        "#/properties/repairs/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/repair/properties/claimIndex/minimum",
+        "#/$defs/repair/properties/rawStatementAnchorIndex/minimum"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 4,
+    "propertyLimit": 5000,
+    "enumValueCount": 0,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 60,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 1,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

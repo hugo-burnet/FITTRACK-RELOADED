@@ -1,0 +1,162 @@
+{
+  "fragmentId": "frag.e5f2.00085985",
+  "attempt": 1,
+  "callType": "repair",
+  "promptInput": "{\n  \"instruction\": \"Répare uniquement les supportAnchors des claimIndex listés.\",\n  \"rawText\": \"- **Sensation musculaire (« mind-muscle connection »).** Les coachs rapportent fréquemment une meilleure sensation subjective de contraction avec les câbles et les machines qu'avec les poids libres lourds pour l'isolation, en particulier en fin d'amplitude. Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire ([Region-specific hamstring activation dissociation from subjective sensation, 2026](https://link.springer.com/10.1186/s13102-026-01910-7)) — la sensation perçue ne doit donc jamais être traitée comme une mesure fiable de l'activation réelle, encore moins de l'hypertrophie.\",\n  \"faultyClaims\": [\n    {\n      \"claimIndex\": 1,\n      \"supportAnchors\": [\n        \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"\n      ],\n      \"rawStatementAnchorIndex\": 0,\n      \"errors\": [\n        {\n          \"code\": \"ANCHOR_NOT_FOUND\",\n          \"anchorIndex\": 0,\n          \"anchor\": \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\"\n        }\n      ]\n    }\n  ]\n}",
+  "rawResponse": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire\"],\"rawStatementAnchorIndex\":0}]}",
+  "providerResponse": {
+    "id": "gen-1787654225-PwhI5Mj3PCccGADwvtnB",
+    "object": "chat.completion",
+    "created": 1787654225,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"repairs\":[{\"claimIndex\":1,\"supportAnchors\":[\"Une étude confirme explicitement que la sensation subjective peut se **dissocier** de l'activation EMG mesurée par région musculaire\"],\"rawStatementAnchorIndex\":0}]}",
+          "refusal": null,
+          "reasoning": "**Evaluating the anchor**\n\nI need to ensure that the anchor is an exact verbatim substring. It looks like the faulty anchor is missing the bold markdown and punctuation. The snippet \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\" has \"dissocier\" in bold and parentheses, but without the markdown, it isn't an exact match. I see I need to maintain the asterisks. Including the whole sentence will help ensure uniqueness. The phrase appears only once, which is good.**Ensuring exact substring**\n\nI need to ensure I include the asterisks in the rawText. I think I should pick the sentence starting from \"Une étude confirme explicitement ...\" and ending at \"musculaire\" before the citation. After \"musculaire,\" there's a space and then the citation in parentheses, which is important. The phrase is definitely part of a continuing sentence leading up to the em dash. So, my anchor must be exactly that substring, and I check that it’s present, including the bold formatting. That looks good!**Defining anchor parameters**\n\nI need to make sure the anchor appears exactly once, which I believe it does. The current fault suggests it couldn't find the anchor because \"dissocier\" didn't have the bold markers. So, I need to propose supportAnchors that include the exact substring with bold formatting. I’ll preserve the rawStatementAnchorIndex as 0, and it’s crucial that each anchor only appears once in rawText. I’ll create a JSON output with \"repairs\" and copy the phrase exactly as it appears, including any necessary formatting.**Verifying anchor details**\n\nI’ll include the exact phrase as spelled but need to double-check for any leading or trailing spaces. I shouldn’t include extra spaces. After verifying, I see that the rawText has an em dash \" — \" after the parentheses, with the prior substring ending at \"musculaire.\" So, I’m set with that! The instruction says to return only verbatim extracts without paraphrasing, and each anchor must appear exactly once in rawText. I’m considering whether to include the link in parentheses for clarity, but it might be safer to include the full sentence.**Preparing final JSON**\n\nThe instruction states that every anchor should appear exactly once, so including the parentheses helps, but I need to ensure there's still only one appearance. I also want to avoid duplicating any earlier phrases. It seems we’re clear on that point. I must preserve the rawStatementAnchorIndex, which I've confirmed is 0, and keep that unchanged. The final JSON needs to use the defined schema for \"repairs,\" with each object containing the right claimIndex, supportAnchors, and rawStatementAnchorIndex. I’ll make sure the anchor is exactly as it appears in rawText, including any formatting. So here is the final answer.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Evaluating the anchor**\n\nI need to ensure that the anchor is an exact verbatim substring. It looks like the faulty anchor is missing the bold markdown and punctuation. The snippet \"Une étude confirme explicitement que la sensation subjective peut se dissocier de l'activation EMG mesurée par région musculaire\" has \"dissocier\" in bold and parentheses, but without the markdown, it isn't an exact match. I see I need to maintain the asterisks. Including the whole sentence will help ensure uniqueness. The phrase appears only once, which is good.**Ensuring exact substring**\n\nI need to ensure I include the asterisks in the rawText. I think I should pick the sentence starting from \"Une étude confirme explicitement ...\" and ending at \"musculaire\" before the citation. After \"musculaire,\" there's a space and then the citation in parentheses, which is important. The phrase is definitely part of a continuing sentence leading up to the em dash. So, my anchor must be exactly that substring, and I check that it’s present, including the bold formatting. That looks good!**Defining anchor parameters**\n\nI need to make sure the anchor appears exactly once, which I believe it does. The current fault suggests it couldn't find the anchor because \"dissocier\" didn't have the bold markers. So, I need to propose supportAnchors that include the exact substring with bold formatting. I’ll preserve the rawStatementAnchorIndex as 0, and it’s crucial that each anchor only appears once in rawText. I’ll create a JSON output with \"repairs\" and copy the phrase exactly as it appears, including any necessary formatting.**Verifying anchor details**\n\nI’ll include the exact phrase as spelled but need to double-check for any leading or trailing spaces. I shouldn’t include extra spaces. After verifying, I see that the rawText has an em dash \" — \" after the parentheses, with the prior substring ending at \"musculaire.\" So, I’m set with that! The instruction says to return only verbatim extracts without paraphrasing, and each anchor must appear exactly once in rawText. I’m considering whether to include the link in parentheses for clarity, but it might be safer to include the full sentence.**Preparing final JSON**\n\nThe instruction states that every anchor should appear exactly once, so including the parentheses helps, but I need to ensure there's still only one appearance. I also want to avoid duplicating any earlier phrases. It seems we’re clear on that point. I must preserve the rawStatementAnchorIndex, which I've confirmed is 0, and keep that unchanged. The final JSON needs to use the defined schema for \"repairs,\" with each object containing the right claimIndex, supportAnchors, and rawStatementAnchorIndex. I’ll make sure the anchor is exactly as it appears in rawText, including any formatting. So here is the final answer.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjXBlcplh9uLHiQC5F65m3KVCcJrtTN8FKOid6eRn6_Bk7gQjBdnQGwVHk87SEc1Y9VDsGGh2QCQ_uxFb3-qPXHGWlHqSt4acRuMWXY4zn5-S518pBYS4BrpBQ49EzStBhPdppjJkBsKZfDAxR3VTalF4mJ9a_XgFBn4D0xjRoPfSLDdJJZgydlGLnJBMbOntjvViEkBATYtUxTsq-KrwB395kcnLrlJSzUAanh10kX-SfFTkbQOn7JP36RGGW4YrIBuqrGUW3y7P9y--UJAufAoJOq8e8kv00W4nV0kBJ4xx1jB4UdIaNZUThLZf_-v64iYqiYgyQLpvfS31u32mp-2i3h_KDKDWbvohOG9qiPl9Za1VToYAEGVM0DaZ6p7lHJi7vW63zfHk1F5Pz3Ndc1nRbR8EIcrT3TyBbDeZ_7P5n0IsTqgurUE0_6q4tA9vDIOzs6qV27jKCfH0M4yDVBxhOIWr9-Z16RPjt94HDQntdYrZ-95CmLq7Y8NHebAk0nHblHVwNob2w_N5KPl-PW7gTUkvLgvFxrGjCu1iQkmFcBiaPO6dv3vW_cBcCV4R2NYxmJooG3e9zzkk9k1CXvOwYKxySbeKYkQeA_Qn_CN9N9Q7JzJvEWGFg3g0ynqIx6Q5fUhi9downVq3L4YEm9CWyMN7iGQpcoc5Xuz2qItKIf-v9xdNSbiaOc0JTP4vLqmznE-nEWtDwy29O5mg_5j3CtdC0MtnlW3Mt612f6EcJgr1M4bL_naghgRJa7nK9B1tcryoHFg1npQJUDWYMtJMge0ehLYD1bNYpF5QllGPve8KL3MqfpLMP0DIAgGylvxRrvPcE4vlhwOrbfQhqjHRDSXNJ5v473SXCvem5NHKd_BPzoa2L_ikaUyPtt7Ak1gjYMLBdatkm7GUoZD7rGhigUbdog0kcVxmY19lOwKOupKpNuX8ZIzVOMxvPNs2IBoRpJp_A65DV4b-CxF9KkiijQR-951QEiEjMc1kRnRkM2FZpZvU4rTrAM9PejwJYyLr-a5gSpp6IZH0Psaquacig_1nxSQ2OQ2RBUNJTU0pYtcUVaVL75I0VPX5eaFGtP08D-yCip5Cecsnqg7ffmXL20771lpRbVxG4PXO6ucg3kQcVRJKIB_COWpXTw_3o2W3KBW5QfMuaLfolS0CQbaRdU_tgFzEcBrlt-cb-ICkTzJbkKXBsw7tqJnNYraRAdtRW7SvFjFnh3zxgM92yLCW1xbAh1Ka6vfcGDn9yzA2GV7qOzpagNJfbSKk0gBjezZDIBwtng3CBlQtjOV3OGn88RbXljnme4V7RdFoDXGqM7Q7lUIvtQ7IINtfIf1y-LCvstTEL3DTPD1dBg796gnQepljqZLnApBcPBI7TCjzeOYTZ8M1qXLBDJslrbjoGRZbkQttQN1-qmLnfiEvQlKlDCpCWRPfFVZVypJDkBVJ93kHR0mdQKfbtBmYA8Tqe050ZSprjmkzJsJBnG31Lt65vT1IedSYKpe-fdm70G67WSeqCA2zWQEi8iTDOohhgNrxWeWicgk8dJtRJYBUjBm_hC61kXN4DZ3KgD0SAHOdmvKy-NMuAFOVKWFjx5RRwOcXFFk_CYQh01xcY-vKPDKNldJaVmrntZjXDpetVu2tbNBfY4inGXdwKUGGCkynf5Ny5W-QxTLE4gouLE2NEAvQ0Ilvqcp5dbAsgh9c3yrFn9USG86mnXVQ0dUM7GhLXc-4RpdbD0GSuTwi_jSA2RipackOJbzkLOYoR8kiGUpEGS3tOmE3jWXKqMtPjsdbs49y_nRxX9O5zxlPDaHfNcolVU4Lscng3NCRC17_tMmvABIUq_7mNIfqvDYnM9yOGq82Vbg5dZQKelrgEUCdHRVtas7TclIULDUZRS68dAaQJyVKOMWLk5AswcizWm_vUqzEq83QGTGONTJ0DzTdZCGGQMEw8A1_5-8R6XwAVZwlllw324ea10Si2CyJTfPY-PNLMX3cA0zAs0FsrW1J3kUYWOHRcltjHbaYfuXucjUaQ8f1xgCxWwWWNPPlu-cl_BKEKkIMY-6caqscHMCt8bEx0ZRTMrlIBCv2Qr7sLKdddVlT_j_nn7s79Q1iN72S-6PYgVRfMD1hV7oWBVm7ddAbS5p1mKtrnFR3ip72dtdW53O-aCB3McHplqiQEShy_pgPYhS-pdgm1krluOshXRDK7hun5NBMeUaPO7ooUuWLjy1qxJEygx_6_dnWa4EE1aHIkkiVY-PA_TooFLMbrS6qCMQxpbXpjuBeTYVuNXO7dCGeIpNp-mYReIQHls7cLEDvC3JrHsEAW7p2Hi0ixOeO9wltA3j3FocuXg3TcKiuJVdxlnsehPTdsTMnBzbEzYdEV6WOp9kxAeEuI9kIhxvtzVqJCX8VsweF-JO4wddbvKxWADprBtgW3UFFeJBGqS-9HED9j0Fofhe-qmunl3UinaQrAeOXw30pIoVDsh2UIaQEwBJuK9PeH-PfjNVONY7nQ1nBx92bUZyUxBHdEjRDZhmAxXq560P5YC8tCa9UvfPzMKjEMEYY4RHzWR0naivOt4LTzHTSLRGuGoB9xKOUk63MffA0PazzJz1U4PyeANKjGVgNRKgE6Idj11FPyXOXIj2FY89042xL4Cb1nZ7Pu0nlnZ1le9PX2F4kp98KP-uvh-Seso1x1E5zkbVQelgIqRFdL0czCxIaPhCh_S7VqfFtBQnFOUz1VVji9ylwzszCOTz1o28cQwn6e1LN6THp_qzjGZpRq988m8vHvpl-kM4OrwtDQ_--MU3fjDqPnmFUAmWKU_0KUikwN3OWqbPDtGV_lE525B1Qd-5vwZQxluppvOyggJuFcLwrS20zm4o0aBMU02ZyhSIayu7xg4Ui8QsK3e1Z91KYLS--duxyKODGX3gbytQB9tOnxa-FKHEME53p-h4ayWgQDnaj_HVmK3FsnHykXLe-UntBPN2VlJ4-1StmrXo73NrLljCpbgeuHojLFpGTm3RTQklywSvhpjT-d4NIwuGI9P_LB-ZpLtqBwLsi8ltuaHgqaRg9wGAp17kUzousKQ5Iv6j3doaiii9hDMpcfjSpq49W5666KLI79ahSnOe7sFV1f14PfpG1admNcaDRKY6cFnZ915_UJXOyZWmd_SbzK2JbRITCWJSkNwrDjO4XAdXWSVfXG6qsU_VcuSLX9JyjaY9UKefJd5lL6u9gqatn-tfw3RJkuLsWJFKKr8enINBIWAbLwMcrMghH0ms06eiM8BZrV6DtRSL50Zw3sRb6nzOyYecyf34Tv1Eqp6aLiThAzqu24bX9XY2oXRSz5z8W0ekDQbmvKyaDJuPF8C45vwizZY9YDxXYvOd4AZXZoTKV7DxQC9Rd-JGJCSkAKRhVmTWLg0J_M93zE_zPH_jxQwUIjot5RCimWTvGdSRhBNvZDK2AoafyzplWYd3WPMr5m6l6m9ebi7TJgq_hM_VE7aMGxKOjTM7bqPPpbL1-fQhOUEyCsDfpGJpwAGOPvJ6tSzccjH7G0VupHMN2OSBZ61-WSD19B1QMBA4LzDf7AGnCcnP0aDNcELLOLgDEZo4OR8FEgv8rRhf1uynAVeYk4ifg_UhlV7HwbD2kjA8iiwugAX7Wn4MV5QLjYKLnd6lEEykhOhW5EhIzHBbpyoGlDFW_NHc9PRd74Zke8q7003XC_ogOoScVRkCDgwv5Q8ws0eDrN5GE_C-CCfhRqDCqZt3oI_qAiLz72VJ4wh0sSAL0rzVml6FWPs36Ab8vo9xGJLu_KkbWfwGJsYne_cN7iYoNLcG4TNpbKQ41BZ_UZsrkeM036ZrLfg6WLRxsSpn9oTaxpu0OVzs2YnKTpJSBbQ8wuRIAWe3OEXzls7xWUCZd3uVOlgrWOS1d6epXkoB3_96_EnGZ5iN7TOC4tjvsoFMepLQBqRMFCFcJCqbJrmWG6pxreYcXySQb-mNp34hYdppQI1yjiZ3OtQ_HCcJB2uOiQBM2DXUDZHVH5Ja0RcskvbmhJ7JORNL7_dCutXJHiUglz7JSl5ES-mILzQvbXmuz6DTOcYO2glVYkKLqX1pgGRKcnwqyQK3IWxu6KWNmfa3-WqtsOnRX2srUZ1bZltLcUOl_-1uIq3VzH1_TkNUBI2zmMME0ULoQaprorbhZlpMmpGR-eaG3mU_w7Oq_QijZMJ4fyOKPFwvANTuNAQ98GxUB9YI4WtzmgPKpavUFhRb5o3kyn8NEWaczOyfUCISWYSHeAE3dL760B7Coj8N7uzLFHGv_CpZrQ9_5NcFmj-J1uSN8MA2MmhO-96Na52Iu81Itvi3p2VRVz95ExEMPeTgbLUlRE3EHnPtQNhs_8SOQAeBUwJI22SbM_u38qX8WpkvaC5QCE1gpDfkZhrm93lCe6wRhFZjyib5aKKO2-KuU6E1GDnE3fCvrxOycUE1lbcWspFrvIquLjTraBq5iwe2PlIZaZBy2peDexVZpC6E62IlJq3v-tA4W5kNFnap711REPUPd5CGQ-AY4_5ianjoGZnccTiLOOYU1eVLAMNXx-qxFXDKYsnArBzB_llbry28M_-O3kW2MiAL-1RtExF10ZNF4mtng7ww1WEYo9KVgDiWq-JGRnkCgaAhYcmfS5-xZLQp3aSS76Wt7vQrvQ186kEFv1L0SJbfyEuWVc9mtcO7bfvwap_NqzCb5qx0tLJtXgZCpoQIQFSLdRvmdS5bPhNEhgtyVKE0eoJp4NXHkYwqVXQ3gmzqA8N4dPFZynPS-jXFogeOyJKflwWQmm1288cgGH0bxIvzIaMHXWDStWM6X1c9yShjRFj13YkEsaFHCisFMZDr37gG8g4VN9TiwtCjF63v-gmLGRszjkxN9tDwbccdVU3X5Tro423YNbih0ue4MFCFbQ_srWLfJ7c8xt0SvuEfFP4wq3PC3_xNIQ9gvjyfHHYH4oD_C_GMJKg65-RK6Z6aETR-qBlahX2mEPxaNa-Xt2TeoELCY_82EiSKaeXTPeLy8bZZOFqir08CtHNg70Rd3riWN__cGTlJ3cxLGaGt4iFg1K8yGl1QpZeKz4CaPBvSUnEdMH5NwbZE6IJw_qXKlNsRRYwYwUTwpPik0iTRz5VJIPHfVZjI82yg67OO9Il1VEp_KNEQv6qDFmuqqoE4wBsvI9rP79O38yYfGebnWOiD7jOJ2PU5D8RcBN7SMCTov7oFDetCtdp3dZD2uGoQWkdpixywzrg_mkw0r2K8yTwvvc7SQLClkLsosJ3k_Y33ff7PzzMAJC-_-kuRglACB2bhhToskSm4efmOqg7MyoxUmg0jEJJW49S5eonMpUQtMfVGOvu942SyS5AmbGwcqtcc8ezCBcaVo9zSeUImIF1W-NLVMy123hLQ-5TIz7cqUVjQjU7PoCHO0leveeYROUVTnpwptN5tP3khSuhtsmTRsKgtQdynG67U2GClt7emPXyeMfeucH24ndy6QOwv6FKvSGq4CvQaTKAOZCgZH-SiJAs39jSEFQh23koJOf3g1Nl60yFE8UOz3SRWNYeG5TahCAuXWoENVvFJbgYmZtWvJPgy-wgDz9NN8gUxODQbMliWNMWD4fuZf_IedeOWqXvRgHtf__4vcjFQldyIkas8m801VBkWbcN4W5ZTmOsd6Yx7dmyhItJqKRDAUVhmLSSpotnBeo76pGAxJQEglICfMKD2XULQkuIMOCJtsENXM7hM5MqN-ATfSuundCMmmVvLrkyXW1SsVtVg3CmqwWQJExXeqhG25JR9TBmdlN8zPoQMTk6jqL5C_pt4RgOIa6Orm_kK5UW97PQeKkY9FAQPXsu0eOEYeZtdJKz70LdbhHtRISoxeK9h7Je4uCT0JttozX-7VU10Gp34VuMKaheLsNsDynC6tqVsdo0A0gGNGVkORTSROavOmRYyKfsWyTZfMfZX9facQiVb8U2qtFjS33sMMVoYNrY-ggfcA-cU3MGvA7zrDivUWpt7k-mY91tF1rG38SEGgL8GQnH93db3RFPU2ZtUZMYKla0thftw-hIXJaxofD8GtDjmllR3XQIM8PspK0MhTKBRSxYJOeZ4sYXmIiwrtY-2z9K4yUIgcjvw5yE1fxE-QwgjLqkwWPvE0V2UGOO7B35BNUEXnZmrWaV2_60RgcelKQfWIKmCeCNGdamVq3HdBm4WCRY5oD5M-hxd436zBZNhXH5x8RrTMgn5s_Npz4ezxcBQRmrW-ZEwDKTAlpMFogEJb8_PuL8INKxr7aiGbDhmNpIx-UimNlseH63xHdG9vuiobIjDxj9f0xU2nv9ku-fd-kCm8CsxHmWqaZ3dt-EHI25UP0YPWkODf1BnHAN4ezMwOSPkNvZ8DND2n-1Q_K1lqyVmghNUfRagmSOZrazJ9AJ_maBCk_XLyqWABWjLW9Mw1e0LOkNAzCJWsjo0KWKtNzKbmqFnGUJ1KqmdmEqfKvriOp1xqqfQBoZaHk14jVmsmsvOpQEVmSx5bTrbp7Sk1FcRINbuPYc6xuFnc1HLLiPQputFBbpuyieXI6kNx7QXtRqbawL1NwcG3lxpUuXmIcCRgvQRSB-6gKcMAyTAz7Z4lGt5PfTbCGXaZ38WJREzYqWte4Uu_4Fs9BMgQq1NnOP-hwdFrZBOlz6hSJ73KYJXidSol00nf3LA7bhlAbR6KS3_c1kMmCn52HAtWFacU1-mdAeZSu4C2zF0o3hXG3kKVrs1t0qgRjVLLlUjMlV8TLUs5E-hgp-N7GGey0cIHIzpRz81VWMQG7JbeApKT_lFTbmgeWhCevWbINGyzB3Hv2YklXf2CjS5R6abAzDA2DJa88lRGiPMvQnHHdYTNPvdJcJH11gQdAS-KyWopQpbkHGhwj3YVCOCgIrA0YpG19laXnP7QTLNobh3mgvFNnyvcmC12JvLBzxqHyBEcxWfMTmSi6xgvk_t_P95B3iCEuTeeCDg-BXpaZumzTu9pocL1dORaK2vQfXgR-I9ctxI-Ok1U4RlJuweLxGcbRLcpfpnX_A6cNj45MMCjoRx9nEaZRmz1ZHQP_NDehh0N4mKZMov4l5zjWTVi5QtU1wMORCSdCHsJdTZtfPv-m2bT-2I4-bak6RGhN0yWF4-hdgEiu64cippVTtJ6SoM1sneKTkUgG0gDDa6PUINq-PaWcmVbJwbpefSxolT21DZAn6Um_wV7FG3BMWe_gTg3uJ1OedRZVvAwbaJDPFH7-c4FTRHNYv5xOipMF4tFuVVoqw-sP3TMqUevN8TTyxRffabeBuDNjgvzbaLi7ZIx4gNq8p3RohmRul-cFoSr5Cpae2kNuNAutKckNO6JVhDntn6k5rZaFxK0yzdnN9bTtN-kBat1HQ3Eza6HtjQl0x_Qd22EF1cMt_9ALQzMg1lDcMuYBo_xof_MT54aLKfMfnat3zo5CTSk7CugtKVgRMW8peNrO9GGpuiq3eFIWN9NmXkSx6Ga9T9Ih-wjB3JsrtL8VM9aavdUuK3uDXO0FtEr4aGB6aLJg9K3hNTDa8hERfkRpDGINwZK-TpsOakdEdKEBFwCWSSWKSnaAvSYRJfLpIVyktULb5awNHzEZPvUvImMwzTJ-ld3DGDS6a2gr4JrJIrdcngAPUNTnXg0afDrrbGOXJoPfw_MlqsSF1twqEnbbI0CpXtldFnWYcygRwIeyDf-yesppCOIFxeGGI-yizpk_pZntgdpSNa_6sC12BCZh159pZYavQsaqZkyK3MH37yWccEc7S5NVyn4mDDHjGJMpkSVQoCKQqBu-8opO8v6J_72WEWYA29nrVXREWBeSrcAyYBj2mLn3gu8bsX9_BPiZY5dMAcM5db4WFTkb4y9EsoayIoIBjEHpV-5wiLOOyeeTj4un53afkREMpkLiTs4ndzT7Bw-mg_ZHcPDAMeVxPOPG3I0zrPrme48zUvAdF1p5aLElgRxNBAae0FOJryuR6W6i8wY1kGjw1eX7MtwgdXyfFbq4JvTF1fTL1AgI87YqcHiu9JQTfpD8aqyeR_wm_Vy7o8rFD_-vHT-VZFD1nTIzGGRCcWXrlU5Q6tMNbEyYxHwcYYS1PoUxXP5SD-npN88pVlxnp5NOju56emyrsyP5LzEuPn5LCEGtLrzomHVDRwMdiTvPwTrYKDyx3rTJu7D97DhxwMXBg2Z4r8xSs2N1_hlQk2JVIwIQp2jT5V1gwxGvw6boD9w8wsZienjYaDQSi7Hdsuwya3NErwdT2Zd-C9EQTWgfO9vH1tcUmt1DYeu8BGyFtPZLbeeyCzhrNi11BpcE97eo0jV-jLX_7REjgQeDRwHW1yQqM11U7PM-AHAeMihinlq_1hXsxPhKTwCS5jKpZQIhInOreWBHy6DzYFqWyefnLGjDMcNUOMibjx_BDQ4WIeIYNwKqgVhwiVItZvKY5UpPEqX2ToYELDliiBCmXZplXzTLIJzgq0vxknNzWei8wcabTatnhpffm4IRTcr_K3MOS-R0lRvn39tuP_sqlBkVjKcMUixP_ew3mBgwAZImPbscYc1A1E4auM_3hqqZlv3i4Xo_BH5CQy-OqSXGTAC1oFNBMi8QvCKi2ML-DQevwjqu1yLB-eRsKdJwITqo0NeH8pVZBgnSuZIpYjOfzIlf7MEpsJCvvpgnnk-AGBdW8oOoOyJmFcg34G33UKwF-zK7EpQiUDOLkDMvyhOTlsBh31JIOaTBA2niaPDvxE1CTXqWhYtksQaCkFhjQNWAiv6VSiuP9U0OSMhYYoNELf93eJdPk2xCGVP7MdLUvD_rp23TTXhRKU-C2muc0EBJ0r5hvGtk6RX51JO5lsHgRqfHDZZnglcMbIiwP5r9dJt20El-2bDKPxChlkRcSqqRV4-lET1dY3RSLiU-zc8BgkA-mgKjlsetoGTo8asw4SMgpkjSOkRhPvfMvgRPKHFYmKfJORG0b25nJnuAnBcPubVJXvtGLzG1tzcfS8zPmYJqteQIhHjkArviVi7QvumQZZidhYDn-CGF_J9h-SQYZSvWal5yNqBXcynVVR1WtGQw82kTZ54K_QTd2oZJNXaEWYMkN1SK1lWERTGm2MofswP8YgCzdbcDs-hQbjKdro0ZtfXyFuXWskl1zncr9ZBO4fOJwATE6EiD4FN7fkvNg5AwjiMV8ZQQgtfXrA52NciwO6p42qh6S-O0Rf584U6qbAWQ3CXWP6B12oAVhsJINtL81cRrs0AwBogdcpXUAclxtPwLDWUjoAIV9Spai4hWEXIpgU1SDy78hCjZi9ttjXzESUe35XTYBEnvZikLeHIfUar70zNgCvUoUSHvdVWg4GaJzEZwqw8p11NP2bB8-EVqCphYpSFsQlhn8MeR-AxOEeeovgdC02eUpR4tZyCInJHDnirip7mxNaCo7kRfTHGzotSdB2k6VDBMEckWw6Ro79Drsvt4QYn3ojxo1qoYTcpnEkcJAkxU8NFKL-ez4IddqF_cjYEmaqZKZVN7a8ZBmaGQbwckUpqLTkrDFwH9uj00hPeIS8BsmddOcKOs9IH4NiIyrI3lVpIep4jyhqbzo272BLrr6WTuZ7kpBzaq9rPmlFnrFn7b7MSrvoeCNy7xZYb3BkOA6bYPppSimGpxYrvwPTt9rht9hvpPOksJINjzSh3XKk8SqyLjdzPG_N-j096gndcGswSzzLpQ1vuttNU_KaFhqtizxKWnLSUGq0u9icQCHtl1hocUX5lpHHI-6XvuwguphhUzv_Db1UI7Rh7G3ctB1t99oxODT1LA1FoiCYBDm7z06u9LcFEcSlKFRVUs3uaGB0FkSX8adsQM2MfqKho6ck7QmKsG6b2oGyO8ghANxNRET5mWW4xzTJl9dQM5VsOc9HHo-DSTGEvIyvd2S83ujl-VQmNBYSq3d4WPIC-YsxLHqbnFbqIFEDGHdufI-a-RrYLIyDdk-3hLdnJ_gPj8VW5FZaRNL3MsYoi-tmWol6mcq_dDZOmkg0KuVenjr29_oo0WKt4SdyAWPe7NBcjXFdZh_b-BadguPf45JQ0Gcr24ga7nV99oE6aXLYbs4NEGyYx5VPU9CIceZW-bRyST7FO0FcMAq4TjSsdnennP3xWK5uWpWTLz2kjedDvlEqhSBIzUcyJX9H-5mu1HFnOkTy6rSZelclKVy1ql8Ov7_PYy973144BA0grvA14vDarvPU6d75yAeycdieYQPGvfxg9tYz4YDsIq-MmOp8AicV9W7nZrVIoASfF0njl2SecwrciHpMgiFPy5evrpo_bTCPq334LJVvxGMg8SE1Gv8XewBgrJEp1CfBauAo0tYI62oUV9fsTngbPATcD8KvxhNyjnQB6NjPdAgn9Zr9hbxiwWus7REc64u4t7695vufg844yji0oINARZLlfoLmb54Psu5N6gieWxzIGojZXsN8JeCg-2Eta5IcouzpGVWAcvNYoIH4A9ak8bUlh7Rp8QiSIwnZ8tQo6qaz2Nxj5Ait1mDQKRklK5iOcYTd3wCZEl-0emRZ5Ewcp3e_zINxZgUIgkDjYGlNPNvSjxDNS_Qz9070zu0MmYKxo8wzTJu5F6wSGubXzUSlI0Ig12tpAziWvqKUm0zjMF0dWvlYFUZPULg5fbi4a_Uapl9WoxW96yJwynWav-XN3-MXHoeOa59MG8l3HDv9BxQximJV7OSYOR3dwFKOmbfXPHSP9qjgoEd9BjMN36aadbW0ySomZS6BY-QDBgdfpfiNEqPNaN-A_O52ZOU8mjV6kn-pEpedfD6K6HHeS3VWL-5qnMR8P.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_02fb439140317d20016a8d70525f7c8197b2f638860fc7d2a8",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 551,
+      "completion_tokens": 1618,
+      "total_tokens": 2169,
+      "cost": 0.01686875,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.01686875,
+        "upstream_inference_prompt_cost": 0.00068875,
+        "upstream_inference_completions_cost": 0.01618
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1536,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787654225-PwhI5Mj3PCccGADwvtnB",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 551,
+    "completion_tokens": 1618,
+    "total_tokens": 2169,
+    "cost": 0.01686875,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.01686875,
+      "upstream_inference_prompt_cost": 0.00068875,
+      "upstream_inference_completions_cost": 0.01618
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1536,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 21206,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/maxItems",
+        "#/properties/repairs/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/minItems",
+        "#/properties/repairs/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/repair/properties/supportAnchors/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/repair/properties/claimIndex/minimum",
+        "#/$defs/repair/properties/rawStatementAnchorIndex/minimum"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 4,
+    "propertyLimit": 5000,
+    "enumValueCount": 0,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 60,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 1,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

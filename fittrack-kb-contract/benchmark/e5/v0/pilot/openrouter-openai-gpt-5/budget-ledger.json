@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "1.0.0-e5-llm-budget-ledger",
+  "capUsd": 2.5,
+  "actualCostUsd": 0.209704,
+  "stoppedBeforeCall": null,
+  "calls": [
+    {
+      "sequence": 1,
+      "fragmentId": "frag.e5f2.00033791",
+      "callType": "full",
+      "attempt": 0,
+      "actualCostBeforeUsd": 0,
+      "conservativeNextCallEstimateUsd": 0.12431625,
+      "projectedCostUsd": 0.12431625,
+      "budgetRemainingBeforeUsd": 2.5,
+      "approximateInputTokens": 3453,
+      "maximumOutputTokens": 12000,
+      "allowed": true,
+      "actualCallCostUsd": 0.06184925,
+      "actualCostAfterUsd": 0.06184925,
+      "budgetRemainingAfterUsd": 2.43815075
+    },
+    {
+      "sequence": 2,
+      "fragmentId": "frag.f3.0002",
+      "callType": "full",
+      "attempt": 0,
+      "actualCostBeforeUsd": 0.06184925,
+      "conservativeNextCallEstimateUsd": 0.1239725,
+      "projectedCostUsd": 0.18582175,
+      "budgetRemainingBeforeUsd": 2.43815075,
+      "approximateInputTokens": 3178,
+      "maximumOutputTokens": 12000,
+      "allowed": true,
+      "actualCallCostUsd": 0.055571,
+      "actualCostAfterUsd": 0.11742025,
+      "budgetRemainingAfterUsd": 2.38257975
+    },
+    {
+      "sequence": 1,
+      "fragmentId": "frag.f2.0004",
+      "callType": "full",
+      "attempt": 0,
+      "actualCostBeforeUsd": 0,
+      "conservativeNextCallEstimateUsd": 0.12464125,
+      "projectedCostUsd": 0.12464125,
+      "budgetRemainingBeforeUsd": 2.5,
+      "approximateInputTokens": 3713,
+      "maximumOutputTokens": 12000,
+      "allowed": true,
+      "actualCallCostUsd": 0.09228375,
+      "actualCostAfterUsd": 0.209704,
+      "budgetRemainingAfterUsd": 2.290296
+    }
+  ]
+}

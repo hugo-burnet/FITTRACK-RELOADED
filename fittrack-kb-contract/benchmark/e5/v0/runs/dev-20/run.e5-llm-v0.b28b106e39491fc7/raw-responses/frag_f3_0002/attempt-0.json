@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.f3.0002",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.f3.0002\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"1. Résumé opérationnel\"\n    ],\n    \"rawText\": \"4. **Les seuils numériques ne sont pas universels.** Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie ([Sprague et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/)).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"4. **Les seuils numériques ne sont pas universels.** Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie ([Sprague et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/)).\"\n    }\n  ],\n  \"citationCatalog\": [\n    {\n      \"candidateId\": \"cand.e5-citation.1c793d3b304a122b\",\n      \"handle\": \"cit.f3.0002.01\",\n      \"rawLabel\": \"Sprague et al., 2021\",\n      \"markdown\": \"[Sprague et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC7905015/)\",\n      \"relativeStartByte\": 317,\n      \"relativeEndByte\": 390\n    }\n  ],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Les seuils numériques ne sont pas universels.\",\"Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie\"],\"rawStatementAnchorIndex\":1,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Texte réfute l'universalité des seuils numériques et précise la portée limitée d'un protocole.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Énoncé normatif soutenu par un exemple précis et une citation; direction établie (non universalité).\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"UNRESOLVED\",\"directness\":null,\"directnessReason\":\"La nature exacte des preuves du protocole cité n'est pas détaillée dans l'extrait.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non explicitement indiqué.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.1c793d3b304a122b\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"Protocole de recherche de surveillance de la douleur dans certains essais tendineux\"],\"limitations\":[\"Exemple limité à certains essais tendineux; non généralisable à toute douleur ou pathologie\"],\"cannotConclude\":[\"Que ce seuil soit une règle universelle pour toutes douleurs/pathologies\"],\"unresolved\":[],\"flags\":[\"explicit_absence\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"DEFINITION\",\"knowledgeTypeReason\":\"Décrit une règle/paramètre d'un protocole de recherche.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established\",\"epistemicStatusReason\":\"Paramètre protocolaire rapporté de manière descriptive.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"threshold\",\"descriptive_accuracy\"],\"confidenceLevels\":[\"moderate\",\"moderate\"],\"confidenceRationales\":[\"Seuil numérique explicite (5/10).\",\"Description factuelle du protocole.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Paramètre d'un protocole clinique dans des essais tendineux.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non explicitement indiqué.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.1c793d3b304a122b\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"Certains essais tendineux\",\"Pendant ou juste après l'exercice\",\"Retour au niveau de base le lendemain\"],\"limitations\":[\"Paramètre propre à un protocole de recherche; non généralisable.\"],\"cannotConclude\":[\"Qu'un tel seuil convienne à d'autres pathologies ou contextes\"],\"unresolved\":[],\"flags\":[\"numeric_threshold\"],\"coverageUnitIndexes\":[0]}]}",
+  "providerResponse": {
+    "id": "gen-1787646541-UmdVk4CJ7bCqExPfJSDQ",
+    "object": "chat.completion",
+    "created": 1787646541,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Les seuils numériques ne sont pas universels.\",\"Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain; il s’agit d’un protocole de recherche, non d’une règle pour toute douleur ou toute pathologie\"],\"rawStatementAnchorIndex\":1,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"MYTH_REFUTATION\",\"knowledgeTypeReason\":\"Texte réfute l'universalité des seuils numériques et précise la portée limitée d'un protocole.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established_direction\",\"epistemicStatusReason\":\"Énoncé normatif soutenu par un exemple précis et une citation; direction établie (non universalité).\",\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"UNRESOLVED\",\"directness\":null,\"directnessReason\":\"La nature exacte des preuves du protocole cité n'est pas détaillée dans l'extrait.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non explicitement indiqué.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.1c793d3b304a122b\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"Protocole de recherche de surveillance de la douleur dans certains essais tendineux\"],\"limitations\":[\"Exemple limité à certains essais tendineux; non généralisable à toute douleur ou pathologie\"],\"cannotConclude\":[\"Que ce seuil soit une règle universelle pour toutes douleurs/pathologies\"],\"unresolved\":[],\"flags\":[\"explicit_absence\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Le modèle de surveillance utilisé dans certains essais tendineux autorise jusqu’à 5/10 pendant ou juste après, avec retour au niveau de base le lendemain\"],\"rawStatementAnchorIndex\":0,\"domain\":\"clinical\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"DEFINITION\",\"knowledgeTypeReason\":\"Décrit une règle/paramètre d'un protocole de recherche.\",\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"established\",\"epistemicStatusReason\":\"Paramètre protocolaire rapporté de manière descriptive.\",\"confidenceState\":\"RESOLVED\",\"confidenceAspects\":[\"threshold\",\"descriptive_accuracy\"],\"confidenceLevels\":[\"moderate\",\"moderate\"],\"confidenceRationales\":[\"Seuil numérique explicite (5/10).\",\"Description factuelle du protocole.\"],\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"direct_clinical\",\"directnessReason\":\"Paramètre d'un protocole clinique dans des essais tendineux.\",\"evidenceTypesState\":\"UNRESOLVED\",\"evidenceTypes\":null,\"evidenceTypesReason\":\"Type d'étude non explicitement indiqué.\",\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[\"cand.e5-citation.1c793d3b304a122b\"],\"citationAttributionState\":\"ATTACHED\",\"conditions\":[\"Certains essais tendineux\",\"Pendant ou juste après l'exercice\",\"Retour au niveau de base le lendemain\"],\"limitations\":[\"Paramètre propre à un protocole de recherche; non généralisable.\"],\"cannotConclude\":[\"Qu'un tel seuil convienne à d'autres pathologies ou contextes\"],\"unresolved\":[],\"flags\":[\"numeric_threshold\"],\"coverageUnitIndexes\":[0]}]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjVJPjvlydigAWj03vPxZ2gJQrKqpeJ-BXbTp4gy-fokDsVhhS9yJl93w6hVEDdlxgnxNI5OvTfEzhcALveejeP_I38_x_JRkg6SWIwBBosXumfs-l06ctP5pnsCx4u-MNpDQQfDzS3LC7f2M-tGtDtxqsO2fgbiEpTzYzHsAEZ3BiDOr4vKpznq0oTHOju_Za_GLgWYI-lCRdcxWNRH7greQdSrLMOIy360NW-HKD65rbCmbq3SRAmww4fDDHFmVzL6U8gOY1MYLiN8DZLelwF_cqRqG2OSeSOWaqZvRWo-tr7R-o7BMtkXD83Uq6z9suz5Yb1cDs0j_HqmT0g2rPneOxAsXIRmo-x6qWuUNivgleEo0eVg-Au_quxLnpKq3q_86Z4118ID3a2uaSBB3mXFzro5CjC89SE1WG6pY0rhfdhmkx-0FUw47h2vJCZUoYyorFfIr09kafvHecR92ItJhexbVdHCt5UOiYZe9FzK14nEeE09bhvMGVmgrvlJVHwMaU_C1iHUA1DrTMQsG-jsbMizmtOvBOr_N02h6gkjPZBooL9vvzOM4h9n7mPujQvNPCuusi-DZ_2GqYf29FMyN6t4k19dAfdGXsKeN-8W77Nko1mKUwPx9Kb7xt-Jz0vvGaoyYoDptailJcfE_V_GxT1yWMOuM6y5JeQYysDV6bvPKGF_Hdqupp7eRW5eXOzG1vkWmms9sdS65GsJ06QUip65kLDDutRC5pDR7zHBzmWj6Y5scq8wZooG7PEKyrc5OnhH6NSzXMlZ4gOs3PvfDyhHjyGwCL6sex19NcBY_mfTiP-WSzOU_E-HIota3VZVZu6rKSPUTgA_q6YtKA0RXHvbcsTwj7shFDfMVeFRNhjAuoiaus76ujI11iLL-n89DlUnzeczFqAmSkuLYhFER9cBDLnBkYMgHyewIyampmPq8XaevDucDCv3bzn-tUO4c.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_085e7aa86ffca09b016a8d524f57c48196a65a45af8807b172",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3924,
+      "completion_tokens": 840,
+      "total_tokens": 4764,
+      "cost": 0.010137,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 2816,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.010137,
+        "upstream_inference_prompt_cost": 0.001737,
+        "upstream_inference_completions_cost": 0.0084
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787646541-UmdVk4CJ7bCqExPfJSDQ",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 3924,
+    "completion_tokens": 840,
+    "total_tokens": 4764,
+    "cost": 0.010137,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 2816,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.010137,
+      "upstream_inference_prompt_cost": 0.001737,
+      "upstream_inference_completions_cost": 0.0084
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 12207,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "fragmentId": "frag.e5f3.00025760",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.01e5a48c0eb7ca20",
+    "fragmentId": "frag.e5f3.00025760",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.9caf7146eac3bc6a",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies",
+        "supportSpans": [
+          {
+            "text": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies",
+            "relativeStartByte": 90,
+            "relativeEndByte": 170,
+            "absoluteStartByte": 25850,
+            "absoluteEndByte": 25930
+          },
+          {
+            "text": "mais ne remplace pas la progression de charge;",
+            "relativeStartByte": 172,
+            "relativeEndByte": 218,
+            "absoluteStartByte": 25932,
+            "absoluteEndByte": 25978
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Presented as practice guidance rather than measured outcomes"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "No explicit trial/quant data; framed as practice"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Formulated as practical guidance without quantification; not presented as trial result"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Stated as clinical practice option with caution"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Presented as practice guidance rather than measured outcomes"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "No explicit trial/quant data; framed as practice"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "certaines épicondylalgies"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.b0abbbc98698bb7c",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse,",
+        "supportSpans": [
+          {
+            "text": "un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse,",
+            "relativeStartByte": 219,
+            "relativeEndByte": 315,
+            "absoluteStartByte": 25979,
+            "absoluteEndByte": 26075
+          },
+          {
+            "text": "avec douleur définie par l’acceptabilité du patient plutôt que par un chiffre universel",
+            "relativeStartByte": 316,
+            "relativeEndByte": 408,
+            "absoluteStartByte": 26076,
+            "absoluteEndByte": 26168
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Consensus-based expert guidance"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "consensus_statement",
+              "expert_practice"
+            ],
+            "reason": "Explicitly described as consensus of physiotherapists"
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Consensus statement of physiotherapists indicates expert practice"
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Consensus guidance rather than outcome evidence"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Consensus-based expert guidance"
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "consensus_statement",
+              "expert_practice"
+            ],
+            "reason": "Explicitly described as consensus of physiotherapists"
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1b8b3f44f6dd20d6"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "épicondylalgies (contexte)"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice",
+          "possible_conflict",
+          "output_policy_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

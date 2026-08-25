@@ -1,0 +1,309 @@
+{
+  "fragmentId": "frag.e5f2.00041891",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00041891",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.6fda6aeeaf6af76b",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l'amplitude complète reste une règle par défaut solide et sans inconvénient démontré pour la plupart des exercices et pratiquants",
+        "supportSpans": [
+          {
+            "text": "l'amplitude complète reste une règle par défaut solide et sans inconvénient démontré pour la plupart des exercices et pratiquants",
+            "relativeStartByte": 58,
+            "relativeEndByte": 193,
+            "absoluteStartByte": 41949,
+            "absoluteEndByte": 42084
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "generalization",
+                "confidence": "moderate",
+                "rationale": "Formulation générale pour la plupart des exercices et pratiquants avec niveau modéré à élevé."
+              }
+            ],
+            "raw": "niveau modéré à élevé",
+            "reason": "Confiance modérée d'après le texte."
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le type de preuve directe (p.ex. mesures d'hypertrophie) n'est pas spécifié."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune catégorie de source précisée."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Le fragment affirme une conclusion avec un niveau de confiance modéré à élevé."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": "Indiqué comme niveau modéré à élevé."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "generalization",
+                "confidence": "moderate",
+                "rationale": "Formulation générale pour la plupart des exercices et pratiquants avec niveau modéré à élevé."
+              }
+            ],
+            "raw": "niveau modéré à élevé",
+            "reason": "Confiance modérée d'après le texte."
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le type de preuve directe (p.ex. mesures d'hypertrophie) n'est pas spécifié."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune catégorie de source précisée."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "pour la plupart des exercices et pratiquants"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a55d6161e1309bee",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné.",
+        "supportSpans": [
+          {
+            "text": "Les répétitions partielles systématiquement réalisées en position raccourcie (par exemple ne pas descendre en squat, ne pas étirer le curl) sont probablement inférieures pour l'hypertrophie du muscle concerné.",
+            "relativeStartByte": 195,
+            "relativeEndByte": 412,
+            "absoluteStartByte": 42086,
+            "absoluteEndByte": 42303
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "probable",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "moderate",
+                "rationale": "Direction vers une infériorité probable."
+              }
+            ],
+            "raw": null,
+            "reason": "Probable implique une confiance modérée."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Le résultat cible explicitement l'hypertrophie."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Sources non précisées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Énoncé évaluatif sur l'effet sur l'hypertrophie."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "probable",
+            "reason": "Le texte dit probablement."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "moderate",
+                "rationale": "Direction vers une infériorité probable."
+              }
+            ],
+            "raw": null,
+            "reason": "Probable implique une confiance modérée."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Le résultat cible explicitement l'hypertrophie."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Sources non précisées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "répétitions partielles systématiquement en position raccourcie"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.7b1c62c79a90875b",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Les répétitions partielles réalisées en position **allongée** peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+        "supportSpans": [
+          {
+            "text": "Les répétitions partielles réalisées en position **allongée** peuvent égaler l'amplitude complète dans certains muscles et protocoles.",
+            "relativeStartByte": 413,
+            "relativeEndByte": 554,
+            "absoluteStartByte": 42304,
+            "absoluteEndByte": 42445
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "equivalence",
+                "confidence": "low",
+                "rationale": "Égalité possible non universelle."
+              },
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "Limité à certains muscles et protocoles."
+              }
+            ],
+            "raw": null,
+            "reason": "Possibilité conditionnelle implique faible confiance généralisable."
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type de mesure non explicité."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Sources non précisées."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Résultat comparatif sur hypertrophie implicite."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": "Formulation contingente: peuvent égaler; limité à certains muscles et protocoles."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "equivalence",
+                "confidence": "low",
+                "rationale": "Égalité possible non universelle."
+              },
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "Limité à certains muscles et protocoles."
+              }
+            ],
+            "raw": null,
+            "reason": "Possibilité conditionnelle implique faible confiance généralisable."
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type de mesure non explicité."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Sources non précisées."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "dans certains muscles et protocoles",
+          "répétitions partielles en position allongée"
+        ],
+        "limitations": [],
+        "cannotConclude": [
+          "Ce n'est pas généralisable à tous les muscles et protocoles."
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

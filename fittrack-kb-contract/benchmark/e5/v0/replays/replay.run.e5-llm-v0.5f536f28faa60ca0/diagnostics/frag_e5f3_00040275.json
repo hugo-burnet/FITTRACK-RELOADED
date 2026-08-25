@@ -1,0 +1,117 @@
+{
+  "fragmentId": "frag.e5f3.00040275",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "- **C — faible :** petites études, indirectes, hétérogènes.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Defines what level C (low) evidence means in this KB."
+        },
+        "epistemicStatus": {
+          "state": "NOT_APPLICABLE",
+          "value": null,
+          "reason": "Definition of an internal evidence level, not a factual efficacy claim."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.5c8dd316bd0cb019",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "- **C — faible :** petites études, indirectes, hétérogènes.",
+          "supportSpans": [
+            {
+              "text": "- **C — faible :** petites études, indirectes, hétérogènes.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 65,
+              "absoluteStartByte": 40275,
+              "absoluteEndByte": 40340
+            }
+          ],
+          "domain": "product",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "This is a classification definition, not an outcome study."
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "No external evidence types; it's a definitional label."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Defines what level C (low) evidence means in this KB."
+            },
+            "epistemicStatus": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Definition of an internal evidence level, not a factual efficacy claim."
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "This is a classification definition, not an outcome study."
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "No external evidence types; it's a definitional label."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "output_policy_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

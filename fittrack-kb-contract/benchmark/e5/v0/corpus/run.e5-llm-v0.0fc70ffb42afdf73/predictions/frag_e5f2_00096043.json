@@ -1,0 +1,11 @@
+{
+  "fragmentId": "frag.e5f2.00096043",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00096043",
+    "annotationPrediction": "ZERO_CLAIM",
+    "claims": []
+  }
+}

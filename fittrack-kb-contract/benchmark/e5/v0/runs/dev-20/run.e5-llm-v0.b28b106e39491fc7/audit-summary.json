@@ -1,0 +1,84 @@
+{
+  "statuses": {
+    "validated": 15,
+    "partiallyValidated": 5,
+    "rejected": 0
+  },
+  "claimAudit": {
+    "attempted": 56,
+    "retained": 50,
+    "filtered": 6
+  },
+  "coverage": {
+    "fragmentsWithDiagnostics": 4,
+    "diagnosticCount": 6,
+    "byCode": {
+      "CLAIM_UNIT_REFERENCE_INVALID": 2,
+      "CLAIM_CONTENT_WITHOUT_CLAIM": 4
+    }
+  },
+  "partialRejections": {
+    "fragmentsWithIndividuallyValidClaims": 0,
+    "individuallyValidClaimsInsideRejectedFragments": 0,
+    "individuallyInvalidClaimsInsideRejectedFragments": 0,
+    "fragments": []
+  },
+  "repairs": {
+    "calls": 2,
+    "ratePerFullCall": 0.1,
+    "successfulFragments": 1,
+    "successRate": 0.5,
+    "reasons": {
+      "ANCHOR_NOT_FOUND": 2,
+      "CLAIM_FILTERED": 2,
+      "PARTIAL_VALIDATION": 2
+    }
+  },
+  "rejectionReasons": {},
+  "safetyExtensions": {
+    "productPolicyIncorrectlyExtracted": 4,
+    "inventedCausality": 1,
+    "populationGeneralization": 0,
+    "inventedReferral": 0
+  },
+  "cost": {
+    "fullUsd": 0.233964,
+    "repairUsd": 0.0037625,
+    "totalUsd": 0.2377265,
+    "meanPerCompletedFragmentUsd": 0.011886325,
+    "projected207Usd": 2.460469275,
+    "fullInputTokens": 80968,
+    "fullOutputTokens": 18949,
+    "fullReasoningTokens": 0,
+    "repairInputTokens": 1138,
+    "repairOutputTokens": 234,
+    "repairReasoningTokens": 0
+  },
+  "errorsByCategory": {
+    "MISSED_CLAIM": 16,
+    "EXTRA_CLAIM": 7,
+    "MERGED_CLAIMS": 7,
+    "OVER_FRAGMENTATION": 4,
+    "WRONG_SPAN": 16,
+    "SPAN_HALLUCINATION": 0,
+    "WRONG_CITATION": 2,
+    "CITATION_BLEED": 0,
+    "INVENTED_CITATION": 0,
+    "WRONG_KNOWLEDGE_TYPE": 9,
+    "WRONG_EPISTEMIC_STATUS": 21,
+    "UNRESOLVED_FORCED": 43,
+    "EVIDENCE_INFLATION": 9,
+    "UNSUPPORTED_INFERENCE": 4,
+    "EMG_HYPERTROPHY_LEAP": 0,
+    "BIOMECHANICS_RISK_LEAP": 0,
+    "CLINICAL_OVERREACH": 0,
+    "INVENTED_DIAGNOSIS": 0,
+    "ZERO_CLAIM_FALSE_POSITIVE": 0,
+    "ZERO_CLAIM_FALSE_NEGATIVE": 1,
+    "INVENTED_SOURCE": 0,
+    "INVALID_JSON": 0,
+    "SCHEMA_FAILURE": 0,
+    "PROVIDER_ERROR": 0,
+    "MISSING_PREDICTION": 0
+  }
+}

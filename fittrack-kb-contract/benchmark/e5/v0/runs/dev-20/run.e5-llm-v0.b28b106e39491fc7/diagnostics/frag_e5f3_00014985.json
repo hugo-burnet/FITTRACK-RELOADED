@@ -1,0 +1,405 @@
+{
+  "fragmentId": "frag.e5f3.00014985",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "La compression, le cisaillement ou le moment externe décrivent une demande mécanique,",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "MECHANISM",
+          "reason": "Décrit la nature mécanique et la non-détermination d’un seuil clinique par ces mesures seules."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "mechanistic_only",
+          "reason": "Énonce un mécanisme/concept sans démonstration clinique directe."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.b5499efe1d3a7c3d",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "La compression, le cisaillement ou le moment externe décrivent une demande mécanique,",
+          "supportSpans": [
+            {
+              "text": "La compression, le cisaillement ou le moment externe décrivent une demande mécanique,",
+              "relativeStartByte": 0,
+              "relativeEndByte": 87,
+              "absoluteStartByte": 14985,
+              "absoluteEndByte": 15072
+            },
+            {
+              "text": "mais ne donnent pas à eux seuls un seuil clinique de dommage.",
+              "relativeStartByte": 88,
+              "relativeEndByte": 150,
+              "absoluteStartByte": 15073,
+              "absoluteEndByte": 15135
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "MECHANISM",
+          "epistemicStatus": "mechanistic_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Portée mécanique conceptuelle, pas d’issue clinique testée."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source précise citée pour cette proposition."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "MECHANISM",
+              "reason": "Décrit la nature mécanique et la non-détermination d’un seuil clinique par ces mesures seules."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "mechanistic_only",
+              "reason": "Énonce un mécanisme/concept sans démonstration clinique directe."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "biomechanical_only",
+              "reason": "Portée mécanique conceptuelle, pas d’issue clinique testée."
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": "Aucune source précise citée pour cette proposition."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "Ces mesures ne suffisent pas à fixer un seuil clinique de dommage."
+          ],
+          "unresolved": [],
+          "flags": [
+            "biomechanical_risk_language"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Enumération de facteurs pertinents sans attribution à des données spécifiques."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Importance pragmatique affirmée sans preuve citée."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.81f0d5f447f97431",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.",
+          "supportSpans": [
+            {
+              "text": "La charge absolue, la fatigue, la vitesse, la capacité, l’historique, le sommeil et le contexte comptent.",
+              "relativeStartByte": 151,
+              "relativeEndByte": 259,
+              "absoluteStartByte": 15136,
+              "absoluteEndByte": 15244
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Énoncé général sans données citées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune étude ou revue citée pour cette phrase."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Enumération de facteurs pertinents sans attribution à des données spécifiques."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Importance pragmatique affirmée sans preuve citée."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Énoncé général sans données citées."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Aucune étude ou revue citée pour cette phrase."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie;",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Rapporte la conclusion d’une revue sur un facteur de risque."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Affirme explicitement l’absence de preuve in vivo crédible."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.ae006017cd419af8",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie;",
+          "supportSpans": [
+            {
+              "text": "Une revue ne trouve pas de preuve in vivo crédible que davantage de flexion lombaire pendant le soulèvement soit un facteur de risque de lombalgie;",
+              "relativeStartByte": 260,
+              "relativeEndByte": 409,
+              "absoluteStartByte": 15245,
+              "absoluteEndByte": 15394
+            },
+            {
+              "text": "les charges étudiées étaient toutefois souvent légères et les données surtout transversales",
+              "relativeStartByte": 410,
+              "relativeEndByte": 507,
+              "absoluteStartByte": 15395,
+              "absoluteEndByte": 15492
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "generalization",
+                  "confidence": "low",
+                  "rationale": "Limité par des charges souvent légères et des données surtout transversales"
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "moderate",
+                  "rationale": "Énoncé clair de la revue quant à l’absence de preuve in vivo crédible"
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": "Traitement d’un facteur de risque de lombalgie chez l’humain."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "systematic_review"
+              ],
+              "reason": "Le texte mentionne une revue; nature systématique implicite non explicitée mais traitée comme revue."
+            },
+            "clinicalEvidenceLevel": "C_low",
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Rapporte la conclusion d’une revue sur un facteur de risque."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Affirme explicitement l’absence de preuve in vivo crédible."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "generalization",
+                  "confidence": "low",
+                  "rationale": "Limité par des charges souvent légères et des données surtout transversales"
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "moderate",
+                  "rationale": "Énoncé clair de la revue quant à l’absence de preuve in vivo crédible"
+                }
+              ],
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_clinical",
+              "reason": "Traitement d’un facteur de risque de lombalgie chez l’humain."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "systematic_review"
+              ],
+              "reason": "Le texte mentionne une revue; nature systématique implicite non explicitée mais traitée comme revue."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.97d5e335856e2df6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "pendant le soulèvement",
+            "davantage de flexion lombaire"
+          ],
+          "limitations": [
+            "les charges étudiées étaient toutefois souvent légères",
+            "les données surtout transversales"
+          ],
+          "cannotConclude": [
+            "Que plus de flexion lombaire augmente le risque de lombalgie"
+          ],
+          "unresolved": [],
+          "flags": [
+            "clinical_content",
+            "explicit_absence",
+            "possible_conflict"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4114,
+      "outputTokens": 1106,
+      "reasoningTokens": 0,
+      "totalTokens": 5220,
+      "costUsd": 0.0162025
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4114,
+      "outputTokens": 1106,
+      "reasoningTokens": 0,
+      "totalTokens": 5220,
+      "costUsd": 0.0162025
+    }
+  }
+}

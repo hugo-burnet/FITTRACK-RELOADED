@@ -1,0 +1,117 @@
+{
+  "fragmentId": "frag.e5f3.00040114",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "- **A — élevé :** plusieurs CPG/revues cohérentes, population directe.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "DEFINITION",
+          "reason": "Defines what constitutes evidence level A in this framework."
+        },
+        "epistemicStatus": {
+          "state": "NOT_APPLICABLE",
+          "value": null,
+          "reason": "Definition/protocol, not an empirical claim."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.b1bb0eafe8abf5e2",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "- **A — élevé :** plusieurs CPG/revues cohérentes, population directe.",
+          "supportSpans": [
+            {
+              "text": "- **A — élevé :** plusieurs CPG/revues cohérentes, population directe.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 75,
+              "absoluteStartByte": 40114,
+              "absoluteEndByte": 40189
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "DEFINITION",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Definition of grading criteria, not a study outcome."
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "No primary evidence cited; it's a grading definition."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "DEFINITION",
+              "reason": "Defines what constitutes evidence level A in this framework."
+            },
+            "epistemicStatus": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Definition/protocol, not an empirical claim."
+            },
+            "confidenceByAspect": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "Definition of grading criteria, not a study outcome."
+            },
+            "evidenceTypes": {
+              "state": "NOT_APPLICABLE",
+              "value": null,
+              "reason": "No primary evidence cited; it's a grading definition."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "output_policy_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

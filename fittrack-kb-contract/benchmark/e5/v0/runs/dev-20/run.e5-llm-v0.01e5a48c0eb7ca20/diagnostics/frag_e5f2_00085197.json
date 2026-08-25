@@ -1,0 +1,172 @@
+{
+  "fragmentId": "frag.e5f2.00085197",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Le fragment attribue explicitement la pratique aux coachs evidence-based et la qualifie d'expert_practice."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "La pratique est fondée sur observation clinique individuelle et non sur preuve populationnelle."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.d68d179f369914ec",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+          "supportSpans": [
+            {
+              "text": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*",
+              "relativeStartByte": 39,
+              "relativeEndByte": 257,
+              "absoluteStartByte": 85236,
+              "absoluteEndByte": 85454
+            },
+            {
+              "text": "fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+              "relativeStartByte": 259,
+              "relativeEndByte": 349,
+              "absoluteStartByte": 85456,
+              "absoluteEndByte": 85546
+            },
+            {
+              "text": "*expert_practice*, à ne jamais présenter comme une règle universelle de sécurité.",
+              "relativeStartByte": 354,
+              "relativeEndByte": 440,
+              "absoluteStartByte": 85551,
+              "absoluteEndByte": 85637
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Le texte indique un fondement d'observation clinique individuelle et expert_practice."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Le fragment l'énonce explicitement."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Le fragment attribue explicitement la pratique aux coachs evidence-based et la qualifie d'expert_practice."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "La pratique est fondée sur observation clinique individuelle et non sur preuve populationnelle."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Le texte indique un fondement d'observation clinique individuelle et expert_practice."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": "Le fragment l'énonce explicitement."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [
+            "en cas d'inconfort persistant"
+          ],
+          "limitations": [
+            "fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+            "à ne jamais présenter comme une règle universelle de sécurité"
+          ],
+          "cannotConclude": [
+            "Pas une règle universelle de sécurité",
+            "Absence de preuve populationnelle indiquée"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 3927,
+      "outputTokens": 460,
+      "reasoningTokens": 0,
+      "totalTokens": 4387,
+      "costUsd": 0.00619675
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 3927,
+      "outputTokens": 460,
+      "reasoningTokens": 0,
+      "totalTokens": 4387,
+      "costUsd": 0.00619675
+    }
+  }
+}

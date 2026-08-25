@@ -1,0 +1,121 @@
+{
+  "fragmentId": "frag.e5f3.00000822",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00000822",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.c2d9582f463da303",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "L’exercice est généralement une composante de première intention.",
+        "supportSpans": [
+          {
+            "text": "L’exercice est généralement une composante de première intention.",
+            "relativeStartByte": 5,
+            "relativeEndByte": 75,
+            "absoluteStartByte": 827,
+            "absoluteEndByte": 897
+          },
+          {
+            "text": "Les recommandations soutiennent l’exercice pour la lombalgie chronique, la tendinopathie de la coiffe, l’épicondylalgie latérale, la douleur fémoro-patellaire, la tendinopathie d’Achille et l’arthrose du genou",
+            "relativeStartByte": 78,
+            "relativeEndByte": 298,
+            "absoluteStartByte": 900,
+            "absoluteEndByte": 1120
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "S’appuie sur des recommandations cliniques pour des pathologies spécifiques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline",
+              "medical_body_recommendation"
+            ],
+            "reason": "Références à des recommandations/CPG APTA et AAOS."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirmation appuyée par des recommandations citées."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le degré de certitude n’est pas précisé dans le fragment."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "S’appuie sur des recommandations cliniques pour des pathologies spécifiques."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline",
+              "medical_body_recommendation"
+            ],
+            "reason": "Références à des recommandations/CPG APTA et AAOS."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.74576bec668a04f0",
+          "cand.e5-citation.de3fd03b4fcca391",
+          "cand.e5-citation.05975ca374952a2f",
+          "cand.e5-citation.76e6da4d2004c295",
+          "cand.e5-citation.215ce6bb5cbc42f3",
+          "cand.e5-citation.7f8f850f3bdf4a2c"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "lombalgie chronique",
+          "tendinopathie de la coiffe",
+          "épicondylalgie latérale",
+          "douleur fémoro-patellaire",
+          "tendinopathie d’Achille",
+          "arthrose du genou"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

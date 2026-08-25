@@ -1,0 +1,148 @@
+{
+  "fragmentId": "frag.e5f2.00037605",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "UNRESOLVED",
+          "value": null,
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.69952f440a5e5466",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée",
+          "supportSpans": [
+            {
+              "text": "Une étude sur l'hypertrophie régionale comparant des exercices à longue et courte longueur musculaire chez des femmes récréativement entraînées apporte une preuve directe supplémentaire d'effets différenciés selon la longueur d'entraînement et la région musculaire mesurée",
+              "relativeStartByte": 2,
+              "relativeEndByte": 287,
+              "absoluteStartByte": 37607,
+              "absoluteEndByte": 37892
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": null,
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.3a35215e439fcec8"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "femmes récréativement entraînées"
+          ],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4583,
+      "outputTokens": 2769,
+      "reasoningTokens": 2432,
+      "totalTokens": 7352,
+      "costUsd": 0.02953075
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4583,
+      "outputTokens": 2769,
+      "reasoningTokens": 2432,
+      "totalTokens": 7352,
+      "costUsd": 0.02953075
+    }
+  }
+}

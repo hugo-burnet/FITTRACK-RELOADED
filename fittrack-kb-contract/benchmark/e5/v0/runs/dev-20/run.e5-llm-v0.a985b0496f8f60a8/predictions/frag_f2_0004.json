@@ -1,0 +1,412 @@
+{
+  "fragmentId": "frag.f2.0004",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.a985b0496f8f60a8",
+    "fragmentId": "frag.f2.0004",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.15e6ee527d1727c3",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "SMD −0,210 en faveur des poids libres pour les tests en poids libres",
+        "supportSpans": [
+          {
+            "text": "SMD −0,210 en faveur des poids libres pour les tests en poids libres",
+            "relativeStartByte": 207,
+            "relativeEndByte": 277,
+            "absoluteStartByte": 32749,
+            "absoluteEndByte": 32819
+          },
+          {
+            "text": "sur des interventions de 9 semaines en moyenne",
+            "relativeStartByte": 547,
+            "relativeEndByte": 593,
+            "absoluteStartByte": 33089,
+            "absoluteEndByte": 33135
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.02cf57ff924cbbd8"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "tests en poids libres",
+          "interventions de 9 semaines en moyenne"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.999076f5898ba193",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "tendance en faveur des machines pour les tests sur machines, p = 0,064",
+        "supportSpans": [
+          {
+            "text": "tendance en faveur des machines pour les tests sur machines, p = 0,064",
+            "relativeStartByte": 280,
+            "relativeEndByte": 350,
+            "absoluteStartByte": 32822,
+            "absoluteEndByte": 32892
+          },
+          {
+            "text": "sur des interventions de 9 semaines en moyenne",
+            "relativeStartByte": 547,
+            "relativeEndByte": 593,
+            "absoluteStartByte": 33089,
+            "absoluteEndByte": 33135
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.02cf57ff924cbbd8"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "tests sur machines",
+          "interventions de 9 semaines en moyenne"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.e3698562865f5476",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "mais aucune différence significative d'hypertrophie entre les deux modalités",
+        "supportSpans": [
+          {
+            "text": "mais aucune différence significative d'hypertrophie entre les deux modalités",
+            "relativeStartByte": 413,
+            "relativeEndByte": 491,
+            "absoluteStartByte": 32955,
+            "absoluteEndByte": 33033
+          },
+          {
+            "text": "SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751",
+            "relativeStartByte": 495,
+            "relativeEndByte": 544,
+            "absoluteStartByte": 33037,
+            "absoluteEndByte": 33086
+          },
+          {
+            "text": "sur des interventions de 9 semaines en moyenne",
+            "relativeStartByte": 547,
+            "relativeEndByte": 593,
+            "absoluteStartByte": 33089,
+            "absoluteEndByte": 33135
+          },
+          {
+            "text": "nombre limité d'études d'hypertrophie disponibles",
+            "relativeStartByte": 832,
+            "relativeEndByte": 883,
+            "absoluteStartByte": 33374,
+            "absoluteEndByte": 33425
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.02cf57ff924cbbd8"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "interventions de 9 semaines en moyenne"
+        ],
+        "limitations": [
+          "nombre limité d'études d'hypertrophie disponibles"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "explicit_absence"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.802c24617791b27f",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle",
+        "supportSpans": [
+          {
+            "text": "le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle",
+            "relativeStartByte": 990,
+            "relativeEndByte": 1146,
+            "absoluteStartByte": 33532,
+            "absoluteEndByte": 33688
+          },
+          {
+            "text": "plutôt que sur une supposée supériorité universelle d'une modalité",
+            "relativeStartByte": 1147,
+            "relativeEndByte": 1218,
+            "absoluteStartByte": 33689,
+            "absoluteEndByte": 33760
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "hypertrophie"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

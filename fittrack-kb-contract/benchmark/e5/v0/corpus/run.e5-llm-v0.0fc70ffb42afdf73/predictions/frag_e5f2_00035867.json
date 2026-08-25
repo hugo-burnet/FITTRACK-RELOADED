@@ -1,0 +1,96 @@
+{
+  "fragmentId": "frag.e5f2.00035867",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00035867",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.327a5f2a809db1b1",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un essai comparant l'entraînement isométrique à grande longueur musculaire à l'entraînement isotonique en amplitude complète pour le quadriceps chez des sujets entraînés en résistance trouve des effets différentiels sur l'hypertrophie régionale du quadriceps fémoral",
+        "supportSpans": [
+          {
+            "text": "Un essai comparant l'entraînement isométrique à grande longueur musculaire à l'entraînement isotonique en amplitude complète pour le quadriceps chez des sujets entraînés en résistance trouve des effets différentiels sur l'hypertrophie régionale du quadriceps fémoral",
+            "relativeStartByte": 2,
+            "relativeEndByte": 280,
+            "absoluteStartByte": 35869,
+            "absoluteEndByte": 36147
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.418da7502e86a105"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "sujets entraînés en résistance"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

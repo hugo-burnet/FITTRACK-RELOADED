@@ -1,0 +1,275 @@
+{
+  "fragmentId": "frag.e5f2.00042447",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00042447",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.7f0227d87140cdd8",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices",
+        "supportSpans": [
+          {
+            "text": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices",
+            "relativeStartByte": 0,
+            "relativeEndByte": 115,
+            "absoluteStartByte": 42447,
+            "absoluteEndByte": 42562
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune source ou type d'étude n'est fourni."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune citation ou type d'évidence n'est présent."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le fragment énonce une limite (non-conclusion) sans indiquer le niveau de certitude."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune source ou type d'étude n'est fourni."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune citation ou type d'évidence n'est présent."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [
+          "Le texte précise explicitement une non-conclusion générale."
+        ],
+        "cannotConclude": [
+          "qu'il existe une règle universelle applicable à tous les muscles et exercices"
+        ],
+        "unresolved": [],
+        "flags": [
+          "output_policy_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.5a215c01057057fe",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+        "supportSpans": [
+          {
+            "text": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+            "relativeStartByte": 0,
+            "relativeEndByte": 378,
+            "absoluteStartByte": 42447,
+            "absoluteEndByte": 42825
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas d'information sur l'évidence."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune citation."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Limite énoncée sans précision de certitude."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas d'information sur l'évidence."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune citation."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "indépendamment de l'anatomie individuelle",
+          "indépendamment de la douleur"
+        ],
+        "limitations": [
+          "Non-conclusion explicitement formulée."
+        ],
+        "cannotConclude": [
+          "que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire"
+        ],
+        "unresolved": [],
+        "flags": [
+          "output_policy_content"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.ce24126cc4c0c660",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+        "supportSpans": [
+          {
+            "text": "**Ce qu'on ne peut PAS conclure :** qu'il existe une règle universelle applicable à tous les muscles et exercices ; que toucher des repères arbitraires (barre au sternum, genou à 90°) est nécessaire indépendamment de l'anatomie individuelle ou de la douleur ; qu'une amplitude partielle est toujours inférieure quel que soit son positionnement dans la course musculaire.",
+            "relativeStartByte": 0,
+            "relativeEndByte": 378,
+            "absoluteStartByte": 42447,
+            "absoluteEndByte": 42825
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "MYTH_REFUTATION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas d'information sur l'évidence."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune citation."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MYTH_REFUTATION",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Limite énoncée sans précision de certitude."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas d'information sur l'évidence."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune citation."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "quel que soit son positionnement dans la course musculaire"
+        ],
+        "limitations": [
+          "Non-conclusion explicitement formulée."
+        ],
+        "cannotConclude": [
+          "qu'une amplitude partielle est toujours inférieure"
+        ],
+        "unresolved": [],
+        "flags": [
+          "output_policy_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

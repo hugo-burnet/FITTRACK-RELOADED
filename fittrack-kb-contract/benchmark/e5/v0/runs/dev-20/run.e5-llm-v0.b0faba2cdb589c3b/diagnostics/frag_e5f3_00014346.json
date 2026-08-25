@@ -1,0 +1,389 @@
+{
+  "fragmentId": "frag.e5f3.00014346",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 3,
+    "retained": 3,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Pour la lombalgie chronique, l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général; aucune méthode n’est nécessaire pour tous",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandations d'une association professionnelle"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Texte rapporte des recommandations, pas des résultats d'efficacité"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.47ffa77f1cc66705",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Pour la lombalgie chronique, l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général; aucune méthode n’est nécessaire pour tous",
+          "supportSpans": [
+            {
+              "text": "Pour la lombalgie chronique, l’APTA recommande notamment renforcement/endurance du tronc, exercice multimodal, activation spécifique, exercice aérobie et exercice général; aucune méthode n’est nécessaire pour tous",
+              "relativeStartByte": 0,
+              "relativeEndByte": 223,
+              "absoluteStartByte": 14346,
+              "absoluteEndByte": 14569
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Basé sur recommandations d'organisme"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "clinical_practice_guideline"
+              ],
+              "reason": "Mention APTA 2021"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandations d'une association professionnelle"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Texte rapporte des recommandations, pas des résultats d'efficacité"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Basé sur recommandations d'organisme"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "clinical_practice_guideline"
+              ],
+              "reason": "Mention APTA 2021"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.db13b05020d9cd68"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "lombalgie chronique"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "N’indique pas l’efficacité comparative ni une méthode universelle"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandation d'un organisme de santé"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Énoncé de pratique, sans données d'efficacité"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.0f327e5782c04aac",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire",
+          "supportSpans": [
+            {
+              "text": "L’OMS préconise une prise en charge non chirurgicale personnalisée et intégrée de la lombalgie chronique primaire",
+              "relativeStartByte": 290,
+              "relativeEndByte": 409,
+              "absoluteStartByte": 14636,
+              "absoluteEndByte": 14755
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Recommandations OMS"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "medical_body_recommendation"
+              ],
+              "reason": "OMS 2023"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandation d'un organisme de santé"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Énoncé de pratique, sans données d'efficacité"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Recommandations OMS"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "medical_body_recommendation"
+              ],
+              "reason": "OMS 2023"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.9306bf2f305a3ed6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "lombalgie chronique primaire"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "Ne démontre pas de supériorité d’une approche spécifique"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Recommandation d'un collège/critères ACR"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Guidance d'usage, non un résultat expérimental"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.a24ea619e91baee0",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags",
+          "supportSpans": [
+            {
+              "text": "L’imagerie n’est habituellement pas appropriée pour une lombalgie non compliquée sans red flags",
+              "relativeStartByte": 479,
+              "relativeEndByte": 580,
+              "absoluteStartByte": 14825,
+              "absoluteEndByte": 14926
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Basé sur appropriateness criteria"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "medical_body_recommendation"
+              ],
+              "reason": "ACR"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Recommandation d'un collège/critères ACR"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Guidance d'usage, non un résultat expérimental"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Basé sur appropriateness criteria"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "medical_body_recommendation"
+              ],
+              "reason": "ACR"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.5d8a519fce6f7204"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "lombalgie non compliquée",
+            "sans red flags"
+          ],
+          "limitations": [],
+          "cannotConclude": [
+            "N’affirme pas une interdiction absolue ni d’autres situations"
+          ],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4330,
+      "outputTokens": 1115,
+      "reasoningTokens": 0,
+      "totalTokens": 5445,
+      "costUsd": 0.0135385
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4330,
+      "outputTokens": 1115,
+      "reasoningTokens": 0,
+      "totalTokens": 5445,
+      "costUsd": 0.0135385
+    }
+  }
+}

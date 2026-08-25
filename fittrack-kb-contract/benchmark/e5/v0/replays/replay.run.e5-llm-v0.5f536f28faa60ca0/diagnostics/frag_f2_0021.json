@@ -1,0 +1,325 @@
+{
+  "fragmentId": "frag.f2.0021",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un essai randomisé intra-sujet chez des sujets entraînés compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions ([Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet](https://pmc.ncbi.nlm.nih.gov/articles/PMC11829627/))",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Le fragment rapporte le résultat d'un essai contrôlé intra-sujet."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Résultat directionnel: adaptations similaires entre conditions."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.09f3210b63f08e04",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Un essai randomisé intra-sujet chez des sujets entraînés compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions ([Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet](https://pmc.ncbi.nlm.nih.gov/articles/PMC11829627/))",
+          "supportSpans": [
+            {
+              "text": "Un essai randomisé intra-sujet chez des sujets entraînés compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions ([Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet](https://pmc.ncbi.nlm.nih.gov/articles/PMC11829627/))",
+              "relativeStartByte": 0,
+              "relativeEndByte": 391,
+              "absoluteStartByte": 40855,
+              "absoluteEndByte": 41246
+            },
+            {
+              "text": "— **preuve directe d'hypertrophie de niveau modéré** (essai contrôlé mais échantillon limité, muscles et exercices spécifiques du haut du corps)",
+              "relativeStartByte": 392,
+              "relativeEndByte": 545,
+              "absoluteStartByte": 41247,
+              "absoluteEndByte": 41400
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "equivalence",
+                  "confidence": "moderate",
+                  "rationale": "Le texte qualifie la preuve de niveau modéré."
+                },
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Direction: similarité entre conditions."
+                },
+                {
+                  "aspect": "generalization",
+                  "confidence": "low",
+                  "rationale": "Généralisation limitée par échantillon restreint et muscles/exercices spécifiques."
+                }
+              ],
+              "raw": "preuve directe d'hypertrophie de niveau modéré (essai contrôlé mais échantillon limité, muscles et exercices spécifiques du haut du corps)",
+              "reason": "Qualification explicite du niveau de preuve et limites."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Mention explicite de preuve directe d'hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial",
+                "within_participant_trial"
+              ],
+              "reason": "Essai randomisé intra-sujet."
+            },
+            "clinicalEvidenceLevel": "B_moderate",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Le fragment rapporte le résultat d'un essai contrôlé intra-sujet."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Résultat directionnel: adaptations similaires entre conditions."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "equivalence",
+                  "confidence": "moderate",
+                  "rationale": "Le texte qualifie la preuve de niveau modéré."
+                },
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Direction: similarité entre conditions."
+                },
+                {
+                  "aspect": "generalization",
+                  "confidence": "low",
+                  "rationale": "Généralisation limitée par échantillon restreint et muscles/exercices spécifiques."
+                }
+              ],
+              "raw": "preuve directe d'hypertrophie de niveau modéré (essai contrôlé mais échantillon limité, muscles et exercices spécifiques du haut du corps)",
+              "reason": "Qualification explicite du niveau de preuve et limites."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Mention explicite de preuve directe d'hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "randomized_trial",
+                "within_participant_trial"
+              ],
+              "reason": "Essai randomisé intra-sujet."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.424e50e70e773a55"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "sujets entraînés",
+            "répétitions partielles en position allongée vs amplitude complète",
+            "muscles et exercices spécifiques du haut du corps"
+          ],
+          "limitations": [
+            "échantillon limité",
+            "spécificité des muscles et exercices"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Une méta-analyse et revue systématique comparant amplitude partielle et complète de façon plus large confirme l'absence de supériorité générale de l'amplitude complète lorsque la partielle est réalisée à grande longueur, tout en soulignant l'hétérogénéité des protocoles inclus ([Partial vs Full ROM Resistance Training: Systematic Review and Meta-Analysis, IUSCA](https://journal.iusca.org/index.php/Journal/article/download/182/250))",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Le fragment rapporte la conclusion d'une méta-analyse et revue systématique."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "established_direction",
+          "reason": "Direction: absence de supériorité générale de l'amplitude complète lorsque la partielle est à grande longueur."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.401cc600cfc08740",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Une méta-analyse et revue systématique comparant amplitude partielle et complète de façon plus large confirme l'absence de supériorité générale de l'amplitude complète lorsque la partielle est réalisée à grande longueur, tout en soulignant l'hétérogénéité des protocoles inclus ([Partial vs Full ROM Resistance Training: Systematic Review and Meta-Analysis, IUSCA](https://journal.iusca.org/index.php/Journal/article/download/182/250))",
+          "supportSpans": [
+            {
+              "text": "Une méta-analyse et revue systématique comparant amplitude partielle et complète de façon plus large confirme l'absence de supériorité générale de l'amplitude complète lorsque la partielle est réalisée à grande longueur, tout en soulignant l'hétérogénéité des protocoles inclus ([Partial vs Full ROM Resistance Training: Systematic Review and Meta-Analysis, IUSCA](https://journal.iusca.org/index.php/Journal/article/download/182/250))",
+              "relativeStartByte": 547,
+              "relativeEndByte": 999,
+              "absoluteStartByte": 41402,
+              "absoluteEndByte": 41854
+            }
+          ],
+          "domain": "training",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "established_direction",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Conclusion synthétique confirmée."
+                },
+                {
+                  "aspect": "equivalence",
+                  "confidence": "low",
+                  "rationale": "Équivalence n'est pas explicitement démontrée par non-infériorité; prudence."
+                },
+                {
+                  "aspect": "generalization",
+                  "confidence": "moderate",
+                  "rationale": "Portée générale mais conditionnelle à grande longueur."
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "moderate",
+                  "rationale": "Hétérogénéité des protocoles notée."
+                }
+              ],
+              "raw": "confirme l'absence de supériorité générale ... tout en soulignant l'hétérogénéité des protocoles inclus",
+              "reason": "Le texte précise une absence de supériorité et mentionne l'hétérogénéité."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Méta-analyse sur hypertrophie dans l'entraînement de résistance."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "systematic_review",
+                "meta_analysis"
+              ],
+              "reason": "Mention explicite de méta-analyse et revue systématique."
+            },
+            "clinicalEvidenceLevel": "A_high",
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Le fragment rapporte la conclusion d'une méta-analyse et revue systématique."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "established_direction",
+              "reason": "Direction: absence de supériorité générale de l'amplitude complète lorsque la partielle est à grande longueur."
+            },
+            "confidenceByAspect": {
+              "state": "RESOLVED",
+              "value": [
+                {
+                  "aspect": "direction",
+                  "confidence": "moderate",
+                  "rationale": "Conclusion synthétique confirmée."
+                },
+                {
+                  "aspect": "equivalence",
+                  "confidence": "low",
+                  "rationale": "Équivalence n'est pas explicitement démontrée par non-infériorité; prudence."
+                },
+                {
+                  "aspect": "generalization",
+                  "confidence": "moderate",
+                  "rationale": "Portée générale mais conditionnelle à grande longueur."
+                },
+                {
+                  "aspect": "descriptive_accuracy",
+                  "confidence": "moderate",
+                  "rationale": "Hétérogénéité des protocoles notée."
+                }
+              ],
+              "raw": "confirme l'absence de supériorité générale ... tout en soulignant l'hétérogénéité des protocoles inclus",
+              "reason": "Le texte précise une absence de supériorité et mentionne l'hétérogénéité."
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "direct_hypertrophy_measured",
+              "reason": "Méta-analyse sur hypertrophie dans l'entraînement de résistance."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "systematic_review",
+                "meta_analysis"
+              ],
+              "reason": "Mention explicite de méta-analyse et revue systématique."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.40b2fe19ffc586b3"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "amplitude partielle à grande longueur",
+            "comparaison à amplitude complète"
+          ],
+          "limitations": [
+            "hétérogénéité des protocoles inclus"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [],
+    "enforced": false
+  },
+  "partialAudit": null
+}

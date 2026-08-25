@@ -1,0 +1,423 @@
+{
+  "fragmentId": "frag.e5f2.00009106",
+  "status": "PARTIALLY_VALIDATED",
+  "diagnostics": [
+    {
+      "code": "SCHEMA_FAILURE",
+      "message": "confidenceByAspect RESOLVED exige une valeur",
+      "critical": true,
+      "retryable": false,
+      "claimRef": "tmp.claim.01",
+      "axis": "confidenceByAspect"
+    },
+    {
+      "code": "CLAIM_FILTERED",
+      "message": "Au moins une claim a été filtrée indépendamment",
+      "critical": false,
+      "retryable": false,
+      "attempted": 4,
+      "retained": 3,
+      "filtered": 1
+    },
+    {
+      "code": "PARTIAL_VALIDATION",
+      "message": "Validation partielle : les claims sûres sont conservées",
+      "critical": false,
+      "retryable": false,
+      "attempted": 4,
+      "retained": 3,
+      "filtered": 1,
+      "coverageDiagnosticCount": 0
+    }
+  ],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 4,
+    "retained": 3,
+    "filtered": 1,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "montre une activation régionale différenciée du grand dorsal selon le type d'exercice isométrique (épaule vs tronc)",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": "Observation EMG d’activation régionale variable selon le type d’exercice."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Résultat d’une seule étude; niveau de preuve indiqué comme faible à modéré."
+        },
+        "individuallyValid": false,
+        "diagnostics": [
+          {
+            "code": "SCHEMA_FAILURE",
+            "message": "confidenceByAspect RESOLVED exige une valeur",
+            "critical": true,
+            "retryable": false,
+            "claimRef": "tmp.claim.01",
+            "axis": "confidenceByAspect"
+          }
+        ],
+        "canonicalCandidate": null
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "suggérant que différents exercices ciblent préférentiellement différentes portions du muscle",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "HYPOTHESIS",
+          "reason": "Inférence proposée à partir des données EMG."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Hypothèse non testée sur l’hypertrophie; fondée sur EMG uniquement."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.31a459154319582f",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "suggérant que différents exercices ciblent préférentiellement différentes portions du muscle",
+          "supportSpans": [
+            {
+              "text": "suggérant que différents exercices ciblent préférentiellement différentes portions du muscle",
+              "relativeStartByte": 161,
+              "relativeEndByte": 258,
+              "absoluteStartByte": 9267,
+              "absoluteEndByte": 9364
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "HYPOTHESIS",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Proposition mécanistique dérivée de l’EMG, pas de mesure d’issue hypertrophique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Hypothèse issue de l’étude EMG citée."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "HYPOTHESIS",
+              "reason": "Inférence proposée à partir des données EMG."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Hypothèse non testée sur l’hypertrophie; fondée sur EMG uniquement."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "mechanistic_hypothesis",
+              "reason": "Proposition mécanistique dérivée de l’EMG, pas de mesure d’issue hypertrophique."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "Hypothèse issue de l’étude EMG citée."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.79625d28ffc3b3a0"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [
+            "ne démontre pas de différence d'hypertrophie régionale correspondante"
+          ],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 2,
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "ne démontre pas de différence d'hypertrophie régionale correspondante",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EVIDENCE",
+          "reason": "Énoncé d’absence de preuve de l’issue hypertrophique correspondante."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "absence_of_evidence",
+          "reason": "Le fragment affirme explicitement l’absence de démonstration d’hypertrophie régionale."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.c66c4221b1fd781d",
+          "technicalClaimRef": "tmp.claim.03",
+          "rawStatement": "ne démontre pas de différence d'hypertrophie régionale correspondante",
+          "supportSpans": [
+            {
+              "text": "ne démontre pas de différence d'hypertrophie régionale correspondante",
+              "relativeStartByte": 416,
+              "relativeEndByte": 488,
+              "absoluteStartByte": 9522,
+              "absoluteEndByte": 9594
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EVIDENCE",
+          "epistemicStatus": "absence_of_evidence",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Basé sur une étude EMG sans mesure directe d’hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "La source est une étude EMG."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EVIDENCE",
+              "reason": "Énoncé d’absence de preuve de l’issue hypertrophique correspondante."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "absence_of_evidence",
+              "reason": "Le fragment affirme explicitement l’absence de démonstration d’hypertrophie régionale."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Basé sur une étude EMG sans mesure directe d’hypertrophie."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "emg_study"
+              ],
+              "reason": "La source est une étude EMG."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.79625d28ffc3b3a0"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content",
+            "explicit_absence"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 3,
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "conclut à une variabilité substantielle entre exercices et entre études méthodologiquement hétérogènes",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EMG_OBSERVATION",
+          "reason": "Synthèse narrative rapportant la variabilité des signaux EMG du grand dorsal."
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "uncertain",
+          "reason": "Conclusion d’une revue narrative, avec hétérogénéité méthodologique signalée."
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.665d476ec00c055e",
+          "technicalClaimRef": "tmp.claim.04",
+          "rawStatement": "conclut à une variabilité substantielle entre exercices et entre études méthodologiquement hétérogènes",
+          "supportSpans": [
+            {
+              "text": "conclut à une variabilité substantielle entre exercices et entre études méthodologiquement hétérogènes",
+              "relativeStartByte": 600,
+              "relativeEndByte": 709,
+              "absoluteStartByte": 9706,
+              "absoluteEndByte": 9815
+            }
+          ],
+          "domain": "biomechanics",
+          "knowledgeType": "EMG_OBSERVATION",
+          "epistemicStatus": "uncertain",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Résumé d’études EMG; pas d’issue clinique/hypertrophique directe."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "narrative_review"
+              ],
+              "reason": "Le fragment qualifie la source de revue narrative."
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EMG_OBSERVATION",
+              "reason": "Synthèse narrative rapportant la variabilité des signaux EMG du grand dorsal."
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "uncertain",
+              "reason": "Conclusion d’une revue narrative, avec hétérogénéité méthodologique signalée."
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "emg_only",
+              "reason": "Résumé d’études EMG; pas d’issue clinique/hypertrophique directe."
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "narrative_review"
+              ],
+              "reason": "Le fragment qualifie la source de revue narrative."
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.56214e1efb85d807"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [],
+          "limitations": [
+            "hétérogénéité méthodologique entre études"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "emg_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4935,
+      "outputTokens": 6793,
+      "reasoningTokens": 5376,
+      "totalTokens": 11728,
+      "costUsd": 0.07021075
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4935,
+      "outputTokens": 6793,
+      "reasoningTokens": 5376,
+      "totalTokens": 11728,
+      "costUsd": 0.07021075
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "fragmentId": "frag.e5f3.00035362",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f3.00035362\",\n    \"corpusFileId\": \"corpus.f3.coaching-clinique\",\n    \"headingPath\": [\n      \"Base de connaissances clinique pour un coaching de musculation adaptatif\",\n      \"12. Règles de réponse conversationnelle\",\n      \"Formulations interdites\"\n    ],\n    \"rawText\": \"- « Continuez malgré la douleur. »\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"LIST_ITEM\",\n      \"text\": \"- « Continuez malgré la douleur. »\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"POLICY_ONLY\"}],\"claims\":[]}",
+  "providerResponse": {
+    "id": "gen-1787664901-SPvLOSMiYnO6DgBDRcoH",
+    "object": "chat.completion",
+    "created": 1787664901,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"ZERO_CLAIM\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"POLICY_ONLY\"}],\"claims\":[]}",
+          "refusal": null,
+          "reasoning": null,
+          "reasoning_details": [
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjZoM73DfxLkm7Pkllfu8_g53Zz2t7Vwi0FOQrK4HgJhs1K2i8NrGRSeuxmOyMl-oNdS-UJxlWwp1zFuqkLFetO9O9CzZI0CsnO0URaGK7MX3jPe5t-JIPmbHafrZhTVn9TOzr4_ebTStoZN68bLzjoREOrhhYSGdH4ubBkbtjU1p5fGqSVeYPAwWnWa4xrEpAehp6Ltpz4Jh-be0bFJgKUApJfyRh3Akxzoo0ob3G_A9I7F5VFVvndf_Ev4yqz9XbZsOOdBcjsF999_AMg-IZL2hkNEiblAzUT34Vti_Sc7VUqlYt1z0K-DnNbWv65qIeFCl6OPRJziX4Y1ow_fg_O_5itS5elpS7QhU1QSAUckiapHQEu4jzGu2GI9q_9mYzo1ssG-fw6TWUY4Qv5kgeJq6dJctJwXRdJWi-X2qmC-pCSgQQge4IQVO9eYYgEupWvR_Se9vlLLjlmQX6NjR6r5W9sCGAdkFxmj9m1xHGjopUZGev3zO4eukpaQT61jW3-NxIxg6R57y8D1hbg-NV3iFS-kFGSDjIGNi9WJlHuk2gCpqe8lviYUYps52u-JXwUxMz15RT-isOXvcieZ7oW1fg5ilnDf1Us2fqrj4s4ZdVXsRLhR0op6etcVXpuxErR5-u9q8o-00dTlsUvCWtNOFNMx3e0ODEglnoyrdZ9jz-JglRslvqHhTzZ9AJUBBIjowtRi7PzqeOeh-eB8nwldSQN1QamHx_ALHTg7mb1duhMHqYwB8Yos9ptod4dp793HwdP3HnHaWWPmm9vJPu3OcN_4Dz1AYE4ycw1froXPGvXJcBUEcJ_A8uk4gT68UrT1YLbMYi7u67VVReZQyLLEwX1pHoUS4G7kF4JKN1jJUbeIAV2c7CNKQT3Mo4tBgemwDHmL8c09s4qs6jCbKR1Pe5QgObwn3TC3aRGGtGmyHcLI2Z8Y-Q83z8b0uIA-b4RhwEukVgYuUnb1sSpZULeyVPcIhPdAcek_50XKvKTzbSVbkG14COK4wOZ0XtV5ilHKFs3Jfb9hr_A60G47oBc0VWCX91VZwEFQN3BNVbpTvdZ28dhh9H2UPR6vUH0qoavCCQoQAaHadc6c5fvm46OG25NhUfBaiz99f8ovJgixD5bf550jyTzOgVlNX365g86AiHXLmBtTxAb2VLDbApZ5USVecP5bpb0dpM0nivOJM9sqbwFXplMLtrAOUZCpZQmAR2UmfSJRJdSRuzus6OPTWQrmN_N_ZNE18itJqnqQ66bp-En_YDgTLljMOwh44ESeaa4Lwii1Mcmm8HW6l7BMRZmTfOxC5mY3v5oAIwF9TYRfJeQgjD5pdWPC-V5QRtwbyA-SoPN4RZBiSFoKlWWvYrHNF9M0NWXJqWICiIEpgVMRhkNmQdAMluK0JdT7HnnGyyDxFXNd7NzxwhBwuLQiGUvVo8dqAJDEgSl_zCc97EeR8t8hKNcKOL145jFgdVRg5XWsfL76niYB4zs2VzyY3keZpJM_3Mps2uluoKYadHfOULJ9pq5QZGeOL1kwKJu3D3mOsN6iGcSkVmzWz9CDBAHwReAylDq7XY_RdjIcApOzEuTIY0aVyUt_z55tHiPGESm3ZLqIPxCbDGui_vxfSsZaVppsqfkbO6uEKeBsCTR1UB36MTP06Sjbd50xdCK7U3aPlAQX5RChH0pBTLMLX71lOPzZfimWO8XLe_ri1yCTiUguqrjdBSnv2vf5U0STgMfPJOu3qxPW1UBqlRkvkEr0MqQ05RzFPLV5jQK3rxxKP1SsrGEDYdttkiVcGz0wEgYT0iKWwsRr6OYGip00MDMnF23iC3WHWucjVZew3yZVbRbbLsRP3s4Wq9MESArghfy7e5aLle8eWHm9LQy-Nzuq1LxfIb4-mqhOu82nF8_BxXO75ikyNmWuhwwo2pAra1SEs2yHhw9NRrTRDzSuLJvpq5hlQY7Y7cuAxHeBhRYfVlcCPTG5-XzAW9WmgNCMz2gKbtVjFco4kvXpYpi_Hkl8HvgekqrV5SnPCOxtTV11dNFxH_UuiST0PH9OQ1QbUT-UDL-bY9WsRRcpnXxvwRh-mRVI6v6kZwepZ_WU6IOtBpvk1mxZJP7wJ2VbdVw2hUEOAUgwKfeAKtROM4l3FIYng7Xf77NxrCHCJg6l_kQjoXa1e2HcbZxw_UO8uIZSYEQZQQpDXOYq3-TA0qZKT1Hx7tZVOBAb0cVMsNINUp9m31pvR6bWxZaTLHbrrM7lURZD4xrcrOKWvXvY5x8bDmCZEa3ews6F0MfUP2ParOwgZA9u_CxVWdlbAB0t2Ym6MWKoAQ_fVV7ONgA6180J8o0gWaYhXKzv-J4JdM2AhFqS_lncbLagG2FEmyE0tgVxg-whUDBsFfFikavEo2vuqdyGbv15cLLDtdexaeHbX01puaVyzZLHRRCHVBOfn87-1kpRXxd5zVZfFAk78pJWLPfvqbnkt-BtqhS7w0PIS5AXbKWw5v_trlpXhkhvzzTAzsWuuB7CZ2fAo5Jybmz1infvZ6Z1kWGlPGexh8ncHFzzFJKJOqGV0orSm-Q71rWt_oq5bZMEDNkI7KV55z8MhwdFI6MhkZ0HC9IJaB1Rbt9T5vsMw2UuYdB2Y4vH4TEGGqoKQZnTJF1-Y3RyLb0N67nUzpGy0I3n6izsjnwLDRDxHzhX9s1XAd9nwrEW5onuutk97fZgMK2cYuXdx2mrlULPaJ3yczEhn9td6syQEkFELNVrGTBDvVIo_mRGyk7x9Do9BDsQQeGts40q4BL2C4usYlwCtgyZONvyMLkXb5pafVJc6UsN_mIFm23K0npeK11liMJkgWixEYjUmh5i6doyDEQ0NqqHxC-29m6d9SUE7vNL64EL0u3w5mgvExH5RDmYWbfHdjklCKIrv0P6YZxeYgDpzpLUhBeLJ-JwYIgKDobOmJzU2Yndtb9VOTrUhiBLSQMpTpwESVGGgO_vbV_I3TZEbKgiLVlE43cpbQhgO0s9sRcpEcZ-4K9cOXNjKT_ba1t0pQmqFd-dVM5bJ3rqr13BQ_KTOSF8jdjBkeSs7lY_946fPUpmv3P0j-E161vf05aXlWSqGm2wx6x8qqWPtRsxvv_5OKw-51CDvVZ5ltmgxS64B7cJSmgJHdVJf7lLfRpyqnjQPrj2Ip5__Q6nAnNj4hwJs8U4A68FCSmfD9gcqtoTACXWRvPOWUZCUpBTsqN09mL4_g9SBLuYzB3vEqRtvk_JAwQaWLUStnY-52rsuQsiljG313V0NNLOEcdrBBqKSn9X6G0TvhR6DIfJNALzotL7dOhmILJNLICU17GniYO7Ph8JOJGUP1hgYo4Ec67c-RivKwQvjhQbeL6eTKTUQz2La58YDmPjTDQHixKP5BSAapYu9THp201kVdEJArVHMKKQmaImXGLgj8zVQjgnXSdgb2-MSCw4S1P5n3Htzh5fF5jxuhl7vMSf8CkPoyMI1WhptrFNaE1dedgm7EqFz_EHxNJPUYilGlpPYmGct7eNG5n9ElDWAyoumeGDppTErGxLTLL4RHTvTU0i1U7iLnE2f0qrBcfuA8YqOmPlG6uOi9g6boPDgY1BNS2e5G1aItTjas5nNfmq0yRUNsSpP0nXryzDbwZpFWFY4SYIo8Kd1CbEbqdb7rOBdlsfDxzaZYeoA3AvqWovC9se9xD4mdxGkapS9W7HWXTw=.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_01633f22c0de0b80016a8d9a06f9b88196bf8f5c96d8b9fe8a",
+              "index": 0
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4260,
+      "completion_tokens": 468,
+      "total_tokens": 4728,
+      "cost": 0.006117,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.006117,
+        "upstream_inference_prompt_cost": 0.001437,
+        "upstream_inference_completions_cost": 0.00468
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 384,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787664901-SPvLOSMiYnO6DgBDRcoH",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4260,
+    "completion_tokens": 468,
+    "total_tokens": 4728,
+    "cost": 0.006117,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.006117,
+      "upstream_inference_prompt_cost": 0.001437,
+      "upstream_inference_completions_cost": 0.00468
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 384,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 7722,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

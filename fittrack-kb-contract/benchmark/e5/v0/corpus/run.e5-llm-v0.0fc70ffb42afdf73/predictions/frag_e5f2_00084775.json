@@ -1,0 +1,199 @@
+{
+  "fragmentId": "frag.e5f2.00084775",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00084775",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.bf238cda4fe811e5",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "privilégier une stabilité suffisante pour que le muscle cible, non l'équilibre, limite la série lors des phases de forte fatigue accumulée ou de gros volume",
+        "supportSpans": [
+          {
+            "text": "privilégier une stabilité suffisante pour que le muscle cible, non l'équilibre, limite la série lors des phases de forte fatigue accumulée ou de gros volume",
+            "relativeStartByte": 38,
+            "relativeEndByte": 199,
+            "absoluteStartByte": 84813,
+            "absoluteEndByte": 84974
+          },
+          {
+            "text": "— *expert_practice*, cohérent avec le principe de la section 5.3 mais non testé directement pour cette recommandation précise.",
+            "relativeStartByte": 290,
+            "relativeEndByte": 421,
+            "absoluteStartByte": 85065,
+            "absoluteEndByte": 85196
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Appui sur la pratique experte sans preuve directe rapportée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Etiqueté « expert_practice »."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Le texte qualifie explicitement la recommandation comme « expert_practice » et précise qu’elle n’a pas été testée directement."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Recommandation d’expertise pratique, non testée directement."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Appui sur la pratique experte sans preuve directe rapportée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Etiqueté « expert_practice »."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "lors des phases de forte fatigue accumulée ou de gros volume"
+        ],
+        "limitations": [
+          "non testé directement pour cette recommandation précise"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.8423c6f552e0190f",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "(ex. préférer le rowing poitrine appuyée à un rowing barre penché en fin de séance)",
+        "supportSpans": [
+          {
+            "text": "(ex. préférer le rowing poitrine appuyée à un rowing barre penché en fin de séance)",
+            "relativeStartByte": 200,
+            "relativeEndByte": 289,
+            "absoluteStartByte": 84975,
+            "absoluteEndByte": 85064
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Basé sur l’expérience praticienne ; aucune étude directe citée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Etiqueté « expert_practice »."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Exemple appliqué d’une recommandation étiquetée « expert_practice »."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Conseil pratique sans test direct rapporté."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Basé sur l’expérience praticienne ; aucune étude directe citée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Etiqueté « expert_practice »."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "en fin de séance"
+        ],
+        "limitations": [
+          "non testé directement pour cette recommandation précise"
+        ],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

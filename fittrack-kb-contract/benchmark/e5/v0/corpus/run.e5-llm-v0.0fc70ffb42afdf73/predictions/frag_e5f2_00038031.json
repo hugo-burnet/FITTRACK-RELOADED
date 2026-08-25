@@ -1,0 +1,377 @@
+{
+  "fragmentId": "frag.e5f2.00038031",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00038031",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.046f7d23039b5592",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "la grande longueur musculaire tend à égaler ou dépasser la courte longueur pour l'hypertrophie régionale",
+        "supportSpans": [
+          {
+            "text": "la grande longueur musculaire tend à égaler ou dépasser la courte longueur pour l'hypertrophie régionale",
+            "relativeStartByte": 74,
+            "relativeEndByte": 182,
+            "absoluteStartByte": 38105,
+            "absoluteEndByte": 38213
+          },
+          {
+            "text": "est cohérente à travers plusieurs essais indépendants et plusieurs muscles",
+            "relativeStartByte": 184,
+            "relativeEndByte": 261,
+            "absoluteStartByte": 38215,
+            "absoluteEndByte": 38292
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "moderate",
+                "rationale": "Synthèse de niveau de confiance : modéré."
+              },
+              {
+                "aspect": "magnitude",
+                "confidence": "low",
+                "rationale": "l'ampleur de l'effet reste incertaine."
+              },
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "sa généralisation à tous les muscles et exercices reste incertaine."
+              }
+            ],
+            "raw": "Synthèse de niveau de confiance : modéré.",
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "direction",
+                "confidence": "moderate",
+                "rationale": "Synthèse de niveau de confiance : modéré."
+              },
+              {
+                "aspect": "magnitude",
+                "confidence": "low",
+                "rationale": "l'ampleur de l'effet reste incertaine."
+              },
+              {
+                "aspect": "generalization",
+                "confidence": "low",
+                "rationale": "sa généralisation à tous les muscles et exercices reste incertaine."
+              }
+            ],
+            "raw": "Synthèse de niveau de confiance : modéré.",
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [
+          "les résultats ne sont pas uniformes selon la modalité de charge",
+          "les échantillons sont petits"
+        ],
+        "cannotConclude": [
+          "les mécanismes ne sont pas confirmés chez l'humain in vivo à l'échelle du sarcomère",
+          "l'ampleur de l'effet et sa généralisation à tous les muscles et exercices restent incertaines"
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.750bf5180483a781",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "les mécanismes ne sont pas confirmés chez l'humain in vivo à l'échelle du sarcomère",
+        "supportSpans": [
+          {
+            "text": "les mécanismes ne sont pas confirmés chez l'humain in vivo à l'échelle du sarcomère",
+            "relativeStartByte": 378,
+            "relativeEndByte": 466,
+            "absoluteStartByte": 38409,
+            "absoluteEndByte": 38497
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "absence_of_evidence",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "absence_of_evidence",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.3a75209c40f9cd01",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Le résultat le plus solide de cette section spécifique à un muscle nommément identifié reste celui du triceps (chef long, position overhead",
+        "supportSpans": [
+          {
+            "text": "Le résultat le plus solide de cette section spécifique à un muscle nommément identifié reste celui du triceps (chef long, position overhead",
+            "relativeStartByte": 573,
+            "relativeEndByte": 717,
+            "absoluteStartByte": 38604,
+            "absoluteEndByte": 38748
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "uncertain",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "uncertain",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a7e75755ce937e69",
+        "technicalClaimRef": "tmp.claim.04",
+        "rawStatement": "d'un mécanisme biomécanique particulièrement clair (biarticularité + étirement à l'épaule)",
+        "supportSpans": [
+          {
+            "text": "d'un mécanisme biomécanique particulièrement clair (biarticularité + étirement à l'épaule)",
+            "relativeStartByte": 749,
+            "relativeEndByte": 846,
+            "absoluteStartByte": 38780,
+            "absoluteEndByte": 38877
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "mechanistic_hypothesis",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

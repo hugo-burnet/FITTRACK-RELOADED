@@ -1,0 +1,210 @@
+{
+  "fragmentId": "frag.e5f2.00036286",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00036286",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.d610260595de671e",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+        "supportSpans": [
+          {
+            "text": "Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que",
+            "relativeStartByte": 2,
+            "relativeEndByte": 94,
+            "absoluteStartByte": 36288,
+            "absoluteEndByte": 36380
+          },
+          {
+            "text": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+            "relativeStartByte": 95,
+            "relativeEndByte": 238,
+            "absoluteStartByte": 36381,
+            "absoluteEndByte": 36524
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1ef0c88d608f1d16"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "sujets entraînés",
+          "fléchisseurs du coude",
+          "8 semaines",
+          "amplitude partielle à grande longueur musculaire",
+          "comparée à amplitude complète"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.d0bb1d6a93f00803",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+        "supportSpans": [
+          {
+            "text": "Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que",
+            "relativeStartByte": 2,
+            "relativeEndByte": 94,
+            "absoluteStartByte": 36288,
+            "absoluteEndByte": 36380
+          },
+          {
+            "text": "l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète",
+            "relativeStartByte": 95,
+            "relativeEndByte": 238,
+            "absoluteStartByte": 36381,
+            "absoluteEndByte": 36524
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": "established_direction",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "established_direction",
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "unknown"
+            ],
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.1ef0c88d608f1d16"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "sujets entraînés",
+          "fléchisseurs du coude",
+          "8 semaines",
+          "amplitude partielle à grande longueur musculaire",
+          "comparée à amplitude complète"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

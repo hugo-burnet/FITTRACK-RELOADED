@@ -1,0 +1,182 @@
+{
+  "fragmentId": "frag.e5f2.00078216",
+  "attempt": 0,
+  "callType": "full",
+  "promptInput": "{\n  \"instruction\": \"Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.\",\n  \"fragment\": {\n    \"fragmentId\": \"frag.e5f2.00078216\",\n    \"corpusFileId\": \"corpus.f2.anatomie-biomecanique\",\n    \"headingPath\": [\n      \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie\",\n      \"8. Substitutions d'exercices : logique et critères\",\n      \"8.1 Principe général\"\n    ],\n    \"rawText\": \"Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal. Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).\"\n  },\n  \"coverageUnits\": [\n    {\n      \"unitIndex\": 0,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.\"\n    },\n    {\n      \"unitIndex\": 1,\n      \"kind\": \"SENTENCE\",\n      \"text\": \"Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).\"\n    }\n  ],\n  \"citationCatalog\": [],\n  \"closedVocabularies\": {\n    \"knowledge-type\": [\n      \"EVIDENCE\",\n      \"EXPERT_PRACTICE\",\n      \"HYPOTHESIS\",\n      \"ANATOMICAL_FACT\",\n      \"BIOMECHANICAL_OBSERVATION\",\n      \"EMG_OBSERVATION\",\n      \"MECHANISM\",\n      \"DEFINITION\",\n      \"MYTH_REFUTATION\",\n      \"PRODUCT_POLICY\",\n      \"MODELING_DECISION\"\n    ],\n    \"epistemic-status\": [\n      \"established\",\n      \"established_direction\",\n      \"probable\",\n      \"uncertain\",\n      \"controversial\",\n      \"mechanistic_only\",\n      \"practice_only\",\n      \"absence_of_evidence\",\n      \"refuted\"\n    ],\n    \"confidence-aspect\": [\n      \"direction\",\n      \"magnitude\",\n      \"dose_response_shape\",\n      \"threshold\",\n      \"distribution\",\n      \"acute_effect\",\n      \"chronic_effect\",\n      \"generalization\",\n      \"regional_specificity\",\n      \"equivalence\",\n      \"descriptive_accuracy\"\n    ],\n    \"confidence-level\": [\n      \"high\",\n      \"moderate\",\n      \"low\",\n      \"very_low\",\n      \"not_applicable\"\n    ],\n    \"directness\": [\n      \"direct_clinical\",\n      \"indirect_clinical\",\n      \"biomechanical_only\",\n      \"expert_only\",\n      \"direct_hypertrophy_measured\",\n      \"emg_only\",\n      \"anatomical_cadaveric\",\n      \"imaging_descriptive\",\n      \"animal_model\",\n      \"mechanistic_hypothesis\",\n      \"qualitative_survey\"\n    ],\n    \"evidence-type\": [\n      \"position_stand\",\n      \"clinical_practice_guideline\",\n      \"medical_body_recommendation\",\n      \"consensus_statement\",\n      \"umbrella_review\",\n      \"systematic_review\",\n      \"meta_analysis\",\n      \"meta_regression\",\n      \"network_meta_analysis\",\n      \"randomized_trial\",\n      \"within_participant_trial\",\n      \"cohort\",\n      \"cross_sectional_survey\",\n      \"biomechanical_study\",\n      \"cadaveric_study\",\n      \"emg_study\",\n      \"imaging_study\",\n      \"narrative_review\",\n      \"scoping_review\",\n      \"qualitative_study\",\n      \"expert_practice\",\n      \"unknown\"\n    ],\n    \"clinical-evidence-level\": [\n      \"A_high\",\n      \"B_moderate\",\n      \"C_low\",\n      \"D_very_low\"\n    ],\n    \"domain\": [\n      \"training\",\n      \"anatomy\",\n      \"biomechanics\",\n      \"exercise\",\n      \"clinical\",\n      \"product\"\n    ]\n  }\n}",
+  "rawResponse": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]}]}",
+  "providerResponse": {
+    "id": "gen-1787657354-y8Lj0bKAfp9ww30Nn6Rz",
+    "object": "chat.completion",
+    "created": 1787657354,
+    "model": "openai/gpt-5",
+    "provider": "Azure",
+    "system_fingerprint": null,
+    "service_tier": "default",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "stop",
+        "native_finish_reason": "completed",
+        "message": {
+          "role": "assistant",
+          "content": "{\"annotationPrediction\":\"CLAIMS\",\"coverageLedger\":[{\"unitIndex\":0,\"decision\":\"CLAIM_CONTENT\"},{\"unitIndex\":1,\"decision\":\"CLAIM_CONTENT\"}],\"claims\":[{\"supportAnchors\":[\"Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[0]},{\"supportAnchors\":[\"Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).\"],\"rawStatementAnchorIndex\":0,\"domain\":\"exercise\",\"knowledgeTypeState\":\"RESOLVED\",\"knowledgeType\":\"EXPERT_PRACTICE\",\"knowledgeTypeReason\":null,\"epistemicStatusState\":\"RESOLVED\",\"epistemicStatus\":\"practice_only\",\"epistemicStatusReason\":null,\"confidenceState\":\"UNRESOLVED\",\"confidenceAspects\":null,\"confidenceLevels\":null,\"confidenceRationales\":null,\"confidenceRaw\":null,\"confidenceReason\":null,\"directnessState\":\"RESOLVED\",\"directness\":\"expert_only\",\"directnessReason\":null,\"evidenceTypesState\":\"RESOLVED\",\"evidenceTypes\":[\"expert_practice\"],\"evidenceTypesReason\":null,\"clinicalEvidenceLevel\":null,\"supportsHypertrophySuperiority\":false,\"supportsDemonstratedClinicalRisk\":false,\"citationOccurrenceRefs\":[],\"citationAttributionState\":\"NOT_CITED\",\"conditions\":[],\"limitations\":[],\"cannotConclude\":[],\"unresolved\":[],\"flags\":[\"expert_practice\"],\"coverageUnitIndexes\":[1]}]}",
+          "refusal": null,
+          "reasoning": "**Assessing exercise substitution principle**\n\nI need to focus on the task of extracting information about the exercise substitution principle. The fragment contains two sentences, and I must classify each segment as either CLAIM_CONTENT or context/policy/no predicate. The first sentence suggests that reliable exercise substitution requires considering multiple factors beyond just the targeted muscle. It seems this is more aligned with expert practice rather than a strict definition, so I'll categorize it as knowledgeType EXPERT_PRACTICE, related to the domain of exercise and training.**Clarifying relevant dimensions**\n\nI need to pay attention to including the conditions from the first sentence, like \"simultaneously\" and \"not only 'muscle targeted' nominal.\" The second sentence details the relevant dimensions, which suggests it's defining a set related to the same principle. I think a reasonable claim could be: \"The relevant dimensions include movement patterns, muscle functions, resistance profiles, etc.\" This claim is normative and can stand as a separate assertion. So, I’ll ensure that the supportAnchors are exact, unique, and not overlapping.**Setting up anchors and classifications**\n\nI need to provide two anchors for each claim, possibly one for each point, and also include a rawStatementAnchorIndex pointing to one of them. I won’t include citations. I should set the knowledgeTypeState to RESOLVED with knowledgeType as EXPERT_PRACTICE. The epistemic status appears to be practice_only, so I’ll go with that, along with RESOLVED. For directness, it looks like expert_only will work, so I’ll set that too. I'll classify evidence types as expert_practice since there are no citations, and I’ll select exercise as the appropriate domain for programming exercises and hypertrophy.**Choosing the exercise domain**\n\nIt seems that the principle I'm focusing on is about exercise substitution selection, so I'll choose the exercise domain. The specific path, \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie,\" definitely points towards exercise selection. I should include the expert_practice flag in the field 'flags' to denote this appropriately. I’ll have two entries in the coverage ledger with CLAIM_CONTENT. \n\nFor claim1, I'll anchor the exact sentence: \"Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.\" For claim2, I'll start with \"Les dimensions pertinentes ... sont : ...\" but may append more to ensure uniqueness.**Structuring JSON data**\n\nAlright, I need to ensure that supportAnchors are unique substrings and not overlapping within the claims. Using one anchor per claim seems fine, so I'll include the full second sentence as one. The rawStatementAnchorIndex will be set to 0 for each claim since I only have one anchor.\n\nFor coverageUnitIndexes, claim1 will be [0] and claim2 will be [1]. Since there are no citations, I will set citationOccurrenceRefs to an empty array and assign \"NOT_CITED\" for citationAttributionState. \n\nAs for confidence fields, I think I'll keep those UNRESOLVED since they aren't determinable. The domain is definitely about exercise, not product. I’ll finalize the JSON structure to include the appropriate entries and make sure that the coverage ledger reflects both claims as CLAIM_CONTENT. Lastly, I'll double-check that I'm not including any unnecessary formatting or fields.",
+          "reasoning_details": [
+            {
+              "type": "reasoning.summary",
+              "summary": "**Assessing exercise substitution principle**\n\nI need to focus on the task of extracting information about the exercise substitution principle. The fragment contains two sentences, and I must classify each segment as either CLAIM_CONTENT or context/policy/no predicate. The first sentence suggests that reliable exercise substitution requires considering multiple factors beyond just the targeted muscle. It seems this is more aligned with expert practice rather than a strict definition, so I'll categorize it as knowledgeType EXPERT_PRACTICE, related to the domain of exercise and training.**Clarifying relevant dimensions**\n\nI need to pay attention to including the conditions from the first sentence, like \"simultaneously\" and \"not only 'muscle targeted' nominal.\" The second sentence details the relevant dimensions, which suggests it's defining a set related to the same principle. I think a reasonable claim could be: \"The relevant dimensions include movement patterns, muscle functions, resistance profiles, etc.\" This claim is normative and can stand as a separate assertion. So, I’ll ensure that the supportAnchors are exact, unique, and not overlapping.**Setting up anchors and classifications**\n\nI need to provide two anchors for each claim, possibly one for each point, and also include a rawStatementAnchorIndex pointing to one of them. I won’t include citations. I should set the knowledgeTypeState to RESOLVED with knowledgeType as EXPERT_PRACTICE. The epistemic status appears to be practice_only, so I’ll go with that, along with RESOLVED. For directness, it looks like expert_only will work, so I’ll set that too. I'll classify evidence types as expert_practice since there are no citations, and I’ll select exercise as the appropriate domain for programming exercises and hypertrophy.**Choosing the exercise domain**\n\nIt seems that the principle I'm focusing on is about exercise substitution selection, so I'll choose the exercise domain. The specific path, \"Anatomie fonctionnelle, biomécanique et sélection d'exercices pour l'hypertrophie,\" definitely points towards exercise selection. I should include the expert_practice flag in the field 'flags' to denote this appropriately. I’ll have two entries in the coverage ledger with CLAIM_CONTENT. \n\nFor claim1, I'll anchor the exact sentence: \"Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.\" For claim2, I'll start with \"Les dimensions pertinentes ... sont : ...\" but may append more to ensure uniqueness.**Structuring JSON data**\n\nAlright, I need to ensure that supportAnchors are unique substrings and not overlapping within the claims. Using one anchor per claim seems fine, so I'll include the full second sentence as one. The rawStatementAnchorIndex will be set to 0 for each claim since I only have one anchor.\n\nFor coverageUnitIndexes, claim1 will be [0] and claim2 will be [1]. Since there are no citations, I will set citationOccurrenceRefs to an empty array and assign \"NOT_CITED\" for citationAttributionState. \n\nAs for confidence fields, I think I'll keep those UNRESOLVED since they aren't determinable. The domain is definitely about exercise, not product. I’ll finalize the JSON structure to include the appropriate entries and make sure that the coverage ledger reflects both claims as CLAIM_CONTENT. Lastly, I'll double-check that I'm not including any unnecessary formatting or fields.",
+              "format": "azure-openai-responses-v1",
+              "index": 0
+            },
+            {
+              "type": "reasoning.encrypted",
+              "data": "gAAAAABqjXyj6xYlQS9OJYe8CEKPAf1RwAjmi194pp83RhOW_8g9wlq_RWmo6EkNx5nTqZBNWZNzAkcYRVliCr6LRS5yTBqJKZvQq1nXzFSJMG1GPHR6pV87mxAAaHxtBRlXuFBe47YGgUnrYAs_3_rBo2nkxV1TPyBIPq3Op2OPfVSZ-yAq2PaJ5uF5-b0UA2zrfeHWb70IGqYdEE3HMMNOFOnkM7ykzE5a0DlVRGHZhTA0m-YhNxX5HtoZgLyYgRwFSDkHMbkBR_4QY8aMC65lW_sY_uhdF-bgz0QiS8Hswcv3o3rExhFTBwbtzIM_velCHPqNg6ImpJA3wMTcmBI_M3P_7MlP3bc0V6ofBMMf4rD05-ie8SQqbBORh2LThJIKl9A4QhYMzjkIfWC2c_5mwJopDAwQUpYC7YpvS3VHwgoKBxu37gjbxTZx4Car5djFWSsXQn0W8TJZBVkRIutg1Nn_pySSAAJvoAzlrUG5ONufpN18-XE3518cpJh3R4yqXDUV1nxU1uTewTMsonEw29oUmDKDOYjnZdSCn284cPRRpPlKWQgfcuevld3qmimQx2woWV6HAEXGi8rWD5Y7_zPeM-DjUxl83gKiqPVZcYppRaXzUadjNv1wbmI5wVNMZYk4Xnr77uzD8-2lZ41-O1GhfRgM09YOzA_beVTGf92L6_ZIS9DhhxLoBjTMIs7_ls11xCpcXGLJg13wcNknAjxuStk6lDO42-RcGbvAYXEpyJOHjKKzX1Us5WP_PLolQLYJZCXOGf20zQr_h7jpbxkYkNB4uTjVAupciAAGjiRTK2dmTYzddm1hmXnwUZDofznel_DYGEeQvYOuNpFSMnQe0p4arI1yZxUc_-PQ-m0Nyh1e33L6Zpngp4Ly5oXDF0vRkEiMwjMl9JWjn5DyhiyoNfFOD3yETBhxUtWb2KsLjEqnvw083Lg1acXhDKIj5Th-E2eNZo3_z8lTtMhh79EcIaUHBlp6e-pb2pXbPJhOTE88AZeSGECO1yF5f1W-rmwoKinfypC-ECbpE0l95iSN8mqwJqLxQ_kRrYfqRF8zDmCa_o4X0K78CLcdgt1cfDaS7OTU1vOzns95Ro8vCR_1hP6V3lwZFFz5dMhb4p5dF6V0Ag_iOp8bJUUbmKzDpFNr4YLdM0v83ud75tModMI9q2s_WV-sVBs09CQZI8bA3GGZIg4jKAZCJv9tNmP7l2kSxqsprlHA1JW1U116_9ObVNlUpptUiDN5mXsRV9n1iH2vrS7xqebbWYVEOb_JC3LHWMEpeZmr8DaNThoWaF2ycgrDbAKSV0yXr65sTjYz5L9hIojfysTS3mbo1QucK9ScwII95jhUpQHYy91r30efxYEJOppurv_f8lC1mxBySMTmgFExrH0F2t4NJ0oQLOzHNC4VzGKiDiPNc7l84W-Tht_c4ofZhj5j7h1R6SDKyRT2IR7psKgS0foGaJ56_tc2ekKTJb_ud-_XORiLDpwpiZnsNJ-hXkYoiwu1iD3kx6DNJ9EpQUlxdQKWIPV-bbrCb4Bj0-NThtP4TIhQzYRKEUKMngl6nBXfdZMO1toA40Uan19LBwJ6zTfvoE-zmTLJvBLNaatMPJ0kywtjFU4uSoFTP8eAGCMVq-5rhvCM2vzytD_GyYC4nG5Ou1aIJMuQpMCIYpSf9pz6vx2TKxgKdnJRcm-6cRBf2i84mwE7X-76sCBv5ufSQ6P048em6xvVT39XO4BYDleveedlHXOEWoEtN2XPqCJE_7zFcJXM1LtBeeLA2J-MEJYZM57pGcN0NWonlTrBY0hPsdXI7CtjLMDpFl-r4ZingV9aYmH6pnJGfCylsRF8cPHTVEOe5xIYx0JKCuYk18dU_iscoGxzWyYjZLJY1A436M2tw3_Az2DDYCN2AN_815otK1NK8Me8wc81O6ajJk5PESxk6JqM_3_ZyobGldbyj1IahQjcAWMogXlRfsAVZy79Wb0Y752sXVd6c4jo6zxwflZ81ICUvlwwq8DyIH4g-t_jpJNqmTlLPJOoGWwoutyK9tb9Zreg05ukVo1G48rE9ilD9RL7I-CAIamya805WCJaNEfPmVE2a6w703tdjJzt9ndixGYyqJFHOMOtFo2eBpAcHRYokV209-qJWZAlCeY4tx16qDN6Lhcc4INg6krGTSuRBptveKPO05Ye0VWETOc7fHEbWLAc2c-yedG7I0Kpdr6bk4QnUpxPEmVT_0MJEVaWcEL135U1-P_mYKwNu-hkArMvwKbs7soOFGMg6Y43ZbHRP7U7ECqDONGSz8HaO7lolJceMXNS35QY6k0iRlF_wTgAoQh-ycVoMZGisz7d79cnsv5OgXPxdT_TwYZjSxnHmLpCCxlMw1u_fubCFkWZt1MRBNnWA85ntp4XxbnueyS2mvESHzCatSj2q9eUBkPbLq9a_O2DjyCPXWx6_ncC9JKm1AV-Wj19gE__k3f5hSarxIqSWELdpvcrhR_HyuWk78Q8aIvmlYxCt0kI4BeRhX4r_2XTbvNZYOAQN-RzF-bfp3xN_Ft7sr9GpOfjJdCeBmsEsLXlkw_C9BXnbS5o-jryiSEvPGhYizVxd5s2mvV7DsK-mcWNgLvIPri7bN6ihsJA6KYhAr-xTkDqouripI6pOXTQ_PaP2txOqcI-PmmJvC39AId4V4GqQQSODJjvGxdecpNWuS2Q8u3Xa3npqcFk9h897mUaaag9MzA39eTCyHQo506sbJPYjN4iR_ZbjB22Ga_SGHeMuHtAowKUTgLmEnYfrv1qid0pqQkxmlOa7cgBUYVqIxTcaSTFvvJMKPktonoJgXdrBo5QtpHKPKUg4wcKsvzAOPCukJfX4-hatdLBnDs2qpORGqlLhos95YjGjmYmABPhdiUbBfED0kcuXW6ei54wtdRaNlN25V00LqiDCfn3PXHjWEW5V3OiVX8osvUj0QJclZOB53N56norBYsT2s2XakV8GxKe1b3iNy_fGaL4A-oL9j7Nfdof2uoZSEEXTSgWtYdfhI_mAO5g2ZAaW_7rx9ehAVe1r7alsXxIK4_kVb4HIvzMLOCdFe3-KO7YF__0727UVZoVjcR5ZTkurq8qC-jzXYOWWCJ9j5FzUYp0RgKdFw6hi7yFvKc6ULx86DJolVcm-ND04zwb2dKjNU72XlS_cFfDU2EO5l3URrIWGoZ1j64748rKQARMZTp9km7oG8zsWgUDHKg-RB17Nxrmb29_dn539UGVoICupJCeRPwYorfKVvV-k50yoXWe3h3bsh2O6YBSJRnB8jSgw_pl98s_rK36Qkn5EEszXtjbhqySn3qF_A3nNpSYAZLt8mcOlWRxh6e9ZXUbnp0XGWJF4LJ_td8TFYWth5WDrvr7YcAEfejFq4h3JOAakWLE80kk5DrgNReiv5dfs-Z4z0becsv4LBUPwPcHCb_CCcs-ktrvt3ch3DgQtIwlNDOyqhXakNA8LuMvtOF28snY6_MO6PuPejDoEQC4wvy5ncevf1t324xoKnnX1qfGqBCZrdzIksOZEktIr1j-1r06qpDb7thwHS8xpS_xDArh8gjuFy2oM-dWQ9Xyo_WRkvjoZoITBtjPJelTS9aL0Z0Q6xbQ0VfGzRRYlcEZ0wfR8e6xmMuXHxVwQGngcKt-z0N8FmCXHPJ95GoLGXZYOvi7wXFpEDuIqOTv9SyxJtXidtU4CD2hi88tk4YAI0OBe4VZecWAgAVHXF0Lhs_wydN5DH2Kdd7B_I7nOdIIfC3kAqKwLnMJcCIzdgLe13y0EcFupQNvPIe5YflqgYMqw2nFg2hNq5UUj-bsNJs70rcRAN_437O3zcJVgwsDcsbQS4MIWowV0IftmnXD7eN7Kx1WNfFTVHfF_PRybgeCt2ID-ZJE_J6CrmUB0GumTrNH-DNlU00N5S8HKZ_kH0NWxFA_aU1BJqYrGd_eZnWUJhLWeDQ-ytb0qOaf0TXQBSqRHCj6GWLVh3yq7cqQRDIet39yUtcyxvLv5RP3_t1DyMNaE7PxdlKjF_ADhj2h6QhuNsVxxpbGrsUMVyCkywyT-96DObEAXZdQh40Xq8TuP_0157i1xYqLo2EUpIILX-_EWnob207bdP-hEESBs_HZz94fq-qrhhe3NxmN9ogIX4rYcJ0wFKh22EX7cgv9TyL8t3av8l8UbGium_dAxdEv2x26hsnQBpGMfEGGh_-5kOV_TbPao5v8lf0J6rfcDMHZYhmCag15NV9gQ6gL0DwvbRq7Osx6-Jw6Tl9ErGQJ2RIhk7DqPqGZcd9cgk5XhMrGFmYrvnryU02NvaJl2BUeSw7TDs9UeYHG1XNP47uyXEifGjl5fZt1MZT8E-jgz0ympa4L3XZzkUL9FslcTUIu4KCv0f_5mj1mWz8Ykp6HmRXkYb8NekJ2LUymadv057zStZapqgWxUIVPyyk7lMEJerrBOnMyNX7qI_bSilBB0_4p86o-cac2jhc9-psGoso314aEbxSX6tQk0PaN3bwO9M1aFOOj9spsf6gmSzzMUXP6VEw2S-vTQehNl3q8ddjGmzsWlsogHqHmqQbVmpRV8yI0oWEbSpGN9ootoIS3ND0IHH81bu9cRtI8lSCHc6zsKZm_3L4HVsVTsI_Ke8Idt1isuMh--i-XxJyWEuios3qSanq5IVvzTiHnpXkQcYPpFH7hGgoy8WQyauVooLgkvofiFtiKutS_QeFBGCAP3p3Y1dKwxgEGY2wsWRM84T9kDUcbiyn2F-lrh9Zu_C6W9FJG_jks4rrYgv5ltrlVqWHREg_0yncslPJMkVCSSDMVVHIoZdJ-kKRhn4kIf248VVrmpxC2_ujdq7It1QezbG69nyhrYl7j02VGuP8i1JPcgVq2UFqBuxWjLCENV1aOK8Ml1QjMTJ53lqu9a2DKpmyXFhc1HuWKZGUcaAxqDOxfYylGjMC3uV5hTD2cYPEU5-UKgrOowQm-k0ki24WLyl1e3ZeeToJ9753THl5b6O53TXW1V4Gjf8S9Gd1B9xHJjA1mTUP4TDn5F2zxcnyMUKI6cCTZDNAWnuxXBUUIdwvlzheoKiOybSI1S6pHP8PvoD7f1AI68LmCg45AHirEOXjTD_GttUAGoNYHmtkD9G6VFHLhAcVlMp7WFkQoop2doLZpY_SK6i2aspOsnX7QuIOcyF8A8mbpQHg4V-QMJv-Y2jy9iOssrbTb3Wi_jq5sxfwsOaridLvAkwx1TIT3_QyNLoRxYsW98YuV_hqCNm8B9cteDqDdM6EwsjsnsFeuK_ZGVuQW935rMys9p5LVdQcggYnxDwLVZD6qzL4ym4XkygclXPPVBHb2aYAsPaSlPXS9C8TFG_iL3jvSUFNrsIB1hjbCQLLpdAjW8bj5sY-dF8f0075Fpwiz3Sk7k2pbLCvE8Zjg0o-qVr3KjtVvln424bRK-Qo8a2gENcnjKvJ_E_dB0wCqXHc7wTWE9agBJtyhIVO-Y9LQ0kcjmQ-wX38G2bY6A1d1L9lD0-HrPQyF4YnTd7zVmTVlkQSQk927yxOSRno80lybFpxsQETUv5vTigc1CEbL2zQrq5KCdH72bRXcLAdNPiaZ3lmEdwxMnDnWe6ZdTzKlln_G9IUR5pZHgEONOZT3R7HvhqYhCbRRtj3QqRwp08T8j9hdTdGMZlAoc5HmXu91qREUqyfmakzajhGVGwIVEOBPWXFog-xdiemG1R0PUTVLFVu1dGzcMg7rbxSRwbdnZIHQf3kuZqBHUDMJks0JuSyWZray1foKKAxXZ9whiQX7IMA8oEzU7WVpi3lApkCTaEQ6zYvsamKqwH2Cw_nLZ_ioRqxCPb34ARTIn5-_qve7QqAsltnKI8igQYScxHt9_5znYQ86rJ-7PddddiQKdDFRVmdi-KnR77HCNM_9LPrkAv9jSvD3J45sNy1noAlIZjnzk68vc-Nn7sqq6jngnS8IGxMNm1nkA2KVrLUuH3fmUYbe3nmGHZdg9STnRkFPsx5fpkc4REmdR6laIXlr0lElxDolD_ArF0tcSAQ5HO3My55AuU-rU633fXl_g5QqHPfZdXhMdAbHKnXvbc0pB2hTVgYhC11xWKs3uujZWvZUVEidLZW_mU9xVrFgZMu3SfHPTJPLKNgIMLpU709kXwvBqTuWdspszKzJSNizuc6mzoWYeM2xEn1prtZKFLR3GyI6L25cRR0vS-CEqRklZ9A7MlPN5gpNVbPTwJ8VATPmCnjhSQA_v4eLOhL6o7JGRMpnhyIkQFZ0HiQi0CiMSGBKT9EiP3SOt119Egc72U8J4nS_i0FZFNYPFc5PpVHLRmBA-FaICflNsIkHAqbOnD30nnmqamBz2BiDSlKX2Tg0WmXZa0VYZafIT1xleCUm-GoJozHp8avRlZg4-t-vfaOUcNWS9hOj6RLmGsDe42D3WQRjPO7p3DitJ_mK2RMS5eDEOw86qfeKel-X8s51zcotVsa36GgozBOjeY2G2p5E2BqYumchws1tBEcISctW-1TF3CaU7M-xO6CpPK1MtDnRlASgTVVQJ9vTc-QVNkyabM595vlw8r1WQvKmIbmUYNwDHPcv2EJbHlEGjNGGiyKNaw6voBOMcUVN98FLIamBVG7yH05FJPsv8kJ6zfmY6DXX6ukad0jSQsngCJyiTN0JmhxkeHwL5DQQrfRL1ZRXaIUGmm6Anp_7T036zHVilCUfofONdmXNBrXd88UDxD0wpSA-HbbBaSUgH0sKBZPpPf0ULeC_EWacuZpKXgzr6Ib3ua5JqnZtQntzP5czVFRo4s0z0ifktpQTVT4_FHO9GbfTkeDWEi1QHNHVKkORYCGxwp7g3d9Qp4dUvIr_JsDm7aMgyXo8YoDFgftnXrt_auxS9xiIuhMhiUKqN9W4AIAlmpWWg4i7D5hLg-GfnI02ip27B3e97P1THCBSRFN9_lO8V6HB0wdg_d1Aar6BdDru2OORyYIDBdt52_rfoFfJ84tFnAFYy4c-HdjI-welsZBEUJXF5RwJXd46FjsWmj3hrH-SKtFsCtOLZ-mww-SoVyJPtfothXsLgm0ERXqWzuZqRi-CsMNXM3HQOxGs9iWnuxsjAAAbkXLwX0jov-zo_TRvTj_a-PMviFM0GItO-zfM9cFHn52YZt-uGayZaowx6sCBxTnoB4n572bYlvHqiU828DayY7VEKpu8wW0EBDV6O740yNpAKEY2hZI6woaDvv_fDMUufLeZXuyCzbCLdtTBV7xZDpuR_sXodJSC3qgROVCFAUd_1AUsAOEpslUBvAYJByqc-ZB2JYBuM6h0SawOTkrsVhjreWpJRn6Z0vktmdbrRLHtsZqNShH7TqJU4rTE4iAR7YYpMS2I1uvnTPCM9DMl1MSbWej4cO3V0CxnjDTyRY0fuqOyDHPOD-F3gWY-uFQS45s05Z9yaRjhf0W_uCOIdSbKw6GEwvyNySSxDZMSKCWupIlahQ4GU4AM2PKisjA4jX60LhXdGT4GFvOluC-Qu9y1OYK_ef2heb9dGW6SjS8Lenh64Ey6bZyKRbVQgARZL7C8Ay-U9CiU5ovJsyFaN-GmzASlD5Xw_SM3VMIkD-XOBsNbnLfUTy7G29SJU5J4CFRqKsk_g-OgfZJTmBFpTZUb81WmUJiALRFdbhUQ1iVr0Bsv0CnnSN9ErYlecafDxt94xaMHcv0d6e0GqOvNbhNngqz5jcnu3scM6Wn8zXXTy5qebU1SYNfPnYnocwH7FdDeHMhR5zRQD7duj9EEx0zNF_boxabxHdp7KnK1CbAmr_MSndqStWJaVMBpcUMDMgzuDSl_fpObviP87CBI-r_wPoZBoBQKqjJlNLK1_Dc3gqMkBgMf4XJ76OYqotLQxacPZaRug0BkAz-5UjwJLqzVCLjnQ8hDwpCjVmHZoiXBhDAkVVZ-WEI_qUD0ufNm5tq8fA38CncenXnTr6YYL5Uho6aEmFv7oiJu6X1HefP2-15fl2OBHVn7N0Nn-AAgBd32Z892puh7X5BlTQc8by24bB3wdXC7Ya6OhAkD4-Wx9-MtUbBZJ51JKj5z51QX_RllqstvvErrCWLKMxyjbX7zI_z_VG11NhcMR5yBDJxbCPmUOTsnk_tPF_rpGg85gmG1HZ7v67mER_XGivPfZQwIbNqYjKWT1Fqz0mgwvPzdNUZYd3U1VNdF--pTbEqVItmBrmYcuXiPKpSuTOJeE1L-wkZcxSeg8vp_Oocy7tLWOJx0nPrrH2FbzCo0MGhw0_kdyuUaxiOGpB1bF4SJrlltfjdLt8BGTf3VwHCZnLGI6-vZmdbm-PZvCWlhJGKB54111n20DIZVfpjtTRoJjJBNUMaZzvVvEfZb4D1s7Q6AnherX_vuJfOrKzPMer51BxiDR1An1tBDSkT8jHFYy_cdKK8cKxIG8olbsJBCqYo-JiQtzsaaOCaCzwC673-gEVkPLyHnjBgS1qwARKo5kNVen9D22mzghABmKZ5S1ob3SMxoM6Y7ylnbb5_oEen_QLsrAToRiozE9L-y-P7z9MutKttIDT0V-0v1thrE5sInG_uFoOCmsz-JVCIN0-05lK7rWWv2wIKs0CIi5NHlMNHyE8Vo0PxBIaL_n3_FDBemS1W72_43h6QLRv3nvbh3sgS6nj-tRvovIfp1oFV4_rkZgRrdRuYwqqXvvwT-_zYNnBaRfdwgVHuzVBqAnaNPN-SuTxc7uWO4EzuAtB6oskRB7ezLnG1ZmQfv0ORU90ydUOeG44Al8N3K7ITpcCZ9JMedcLzG2P5h5ggHkIg0QvWb7_-TILl7XzKv5KXR1Spk66wBDaTBfxCHmOzXHg6FA9FpMBmjz0IVLkwEIdVHj-hCJvew50MBbAqJxgLfxWEK9BMCiLWcWmwwpZtacW8OsI6eQDoFrtFFFdTVwUO5K4tNo7vLSHuizdBze889OiWgJ0iCm2n32SoTb8HUjMvPZZHkSi8a3GLa2DOPAHPm_niwDlCLgd8F3kcRS4nYuIQh6p_c2urrfEWGJhWPMxNBIq4Eowl6bF-0meWYMuIsW-40E79URfRBBKNIlJPMogP7zMF-l_gDer1-cSIGf1qxG5G8NWV1lQZlIvNOKJVRHk6IfCMIycc9GDu2crAkV6St4YL0vRuemf92JHlcqtIkYceGCnayzQpOeBSpV7tnxrOmxHRIK3emwnVRJ2wTXHWiFtWyPsiuc1F96uNQ4GZa3vN91ZxYIIxB-ywFzMR2F6LrssUSzFSEETZFUHVCMoCaajIECG6xbB94k3I4Zd-ScNBOlLwSkwYOdcqYgCr_H9ME31UOPExc_fedy_Gfkypd1ZZvKJmMKV_g9wDi-wE84mVIRS5qygNGJQTuSmXW3MgsYBnNedAVRkVlqIReyIPMBH2oBCzkLZBudNJrYIm_bHj9qqodGuDoogUCDksby-HVbhpsBvDZj4ZfMGGu49S4WRhu7crUP8z9jHXgZgvyVdcjd06W5RLTAnhYRBU9sjsfABzH1qOIxV6jN5pdalvaYkNn-3RBoY-tF2oE7xoEKh4DOxGAzO36RtaYi368rX2gW5Bp2GHBYOwC0S4YIt9buYfiWaQENJp3XcXobolWeo0j6VEeaZgNe1QwLDIc1NT-0WbrssbnI2Gz1q-tsFS4EDK0oZ9nwa9j8f_eGg5PVVI-bed9Ay7mV6KJFRsSsDkyh6l7rFPUUg0SbVVE7ELF6_xvJo_JSCxTIgDvs5Nauw6pBMb0kHVndG5BBMrhaXhFFPAnxXdBPbUm8obKaZ4YOO-_wjeCd2bkEaXCxeC_OJU2kSH_aU0_9OZg8speEYLatxc8-5PScrWDJaNaJCzNvXjFQ13hzB4gBDLTUEyQmUkVGQLypmVftcGLdVGdZ-ATvf0b1A57rYpy1JjymjNhLQfEnaM6YF3xXUocMWQ3Tx5Q1kBM19aV7f2aVtTnhUwdTMmgh8V55l5znnzYIYxmvolKU31EYoHah4fEYM0XGUgMg2GeDorvRCZRE5rDepgR2GerAXNXc_lW-AHcn3pHWVGmXnRga37F6dtkCSTdQHLonWOBjs19efKPnYeMaUnhBnyQnT1B-h7UUylB2_mDPsRnivwvESQb7U3s7ofd4RQnwgFmtJFRgdCgCbjjGjX_3wd2ew4MN5BAslTIaKX3MU5_bDN5hlF02konuW_CD1uMQXz1i4fLb9V7ov5pThL7bNdwQ2CvpTLQWFFrUtmsabgAcDqIdfOA4vRhgjW7DUL8ldr0x-KiGlJ-Pn4v9aaxa5v0n598qBdUlTX7ngYMjnczB0dDgiGgaKIKfhd03J3G47TK5R0l8HwQDNCt5BM3aaRNFulrgZ10WBb2VFc1BTuuw7npw5x-uecBinE87a8H-RB02OT5MAL1B0uZIA4W2dijnMlvVzbo4DZi203zPt0g5Ha3yOKe8wGrtW6ozU0UamXj4SY90btcT3F2LxVV__WZNu2AeZ7ckSp57jjaGMDu8R3WrDWwEhCf61x_5X2sZIVjv0_MF11dXcFvrVxPsr6ttz2Cn6zAvb_t-tbV8hNg77v3EehTTcVwvTp-kfFzB3U9EC_cjCbLt61s00qH4Qy42VRxNchUnFijLLppqeL-nv8DIGiGzosI6bROOgw-V7-L_DNEPRktWLD5RWKS1LaH23GDOkI6DzUoHl5_QfNlSE1ceKqpfe3paaGSMThhKFouXO4LjeGVQyBaKa1aRTV_0JttXf2UJvGH8TeUIVSPz-IMQRa7h0AuDVQLyk1iR40aa0BOhfs1w_AykGJOXHplgpg4q8ksG8VeMgi6XB5u_WtwiloZPjUHuQerUlnF1RXNAoknqdhd-IxACLIY301m9y0-inWxmMRqo-u6FPcMZ4a55wuXoroIov8iLsjdlAONcyviiL5l9GKHr7TXyD8PVee_c6W4eCfIH9fH2t6zsUeJOEm9Cya8Sb0Nxj_fgN58RB069ZzxaF7pPYiiz0t-Gw8OtfB4heNAyUcq6fF3qHATKrDA6pxvqKzZoJEcxneRa9GB9cAnqoPrGr6Q-HETWdOFqReHOh0mZX2s0OFLjxGNjkqwrEx5m1mp9sdTCLN-dclZs0gGJLHxt-Y9P0ki8iwsBU3-frPhJsZmmD3GrrWdeLYfvEZD71ayRHwP7RldyHkPp8dAdm-nK63ibc0r28VpQGEdxbGipovhAVcdmDIjEcQ_jnX58CArMV4LGPQzp9oYEAOigvwODwMccLn0boJw35U6HwN7nNYhG-BCpC_XvWubjgjGVQi1dDK38yNko76I3g08F38w5Lr-Bf51O1I9R-O6ePJJA6xzfr7PaXiiZbfh8QVNRhbsaEumqmyVTmrjLhBvrgdbPRb1HwTGhcBBA9wocp-f8ZZn4JwDFmFddpMXfzBx1Mp42upI3QTLgB2X_go3h3SL1_nAOCJeO9QehvGYU7BCSfAm953T7sPBJRUjGyP6w9O_l-E8htsdNM2-eFHF7PmDy-sSpEcNPEQt_3AdJXJlXXQDQo1_zBgO4TSls3zkSZMc42ntk3vCeaOHgU1df_30LyrQXn0BwP8nJOFar55Bf7RbgNZtkeFJ3x6b9NRsvqHPd10bxO8EafaqMAjwHTalUCKOXEkI_YtOuHqjxuF1KhYcUGngAKkap2zDciqhglU5DOgbZT-lJCirz-ZeOlvEZMItsRo0_FdgQIMJ3xt-Cbib4SnCKwoTviQQBBK6yPEDHs_42YPUOQe7lC43lktzlYRXzfWJt2LVgMBbjuDKt-UP0OxyxceswL0K65zuXOHXVscflKA60P1Vn6FRTB5JL9Hvsv17vi25YFeFKS5jGHnltQSlVquQ48gEPdFaJ6akwe7KoD43yOOqyj6fZPWelMuh4HeiU4SngLLxjbnHnJeu3LBu3kQcstyB7LlL8cb2i7u48R4AAKUmYnNoodVKR-I3yldzEY9L6ba4bdscX8Iems9RSY5byq7SFDaOySN65GIvgoknwquMbsSgKSGC_xMLoZWuSXEyNRVmcym8na2ha89uzOkWpB35pr8aoybWWn4Jy28SZRhlMqLgv4tMBHru07tBqTBaz1F1tc5yqFyQivuw0eM-MSIJqfKiDoTAUl1UkWnAduNWY4-CCtchYTVc_MgVCu8jAlVu7CzfDLiyw2z5Y2G581xkn3kpCl222gSUf6bnscspojfiQ675HUVaQRih9J2BOQoMzdPf6CCSsssEg0FWI3QaH1NexKqw2Jlx-yXRHFgdqZFtfdqSTMoVTghWUfP6cXBgdA2vRyAglUj0l6eIdB1NxxpkfTi9tfX1xzj0mLD4c2MgDiCSOvUvn83h4YAnx1IEmhuiDnV-a2DNSDmS11W2GPnjdXfSLdwNmK4B1pwh_2W1V8ZrtlySs2hHb_pDz2PbiXkF1uhxh0-a8nN8q19TZrDyWZ595cz9ybVvtCKt4HUiXrSHV6QwEu3OqWZTG8zdTKQ5wVBuJwRBFfnuE44CyQTHZVty6Z9ng3TIw2P7WGduB2XkHQApIwQLrNFXqsOTfvcM2Q0_mUt3IQSHBd70fZu47L4gjwhYztHiXMTCrgv5O-qfcE0nLF9D9Azx6DeZeFoQ3JpI8v5LYBvolsOt6soYsXFL3S_pn7tD8Z_6uFyFlF1IIUeK81RTAUQ04nVufp4ooH7NxT4MGKXXQCSyySjneLnbUxRjh3YxjhLYeLL84W6I7p7SkKWwqgvAO7xwE60ww_n3U_dseiAw0P48jIiPJJo82CPwtuv1vSvBi7kzKJ1_6-fLjV64YmGQ5PoJeupcBeToXvqACqvzvQW_RgItJhvfwSY9quqX6malPdV4mvj9oDbNRcVSJFECGufMRjG-m46aQ5ZPqib9pDQbxGwyR0pAPLj2aqxjw_gOmUnuJXhvZMnOEWL1DNCiUGNk7RMk_049u4NJ5zQ-G4W__tEg_ZrnsWTC5qNYKvzc0VoLWtpb4Pqp5EKr1lWcK35KjuIAzNqUWWFLEz_6EnTAPUDk0JglGrKunQ_E3qykhHgPkXnyNSkkBI8jTVAdW27fUTpZEUx-Ug5-fEu9C6TQ5lfUmjX4q77azWvy6cX-fIzp-5wf8UsyjGo6s5vh22ec5xWrZ9fK4go7FiCk7C_1d8HbsFGqDSHfWCwrmJwqcSVi_ezrxxcVMwxwLxLMwSy50TAoyDbWEg==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LTIwMjUtMDgtMDd8YXp1cmUifQ",
+              "format": "azure-openai-responses-v1",
+              "id": "rs_042fccda859d96cf016a8d7c8c02ec8193b14bc555872a9e45",
+              "index": 1
+            }
+          ]
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4666,
+      "completion_tokens": 2531,
+      "total_tokens": 7197,
+      "cost": 0.0272545,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 3456,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0272545,
+        "upstream_inference_prompt_cost": 0.0019445,
+        "upstream_inference_completions_cost": 0.02531
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1856,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "openrouter_metadata": {
+      "requested": "openai/gpt-5",
+      "strategy": "direct",
+      "region": "CDG",
+      "summary": "available=1, selected=Azure",
+      "attempt": 1,
+      "is_byok": false,
+      "endpoints": {
+        "total": 3,
+        "available": [
+          {
+            "provider": "Azure",
+            "model": "openai/gpt-5-2025-08-07",
+            "selected": true
+          }
+        ]
+      }
+    }
+  },
+  "responseId": "gen-1787657354-y8Lj0bKAfp9ww30Nn6Rz",
+  "modelVersion": "openai/gpt-5",
+  "usage": {
+    "prompt_tokens": 4666,
+    "completion_tokens": 2531,
+    "total_tokens": 7197,
+    "cost": 0.0272545,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 3456,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0272545,
+      "upstream_inference_prompt_cost": 0.0019445,
+      "upstream_inference_completions_cost": 0.02531
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1856,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "latencyMs": 28750,
+  "localMetrics": null,
+  "providerSchemaDroppedKeywords": [
+    {
+      "keyword": "maxItems",
+      "paths": [
+        "#/$defs/claim/properties/supportAnchors/maxItems",
+        "#/properties/claims/maxItems"
+      ]
+    },
+    {
+      "keyword": "minItems",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+        "#/$defs/claim/properties/supportAnchors/minItems"
+      ]
+    },
+    {
+      "keyword": "minLength",
+      "paths": [
+        "#/$defs/claim/properties/cannotConclude/items/minLength",
+        "#/$defs/claim/properties/conditions/items/minLength",
+        "#/$defs/claim/properties/limitations/items/minLength",
+        "#/$defs/claim/properties/supportAnchors/items/minLength",
+        "#/$defs/claim/properties/unresolved/items/minLength"
+      ]
+    },
+    {
+      "keyword": "minimum",
+      "paths": [
+        "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+        "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+        "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+      ]
+    },
+    {
+      "keyword": "pattern",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+      ]
+    },
+    {
+      "keyword": "uniqueItems",
+      "paths": [
+        "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+        "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+        "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+        "#/$defs/claim/properties/flags/uniqueItems"
+      ]
+    }
+  ],
+  "providerEnumTypesInjected": [],
+  "providerSchemaAssertions": {
+    "passed": true,
+    "maxDepth": 5,
+    "maxDepthLimit": 5,
+    "propertyCount": 37,
+    "propertyLimit": 5000,
+    "enumValueCount": 123,
+    "enumValueLimit": 1000,
+    "schemaStringLength": 2204,
+    "schemaStringLengthLimit": 120000,
+    "refsChecked": 2,
+    "errors": []
+  },
+  "validation": {
+    "accepted": true,
+    "retryable": false,
+    "diagnostics": [],
+    "partialAudit": null
+  }
+}

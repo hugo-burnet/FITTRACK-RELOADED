@@ -1,0 +1,165 @@
+{
+  "fragmentId": "frag.e5f3.00025760",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 1,
+    "retained": 1,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies, mais ne remplace pas la progression de charge; un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse, avec douleur définie par l’acceptabilité du patient plutôt que par un chiffre universel",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": "Texte rapporte un consensus de physiothérapeutes"
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": "Formulé comme un consensus professionnel, pas comme preuve expérimentale"
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.dd4971b4b36f2a0c",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies, mais ne remplace pas la progression de charge; un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse, avec douleur définie par l’acceptabilité du patient plutôt que par un chiffre universel",
+          "supportSpans": [
+            {
+              "text": "Une orthèse de contre-force peut être adjointe dans certaines épicondylalgies, mais ne remplace pas la progression de charge; un consensus de physiothérapeutes a retenu éducation, pacing, exercice progressif et orthèse, avec douleur définie par l’acceptabilité du patient plutôt que par un chiffre universel",
+              "relativeStartByte": 90,
+              "relativeEndByte": 408,
+              "absoluteStartByte": 25850,
+              "absoluteEndByte": 26168
+            }
+          ],
+          "domain": "clinical",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Consensus de praticiens"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "consensus_statement"
+              ],
+              "reason": "Mention explicite d'un consensus"
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "clinical",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": "Texte rapporte un consensus de physiothérapeutes"
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": "Formulé comme un consensus professionnel, pas comme preuve expérimentale"
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": "Consensus de praticiens"
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "consensus_statement"
+              ],
+              "reason": "Mention explicite d'un consensus"
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "clinical",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [
+            "cand.e5-citation.1b8b3f44f6dd20d6"
+          ],
+          "citationAttributionState": "ATTACHED",
+          "conditions": [
+            "épicondylalgies",
+            "douleur définie par l’acceptabilité du patient",
+            "composants: éducation, pacing, exercice progressif, orthèse"
+          ],
+          "limitations": [
+            "Ne remplace pas la progression de charge"
+          ],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice",
+            "clinical_content"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 3908,
+      "outputTokens": 498,
+      "reasoningTokens": 0,
+      "totalTokens": 4406,
+      "costUsd": 0.006841
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 3908,
+      "outputTokens": 498,
+      "reasoningTokens": 0,
+      "totalTokens": 4406,
+      "costUsd": 0.006841
+    }
+  }
+}

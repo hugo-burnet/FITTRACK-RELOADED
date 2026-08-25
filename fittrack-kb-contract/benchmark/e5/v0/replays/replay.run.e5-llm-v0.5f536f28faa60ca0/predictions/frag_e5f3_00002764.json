@@ -1,0 +1,186 @@
+{
+  "fragmentId": "frag.e5f3.00002764",
+  "status": "PARTIALLY_VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00002764",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.642637a4e8083310",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Syndrome de la queue de cheval, déficit neurologique progressif, fracture, infection ou malignité suspectées exigent une évaluation médicale appropriée",
+        "supportSpans": [
+          {
+            "text": "Syndrome de la queue de cheval, déficit neurologique progressif, fracture, infection ou malignité suspectées exigent une évaluation médicale appropriée",
+            "relativeStartByte": 51,
+            "relativeEndByte": 208,
+            "absoluteStartByte": 2815,
+            "absoluteEndByte": 2972
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type de preuve non spécifié textuellement."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Références à IFOMPT 2020 et ACR 2021 suggèrent des lignes directrices cliniques."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Recommandation clinique pratique."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type de preuve non spécifié textuellement."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "clinical_practice_guideline"
+            ],
+            "reason": "Références à IFOMPT 2020 et ACR 2021 suggèrent des lignes directrices cliniques."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.2ff9226e8f58bd0d",
+          "cand.e5-citation.c8bdbcc7615aa0aa"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "les signes isolés sont imparfaits et doivent être interprétés en combinaison et dans leur contexte"
+        ],
+        "unresolved": [],
+        "flags": [
+          "clinical_content",
+          "possible_conflict"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.a9166ab3d8494b20",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "les signes isolés sont imparfaits et doivent être interprétés en combinaison et dans leur contexte",
+        "supportSpans": [
+          {
+            "text": "les signes isolés sont imparfaits et doivent être interprétés en combinaison et dans leur contexte",
+            "relativeStartByte": 210,
+            "relativeEndByte": 312,
+            "absoluteStartByte": 2974,
+            "absoluteEndByte": 3076
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de détail d'étude."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Attribution des citations potentiellement ambiguë pour cette phrase."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Conseil d'interprétation clinique."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de détail d'étude."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Attribution des citations potentiellement ambiguë pour cette phrase."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "UNRESOLVED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

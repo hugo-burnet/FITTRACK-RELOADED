@@ -1,0 +1,274 @@
+{
+  "fragmentId": "frag.f2.0010",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.f2.0010",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.67c4b2d5c3e6e587",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Deux exercices sollicitant le même pattern de mouvement, la même fonction musculaire principale, une longueur musculaire dominante comparable, et ne différant principalement que par le profil de résistance ou le niveau de stabilité.",
+        "supportSpans": [
+          {
+            "text": "Substitutions quasi directes.",
+            "relativeStartByte": 2,
+            "relativeEndByte": 31,
+            "absoluteStartByte": 79086,
+            "absoluteEndByte": 79115
+          },
+          {
+            "text": "Deux exercices sollicitant le même pattern de mouvement, la même fonction musculaire principale, une longueur musculaire dominante comparable, et ne différant principalement que par le profil de résistance ou le niveau de stabilité.",
+            "relativeStartByte": 34,
+            "relativeEndByte": 271,
+            "absoluteStartByte": 79118,
+            "absoluteEndByte": 79355
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "reason": "Pas d'effet mesuré, définition de catégorie."
+          },
+          "evidenceTypes": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "reason": "Il s’agit d’une définition, pas d’un résultat."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": "Définit le concept de « Substitutions quasi directes » et ses critères."
+          },
+          "epistemicStatus": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "reason": "Définition conceptuelle, pas un résultat empirique."
+          },
+          "confidenceByAspect": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "reason": "Pas d'effet mesuré, définition de catégorie."
+          },
+          "evidenceTypes": {
+            "state": "NOT_APPLICABLE",
+            "value": null,
+            "reason": "Il s’agit d’une définition, pas d’un résultat."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.803f0b430eff0073",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "La méta-analyse de la section 2.5 (pas de différence d'hypertrophie poids libres/machines) et celle de la section 7.6 (pas de différence unilatéral/bilatéral) fournissent une base de preuve directe pour qualifier ce type de paires de « quasi directes » sur le plan de l'hypertrophie, même si la spécificité de force diffère.",
+        "supportSpans": [
+          {
+            "text": "La méta-analyse de la section 2.5 (pas de différence d'hypertrophie poids libres/machines) et celle de la section 7.6 (pas de différence unilatéral/bilatéral) fournissent une base de preuve directe pour qualifier ce type de paires de « quasi directes » sur le plan de l'hypertrophie, même si la spécificité de force diffère.",
+            "relativeStartByte": 446,
+            "relativeEndByte": 781,
+            "absoluteStartByte": 79530,
+            "absoluteEndByte": 79865
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EVIDENCE",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "Niveau de confiance non spécifié."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Référence à des méta-analyses indiquant « pas de différence d’hypertrophie »."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": "Mention explicite de méta-analyses."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EVIDENCE",
+            "reason": "Affirme l’existence d’une base de preuve directe issue de méta-analyses."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Le degré de certitude n’est pas précisé dans le fragment."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": "Niveau de confiance non spécifié."
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_hypertrophy_measured",
+            "reason": "Référence à des méta-analyses indiquant « pas de différence d’hypertrophie »."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "meta_analysis"
+            ],
+            "reason": "Mention explicite de méta-analyses."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "poids libres vs machines",
+          "unilatéral vs bilatéral"
+        ],
+        "limitations": [
+          "même si la spécificité de force diffère"
+        ],
+        "cannotConclude": [],
+        "unresolved": [
+          "Attribution précise des sources (sections internes non disponibles)"
+        ],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.e09429144c4a89ae",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Exemple : développé couché haltères vs barre (même pattern, même muscle dominant, différence principale de stabilité et de légère variation d'amplitude d'épaule).",
+        "supportSpans": [
+          {
+            "text": "Exemple : développé couché haltères vs barre (même pattern, même muscle dominant, différence principale de stabilité et de légère variation d'amplitude d'épaule).",
+            "relativeStartByte": 272,
+            "relativeEndByte": 445,
+            "absoluteStartByte": 79356,
+            "absoluteEndByte": 79529
+          }
+        ],
+        "domain": "exercise",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de mesure rapportée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Exemple pratique sans citation empirique."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Propose un exemple pratique illustratif de la catégorie."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Pas de mesure rapportée."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Exemple pratique sans citation empirique."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

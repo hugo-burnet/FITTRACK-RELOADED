@@ -1,0 +1,276 @@
+{
+  "fragmentId": "frag.e5f2.00027824",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "run.e5-llm-v0.0fc70ffb42afdf73",
+    "fragmentId": "frag.e5f2.00027824",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.b0eb406f3517ebbe",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Les érecteurs du rachis (ilio-costal, longissimus, épineux) et le multifidus réalisent l'**extension du rachis**",
+        "supportSpans": [
+          {
+            "text": "Les érecteurs du rachis (ilio-costal, longissimus, épineux) et le multifidus réalisent l'**extension du rachis**",
+            "relativeStartByte": 0,
+            "relativeEndByte": 115,
+            "absoluteStartByte": 27824,
+            "absoluteEndByte": 27939
+          }
+        ],
+        "domain": "anatomy",
+        "knowledgeType": "ANATOMICAL_FACT",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "ANATOMICAL_FACT",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.c73866159b47674e",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "contribuent à sa stabilisation dynamique lors des mouvements de flexion/extension et de rotation.",
+        "supportSpans": [
+          {
+            "text": "contribuent à sa stabilisation dynamique lors des mouvements de flexion/extension et de rotation.",
+            "relativeStartByte": 119,
+            "relativeEndByte": 217,
+            "absoluteStartByte": 27943,
+            "absoluteEndByte": 28041
+          }
+        ],
+        "domain": "anatomy",
+        "knowledgeType": "ANATOMICAL_FACT",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "ANATOMICAL_FACT",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.629d851e0d5c9dc6",
+        "technicalClaimRef": "tmp.claim.03",
+        "rawStatement": "Le multifidus présente une cinétique de pont actine-myosine particulière selon des travaux sur le muscle paraspinal chez le rat, distincte des autres muscles squelettiques",
+        "supportSpans": [
+          {
+            "text": "Le multifidus présente une cinétique de pont actine-myosine particulière selon des travaux sur le muscle paraspinal chez le rat, distincte des autres muscles squelettiques",
+            "relativeStartByte": 218,
+            "relativeEndByte": 392,
+            "absoluteStartByte": 28042,
+            "absoluteEndByte": 28216
+          },
+          {
+            "text": "preuve translationnelle indirecte (modèle animal), niveau très faible pour une application directe à la programmation humaine.",
+            "relativeStartByte": 537,
+            "relativeEndByte": 666,
+            "absoluteStartByte": 28361,
+            "absoluteEndByte": 28490
+          }
+        ],
+        "domain": "biomechanics",
+        "knowledgeType": "MECHANISM",
+        "epistemicStatus": "mechanistic_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "generalization",
+                "confidence": "very_low",
+                "rationale": "Traduction vers l'humain explicitement qualifiée de niveau très faible."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "animal_model",
+            "reason": "Preuve indiquée comme provenant d’un modèle animal."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "MECHANISM",
+            "reason": null
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "mechanistic_only",
+            "reason": "Observation mécanistique rapportée sans outcome pratique démontré; preuve en modèle animal."
+          },
+          "confidenceByAspect": {
+            "state": "RESOLVED",
+            "value": [
+              {
+                "aspect": "generalization",
+                "confidence": "very_low",
+                "rationale": "Traduction vers l'humain explicitement qualifiée de niveau très faible."
+              }
+            ],
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "animal_model",
+            "reason": "Preuve indiquée comme provenant d’un modèle animal."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": null
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.a22d86be119f86ee"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [],
+        "limitations": [],
+        "cannotConclude": [
+          "preuve translationnelle indirecte (modèle animal)",
+          "niveau très faible pour une application directe à la programmation humaine."
+        ],
+        "unresolved": [],
+        "flags": [],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

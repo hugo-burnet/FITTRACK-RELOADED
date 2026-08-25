@@ -1,0 +1,254 @@
+{
+  "fragmentId": "frag.e5f2.00078216",
+  "status": "VALIDATED",
+  "diagnostics": [],
+  "partialAudit": null,
+  "claimAudit": {
+    "attempted": 2,
+    "retained": 2,
+    "filtered": 0,
+    "claims": [
+      {
+        "sourceClaimIndex": 0,
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.eb7eaf0b63dc1796",
+          "technicalClaimRef": "tmp.claim.01",
+          "rawStatement": "Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.",
+          "supportSpans": [
+            {
+              "text": "Un exercice ne peut être remplacé par un autre de façon fiable qu'en tenant compte simultanément de plusieurs dimensions, pas seulement du « muscle ciblé » nominal.",
+              "relativeStartByte": 0,
+              "relativeEndByte": 171,
+              "absoluteStartByte": 78216,
+              "absoluteEndByte": 78387
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      },
+      {
+        "sourceClaimIndex": 1,
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).",
+        "knowledgeType": {
+          "state": "RESOLVED",
+          "value": "EXPERT_PRACTICE",
+          "reason": null
+        },
+        "epistemicStatus": {
+          "state": "RESOLVED",
+          "value": "practice_only",
+          "reason": null
+        },
+        "individuallyValid": true,
+        "diagnostics": [],
+        "canonicalCandidate": {
+          "candidateId": "cand.e5-benchmark-claim.46d12c4857417d24",
+          "technicalClaimRef": "tmp.claim.02",
+          "rawStatement": "Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).",
+          "supportSpans": [
+            {
+              "text": "Les dimensions pertinentes, dérivées directement des sections précédentes, sont : le **pattern de mouvement** (poussée horizontale/verticale, tirage horizontal/vertical, hip hinge, squat, fente), la **fonction musculaire précise** sollicitée (quel chef, quelle portion, biarticulaire ou non), la **longueur musculaire** dominante de l'exercice (raccourcie, moyenne, allongée), le **profil de résistance** (où se situe le point difficile sur l'amplitude), la **stabilité requise**, la **demande lombaire et articulaire**, le **matériel disponible**, et l'**objectif** (hypertrophie régionale précise vs développement global, force vs volume).",
+              "relativeStartByte": 172,
+              "relativeEndByte": 828,
+              "absoluteStartByte": 78388,
+              "absoluteEndByte": 79044
+            }
+          ],
+          "domain": "exercise",
+          "knowledgeType": "EXPERT_PRACTICE",
+          "epistemicStatus": "practice_only",
+          "assessmentDraft": {
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": null
+            },
+            "clinicalEvidenceLevel": null,
+            "hierarchyHint": "biomechanics",
+            "supportsHypertrophySuperiority": false,
+            "supportsDemonstratedClinicalRisk": false
+          },
+          "axisResolution": {
+            "knowledgeType": {
+              "state": "RESOLVED",
+              "value": "EXPERT_PRACTICE",
+              "reason": null
+            },
+            "epistemicStatus": {
+              "state": "RESOLVED",
+              "value": "practice_only",
+              "reason": null
+            },
+            "confidenceByAspect": {
+              "state": "UNRESOLVED",
+              "value": null,
+              "raw": null,
+              "reason": null
+            },
+            "directness": {
+              "state": "RESOLVED",
+              "value": "expert_only",
+              "reason": null
+            },
+            "evidenceTypes": {
+              "state": "RESOLVED",
+              "value": [
+                "expert_practice"
+              ],
+              "reason": null
+            },
+            "hierarchyHint": {
+              "state": "RESOLVED",
+              "value": "biomechanics",
+              "reason": "deterministic_corpus_rule"
+            }
+          },
+          "citationOccurrenceRefs": [],
+          "citationAttributionState": "NOT_CITED",
+          "conditions": [],
+          "limitations": [],
+          "cannotConclude": [],
+          "unresolved": [],
+          "flags": [
+            "expert_practice"
+          ],
+          "reviewState": "pending_human_review"
+        }
+      }
+    ]
+  },
+  "coverageAudit": {
+    "diagnostics": [],
+    "coveredUnitIndexes": [
+      0,
+      1
+    ]
+  },
+  "fullCallCount": 1,
+  "repairCallCount": 0,
+  "usageByCallType": {
+    "full": {
+      "calls": 1,
+      "inputTokens": 4666,
+      "outputTokens": 2531,
+      "reasoningTokens": 1856,
+      "totalTokens": 7197,
+      "costUsd": 0.0272545
+    },
+    "repair": {
+      "calls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "reasoningTokens": 0,
+      "totalTokens": 0,
+      "costUsd": 0
+    },
+    "total": {
+      "calls": 1,
+      "inputTokens": 4666,
+      "outputTokens": 2531,
+      "reasoningTokens": 1856,
+      "totalTokens": 7197,
+      "costUsd": 0.0272545
+    }
+  }
+}

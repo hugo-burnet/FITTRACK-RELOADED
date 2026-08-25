@@ -1,0 +1,105 @@
+{
+  "fragmentId": "frag.e5f2.00085197",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f2.00085197",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.c430295b09668861",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*, fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+        "supportSpans": [
+          {
+            "text": "substituer un exercice pour un autre en cas d'inconfort persistant (ex. développé couché barre vers développé haltères ou machine convergente) est une pratique largement répandue chez les coachs *evidence-based*, fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle",
+            "relativeStartByte": 39,
+            "relativeEndByte": 349,
+            "absoluteStartByte": 85236,
+            "absoluteEndByte": 85546
+          }
+        ],
+        "domain": "training",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Pratique rapportée de coachs, sans preuve populationnelle."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Le texte explicite l'appui sur l'observation clinique individuelle."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "biomechanics",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Le fragment décrit une pratique des coachs evidence-based."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "Présentée comme fondée sur l'observation clinique individuelle et non sur une preuve populationnelle."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "expert_only",
+            "reason": "Pratique rapportée de coachs, sans preuve populationnelle."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "expert_practice"
+            ],
+            "reason": "Le texte explicite l'appui sur l'observation clinique individuelle."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "biomechanics",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "inconfort persistant durant un exercice"
+        ],
+        "limitations": [
+          "fondée sur l'observation clinique individuelle plutôt que sur une preuve populationnelle"
+        ],
+        "cannotConclude": [
+          "À ne jamais présenter comme une règle universelle de sécurité."
+        ],
+        "unresolved": [],
+        "flags": [
+          "expert_practice",
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}

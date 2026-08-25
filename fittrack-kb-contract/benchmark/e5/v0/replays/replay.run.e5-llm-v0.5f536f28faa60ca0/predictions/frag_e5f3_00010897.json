@@ -1,0 +1,194 @@
+{
+  "fragmentId": "frag.e5f3.00010897",
+  "status": "VALIDATED",
+  "prediction": {
+    "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+    "runId": "replay.run.e5-llm-v0.5f536f28faa60ca0",
+    "fragmentId": "frag.e5f3.00010897",
+    "annotationPrediction": "CLAIMS",
+    "claims": [
+      {
+        "candidateId": "cand.e5-benchmark-claim.c679dd6b86bd69d2",
+        "technicalClaimRef": "tmp.claim.01",
+        "rawStatement": "Le seuil doit être abaissé quand l’irritabilité est élevée : douleur au repos, réaction avec faible charge, amplitude très sensible, aggravation durable ou perte de fonction.",
+        "supportSpans": [
+          {
+            "text": "Le seuil doit être abaissé quand l’irritabilité est élevée : douleur au repos, réaction avec faible charge, amplitude très sensible, aggravation durable ou perte de fonction.",
+            "relativeStartByte": 2,
+            "relativeEndByte": 185,
+            "absoluteStartByte": 10899,
+            "absoluteEndByte": 11082
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "EXPERT_PRACTICE",
+        "epistemicStatus": "practice_only",
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type de preuve non précisé pour cette recommandation."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune attribution explicite de type d’étude pour cette phrase."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "EXPERT_PRACTICE",
+            "reason": "Formulation prescriptive pratique sans données chiffrées, présentée comme conduite à tenir."
+          },
+          "epistemicStatus": {
+            "state": "RESOLVED",
+            "value": "practice_only",
+            "reason": "deterministic_expert_practice_default"
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Type de preuve non précisé pour cette recommandation."
+          },
+          "evidenceTypes": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Aucune attribution explicite de type d’étude pour cette phrase."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [],
+        "citationAttributionState": "NOT_CITED",
+        "conditions": [
+          "irritabilité élevée définie par douleur au repos, réaction avec faible charge, amplitude très sensible, aggravation durable ou perte de fonction"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content",
+          "expert_practice"
+        ],
+        "reviewState": "pending_human_review"
+      },
+      {
+        "candidateId": "cand.e5-benchmark-claim.4447a6091698171f",
+        "technicalClaimRef": "tmp.claim.02",
+        "rawStatement": "Le consensus de Berne propose une progression selon irritabilité et réponse symptomatique",
+        "supportSpans": [
+          {
+            "text": "Le consensus de Berne propose une progression selon irritabilité et réponse symptomatique",
+            "relativeStartByte": 186,
+            "relativeEndByte": 277,
+            "absoluteStartByte": 11083,
+            "absoluteEndByte": 11174
+          },
+          {
+            "text": "[Consensus de Berne 2022](https://www.jospt.org/doi/10.2519/jospt.2022.10952)",
+            "relativeStartByte": 279,
+            "relativeEndByte": 356,
+            "absoluteStartByte": 11176,
+            "absoluteEndByte": 11253
+          }
+        ],
+        "domain": "clinical",
+        "knowledgeType": "DEFINITION",
+        "epistemicStatus": null,
+        "assessmentDraft": {
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Protocole clinique de progression en fonction de symptômes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "consensus_statement"
+            ],
+            "reason": "Texte mentionne explicitement un consensus."
+          },
+          "clinicalEvidenceLevel": null,
+          "hierarchyHint": "clinical",
+          "supportsHypertrophySuperiority": false,
+          "supportsDemonstratedClinicalRisk": false
+        },
+        "axisResolution": {
+          "knowledgeType": {
+            "state": "RESOLVED",
+            "value": "DEFINITION",
+            "reason": "Décrit une proposition de protocole/progression par un consensus."
+          },
+          "epistemicStatus": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "reason": "Niveau d’établissement non indiqué."
+          },
+          "confidenceByAspect": {
+            "state": "UNRESOLVED",
+            "value": null,
+            "raw": null,
+            "reason": null
+          },
+          "directness": {
+            "state": "RESOLVED",
+            "value": "direct_clinical",
+            "reason": "Protocole clinique de progression en fonction de symptômes."
+          },
+          "evidenceTypes": {
+            "state": "RESOLVED",
+            "value": [
+              "consensus_statement"
+            ],
+            "reason": "Texte mentionne explicitement un consensus."
+          },
+          "hierarchyHint": {
+            "state": "RESOLVED",
+            "value": "clinical",
+            "reason": "deterministic_corpus_rule"
+          }
+        },
+        "citationOccurrenceRefs": [
+          "cand.e5-citation.596245dcbd28f2f3"
+        ],
+        "citationAttributionState": "ATTACHED",
+        "conditions": [
+          "progression selon irritabilité et réponse symptomatique"
+        ],
+        "limitations": [],
+        "cannotConclude": [],
+        "unresolved": [],
+        "flags": [
+          "clinical_content"
+        ],
+        "reviewState": "pending_human_review"
+      }
+    ]
+  }
+}
