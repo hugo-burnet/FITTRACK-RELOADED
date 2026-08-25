@@ -76,6 +76,27 @@ que l'empreinte et le texte des 77 fragments réellement cités.
 **E1 à E4 sont amorcés** sur `master` : tableaux, axes, citations,
 puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
 
+### KB phase 4 (2026-08-26) — bifurcation vers un wiki
+
+Le coach est abandonné. Pas par renoncement : la mesure du jour dit que le corpus est une
+**encyclopédie** — anatomie, biomécanique, sélection d'exercices, clinique — et qu'on
+essayait d'en faire un coach, c'est-à-dire de lui faire dire ce qu'il ne contient pas.
+
+Un wiki supprime le défaut bloquant au lieu de le résoudre : il n'a **aucune décision
+d'answerability à prendre**, c'est le lecteur qui juge si la page répond. Les 28 questions
+sans réponse cessent d'être une béance et redeviennent des pages qui n'existent pas.
+
+Plan et suivi : `docs/plans/kb-phase-4-wiki.md`, dont les cases se cochent au fil des
+sessions. `kb-phase-3-restitution.md` est marqué dépassé sur ses étapes 4 à 6, et
+`kb-prompt-de-reprise.md` porte en tête la mise à jour du diagnostic. **C'est le trio à
+relire pour reprendre** — aucun autre mécanisme de suivi n'a été inventé, ceux-là
+existaient.
+
+Matière disponible pour la v1, mesurée : **266 passages de prose distincts** (les 408
+affirmations n'en font que 266 — la même duplication que celle corrigée le matin sur le
+banc), ~95 500 caractères soit ~64 pages A4, **64 sections**, 2 documents, et 31 questions
+déjà appariées à leurs sources. Coût API restant : **zéro**.
+
 ### Annotation exhaustive DEV (2026-08-26) — le diagnostic de `DEV-RUN.md` était faux
 
 Les 59 questions DEV sont annotées, feuilles A et B remplies avec deux procédures distinctes

@@ -6,6 +6,35 @@
 
 ---
 
+## Mise à jour du 26 août 2026 — lire ceci en premier
+
+Ce qui suit reste exact sur le pipeline, le corpus et les coûts. Deux choses ont changé.
+
+**La direction.** L'objectif n'est plus un assistant qui répond, c'est **un wiki qui montre
+où lire**. Le plan et l'état d'avancement vivent dans `docs/plans/kb-phase-4-wiki.md` —
+c'est le fichier à ouvrir pour reprendre, ses cases se cochent au fil des sessions.
+`kb-phase-3-restitution.md` est dépassé sur ses étapes 4 à 6.
+
+**Le diagnostic.** Le blocage décrit plus bas (« la couverture ne dépasse pas… ») était
+faux. L'annotation exhaustive des 59 questions DEV donne :
+
+| | |
+|---|---:|
+| Couverture du corpus | **31/59 = 52,5 %** (seuil de continuation : 20 %) |
+| Lacunes réelles, toutes en programmation | 28 |
+| Erreurs de récupération, après correction | 5 |
+| Rappel de la recherche embarquée, 8 candidats | 27/31 |
+
+Le corpus était **sous-exploité**, pas trop pauvre. Détail complet dans
+`fittrack-kb-contract/benchmark/e5-retrieval/selective-v1/DEV-ANNOTATION.md`.
+
+**Deux règles à ne pas casser.** `CAL` et `TEST` n'ont jamais été ouverts et ne doivent pas
+l'être : les lire est irréversible. Et régler la recherche sur `DEV` en a fait un jeu
+d'entraînement — le banc `scripts/score-evidence-search.mjs` sert à départager deux
+variantes, pas à produire un chiffre publiable.
+
+---
+
 ## Ce que tu reprends
 
 Un sous-projet du dépôt FitTrack (application personnelle de musculation, local-first,

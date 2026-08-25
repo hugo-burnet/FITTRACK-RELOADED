@@ -6,6 +6,17 @@
 >
 > Ce fichier est un plan, pas un compte rendu. Rien n'a été implémenté.
 
+> **DÉPASSÉ SUR SES ÉTAPES 4 À 6 — 2026-08-26.** Les étapes 1 à 3 sont faites : modèle
+> d'embedding choisi (`bge-m3:latest`), index construit, recherche mesurée seule. Les
+> étapes 4 à 6 — restitution par Qwen3-1.7B, mesure de fidélité, fine-tuning comportemental
+> — sont **abandonnées**. L'annotation exhaustive de DEV a montré que le corpus ne peut pas
+> répondre à 28 questions réalistes sur 59, et que le moteur renvoie pourtant des candidats
+> pour les 28. La suite est un wiki, pas un assistant : voir `kb-phase-4-wiki.md`.
+>
+> Cette page reste en l'état, sans réécriture, parce que son raisonnement sur le
+> fine-tuning est toujours juste et qu'il ressert : entraîner enseigne un style, pas la
+> restitution fidèle d'un fait.
+
 **Objectif :** que l'application réponde à une question de musculation en s'appuyant sur
 le corpus, sans jamais inventer d'étude ni franchir la ligne clinique. Sur le téléphone,
 hors ligne, avec Qwen3-1.7B.
