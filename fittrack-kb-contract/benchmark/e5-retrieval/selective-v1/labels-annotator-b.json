@@ -1,0 +1,1074 @@
+{
+  "schemaVersion": "1.0.0-selective-annotations",
+  "questionSetHash": "sha256:a118fcca61ff662d74ef1c8e53eee19b691988918f7749d570f6a796aed0812b",
+  "allowedAnswerability": [
+    "ANSWERABLE",
+    "UNANSWERABLE",
+    "AMBIGUOUS"
+  ],
+  "annotations": [
+    {
+      "questionId": "sq.3b989e73e623",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.bc573600a4eb",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.5f4692abe3b9",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.6e1136457d46",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.da2d3a4a2edf",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e9e8b611d6c4",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.11f16e0e61a7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.a2905b6aeb49",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.97da6cd012b7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.64afdc860b7a",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.9671b67db518",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3dd4369665e4",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.1bf3bd00b4aa",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.2ca67ef27caf",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3dfa7500cfe7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.39d99cdd0943",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.c5d9f7dceab3",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4a44dc4b221c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.51dfd57b6185",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f6fe4ceb7a5b",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.16082a2a969b",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e53b85ece37d",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.52e815f4f6db",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.8b549ac9726e",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f7e9ce902933",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.05f829788c9c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3146097607f8",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.0ab26536af75",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.19d87c79b8c6",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f29b0ecd39ce",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.fef22e860a18",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.1d843d212fe5",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e3de0016c1a2",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.1191ad759094",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cee318316b97",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cf4732bd8fd0",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ca73c16e08c0",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ce836e0378d4",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.55534e960c83",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.8f9b937a65ee",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.adcee986fc2b",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cdbb40c50c27",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.46d98d603f49",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.daba03361b16",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.50df7f71a1ad",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.afc713fcc0c3",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.72e7a40b0593",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.255a38d6c2c5",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f7ac0e2c33b4",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.8469c2bdee4e",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.75ddd6fe11de",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.94a7400e4dea",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4134ba3f89e5",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f61dd8e55c7c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.6ea465b0f170",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.57701fef9cba",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.d8441cae4705",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3466d2f021c2",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.082960cb3951",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.041daf078d12",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e43e4baf1cd3",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ca4859b9ac22",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.5bb2f861ea5b",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f969c4e106c0",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.a09c74860ef4",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.2b3785b4a74c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4f060e080640",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e3c9367edef7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e5242db10039",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.88147aa5c9f8",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cdd6fd21c81f",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f1d740daf6d6",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.374d4560f819",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.786ea3fb2e0a",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e781419399cd",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.d4e7cc8093a6",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.761418de1897",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e81e7ed21306",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e58a3f3f1675",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b129fd800363",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.aa28099c992b",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.fdb7a5076f40",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3fba0cef16aa",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f4587b596fa1",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b3f9d5dfc3a8",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.97ff16e5aa61",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.7088171a69e6",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.c2b33418f8da",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4a147284810d",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.30cd3fea1306",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3b7899897f27",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.fa85875bc6ad",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e06f56df7033",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.0886785a4a45",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.c604b8a6fdca",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.d67638f696f7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.6550ba8e6e77",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.9641e75a9a22",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.a4b1646c95ab",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.a7eec943882c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f40fc1de0ed9",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.5698aedab4e6",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e5af32b17113",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.63871e173360",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.77d7abd8ad66",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.581906c0e898",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b8555c75521d",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.8e4ef4688f45",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.59181f26c4ff",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cf59fa3b3676",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.973b68c3fd21",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.5810a3a2a209",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.7d55a6615465",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.2bb40ca27933",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.222d1bc2f676",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.5e8a5128d21e",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.28d195b59aa7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b2c1b67f3524",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.956cd10e4101",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ec12fb9175a3",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cc0985243857",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.fe5a08eccdea",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.d8f88141484e",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.c9d7a651d68c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.91680fcebead",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b51f5ff0c317",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cc764ccc5816",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f5d2ca0d7f11",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.096c669470b2",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.d16bcdff9af3",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.7aa3681af53d",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.437f00aeffd1",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.de48512497fc",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.926348c9595e",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.339d94e5dbdf",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f416858517ea",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.2982a9cbe555",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.96aa612d2d46",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.c733df7f3883",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.de1f101306b2",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e1ee18dac898",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.18bddc749f89",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.a111b8002ce8",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4c1ea341a3dd",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4b0b1c3cf222",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ccb8e114b8e5",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ec73fd377ca2",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b6f8d59f80f7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.806057341da8",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.7652f5ad2154",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.d720560a6d70",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.167c1b28f996",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.9e5756a4a248",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.56d7b5ddd0f9",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e4087726cef7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.44968f82a2b3",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4f726b008a3c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e8457e026346",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e8295d1bb88d",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.cb246cdfa3c7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4e35c0922e69",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.a6c65630ead7",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.13d1e16bf76a",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.3ba4b2526e06",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.435049125f07",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.41153b9cd529",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.f17b8f54569a",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.22ddcb5d932c",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.92321e4b0eae",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.b893551e71ef",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.8b68d405228e",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.6645051325b5",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.75f61f412635",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.ad5910961ad1",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.bb81b07b0441",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.e7634e0e37f6",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    },
+    {
+      "questionId": "sq.4686e555b687",
+      "answerability": null,
+      "supportingClaimIds": [],
+      "notes": ""
+    }
+  ],
+  "annotator": "b"
+}

@@ -1,0 +1,931 @@
+{
+  "schemaVersion": "1.0.0-selective-benchmark",
+  "seed": "fittrack-selective-v1",
+  "questionSetHash": "sha256:a118fcca61ff662d74ef1c8e53eee19b691988918f7749d570f6a796aed0812b",
+  "priorQuestionSetHash": "sha256:a634dcb4049235d366277d69946cb6a565defe562c7c327e6d64a24192ba54ef",
+  "suppliedQuestionCount": 206,
+  "excludedPriorCount": 29,
+  "excludedPriorQuestionIds": [
+    "sq.36d4d1979213",
+    "sq.6fbbc9db7f97",
+    "sq.7f26145b3f43",
+    "sq.6e67f3d7b1be",
+    "sq.b3b0436d159e",
+    "sq.29409dc98283",
+    "sq.92584694ec8c",
+    "sq.d2ae7fbef453",
+    "sq.a57b61b9805f",
+    "sq.268bcaa12722",
+    "sq.676c56c1536d",
+    "sq.a6299a203f65",
+    "sq.018448d1f661",
+    "sq.2ac01e93df3b",
+    "sq.84e1288c371b",
+    "sq.ea86b60be752",
+    "sq.1d03dc634f7c",
+    "sq.3279571f0591",
+    "sq.c5ef3ca4dadf",
+    "sq.7cb4aa279491",
+    "sq.f35f00c35e9a",
+    "sq.c62498fa350b",
+    "sq.20c66b7a0fa0",
+    "sq.0103295f3ef4",
+    "sq.cef44ce8e872",
+    "sq.4499699d108e",
+    "sq.88d13bbd0d32",
+    "sq.58f256679b67",
+    "sq.08a4256cba54"
+  ],
+  "counts": {
+    "DEV": 59,
+    "CAL": 59,
+    "TEST": 59
+  },
+  "questions": [
+    {
+      "text": "Est-ce que les exercices unilatéraux sont meilleurs pour corriger les différences droite/gauche ?",
+      "questionId": "sq.3b989e73e623",
+      "split": "DEV"
+    },
+    {
+      "text": "Sur le développé incliné je mets le banc à 15, 30 ou 45 degrés pour viser surtout le haut des pecs ?",
+      "questionId": "sq.bc573600a4eb",
+      "split": "DEV"
+    },
+    {
+      "text": "On peut avoir de grosses jambes sans squat ni deadlift ?",
+      "questionId": "sq.5f4692abe3b9",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour les fessiers, squat profond ou hip thrust en priorité ?",
+      "questionId": "sq.6e1136457d46",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour l'arrière d'épaule, reverse pec deck ou face pull c'est mieux pour prendre du volume ?",
+      "questionId": "sq.da2d3a4a2edf",
+      "split": "DEV"
+    },
+    {
+      "text": "Quand on dit bonne technique, c'est quoi en vrai ? Parce que deux mecs peuvent faire le même exo complètement différemment et les deux ont l'air propres.",
+      "questionId": "sq.e9e8b611d6c4",
+      "split": "DEV"
+    },
+    {
+      "text": "J'ai les pecs qui progressent mais pas visuellement, c'est juste trop tôt ?",
+      "questionId": "sq.11f16e0e61a7",
+      "split": "DEV"
+    },
+    {
+      "text": "Un exercice où je sens énormément le muscle est forcément meilleur qu'un autre où je sens presque rien ?",
+      "questionId": "sq.a2905b6aeb49",
+      "split": "DEV"
+    },
+    {
+      "text": "Si je mets les biceps en premier dans la séance dos je vais ruiner tout mon dos après ?",
+      "questionId": "sq.97da6cd012b7",
+      "split": "DEV"
+    },
+    {
+      "text": "Si l'amplitude complète me fait perdre beaucoup de charge, je garde quand même l'amplitude complète ?",
+      "questionId": "sq.64afdc860b7a",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour les quadriceps, presse + hack squat ça fait doublon ou ça vaut le coup de garder les deux ?",
+      "questionId": "sq.9671b67db518",
+      "split": "DEV"
+    },
+    {
+      "text": "Si l'overhead triceps me fait mal au coude mais le pushdown non, je peux quand même développer le chef long correctement ?",
+      "questionId": "sq.3dd4369665e4",
+      "split": "DEV"
+    },
+    {
+      "text": "Pourquoi je suis beaucoup plus fort en machine chest press qu'aux haltères ?",
+      "questionId": "sq.1bf3bd00b4aa",
+      "split": "DEV"
+    },
+    {
+      "text": "Je dois chercher à toucher les haltères en haut au développé ou ça sert à rien ?",
+      "questionId": "sq.2ca67ef27caf",
+      "split": "DEV"
+    },
+    {
+      "text": "Je sens un côté du dos beaucoup plus que l'autre au tirage, comment je corrige ça ?",
+      "questionId": "sq.3dfa7500cfe7",
+      "split": "DEV"
+    },
+    {
+      "text": "Si je fais du rowing poitrine appuyée j'enlève quelque chose par rapport à un rowing barre ?",
+      "questionId": "sq.39d99cdd0943",
+      "split": "DEV"
+    },
+    {
+      "text": "Quand je bloque sur un exo, mieux vaut baisser le poids quelques séances ou continuer à forcer ?",
+      "questionId": "sq.c5d9f7dceab3",
+      "split": "DEV"
+    },
+    {
+      "text": "Si je passe d'un exercice libre à une machine et que mes charges explosent, ça veut pas dire que j'ai vraiment gagné autant de force ?",
+      "questionId": "sq.4a44dc4b221c",
+      "split": "DEV"
+    },
+    {
+      "text": "Si mes perfs montent presque partout mais que le miroir change peu, je continue pareil ?",
+      "questionId": "sq.51dfd57b6185",
+      "split": "DEV"
+    },
+    {
+      "text": "Est-ce que l'échec est moins gênant sur une machine que sur un exercice libre ?",
+      "questionId": "sq.f6fe4ceb7a5b",
+      "split": "DEV"
+    },
+    {
+      "text": "Pourquoi parfois je sens mieux un muscle avec moins lourd ?",
+      "questionId": "sq.16082a2a969b",
+      "split": "DEV"
+    },
+    {
+      "text": "J'ai un tendon qui tire un peu au début puis plus rien après deux séries, je continue ou pas ?",
+      "questionId": "sq.e53b85ece37d",
+      "split": "DEV"
+    },
+    {
+      "text": "Si je fais une série de plus quand je me sens en forme ça fausse complètement mon suivi ?",
+      "questionId": "sq.52e815f4f6db",
+      "split": "DEV"
+    },
+    {
+      "text": "Après 2 semaines de pause, combien de séances il faut en général pour retrouver ses perfs ?",
+      "questionId": "sq.8b549ac9726e",
+      "split": "DEV"
+    },
+    {
+      "text": "Quand je fais de l'unilatéral je commence toujours par le côté faible ou ça change rien ?",
+      "questionId": "sq.f7e9ce902933",
+      "split": "DEV"
+    },
+    {
+      "text": "Est-ce que les machines sont moins bonnes que les poids libres pour prendre du muscle ?",
+      "questionId": "sq.05f829788c9c",
+      "split": "DEV"
+    },
+    {
+      "text": "Pourquoi deux machines qui ont le même poids affiché peuvent être complètement différentes en difficulté ?",
+      "questionId": "sq.3146097607f8",
+      "split": "DEV"
+    },
+    {
+      "text": "Si une machine me met dans une position bizarre même avec les réglages, vaut mieux juste pas l'utiliser ?",
+      "questionId": "sq.0ab26536af75",
+      "split": "DEV"
+    },
+    {
+      "text": "Je peux faire les épaules presque tous les jours si je mets peu de séries ?",
+      "questionId": "sq.19d87c79b8c6",
+      "split": "DEV"
+    },
+    {
+      "text": "Les partiels en position étirée ça vaut le coup ou c'est juste une mode ?",
+      "questionId": "sq.f29b0ecd39ce",
+      "split": "DEV"
+    },
+    {
+      "text": "Je peux faire grossir les quadriceps juste avec presse et leg extension ?",
+      "questionId": "sq.fef22e860a18",
+      "split": "DEV"
+    },
+    {
+      "text": "Écartés poulie basse vers haut ça cible vraiment le haut de pec ou c'est surtout une sensation ?",
+      "questionId": "sq.1d843d212fe5",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour les mollets faut plutôt lourd et peu de reps ou léger et beaucoup ?",
+      "questionId": "sq.e3de0016c1a2",
+      "split": "DEV"
+    },
+    {
+      "text": "À partir de combien de séries par semaine ça devient beaucoup pour un muscle ?",
+      "questionId": "sq.1191ad759094",
+      "split": "DEV"
+    },
+    {
+      "text": "Je peux progresser aux tractions juste avec des négatives et des reps assistées ?",
+      "questionId": "sq.cee318316b97",
+      "split": "DEV"
+    },
+    {
+      "text": "Comment tu estimes les RIR quand t'es pas sûr de combien de reps il te restait ?",
+      "questionId": "sq.cf4732bd8fd0",
+      "split": "DEV"
+    },
+    {
+      "text": "Est-ce que les shrugs sont nécessaires pour avoir de gros trapèzes ?",
+      "questionId": "sq.ca73c16e08c0",
+      "split": "DEV"
+    },
+    {
+      "text": "Sur le pec deck je dois laisser les épaules partir en avant à la fin ou garder les omoplates fixes ?",
+      "questionId": "sq.ce836e0378d4",
+      "split": "DEV"
+    },
+    {
+      "text": "Si mes bras sont longs ça change beaucoup ma technique au développé couché ?",
+      "questionId": "sq.55534e960c83",
+      "split": "DEV"
+    },
+    {
+      "text": "Mes mollets brûlent mais progressent jamais, je dois surtout augmenter le volume ou la charge ?",
+      "questionId": "sq.8f9b937a65ee",
+      "split": "DEV"
+    },
+    {
+      "text": "Pré-fatiguer les pecs avec du pec deck avant le développé c'est une bonne idée ou pas ?",
+      "questionId": "sq.adcee986fc2b",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour les mollets je dois faire une pause en bas à chaque rep ?",
+      "questionId": "sq.cdbb40c50c27",
+      "split": "DEV"
+    },
+    {
+      "text": "Si je descends très profond à la presse mais que mon bassin se décolle un peu, je dois limiter l'amplitude ?",
+      "questionId": "sq.46d98d603f49",
+      "split": "DEV"
+    },
+    {
+      "text": "Il faut combien de secondes sur la descente d'une rep en général ?",
+      "questionId": "sq.daba03361b16",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour avoir un dos visuellement épais, quels types de mouvements comptent le plus ?",
+      "questionId": "sq.50df7f71a1ad",
+      "split": "DEV"
+    },
+    {
+      "text": "Sur la presse, placer les pieds bas change vraiment beaucoup le travail des quadriceps ?",
+      "questionId": "sq.afc713fcc0c3",
+      "split": "DEV"
+    },
+    {
+      "text": "Le leg extension est dangereux pour les genoux ou c'est un vieux mythe ?",
+      "questionId": "sq.72e7a40b0593",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour construire un physique harmonieux, tu prioriserais quels muscles chez quelqu'un qui débute ?",
+      "questionId": "sq.255a38d6c2c5",
+      "split": "DEV"
+    },
+    {
+      "text": "Ça change beaucoup de faire les gros exos en premier ou je peux commencer par un muscle que je veux rattraper ?",
+      "questionId": "sq.f7ac0e2c33b4",
+      "split": "DEV"
+    },
+    {
+      "text": "Un deload c'est utile même si je me sens pas particulièrement fatigué ?",
+      "questionId": "sq.8469c2bdee4e",
+      "split": "DEV"
+    },
+    {
+      "text": "Le hack squat ça remplace vraiment le squat ou pas du tout ?",
+      "questionId": "sq.75ddd6fe11de",
+      "split": "DEV"
+    },
+    {
+      "text": "Le hip thrust sert vraiment à prendre des fessiers ou c'est surcoté ?",
+      "questionId": "sq.94a7400e4dea",
+      "split": "DEV"
+    },
+    {
+      "text": "Pour le dos, prise large = dos plus large et prise serrée = dos plus épais, c'est vrai ou c'est un mythe ?",
+      "questionId": "sq.4134ba3f89e5",
+      "split": "DEV"
+    },
+    {
+      "text": "Mes deltoïdes avant prennent super vite mais pas les côtés, je dois enlever du développé ?",
+      "questionId": "sq.f61dd8e55c7c",
+      "split": "DEV"
+    },
+    {
+      "text": "Je peux faire que des exercices guidés pendant plusieurs mois sans perdre de muscle stabilisateur important ?",
+      "questionId": "sq.6ea465b0f170",
+      "split": "DEV"
+    },
+    {
+      "text": "Est-ce que les bras grossissent suffisamment avec les développés et tirages ou l'isolation est vraiment nécessaire ?",
+      "questionId": "sq.57701fef9cba",
+      "split": "DEV"
+    },
+    {
+      "text": "Est-ce qu'une petite asymétrie musculaire finit souvent par se corriger toute seule avec le temps ?",
+      "questionId": "sq.d8441cae4705",
+      "split": "DEV"
+    },
+    {
+      "text": "Je peux faire du développé couché sans cambrer du tout ou ça me pénalise trop ?",
+      "questionId": "sq.3466d2f021c2",
+      "split": "DEV"
+    },
+    {
+      "text": "Pourquoi mes triceps brûlent plus avec 15 kg à la poulie qu'avec 30 sur une autre machine ?",
+      "questionId": "sq.082960cb3951",
+      "split": "DEV"
+    },
+    {
+      "text": "Sur les dernières reps si la concentrique devient très lente c'est bon signe ou je suis allé trop loin ?",
+      "questionId": "sq.041daf078d12",
+      "split": "CAL"
+    },
+    {
+      "text": "Est-ce que faire 20-25 reps aux élévations latérales c'est trop haut pour l'hypertrophie ?",
+      "questionId": "sq.e43e4baf1cd3",
+      "split": "CAL"
+    },
+    {
+      "text": "Si j'ai des chevilles raides, ça limite vraiment mon squat ou je peux juste adapter ma position ?",
+      "questionId": "sq.ca4859b9ac22",
+      "split": "CAL"
+    },
+    {
+      "text": "Est-ce que je dois ressentir le muscle cible dès les premières reps ou seulement quand ça commence à fatiguer ?",
+      "questionId": "sq.5bb2f861ea5b",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour les biceps, prise marteau ça compte vraiment pour faire grossir le bras ou c'est surtout avant-bras ?",
+      "questionId": "sq.f969c4e106c0",
+      "split": "CAL"
+    },
+    {
+      "text": "Si mes mensurations bougent mais pas mes charges, ça peut quand même être de l'hypertrophie ?",
+      "questionId": "sq.a09c74860ef4",
+      "split": "CAL"
+    },
+    {
+      "text": "Je perds énormément de reps entre ma première et ma troisième série, je prends trop peu de repos ?",
+      "questionId": "sq.2b3785b4a74c",
+      "split": "CAL"
+    },
+    {
+      "text": "Deux personnes de même taille peuvent avoir des amplitudes complètement différentes sur le même exo ?",
+      "questionId": "sq.4f060e080640",
+      "split": "CAL"
+    },
+    {
+      "text": "Je dois toujours chercher l'amplitude maximale tant que j'ai pas mal ?",
+      "questionId": "sq.e3c9367edef7",
+      "split": "CAL"
+    },
+    {
+      "text": "Une prise neutre au tirage vertical change vraiment le muscle ciblé ?",
+      "questionId": "sq.e5242db10039",
+      "split": "CAL"
+    },
+    {
+      "text": "Est-ce qu'il faut chercher à renforcer autour d'une articulation douloureuse ou juste éviter ce qui fait mal ?",
+      "questionId": "sq.88147aa5c9f8",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour rattraper un point faible je rajoute des séries ou je le mets juste plus tôt dans la séance ?",
+      "questionId": "sq.cdd6fd21c81f",
+      "split": "CAL"
+    },
+    {
+      "text": "Les junk sets c'est quoi concrètement, comment je sais qu'une série sert plus à rien ?",
+      "questionId": "sq.f1d740daf6d6",
+      "split": "CAL"
+    },
+    {
+      "text": "Quand je reprends après une semaine sans salle je repars direct sur mes charges normales ?",
+      "questionId": "sq.374d4560f819",
+      "split": "CAL"
+    },
+    {
+      "text": "Les avant-bras ont vraiment besoin d'exercices dédiés ou les tirages et curls suffisent ?",
+      "questionId": "sq.786ea3fb2e0a",
+      "split": "CAL"
+    },
+    {
+      "text": "À quel moment ça vaut le coup de tester vraiment son échec sur un exercice ?",
+      "questionId": "sq.e781419399cd",
+      "split": "CAL"
+    },
+    {
+      "text": "Comment je sais si je stagne à cause de la fatigue ou juste parce que je suis arrivé à un niveau plus dur ?",
+      "questionId": "sq.d4e7cc8093a6",
+      "split": "CAL"
+    },
+    {
+      "text": "Est-ce que progresser en force sur 8-12 reps est un bon indicateur que je prends du muscle ?",
+      "questionId": "sq.761418de1897",
+      "split": "CAL"
+    },
+    {
+      "text": "Quand une douleur revient toujours sur le même exercice mais jamais sur les autres, vaut mieux supprimer l'exo définitivement ?",
+      "questionId": "sq.e81e7ed21306",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour le chef long du triceps faut obligatoirement un mouvement overhead ?",
+      "questionId": "sq.e58a3f3f1675",
+      "split": "CAL"
+    },
+    {
+      "text": "Je dois verrouiller les coudes en haut au développé militaire ou garder un peu de flexion ?",
+      "questionId": "sq.b129fd800363",
+      "split": "CAL"
+    },
+    {
+      "text": "Au reverse pec deck je dois garder les bras complètement tendus ou légèrement fléchis ?",
+      "questionId": "sq.aa28099c992b",
+      "split": "CAL"
+    },
+    {
+      "text": "Se reposer 4 minutes entre deux séries d'isolation c'est inutilement long ?",
+      "questionId": "sq.fdb7a5076f40",
+      "split": "CAL"
+    },
+    {
+      "text": "Si je suis moins fort un jour sans raison, je force quand même le programme prévu ou j'adapte ?",
+      "questionId": "sq.3fba0cef16aa",
+      "split": "CAL"
+    },
+    {
+      "text": "Quand je fais des extensions triceps unilatérales j'ai pas exactement la même trajectoire des deux côtés, c'est un problème ?",
+      "questionId": "sq.f4587b596fa1",
+      "split": "CAL"
+    },
+    {
+      "text": "Sur le hip thrust je dois faire une rétroversion du bassin en haut ou juste monter les hanches ?",
+      "questionId": "sq.b3f9d5dfc3a8",
+      "split": "CAL"
+    },
+    {
+      "text": "Si j'ai une douleur légère genre 2/10 mais stable, c'est acceptable pendant un mouvement ?",
+      "questionId": "sq.97ff16e5aa61",
+      "split": "CAL"
+    },
+    {
+      "text": "Un exercice où je suis stable et à l'aise est souvent meilleur pour l'hypertrophie qu'un exercice plus technique ?",
+      "questionId": "sq.7088171a69e6",
+      "split": "CAL"
+    },
+    {
+      "text": "Sur le lat pulldown je tire jusqu'au haut des pecs ou plus bas ?",
+      "questionId": "sq.c2b33418f8da",
+      "split": "CAL"
+    },
+    {
+      "text": "Est-ce que je peux construire de grosses jambes sans squat barre ?",
+      "questionId": "sq.4a147284810d",
+      "split": "CAL"
+    },
+    {
+      "text": "Il faut vraiment laisser 1 ou 2 reps en réserve ou je peux aller à l'échec presque tout le temps ?",
+      "questionId": "sq.30cd3fea1306",
+      "split": "CAL"
+    },
+    {
+      "text": "J'ai un bras visiblement plus gros que l'autre mais les performances sont quasi identiques, je corrige quand même ?",
+      "questionId": "sq.3b7899897f27",
+      "split": "CAL"
+    },
+    {
+      "text": "Je peux rester au même poids 3 semaines mais faire les reps plus propres, c'est une progression ?",
+      "questionId": "sq.fa85875bc6ad",
+      "split": "CAL"
+    },
+    {
+      "text": "Je dois me pencher en arrière au tirage vertical ou rester complètement droit ?",
+      "questionId": "sq.e06f56df7033",
+      "split": "CAL"
+    },
+    {
+      "text": "Quand je change de machine dans une autre salle, je peux comparer les kilos ou ça veut rien dire ?",
+      "questionId": "sq.0886785a4a45",
+      "split": "CAL"
+    },
+    {
+      "text": "J'ai du mal à progresser aux élévations latérales parce que le saut de poids est énorme, je fais comment ?",
+      "questionId": "sq.c604b8a6fdca",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour prendre des pecs, est-ce que les écartés sont obligatoires si je fais déjà deux développés ?",
+      "questionId": "sq.d67638f696f7",
+      "split": "CAL"
+    },
+    {
+      "text": "J'arrive pas à sentir mes dorsaux en tirage horizontal, je sens que les bras, je dois changer quoi ?",
+      "questionId": "sq.6550ba8e6e77",
+      "split": "CAL"
+    },
+    {
+      "text": "Si je monte de 2,5 kg mais que je perds 3 reps, c'est une vraie progression ou pas ?",
+      "questionId": "sq.9641e75a9a22",
+      "split": "CAL"
+    },
+    {
+      "text": "Le preacher curl est vraiment meilleur que le curl debout ou c'est du détail ?",
+      "questionId": "sq.a4b1646c95ab",
+      "split": "CAL"
+    },
+    {
+      "text": "Les abducteurs à la machine ça sert vraiment pour l'esthétique ou pas tellement ?",
+      "questionId": "sq.a7eec943882c",
+      "split": "CAL"
+    },
+    {
+      "text": "Si mon côté fort pourrait faire deux reps de plus, je m'arrête au nombre de reps du côté faible ?",
+      "questionId": "sq.f40fc1de0ed9",
+      "split": "CAL"
+    },
+    {
+      "text": "La Smith machine pour les pecs c'est aussi bien que la barre libre niveau hypertrophie ?",
+      "questionId": "sq.5698aedab4e6",
+      "split": "CAL"
+    },
+    {
+      "text": "Les supersets biceps triceps réduisent les performances ou c'est nickel pour gagner du temps ?",
+      "questionId": "sq.e5af32b17113",
+      "split": "CAL"
+    },
+    {
+      "text": "Je sens plus mes lombaires que mes ischios au RDL, c'est juste ma technique ?",
+      "questionId": "sq.63871e173360",
+      "split": "CAL"
+    },
+    {
+      "text": "Je peux remplacer un exercice douloureux par une variante qui travaille pareil sans perdre de résultats ?",
+      "questionId": "sq.77d7abd8ad66",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour les ischios, leg curl assis ou allongé c'est mieux ?",
+      "questionId": "sq.581906c0e898",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour le haut de pec, développé incliné + écarté poulie c'est suffisant ou faut un troisième exo ?",
+      "questionId": "sq.b8555c75521d",
+      "split": "CAL"
+    },
+    {
+      "text": "Faire un muscle tous les 3 jours c'est trop fréquent pour prendre de la masse ?",
+      "questionId": "sq.8e4ef4688f45",
+      "split": "CAL"
+    },
+    {
+      "text": "Je peux avoir une bonne progression en faisant mes séances un peu au feeling ?",
+      "questionId": "sq.59181f26c4ff",
+      "split": "CAL"
+    },
+    {
+      "text": "Une répétition avec une amplitude un peu plus courte compte quand même dans mon carnet ?",
+      "questionId": "sq.cf59fa3b3676",
+      "split": "CAL"
+    },
+    {
+      "text": "Je peux supersetter deux exercices du même muscle sans perdre trop d'efficacité ?",
+      "questionId": "sq.973b68c3fd21",
+      "split": "CAL"
+    },
+    {
+      "text": "Pour avoir l'air plus large de face, c'est surtout épaules + dorsaux ou les pecs jouent autant ?",
+      "questionId": "sq.5810a3a2a209",
+      "split": "CAL"
+    },
+    {
+      "text": "J'ai mal devant l'épaule sur les dips, je descends moins bas ou j'arrête complètement ?",
+      "questionId": "sq.7d55a6615465",
+      "split": "CAL"
+    },
+    {
+      "text": "J'ai mal au genou uniquement au leg extension, ça veut dire que l'exo est mauvais pour moi ?",
+      "questionId": "sq.2bb40ca27933",
+      "split": "CAL"
+    },
+    {
+      "text": "J'ai des grosses courbatures 3 jours après, je peux quand même retravailler le muscle ?",
+      "questionId": "sq.222d1bc2f676",
+      "split": "CAL"
+    },
+    {
+      "text": "Les dips entre deux bancs c'est vraiment un mauvais exo ou ça dépend des gens ?",
+      "questionId": "sq.5e8a5128d21e",
+      "split": "CAL"
+    },
+    {
+      "text": "Il y a vraiment des exercices indispensables pour construire un bon physique ?",
+      "questionId": "sq.28d195b59aa7",
+      "split": "CAL"
+    },
+    {
+      "text": "Si je déteste un exercice mais qu'il est réputé excellent, ça vaut quand même le coup de me forcer à le faire ?",
+      "questionId": "sq.b2c1b67f3524",
+      "split": "CAL"
+    },
+    {
+      "text": "Si j'ai aucune courbature le lendemain je peux refaire le muscle ou faut quand même attendre ?",
+      "questionId": "sq.956cd10e4101",
+      "split": "TEST"
+    },
+    {
+      "text": "Si je fais seulement 4 tractions propres ça vaut le coup ou vaut mieux faire du tirage vertical ?",
+      "questionId": "sq.ec12fb9175a3",
+      "split": "TEST"
+    },
+    {
+      "text": "Les poignées neutres sont vraiment plus confortables pour les épaules ou c'est individuel ?",
+      "questionId": "sq.cc0985243857",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce que la congestion veut dire que l'exercice marche bien ?",
+      "questionId": "sq.fe5a08eccdea",
+      "split": "TEST"
+    },
+    {
+      "text": "Le rowing coudes ouverts c'est vraiment plus haut du dos ?",
+      "questionId": "sq.d8f88141484e",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce qu'une amplitude plus courte au bench peut quand même faire prendre autant de pecs ?",
+      "questionId": "sq.c9d7a651d68c",
+      "split": "TEST"
+    },
+    {
+      "text": "Les élévations latérales à la poulie sont réellement meilleures que les haltères ?",
+      "questionId": "sq.91680fcebead",
+      "split": "TEST"
+    },
+    {
+      "text": "Les tractions supination c'est plus biceps ou ça reste très bon pour le dos ?",
+      "questionId": "sq.b51f5ff0c317",
+      "split": "TEST"
+    },
+    {
+      "text": "Pour prendre de la masse, est-ce que le choix exact de l'exercice compte beaucoup ou surtout la progression dessus ?",
+      "questionId": "sq.cc764ccc5816",
+      "split": "TEST"
+    },
+    {
+      "text": "Combien de temps tu gardes normalement le même exercice avant de juger s'il marche ou pas ?",
+      "questionId": "sq.f5d2ca0d7f11",
+      "split": "TEST"
+    },
+    {
+      "text": "Le tempo doit rester exactement le même sur toutes les reps d'une série ?",
+      "questionId": "sq.096c669470b2",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce que faire des rest-pause est utile pour la masse ou juste pratique quand on manque de temps ?",
+      "questionId": "sq.d16bcdff9af3",
+      "split": "TEST"
+    },
+    {
+      "text": "Une seule séance jambes par semaine peut suffire si je la fais vraiment à fond ?",
+      "questionId": "sq.7aa3681af53d",
+      "split": "TEST"
+    },
+    {
+      "text": "Je dois changer mon programme dès que je m'ennuie ou vaut mieux rester dessus tant que je progresse ?",
+      "questionId": "sq.437f00aeffd1",
+      "split": "TEST"
+    },
+    {
+      "text": "Je sens mes triceps à mort sur le développé serré mais presque pas mes pecs, c'est normal ?",
+      "questionId": "sq.de48512497fc",
+      "split": "TEST"
+    },
+    {
+      "text": "Si une articulation craque sans douleur pendant un exo, je m'en fiche ?",
+      "questionId": "sq.926348c9595e",
+      "split": "TEST"
+    },
+    {
+      "text": "À partir de combien de mois on peut vraiment juger si un programme marche pour la masse ?",
+      "questionId": "sq.339d94e5dbdf",
+      "split": "TEST"
+    },
+    {
+      "text": "Au développé haltères je descends jusqu'à ce que les haltères touchent presque les pecs ou pas forcément ?",
+      "questionId": "sq.f416858517ea",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce qu'il faut absolument noter toutes ses séries pour progresser correctement ?",
+      "questionId": "sq.2982a9cbe555",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce que le leg curl assis suffit si je veux éviter le soulevé de terre roumain ?",
+      "questionId": "sq.96aa612d2d46",
+      "split": "TEST"
+    },
+    {
+      "text": "Si je fais 12 reps puis 8 puis 6 avec le même poids, c'est normal ou je vais trop proche de l'échec ?",
+      "questionId": "sq.c733df7f3883",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai mal au bas du dos sur le hip thrust alors que je pensais que c'était safe, je fais quoi de travers ?",
+      "questionId": "sq.de1f101306b2",
+      "split": "TEST"
+    },
+    {
+      "text": "Sur le pushdown faut garder les coudes collés au corps à tout prix ?",
+      "questionId": "sq.e1ee18dac898",
+      "split": "TEST"
+    },
+    {
+      "text": "Quand je me suspends à la barre mes épaules remontent complètement, c'est normal ou je dois rester gainé en permanence ?",
+      "questionId": "sq.18bddc749f89",
+      "split": "TEST"
+    },
+    {
+      "text": "Je dois adapter la technique à ma morphologie ou essayer de copier la technique parfaite qu'on voit partout ?",
+      "questionId": "sq.a111b8002ce8",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce que ça sert encore de faire du développé épaules si je fais déjà beaucoup de développé pecs ?",
+      "questionId": "sq.4c1ea341a3dd",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce que 6 séries de pecs dans une séance ça peut suffire si elles sont vraiment dures ?",
+      "questionId": "sq.4b0b1c3cf222",
+      "split": "TEST"
+    },
+    {
+      "text": "Les trapèzes travaillent assez avec les rowings ou faut vraiment les isoler ?",
+      "questionId": "sq.ccb8e114b8e5",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai l'impression d'avoir les épaules qui montent vers les oreilles aux élévations latérales, c'est forcément mauvais ?",
+      "questionId": "sq.ec73fd377ca2",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce que 2 séries très dures peuvent être aussi efficaces que 4 séries moyennes ?",
+      "questionId": "sq.b6f8d59f80f7",
+      "split": "TEST"
+    },
+    {
+      "text": "Faire du tirage unilatéral peut vraiment corriger une asymétrie ou c'est surtout dans ma tête ?",
+      "questionId": "sq.806057341da8",
+      "split": "TEST"
+    },
+    {
+      "text": "Les reps lentes font vraiment plus grossir ou ça sert surtout à mieux contrôler ?",
+      "questionId": "sq.7652f5ad2154",
+      "split": "TEST"
+    },
+    {
+      "text": "Comment je sais si un exercice est mauvais pour moi ou si je suis juste pas encore habitué ?",
+      "questionId": "sq.d720560a6d70",
+      "split": "TEST"
+    },
+    {
+      "text": "Faire 45 minutes très intenses peut être aussi bien que 1h30 avec plus de volume ?",
+      "questionId": "sq.167c1b28f996",
+      "split": "TEST"
+    },
+    {
+      "text": "Si je pensais être à RIR 2 mais que j'aurais peut-être pu en faire 5, ma série sert quand même ?",
+      "questionId": "sq.9e5756a4a248",
+      "split": "TEST"
+    },
+    {
+      "text": "Les dropsets font vraiment gagner plus de muscle ou c'est surtout pour la congestion ?",
+      "questionId": "sq.56d7b5ddd0f9",
+      "split": "TEST"
+    },
+    {
+      "text": "Si je progresse en charge mais que mon exécution devient petit à petit moins propre, à quel moment je dois redescendre ?",
+      "questionId": "sq.e4087726cef7",
+      "split": "TEST"
+    },
+    {
+      "text": "Je dois garder exactement le même temps de repos à chaque séance pour suivre ma progression ?",
+      "questionId": "sq.44968f82a2b3",
+      "split": "TEST"
+    },
+    {
+      "text": "Je peux mettre les pieds très haut à la presse pour remplacer un mouvement d'ischios ?",
+      "questionId": "sq.4f726b008a3c",
+      "split": "TEST"
+    },
+    {
+      "text": "Si ma technique se dégrade seulement sur la dernière rep c'est encore une série propre ou pas ?",
+      "questionId": "sq.e8457e026346",
+      "split": "TEST"
+    },
+    {
+      "text": "Le développé militaire fait vraiment beaucoup le deltoïde latéral ou surtout l'avant ?",
+      "questionId": "sq.e8295d1bb88d",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai le poignet qui me gêne au curl barre droite, EZ c'est moins bien pour le biceps ?",
+      "questionId": "sq.cb246cdfa3c7",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai jamais de courbatures dans le dos même après une grosse séance, c'est suspect ?",
+      "questionId": "sq.4e35c0922e69",
+      "split": "TEST"
+    },
+    {
+      "text": "Un muscle peut être fort mais paraître petit juste à cause de la morphologie ?",
+      "questionId": "sq.a6c65630ead7",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai parfois un pincement dans l'épaule sur les élévations latérales, changer l'angle peut suffire ?",
+      "questionId": "sq.13d1e16bf76a",
+      "split": "TEST"
+    },
+    {
+      "text": "Sur le curl incliné j'ai une grosse tension en bas, c'est justement le but ou je descends trop ?",
+      "questionId": "sq.3ba4b2526e06",
+      "split": "TEST"
+    },
+    {
+      "text": "Une douleur qui disparaît à chaud pendant la séance c'est rassurant ou au contraire pas forcément ?",
+      "questionId": "sq.435049125f07",
+      "split": "TEST"
+    },
+    {
+      "text": "Pour progresser faut forcément ajouter du poids ou ajouter une rep ça compte pareil ?",
+      "questionId": "sq.41153b9cd529",
+      "split": "TEST"
+    },
+    {
+      "text": "La double progression c'est vraiment mieux que juste essayer de charger plus à chaque séance ?",
+      "questionId": "sq.f17b8f54569a",
+      "split": "TEST"
+    },
+    {
+      "text": "Sur le rowing poulie basse je tire vers le nombril ou vers les pecs ?",
+      "questionId": "sq.22ddcb5d932c",
+      "split": "TEST"
+    },
+    {
+      "text": "Est-ce qu'on peut avoir un très bon dos sans faire de rowing barre ?",
+      "questionId": "sq.92321e4b0eae",
+      "split": "TEST"
+    },
+    {
+      "text": "Combien de temps de repos faut vraiment entre deux séries pour la masse ?",
+      "questionId": "sq.b893551e71ef",
+      "split": "TEST"
+    },
+    {
+      "text": "Si ma deuxième séance de la semaine est moins performante, ça veut dire que j'ai pas récupéré ?",
+      "questionId": "sq.8b68d405228e",
+      "split": "TEST"
+    },
+    {
+      "text": "Je fais beaucoup de composés mais mes bras suivent pas, je rajoute combien d'isolation sans exploser le volume ?",
+      "questionId": "sq.6645051325b5",
+      "split": "TEST"
+    },
+    {
+      "text": "Faire une pause en position étirée aide vraiment pour l'hypertrophie ?",
+      "questionId": "sq.75f61f412635",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai une petite gêne à l'épaule uniquement quand je descends très bas au développé, je réduis juste l'amplitude ?",
+      "questionId": "sq.ad5910961ad1",
+      "split": "TEST"
+    },
+    {
+      "text": "Changer juste l'ordre des exercices peut suffire pour relancer une progression ?",
+      "questionId": "sq.bb81b07b0441",
+      "split": "TEST"
+    },
+    {
+      "text": "J'ai les genoux qui rentrent un peu sur les dernières reps à la presse, c'est grave ?",
+      "questionId": "sq.e7634e0e37f6",
+      "split": "TEST"
+    },
+    {
+      "text": "Je peux aller à l'échec sur les élévations latérales à chaque séance ?",
+      "questionId": "sq.4686e555b687",
+      "split": "TEST"
+    }
+  ]
+}

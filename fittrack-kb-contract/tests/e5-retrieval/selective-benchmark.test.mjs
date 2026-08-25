@@ -31,3 +31,16 @@ test('rejects normalized duplicates and reused development questions', () => {
     /déjà utilisées/u,
   );
 });
+
+test('can explicitly exclude prior questions while recording the contamination', () => {
+  const supplied = [...questions, 'Question historique ?'];
+  const result = buildSelectiveBenchmark(supplied, {
+    priorQuestions: ['Question historique ?'],
+    excludePrior: true,
+  });
+
+  assert.equal(result.manifest.suppliedQuestionCount, 121);
+  assert.equal(result.manifest.excludedPriorCount, 1);
+  assert.equal(result.manifest.questions.length, 120);
+  assert.ok(result.manifest.excludedPriorQuestionIds[0].startsWith('sq.'));
+});

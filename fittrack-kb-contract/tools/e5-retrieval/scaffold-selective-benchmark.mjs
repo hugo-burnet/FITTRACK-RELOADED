@@ -22,22 +22,27 @@ function blankAnnotation(questionId) {
 
 export function buildSelectiveBenchmark(
   lines,
-  { seed = 'fittrack-selective-v1', priorQuestions = [] } = {},
+  { seed = 'fittrack-selective-v1', priorQuestions = [], excludePrior = false } = {},
 ) {
-  const rawQuestions = lines.map((line) => line.trim()).filter(Boolean);
-  const normalized = rawQuestions.map(normalizeQuestion);
+  const suppliedQuestions = lines
+    .map((line) => line.trim().replace(/^\d+\.\s*/u, ''))
+    .filter(Boolean);
+  const normalized = suppliedQuestions.map(normalizeQuestion);
   const unique = new Set(normalized);
-  if (unique.size !== rawQuestions.length) {
+  if (unique.size !== suppliedQuestions.length) {
     throw new Error('Le fichier contient des questions dupliquées après normalisation.');
-  }
-  if (rawQuestions.length < 120) {
-    throw new Error(`120 questions nouvelles minimum sont requises (${rawQuestions.length} reçues).`);
   }
 
   const prior = new Set(priorQuestions.map(normalizeQuestion));
-  const reused = rawQuestions.filter((question) => prior.has(normalizeQuestion(question)));
-  if (reused.length > 0) {
+  const reused = suppliedQuestions.filter((question) => prior.has(normalizeQuestion(question)));
+  if (reused.length > 0 && !excludePrior) {
     throw new Error(`Questions déjà utilisées : ${reused.join(' | ')}`);
+  }
+  const rawQuestions = excludePrior
+    ? suppliedQuestions.filter((question) => !prior.has(normalizeQuestion(question)))
+    : suppliedQuestions;
+  if (rawQuestions.length < 120) {
+    throw new Error(`120 questions nouvelles minimum sont requises (${rawQuestions.length} reçues).`);
   }
 
   const ranked = rawQuestions
@@ -69,6 +74,11 @@ export function buildSelectiveBenchmark(
     seed,
     questionSetHash: `sha256:${sha256(questions.map((question) => question.text).join('\n'))}`,
     priorQuestionSetHash: `sha256:${sha256(priorQuestions.join('\n'))}`,
+    suppliedQuestionCount: suppliedQuestions.length,
+    excludedPriorCount: reused.length,
+    excludedPriorQuestionIds: reused.map(
+      (question) => `sq.${sha256(normalizeQuestion(question)).slice(0, 12)}`,
+    ),
     counts,
     questions,
   };
@@ -96,6 +106,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     join(contractRoot, 'benchmark/e5-retrieval/selective-v1'),
   );
   const seed = option(args, 'seed', 'fittrack-selective-v1');
+  const excludePrior = option(args, 'exclude-prior', 'false') === 'true';
   if (!inputPath) {
     throw new Error(
       'Usage : node scaffold-selective-benchmark.mjs --input questions.txt [--output-dir dossier] [--seed valeur]',
@@ -109,6 +120,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const { manifest, annotationTemplate } = buildSelectiveBenchmark(lines, {
     seed,
     priorQuestions: priorDocument.questions.map((question) => question.text),
+    excludePrior,
   });
 
   mkdirSync(resolve(outputDirectory), { recursive: true });

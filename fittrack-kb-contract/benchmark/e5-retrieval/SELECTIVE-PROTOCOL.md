@@ -21,6 +21,10 @@ partitions déterministes d’au moins 40 questions :
 - `CAL` sert une seule fois à choisir le seuil de refus ;
 - `TEST` reste fermé jusqu’au gel du pipeline et donne le résultat publié.
 
+Si un fichier reçu mélange volontairement anciennes et nouvelles questions, l’option
+`--exclude-prior true` retire les anciennes tout en enregistrant leur nombre et leurs
+identifiants dans le manifeste. Sans cette option explicite, le générateur s’arrête.
+
 ## 2. Couverture exhaustive
 
 Deux personnes remplissent séparément `labels-annotator-a.json` et
