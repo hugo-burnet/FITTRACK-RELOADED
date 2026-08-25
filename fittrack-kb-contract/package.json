@@ -27,6 +27,8 @@
     "benchmark:e5-v04:dev100": "node tools/run-e5-llm-benchmark.mjs --mode dev-100 --manifest candidates/e5-prose-golden-manifest.json",
     "benchmark:e5-v04:holdout30:dry-run": "node tools/run-e5-llm-benchmark.mjs --mode dry-run --manifest benchmark/e5/v0/manifests/holdout-30.json --stage HOLDOUT_30",
     "benchmark:e5-v04:holdout30": "node tools/run-e5-llm-benchmark.mjs --mode holdout-30 --manifest benchmark/e5/v0/manifests/holdout-30.json",
+    "holdout:e5-v04:scaffold": "node tools/scaffold-e5-v04-holdout.mjs",
+    "holdout:e5-v04:validate": "node tools/validate-e5-v04-holdout.mjs",
     "test:e1": "node --test tests/e1/*.test.mjs",
     "test:e2": "node --test tests/e2/*.test.mjs",
     "test:e3": "node --test tests/e3/*.test.mjs",
