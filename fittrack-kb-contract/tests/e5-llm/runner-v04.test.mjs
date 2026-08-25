@@ -1,11 +1,16 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { buildMetrics, evaluateFragments } from '../../tools/e5-llm/evaluate.mjs';
 import { loadBenchmarkInputs, STAGE_REQUIREMENTS } from '../../tools/e5-llm/inputs.mjs';
-import { assertStageApprovals, runBenchmark } from '../../tools/run-e5-llm-benchmark.mjs';
+import {
+  assertStageApprovals,
+  loadPersistedResult,
+  persistResult,
+  runBenchmark
+} from '../../tools/run-e5-llm-benchmark.mjs';
 
 const root = join(import.meta.dirname, '../..');
 
@@ -240,4 +245,55 @@ test('output roots carry the stage and the runId so an audited run is never over
   assert.notEqual(first, second);
   assert.ok(first.includes('dev-20'));
   assert.ok(first.includes('run.abc'));
+});
+
+test('resume reuses a paid fragment and refuses a half-written one', () => {
+  // Une interruption laisse un run a moitie paye. Le runId etant un hash de la
+  // configuration, retrouver des artefacts sous ce runId prouve que la config est
+  // identique — reprendre ne melange donc pas deux protocoles. Sans ca, il faut
+  // repayer les fragments deja obtenus.
+  const workspace = mkdtempSync(join(tmpdir(), 'e5-resume-'));
+  const safeId = 'frag_f2_0001';
+  try {
+    assert.equal(loadPersistedResult(workspace, 'frag.f2.0001'), null);
+
+    mkdirSync(join(workspace, 'predictions'), { recursive: true });
+    mkdirSync(join(workspace, 'diagnostics'), { recursive: true });
+    mkdirSync(join(workspace, 'raw-responses', safeId), { recursive: true });
+    writeFileSync(
+      join(workspace, 'predictions', `${safeId}.json`),
+      JSON.stringify({ fragmentId: 'frag.f2.0001', status: 'VALIDATED', prediction: { claims: [] } })
+    );
+    writeFileSync(
+      join(workspace, 'diagnostics', `${safeId}.json`),
+      JSON.stringify({ diagnostics: [], claimAudit: { attempted: 0 }, usageByCallType: {} })
+    );
+    // Prediction et diagnostics presents mais aucune tentative : fragment a moitie
+    // ecrit, il doit etre retraite plutot que rafistole.
+    assert.equal(loadPersistedResult(workspace, 'frag.f2.0001'), null);
+
+    writeFileSync(
+      join(workspace, 'raw-responses', safeId, 'attempt-0.json'),
+      JSON.stringify({ attempt: 0, callType: 'full', rawResponse: '{}' })
+    );
+    const reused = loadPersistedResult(workspace, 'frag.f2.0001');
+    assert.equal(reused.status, 'VALIDATED');
+    assert.equal(reused.attempts.length, 1);
+    assert.equal(reused.reusedFromInterruptedRun, true);
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test('persistResult never rewrites a reused fragment', () => {
+  const workspace = mkdtempSync(join(tmpdir(), 'e5-resume-'));
+  try {
+    // Reecrire declencherait la garde anti-ecrasement qu on vient de contourner.
+    assert.doesNotThrow(() =>
+      persistResult(workspace, { fragmentId: 'frag.f2.0001', reusedFromInterruptedRun: true }, workspace)
+    );
+    assert.equal(existsSync(join(workspace, 'predictions')), false);
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
 });

@@ -5,6 +5,7 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
   writeFileSync
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -174,7 +175,8 @@ function argsOf(argv) {
     dev20Approved: false,
     dev100Frozen: false,
     stage: null,
-    manifest: null
+    manifest: null,
+    resume: false
   };
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--mode') args.mode = argv[++index];
@@ -185,6 +187,7 @@ function argsOf(argv) {
     else if (argv[index] === '--pilot-approved') args.pilotApproved = true;
     else if (argv[index] === '--dev20-approved') args.dev20Approved = true;
     else if (argv[index] === '--dev100-frozen') args.dev100Frozen = true;
+    else if (argv[index] === '--resume') args.resume = true;
     else throw new Error(`unknown_argument:${argv[index]}`);
   }
   const modes = ['dry-run', 'pilot', 'mini', 'full', 'dev-20', 'dev-100', 'holdout-30'];
@@ -362,7 +365,41 @@ function assertOutputScope(path) {
   }
 }
 
+// Relit un fragment déjà persisté sous ce runId. Renvoie null si l'un des trois
+// artefacts manque — un fragment à moitié écrit est retraité, jamais rafistolé.
+export function loadPersistedResult(outputRoot, fragmentId) {
+  const safeId = fragmentId.replaceAll('.', '_');
+  const predictionPath = join(outputRoot, 'predictions', `${safeId}.json`);
+  const diagnosticPath = join(outputRoot, 'diagnostics', `${safeId}.json`);
+  const attemptDirectory = join(outputRoot, 'raw-responses', safeId);
+  if (!existsSync(predictionPath) || !existsSync(diagnosticPath) || !existsSync(attemptDirectory)) {
+    return null;
+  }
+  const prediction = JSON.parse(readFileSync(predictionPath, 'utf8'));
+  const diagnostics = JSON.parse(readFileSync(diagnosticPath, 'utf8'));
+  const attempts = readdirSync(attemptDirectory)
+    .filter((name) => /^attempt-\d+\.json$/.test(name))
+    .sort()
+    .map((name) => JSON.parse(readFileSync(join(attemptDirectory, name), 'utf8')));
+  if (attempts.length === 0) return null;
+  return {
+    fragmentId,
+    status: prediction.status,
+    prediction: prediction.prediction,
+    diagnostics: diagnostics.diagnostics,
+    claimAudit: diagnostics.claimAudit ?? null,
+    coverageAudit: diagnostics.coverageAudit ?? null,
+    partialAudit: diagnostics.partialAudit ?? null,
+    attempts,
+    usageByCallType: diagnostics.usageByCallType,
+    reusedFromInterruptedRun: true
+  };
+}
+
 export function persistResult(outputRoot, result, allowedRoot = benchmarkRoot) {
+  // Un fragment relu depuis le disque est déjà persisté : le réécrire déclencherait
+  // la garde anti-écrasement qu'on vient précisément de contourner en le relisant.
+  if (result.reusedFromInterruptedRun) return;
   const resolvedOutput = resolve(outputRoot);
   const resolvedAllowed = resolve(allowedRoot);
   const allowedRelative = relative(resolvedAllowed, resolvedOutput);
@@ -586,6 +623,17 @@ export async function runBenchmark(argv = process.argv.slice(2)) {
   });
   async function runOne(item, index) {
     console.log(`[${index + 1}/${selectedInputs.length}] ${item.fragment.fragmentId}`);
+    // Reprise explicite après une interruption. Le runId est un hash de la
+    // configuration : retrouver des artefacts sous ce runId prouve que la config est
+    // identique au bit près, donc reprendre ne mélange pas deux protocoles. Chaque
+    // fragment reçoit de toute façon un appel complet et un seul.
+    if (args.resume) {
+      const stored = loadPersistedResult(outputRoot, item.fragment.fragmentId);
+      if (stored) {
+        console.log(`      déjà payé, réutilisé (${stored.status})`);
+        return stored;
+      }
+    }
     try {
       const result = await extractProseFragment(
         {
