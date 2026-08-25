@@ -21,7 +21,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "voice:generate": "node scripts/generate-voice.mjs",
-    "kb:build-index": "node scripts/build-knowledge-index.mjs"
+    "kb:build-index": "node scripts/build-knowledge-index.mjs",
+    "kb:benchmark:lexical": "node scripts/run-selective-lexical-baseline.mjs",
+    "kb:benchmark:hybrid": "node scripts/run-selective-hybrid-benchmark.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",
