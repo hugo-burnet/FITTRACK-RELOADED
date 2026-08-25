@@ -126,3 +126,72 @@ node fittrack-kb-contract/tools/e5-retrieval/serve-lab.mjs 5210
 
 Le serveur est volontairement minimal et sans dépendance : le serveur de dev Vite
 rechargeait la page dès qu'un fichier bougeait, et a tué un index à 320 sur 337.
+
+---
+
+# Le refus sur la cible réelle — quatre configurations, quatre échecs
+
+Un runtime local (ollama) ayant été installé, la mesure passe de vingt minutes à deux et
+devient itérable. Embeddings `bge-m3`, index de 337 affirmations, 4 affirmations fournies
+par question, température 0.
+
+| Configuration | Refus justes | Refus à tort | Précision du refus |
+|---|---:|---:|---:|
+| `qwen3:1.7b` v1, sans réflexion | 2 / 9 | 1 / 21 | 0,67 |
+| `qwen3:1.7b` v2, sans réflexion | 0 / 9 | 1 / 21 | — |
+| `qwen3:1.7b` v1, **avec réflexion** | 3 / 9 | 6 / 21 | 0,33 |
+| `gemma4:e2b` v1 | 9 / 9 | **20 / 21** | 0,31 |
+
+La seule métrique qui décide est la dernière : **quand le modèle refuse, a-t-il raison ?**
+Aucune configuration ne dépasse 0,67, et celle qui l'atteint ne refuse que trois fois sur
+trente.
+
+## Ce que chaque essai a appris
+
+**La réflexion aide à décider, pas à décider juste.** Activer le mode hybride de Qwen3
+fait passer les bons refus de 2 à 3, et les mauvais de 1 à 6. Il refuse davantage, pas
+mieux.
+
+Note de méthode : le premier jet avait `think: false`, exactement la même erreur que le
+`reasoningEffort: minimal` de GPT-5 corrigé le matin même — deux fois dans la même journée,
+sur une tâche de pur jugement. L'utilisateur l'a signalé avant que la mesure ne le montre.
+
+**Décomposer la décision l'a aggravée.** La v2 demandait d'abord quelles affirmations sont
+pertinentes, puis de répondre ou refuser. Résultat : zéro refus sur neuf. Un petit modèle
+qui doit produire une étape intermédiaire s'engage dans une réponse et ne revient plus.
+
+**Un modèle qui refuse toujours n'est pas prudent.** `gemma4:e2b` obtient 9/9 sur les
+questions hors périmètre — et refuse 20 des 21 questions que le corpus couvre. Sa précision
+de refus (0,31) est proche du taux de base : la décision ne porte aucune information.
+
+## Le mode d'échec qui compte
+
+En v1 sans réflexion, sur « les séries jusqu'à l'échec c'est utile pour la masse ? » —
+question hors périmètre — Qwen3 a répondu :
+
+> « Les séries jusqu'à l'échec sont utiles pour la masse, **car elles favorisent la fatigue
+> nécessaire pour améliorer la masse musculaire**, conformément à l'affirmation [1]. »
+
+Le mécanisme causal est inventé, et attribué à une affirmation du corpus. **Fabriquer en
+citant** est précisément ce que toute la phase 2 servait à empêcher. C'est pire que ne pas
+refuser : la citation donne à l'invention l'apparence de la traçabilité.
+
+## État
+
+Trois mécanismes de refus éliminés par la mesure : le seuil de score de recherche, un
+modèle de 0,5 B, et le modèle cible sous quatre configurations. Ce n'est pas un échec du
+projet — c'est le travail d'élimination qui précède la solution.
+
+Ce qui reste ouvert : la piste des rappels anti-hallucination formulés d'une manière
+précise, que l'utilisateur dit efficace chez lui, et qui n'a pas encore été testée à
+l'identique.
+
+## Comment rejouer
+
+```bash
+node fittrack-kb-contract/tools/e5-retrieval/judge-local.mjs \
+  --model qwen3:1.7b --prompt v1 --think true \
+  --output benchmark/e5-retrieval/judge-run-think.json
+```
+
+Nécessite ollama avec `qwen3:1.7b` et `bge-m3`. Aucun appel payant.
