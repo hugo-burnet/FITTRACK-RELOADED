@@ -199,6 +199,35 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### Bug de spécification : le prompt et la GOLD ne parlaient pas la même langue (2026-08-25)
+
+Le schéma déclare quatre états de résolution — `RESOLVED`, `UNRESOLVED`, `NOT_STATED`,
+`NOT_APPLICABLE` — **sans en définir aucun**. Le prompt système n'enseignait que `UNRESOLVED` ;
+`NOT_STATED` n'y apparaissait *pas une seule fois*, alors que la GOLD l'emploie **256 fois**.
+Le modèle suivait sa consigne et se faisait compter faux 43 fois sur un mot qu'on ne lui avait
+jamais donné.
+
+La métrique confondait deux décisions : le choix entre deux synonymes, et trancher ou s'abstenir.
+Seule la seconde engage quelque chose — trancher à tort invente de la certitude, choisir l'autre
+synonyme n'invente rien. Corrigé, et le prompt passe en `e5-llm-v0.4.2` avec les trois états non
+résolus déclarés équivalents. Un test vérifie désormais que le prompt nomme tout état non résolu
+que la GOLD emploie, pour que la spécification ne puisse plus diverger en silence.
+
+**Ce que ça invalide.** Deux conclusions précédentes, consignées plus bas, étaient fausses :
+
+- « la gate `unresolved` à 0,90 est incohérente, les humains ne font que 0,57 » — **faux**.
+  Compté correctement, l'accord humain est de **0,9314**. La gate est légitime.
+- « il faut réduire l'échelle à neuf niveaux » — **faux** aussi. Le kappa d'`epistemicStatus`
+  est de 0,889 et celui de `knowledgeType` de 0,940 : deux annotateurs choisissent la même
+  valeur parmi neuf. Il n'y avait rien à simplifier.
+
+Le profil `human-ceiling` avait été construit pour retirer `unresolvedFidelity` du verdict. Il
+aurait excusé un vrai défaut. Retiré, et un test interdit désormais de démoter une gate en silence.
+
+Le modèle, mesuré correctement, est à **0,5222** sur cet axe contre un seuil de 0,90 et un plafond
+humain de 0,9314 : 43 vraies sur-résolutions sur 90 axes. L'écart est réel et important — il
+n'était simplement pas de 0,18.
+
 ### Ce que « se tromper » veut dire ici (2026-08-25)
 
 Exigence rappelée par l'utilisateur : il faut un système fiable, qui **ne se trompe pas** *et*
