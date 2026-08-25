@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "stage": "DEV_100",
+  "manifestPath": "candidates/e5-prose-golden-manifest.json",
+  "fragmentCount": 100,
+  "split": {
+    "F2": 50,
+    "F3": 50
+  },
+  "goldenLeakChecks": 100,
+  "apiCalls": 0,
+  "repairPolicy": {
+    "maxFullRetries": 0,
+    "maxAnchorRepairRetries": 1,
+    "maxRepairOutputTokens": 1000
+  },
+  "costEstimate": {
+    "approximationMethod": "UTF-8 bytes / 4 for input; configured expected and hard maximum output tokens",
+    "approximateInputTokens": 291871,
+    "expectedOutputTokens": 100000,
+    "maximumOutputTokens": 450000,
+    "configuredRatesUsdPerMillionTokens": {
+      "input": 1.25,
+      "output": 10,
+      "basis": "User-configured OpenRouter rates for openai/gpt-5 on 2026-08-24"
+    },
+    "expectedCostUsd": 1.3648,
+    "maximumConfiguredCostUsd": 4.8648
+  },
+  "maxRunCostUsd": 2.5
+}
