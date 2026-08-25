@@ -1,0 +1,100 @@
+<!-- Banc d essai : fait tourner un modele d embedding ENTIEREMENT dans le navigateur,
+     c est-a-dire dans l environnement reel du telephone. Node ne convenait pas ici : le
+     binding natif d ONNX ne charge pas, et surtout il aurait valide un chemin que l app
+     n empruntera jamais.
+
+     Pour l executer : copier ce fichier dans public/ avec les trois JSON attendus sous
+     public/lab/, puis ouvrir /FITTRACK-RELOADED/embed-lab.html sur le serveur de dev.
+     Volontairement HORS de public/ : il ne doit pas partir dans le build de la PWA.
+-->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Banc d'essai — recherche sémantique</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 2rem; max-width: 60rem; }
+  #status { font-family: ui-monospace, monospace; padding: .75rem; background: #f2f4f2; border-radius: 4px; }
+  .q { border-top: 1px solid #ddd; padding-top: .75rem; margin-top: .75rem; }
+  .hit { font-size: 13px; color: #444; margin-left: 1rem; }
+  .score { font-family: ui-monospace, monospace; color: #2F5D50; }
+</style>
+</head>
+<body>
+<h1>Banc d'essai — recherche sémantique</h1>
+<div id="status">initialisation…</div>
+<div id="out"></div>
+
+<script type="module">
+// Le modele tourne ENTIEREMENT dans le navigateur : c'est l'environnement reel du
+// telephone, pas une simulation. Aucun appel API, aucun binaire natif.
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6';
+
+env.allowLocalModels = false;
+
+const status = document.getElementById('status');
+const out = document.getElementById('out');
+const say = (m) => { status.textContent = m; console.log(m); };
+
+function dot(a, b) { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; }
+
+async function embedAll(pipe, texts, label) {
+  const vectors = [];
+  const BATCH = 8;
+  for (let i = 0; i < texts.length; i += BATCH) {
+    const slice = texts.slice(i, i + BATCH);
+    const result = await pipe(slice, { pooling: 'mean', normalize: true });
+    vectors.push(...result.tolist());
+    say(`${label} : ${Math.min(i + BATCH, texts.length)} / ${texts.length}`);
+  }
+  return vectors;
+}
+
+try {
+  say('chargement du corpus…');
+  const corpus = await (await fetch('./lab/corpus.json')).json();
+  const fragments = await (await fetch('./lab/fragments.json')).json();
+  const questions = await (await fetch('./lab/questions.json')).json();
+  const headings = new Map(fragments.fragments.map((f) => [f.fragmentId, (f.headingPath || []).join(' › ')]));
+
+  say('téléchargement du modèle (~120 Mo, une seule fois)…');
+  const pipe = await pipeline('feature-extraction', 'Xenova/multilingual-e5-small', { dtype: 'q8' });
+
+  // e5 exige ces prefixes : ils distinguent une question d'un passage indexe.
+  const passages = corpus.claims.map((c) => `passage: ${headings.get(c.fragmentId) ?? ''} ${c.rawStatement}`);
+  const queries = questions.questions.map((q) => `query: ${q.text}`);
+
+  const t0 = performance.now();
+  const passageVectors = await embedAll(pipe, passages, 'affirmations');
+  const queryVectors = await embedAll(pipe, queries, 'questions');
+  const seconds = ((performance.now() - t0) / 1000).toFixed(1);
+
+  const results = questions.questions.map((q, qi) => {
+    const scored = passageVectors
+      .map((v, ci) => ({ ci, score: dot(queryVectors[qi], v) }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(({ ci, score }) => ({
+        score: Number(score.toFixed(4)),
+        fragmentId: corpus.claims[ci].fragmentId,
+        source: corpus.claims[ci].source,
+        text: corpus.claims[ci].rawStatement.replace(/\s+/g, ' ')
+      }));
+    return { questionId: q.questionId, question: q.text, hits: scored };
+  });
+
+  window.__vectors = { passageVectors, queryVectors, claims: corpus.claims.map((c,i)=>({ i, fragmentId: c.fragmentId, source: c.source, len: c.rawStatement.length, text: c.rawStatement.replace(/s+/g, " ") })), questions: questions.questions };
+  window.__results = { model: 'Xenova/multilingual-e5-small', dtype: 'q8', seconds: Number(seconds), claims: passages.length, results };
+  say(`terminé — ${passages.length} affirmations et ${queries.length} questions embarquées en ${seconds} s`);
+
+  out.innerHTML = results.map((r) => `<div class="q"><strong>${r.questionId}</strong> ${r.question}` +
+    r.hits.map((h) => `<div class="hit"><span class="score">${h.score.toFixed(3)}</span> ${h.text.slice(0, 150)}</div>`).join('') +
+    `</div>`).join('');
+} catch (error) {
+  say(`ERREUR : ${error?.message ?? error}`);
+  console.error(error);
+  window.__error = String(error?.stack ?? error);
+}
+</script>
+</body>
+</html>
