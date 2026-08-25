@@ -105,3 +105,107 @@ Les seuils viennent exclusivement du Design Review : ils ne sont pas ajustés
 après observation des résultats. Le comparateur principal est déterministe
 (spans, similarité lexicale locale, citations fermées) et n’emploie aucun juge
 LLM.
+
+## v0.4 — validation par étages
+
+### Statuts de fragment
+
+v0.3 ne connaissait que `VALIDATED` et `REJECTED` : une seule claim mal ancrée
+faisait tomber tout le fragment, y compris ses sœurs valides. v0.4 valide claim
+par claim et ajoute `PARTIALLY_VALIDATED`.
+
+| Statut | Sens | Compté dans `rejectedFragments` |
+|---|---|---|
+| `VALIDATED` | Toutes les claims tentées sont retenues, couverture cohérente | non |
+| `PARTIALLY_VALIDATED` | Au moins une claim filtrée, les sûres sont conservées | non |
+| `REJECTED` | JSON invalide, DTO non conforme, ou erreur provider | oui |
+
+Les claims filtrées restent au **dénominateur** des taux de sûreté
+(`claimAudit.attempted`). C’est délibéré : si filtrer une hallucination la
+retirait aussi du dénominateur, plus le filtre marcherait, meilleur paraîtrait
+le taux d’hallucination.
+
+### Couverture
+
+Le DTO v3 porte un `coverageLedger` : chaque unité de couverture du fragment
+reçoit une décision explicite. `auditCoverageLedger` signale les unités
+manquantes, dupliquées, hors bornes, et les décisions `CLAIM_CONTENT` sans claim
+correspondante. Ces diagnostics rendent le fragment partiel, jamais rejeté.
+
+Le DTO v2 (legacy) n’a pas de ledger. Le replay v0.3 passe donc par
+`legacyClaimSalvage`, qui active le sauvetage claim par claim **sans** contrôle
+de couverture : exiger la couverture d’une réponse v0.3 inventerait un échec que
+le modèle n’avait aucun moyen d’éviter.
+
+### Étages, approbations et seuils
+
+Chaque étage payant vérifie ses approbations **avant** de construire l’adaptateur
+provider : un étage non approuvé ne peut pas échouer après avoir déjà dépensé un
+appel.
+
+| Étage | Fragments | Manifeste | Approbations | Seuils |
+|---|---:|---|---|---|
+| `DEV_20` | 20 (10/10) | `manifests/dev-20.json` | `--approve-cost` | précision ≥ 0,90 ; rappel ≥ 0,80 ; sûreté critique à zéro ; zéro rejet global |
+| `DEV_100` | 100 (50/50) | `candidates/e5-prose-golden-manifest.json` | + `--dev20-approved` | gates gelées + `knowledgeType` ≥ 0,90, `epistemicStatus` ≥ 0,85, UNRESOLVED ≥ 0,90, `cannotConclude` ≥ 0,90 |
+| `HOLDOUT_30` | 30 (15/15) | `manifests/holdout-30.json` | + `--dev100-frozen` + GOLD holdout validée | identiques à DEV-100 ; une métrique N/A ne passe que si la même gate est mesurée et franchie sur DEV-100 |
+
+Aucun étage v0.4 ne peut sélectionner plus de 100 fragments. Les 207 candidats
+sont la sortie de production : ils relèvent du second plan et d’une approbation
+distincte.
+
+Un replay ne reçoit **jamais** de verdict de mise en production. Il prouve une
+non-régression, rien d’autre.
+
+### Commandes v0.4
+
+```bash
+npm run benchmark:e5-v04:replay-v03 -- --source-run <run v0.3>
+npm run benchmark:e5-v04:dev20:dry-run
+npm run benchmark:e5-v04:dev20 -- --approve-cost
+npm run benchmark:e5-v04:dev100:dry-run
+npm run benchmark:e5-v04:dev100 -- --approve-cost --dev20-approved
+npm run benchmark:e5-v04:holdout30:dry-run
+npm run benchmark:e5-v04:holdout30 -- --approve-cost --dev20-approved --dev100-frozen
+npm run holdout:e5-v04:scaffold -- --freeze <freeze.json> --output <dir>
+npm run holdout:e5-v04:validate <dir>
+```
+
+### Disposition des sorties
+
+```text
+benchmark/e5/v0/
+  dry-run.<STAGE>.<runVariant>.<promptVersion>.json   versionné : pièce d'approbation
+  stages/dev-20/<runId>/                              ignoré
+  stages/dev-100/<runId>/                             ignoré
+  stages/holdout-30/<runId>/                          ignoré
+  replays/replay.<sourceRunId>/                       ignoré
+```
+
+La racine porte l’étage **et** le `runId` : un run audité n’est jamais écrasé par
+le suivant, et `persistResult` refuse déjà d’écrire sur un artefact existant.
+
+### Conditions d’ARRÊT
+
+- Estimation de coût au-dessus de `maxRunCostUsd` → le dry-run sort en `STOP`.
+- Approbation manquante → `stage_requires_approval:<STAGE>:<flag>`.
+- Manifeste altéré : id dupliqué, id inconnu, découpage F2/F3 faux, hash source
+  différent, recouvrement holdout/DEV-100 → refus au chargement.
+- `promptVersion` ou `providerDtoVersion` de la config différents de ceux du code
+  → refus : on ne saurait plus dire quel protocole le run mesure.
+- GOLD du holdout non validée → `holdout_gold_not_validated`.
+- Toute clé issue d’une exécution de modèle dans la GOLD du holdout
+  (`prediction`, `runId`, `model`, `prompt`, `rawResponse`…) → `holdout_model_data_leak`.
+
+### Piège : fins de ligne
+
+Les manifestes ont été gelés depuis un checkout LF. Les hashes source sont donc
+vérifiés **après** normalisation `\r\n` → `\n`. Hacher les octets bruts ferait
+échouer tout checkout CRLF, et la réparation évidente — régénérer le manifeste —
+détruirait précisément le gel qu’il garantit.
+
+Pour la même raison, `npm run check` réécrit une soixantaine de fichiers sur un
+checkout CRLF, dont `golden/e5/manifest.json` (`designReviewHash`, calculé sur
+les octets bruts). Ces réécritures ne sont **pas** à indexer : `git checkout --`
+après le check. `tests/validation-results.json` est une sortie générée et ne se
+commite pas non plus ; son compteur `jsonFiles` dépend en plus des sorties de run
+présentes localement.
