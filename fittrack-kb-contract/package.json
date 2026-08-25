@@ -29,6 +29,7 @@
     "benchmark:e5-v04:holdout30": "node tools/run-e5-llm-benchmark.mjs --mode holdout-30 --manifest benchmark/e5/v0/manifests/holdout-30.json",
     "holdout:e5-v04:scaffold": "node tools/scaffold-e5-v04-holdout.mjs",
     "holdout:e5-v04:validate": "node tools/validate-e5-v04-holdout.mjs",
+    "measure:e5-agreement": "node tools/measure-e5-annotator-agreement.mjs",
     "test:e1": "node --test tests/e1/*.test.mjs",
     "test:e2": "node --test tests/e2/*.test.mjs",
     "test:e3": "node --test tests/e3/*.test.mjs",
