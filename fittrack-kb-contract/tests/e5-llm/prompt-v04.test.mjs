@@ -37,7 +37,7 @@ test('v0.4 envelope exposes every coverage unit exactly once without GOLD fields
   });
   const input = JSON.parse(prompt);
 
-  assert.equal(PROMPT_VERSION, 'e5-llm-v0.4.3');
+  assert.equal(PROMPT_VERSION, 'e5-llm-v0.4.4');
   assert.equal(input.instruction, 'Classe chaque unité de couverture puis extrais les claims atomiques du FRAGMENT CIBLE.');
   assert.deepEqual(
     input.coverageUnits,

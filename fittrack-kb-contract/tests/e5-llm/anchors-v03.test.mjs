@@ -309,5 +309,5 @@ test('20. full and repair calls journal tokens and costs separately', async () =
 });
 
 test('v0.4 prompt version is explicit while v0.3 anchor replay remains covered', () => {
-  assert.equal(PROMPT_VERSION, 'e5-llm-v0.4.3');
+  assert.equal(PROMPT_VERSION, 'e5-llm-v0.4.4');
 });

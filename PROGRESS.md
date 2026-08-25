@@ -199,6 +199,45 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### DEV-20 v0.4.4 (2026-08-25) — `refuted` réparé, et **fin du réglage sur DEV-20**
+
+Cible : `epistemicStatus`, le plus gros écart restant (0,43 contre 0,85) et le seul axe qu'aucune
+itération n'avait visé — sa trajectoire était 0,54 → 0,49 → 0,50 → 0,40 → 0,43, immobile.
+
+Diagnostic par matrice de confusion, deux confusions systématiques :
+
+- **`refuted` : 0/7**, dont 5 devenaient `null`. Cause identifiée : la consigne « dans le doute,
+  abstiens-toi » que j'avais ajoutée en v0.4.2 faisait s'abstenir le modèle **sur des réfutations
+  explicites**. Contresens — une réfutation énoncée n'est pas une incertitude, et `refuted` est
+  probablement le statut le plus utile du corpus : c'est lui qui empêche de répéter un mythe.
+- **`established_direction` → `established` : 4/5**, inflation systématique d'un cran.
+
+v0.4.4 exclut les réfutations énoncées de la consigne d'abstention et impose le cran inférieur en
+cas de doute entre deux niveaux de solidité.
+
+| Axe | v0.4.3 | v0.4.4 | Seuil |
+|---|---:|---:|---:|
+| **`refuted` correct** | **0/7** | **5/8** | — |
+| `epistemicStatus` global | 0,4314 | **0,4902** | 0,85 |
+| `knowledgeType` | 0,7547 | **0,8302** | 0,90 |
+| rappel | 0,9153 | 0,9153 | 0,80 ✅ |
+| précision | 0,8571 | 0,8182 | 0,90 |
+| sur-fusion | 0,0159 | 0,0606 | 0,03 |
+
+Le correctif touche sa cible avec précision, et les erreurs restantes sur `probable` ne montent
+plus vers `established` mais vers le cran inférieur — la bonne direction pour la sûreté. Mais la
+granularité régresse et la sur-fusion perd le seuil qu'elle venait de franchir.
+
+**Cinquième itération, cinquième arbitrage du même type** : l'axe visé progresse, un voisin recule.
+Le budget d'attention du prompt est saturé pour de bon, cette fois avec la réflexion activée.
+
+**Décision tenue : on arrête de régler sur DEV-20.** Cinq réglages successifs sur les mêmes 59
+claims de référence, c'est du sur-apprentissage d'échantillon — j'ai failli le formaliser plus tôt
+avec un filtre déterministe qui touchait pile 0,9000, dessiné en regardant les échecs de ce run
+précis. La suite se mesure sur les 186 claims de DEV-100, ou ne se mesure pas.
+
+Coût : `1,1861 USD`. Total de la session : **4,72 USD**.
+
 ### DEV-20 v0.4.3 avec réflexion (2026-08-25) — 7 barrières sur 9, le plateau était faux
 
 Le plafond annoncé après v0.4.2 — « l'itération de prompt est terminée » — était vrai **pour un
