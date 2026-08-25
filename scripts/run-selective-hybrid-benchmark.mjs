@@ -122,8 +122,24 @@ const results = questions.map((question, questionIndex) => {
   const lexicalScoreByClaim = new Map(
     lexicalHits.map((item) => [item.payload, Number(item.score.toFixed(6))]),
   );
-  const retrieved = reciprocalRankFusion(denseRanking, lexicalRanking)
-    .slice(0, TOP_K)
+  // Correction d'instrument unique (protocole sélectif v1). La recherche embarquée
+  // (searchEvidence.ts) ne retient qu'une affirmation par displayContext : deux extraits
+  // découpés dans le même passage ne sont pas deux preuves indépendantes, et les présenter
+  // comme telles fabrique une corroboration qui n'existe pas. La fusion ne le faisait pas.
+  // Mesuré sur DEV : 44 des 59 questions remontaient moins de quatre contextes distincts,
+  // et 60 des 236 emplacements de candidats étaient consommés par un passage déjà affiché.
+  // Le banc mesurait donc un pipeline différent de celui qui est livré.
+  const fused = reciprocalRankFusion(denseRanking, lexicalRanking);
+  const seenContexts = new Set();
+  const selected = [];
+  for (const entry of fused) {
+    const claim = claims[entry[0]];
+    if (seenContexts.has(claim.displayContext)) continue;
+    seenContexts.add(claim.displayContext);
+    selected.push(entry);
+    if (selected.length === TOP_K) break;
+  }
+  const retrieved = selected
     .map(([claimIndex, rrfScore]) => {
       const claim = claims[claimIndex];
       return {
@@ -172,6 +188,8 @@ const document = {
     lexicalLimit: LEXICAL_LIMIT,
     topK: TOP_K,
     indexedClaims: claims.length,
+    contextDeduplication: 'one-claim-per-displayContext',
+    alignedWith: 'src/features/knowledge/searchEvidence.ts',
     scoreSemantics: 'ranking-only; retrieval is not answerability or corpus coverage',
   },
   summary: { questions: results.length, retrievedPerQuestion: TOP_K },
