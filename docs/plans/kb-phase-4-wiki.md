@@ -93,11 +93,19 @@ soit vérifié, soit explicitement marqué comme non relu.
 - [x] **T1 — Plan et suivi multi-session.** Ce fichier, `kb-phase-3-restitution.md` marqué
       comme dépassé sur ses étapes 4 à 6, `kb-prompt-de-reprise.md` remis à jour,
       `PROGRESS.md` complété.
-- [ ] **T2 — Dérivation de la structure.** `src/features/knowledge/wikiIndex.ts` : à partir
-      de l'index de preuves, produire les documents, leurs sections ordonnées, et les
-      passages dédupliqués de chaque section triés par `supportStartByte`. Tests :
-      unicité des identifiants sur les 64 sections, 266 passages au total, ordre du
-      document respecté, aucun `rawQuote` exposé.
+- [x] **T2 — Dérivation de la structure.** `src/features/knowledge/wikiIndex.ts`, 10 tests.
+      Produit **2 documents, 64 sections, 266 passages**, dans l'ordre du document source.
+      `findWikiSection(id)` pour la route de section.
+
+      > **Piège trouvé en l'écrivant, à connaître avant de toucher ce module :** `f2` et
+      > `e5f2` ne sont pas deux documents, ce sont les deux passes d'extraction du **même
+      > fichier** — 186 affirmations relues par un humain, 224 sorties du modèle — et leurs
+      > octets indexent le même texte. Les traiter séparément coupe chaque document en deux
+      > et détruit l'ordre de lecture. Le préfixe `e5` est retiré du code de document, et un
+      > test garde cette hypothèse : un code ne doit jamais recouvrir deux titres.
+      >
+      > Répartition réelle : `f2` Anatomie, 49 sections / 194 passages ; `f3` Clinique,
+      > 15 sections / 72 passages.
 - [ ] **T3 — Écran sommaire.** Les 2 documents, leurs sections, le nombre de passages.
       Textes dans `src/i18n/fr.ts`. Route `/knowledge` enrichie sous la recherche existante.
 - [ ] **T4 — Écran de section.** Route `/knowledge/s/:sectionId`. Passages dans l'ordre,
