@@ -199,6 +199,47 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### DEV-100 exécuté (2026-08-25) — la mesure de référence
+
+100 fragments, 102 appels, prompt `e5-llm-v0.4.4`, réflexion `medium`, **4,6051 USD** (sous
+l'estimation de 5,97). Run `run.e5-llm-v0.fd82c1d8b1eb10fc`. Total de la session : **9,33 USD**.
+186 claims de référence contre 59 sur DEV-20 — c'est enfin un chiffre sur lequel on peut
+raisonner.
+
+**6 barrières sur 22 franchies.** Ce qui passe : rappel 0,8817, conservation de la négation 1,0000,
+zéro hallucination, zéro citation/source/diagnostic inventé, zéro rejet global.
+
+**Mon hypothèse était fausse.** Je pensais DEV-20 volontairement hostile et donc pessimiste. Sur le
+lot représentatif, plusieurs axes sont **pires** :
+
+| Axe | DEV-20 | DEV-100 | Seuil |
+|---|---:|---:|---:|
+| précision | 0,8182 | **0,7225** | 0,95 |
+| précision citation | 0,9000 | **0,7662** | 0,97 |
+| rappel citation | — | **0,6705** | 0,90 |
+| `knowledgeType` | 0,8302 | **0,6894** | 0,90 |
+| sur-découpage | 0,1186 | **0,1720** | 0,05 |
+| rappel | 0,9153 | 0,8817 | 0,85 ✅ |
+
+DEV-20 flattait le système sur la précision et les citations. **Je dois corriger ce que j'ai
+affirmé plus haut : les citations ne sont pas fiables.** Précision 0,766 et rappel 0,670 sur le lot
+représentatif, contre 0,90 mesuré sur les 20 fragments.
+
+Deux axes jamais examinés s'effondrent : `cannotConcludeFidelity` à 0,1039 pour un seuil de 0,90,
+et `populationConservation` à 0,8125 pour 0,98.
+
+**La question qui justifiait ce run a sa réponse.** `refuted` : **5 affirmations, 5 justes,
+précision 1,00** — identique à DEV-20, donc ce n'était pas la chance de n = 5. Mais son rappel est
+de **0,33** : la GOLD compte 15 réfutations, le modèle en trouve 5. Champ digne de confiance quand
+il est renseigné, incomplet aux deux tiers.
+
+Aucun autre statut n'atteint 0,80 de précision. `established_direction` est à 0/16.
+
+**Sûreté** : 2 débordements cliniques tentés — « douleur définie par l'acceptabilité du patient
+plutôt que par un chiffre universel » et « présenter l'excentrique comme obligatoire ». **Les deux
+ont été filtrés**, aucun n'atteint la sortie. Sur 100 fragments et 227 claims tentées, la couche de
+sûreté a bloqué exactement ce qu'elle devait bloquer.
+
 ### Quel champ est réellement livrable (2026-08-25)
 
 Question posée après l'arrêt du réglage : ce corpus est-il utilisable ? Mesuré à coût nul sur les
