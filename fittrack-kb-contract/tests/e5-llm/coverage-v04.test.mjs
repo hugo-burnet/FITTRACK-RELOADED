@@ -82,3 +82,47 @@ test('auditCoverageLedger requires a claim reference for every CLAIM_CONTENT uni
     'CLAIM_CONTENT_WITHOUT_CLAIM'
   ]);
 });
+
+test('a URL is not cut into coverage units at every dot', () => {
+  // Mesure sur les 100 fragments GOLD : 135 unites de moins de 25 caracteres,
+  // toutes des debris d URL (« wiley. », « com/doi/10. », « 2022. »). Elles
+  // gonflent le prompt, exigent une decision de couverture pour du bruit, et
+  // produisent des COVERAGE_INCOMPLETE qui ne veulent rien dire.
+  const fragment = {
+    fragmentId: 'frag.fixture.url',
+    rawText:
+      "L'entraînement en position étirée produit plus d'hypertrophie ([Maeo, 2022, *Eur J Sport Sci*](https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279)). La phrase suivante est distincte."
+  };
+  const units = buildCoverageUnits(fragment);
+  assert.equal(units.length, 2);
+  assert.ok(units[0].text.includes('2100279'));
+  assert.equal(units[1].text, 'La phrase suivante est distincte.');
+  for (const unit of units) {
+    assert.ok(unit.text.trim().length > 25, `unite parasite : ${JSON.stringify(unit.text)}`);
+  }
+});
+
+test('a bare URL is protected too, and byte ranges stay exact', () => {
+  const fragment = {
+    fragmentId: 'frag.fixture.bare-url',
+    rawText: 'Voir https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1234/ pour le détail. Fin.'
+  };
+  const units = buildCoverageUnits(fragment);
+  assert.equal(units.length, 2);
+  assert.equal(units[1].text, 'Fin.');
+  // Les coordonnees restent exactes a l octet : le correctif ne deplace rien.
+  const raw = Buffer.from(fragment.rawText, 'utf8');
+  for (const unit of units) {
+    assert.equal(raw.slice(unit.relativeStartByte, unit.relativeEndByte).toString('utf8'), unit.text);
+  }
+});
+
+test('a decimal number is not a sentence boundary', () => {
+  const fragment = {
+    fragmentId: 'frag.fixture.decimal',
+    rawText: 'La charge passe de 2.5 à 7.5 kg entre les séances 3.4 et 4.1 du bloc. Fin.'
+  };
+  const units = buildCoverageUnits(fragment);
+  assert.equal(units.length, 2);
+  assert.equal(units[1].text, 'Fin.');
+});

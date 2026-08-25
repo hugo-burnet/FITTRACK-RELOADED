@@ -46,13 +46,49 @@ function emitUnit(units, rawText, kind, start, end) {
   });
 }
 
+// Une URL est pleine de points qui ne terminent aucune phrase. Sans cette
+// protection, « https://onlinelibrary.wiley.com/doi/10.1080/17461391.2022.2100279 »
+// devient six unites de couverture — « wiley. », « com/doi/10. », « 2022. » — qui
+// gonflent le prompt, reclament une decision de couverture pour du bruit, et
+// produisent des COVERAGE_INCOMPLETE dépourvus de sens. Mesure sur les 100
+// fragments GOLD avant correctif : 135 unites de moins de 25 caracteres, toutes
+// des debris d URL.
+const URL_PATTERN = /https?:\/\/[^\s)<>\]]+|\bwww\.[^\s)<>\]]+/giu;
+
+function protectedRanges(text) {
+  const ranges = [];
+  for (const match of text.matchAll(URL_PATTERN)) {
+    ranges.push({ start: match.index, end: match.index + match[0].length });
+  }
+  return ranges;
+}
+
+function insideProtectedRange(ranges, index) {
+  return ranges.some((range) => index >= range.start && index < range.end);
+}
+
 function emitSentences(units, rawText, start, end) {
+  const ranges = protectedRanges(rawText.slice(start, end)).map((range) => ({
+    start: range.start + start,
+    end: range.end + start
+  }));
   let sentenceStart = start;
   let cursor = start;
   while (cursor < end) {
     const character = rawText[cursor];
+    const boundaryIndex = cursor;
     cursor += 1;
     if (!SENTENCE_BOUNDARIES.has(character)) continue;
+    if (insideProtectedRange(ranges, boundaryIndex)) continue;
+    // « 2.5 kg », « version 1.4 », « niveau 3.4 » : un point encadré de chiffres est
+    // un séparateur décimal, pas une fin de phrase.
+    if (
+      character === '.' &&
+      /\d/u.test(rawText[boundaryIndex - 1] ?? '') &&
+      /\d/u.test(rawText[boundaryIndex + 1] ?? '')
+    ) {
+      continue;
+    }
     while (cursor < end) {
       let closingStart = cursor;
       while (closingStart < end && isWhitespace(rawText[closingStart])) closingStart += 1;
