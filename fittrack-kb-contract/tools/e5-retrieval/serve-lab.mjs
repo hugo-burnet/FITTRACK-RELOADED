@@ -7,7 +7,7 @@
 //
 // Sert `tools/e5-retrieval/` à la racine et les données sous `/lab/`.
 import { createServer } from 'node:http';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,6 +34,26 @@ const port = Number(process.argv[2] ?? 5210);
 createServer((request, response) => {
   const url = new URL(request.url, `http://localhost:${port}`);
   const path = url.pathname === '/' ? '/index.html' : url.pathname;
+
+  // Les bancs tournent dans le navigateur mais leurs mesures doivent finir versionnees
+  // dans le depot. Les faire transiter par la console tronque le JSON et coute cher :
+  // le banc POSTe son resultat ici. Ecriture confinee a benchmark/e5-retrieval/.
+  if (request.method === 'POST' && path === '/lab/save') {
+    const name = (url.searchParams.get('name') ?? '').replace(/[^a-z0-9.-]/gi, '');
+    if (!name.endsWith('.json')) {
+      response.writeHead(400).end('nom invalide');
+      return;
+    }
+    const chunks = [];
+    request.on('data', (chunk) => chunks.push(chunk));
+    request.on('end', () => {
+      const target = join(contractRoot, 'benchmark/e5-retrieval', name);
+      writeFileSync(target, Buffer.concat(chunks));
+      console.log('écrit : ' + target);
+      response.writeHead(200, { 'content-type': 'text/plain' }).end(String(target));
+    });
+    return;
+  }
 
   let file = ROUTES[path];
   if (!file) {

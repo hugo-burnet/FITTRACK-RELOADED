@@ -1,0 +1,171 @@
+<!-- Reclassement par un VRAI cross-encoder.
+     Un bi-encodeur compare la question et l'affirmation separement, chacune reduite a
+     un vecteur avant de se rencontrer. Un cross-encoder les lit ENSEMBLE, mot contre
+     mot : c'est ce qui lui permet de juger « cette affirmation repond-elle a cette
+     question » la ou le cosinus ne mesure qu'une proximite de sujet.
+
+     Pourquoi le navigateur : ollama 0.32 n'expose aucun /api/rerank, donc aucun modele
+     telecharge ne servirait. Et c'est de toute facon l'environnement du telephone.
+
+     Servi par serve-lab.mjs ; ecrit son resultat dans window.__rerank, a recuperer
+     ensuite pour alimenter judge-local.mjs.
+-->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Reclassement — cross-encoder</title>
+<style>
+  body { font: 14px/1.55 system-ui, sans-serif; margin: 2rem; max-width: 62rem; }
+  #status { font-family: ui-monospace, monospace; padding: .75rem; background: #f2f4f2; border-radius: 4px; }
+  .q { border-top: 1px solid #ddd; padding-top: .7rem; margin-top: .7rem; }
+  .hit { margin-left: 1rem; color: #333; font-size: 13px; }
+  .sc { font-family: ui-monospace, monospace; color: #2F5D50; }
+</style>
+</head>
+<body>
+<h1>Reclassement par cross-encoder</h1>
+<div id="status">initialisation…</div>
+<div id="out"></div>
+
+<script type="module">
+import { pipeline, env, AutoTokenizer, AutoModelForSequenceClassification } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6';
+env.allowLocalModels = false;
+
+const MIN_LEN = 60;
+const CANDIDATES = 12;
+const TOP_K = 4;
+const RRF_K = 60;
+
+const status = document.getElementById('status');
+const out = document.getElementById('out');
+const say = (m) => { status.textContent = m; console.log(m); };
+const dot = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; };
+
+// BM25 minimal, replie les accents et coupe les elisions — le francais l'impose.
+const STOP = new Set(['le','la','les','un','une','des','du','de','et','ou','a','au','aux','en','que','qui','pour','par','sur','dans','avec','sans','est','sont','je','tu','il','on','ce','plus','moins','si','ne','pas','mais','donc','vraiment','juste','tout','quoi','fait','faire','ai','vous']);
+const tok = (t) => t.normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase().replace(/['’]/gu,' ')
+  .split(/[^a-z0-9]+/u).filter((w) => w.length >= 2 && !STOP.has(w));
+
+function bm25Rank(docs, query) {
+  const toks = docs.map(tok);
+  const df = new Map();
+  toks.forEach((t) => new Set(t).forEach((w) => df.set(w, (df.get(w) ?? 0) + 1)));
+  const avg = toks.reduce((s, t) => s + t.length, 0) / toks.length;
+  const q = [...new Set(tok(query))];
+  return toks
+    .map((t, i) => {
+      const freq = new Map();
+      t.forEach((w) => freq.set(w, (freq.get(w) ?? 0) + 1));
+      let score = 0;
+      for (const w of q) {
+        const f = freq.get(w);
+        if (!f) continue;
+        const n = df.get(w) ?? 0;
+        score += Math.max(0, Math.log((toks.length - n + 0.5) / (n + 0.5) + 1)) *
+          (f * 2.2) / (f + 1.2 * (0.25 + 0.75 * (t.length / avg)));
+      }
+      return { i, score };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((x) => x.i);
+}
+
+function rrf(rankings, limit) {
+  const s = new Map();
+  for (const r of rankings) r.forEach((i, rank) => s.set(i, (s.get(i) ?? 0) + 1 / (RRF_K + rank + 1)));
+  return [...s.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]).slice(0, limit).map(([i]) => i);
+}
+
+function hydrate(claim, fragment) {
+  const span = (claim.supportSpans ?? [])[0];
+  if (!span || !fragment) return claim.rawStatement.replace(/\s+/gu, ' ');
+  const bytes = new TextEncoder().encode(fragment.rawText);
+  const dec = new TextDecoder();
+  const edge = /[.!?\n]/u;
+  let a = span.relativeStartByte;
+  while (a > 0 && !edge.test(dec.decode(bytes.slice(a - 1, a)))) a--;
+  let b = span.relativeEndByte;
+  while (b < bytes.length && !edge.test(dec.decode(bytes.slice(b, b + 1)))) b++;
+  return dec.decode(bytes.slice(a, Math.min(b + 1, bytes.length))).replace(/\s+/gu, ' ').trim();
+}
+
+try {
+  say('corpus…');
+  const corpus = await (await fetch('./lab/corpus.json')).json();
+  const fragments = await (await fetch('./lab/fragments.json')).json();
+  const questions = await (await fetch('./lab/questions.json')).json();
+  const fragById = new Map(fragments.fragments.map((f) => [f.fragmentId, f]));
+  const headings = new Map(fragments.fragments.map((f) => [f.fragmentId, (f.headingPath || []).join(' › ')]));
+
+  const claims = corpus.claims
+    .map((c) => ({ fragmentId: c.fragmentId, text: hydrate(c, fragById.get(c.fragmentId)) }))
+    .filter((c) => c.text.length >= MIN_LEN);
+
+  say('embeddings…');
+  const embed = await pipeline('feature-extraction', 'Xenova/multilingual-e5-small', { dtype: 'q8' });
+  const vectors = [];
+  for (let i = 0; i < claims.length; i += 8) {
+    const batch = claims.slice(i, i + 8).map((c) => `passage: ${headings.get(c.fragmentId) ?? ''} ${c.text}`);
+    vectors.push(...(await embed(batch, { pooling: 'mean', normalize: true })).tolist());
+    say(`index : ${Math.min(i + 8, claims.length)} / ${claims.length}`);
+  }
+  const qVec = (await embed(questions.questions.map((q) => `query: ${q.text}`), { pooling: 'mean', normalize: true })).tolist();
+
+  say('cross-encoder (téléchargement)…');
+  const tokenizer = await AutoTokenizer.from_pretrained('Xenova/bge-reranker-base');
+  const reranker = await AutoModelForSequenceClassification.from_pretrained('Xenova/bge-reranker-base', { dtype: 'q8' });
+
+  const results = [];
+  for (let qi = 0; qi < questions.questions.length; qi++) {
+    const question = questions.questions[qi];
+    const dense = vectors.map((v, i) => ({ i, s: dot(qVec[qi], v) })).sort((a, b) => b.s - a.s).map((x) => x.i);
+    const fused = rrf([dense, bm25Rank(claims.map((c) => c.text), question.text)], CANDIDATES * 2);
+
+    const seen = new Set();
+    const candidates = [];
+    for (const i of fused) {
+      if (seen.has(claims[i].text)) continue;
+      seen.add(claims[i].text);
+      candidates.push(claims[i]);
+      if (candidates.length === CANDIDATES) break;
+    }
+
+    // Le cross-encoder lit la paire (question, affirmation) d'un seul tenant.
+    const inputs = tokenizer(candidates.map(() => question.text), {
+      text_pair: candidates.map((c) => c.text),
+      padding: true,
+      truncation: true
+    });
+    const { logits } = await reranker(inputs);
+    const scores = logits.tolist().map((row) => row[0]);
+    const ranked = candidates
+      .map((c, i) => ({ ...c, rerankScore: Number(scores[i].toFixed(3)) }))
+      .sort((a, b) => b.rerankScore - a.rerankScore)
+      .slice(0, TOP_K);
+
+    results.push({ questionId: question.questionId, question: question.text, retrieved: ranked });
+    say(`reclassement : ${qi + 1} / ${questions.questions.length}`);
+    out.insertAdjacentHTML('beforeend',
+      `<div class="q"><strong>${question.questionId}</strong> ${question.text}` +
+      ranked.map((h) => `<div class="hit"><span class="sc">${h.rerankScore}</span> ${h.text.slice(0, 130)}</div>`).join('') + '</div>');
+  }
+
+  window.__rerank = { model: 'Xenova/bge-reranker-base', candidates: CANDIDATES, topK: TOP_K, results };
+  // Ecrire tout de suite : une mesure qui ne vit que dans window disparait au premier
+  // rechargement, et la relancer coute dix minutes de calcul.
+  await fetch('/lab/save?name=rerank-crossencoder.json', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(window.__rerank)
+  });
+  say(`terminé — ${results.length} questions reclassées`);
+} catch (error) {
+  say(`ERREUR : ${error?.message ?? error}`);
+  console.error(error);
+  window.__error = String(error?.stack ?? error);
+}
+</script>
+</body>
+</html>

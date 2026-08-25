@@ -333,3 +333,67 @@ Cette architecture est sûre **par construction** : rien n'est produit, donc rie
 être inventé. Elle ne demande plus qu'une chose fonctionne — la recherche — au lieu de
 deux. Et elle rend au lecteur le rôle que le modèle exécute mal : décider si l'affirmation
 répond à sa question.
+
+## Ce qui manquait : un reclassement
+
+Le constat ci-dessus a été tiré d'un pipeline incomplet. La pratique standard en
+recherche augmentée comporte deux étages, et je n'en avais mesuré qu'un :
+
+1. **Rappel** — retrouver vite un ensemble large de candidats (BM25, embeddings)
+2. **Précision** — reclasser finement ce petit ensemble avec un modèle plus coûteux
+
+Conclure « le modèle ne sait pas répondre » sans avoir monté l'étage 2 revenait à juger
+le générateur sur des extraits que rien n'avait vérifiés.
+
+Deux corrections ont été apportées ensemble : la **fusion hybride** de BM25 et des
+embeddings par *reciprocal rank fusion* (k = 60 — on fusionne les rangs, pas les scores,
+ce qui n'aurait aucun sens entre un BM25 étalé de 4 à 16 et un cosinus tassé sur 6 %), et
+le **reclassement** des 12 meilleurs candidats pour n'en garder que 4.
+
+### Reclassement par le modèle génératif — sans effet
+
+`qwen3:1.7b` note chaque paire de 0 à 10. La fusion hybride change réellement ce qui est
+retrouvé (**89 des 120 extraits du top-4 diffèrent** du dense seul), mais le reclassement
+ne discrimine pas : **84 des 120 notes tombent sur 6 ou 8**. Les refus restent à 2/30.
+
+C'est le même modèle qui échouait à répondre ; lui demander de juger ne pouvait pas
+produire une information qu'il n'a pas.
+
+### Reclassement par un vrai cross-encoder — le premier signal calibré
+
+Un bi-encodeur réduit la question et l'affirmation chacune à un vecteur, **séparément** :
+toute l'information est écrasée avant qu'elles ne se rencontrent, et le cosinus ne mesure
+plus qu'une proximité de sujet. Un cross-encoder les lit **ensemble**, mot contre mot.
+
+`bge-reranker-base` (278 M paramètres, quantifié en q8, dans le navigateur — ollama 0.32
+n'expose aucun endpoint de reclassement, aucun modèle téléchargé n'y aurait changé quoi
+que ce soit).
+
+Le score du meilleur extrait, sur les 30 questions, s'étale de **−9,86 à +1,44**. C'est la
+première fois qu'une mesure de cette chaîne n'est pas plate :
+
+| | BM25 | cosinus | note qwen3 | cross-encoder |
+|---|---|---|---|---|
+| étendue | 4 → 16 | ~6 % | 84/120 sur {6,8} | −9,9 → +1,4 |
+| sépare couvert / non couvert | non | non | non | **apparemment oui** |
+
+En haut du classement : q.28 (amplitude réduite, +1,44) tombe sur un extrait qui traite
+exactement de l'amplitude ; q.15 (douleur musculaire ou blessure, −0,28) sur les critères
+d'arrêt ; q.18 (chef long du triceps, −0,53) sur les extensions au-dessus de la tête.
+
+En bas : « tricher sur les dernières reps de curl » (−6,77), « un côté pousse plus fort »
+(−5,65), « je stagne sur un seul mouvement » (−6,73), « garder 5-6 exercices » (−6,22).
+Le corpus ne couvre aucun de ces sujets — et le score le dit, là où le cosinus les
+plaçait au même niveau que les questions couvertes.
+
+### La réserve qui compte
+
+**J'ai lu quelles questions le corpus couvrait après avoir vu les scores.** L'accord
+décrit ci-dessus est donc une hypothèse, pas une mesure : rien n'exclut que je lise la
+couverture à travers le score. Deux exceptions visibles le montrent bien — q.21 (« trop de
+volume ») et q.17 (« monter les reps ») obtiennent des scores hauts sur des extraits hors
+sujet.
+
+Le seuil de refus ne peut pas être fixé sur ces données. Il demande un étiquetage en
+aveugle, question par question : *le corpus contient-il de quoi répondre, oui ou non*,
+décidé sans voir le score.

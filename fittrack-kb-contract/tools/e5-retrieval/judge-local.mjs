@@ -7,6 +7,7 @@
 // exploration impraticable.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
+import { buildIndex, search } from '../e5-llm/retrieval.mjs';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -17,6 +18,8 @@ const OLLAMA = process.env.OLLAMA_URL ?? 'http://127.0.0.1:11434';
 // sémantique et remontent sur n'importe quelle question.
 const MIN_LEN = 60;
 const TOP_K = 4;
+// On recupere large puis on reclasse : c est tout l interet du reranking.
+const CANDIDATES = 12;
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
@@ -30,7 +33,7 @@ async function embed(model, input) {
   return (await response.json()).embeddings;
 }
 
-async function generate(model, prompt, think) {
+async function generate(model, prompt, think, maxTokens) {
   const response = await fetch(`${OLLAMA}/api/generate`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -40,7 +43,7 @@ async function generate(model, prompt, think) {
       stream: false,
       // La décision doit être reproductible : deux mesures du même prompt ne peuvent
       // pas diverger, sinon on ne compare plus rien.
-      options: { temperature: 0, num_predict: think ? 900 : 120 },
+      options: { temperature: 0, num_predict: maxTokens ?? (think ? 900 : 120) },
       think
     })
   });
@@ -81,6 +84,45 @@ function dot(a, b) {
   let sum = 0;
   for (let i = 0; i < a.length; i += 1) sum += a[i] * b[i];
   return sum;
+}
+
+// Fusion par rang réciproque. Les deux recherches trouvent des choses différentes —
+// BM25 gagnait sur « mal au coude », les embeddings sur « sensation / EMG ». Fusionner
+// sur les RANGS plutôt que sur les scores évite d'avoir à les rendre comparables, ce
+// qui n'a pas de sens entre un BM25 étalé de 4 à 16 et un cosinus tassé sur 6 %.
+const RRF_K = 60;
+
+export function reciprocalRankFusion(rankings, limit) {
+  const scores = new Map();
+  for (const ranking of rankings) {
+    ranking.forEach((claimIndex, rank) => {
+      scores.set(claimIndex, (scores.get(claimIndex) ?? 0) + 1 / (RRF_K + rank + 1));
+    });
+  }
+  return [...scores.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0] - right[0])
+    .slice(0, limit)
+    .map(([claimIndex]) => claimIndex);
+}
+
+// Reclassement ponctuel par le modèle lui-même : faute de cross-encoder disponible en
+// local, on lui pose une question fermée sur UNE affirmation à la fois. C'est le défaut
+// mesuré — il choisit mal parmi quatre — traité en le lui faisant juger séparément.
+async function rerank(model, question, candidates) {
+  const scored = [];
+  for (const candidate of candidates) {
+    const prompt = `Question d'un pratiquant de musculation :
+${question}
+
+Affirmation extraite d'un corpus :
+${candidate.text}
+
+Cette affirmation aide-t-elle à répondre à la question ? Réponds par un seul nombre entre 0 et 10, rien d'autre.`;
+    const raw = await generate(model, prompt, false, 6);
+    const score = Number((raw.match(/\d+/) ?? ['0'])[0]);
+    scored.push({ ...candidate, rerankScore: Number.isFinite(score) ? Math.min(score, 10) : 0 });
+  }
+  return scored.sort((left, right) => right.rerankScore - left.rerankScore);
 }
 
 function normalize(vector) {
@@ -144,7 +186,7 @@ export function buildPrompt(question, claims, variant = 'v2') {
   return PROMPTS[variant](question, claims);
 }
 
-export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b', variant = 'v2', think = true, context = false, outputPath } = {}) {
+export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b', variant = 'v2', think = true, context = false, hybrid = false, reranked = false, outputPath } = {}) {
   const corpus = readJson(join(root, 'candidates/e5-corpus.json'));
   const fragments = readJson(join(root, 'candidates/e5-prose-fragments.json'));
   const questions = readJson(join(root, 'benchmark/e5-retrieval/questions-30.json'));
@@ -173,25 +215,44 @@ export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b'
   }
   process.stdout.write('\n');
 
+  const lexicalIndex = buildIndex(claims.map((c, i) => ({ id: i, text: c.text, payload: i })));
+
   const queryVectors = (await embed(embedModel, questions.questions.map((q) => q.text))).map(normalize);
 
   const results = [];
   for (const [index, question] of questions.questions.entries()) {
-    // Dédupliquer sur le texte réellement fourni au modèle. Sans ça, l'hydratation
-    // rend identiques plusieurs claims extraites de la même phrase : 120 affirmations
-    // récupérées ne donnaient que 77 textes distincts, et trois questions recevaient
-    // quatre fois la même. Le modèle croyait avoir quatre sources, il en avait une.
-    const seen = new Set();
-    const top = [];
-    for (const candidate of vectors
+    const denseRanking = vectors
       .map((vector, claimIndex) => ({ claimIndex, score: dot(queryVectors[index], vector) }))
-      .sort((left, right) => right.score - left.score)) {
-      const claim = claims[candidate.claimIndex];
+      .sort((left, right) => right.score - left.score)
+      .map((item) => item.claimIndex);
+
+    // Fusionner les deux recherches quand on le demande : chacune rattrape les angles
+    // morts de l'autre, et fusionner sur les rangs évite d'avoir à comparer un BM25
+    // étalé de 4 à 16 avec un cosinus tassé sur 6 %.
+    const ranking = hybrid
+      ? reciprocalRankFusion(
+          [denseRanking, search(lexicalIndex, question.text, { limit: 60 }).map((hit) => hit.payload)],
+          CANDIDATES
+        )
+      : denseRanking.slice(0, CANDIDATES);
+
+    // Dédupliquer sur le texte réellement fourni. Sans ça, l'hydratation rend identiques
+    // plusieurs claims extraites de la même phrase : 120 affirmations récupérées ne
+    // donnaient que 77 textes distincts, et trois questions recevaient quatre fois la
+    // même. Le modèle croyait avoir quatre sources, il en avait une.
+    const seen = new Set();
+    const candidates = [];
+    for (const claimIndex of ranking) {
+      const claim = claims[claimIndex];
       if (seen.has(claim.text)) continue;
       seen.add(claim.text);
-      top.push({ ...claim, score: Number(candidate.score.toFixed(4)) });
-      if (top.length === TOP_K) break;
+      candidates.push(claim);
     }
+
+    const top = (reranked ? await rerank(chatModel, question.text, candidates) : candidates).slice(
+      0,
+      TOP_K
+    );
 
     const answer = await generate(chatModel, buildPrompt(question.text, top, variant), think);
     const refused = /HORS_CORPUS/i.test(answer);
@@ -199,7 +260,7 @@ export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b'
     console.log(`${question.questionId} ${refused ? 'REFUS ' : 'répond'} ${question.text.slice(0, 52)}`);
   }
 
-  const document = { embedModel, chatModel, variant, think, context, topK: TOP_K, minLen: MIN_LEN, indexed: claims.length, results };
+  const document = { embedModel, chatModel, variant, think, context, hybrid, reranked, topK: TOP_K, minLen: MIN_LEN, indexed: claims.length, results };
   if (outputPath) {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, `${JSON.stringify(document, null, 2)}\n`, 'utf8');
@@ -219,6 +280,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     variant: option('prompt', 'v2'),
     think: option('think', 'true') !== 'false',
     context: option('context', 'false') === 'true',
+    hybrid: option('hybrid', 'false') === 'true',
+    reranked: option('rerank', 'false') === 'true',
     outputPath: option('output', join(root, 'benchmark/e5-retrieval/judge-run.json'))
   }).catch((error) => {
     console.error(error instanceof Error ? error.message : String(error));
