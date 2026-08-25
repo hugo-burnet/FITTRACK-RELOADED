@@ -17,7 +17,7 @@
   "maxAnchorRepairRetries": 1,
   "maxRepairOutputTokens": 4000,
   "concurrency": 2,
-  "maxRunCostUsd": 2.5,
+  "maxRunCostUsd": 7,
   "goldenCommit": "4ff2ae6ebf2e0c587e315c527a8fb1f75d05bf2f",
   "corpusCommit": "75f49f7e5bda67b1582a9ae5b9f2b8a0f16e74f2",
   "pricingUsdPerMillionTokens": {

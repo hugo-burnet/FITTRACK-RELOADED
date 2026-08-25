@@ -199,6 +199,42 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### Quel champ est réellement livrable (2026-08-25)
+
+Question posée après l'arrêt du réglage : ce corpus est-il utilisable ? Mesuré à coût nul sur les
+runs déjà payés.
+
+**Regrouper l'échelle ne sauve rien.** Réduite à trois niveaux, `epistemicStatus` plafonne à un
+kappa de 0,659, sous le plancher de fiabilité de 0,70. Fondre les gradations de preuve positive
+*dégrade* même le résultat (0,559) : la confusion traverse les catégories, elle n'est pas contenue
+dedans.
+
+**Mais la bonne question n'était pas celle-là.** Pour livrer, ce qui compte n'est pas « quand la
+GOLD dit X, le modèle dit-il X » (le rappel par étiquette) mais **« quand le modèle dit X, a-t-il
+raison »** (la précision par étiquette). Jamais calculé jusqu'ici.
+
+| Le modèle affirme | Il a raison |
+|---|---:|
+| `refuted` | **5 / 5** |
+| `mechanistic_only` | **2 / 2** |
+| `practice_only` | 10 / 14 |
+| `uncertain` | 5 / 8 |
+| `absence_of_evidence` | 2 / 4 |
+| `established_direction` | 1 / 4 |
+| `established` | 0 / 4 |
+| abstention (`null`) | 0 / 10 |
+
+Le champ est inutilisable **en bloc**, mais `refuted` — le statut qui empêche de répéter un mythe
+démonté, et donc le plus utile à l'application — est **exact chaque fois qu'il est affirmé**. Il
+était à 0/7 avant le correctif v0.4.4.
+
+Réserve : n = 5. C'est précisément ce que DEV-100 doit trancher.
+
+**Forme du livrable qui se dessine** : texte des claims et citations fiables, `refuted` renseigné
+et digne de confiance, le reste de `epistemicStatus` marqué non résolu plutôt que rempli d'une
+valeur fausse une fois sur deux. C'est le principe inscrit dans le prompt — s'abstenir plutôt
+qu'inventer de la certitude — appliqué au niveau du champ.
+
 ### DEV-20 v0.4.4 (2026-08-25) — `refuted` réparé, et **fin du réglage sur DEV-20**
 
 Cible : `epistemicStatus`, le plus gros écart restant (0,43 contre 0,85) et le seul axe qu'aucune
