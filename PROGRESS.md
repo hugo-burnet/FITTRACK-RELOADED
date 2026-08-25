@@ -199,6 +199,35 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### Ce que « se tromper » veut dire ici (2026-08-25)
+
+Exigence rappelée par l'utilisateur : il faut un système fiable, qui **ne se trompe pas** *et*
+**n'invente pas**. Pas l'un des deux. Le score de précision à 0,86 laissait penser que 14 % des
+affirmations sont fausses. Vérifié affirmation par affirmation sur le run v0.4.1 — ce n'est pas le
+cas.
+
+**N'invente pas — mesuré :** 0 hallucination, 0 citation inventée, 0 source inventée, 0 diagnostic
+inventé, 0 saut EMG→hypertrophie, 0 saut biomécanique→risque, 0 débordement clinique. **Négation
+conservée 16/16** : jamais d'inversion de sens. Et les **7 affirmations « sans correspondance »
+sont toutes verbatim dans le texte source** — l'annotateur ne les avait pas retenues, elles ne sont
+pas fausses.
+
+**Se trompe — mais sur quoi :** pas sur la véracité, sur la *comptabilité*. Où couper une phrase,
+et quelle étiquette de certitude poser. Ce sont exactement les deux axes où deux annotateurs
+humains divergeaient le plus (granularité 74 %, `unresolved` 63 %).
+
+Nuance importante sur les 6 cas `refuted` mal classés : **le texte est identique dans 5 cas sur 6**,
+négation comprise. Le modèle range une réfutation sous `established_direction` au lieu de
+`refuted` — désaccord de convention sur l'étiquetage d'une affirmation négative, pas inversion.
+
+**Conséquence pour l'application.** Le *texte* des claims et leurs citations sont fiables :
+ancrés, verbatim, négation préservée, sans invention. Les *métadonnées* de certitude ne le sont pas
+encore : `epistemicStatus` est faux une fois sur deux. Concrètement, une app peut afficher ces
+claims et leurs sources, mais ne doit **pas** se servir de `epistemicStatus` pour moduler la force
+de ce qu'elle affirme tant que cet axe n'est pas fiabilisé.
+
+Une seule perte de nuance réelle : 1 qualificatif temporel sur 6 (`temporality` 0,8333).
+
 ### DEV-20 v0.4.1 (2026-08-25) — verdict **NO**, mais les correctifs sont validés
 
 Second run payant, approuvé explicitement. `run.e5-llm-v0.b28b106e39491fc7`, prompt `e5-llm-v0.4.1`,
