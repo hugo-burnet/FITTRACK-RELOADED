@@ -74,7 +74,7 @@ que l'empreinte et le texte des 77 fragments réellement cités.
 **E1 à E4 sont amorcés** sur `master` : tableaux, axes, citations,
 puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
 
-### E5 v0.4 — checkpoint après la tâche 12 (2026-08-25)
+### E5 v0.4 — checkpoint après DEV-20 (2026-08-25)
 
 Le benchmark GPT-5 v0.3 sur DEV-100 a refusé le passage aux 207 fragments. La reprise v0.4 est
 implémentée et revue jusqu'au prompt, sans lancement payant :
@@ -135,17 +135,56 @@ Deux pièges d'environnement, tous deux liés à Windows :
    le check. Sans cette note, la réparation évidente serait de regénérer les manifestes, ce qui
    détruirait le gel qu'ils garantissent.
 
-**Point de reprise : tâche 13** du plan
-`docs/superpowers/plans/2026-08-24-e5-v04-extractor-dev-validation.md`. Les tâches 1 à 12 sont
-faites ; **les tâches 13 et 14 sont les premiers étages payants et attendent une approbation
-explicite**. Rien n'a été lancé : ni DEV-20, ni DEV-100 v0.4, ni HOLDOUT-30, ni run 207. Aucun
-appel API n'a été émis de toute la session.
+### DEV-20 exécuté (2026-08-25) — verdict **NO**
 
-Estimations de dry-run, toutes à zéro appel : DEV-20 `0,2752 USD`, DEV-100 `1,3648 USD`,
-HOLDOUT-30 `0,4129 USD`, soit `2,05 USD` attendus pour les trois. À savoir avant d'approuver : le
-plafond **théorique** de DEV-100 est `4,8648 USD`, presque le double du `maxRunCostUsd` de
-`2,50 USD`. Le dry-run passe parce qu'il compare le coût attendu au plafond ; un run qui déraperait
-sur les tokens de sortie serait arrêté en cours par le budget, pas avant.
+Lancé après approbation explicite du coût. 20 fragments, 21 appels (une seule réparation), zéro
+retry complet, **0,2306 USD** réels. Run `run.e5-llm-v0.b0faba2cdb589c3b`, sorties locales et
+non versionnées.
+
+| Gate | Mesuré | Seuil | |
+|---|---:|---:|---|
+| Rejets globaux | 0 | 0 | PASS |
+| Citation / source / diagnostic inventés | 0 | 0 | PASS |
+| Débordement clinique, EMG→hypertrophie, biomécanique→risque | 0 | 0 | PASS |
+| Précision | 0,8542 | 0,90 | **FAIL** |
+| Rappel | 0,6949 | 0,80 | **FAIL** |
+
+Ce que ça dit vraiment, mesuré sur les **mêmes** 20 fragments :
+
+| | rejets | GOLD appariées | précision | rappel |
+|---|---:|---:|---:|---:|
+| v0.3 réel | 4 | 34 | 0,8718 | 0,5763 |
+| replay v0.4 (mêmes réponses) | 0 | 38 | 0,8837 | 0,6441 |
+| v0.4 complet (nouveau prompt) | 0 | 41 | 0,8542 | 0,6949 |
+
+Le changement de **validation** seul est un gain net : +4 appariements, rappel +0,068, précision
++0,012, rejets 4 → 0. Le **prompt** v0.4 orienté couverture ajoute +3 appariements et +0,051 de
+rappel, mais coûte 0,030 de précision. Il échange de la précision contre du rappel, et les deux
+restent sous les seuils du pilote.
+
+Il faut se rappeler que DEV-20 est délibérément le lot le plus dur : sa sélection priorise le
+bucket `partial_rejection` puis les fragments par nombre d'erreurs décroissant. Ce n'est pas un
+échantillon représentatif, c'est un test de résistance. Un échec ici ne dit pas que v0.4 échouerait
+sur DEV-100 — il dit que le pilote refuse de payer DEV-100 sans revoir le protocole.
+
+Coût projeté pour 207 fragments à partir du coût réel : `2,387 USD`, sous le plafond de `2,50`.
+
+Défaut trouvé et corrigé au passage : `evaluateBenchmark` notait les 20 fragments contre les 100
+annotations GOLD, transformant les 80 absents en rejets. Le premier rapport annonçait 80 rejets et
+un rappel de 0,2204. Corrigé et verrouillé par un test.
+
+**Point de reprise : décision de protocole, pas exécution.** Le plan impose l'arrêt avant DEV-100
+et une nouvelle estimation plus une nouvelle approbation pour tout pilote payant supplémentaire.
+Les options sont de retoucher le prompt v0.4 pour récupérer la précision sans perdre le rappel
+gagné, d'assouplir des seuils de pilote qui n'ont jamais été calibrés sur un lot volontairement
+difficile, ou de payer DEV-100 malgré l'échec du pilote en assumant que DEV-20 n'est pas
+représentatif. Aucune de ces trois n'est une décision technique.
+
+Rien d'autre n'a été lancé : ni DEV-100 v0.4, ni HOLDOUT-30, ni run 207. Estimations restantes,
+à zéro appel : DEV-100 `1,3648 USD`, HOLDOUT-30 `0,4129 USD`. À savoir avant d'approuver DEV-100 :
+son plafond **théorique** est `4,8648 USD`, presque le double du `maxRunCostUsd` de `2,50 USD`. Le
+dry-run passe parce qu'il compare le coût attendu au plafond ; un run qui déraperait sur les tokens
+de sortie serait arrêté en cours par le budget, pas avant.
 
 ## v1.3.1 — livrée et publiée
 
