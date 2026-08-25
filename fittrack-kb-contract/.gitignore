@@ -3,4 +3,6 @@ node_modules/
 # Sorties de run : predictions, diagnostics, metriques, replays. Le plan interdit
 # de les versionner — ce sont des artefacts d execution, pas du contrat.
 benchmark/e5/v0/replays/
-benchmark/e5/v0/stages/
+benchmark/e5/v0/runs/dev-20/
+benchmark/e5/v0/runs/dev-100/
+benchmark/e5/v0/runs/holdout-30/

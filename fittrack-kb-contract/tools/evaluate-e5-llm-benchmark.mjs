@@ -316,7 +316,18 @@ export function evaluateBenchmark(outputRoot = defaultOutputRoot, options = {}) 
       attempts
     };
   });
-  const result = evaluateFragments({ annotations: adjudicated.annotations, runRecords });
+  // Ne noter que les fragments que le run a effectivement tentes. Sans ce filtre, un
+  // etage de 20 fragments est note contre les 100 annotations GOLD : les 80 absents
+  // deviennent des MISSING_PREDICTION, donc des rejets, et le rappel s effondre
+  // mecaniquement. Le run paraitrait catastrophique alors qu il n a rien rate.
+  const scoredIds = new Set(config.fragmentIds);
+  const scoredAnnotations = adjudicated.annotations.filter((item) => scoredIds.has(item.fragmentId));
+  if (scoredAnnotations.length !== config.fragmentIds.length) {
+    throw new Error(
+      `benchmark_gold_missing_for_fragments:${config.fragmentIds.length - scoredAnnotations.length}`
+    );
+  }
+  const result = evaluateFragments({ annotations: scoredAnnotations, runRecords });
   const metrics = buildMetrics(result.fragmentResults);
   const passResult = { ...benchmarkPass(metrics, { stage, dev100Metrics }), replay: isReplay };
   const samples = qualitativeSamples(result.fragmentResults);
@@ -341,7 +352,8 @@ export function evaluateBenchmark(outputRoot = defaultOutputRoot, options = {}) 
 function argsOf(argv) {
   const args = {};
   for (let index = 0; index < argv.length; index += 1) {
-    if (argv[index] === '--output') args.output = argv[++index];
+    // --run est le nom utilise par le plan ; --output est l alias historique.
+    if (argv[index] === '--run' || argv[index] === '--output') args.output = argv[++index];
     else if (argv[index] === '--stage') args.stage = argv[++index];
     else if (argv[index] === '--dev100-metrics') args.dev100MetricsPath = argv[++index];
     else throw new Error(`unknown_argument:${argv[index]}`);

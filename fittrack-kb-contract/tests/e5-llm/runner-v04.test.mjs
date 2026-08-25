@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
+import { buildMetrics, evaluateFragments } from '../../tools/e5-llm/evaluate.mjs';
 import { loadBenchmarkInputs, STAGE_REQUIREMENTS } from '../../tools/e5-llm/inputs.mjs';
 import { assertStageApprovals, runBenchmark } from '../../tools/run-e5-llm-benchmark.mjs';
 
@@ -209,6 +210,28 @@ test('a paid stage refuses to start without its approvals, before touching the n
       ]),
     /stage_requires_approval:DEV_20:--approve-cost/
   );
+});
+
+test('a stage is scored only against the fragments it attempted', () => {
+  // Un etage de 20 fragments note contre les 100 annotations GOLD transforme les 80
+  // absents en MISSING_PREDICTION, donc en rejets : le rappel s effondre et le run
+  // parait catastrophique alors qu il n a rien rate. C est arrive une fois.
+  const adjudicated = readJson(join(root, 'golden/e5/adjudication/adjudicated.json'));
+  const scoredIds = new Set(dev20.fragmentIds);
+  const scored = adjudicated.annotations.filter((item) => scoredIds.has(item.fragmentId));
+  assert.equal(scored.length, 20);
+  const runRecords = dev20.fragmentIds.map((fragmentId) => ({
+    fragmentId,
+    status: 'VALIDATED',
+    prediction: { annotationPrediction: 'ZERO_CLAIM', claims: [] },
+    diagnostics: [],
+    claimAudit: { attempted: 0, retained: 0, filtered: 0, claims: [] },
+    attempts: []
+  }));
+  const all = evaluateFragments({ annotations: adjudicated.annotations, runRecords });
+  const filtered = evaluateFragments({ annotations: scored, runRecords });
+  assert.equal(buildMetrics(all.fragmentResults).GLOBAL.rejectedFragments, 80);
+  assert.equal(buildMetrics(filtered.fragmentResults).GLOBAL.rejectedFragments, 0);
 });
 
 test('output roots carry the stage and the runId so an audited run is never overwritten', () => {

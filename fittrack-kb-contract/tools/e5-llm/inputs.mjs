@@ -16,21 +16,21 @@ export const STAGE_REQUIREMENTS = {
     fragmentCount: 20,
     counts: { F2: 10, F3: 10 },
     approvals: ['approveCost'],
-    outputRoot: (runId) => join('stages', 'dev-20', runId)
+    outputRoot: (runId) => join('runs', 'dev-20', runId)
   },
   DEV_100: {
     manifest: DEFAULT_MANIFEST,
     fragmentCount: 100,
     counts: { F2: 50, F3: 50 },
     approvals: ['approveCost', 'dev20Approved'],
-    outputRoot: (runId) => join('stages', 'dev-100', runId)
+    outputRoot: (runId) => join('runs', 'dev-100', runId)
   },
   HOLDOUT_30: {
     manifest: 'benchmark/e5/v0/manifests/holdout-30.json',
     fragmentCount: 30,
     counts: { F2: 15, F3: 15 },
     approvals: ['approveCost', 'dev20Approved', 'dev100Frozen'],
-    outputRoot: (runId) => join('stages', 'holdout-30', runId)
+    outputRoot: (runId) => join('runs', 'holdout-30', runId)
   }
 };
 
