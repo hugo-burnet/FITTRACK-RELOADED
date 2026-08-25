@@ -337,7 +337,9 @@ test('benchmark config journals model, prompt, sampling, retries and immutable c
   // L'effort n'est plus epingle : GPT-5 fabrique le corpus, il n'a pas a etre bride
   // au niveau du modele embarque. Ce qui reste garde, c'est qu'il soit valide.
   assert.ok(GPT5_REASONING_EFFORTS.includes(config.reasoningEffort), config.reasoningEffort);
-  assert.equal(config.maxRunCostUsd, 2.5);
+  // Le plafond de dépense est un arbitrage de l'utilisateur, relevé à 7 USD pour
+  // DEV-100 avec réflexion. Le test garde qu'il existe et reste borné, pas sa valeur.
+  assert.ok(config.maxRunCostUsd > 0 && config.maxRunCostUsd <= 10, String(config.maxRunCostUsd));
   assert.equal(config.maxFullRetries, 0);
   assert.equal(config.maxAnchorRepairRetries, 1);
   assert.deepEqual(config.pricingUsdPerMillionTokens, {
