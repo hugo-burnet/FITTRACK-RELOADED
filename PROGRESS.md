@@ -199,7 +199,34 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
-### Correctifs de protocole appliqués (2026-08-25) — non validés faute de run
+### DEV-20 v0.4.1 (2026-08-25) — verdict **NO**, mais les correctifs sont validés
+
+Second run payant, approuvé explicitement. `run.e5-llm-v0.b28b106e39491fc7`, prompt `e5-llm-v0.4.1`,
+22 appels, **0,2377 USD**. Total dépensé sur la session : 0,47 USD.
+
+| Axe | v0.4.0 | v0.4.1 | Seuil |
+|---|---:|---:|---:|
+| sur-fusion | 0,2292 | **0,1400** | 0,03 |
+| `knowledgeType` | 0,6750 | **0,7857** | 0,90 |
+| rappel | 0,6949 | **0,7288** | 0,80 |
+| précision citation | 0,9412 | **1,0000** | 0,97 |
+| précision | 0,8542 | 0,8600 | 0,90 |
+| `unresolved` | 0,1304 | 0,1818 | 0,90 |
+| sur-découpage | 0,0508 | **0,0678** | 0,05 |
+| `epistemicStatus` | 0,5385 | **0,4878** | 0,85 |
+
+Le correctif ciblé a fait ce qu'il devait : la sur-fusion baisse de 39 % en relatif, et le rappel
+suit. Le sur-découpage monte de 0,017 — **exactement l'effet de bord annoncé avant le run** :
+pousser à scinder fait scinder à tort. `epistemicStatus` recule de 0,05, non expliqué.
+
+Zéro rejet global et toutes les gates de sûreté passent, pour la deuxième fois consécutive.
+
+**Le plafond, nommé.** Il faut +5 appariements en n'ajoutant que 3 prédictions. Il reste 7 claims
+fusionnées ; les scinder toutes parfaitement donnerait rappel 0,8475 (franchi) mais précision
+0,8772 — **toujours sous 0,90**. Donc réparer la fusion à fond ne suffit pas : la précision demande
+son propre levier, sur les 7 prédictions qui n'apparient rien.
+
+### Correctifs de protocole appliqués (2026-08-25) — validés par le run ci-dessus
 
 Trois causes concrètes identifiées puis corrigées, toutes à coût nul. **Aucune n'est validée
 contre le modèle** : ça demanderait un nouveau DEV-20 payant, donc une nouvelle approbation.
@@ -226,7 +253,7 @@ défaut — baisser une cible après l'avoir ratée, c'est déplacer les poteaux
 `human-ceiling` est disponible à côté. **Appliqué au run DEV-20 réel, il fait passer les échecs de
 13 à 11 et le verdict reste NO.** Assouplir ne sauve rien ; c'est la réponse à la question.
 
-**Point de reprise : décision de protocole, pas exécution.** Le plan impose l'arrêt avant DEV-100
+**Point de reprise : décision de périmètre.** Le plan impose l'arrêt avant DEV-100
 et une nouvelle estimation plus une nouvelle approbation pour tout pilote payant supplémentaire.
 La mesure du plafond inter-annotateur, faite juste après et consignée plus bas, a tranché une
 partie de la question : quatre seuils sont au-dessus de l'accord humain et doivent être revus,
