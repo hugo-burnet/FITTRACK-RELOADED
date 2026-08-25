@@ -371,3 +371,35 @@ test('an unknown threshold profile is refused', () => {
     /unknown_threshold_profile:relaxed/
   );
 });
+
+test('negation is preserved by polarity, not by reusing the same particle', () => {
+  // Cas reel du run v0.4.2 : la GOLD dit « ... non d'une regle pour toute douleur »,
+  // le modele dit « Les seuils numeriques ne sont pas universels ». Les deux sont
+  // negatifs. Exiger le mot « non » a la lettre transformait une reformulation en
+  // fausse alerte sur la propriete la plus critique du systeme.
+  const golden = claim(0, 90, "il s'agit d'un protocole de recherche, non d'une règle pour toute douleur");
+  const predicted = claim(0, 90, 'Les seuils numériques ne sont pas universels');
+  const metrics = buildMetrics(
+    evaluateFragments({
+      annotations: [annotation('frag.f3.0002', [golden])],
+      runRecords: [record('frag.f3.0002', [predicted])]
+    }).fragmentResults
+  );
+  assert.equal(metrics.GLOBAL.nuanceConservation.negation.applicable, 1);
+  assert.equal(metrics.GLOBAL.nuanceConservation.negation.conserved, 1);
+});
+
+test('dropping the negation entirely is still caught', () => {
+  // La garde qui compte vraiment : une affirmation negative devenue affirmative.
+  const golden = claim(0, 90, "cette technique n'augmente pas l'hypertrophie");
+  const predicted = claim(0, 90, "cette technique augmente l'hypertrophie");
+  const results = evaluateFragments({
+    annotations: [annotation('frag.f2.0001', [golden])],
+    runRecords: [record('frag.f2.0001', [predicted])]
+  }).fragmentResults;
+  const metrics = buildMetrics(results);
+  // L alignement refuse deja d apparier deux polarites opposees, donc la claim
+  // negative est comptee manquee : l inversion ne peut pas passer inapercue.
+  assert.equal(metrics.GLOBAL.claims.matched, 0);
+  assert.ok(results[0].errors.some((item) => item.category === 'MISSED_CLAIM'));
+});

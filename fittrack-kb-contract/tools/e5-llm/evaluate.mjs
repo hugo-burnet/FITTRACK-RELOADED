@@ -189,11 +189,21 @@ function conservationForPair(prediction, golden) {
     const expected = [...golden.rawStatement.matchAll(regex)].map((match) =>
       match[0].toLocaleLowerCase('fr')
     );
+    // La négation se conserve par la polarité, pas par la réutilisation de la même
+    // particule. La GOLD écrit « ... non d'une règle », le modèle « ne sont pas
+    // universels » : même sens, mots différents. Exiger le terme à la lettre
+    // transformait une reformulation en fausse alerte sur la propriété la plus
+    // critique du système. L'inversion réelle — négatif devenu affirmatif — reste
+    // attrapée : l'alignement refuse d'apparier deux polarités opposées, donc la
+    // claim tombe en MISSED_CLAIM.
+    const predicted = prediction.rawStatement.toLocaleLowerCase('fr');
+    const conserved =
+      name === 'negation'
+        ? [...prediction.rawStatement.matchAll(NEGATION_RE)].length > 0
+        : expected.some((term) => predicted.includes(term));
     dimensions[name] = {
       applicable: expected.length > 0,
-      conserved:
-        expected.length === 0 ||
-        expected.some((term) => prediction.rawStatement.toLocaleLowerCase('fr').includes(term))
+      conserved: expected.length === 0 || conserved
     };
   }
   return dimensions;
