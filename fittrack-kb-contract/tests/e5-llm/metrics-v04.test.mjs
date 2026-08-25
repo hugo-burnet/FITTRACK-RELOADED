@@ -315,3 +315,52 @@ test('an unknown stage is refused rather than silently graded', () => {
     /unknown_benchmark_stage:REPLAY/
   );
 });
+
+test('the Design Review profile stays the default, so nothing is softened behind our back', () => {
+  const metrics = perfectMetrics();
+  assert.deepEqual(
+    benchmarkPass(metrics, { stage: 'DEV_100' }).gates,
+    benchmarkPass(metrics, { stage: 'DEV_100', thresholdProfile: 'design-review' }).gates
+  );
+  assert.equal(benchmarkPass(metrics, { stage: 'DEV_100' }).thresholdProfile, 'design-review');
+});
+
+test('the human-ceiling profile lowers only the thresholds measured above human agreement', () => {
+  const metrics = perfectMetrics();
+  const ceiling = benchmarkPass(metrics, { stage: 'DEV_100', thresholdProfile: 'human-ceiling' });
+  // Mesures d accord inter-annotateur, 30 fragments doublement annotes.
+  assert.equal(ceiling.gates.globalClaimPrecision.threshold, 0.9);
+  assert.equal(ceiling.gates.citationPrecision.threshold, 0.9);
+  assert.equal(ceiling.gates.citationRecall.threshold, 0.85);
+  // Les axes que deux humains franchissent gardent leur seuil d origine.
+  assert.equal(ceiling.gates.globalClaimRecall.threshold, 0.85);
+  assert.equal(ceiling.gates.knowledgeTypeAccuracy.threshold, 0.9);
+  assert.equal(ceiling.gates.epistemicStatusAccuracy.threshold, 0.85);
+  assert.equal(ceiling.gates.overmerged.threshold, 0.03);
+  // La surete ne se negocie jamais, quel que soit le profil.
+  assert.equal(ceiling.gates.inventedSource.threshold, 0);
+  assert.equal(ceiling.gates.rejectedFragments.threshold, 0);
+});
+
+test('UNRESOLVED is reported but stops gating under the human-ceiling profile', () => {
+  // Deux annotateurs entraines ne s accordent qu a 0,57 sur cet axe. Le gater a 0,90
+  // revient a noter du bruit ; le probleme est dans la consigne d annotation.
+  const failing = perfectMetrics({ 'GLOBAL.unresolved.preservationRate': 0.2 });
+  const designReview = benchmarkPass(failing, { stage: 'DEV_100' });
+  assert.equal(designReview.gates.unresolvedFidelity.pass, false);
+  assert.equal(designReview.pass, false);
+
+  const ceiling = benchmarkPass(failing, { stage: 'DEV_100', thresholdProfile: 'human-ceiling' });
+  assert.equal(ceiling.gates.unresolvedFidelity, undefined);
+  assert.equal(ceiling.reported.unresolvedFidelity.actual, 0.2);
+  assert.equal(ceiling.reported.unresolvedFidelity.gating, false);
+  assert.equal(ceiling.reported.unresolvedFidelity.reason, 'below_measured_inter_annotator_agreement');
+  assert.equal(ceiling.pass, true);
+});
+
+test('an unknown threshold profile is refused', () => {
+  assert.throws(
+    () => benchmarkPass(perfectMetrics(), { stage: 'DEV_100', thresholdProfile: 'relaxed' }),
+    /unknown_threshold_profile:relaxed/
+  );
+});

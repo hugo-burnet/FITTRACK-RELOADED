@@ -96,3 +96,29 @@ n'est pas tranchée, la mesurer par une gate revient à noter du bruit.
 texte ordinaire est probablement plus haut. Un seul couple d'annotateurs, donc l'accord
 mesuré est un point, pas une distribution. Et le plafond de fusion est légèrement
 pessimiste à cause des spans partagés de B décrits plus haut.
+
+## Profils de seuils
+
+Les seuils du Design Review ne sont **pas** écrasés. Baisser une cible après l'avoir
+ratée, c'est déplacer les poteaux, et un run doit pouvoir être relu contre la cible
+affichée quand il a tourné. `benchmarkPass` accepte donc un `thresholdProfile` :
+
+- `design-review` (défaut) : le gel d'origine, inchangé.
+- `human-ceiling` : les trois seuils mesurés au-dessus de l'accord humain sont ramenés
+  à celui-ci (`claimPrecision` 0,95 → 0,90 ; `citationPrecision` 0,97 → 0,90 ;
+  `citationRecall` 0,90 → 0,85), et `unresolvedFidelity` sort du verdict tout en
+  restant rapporté, avec le motif `below_measured_inter_annotator_agreement`.
+
+Les gates de sûreté et de rejet global sont identiques dans les deux profils. Elles ne
+se négocient pas.
+
+### Ce que le profil ne sauve pas
+
+Appliqué au run DEV-20 réel, le profil `human-ceiling` fait passer les gates en échec de
+13 à 11. **Le verdict reste NO.** Assouplir les seuils incohérents ne rend pas le run
+acceptable — ça rend seulement la mesure honnête. Les onze échecs restants sont de vrais
+écarts sur des axes où deux humains convergent : rappel, `knowledgeType`,
+`epistemicStatus`, sur-fusion, sur-découpage.
+
+C'est la réponse à la question « faut-il assouplir les seuils ? » : non, ça ne change
+rien au fond. Le travail est dans le protocole d'extraction.

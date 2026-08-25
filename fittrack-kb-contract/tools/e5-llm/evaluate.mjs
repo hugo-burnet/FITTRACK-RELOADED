@@ -646,16 +646,45 @@ export function errorDistribution(errors) {
 
 export const BENCHMARK_STAGES = ['DEV_20', 'DEV_100', 'HOLDOUT_30'];
 
+// Deux jeux de seuils, jamais fusionnes. `design-review` est le gel d origine et
+// reste le defaut : baisser une cible apres l avoir ratee, c est deplacer les
+// poteaux, et un run doit pouvoir etre relu contre la cible qui etait affichee
+// quand il a tourne.
+//
+// `human-ceiling` derive des seuils de l accord inter-annotateur reellement mesure
+// (voir benchmark/e5/v0/AGREEMENT-CEILING.md, 30 fragments doublement annotes). Un
+// seuil au-dessus de cet accord n est pas ambitieux, il est incoherent : il demande
+// au modele d etre plus d accord avec l arbitre que les annotateurs ne l ont ete
+// entre eux, sur une reference dont c est precisement la variance.
+export const THRESHOLD_PROFILES = ['design-review', 'human-ceiling'];
+
+const HUMAN_CEILING_OVERRIDES = {
+  // seuil d origine -> accord humain mesure
+  globalClaimPrecision: 0.9, // 0,95 -> humains 0,914
+  citationPrecision: 0.9, // 0,97 -> humains 0,845
+  citationRecall: 0.85 // 0,90 -> humains 0,845
+};
+
+// Axes retires du verdict mais toujours rapportes. `unresolvedFidelity` est a 0,57
+// d accord humain contre un seuil de 0,90 : le gater revient a noter du bruit, et le
+// correctif est dans la consigne d annotation, pas dans le modele.
+const HUMAN_CEILING_REPORTED_ONLY = {
+  unresolvedFidelity: 'below_measured_inter_annotator_agreement'
+};
+
+// `lowerIsBetter` est porté explicitement : un profil de seuils recalcule le verdict
+// à partir du seuil substitué, et déduire le sens de comparaison d'un champ absent
+// serait juste au hasard.
 function minGate(actual, threshold) {
-  return { actual, threshold, pass: actual >= threshold };
+  return { actual, threshold, lowerIsBetter: false, pass: actual >= threshold };
 }
 
 function maxGate(actual, threshold) {
-  return { actual, threshold, pass: actual <= threshold };
+  return { actual, threshold, lowerIsBetter: true, pass: actual <= threshold };
 }
 
 function zeroGate(actual) {
-  return { actual, threshold: 0, pass: actual === 0 };
+  return { actual, threshold: 0, lowerIsBetter: true, pass: actual === 0 };
 }
 
 // Un taux nul veut dire « aucun item comparable », pas « échec ». Sur DEV il n'y a
@@ -690,9 +719,38 @@ function criticalSafetyGates(metrics) {
   };
 }
 
-export function benchmarkPass(metrics, { stage = 'DEV_100', dev100Metrics = null } = {}) {
+// Applique le profil au jeu de gates deja construit : les seuils de surete et de
+// rejet n y figurent jamais, ils ne se negocient pas.
+function applyThresholdProfile(gates, profile) {
+  if (profile === 'design-review') return { gates, reported: {} };
+  const adjusted = {};
+  const reported = {};
+  for (const [name, gate] of Object.entries(gates)) {
+    const reason = HUMAN_CEILING_REPORTED_ONLY[name];
+    if (reason) {
+      reported[name] = { actual: gate.actual, threshold: gate.threshold, gating: false, reason };
+      continue;
+    }
+    const override = HUMAN_CEILING_OVERRIDES[name];
+    if (override === undefined) {
+      adjusted[name] = gate;
+      continue;
+    }
+    const pass = gate.lowerIsBetter ? gate.actual <= override : gate.actual >= override;
+    adjusted[name] = { ...gate, threshold: override, pass, designReviewThreshold: gate.threshold };
+  }
+  return { gates: adjusted, reported };
+}
+
+export function benchmarkPass(
+  metrics,
+  { stage = 'DEV_100', dev100Metrics = null, thresholdProfile = 'design-review' } = {}
+) {
   if (!BENCHMARK_STAGES.includes(stage)) {
     throw new Error(`unknown_benchmark_stage:${stage}`);
+  }
+  if (!THRESHOLD_PROFILES.includes(thresholdProfile)) {
+    throw new Error(`unknown_threshold_profile:${thresholdProfile}`);
   }
   const g = metrics.GLOBAL;
   const f3 = metrics.F3;
@@ -704,7 +762,14 @@ export function benchmarkPass(metrics, { stage = 'DEV_100', dev100Metrics = null
       globalClaimRecall: minGate(g.claims.recall, 0.8),
       ...criticalSafetyGates(metrics)
     };
-    return { stage, pass: Object.values(gates).every((gate) => gate.pass), gates };
+    const applied = applyThresholdProfile(gates, thresholdProfile);
+    return {
+      stage,
+      thresholdProfile,
+      pass: Object.values(applied.gates).every((gate) => gate.pass),
+      gates: applied.gates,
+      reported: applied.reported
+    };
   }
   const baseline = dev100Metrics?.GLOBAL ?? null;
   const nullable = (actual, threshold, baselineActual) =>
@@ -755,7 +820,14 @@ export function benchmarkPass(metrics, { stage = 'DEV_100', dev100Metrics = null
     overmerged: maxGate(g.claims.mergedClaimRate, 0.03),
     oversplit: maxGate(g.claims.overFragmentationRate, 0.05)
   };
-  return { stage, pass: Object.values(gates).every((gate) => gate.pass), gates };
+  const applied = applyThresholdProfile(gates, thresholdProfile);
+  return {
+    stage,
+    thresholdProfile,
+    pass: Object.values(applied.gates).every((gate) => gate.pass),
+    gates: applied.gates,
+    reported: applied.reported
+  };
 }
 
 export { ERROR_CATEGORIES };
