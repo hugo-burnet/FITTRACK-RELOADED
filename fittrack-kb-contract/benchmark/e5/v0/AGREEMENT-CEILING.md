@@ -122,3 +122,54 @@ acceptable — ça rend seulement la mesure honnête. Les onze échecs restants 
 
 C'est la réponse à la question « faut-il assouplir les seuils ? » : non, ça ne change
 rien au fond. Le travail est dans le protocole d'extraction.
+
+## Accord corrigé du hasard (kappa)
+
+L'accord brut suffit pour comparer humains et modèle sur la même échelle. Il ne suffit
+pas pour décider si une consigne d'annotation tient : quand une catégorie domine, deux
+annotateurs s'accordent beaucoup par pur hasard. Le kappa retire cette part.
+
+Repère de métier pour une grille d'évaluation LLM : viser **0,70 à 0,85** par critère.
+Sous 0,70, la grille est ambiguë et les étiquettes sont du bruit ; à partir de 0,90 elle
+ne distingue plus que les cas évidents.
+
+### Le choix de la valeur tient très bien
+
+| Axe | Accord brut | Kappa | Verdict |
+|---|---:|---:|---|
+| `epistemicStatus` (9 niveaux) | 0,9054 | **0,8890** | utilisable |
+| `knowledgeType` (9 niveaux) | 0,9524 | **0,9397** | trop grossier |
+
+**L'échelle à neuf niveaux n'est pas le problème.** C'était l'hypothèse de départ — la
+littérature en utilise trois à cinq — et la mesure la réfute. Deux annotateurs choisissent
+la même valeur parmi neuf avec un kappa de 0,89. Il n'y a rien à simplifier ici.
+
+### Le vrai défaut est un vocabulaire redondant
+
+La décision « cet axe est-il résolu ? » a trois états, dont deux disent la même chose :
+`UNRESOLVED` (indéterminable) et `NOT_STATED` (non énoncé). Aucune règle ne tranche.
+Résultat mesuré sur `confidenceByAspect` : **un annotateur écrit `NOT_STATED` là où
+l'autre écrit `UNRESOLVED` 54 fois sur 85.**
+
+| Axe | Kappa | Verdict | Après fusion des deux états | Verdict |
+|---|---:|---|---:|---|
+| `knowledgeType` | 1,0000 | trop grossier | 1,0000 | trop grossier |
+| `epistemicStatus` | 0,8492 | utilisable | 0,8492 | utilisable |
+| `confidenceByAspect` | 0,1671 | **bruit** | **0,7922** | utilisable |
+| `directness` | 0,4321 | **bruit** | 0,6256 | bruit |
+| `evidenceTypes` | 0,2134 | **bruit** | **0,9037** | trop grossier |
+
+Fusionner deux étiquettes synonymes fait passer deux axes sur trois du bruit à
+l'utilisable, **sans réannoter une seule ligne**. `directness` garde une difficulté
+réelle et reste sous le plancher.
+
+### Ce que la fusion ne répare pas
+
+Côté modèle, elle ne change rien. Quand la GOLD dit `UNRESOLVED`, le modèle répond
+`RESOLVED` **18 fois sur 22** et n'emploie jamais `NOT_STATED`. Sa sur-résolution est un
+vrai défaut de protocole, pas une convention d'étiquetage.
+
+Les deux problèmes sont donc distincts, et l'ordre compte : réparer le vocabulaire rend
+la référence fiable (kappa 0,17 → 0,79), ce qui rend seulement alors la sur-résolution du
+modèle *mesurable*. Aujourd'hui la gate `unresolvedFidelity` note un modèle contre un axe
+dont l'accord humain est de 0,17 — elle ne mesure rien.

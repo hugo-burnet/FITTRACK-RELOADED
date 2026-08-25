@@ -12,6 +12,12 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildMetrics, evaluateFragments } from './e5-llm/evaluate.mjs';
+import {
+  cohensKappa,
+  collapseConfusionMatrix,
+  observedAgreement,
+  reliabilityVerdict
+} from './e5-llm/kappa.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const defaultRoot = join(here, '..');
@@ -138,6 +144,47 @@ export function claimsSharingSpans(annotations) {
   return affected;
 }
 
+export const RESOLUTION_AXES = [
+  'knowledgeType',
+  'epistemicStatus',
+  'confidenceByAspect',
+  'directness',
+  'evidenceTypes'
+];
+
+// `UNRESOLVED` et `NOT_STATED` disent la même chose — l'information n'est pas dans le
+// fragment — et aucune règle ne tranche laquelle employer. Mesuré : sur
+// confidenceByAspect, un annotateur écrit NOT_STATED là où l'autre écrit UNRESOLVED
+// 54 fois sur 85. Ce n'est pas un désaccord de jugement, c'est un vocabulaire
+// redondant, et il fait passer l'axe pour du bruit.
+export const MERGED_RESOLUTION_STATES = {
+  RESOLVED: 'RESOLVED',
+  UNRESOLVED: 'NON_RESOLU',
+  NOT_STATED: 'NON_RESOLU',
+  ABSENT: 'NON_RESOLU'
+};
+
+// Matrice de confusion des états de résolution, axe par axe, entre deux jeux
+// d'annotations appariés claim par claim.
+export function axisStateMatrices(primaryAnnotations, secondaryAnnotations) {
+  const evaluation = evaluateFragments({
+    annotations: secondaryAnnotations,
+    runRecords: annotationsAsRunRecords(primaryAnnotations)
+  });
+  const matrices = Object.fromEntries(RESOLUTION_AXES.map((axis) => [axis, {}]));
+  for (const fragment of evaluation.fragmentResults) {
+    for (const pair of fragment.pairs) {
+      for (const axis of RESOLUTION_AXES) {
+        const left = pair.prediction.axisResolution?.[axis]?.state ?? 'ABSENT';
+        const right = pair.golden.axisResolution?.[axis]?.state ?? 'ABSENT';
+        matrices[axis][right] ??= {};
+        matrices[axis][right][left] = (matrices[axis][right][left] ?? 0) + 1;
+      }
+    }
+  }
+  return matrices;
+}
+
 function mean(left, right) {
   if (left === null || left === undefined) return right ?? null;
   if (right === null || right === undefined) return left;
@@ -227,6 +274,37 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       const mark = item.reachedByHumans === null ? 'n/a' : item.reachedByHumans ? 'oui' : 'NON';
       console.log(
         `${name.padEnd(26)} ${fmt(item.observed)}   ${fmt(item.threshold)}   ${mark}`
+      );
+    }
+
+    // L'accord brut suffit pour comparer humains et modèle sur la même échelle. Pour
+    // décider si une consigne d'annotation tient, il faut le kappa : il retire la
+    // part d'accord due au hasard, qui est énorme quand une catégorie domine.
+    const primaryAnnotations = readJson(defaultRoot, 'golden/e5/annotations/annotator-a.json')
+      .annotations.filter((item) => fragmentIds.includes(item.fragmentId));
+    const secondaryAnnotations = readJson(defaultRoot, 'golden/e5/annotations/annotator-b.json')
+      .annotations.filter((item) => fragmentIds.includes(item.fragmentId));
+    const matrices = axisStateMatrices(primaryAnnotations, secondaryAnnotations);
+    console.log('\nDécision RESOLVED / UNRESOLVED / NOT_STATED, corrigée du hasard');
+    console.log('Axe                    kappa   verdict        après fusion des deux « non résolu »');
+    for (const axis of RESOLUTION_AXES) {
+      const strict = cohensKappa(matrices[axis]);
+      const merged = cohensKappa(collapseConfusionMatrix(matrices[axis], MERGED_RESOLUTION_STATES));
+      console.log(
+        `${axis.padEnd(22)} ${fmt(strict)}  ${reliabilityVerdict(strict).padEnd(14)} ${fmt(merged)}  ${reliabilityVerdict(merged)}`
+      );
+    }
+
+    const classification = [
+      ['epistemicStatus', result.forward.classification.epistemicStatusConfusionMatrix],
+      ['knowledgeType', result.forward.classification.knowledgeTypeConfusionMatrix]
+    ];
+    console.log('\nChoix de la valeur, corrigé du hasard');
+    console.log('Axe                    accord   kappa   verdict');
+    for (const [name, confusion] of classification) {
+      const kappa = cohensKappa(confusion);
+      console.log(
+        `${name.padEnd(22)} ${fmt(observedAgreement(confusion))}  ${fmt(kappa)}  ${reliabilityVerdict(kappa)}`
       );
     }
   } catch (error) {
