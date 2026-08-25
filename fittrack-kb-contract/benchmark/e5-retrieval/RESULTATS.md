@@ -195,3 +195,73 @@ node fittrack-kb-contract/tools/e5-retrieval/judge-local.mjs \
 ```
 
 Nécessite ollama avec `qwen3:1.7b` et `bge-m3`. Aucun appel payant.
+
+---
+
+# La cause racine : le corpus est illisible hors contexte
+
+## Le constat
+
+**61 % des affirmations commencent en minuscule** — ce sont des morceaux de phrases
+amputés de leur sujet.
+
+> « conclut à l'**absence de différence significative d'hypertrophie** entre les deux
+> approches »
+
+Entre quelles deux approches ? L'information est restée dans le texte source.
+
+Le point décisif : **56 % des affirmations écrites par les annotateurs humains sont dans
+le même cas** (65 % côté modèle). Ce n'est donc pas la sur-production de l'extracteur.
+
+## Le mécanisme
+
+Le schéma exige que `rawStatement` soit un extrait **verbatim** du corpus, ancré à
+l'octet. Pour être exact, on extrait la portion exacte — qui commence souvent au milieu
+d'une phrase.
+
+**La propriété qui garantit « rien n'est inventé » est celle qui rend les affirmations
+inutilisables seules.** Le corpus est optimisé pour la traçabilité, pas pour la lecture.
+
+Donner quatre fragments de ce type à un modèle et lui demander une réponse cohérente le
+force à combler les trous. Combler un trou, c'est fabriquer. Les 15 % d'invention mesurés
+n'étaient pas un défaut du modèle : c'était sa seule issue.
+
+## Le correctif testé
+
+`--context true` rend à chaque affirmation sa phrase d'origine, prise dans le fragment
+source — rien n'est reconstruit, seulement re-lu.
+
+| | Fragments bruts | Phrases entières |
+|---|---:|---:|
+| Longueur moyenne fournie | 146 car. | 330 car. |
+| Vocabulaire absent des sources (normalisé) | 42 % | 44 % |
+| Réponses qui recopient la question | 5 / 27 | 4 / 28 |
+| Refus justes | 2 / 9 | 1 / 9 |
+
+## Ce que la mesure ne sait pas dire
+
+**Aucune métrique automatique ici ne distingue une réponse fidèle d'une fabrication.**
+
+Le premier proxy — tournure causale plus vocabulaire absent des sources — annonçait 15 %
+contre 36 %, un effondrement. Normalisé par la longueur des réponses, l'écart disparaît :
+42 % contre 44 %. Le proxy mesurait la dérive lexicale, et il était confondu par le fait
+que les réponses avec contexte sont plus longues.
+
+Qualitativement, l'écart penche pourtant nettement dans l'autre sens :
+
+> **q.15, sans contexte** — « il faut vérifier si elle est due à une douleur de base ou à
+> un red flag. Cela dépend du rapport entre le moment de force externe… » — incohérent,
+> deux affirmations sans rapport soudées.
+>
+> **q.15, avec contexte** — « si elle est brutale, intense, ou accompagnée de symptômes
+> neurologiques, il est préférable d'arrêter » — fidèle et utilisable.
+
+Trancher demande un jugement humain sur les 30 réponses. C'est le protocole prévu depuis
+le départ : la machine retrouve, la personne juge.
+
+## Conséquence pour la phase 2
+
+Si l'hydratation se confirme utile, elle change ce que le corpus doit exporter : pas
+seulement l'extrait verbatim et ses coordonnées, mais aussi **la phrase porteuse**. Les
+coordonnées sont déjà là (`supportSpans`), donc c'est une projection à ajouter, pas une
+extraction à refaire — aucun appel payant.

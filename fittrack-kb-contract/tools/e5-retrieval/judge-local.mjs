@@ -48,6 +48,35 @@ async function generate(model, prompt, think) {
   return (await response.json()).response.trim();
 }
 
+
+// 61 % des affirmations commencent en milieu de phrase : le schema exige un extrait
+// verbatim ancre a l octet, donc la portion exacte, qui a souvent perdu son sujet.
+// « conclut a l absence de difference entre les deux approches » — lesquelles ?
+// Un modele a qui on donne quatre fragments pareils DOIT combler les trous pour
+// repondre, et combler un trou c est fabriquer. On lui rend donc la phrase entiere.
+const SENTENCE_EDGE = /[.!?\n]/u;
+
+function hydrate(claim, fragment) {
+  const span = (claim.supportSpans ?? [])[0];
+  if (!span || !fragment) return claim.rawStatement.replace(/\s+/gu, ' ');
+  const bytes = Buffer.from(fragment.rawText, 'utf8');
+  // Remonter au début de la phrase, puis descendre jusqu'à sa fin, sans jamais sortir
+  // du fragment : le contexte rendu vient du corpus, il n'est pas reconstruit.
+  let start = span.relativeStartByte;
+  while (start > 0 && !SENTENCE_EDGE.test(bytes.slice(start - 1, start).toString('utf8'))) {
+    start -= 1;
+  }
+  let end = span.relativeEndByte;
+  while (end < bytes.length && !SENTENCE_EDGE.test(bytes.slice(end, end + 1).toString('utf8'))) {
+    end += 1;
+  }
+  return bytes
+    .slice(start, Math.min(end + 1, bytes.length))
+    .toString('utf8')
+    .replace(/\s+/gu, ' ')
+    .trim();
+}
+
 function dot(a, b) {
   let sum = 0;
   for (let i = 0; i < a.length; i += 1) sum += a[i] * b[i];
@@ -115,16 +144,22 @@ export function buildPrompt(question, claims, variant = 'v2') {
   return PROMPTS[variant](question, claims);
 }
 
-export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b', variant = 'v2', think = true, outputPath } = {}) {
+export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b', variant = 'v2', think = true, context = false, outputPath } = {}) {
   const corpus = readJson(join(root, 'candidates/e5-corpus.json'));
   const fragments = readJson(join(root, 'candidates/e5-prose-fragments.json'));
   const questions = readJson(join(root, 'benchmark/e5-retrieval/questions-30.json'));
+  const fragmentById = new Map(fragments.fragments.map((f) => [f.fragmentId, f]));
   const headings = new Map(
     fragments.fragments.map((fragment) => [fragment.fragmentId, (fragment.headingPath ?? []).join(' > ')])
   );
 
   const claims = corpus.claims
-    .map((claim) => ({ fragmentId: claim.fragmentId, text: claim.rawStatement.replace(/\s+/g, ' ') }))
+    .map((claim) => ({
+      fragmentId: claim.fragmentId,
+      text: context
+        ? hydrate(claim, fragmentById.get(claim.fragmentId))
+        : claim.rawStatement.replace(/\s+/gu, ' ')
+    }))
     .filter((claim) => claim.text.length >= MIN_LEN);
 
   process.stdout.write(`index : ${claims.length} affirmations`);
@@ -154,7 +189,7 @@ export async function runJudge({ embedModel = 'bge-m3', chatModel = 'qwen3:1.7b'
     console.log(`${question.questionId} ${refused ? 'REFUS ' : 'répond'} ${question.text.slice(0, 52)}`);
   }
 
-  const document = { embedModel, chatModel, variant, think, topK: TOP_K, minLen: MIN_LEN, indexed: claims.length, results };
+  const document = { embedModel, chatModel, variant, think, context, topK: TOP_K, minLen: MIN_LEN, indexed: claims.length, results };
   if (outputPath) {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, `${JSON.stringify(document, null, 2)}\n`, 'utf8');
@@ -173,6 +208,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     chatModel: option('model', 'qwen3:1.7b'),
     variant: option('prompt', 'v2'),
     think: option('think', 'true') !== 'false',
+    context: option('context', 'false') === 'true',
     outputPath: option('output', join(root, 'benchmark/e5-retrieval/judge-run.json'))
   }).catch((error) => {
     console.error(error instanceof Error ? error.message : String(error));
