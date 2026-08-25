@@ -44,3 +44,25 @@ Ne pas ouvrir CAL ni TEST.
 
 Étape suivante : annoter DEV de façon exhaustive, distinguer les erreurs de recherche des trous
 du corpus, puis effectuer l’unique correction autorisée avant de mesurer de nouveau DEV.
+
+## Suite — ce que l’annotation a révisé
+
+Cette étape suivante a été faite ; elle est consignée dans `DEV-ANNOTATION.md`. Elle corrige
+deux affirmations de la section « Inspection DEV provisoire » ci-dessus.
+
+D’abord, les six échecs cités (deload, ordre biceps/dos, volume hebdomadaire, tempo excentrique,
+reprise après pause, priorité des muscles) ne sont pas des échecs du moteur : ce sont des
+**lacunes du corpus**. Le corpus ne contient aucun contenu de programmation. Aucun réglage de
+récupération ne les corrigera.
+
+Ensuite, la couverture exhaustive du corpus est de **31/59 = 52,5 %**, très au-dessus du seuil
+de continuation de 20 %. Sur les 31 questions répondables, le moteur en ratait 9 dont la réponse
+était présente dans le corpus. Le pipeline sous-exploitait donc le corpus au lieu d’en atteindre
+les limites.
+
+Enfin, l’inspection provisoire notait que « la présence d’un résultat ne peut pas servir de
+décision d’answerability ». C’est maintenant mesuré : le moteur renvoie quatre candidats pour
+**28 des 28** questions auxquelles le corpus ne peut pas répondre.
+
+La décision « ne pas ouvrir CAL ni TEST » reste valable, mais pour une raison différente de celle
+écrite ici : ce n’est pas le corpus qui est trop pauvre, c’est le refus qui n’existe pas encore.

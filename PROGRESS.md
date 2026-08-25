@@ -2,7 +2,9 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-24 (**`feat/knowledge-base-v1` intégré dans `master` en
+**Dernière mise à jour :** 2026-08-26 (**annotation exhaustive DEV : couverture du corpus à
+52,5 %, correction d'instrument consommée, CAL et TEST toujours fermés** — voir la section
+« Annotation exhaustive DEV » ci-dessous). Précédemment, le 2026-08-24 (**`feat/knowledge-base-v1` intégré dans `master` en
 fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-contract/`, dont les
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
@@ -73,6 +75,46 @@ que l'empreinte et le texte des 77 fragments réellement cités.
 
 **E1 à E4 sont amorcés** sur `master` : tableaux, axes, citations,
 puis parcours déterministe de F4. Pas d'écriture dans `curated/`.
+
+### Annotation exhaustive DEV (2026-08-26) — le diagnostic de `DEV-RUN.md` était faux
+
+Les 59 questions DEV sont annotées, feuilles A et B remplies avec deux procédures distinctes
+(descendante par éléments indispensables, ascendante par assemblage de preuves). Accord brut
+83,1 %, kappa de Cohen 0,670, dix désaccords adjugés par une règle écrite. Détail complet dans
+`fittrack-kb-contract/benchmark/e5-retrieval/selective-v1/DEV-ANNOTATION.md`.
+
+**La couverture du corpus est de 31/59 = 52,5 %**, pour un seuil de continuation fixé à 20 %.
+`DEV-RUN.md` concluait que le pipeline butait sur un corpus trop pauvre ; c'est l'inverse. Les six
+échecs qu'il citait — deload, ordre biceps/dos, volume hebdomadaire, tempo excentrique, reprise
+après pause, priorité des muscles — sont bien des lacunes réelles, mais elles tombent toutes dans
+**un seul domaine absent : la programmation**. Le corpus couvre l'anatomie, la biomécanique, la
+sélection d'exercices et le clinique, et rien d'autre. Sur les 31 questions dont la réponse était
+dans le corpus, le moteur en ratait 9.
+
+**La correction d'instrument autorisée est consommée.** `run-selective-hybrid-benchmark.mjs`
+tronquait la fusion RRF à `TOP_K` sans dédupliquer par `displayContext`, alors que la recherche
+livrée (`searchEvidence.ts`) le fait depuis toujours — **le banc mesurait un pipeline différent de
+celui qui est livré**. 44 questions sur 59 remontaient moins de quatre contextes distincts, et 60
+des 236 emplacements de candidats étaient consommés par un passage déjà affiché. Après correction,
+à modèle et digest identiques : contextes distincts 2,98 → 4,00, emplacements gaspillés 60 → 0,
+rappel@4 sur les répondables 22 → 26, erreurs de récupération 9 → 5, **aucune régression**. La
+précision au rang 1 ne bouge pas, ce qui est le bon signe : une déduplication n'évince jamais le
+premier résultat, donc une correction qui aurait déplacé le top-1 aurait été un réglage déguisé.
+
+**Le défaut restant n'est pas la récupération, c'est le refus.** Le moteur renvoie quatre
+candidats pour **28 questions sur 28** auxquelles le corpus ne peut pas répondre — 100 % de faux
+positifs sur l'answerability, avant comme après. C'est la confirmation expérimentale de ce que le
+protocole affirmait sans l'avoir mesuré, et c'est le travail de CAL.
+
+Deux réserves à porter dans la session suivante. D'abord, **les deux feuilles ont été remplies par
+le même annotateur** : le protocole exige deux personnes, la relecture humaine reste due, et le
+52,5 % mesure pour l'instant la stabilité d'une procédure, pas une reproductibilité
+inter-annotateurs. La limite est inscrite dans les fichiers eux-mêmes (`annotator.independence`).
+Ensuite, cinq erreurs de récupération subsistent (Q6, Q8, Q28, Q32, Q39) et partagent un trait :
+la réponse existe mais s'assemble à partir d'affirmations dispersées qui n'emploient jamais le
+vocabulaire de la question. Les traiter demanderait une seconde correction, non autorisée.
+
+**CAL et TEST n'ont été ni lus, ni exécutés, ni inspectés.**
 
 ### E5 v0.4 — checkpoint après DEV-20 (2026-08-25)
 
