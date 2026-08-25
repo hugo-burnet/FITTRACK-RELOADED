@@ -1,8 +1,11 @@
 node_modules/
 
-# Sorties de run : predictions, diagnostics, metriques, replays. Le plan interdit
-# de les versionner — ce sont des artefacts d execution, pas du contrat.
+# Sorties de run : predictions, diagnostics, metriques, reponses brutes du
+# fournisseur. Le plan interdit de les versionner — ce sont des artefacts
+# d execution. Le produit distille, lui, est versionne : candidates/e5-corpus.json
 benchmark/e5/v0/replays/
 benchmark/e5/v0/runs/dev-20/
 benchmark/e5/v0/runs/dev-100/
 benchmark/e5/v0/runs/holdout-30/
+benchmark/e5/v0/corpus/
+benchmark/e5/v0/pilot/openrouter-openai-gpt-5/

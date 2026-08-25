@@ -16,16 +16,16 @@
   },
   "costEstimate": {
     "approximationMethod": "UTF-8 bytes / 4 for input; configured expected and hard maximum output tokens",
-    "approximateInputTokens": 66273,
+    "approximateInputTokens": 76820,
     "expectedOutputTokens": 110000,
-    "maximumOutputTokens": 240000,
+    "maximumOutputTokens": 320000,
     "configuredRatesUsdPerMillionTokens": {
       "input": 1.25,
       "output": 10,
       "basis": "User-configured OpenRouter rates for openai/gpt-5 on 2026-08-24"
     },
-    "expectedCostUsd": 1.1828,
-    "maximumConfiguredCostUsd": 2.4828
+    "expectedCostUsd": 1.196,
+    "maximumConfiguredCostUsd": 3.296
   },
-  "maxRunCostUsd": 2.5
+  "maxRunCostUsd": 7
 }
