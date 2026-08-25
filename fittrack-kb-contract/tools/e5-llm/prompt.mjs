@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export const PROMPT_VERSION = 'e5-llm-v0.4.0';
+export const PROMPT_VERSION = 'e5-llm-v0.4.1';
 
 export const E5_SYSTEM_PROMPT = `Tu es l'extracteur E5 de la Knowledge Base FitTrack.
 
@@ -19,6 +19,18 @@ GRANULARITE AUTORITAIRE
 - Ne sépare pas population, conditions, temporalité, modalité, comparaison, négation ou limite indispensables.
 - Sépare résultat scientifique, mécanisme, EMG, biomécanique et conséquence pratique.
 - Evite les mega-claims comme les micro-claims artificiels.
+- Une unité de couverture est une phrase ; une claim est une affirmation. Une phrase en porte
+  souvent plusieurs. Dans le corpus de référence, une unité qui porte au moins une claim en porte
+  1,56 en moyenne, et 38 % en portent au moins deux. Produire une claim par unité est l'erreur la
+  plus fréquente.
+- Coupe systématiquement aux articulations contrastives et additives — « tandis que », « alors
+  que », « en revanche », « contrairement à », « mais », « et », « , avec » — dès que chaque côté
+  porte son propre prédicat évaluable. Exemple : « les extensions au-dessus de la tête ciblent
+  préférentiellement le chef long, tandis que les pushdowns sollicitent davantage les chefs
+  latéral et médial » est deux claims, pas une.
+- Cette coupe ne s'applique pas quand un côté n'est qu'un qualificatif de l'autre : population,
+  conditions, temporalité, modalité, comparaison, négation et limites restent dans la claim
+  qu'elles qualifient.
 
 COUVERTURE EXHAUSTIVE
 - Le tableau coverageUnits est ordonné et exhaustif : examine chaque unité, une par une, avant d'extraire les claims.

@@ -199,6 +199,33 @@ pas à juger, il a à recopier.
 L'outil porte son propre contrôle : comparée à elle-même, la GOLD arbitrée donne 1,0000 partout et
 0,0000 de fusion. Les écarts du modèle ne sont donc pas des artefacts de mesure.
 
+### Correctifs de protocole appliqués (2026-08-25) — non validés faute de run
+
+Trois causes concrètes identifiées puis corrigées, toutes à coût nul. **Aucune n'est validée
+contre le modèle** : ça demanderait un nouveau DEV-20 payant, donc une nouvelle approbation.
+
+**1. Le ledger de couverture causait la sur-fusion.** Les unités de couverture sont des phrases ;
+la GOLD découpe *à l'intérieur* des phrases. Le prompt demandait de couvrir chaque unité, le
+modèle produisait une claim par unité. Mesuré : la GOLD met 1,56 claim par unité porteuse, et 38 %
+des unités porteuses en portent au moins deux. Sur les 11 cas de fusion du run, la longueur du
+span du modèle vaut ≈ la somme des spans GOLD dans 8 cas — **le modèle lit le bon texte, il
+l'emballe mal**. 7 cas sur 11 fusionnent à une articulation explicite : « tandis que », « mais »,
+« et », « avec ».
+
+**2. Le segmenteur coupait dans les URL.** `emitSentences` traitait tout point comme une fin de
+phrase, donc `https://onlinelibrary.wiley.com/doi/10.1080/...` devenait six unités : « wiley. »,
+« com/doi/10. », « 2022. ». Sur les 100 fragments GOLD : 361 unités dont 135 de moins de
+25 caractères, toutes des débris d'URL. Après correctif : **192 unités dont 3**. La moitié de ce
+que le ledger demandait de couvrir n'existait pas. Même classe de bug pour les décimales.
+
+**3. Le prompt passe en `e5-llm-v0.4.1`** avec une consigne de granularité chiffrée plutôt
+qu'abstraite, et un exemple tiré d'un échec réel.
+
+Sur les seuils : `benchmarkPass` accepte un `thresholdProfile`. Le gel `design-review` reste le
+défaut — baisser une cible après l'avoir ratée, c'est déplacer les poteaux. Le profil
+`human-ceiling` est disponible à côté. **Appliqué au run DEV-20 réel, il fait passer les échecs de
+13 à 11 et le verdict reste NO.** Assouplir ne sauve rien ; c'est la réponse à la question.
+
 **Point de reprise : décision de protocole, pas exécution.** Le plan impose l'arrêt avant DEV-100
 et une nouvelle estimation plus une nouvelle approbation pour tout pilote payant supplémentaire.
 La mesure du plafond inter-annotateur, faite juste après et consignée plus bas, a tranché une
