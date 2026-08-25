@@ -6,1069 +6,730 @@
     "UNANSWERABLE",
     "AMBIGUOUS"
   ],
+  "split": "DEV",
+  "annotator": {
+    "id": "annotator-b",
+    "procedure": "Assemblage ascendant. Balayage lexical des 408 affirmations (top-10 dédupliqué par contexte) puis scan manuel des sections voisines ; ANSWERABLE si l'ensemble réuni permet une réponse substantiellement correcte et non trompeuse. supportingClaimIds = ensemble réuni.",
+    "independence": "LIMITE À CONSIGNER : les feuilles A et B ont été remplies par le même annotateur (agent), avec deux procédures délibérément distinctes et sans consulter la feuille jumelle pendant le remplissage. Cela ne satisfait pas l'exigence de deux personnes du protocole sélectif v1. L'accord inter-feuilles mesuré ici borne la stabilité de la procédure, pas la reproductibilité inter-annotateurs. Une relecture humaine reste requise avant d'ouvrir CAL."
+  },
   "annotations": [
     {
       "questionId": "sq.3b989e73e623",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.3ce99b70f1626b08",
+        "claim.a5fcad09ba817ea0",
+        "claim.14b3489e82723afb",
+        "claim.d842e25b309b2d5e"
+      ],
+      "notes": "Rien sur la correction d'un déséquilibre droite/gauche. La spécificité de force unilatérale est un mécanisme voisin, pas une preuve de correction."
     },
     {
       "questionId": "sq.bc573600a4eb",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.1a1d43584bef9a5d",
+        "claim.4925f7d08ba01896",
+        "claim.6f33aaaeadcc53d9",
+        "claim.577b5938355fd519"
+      ],
+      "notes": "Négation spécifique à la question : à volume égal, certaines études ne trouvent pas de différence claviculaire entre plat et incliné. Si la distinction grossière n'est pas fiable, le choix de l'angle fin ne l'est pas davantage."
     },
     {
       "questionId": "sq.5f4692abe3b9",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.59a8c635baaaaa23",
+        "claim.3ce99b70f1626b08",
+        "claim.15d72ec5a92a590f",
+        "claim.5d2902199f7c4f94",
+        "claim.ac5bd6c66df1ebef",
+        "claim.f590c2f747c37902",
+        "claim.86da07d188584cf2",
+        "claim.51dce1ca6d569d5a",
+        "claim.42b409f14438d0e6"
+      ],
+      "notes": "Chaque groupe de la jambe dispose d'un substitut documenté ; la seule perte explicitée est la spécificité de force et la demande lombaire."
     },
     {
       "questionId": "sq.6e1136457d46",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.5d2902199f7c4f94",
+        "claim.ac5bd6c66df1ebef",
+        "claim.924325fefb1ffab9",
+        "claim.bb2dcdddf21ed743",
+        "claim.5b4ef8cbcc3518e7",
+        "claim.da7c64b9d56c66b9",
+        "claim.1461b0355b407815",
+        "claim.7ea2906b5f0fdf45",
+        "claim.ce6eedac6deff0d5",
+        "claim.b8682774a8e2a15b"
+      ],
+      "notes": "Hypertrophie fessière équivalente à volume égalisé ; le squat ajoute quadriceps et adducteurs ; l'écart EMG ne tranche pas."
     },
     {
       "questionId": "sq.da2d3a4a2edf",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.31c1389c9298005e",
+        "claim.bad9288d776b8779",
+        "claim.4293200076afb94d"
+      ],
+      "notes": "Les deux mouvements sont caractérisés comme deltoïde postérieur et rotateurs externes, et le corpus déclare la lacune des comparaisons de paires."
     },
     {
       "questionId": "sq.e9e8b611d6c4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.b3ba10bc9b56d2da",
+        "claim.ea11fbcce0f5eb47",
+        "claim.ac65b8059f025367",
+        "claim.b5581ebd36faa779",
+        "claim.16ef33eeb21e4969",
+        "claim.6e3b28f61cb3fb4e",
+        "claim.0817517028e95aef"
+      ],
+      "notes": "Le corpus nie explicitement l'existence d'une forme universelle et nomme ce qui la remplace : anatomie individuelle, réponse symptomatique, muscle cible facteur limitant, position de longueur plutôt que repères arbitraires."
     },
     {
       "questionId": "sq.11f16e0e61a7",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Le balayage ne remonte qu'une seule preuve, sans rapport (seuil de douleur tendineuse). Lacune franche."
     },
     {
       "questionId": "sq.a2905b6aeb49",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6e3b28f61cb3fb4e",
+        "claim.a92f0d17177d052b",
+        "claim.da7c64b9d56c66b9",
+        "claim.1461b0355b407815",
+        "claim.b9205f6bbd041a41",
+        "claim.512fabfb0c606259",
+        "claim.62ba665452ef8c42"
+      ],
+      "notes": "Trois affirmations indépendantes convergent : la sensation n'est pas une mesure d'activation, l'EMG n'est pas une mesure d'hypertrophie."
     },
     {
       "questionId": "sq.97da6cd012b7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.73336e41faf2e333",
+        "claim.05931ee087228965"
+      ],
+      "notes": "Seule trace voisine : une préférence de praticiens pour un rowing appuyé en fin de séance, motivée par la stabilité sous fatigue, pas par un effet d'ordre mesuré."
     },
     {
       "questionId": "sq.64afdc860b7a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.bb83ae131c09da88",
+        "claim.0817517028e95aef",
+        "claim.c5a1b80e772f7725",
+        "claim.76d2596b3c36a7db",
+        "claim.f7d50bbaab2b7ffd",
+        "claim.d468787f88c414ca",
+        "claim.2940e3a13be0cfa8",
+        "claim.0f2622a04337467e",
+        "claim.1561d935251102c0"
+      ],
+      "notes": "Un essai compare précisément intensité modérée en partielle longue contre haute intensité en amplitude complète : adaptations similaires."
     },
     {
       "questionId": "sq.9671b67db518",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.a0f182e86a501c82",
+        "claim.d842e25b309b2d5e",
+        "claim.0a3f7f057e57928c",
+        "claim.42b409f14438d0e6",
+        "claim.d41d8d9727b95d26",
+        "claim.628a8baf6f58c5f4",
+        "claim.a10517f65cbc63d1"
+      ],
+      "notes": "Profils d'activation quadricipitale similaires entre modalités guidées et absence de ciblage régional différencié démontré."
     },
     {
       "questionId": "sq.3dd4369665e4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.22282f571ee5e5e4",
+        "claim.a56f3532fceaf6ce",
+        "claim.02ced8a097b22d78",
+        "claim.67bd353e883b7a38",
+        "claim.789d4d1cd9b0fa7d",
+        "claim.e841347268547972",
+        "claim.d37e889614ebe32f",
+        "claim.4370b01be93db29f",
+        "claim.0d1cf689d5689199",
+        "claim.7b48297f0a6a2add",
+        "claim.ef63606117cc8f95"
+      ],
+      "notes": "Réponse nette : le pushdown n'étire pas le chef long, ces deux exercices ne sont pas interchangeables, et d'autres positions d'épaule fléchie restent disponibles. La contrainte au coude est signalée comme raisonnement de premier principe, non mesurée."
     },
     {
       "questionId": "sq.1bf3bd00b4aa",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.2fa4cca69532e008",
+        "claim.d32e3abdd4add257",
+        "claim.505a9aabfa202270",
+        "claim.1bd2c08cdff83c7b",
+        "claim.5c84991d6644131e",
+        "claim.6daed6f5e307e561",
+        "claim.4a9e0e793526f61e",
+        "claim.b5581ebd36faa779"
+      ],
+      "notes": "Trois causes cumulables et toutes documentées : spécificité de test, partage de l'effort vers la stabilisation, profil de résistance différent."
     },
     {
       "questionId": "sq.2ca67ef27caf",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.76d2596b3c36a7db",
+        "claim.d72d25c83142ed71",
+        "claim.61bfad7df7533e26",
+        "claim.21842e1530072b0d",
+        "claim.e25c210698d521e4",
+        "claim.6e467d801d5980ba",
+        "claim.4a9e0e793526f61e"
+      ],
+      "notes": "Le bras de levier gravitationnel s'annule en fin de course : la fin du mouvement n'apporte presque pas de tension, et les partielles raccourcies sont probablement inférieures. Le câble est l'exception explicitement nommée."
     },
     {
       "questionId": "sq.3dfa7500cfe7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6e3b28f61cb3fb4e",
+        "claim.a92f0d17177d052b",
+        "claim.b9205f6bbd041a41"
+      ],
+      "notes": "Le corpus disqualifie la prémisse (la sensation n'est pas une mesure) mais ne dit rien du « comment corriger », qui est la question posée."
     },
     {
       "questionId": "sq.39d99cdd0943",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4e8de03a0a9c13e2",
+        "claim.be963fe0156eb7e5",
+        "claim.a0f182e86a501c82",
+        "claim.d842e25b309b2d5e",
+        "claim.73336e41faf2e333",
+        "claim.cbc008081871bb1c",
+        "claim.5e3a38a9aecb3d10",
+        "claim.9ce649b6a62552df"
+      ],
+      "notes": "Conséquence biomécanique directe, sans perte d'hypertrophie attendue ; la largeur de prise reste un paramètre distinct."
     },
     {
       "questionId": "sq.c5d9f7dceab3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.2f6a24292822d0d9"
+      ],
+      "notes": "La seule progression décrite est une reprise après blessure ou interruption, cadre clinique ; la transposer à un plateau serait un détournement."
     },
     {
       "questionId": "sq.4a44dc4b221c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.a5fcad09ba817ea0",
+        "claim.4b5205201193a74f",
+        "claim.d32e3abdd4add257",
+        "claim.2fa4cca69532e008",
+        "claim.f7d467f7954831ce"
+      ],
+      "notes": "Le gain apparent est en grande partie spécifique à la modalité ; l'hypertrophie, elle, ne diffère pas."
     },
     {
       "questionId": "sq.51dfd57b6185",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.3237f1b90a26e68b",
+        "claim.bb3217dc0827e0ab"
+      ],
+      "notes": "Le corpus permet de dire que force et taille se dissocient, mais pas quoi faire ensuite ni sur quel horizon juger."
     },
     {
       "questionId": "sq.f6fe4ceb7a5b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.b5581ebd36faa779",
+        "claim.05931ee087228965",
+        "claim.2fa4cca69532e008",
+        "claim.d32e3abdd4add257",
+        "claim.e8cf61160b4c055f",
+        "claim.d99b5a799732d2a4",
+        "claim.f7d467f7954831ce"
+      ],
+      "notes": "Recommandation de praticiens explicitement formulée pour les phases de forte fatigue, tout en rappelant qu'aucune supériorité hypertrophique n'en découle."
     },
     {
       "questionId": "sq.16082a2a969b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.1bd2c08cdff83c7b",
+        "claim.a92f0d17177d052b",
+        "claim.727034ce2e90575d",
+        "claim.b01f7e99dfc6d209",
+        "claim.505a9aabfa202270",
+        "claim.2fa4cca69532e008",
+        "claim.62ba665452ef8c42",
+        "claim.6e3b28f61cb3fb4e"
+      ],
+      "notes": "Trois causes documentées, plus le rappel que la sensation ne mesure rien de fiable."
     },
     {
       "questionId": "sq.e53b85ece37d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.633cafb7f8a6ff7b",
+        "claim.949ce97db5e618c5",
+        "claim.a7c689f68cc4805f",
+        "claim.a896d12c0806d852",
+        "claim.10805ad03581a30f",
+        "claim.cd8f76af2586d45d",
+        "claim.eba14dc140548f44",
+        "claim.f97cfb3643622a80",
+        "claim.42d7e0ec55386f16",
+        "claim.54de426db201b40f",
+        "claim.88d6ae1a15df6a65",
+        "claim.dbb1adacfde680db",
+        "claim.b5c115c5d4546a24"
+      ],
+      "notes": "Terrain le mieux couvert du corpus : algorithme avant / pendant / après, seuils explicitement présentés comme protocoles de recherche et non comme règles universelles."
     },
     {
       "questionId": "sq.52e815f4f6db",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.f7d467f7954831ce"
+      ],
+      "notes": "Le corpus ne parle de variabilité de suivi que pour la trajectoire d'un exercice, pas pour le nombre de séries."
     },
     {
       "questionId": "sq.8b549ac9726e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.acb3cdd19afaabc7",
+        "claim.5125a19c294afa0b",
+        "claim.9d9266e4d36c86f4",
+        "claim.4fb1f3e2ff7ffb08",
+        "claim.2f6a24292822d0d9"
+      ],
+      "notes": "Aucun pourcentage universel de reprise n'est soutenu : cette négation explicite tient lieu de réponse."
     },
     {
       "questionId": "sq.f7e9ce902933",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Rien dans les sections unilatérales ne traite de l'ordre entre les membres."
     },
     {
       "questionId": "sq.05f829788c9c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4b5205201193a74f",
+        "claim.884a0a713ce1b61d",
+        "claim.c0c8389ec9a75597",
+        "claim.2ee07811748dd211",
+        "claim.d99b5a799732d2a4",
+        "claim.e8cf61160b4c055f",
+        "claim.d842e25b309b2d5e",
+        "claim.635f960366a8b312"
+      ],
+      "notes": "Question la mieux couverte du lot : réponse chiffrée, direction claire, et critère de choix de remplacement explicitement énoncé."
     },
     {
       "questionId": "sq.3146097607f8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.25b1fb28e1627230",
+        "claim.fcf2b780f852770f",
+        "claim.727034ce2e90575d",
+        "claim.b5a31c606df830a4",
+        "claim.d113ad90eb4b610d",
+        "claim.d5b5ebc63db67c57",
+        "claim.81c60784ff38cdde"
+      ],
+      "notes": "Mécanisme complet et généralisable par analogie anatomique, comme le corpus l'autorise explicitement."
     },
     {
       "questionId": "sq.0ab26536af75",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.ef63606117cc8f95",
+        "claim.c0c8389ec9a75597",
+        "claim.4b5205201193a74f",
+        "claim.7276728119213533",
+        "claim.ea11fbcce0f5eb47",
+        "claim.42c2cf569ab8b0e6",
+        "claim.16ef33eeb21e4969",
+        "claim.04285c3d9ea6dcba"
+      ],
+      "notes": "Inconfort n'équivaut pas à lésion, aucune interdiction générique, et la réponse individuelle prime sur un angle prétendument parfait."
     },
     {
       "questionId": "sq.19d87c79b8c6",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "L'affirmation voisine sur l'impossibilité de fixer une combinaison optimale fréquence/intensité/volume porte explicitement sur les douleurs musculosquelettiques ; l'appliquer ici serait un détournement."
     },
     {
       "questionId": "sq.f29b0ecd39ce",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.1561d935251102c0",
+        "claim.0817517028e95aef",
+        "claim.c5a1b80e772f7725",
+        "claim.76d2596b3c36a7db",
+        "claim.2940e3a13be0cfa8",
+        "claim.0f2622a04337467e",
+        "claim.f7d50bbaab2b7ffd",
+        "claim.23b3d469960dd46b",
+        "claim.99c9b20fbe7a4879",
+        "claim.89f05bd1b837bea9",
+        "claim.b45904746118bd31",
+        "claim.5fa2fffd1a2416a1",
+        "claim.267efae83fb16bdc"
+      ],
+      "notes": "Réponse nuancée et entièrement sourcée, y compris le contre-exemple qui borne la généralisation."
     },
     {
       "questionId": "sq.fef22e860a18",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.51dce1ca6d569d5a",
+        "claim.42b409f14438d0e6",
+        "claim.1ccb2ede09b6a567",
+        "claim.cf47c3685a02914c",
+        "claim.622029068fcef311",
+        "claim.0a3f7f057e57928c",
+        "claim.8f480477edc14ffb",
+        "claim.59a8c635baaaaa23"
+      ],
+      "notes": "La paire couvre le quadriceps entier, la leg extension levant l'insuffisance active du droit fémoral ; la perte porte sur la demande lombaire et la synergie de hanche."
     },
     {
       "questionId": "sq.1d843d212fe5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6f33aaaeadcc53d9",
+        "claim.4925f7d08ba01896",
+        "claim.a92f0d17177d052b",
+        "claim.1a1d43584bef9a5d",
+        "claim.6e3b28f61cb3fb4e",
+        "claim.d57ffa4a5b4fe7cd",
+        "claim.21842e1530072b0d",
+        "claim.ac86fd18ed2f29e9",
+        "claim.9b4fa84cb3a9dcbf"
+      ],
+      "notes": "La ligne de traction bas-haut correspond à l'orientation des fibres claviculaires, mais la supériorité du câble n'est pas démontrée et la sensation ne prouve rien."
     },
     {
       "questionId": "sq.e3de0016c1a2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4f890c4163f2e284"
+      ],
+      "notes": "La seule lacune déclarée concerne l'angle de genou, pas la charge. Aucun contenu sur lourd contre léger."
     },
     {
       "questionId": "sq.1191ad759094",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "La mention « au moins trois fois par semaine » concerne la charge tendineuse d'Achille en cadre clinique ; sans rapport avec le volume d'hypertrophie."
     },
     {
       "questionId": "sq.cee318316b97",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Le balayage ne remonte que deux preuves, toutes deux tendineuses. Lacune franche."
     },
     {
       "questionId": "sq.cf4732bd8fd0",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucune correspondance lexicale sur « RIR » ; les sept résultats remontés le sont sur des mots hors sujet."
     },
     {
       "questionId": "sq.ca73c16e08c0",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.2efbc4324d2867ae",
+        "claim.be18353c3e467236",
+        "claim.0a8fa895aa63e7bc",
+        "claim.1c6bce3e8bacd03f"
+      ],
+      "notes": "Fonction d'élévation scapulaire documentée et absence explicite de preuve longitudinale par portion."
     },
     {
       "questionId": "sq.ce836e0378d4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6047bbc521d0c7cb",
+        "claim.c90de53966d681a1",
+        "claim.0a21f82d5f065926"
+      ],
+      "notes": "Le corpus décrit l'action du grand et du petit pectoral mais ne traite jamais de la protraction en fin d'amplitude."
     },
     {
       "questionId": "sq.55534e960c83",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.4a9e0e793526f61e",
+        "claim.6e467d801d5980ba",
+        "claim.b01f7e99dfc6d209",
+        "claim.d5b5ebc63db67c57",
+        "claim.b3ba10bc9b56d2da"
+      ],
+      "notes": "Le corpus nomme explicitement l'anatomie individuelle comme raison pour laquelle les repères arbitraires ne s'imposent pas, et donne le mécanisme du bras de levier, généralisable par analogie de son propre aveu."
     },
     {
       "questionId": "sq.8f9b937a65ee",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.2f6a24292822d0d9",
+        "claim.4f890c4163f2e284"
+      ],
+      "notes": "La règle « augmenter une seule variable » appartient à la reprise après blessure ; rien pour un mollet sain qui stagne."
     },
     {
       "questionId": "sq.adcee986fc2b",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Ni l'ordre des exercices ni la pré-fatigue n'apparaissent nulle part."
     },
     {
       "questionId": "sq.cdbb40c50c27",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.23b3d469960dd46b",
+        "claim.c5a1b80e772f7725"
+      ],
+      "notes": "Le principe de grande longueur est présent, mais une pause est une variable de tempo que le corpus ne traite jamais."
     },
     {
       "questionId": "sq.46d98d603f49",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.72e526b4bee68a11",
+        "claim.42c2cf569ab8b0e6",
+        "claim.9c7f2bfc213bbd59",
+        "claim.e0557245d2256b1e",
+        "claim.1a77d19cd4d042ae",
+        "claim.339bb329a5e9c820",
+        "claim.11e25d52c5282933",
+        "claim.54de426db201b40f",
+        "claim.8f8fa159681d6cc6"
+      ],
+      "notes": "Le corpus contient la consigne exacte et son cadre : décoller le bassin décrit une demande mécanique, pas un seuil lésionnel, et la flexion lombaire n'est pas un facteur de risque démontré."
     },
     {
       "questionId": "sq.daba03361b16",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.1a77d19cd4d042ae",
+        "claim.37bc6a5f38d010fe"
+      ],
+      "notes": "Le tempo n'apparaît que comme variable ajustable en cadre clinique, jamais avec une valeur."
     },
     {
       "questionId": "sq.50df7f71a1ad",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.31c2b646c024874f",
+        "claim.00d5c6d7f7c440c5",
+        "claim.5462f57c6c72a709",
+        "claim.be18353c3e467236",
+        "claim.cbc008081871bb1c",
+        "claim.5069250ec7afb317",
+        "claim.0c46d49e321c5af6",
+        "claim.4317694aab2bb90f"
+      ],
+      "notes": "Négations spécifiques au dos, non génériques : le ciblage régional du grand dorsal suggéré par l'EMG ne se traduit pas en hypertrophie régionale démontrée, et rien ne soutient la dichotomie largeur/épaisseur."
     },
     {
       "questionId": "sq.afc713fcc0c3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.622029068fcef311",
+        "claim.23ea916fca28c813",
+        "claim.42b409f14438d0e6",
+        "claim.a10517f65cbc63d1",
+        "claim.8f480477edc14ffb",
+        "claim.44f1c168e713c4c3",
+        "claim.9f6e03a416e99efe"
+      ],
+      "notes": "Voie biomécanique plausible mais aucun ciblage préférentiel d'un chef démontré par la seule variation d'angle : la réponse est « moins que ce qu'on croit »."
     },
     {
       "questionId": "sq.72e7a40b0593",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.3c588e6d31cee60b",
+        "claim.58910db9d4dd3945",
+        "claim.902fb3b1d1e90e4a",
+        "claim.3576be67689235fa",
+        "claim.40ad20663bf879e1",
+        "claim.0918e46c039ce540",
+        "claim.7163b6869319673c",
+        "claim.4a7268c76f333993",
+        "claim.870ee1d1ac5efca2",
+        "claim.04285c3d9ea6dcba",
+        "claim.5a14864a162b0c86"
+      ],
+      "notes": "Les deux documents convergent, et l'argument le plus fort est empirique : la rééducation post-chirurgicale utilise couramment la leg extension à charge progressive."
     },
     {
       "questionId": "sq.255a38d6c2c5",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Le balayage ne remonte que du bruit. Lacune franche."
     },
     {
       "questionId": "sq.f7ac0e2c33b4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.55848e72710df2d6",
+        "claim.49fc47eb5c6637fe",
+        "claim.05931ee087228965"
+      ],
+      "notes": "« Informe un ordre possible d'exercices » appartient au cadre clinique et est immédiatement borné par « ne prouve ni efficacité ni sécurité chez une personne blessée »."
     },
     {
       "questionId": "sq.8469c2bdee4e",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Le mot « fatigue » n'apparaît que dans des contextes sans rapport : irritation posturale et choix de stabilité en fin de séance."
     },
     {
       "questionId": "sq.75ddd6fe11de",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.59a8c635baaaaa23",
+        "claim.628a8baf6f58c5f4",
+        "claim.884a0a713ce1b61d",
+        "claim.42b409f14438d0e6",
+        "claim.19421ac898d12791",
+        "claim.15d72ec5a92a590f"
+      ],
+      "notes": "La grille de substitution répond littéralement : oui pour le quadriceps, non pour la force au squat, la charge axiale et la synergie de hanche."
     },
     {
       "questionId": "sq.94a7400e4dea",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.5d2902199f7c4f94",
+        "claim.ac5bd6c66df1ebef",
+        "claim.5b4ef8cbcc3518e7",
+        "claim.da7c64b9d56c66b9",
+        "claim.1461b0355b407815",
+        "claim.7ea2906b5f0fdf45",
+        "claim.924325fefb1ffab9",
+        "claim.4071a7d47f02d5a2",
+        "claim.7aef35e766cb47f2",
+        "claim.bb2dcdddf21ed743"
+      ],
+      "notes": "Cas d'école du corpus : il oppose explicitement l'argument EMG populaire au résultat d'hypertrophie à volume égalisé."
     },
     {
       "questionId": "sq.4134ba3f89e5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.cbc008081871bb1c",
+        "claim.00d5c6d7f7c440c5",
+        "claim.31c2b646c024874f",
+        "claim.5462f57c6c72a709",
+        "claim.658a919e9962841f",
+        "claim.6c2894dbf0dc3f7a",
+        "claim.dd51dfabd8819ce7"
+      ],
+      "notes": "Négations spécifiques au grand dorsal : la largeur de prise modifie l'activation, mais aucune différence d'hypertrophie régionale correspondante n'est démontrée. Le mythe est donc adressable."
     },
     {
       "questionId": "sq.f61dd8e55c7c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d3d2b10fa0a4007c",
+        "claim.1bba546622be8e9a",
+        "claim.f320a2ec77882660",
+        "claim.ce2b4e54b6debaf2",
+        "claim.997d675875be1fe1",
+        "claim.ba3bed85916b2390",
+        "claim.bed72e8e1544a655",
+        "claim.d2c45ec3e6e3655b"
+      ],
+      "notes": "Le faisceau latéral est le moteur de l'abduction pure : il ne se travaille pas au développé. La réponse est d'ajouter de l'abduction, pas de retirer du développé — et une comparaison directe d'hypertrophie haltère/câble existe."
     },
     {
       "questionId": "sq.6ea465b0f170",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.4b5205201193a74f",
+        "claim.a5fcad09ba817ea0",
+        "claim.d32e3abdd4add257",
+        "claim.54a864ed934420fc",
+        "claim.ac65b8059f025367"
+      ],
+      "notes": "Ce qui se perd est spécifié : la force spécifique au mode libre, pas l'hypertrophie."
     },
     {
       "questionId": "sq.57701fef9cba",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.a4d03a20c5b3801a",
+        "claim.7adba7ed057d7b69",
+        "claim.7ea355ab1756e9c1"
+      ],
+      "notes": "La seule comparaison mono/polyarticulaire du corpus porte sur le triceps sural, pas sur les bras, et sur l'activation, pas l'hypertrophie."
     },
     {
       "questionId": "sq.d8441cae4705",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.77b7c0c33d61af7f"
+      ],
+      "notes": "La seule mention d'asymétrie est un critère de retour au sport, qui ne dit rien de son évolution spontanée."
     },
     {
       "questionId": "sq.3466d2f021c2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8510a72d53c96a70",
+        "claim.e9457d9fec59ec5b",
+        "claim.9c7f2bfc213bbd59"
+      ],
+      "notes": "Le corpus documente la charge à l'épaule au développé et la flexion lombaire, jamais l'extension lombaire volontaire ni son effet sur l'amplitude."
     },
     {
       "questionId": "sq.082960cb3951",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.041daf078d12",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e43e4baf1cd3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ca4859b9ac22",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5bb2f861ea5b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f969c4e106c0",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a09c74860ef4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.2b3785b4a74c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4f060e080640",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e3c9367edef7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e5242db10039",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.88147aa5c9f8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cdd6fd21c81f",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f1d740daf6d6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.374d4560f819",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.786ea3fb2e0a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e781419399cd",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d4e7cc8093a6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.761418de1897",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e81e7ed21306",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e58a3f3f1675",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b129fd800363",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.aa28099c992b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.fdb7a5076f40",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.3fba0cef16aa",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f4587b596fa1",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b3f9d5dfc3a8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.97ff16e5aa61",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7088171a69e6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c2b33418f8da",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4a147284810d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.30cd3fea1306",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.3b7899897f27",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.fa85875bc6ad",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e06f56df7033",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.0886785a4a45",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c604b8a6fdca",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d67638f696f7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.6550ba8e6e77",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.9641e75a9a22",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a4b1646c95ab",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a7eec943882c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f40fc1de0ed9",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5698aedab4e6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e5af32b17113",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.63871e173360",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.77d7abd8ad66",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.581906c0e898",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b8555c75521d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.8e4ef4688f45",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.59181f26c4ff",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cf59fa3b3676",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.973b68c3fd21",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5810a3a2a209",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7d55a6615465",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.2bb40ca27933",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.222d1bc2f676",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5e8a5128d21e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.28d195b59aa7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b2c1b67f3524",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.956cd10e4101",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ec12fb9175a3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cc0985243857",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.fe5a08eccdea",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d8f88141484e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c9d7a651d68c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.91680fcebead",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b51f5ff0c317",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cc764ccc5816",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f5d2ca0d7f11",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.096c669470b2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d16bcdff9af3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7aa3681af53d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.437f00aeffd1",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.de48512497fc",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.926348c9595e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.339d94e5dbdf",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f416858517ea",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.2982a9cbe555",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.96aa612d2d46",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c733df7f3883",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.de1f101306b2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e1ee18dac898",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.18bddc749f89",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a111b8002ce8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4c1ea341a3dd",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4b0b1c3cf222",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ccb8e114b8e5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ec73fd377ca2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b6f8d59f80f7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.806057341da8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7652f5ad2154",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d720560a6d70",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.167c1b28f996",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.9e5756a4a248",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.56d7b5ddd0f9",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e4087726cef7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.44968f82a2b3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4f726b008a3c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e8457e026346",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e8295d1bb88d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cb246cdfa3c7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4e35c0922e69",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a6c65630ead7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.13d1e16bf76a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.3ba4b2526e06",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.435049125f07",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.41153b9cd529",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f17b8f54569a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.22ddcb5d932c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.92321e4b0eae",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b893551e71ef",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.8b68d405228e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.6645051325b5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.75f61f412635",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ad5910961ad1",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.bb81b07b0441",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e7634e0e37f6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4686e555b687",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.fcf2b780f852770f",
+        "claim.25b1fb28e1627230",
+        "claim.b5a31c606df830a4",
+        "claim.727034ce2e90575d",
+        "claim.d5b5ebc63db67c57",
+        "claim.62ba665452ef8c42",
+        "claim.6e3b28f61cb3fb4e"
+      ],
+      "notes": "Même mécanisme que la question 27, plus le rappel que la brûlure ressentie ne mesure ni l'activation ni l'hypertrophie."
     }
-  ],
-  "annotator": "b"
+  ]
 }

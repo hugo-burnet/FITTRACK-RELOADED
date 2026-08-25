@@ -6,1069 +6,506 @@
     "UNANSWERABLE",
     "AMBIGUOUS"
   ],
+  "split": "DEV",
+  "annotator": {
+    "id": "annotator-a",
+    "procedure": "Décomposition descendante. La question est réduite à ses éléments indispensables ; ANSWERABLE seulement si chaque élément a un appui direct dans le corpus. supportingClaimIds = ensemble décisif minimal.",
+    "independence": "LIMITE À CONSIGNER : les feuilles A et B ont été remplies par le même annotateur (agent), avec deux procédures délibérément distinctes et sans consulter la feuille jumelle pendant le remplissage. Cela ne satisfait pas l'exigence de deux personnes du protocole sélectif v1. L'accord inter-feuilles mesuré ici borne la stabilité de la procédure, pas la reproductibilité inter-annotateurs. Une relecture humaine reste requise avant d'ouvrir CAL."
+  },
   "annotations": [
     {
       "questionId": "sq.3b989e73e623",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.3ce99b70f1626b08",
+        "claim.a5fcad09ba817ea0"
+      ],
+      "notes": "Élément manquant : l'effet de l'entraînement unilatéral sur l'asymétrie elle-même. Le corpus ne traite que l'équivalence hypertrophique unilatéral/bilatéral."
     },
     {
       "questionId": "sq.bc573600a4eb",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.1a1d43584bef9a5d",
+        "claim.6f33aaaeadcc53d9"
+      ],
+      "notes": "L'angle en degrés (15/30/45) n'est comparé nulle part."
     },
     {
       "questionId": "sq.5f4692abe3b9",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.3ce99b70f1626b08",
+        "claim.5d2902199f7c4f94",
+        "claim.f590c2f747c37902"
+      ],
+      "notes": "Substituts couverts pour quadriceps, fessiers et ischio-jambiers."
     },
     {
       "questionId": "sq.6e1136457d46",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.5d2902199f7c4f94",
+        "claim.924325fefb1ffab9",
+        "claim.5b4ef8cbcc3518e7",
+        "claim.da7c64b9d56c66b9"
+      ],
+      "notes": "Comparaison directe à volume égalisé présente, avec la mise en garde EMG."
     },
     {
       "questionId": "sq.da2d3a4a2edf",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.31c1389c9298005e"
+      ],
+      "notes": "Aucune comparaison reverse pec deck / face pull, ni aucune négation propre à cette paire."
     },
     {
       "questionId": "sq.e9e8b611d6c4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.b3ba10bc9b56d2da"
+      ],
+      "notes": "Pas de section consacrée à la technique ni de critère de qualité d'exécution."
     },
     {
       "questionId": "sq.11f16e0e61a7",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucune donnée sur le délai d'apparition visible de l'hypertrophie."
     },
     {
       "questionId": "sq.a2905b6aeb49",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6e3b28f61cb3fb4e",
+        "claim.a92f0d17177d052b",
+        "claim.da7c64b9d56c66b9"
+      ],
+      "notes": "La dissociation sensation / activation / hypertrophie est affirmée directement."
     },
     {
       "questionId": "sq.97da6cd012b7",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur l'ordre des exercices et son effet sur la performance ou l'hypertrophie ultérieure."
     },
     {
       "questionId": "sq.64afdc860b7a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.bb83ae131c09da88",
+        "claim.0817517028e95aef",
+        "claim.c5a1b80e772f7725",
+        "claim.76d2596b3c36a7db"
+      ],
+      "notes": "Règle par défaut, critère de longueur, et sort des partielles selon leur position."
     },
     {
       "questionId": "sq.9671b67db518",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.a0f182e86a501c82",
+        "claim.d842e25b309b2d5e",
+        "claim.0a3f7f057e57928c"
+      ],
+      "notes": "Le niveau « quasi direct » de la grille de substitution s'applique littéralement à cette paire."
     },
     {
       "questionId": "sq.3dd4369665e4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.22282f571ee5e5e4",
+        "claim.a56f3532fceaf6ce",
+        "claim.02ced8a097b22d78",
+        "claim.67bd353e883b7a38"
+      ],
+      "notes": "Preuve directe d'hypertrophie différentielle du chef long selon la position d'épaule."
     },
     {
       "questionId": "sq.1bf3bd00b4aa",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.2fa4cca69532e008",
+        "claim.d32e3abdd4add257"
+      ],
+      "notes": "Spécificité du gain de force au mode de test et coût de la stabilisation."
     },
     {
       "questionId": "sq.2ca67ef27caf",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.76d2596b3c36a7db",
+        "claim.d72d25c83142ed71"
+      ],
+      "notes": "Repères arbitraires non nécessaires, et résistance quasi nulle en position raccourcie."
     },
     {
       "questionId": "sq.3dfa7500cfe7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6e3b28f61cb3fb4e"
+      ],
+      "notes": "Aucun protocole de correction d'un déséquilibre perçu."
     },
     {
       "questionId": "sq.39d99cdd0943",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4e8de03a0a9c13e2",
+        "claim.be963fe0156eb7e5",
+        "claim.a0f182e86a501c82"
+      ],
+      "notes": "Ce qui est retiré est nommé explicitement : le maintien isométrique du tronc."
     },
     {
       "questionId": "sq.c5d9f7dceab3",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur la stagnation ni sur les schémas de progression en musculation."
     },
     {
       "questionId": "sq.4a44dc4b221c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.a5fcad09ba817ea0"
+      ],
+      "notes": "Spécificité du gain de force au mode de test, chiffrée."
     },
     {
       "questionId": "sq.51dfd57b6185",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d"
+      ],
+      "notes": "L'élément décisif est une décision de programmation, absente du corpus."
     },
     {
       "questionId": "sq.f6fe4ceb7a5b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.b5581ebd36faa779",
+        "claim.05931ee087228965",
+        "claim.2fa4cca69532e008"
+      ],
+      "notes": "Sur une machine, le muscle cible et non l'équilibre devient le facteur limitant de la série."
     },
     {
       "questionId": "sq.16082a2a969b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.1bd2c08cdff83c7b",
+        "claim.a92f0d17177d052b"
+      ],
+      "notes": "Rapport moment externe / moment interne, redistribution de l'effort, et dissociation de la sensation."
     },
     {
       "questionId": "sq.e53b85ece37d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.633cafb7f8a6ff7b",
+        "claim.949ce97db5e618c5",
+        "claim.a7c689f68cc4805f",
+        "claim.a896d12c0806d852"
+      ],
+      "notes": "Douleur tolérable stable, seuils publiés, et critères d'arrêt immédiat."
     },
     {
       "questionId": "sq.52e815f4f6db",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Rien sur la validité d'un suivi longitudinal face à une variation de volume."
     },
     {
       "questionId": "sq.8b549ac9726e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.acb3cdd19afaabc7",
+        "claim.5125a19c294afa0b"
+      ],
+      "notes": "Le corpus dit comment reprendre, jamais en combien de séances les performances reviennent."
     },
     {
       "questionId": "sq.f7e9ce902933",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur l'ordre entre côté fort et côté faible."
     },
     {
       "questionId": "sq.05f829788c9c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4b5205201193a74f",
+        "claim.884a0a713ce1b61d",
+        "claim.c0c8389ec9a75597"
+      ],
+      "notes": "Méta-analyse directe avec taille d'effet et intervalle de confiance."
     },
     {
       "questionId": "sq.3146097607f8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.25b1fb28e1627230",
+        "claim.fcf2b780f852770f"
+      ],
+      "notes": "Le poids affiché n'est pas le moment résultant ; came et géométrie de poulie le modifient."
     },
     {
       "questionId": "sq.0ab26536af75",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.ef63606117cc8f95",
+        "claim.c0c8389ec9a75597",
+        "claim.4b5205201193a74f"
+      ],
+      "notes": "Substituer sur inconfort persistant est documenté, et le coût hypertrophique est nul."
     },
     {
       "questionId": "sq.19d87c79b8c6",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur la fréquence d'entraînement pour l'hypertrophie."
     },
     {
       "questionId": "sq.f29b0ecd39ce",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.1561d935251102c0",
+        "claim.0817517028e95aef",
+        "claim.c5a1b80e772f7725",
+        "claim.76d2596b3c36a7db"
+      ],
+      "notes": "Essai intra-sujet dédié aux partielles en position allongée."
     },
     {
       "questionId": "sq.fef22e860a18",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.51dce1ca6d569d5a",
+        "claim.42b409f14438d0e6"
+      ],
+      "notes": "Substitution raisonnable documentée, et rôle propre de la leg extension."
     },
     {
       "questionId": "sq.1d843d212fe5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.6f33aaaeadcc53d9",
+        "claim.4925f7d08ba01896",
+        "claim.a92f0d17177d052b"
+      ],
+      "notes": "Orientation des fibres claviculaires, évidence équivoque à volume égal, et dissociation de la sensation."
     },
     {
       "questionId": "sq.e3de0016c1a2",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucune prescription de charge ni de plage de répétitions, pour les mollets ni ailleurs."
     },
     {
       "questionId": "sq.1191ad759094",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun seuil de volume hebdomadaire nulle part dans le corpus."
     },
     {
       "questionId": "sq.cee318316b97",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Rien sur les négatives, les répétitions assistées ni la progression vers la traction."
     },
     {
       "questionId": "sq.cf4732bd8fd0",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur le RIR, sa mesure ou sa fiabilité."
     },
     {
       "questionId": "sq.ca73c16e08c0",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.2efbc4324d2867ae",
+        "claim.be18353c3e467236"
+      ],
+      "notes": "La fonction du trapèze supérieur est décrite, mais rien ne dit si d'autres exercices suffisent — c'est l'élément décisif de « nécessaires »."
     },
     {
       "questionId": "sq.ce836e0378d4",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur la position scapulaire pendant un écarté."
     },
     {
       "questionId": "sq.55534e960c83",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.8f8fa159681d6cc6"
+      ],
+      "notes": "La longueur des segments n'est jamais étudiée comme variable."
     },
     {
       "questionId": "sq.8f9b937a65ee",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur le choix entre progression en volume et progression en charge."
     },
     {
       "questionId": "sq.adcee986fc2b",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur la pré-fatigue."
     },
     {
       "questionId": "sq.cdbb40c50c27",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur les pauses ni sur le tempo."
     },
     {
       "questionId": "sq.46d98d603f49",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.72e526b4bee68a11",
+        "claim.42c2cf569ab8b0e6",
+        "claim.9c7f2bfc213bbd59"
+      ],
+      "notes": "Consigne littérale sur la presse : limiter la profondeur si la fin d'amplitude irrite."
     },
     {
       "questionId": "sq.daba03361b16",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucune durée de phase excentrique nulle part."
     },
     {
       "questionId": "sq.50df7f71a1ad",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.31c2b646c024874f"
+      ],
+      "notes": "« Épais » n'est jamais défini, et aucun mouvement n'y est rattaché."
     },
     {
       "questionId": "sq.afc713fcc0c3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.622029068fcef311",
+        "claim.23ea916fca28c813",
+        "claim.42b409f14438d0e6"
+      ],
+      "notes": "La hauteur des pieds à la presse est nommément citée comme voie plausible de ciblage du droit fémoral, au niveau modéré."
     },
     {
       "questionId": "sq.72e7a40b0593",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.3c588e6d31cee60b",
+        "claim.58910db9d4dd3945",
+        "claim.902fb3b1d1e90e4a"
+      ],
+      "notes": "Charge mécanique différentielle documentée, explicitement distinguée d'une preuve de danger."
     },
     {
       "questionId": "sq.255a38d6c2c5",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucune notion de priorisation musculaire ni d'objectif esthétique."
     },
     {
       "questionId": "sq.f7ac0e2c33b4",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun effet d'ordre des exercices sur l'hypertrophie."
     },
     {
       "questionId": "sq.8469c2bdee4e",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucun contenu sur le deload ni sur la gestion de la fatigue accumulée."
     },
     {
       "questionId": "sq.75ddd6fe11de",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.59a8c635baaaaa23",
+        "claim.628a8baf6f58c5f4"
+      ],
+      "notes": "Substitution raisonnable pour l'hypertrophie du quadriceps, mais pas pour la force spécifique ni la demande lombaire."
     },
     {
       "questionId": "sq.94a7400e4dea",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.5d2902199f7c4f94",
+        "claim.ac5bd6c66df1ebef",
+        "claim.5b4ef8cbcc3518e7",
+        "claim.da7c64b9d56c66b9"
+      ],
+      "notes": "L'écart EMG spectaculaire ne se traduit pas en avantage hypertrophique à volume égalisé."
     },
     {
       "questionId": "sq.4134ba3f89e5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.cbc008081871bb1c"
+      ],
+      "notes": "L'effet de la prise sur l'activation est documenté, mais rien ne relie la prise à « largeur » ou « épaisseur »."
     },
     {
       "questionId": "sq.f61dd8e55c7c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.d3d2b10fa0a4007c",
+        "claim.1bba546622be8e9a"
+      ],
+      "notes": "L'élément décisif — retirer ou non du volume de développé — relève de la programmation, absente du corpus."
     },
     {
       "questionId": "sq.6ea465b0f170",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.884a0a713ce1b61d"
+      ],
+      "notes": "Aucune donnée sur la perte de musculature stabilisatrice sous entraînement guidé prolongé."
     },
     {
       "questionId": "sq.57701fef9cba",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "UNANSWERABLE",
+      "supportingClaimIds": [
+        "claim.a4d03a20c5b3801a"
+      ],
+      "notes": "Aucune comparaison polyarticulaire seul contre polyarticulaire plus isolation pour les bras."
     },
     {
       "questionId": "sq.d8441cae4705",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "Aucune donnée d'histoire naturelle d'une asymétrie."
     },
     {
       "questionId": "sq.3466d2f021c2",
-      "answerability": null,
+      "answerability": "UNANSWERABLE",
       "supportingClaimIds": [],
-      "notes": ""
+      "notes": "La cambrure au développé couché n'est traitée nulle part."
     },
     {
       "questionId": "sq.082960cb3951",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.041daf078d12",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e43e4baf1cd3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ca4859b9ac22",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5bb2f861ea5b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f969c4e106c0",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a09c74860ef4",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.2b3785b4a74c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4f060e080640",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e3c9367edef7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e5242db10039",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.88147aa5c9f8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cdd6fd21c81f",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f1d740daf6d6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.374d4560f819",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.786ea3fb2e0a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e781419399cd",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d4e7cc8093a6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.761418de1897",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e81e7ed21306",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e58a3f3f1675",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b129fd800363",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.aa28099c992b",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.fdb7a5076f40",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.3fba0cef16aa",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f4587b596fa1",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b3f9d5dfc3a8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.97ff16e5aa61",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7088171a69e6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c2b33418f8da",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4a147284810d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.30cd3fea1306",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.3b7899897f27",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.fa85875bc6ad",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e06f56df7033",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.0886785a4a45",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c604b8a6fdca",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d67638f696f7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.6550ba8e6e77",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.9641e75a9a22",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a4b1646c95ab",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a7eec943882c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f40fc1de0ed9",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5698aedab4e6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e5af32b17113",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.63871e173360",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.77d7abd8ad66",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.581906c0e898",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b8555c75521d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.8e4ef4688f45",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.59181f26c4ff",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cf59fa3b3676",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.973b68c3fd21",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5810a3a2a209",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7d55a6615465",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.2bb40ca27933",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.222d1bc2f676",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.5e8a5128d21e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.28d195b59aa7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b2c1b67f3524",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.956cd10e4101",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ec12fb9175a3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cc0985243857",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.fe5a08eccdea",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d8f88141484e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c9d7a651d68c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.91680fcebead",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b51f5ff0c317",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cc764ccc5816",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f5d2ca0d7f11",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.096c669470b2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d16bcdff9af3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7aa3681af53d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.437f00aeffd1",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.de48512497fc",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.926348c9595e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.339d94e5dbdf",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f416858517ea",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.2982a9cbe555",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.96aa612d2d46",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.c733df7f3883",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.de1f101306b2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e1ee18dac898",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.18bddc749f89",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a111b8002ce8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4c1ea341a3dd",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4b0b1c3cf222",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ccb8e114b8e5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ec73fd377ca2",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b6f8d59f80f7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.806057341da8",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.7652f5ad2154",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.d720560a6d70",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.167c1b28f996",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.9e5756a4a248",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.56d7b5ddd0f9",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e4087726cef7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.44968f82a2b3",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4f726b008a3c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e8457e026346",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e8295d1bb88d",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.cb246cdfa3c7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4e35c0922e69",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.a6c65630ead7",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.13d1e16bf76a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.3ba4b2526e06",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.435049125f07",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.41153b9cd529",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.f17b8f54569a",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.22ddcb5d932c",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.92321e4b0eae",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.b893551e71ef",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.8b68d405228e",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.6645051325b5",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.75f61f412635",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.ad5910961ad1",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.bb81b07b0441",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.e7634e0e37f6",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
-    },
-    {
-      "questionId": "sq.4686e555b687",
-      "answerability": null,
-      "supportingClaimIds": [],
-      "notes": ""
+      "answerability": "ANSWERABLE",
+      "supportingClaimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.fcf2b780f852770f",
+        "claim.25b1fb28e1627230"
+      ],
+      "notes": "Le poids affiché n'est pas comparable entre machines : la géométrie détermine le moment résultant."
     }
-  ],
-  "annotator": "a"
+  ]
 }
