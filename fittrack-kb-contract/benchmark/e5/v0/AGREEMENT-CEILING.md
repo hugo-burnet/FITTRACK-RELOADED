@@ -173,3 +173,43 @@ Les deux problèmes sont donc distincts, et l'ordre compte : réparer le vocabul
 la référence fiable (kappa 0,17 → 0,79), ce qui rend seulement alors la sur-résolution du
 modèle *mesurable*. Aujourd'hui la gate `unresolvedFidelity` note un modèle contre un axe
 dont l'accord humain est de 0,17 — elle ne mesure rien.
+
+## Correction : `unresolvedPreservation` était mal mesuré
+
+Tout ce qui précède annonçait un accord humain de **0,5699** sur `unresolvedPreservation`,
+très en dessous du seuil de 0,90, et en concluait que la gate était incohérente. **C'était
+faux, et la cause est instructive.**
+
+La métrique confondait deux choses :
+
+1. le choix entre deux synonymes — `UNRESOLVED` ou `NOT_STATED`, qui disent tous deux
+   « l'information n'est pas dans le fragment » ;
+2. la décision qui compte — trancher, ou s'abstenir.
+
+En ne comptant que la seconde, l'accord humain sur cet axe est de **0,9314**. Au-dessus du
+seuil. **La gate est légitime.**
+
+Et le modèle, mesuré pareillement, est à **0,5222**, dont 43 vraies sur-résolutions sur
+90 axes. Son écart est donc réel et important — il n'était simplement pas de 0,18, chiffre
+lui aussi gonflé par le même artefact.
+
+### La cause racine était dans le prompt
+
+Le schéma déclare quatre états de résolution sans en définir aucun. Le prompt système
+n'enseignait que `UNRESOLVED` — `NOT_STATED` n'y apparaissait **pas une seule fois** —
+alors que la GOLD l'emploie **256 fois**. Le modèle suivait sa consigne et se faisait
+compter faux 43 fois sur un vocabulaire qu'on ne lui avait jamais donné.
+
+Corrigé en `e5-llm-v0.4.2` : le prompt déclare les trois états non résolus équivalents,
+demande `UNRESOLVED`, et énonce la seule distinction qui engage quelque chose — trancher à
+tort invente de la certitude, s'abstenir n'invente rien.
+
+### Ce que cet épisode dit de la méthode
+
+Deux conclusions successives ont été tirées d'un instrument non étalonné, et les deux
+étaient fausses : « la gate `unresolved` est incohérente » et « il faut réduire l'échelle à
+neuf niveaux ». Les deux venaient d'une mesure qui agrégeait des choses différentes. Le
+profil `human-ceiling` avait même été construit pour retirer `unresolvedFidelity` du
+verdict — il aurait excusé un vrai défaut. Un test l'interdit désormais.
+
+Avant d'interpréter un écart, vérifier que la mesure sépare bien ce qu'elle prétend séparer.

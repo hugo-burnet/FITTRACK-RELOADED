@@ -1,3 +1,17 @@
+import {
+  classifyResolutionDisagreement,
+  isResolved
+} from './resolution-state.mjs';
+
+// Les cinq axes portant un etat de resolution.
+const RESOLUTION_AXES = [
+  'knowledgeType',
+  'epistemicStatus',
+  'confidenceByAspect',
+  'directness',
+  'evidenceTypes'
+];
+
 const ERROR_CATEGORIES = [
   'MISSED_CLAIM',
   'EXTRA_CLAIM',
@@ -286,10 +300,16 @@ export function evaluateFragments({ annotations, runRecords }) {
           );
         }
       }
-      for (const axis of ['knowledgeType', 'epistemicStatus', 'confidenceByAspect', 'directness', 'evidenceTypes']) {
+      // Seul le fait de trancher là où la référence s'abstient est une erreur. Choisir
+      // `NOT_STATED` plutôt que `UNRESOLVED` n'invente aucune certitude — et le prompt
+      // n'enseignait même pas le premier, donc le reprocher revenait à noter le modèle
+      // sur un vocabulaire qu'on ne lui avait pas donné.
+      for (const axis of RESOLUTION_AXES) {
         if (
-          golden.axisResolution[axis]?.state === 'UNRESOLVED' &&
-          prediction.axisResolution[axis]?.state === 'RESOLVED'
+          classifyResolutionDisagreement(
+            golden.axisResolution[axis]?.state,
+            prediction.axisResolution[axis]?.state
+          ) === 'OVER_RESOLVED'
         ) {
           localErrors.push(
             error(annotation.fragmentId, 'UNRESOLVED_FORCED', prediction, golden, { axis })
@@ -419,7 +439,7 @@ function metricsForScope(fragmentResults, scope) {
   const knowledgeTypeConfusionMatrix = {};
   const epistemicStatusConfusionMatrix = {};
   const cannotConclude = { applicableClaims: 0, preservedClaims: 0, goldenItems: 0, predictedItems: 0 };
-  const unresolved = { goldenAxes: 0, preserved: 0, forced: 0 };
+  const unresolved = { goldenAxes: 0, preserved: 0, forced: 0, vocabularyOnly: 0 };
   const conservation = {
     negation: { applicable: 0, conserved: 0 },
     population: { applicable: 0, conserved: 0 },
@@ -459,11 +479,17 @@ function metricsForScope(fragmentResults, scope) {
       cannotConclude.predictedItems += predictedCannotConclude.length;
       if (predictedCannotConclude.length > 0) cannotConclude.preservedClaims += 1;
     }
-    for (const axis of ['knowledgeType', 'epistemicStatus', 'confidenceByAspect', 'directness', 'evidenceTypes']) {
-      if (pair.golden.axisResolution[axis]?.state !== 'UNRESOLVED') continue;
+    for (const axis of RESOLUTION_AXES) {
+      const goldenState = pair.golden.axisResolution[axis]?.state;
+      if (isResolved(goldenState) || goldenState === undefined) continue;
+      const predictedState = pair.prediction.axisResolution[axis]?.state;
       unresolved.goldenAxes += 1;
-      if (pair.prediction.axisResolution[axis]?.state === 'UNRESOLVED') unresolved.preserved += 1;
-      if (pair.prediction.axisResolution[axis]?.state === 'RESOLVED') unresolved.forced += 1;
+      // « Préservé » veut dire « s'est abstenu comme la référence », quel que soit le
+      // synonyme employé. Les deux familles restent comptées à part pour rester lisibles.
+      const verdict = classifyResolutionDisagreement(goldenState, predictedState);
+      if (verdict === 'IDENTICAL' || verdict === 'VOCABULARY_ONLY') unresolved.preserved += 1;
+      if (verdict === 'VOCABULARY_ONLY') unresolved.vocabularyOnly += 1;
+      if (verdict === 'OVER_RESOLVED') unresolved.forced += 1;
     }
     for (const name of Object.keys(conservation)) {
       if (pair.conservation[name].applicable) {
@@ -665,12 +691,15 @@ const HUMAN_CEILING_OVERRIDES = {
   citationRecall: 0.85 // 0,90 -> humains 0,845
 };
 
-// Axes retires du verdict mais toujours rapportes. `unresolvedFidelity` est a 0,57
-// d accord humain contre un seuil de 0,90 : le gater revient a noter du bruit, et le
-// correctif est dans la consigne d annotation, pas dans le modele.
-const HUMAN_CEILING_REPORTED_ONLY = {
-  unresolvedFidelity: 'below_measured_inter_annotator_agreement'
-};
+// Aucun axe n'est retiré du verdict pour l'instant.
+//
+// `unresolvedFidelity` l'a été un temps, sur la foi d'un accord humain mesuré à 0,57.
+// Ce chiffre était faux : la métrique confondait le choix entre deux synonymes
+// (`UNRESOLVED` / `NOT_STATED`) avec la décision de trancher ou non. Comptée
+// correctement, la concordance humaine sur cet axe est de 0,9314 — au-dessus du seuil
+// de 0,90. La gate est donc légitime, et le modèle la rate réellement, à 0,52. La
+// retirer aurait excusé un vrai défaut sur la foi d'un artefact de mesure.
+const HUMAN_CEILING_REPORTED_ONLY = {};
 
 // `lowerIsBetter` est porté explicitement : un profil de seuils recalcule le verdict
 // à partir du seuil substitué, et déduire le sens de comparaison d'un champ absent

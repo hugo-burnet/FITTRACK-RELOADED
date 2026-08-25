@@ -6,7 +6,7 @@
   "runVariant": "openrouter-openai-gpt-5",
   "model": "openai/gpt-5",
   "modelVersion": null,
-  "promptVersion": "e5-llm-v0.4.1",
+  "promptVersion": "e5-llm-v0.4.2",
   "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
   "temperature": null,
   "topP": null,

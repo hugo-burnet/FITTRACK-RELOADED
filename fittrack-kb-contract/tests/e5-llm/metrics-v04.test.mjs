@@ -342,20 +342,27 @@ test('the human-ceiling profile lowers only the thresholds measured above human 
   assert.equal(ceiling.gates.rejectedFragments.threshold, 0);
 });
 
-test('UNRESOLVED is reported but stops gating under the human-ceiling profile', () => {
-  // Deux annotateurs entraines ne s accordent qu a 0,57 sur cet axe. Le gater a 0,90
-  // revient a noter du bruit ; le probleme est dans la consigne d annotation.
-  const failing = perfectMetrics({ 'GLOBAL.unresolved.preservationRate': 0.2 });
-  const designReview = benchmarkPass(failing, { stage: 'DEV_100' });
-  assert.equal(designReview.gates.unresolvedFidelity.pass, false);
-  assert.equal(designReview.pass, false);
+test('UNRESOLVED keeps gating under both profiles', () => {
+  // Cet axe a ete retire du verdict un temps, sur la foi d un accord humain mesure a
+  // 0,57. Ce chiffre etait faux : la metrique confondait le choix entre deux
+  // synonymes et la decision de trancher. Compte correctement, l accord humain est de
+  // 0,9314, au-dessus du seuil. La gate est legitime et le modele la rate vraiment.
+  // Ce test empeche de la retirer une seconde fois.
+  const failing = perfectMetrics({ 'GLOBAL.unresolved.preservationRate': 0.52 });
+  for (const thresholdProfile of ['design-review', 'human-ceiling']) {
+    const result = benchmarkPass(failing, { stage: 'DEV_100', thresholdProfile });
+    assert.equal(result.gates.unresolvedFidelity.threshold, 0.9, thresholdProfile);
+    assert.equal(result.gates.unresolvedFidelity.pass, false, thresholdProfile);
+    assert.equal(result.pass, false, thresholdProfile);
+  }
+});
 
-  const ceiling = benchmarkPass(failing, { stage: 'DEV_100', thresholdProfile: 'human-ceiling' });
-  assert.equal(ceiling.gates.unresolvedFidelity, undefined);
-  assert.equal(ceiling.reported.unresolvedFidelity.actual, 0.2);
-  assert.equal(ceiling.reported.unresolvedFidelity.gating, false);
-  assert.equal(ceiling.reported.unresolvedFidelity.reason, 'below_measured_inter_annotator_agreement');
-  assert.equal(ceiling.pass, true);
+test('no gate is silently demoted to reported-only', () => {
+  const result = benchmarkPass(perfectMetrics(), {
+    stage: 'DEV_100',
+    thresholdProfile: 'human-ceiling'
+  });
+  assert.deepEqual(result.reported, {});
 });
 
 test('an unknown threshold profile is refused', () => {
