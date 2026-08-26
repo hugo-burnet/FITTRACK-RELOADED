@@ -1,0 +1,598 @@
+{
+  "schemaVersion": "1.0.0-wiki-questions",
+  "split": "DEV",
+  "questionSetHash": "sha256:a118fcca61ff662d74ef1c8e53eee19b691988918f7749d570f6a796aed0812b",
+  "note": "Questions écrites avant toute recherche. Aucune réponse rédigée : seulement des identifiants d’affirmations du corpus embarqué.",
+  "covered": [
+    {
+      "questionId": "sq.bc573600a4eb",
+      "text": "Sur le développé incliné je mets le banc à 15, 30 ou 45 degrés pour viser surtout le haut des pecs ?",
+      "claimIds": [
+        "claim.1a1d43584bef9a5d",
+        "claim.6f33aaaeadcc53d9",
+        "claim.4925f7d08ba01896",
+        "claim.577b5938355fd519"
+      ]
+    },
+    {
+      "questionId": "sq.5f4692abe3b9",
+      "text": "On peut avoir de grosses jambes sans squat ni deadlift ?",
+      "claimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.3ce99b70f1626b08",
+        "claim.5d2902199f7c4f94",
+        "claim.f590c2f747c37902",
+        "claim.59a8c635baaaaa23",
+        "claim.15d72ec5a92a590f",
+        "claim.ac5bd6c66df1ebef",
+        "claim.86da07d188584cf2",
+        "claim.51dce1ca6d569d5a",
+        "claim.42b409f14438d0e6"
+      ]
+    },
+    {
+      "questionId": "sq.6e1136457d46",
+      "text": "Pour les fessiers, squat profond ou hip thrust en priorité ?",
+      "claimIds": [
+        "claim.5d2902199f7c4f94",
+        "claim.924325fefb1ffab9",
+        "claim.5b4ef8cbcc3518e7",
+        "claim.da7c64b9d56c66b9",
+        "claim.ac5bd6c66df1ebef",
+        "claim.bb2dcdddf21ed743",
+        "claim.1461b0355b407815",
+        "claim.7ea2906b5f0fdf45",
+        "claim.ce6eedac6deff0d5",
+        "claim.b8682774a8e2a15b"
+      ]
+    },
+    {
+      "questionId": "sq.e9e8b611d6c4",
+      "text": "Quand on dit bonne technique, c'est quoi en vrai ? Parce que deux mecs peuvent faire le même exo complètement différemment et les deux ont l'air propres.",
+      "claimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.b3ba10bc9b56d2da",
+        "claim.ea11fbcce0f5eb47",
+        "claim.ac65b8059f025367",
+        "claim.b5581ebd36faa779",
+        "claim.16ef33eeb21e4969",
+        "claim.6e3b28f61cb3fb4e",
+        "claim.0817517028e95aef"
+      ]
+    },
+    {
+      "questionId": "sq.a2905b6aeb49",
+      "text": "Un exercice où je sens énormément le muscle est forcément meilleur qu'un autre où je sens presque rien ?",
+      "claimIds": [
+        "claim.6e3b28f61cb3fb4e",
+        "claim.a92f0d17177d052b",
+        "claim.da7c64b9d56c66b9",
+        "claim.1461b0355b407815",
+        "claim.b9205f6bbd041a41",
+        "claim.512fabfb0c606259",
+        "claim.62ba665452ef8c42"
+      ]
+    },
+    {
+      "questionId": "sq.64afdc860b7a",
+      "text": "Si l'amplitude complète me fait perdre beaucoup de charge, je garde quand même l'amplitude complète ?",
+      "claimIds": [
+        "claim.bb83ae131c09da88",
+        "claim.0817517028e95aef",
+        "claim.c5a1b80e772f7725",
+        "claim.76d2596b3c36a7db",
+        "claim.f7d50bbaab2b7ffd",
+        "claim.d468787f88c414ca",
+        "claim.2940e3a13be0cfa8",
+        "claim.0f2622a04337467e",
+        "claim.1561d935251102c0"
+      ]
+    },
+    {
+      "questionId": "sq.9671b67db518",
+      "text": "Pour les quadriceps, presse + hack squat ça fait doublon ou ça vaut le coup de garder les deux ?",
+      "claimIds": [
+        "claim.a0f182e86a501c82",
+        "claim.d842e25b309b2d5e",
+        "claim.0a3f7f057e57928c",
+        "claim.42b409f14438d0e6",
+        "claim.d41d8d9727b95d26",
+        "claim.628a8baf6f58c5f4",
+        "claim.a10517f65cbc63d1"
+      ]
+    },
+    {
+      "questionId": "sq.3dd4369665e4",
+      "text": "Si l'overhead triceps me fait mal au coude mais le pushdown non, je peux quand même développer le chef long correctement ?",
+      "claimIds": [
+        "claim.22282f571ee5e5e4",
+        "claim.a56f3532fceaf6ce",
+        "claim.02ced8a097b22d78",
+        "claim.67bd353e883b7a38",
+        "claim.789d4d1cd9b0fa7d",
+        "claim.e841347268547972",
+        "claim.d37e889614ebe32f",
+        "claim.4370b01be93db29f",
+        "claim.0d1cf689d5689199",
+        "claim.7b48297f0a6a2add",
+        "claim.ef63606117cc8f95"
+      ]
+    },
+    {
+      "questionId": "sq.1bf3bd00b4aa",
+      "text": "Pourquoi je suis beaucoup plus fort en machine chest press qu'aux haltères ?",
+      "claimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.2fa4cca69532e008",
+        "claim.d32e3abdd4add257",
+        "claim.505a9aabfa202270",
+        "claim.1bd2c08cdff83c7b",
+        "claim.5c84991d6644131e",
+        "claim.6daed6f5e307e561",
+        "claim.4a9e0e793526f61e",
+        "claim.b5581ebd36faa779"
+      ]
+    },
+    {
+      "questionId": "sq.2ca67ef27caf",
+      "text": "Je dois chercher à toucher les haltères en haut au développé ou ça sert à rien ?",
+      "claimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.76d2596b3c36a7db",
+        "claim.d72d25c83142ed71",
+        "claim.61bfad7df7533e26",
+        "claim.21842e1530072b0d",
+        "claim.e25c210698d521e4",
+        "claim.6e467d801d5980ba",
+        "claim.4a9e0e793526f61e"
+      ]
+    },
+    {
+      "questionId": "sq.39d99cdd0943",
+      "text": "Si je fais du rowing poitrine appuyée j'enlève quelque chose par rapport à un rowing barre ?",
+      "claimIds": [
+        "claim.4e8de03a0a9c13e2",
+        "claim.be963fe0156eb7e5",
+        "claim.a0f182e86a501c82",
+        "claim.d842e25b309b2d5e",
+        "claim.73336e41faf2e333",
+        "claim.cbc008081871bb1c",
+        "claim.5e3a38a9aecb3d10",
+        "claim.9ce649b6a62552df"
+      ]
+    },
+    {
+      "questionId": "sq.4a44dc4b221c",
+      "text": "Si je passe d'un exercice libre à une machine et que mes charges explosent, ça veut pas dire que j'ai vraiment gagné autant de force ?",
+      "claimIds": [
+        "claim.884a0a713ce1b61d",
+        "claim.a5fcad09ba817ea0",
+        "claim.4b5205201193a74f",
+        "claim.d32e3abdd4add257",
+        "claim.2fa4cca69532e008",
+        "claim.f7d467f7954831ce"
+      ]
+    },
+    {
+      "questionId": "sq.f6fe4ceb7a5b",
+      "text": "Est-ce que l'échec est moins gênant sur une machine que sur un exercice libre ?",
+      "claimIds": [
+        "claim.b5581ebd36faa779",
+        "claim.05931ee087228965",
+        "claim.2fa4cca69532e008",
+        "claim.d32e3abdd4add257",
+        "claim.e8cf61160b4c055f",
+        "claim.d99b5a799732d2a4",
+        "claim.f7d467f7954831ce"
+      ]
+    },
+    {
+      "questionId": "sq.16082a2a969b",
+      "text": "Pourquoi parfois je sens mieux un muscle avec moins lourd ?",
+      "claimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.1bd2c08cdff83c7b",
+        "claim.a92f0d17177d052b",
+        "claim.727034ce2e90575d",
+        "claim.b01f7e99dfc6d209",
+        "claim.505a9aabfa202270",
+        "claim.2fa4cca69532e008",
+        "claim.62ba665452ef8c42",
+        "claim.6e3b28f61cb3fb4e"
+      ]
+    },
+    {
+      "questionId": "sq.e53b85ece37d",
+      "text": "J'ai un tendon qui tire un peu au début puis plus rien après deux séries, je continue ou pas ?",
+      "claimIds": [
+        "claim.633cafb7f8a6ff7b",
+        "claim.949ce97db5e618c5",
+        "claim.a7c689f68cc4805f",
+        "claim.a896d12c0806d852",
+        "claim.10805ad03581a30f",
+        "claim.cd8f76af2586d45d",
+        "claim.eba14dc140548f44",
+        "claim.f97cfb3643622a80",
+        "claim.42d7e0ec55386f16",
+        "claim.54de426db201b40f",
+        "claim.88d6ae1a15df6a65",
+        "claim.dbb1adacfde680db",
+        "claim.b5c115c5d4546a24"
+      ]
+    },
+    {
+      "questionId": "sq.05f829788c9c",
+      "text": "Est-ce que les machines sont moins bonnes que les poids libres pour prendre du muscle ?",
+      "claimIds": [
+        "claim.4b5205201193a74f",
+        "claim.884a0a713ce1b61d",
+        "claim.c0c8389ec9a75597",
+        "claim.2ee07811748dd211",
+        "claim.d99b5a799732d2a4",
+        "claim.e8cf61160b4c055f",
+        "claim.d842e25b309b2d5e",
+        "claim.635f960366a8b312"
+      ]
+    },
+    {
+      "questionId": "sq.3146097607f8",
+      "text": "Pourquoi deux machines qui ont le même poids affiché peuvent être complètement différentes en difficulté ?",
+      "claimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.25b1fb28e1627230",
+        "claim.fcf2b780f852770f",
+        "claim.727034ce2e90575d",
+        "claim.b5a31c606df830a4",
+        "claim.d113ad90eb4b610d",
+        "claim.d5b5ebc63db67c57",
+        "claim.81c60784ff38cdde"
+      ]
+    },
+    {
+      "questionId": "sq.0ab26536af75",
+      "text": "Si une machine me met dans une position bizarre même avec les réglages, vaut mieux juste pas l'utiliser ?",
+      "claimIds": [
+        "claim.ef63606117cc8f95",
+        "claim.c0c8389ec9a75597",
+        "claim.4b5205201193a74f",
+        "claim.7276728119213533",
+        "claim.ea11fbcce0f5eb47",
+        "claim.42c2cf569ab8b0e6",
+        "claim.16ef33eeb21e4969",
+        "claim.04285c3d9ea6dcba"
+      ]
+    },
+    {
+      "questionId": "sq.f29b0ecd39ce",
+      "text": "Les partiels en position étirée ça vaut le coup ou c'est juste une mode ?",
+      "claimIds": [
+        "claim.1561d935251102c0",
+        "claim.0817517028e95aef",
+        "claim.c5a1b80e772f7725",
+        "claim.76d2596b3c36a7db",
+        "claim.2940e3a13be0cfa8",
+        "claim.0f2622a04337467e",
+        "claim.f7d50bbaab2b7ffd",
+        "claim.23b3d469960dd46b",
+        "claim.99c9b20fbe7a4879",
+        "claim.89f05bd1b837bea9",
+        "claim.b45904746118bd31",
+        "claim.5fa2fffd1a2416a1",
+        "claim.267efae83fb16bdc"
+      ]
+    },
+    {
+      "questionId": "sq.fef22e860a18",
+      "text": "Je peux faire grossir les quadriceps juste avec presse et leg extension ?",
+      "claimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.51dce1ca6d569d5a",
+        "claim.42b409f14438d0e6",
+        "claim.1ccb2ede09b6a567",
+        "claim.cf47c3685a02914c",
+        "claim.622029068fcef311",
+        "claim.0a3f7f057e57928c",
+        "claim.8f480477edc14ffb",
+        "claim.59a8c635baaaaa23"
+      ]
+    },
+    {
+      "questionId": "sq.1d843d212fe5",
+      "text": "Écartés poulie basse vers haut ça cible vraiment le haut de pec ou c'est surtout une sensation ?",
+      "claimIds": [
+        "claim.6f33aaaeadcc53d9",
+        "claim.4925f7d08ba01896",
+        "claim.a92f0d17177d052b",
+        "claim.1a1d43584bef9a5d",
+        "claim.6e3b28f61cb3fb4e",
+        "claim.d57ffa4a5b4fe7cd",
+        "claim.21842e1530072b0d",
+        "claim.ac86fd18ed2f29e9",
+        "claim.9b4fa84cb3a9dcbf"
+      ]
+    },
+    {
+      "questionId": "sq.55534e960c83",
+      "text": "Si mes bras sont longs ça change beaucoup ma technique au développé couché ?",
+      "claimIds": [
+        "claim.8f8fa159681d6cc6",
+        "claim.4a9e0e793526f61e",
+        "claim.6e467d801d5980ba",
+        "claim.b01f7e99dfc6d209",
+        "claim.d5b5ebc63db67c57",
+        "claim.b3ba10bc9b56d2da"
+      ]
+    },
+    {
+      "questionId": "sq.46d98d603f49",
+      "text": "Si je descends très profond à la presse mais que mon bassin se décolle un peu, je dois limiter l'amplitude ?",
+      "claimIds": [
+        "claim.72e526b4bee68a11",
+        "claim.42c2cf569ab8b0e6",
+        "claim.9c7f2bfc213bbd59",
+        "claim.e0557245d2256b1e",
+        "claim.1a77d19cd4d042ae",
+        "claim.339bb329a5e9c820",
+        "claim.11e25d52c5282933",
+        "claim.54de426db201b40f",
+        "claim.8f8fa159681d6cc6"
+      ]
+    },
+    {
+      "questionId": "sq.50df7f71a1ad",
+      "text": "Pour avoir un dos visuellement épais, quels types de mouvements comptent le plus ?",
+      "claimIds": [
+        "claim.31c2b646c024874f",
+        "claim.00d5c6d7f7c440c5",
+        "claim.5462f57c6c72a709",
+        "claim.be18353c3e467236",
+        "claim.cbc008081871bb1c",
+        "claim.5069250ec7afb317",
+        "claim.0c46d49e321c5af6",
+        "claim.4317694aab2bb90f"
+      ]
+    },
+    {
+      "questionId": "sq.afc713fcc0c3",
+      "text": "Sur la presse, placer les pieds bas change vraiment beaucoup le travail des quadriceps ?",
+      "claimIds": [
+        "claim.622029068fcef311",
+        "claim.23ea916fca28c813",
+        "claim.42b409f14438d0e6",
+        "claim.a10517f65cbc63d1",
+        "claim.8f480477edc14ffb",
+        "claim.44f1c168e713c4c3",
+        "claim.9f6e03a416e99efe"
+      ]
+    },
+    {
+      "questionId": "sq.72e7a40b0593",
+      "text": "Le leg extension est dangereux pour les genoux ou c'est un vieux mythe ?",
+      "claimIds": [
+        "claim.3c588e6d31cee60b",
+        "claim.58910db9d4dd3945",
+        "claim.902fb3b1d1e90e4a",
+        "claim.3576be67689235fa",
+        "claim.40ad20663bf879e1",
+        "claim.0918e46c039ce540",
+        "claim.7163b6869319673c",
+        "claim.4a7268c76f333993",
+        "claim.870ee1d1ac5efca2",
+        "claim.04285c3d9ea6dcba",
+        "claim.5a14864a162b0c86"
+      ]
+    },
+    {
+      "questionId": "sq.75ddd6fe11de",
+      "text": "Le hack squat ça remplace vraiment le squat ou pas du tout ?",
+      "claimIds": [
+        "claim.d41d8d9727b95d26",
+        "claim.59a8c635baaaaa23",
+        "claim.628a8baf6f58c5f4",
+        "claim.884a0a713ce1b61d",
+        "claim.42b409f14438d0e6",
+        "claim.19421ac898d12791",
+        "claim.15d72ec5a92a590f"
+      ]
+    },
+    {
+      "questionId": "sq.94a7400e4dea",
+      "text": "Le hip thrust sert vraiment à prendre des fessiers ou c'est surcoté ?",
+      "claimIds": [
+        "claim.5d2902199f7c4f94",
+        "claim.ac5bd6c66df1ebef",
+        "claim.5b4ef8cbcc3518e7",
+        "claim.da7c64b9d56c66b9",
+        "claim.1461b0355b407815",
+        "claim.7ea2906b5f0fdf45",
+        "claim.924325fefb1ffab9",
+        "claim.4071a7d47f02d5a2",
+        "claim.7aef35e766cb47f2",
+        "claim.bb2dcdddf21ed743"
+      ]
+    },
+    {
+      "questionId": "sq.4134ba3f89e5",
+      "text": "Pour le dos, prise large = dos plus large et prise serrée = dos plus épais, c'est vrai ou c'est un mythe ?",
+      "claimIds": [
+        "claim.cbc008081871bb1c",
+        "claim.00d5c6d7f7c440c5",
+        "claim.31c2b646c024874f",
+        "claim.5462f57c6c72a709",
+        "claim.658a919e9962841f",
+        "claim.6c2894dbf0dc3f7a",
+        "claim.dd51dfabd8819ce7"
+      ]
+    },
+    {
+      "questionId": "sq.f61dd8e55c7c",
+      "text": "Mes deltoïdes avant prennent super vite mais pas les côtés, je dois enlever du développé ?",
+      "claimIds": [
+        "claim.d3d2b10fa0a4007c",
+        "claim.1bba546622be8e9a",
+        "claim.f320a2ec77882660",
+        "claim.ce2b4e54b6debaf2",
+        "claim.997d675875be1fe1",
+        "claim.ba3bed85916b2390",
+        "claim.bed72e8e1544a655",
+        "claim.d2c45ec3e6e3655b"
+      ]
+    },
+    {
+      "questionId": "sq.082960cb3951",
+      "text": "Pourquoi mes triceps brûlent plus avec 15 kg à la poulie qu'avec 30 sur une autre machine ?",
+      "claimIds": [
+        "claim.4a9e0e793526f61e",
+        "claim.fcf2b780f852770f",
+        "claim.25b1fb28e1627230",
+        "claim.b5a31c606df830a4",
+        "claim.727034ce2e90575d",
+        "claim.d5b5ebc63db67c57",
+        "claim.62ba665452ef8c42",
+        "claim.6e3b28f61cb3fb4e"
+      ]
+    }
+  ],
+  "uncovered": [
+    {
+      "questionId": "sq.3b989e73e623",
+      "text": "Est-ce que les exercices unilatéraux sont meilleurs pour corriger les différences droite/gauche ?",
+      "missing": "Élément manquant : l'effet de l'entraînement unilatéral sur l'asymétrie elle-même. Le corpus ne traite que l'équivalence hypertrophique unilatéral/bilatéral."
+    },
+    {
+      "questionId": "sq.da2d3a4a2edf",
+      "text": "Pour l'arrière d'épaule, reverse pec deck ou face pull c'est mieux pour prendre du volume ?",
+      "missing": "Aucune comparaison reverse pec deck / face pull, ni aucune négation propre à cette paire."
+    },
+    {
+      "questionId": "sq.11f16e0e61a7",
+      "text": "J'ai les pecs qui progressent mais pas visuellement, c'est juste trop tôt ?",
+      "missing": "Aucune donnée sur le délai d'apparition visible de l'hypertrophie."
+    },
+    {
+      "questionId": "sq.97da6cd012b7",
+      "text": "Si je mets les biceps en premier dans la séance dos je vais ruiner tout mon dos après ?",
+      "missing": "Aucun contenu sur l'ordre des exercices et son effet sur la performance ou l'hypertrophie ultérieure."
+    },
+    {
+      "questionId": "sq.3dfa7500cfe7",
+      "text": "Je sens un côté du dos beaucoup plus que l'autre au tirage, comment je corrige ça ?",
+      "missing": "Aucun protocole de correction d'un déséquilibre perçu."
+    },
+    {
+      "questionId": "sq.c5d9f7dceab3",
+      "text": "Quand je bloque sur un exo, mieux vaut baisser le poids quelques séances ou continuer à forcer ?",
+      "missing": "Aucun contenu sur la stagnation ni sur les schémas de progression en musculation."
+    },
+    {
+      "questionId": "sq.51dfd57b6185",
+      "text": "Si mes perfs montent presque partout mais que le miroir change peu, je continue pareil ?",
+      "missing": "L'élément décisif est une décision de programmation, absente du corpus."
+    },
+    {
+      "questionId": "sq.52e815f4f6db",
+      "text": "Si je fais une série de plus quand je me sens en forme ça fausse complètement mon suivi ?",
+      "missing": "Rien sur la validité d'un suivi longitudinal face à une variation de volume."
+    },
+    {
+      "questionId": "sq.8b549ac9726e",
+      "text": "Après 2 semaines de pause, combien de séances il faut en général pour retrouver ses perfs ?",
+      "missing": "Le corpus dit comment reprendre, jamais en combien de séances les performances reviennent."
+    },
+    {
+      "questionId": "sq.f7e9ce902933",
+      "text": "Quand je fais de l'unilatéral je commence toujours par le côté faible ou ça change rien ?",
+      "missing": "Aucun contenu sur l'ordre entre côté fort et côté faible."
+    },
+    {
+      "questionId": "sq.19d87c79b8c6",
+      "text": "Je peux faire les épaules presque tous les jours si je mets peu de séries ?",
+      "missing": "Aucun contenu sur la fréquence d'entraînement pour l'hypertrophie."
+    },
+    {
+      "questionId": "sq.e3de0016c1a2",
+      "text": "Pour les mollets faut plutôt lourd et peu de reps ou léger et beaucoup ?",
+      "missing": "Aucune prescription de charge ni de plage de répétitions, pour les mollets ni ailleurs."
+    },
+    {
+      "questionId": "sq.1191ad759094",
+      "text": "À partir de combien de séries par semaine ça devient beaucoup pour un muscle ?",
+      "missing": "Aucun seuil de volume hebdomadaire nulle part dans le corpus."
+    },
+    {
+      "questionId": "sq.cee318316b97",
+      "text": "Je peux progresser aux tractions juste avec des négatives et des reps assistées ?",
+      "missing": "Rien sur les négatives, les répétitions assistées ni la progression vers la traction."
+    },
+    {
+      "questionId": "sq.cf4732bd8fd0",
+      "text": "Comment tu estimes les RIR quand t'es pas sûr de combien de reps il te restait ?",
+      "missing": "Aucun contenu sur le RIR, sa mesure ou sa fiabilité."
+    },
+    {
+      "questionId": "sq.ca73c16e08c0",
+      "text": "Est-ce que les shrugs sont nécessaires pour avoir de gros trapèzes ?",
+      "missing": "La fonction du trapèze supérieur est décrite, mais rien ne dit si d'autres exercices suffisent — c'est l'élément décisif de « nécessaires »."
+    },
+    {
+      "questionId": "sq.ce836e0378d4",
+      "text": "Sur le pec deck je dois laisser les épaules partir en avant à la fin ou garder les omoplates fixes ?",
+      "missing": "Aucun contenu sur la position scapulaire pendant un écarté."
+    },
+    {
+      "questionId": "sq.8f9b937a65ee",
+      "text": "Mes mollets brûlent mais progressent jamais, je dois surtout augmenter le volume ou la charge ?",
+      "missing": "Aucun contenu sur le choix entre progression en volume et progression en charge."
+    },
+    {
+      "questionId": "sq.adcee986fc2b",
+      "text": "Pré-fatiguer les pecs avec du pec deck avant le développé c'est une bonne idée ou pas ?",
+      "missing": "Aucun contenu sur la pré-fatigue."
+    },
+    {
+      "questionId": "sq.cdbb40c50c27",
+      "text": "Pour les mollets je dois faire une pause en bas à chaque rep ?",
+      "missing": "Aucun contenu sur les pauses ni sur le tempo."
+    },
+    {
+      "questionId": "sq.daba03361b16",
+      "text": "Il faut combien de secondes sur la descente d'une rep en général ?",
+      "missing": "Aucune durée de phase excentrique nulle part."
+    },
+    {
+      "questionId": "sq.255a38d6c2c5",
+      "text": "Pour construire un physique harmonieux, tu prioriserais quels muscles chez quelqu'un qui débute ?",
+      "missing": "Aucune notion de priorisation musculaire ni d'objectif esthétique."
+    },
+    {
+      "questionId": "sq.f7ac0e2c33b4",
+      "text": "Ça change beaucoup de faire les gros exos en premier ou je peux commencer par un muscle que je veux rattraper ?",
+      "missing": "Aucun effet d'ordre des exercices sur l'hypertrophie."
+    },
+    {
+      "questionId": "sq.8469c2bdee4e",
+      "text": "Un deload c'est utile même si je me sens pas particulièrement fatigué ?",
+      "missing": "Aucun contenu sur le deload ni sur la gestion de la fatigue accumulée."
+    },
+    {
+      "questionId": "sq.6ea465b0f170",
+      "text": "Je peux faire que des exercices guidés pendant plusieurs mois sans perdre de muscle stabilisateur important ?",
+      "missing": "Aucune donnée sur la perte de musculature stabilisatrice sous entraînement guidé prolongé."
+    },
+    {
+      "questionId": "sq.57701fef9cba",
+      "text": "Est-ce que les bras grossissent suffisamment avec les développés et tirages ou l'isolation est vraiment nécessaire ?",
+      "missing": "Aucune comparaison polyarticulaire seul contre polyarticulaire plus isolation pour les bras."
+    },
+    {
+      "questionId": "sq.d8441cae4705",
+      "text": "Est-ce qu'une petite asymétrie musculaire finit souvent par se corriger toute seule avec le temps ?",
+      "missing": "Aucune donnée d'histoire naturelle d'une asymétrie."
+    },
+    {
+      "questionId": "sq.3466d2f021c2",
+      "text": "Je peux faire du développé couché sans cambrer du tout ou ça me pénalise trop ?",
+      "missing": "La cambrure au développé couché n'est traitée nulle part."
+    }
+  ]
+}
