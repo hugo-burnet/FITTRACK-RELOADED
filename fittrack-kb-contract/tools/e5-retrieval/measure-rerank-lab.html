@@ -87,7 +87,20 @@ try {
     if (after.length > 0 && gold.has(after[0])) rerankedAt1 += 1;
     if (hitAfter && !hitBefore) recovered.push(entry.question);
     if (!hitAfter && hitBefore) lost.push(entry.question);
+
+    // Publié à CHAQUE question, pas seulement à la fin. Un onglet masqué est
+    // bridé par le navigateur : un run qui ne rend son résultat qu'au terme
+    // paraît planté alors qu'il avance, et on ne peut ni le suivre ni le lire.
+    window.__progress = {
+      done: index + 1,
+      total: pool.entries.length,
+      lexical: { recall: baseline, precisionAt1: baselineAt1 },
+      reranked: { recall: reranked, precisionAt1: rerankedAt1 }
+    };
     out.textContent = `${index + 1}/${pool.entries.length}`;
+    // Rend la main au navigateur : sans cette pause, la boucle monopolise le
+    // fil principal et window.__progress n'est jamais lisible de l'exterieur.
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
   const total = pool.entries.length;

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import {
   ProgramRepositoryError,
@@ -28,6 +28,7 @@ import { MissingRoutineReplacementSheet } from './MissingRoutineReplacementSheet
 import { repositoryErrorKey } from './programEditorModel';
 import { ProgramSessionList, UpcomingWeeks } from './ProgramSessionList';
 import type { ProgramSessionReading } from './ProgramSessionList';
+import { phaseEvidenceFor } from './phaseEvidence';
 import { loadRuleReading, weekLine } from './weekReading';
 
 interface DetailProjection {
@@ -88,6 +89,7 @@ function ProgramProgressReading({
 
 function CurrentIntention({ week }: { week: ProgramWeek }) {
   const intention = loadRuleReading(week);
+  const evidence = phaseEvidenceFor(week.phase);
   return (
     <section className="border-y border-[var(--border)] py-4">
       <p className="label-xs font-semibold text-[var(--text-2)]">{t('program.intentionTitle')}</p>
@@ -100,6 +102,32 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
       </p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{intention}</p>
       {week.notes && <p className="mt-2 text-sm text-[var(--text-2)]">{week.notes}</p>}
+      {/* Ce que la littérature dit de la phase traversée. L'app savait planifier
+          une décharge, le corpus savait ce qu'on en sait — sans qu'aucun des
+          deux ne mentionne l'autre. Le lien n'apparaît que si une section traite
+          vraiment la phase : en proposer une vaguement voisine apprendrait au
+          lecteur que le lien ment. */}
+      {evidence !== null && (
+        <Link
+          to={`/knowledge/p/${evidence.sectionId}`}
+          className="mt-4 flex min-h-12 items-center justify-between gap-3 rounded-xl bg-[var(--surface-1)] px-4 py-2"
+        >
+          <span className="min-w-0">
+            <span className="block text-sm font-semibold text-[var(--accent-ink)]">
+              {t('program.evidenceLink')}
+            </span>
+            <span className="mt-0.5 block text-xs leading-5 text-[var(--text-2)]">
+              {t(
+                evidence.count === 1 ? 'program.evidenceCountOne' : 'program.evidenceCountMany',
+                { count: evidence.count, section: evidence.title },
+              )}
+            </span>
+          </span>
+          <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
+            →
+          </span>
+        </Link>
+      )}
     </section>
   );
 }

@@ -621,6 +621,14 @@ const fr = {
     progressBefore: 'Le bloc commence le {date}.',
     progressAfter: 'Les {count} semaines sont terminées.',
     intentionTitle: 'Intention de la semaine',
+
+    /**
+     * Le pont vers le corpus. Le libellé ne promet pas une réponse : il dit où
+     * lire, ce qui est exactement ce que fait la base de preuves.
+     */
+    evidenceLink: 'Ce qu’en dit le corpus',
+    evidenceCountOne: '{count} fiche — {section}',
+    evidenceCountMany: '{count} fiches — {section}',
     /**
      * La section liste les sept jours, pas seulement ceux qui portent une
      * séance : un bloc se lit autant à ses jours de repos qu'à ses séances.
