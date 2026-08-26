@@ -26,6 +26,7 @@ import { hasDrawableMuscles } from '@/ui/muscleMap';
 import { ChevronRightIcon } from '@/ui/icons';
 import { CoachCard } from '@/features/workout/CoachCard';
 import { recommendationAsSignal } from '@/features/workout/coachCopy';
+import { ExerciseDocumentationView } from './ExerciseDocumentationView';
 import { ExerciseLoadCard } from './ExerciseLoadCard';
 import { ExerciseMusclesCard } from './ExerciseMusclesCard';
 
@@ -111,6 +112,12 @@ export function ExerciseDetailScreen() {
    * echoing each write back into the field and moving the caret. Keyed on the
    * exercise id so walking from one exercise to another re-reads.
    */
+  /**
+   * Suivi ou Documentation. La vue est éphémère : revenir sur une fiche part
+   * toujours du Suivi, parce que c'est ce qu'on ouvre pendant une séance.
+   */
+  const [view, setView] = useState<'tracking' | 'documentation'>('tracking');
+
   const [draft, setDraft] = useState<{
     id: string;
     notes: string;
@@ -148,13 +155,7 @@ export function ExerciseDetailScreen() {
     );
   }
 
-  if (
-    exercise === undefined ||
-    draft === null ||
-    sessions === undefined ||
-    records === undefined ||
-    coachHistory === undefined
-  ) {
+  if (exercise === undefined || draft === null) {
     return (
       <Screen title="" onBack={goBack}>
         <span />
@@ -211,6 +212,39 @@ export function ExerciseDetailScreen() {
           )}
         </p>
 
+        {/* Deux vues nommées, pas un accordéon : « Suivi » est ce qu'on ouvre en
+            salle, « Documentation » ce qu'on lit à froid. Les mélanger sur un
+            seul écran ferait descendre les records sous quinze paragraphes. */}
+        <div role="tablist" aria-label={t('exercise.viewsLabel')} className="flex gap-1
+          rounded-xl bg-[var(--surface-2)] p-1">
+          {(['tracking', 'documentation'] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              role="tab"
+              aria-selected={view === value}
+              onClick={() => setView(value)}
+              className={`min-h-12 flex-1 rounded-lg text-base font-semibold
+                transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
+                ${
+                  view === value
+                    ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                    : 'text-[var(--text-2)]'
+                }`}
+            >
+              {value === 'tracking'
+                ? t('exerciseDoc.tabTracking')
+                : t('exerciseDoc.tabDocumentation')}
+            </button>
+          ))}
+        </div>
+
+        {view === 'documentation' ? (
+          <ExerciseDocumentationView exercise={exercise} />
+        ) : sessions === undefined || records === undefined || coachHistory === undefined ? (
+          <span />
+        ) : (
+          <>
         {/* Nothing at all for a stretching routine: a mute grey body would be
             worse than no body, and it is the roadmap's own checkpoint here. */}
         {hasDrawableMuscles(exercise) && <ExerciseMusclesCard exercise={exercise} />}
@@ -389,7 +423,8 @@ export function ExerciseDetailScreen() {
             {t('exercise.catalogueNote')}
           </p>
         )}
-
+          </>
+        )}
       </div>
     </Screen>
   );

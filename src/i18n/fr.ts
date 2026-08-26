@@ -1180,6 +1180,7 @@ const fr = {
     musclesPrimary: 'Principal',
     musclesSecondary: 'Aussi sollicités',
 
+    viewsLabel: 'Vues de la fiche',
     recordsSection: 'Records',
     recordsLink: 'Voir tous les records',
     recordWeightReps: '{weight} kg × {reps}',
@@ -1242,6 +1243,35 @@ const fr = {
       'Il quitte la bibliothèque. Tes séances passées gardent leurs séries et leurs charges.',
     deleteConfirm: 'Supprimer',
     cancel: 'Annuler',
+  },
+
+  /**
+   * La vue Documentation d'une fiche d'exercice. Elle ne promet rien : elle dit
+   * ce que le corpus rattache à cet exercice, et nomme ce qu'il ne rattache pas.
+   */
+  exerciseDoc: {
+    tabTracking: 'Suivi',
+    tabDocumentation: 'Documentation',
+    summaryTitle: 'Ce que le wiki documente ici',
+    emptyBody:
+      'Aucun article ne couvre encore ce muscle. Le sommaire du wiki dit ce qui existe ; rien n’est cherché à sa place.',
+    toSummary: 'Ouvrir le sommaire du wiki',
+    readArticle: 'Lire l’article',
+    filterLabel: 'Filtrer ces articles',
+    filterPlaceholder: 'Ex. : chef long',
+    filterClear: 'Effacer le filtre',
+    filterEmpty:
+      'Aucun de ces articles ne contient ces mots. Le filtre ne cherche pas ailleurs : efface-le pour retrouver la documentation complète.',
+    secondaryTitle: 'Muscles secondaires',
+    secondaryNoRole:
+      'Le corpus ne documente pas le rôle de ce muscle dans cette famille de mouvement. Sa fiche complète reste accessible.',
+    limitsTitle: 'Ce que cette page ne dit pas',
+    limitPrimaryMissing:
+      'Aucun article ne couvre encore le muscle principal de cet exercice.',
+    limitPatternMissing:
+      'Aucune relation de mouvement n’est déclarée sur cet exercice. Les muscles restent documentés ; leur coopération, elle, ne s’invente pas.',
+    limitMovementArticleMissing:
+      'La famille de mouvement déclarée n’a pas encore d’article dans le wiki.',
   },
 
   exerciseForm: {

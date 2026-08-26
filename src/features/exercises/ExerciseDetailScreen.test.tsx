@@ -180,3 +180,41 @@ describe('ExerciseDetailScreen load increment', () => {
     });
   });
 });
+
+describe('ExerciseDetailScreen vues Suivi et Documentation', () => {
+  beforeEach(async () => {
+    await resetDb();
+    await db.exercises.add({ ...exercise, movementPattern: 'poussee_horizontale' });
+  });
+
+  it('ouvre sur le Suivi, pas sur la documentation', async () => {
+    renderScreen();
+
+    const tracking = await screen.findByRole('tab', { name: 'Suivi' });
+    expect(tracking).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Documentation' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
+  });
+
+  it('bascule sur la documentation reliée à l’exercice', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    await user.click(await screen.findByRole('tab', { name: 'Documentation' }));
+
+    expect(screen.getByRole('heading', { name: 'Pectoraux' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Poussée horizontale' })).toBeVisible();
+  });
+
+  it('revient au Suivi sans perdre ses réglages', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    await user.click(await screen.findByRole('tab', { name: 'Documentation' }));
+    await user.click(screen.getByRole('tab', { name: 'Suivi' }));
+
+    expect(await screen.findByText('Notes')).toBeVisible();
+  });
+});
