@@ -177,5 +177,28 @@ donc à CAL.
       servi par `serve-lab.mjs`, sur le vivier de `scripts/dump-search-pool.mjs`.
       À lancer avec le panneau navigateur **visible** : masqué, le rendu est bridé
       et l'inférence gèle le fil principal. Non exécutable en session agent.
+
+      > **Trois défauts du banc, trouvés avant d'avoir un seul chiffre** — tous de la
+      > même famille : le banc ne disait pas dans quelles conditions il tournait.
+      >
+      > 1. Modèle sur le fil principal, 18 paires en un passage, aucun avancement
+      >    publié. Chrome affichait « Page ne répondant pas » et un run lent était
+      >    indistinguable d'un run planté. Corrigé : Web Worker, lots de 4,
+      >    `postMessage` par lot et `progress_callback` au téléchargement.
+      > 2. **Pas d'en-têtes COOP/COEP sur `serve-lab.mjs`** → pas de
+      >    `SharedArrayBuffer` → **WASM mono-thread**, et WebGPU jamais demandé. J'ai
+      >    failli conclure « ce modèle est trop lourd pour le téléphone » à partir de
+      >    la pire configuration possible. Corrigé, et le backend réellement obtenu
+      >    est désormais affiché puis consigné dans le résultat.
+      > 3. Le petit modèle de comparaison, `Xenova/mmarco-mMiniLMv2-L12-H384-v1`,
+      >    **n'existe pas** — identifiant écrit de mémoire. Remplacé par
+      >    `Xenova/bge-reranker-base` (278 M, 266 Mo en q8), vérifié contre l'API
+      >    HuggingFace.
+      >
+      > **Plancher de taille, mesuré :** un cross-encoder qui comprend le français
+      > coûte ~266 Mo quantifié, parce que 69 % de ses paramètres sont la table
+      > d'embeddings de 250 000 tokens. Ce n'est pas un modèle qu'on rend petit ;
+      > c'est un téléchargement qu'on assume ou qu'on refuse. Le chiffre à opposer
+      > à ce coût est le gain sur 27/31 et 17/31 — il n'existe pas encore.
 - [ ] **T9 — Recalibrer le refus sur le score de reclassement**, si T8 est concluant.
       Puis, et seulement puis, CAL.
