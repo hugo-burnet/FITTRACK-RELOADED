@@ -2,7 +2,11 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-26 (**wiki structuré relu, corrigé et complété** : la relecture
+**Dernière mise à jour :** 2026-08-26 (**reprise UI Routines, Wiki et coach en séance** : les
+commandes de la bibliothèque suivent désormais les motifs existants, les articles ont été allégés
+et le coach exige une action explicite avant d'appliquer une charge. Voir la section dédiée
+ci-dessous — **checkpoint téléphone à faire**). Plus tôt le même jour (**wiki structuré relu,
+corrigé et complété** : la relecture
 des 64 articles a trouvé 27 renvois orphelins, 6 passages tronqués par l'extraction et 4 erreurs de
 rédaction ; le Guide gagne un parcours « Apprendre à programmer » et la douleur devient accessible
 depuis chaque exercice. **Huit checkpoints téléphone restent à faire.**) Plus tôt (**le wiki
@@ -22,6 +26,51 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Reprise UI Routines, Wiki et coach en séance
+
+> Conception : `docs/superpowers/specs/2026-08-26-routines-wiki-live-coach-ui-design.md`
+> Plan : `docs/superpowers/plans/2026-08-26-routines-wiki-live-coach-ui.md`
+
+### Ce qui change
+
+- **Routines** réutilise les commandes de verrouillage et de repli de la séance, masque la racine
+  « Sans dossier » lorsqu'elle est vide et annonce le repli d'un dossier par un chevron. Le compteur
+  a quitté le titre pour rejoindre cette barre de commandes.
+- **Wiki** n'affiche plus le bouton de tutoriel sur ses pages. L'en-tête et le résumé sont alignés,
+  la note « Non relu » est compacte, les affirmations sont regroupées dans une surface continue et
+  les sources sont repliables. Les identifiants de traçabilité restent présents dans le DOM.
+- **Coach en séance** ne transforme plus toute la carte en commande invisible : une recommandation
+  de charge présente « Appliquer » et « Ignorer », tandis qu'une observation sans charge présente
+  seulement « Masquer ». L'état d'application bloque les doubles actions et un échec d'écriture
+  laisse la recommandation visible.
+- **Réglages en séance** aligne désormais les choix isolés sur toute leur rangée : « Aucun » pour le
+  repos et « Par défaut partout » pour la cadence utilisent un accent doux et ne concurrencent plus
+  les actions principales.
+- **Nettoyage sans perte fonctionnelle** : `wikiDocuments` et l'export mort `wikiSections` ont été
+  supprimés. La recherche globale et l'écran de section sont conservés.
+
+### Vérifié au navigateur, sur le serveur de développement
+
+Contrôle visuel à 320 et 375 px : aucune largeur parasite sur Routines, Wiki, la carte Coach,
+`RestPicker` ou `PaceSheet` ; les actions du coach se superposent proprement à 320 px ; la barre de
+reprise d'une séance reste séparée des commandes de la bibliothèque. « Aucun » et « Par défaut
+partout » mesurent 48 px de haut, occupent toute leur rangée et gardent 24 px entre le réglage global
+et l'action de lancement. Ce contrôle sur poste ne remplace pas le checkpoint téléphone.
+
+### CHECKPOINT MANUEL — à faire sur le téléphone
+
+1. Avec une séance active, ouvrir Planifier → Routines et vérifier que la barre de reprise, le
+   verrouillage et le repli restent faciles à toucher à une main.
+2. Avec zéro routine à la racine, vérifier que « Sans dossier » n'apparaît pas ; replier ensuite un
+   dossier et confirmer que son contenu et son chevron suivent le même état.
+3. Ouvrir l'article « Volume » : aucun bouton `?`, sources fermées par défaut, lecture fluide hors
+   ligne.
+4. Dans une séance, appliquer une recommandation de charge puis masquer une observation ; vérifier
+   que chaque action a un libellé explicite et que la séance reste intacte après un retour arrière.
+5. Ouvrir Cadence puis Tes réglages : vérifier que « Par défaut partout » et « Aucun » ne flottent
+   plus seuls à gauche et restent visuellement secondaires face à « Lancer la cadence » et
+   « Terminé ».
 
 ## Relecture du corpus, et ce qui a été ajouté après
 
