@@ -128,9 +128,7 @@ export function CoachCard({
       <p className="mt-2 text-sm leading-snug text-pretty text-[var(--text-1)]">{reason}</p>
 
       {(applicable || onDismiss !== undefined) && (
-        <div
-          className={`mt-3 flex flex-col gap-2 ${applicable ? 'min-[23rem]:flex-row' : 'items-end'}`}
-        >
+        <div className={`mt-3 flex flex-col gap-2 ${applicable ? 'min-[23rem]:flex-row' : ''}`}>
           {applicable && weight !== undefined && (
             <Button
               variant="primary"
@@ -142,12 +140,22 @@ export function CoachCard({
               {t('coach.applyButton', { weight })}
             </Button>
           )}
+          {/* Seule, la commande d'une observation flottait à droite : un mot gris
+              centré dans 48 px transparents, qui se lisait comme du texte et non
+              comme un bouton, avec un vide sans fonction à sa gauche. Elle prend
+              sa rangée et le trait de `--border`, qui est ce qui dessine une
+              surface sur le bandeau `--surface-2` où un fond `secondary`
+              disparaîtrait. À côté d'« Appliquer », rien ne change : le contraste
+              avec l'aplat plein suffit déjà à la situer. */}
           {onDismiss !== undefined && (
             <Button
               variant="ghost"
+              fullWidth={!applicable}
               disabled={applying}
               onClick={onDismiss}
-              className={applicable ? 'min-[23rem]:shrink-0' : ''}
+              className={
+                applicable ? 'min-[23rem]:shrink-0' : 'border border-[var(--border)]'
+              }
             >
               {t(hasLoad ? 'coach.dismiss' : 'coach.hideObservation')}
             </Button>
