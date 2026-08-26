@@ -143,6 +143,23 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
         </section>
       ))}
 
+      {documentation.clinical.filter(keep).length > 0 && (
+        <section aria-labelledby="exercise-doc-clinical" className="space-y-3">
+          <h2 id="exercise-doc-clinical" className="px-1 text-lg font-semibold text-[var(--text-1)]">
+            {t('exerciseDoc.clinicalTitle')}
+          </h2>
+          {/* Ce bloc ne diagnostique rien et ne se déclenche sur rien : il évite
+              seulement d'avoir à chercher « genou » dans un wiki le jour où le
+              genou fait mal pendant un squat. */}
+          <p className="px-1 text-sm leading-6 text-[var(--text-2)]">
+            {t('exerciseDoc.clinicalHint')}
+          </p>
+          {documentation.clinical.filter(keep).map((article) => (
+            <ArticleCard key={article.articleId} article={article} />
+          ))}
+        </section>
+      )}
+
       {documentation.secondary.length > 0 && (
         <section aria-labelledby="exercise-doc-secondary" className="space-y-3">
           <h2 id="exercise-doc-secondary" className="px-1 text-lg font-semibold text-[var(--text-1)]">

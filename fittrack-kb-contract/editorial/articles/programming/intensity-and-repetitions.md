@@ -118,6 +118,17 @@ Interprétation pratique : Utiliser principalement pour la force/compétence; co
 <!-- factual: row:cand.e1.a87f41900ed7d18d -->
 Ce qu’on ne peut PAS conclure : Qu’elles ne stimulent jamais l’hypertrophie.
 
+## Ce que le corpus ne différencie pas
+
+<!-- editorial -->
+Le corpus embarqué ne donne aucune plage de répétitions par muscle. Il n’existe pas ici de « 6 à 8 pour les pectoraux, 15 à 20 pour les mollets » : ce que la matière soutient, c’est qu’une large gamme de charges produit de l’hypertrophie dès lors que l’effort est suffisant, quel que soit le muscle.
+
+<!-- editorial -->
+Deux nuances existent, et elles portent sur autre chose que le muscle : les séries très légères demandent d’aller nettement plus près de l’échec, et les séries de une à trois répétitions coûtent beaucoup de séries pour peu de stimulus. Ce sont des contraintes de charge, pas des prescriptions par groupe musculaire.
+
+<!-- editorial -->
+Bâtir un programme sur des plages par muscle reviendrait donc à suivre une règle que ce corpus ne porte pas. Si tu en trouves une ailleurs, elle peut être juste — mais elle ne vient pas d’ici, et rien dans cette application ne la vérifie.
+
 ## Limites
 
 <!-- editorial -->

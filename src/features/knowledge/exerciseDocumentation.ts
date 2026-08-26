@@ -38,6 +38,13 @@ export type ExerciseDocumentation = Readonly<{
   primary: WikiArticle | null;
   relationship: WikiArticle | null;
   specific: readonly WikiArticle[];
+  /**
+   * Les pages cliniques qui portent explicitement l'un des muscles de cet
+   * exercice. Elles ne diagnostiquent rien et ne remplacent pas un avis
+   * médical ; elles évitent d'avoir à chercher « genou » dans un wiki quand on
+   * a mal au genou en faisant du squat.
+   */
+  clinical: readonly WikiArticle[];
   secondary: readonly SecondaryMuscleDocumentation[];
   /** L'ordre de lecture, dédupliqué. C'est une règle du module, pas de l'écran. */
   articleIds: string[];
@@ -88,11 +95,19 @@ export function getDocumentationForExercise(
       };
     });
 
+  // Muscle principal **et** secondaires : une douleur d'épaule sur un développé
+  // ne se déclare pas selon que l'épaule est la cible ou l'assistante.
+  const involved = [exercise.primaryMuscle, ...exercise.secondaryMuscles];
+  const clinical = articlesForScope({ muscleGroups: involved }).filter(
+    (article) => article.family === 'clinical',
+  );
+
   const ordered = uniqueArticles([
     primary,
     relationship,
     ...specific,
     ...secondary.map((item) => item.article),
+    ...clinical,
   ]);
 
   // Une lacune s'affiche. Un écran qui ne trouve rien ne doit pas se rabattre
@@ -106,6 +121,7 @@ export function getDocumentationForExercise(
     primary,
     relationship,
     specific,
+    clinical,
     secondary,
     articleIds: ordered.map((article) => article.articleId),
     limitations,

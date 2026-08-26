@@ -145,6 +145,17 @@ Interprétation pratique : Sélectionner peu d’exercices complémentaires couv
 <!-- factual: row:cand.e1.399c8c3c09cc32ef -->
 Ce qu’on ne peut PAS conclure : Qu’une liste fixe d’exercices est universellement optimale.
 
+## Pourquoi il n’y a pas de liste d’exercices conseillés
+
+<!-- editorial -->
+Le corpus ne classe pas les exercices. Sur presque chaque comparaison qu’il examine — poids libres contre machines, unilatéral contre bilatéral, une variante contre une autre — il conclut à l’absence de différence d’hypertrophie démontrée.
+
+<!-- editorial -->
+La seule exception nette est l’extension du coude bras au-dessus de la tête, appuyée sur un essai contrôlé, et elle est traitée dans « Extensions du triceps ». Tout le reste relève du choix : stabilité voulue, confort articulaire, matériel disponible, préférence.
+
+<!-- editorial -->
+Ce que le wiki donne à la place d’un classement, c’est de quoi choisir : les familles de mouvement disent quels muscles coopèrent, « Profils de résistance » et « Longueur musculaire et amplitude » disent ce que change une variante, et « Remplacer un exercice » donne les critères d’un échange qui en est vraiment un.
+
 ## Limites
 
 <!-- editorial -->

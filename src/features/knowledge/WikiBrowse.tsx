@@ -64,6 +64,41 @@ export function WikiBrowse() {
         </p>
       </div>
 
+      {/* Deux entrées avant les familles, et ce sont les deux seules choses qu'on
+          cherche dans l'urgence : par où commencer, et qu'est-ce que je fais si
+          j'ai mal. Le reste se parcourt. */}
+      <Link
+        to="/knowledge/apprendre"
+        className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
+          bg-[var(--accent-soft)] px-5 py-4"
+      >
+        <span className="min-w-0">
+          <span className="block font-semibold text-[var(--accent-ink)]">{t('learn.entry')}</span>
+          <span className="mt-1 block text-sm leading-6 text-[var(--text-2)]">
+            {t('learn.entryHint')}
+          </span>
+        </span>
+        <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
+          →
+        </span>
+      </Link>
+
+      <Link
+        to="/knowledge/a/clinical-red-flags"
+        className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
+          border border-[var(--border)] px-5 py-4"
+      >
+        <span className="min-w-0">
+          <span className="block font-semibold text-[var(--text-1)]">{t('injury.entry')}</span>
+          <span className="mt-1 block text-sm leading-6 text-[var(--text-2)]">
+            {t('injury.entryHint')}
+          </span>
+        </span>
+        <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]">
+          →
+        </span>
+      </Link>
+
       <Link
         to="/knowledge/questions"
         className="flex min-h-12 items-center justify-between gap-4 rounded-2xl

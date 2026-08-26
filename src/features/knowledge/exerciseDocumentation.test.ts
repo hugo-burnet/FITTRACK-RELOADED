@@ -18,6 +18,9 @@ describe('getDocumentationForExercise', () => {
       'movement-elbow-isolation',
       'exercise-triceps-extensions',
       'muscle-shoulders',
+      // La page clinique de l'épaule vient en dernier : elle ne parle pas
+      // d'hypertrophie, elle sert le jour où quelque chose fait mal.
+      'clinical-shoulder',
     ]);
   });
 
@@ -29,7 +32,11 @@ describe('getDocumentationForExercise', () => {
     const documentation = getDocumentationForExercise(custom);
 
     expect(documentation.relationship).toBeNull();
-    expect(documentation.articleIds).toEqual(['muscle-triceps', 'muscle-shoulders']);
+    expect(documentation.articleIds).toEqual([
+      'muscle-triceps',
+      'muscle-shoulders',
+      'clinical-shoulder',
+    ]);
     expect(documentation.limitations).toContain('movement_pattern_missing');
   });
 
@@ -86,6 +93,7 @@ describe('getDocumentationForExercise', () => {
       'muscle-triceps',
       'movement-elbow-isolation',
       'muscle-shoulders',
+      'clinical-shoulder',
     ]);
     expect(new Set(documentation.articleIds).size).toBe(documentation.articleIds.length);
   });
@@ -111,5 +119,26 @@ describe('getDocumentationForExercise', () => {
 
     expect(documentation.relationship).toBeNull();
     expect(documentation.limitations).toContain('movement_article_missing');
+  });
+
+  it('rattache les pages cliniques des muscles engagés, principal comme secondaire', () => {
+    // Une douleur d'épaule sur un développé ne se déclare pas selon que l'épaule
+    // est la cible ou l'assistante.
+    const squat = getDocumentationForExercise({
+      primaryMuscle: 'quads',
+      secondaryMuscles: ['glutes', 'lower_back'],
+      movementPattern: 'squat',
+      slug: 'barbell-back-squat',
+    });
+    const ids = squat.clinical.map((article) => article.articleId);
+
+    expect(ids).toContain('clinical-knee');
+    expect(ids).toContain('clinical-lower-back');
+  });
+
+  it('ne rattache aucune page clinique quand le corpus n’en porte pas pour ce muscle', () => {
+    const abs = getDocumentationForExercise({ primaryMuscle: 'abs', secondaryMuscles: [] });
+
+    expect(abs.clinical).toEqual([]);
   });
 });

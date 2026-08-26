@@ -606,10 +606,40 @@
         },
         {
           "sectionId": "clinical-pain-monitoring-5",
-          "title": "Limites",
+          "title": "Pourquoi il n’y a pas de tableau « pathologie → exercice »",
           "blocks": [
             {
               "blockId": "clinical-pain-monitoring-5-b1",
+              "text": "Le corpus clinique ne contient aucune correspondance entre une pathologie nommée et une liste d’exercices à faire ou à éviter. Il écrit l’inverse : la littérature ne permet pas de fixer une combinaison optimale universelle de fréquence, d’intensité et de volume pour les douleurs musculosquelettiques.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            },
+            {
+              "blockId": "clinical-pain-monitoring-5-b2",
+              "text": "Ce qu’il donne est d’une autre nature, et utilisable : une surveillance avant, pendant et après, des motifs d’arrêt immédiat, une hiérarchie de modification qui préfère réduire graduellement plutôt qu’arrêter tout, et les pages par région pour l’épaule, le coude et le poignet, le rachis lombaire et le genou.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            },
+            {
+              "blockId": "clinical-pain-monitoring-5-b3",
+              "text": "La substitution d’un exercice pour cause d’inconfort persistant — passer d’un développé barre à des haltères ou à une machine convergente — est documentée comme une pratique répandue chez les coachs, fondée sur l’observation individuelle et non sur un essai. Elle est donc présentée comme telle, et pas comme une règle.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            }
+          ]
+        },
+        {
+          "sectionId": "clinical-pain-monitoring-6",
+          "title": "Limites",
+          "blocks": [
+            {
+              "blockId": "clinical-pain-monitoring-6-b1",
               "text": "Ces critères viennent d’un document écrit pour encadrer une IA de coaching. FitTrack ne les applique pas automatiquement : ils sont donnés à lire, pas à exécuter.",
               "claimIds": [],
               "rowIds": [],
@@ -6920,10 +6950,40 @@
         },
         {
           "sectionId": "programming-exercise-selection-3",
-          "title": "Limites",
+          "title": "Pourquoi il n’y a pas de liste d’exercices conseillés",
           "blocks": [
             {
               "blockId": "programming-exercise-selection-3-b1",
+              "text": "Le corpus ne classe pas les exercices. Sur presque chaque comparaison qu’il examine — poids libres contre machines, unilatéral contre bilatéral, une variante contre une autre — il conclut à l’absence de différence d’hypertrophie démontrée.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            },
+            {
+              "blockId": "programming-exercise-selection-3-b2",
+              "text": "La seule exception nette est l’extension du coude bras au-dessus de la tête, appuyée sur un essai contrôlé, et elle est traitée dans « Extensions du triceps ». Tout le reste relève du choix : stabilité voulue, confort articulaire, matériel disponible, préférence.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            },
+            {
+              "blockId": "programming-exercise-selection-3-b3",
+              "text": "Ce que le wiki donne à la place d’un classement, c’est de quoi choisir : les familles de mouvement disent quels muscles coopèrent, « Profils de résistance » et « Longueur musculaire et amplitude » disent ce que change une variante, et « Remplacer un exercice » donne les critères d’un échange qui en est vraiment un.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            }
+          ]
+        },
+        {
+          "sectionId": "programming-exercise-selection-4",
+          "title": "Limites",
+          "blocks": [
+            {
+              "blockId": "programming-exercise-selection-4-b1",
               "text": "Aucune de ces fiches n’a été relue par un humain. L’extraction est déterministe — aucun modèle génératif n’y intervient — mais la fidélité au document ne vaut pas validation scientifique.",
               "claimIds": [],
               "rowIds": [],
@@ -8141,10 +8201,40 @@
         },
         {
           "sectionId": "programming-intensity-and-repetitions-3",
-          "title": "Limites",
+          "title": "Ce que le corpus ne différencie pas",
           "blocks": [
             {
               "blockId": "programming-intensity-and-repetitions-3-b1",
+              "text": "Le corpus embarqué ne donne aucune plage de répétitions par muscle. Il n’existe pas ici de « 6 à 8 pour les pectoraux, 15 à 20 pour les mollets » : ce que la matière soutient, c’est qu’une large gamme de charges produit de l’hypertrophie dès lors que l’effort est suffisant, quel que soit le muscle.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            },
+            {
+              "blockId": "programming-intensity-and-repetitions-3-b2",
+              "text": "Deux nuances existent, et elles portent sur autre chose que le muscle : les séries très légères demandent d’aller nettement plus près de l’échec, et les séries de une à trois répétitions coûtent beaucoup de séries pour peu de stimulus. Ce sont des contraintes de charge, pas des prescriptions par groupe musculaire.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            },
+            {
+              "blockId": "programming-intensity-and-repetitions-3-b3",
+              "text": "Bâtir un programme sur des plages par muscle reviendrait donc à suivre une règle que ce corpus ne porte pas. Si tu en trouves une ailleurs, elle peut être juste — mais elle ne vient pas d’ici, et rien dans cette application ne la vérifie.",
+              "claimIds": [],
+              "rowIds": [],
+              "muscleRoles": [],
+              "editorial": true
+            }
+          ]
+        },
+        {
+          "sectionId": "programming-intensity-and-repetitions-4",
+          "title": "Limites",
+          "blocks": [
+            {
+              "blockId": "programming-intensity-and-repetitions-4-b1",
               "text": "Aucune de ces fiches n’a été relue par un humain. L’extraction est déterministe — aucun modèle génératif n’y intervient — mais la fidélité au document ne vaut pas validation scientifique.",
               "claimIds": [],
               "rowIds": [],

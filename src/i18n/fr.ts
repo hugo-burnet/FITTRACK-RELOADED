@@ -42,6 +42,35 @@ const fr = {
    * Le vocabulaire est verrouillé par la spécification — si deux de ces mots se
    * mettaient à vouloir dire la même chose, l'onglet n'aurait plus d'utilité.
    */
+  /**
+   * Le parcours « Apprendre à programmer ». Il n'apporte aucun contenu propre :
+   * il ordonne des pages du Guide et dit pourquoi chacune arrive à ce moment-là.
+   */
+  learn: {
+    title: 'Apprendre à programmer',
+    entry: 'Apprendre à programmer',
+    entryHint: 'Le Guide dans l’ordre où le lire, une phrase par étape.',
+    intro:
+      'Quatorze étapes, une phrase chacune. Tu peux t’arrêter après la sixième et déjà construire un programme qui tient : la suite sert à l’améliorer, pas à le rendre valable.',
+    progress: '{done}/{total} lues',
+    readStep: 'Lire cette étape',
+    readTodo: 'À lire',
+    readDone: 'Lu',
+    markRead: 'Marquer « {title} » comme lu',
+    limitTitle: 'Ce que ce parcours ne fait pas',
+    limitBody:
+      'Il ne construit pas ton programme et ne prescrit rien. Il te donne de quoi décider toi-même, et te dit où le corpus s’arrête.',
+  },
+
+  /**
+   * L'entrée douleur et blessure. Elle est volontairement séparée des familles
+   * du wiki : on la cherche dans un état d'esprit différent, et souvent vite.
+   */
+  injury: {
+    entry: 'Douleur ou blessure',
+    entryHint: 'Ce qui doit faire arrêter, ce qui doit faire consulter.',
+  },
+
   planning: {
     tabsLabel: 'Espaces de Planifier',
     routines: 'Routines',
@@ -1282,6 +1311,9 @@ const fr = {
     filterClear: 'Effacer le filtre',
     filterEmpty:
       'Aucun de ces articles ne contient ces mots. Le filtre ne cherche pas ailleurs : efface-le pour retrouver la documentation complète.',
+    clinicalTitle: 'Douleur et tolérance',
+    clinicalHint:
+      'Ce que le corpus clinique documente pour les articulations engagées par cet exercice. Aucun diagnostic, aucune prescription : en cas de doute, un avis médical reste la seule réponse.',
     secondaryTitle: 'Muscles secondaires',
     secondaryNoRole:
       'Le corpus ne documente pas le rôle de ce muscle dans cette famille de mouvement. Sa fiche complète reste accessible.',

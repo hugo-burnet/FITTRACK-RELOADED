@@ -41,6 +41,17 @@ Le modèle publié le mieux documenté ici utilise 5/10 dans des populations ten
 <!-- factual: claim.9773e396d9fd1154, claim.683b7311b610e71e -->
 Une baisse de symptômes immédiate n’est pas le seul objectif : la trajectoire sur 24–48 h, la fonction et la progression de capacité comptent davantage. La littérature ne permet pas de fixer une combinaison optimale universelle de fréquence, intensité et volume pour les douleurs musculosquelettiques (Arora et al., 2024).
 
+## Pourquoi il n’y a pas de tableau « pathologie → exercice »
+
+<!-- editorial -->
+Le corpus clinique ne contient aucune correspondance entre une pathologie nommée et une liste d’exercices à faire ou à éviter. Il écrit l’inverse : la littérature ne permet pas de fixer une combinaison optimale universelle de fréquence, d’intensité et de volume pour les douleurs musculosquelettiques.
+
+<!-- editorial -->
+Ce qu’il donne est d’une autre nature, et utilisable : une surveillance avant, pendant et après, des motifs d’arrêt immédiat, une hiérarchie de modification qui préfère réduire graduellement plutôt qu’arrêter tout, et les pages par région pour l’épaule, le coude et le poignet, le rachis lombaire et le genou.
+
+<!-- editorial -->
+La substitution d’un exercice pour cause d’inconfort persistant — passer d’un développé barre à des haltères ou à une machine convergente — est documentée comme une pratique répandue chez les coachs, fondée sur l’observation individuelle et non sur un essai. Elle est donc présentée comme telle, et pas comme une règle.
+
 ## Limites
 
 <!-- editorial -->

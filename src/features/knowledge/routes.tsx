@@ -29,3 +29,10 @@ export const WikiArticleRoute = lazyRoute(
   () => import('./WikiArticleScreen'),
   'WikiArticleScreen',
 );
+
+// Le parcours guidé. Il ne charge que le catalogue d'articles, déjà en cache dès
+// qu'on a ouvert le wiki une fois.
+export const LearnProgrammingRoute = lazyRoute(
+  () => import('./LearnProgrammingScreen'),
+  'LearnProgrammingScreen',
+);

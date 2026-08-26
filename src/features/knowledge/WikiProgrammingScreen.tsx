@@ -57,6 +57,24 @@ export function WikiProgrammingScreen() {
           </section>
         )}
 
+        {/* Le Guide est complet et dans l'ordre du document source. Pour qui
+            construit son premier programme, cet ordre n'est pas le bon. */}
+        <Link
+          to="/knowledge/apprendre"
+          className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
+            bg-[var(--accent-soft)] px-5 py-4"
+        >
+          <span className="min-w-0">
+            <span className="block font-semibold text-[var(--accent-ink)]">{t('learn.entry')}</span>
+            <span className="mt-1 block text-sm leading-6 text-[var(--text-2)]">
+              {t('learn.entryHint')}
+            </span>
+          </span>
+          <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
+            →
+          </span>
+        </Link>
+
         <ProgrammingGuideEntry />
 
         <ul className="space-y-1">
