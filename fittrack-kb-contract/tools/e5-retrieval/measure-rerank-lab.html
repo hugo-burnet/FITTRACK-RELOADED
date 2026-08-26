@@ -1,14 +1,16 @@
 <!-- Mesure du reclassement cross-encoder sur le vivier de la recherche embarquée.
 
-     Pourquoi le navigateur et pas Node : onnxruntime-node n'arrive pas à charger
-     ses DLL sur ce poste, et c'est de toute façon l'environnement du téléphone —
-     mesurer ailleurs mesurerait autre chose.
+     Entrée : /lab/search-pool.json, écrit par scripts/dump-search-pool.mjs à la
+     racine. Le vivier vient de la recherche RÉELLEMENT livrée : on ne compare
+     pas deux idées, on compare la page telle qu'elle est à la même page
+     reclassée.
 
-     Entrée  : /lab/search-pool.json, écrit par scripts/dump-search-pool.mjs.
-     Sortie  : window.__measure, à lire depuis l'extérieur.
+     Le modèle tourne dans un Web Worker. La première version le faisait tourner
+     dans la page et Chrome affichait « Page ne répondant pas » — un run lent
+     était alors indistinguable d'un run planté. Ici la page reste vivante et
+     montre son avancement, ce qui est la moitié de l'information.
 
-     Le vivier vient de la recherche RÉELLEMENT livrée. On ne compare donc pas
-     deux idées, on compare la page telle qu'elle est à la même page reclassée.
+     Sortie : window.__measure quand c'est fini, window.__progress en cours.
 -->
 <!doctype html>
 <html lang="fr">
@@ -16,66 +18,150 @@
 <meta charset="utf-8">
 <title>Mesure — reclassement cross-encoder</title>
 <style>
-  body { font: 14px/1.6 system-ui, sans-serif; margin: 2rem; max-width: 58rem; }
-  pre { background: #f2f4f2; padding: 1rem; border-radius: 4px; white-space: pre-wrap; }
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 2rem auto; max-width: 52rem; padding: 0 1rem; }
+  h1 { font-size: 1.3rem; }
+  #status { font-family: ui-monospace, monospace; padding: .8rem 1rem; background: color-mix(in srgb, currentColor 8%, transparent); border-radius: 6px; }
+  #bar { height: 6px; border-radius: 3px; background: color-mix(in srgb, currentColor 15%, transparent); overflow: hidden; margin: 1rem 0; }
+  /* scaleX plutot que width : animer une propriete de layout fait relayouter a
+     chaque question, ce qui est exactement ce qu on veut eviter pendant une mesure. */
+  #fill { height: 100%; width: 100%; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .2s; }
+  table { border-collapse: collapse; margin-top: 1.5rem; width: 100%; }
+  th, td { text-align: left; padding: .45rem .8rem; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  td.n { text-align: right; font-family: ui-monospace, monospace; }
+  pre { background: color-mix(in srgb, currentColor 8%, transparent); padding: 1rem; border-radius: 6px; white-space: pre-wrap; font-size: 13px; }
 </style>
 </head>
 <body>
 <h1>Reclassement cross-encoder</h1>
-<pre id="out">Chargement…</pre>
+<p style="opacity:.7;font-size:13px">URL : <code>?modele=gros</code> (568 M, defaut) ou <code>?modele=petit</code> (278 M) &middot; <code>&amp;device=wasm</code> pour forcer le CPU &middot; <code>&amp;dtype=q4</code> pour alleger.</p>
+<div id="machine" style="opacity:.7;font-size:13px;font-family:ui-monospace,monospace"></div>
+<div id="status">démarrage…</div>
+<div id="bar"><div id="fill"></div></div>
+<div id="table"></div>
 <script type="module">
-import {
-  AutoModelForSequenceClassification,
-  AutoTokenizer,
-  env
-} from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6';
-
 const TOP_K = 8;
-// Même modèle et même révision épinglée que rerank-lab.html : une mesure qui
-// flotterait avec la dernière version publiée ne serait pas reproductible.
+// Révision épinglée : une mesure qui flotterait avec la dernière version publiée
+// ne serait pas reproductible.
+// Deux modeles, choisis par l URL. Le gros est le meilleur en francais ; le
+// petit sert a distinguer « le harnais est casse » de « ce modele est trop
+// lourd », et il est accessoirement le seul des deux qui pourrait vivre dans la
+// PWA. Un banc qui ne peut pas separer ces deux causes ne mesure rien.
+const MODELS = {
+  gros: {
+    id: 'onnx-community/bge-reranker-v2-m3-ONNX',
+    revision: 'a3046abee880d6e78833e4e885939754355156bd',
+    parametres: '568 M',
+    poids: '544 Mo en q8'
+  },
+  petit: {
+    // Meme famille que le gros, backbone XLM-RoBERTa-base : le francais tient.
+    // Un cran en dessous existait sur le papier (MiniLM mMARCO) mais aucune
+    // conversion ONNX publique n en existe — verifie sur l API HuggingFace
+    // apres qu un identifiant invente ait fait echouer le banc.
+    id: 'Xenova/bge-reranker-base',
+    revision: '280bcc27a84e0b898c251e06fddb25171bd9b101',
+    parametres: '278 M',
+    // 69 % de ces parametres sont la table d embeddings : 250 000 tokens de
+    // vocabulaire multilingue. C est le plancher de taille d un cross-encoder
+    // qui comprend le francais, quantification comprise.
+    poids: '266 Mo en q8'
+  }
+};
+const params = new URLSearchParams(location.search);
 const MODEL = {
-  id: 'onnx-community/bge-reranker-v2-m3-ONNX',
-  revision: 'a3046abee880d6e78833e4e885939754355156bd',
-  dtype: 'q8'
+  ...(MODELS[params.get('modele') ?? 'gros'] ?? MODELS.gros),
+  device: params.get('device') ?? 'webgpu',
+  dtype: params.get('dtype') ?? (params.get('device') === 'wasm' ? 'q8' : 'fp16')
 };
 
-const out = document.getElementById('out');
-const log = (line) => { out.textContent += `\n${line}`; };
+const status = document.getElementById('status');
+const machine = document.getElementById('machine');
+machine.textContent =
+  `${MODEL.id} (${MODEL.parametres}, ${MODEL.poids}) · demande : ${MODEL.device}/${MODEL.dtype}`;
+const fill = document.getElementById('fill');
+const table = document.getElementById('table');
+
+const render = (state) => {
+  table.innerHTML = `
+    <table>
+      <tr><th></th><th class="n">rappel@${TOP_K}</th><th class="n">précision@1</th></tr>
+      <tr><td>lexical seul</td><td class="n">${state.lexical.recall}/${state.done}</td><td class="n">${state.lexical.precisionAt1}/${state.done}</td></tr>
+      <tr><td><strong>reclassé</strong></td><td class="n"><strong>${state.reranked.recall}/${state.done}</strong></td><td class="n"><strong>${state.reranked.precisionAt1}/${state.done}</strong></td></tr>
+    </table>`;
+};
 
 try {
-  env.allowLocalModels = false;
-  out.textContent = 'Téléchargement du modèle…';
-  const started = Date.now();
-  const tokenizer = await AutoTokenizer.from_pretrained(MODEL.id, { revision: MODEL.revision });
-  const reranker = await AutoModelForSequenceClassification.from_pretrained(MODEL.id, {
-    revision: MODEL.revision,
-    dtype: MODEL.dtype
-  });
-  log(`modèle prêt en ${Math.round((Date.now() - started) / 1000)} s`);
-
+  const worker = new Worker('/rerank-worker.js', { type: 'module' });
   const pool = await (await fetch('/lab/search-pool.json')).json();
-  let baseline = 0;
-  let baselineAt1 = 0;
-  let reranked = 0;
-  let rerankedAt1 = 0;
+
+  let runtime = {};
+  const mo = (bytes) => `${(bytes / 1048576).toFixed(0)} Mo`;
+  await new Promise((resolve, reject) => {
+    worker.onmessage = (event) => {
+      const { type, text, seconds, message, file, percent, loaded, total } = event.data;
+      if (type === 'status') status.textContent = text;
+      if (type === 'download') {
+        // Un pourcentage ET les octets : le pourcentage seul ne dit pas si on
+        // télécharge 40 Mo ou 400, et c'est ce chiffre-là qui décide si ce
+        // modèle peut vivre un jour dans la PWA.
+        status.textContent = `${file} — ${percent} % (${mo(loaded)} / ${mo(total)})`;
+        fill.style.transform = `scaleX(${percent / 100})`;
+      }
+      if (type === 'ready') {
+        // Le backend REELLEMENT obtenu, pas celui demande. Toute la lenteur du
+        // premier banc tenait la : WASM mono-thread, jamais annonce.
+        runtime = event.data;
+        status.textContent = `modèle prêt en ${seconds} s`;
+        machine.textContent =
+          `${MODEL.id} (${MODEL.parametres}) · ${runtime.backend}` +
+          `${runtime.backend === 'wasm' ? ` ${runtime.threads} fil(s)` : ''}` +
+          ` · ${runtime.dtype} · isole : ${runtime.isolated ? 'oui' : 'NON'}` +
+          ` · WebGPU dispo : ${runtime.gpu ? 'oui' : 'non'}`;
+        fill.style.transform = 'scaleX(0)';
+        resolve();
+      }
+      if (type === 'error') reject(new Error(message));
+    };
+    worker.postMessage({ type: 'load', payload: MODEL });
+  });
+
+  const scoreOne = (index, question, passages) =>
+    new Promise((resolve, reject) => {
+      worker.onmessage = (event) => {
+        const data = event.data;
+        // Un lot termine est la preuve que ca calcule. Le premier passage inclut
+        // la mise en route du graphe et peut durer une minute.
+        if (data.type === 'batch') {
+          status.textContent = `question ${data.index + 1} — ${data.done}/${data.total} passages jugés`;
+        }
+        if (data.type === 'scored') resolve(data.scores);
+        if (data.type === 'error') reject(new Error(data.message));
+      };
+      worker.postMessage({ type: 'score', payload: { index, question, passages } });
+    });
+
+  const state = {
+    done: 0,
+    total: pool.entries.length,
+    lexical: { recall: 0, precisionAt1: 0 },
+    reranked: { recall: 0, precisionAt1: 0 }
+  };
   const recovered = [];
   const lost = [];
-  const rankStarted = Date.now();
+  const started = Date.now();
 
   for (const [index, entry] of pool.entries.entries()) {
     const gold = new Set(entry.gold);
     const before = entry.pool.slice(0, TOP_K).map((item) => item.claimId);
     const hitBefore = before.some((id) => gold.has(id));
-    if (hitBefore) baseline += 1;
-    if (before.length > 0 && gold.has(before[0])) baselineAt1 += 1;
+    if (hitBefore) state.lexical.recall += 1;
+    if (before.length > 0 && gold.has(before[0])) state.lexical.precisionAt1 += 1;
 
-    // Le contexte affiché, pas la citation seule : c'est ce que le lecteur lit.
-    const inputs = tokenizer(
-      entry.pool.map(() => entry.question),
-      { text_pair: entry.pool.map((item) => item.displayContext), padding: true, truncation: true }
-    );
-    const { logits } = await reranker(inputs);
-    const scores = logits.tolist().map((row) => row[0]);
+    // Le contexte affiché, pas la citation seule : c'est ce que le lecteur lit,
+    // donc c'est ce qu'il faut faire juger.
+    status.textContent = `question ${index + 1}/${pool.entries.length} — premier jugement…`;
+    const scores = await scoreOne(index, entry.question, entry.pool.map((item) => item.displayContext));
     const after = entry.pool
       .map((item, position) => ({ item, score: scores[position] }))
       .sort((left, right) => right.score - left.score)
@@ -83,44 +169,39 @@ try {
       .map(({ item }) => item.claimId);
 
     const hitAfter = after.some((id) => gold.has(id));
-    if (hitAfter) reranked += 1;
-    if (after.length > 0 && gold.has(after[0])) rerankedAt1 += 1;
+    if (hitAfter) state.reranked.recall += 1;
+    if (after.length > 0 && gold.has(after[0])) state.reranked.precisionAt1 += 1;
     if (hitAfter && !hitBefore) recovered.push(entry.question);
     if (!hitAfter && hitBefore) lost.push(entry.question);
 
-    // Publié à CHAQUE question, pas seulement à la fin. Un onglet masqué est
-    // bridé par le navigateur : un run qui ne rend son résultat qu'au terme
-    // paraît planté alors qu'il avance, et on ne peut ni le suivre ni le lire.
-    window.__progress = {
-      done: index + 1,
-      total: pool.entries.length,
-      lexical: { recall: baseline, precisionAt1: baselineAt1 },
-      reranked: { recall: reranked, precisionAt1: rerankedAt1 }
-    };
-    out.textContent = `${index + 1}/${pool.entries.length}`;
-    // Rend la main au navigateur : sans cette pause, la boucle monopolise le
-    // fil principal et window.__progress n'est jamais lisible de l'exterieur.
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    state.done = index + 1;
+    window.__progress = { ...state };
+    fill.style.transform = `scaleX(${state.done / state.total})`;
+    status.textContent = `${state.done}/${state.total} — ${Math.round((Date.now() - started) / state.done)} ms par question`;
+    render(state);
   }
 
-  const total = pool.entries.length;
   const result = {
     model: MODEL.id,
-    dtype: MODEL.dtype,
+    dtype: runtime.dtype ?? MODEL.dtype,
+    backend: runtime.backend,
+    threads: runtime.threads,
+    isolated: runtime.isolated,
     poolSize: pool.poolSize,
     topK: TOP_K,
-    questions: total,
-    msPerQuestion: Math.round((Date.now() - rankStarted) / total),
-    lexical: { recall: baseline, precisionAt1: baselineAt1 },
-    reranked: { recall: reranked, precisionAt1: rerankedAt1 },
+    questions: state.total,
+    msPerQuestion: Math.round((Date.now() - started) / state.total),
+    lexical: state.lexical,
+    reranked: state.reranked,
     recovered,
     lost
   };
   window.__measure = result;
-  out.textContent = JSON.stringify(result, null, 2);
+  status.textContent = 'terminé';
+  table.innerHTML += `<pre>${JSON.stringify(result, null, 2)}</pre>`;
 } catch (error) {
   window.__measure = { error: String(error && error.message ? error.message : error) };
-  out.textContent = `ERREUR : ${out.textContent}\n${String(error)}`;
+  status.textContent = `ERREUR : ${error}`;
 }
 </script>
 </body>
