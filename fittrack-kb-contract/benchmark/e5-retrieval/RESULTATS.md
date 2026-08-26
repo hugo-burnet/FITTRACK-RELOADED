@@ -456,3 +456,10 @@ plus fort, je fais quoi ? combien de reps ?* Les deux parlent de musculation et 
 recouvrent presque pas.
 
 Tout le travail de recherche menait à faire trouver des réponses qui ne sont pas là.
+
+## Verdict produit — 2026-08-26
+
+Le petit cross-encoder atteint 4 343 ms/question après chargement pour 16 passages avec WebGPU,
+mais dégrade le rappel de 27/31 à 22/31 et la précision@1 de 17/31 à 5/31. La piste est arrêtée :
+aucun reranker n'entre dans l'application, CAL et TEST restent fermés, et la recherche ne sert plus
+à décider quel contenu rattacher à un objet FitTrack.

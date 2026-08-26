@@ -173,7 +173,10 @@ de 100 % constaté toute la journée. Un cross-encoder, lui, produit un score de
 pas seulement un gain de classement : **c'est le préalable à tout refus**, et
 donc à CAL.
 
-- [ ] **T8 — Mesurer le reclassement.** `tools/e5-retrieval/measure-rerank-lab.html`,
+- [x] **T8 — Mesurer le reclassement.** Conclue **négativement** le 2026-08-26 :
+      4 343 ms/question après chargement pour 16 passages avec WebGPU, rappel 22/31
+      contre 27/31 sans reclassement, précision@1 5/31 contre 17/31. Le banc lui-même
+      reste utilisable : `tools/e5-retrieval/measure-rerank-lab.html`,
       servi par `serve-lab.mjs`, sur le vivier de `scripts/dump-search-pool.mjs`.
       À lancer avec le panneau navigateur **visible** : masqué, le rendu est bridé
       et l'inférence gèle le fil principal. Non exécutable en session agent.
@@ -199,6 +202,8 @@ donc à CAL.
       > coûte ~266 Mo quantifié, parce que 69 % de ses paramètres sont la table
       > d'embeddings de 250 000 tokens. Ce n'est pas un modèle qu'on rend petit ;
       > c'est un téléchargement qu'on assume ou qu'on refuse. Le chiffre à opposer
-      > à ce coût est le gain sur 27/31 et 17/31 — il n'existe pas encore.
-- [ ] **T9 — Recalibrer le refus sur le score de reclassement**, si T8 est concluant.
-      Puis, et seulement puis, CAL.
+      > à ce coût est le gain sur 27/31 et 17/31 : mesuré le lendemain, il est négatif.
+- [x] **T9 — Ne pas recalibrer le refus.** Annulée par le résultat négatif de T8 :
+      il n'existe aucun score de reclassement sur lequel calibrer un seuil. **CAL et TEST
+      restent fermés**, et la recherche ne sert plus à décider quel contenu rattacher à un
+      objet FitTrack — c'est le wiki structuré qui porte ce lien.

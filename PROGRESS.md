@@ -2,7 +2,12 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-26 (**annotation exhaustive DEV : couverture du corpus à
+**Dernière mise à jour :** 2026-08-26 (**la piste du reclassement est close, négativement** :
+le petit cross-encoder coûte 4 343 ms/question et fait tomber le rappel de 27/31 à 22/31 et la
+précision@1 de 17/31 à 5/31. Aucun reranker n'entre dans l'application, CAL et TEST restent fermés,
+et **la recherche ne sert plus à décider quel contenu rattacher à un objet FitTrack** — c'est le
+rôle du wiki structuré. Voir « Verdict produit » dans
+`fittrack-kb-contract/benchmark/e5-retrieval/RESULTATS.md`). Le même jour (**annotation exhaustive DEV : couverture du corpus à
 52,5 %, correction d'instrument consommée, CAL et TEST toujours fermés** — voir la section
 « Annotation exhaustive DEV » ci-dessous). Précédemment, le 2026-08-24 (**`feat/knowledge-base-v1` intégré dans `master` en
 fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-contract/`, dont les
