@@ -70,7 +70,7 @@ Trois écrans, une règle : **le wiki ne rédige jamais**. Il ordonne, il situe,
 ## Décisions techniques
 
 **Aucun nouvel artefact de données.** La structure du wiki se **dérive** de
-`src/features/knowledge/evidence-index.json` au chargement du module. 266 passages à
+`src/features/knowledge/evidence-index.json` au chargement du module. 209 passages à
 regrouper, c'est instantané. Un second fichier généré finirait par diverger du premier —
 c'est exactement le défaut corrigé le 2026-08-26 sur le banc hybride, qui mesurait un
 pipeline différent de celui qui était livré.
@@ -104,8 +104,8 @@ soit vérifié, soit explicitement marqué comme non relu.
       > et détruit l'ordre de lecture. Le préfixe `e5` est retiré du code de document, et un
       > test garde cette hypothèse : un code ne doit jamais recouvrir deux titres.
       >
-      > Répartition réelle : `f2` Anatomie, 49 sections / 194 passages ; `f3` Clinique,
-      > 15 sections / 72 passages.
+      > Répartition réelle : `f2` Anatomie, 49 sections / 149 passages ; `f3` Clinique,
+      > 15 sections / 60 passages (après la fusion des passages imbriqués, cf. T6).
 - [x] **T3 — Écran sommaire.** `WikiBrowse.tsx`, sous la recherche existante.
 - [x] **T4 — Écran de section.** Route `/knowledge/s/:sectionId`.
 - [x] **T5 — Index des questions.** Route `/knowledge/questions`. Artefact
