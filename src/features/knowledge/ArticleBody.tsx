@@ -1,6 +1,7 @@
 import { t } from '@/i18n/fr';
 import type { WikiArticle, WikiArticleBlock } from './articleTypes';
 import { stripEmphasis } from './markdownText';
+import { resolveSources } from './claimSources';
 
 /** Le bandeau qui dit que la matière n'a pas été relue. Il ne se ferme pas. */
 export function UnreviewedNotice({ article }: { article: WikiArticle }) {
@@ -99,9 +100,22 @@ function Provenance({
             />
           </div>
         ))}
-        <p className="record-figure break-words text-xs leading-5 text-[var(--text-2)]">
-          {sources.join(' · ')}
-        </p>
+        {/* La section du corpus, pas son empreinte. Le compte n'apparaît qu'au
+            pluriel : « 1.1 Pectoraux — 1 affirmations » se lirait comme un bug,
+            et une source unique n'a rien à dénombrer. */}
+        <ul className="space-y-1">
+          {resolveSources(sources).map((source) => (
+            <li key={source.label} className="text-sm leading-6 text-[var(--text-2)]">
+              {source.label}
+              {source.count > 1 && (
+                <span className="text-[var(--text-2)]">
+                  {' — '}
+                  {t('knowledge.article.sourcesCount', { count: source.count })}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
     </details>
   );
@@ -186,7 +200,7 @@ function RowCard({ blocks }: { blocks: readonly WikiArticleBlock[] }) {
   );
 }
 
-function ProseBlock({ block }: { block: WikiArticleBlock }) {
+function ProseBlock({ block, framed = true }: { block: WikiArticleBlock; framed?: boolean }) {
   // Un bloc éditorial n'affirme rien : il n'a donc pas le rail du témoin, qui
   // sur tous les autres écrans veut dire « ce texte vient d'une source ». Lui
   // en donner un ferait mentir un signe visuel déjà installé.
@@ -194,8 +208,10 @@ function ProseBlock({ block }: { block: WikiArticleBlock }) {
     return <p className="px-1 text-base leading-7 text-[var(--text-2)]">{block.text}</p>;
   }
 
+  // Hors cadre, le paragraphe s'aligne sur le titre de section plutôt que de
+  // garder la marge intérieure d'une carte qui n'est plus là.
   return (
-    <article className="p-5">
+    <article className={framed ? 'p-5' : 'px-1 py-4'}>
       <p className="text-base leading-7 text-[var(--text-1)]">{stripEmphasis(block.text)}</p>
       <Provenance sources={[...block.claimIds, ...block.rowIds]} />
     </article>
@@ -259,29 +275,44 @@ export function ArticleBody({ article }: { article: WikiArticle }) {
 
       {article.sections.map((section) => (
         <section key={section.sectionId} aria-labelledby={section.sectionId} className="space-y-4">
-          <h2 id={section.sectionId} className="px-1 text-lg font-semibold text-[var(--text-1)]">
+          {/* Le jalon. Un article de prose n'avait aucun repère : une seule
+              surface grise, des paragraphes de même poids, et des titres au ton
+              du corps de texte. L'accent ici ne décore pas — c'est le seul
+              endroit de la page qui dit « nouvelle idée ». */}
+          <h2
+            id={section.sectionId}
+            className="border-b border-[var(--border)] px-1 pb-2 text-lg font-semibold
+              text-[var(--accent-ink)]"
+          >
             {section.title}
           </h2>
-          {groupRuns(groupBlocks(section.blocks)).map((run) =>
-            run.kind === 'editorial' ? (
-              <ProseBlock key={run.key} block={run.block} />
-            ) : (
+          {groupRuns(groupBlocks(section.blocks)).map((run) => {
+            if (run.kind === 'editorial') return <ProseBlock key={run.key} block={run.block} />;
+
+            // Une fiche est une carte ; de la prose est un document. Les
+            // enfermer dans la même dalle grise donnait ce bloc unique où plus
+            // rien ne se distinguait — c'est le cadre qui était en trop, pas la
+            // matière.
+            const framed = run.groups.some((group) => group.kind === 'row');
+
+            return (
               <div
                 key={run.key}
                 data-article-evidence-group
-                className="divide-y divide-[var(--border)] overflow-hidden rounded-2xl
-                  bg-[var(--surface-1)]"
+                className={`divide-y divide-[var(--border)] ${
+                  framed ? 'overflow-hidden rounded-2xl bg-[var(--surface-1)]' : ''
+                }`}
               >
                 {run.groups.map((group) =>
                   group.kind === 'row' ? (
                     <RowCard key={group.key} blocks={group.blocks} />
                   ) : (
-                    <ProseBlock key={group.key} block={group.block} />
+                    <ProseBlock key={group.key} block={group.block} framed={framed} />
                   ),
                 )}
               </div>
-            ),
-          )}
+            );
+          })}
         </section>
       ))}
     </div>

@@ -48,6 +48,47 @@ if (diagnostics.length > 0) {
 
 const generated = `${JSON.stringify(bundle, null, 2)}\n`;
 
+/**
+ * Où va un identifiant de traçabilité, en toutes lettres.
+ *
+ * L'écran affichait « claim.6f33aaaeadcc53d9 · claim.9b4fa84c… » sous chaque
+ * paragraphe : trois hashes que personne ne lit, alors qu'ils désignaient tous
+ * la même section du corpus. La correspondance existe dans `evidence-index.json`
+ * et dans `f1-programming.json`, mais ces deux fichiers pèsent 1,1 Mo — les
+ * embarquer sur la route d'un article pour afficher une ligne de texte serait
+ * absurde dans une app qui doit se charger dans un sous-sol. On projette donc
+ * ici la seule chose dont la lecture a besoin, et `--check` empêche cette
+ * projection de dériver comme il le fait déjà pour le bundle.
+ *
+ * Les libellés sont mis en commun : le segment le plus profond du chemin suffit
+ * à situer une source, et il se répète des dizaines de fois.
+ */
+const sourceLabels = [];
+const labelIndex = new Map();
+const byId = {};
+
+const intern = (label) => {
+  const known = labelIndex.get(label);
+  if (known !== undefined) return known;
+  const next = sourceLabels.length;
+  sourceLabels.push(label);
+  labelIndex.set(label, next);
+  return next;
+};
+
+for (const claim of references.evidenceIndex.claims) {
+  const segments = claim.sourceTitle.split(' › ');
+  byId[claim.claimId] = intern(segments.at(-1) ?? claim.sourceTitle);
+}
+
+for (const section of references.programming.sections) {
+  const label = intern(section.title);
+  for (const row of section.rows) byId[row.rowId] = label;
+}
+
+const sourcesPath = resolve(root, 'src/features/knowledge/claim-sources.json');
+const generatedSources = `${JSON.stringify({ schemaVersion: '1.0.0-claim-sources', labels: sourceLabels, byId }, null, 2)}\n`;
+
 if (mode === '--check') {
   const existing = existsSync(outputPath) ? readFileSync(outputPath, 'utf8') : '';
   // Comparaison **normalisée**. Avec `core.autocrlf=true`, git rend le fichier
@@ -60,9 +101,14 @@ if (mode === '--check') {
   if (normalise(existing) !== normalise(generated)) {
     throw new Error('wiki-articles.json est périmé; lancer npm run kb:build-articles');
   }
+  const existingSources = existsSync(sourcesPath) ? readFileSync(sourcesPath, 'utf8') : '';
+  if (normalise(existingSources) !== normalise(generatedSources)) {
+    throw new Error('claim-sources.json est périmé; lancer npm run kb:build-articles');
+  }
   console.log('Wiki articles: artefact à jour');
 } else {
   writeFileSync(outputPath, generated, 'utf8');
+  writeFileSync(sourcesPath, generatedSources, 'utf8');
   const { coverage, programmingCoverage } = bundle;
   console.log(
     `Wiki articles: ${bundle.articles.length} articles -> ${outputPath}\n` +
