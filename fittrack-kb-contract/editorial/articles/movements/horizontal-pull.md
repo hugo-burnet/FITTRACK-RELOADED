@@ -13,7 +13,7 @@ Tirer une charge vers soi combine une action du bras vers l’arrière et une r�
 <!-- factual: claim.5069250ec7afb317, claim.817edecd5184232b | roles: lats -->
 Le grand dorsal réalise l’extension, l’adduction et la rotation interne de l’épaule : c’est lui qui ramène le bras vers l’arrière.
 
-<!-- factual: claim.1c6bce3e8bacd03f, claim.2efbc4324d2867ae | roles: traps, upper_back -->
+<!-- factual: claim.1c6bce3e8bacd03f, claim.2efbc4324d2867ae | roles: traps -->
 La portion moyenne du trapèze rétracte la scapula, action distincte de celle du bras et propre aux tirages horizontaux.
 
 <!-- factual: claim.7319545121f15b5e, claim.0de58bffa41a4e9e | roles: biceps -->

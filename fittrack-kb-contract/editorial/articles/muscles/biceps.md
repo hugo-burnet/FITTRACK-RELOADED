@@ -37,13 +37,13 @@ Une étude cadavre récente documente le changement morphologique du biceps pend
 Curl debout, preacher curl, incline curl. Un essai comparant directement les adaptations de croissance musculaire et de force entre preacher curl et incline curl chez des sujets entraînés apporte une preuve directe d'hypertrophie distincte de l'EMG (Distinct muscle growth and strength adaptations after preacher and incline biceps curls, 2025) — à consulter en priorité comme preuve de niveau plus élevé que les comparaisons EMG seules pour cette paire d'exercices.
 
 <!-- factual: claim.50ee9cba029368ea -->
-Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie ([Placing Greater Torque at Shorter or Longer Muscle Lengths?
+Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie.
 
 <!-- factual: claim.4a0609caaf8354eb, claim.2f3903933a4f34ed, claim.474940fec0c2fcb5, claim.dd68aafb309be9aa, claim.e2c34a1ed2cd35ec -->
 Bayesian cable curl (curl câble en poulie basse, bras derrière le tronc). Ce mouvement place l'épaule en extension, ce qui étire le chef long du biceps à l'épaule tout en maintenant une tension câble en position finale de flexion du coude (contraction raccourcie du muscle au niveau du coude) — combinaison de profil de résistance et de longueur musculaire cohérente avec les principes des sections 2 et 3, sans étude d'hypertrophie dédiée spécifiquement identifiée à ce nom d'exercice précis dans cette recherche (nom populaire récent, littérature scientifique en retard sur la terminologie de pratique).
 
 <!-- factual: claim.da50522adbb1df85 -->
-Hammer curl et variantes machines. La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial (voir 1.5), cohérent avec les études de prise en curl citées en 1.5 et 7.4 initial.
+Hammer curl et variantes machines. La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial, cohérent avec les études de prise en curl citées plus haut dans cette fiche.
 
 <!-- factual: claim.89f05bd1b837bea9 -->
 Une étude testant l'entraînement dans l'amplitude initiale (position allongée) contre l'amplitude finale (position raccourcie) du curl trouve de meilleures adaptations musculaires dans le groupe entraîné en position initiale/allongée (Training in the Initial Range of Motion Promotes Greater Muscle Adaptations, arm curl) — preuve directe d'hypertrophie, niveau modéré, cohérente avec le principe de longueur musculaire (section 3).

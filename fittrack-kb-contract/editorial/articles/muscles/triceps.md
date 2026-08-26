@@ -22,7 +22,7 @@ Conséquence pratique : les extensions au-dessus de la tête (overhead extension
 ## Choix d’exercices
 
 <!-- factual: claim.4370b01be93db29f, claim.02ced8a097b22d78 -->
-Pushdown, overhead extension, skull crusher, machine, dips, presses. Le principe central déjà établi en section 1.6 organise cette famille : les exercices plaçant l'épaule en flexion complète (overhead extension, skull crusher incliné bras verticaux) étirent le chef long et produisent une hypertrophie de ce chef supérieure aux exercices bras le long du corps ou en légère extension d'épaule (pushdown, kickback) (Nunes et al., 2022).
+Pushdown, overhead extension, skull crusher, machine, dips, presses. Le principe central établi plus haut dans cette fiche organise cette famille : les exercices plaçant l'épaule en flexion complète (overhead extension, skull crusher incliné bras verticaux) étirent le chef long et produisent une hypertrophie de ce chef supérieure aux exercices bras le long du corps ou en légère extension d'épaule (pushdown, kickback) (Nunes et al., 2022).
 
 <!-- factual: claim.b36e5aa3a6b12f97, claim.0443f767c5dc3de4, claim.72846f7668ec92da -->
 Les chefs latéral et médial, mono-articulaires, ne bénéficient pas de cet effet de position d'épaule et sont sollicités de façon comparable dans la plupart des variantes d'extension du coude, qu'elles soient overhead ou non — niveau de preuve : biomécanique + essai contrôlé pour le chef long (modéré à élevé), extrapolation pour les chefs latéral/médial (modéré).

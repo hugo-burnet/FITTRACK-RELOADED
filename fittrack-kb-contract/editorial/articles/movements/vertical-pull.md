@@ -13,8 +13,8 @@ Tirer depuis le haut place l’épaule en adduction plutôt qu’en extension pu
 <!-- factual: claim.5069250ec7afb317, claim.817edecd5184232b | roles: lats -->
 Le grand dorsal réalise l’adduction et l’extension de l’épaule, actions qui ramènent le bras le long du corps depuis une position haute.
 
-<!-- factual: claim.1c6bce3e8bacd03f, claim.2efbc4324d2867ae | roles: traps, upper_back -->
-La portion inférieure du trapèze déprime la scapula et contribue à sa rotation, ce qui accompagne la descente du bras.
+<!-- factual: claim.1c6bce3e8bacd03f, claim.2efbc4324d2867ae | roles: traps -->
+La portion inférieure du trapèze déprime la scapula, action qui accompagne la descente du bras contre résistance.
 
 <!-- factual: claim.7319545121f15b5e, claim.0de58bffa41a4e9e | roles: biceps -->
 La flexion du coude par le biceps est présente dans tout tirage vertical ; la supination de la prise en augmente la part relative.

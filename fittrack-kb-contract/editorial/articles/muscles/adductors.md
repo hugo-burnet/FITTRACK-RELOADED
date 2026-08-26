@@ -17,7 +17,7 @@ Le groupe adducteur (long, court, grand adducteur, gracile, pectiné) réalise p
 Une étude biomécanique quantifie les forces produites par les adducteurs pendant des exercices de renforcement et de rééducation courants (Hip Adductor Muscle Forces During Strength Training, 2026).
 
 <!-- factual: claim.19ee0dcf16ff24f8, claim.ed5e15c49dc9cbc0 -->
-Le grand adducteur, souvent classé comme ischio-jambier fonctionnel pour sa portion postérieure (attache ischiatique), est significativement hypertrophié par le squat selon les données IRM de Plotkin et al. citées ci-dessus.
+Le grand adducteur, souvent classé comme ischio-jambier fonctionnel pour sa portion postérieure (attache ischiatique), est significativement hypertrophié par le squat selon les données IRM de Plotkin et al. citées dans la fiche Fessiers.
 
 ## Limites
 

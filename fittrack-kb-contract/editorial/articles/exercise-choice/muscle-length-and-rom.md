@@ -11,7 +11,7 @@ La longueur à laquelle un muscle travaille est l’un des rares paramètres de 
 ## Le principe de la grande longueur musculaire
 
 <!-- factual: claim.23b3d469960dd46b, claim.10a527808c70cbcd, claim.faba39b8096d94a9 -->
-Un ensemble croissant de littérature explore l'hypothèse que l'entraînement réalisé lorsque le muscle est en position étirée/allongée produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés. Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement, notamment l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur, et la sarcomérogenèse en série observée dans des modèles animaux (Physiology of Stretch-Mediated Hypertrophy, revue narrative) — preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné, bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.
+Un ensemble croissant de littérature explore l'hypothèse que l'entraînement réalisé lorsque le muscle est en position étirée/allongée produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés. Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement, notamment l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur, et la sarcomérogenèse en série observée dans des modèles animaux (Physiology of Stretch-Mediated Hypertrophy, revue narrative) — preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné, bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités plus bas dans cette page.
 
 ## Preuves directes chez l’humain
 
@@ -19,7 +19,7 @@ Un ensemble croissant de littérature explore l'hypothèse que l'entraînement r
 Un essai comparant l'entraînement isométrique à grande longueur musculaire à l'entraînement isotonique en amplitude complète pour le quadriceps chez des sujets entraînés en résistance trouve des effets différentiels sur l'hypertrophie régionale du quadriceps fémoral (Effects of Long Muscle Length Isometric vs Full ROM Training, quadriceps, 2025).
 
 <!-- factual: claim.f7d50bbaab2b7ffd -->
-Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète ([Partial Range, Full Gains?
+Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète.
 
 <!-- factual: claim.b45904746118bd31, claim.5fa2fffd1a2416a1 -->
 Une étude comparant l'hypertrophie régionale des fléchisseurs du coude entre entraînement à faible charge avec occlusion vasculaire à courte vs longue longueur musculaire ne trouve pas de différence significative d'hypertrophie régionale entre les deux conditions (Similar Regional Hypertrophy, occlusion vasculaire, courte vs longue longueur) — résultat contradictoire important à signaler : la supériorité de la grande longueur n'est pas universelle selon la modalité de charge (ici occlusion vasculaire à charge très faible).
@@ -34,7 +34,7 @@ Une étude sur l'hypertrophie régionale comparant des exercices à longue et co
 Synthèse de niveau de confiance : modéré. La direction générale (la grande longueur musculaire tend à égaler ou dépasser la courte longueur pour l'hypertrophie régionale) est cohérente à travers plusieurs essais indépendants et plusieurs muscles, mais (a) les résultats ne sont pas uniformes selon la modalité de charge, (b) les échantillons sont petits, (c) les mécanismes ne sont pas confirmés chez l'humain in vivo à l'échelle du sarcomère, et (d) l'ampleur de l'effet et sa généralisation à tous les muscles et exercices restent incertaines.
 
 <!-- factual: claim.00ade31cb978ad1d, claim.f41e5ac8c6984ade -->
-Le résultat le plus solide de cette section spécifique à un muscle nommément identifié reste celui du triceps (chef long, position overhead, section 1.6), qui bénéficie d'un mécanisme biomécanique particulièrement clair (biarticularité + étirement à l'épaule).
+Le résultat le plus solide de cette section spécifique à un muscle nommément identifié reste celui du triceps (chef long, position overhead, voir la fiche Triceps), qui bénéficie d'un mécanisme biomécanique particulièrement clair (biarticularité + étirement à l'épaule).
 
 ## Muscles biarticulaires
 
@@ -47,7 +47,7 @@ C'est la base biomécanique de règles pratiques comme : étirer les ischio-jamb
 ## Amplitude de mouvement : état des lieux
 
 <!-- factual: claim.0f2622a04337467e, claim.0817517028e95aef -->
-Une revue systématique de référence sur l'effet de l'amplitude de mouvement sur le développement musculaire trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle, en particulier lorsque la partielle est réalisée en position raccourcie du muscle (Schoenfeld & Grgic, 2020, ROM systematic review) — déjà cité dans le rapport compagnon sur la programmation ; ce constat est confirmé et affiné par les données plus récentes de longueur musculaire (section 3.2), qui montrent que ce n'est pas l'amplitude en tant que telle mais la position de longueur atteinte qui semble déterminante.
+Une revue systématique de référence sur l'effet de l'amplitude de mouvement sur le développement musculaire trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle, en particulier lorsque la partielle est réalisée en position raccourcie du muscle (Schoenfeld & Grgic, 2020, ROM systematic review) — déjà cité dans le rapport compagnon sur la programmation ; ce constat est confirmé et affiné par les données plus récentes de longueur musculaire présentées plus haut dans cette page, qui montrent que ce n'est pas l'amplitude en tant que telle mais la position de longueur atteinte qui semble déterminante.
 
 <!-- factual: claim.1561d935251102c0 -->
 Un essai randomisé intra-sujet chez des sujets entraînés compare directement des répétitions partielles en position allongée à des répétitions en amplitude complète et trouve des adaptations musculaires similaires entre les deux conditions (Lengthened partial repetitions elicit similar muscular adaptations, essai intra-sujet) — preuve directe d'hypertrophie de niveau modéré (essai contrôlé mais échantillon limité, muscles et exercices spécifiques du haut du corps).

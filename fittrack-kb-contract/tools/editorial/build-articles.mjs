@@ -27,6 +27,31 @@ const SCHEMA_VERSION = '1.0.0-wiki-articles';
 const REPOSITORY_ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '../../..');
 
 /**
+ * Le corpus source renvoie à ses propres numéros de section — « voir 1.5 »,
+ * « la méta-analyse de la section 2.5 ». Sorti du document, ce renvoi ne pointe
+ * plus nulle part : le lecteur voit une référence et n'a aucun moyen de la
+ * suivre. Trouvé sur 25 blocs à la relecture, réécrit vers les pages du wiki,
+ * et bloqué ici pour que ça ne revienne pas.
+ *
+ * Un renvoi *interne* — « plus haut dans cette fiche » — reste permis : il
+ * décrit la page qu'on est en train de lire.
+ */
+const SOURCE_SECTION_REFERENCE = /\b(?:section|§)\s*\d+\.\d+|\bvoir\s+\d+\.\d+|\ben\s+\d+\.\d+\b/iu;
+
+/**
+ * L'extraction coupe parfois un passage en plein milieu d'une citation, sur le
+ * point d'un « et al. » ou d'un titre. Le bloc se termine alors sur « ([Kojic
+ * et al. » — une parenthèse ouverte et une phrase sans fin. Six cas trouvés à la
+ * relecture ; aucun test ne les voyait.
+ */
+function hasUnbalancedCitation(text) {
+  const opens = (text.match(/\(/gu) ?? []).length;
+  const closes = (text.match(/\)/gu) ?? []).length;
+  const brackets = (text.match(/\[/gu) ?? []).length - (text.match(/\]/gu) ?? []).length;
+  return opens !== closes || brackets !== 0;
+}
+
+/**
  * Les groupes musculaires sont lus dans `src/data/types.ts` plutôt que recopiés
  * ici. Une seconde liste dériverait de la première sans que rien ne le signale,
  * et c'est exactement le défaut que ce validateur existe pour empêcher.
@@ -201,6 +226,12 @@ export function validateArticleBundle(bundle, references = loadReferences()) {
       for (const rowId of block.rowIds) {
         citesProgramming = true;
         if (!knownRows.has(rowId)) report('UNKNOWN_ROW', articleId, rowId);
+      }
+      if (!block.editorial && SOURCE_SECTION_REFERENCE.test(block.text)) {
+        report('DANGLING_SOURCE_REFERENCE', articleId, block.blockId);
+      }
+      if (!block.editorial && hasUnbalancedCitation(block.text)) {
+        report('TRUNCATED_CITATION', articleId, block.blockId);
       }
       if (block.muscleRoles.length > 0 && article.family !== 'movements') {
         report('ROLE_OUTSIDE_MOVEMENT', articleId, block.blockId);

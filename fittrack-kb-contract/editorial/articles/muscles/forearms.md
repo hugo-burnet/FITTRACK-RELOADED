@@ -17,7 +17,7 @@ Les fléchisseurs du poignet (groupe antérieur de l'avant-bras) et les extenseu
 La rotation de l'avant-bras (pronation/supination) modifie l'activité relative des fléchisseurs et extenseurs du poignet, ce qui a des implications pour les exercices de préhension et de curl de poignet (Effects of forearm rotation on wrist flexor and extensor activities, 2025).
 
 <!-- factual: claim.aad86efbdaa9fcb1, claim.540f12d8bd2669e8 -->
-Le brachioradial, bien que classé comme fléchisseur du coude, appartient anatomiquement au compartiment de l'avant-bras et est davantage recruté en prise neutre ou pronée pendant les curls (voir 1.5).
+Le brachioradial, bien que classé comme fléchisseur du coude, appartient anatomiquement au compartiment de l'avant-bras et est davantage recruté en prise neutre ou pronée pendant les curls (voir la fiche Biceps et brachial).
 
 ## Contraintes du poignet
 

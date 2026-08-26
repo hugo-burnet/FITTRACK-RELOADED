@@ -17,7 +17,7 @@ Les ischio-jambiers comprennent le chef long du biceps fémoral, le semi-tendine
 Une revue systématique sur l'activation du biceps fémoral pendant les exercices de renforcement des ischio-jambiers confirme des patterns d'activation différenciés selon le type d'exercice (hip-dominant vs knee-dominant) (Biceps Femoris Activation during Hamstring Strength Exercises, 2021), et une étude sur les forces musculaires et le comportement des fascicules pendant trois exercices d'ischio-jambiers apporte des données biomécaniques directes sur les différences de sollicitation (Muscle forces and fascicle behavior during three hamstring exercises).
 
 <!-- factual: claim.ac0c9d29d1c45828 -->
-Un essai randomisé en cours compare directement l'effet d'un programme à biais hanche contre un programme à biais genou sur la morphologie du biceps fémoral, la force et la performance de sprint ([The effects of hip- vs.
+Un essai randomisé en cours compare directement l'effet d'un programme à biais hanche contre un programme à biais genou sur la morphologie du biceps fémoral, la force et la performance de sprint.
 
 ## Choix d’exercices
 

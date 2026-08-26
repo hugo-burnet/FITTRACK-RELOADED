@@ -20,7 +20,7 @@ Le moyen et le petit fessier sont les abducteurs et stabilisateurs frontaux prin
 Une méta-analyse de 2025 sur l'hypertrophie du grand fessier en réponse à l'entraînement en résistance (12 études) trouve un effet modéré (SMD 0,71) toutes modalités confondues, avec un effet similaire pour les protocoles mono-exercice et les protocoles combinés ; elle conclut que le hip thrust en amplitude complète, le squat (parallèle ou complet), la presse à cuisses et les extensions de hanche à genou fléchi contribuent tous de façon significative à l'hypertrophie du grand fessier (Impact of resistance training on gluteus maximus hypertrophy, 2025, *Front Physiol*) — méta-analyse d'issues d'hypertrophie mesurée, niveau modéré à élevé.
 
 <!-- factual: claim.5d2902199f7c4f94, claim.dbee8a294aca0208 -->
-déjà cité (section 0.1) montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé, avec un avantage du squat pour le quadriceps et les adducteurs (Plotkin et al., 2023).
+L’essai de Plotkin et al. (2023) montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé, avec un avantage du squat pour le quadriceps et les adducteurs (Plotkin et al., 2023).
 
 ## Choix d’exercices
 
@@ -34,7 +34,7 @@ Une revue systématique sur l'activation EMG du grand fessier, des ischio-jambie
 Extension de hanche, abduction. Les extensions de hanche à genou fléchi (position réduisant le bras de levier des ischio-jambiers biarticulaires par flexion de genou, isolant relativement mieux le grand fessier) et les machines d'abduction ciblant le moyen et le petit fessier sont soutenues par une méta-analyse d'hypertrophie déjà citée (Impact of resistance training on gluteus maximus hypertrophy, 2025) et par des données EMG sur l'activation du moyen fessier selon la charge en abduction de hanche horizontale (Activation of gluteus medius according to load, horizontal hip abduction) et pendant des exercices de renforcement multi-articulaires (Gluteus Medius and Tensor Fascia Latae activation during multi-joint strengthening exercises).
 
 <!-- factual: claim.6b08aed783aafc07, claim.f85e0f1993f55dd4, claim.14b3489e82723afb -->
-Split squat, fentes. Sollicitent le grand fessier de la jambe avant en extension de hanche, avec une demande d'équilibre unilatérale ; l'absence de différence d'hypertrophie démontrée entre exercices unilatéraux et bilatéraux (section 7.6) s'applique par extension à cette famille pour le fessier également, sous réserve de la même prudence méthodologique.
+Split squat, fentes. Sollicitent le grand fessier de la jambe avant en extension de hanche, avec une demande d'équilibre unilatérale ; l'absence de différence d'hypertrophie démontrée entre exercices unilatéraux et bilatéraux (voir la fiche Quadriceps) s'applique par extension à cette famille pour le fessier également, sous réserve de la même prudence méthodologique.
 
 ## Limites
 

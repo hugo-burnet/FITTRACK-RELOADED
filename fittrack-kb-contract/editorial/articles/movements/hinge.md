@@ -16,7 +16,7 @@ Trois des quatre chefs des ischio-jambiers sont biarticulaires, fléchisseurs de
 <!-- factual: claim.ef6482f8bd33b70c, claim.713ba4e4ebb08753 | roles: glutes -->
 Le grand fessier est le principal extenseur et rotateur externe de la hanche.
 
-<!-- factual: claim.4d432730ac9e4890, claim.46eb7ef095870465 | roles: lower_back -->
+<!-- factual: claim.4d432730ac9e4890 | roles: lower_back -->
 Les érecteurs du rachis et le multifidus étendent la colonne et contribuent à sa stabilisation dynamique pendant la flexion et l’extension.
 
 ## Limites

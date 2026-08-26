@@ -64,3 +64,38 @@ test('aucun article de programmation n’est promu relu', () => {
     .filter((article) => article.reviewState !== 'pending_human_review');
   assert.deepEqual(promoted, []);
 });
+
+test('aucun passage ne renvoie à un numéro de section du document source', () => {
+  // Trouvé à la relecture sur 25 blocs : « voir 1.5 », « la méta-analyse de la
+  // section 2.5 ». Sorti du document, ce renvoi ne pointe plus nulle part, et le
+  // lecteur voit une référence sans aucun moyen de la suivre.
+  const dangling =
+    /\b(?:section|§)\s*\d+\.\d+|\bvoir\s+\d+\.\d+|\ben\s+\d+\.\d+\b/iu;
+  const offenders = bundle.articles.flatMap((article) =>
+    article.sections.flatMap((section) =>
+      section.blocks
+        .filter((block) => !block.editorial && dangling.test(block.text))
+        .map((block) => block.blockId),
+    ),
+  );
+  assert.deepEqual(offenders, []);
+});
+
+test('aucun passage ne se termine sur une citation restée ouverte', () => {
+  // Six passages étaient coupés par l'extraction en plein « ([Kojic et al. » :
+  // une parenthèse ouverte et une phrase sans fin, affichées telles quelles.
+  const unbalanced = (text) => {
+    const opens = (text.match(/\(/gu) ?? []).length;
+    const closes = (text.match(/\)/gu) ?? []).length;
+    const brackets = (text.match(/\[/gu) ?? []).length - (text.match(/\]/gu) ?? []).length;
+    return opens !== closes || brackets !== 0;
+  };
+  const offenders = bundle.articles.flatMap((article) =>
+    article.sections.flatMap((section) =>
+      section.blocks
+        .filter((block) => !block.editorial && unbalanced(block.text))
+        .map((block) => block.blockId),
+    ),
+  );
+  assert.deepEqual(offenders, []);
+});

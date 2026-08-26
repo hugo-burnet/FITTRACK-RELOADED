@@ -27,7 +27,7 @@ Cela crée des courbes de résistance caractéristiques : par exemple, un dével
 Un système de câble/poulie impose une tension relativement constante le long du câble (aux frottements de poulie près), mais le moment résultant à l'articulation varie tout de même avec l'angle formé entre le câble et le segment corporel. Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule.
 
 <!-- factual: claim.21842e1530072b0d, claim.d57ffa4a5b4fe7cd, claim.ac86fd18ed2f29e9 -->
-Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule. C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée, bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale (voir 2.5).
+Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule. C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée, bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale (voir « Poids libres contre machines » plus bas).
 
 ## Machines à came
 
@@ -37,7 +37,7 @@ Les machines à came (leg extension, machines convergentes de développé, pec d
 ## Poids libres contre machines : la preuve directe
 
 <!-- factual: claim.884a0a713ce1b61d, claim.4b5205201193a74f -->
-Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que chaque modalité produit un gain de force supérieur dans son propre mode de test (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, mais aucune différence significative d'hypertrophie entre les deux modalités (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al.
+Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que chaque modalité produit un gain de force supérieur dans son propre mode de test (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, mais aucune différence significative d'hypertrophie entre les deux modalités (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne.
 
 <!-- factual: claim.c0c8389ec9a75597 -->
 Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophie devrait reposer sur la stabilité, le confort, la disponibilité et la préférence individuelle plutôt que sur une supposée supériorité universelle d'une modalité.
@@ -45,7 +45,7 @@ Conclusion pratique : le choix entre poids libres et machines pour l'hypertrophi
 ## Bandes élastiques
 
 <!-- factual: claim.8fe13003090b387c, claim.78a8b2f2dba34816 -->
-Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée), l'inverse potentiel d'un poids libre dans certains mouvements. Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique ([Muscle Activity in Upper-Body Single-Joint Exercises: Elastic Bands vs.
+Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée), l'inverse potentiel d'un poids libre dans certains mouvements. Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique.
 
 ## Limites
 

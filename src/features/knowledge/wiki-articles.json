@@ -1218,7 +1218,7 @@
           "blocks": [
             {
               "blockId": "exercise-muscle-length-and-rom-2-b1",
-              "text": "Un ensemble croissant de littérature explore l'hypothèse que l'entraînement réalisé lorsque le muscle est en position étirée/allongée produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés. Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement, notamment l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur, et la sarcomérogenèse en série observée dans des modèles animaux (Physiology of Stretch-Mediated Hypertrophy, revue narrative) — preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné, bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités ci-dessous.",
+              "text": "Un ensemble croissant de littérature explore l'hypothèse que l'entraînement réalisé lorsque le muscle est en position étirée/allongée produit un stimulus hypertrophique supérieur ou complémentaire à l'entraînement en position raccourcie, à volume et effort égalisés. Une revue narrative détaille les mécanismes proposés de l'hypertrophie médiée par l'étirement, notamment l'activation de voies de signalisation anabolique (Akt/mTOR) par la tension mécanique passive et active à grande longueur, et la sarcomérogenèse en série observée dans des modèles animaux (Physiology of Stretch-Mediated Hypertrophy, revue narrative) — preuve mécanistique et translationnelle depuis des modèles animaux, niveau faible pour une application quantitative directe chez l'humain entraîné, bien que le principe qualitatif (tension à grande longueur = stimulus important) soit cohérent avec plusieurs essais humains cités plus bas dans cette page.",
               "claimIds": [
                 "claim.23b3d469960dd46b",
                 "claim.10a527808c70cbcd",
@@ -1246,7 +1246,7 @@
             },
             {
               "blockId": "exercise-muscle-length-and-rom-3-b2",
-              "text": "Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète ([Partial Range, Full Gains?",
+              "text": "Un essai de 8 semaines sur les fléchisseurs du coude chez des sujets entraînés montre que l'entraînement en amplitude partielle à grande longueur musculaire produit une hypertrophie et une force comparables à l'amplitude complète.",
               "claimIds": [
                 "claim.f7d50bbaab2b7ffd"
               ],
@@ -1298,7 +1298,7 @@
             },
             {
               "blockId": "exercise-muscle-length-and-rom-3-b7",
-              "text": "Le résultat le plus solide de cette section spécifique à un muscle nommément identifié reste celui du triceps (chef long, position overhead, section 1.6), qui bénéficie d'un mécanisme biomécanique particulièrement clair (biarticularité + étirement à l'épaule).",
+              "text": "Le résultat le plus solide de cette section spécifique à un muscle nommément identifié reste celui du triceps (chef long, position overhead, voir la fiche Triceps), qui bénéficie d'un mécanisme biomécanique particulièrement clair (biarticularité + étirement à l'épaule).",
               "claimIds": [
                 "claim.00ade31cb978ad1d",
                 "claim.f41e5ac8c6984ade"
@@ -1344,7 +1344,7 @@
           "blocks": [
             {
               "blockId": "exercise-muscle-length-and-rom-5-b1",
-              "text": "Une revue systématique de référence sur l'effet de l'amplitude de mouvement sur le développement musculaire trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle, en particulier lorsque la partielle est réalisée en position raccourcie du muscle (Schoenfeld & Grgic, 2020, ROM systematic review) — déjà cité dans le rapport compagnon sur la programmation ; ce constat est confirmé et affiné par les données plus récentes de longueur musculaire (section 3.2), qui montrent que ce n'est pas l'amplitude en tant que telle mais la position de longueur atteinte qui semble déterminante.",
+              "text": "Une revue systématique de référence sur l'effet de l'amplitude de mouvement sur le développement musculaire trouve un avantage généralement en faveur de l'amplitude complète par rapport à l'amplitude partielle, en particulier lorsque la partielle est réalisée en position raccourcie du muscle (Schoenfeld & Grgic, 2020, ROM systematic review) — déjà cité dans le rapport compagnon sur la programmation ; ce constat est confirmé et affiné par les données plus récentes de longueur musculaire présentées plus haut dans cette page, qui montrent que ce n'est pas l'amplitude en tant que telle mais la position de longueur atteinte qui semble déterminante.",
               "claimIds": [
                 "claim.0f2622a04337467e",
                 "claim.0817517028e95aef"
@@ -1518,7 +1518,7 @@
             },
             {
               "blockId": "exercise-resistance-profiles-4-b2",
-              "text": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule. C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée, bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale (voir 2.5).",
+              "text": "Les câbles permettent de modifier l'angle de traction indépendamment de la gravité, ce qui autorise des profils de résistance impossibles en poids libre — par exemple maintenir une tension significative en position d'épaule fléchie complète (fin de mouvement d'un cable fly), configuration où un haltère perdrait presque toute résistance car le bras de levier gravitationnel s'annule. C'est un avantage biomécanique documenté pour cibler une tension continue à une longueur musculaire donnée, notamment en position raccourcie/contractée, bien que la traduction en supériorité hypertrophique nette par rapport aux poids libres ne soit pas démontrée de façon générale (voir « Poids libres contre machines » plus bas).",
               "claimIds": [
                 "claim.21842e1530072b0d",
                 "claim.d57ffa4a5b4fe7cd",
@@ -1554,7 +1554,7 @@
           "blocks": [
             {
               "blockId": "exercise-resistance-profiles-6-b1",
-              "text": "Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que chaque modalité produit un gain de force supérieur dans son propre mode de test (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, mais aucune différence significative d'hypertrophie entre les deux modalités (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne ([Heidel et al.",
+              "text": "Une méta-analyse de référence comparant systématiquement l'entraînement en poids libres et sur machines trouve que chaque modalité produit un gain de force supérieur dans son propre mode de test (SMD −0,210 en faveur des poids libres pour les tests en poids libres ; tendance en faveur des machines pour les tests sur machines, p = 0,064), un résultat cohérent avec le principe de spécificité, mais aucune différence significative d'hypertrophie entre les deux modalités (SMD −0,055, IC95 % −0,397 à 0,287, p = 0,751), sur des interventions de 9 semaines en moyenne.",
               "claimIds": [
                 "claim.884a0a713ce1b61d",
                 "claim.4b5205201193a74f"
@@ -1581,7 +1581,7 @@
           "blocks": [
             {
               "blockId": "exercise-resistance-profiles-7-b1",
-              "text": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée), l'inverse potentiel d'un poids libre dans certains mouvements. Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique ([Muscle Activity in Upper-Body Single-Joint Exercises: Elastic Bands vs.",
+              "text": "Les bandes élastiques ont une courbe de résistance croissante avec l'étirement (résistance minimale en position raccourcie, maximale en position étirée), l'inverse potentiel d'un poids libre dans certains mouvements. Une étude comparant l'activité musculaire lors d'exercices mono-articulaires du haut du corps avec bandes élastiques contre poids libres documente des différences d'activation liées à cette courbe de résistance spécifique.",
               "claimIds": [
                 "claim.8fe13003090b387c",
                 "claim.78a8b2f2dba34816"
@@ -1695,7 +1695,7 @@
             },
             {
               "blockId": "exercise-stability-4-b2",
-              "text": "Une instabilité excessive peut réduire la charge utilisable et détourner l'effort vers des muscles stabilisateurs non ciblés. Ce qu'on ne peut PAS conclure : qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation.",
+              "text": "Une instabilité excessive peut réduire la charge utilisable et détourner l'effort vers des muscles stabilisateurs non ciblés. Ce qu'on ne peut PAS conclure : qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse poids libres/machines de « Profils de résistance » ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation.",
               "claimIds": [
                 "claim.2fa4cca69532e008"
               ],
@@ -1705,7 +1705,7 @@
             },
             {
               "blockId": "exercise-stability-4-b3",
-              "text": "Ce qu'on ne peut PAS conclure : qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse de la section 2.5 ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation. La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.",
+              "text": "Ce qu'on ne peut PAS conclure : qu'une stabilité maximale (machine guidée) est toujours supérieure à un poids libre pour l'hypertrophie — la méta-analyse poids libres/machines de « Profils de résistance » ne trouve pas de différence d'hypertrophie entre poids libres et machines malgré des différences évidentes de demande de stabilisation. La stabilité est donc un paramètre qui influence la *technique et la charge utilisable*, pas un déterminant direct et indépendant démontré de l'hypertrophie.",
               "claimIds": [
                 "claim.d99b5a799732d2a4",
                 "claim.e8cf61160b4c055f",
@@ -1774,7 +1774,7 @@
             },
             {
               "blockId": "exercise-substitutions-2-b2",
-              "text": "La méta-analyse de la section 2.5 (pas de différence d'hypertrophie poids libres/machines) et celle de la section 7.6 (pas de différence unilatéral/bilatéral) fournissent une base de preuve directe pour qualifier ce type de paires de « quasi directes » sur le plan de l'hypertrophie, même si la spécificité de force diffère.",
+              "text": "La méta-analyse de « Profils de résistance » (pas de différence d'hypertrophie poids libres/machines) et celle de la fiche Quadriceps (pas de différence unilatéral/bilatéral) fournissent une base de preuve directe pour qualifier ce type de paires de « quasi directes » sur le plan de l'hypertrophie, même si la spécificité de force diffère.",
               "claimIds": [
                 "claim.d842e25b309b2d5e"
               ],
@@ -2002,7 +2002,7 @@
           "blocks": [
             {
               "blockId": "method-limits-governance-3-b1",
-              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) : contraintes précises au coude en musculation récréative (section 6.2) ; lien longitudinal direct entre charge lombaire modélisée et incidence de blessure en musculation (section 6.4) ; contraintes cervicales/thoraciques spécifiques aux exercices de musculation (section 6.4) ; charge de cheville en musculation pure hors contexte clinique (section 6.7) ; hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
+              "text": "Lacunes de preuve explicitement signalées (à ne pas combler par extrapolation dans la base de données) : contraintes précises au coude en musculation récréative (voir « Contraintes articulaires et familles d’exercices ») ; lien longitudinal direct entre charge lombaire modélisée et incidence de blessure en musculation (voir « Érecteurs du rachis ») ; contraintes cervicales/thoraciques spécifiques aux exercices de musculation ; charge de cheville en musculation pure hors contexte clinique (voir « Mollets ») ; hypertrophie régionale directement mesurée pour de nombreuses paires d'exercices couramment comparées en pratique (Bayesian curl, straight-arm pulldown, nombreuses variantes de mollets) où seul un raisonnement biomécanique de premier principe est actuellement disponible.",
               "claimIds": [
                 "claim.82681dac5a0387d9",
                 "claim.e8693e2835ea701f",
@@ -2043,7 +2043,7 @@
             },
             {
               "blockId": "method-limits-governance-4-b3",
-              "text": "Stabilité et fatigue inutile : privilégier une stabilité suffisante pour que le muscle cible, non l'équilibre, limite la série lors des phases de forte fatigue accumulée ou de gros volume (ex. préférer le rowing poitrine appuyée à un rowing barre penché en fin de séance) — *expert_practice*, cohérent avec le principe de la section 5.3 mais non testé directement pour cette recommandation précise.",
+              "text": "Stabilité et fatigue inutile : privilégier une stabilité suffisante pour que le muscle cible, non l'équilibre, limite la série lors des phases de forte fatigue accumulée ou de gros volume (ex. préférer le rowing poitrine appuyée à un rowing barre penché en fin de séance) — *expert_practice*, cohérent avec le principe exposé dans « Stabilité » mais non testé directement pour cette recommandation précise.",
               "claimIds": [
                 "claim.05931ee087228965",
                 "claim.73336e41faf2e333"
@@ -2481,8 +2481,7 @@
               "blockId": "movement-hinge-2-b3",
               "text": "Les érecteurs du rachis et le multifidus étendent la colonne et contribuent à sa stabilisation dynamique pendant la flexion et l’extension.",
               "claimIds": [
-                "claim.4d432730ac9e4890",
-                "claim.46eb7ef095870465"
+                "claim.4d432730ac9e4890"
               ],
               "rowIds": [],
               "muscleRoles": [
@@ -2738,8 +2737,7 @@
               ],
               "rowIds": [],
               "muscleRoles": [
-                "traps",
-                "upper_back"
+                "traps"
               ],
               "editorial": false
             },
@@ -2894,7 +2892,7 @@
           "blocks": [
             {
               "blockId": "movement-lunge-2-b1",
-              "text": "L’extension du genou est portée par les vastes et le droit fémoral, comme dans toute flexion de genou chargée.",
+              "text": "L’extension du genou de la jambe avant est portée par les vastes et le droit fémoral, comme dans tout appui chargé.",
               "claimIds": [
                 "claim.9f6e03a416e99efe",
                 "claim.44f1c168e713c4c3"
@@ -3058,7 +3056,7 @@
           "blocks": [
             {
               "blockId": "movement-squat-2-b1",
-              "text": "Les trois vastes étendent le genou et le droit fémoral traverse aussi la hanche : le quadriceps est le groupe le plus directement engagé par la flexion de genou.",
+              "text": "Les trois vastes étendent le genou et le droit fémoral traverse aussi la hanche : le quadriceps porte l’extension du genou, que le squat charge directement.",
               "claimIds": [
                 "claim.9f6e03a416e99efe",
                 "claim.44f1c168e713c4c3"
@@ -3248,15 +3246,14 @@
             },
             {
               "blockId": "movement-vertical-pull-2-b2",
-              "text": "La portion inférieure du trapèze déprime la scapula et contribue à sa rotation, ce qui accompagne la descente du bras.",
+              "text": "La portion inférieure du trapèze déprime la scapula, action qui accompagne la descente du bras contre résistance.",
               "claimIds": [
                 "claim.1c6bce3e8bacd03f",
                 "claim.2efbc4324d2867ae"
               ],
               "rowIds": [],
               "muscleRoles": [
-                "traps",
-                "upper_back"
+                "traps"
               ],
               "editorial": false
             },
@@ -3485,7 +3482,7 @@
             },
             {
               "blockId": "muscle-adductors-2-b3",
-              "text": "Le grand adducteur, souvent classé comme ischio-jambier fonctionnel pour sa portion postérieure (attache ischiatique), est significativement hypertrophié par le squat selon les données IRM de Plotkin et al. citées ci-dessus.",
+              "text": "Le grand adducteur, souvent classé comme ischio-jambier fonctionnel pour sa portion postérieure (attache ischiatique), est significativement hypertrophié par le squat selon les données IRM de Plotkin et al. citées dans la fiche Fessiers.",
               "claimIds": [
                 "claim.19ee0dcf16ff24f8",
                 "claim.ed5e15c49dc9cbc0"
@@ -3645,7 +3642,7 @@
             },
             {
               "blockId": "muscle-biceps-3-b2",
-              "text": "Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie ([Placing Greater Torque at Shorter or Longer Muscle Lengths?",
+              "text": "Un essai comparant cable preacher curl et barbell preacher curl, positionnant un couple de force plus important à des longueurs musculaires courtes ou longues, teste directement l'hypothèse de longueur musculaire sur la force et l'hypertrophie.",
               "claimIds": [
                 "claim.50ee9cba029368ea"
               ],
@@ -3669,7 +3666,7 @@
             },
             {
               "blockId": "muscle-biceps-3-b4",
-              "text": "Hammer curl et variantes machines. La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial (voir 1.5), cohérent avec les études de prise en curl citées en 1.5 et 7.4 initial.",
+              "text": "Hammer curl et variantes machines. La prise neutre du hammer curl favorise le brachial et le brachioradial relativement au biceps brachial, cohérent avec les études de prise en curl citées plus haut dans cette fiche.",
               "claimIds": [
                 "claim.da50522adbb1df85"
               ],
@@ -3768,7 +3765,7 @@
           "blocks": [
             {
               "blockId": "muscle-calves-3-b1",
-              "text": "Mollets debout, assis, presse à cuisses (calf raise). Cohérent avec le principe biomécanique de la section 1.12 : le mollet debout (genou tendu) sollicite davantage le gastrocnémien en position mécaniquement favorable, tandis que le mollet assis ou la presse à cuisses jambes fléchies (genou fléchi) désavantage le gastrocnémien et reporte relativement la charge sur le soléaire. Une étude sur l'entraînement mono- et multi-articulaire du triceps sural trouve une activation du fléchisseur plantaire globalement similaire entre certaines modalités mono- et multi-articulaires chez des hommes entraînés en résistance (Multi- and Single-Joint Resistance Exercises Promote Similar Plantar Flexor Activation, 2020) — nuance importante : la distinction mono/multi-articulaire (genou impliqué ou non dans le mouvement global) n'est pas identique à la distinction d'angle de genou fixe (tendu vs fléchi) traitée en 1.12, et ce résultat ne contredit pas directement le principe gastrocnémien/soléaire selon l'angle du genou.",
+              "text": "Mollets debout, assis, presse à cuisses (calf raise). Cohérent avec le principe biomécanique établi plus haut dans cette fiche : le mollet debout (genou tendu) sollicite davantage le gastrocnémien en position mécaniquement favorable, tandis que le mollet assis ou la presse à cuisses jambes fléchies (genou fléchi) désavantage le gastrocnémien et reporte relativement la charge sur le soléaire. Une étude sur l'entraînement mono- et multi-articulaire du triceps sural trouve une activation du fléchisseur plantaire globalement similaire entre certaines modalités mono- et multi-articulaires chez des hommes entraînés en résistance (Multi- and Single-Joint Resistance Exercises Promote Similar Plantar Flexor Activation, 2020) — nuance importante : la distinction mono/multi-articulaire (genou impliqué ou non dans le mouvement global) n'est pas identique à la distinction d'angle de genou fixe (tendu vs fléchi) traitée plus haut dans cette fiche, et ce résultat ne contredit pas directement le principe gastrocnémien/soléaire selon l'angle du genou.",
               "claimIds": [
                 "claim.768e18c1df066c41",
                 "claim.7ea355ab1756e9c1",
@@ -3786,7 +3783,7 @@
           "blocks": [
             {
               "blockId": "muscle-calves-4-b1",
-              "text": "Peu de données biomécaniques dédiées à la charge de cheville en musculation pure (mollets, squat) ont été identifiées au-delà du contexte clinique (arthrose, prothèses, rupture du tendon d'Achille) — lacune de preuve explicite. Les données disponibles sur la contribution différentielle gastrocnémien/soléaire selon l'angle du genou (section 1.12) restent la source biomécanique la plus directement transférable à la programmation des mollets.",
+              "text": "Peu de données biomécaniques dédiées à la charge de cheville en musculation pure (mollets, squat) ont été identifiées au-delà du contexte clinique (arthrose, prothèses, rupture du tendon d'Achille) — lacune de preuve explicite. Les données disponibles sur la contribution différentielle gastrocnémien/soléaire selon l'angle du genou, décrites plus haut dans cette fiche, restent la source biomécanique la plus directement transférable à la programmation des mollets.",
               "claimIds": [
                 "claim.88debf7332f8272e",
                 "claim.fe0483d58cb72a88"
@@ -3871,7 +3868,7 @@
             },
             {
               "blockId": "muscle-chest-2-b3",
-              "text": "Fonctionnellement, le grand pectoral réalise la flexion horizontale de l'épaule, l'adduction du bras, et une rotation interne. La portion claviculaire est davantage sollicitée en flexion d'épaule (mouvement vers le haut, proche du développé incliné) tandis que la portion sterno-costale domine en adduction horizontale pure et en position déclinée ou horizontale — logique biomécanique validée par de multiples études EMG comparant incliné/plat/décliné (voir section 5.1).",
+              "text": "Fonctionnellement, le grand pectoral réalise la flexion horizontale de l'épaule, l'adduction du bras, et une rotation interne. La portion claviculaire est davantage sollicitée en flexion d'épaule (mouvement vers le haut, proche du développé incliné) tandis que la portion sterno-costale domine en adduction horizontale pure et en position déclinée ou horizontale — logique biomécanique validée par de multiples études EMG comparant incliné/plat/décliné.",
               "claimIds": [
                 "claim.b4622b981541b4b0",
                 "claim.0a21f82d5f065926"
@@ -3931,7 +3928,7 @@
             },
             {
               "blockId": "muscle-chest-3-b4",
-              "text": "Machines convergentes vs Smith machine vs poids libre. La méta-analyse générale poids libres/machines (section 2.5) ne trouve pas de différence d'hypertrophie entre modalités ; à défaut de données spécifiques au développé couché en particulier, cette conclusion générale s'applique par extension raisonnable (niveau modéré), le choix devant reposer sur la stabilité souhaitée, le confort d'épaule et la préférence individuelle plutôt que sur une supériorité intrinsèque démontrée.",
+              "text": "Machines convergentes vs Smith machine vs poids libre. La méta-analyse générale poids libres/machines (voir « Profils de résistance ») ne trouve pas de différence d'hypertrophie entre modalités ; à défaut de données spécifiques au développé couché en particulier, cette conclusion générale s'applique par extension raisonnable (niveau modéré), le choix devant reposer sur la stabilité souhaitée, le confort d'épaule et la préférence individuelle plutôt que sur une supériorité intrinsèque démontrée.",
               "claimIds": [
                 "claim.2ee07811748dd211",
                 "claim.1dc953cd9a18e437",
@@ -3956,7 +3953,7 @@
             },
             {
               "blockId": "muscle-chest-3-b6",
-              "text": "Pec deck / cable fly / écartés haltères. Ces variantes d'isolation en adduction horizontale d'épaule permettent, via le câble notamment, de maintenir une tension en position d'adduction complète (contraction raccourcie) que les haltères perdent en fin de mouvement (bras de levier gravitationnel proche de zéro) — différence de profil de résistance documentée en section 2.3, niveau de preuve : biomécanique de premier principe, modéré.",
+              "text": "Pec deck / cable fly / écartés haltères. Ces variantes d'isolation en adduction horizontale d'épaule permettent, via le câble notamment, de maintenir une tension en position d'adduction complète (contraction raccourcie) que les haltères perdent en fin de mouvement (bras de levier gravitationnel proche de zéro) — différence de profil de résistance documentée dans « Profils de résistance », niveau de preuve : biomécanique de premier principe, modéré.",
               "claimIds": [
                 "claim.e25c210698d521e4",
                 "claim.61bfad7df7533e26",
@@ -4050,7 +4047,7 @@
             },
             {
               "blockId": "muscle-forearms-2-b3",
-              "text": "Le brachioradial, bien que classé comme fléchisseur du coude, appartient anatomiquement au compartiment de l'avant-bras et est davantage recruté en prise neutre ou pronée pendant les curls (voir 1.5).",
+              "text": "Le brachioradial, bien que classé comme fléchisseur du coude, appartient anatomiquement au compartiment de l'avant-bras et est davantage recruté en prise neutre ou pronée pendant les curls (voir la fiche Biceps et brachial).",
               "claimIds": [
                 "claim.aad86efbdaa9fcb1",
                 "claim.540f12d8bd2669e8"
@@ -4180,7 +4177,7 @@
             },
             {
               "blockId": "muscle-glutes-2-b4",
-              "text": "déjà cité (section 0.1) montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé, avec un avantage du squat pour le quadriceps et les adducteurs (Plotkin et al., 2023).",
+              "text": "L’essai de Plotkin et al. (2023) montre une hypertrophie fessière équivalente entre hip thrust et squat à volume égalisé, avec un avantage du squat pour le quadriceps et les adducteurs (Plotkin et al., 2023).",
               "claimIds": [
                 "claim.5d2902199f7c4f94",
                 "claim.dbee8a294aca0208"
@@ -4231,7 +4228,7 @@
             },
             {
               "blockId": "muscle-glutes-3-b4",
-              "text": "Split squat, fentes. Sollicitent le grand fessier de la jambe avant en extension de hanche, avec une demande d'équilibre unilatérale ; l'absence de différence d'hypertrophie démontrée entre exercices unilatéraux et bilatéraux (section 7.6) s'applique par extension à cette famille pour le fessier également, sous réserve de la même prudence méthodologique.",
+              "text": "Split squat, fentes. Sollicitent le grand fessier de la jambe avant en extension de hanche, avec une demande d'équilibre unilatérale ; l'absence de différence d'hypertrophie démontrée entre exercices unilatéraux et bilatéraux (voir la fiche Quadriceps) s'applique par extension à cette famille pour le fessier également, sous réserve de la même prudence méthodologique.",
               "claimIds": [
                 "claim.6b08aed783aafc07",
                 "claim.f85e0f1993f55dd4",
@@ -4317,7 +4314,7 @@
             },
             {
               "blockId": "muscle-hamstrings-2-b3",
-              "text": "Un essai randomisé en cours compare directement l'effet d'un programme à biais hanche contre un programme à biais genou sur la morphologie du biceps fémoral, la force et la performance de sprint ([The effects of hip- vs.",
+              "text": "Un essai randomisé en cours compare directement l'effet d'un programme à biais hanche contre un programme à biais genou sur la morphologie du biceps fémoral, la force et la performance de sprint.",
               "claimIds": [
                 "claim.ac0c9d29d1c45828"
               ],
@@ -4703,7 +4700,7 @@
             },
             {
               "blockId": "muscle-quads-2-b3",
-              "text": "Une étude d'entraînement contrôlé de 7 semaines de squat parallèle montre une hypertrophie significative des quatre chefs du quadriceps sans différence statistique entre eux, mais avec une association spécifique entre le gain de force au squat et l'hypertrophie du seul vaste latéral (r = 0,717) ([Kojic et al.",
+              "text": "Une étude d'entraînement contrôlé de 7 semaines de squat parallèle montre une hypertrophie significative des quatre chefs du quadriceps sans différence statistique entre eux, mais avec une association spécifique entre le gain de force au squat et l'hypertrophie du seul vaste latéral (r = 0,717).",
               "claimIds": [
                 "claim.3237f1b90a26e68b"
               ],
@@ -4719,7 +4716,7 @@
           "blocks": [
             {
               "blockId": "muscle-quads-3-b1",
-              "text": "Squat, hack squat, leg press, Smith squat. Ces variantes polyarticulaires sollicitent l'ensemble du quadriceps de façon relativement homogène selon l'étude d'hypertrophie régionale du squat déjà citée (Kojic et al., 2022), le vaste latéral montrant l'association la plus forte avec le gain de force. Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées ([Leg Press vs.",
+              "text": "Squat, hack squat, leg press, Smith squat. Ces variantes polyarticulaires sollicitent l'ensemble du quadriceps de façon relativement homogène selon l'étude d'hypertrophie régionale du squat déjà citée (Kojic et al., 2022), le vaste latéral montrant l'association la plus forte avec le gain de force. Une comparaison EMG et de perception d'effort entre leg press et Smith machine squat documente des profils d'activation du quadriceps globalement similaires entre ces deux modalités guidées.",
               "claimIds": [
                 "claim.eb3b6eea92b814a2",
                 "claim.42b409f14438d0e6",
@@ -4731,7 +4728,7 @@
             },
             {
               "blockId": "muscle-quads-3-b2",
-              "text": "Une étude testant si le squat classique produit une hypertrophie régionale différenciée entre les chefs du quadriceps ne trouve pas de différence significative entre eux dans son échantillon (Does Back Squat Lead to Regional Hypertrophy among Quadriceps Muscles?, 2022) — même étude que celle citée en 1.8, résultat confirmé.",
+              "text": "Une étude testant si le squat classique produit une hypertrophie régionale différenciée entre les chefs du quadriceps ne trouve pas de différence significative entre eux dans son échantillon (Does Back Squat Lead to Regional Hypertrophy among Quadriceps Muscles?, 2022) — même étude que celle citée plus haut dans cette fiche, résultat confirmé.",
               "claimIds": [
                 "claim.a10517f65cbc63d1"
               ],
@@ -4785,7 +4782,7 @@
             },
             {
               "blockId": "muscle-quads-3-b7",
-              "text": "Leg extension. Exercice mono-articulaire isolant le quadriceps sans intervention du droit fémoral en configuration bi-articulaire (la hanche reste fléchie et fixe), ce qui limite l'insuffisance active du droit fémoral et peut permettre de le cibler à une longueur différente de celle atteinte en squat — logique biomécanique déjà établie en 1.8, niveau modéré.",
+              "text": "Leg extension. Exercice mono-articulaire isolant le quadriceps sans intervention du droit fémoral en configuration bi-articulaire (la hanche reste fléchie et fixe), ce qui limite l'insuffisance active du droit fémoral et peut permettre de le cibler à une longueur différente de celle atteinte en squat — logique biomécanique établie plus haut dans cette fiche, niveau modéré.",
               "claimIds": [
                 "claim.51dce1ca6d569d5a",
                 "claim.1ccb2ede09b6a567",
@@ -4900,7 +4897,7 @@
             },
             {
               "blockId": "muscle-shoulders-2-b2",
-              "text": "Sur le plan fonctionnel : le faisceau antérieur réalise la flexion et la rotation interne de l'épaule et contribue à l'adduction horizontale ; le faisceau latéral est le moteur principal de l'abduction pure ; le faisceau postérieur réalise l'extension, la rotation externe et l'adduction horizontale (rôle de stabilisateur de trajectoire documenté aussi en développé militaire, section 5.4).",
+              "text": "Sur le plan fonctionnel : le faisceau antérieur réalise la flexion et la rotation interne de l'épaule et contribue à l'adduction horizontale ; le faisceau latéral est le moteur principal de l'abduction pure ; le faisceau postérieur réalise l'extension, la rotation externe et l'adduction horizontale (rôle de stabilisateur de trajectoire documenté aussi en développé militaire).",
               "claimIds": [
                 "claim.1bba546622be8e9a",
                 "claim.d3d2b10fa0a4007c",
@@ -4929,7 +4926,7 @@
           "blocks": [
             {
               "blockId": "muscle-shoulders-3-b1",
-              "text": "Overhead press (barre, machine, devant/derrière la nuque). Une étude EMG comparant développé militaire barbell et machine, devant et derrière la nuque, trouve que le développé derrière la nuque (back) augmente l'excitation du deltoïde médial et postérieur par rapport au développé devant (front), qui favorise davantage le grand pectoral ; la barre libre excite globalement plus les muscles que la machine, cohérent avec une demande de stabilisation accrue (Front vs Back and Barbell vs Machine Overhead Press, EMG) — preuve EMG, niveau modéré, avec l'avertissement que l'EMG ne prouve pas une hypertrophie différentielle correspondante (principe de la section 0.1).",
+              "text": "Overhead press (barre, machine, devant/derrière la nuque). Une étude EMG comparant développé militaire barbell et machine, devant et derrière la nuque, trouve que le développé derrière la nuque (back) augmente l'excitation du deltoïde médial et postérieur par rapport au développé devant (front), qui favorise davantage le grand pectoral ; la barre libre excite globalement plus les muscles que la machine, cohérent avec une demande de stabilisation accrue (Front vs Back and Barbell vs Machine Overhead Press, EMG) — preuve EMG, niveau modéré, avec l'avertissement que l'EMG ne prouve pas une hypertrophie différentielle correspondante (principe rappelé dans « Lire une preuve d’entraînement »).",
               "claimIds": [
                 "claim.bad9288d776b8779"
               ],
@@ -4950,7 +4947,7 @@
             },
             {
               "blockId": "muscle-shoulders-3-b3",
-              "text": "Le câble permet de maintenir une tension en position basse (bras le long du corps, deltoïde raccourci) où l'haltère perd sa résistance gravitationnelle — différence de profil de résistance cohérente avec la section 2.3.",
+              "text": "Le câble permet de maintenir une tension en position basse (bras le long du corps, deltoïde raccourci) où l'haltère perd sa résistance gravitationnelle — différence de profil de résistance cohérente avec « Profils de résistance ».",
               "claimIds": [
                 "claim.ce2b4e54b6debaf2",
                 "claim.997d675875be1fe1"
@@ -5202,7 +5199,7 @@
           "blocks": [
             {
               "blockId": "muscle-triceps-3-b1",
-              "text": "Pushdown, overhead extension, skull crusher, machine, dips, presses. Le principe central déjà établi en section 1.6 organise cette famille : les exercices plaçant l'épaule en flexion complète (overhead extension, skull crusher incliné bras verticaux) étirent le chef long et produisent une hypertrophie de ce chef supérieure aux exercices bras le long du corps ou en légère extension d'épaule (pushdown, kickback) (Nunes et al., 2022).",
+              "text": "Pushdown, overhead extension, skull crusher, machine, dips, presses. Le principe central établi plus haut dans cette fiche organise cette famille : les exercices plaçant l'épaule en flexion complète (overhead extension, skull crusher incliné bras verticaux) étirent le chef long et produisent une hypertrophie de ce chef supérieure aux exercices bras le long du corps ou en légère extension d'épaule (pushdown, kickback) (Nunes et al., 2022).",
               "claimIds": [
                 "claim.4370b01be93db29f",
                 "claim.02ced8a097b22d78"

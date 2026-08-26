@@ -11,7 +11,7 @@ Le corpus ne consacre aucune section aux fentes : il décrit les actions de la h
 ## Muscles qui produisent le mouvement
 
 <!-- factual: claim.9f6e03a416e99efe, claim.44f1c168e713c4c3 | roles: quads -->
-L’extension du genou est portée par les vastes et le droit fémoral, comme dans toute flexion de genou chargée.
+L’extension du genou de la jambe avant est portée par les vastes et le droit fémoral, comme dans tout appui chargé.
 
 <!-- factual: claim.ef6482f8bd33b70c, claim.713ba4e4ebb08753 | roles: glutes -->
 L’extension de hanche de la jambe avant est portée par le grand fessier.

@@ -11,7 +11,7 @@ Le squat fléchit la hanche et le genou en même temps, ce qui sollicite ensembl
 ## Muscles qui produisent le mouvement
 
 <!-- factual: claim.9f6e03a416e99efe, claim.44f1c168e713c4c3 | roles: quads -->
-Les trois vastes étendent le genou et le droit fémoral traverse aussi la hanche : le quadriceps est le groupe le plus directement engagé par la flexion de genou.
+Les trois vastes étendent le genou et le droit fémoral traverse aussi la hanche : le quadriceps porte l’extension du genou, que le squat charge directement.
 
 <!-- factual: claim.ef6482f8bd33b70c, claim.713ba4e4ebb08753 | roles: glutes -->
 Le grand fessier est le principal extenseur de la hanche, action qui remonte le bassin depuis la position basse.
