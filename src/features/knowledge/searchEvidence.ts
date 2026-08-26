@@ -1,5 +1,7 @@
 import indexDocument from './evidence-index.json';
 import { normalizeGymTerm } from './frenchGymVocabulary';
+import { programmingSearchEntries } from './programmingIndex';
+import { findSectionIdForClaim } from './wikiIndex';
 
 export type EpistemicStatus =
   | 'absence_of_evidence'
@@ -35,6 +37,14 @@ type EvidenceIndex = {
 export type EvidenceCandidate = EvidenceRecord & {
   matchedTerms: string[];
   score: number;
+  /**
+   * D'où vient le passage. Les deux familles se classent dans le même palmarès
+   * — c'est le but, une seule recherche — mais elles ne mènent pas au même
+   * écran et n'ont pas le même statut de relecture.
+   */
+  kind: 'claim' | 'programming';
+  /** Section de destination du lien « lire dans sa section ». */
+  sectionId: string | undefined;
 };
 
 export type EvidenceSearchOutcome =
@@ -117,15 +127,65 @@ const TITLE_WEIGHT = 3;
 const QUOTE_WEIGHT = 1;
 const CONTEXT_WEIGHT = 1;
 
-function weightedDocument(claim: EvidenceRecord): string[] {
+function weightedDocument(entry: {
+  sourceTitle: string;
+  rawQuote: string;
+  retrievalText: string;
+}): string[] {
   const parts: string[] = [];
-  for (let index = 0; index < TITLE_WEIGHT; index += 1) parts.push(claim.sourceTitle);
-  for (let index = 0; index < QUOTE_WEIGHT; index += 1) parts.push(claim.rawQuote);
-  for (let index = 0; index < CONTEXT_WEIGHT; index += 1) parts.push(claim.displayContext);
+  for (let index = 0; index < TITLE_WEIGHT; index += 1) parts.push(entry.sourceTitle);
+  for (let index = 0; index < QUOTE_WEIGHT; index += 1) parts.push(entry.rawQuote);
+  for (let index = 0; index < CONTEXT_WEIGHT; index += 1) parts.push(entry.retrievalText);
   return tokenizeEvidenceText(parts.join(' '));
 }
 
-const documents = evidenceIndex.claims.map(weightedDocument);
+type SearchableEntry = EvidenceRecord & {
+  kind: 'claim' | 'programming';
+  sectionId: string | undefined;
+};
+
+/**
+ * Un seul palmarès pour deux familles de contenu.
+ *
+ * La prose vient de l'extraction E5 ; les fiches de programmation viennent des
+ * tableaux de F1, extraits déterministiquement à l'étage E1. Les chercher
+ * séparément obligerait le lecteur à deviner dans quel silo se trouve sa
+ * réponse — or « combien de séries par semaine » et « le rowing appuyé enlève
+ * quoi » sont la même question pour lui : où est-ce écrit ?
+ *
+ * Les fiches n'ont pas de statut épistémique : leur niveau de confiance est un
+ * champ du tableau, affiché dans la fiche, pas une étiquette du corpus E5. Le
+ * laisser à `null` évite de fabriquer une équivalence entre deux échelles.
+ */
+const programmingEntries: SearchableEntry[] = programmingSearchEntries.map((row) => ({
+  kind: 'programming',
+  sectionId: row.sectionId,
+  claimId: row.rowId,
+  fragmentId: row.rowId,
+  sourceTitle: row.sourceTitle,
+  rawQuote: row.affirmation,
+  rawContext: row.displayText,
+  displayContext: row.displayText,
+  // Ce que la recherche voit : les valeurs, sans les libellés de colonnes.
+  retrievalText: row.searchText,
+  epistemicStatus: null,
+  knowledgeType: null,
+  citationCount: 0,
+  sourceHash: '',
+  supportStartByte: row.startByte,
+  supportEndByte: row.endByte,
+}));
+
+const searchable: SearchableEntry[] = [
+  ...evidenceIndex.claims.map((claim) => ({
+    ...claim,
+    kind: 'claim' as const,
+    sectionId: findSectionIdForClaim(claim.claimId),
+  })),
+  ...programmingEntries,
+];
+
+const documents = searchable.map(weightedDocument);
 const documentFrequency = new Map<string, number>();
 for (const tokens of documents) {
   for (const token of new Set(tokens)) {
@@ -163,10 +223,15 @@ export function searchEvidence(query: string, limit = 8): EvidenceSearchOutcome 
       return { index, matchedTerms, score };
     })
     .filter((candidate) => candidate.score > 0)
+    // Le score BM25 tient déjà compte de la couverture des termes, puisqu'il les
+    // somme. Trier d'abord par *nombre* de termes appariés favorisait
+    // structurellement les documents longs : une fiche de programmation est un
+    // bloc multi-champs, elle touche mécaniquement plus de termes distincts
+    // qu'une phrase, et passait devant sans être plus pertinente.
     .sort(
       (left, right) =>
-        right.matchedTerms.length - left.matchedTerms.length ||
         right.score - left.score ||
+        right.matchedTerms.length - left.matchedTerms.length ||
         left.index - right.index,
     );
 
@@ -179,18 +244,48 @@ export function searchEvidence(query: string, limit = 8): EvidenceSearchOutcome 
   // résultats étaient le même passage découpé à trois endroits. Le chevauchement
   // dans un sens ou dans l'autre vaut donc doublon, et le premier arrivé gagne :
   // il a le meilleur score.
-  const selectedContexts: string[] = [];
+  // Les deux familles ne se classent pas équitablement dans un même palmarès.
+  // Une fiche de programmation est un bloc multi-champs long et dense en
+  // vocabulaire d'entraînement ; une affirmation E5 est une phrase. La
+  // normalisation de longueur de BM25 ne les égalise pas, et les fiches
+  // évinçaient de bonnes réponses avec du hors-sujet — « bras longs au développé
+  // couché » ramenait une fiche sur les séries de 1 à 3 répétitions, et « bonne
+  // technique » en ramenait cinq sur le sommeil et les temps de repos. Mesuré :
+  // rappel@8 28/31 sans elles, 26/31 sans plafond, 28/31 avec ce plafond.
+  //
+  // Deux places EN PLUS, jamais prises sur les autres. Un plafond qui retire des
+  // places coûtait encore deux questions au banc : la bonne réponse tombait au
+  // rang 9. Les fiches ne sont pas des concurrentes des affirmations, elles sont
+  // du matériel supplémentaire — les faire payer leur présence n'a pas de sens.
+  // L'ordre global par score reste intact : une fiche qui domine la requête sort
+  // première, mais elles ne peuvent jamais prendre la page.
+  const PROGRAMMING_SLOTS = 2;
+  let programmingTaken = 0;
+  let claimsTaken = 0;
+  const selectedContexts: { kind: 'claim' | 'programming'; text: string }[] = [];
   const selected: EvidenceCandidate[] = [];
   for (const candidate of candidates) {
-    const claim = evidenceIndex.claims[candidate.index];
+    const claim = searchable[candidate.index];
     if (!claim) continue;
+    if (claim.kind === 'programming' && programmingTaken === PROGRAMMING_SLOTS) continue;
+    if (claim.kind === 'claim' && claimsTaken === limit) continue;
+    // La déduplication ne vaut qu'à l'intérieur d'une même famille. Elle existe
+    // parce que les affirmations E5 partagent des contextes projetés ; une fiche
+    // de programmation et une affirmation ne sont jamais deux découpes du même
+    // passage, et un chevauchement de texte entre elles est une coïncidence. Le
+    // faire compter écartait de bonnes affirmations dès qu'une fiche longue les
+    // contenait par hasard.
     const overlaps = selectedContexts.some(
-      (context) => context.includes(claim.displayContext) || claim.displayContext.includes(context),
+      (entry) =>
+        entry.kind === claim.kind &&
+        (entry.text.includes(claim.displayContext) || claim.displayContext.includes(entry.text)),
     );
     if (overlaps) continue;
-    selectedContexts.push(claim.displayContext);
+    selectedContexts.push({ kind: claim.kind, text: claim.displayContext });
     selected.push({ ...claim, matchedTerms: candidate.matchedTerms, score: candidate.score });
-    if (selected.length === limit) break;
+    if (claim.kind === 'programming') programmingTaken += 1;
+    else claimsTaken += 1;
+    if (claimsTaken === limit && programmingTaken === PROGRAMMING_SLOTS) break;
   }
 
   return { kind: 'EVIDENCE_CANDIDATES', candidates: selected };

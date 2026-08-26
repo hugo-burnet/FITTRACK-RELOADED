@@ -4,7 +4,6 @@ import { Screen } from '@/app/Screen';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { Button } from '@/ui';
 import { WikiBrowse } from './WikiBrowse';
-import { findSectionIdForClaim } from './wikiIndex';
 import {
   evidenceIndexStatus,
   searchEvidence,
@@ -49,7 +48,11 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
   const quoteIsRedundant = stripEmphasis(evidence.displayContext).includes(
     stripEmphasis(evidence.rawQuote),
   );
-  const sectionId = findSectionIdForClaim(evidence.claimId);
+  const isProgramming = evidence.kind === 'programming';
+  const sectionHref =
+    evidence.sectionId === undefined
+      ? undefined
+      : `/knowledge/${isProgramming ? 'p' : 's'}/${evidence.sectionId}`;
 
   return (
     <article className="relative overflow-hidden rounded-2xl bg-[var(--surface-1)] pl-1">
@@ -63,6 +66,14 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
           <p className="label-xs font-semibold text-[var(--accent-ink)]">
             {t('knowledge.proofNumber', { rank })}
           </p>
+          {/* Une fiche de programmation porte « non relu » à la place du statut
+              épistémique : son niveau de confiance est un champ du tableau,
+              affiché dans la fiche, et non une étiquette de l'échelle E5. */}
+          {isProgramming && (
+            <p className="label-xs text-right font-semibold text-[var(--text-2)]">
+              {t('knowledge.programming.unreviewedLabel')}
+            </p>
+          )}
           {/* Un statut absent n'a rien à annoncer. « Cadre non qualifié »
               sortait sur presque chaque carte : du bruit, pas du sens. */}
           {evidence.epistemicStatus !== null && (
@@ -95,9 +106,9 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
           </p>
           {/* Un extrait seul ne dit pas ce qu'il y avait autour. Ce lien est la
               différence entre une recherche et un corpus qu'on peut lire. */}
-          {sectionId !== undefined && (
+          {sectionHref !== undefined && (
             <Link
-              to={`/knowledge/s/${sectionId}`}
+              to={sectionHref}
               className="mt-4 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
             >
               {t('knowledge.wiki.readInSection')}

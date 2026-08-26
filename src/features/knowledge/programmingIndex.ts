@@ -77,3 +77,49 @@ const byId = new Map(built.map((section) => [section.sectionId, section]));
 export function findProgrammingSection(sectionId: string): ProgrammingSection | undefined {
   return byId.get(sectionId);
 }
+
+export type ProgrammingSearchEntry = {
+  rowId: string;
+  sectionId: string;
+  /** Titre de section, pesé comme le chemin de titres des affirmations E5. */
+  sourceTitle: string;
+  /** L'affirmation principale : la phrase que la fiche défend. */
+  affirmation: string;
+  /** Les valeurs des champs, pour la recherche. */
+  searchText: string;
+  /** Les champs libellés, pour l'affichage d'un résultat. */
+  displayText: string;
+  startByte: number;
+  endByte: number;
+};
+
+/**
+ * Les fiches rendues cherchables au même titre que la prose.
+ *
+ * Sans ça, elles n'existaient que pour qui pensait à ouvrir l'écran
+ * Programmation : chercher « combien de séries par semaine » renvoyait du bruit
+ * alors que la réponse était dans l'app. Une page qu'on ne trouve pas ne vaut
+ * pas mieux qu'une page absente.
+ *
+ * Les 26 lignes bibliographiques sont exclues : chercher un DOI n'est pas une
+ * question de pratiquant, et elles diluerait les fiches.
+ */
+export const programmingSearchEntries: readonly ProgrammingSearchEntry[] = built.flatMap(
+  (section) =>
+    section.rows
+      .filter((row) => !row.isBibliography)
+      .map((row) => ({
+        rowId: row.rowId,
+        sectionId: section.sectionId,
+        sourceTitle: `${programmingTitle} › ${section.title}`,
+        affirmation: row.fields[0]?.value ?? '',
+        // Les libellés de colonnes — « Confiance », « Limites », « Population »
+        // — sont de la structure, pas du contenu. Les indexer faisait remonter
+        // une fiche sur presque n'importe quelle question et coûtait trois
+        // bonnes réponses au banc : rappel@8 28/31 -> 25/31.
+        searchText: row.fields.map((field) => field.value).join('. '),
+        displayText: row.fields.map((field) => `${field.label} : ${field.value}`).join('. '),
+        startByte: row.startByte,
+        endByte: row.endByte,
+      })),
+);

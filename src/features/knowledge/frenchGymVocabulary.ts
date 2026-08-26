@@ -58,6 +58,17 @@ const ALIASES: Readonly<Record<string, string>> = {
   sent: 'sensation',
   sentir: 'sensation',
   ressenti: 'sensation',
+  // Vocabulaire de programmation. Le document F1 écrit « excentrique » et
+  // « concentrique » là où on demande « la descente » et « la montée » — sans ce
+  // repli, « combien de secondes sur la descente » ne trouvait pas la section
+  // Tempo, alors qu'elle répond exactement à la question.
+  descente: 'excentrique',
+  descendre: 'excentrique',
+  negative: 'excentrique',
+  monte: 'concentrique',
+  montee: 'concentrique',
+  decharge: 'deload',
+  seche: 'deload',
 };
 
 /**
