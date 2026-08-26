@@ -22,6 +22,8 @@ const fr = {
     undoDelete: 'Annuler la suppression de {reading}',
     unlockExerciseOrder: 'Déverrouiller l’ordre des exercices',
     lockExerciseOrder: 'Verrouiller l’ordre des exercices',
+    unlockRoutineOrder: 'Déverrouiller l’ordre des routines',
+    lockRoutineOrder: 'Verrouiller l’ordre des routines',
   },
 
   nav: {

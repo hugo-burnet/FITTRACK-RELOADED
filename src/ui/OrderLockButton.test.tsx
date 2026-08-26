@@ -19,4 +19,19 @@ describe('OrderLockButton', () => {
     fireEvent.click(button);
     expect(onToggle).toHaveBeenCalledOnce();
   });
+
+  it('emprunte les libellés de la surface qui l’emploie', () => {
+    render(
+      <OrderLockButton
+        unlocked={false}
+        onToggle={vi.fn()}
+        unlockLabel="Déverrouiller l’ordre des routines"
+        lockLabel="Verrouiller l’ordre des routines"
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Déverrouiller l’ordre des routines' }),
+    ).toBeVisible();
+  });
 });
