@@ -33,12 +33,6 @@ export type WikiSection = {
   passages: WikiPassage[];
 };
 
-export type WikiDocument = {
-  documentId: string;
-  title: string;
-  sections: WikiSection[];
-};
-
 type IndexedClaim = {
   claimId: string;
   fragmentId: string;
@@ -163,33 +157,6 @@ for (const [sourceTitle, accumulated] of sectionAccumulator) {
     ),
   });
 }
-
-export const wikiSections: readonly WikiSection[] = builtSections;
-
-const documentAccumulator = new Map<string, WikiDocument>();
-for (const [sourceTitle, accumulated] of sectionAccumulator) {
-  const code = documentCode(accumulated.claim.fragmentId);
-  if (documentAccumulator.has(code)) continue;
-  documentAccumulator.set(code, {
-    documentId: code,
-    title: sourceTitle.split(HEADING_SEPARATOR)[0] ?? code,
-    sections: [],
-  });
-}
-
-for (const section of builtSections) {
-  documentAccumulator.get(section.documentId)?.sections.push(section);
-}
-
-// L'ordre de lecture est celui du document source, pas l'ordre alphabétique :
-// une section « 10. » doit suivre la « 9. » et non s'intercaler après la « 1. ».
-for (const document of documentAccumulator.values()) {
-  document.sections.sort(
-    (left, right) => (left.passages[0]?.startByte ?? 0) - (right.passages[0]?.startByte ?? 0),
-  );
-}
-
-export const wikiDocuments: readonly WikiDocument[] = [...documentAccumulator.values()];
 
 const sectionsById = new Map(builtSections.map((section) => [section.sectionId, section]));
 
