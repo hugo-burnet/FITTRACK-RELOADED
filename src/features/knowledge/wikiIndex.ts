@@ -24,6 +24,8 @@ export type WikiPassage = {
 export type WikiSection = {
   sectionId: string;
   documentId: string;
+  /** Titre du document source, pour situer une section dont le titre est seul. */
+  documentTitle: string;
   /** Dernier segment du chemin de titres : « 1.5 Biceps brachii et brachial ». */
   title: string;
   /** Le chemin complet sous le document, pour situer la section. */
@@ -76,6 +78,36 @@ function documentCode(fragmentId: string): string {
 }
 
 const claims = indexDocument.claims as IndexedClaim[];
+const claimOrder = new Map(claims.map((claim, index) => [claim.claimId, index]));
+
+/**
+ * Deux affirmations voisines projettent parfois des contextes **imbriqués** :
+ * l'une porte la phrase, l'autre le paragraphe qui la contient. Dédupliquer par
+ * égalité stricte ne les voit pas, et la page affiche alors deux fois le même
+ * texte à quelques lignes d'intervalle. Mesuré : 57 des 266 passages, sur 36
+ * sections des 64 — soit plus d'une page sur deux qui se répétait.
+ *
+ * On garde le passage le plus large et on lui rattache les ancrages de celui
+ * qu'il absorbe : aucune affirmation n'est perdue, elles sont juste citées à
+ * l'endroit où on les lit vraiment.
+ */
+function mergeNestedPassages(passages: WikiPassage[]): WikiPassage[] {
+  const widestFirst = [...passages].sort((left, right) => right.text.length - left.text.length);
+  const kept: WikiPassage[] = [];
+  for (const passage of widestFirst) {
+    const container = kept.find((candidate) => candidate.text.includes(passage.text));
+    if (container === undefined) {
+      kept.push(passage);
+      continue;
+    }
+    container.claimIds.push(...passage.claimIds);
+    container.startByte = Math.min(container.startByte, passage.startByte);
+  }
+  for (const passage of kept) {
+    passage.claimIds.sort((left, right) => claimOrder.get(left)! - claimOrder.get(right)!);
+  }
+  return kept;
+}
 
 // Regroupement par titre source, puis par contexte à l'intérieur. L'ordre
 // d'insertion suit l'ordre du corpus, ce qui sert de départage stable partout
@@ -123,9 +155,10 @@ for (const [sourceTitle, accumulated] of sectionAccumulator) {
   builtSections.push({
     sectionId,
     documentId: code,
+    documentTitle: segments[0] ?? code,
     title,
     headingPath,
-    passages: [...accumulated.passages.values()].sort(
+    passages: mergeNestedPassages([...accumulated.passages.values()]).sort(
       (left, right) => left.startByte - right.startByte,
     ),
   });
@@ -162,4 +195,18 @@ const sectionsById = new Map(builtSections.map((section) => [section.sectionId, 
 
 export function findWikiSection(sectionId: string): WikiSection | undefined {
   return sectionsById.get(sectionId);
+}
+
+// Une affirmation retrouvée par la recherche doit pouvoir atterrir dans sa
+// section plutôt que de flotter seule : c'est la différence entre un extrait et
+// une page qu'on peut lire autour.
+const sectionIdByClaimId = new Map<string, string>();
+for (const section of builtSections) {
+  for (const passage of section.passages) {
+    for (const claimId of passage.claimIds) sectionIdByClaimId.set(claimId, section.sectionId);
+  }
+}
+
+export function findSectionIdForClaim(claimId: string): string | undefined {
+  return sectionIdByClaimId.get(claimId);
 }

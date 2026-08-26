@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import indexDocument from './evidence-index.json';
-import { findWikiSection, wikiDocuments, wikiSections } from './wikiIndex';
+import {
+  findSectionIdForClaim,
+  findWikiSection,
+  wikiDocuments,
+  wikiSections,
+} from './wikiIndex';
 
 describe('wikiIndex', () => {
   it('dérive les deux documents du corpus', () => {
@@ -42,12 +47,35 @@ describe('wikiIndex', () => {
     expect(claimIds).toHaveLength(indexDocument.claims.length);
   });
 
-  it('replie les 408 affirmations sur les 266 passages réellement distincts', () => {
+  it('replie les 408 affirmations sur les 209 passages réellement distincts', () => {
     const passages = wikiSections.flatMap((section) => section.passages);
-    expect(passages).toHaveLength(266);
+    expect(passages).toHaveLength(209);
     // Un passage cité deux fois dans une page se lirait comme un bégaiement.
     const texts = passages.map((passage) => passage.text);
     expect(new Set(texts).size).toBe(texts.length);
+  });
+
+  it('n’affiche jamais un passage déjà contenu dans un autre de la même page', () => {
+    // La déduplication par égalité stricte laissait passer les contextes
+    // imbriqués — l'un porte la phrase, l'autre le paragraphe qui la contient.
+    // 57 des 266 passages étaient dans ce cas, sur 36 sections des 64.
+    for (const section of wikiSections) {
+      for (const passage of section.passages) {
+        const swallowed = section.passages.some(
+          (other) => other !== passage && other.text.includes(passage.text),
+        );
+        expect(swallowed, `${section.sectionId} : « ${passage.text.slice(0, 50)}… »`).toBe(false);
+      }
+    }
+  });
+
+  it('situe chaque section par le titre de son document', () => {
+    for (const section of wikiSections) {
+      expect(section.documentTitle.length).toBeGreaterThan(10);
+      // Le titre du document n'est jamais le titre de la section : sinon le
+      // sous-titre de l'écran répéterait mot pour mot son titre.
+      expect(section.documentTitle).not.toBe(section.title);
+    }
   });
 
   it('donne des identifiants de section uniques et utilisables dans une URL', () => {
@@ -78,6 +106,15 @@ describe('wikiIndex', () => {
     const texts = new Set(wikiSections.flatMap((s) => s.passages.map((p) => p.text)));
     expect(texts.has(fragment!.rawQuote)).toBe(false);
     expect([...texts].some((text) => text.includes(fragment!.rawQuote))).toBe(true);
+  });
+
+  it('ramène chaque affirmation à sa section, sans exception', () => {
+    // Un résultat de recherche qui ne retrouve pas sa section resterait un
+    // extrait flottant, et le wiki n'aurait rien ajouté à la recherche seule.
+    for (const claim of indexDocument.claims) {
+      expect(findSectionIdForClaim(claim.claimId), claim.claimId).toBeDefined();
+    }
+    expect(findSectionIdForClaim('claim.inexistant')).toBeUndefined();
   });
 
   it('retrouve une section par son identifiant, et rien par un identifiant inconnu', () => {
