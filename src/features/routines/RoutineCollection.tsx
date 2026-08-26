@@ -125,11 +125,17 @@ function RoutineRow({
         </button>
       )}
 
+      {/* Le retrait à gauche est celui de la poignée quand elle est là. Sans
+          elle — c'est-à-dire dans l'état verrouillé, qui est le défaut — rien ne
+          décollait plus le libellé du bord de la carte : `pl-4` le remplace, au
+          lieu d'un retrait permanent qui décalerait deux fois le texte lorsque
+          la poignée revient. La zone de pression continue d'atteindre le bord. */}
       <button
         type="button"
         onClick={() => onIntent({ kind: 'openRoutine', routine })}
-        className="flex min-h-16 min-w-0 flex-1 flex-col justify-center gap-1 py-3 text-left
-          transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
+        className={`flex min-h-16 min-w-0 flex-1 flex-col justify-center gap-1 py-3 text-left
+          transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
+          ${draggable ? '' : 'pl-4'}`}
       >
         <span className="truncate text-base text-[var(--text-1)]">{routine.name}</span>
         {subtitle !== undefined && subtitle !== '' && (
