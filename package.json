@@ -25,7 +25,10 @@
     "kb:benchmark:lexical": "node scripts/run-selective-lexical-baseline.mjs",
     "kb:benchmark:hybrid": "node scripts/run-selective-hybrid-benchmark.mjs",
     "kb:build-wiki-questions": "node scripts/build-wiki-questions.mjs",
-    "kb:build-f1-programming": "node scripts/build-f1-programming.mjs"
+    "kb:build-f1-programming": "node scripts/build-f1-programming.mjs",
+    "kb:build-articles": "node scripts/build-wiki-articles.mjs --write",
+    "kb:check-articles": "node scripts/build-wiki-articles.mjs --check",
+    "kb:test:editorial": "npm --prefix fittrack-kb-contract run test:editorial"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.0",
