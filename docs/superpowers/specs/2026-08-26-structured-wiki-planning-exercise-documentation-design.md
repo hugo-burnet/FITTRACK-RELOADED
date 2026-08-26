@@ -1,7 +1,7 @@
 # Wiki structuré, documentation des exercices et espace Planifier
 
 **Date :** 2026-08-26
-**Statut :** conception validée en conversation, en attente de relecture écrite
+**Statut :** conception écrite validée par l’utilisateur le 2026-08-26
 **Branche :** `claude/task-7-complete-06d6ff`
 
 ## 1. Contexte et décision produit
