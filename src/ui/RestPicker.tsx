@@ -126,8 +126,14 @@ export function RestPicker({
 
       {/* On its own line: it is a mode ("inherit"), not another duration, and the
           gap keeps it from reading as a sixth value chip. */}
-      <div className="mt-2 flex">
-        <Chip label={clearLabel} active={!isSet} onClick={() => onChange(undefined)} />
+      <div className="mt-2">
+        <Chip
+          label={clearLabel}
+          active={!isSet}
+          fill
+          quietActive
+          onClick={() => onChange(undefined)}
+        />
       </div>
     </div>
   );
@@ -144,6 +150,7 @@ function Chip({
   active,
   numeric = false,
   fill = false,
+  quietActive = false,
   onClick,
 }: {
   label: string;
@@ -151,8 +158,14 @@ function Chip({
   numeric?: boolean;
   /** Stretch to the grid cell (presets) rather than hug the label (clear chip). */
   fill?: boolean;
+  /** A selected mode stays subordinate to the numeric choices and primary action. */
+  quietActive?: boolean;
   onClick: () => void;
 }) {
+  const activeClass = quietActive
+    ? 'bg-[var(--accent-soft)] text-[var(--accent-ink)]'
+    : 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]';
+
   return (
     <button
       type="button"
@@ -162,9 +175,7 @@ function Chip({
         duration-[var(--dur-1)] ease-[var(--ease-mech)] ${fill ? 'w-full px-1' : 'px-4'} ${
           numeric ? 'metric' : ''
         } ${
-          active
-            ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-            : 'bg-[var(--surface-2)] text-[var(--text-1)]'
+          active ? activeClass : 'bg-[var(--surface-2)] text-[var(--text-1)]'
         }`}
     >
       {label}

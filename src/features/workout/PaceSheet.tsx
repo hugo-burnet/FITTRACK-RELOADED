@@ -178,27 +178,28 @@ export function PaceSheet({ open, onClose, view, onChange, onSetDefault, onStart
               : t(view.running ? 'workout.paceStop' : 'workout.pace')}
           </Button>
 
-          {/* The preference, one tap away from the value already chosen: setting
-              a tempo once and having every other exercise follow is the whole
-              of "easy to configure". Lit while the two already agree. */}
+          {/* The preference belongs with its explanation, one quiet level below
+              the primary action. It spans the same axis as the controls above
+              instead of looking like a sixth preset dropped on the left. */}
           {view.kind === 'reps' && (
-            <button
-              type="button"
-              aria-pressed={view.defaultRepSeconds === repSeconds}
-              onClick={() => onSetDefault(repSeconds)}
-              className={`min-h-12 self-start rounded-xl px-4 text-base font-semibold
-              transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
-                view.defaultRepSeconds === repSeconds
-                  ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                  : 'bg-[var(--surface-2)] text-[var(--text-1)]'
-              }`}
-            >
-              {t('workout.paceSetDefault')}
-            </button>
-          )}
-
-          {view.kind === 'reps' && (
-            <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('workout.paceHelp')}</p>
+            <div className="mt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                aria-pressed={view.defaultRepSeconds === repSeconds}
+                onClick={() => onSetDefault(repSeconds)}
+                className={`min-h-12 w-full rounded-xl px-4 text-base font-semibold
+                transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
+                  view.defaultRepSeconds === repSeconds
+                    ? 'bg-[var(--accent-soft)] text-[var(--accent-ink)]'
+                    : 'bg-[var(--surface-2)] text-[var(--text-1)]'
+                }`}
+              >
+                {t('workout.paceSetDefault')}
+              </button>
+              <p className="text-sm leading-relaxed text-[var(--text-2)]">
+                {t('workout.paceHelp')}
+              </p>
+            </div>
           )}
         </div>
       )}
