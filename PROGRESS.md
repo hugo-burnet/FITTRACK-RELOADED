@@ -2,7 +2,10 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-26 (**reprise UI Routines, Wiki et coach en séance** : les
+**Dernière mise à jour :** 2026-08-27 (**reprise de lecture après retours téléphone** : libellé de
+routine décollé du bord de sa carte, commande d'une observation coach rendue lisible, et hiérarchie
+de lecture des articles wiki. Voir la section v2.1.0 ci-dessous — **checkpoint téléphone à
+faire**). Plus tôt (**reprise UI Routines, Wiki et coach en séance** : les
 commandes de la bibliothèque suivent désormais les motifs existants, les articles ont été allégés
 et le coach exige une action explicite avant d'appliquer une charge. Voir la section dédiée
 ci-dessous — **checkpoint téléphone à faire**). Plus tôt le même jour (**wiki structuré relu,
@@ -71,6 +74,43 @@ et l'action de lancement. Ce contrôle sur poste ne remplace pas le checkpoint t
 5. Ouvrir Cadence puis Tes réglages : vérifier que « Par défaut partout » et « Aucun » ne flottent
    plus seuls à gauche et restent visuellement secondaires face à « Lancer la cadence » et
    « Terminé ».
+
+## Reprise de lecture, après retours téléphone (v2.1.0)
+
+Trois défauts trouvés par Hugo sur l'APK v2.0.1, tous d'affichage, aucun de comportement.
+
+- **Carte de routine** : le libellé était collé au bord. Le retrait n'avait jamais été déclaré —
+  il venait de la poignée de glissement, qui n'est plus rendue depuis que la bibliothèque est
+  verrouillée par défaut. `pl-4` ne s'applique donc que sans poignée.
+- **Observation coach** : « Masquer », seule, flottait à droite en texte gris dans 48 px
+  transparents. Elle prend sa rangée et le trait de `--border` — un fond `secondary` disparaîtrait
+  sur le bandeau `--surface-2`. Même principe que « Aucun » et « Par défaut partout ».
+- **Article wiki** : neuf champs au même poids typographique rendaient un article exact illisible.
+  L'affirmation mène désormais (18/32), « Interprétation pratique » passe sur `--accent-soft`, les
+  quatre champs de provenance rejoignent le repli « Sources » et les énumérations en points-virgules
+  deviennent des listes. Rien n'est retiré du document : la traçabilité une par une est intacte, et
+  une fiche de publication — qui *est* sa provenance — est épargnée par la réorganisation.
+
+### Vérifié au navigateur, sur le serveur de développement
+
+Mesuré à 375 puis 320 px, sur une routine réellement créée par l'interface : retrait de 16 px
+verrouillé, 44 px déverrouillé par la poignée, jamais les deux ; article « Volume » sans débordement
+horizontal, replis à 48 px, 66 puces là où il y avait des murs de points-virgules.
+
+**La carte Coach n'a pas pu être atteinte au navigateur** : elle demande une séance active dont
+l'historique produit un signal. Sa géométrie est celle, déjà mesurée deux fois, de `fullWidth` —
+mais c'est le checkpoint 2 ci-dessous qui la tranche.
+
+### CHECKPOINT MANUEL — à faire sur le téléphone
+
+1. Planifier → Routines, bibliothèque verrouillée : le nom d'une routine n'est plus collé au bord.
+   Déverrouiller et vérifier que le texte ne se décale pas deux fois.
+2. En séance, sur une observation sans charge : « Masquer » se lit comme un bouton, occupe sa rangée
+   et ne laisse plus de vide à sa gauche.
+3. Ouvrir l'article « Volume » : l'affirmation saute aux yeux, l'interprétation pratique se
+   distingue, les limites se lisent en liste, et « Sources » contient bien Confiance, Population,
+   Type de preuve et Sources principales.
+4. Ouvrir une page « Publications majeures » : ses champs sont restés dépliés et complets.
 
 ## Relecture du corpus, et ce qui a été ajouté après
 
