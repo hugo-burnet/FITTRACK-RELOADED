@@ -22,7 +22,11 @@ import { ExercisesScreen } from './features/exercises/ExercisesScreen';
 import { HistoryDetailScreen } from './features/history/HistoryDetailScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
-import { KnowledgeRoute } from './features/knowledge/routes';
+import {
+  KnowledgeRoute,
+  WikiQuestionsRoute,
+  WikiSectionRoute,
+} from './features/knowledge/routes';
 import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
 import { RoutineEditorScreen } from './features/routines/RoutineEditorScreen';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
@@ -75,6 +79,8 @@ export const router = createHashRouter([
       { path: 'exercises/:id/edit', element: <ExerciseFormScreen /> },
       { path: 'settings', element: <SettingsScreen /> },
       { path: 'knowledge', element: <KnowledgeRoute /> },
+      { path: 'knowledge/questions', element: <WikiQuestionsRoute /> },
+      { path: 'knowledge/s/:sectionId', element: <WikiSectionRoute /> },
       { path: 'settings/debug', element: <DebugRoute /> },
       { path: 'settings/about', element: <CreditsRoute /> },
     ],

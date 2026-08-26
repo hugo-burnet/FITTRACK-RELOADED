@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { Button } from '@/ui';
+import { WikiBrowse } from './WikiBrowse';
+import { findSectionIdForClaim } from './wikiIndex';
 import {
   evidenceIndexStatus,
   searchEvidence,
@@ -28,6 +30,7 @@ function statusLabel(status: EpistemicStatus | null): string {
 
 function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: number }) {
   const contextRepeatsQuote = evidence.displayContext === evidence.rawQuote;
+  const sectionId = findSectionIdForClaim(evidence.claimId);
 
   return (
     <article className="relative overflow-hidden rounded-2xl bg-[var(--surface-1)] pl-1">
@@ -67,6 +70,17 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
             {evidence.claimId} · {evidence.fragmentId} · {evidence.supportStartByte}–
             {evidence.supportEndByte}
           </p>
+          {/* Un extrait seul ne dit pas ce qu'il y avait autour. Ce lien est la
+              différence entre une recherche et un corpus qu'on peut lire. */}
+          {sectionId !== undefined && (
+            <Link
+              to={`/knowledge/s/${sectionId}`}
+              className="mt-4 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
+            >
+              {t('knowledge.wiki.readInSection')}
+              <span aria-hidden="true">→</span>
+            </Link>
+          )}
         </div>
       </div>
     </article>
@@ -175,6 +189,11 @@ export function KnowledgeScreen() {
         ) : (
           <SearchResult outcome={outcome} />
         )}
+
+        {/* Le sommaire vient après la recherche, pas avant : chercher est le
+            geste fréquent, parcourir celui qu'on fait quand on ne sait pas
+            encore quoi chercher. */}
+        <WikiBrowse />
 
         <section className="border-t border-[var(--border)] px-1 pt-5">
           <h2 className="label-xs font-semibold text-[var(--text-2)]">

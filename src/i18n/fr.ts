@@ -1279,6 +1279,38 @@ const fr = {
       refuted: 'Réfuté',
       uncertain: 'Incertain',
     },
+
+    /**
+     * Le wiki. L'écran de recherche répond à « où est-ce écrit ? » ; celui-ci
+     * répond à « qu'est-ce qu'il y a là-dedans ? ». Aucun libellé ne promet une
+     * réponse : on parcourt, on lit, on remonte à la source.
+     */
+    wiki: {
+      browseTitle: 'Parcourir le corpus',
+      browseIntro:
+        'Les documents embarqués, dans l’ordre où ils ont été écrits. Rien n’est rédigé ici : chaque passage vient d’un document source, à l’octet près.',
+      sectionCountOne: '{count} section',
+      sectionCountMany: '{count} sections',
+      passageCountOne: '{count} passage',
+      passageCountMany: '{count} passages',
+      backToBrowse: 'Sommaire',
+      notFoundTitle: 'Section introuvable',
+      notFoundBody:
+        'Cette adresse ne correspond à aucune section du corpus embarqué. Reviens au sommaire pour parcourir ce qui existe.',
+      passageNumber: 'Passage {rank}',
+      readInSection: 'Lire dans sa section',
+      questionsEntry: 'Partir d’une question',
+      questionsTitle: 'Questions',
+      questionsIntro:
+        'Des questions écrites par un pratiquant avant toute recherche. Elles sont classées selon ce que le corpus permet d’en faire, pas selon leur intérêt.',
+      coveredTitle: 'Ce que le corpus documente',
+      coveredIntro:
+        'Chaque question mène aux passages qui la concernent. À toi de lire et de juger : FitTrack ne conclut pas à ta place.',
+      uncoveredTitle: 'Ce que le corpus ne documente pas',
+      uncoveredIntro:
+        'Ces questions n’ont pas de réponse dans les documents embarqués. Elles sont listées plutôt que cachées : une page absente se dit, elle ne se devine pas.',
+      uncoveredBadge: 'Hors corpus',
+    },
   },
 
   settings: {
