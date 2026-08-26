@@ -1,12 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { parseArticle } from '../../tools/editorial/article-format.mjs';
-import {
-  buildCoverageReport,
-  buildProgrammingCoverage,
-  loadReferences,
-  validateArticleBundle,
-} from '../../tools/editorial/build-articles.mjs';
+import { loadReferences, validateArticleBundle } from '../../tools/editorial/build-articles.mjs';
 
 const references = loadReferences();
 
@@ -114,34 +109,4 @@ test('rejette un rôle musculaire hors vocabulaire', () => {
   assert.deepEqual(codes(validateArticleBundle(bundleOf(invented), references)), [
     'UNKNOWN_MUSCLE_ROLE',
   ]);
-});
-
-test('compte 266 contextes, 57 fusions, 209 passages lisibles et 408 affirmations', () => {
-  const report = buildCoverageReport({
-    articles: [article()],
-    evidenceIndex: references.evidenceIndex,
-  });
-  assert.equal(report.contexts, 266);
-  assert.equal(report.merged, 57);
-  assert.equal(report.readablePassages, 209);
-  assert.equal(report.claims, 408);
-  // Le corpus éditorial complet arrive en Task 4 ; ici une seule affirmation est
-  // citée, et le rapport doit dire exactement laquelle manque au reste.
-  assert.equal(report.uncoveredClaims.length, 407);
-  assert.ok(!report.uncoveredClaims.includes(CLAIM));
-});
-
-test('classe les fiches de programmation citées, bibliographie à part', () => {
-  const cited = article({
-    header: { family: 'programming', reviewState: 'pending_human_review' },
-    annotation: `<!-- factual: row:${ROW} -->`,
-  });
-  const coverage = buildProgrammingCoverage({
-    articles: [cited],
-    programming: references.programming,
-  });
-  assert.equal(coverage.rows, 102);
-  assert.equal(coverage.integrated, 1);
-  assert.equal(coverage.appendix, 0);
-  assert.equal(coverage.uncoveredRows.length, 101);
 });

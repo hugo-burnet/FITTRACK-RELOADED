@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run kb:check-articles",
     "build": "tsc -b && vite build",
     "build:android:web": "tsc -b && vite build --mode android",
     "android:sync": "npm run build:android:web && cap sync android",
