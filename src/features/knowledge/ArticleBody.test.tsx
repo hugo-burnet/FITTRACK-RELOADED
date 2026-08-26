@@ -40,6 +40,12 @@ const article: WikiArticle = {
           rowIds: ['row.test'],
         }),
         block('row-confidence', '**Confiance** : Élevée.', { rowIds: ['row.test'] }),
+        block('row-limits', '**Limites** : Courtes durées; peu de femmes; volumes rares.', {
+          rowIds: ['row.test'],
+        }),
+        block('row-practice', '**Interprétation pratique** : Augmenter graduellement.', {
+          rowIds: ['row.test'],
+        }),
       ],
     },
   ],
@@ -57,6 +63,27 @@ describe('ArticleBody', () => {
     expect(screen.getByText('claim.test.a')).toBeInTheDocument();
     expect(screen.getByText('claim.test.b')).toBeInTheDocument();
     expect(screen.getByText('row.test')).toBeInTheDocument();
+  });
+
+  it('replie la provenance d’une fiche de preuve sans la retirer du document', () => {
+    render(<ArticleBody article={article} />);
+
+    // Repliée, pas supprimée : la traçabilité une par une est la promesse du
+    // wiki, c'est le poids égal de neuf champs qui rendait l'article illisible.
+    const confidence = screen.getByText('Confiance');
+    expect(confidence.closest('details')).not.toBeNull();
+
+    // Une limite reste à la lecture, elle qualifie l'affirmation.
+    expect(screen.getByText('Limites').closest('details')).toBeNull();
+  });
+
+  it('rend une énumération en points-virgules comme une liste', () => {
+    render(<ArticleBody article={article} />);
+
+    const items = screen.getAllByRole('listitem').map((item) => item.textContent);
+    expect(items).toContain('Courtes durées');
+    expect(items).toContain('peu de femmes');
+    expect(items).toContain('volumes rares.');
   });
 
   it('regroupe les contenus factuels consécutifs sans avaler la prose éditoriale', () => {

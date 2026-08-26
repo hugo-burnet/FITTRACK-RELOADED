@@ -24,7 +24,63 @@ function splitField(text: string): { label: string; value: string } | null {
   return { label: text.slice(0, at), value: text.slice(at + 3) };
 }
 
-function Provenance({ sources }: { sources: readonly string[] }) {
+type Field = { label: string; value: string };
+
+/** L'en-tête d'une fiche de preuve, par opposition à une fiche de publication. */
+const CLAIM_FIELD = 'Affirmation principale';
+
+/**
+ * Les quatre champs qui disent d'où vient l'affirmation plutôt que ce qu'elle
+ * dit. Sur une fiche de preuve ils rejoignent le repli « Sources ».
+ *
+ * Défaut trouvé sur téléphone : neuf champs de même poids à la file, l'article
+ * devenait un mur où l'affirmation ne se distinguait plus de « Type de preuve ».
+ * Rien n'est supprimé — même DOM, un tap — parce que la traçabilité une par une
+ * est ce que ce wiki promet ; c'est la hiérarchie qui manquait, pas la matière.
+ */
+const PROVENANCE_FIELDS = new Set([
+  'Confiance',
+  'Population',
+  'Type de preuve',
+  'Sources principales',
+]);
+
+/** Le seul champ qui se traduit en geste sous la barre. */
+const PRACTICE_FIELD = 'Interprétation pratique';
+
+/**
+ * Les sources écrivent leurs énumérations en points-virgules. Rendues telles
+ * quelles, « Courtes durées; peu de femmes; volumes élevés rares » se lit comme
+ * une phrase qui n'en est pas une. Deux segments au minimum : en deçà, c'est une
+ * phrase qui contient un point-virgule, et la découper la casserait.
+ */
+function splitList(value: string): string[] | null {
+  const parts = value
+    .split(';')
+    .map((part) => part.trim())
+    .filter((part) => part !== '');
+  return parts.length >= 2 ? parts : null;
+}
+
+function FieldValue({ value, className }: { value: string; className: string }) {
+  const items = splitList(value);
+  if (items === null) return <p className={className}>{value}</p>;
+  return (
+    <ul className={`${className} list-disc space-y-1 pl-5 marker:text-[var(--text-2)]`}>
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+
+function Provenance({
+  sources,
+  fields = [],
+}: {
+  sources: readonly string[];
+  fields?: readonly Field[];
+}) {
   return (
     <details className="mt-4 border-t border-[var(--border)] pt-1">
       <summary
@@ -33,9 +89,20 @@ function Provenance({ sources }: { sources: readonly string[] }) {
       >
         {t('knowledge.article.sourcesLabel')}
       </summary>
-      <p className="record-figure break-words pb-3 text-xs leading-5 text-[var(--text-2)]">
-        {sources.join(' · ')}
-      </p>
+      <div className="space-y-3 pb-3">
+        {fields.map((field) => (
+          <div key={field.label}>
+            <p className="label-xs font-semibold text-[var(--text-2)]">{field.label}</p>
+            <FieldValue
+              value={field.value}
+              className="mt-1 text-sm leading-6 text-[var(--text-1)]"
+            />
+          </div>
+        ))}
+        <p className="record-figure break-words text-xs leading-5 text-[var(--text-2)]">
+          {sources.join(' · ')}
+        </p>
+      </div>
     </details>
   );
 }
@@ -62,23 +129,59 @@ function RowCard({ blocks }: { blocks: readonly WikiArticleBlock[] }) {
 
   if (head === undefined) return null;
 
+  // Une fiche de publication (« Publication : … ») n'a pas de provenance à
+  // replier : elle *est* la provenance. Lui appliquer la réorganisation d'une
+  // fiche de preuve viderait la carte de ce qui fait sa valeur — c'est le défaut
+  // que le commentaire ci-dessus raconte déjà, sous une autre forme.
+  const isClaim = head.label === CLAIM_FIELD;
+  const practice = isClaim ? rest.find((field) => field.label === PRACTICE_FIELD) : undefined;
+  const provenance = isClaim ? rest.filter((field) => PROVENANCE_FIELDS.has(field.label)) : [];
+  const caveats = rest.filter((field) => field !== practice && !provenance.includes(field));
+
   return (
     <article className="p-5">
-      <p className="label-xs font-semibold text-[var(--text-2)]">{head.label}</p>
-      <p className="mt-3 text-base leading-7 text-[var(--text-1)]">{head.value}</p>
+      {/* L'étiquette « Affirmation principale » se répète sur 55 articles et ne
+          dit rien que la première place et le corps ne disent déjà. Une fiche de
+          publication garde la sienne : « Publication » y identifie l'objet. */}
+      {!isClaim && <p className="label-xs font-semibold text-[var(--text-2)]">{head.label}</p>}
+      <p
+        className={`text-[var(--text-1)] ${
+          isClaim ? 'text-lg leading-8' : 'mt-3 text-base leading-7'
+        }`}
+      >
+        {head.value}
+      </p>
 
-      {rest.length > 0 && (
+      {/* Ce qu'on fait de l'affirmation, sur la surface qui veut déjà dire « à
+          retenir » ailleurs dans le Guide. C'est le seul champ qu'on lit une
+          barre à la main. */}
+      {practice !== undefined && (
+        <div className="mt-4 rounded-xl bg-[var(--accent-soft)] p-4">
+          <p className="label-xs font-semibold text-[var(--accent-ink)]">{practice.label}</p>
+          <FieldValue
+            value={practice.value}
+            className="mt-1.5 text-sm leading-6 text-[var(--text-1)]"
+          />
+        </div>
+      )}
+
+      {caveats.length > 0 && (
         <dl className="mt-5 space-y-3 border-t border-[var(--border)] pt-4">
-          {rest.map((field) => (
+          {caveats.map((field) => (
             <div key={field.label}>
               <dt className="label-xs font-semibold text-[var(--text-2)]">{field.label}</dt>
-              <dd className="mt-1 text-sm leading-6 text-[var(--text-1)]">{field.value}</dd>
+              <dd className="mt-1">
+                <FieldValue
+                  value={field.value}
+                  className="text-sm leading-6 text-[var(--text-1)]"
+                />
+              </dd>
             </div>
           ))}
         </dl>
       )}
 
-      <Provenance sources={sources} />
+      <Provenance sources={sources} fields={provenance} />
     </article>
   );
 }
