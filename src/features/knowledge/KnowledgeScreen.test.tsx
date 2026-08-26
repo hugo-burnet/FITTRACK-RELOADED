@@ -1,18 +1,29 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { KnowledgeScreen } from './KnowledgeScreen';
 
 function renderScreen() {
   render(
-    <MemoryRouter>
-      <KnowledgeScreen />
-    </MemoryRouter>,
+    <TutorialContext.Provider
+      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report: vi.fn() }}
+    >
+      <MemoryRouter>
+        <KnowledgeScreen />
+      </MemoryRouter>
+    </TutorialContext.Provider>,
   );
 }
 
 describe('KnowledgeScreen', () => {
+  it('n’affiche pas l’aide contextuelle du tutoriel', () => {
+    renderScreen();
+
+    expect(screen.queryByRole('button', { name: 'Aide sur cette page' })).not.toBeInTheDocument();
+  });
+
   it('présente l’outil comme un navigateur non calibré, jamais comme un coach', () => {
     renderScreen();
 

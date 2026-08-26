@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
 import { ProgrammingGuideEntry } from './ProgrammingGuideEntry';
+import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
 
 /**
  * Le Guide : la famille « Programmer l'entraînement » du wiki, en lecture seule.
@@ -23,7 +23,7 @@ export function WikiProgrammingScreen() {
   const unreviewed = articles.some((article) => article.reviewState === 'pending_human_review');
 
   return (
-    <Screen
+    <KnowledgeScreenFrame
       title={t('knowledge.programming.title')}
       onBack={() => void navigate('/knowledge')}
       action={
@@ -95,6 +95,6 @@ export function WikiProgrammingScreen() {
           ))}
         </ul>
       </div>
-    </Screen>
+    </KnowledgeScreenFrame>
   );
 }

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { articleHref } from './articleCatalogue';
+import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
 import { loadReadSteps, resolveLearningPath, saveReadSteps } from './learningPath';
 
 /**
@@ -32,7 +32,7 @@ export function LearnProgrammingScreen() {
   const done = steps.filter((step) => read.has(step.article.articleId)).length;
 
   return (
-    <Screen
+    <KnowledgeScreenFrame
       title={t('learn.title')}
       onBack={() => void navigate('/knowledge')}
       action={
@@ -50,10 +50,7 @@ export function LearnProgrammingScreen() {
           {steps.map((step, index) => {
             const isRead = read.has(step.article.articleId);
             return (
-              <li
-                key={step.article.articleId}
-                className="rounded-2xl bg-[var(--surface-1)] p-5"
-              >
+              <li key={step.article.articleId} className="rounded-2xl bg-[var(--surface-1)] p-5">
                 <div className="flex items-baseline gap-3">
                   <span className="record-figure shrink-0 text-sm text-[var(--text-2)]">
                     {index + 1}
@@ -102,6 +99,6 @@ export function LearnProgrammingScreen() {
           <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">{t('learn.limitBody')}</p>
         </section>
       </div>
-    </Screen>
+    </KnowledgeScreenFrame>
   );
 }

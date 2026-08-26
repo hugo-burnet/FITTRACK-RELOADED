@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import questionsDocument from './wiki-questions.json';
 import { findSectionIdForClaim, findWikiSection } from './wikiIndex';
+import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
 
 type CoveredQuestion = { questionId: string; text: string; claimIds: string[] };
 type UncoveredQuestion = { questionId: string; text: string; missing: string };
@@ -76,7 +76,10 @@ export function WikiQuestionsScreen() {
   const navigate = useNavigate();
 
   return (
-    <Screen title={t('knowledge.wiki.questionsTitle')} onBack={() => void navigate('/knowledge')}>
+    <KnowledgeScreenFrame
+      title={t('knowledge.wiki.questionsTitle')}
+      onBack={() => void navigate('/knowledge')}
+    >
       <div className="space-y-7">
         <section className="rounded-2xl bg-[var(--accent-soft)] p-5">
           <p className="text-sm leading-6 text-[var(--text-1)]">
@@ -112,6 +115,6 @@ export function WikiQuestionsScreen() {
           ))}
         </section>
       </div>
-    </Screen>
+    </KnowledgeScreenFrame>
   );
 }

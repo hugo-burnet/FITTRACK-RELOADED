@@ -4,7 +4,7 @@ import { t } from '@/i18n/fr';
 import { HeaderAction } from '@/ui/HeaderAction';
 import { ArrowLeftIcon, HelpIcon } from '@/ui/icons';
 
-type Props = {
+export type ScreenProps = {
   title: string;
   /**
    * Draws the back arrow, on the left, before the title. Every screen that can
@@ -29,6 +29,8 @@ type Props = {
    * n'est dessiné.
    */
   footer?: ReactNode;
+  /** Contextual tutorial help is opt-out for self-explanatory reading surfaces. */
+  showTutorialHelp?: boolean;
   children: ReactNode;
 };
 
@@ -57,17 +59,24 @@ type Props = {
  * défilant refuse de rétrécir sous sa hauteur de contenu, et c'est la page
  * entière qui se met à défiler — pied compris.
  */
-export function Screen({ title, onBack, action, sub, footer, children }: Props) {
+export function Screen({
+  title,
+  onBack,
+  action,
+  sub,
+  footer,
+  showTutorialHelp = true,
+  children,
+}: ScreenProps) {
   const tutorial = useTutorialControls();
+  const hasTutorialHelp = showTutorialHelp && tutorial !== null;
 
   return (
     <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
       {/* L'en-tête arrive une fraction avant son contenu : le titre pose le
           décor, la page se remplit derrière. `animate-*` ne rejoue qu'au
           montage, donc une fois par écran et jamais à chaque série validée. */}
-      <header
-        className="animate-fade flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4"
-      >
+      <header className="animate-fade flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
         {onBack && (
           <button
             type="button"
@@ -84,10 +93,10 @@ export function Screen({ title, onBack, action, sub, footer, children }: Props) 
         <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight text-[var(--text-1)]">
           {title}
         </h1>
-        {(action !== undefined || tutorial !== null) && (
+        {(action !== undefined || hasTutorialHelp) && (
           <div className="flex shrink-0 items-center gap-1">
             {action}
-            {tutorial !== null && (
+            {hasTutorialHelp && tutorial !== null && (
               <HeaderAction label={t('tutorial.pageHelp')} onClick={tutorial.openHelp}>
                 <HelpIcon />
               </HeaderAction>

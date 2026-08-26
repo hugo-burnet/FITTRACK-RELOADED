@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Screen } from '@/app/Screen';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { Button } from '@/ui';
 import { WikiBrowse } from './WikiBrowse';
 import { stripEmphasis } from './markdownText';
 import { articleHref, findArticleForRow } from './articleCatalogue';
+import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
 import {
   evidenceIndexStatus,
   searchEvidence,
@@ -52,10 +52,7 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
   return (
     <article className="relative overflow-hidden rounded-2xl bg-[var(--surface-1)] pl-1">
       {/* The witness rail: every card is visibly anchored to a source span. */}
-      <span
-        aria-hidden="true"
-        className="absolute inset-y-0 left-0 w-1 bg-[var(--accent-ink)]"
-      />
+      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-[var(--accent-ink)]" />
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <p className="label-xs font-semibold text-[var(--accent-ink)]">
@@ -131,9 +128,7 @@ function SearchResult({ outcome }: { outcome: EvidenceSearchOutcome }) {
   if (outcome.kind === 'NO_LEXICAL_EVIDENCE') {
     return (
       <div role="status" className="rounded-2xl border border-[var(--border)] p-5">
-        <p className="label-xs font-semibold text-[var(--text-2)]">
-          {t('knowledge.refusalLabel')}
-        </p>
+        <p className="label-xs font-semibold text-[var(--text-2)]">{t('knowledge.refusalLabel')}</p>
         <h2 className="mt-3 text-lg font-semibold text-[var(--text-1)]">
           {t('knowledge.noEvidenceTitle')}
         </h2>
@@ -170,15 +165,13 @@ export function KnowledgeScreen() {
   const runSearch = () => setOutcome(searchEvidence(query));
 
   return (
-    <Screen title={t('knowledge.title')} onBack={() => void navigate(-1)}>
+    <KnowledgeScreenFrame title={t('knowledge.title')} onBack={() => void navigate(-1)}>
       <div className="space-y-7">
         <section className="rounded-2xl bg-[var(--accent-soft)] p-5">
           <p className="label-xs font-semibold text-[var(--accent-ink)]">
             {t('knowledge.evidenceOnlyLabel')}
           </p>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-1)]">
-            {t('knowledge.intro')}
-          </p>
+          <p className="mt-3 text-sm leading-6 text-[var(--text-1)]">{t('knowledge.intro')}</p>
           {evidenceIndexStatus === 'UNCALIBRATED' && (
             <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">
               {t('knowledge.uncalibratedNotice')}
@@ -239,11 +232,9 @@ export function KnowledgeScreen() {
           <h2 className="label-xs font-semibold text-[var(--text-2)]">
             {t('knowledge.limitTitle')}
           </h2>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">
-            {t('knowledge.limitBody')}
-          </p>
+          <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">{t('knowledge.limitBody')}</p>
         </section>
       </div>
-    </Screen>
+    </KnowledgeScreenFrame>
   );
 }
