@@ -22,13 +22,13 @@ import { t } from '@/i18n/fr';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionSheet, ConfirmSheet, HeaderAction, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
-import { PlusIcon } from '@/ui/icons';
+import { CollapseAllIcon, ExpandAllIcon, PlusIcon } from '@/ui/icons';
 import { FolderFormSheet } from './FolderFormSheet';
-import { RoutineCollection } from './RoutineCollection';
+import { collapsibleRoutineFolderIds, RoutineCollection } from './RoutineCollection';
 import type { RoutineCollectionIntent } from './RoutineCollection';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { useRoutineLibraryView } from '@/stores/routineLibraryView';
-import { Button, OrderLockButton } from '@/ui';
+import { OrderLockButton } from '@/ui';
 
 /** One sheet at a time: two stacked modals fight over the body scroll lock. */
 type SheetState =
@@ -117,12 +117,9 @@ export function RoutinesScreen() {
     return unhandled;
   };
 
-  // Mêmes identifiants que la projection : la racine n'est un en-tête que
-  // lorsqu'au moins un dossier existe.
-  const collapsibleIds =
-    folders === undefined || folders.length === 0
-      ? []
-      : ['root', ...folders.map((folder) => folder.id)];
+  // Mêmes identifiants que la projection : une racine vide n'est ni rendue ni
+  // repliable.
+  const collapsibleIds = loaded ? collapsibleRoutineFolderIds(summaries, folders) : [];
   const allCollapsed =
     collapsibleIds.length > 0 && collapsibleIds.every((id) => collapsedFolderIds.has(id));
 
@@ -130,25 +127,13 @@ export function RoutinesScreen() {
     <Screen
       title={t('routines.title')}
       action={
-        <div className="flex items-center gap-3">
-          {loaded && summaries.length > 0 && (
-            <p className="text-right">
-              <span className="metric text-xl font-semibold text-[var(--text-1)]">
-                {summaries.length.toLocaleString('fr-FR')}
-              </span>{' '}
-              <span className="label-xs font-semibold text-[var(--text-2)]">
-                {t('routines.countUnit')}
-              </span>
-            </p>
-          )}
-          <HeaderAction
-            label={t('routines.create')}
-            tutorialId="routine-create"
-            onClick={() => setSheet({ kind: 'create' })}
-          >
-            <PlusIcon />
-          </HeaderAction>
-        </div>
+        <HeaderAction
+          label={t('routines.create')}
+          tutorialId="routine-create"
+          onClick={() => setSheet({ kind: 'create' })}
+        >
+          <PlusIcon />
+        </HeaderAction>
       }
     >
       {/* Rien au-dessus de la bibliothèque sauf la navigation de Planifier : les
@@ -158,16 +143,13 @@ export function RoutinesScreen() {
         <PlanningTabs />
 
         {loaded && (summaries.length > 0 || folders.length > 0) && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="md"
-              disabled={reorderUnlocked}
-              onClick={() => (allCollapsed ? expandAll() : collapseAll(collapsibleIds))}
-            >
-              {allCollapsed ? t('routines.expandAll') : t('routines.collapseAll')}
-            </Button>
-            <span className="flex-1" />
+          <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-1">
+            <p className="label-xs min-w-0 flex-1 font-semibold text-[var(--text-2)]">
+              <span className="record-figure mr-1.5 text-base text-[var(--text-1)]">
+                {summaries.length.toLocaleString('fr-FR')}
+              </span>
+              {t('routines.countUnit')}
+            </p>
             {/* Fermé au lancement, et il le reste jusqu'à ce qu'on le demande :
                 la bibliothèque ne doit pas se réordonner sous un pouce. */}
             <OrderLockButton
@@ -176,6 +158,17 @@ export function RoutinesScreen() {
               unlockLabel={t('common.unlockRoutineOrder')}
               lockLabel={t('common.lockRoutineOrder')}
             />
+            <button
+              type="button"
+              aria-label={t(allCollapsed ? 'routines.expandAll' : 'routines.collapseAll')}
+              disabled={reorderUnlocked || collapsibleIds.length === 0}
+              onClick={() => (allCollapsed ? expandAll() : collapseAll(collapsibleIds))}
+              className="flex size-12 shrink-0 items-center justify-center text-[var(--text-2)]
+                transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]
+                disabled:opacity-40"
+            >
+              {allCollapsed ? <ExpandAllIcon /> : <CollapseAllIcon />}
+            </button>
           </div>
         )}
 

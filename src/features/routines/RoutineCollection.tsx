@@ -5,7 +5,7 @@ import { t } from '@/i18n/fr';
 import { moveItem } from '@/lib/routineOrder';
 import { Button, EmptyState, ReorderableList } from '@/ui';
 import type { ItemState } from '@/ui';
-import { GripIcon, MoreIcon } from '@/ui/icons';
+import { ChevronDownIcon, GripIcon, MoreIcon } from '@/ui/icons';
 import { routineSummaryLine } from './summary';
 
 export type RoutinePlacement = Readonly<{
@@ -38,6 +38,17 @@ type Entry =
   | { kind: 'heading'; id: string; folder?: RoutineFolder }
   | { kind: 'routine'; id: string; folderId: string; summary: RoutineSummary };
 
+export function collapsibleRoutineFolderIds(
+  summaries: readonly RoutineSummary[],
+  folders: readonly RoutineFolder[],
+): string[] {
+  const hasRootRoutines = summaries.some((summary) => summary.routine.folderId === '');
+  return [
+    ...(hasRootRoutines && folders.length > 0 ? ['root'] : []),
+    ...folders.map(({ id }) => id),
+  ];
+}
+
 function projectEntries(
   summaries: readonly RoutineSummary[],
   folders: readonly RoutineFolder[],
@@ -45,8 +56,11 @@ function projectEntries(
   const entries: Entry[] = [];
   const inFolder = (id: string) => summaries.filter((row) => row.routine.folderId === id);
 
-  if (folders.length > 0) entries.push({ kind: 'heading', id: 'root' });
-  for (const summary of inFolder('')) {
+  const rootSummaries = inFolder('');
+  if (folders.length > 0 && rootSummaries.length > 0) {
+    entries.push({ kind: 'heading', id: 'root' });
+  }
+  for (const summary of rootSummaries) {
     entries.push({ kind: 'routine', id: summary.routine.id, folderId: 'root', summary });
   }
 
@@ -233,6 +247,13 @@ export function RoutineCollection({
               className="flex min-h-12 min-w-0 flex-1 items-center gap-2 text-left
                 disabled:opacity-60"
             >
+              <span
+                aria-hidden="true"
+                className={`shrink-0 transition-transform duration-[var(--dur-1)]
+                  ${collapsed ? '-rotate-90' : ''}`}
+              >
+                <ChevronDownIcon />
+              </span>
               <h2 className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
                 {name}
               </h2>

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { RoutineSummary } from '@/data/repositories/routines';
 import type { Routine, RoutineFolder } from '@/data/types';
-import { RoutineCollection } from './RoutineCollection';
+import { collapsibleRoutineFolderIds, RoutineCollection } from './RoutineCollection';
 import type { RoutineCollectionProps } from './RoutineCollection';
 
 const stamps = {
@@ -78,11 +78,21 @@ describe('RoutineCollection', () => {
     const legsHeading = screen.getByRole('heading', { name: 'Jambes' });
     const legsName = screen.getByText('Squat');
 
-    expect(rootHeading.compareDocumentPosition(rootName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
-    expect(rootName.compareDocumentPosition(pushHeading) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
-    expect(pushHeading.compareDocumentPosition(pushName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
-    expect(pushName.compareDocumentPosition(legsHeading) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
-    expect(legsHeading.compareDocumentPosition(legsName) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+    expect(
+      rootHeading.compareDocumentPosition(rootName) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      rootName.compareDocumentPosition(pushHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      pushHeading.compareDocumentPosition(pushName) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      pushName.compareDocumentPosition(legsHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      legsHeading.compareDocumentPosition(legsName) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
   });
 
   it('rend une routine racine sans titre lorsqu’aucun dossier n’existe', () => {
@@ -98,21 +108,21 @@ describe('RoutineCollection', () => {
     expect(screen.queryByRole('heading', { name: 'Sans dossier' })).not.toBeInTheDocument();
   });
 
-  it('rend la racine m\u00eame vide d\u00e8s qu\u2019un dossier existe', () => {
-    render(
-      <Collection
-        summaries={[]}
-        folders={[folder('folder-push', 'Push')]}
-        onIntent={vi.fn()}
-      />,
-    );
+  it('omet la racine vide même lorsqu’un dossier existe', () => {
+    const push = folder('folder-push', 'Push');
+    render(<Collection summaries={[]} folders={[push]} onIntent={vi.fn()} />);
 
-    expect(screen.getByRole('heading', { name: 'Sans dossier' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Sans dossier' })).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Push' })).toBeVisible();
-    // L'assertion visait l'état vide, pas le chiffre : un en-tête de dossier
-    // affiche désormais son nombre de routines, et « 0 » y est une information
-    // juste. On vérifie donc l'absence de l'état vide lui-même.
     expect(screen.queryByRole('button', { name: 'Routine vide' })).not.toBeInTheDocument();
+  });
+
+  it('ne compte la racine parmi les dossiers repliables que si elle contient une routine', () => {
+    const push = folder('folder-push', 'Push');
+    const rootRoutine = routine('routine-root', 'Racine');
+
+    expect(collapsibleRoutineFolderIds([], [push])).toEqual([push.id]);
+    expect(collapsibleRoutineFolderIds([summary(rootRoutine)], [push])).toEqual(['root', push.id]);
   });
 
   it('traduit les ouvertures en intentions portant les entit\u00e9s courantes', async () => {
@@ -121,11 +131,7 @@ describe('RoutineCollection', () => {
     const pushFolder = folder('folder-push', 'Push');
     const pushRoutine = routine('routine-push', 'Pouss\u00e9e', pushFolder.id);
     render(
-      <Collection
-        summaries={[summary(pushRoutine)]}
-        folders={[pushFolder]}
-        onIntent={onIntent}
-      />,
+      <Collection summaries={[summary(pushRoutine)]} folders={[pushFolder]} onIntent={onIntent} />,
     );
 
     await user.click(screen.getByText('Pouss\u00e9e'));
@@ -157,9 +163,7 @@ describe('RoutineCollection', () => {
       Object.freeze(summary(pushRoutine)),
     ]);
     const folders = Object.freeze([Object.freeze(pushFolder)]);
-    render(
-      <Collection summaries={summaries} folders={folders} onIntent={onIntent} />,
-    );
+    render(<Collection summaries={summaries} folders={folders} onIntent={onIntent} />);
 
     screen.getByRole('button', { name: 'D\u00e9placer Racine' }).focus();
     await user.keyboard('{ArrowDown}');
@@ -181,11 +185,7 @@ describe('RoutineCollection', () => {
     const pushFolder = folder('folder-push', 'Push');
     const pushRoutine = routine('routine-push', 'Pouss\u00e9e', pushFolder.id);
     render(
-      <Collection
-        summaries={[summary(pushRoutine)]}
-        folders={[pushFolder]}
-        onIntent={onIntent}
-      />,
+      <Collection summaries={[summary(pushRoutine)]} folders={[pushFolder]} onIntent={onIntent} />,
     );
 
     screen.getByRole('button', { name: 'D\u00e9placer Pouss\u00e9e' }).focus();

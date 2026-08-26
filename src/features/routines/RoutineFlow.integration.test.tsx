@@ -116,6 +116,32 @@ describe('parcours de composition d’une routine', () => {
     expect(document.querySelector('[data-tutorial-id="routine-add-exercise"]')).toBeNull();
   });
 
+  it('réutilise les commandes compactes de la séance et omet la racine vide', async () => {
+    const ppl = await createFolder('PPL');
+    const pull = await createRoutine('Pull A');
+    await updateRoutine(pull.id, { folderId: ppl.id });
+    const user = userEvent.setup();
+
+    renderRoutineFlow();
+
+    expect(await screen.findByRole('heading', { name: 'PPL' })).toBeVisible();
+    expect(screen.queryByRole('heading', { name: 'Sans dossier' })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Déverrouiller l’ordre des routines' }),
+    ).toBeVisible();
+    const collapse = screen.getByRole('button', { name: 'Tout replier' });
+    expect(collapse).toBeVisible();
+    expect(collapse).not.toHaveTextContent('Tout replier');
+
+    await user.click(collapse);
+
+    expect(screen.getByRole('button', { expanded: false, name: /PPL/u })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    expect(screen.getByRole('button', { name: 'Tout déplier' })).toBeVisible();
+  });
+
   it('reports collection start only after the workout repository resolves', async () => {
     const routine = await createRoutine('Démarrage collection');
     const workout: Workout = {
