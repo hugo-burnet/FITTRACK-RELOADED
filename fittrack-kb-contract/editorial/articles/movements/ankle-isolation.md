@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-ankle-isolation","title":"Isolation de la cheville","summary":"Mollets debout ou assis : l’angle du genou décide lequel des deux muscles travaille.","family":"movements","muscleGroups":[],"movementPatterns":["isolation_cheville"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-ankle-isolation","title":"Isolation de la cheville","summary":"Mollets debout ou assis : l’angle du genou décide lequel des deux muscles travaille.","family":"movements","order":12,"muscleGroups":[],"movementPatterns":["isolation_cheville"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Isolation de la cheville
 

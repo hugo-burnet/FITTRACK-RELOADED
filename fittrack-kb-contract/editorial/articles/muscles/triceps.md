@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-triceps","title":"Triceps","summary":"Fonctions des trois chefs et conséquences pour les extensions du coude.","family":"muscles","muscleGroups":["triceps"],"movementPatterns":["isolation_coude","poussee_horizontale","poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-triceps","title":"Triceps","summary":"Fonctions des trois chefs et conséquences pour les extensions du coude.","family":"muscles","order":7,"muscleGroups":["triceps"],"movementPatterns":["isolation_coude","poussee_horizontale","poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Triceps
 

@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-hinge","title":"Hip hinge","summary":"Soulevés et hip thrust : extension de hanche avec un rachis tenu.","family":"movements","muscleGroups":[],"movementPatterns":["hinge"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-hinge","title":"Hip hinge","summary":"Soulevés et hip thrust : extension de hanche avec un rachis tenu.","family":"movements","order":6,"muscleGroups":[],"movementPatterns":["hinge"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Hip hinge
 

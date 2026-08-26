@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-shoulder","title":"Épaule","summary":"Ce que le document clinique retient pour l’épaule.","family":"clinical","muscleGroups":["shoulders"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-shoulder","title":"Épaule","summary":"Ce que le document clinique retient pour l’épaule.","family":"clinical","order":4,"muscleGroups":["shoulders"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Épaule
 

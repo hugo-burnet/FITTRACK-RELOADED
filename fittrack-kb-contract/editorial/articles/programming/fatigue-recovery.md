@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-fatigue-recovery","title":"Fatigue et récupération","summary":"Ce que la fatigue recouvre, et ce qui la fait redescendre.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-fatigue-recovery","title":"Fatigue et récupération","summary":"Ce que la fatigue recouvre, et ce qui la fait redescendre.","family":"programming","order":15,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Fatigue et récupération
 

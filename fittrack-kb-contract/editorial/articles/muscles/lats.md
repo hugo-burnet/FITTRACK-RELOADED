@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-lats","title":"Grand dorsal","summary":"Attaches multiples, activation régionale et variabilité entre exercices de tirage.","family":"muscles","muscleGroups":["lats"],"movementPatterns":["tirage_vertical","tirage_horizontal"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-lats","title":"Grand dorsal","summary":"Attaches multiples, activation régionale et variabilité entre exercices de tirage.","family":"muscles","order":2,"muscleGroups":["lats"],"movementPatterns":["tirage_vertical","tirage_horizontal"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Grand dorsal
 

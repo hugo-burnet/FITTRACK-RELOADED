@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-progression","title":"Progression et autorégulation","summary":"Augmenter la charge, ajuster à la séance, ou les deux.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-progression","title":"Progression et autorégulation","summary":"Augmenter la charge, ajuster à la séance, ou les deux.","family":"programming","order":11,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Progression et autorégulation
 

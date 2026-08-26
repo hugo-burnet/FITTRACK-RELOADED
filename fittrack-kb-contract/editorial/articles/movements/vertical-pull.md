@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-vertical-pull","title":"Tirage vertical","summary":"Tractions et tirages verticaux : adduction d’épaule et fléchisseurs du coude.","family":"movements","muscleGroups":[],"movementPatterns":["tirage_vertical"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-vertical-pull","title":"Tirage vertical","summary":"Tractions et tirages verticaux : adduction d’épaule et fléchisseurs du coude.","family":"movements","order":4,"muscleGroups":[],"movementPatterns":["tirage_vertical"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Tirage vertical
 

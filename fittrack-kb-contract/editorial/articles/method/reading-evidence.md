@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"method-reading-evidence","title":"Lire une preuve d’entraînement","summary":"Hiérarchie des preuves, niveaux de certitude et ce qu’un signal EMG ne prouve pas.","family":"method","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"method-reading-evidence","title":"Lire une preuve d’entraînement","summary":"Hiérarchie des preuves, niveaux de certitude et ce qu’un signal EMG ne prouve pas.","family":"method","order":1,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Lire une preuve d’entraînement
 

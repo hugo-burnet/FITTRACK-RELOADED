@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-intensity-and-repetitions","title":"Intensité, charge et répétitions","summary":"Plage de répétitions, pourcentage de charge et effort réel.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-intensity-and-repetitions","title":"Intensité, charge et répétitions","summary":"Plage de répétitions, pourcentage de charge et effort réel.","family":"programming","order":4,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Intensité, charge et répétitions
 

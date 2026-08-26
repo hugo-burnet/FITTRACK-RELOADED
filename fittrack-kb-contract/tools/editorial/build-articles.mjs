@@ -177,6 +177,12 @@ export function validateArticleBundle(bundle, references = loadReferences()) {
     if (!ARTICLE_FAMILIES.includes(article.family)) {
       report('UNKNOWN_FAMILY', articleId, article.family);
     }
+    // L'ordre d'affichage est une décision éditoriale : le bundle reste trié par
+    // identifiant pour être déterministe, et c'est ce champ qui dit dans quel
+    // ordre une famille se lit.
+    if (!Number.isInteger(article.order) || article.order < 1) {
+      report('INVALID_ORDER', articleId, String(article.order));
+    }
     for (const muscle of article.muscleGroups ?? []) {
       if (!knownMuscles.has(muscle)) report('UNKNOWN_MUSCLE', articleId, muscle);
     }
@@ -208,6 +214,19 @@ export function validateArticleBundle(bundle, references = loadReferences()) {
     // fiche non relue interdit d'afficher l'article comme relu.
     if (citesProgramming && article.reviewState !== 'pending_human_review') {
       report('PROGRAMMING_REVIEW_PROMOTED', articleId, article.reviewState);
+    }
+  }
+
+  // Deux articles au même rang, ou un trou dans la suite, rendraient l'ordre
+  // dépendant du tri par identifiant — c'est-à-dire du hasard.
+  for (const family of ARTICLE_FAMILIES) {
+    const orders = bundle.articles
+      .filter((article) => article.family === family)
+      .map((article) => article.order)
+      .sort((left, right) => left - right);
+    const expected = orders.map((_, index) => index + 1);
+    if (orders.join(',') !== expected.join(',')) {
+      report('BROKEN_FAMILY_ORDER', family, orders.join(','));
     }
   }
 

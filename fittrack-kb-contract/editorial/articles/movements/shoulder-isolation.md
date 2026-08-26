@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-shoulder-isolation","title":"Isolation de l’épaule","summary":"Élévations et oiseaux : trois faisceaux, et un bras de levier qui change avec l’angle.","family":"movements","muscleGroups":[],"movementPatterns":["isolation_epaule"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-shoulder-isolation","title":"Isolation de l’épaule","summary":"Élévations et oiseaux : trois faisceaux, et un bras de levier qui change avec l’angle.","family":"movements","order":9,"muscleGroups":[],"movementPatterns":["isolation_epaule"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Isolation de l’épaule
 

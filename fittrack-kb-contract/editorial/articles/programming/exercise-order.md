@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-exercise-order","title":"Ordre des exercices","summary":"Ce que l’ordre d’une séance change réellement.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-exercise-order","title":"Ordre des exercices","summary":"Ce que l’ordre d’une séance change réellement.","family":"programming","order":10,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Ordre des exercices
 

@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-wrist-isolation","title":"Isolation du poignet","summary":"Curls de poignet et travail de préhension : angle et rotation changent la mesure.","family":"movements","muscleGroups":[],"movementPatterns":["isolation_poignet"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-wrist-isolation","title":"Isolation du poignet","summary":"Curls de poignet et travail de préhension : angle et rotation changent la mesure.","family":"movements","order":13,"muscleGroups":[],"movementPatterns":["isolation_poignet"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Isolation du poignet
 

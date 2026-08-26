@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-upper-back","title":"Haut du dos","summary":"Rhomboïdes et grand rond : ce que le corpus traite avec le dos, sans fiche séparée.","family":"muscles","muscleGroups":["upper_back"],"movementPatterns":["tirage_horizontal","tirage_vertical"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-upper-back","title":"Haut du dos","summary":"Rhomboïdes et grand rond : ce que le corpus traite avec le dos, sans fiche séparée.","family":"muscles","order":3,"muscleGroups":["upper_back"],"movementPatterns":["tirage_horizontal","tirage_vertical"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Haut du dos
 

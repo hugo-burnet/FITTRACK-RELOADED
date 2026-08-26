@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-contradictions","title":"Contradictions majeures","summary":"Les désaccords que le Guide laisse ouverts, avec leurs causes probables.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-contradictions","title":"Contradictions majeures","summary":"Les désaccords que le Guide laisse ouverts, avec leurs causes probables.","family":"programming","order":18,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Contradictions majeures
 

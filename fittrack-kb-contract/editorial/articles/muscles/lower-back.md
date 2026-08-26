@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-lower-back","title":"Érecteurs du rachis","summary":"Extension et stabilisation du rachis, et les contraintes documentées de la colonne.","family":"muscles","muscleGroups":["lower_back"],"movementPatterns":["hinge"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-lower-back","title":"Érecteurs du rachis","summary":"Extension et stabilisation du rachis, et les contraintes documentées de la colonne.","family":"muscles","order":15,"muscleGroups":["lower_back"],"movementPatterns":["hinge"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Érecteurs du rachis
 

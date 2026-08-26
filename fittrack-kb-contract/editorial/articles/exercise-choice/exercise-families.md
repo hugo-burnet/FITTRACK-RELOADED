@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"exercise-families","title":"Contraintes articulaires et familles d’exercices","summary":"Le cadre commun que le corpus applique avant de détailler chaque articulation.","family":"exercise-choice","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"exercise-families","title":"Contraintes articulaires et familles d’exercices","summary":"Le cadre commun que le corpus applique avant de détailler chaque articulation.","family":"exercise-choice","order":5,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Contraintes articulaires et familles d’exercices
 

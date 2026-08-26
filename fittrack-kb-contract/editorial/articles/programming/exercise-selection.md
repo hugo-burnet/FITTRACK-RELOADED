@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-exercise-selection","title":"Sélection et variation","summary":"Choisir, garder ou changer un exercice.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-exercise-selection","title":"Sélection et variation","summary":"Choisir, garder ou changer un exercice.","family":"programming","order":9,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Sélection et variation
 

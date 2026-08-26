@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-pain-monitoring","title":"Douleur, irritabilité et surveillance","summary":"Ce que la littérature soutient sur le suivi de la douleur, et la hiérarchie de modification.","family":"clinical","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-pain-monitoring","title":"Douleur, irritabilité et surveillance","summary":"Ce que la littérature soutient sur le suivi de la douleur, et la hiérarchie de modification.","family":"clinical","order":2,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Douleur, irritabilité et surveillance
 

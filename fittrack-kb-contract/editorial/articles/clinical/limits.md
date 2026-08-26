@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-limits","title":"Limites du volet clinique","summary":"Ce que le document clinique refuse explicitement de faire.","family":"clinical","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-limits","title":"Limites du volet clinique","summary":"Ce que le document clinique refuse explicitement de faire.","family":"clinical","order":9,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Limites du volet clinique
 

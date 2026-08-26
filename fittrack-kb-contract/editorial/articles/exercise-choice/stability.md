@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"exercise-stability","title":"Stabilité","summary":"Ce que la stabilité d’un exercice change, et ce qu’elle ne change pas.","family":"exercise-choice","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"exercise-stability","title":"Stabilité","summary":"Ce que la stabilité d’un exercice change, et ce qu’elle ne change pas.","family":"exercise-choice","order":3,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Stabilité
 

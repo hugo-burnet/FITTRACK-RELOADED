@@ -45,6 +45,8 @@ export type WikiArticle = Readonly<{
   title: string;
   summary: string;
   family: WikiFamily;
+  /** Rang de lecture dans sa famille, déclaré dans le Markdown. */
+  order: number;
   muscleGroups: MuscleGroup[];
   movementPatterns: MovementPattern[];
   exerciseSlugs: string[];

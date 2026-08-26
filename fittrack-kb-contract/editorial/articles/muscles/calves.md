@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-calves","title":"Mollets","summary":"Gastrocnémien biarticulaire, soléaire mono-articulaire, et le rôle de l’angle du genou.","family":"muscles","muscleGroups":["calves"],"movementPatterns":["isolation_cheville"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-calves","title":"Mollets","summary":"Gastrocnémien biarticulaire, soléaire mono-articulaire, et le rôle de l’angle du genou.","family":"muscles","order":13,"muscleGroups":["calves"],"movementPatterns":["isolation_cheville"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Mollets
 

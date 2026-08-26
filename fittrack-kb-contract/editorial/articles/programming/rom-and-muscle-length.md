@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-rom-and-muscle-length","title":"Amplitude et longueur musculaire","summary":"La version programmation d’un sujet aussi traité par la biomécanique.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-rom-and-muscle-length","title":"Amplitude et longueur musculaire","summary":"La version programmation d’un sujet aussi traité par la biomécanique.","family":"programming","order":7,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Amplitude et longueur musculaire
 

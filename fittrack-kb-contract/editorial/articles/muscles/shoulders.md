@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-shoulders","title":"Deltoïdes","summary":"Trois faisceaux, des bras de levier qui changent avec l’angle, et l’épaule comme articulation.","family":"muscles","muscleGroups":["shoulders"],"movementPatterns":["poussee_verticale","isolation_epaule","poussee_horizontale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-shoulders","title":"Deltoïdes","summary":"Trois faisceaux, des bras de levier qui changent avec l’angle, et l’épaule comme articulation.","family":"muscles","order":5,"muscleGroups":["shoulders"],"movementPatterns":["poussee_verticale","isolation_epaule","poussee_horizontale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Deltoïdes
 

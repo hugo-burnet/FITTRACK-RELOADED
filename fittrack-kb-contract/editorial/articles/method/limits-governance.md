@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"method-limits-governance","title":"Limites, contradictions et gouvernance","summary":"Ce que le corpus ne permet pas d’affirmer, et les contradictions qu’il assume.","family":"method","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"method-limits-governance","title":"Limites, contradictions et gouvernance","summary":"Ce que le corpus ne permet pas d’affirmer, et les contradictions qu’il assume.","family":"method","order":2,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Limites, contradictions et gouvernance
 

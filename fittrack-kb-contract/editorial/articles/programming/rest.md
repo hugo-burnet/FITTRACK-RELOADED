@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-rest","title":"Temps de repos","summary":"Durée du repos entre séries et conséquences mesurées.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-rest","title":"Temps de repos","summary":"Durée du repos entre séries et conséquences mesurées.","family":"programming","order":6,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Temps de repos
 

@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-rir-rpe","title":"Proximité de l’échec, RIR et RPE","summary":"Aller à l’échec ou s’en approcher : ce que les mesures soutiennent.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-rir-rpe","title":"Proximité de l’échec, RIR et RPE","summary":"Aller à l’échec ou s’en approcher : ce que les mesures soutiennent.","family":"programming","order":5,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Proximité de l’échec, RIR et RPE
 

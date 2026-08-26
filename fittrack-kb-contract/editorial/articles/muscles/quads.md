@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-quads","title":"Quadriceps","summary":"Droit fémoral biarticulaire, vastes mono-articulaires, et ce que le squat hypertrophie.","family":"muscles","muscleGroups":["quads"],"movementPatterns":["squat","fente","isolation_genou"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-quads","title":"Quadriceps","summary":"Droit fémoral biarticulaire, vastes mono-articulaires, et ce que le squat hypertrophie.","family":"muscles","order":9,"muscleGroups":["quads"],"movementPatterns":["squat","fente","isolation_genou"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Quadriceps
 

@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-hamstrings","title":"Ischio-jambiers","summary":"Biais hanche contre biais genou, et ce que les patterns d’activation permettent de dire.","family":"muscles","muscleGroups":["hamstrings"],"movementPatterns":["hinge","isolation_genou"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-hamstrings","title":"Ischio-jambiers","summary":"Biais hanche contre biais genou, et ce que les patterns d’activation permettent de dire.","family":"muscles","order":10,"muscleGroups":["hamstrings"],"movementPatterns":["hinge","isolation_genou"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Ischio-jambiers
 

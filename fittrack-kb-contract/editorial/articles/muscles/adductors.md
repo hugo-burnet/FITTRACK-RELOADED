@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-adductors","title":"Adducteurs de hanche","summary":"Un groupe hypertrophié par le squat, et un grand adducteur à cheval sur deux catégories.","family":"muscles","muscleGroups":["adductors"],"movementPatterns":["squat","fente","isolation_hanche"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-adductors","title":"Adducteurs de hanche","summary":"Un groupe hypertrophié par le squat, et un grand adducteur à cheval sur deux catégories.","family":"muscles","order":12,"muscleGroups":["adductors"],"movementPatterns":["squat","fente","isolation_hanche"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Adducteurs de hanche
 

@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-deload","title":"Deload","summary":"Alléger volontairement : quand, comment, et sur quelles bases.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-deload","title":"Deload","summary":"Alléger volontairement : quand, comment, et sur quelles bases.","family":"programming","order":13,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Deload
 

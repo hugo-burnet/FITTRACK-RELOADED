@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-populations","title":"Différences selon population","summary":"Ce que les données couvrent, et qui elles ne couvrent pas.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-populations","title":"Différences selon population","summary":"Ce que les données couvrent, et qui elles ne couvrent pas.","family":"programming","order":17,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Différences selon population
 

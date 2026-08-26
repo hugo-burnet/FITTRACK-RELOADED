@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-horizontal-pull","title":"Tirage horizontal","summary":"Rowings : dorsal, rétraction scapulaire et fléchisseurs du coude.","family":"movements","muscleGroups":[],"movementPatterns":["tirage_horizontal"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-horizontal-pull","title":"Tirage horizontal","summary":"Rowings : dorsal, rétraction scapulaire et fléchisseurs du coude.","family":"movements","order":3,"muscleGroups":[],"movementPatterns":["tirage_horizontal"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Tirage horizontal
 

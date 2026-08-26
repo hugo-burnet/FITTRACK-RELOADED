@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-lunge","title":"Fente","summary":"Une flexion de hanche et de genou en appui décalé, que le corpus ne traite pas à part.","family":"movements","muscleGroups":[],"movementPatterns":["fente"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-lunge","title":"Fente","summary":"Une flexion de hanche et de genou en appui décalé, que le corpus ne traite pas à part.","family":"movements","order":7,"muscleGroups":[],"movementPatterns":["fente"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Fente
 

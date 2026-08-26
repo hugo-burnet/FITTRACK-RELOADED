@@ -59,7 +59,9 @@ const bySlug = index<string>((article) => article.exerciseSlugs);
 const families: ArticleFamilyGroup[] = bundle.families.map((id) => ({
   id,
   label: t(FAMILY_LABELS[id]),
-  articles: bundle.articles.filter((article) => article.family === id),
+  articles: bundle.articles
+    .filter((article) => article.family === id)
+    .sort((left, right) => left.order - right.order),
 }));
 
 export function listArticleFamilies(): readonly ArticleFamilyGroup[] {

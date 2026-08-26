@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-volume","title":"Volume","summary":"Séries hebdomadaires, rendements décroissants et ce que les données ne tranchent pas.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-volume","title":"Volume","summary":"Séries hebdomadaires, rendements décroissants et ce que les données ne tranchent pas.","family":"programming","order":2,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Volume
 

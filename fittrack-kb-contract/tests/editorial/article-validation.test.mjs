@@ -17,6 +17,7 @@ function article({ header = {}, annotation = `<!-- factual: ${CLAIM} -->` } = {}
     title: 'Triceps',
     summary: 'Comprendre le triceps.',
     family: 'muscles',
+    order: 1,
     muscleGroups: ['triceps'],
     movementPatterns: [],
     exerciseSlugs: [],
@@ -44,9 +45,10 @@ test('accepte un article dont toutes les identités existent', () => {
 });
 
 test('rejette les identifiants, muscles, mouvements, slugs et sources inconnus', () => {
-  assert.deepEqual(codes(validateArticleBundle(bundleOf(article(), article()), references)), [
-    'DUPLICATE_ARTICLE_ID',
-  ]);
+  assert.deepEqual(
+    codes(validateArticleBundle(bundleOf(article(), article({ header: { order: 2 } })), references)),
+    ['DUPLICATE_ARTICLE_ID'],
+  );
   assert.deepEqual(
     codes(validateArticleBundle(bundleOf(article({ header: { muscleGroups: ['inconnu'] } })), references)),
     ['UNKNOWN_MUSCLE'],
@@ -109,4 +111,15 @@ test('rejette un rôle musculaire hors vocabulaire', () => {
   assert.deepEqual(codes(validateArticleBundle(bundleOf(invented), references)), [
     'UNKNOWN_MUSCLE_ROLE',
   ]);
+});
+
+test('exige un rang de lecture déclaré et contigu dans chaque famille', () => {
+  assert.deepEqual(codes(validateArticleBundle(bundleOf(article({ header: { order: 3 } })), references)), [
+    'BROKEN_FAMILY_ORDER',
+  ]);
+  assert.ok(
+    codes(validateArticleBundle(bundleOf(article({ header: { order: 0 } })), references)).includes(
+      'INVALID_ORDER',
+    ),
+  );
 });

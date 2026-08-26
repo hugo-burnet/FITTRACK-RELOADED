@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-knee-isolation","title":"Isolation du genou","summary":"Extensions et leg curls : ce que la hanche fixe change pour les muscles biarticulaires.","family":"movements","muscleGroups":[],"movementPatterns":["isolation_genou"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-knee-isolation","title":"Isolation du genou","summary":"Extensions et leg curls : ce que la hanche fixe change pour les muscles biarticulaires.","family":"movements","order":10,"muscleGroups":[],"movementPatterns":["isolation_genou"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Isolation du genou
 

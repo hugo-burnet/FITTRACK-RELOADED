@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-squat","title":"Squat","summary":"Flexion simultanée de hanche et de genou : quadriceps, fessiers et adducteurs.","family":"movements","muscleGroups":[],"movementPatterns":["squat"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-squat","title":"Squat","summary":"Flexion simultanée de hanche et de genou : quadriceps, fessiers et adducteurs.","family":"movements","order":5,"muscleGroups":[],"movementPatterns":["squat"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Squat
 

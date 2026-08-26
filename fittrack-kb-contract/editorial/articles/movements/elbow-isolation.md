@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-elbow-isolation","title":"Isolation du coude","summary":"Curls et extensions : les muscles qui fléchissent et étendent le coude, et le rôle de la prise.","family":"movements","muscleGroups":[],"movementPatterns":["isolation_coude"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-elbow-isolation","title":"Isolation du coude","summary":"Curls et extensions : les muscles qui fléchissent et étendent le coude, et le rôle de la prise.","family":"movements","order":8,"muscleGroups":[],"movementPatterns":["isolation_coude"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Isolation du coude
 

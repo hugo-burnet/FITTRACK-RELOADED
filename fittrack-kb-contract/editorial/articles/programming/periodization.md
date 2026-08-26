@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-periodization","title":"Périodisation","summary":"Organiser plusieurs semaines : ce que la littérature soutient.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-periodization","title":"Périodisation","summary":"Organiser plusieurs semaines : ce que la littérature soutient.","family":"programming","order":12,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Périodisation
 

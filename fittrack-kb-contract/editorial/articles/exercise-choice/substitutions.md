@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"exercise-substitutions","title":"Remplacer un exercice","summary":"Trois niveaux d’équivalence, et les critères qui décident si un échange en est un.","family":"exercise-choice","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"exercise-substitutions","title":"Remplacer un exercice","summary":"Trois niveaux d’équivalence, et les critères qui décident si un échange en est un.","family":"exercise-choice","order":4,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Remplacer un exercice
 

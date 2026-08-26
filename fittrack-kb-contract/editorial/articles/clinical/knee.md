@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-knee","title":"Genou","summary":"Squat, presse et extension du genou vus par le document clinique.","family":"clinical","muscleGroups":["quads"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-knee","title":"Genou","summary":"Squat, presse et extension du genou vus par le document clinique.","family":"clinical","order":7,"muscleGroups":["quads"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Genou
 

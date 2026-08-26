@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-tempo","title":"Tempo et contrôle","summary":"Vitesse d’exécution : ce qui compte et ce qui a été surestimé.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-tempo","title":"Tempo et contrôle","summary":"Vitesse d’exécution : ce qui compte et ce qui a été surestimé.","family":"programming","order":8,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Tempo et contrôle
 

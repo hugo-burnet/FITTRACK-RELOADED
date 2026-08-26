@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-return-to-training","title":"Retour à l’entraînement","summary":"Progression générique et critères de reprise décrits par le corpus.","family":"clinical","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-return-to-training","title":"Retour à l’entraînement","summary":"Progression générique et critères de reprise décrits par le corpus.","family":"clinical","order":8,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Retour à l’entraînement
 

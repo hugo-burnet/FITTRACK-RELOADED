@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-specialization","title":"Spécialisation et maintenance","summary":"Insister sur un groupe, entretenir les autres.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-specialization","title":"Spécialisation et maintenance","summary":"Insister sur un groupe, entretenir les autres.","family":"programming","order":16,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Spécialisation et maintenance
 

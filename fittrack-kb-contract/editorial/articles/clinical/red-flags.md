@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-red-flags","title":"Signaux d’alerte","summary":"Les motifs d’arrêt prioritaires et le résumé opérationnel du document clinique.","family":"clinical","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-red-flags","title":"Signaux d’alerte","summary":"Les motifs d’arrêt prioritaires et le résumé opérationnel du document clinique.","family":"clinical","order":1,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Signaux d’alerte
 

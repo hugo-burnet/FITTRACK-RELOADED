@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-tendinopathy","title":"Tendinopathies","summary":"Synthèse transversale : charge, délai et ce qui distingue une tendinopathie d’une autre douleur.","family":"clinical","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-tendinopathy","title":"Tendinopathies","summary":"Synthèse transversale : charge, délai et ce qui distingue une tendinopathie d’une autre douleur.","family":"clinical","order":3,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Tendinopathies
 

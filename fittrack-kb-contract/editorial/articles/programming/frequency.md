@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-frequency","title":"Fréquence","summary":"Répartir le volume dans la semaine : ce qui change et ce qui ne change pas.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-frequency","title":"Fréquence","summary":"Répartir le volume dans la semaine : ce qui change et ce qui ne change pas.","family":"programming","order":3,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Fréquence
 

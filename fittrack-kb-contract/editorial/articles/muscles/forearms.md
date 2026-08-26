@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-forearms","title":"Avant-bras","summary":"Fléchisseurs, extenseurs, brachioradial, et la contrainte du poignet.","family":"muscles","muscleGroups":["forearms"],"movementPatterns":["isolation_poignet","isolation_coude"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-forearms","title":"Avant-bras","summary":"Fléchisseurs, extenseurs, brachioradial, et la contrainte du poignet.","family":"muscles","order":8,"muscleGroups":["forearms"],"movementPatterns":["isolation_poignet","isolation_coude"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Avant-bras
 

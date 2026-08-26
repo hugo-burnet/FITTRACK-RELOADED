@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-vertical-press","title":"Poussée verticale","summary":"Développés au-dessus de la tête : deltoïde, triceps et rotation de la scapula.","family":"movements","muscleGroups":[],"movementPatterns":["poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-vertical-press","title":"Poussée verticale","summary":"Développés au-dessus de la tête : deltoïde, triceps et rotation de la scapula.","family":"movements","order":2,"muscleGroups":[],"movementPatterns":["poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Poussée verticale
 

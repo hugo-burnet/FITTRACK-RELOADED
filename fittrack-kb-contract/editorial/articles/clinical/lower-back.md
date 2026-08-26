@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-lower-back","title":"Rachis lombaire","summary":"Principes communs et lecture des exercices usuels pour le bas du dos.","family":"clinical","muscleGroups":["lower_back"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-lower-back","title":"Rachis lombaire","summary":"Principes communs et lecture des exercices usuels pour le bas du dos.","family":"clinical","order":6,"muscleGroups":["lower_back"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Rachis lombaire
 

@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-biceps","title":"Biceps et brachial","summary":"Prise, position d’épaule et longueur du chef long : ce qui distingue réellement deux curls.","family":"muscles","muscleGroups":["biceps"],"movementPatterns":["isolation_coude","tirage_horizontal","tirage_vertical"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-biceps","title":"Biceps et brachial","summary":"Prise, position d’épaule et longueur du chef long : ce qui distingue réellement deux curls.","family":"muscles","order":6,"muscleGroups":["biceps"],"movementPatterns":["isolation_coude","tirage_horizontal","tirage_vertical"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Biceps et brachial
 

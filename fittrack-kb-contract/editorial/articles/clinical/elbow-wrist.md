@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"clinical-elbow-wrist","title":"Coude et poignet","summary":"Ce que le document clinique retient pour le coude et le poignet.","family":"clinical","muscleGroups":["forearms"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"clinical-elbow-wrist","title":"Coude et poignet","summary":"Ce que le document clinique retient pour le coude et le poignet.","family":"clinical","order":5,"muscleGroups":["forearms"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Coude et poignet
 

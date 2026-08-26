@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"exercise-muscle-length-and-rom","title":"Longueur musculaire et amplitude","summary":"Travailler à grande longueur, l’amplitude complète, et les muscles biarticulaires.","family":"exercise-choice","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"exercise-muscle-length-and-rom","title":"Longueur musculaire et amplitude","summary":"Travailler à grande longueur, l’amplitude complète, et les muscles biarticulaires.","family":"exercise-choice","order":2,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Longueur musculaire et amplitude
 

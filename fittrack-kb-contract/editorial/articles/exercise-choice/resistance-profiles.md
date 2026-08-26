@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"exercise-resistance-profiles","title":"Profils de résistance","summary":"Poids libres, machines, câbles, cames et élastiques : ce que chaque profil change au moment de force.","family":"exercise-choice","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"exercise-resistance-profiles","title":"Profils de résistance","summary":"Poids libres, machines, câbles, cames et élastiques : ce que chaque profil change au moment de force.","family":"exercise-choice","order":1,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Profils de résistance
 

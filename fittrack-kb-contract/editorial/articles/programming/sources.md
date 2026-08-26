@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-sources","title":"Publications majeures","summary":"Les 26 références du Guide, avec leurs métadonnées vérifiables.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-sources","title":"Publications majeures","summary":"Les 26 références du Guide, avec leurs métadonnées vérifiables.","family":"programming","order":19,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Publications majeures
 

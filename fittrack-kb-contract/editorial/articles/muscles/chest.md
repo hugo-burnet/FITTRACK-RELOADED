@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-chest","title":"Pectoraux","summary":"Portions claviculaire et sterno-costale, et ce que cela change au choix des développés.","family":"muscles","muscleGroups":["chest"],"movementPatterns":["poussee_horizontale","poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-chest","title":"Pectoraux","summary":"Portions claviculaire et sterno-costale, et ce que cela change au choix des développés.","family":"muscles","order":1,"muscleGroups":["chest"],"movementPatterns":["poussee_horizontale","poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Pectoraux
 

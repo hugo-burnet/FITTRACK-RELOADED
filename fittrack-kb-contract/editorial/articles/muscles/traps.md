@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-traps","title":"Trapèzes","summary":"Trois portions aux actions scapulaires distinctes, et la limite de leur ciblage.","family":"muscles","muscleGroups":["traps"],"movementPatterns":["tirage_vertical","poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-traps","title":"Trapèzes","summary":"Trois portions aux actions scapulaires distinctes, et la limite de leur ciblage.","family":"muscles","order":4,"muscleGroups":["traps"],"movementPatterns":["tirage_vertical","poussee_verticale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Trapèzes
 

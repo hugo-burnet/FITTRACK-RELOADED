@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-method","title":"Méthode et langage de certitude","summary":"Comment le Guide qualifie ce qu’il affirme, avant d’affirmer quoi que ce soit.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-method","title":"Méthode et langage de certitude","summary":"Comment le Guide qualifie ce qu’il affirme, avant d’affirmer quoi que ce soit.","family":"programming","order":1,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Méthode et langage de certitude
 

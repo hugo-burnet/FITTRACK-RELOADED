@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"programming-splits","title":"Splits","summary":"Découper la semaine par groupes musculaires.","family":"programming","muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"programming-splits","title":"Splits","summary":"Découper la semaine par groupes musculaires.","family":"programming","order":14,"muscleGroups":[],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Splits
 

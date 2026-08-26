@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"exercise-triceps-extensions","title":"Extensions du triceps","summary":"Overhead ou pushdown : la seule comparaison du corpus appuyée sur un essai contrôlé.","family":"exercise-choice","muscleGroups":["triceps"],"movementPatterns":["isolation_coude"],"exerciseSlugs":["skull-crusher","cable-triceps-pushdown-rope","cable-triceps-pushdown-bar","overhead-cable-extension","dumbbell-overhead-extension","dumbbell-kickback","machine-triceps-extension","band-triceps-pushdown"],"reviewState":"pending_human_review"}
+{"articleId":"exercise-triceps-extensions","title":"Extensions du triceps","summary":"Overhead ou pushdown : la seule comparaison du corpus appuyée sur un essai contrôlé.","family":"exercise-choice","order":6,"muscleGroups":["triceps"],"movementPatterns":["isolation_coude"],"exerciseSlugs":["skull-crusher","cable-triceps-pushdown-rope","cable-triceps-pushdown-bar","overhead-cable-extension","dumbbell-overhead-extension","dumbbell-kickback","machine-triceps-extension","band-triceps-pushdown"],"reviewState":"pending_human_review"}
 -->
 # Extensions du triceps
 

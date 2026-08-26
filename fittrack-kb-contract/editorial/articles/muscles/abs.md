@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-abs","title":"Abdominaux","summary":"Grand droit, obliques et transverse : trois rôles qui ne se remplacent pas.","family":"muscles","muscleGroups":["abs"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-abs","title":"Abdominaux","summary":"Grand droit, obliques et transverse : trois rôles qui ne se remplacent pas.","family":"muscles","order":14,"muscleGroups":["abs"],"movementPatterns":[],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Abdominaux
 

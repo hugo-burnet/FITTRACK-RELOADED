@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-horizontal-press","title":"Poussée horizontale","summary":"Développés et dips : ce que le pectoral, le deltoïde antérieur et le triceps y font.","family":"movements","muscleGroups":[],"movementPatterns":["poussee_horizontale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-horizontal-press","title":"Poussée horizontale","summary":"Développés et dips : ce que le pectoral, le deltoïde antérieur et le triceps y font.","family":"movements","order":1,"muscleGroups":[],"movementPatterns":["poussee_horizontale"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Poussée horizontale
 

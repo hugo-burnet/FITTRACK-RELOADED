@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"muscle-glutes","title":"Fessiers","summary":"Grand, moyen et petit fessier, et l’équivalence mesurée entre hip thrust et squat.","family":"muscles","muscleGroups":["glutes"],"movementPatterns":["hinge","squat","isolation_hanche"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"muscle-glutes","title":"Fessiers","summary":"Grand, moyen et petit fessier, et l’équivalence mesurée entre hip thrust et squat.","family":"muscles","order":11,"muscleGroups":["glutes"],"movementPatterns":["hinge","squat","isolation_hanche"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Fessiers
 

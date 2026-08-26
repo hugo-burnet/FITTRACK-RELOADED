@@ -1,5 +1,5 @@
 <!-- fittrack-wiki
-{"articleId":"movement-hip-isolation","title":"Isolation de la hanche","summary":"Extensions, abductions et adductions de hanche : trois plans, trois groupes.","family":"movements","muscleGroups":[],"movementPatterns":["isolation_hanche"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
+{"articleId":"movement-hip-isolation","title":"Isolation de la hanche","summary":"Extensions, abductions et adductions de hanche : trois plans, trois groupes.","family":"movements","order":11,"muscleGroups":[],"movementPatterns":["isolation_hanche"],"exerciseSlugs":[],"reviewState":"pending_human_review"}
 -->
 # Isolation de la hanche
 
