@@ -1308,11 +1308,6 @@ const fr = {
       'Aucun article ne couvre encore ce muscle. Le sommaire du wiki dit ce qui existe ; rien n’est cherché à sa place.',
     toSummary: 'Ouvrir le sommaire du wiki',
     readArticle: 'Lire l’article',
-    filterLabel: 'Filtrer ces articles',
-    filterPlaceholder: 'Ex. : chef long',
-    filterClear: 'Effacer le filtre',
-    filterEmpty:
-      'Aucun de ces articles ne contient ces mots. Le filtre ne cherche pas ailleurs : efface-le pour retrouver la documentation complète.',
     clinicalTitle: 'Douleur et tolérance',
     clinicalHint:
       'Ce que le corpus clinique documente pour les articulations engagées par cet exercice. Aucun diagnostic, aucune prescription : en cas de doute, un avis médical reste la seule réponse.',
@@ -1452,6 +1447,7 @@ const fr = {
       unreviewedBody:
         'Matière non vérifiée ligne par ligne ; le remaniement éditorial ne vaut pas validation scientifique.',
       sourcesLabel: 'Sources',
+      sourcesCount: '{count} affirmations',
       editorialLabel: 'Fil éditorial',
       searchTitle: 'Chercher dans tout le corpus',
       searchIntro:

@@ -92,38 +92,6 @@ export function articlesForScope(scope: ArticleScope): readonly WikiArticle[] {
   return bundle.articles.filter((article) => found.has(article));
 }
 
-function normalise(value: string): string {
-  return value
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase();
-}
-
-/**
- * Filtre textuel **à l'intérieur** d'un ensemble déjà choisi. Il n'élargit
- * jamais la sélection : c'est ce qui le distingue d'une recherche, et ce qui
- * l'empêche de redevenir la seam de routage qu'on vient de retirer. Une absence
- * de résultat veut dire « ce texte ne contient pas ces mots », rien de plus.
- */
-export function filterArticles(
-  articles: readonly WikiArticle[],
-  query: string,
-): readonly WikiArticle[] {
-  const needle = normalise(query.trim());
-  if (needle === '') return articles;
-  return articles.filter((article) => {
-    const haystack = [
-      article.title,
-      article.summary,
-      ...article.sections.flatMap((section) => [
-        section.title,
-        ...section.blocks.map((block) => block.text),
-      ]),
-    ].join(' ');
-    return normalise(haystack).includes(needle);
-  });
-}
-
 /**
  * Les pages du Guide vivent sous `/knowledge/programmation` pour rester dans
  * l'espace Planifier, les autres sous `/knowledge/a`. Les deux adresses mènent au

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   articleHref,
   articlesForScope,
-  filterArticles,
   findArticle,
   listArticleFamilies,
 } from './articleCatalogue';
@@ -53,18 +52,6 @@ describe('articleCatalogue', () => {
     });
     const ids = both.map((article) => article.articleId);
     expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it('filtre à l’intérieur d’un ensemble déjà choisi, sans jamais l’élargir', () => {
-    const triceps = findArticle('muscle-triceps');
-    expect(triceps).toBeDefined();
-    expect(filterArticles([triceps!], 'chef long')).toHaveLength(1);
-    expect(filterArticles([triceps!], 'zirconium')).toEqual([]);
-  });
-
-  it('ignore les accents et la casse dans le filtre', () => {
-    const triceps = findArticle('muscle-triceps');
-    expect(filterArticles([triceps!], 'EPAULE')).toHaveLength(1);
   });
 
   it('envoie le Guide sous Planifier et les autres familles sous le wiki', () => {

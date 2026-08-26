@@ -1,16 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { t } from '@/i18n/fr';
 import { muscleLabel } from '@/i18n/labels';
 import { ArticleBody } from '@/features/knowledge/ArticleBody';
-import { articleHref, filterArticles, findArticle } from '@/features/knowledge/articleCatalogue';
+import { articleHref, findArticle } from '@/features/knowledge/articleCatalogue';
 import {
   getDocumentationForExercise,
   type DocumentationExercise,
   type ExerciseDocumentationLimit,
 } from '@/features/knowledge/exerciseDocumentation';
 import type { WikiArticle } from '@/features/knowledge/articleTypes';
-import { Button } from '@/ui';
 
 const LIMIT_KEYS = {
   primary_article_missing: 'exerciseDoc.limitPrimaryMissing',
@@ -43,13 +42,12 @@ function ArticleCard({ article }: { article: WikiArticle }) {
  * — l'article de portée, et le rôle documenté de chaque secondaire dans cette
  * famille de mouvement — s'affiche ici, en entier.
  *
- * Le champ de recherche filtre uniquement les articles déjà rattachés. Il ne
- * décide jamais lesquels charger : une absence de résultat veut dire « ce texte
- * ne contient pas ces mots », pas « le corpus ne sait pas ».
+ * Il n'y a pas de champ de recherche ici. Il en a existé un : il filtrait au
+ * maximum six cartes — 164 exercices sur 175 en projettent quatre ou moins —
+ * dont l'encadré du haut listait déjà tous les titres. Chercher dans tout le
+ * corpus reste à un tap, par « Ouvrir le sommaire du wiki ».
  */
 export function ExerciseDocumentationView({ exercise }: { exercise: DocumentationExercise }) {
-  const [query, setQuery] = useState('');
-
   const documentation = useMemo(() => getDocumentationForExercise(exercise), [exercise]);
 
   const projected = useMemo(
@@ -60,13 +58,6 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
       }),
     [documentation],
   );
-
-  const visible = useMemo(() => filterArticles(projected, query), [projected, query]);
-  const visibleIds = new Set(visible.map((article) => article.articleId));
-  const keep = (article: WikiArticle | null): boolean =>
-    article !== null && visibleIds.has(article.articleId);
-
-  const filtering = query.trim() !== '';
 
   return (
     <div className="flex flex-col gap-7">
@@ -96,40 +87,11 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
         </Link>
       </section>
 
-      <div className="space-y-3">
-        <label htmlFor="exercise-doc-filter" className="label-xs font-semibold text-[var(--text-2)]">
-          {t('exerciseDoc.filterLabel')}
-        </label>
-        <input
-          id="exercise-doc-filter"
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.currentTarget.value)}
-          placeholder={t('exerciseDoc.filterPlaceholder')}
-          autoComplete="off"
-          className="min-h-14 w-full rounded-xl bg-[var(--surface-2)] px-4 text-base
-            text-[var(--text-1)] outline-none placeholder:text-[var(--text-2)]
-            focus:ring-2 focus:ring-[var(--accent-ink)]"
-        />
-        {/* Le bouton d'effacement survit à une recherche sans résultat : sans
-            lui, un filtre trop précis laisse un écran vide et sans issue. */}
-        {filtering && (
-          <Button variant="ghost" size="md" onClick={() => setQuery('')}>
-            {t('exerciseDoc.filterClear')}
-          </Button>
-        )}
-        {filtering && visible.length === 0 && (
-          <p role="status" className="text-sm leading-6 text-[var(--text-2)]">
-            {t('exerciseDoc.filterEmpty')}
-          </p>
-        )}
-      </div>
+      {documentation.primary !== null && <ArticleCard article={documentation.primary} />}
 
-      {keep(documentation.primary) && <ArticleCard article={documentation.primary!} />}
+      {documentation.relationship !== null && <ArticleCard article={documentation.relationship} />}
 
-      {keep(documentation.relationship) && <ArticleCard article={documentation.relationship!} />}
-
-      {documentation.specific.filter(keep).map((article) => (
+      {documentation.specific.map((article) => (
         <section key={article.articleId} aria-labelledby={`specific-${article.articleId}`}>
           <h3
             id={`specific-${article.articleId}`}
@@ -143,7 +105,7 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
         </section>
       ))}
 
-      {documentation.clinical.filter(keep).length > 0 && (
+      {documentation.clinical.length > 0 && (
         <section aria-labelledby="exercise-doc-clinical" className="space-y-3">
           <h2 id="exercise-doc-clinical" className="px-1 text-lg font-semibold text-[var(--text-1)]">
             {t('exerciseDoc.clinicalTitle')}
@@ -154,7 +116,7 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
           <p className="px-1 text-sm leading-6 text-[var(--text-2)]">
             {t('exerciseDoc.clinicalHint')}
           </p>
-          {documentation.clinical.filter(keep).map((article) => (
+          {documentation.clinical.map((article) => (
             <ArticleCard key={article.articleId} article={article} />
           ))}
         </section>

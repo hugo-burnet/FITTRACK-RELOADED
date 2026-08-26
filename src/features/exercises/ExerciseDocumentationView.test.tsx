@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import type { DocumentationExercise } from '@/features/knowledge/exerciseDocumentation';
@@ -57,28 +56,4 @@ describe('ExerciseDocumentationView', () => {
     expect(screen.getByText(/Le corpus ne documente pas le rôle de ce muscle/u)).toBeVisible();
   });
 
-  it('garde le bouton d’effacement quand le filtre ne rend rien', async () => {
-    const user = userEvent.setup();
-    renderView(pushdown);
-
-    await user.type(screen.getByLabelText('Filtrer ces articles'), 'zirconium');
-
-    expect(screen.getByRole('status')).toHaveTextContent(/Aucun de ces articles/u);
-    expect(screen.getByRole('button', { name: 'Effacer le filtre' })).toBeVisible();
-    expect(screen.queryByRole('heading', { name: 'Triceps' })).toBeNull();
-
-    await user.click(screen.getByRole('button', { name: 'Effacer le filtre' }));
-    expect(screen.getByRole('heading', { name: 'Triceps' })).toBeVisible();
-  });
-
-  it('ne filtre jamais au-delà des articles déjà rattachés', async () => {
-    const user = userEvent.setup();
-    renderView(pushdown);
-
-    // « volume » est un sujet du Guide, hors de cette projection. Le filtre ne
-    // doit pas le faire apparaître : il réduit, il n'élargit jamais.
-    await user.type(screen.getByLabelText('Filtrer ces articles'), 'volume');
-
-    expect(screen.queryByRole('heading', { name: 'Volume' })).toBeNull();
-  });
 });
