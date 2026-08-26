@@ -2,7 +2,11 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-26 (**le wiki structuré est livré** : 64 articles, 408/408
+**Dernière mise à jour :** 2026-08-26 (**wiki structuré relu, corrigé et complété** : la relecture
+des 64 articles a trouvé 27 renvois orphelins, 6 passages tronqués par l'extraction et 4 erreurs de
+rédaction ; le Guide gagne un parcours « Apprendre à programmer » et la douleur devient accessible
+depuis chaque exercice. **Huit checkpoints téléphone restent à faire.**) Plus tôt (**le wiki
+structuré est livré** : 64 articles, 408/408
 affirmations et 102/102 fiches citées, la documentation reliée aux exercices, et Planifier réunit
 Routines, Programmes et Guide. Voir « Wiki structuré, documentation et Planifier » ci-dessous —
 **huit checkpoints téléphone restent à faire**). Plus tôt le même jour (**la piste du reclassement
@@ -18,6 +22,66 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Relecture du corpus, et ce qui a été ajouté après
+
+> Commit testé **6f0aef0**. Portails : `kb:check-articles` à jour, `kb:test:editorial` 20/20,
+> lint 0, typecheck 0, **2 236 tests**, build OK, `git diff --check` muet.
+
+### Ce que la relecture a trouvé
+
+Lecture des 64 articles bloc par bloc, doublée de contrôles mécaniques sur les 1 110 blocs. Quatre
+familles de défauts, **aucune visible par un test existant** :
+
+| Défaut | Nombre | Statut |
+|---|---:|---|
+| Renvoi vers un numéro de section du document source | 27 | corrigé, refusé par le validateur |
+| Passage tronqué par l'extraction, parenthèse ouverte | 6 | tronqué proprement, contrôle d'équilibrage ajouté |
+| Passage amputé de son sujet par la fusion | 1 | sujet restauré |
+| Bloc que j'avais rédigé disant autre chose que sa source | 4 | corrigé |
+
+Le plus net des quatre : la portion inférieure du trapèze était donnée comme accompagnant la
+**descente** du bras, alors que la source lie sa rotation haute à l'**élévation**. Un autre bloc
+citait une étude sur le multifidus du **rat** pour affirmer que les érecteurs étendent le rachis.
+
+Les six troncatures sont **dans le corpus**, pas dans la projection : `rawContext` se terminait déjà
+sur « ([Kojic et al. ». Un défaut de l'extraction E5, resté invisible tant que personne ne lisait.
+
+Le Guide a par ailleurs retrouvé sa **carte de fiche**. Projetée en blocs indépendants, une ligne F1
+perdait sa structure : « Publications majeures » devenait une suite de « Type : … » / « URL : PMC »
+dont on ne pouvait plus dire à quelle publication elles appartenaient.
+
+### Ce qui a été ajouté ensuite
+
+**Parcours « Apprendre à programmer »** (`/knowledge/apprendre`) — 14 étapes, une phrase chacune,
+qui réordonnent le Guide dans un ordre d'apprentissage : la progression d'abord, la douleur avant
+les contradictions. Il n'apporte aucun contenu propre ; une étape dont l'article manque disparaît.
+
+**La douleur, accessible.** Les pages cliniques déclaraient déjà leur portée musculaire et le
+résolveur les jetait. Une fiche d'exercice montre désormais les pages cliniques des articulations
+qu'elle engage — Genou et Rachis lombaire sur un squat — et le sommaire du wiki porte une entrée
+dédiée. Aucun diagnostic, aucun déclenchement automatique.
+
+### Ce que le corpus ne contient pas, et qui est maintenant écrit
+
+Trois demandes produit n'ont **pas** de matière dans le corpus. Elles sont documentées comme telles
+plutôt qu'inventées, à l'endroit exact où on irait les chercher :
+
+- **aucune plage de répétitions par muscle.** Le corpus donne une plage globale (~30–100 % 1RM si
+  l'effort suffit) et dit que la fréquence par muscle a peu d'effet indépendant ;
+- **aucune liste d'exercices conseillés.** Une seule comparaison directe existe (extension du coude
+  overhead) ; partout ailleurs le corpus conclut à l'absence de différence démontrée ;
+- **aucun tableau pathologie → exercice.** Le corpus écrit l'inverse : la littérature ne permet pas
+  de fixer une combinaison optimale universelle pour les douleurs musculosquelettiques.
+
+### Revue humaine : rien n'a été promu
+
+Les 64 articles restent `pending_human_review`. La relecture établit la **fidélité éditoriale** —
+provenance, routage, absence d'invention — pas la validité scientifique du corpus, et pour la
+plupart des articles la matière source vient de la passe d'extraction par modèle (`frag.e5*`) et non
+de la passe relue par un humain (`frag.f2`/`f3`). La part relue varie de 0 % (toutes les pages
+cliniques sauf deux) à 100 % (`exercise-families`, `exercise-substitutions`,
+`exercise-triceps-extensions`).
 
 ## Wiki structuré, documentation des exercices et Planifier
 
