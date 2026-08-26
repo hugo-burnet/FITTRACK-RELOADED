@@ -1321,6 +1321,36 @@ const fr = {
     },
 
     /**
+     * Le wiki rédigé. Il remplace le routage par recherche : on entre par une
+     * famille, on lit un article, et chaque paragraphe factuel dit d'où il
+     * vient. Aucun libellé ne promet une réponse à une question libre.
+     */
+    article: {
+      browseTitle: 'Le wiki',
+      browseIntro:
+        'Six familles, rédigées à partir du corpus embarqué. Chaque paragraphe factuel cite la source qui le porte ; rien n’est déduit d’un nom d’exercice.',
+      familyMuscles: 'Comprendre les muscles',
+      familyMovements: 'Comprendre les mouvements',
+      familyExerciseChoice: 'Choisir et comparer les exercices',
+      familyProgramming: 'Programmer l’entraînement',
+      familyClinical: 'Tolérance et clinique',
+      familyMethod: 'Méthode et lecture des preuves',
+      articleCountOne: '{count} article',
+      articleCountMany: '{count} articles',
+      notFoundTitle: 'Article introuvable',
+      notFoundBody:
+        'Cette adresse ne correspond à aucun article du wiki embarqué. Reviens au sommaire pour parcourir ce qui existe.',
+      unreviewedLabel: 'Non relu',
+      unreviewedBody:
+        'Cet article s’appuie sur une matière qu’aucun humain n’a encore vérifiée ligne par ligne. Le remaniement éditorial ne vaut pas validation scientifique.',
+      sourcesLabel: 'Sources de ce paragraphe',
+      editorialLabel: 'Fil éditorial',
+      searchTitle: 'Chercher dans tout le corpus',
+      searchIntro:
+        'Un raccourci facultatif, sans promesse de réponse : il retrouve des passages contenant tes mots, il ne décide pas s’ils répondent.',
+    },
+
+    /**
      * Le volet programmation. Il vient d'un document à 79 % tabulaire, dont les
      * tableaux avaient été extraits de façon déterministe en 2026-08 et n'étaient
      * consommés par rien. Chaque ligne est une fiche, pas une phrase — et aucune

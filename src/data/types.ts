@@ -34,6 +34,32 @@ export const MUSCLE_GROUPS = [
 
 export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
 
+/**
+ * Famille de mouvement : la seule identité qui autorise le wiki à expliquer la
+ * coopération entre deux muscles. Elle vient du vocabulaire contrôlé du corpus
+ * (`movement-pattern.vocab.json`) et ne se déduit jamais du nom d'un exercice —
+ * un nom se réécrit, et une déduction par le nom est précisément ce que la
+ * mesure du 2026-08-26 a disqualifié.
+ */
+export const MOVEMENT_PATTERNS = [
+  'poussee_horizontale',
+  'poussee_verticale',
+  'tirage_horizontal',
+  'tirage_vertical',
+  'squat',
+  'hinge',
+  'fente',
+  'isolation_coude',
+  'isolation_epaule',
+  'isolation_genou',
+  'isolation_hanche',
+  'isolation_cheville',
+  'isolation_poignet',
+  'autre',
+] as const;
+
+export type MovementPattern = (typeof MOVEMENT_PATTERNS)[number];
+
 export const EQUIPMENT = [
   'barbell',
   'dumbbell',
@@ -96,6 +122,13 @@ export interface Exercise extends Syncable {
   isUnilateral: 0 | 1; // audit recommendation M2
   /** Stable seed idempotency key; absent on custom exercises. */
   slug?: string;
+  /**
+   * Famille de mouvement, facultative et **non indexée** : elle ne sert qu'à
+   * documenter, jamais à filtrer une requête. Aucune version Dexie n'est donc
+   * ajoutée, et les exercices personnels existants restent valides sans
+   * migration — l'absence de famille est une réponse, pas un trou à combler.
+   */
+  movementPattern?: MovementPattern;
   imageUrl?: string;
   instructions?: string;
   userNotes?: string; // RF-09: machine settings, bench height…

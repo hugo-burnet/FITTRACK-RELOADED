@@ -21,3 +21,11 @@ export const WikiProgrammingRoute = lazyRoute(
   () => import('./WikiProgrammingScreen'),
   'WikiProgrammingScreen',
 );
+
+// Un article est une page de lecture : elle ne sert que si on vient du sommaire,
+// d'une projection d'exercice ou d'un résultat. Elle se charge à la demande,
+// comme les écrans qui la précèdent.
+export const WikiArticleRoute = lazyRoute(
+  () => import('./WikiArticleScreen'),
+  'WikiArticleScreen',
+);

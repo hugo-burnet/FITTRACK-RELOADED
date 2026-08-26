@@ -4,6 +4,8 @@ import { Screen } from '@/app/Screen';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { Button } from '@/ui';
 import { WikiBrowse } from './WikiBrowse';
+import { stripEmphasis } from './markdownText';
+import { articleHref, findArticleForRow } from './articleCatalogue';
 import {
   evidenceIndexStatus,
   searchEvidence,
@@ -27,16 +29,6 @@ function statusLabel(status: EpistemicStatus | null): string {
   return status === null ? t('knowledge.status.unqualified') : t(STATUS_KEYS[status]);
 }
 
-/**
- * Les affirmations gardent l'emphase Markdown de leur document source, et
- * l'écran l'affichait telle quelle : « les chefs **latéral** et **médial** ».
- * On ne peut pas la rendre en gras sans réinterpréter le texte cité, alors on
- * la retire — une citation exacte se juge sur ses mots, pas sur ses astérisques.
- */
-function stripEmphasis(text: string): string {
-  return text.replace(/\*\*(.+?)\*\*/gsu, '$1').replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/gsu, '$1');
-}
-
 function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: number }) {
   // On affiche toujours le contexte — c'est lui la prose lisible — et on ne
   // répète la citation en dessous que si elle apporte un cadrage absent du
@@ -49,10 +41,13 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
     stripEmphasis(evidence.rawQuote),
   );
   const isProgramming = evidence.kind === 'programming';
-  const sectionHref =
-    evidence.sectionId === undefined
-      ? undefined
-      : `/knowledge/${isProgramming ? 'p' : 's'}/${evidence.sectionId}`;
+  // Une fiche de programmation n'a plus de page de lignes brutes : elle est
+  // citée dans un article du Guide, et c'est là qu'on l'envoie lire. Pour une
+  // affirmation E5, la section du corpus reste la bonne destination.
+  const programmingArticle = isProgramming ? findArticleForRow(evidence.claimId) : undefined;
+  const sectionHref = isProgramming
+    ? programmingArticle && articleHref(programmingArticle)
+    : evidence.sectionId && `/knowledge/s/${evidence.sectionId}`;
 
   return (
     <article className="relative overflow-hidden rounded-2xl bg-[var(--surface-1)] pl-1">
@@ -191,6 +186,22 @@ export function KnowledgeScreen() {
           )}
         </section>
 
+        {/* Le sommaire passe devant. La mesure du 2026-08-26 a tranché : une
+            recherche lexicale répond pour 28 questions sur 28 auxquelles le
+            corpus ne peut pas répondre, et aucun seuil de refus ne rattrape ça.
+            Parcourir est devenu le parcours principal ; chercher est le
+            raccourci de celui qui sait déjà quel mot il cherche. */}
+        <WikiBrowse />
+
+        <section className="border-t border-[var(--border)] px-1 pt-5">
+          <h2 className="text-lg font-semibold text-[var(--text-1)]">
+            {t('knowledge.article.searchTitle')}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-2)]">
+            {t('knowledge.article.searchIntro')}
+          </p>
+        </section>
+
         <form
           className="space-y-3"
           onSubmit={(event) => {
@@ -223,11 +234,6 @@ export function KnowledgeScreen() {
         ) : (
           <SearchResult outcome={outcome} />
         )}
-
-        {/* Le sommaire vient après la recherche, pas avant : chercher est le
-            geste fréquent, parcourir celui qu'on fait quand on ne sait pas
-            encore quoi chercher. */}
-        <WikiBrowse />
 
         <section className="border-t border-[var(--border)] px-1 pt-5">
           <h2 className="label-xs font-semibold text-[var(--text-2)]">

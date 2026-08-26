@@ -1,32 +1,73 @@
 import { Link } from 'react-router-dom';
 import { t } from '@/i18n/fr';
-import { wikiDocuments } from './wikiIndex';
+import { articleHref, listArticleFamilies } from './articleCatalogue';
+import type { ArticleFamilyGroup } from './articleCatalogue';
 
-function countLabel(count: number, one: 'sectionCountOne' | 'passageCountOne'): string {
-  const many = one === 'sectionCountOne' ? 'sectionCountMany' : 'passageCountMany';
-  return t(`knowledge.wiki.${count === 1 ? one : many}`, { count });
+function countLabel(count: number): string {
+  return t(
+    count === 1 ? 'knowledge.article.articleCountOne' : 'knowledge.article.articleCountMany',
+    { count },
+  );
+}
+
+function FamilyCard({ family }: { family: ArticleFamilyGroup }) {
+  return (
+    <article className="rounded-2xl bg-[var(--surface-1)] p-5">
+      <h3 className="text-base font-semibold leading-6 text-[var(--text-1)]">{family.label}</h3>
+      <p className="label-xs mt-2 font-semibold text-[var(--text-2)]">
+        {countLabel(family.articles.length)}
+      </p>
+
+      <ul className="mt-4 space-y-1">
+        {family.articles.map((article) => (
+          <li key={article.articleId}>
+            {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
+            <Link
+              to={articleHref(article)}
+              className="flex min-h-12 items-center justify-between gap-4 rounded-xl px-3 py-2
+                text-sm leading-6 text-[var(--text-1)]"
+            >
+              <span>{article.title}</span>
+              <span aria-hidden="true" className="shrink-0 text-[var(--text-2)]">
+                →
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </article>
+  );
 }
 
 /**
- * Le sommaire. Ce qui transforme 266 passages orphelins en quelque chose qui se
- * parcourt : l'ordre du document source, et rien d'autre. Pas de tri par
- * pertinence — un sommaire qui se réordonne n'est plus un sommaire.
+ * Le sommaire. Il entre par les familles du wiki rédigé, dans l'ordre écrit à la
+ * main dans le contrat éditorial — pas dans un ordre de pertinence, qui ferait
+ * bouger le sommaire d'une visite à l'autre.
+ *
+ * La méthode est mise à part en bas : elle est nécessaire pour lire le reste,
+ * mais la rattacher aux muscles ou aux mouvements l'aurait fait remonter sur des
+ * écrans où elle n'a rien à faire.
  */
 export function WikiBrowse() {
+  const families = listArticleFamilies();
+  const content = families.filter((family) => family.id !== 'method');
+  const method = families.find((family) => family.id === 'method');
+
   return (
     <section aria-labelledby="wiki-browse" className="space-y-4">
       <div className="px-1">
         <h2 id="wiki-browse" className="text-lg font-semibold text-[var(--text-1)]">
-          {t('knowledge.wiki.browseTitle')}
+          {t('knowledge.article.browseTitle')}
         </h2>
         <p className="mt-2 text-sm leading-6 text-[var(--text-2)]">
-          {t('knowledge.wiki.browseIntro')}
+          {t('knowledge.article.browseIntro')}
         </p>
       </div>
 
       <Link
         to="/knowledge/questions"
-        className="flex min-h-12 items-center justify-between gap-4 rounded-2xl bg-[var(--accent-soft)] px-5 py-4"
+        className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
+          bg-[var(--accent-soft)] px-5 py-4"
       >
         <span className="font-semibold text-[var(--accent-ink)]">
           {t('knowledge.wiki.questionsEntry')}
@@ -36,60 +77,15 @@ export function WikiBrowse() {
         </span>
       </Link>
 
-      {/* La programmation vient d'un autre document et d'un autre étage
-          d'extraction. Elle a sa propre entrée plutôt que d'être fondue dans la
-          liste des sections : sa matière est faite de fiches, pas de prose. */}
-      <Link
-        to="/knowledge/programmation"
-        className="flex min-h-12 items-center justify-between gap-4 rounded-2xl bg-[var(--accent-soft)] px-5 py-4"
-      >
-        <span className="min-w-0">
-          <span className="block font-semibold text-[var(--accent-ink)]">
-            {t('knowledge.programming.title')}
-          </span>
-          <span className="mt-1 block text-sm leading-6 text-[var(--text-2)]">
-            {t('knowledge.programming.entry')}
-          </span>
-        </span>
-        <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
-          →
-        </span>
-      </Link>
+      {content.map((family) => (
+        <FamilyCard key={family.id} family={family} />
+      ))}
 
-      {wikiDocuments.map((document) => {
-        const passages = document.sections.reduce(
-          (total, section) => total + section.passages.length,
-          0,
-        );
-        return (
-          <article key={document.documentId} className="rounded-2xl bg-[var(--surface-1)] p-5">
-            <h3 className="text-base font-semibold leading-6 text-[var(--text-1)]">
-              {document.title}
-            </h3>
-            <p className="label-xs mt-2 font-semibold text-[var(--text-2)]">
-              {countLabel(document.sections.length, 'sectionCountOne')} ·{' '}
-              {countLabel(passages, 'passageCountOne')}
-            </p>
-
-            <ul className="mt-4 space-y-1">
-              {document.sections.map((section) => (
-                <li key={section.sectionId}>
-                  {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
-                  <Link
-                    to={`/knowledge/s/${section.sectionId}`}
-                    className="flex min-h-12 items-center justify-between gap-4 rounded-xl px-3 py-2 text-sm leading-6 text-[var(--text-1)]"
-                  >
-                    <span>{section.title}</span>
-                    <span className="record-figure shrink-0 text-xs text-[var(--text-2)]">
-                      {section.passages.length}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </article>
-        );
-      })}
+      {method !== undefined && (
+        <div className="border-t border-[var(--border)] pt-4">
+          <FamilyCard family={method} />
+        </div>
+      )}
     </section>
   );
 }
