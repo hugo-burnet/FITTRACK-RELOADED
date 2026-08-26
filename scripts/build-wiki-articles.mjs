@@ -50,7 +50,14 @@ const generated = `${JSON.stringify(bundle, null, 2)}\n`;
 
 if (mode === '--check') {
   const existing = existsSync(outputPath) ? readFileSync(outputPath, 'utf8') : '';
-  if (existing !== generated) {
+  // Comparaison **normalisée**. Avec `core.autocrlf=true`, git rend le fichier
+  // en CRLF au checkout alors que ce script l'écrit en LF : la comparaison
+  // octet à octet échouait donc sur tout clone frais sous Windows, et faisait
+  // tomber `npm run build` via prebuild. Trouvé en fusionnant sur master, pas
+  // dans le worktree où le fichier venait d'être écrit. C'est le contenu qui ne
+  // doit pas dériver, pas ses fins de ligne.
+  const normalise = (value) => value.split('\r\n').join('\n');
+  if (normalise(existing) !== normalise(generated)) {
     throw new Error('wiki-articles.json est périmé; lancer npm run kb:build-articles');
   }
   console.log('Wiki articles: artefact à jour');
