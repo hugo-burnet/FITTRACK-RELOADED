@@ -30,7 +30,7 @@ a jamais de « rien », il y a un corpus qu'on parcourt.
 
 | | |
 |---|---:|
-| Passages de prose distincts | **266** |
+| Passages de prose distincts | **209** (les 408 affirmations s’y replient) |
 | Volume de prose | ~95 500 caractères, soit ~64 pages A4 |
 | Sections | **64** |
 | Documents sources | 2 |
@@ -48,7 +48,7 @@ Trois écrans, une règle : **le wiki ne rédige jamais**. Il ordonne, il situe,
 ### Dans la v1
 
 - **Sommaire** — les 2 documents, leurs 64 sections, avec le nombre de passages. C'est ce
-  qui transforme 266 passages orphelins en quelque chose qui se parcourt.
+  qui transforme 209 passages orphelins en quelque chose qui se parcourt.
 - **Page de section** — les passages d'une section, **dans l'ordre du document source**
   (tri par `supportStartByte`), chacun avec son statut épistémique et son ancrage.
 - **Index des questions** — les 31 questions répondables comme portes d'entrée, chacune
@@ -77,7 +77,7 @@ pipeline différent de celui qui était livré.
 
 **Afficher `displayContext`, jamais `rawQuote`.** 18 % des affirmations sont des bouts de
 phrase (« et une **rotation interne**. »). Parfaits comme unités de récupération,
-illisibles comme prose. Et dédupliquer : **408 affirmations ne font que 266 passages**.
+illisibles comme prose. Et dédupliquer : **408 affirmations ne font que 209 passages**.
 
 **Identifiants de section stables et lisibles**, dérivés du chemin de titres. Un test
 vérifie leur unicité sur les 64 : une collision silencieuse enverrait deux sections sur
@@ -94,7 +94,7 @@ soit vérifié, soit explicitement marqué comme non relu.
       comme dépassé sur ses étapes 4 à 6, `kb-prompt-de-reprise.md` remis à jour,
       `PROGRESS.md` complété.
 - [x] **T2 — Dérivation de la structure.** `src/features/knowledge/wikiIndex.ts`, 10 tests.
-      Produit **2 documents, 64 sections, 266 passages**, dans l'ordre du document source.
+      Produit **2 documents, 64 sections, 209 passages**, dans l'ordre du document source.
       `findWikiSection(id)` pour la route de section.
 
       > **Piège trouvé en l'écrivant, à connaître avant de toucher ce module :** `f2` et
@@ -106,14 +106,18 @@ soit vérifié, soit explicitement marqué comme non relu.
       >
       > Répartition réelle : `f2` Anatomie, 49 sections / 194 passages ; `f3` Clinique,
       > 15 sections / 72 passages.
-- [ ] **T3 — Écran sommaire.** Les 2 documents, leurs sections, le nombre de passages.
-      Textes dans `src/i18n/fr.ts`. Route `/knowledge` enrichie sous la recherche existante.
-- [ ] **T4 — Écran de section.** Route `/knowledge/s/:sectionId`. Passages dans l'ordre,
-      ancrage affiché, retour au sommaire. Cible tactile ≥ 48 px, thème sombre par défaut.
-- [ ] **T5 — Index des questions.** Route `/knowledge/questions`. Les 31 répondables vers
-      leurs passages ; les 28 autres listées avec le sous-domaine manquant.
-- [ ] **T6 — Relier la recherche aux sections.** Un résultat de recherche mène à sa page de
-      section, ancré sur le bon passage.
+- [x] **T3 — Écran sommaire.** `WikiBrowse.tsx`, sous la recherche existante.
+- [x] **T4 — Écran de section.** Route `/knowledge/s/:sectionId`.
+- [x] **T5 — Index des questions.** Route `/knowledge/questions`. Artefact
+      `wiki-questions.json` généré par `npm run kb:build-wiki-questions`.
+- [x] **T6 — Relier la recherche aux sections.** Chaque résultat mène à sa page.
+
+      > **Défaut trouvé en lisant l'app, corrigé :** les passages n'étaient dédupliqués que
+      > par égalité stricte, ce qui laissait passer les contextes **imbriqués** — l'un porte
+      > la phrase, l'autre le paragraphe qui la contient. **57 des 266 passages, sur 36
+      > sections des 64.** Plus d'une page sur deux se répétait à quelques lignes
+      > d'intervalle. Après fusion : **209 passages**, 408 affirmations toutes conservées.
+      > Même famille que le défaut du banc hybride, un cran plus subtil.
 - [ ] **T7 — Checkpoint téléphone.** Parcourir le sommaire, ouvrir trois sections, chercher
       « mon tendon tire », suivre un résultat jusqu'à sa section. À faire sur le vrai
       appareil : le panneau navigateur ne compose pas d'images quand il est masqué, donc
