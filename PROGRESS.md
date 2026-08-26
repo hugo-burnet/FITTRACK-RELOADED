@@ -2,7 +2,11 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-26 (**la piste du reclassement est close, négativement** :
+**Dernière mise à jour :** 2026-08-26 (**le wiki structuré est livré** : 64 articles, 408/408
+affirmations et 102/102 fiches citées, la documentation reliée aux exercices, et Planifier réunit
+Routines, Programmes et Guide. Voir « Wiki structuré, documentation et Planifier » ci-dessous —
+**huit checkpoints téléphone restent à faire**). Plus tôt le même jour (**la piste du reclassement
+est close, négativement** :
 le petit cross-encoder coûte 4 343 ms/question et fait tomber le rappel de 27/31 à 22/31 et la
 précision@1 de 17/31 à 5/31. Aucun reranker n'entre dans l'application, CAL et TEST restent fermés,
 et **la recherche ne sert plus à décider quel contenu rattacher à un objet FitTrack** — c'est le
@@ -14,6 +18,105 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Wiki structuré, documentation des exercices et Planifier
+
+> Conception : `docs/superpowers/specs/2026-08-26-structured-wiki-planning-exercise-documentation-design.md`
+> Plan : `docs/superpowers/plans/2026-08-26-structured-wiki-exercise-documentation-planifier.md`
+> Branche `claude/implemente-d65485`, commit testé **a744aa7**, 13 commits au-dessus de `master`.
+
+### Le changement qui compte
+
+La recherche ne décide plus quel contenu rattacher à un objet FitTrack. Elle en était incapable, et
+c'est mesuré : le petit cross-encoder coûte 4 343 ms/question et fait tomber le rappel de 27/31 à
+22/31, la précision@1 de 17/31 à 5/31. **T8 est conclue négativement, T9 annulée, CAL et TEST
+restent fermés.**
+
+Le rattachement est désormais **déclaré** dans le corpus éditorial et **vérifié au build**. Un slug
+inventé, un `claimId` inconnu, un rôle musculaire affirmé hors d'un article de mouvement ou une fiche
+de programmation promue relue font échouer `npm run build`.
+
+### Ce qui est livré
+
+| Portail | Résultat |
+|---|---|
+| `npm run kb:check-articles` | artefact à jour |
+| `npm run kb:test:editorial` | 18 tests, 0 échec |
+| `npm run lint` | code 0 |
+| `npm run typecheck` | code 0 |
+| `npm run test:run` | 208 fichiers, **2 223 tests**, 0 échec |
+| `npm run build` | terminé, précache 7 291 Kio |
+| `git diff --check` | aucune sortie |
+
+**Couverture du corpus**, reproduite depuis la donnée et non depuis le plan : 266 contextes → 57
+fusions imbriquées → **209 passages lisibles**, **408/408 affirmations citées**, **102/102 fiches de
+programmation citées** dont 26 bibliographiques.
+
+64 articles : 15 fiches musculaires, 13 familles de mouvement, 6 pages de choix d'exercice, 9 pages
+cliniques, 19 pages de Guide, 2 pages de méthode.
+
+### Ce qui reste `pending_human_review`
+
+**Les 64 articles.** Aucun n'a été relu par un humain. Les 19 pages du Guide ne peuvent pas l'être
+tant que leurs 102 lignes sources ne le sont pas une par une ; les 45 autres attendent une relecture
+qui ne dépend que de toi. Le bandeau est affiché sur chaque page et aucune transformation de format
+ne le retire.
+
+### Décisions consignées
+
+- **175 exercices du catalogue** portent une famille de mouvement décidée slug par slug. `null` — 12
+  exercices : cardio, étirements, mobilité — veut dire « la notion ne s'applique pas », pas « je n'ai
+  pas su ». `autre` — 33 exercices — couvre les mouvements réels que les treize noms ne recouvrent
+  pas : haussements d'épaules, flexions du tronc, nuque, port de charge, mouvements olympiques.
+- **Aucun script ne déduit une famille d'un nom.** Un renommage ne change aucune documentation, et un
+  test l'exige.
+- Le repli des dossiers et le cadenas de la bibliothèque sont **éphémères** : un redémarrage revient
+  à « tout déplié, cadenas fermé ».
+
+### Trois défauts trouvés pendant l'implémentation
+
+1. **La fixture du plan ne pouvait pas échouer.** Sans ligne vide entre blocs, retirer une annotation
+   recollait le paragraphe orphelin au précédent, qui est sourcé. La ligne vide est devenue une règle
+   du format, et `UNKNOWN_ANNOTATION` refuse en plus une annotation mal orthographiée — qui se serait
+   sinon affichée telle quelle dans l'application.
+2. **Une portée que j'allais livrer.** `muscle-abs` déclarait `movementPatterns: ['autre']` : la fiche
+   des abdominaux serait apparue sur chaque flexion de nuque et chaque haussement d'épaules.
+3. **L'ordre de lecture du wiki était celui des identifiants anglais.** Trouvé en ouvrant l'app dans
+   un navigateur, pas dans un test : le Guide ouvrait sur « Contradictions majeures » et plaçait
+   « Méthode et langage de certitude » en huitième position. Chaque article porte désormais son rang,
+   et le validateur exige qu'il soit déclaré, unique et contigu.
+
+Deux tests d'édition étaient par ailleurs **instables** : ils attendaient le champ et non sa valeur,
+donc taper s'ajoutait au nom qui arrivait juste après. Échec trois fois sur quatre, trouvé en
+relançant la série. L'attente a été corrigée, pas l'assertion.
+
+### Vérifié au navigateur, sur le serveur de dev
+
+Fait sur poste, viewport 375 × 812. Ce n'est **pas** un checkpoint téléphone.
+
+- Sommaire du wiki : six familles, ordre de lecture correct.
+- Guide : 19 articles dans l'ordre des sections sources, bandeau « non relu », « Mettre en pratique ».
+- Article de mouvement : blocs sourcés avec leurs `claimId`.
+- Fiche d'un exercice du catalogue : onglets Suivi / Documentation, projection correcte.
+- Bibliothèque : en-têtes de 48 px avec `aria-expanded` et compteur, aucune poignée verrouillé,
+  déverrouiller déplie tout et désactive le repli, reverrouiller restaure l'état replié, un
+  rechargement revient à « déplié, verrouillé » sans perdre de routine.
+
+### CHECKPOINT MANUEL — huit parcours à faire sur le téléphone
+
+1. Ouvrir un exercice du catalogue : Suivi et Documentation se distinguent ; la documentation charge
+   hors ligne et explique le mouvement sans bloc hors sujet.
+2. Créer un exercice personnel **sans** famille : les muscles sont documentés, la relation spécifique
+   est annoncée absente. Ajouter ensuite une famille et vérifier que l'article relationnel apparaît.
+3. Ouvrir Planifier : passer de Routines à Programmes puis Guide sans ambiguïté de vocabulaire.
+4. Depuis le Guide, « Mettre en pratique » ouvre l'éditeur Program existant.
+5. Replier plusieurs dossiers, vérifier que le contenu disparaît sans perdre l'ordre.
+6. Déverrouiller : tous les dossiers se déplient, déplacer une routine entre dossiers, reverrouiller
+   et vérifier le retour de l'état replié.
+7. Force-close puis relancer : cadenas fermé, dossiers dépliés, données de routines intactes.
+8. Couper le réseau et répéter les parcours Documentation et Guide.
+
+Le contrôle visuel du tutoriel sur téléphone reste dû par ailleurs.
 
 ## Knowledge Base — phase 2 : le contrat exécutable
 
