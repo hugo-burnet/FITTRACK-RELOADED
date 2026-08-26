@@ -121,10 +121,10 @@ soit vérifié, soit explicitement marqué comme non relu.
 - [x] **T7 — Checkpoint téléphone.** Fait le 2026-08-26 : trois défauts trouvés sur
       appareil réel (doublons de passage, fiches hors sujet, emphase Markdown affichée),
       tous corrigés. Version testée : v1.4.2, corrigés en v1.4.3.
-- [x] **T7 bis (ancien libellé) — Checkpoint téléphone.** Parcourir le sommaire, ouvrir trois sections, chercher
-      « mon tendon tire », suivre un résultat jusqu'à sa section. À faire sur le vrai
-      appareil : le panneau navigateur ne compose pas d'images quand il est masqué, donc
-      aucune capture n'a pu valider la mise en page.
+      > Le panneau navigateur ne compose pas d'images quand il est masqué : aucune capture
+      > n'a jamais pu valider la mise en page depuis une session agent. Ce checkpoint ne
+      > peut se faire que sur l'appareil, et il a trouvé trois défauts que le banc ne
+      > voyait pas — c'est l'argument pour le refaire à chaque version.
 
 ## Ce qui reste à trancher
 
