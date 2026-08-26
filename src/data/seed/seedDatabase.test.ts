@@ -210,6 +210,54 @@ describe('réconciliation de la classification', () => {
     expect(Object.hasOwn(cleanedCrunch, 'bodyweightLoadFactor')).toBe(false);
   });
 
+  it('réaligne la famille de mouvement d’une fiche du catalogue', async () => {
+    // Même raison que pour les muscles : la famille de mouvement décide quel
+    // article le wiki rattache à l'exercice. Une dérive laisse la documentation
+    // parler d'un autre geste, en silence.
+    await seedDatabase();
+    const row = (await db.exercises.toArray()).find((e) => e.slug === 'barbell-back-squat');
+    await db.exercises.update(row!.id, { movementPattern: 'hinge', updatedAt: 1 });
+
+    await seedDatabase();
+
+    const fixed = await db.exercises.get(row!.id);
+    expect(fixed!.movementPattern).toBe('squat');
+    expect(fixed!.updatedAt).toBeGreaterThan(1);
+  });
+
+  it('efface une famille inventée sur un exercice que le catalogue ne classe pas', async () => {
+    // `null` dans le catalogue veut dire « la notion ne s'applique pas ». Le
+    // réalignement doit donc **retirer** le champ, pas y écrire une valeur de
+    // repli qui ferait remonter un article hors sujet sur un tapis de course.
+    await seedDatabase();
+    const row = (await db.exercises.toArray()).find((e) => e.slug === 'treadmill-run');
+    await db.exercises.update(row!.id, { movementPattern: 'squat', updatedAt: 1 });
+
+    await seedDatabase();
+
+    const cleaned = (await db.exercises.get(row!.id))!;
+    expect(cleaned.movementPattern).toBeUndefined();
+    expect(Object.hasOwn(cleaned, 'movementPattern')).toBe(false);
+  });
+
+  it('laisse la famille choisie sur un exercice personnel', async () => {
+    const mine = newEntity<Exercise>({
+      name: 'Machine de ma salle',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isCustom: 1,
+      isUnilateral: 0,
+      movementPattern: 'poussee_horizontale',
+    });
+    await db.exercises.add(mine);
+
+    await seedDatabase();
+
+    expect((await db.exercises.get(mine.id))!.movementPattern).toBe('poussee_horizontale');
+  });
+
   it('n’écrit rien quand tout est déjà d’accord', async () => {
     await seedDatabase();
     const before = (await db.exercises.toArray()).find((e) => e.slug === 'seated-cable-row');

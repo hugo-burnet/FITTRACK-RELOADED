@@ -98,6 +98,43 @@ describe('sauvegarde complète', () => {
     expect(localStorage.getItem('fittrack:tutorial:v2')).toBe(tutorial);
   });
 
+  it('emporte la famille de mouvement d’un exercice personnel, et accepte son absence', async () => {
+    // La famille de mouvement décide quels articles du wiki s'affichent sur la
+    // fiche. Si elle ne survivait pas à une restauration, la documentation d'un
+    // exercice personnel disparaîtrait au changement de téléphone — sans erreur,
+    // sans message, juste un onglet devenu plus pauvre.
+    const withPattern = await createCustomExercise({
+      name: 'Presse de ma salle',
+      primaryMuscle: 'quads',
+      secondaryMuscles: ['glutes'],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+      movementPattern: 'squat',
+    });
+    // Le champ est facultatif : une fiche créée avant son existence n'a rien à
+    // rattraper, et surtout aucun backfill ne doit lui inventer une valeur.
+    const without = await createCustomExercise({
+      name: 'Machine sans nom',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+
+    const text = serializeBackup(await buildBackup());
+    await resetDb();
+    const parsed = parseBackup(text);
+    if (!parsed.ok) throw new Error(`sauvegarde refusée : ${parsed.problem}`);
+    await restoreBackup(parsed.backup);
+
+    expect((await db.exercises.get(withPattern.id))!.movementPattern).toBe('squat');
+    const restored = (await db.exercises.get(without.id))!;
+    expect(restored.movementPattern).toBeUndefined();
+    expect(restored.primaryMuscle).toBe('chest');
+  });
+
   it('remplace ce qui est là plutôt que de s’y ajouter', async () => {
     await seedAccount();
     const backup = await buildBackup();

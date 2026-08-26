@@ -103,6 +103,29 @@ const fr = {
     other: 'Autre',
   },
 
+  /**
+   * Les quatorze familles de mouvement, reprises du vocabulaire fermé du contrat
+   * KB (`movement-pattern.vocab.json`). Elles nomment une **mécanique**, jamais
+   * une zone du corps : c'est ce qui permet au wiki d'expliquer pourquoi deux
+   * muscles coopèrent sans le deviner d'un nom d'exercice.
+   */
+  movementPattern: {
+    poussee_horizontale: 'Poussée horizontale',
+    poussee_verticale: 'Poussée verticale',
+    tirage_horizontal: 'Tirage horizontal',
+    tirage_vertical: 'Tirage vertical',
+    squat: 'Squat',
+    hinge: 'Hip hinge',
+    fente: 'Fente',
+    isolation_coude: 'Isolation du coude',
+    isolation_epaule: 'Isolation de l’épaule',
+    isolation_genou: 'Isolation du genou',
+    isolation_hanche: 'Isolation de la hanche',
+    isolation_cheville: 'Isolation de la cheville',
+    isolation_poignet: 'Isolation du poignet',
+    autre: 'Autre',
+  },
+
   equipment: {
     barbell: 'Barre',
     dumbbell: 'Haltères',

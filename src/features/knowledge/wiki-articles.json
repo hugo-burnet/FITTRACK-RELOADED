@@ -3342,9 +3342,7 @@
       "muscleGroups": [
         "abs"
       ],
-      "movementPatterns": [
-        "autre"
-      ],
+      "movementPatterns": [],
       "exerciseSlugs": [],
       "reviewState": "pending_human_review",
       "sections": [

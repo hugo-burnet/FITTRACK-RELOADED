@@ -2,6 +2,7 @@ import type {
   Equipment,
   Exercise,
   MeasurementType,
+  MovementPattern,
   MuscleGroup,
   PersonalRecord,
   PersonalRecordType,
@@ -28,6 +29,10 @@ import { t } from './fr';
  */
 
 export const muscleLabel = (muscle: MuscleGroup): string => t(`muscle.${muscle}`);
+
+/** Les quatorze familles du vocabulaire fermé, sans exception ni repli. */
+export const movementPatternLabel = (pattern: MovementPattern): string =>
+  t(`movementPattern.${pattern}`);
 
 /** `Date.getDay()` order, so a stored day and a label never need a conversion. */
 const WEEKDAY_KEYS = [

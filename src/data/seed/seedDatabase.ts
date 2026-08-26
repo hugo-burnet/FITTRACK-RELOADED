@@ -1,6 +1,6 @@
 import { db } from '@/data/db';
 import { newEntity, touch } from '@/data/repositories/base';
-import type { Exercise, Syncable } from '@/data/types';
+import type { Exercise, MovementPattern, Syncable } from '@/data/types';
 import catalogue from './exercises.json';
 
 /**
@@ -9,10 +9,29 @@ import catalogue from './exercises.json';
  */
 export type CatalogueExercise = Omit<Exercise, keyof Syncable | 'isCustom'> & { slug: string };
 
+/**
+ * La source JSON porte `movementPattern: null` là où aucune des quatorze
+ * familles ne décrit honnêtement le mouvement — cardio, étirements, mobilité.
+ * `null` est une **décision auditée**, pas une case vide : le test du catalogue
+ * exige que chaque ligne porte la propriété.
+ *
+ * Le modèle persisté, lui, ne connaît pas `null` : il connaît l'absence du
+ * champ. Traduire ici évite de stocker une troisième valeur qui voudrait dire la
+ * même chose que l'absence.
+ */
+type CatalogueSourceExercise = Omit<CatalogueExercise, 'movementPattern'> & {
+  movementPattern: MovementPattern | null;
+};
+
 // JSON modules widen every string to `string`, so the union types are lost on
 // import. The cast is checked instead by the catalogue tests, which validate
-// every row against MUSCLE_GROUPS / EQUIPMENT / MEASUREMENT_TYPES.
-const CATALOGUE = catalogue as CatalogueExercise[];
+// every row against MUSCLE_GROUPS / EQUIPMENT / MEASUREMENT_TYPES /
+// MOVEMENT_PATTERNS.
+const SOURCE_CATALOGUE = catalogue as CatalogueSourceExercise[];
+
+const CATALOGUE: CatalogueExercise[] = SOURCE_CATALOGUE.map(({ movementPattern, ...entry }) =>
+  movementPattern === null ? entry : { ...entry, movementPattern },
+);
 
 /** How many exercises ship with the app. Shown on the debug screen. */
 export const CATALOGUE_SIZE = CATALOGUE.length;
@@ -100,6 +119,7 @@ async function reconcileShippedMetadata(rows: readonly Exercise[]): Promise<void
       row.primaryMuscle === entry.primaryMuscle &&
       row.secondaryMuscles.length === entry.secondaryMuscles.length &&
       row.secondaryMuscles.every((muscle, index) => muscle === entry.secondaryMuscles[index]) &&
+      row.movementPattern === entry.movementPattern &&
       (factorIsTheirs || row.bodyweightLoadFactor === entry.bodyweightLoadFactor);
 
     // Nothing written when nothing differs: this runs at every launch, and a
@@ -107,20 +127,33 @@ async function reconcileShippedMetadata(rows: readonly Exercise[]): Promise<void
     // future sync (ADR-002).
     if (same) return [];
 
-    const changes = {
+    /**
+     * La famille de mouvement suit la même règle que les muscles : c'est une
+     * classification dont l'application répond, et le wiki s'en sert pour
+     * décider quel article rattacher. Une décision `null` du catalogue retire
+     * le champ au lieu d'y écrire une valeur — l'absence *est* la réponse.
+     */
+    const base = {
       primaryMuscle: entry.primaryMuscle,
       secondaryMuscles: [...entry.secondaryMuscles],
     };
+    const patternless = { ...row };
+    delete patternless.movementPattern;
+    const target = entry.movementPattern === undefined ? patternless : row;
+    const changes =
+      entry.movementPattern === undefined
+        ? base
+        : { ...base, movementPattern: entry.movementPattern };
 
-    if (factorIsTheirs) return [touch(row, changes)];
+    if (factorIsTheirs) return [touch(target, changes)];
 
     if (entry.bodyweightLoadFactor === undefined) {
-      const withoutFactor = { ...row };
+      const withoutFactor = { ...target };
       delete withoutFactor.bodyweightLoadFactor;
       return [touch(withoutFactor, changes)];
     }
 
-    return [touch(row, { ...changes, bodyweightLoadFactor: entry.bodyweightLoadFactor })];
+    return [touch(target, { ...changes, bodyweightLoadFactor: entry.bodyweightLoadFactor })];
   });
 
   if (drifted.length > 0) await db.exercises.bulkPut(drifted);
