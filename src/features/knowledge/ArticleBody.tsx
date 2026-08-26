@@ -6,11 +6,11 @@ import { stripEmphasis } from './markdownText';
 export function UnreviewedNotice({ article }: { article: WikiArticle }) {
   if (article.reviewState !== 'pending_human_review') return null;
   return (
-    <section className="rounded-2xl border border-[var(--border)] p-5">
-      <p className="label-xs font-semibold text-[var(--text-2)]">
-        {t('knowledge.article.unreviewedLabel')}
-      </p>
-      <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">
+    <section className="border-y border-[var(--border)] px-1 py-3">
+      <p className="text-sm leading-6 text-[var(--text-2)]">
+        <span className="label-xs mr-2 font-semibold">
+          {t('knowledge.article.unreviewedLabel')}
+        </span>
         {t('knowledge.article.unreviewedBody')}
       </p>
     </section>
@@ -26,24 +26,17 @@ function splitField(text: string): { label: string; value: string } | null {
 
 function Provenance({ sources }: { sources: readonly string[] }) {
   return (
-    <div className="mt-5 border-t border-[var(--border)] pt-4">
-      <p className="label-xs font-semibold text-[var(--text-2)]">
+    <details className="mt-4 border-t border-[var(--border)] pt-1">
+      <summary
+        className="label-xs flex min-h-12 cursor-pointer items-center font-semibold
+          text-[var(--text-2)]"
+      >
         {t('knowledge.article.sourcesLabel')}
-      </p>
-      <p className="record-figure mt-2 break-words text-xs leading-5 text-[var(--text-2)]">
+      </summary>
+      <p className="record-figure break-words pb-3 text-xs leading-5 text-[var(--text-2)]">
         {sources.join(' · ')}
       </p>
-    </div>
-  );
-}
-
-/** Le rail du témoin : ce texte vient d'une source, à l'octet près. */
-function SourcedCard({ children }: { children: React.ReactNode }) {
-  return (
-    <article className="relative overflow-hidden rounded-2xl bg-[var(--surface-1)] pl-1">
-      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-[var(--accent-ink)]" />
-      <div className="p-5">{children}</div>
-    </article>
+    </details>
   );
 }
 
@@ -70,8 +63,8 @@ function RowCard({ blocks }: { blocks: readonly WikiArticleBlock[] }) {
   if (head === undefined) return null;
 
   return (
-    <SourcedCard>
-      <p className="label-xs font-semibold text-[var(--accent-ink)]">{head.label}</p>
+    <article className="p-5">
+      <p className="label-xs font-semibold text-[var(--text-2)]">{head.label}</p>
       <p className="mt-3 text-base leading-7 text-[var(--text-1)]">{head.value}</p>
 
       {rest.length > 0 && (
@@ -86,7 +79,7 @@ function RowCard({ blocks }: { blocks: readonly WikiArticleBlock[] }) {
       )}
 
       <Provenance sources={sources} />
-    </SourcedCard>
+    </article>
   );
 }
 
@@ -99,16 +92,20 @@ function ProseBlock({ block }: { block: WikiArticleBlock }) {
   }
 
   return (
-    <SourcedCard>
+    <article className="p-5">
       <p className="text-base leading-7 text-[var(--text-1)]">{stripEmphasis(block.text)}</p>
       <Provenance sources={[...block.claimIds, ...block.rowIds]} />
-    </SourcedCard>
+    </article>
   );
 }
 
 type Group =
   | { kind: 'block'; key: string; block: WikiArticleBlock }
   | { kind: 'row'; key: string; blocks: WikiArticleBlock[] };
+
+type Run =
+  | { kind: 'editorial'; key: string; block: WikiArticleBlock }
+  | { kind: 'sourced'; key: string; groups: Group[] };
 
 /**
  * Regroupe les blocs consécutifs qui citent la même fiche de programmation.
@@ -119,9 +116,7 @@ function groupBlocks(blocks: readonly WikiArticleBlock[]): Group[] {
   const groups: Group[] = [];
   for (const block of blocks) {
     const rowId =
-      block.rowIds.length === 1 && block.claimIds.length === 0
-        ? (block.rowIds[0] ?? null)
-        : null;
+      block.rowIds.length === 1 && block.claimIds.length === 0 ? (block.rowIds[0] ?? null) : null;
     const last = groups.at(-1);
     if (rowId !== null && last?.kind === 'row' && last.key === rowId) {
       last.blocks.push(block);
@@ -131,6 +126,22 @@ function groupBlocks(blocks: readonly WikiArticleBlock[]): Group[] {
     else groups.push({ kind: 'block', key: block.blockId, block });
   }
   return groups;
+}
+
+/** Editorial prose breaks the factual surface; adjacent sourced units share it. */
+function groupRuns(groups: readonly Group[]): Run[] {
+  const runs: Run[] = [];
+  for (const group of groups) {
+    if (group.kind === 'block' && group.block.editorial) {
+      runs.push({ kind: 'editorial', key: group.key, block: group.block });
+      continue;
+    }
+
+    const last = runs.at(-1);
+    if (last?.kind === 'sourced') last.groups.push(group);
+    else runs.push({ kind: 'sourced', key: `sourced:${group.key}`, groups: [group] });
+  }
+  return runs;
 }
 
 /**
@@ -148,11 +159,24 @@ export function ArticleBody({ article }: { article: WikiArticle }) {
           <h2 id={section.sectionId} className="px-1 text-lg font-semibold text-[var(--text-1)]">
             {section.title}
           </h2>
-          {groupBlocks(section.blocks).map((group) =>
-            group.kind === 'row' ? (
-              <RowCard key={group.key} blocks={group.blocks} />
+          {groupRuns(groupBlocks(section.blocks)).map((run) =>
+            run.kind === 'editorial' ? (
+              <ProseBlock key={run.key} block={run.block} />
             ) : (
-              <ProseBlock key={group.key} block={group.block} />
+              <div
+                key={run.key}
+                data-article-evidence-group
+                className="divide-y divide-[var(--border)] overflow-hidden rounded-2xl
+                  bg-[var(--surface-1)]"
+              >
+                {run.groups.map((group) =>
+                  group.kind === 'row' ? (
+                    <RowCard key={group.key} blocks={group.blocks} />
+                  ) : (
+                    <ProseBlock key={group.key} block={group.block} />
+                  ),
+                )}
+              </div>
             ),
           )}
         </section>

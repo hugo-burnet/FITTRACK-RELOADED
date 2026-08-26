@@ -1318,8 +1318,7 @@ const fr = {
     secondaryNoRole:
       'Le corpus ne documente pas le rôle de ce muscle dans cette famille de mouvement. Sa fiche complète reste accessible.',
     limitsTitle: 'Ce que cette page ne dit pas',
-    limitPrimaryMissing:
-      'Aucun article ne couvre encore le muscle principal de cet exercice.',
+    limitPrimaryMissing: 'Aucun article ne couvre encore le muscle principal de cet exercice.',
     limitPatternMissing:
       'Aucune relation de mouvement n’est déclarée sur cet exercice. Les muscles restent documentés ; leur coopération, elle, ne s’invente pas.',
     limitMovementArticleMissing:
@@ -1449,8 +1448,8 @@ const fr = {
         'Cette adresse ne correspond à aucun article du wiki embarqué. Reviens au sommaire pour parcourir ce qui existe.',
       unreviewedLabel: 'Non relu',
       unreviewedBody:
-        'Cet article s’appuie sur une matière qu’aucun humain n’a encore vérifiée ligne par ligne. Le remaniement éditorial ne vaut pas validation scientifique.',
-      sourcesLabel: 'Sources de ce paragraphe',
+        'Matière non vérifiée ligne par ligne ; le remaniement éditorial ne vaut pas validation scientifique.',
+      sourcesLabel: 'Sources',
       editorialLabel: 'Fil éditorial',
       searchTitle: 'Chercher dans tout le corpus',
       searchIntro:
