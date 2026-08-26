@@ -27,11 +27,27 @@ const fr = {
   nav: {
     label: 'Navigation principale',
     home: 'Accueil',
-    routines: 'Routines',
+    planning: 'Planifier',
     history: 'Historique',
     progress: 'Progression',
     exercises: 'Exercices',
     settings: 'Réglages',
+  },
+
+  /**
+   * Planifier. Trois espaces, trois sens qui ne se confondent pas : une routine
+   * compose une séance, un programme organise les semaines, le Guide explique.
+   * Le vocabulaire est verrouillé par la spécification — si deux de ces mots se
+   * mettaient à vouloir dire la même chose, l'onglet n'aurait plus d'utilité.
+   */
+  planning: {
+    tabsLabel: 'Espaces de Planifier',
+    routines: 'Routines',
+    programs: 'Programmes',
+    guide: 'Guide',
+    applyGuide: 'Mettre en pratique',
+    applyGuideHint:
+      'Le Guide explique ; il n’écrit aucun programme. Cette action ouvre l’éditeur de programme, sans rien y préremplir.',
   },
 
   units: {

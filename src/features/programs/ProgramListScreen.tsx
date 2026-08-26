@@ -11,6 +11,7 @@ import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { Button, EmptyState, HeaderAction, ListRow } from '@/ui';
 import { ChevronRightIcon, PlusIcon } from '@/ui/icons';
+import { PlanningTabs } from '@/features/planning/PlanningTabs';
 
 type ProgramsQuery =
   | {
@@ -75,6 +76,9 @@ export function ProgramListScreen() {
         </HeaderAction>
       }
     >
+      <div className="mb-6">
+        <PlanningTabs />
+      </div>
       {query === undefined && <p className="text-[var(--text-2)]">{t('program.loading')}</p>}
       {query?.status === 'error' && (
         <p role="alert" className="text-[var(--danger-ink)]">

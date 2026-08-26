@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
+import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
+import { ProgrammingGuideEntry } from './ProgrammingGuideEntry';
 
 /**
  * Le Guide : la famille « Programmer l'entraînement » du wiki, en lecture seule.
@@ -36,6 +38,8 @@ export function WikiProgrammingScreen() {
       }
     >
       <div className="space-y-5">
+        <PlanningTabs />
+
         <section className="rounded-2xl bg-[var(--accent-soft)] p-5">
           <p className="text-sm leading-6 text-[var(--text-1)]">
             {t('knowledge.programming.intro')}
@@ -52,6 +56,8 @@ export function WikiProgrammingScreen() {
             </p>
           </section>
         )}
+
+        <ProgrammingGuideEntry />
 
         <ul className="space-y-1">
           {articles.map((article) => (

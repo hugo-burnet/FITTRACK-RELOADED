@@ -26,6 +26,7 @@ import { PlusIcon } from '@/ui/icons';
 import { FolderFormSheet } from './FolderFormSheet';
 import { RoutineCollection } from './RoutineCollection';
 import type { RoutineCollectionIntent } from './RoutineCollection';
+import { PlanningTabs } from '@/features/planning/PlanningTabs';
 
 /** One sheet at a time: two stacked modals fight over the body scroll lock. */
 type SheetState =
@@ -132,9 +133,11 @@ export function RoutinesScreen() {
         </div>
       }
     >
-      {/* Rien au-dessus de la bibliothèque : les blocs vivent sur l'accueil,
-          où une séance commence. Ici on compose, on duplique, on range. */}
+      {/* Rien au-dessus de la bibliothèque sauf la navigation de Planifier : les
+          blocs vivent sur l'accueil, où une séance commence. Ici on compose, on
+          duplique, on range. */}
       <div className="flex flex-col gap-6">
+        <PlanningTabs />
         {loaded && (
           <RoutineCollection
             summaries={summaries}
