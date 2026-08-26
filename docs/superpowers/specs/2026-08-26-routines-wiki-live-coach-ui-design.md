@@ -210,6 +210,26 @@ promesse d’action.
 - Les recommandations appartenant à un programme continuent de suivre la règle existante : les
   objectifs numériques sont filtrés, les observations restent possibles.
 
+### 6.4 Choix isolés dans les réglages de séance
+
+Les options non numériques qui suivent une grille ne restent plus sous forme de petites dalles
+alignées seules à gauche. Leur largeur au contenu rompait l'axe des commandes et laissait à droite
+un vide sans fonction.
+
+- Dans `RestPicker`, « Aucun » occupe toute la rangée sous les cinq durées. C'est un mode distinct,
+  pas une sixième durée : il reste séparé de la grille par 8 px et conserve `aria-pressed`.
+- Dans `PaceSheet`, « Par défaut partout » devient une rangée de préférence pleine largeur,
+  regroupée avec son explication. Elle est séparée du bouton « Lancer la cadence » par 24 px.
+- Ces deux états sélectionnés utilisent `--accent-soft` avec `--accent-ink`, et non le grand aplat
+  `--color-accent`. L'accent plein reste réservé à l'action primaire et aux valeurs numériques
+  directement choisies.
+- Chaque rangée garde une hauteur minimale de 48 px, un texte centré et le focus visible existant.
+  Aucun nouveau composant, jeton, pictogramme ou comportement n'est introduit.
+
+À 320 px, les cinq durées de la fiche exercice peuvent descendre légèrement sous 48 px de largeur
+dans la carte imbriquée ; cette reprise ne change pas leur grille, car le défaut demandé concerne
+les choix isolés et toutes les cibles conservent 48 px de hauteur.
+
 ## 7. Accessibilité et interaction
 
 - Toutes les cibles tactiles mesurent au moins 48 × 48 px.
@@ -247,6 +267,8 @@ Les changements de comportement sont menés en TDD :
    la charge.
 6. Une observation sans charge ne rend aucun bouton Appliquer.
 7. Les actions coach conservent les transitions `pending` → `followed` / `dismissed` existantes.
+8. « Aucun » et « Par défaut partout » restent des boutons `aria-pressed`, mais occupent chacun la
+   largeur de leur groupe sans reprendre l'accent plein de l'action principale.
 
 Vérifications finales :
 
@@ -270,6 +292,8 @@ git diff --check
    les séries restantes et la recommandation disparaît.
 6. Pendant une séance, masquer une observation sans charge : aucune valeur de série ne change.
 7. Vérifier les mêmes parcours à 320 px et avec le thème clair.
+8. Dans Cadence et Tes réglages, vérifier que « Par défaut partout » et « Aucun » forment des lignes
+   complètes, sans concurrence visuelle avec « Lancer la cadence » ou « Terminé ».
 
 ## 11. Critères d’acceptation
 
@@ -280,5 +304,7 @@ La reprise est terminée lorsque :
 - le Wiki se lit comme un document, conserve toute sa traçabilité et ne propose plus de tutoriel ;
 - une action coach qui écrit dans la séance est toujours nommée explicitement ;
 - une observation sans charge ne ressemble pas à un objectif applicable ;
+- les choix isolés de repos et de cadence restent alignés à la largeur de leur groupe et visuellement
+  secondaires ;
 - les tests, le typecheck, le lint et le build passent ;
 - les checkpoints téléphone sont consignés dans `PROGRESS.md`.
