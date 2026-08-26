@@ -604,6 +604,8 @@ const fr = {
     untitled: 'Sans nom',
 
     rootFolder: 'Sans dossier',
+    collapseAll: 'Tout replier',
+    expandAll: 'Tout déplier',
     noFolder: 'Aucun',
 
     exerciseCount: '{count} exercices',

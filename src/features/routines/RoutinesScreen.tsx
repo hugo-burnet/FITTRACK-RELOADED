@@ -27,6 +27,8 @@ import { FolderFormSheet } from './FolderFormSheet';
 import { RoutineCollection } from './RoutineCollection';
 import type { RoutineCollectionIntent } from './RoutineCollection';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
+import { useRoutineLibraryView } from '@/stores/routineLibraryView';
+import { Button, OrderLockButton } from '@/ui';
 
 /** One sheet at a time: two stacked modals fight over the body scroll lock. */
 type SheetState =
@@ -44,6 +46,13 @@ export function RoutinesScreen() {
   const tutorial = useTutorialControls();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);
+  const collapsedFolderIds = useRoutineLibraryView((state) => state.collapsedFolderIds);
+  const reorderUnlocked = useRoutineLibraryView((state) => state.reorderUnlocked);
+  const toggleFolder = useRoutineLibraryView((state) => state.toggleFolder);
+  const collapseAll = useRoutineLibraryView((state) => state.collapseAll);
+  const expandAll = useRoutineLibraryView((state) => state.expandAll);
+  const setReorderUnlocked = useRoutineLibraryView((state) => state.setReorderUnlocked);
+
   const [sheet, setSheet] = useState<SheetState | null>(null);
 
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);
@@ -108,6 +117,15 @@ export function RoutinesScreen() {
     return unhandled;
   };
 
+  // Mêmes identifiants que la projection : la racine n'est un en-tête que
+  // lorsqu'au moins un dossier existe.
+  const collapsibleIds =
+    folders === undefined || folders.length === 0
+      ? []
+      : ['root', ...folders.map((folder) => folder.id)];
+  const allCollapsed =
+    collapsibleIds.length > 0 && collapsibleIds.every((id) => collapsedFolderIds.has(id));
+
   return (
     <Screen
       title={t('routines.title')}
@@ -138,11 +156,37 @@ export function RoutinesScreen() {
           duplique, on range. */}
       <div className="flex flex-col gap-6">
         <PlanningTabs />
+
+        {loaded && (summaries.length > 0 || folders.length > 0) && (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="md"
+              disabled={reorderUnlocked}
+              onClick={() => (allCollapsed ? expandAll() : collapseAll(collapsibleIds))}
+            >
+              {allCollapsed ? t('routines.expandAll') : t('routines.collapseAll')}
+            </Button>
+            <span className="flex-1" />
+            {/* Fermé au lancement, et il le reste jusqu'à ce qu'on le demande :
+                la bibliothèque ne doit pas se réordonner sous un pouce. */}
+            <OrderLockButton
+              unlocked={reorderUnlocked}
+              onToggle={() => setReorderUnlocked(!reorderUnlocked)}
+              unlockLabel={t('common.unlockRoutineOrder')}
+              lockLabel={t('common.lockRoutineOrder')}
+            />
+          </div>
+        )}
+
         {loaded && (
           <RoutineCollection
             summaries={summaries}
             folders={folders}
             onIntent={handleCollectionIntent}
+            collapsedFolderIds={collapsedFolderIds}
+            reorderUnlocked={reorderUnlocked}
+            onToggleFolder={toggleFolder}
           />
         )}
       </div>

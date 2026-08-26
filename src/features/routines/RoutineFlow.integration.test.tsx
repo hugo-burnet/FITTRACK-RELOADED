@@ -12,15 +12,18 @@ import {
 } from '@/data/repositories/programs';
 import {
   addExercisesToRoutine,
+  createFolder,
   createRoutine,
   getRoutineDetail,
   listRoutineSummaries,
+  updateRoutine,
 } from '@/data/repositories/routines';
 import * as routinesRepository from '@/data/repositories/routines';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import * as workoutsRepository from '@/data/repositories/workouts';
 import type { Workout } from '@/data/types';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
+import { useRoutineLibraryView } from '@/stores/routineLibraryView';
 import { resetDb } from '@/test/resetDb';
 import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { ExercisePickerScreen } from './ExercisePickerScreen';
@@ -72,6 +75,7 @@ describe('parcours de composition d’une routine', () => {
 
   beforeEach(async () => {
     useExerciseOrderLock.getState().reset();
+    useRoutineLibraryView.getState().reset();
     await resetDb();
     vi.spyOn(Date, 'now').mockReturnValue(monday);
   });
@@ -433,5 +437,67 @@ describe('parcours de composition d’une routine', () => {
     await waitFor(async () => {
       expect((await db.routines.get(routine.id))?.name).toBe('Jambes lourdes');
     });
+  });
+
+  /**
+   * Le déplacement entre dossiers, jusqu'à la base.
+   *
+   * C'est le test qui protège l'invariant du design : le placement envoyé au
+   * repository est calculé sur **toutes** les routines, jamais sur la liste
+   * visible. Un placement partiel réécrirait l'ordre des routines repliées à
+   * partir de rien, et la perte serait silencieuse.
+   */
+  it('déplace une routine dans un dossier et persiste l’ordre complet', async () => {
+    const pushFolder = await createFolder('Push');
+    const rootRoutine = await createRoutine('Racine');
+    const pushRoutine = await createRoutine('Poussée');
+    await updateRoutine(pushRoutine.id, { folderId: pushFolder.id });
+
+    const user = userEvent.setup();
+    renderRoutineFlow('/routines');
+
+    await screen.findByText('Racine');
+    // Cadenas fermé au premier rendu : aucune poignée nulle part.
+    expect(screen.queryByRole('button', { name: 'Déplacer Racine' })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Déverrouiller l’ordre des routines' }));
+
+    const handle = screen.getByRole('button', { name: 'Déplacer Racine' });
+    fireEvent.keyDown(handle, { key: 'ArrowDown' });
+
+    await waitFor(async () => {
+      const summaries = await listRoutineSummaries();
+      const moved = summaries.find((row) => row.routine.id === rootRoutine.id);
+      expect(moved?.routine.folderId).toBe(pushFolder.id);
+    });
+
+    // L'autre routine n'a pas été oubliée en route : elle garde son dossier.
+    const summaries = await listRoutineSummaries();
+    expect(summaries.find((row) => row.routine.id === pushRoutine.id)?.routine.folderId).toBe(
+      pushFolder.id,
+    );
+    expect(summaries.map((row) => row.routine.order)).toEqual(
+      [...summaries].map((row) => row.routine.order).sort((left, right) => left - right),
+    );
+  });
+
+  it('replie un dossier, puis le retrouve replié après un reverrouillage', async () => {
+    const pushFolder = await createFolder('Push');
+    const pushRoutine = await createRoutine('Poussée');
+    await updateRoutine(pushRoutine.id, { folderId: pushFolder.id });
+
+    const user = userEvent.setup();
+    renderRoutineFlow('/routines');
+
+    await user.click(await screen.findByRole('button', { expanded: true, name: /Push/u }));
+    expect(screen.queryByText('Poussée')).not.toBeInTheDocument();
+
+    // Déverrouiller déplie tout, sinon un déplacement se calculerait sur une
+    // liste amputée. Reverrouiller rend l'état d'avant.
+    await user.click(screen.getByRole('button', { name: 'Déverrouiller l’ordre des routines' }));
+    expect(screen.getByText('Poussée')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Verrouiller l’ordre des routines' }));
+    expect(screen.queryByText('Poussée')).not.toBeInTheDocument();
   });
 });

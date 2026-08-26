@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { RoutineSummary } from '@/data/repositories/routines';
 import type { Routine, RoutineFolder } from '@/data/types';
 import { RoutineCollection } from './RoutineCollection';
+import type { RoutineCollectionProps } from './RoutineCollection';
 
 const stamps = {
   createdAt: 1,
@@ -29,11 +30,25 @@ function summary(value: Routine, exerciseCount = 1, setCount = 2): RoutineSummar
   return { routine: value, exerciseCount, setCount };
 }
 
+function Collection(
+  props: Pick<RoutineCollectionProps, 'summaries' | 'folders' | 'onIntent'> &
+    Partial<RoutineCollectionProps>,
+) {
+  return (
+    <RoutineCollection
+      reorderUnlocked
+      collapsedFolderIds={new Set()}
+      onToggleFolder={() => {}}
+      {...props}
+    />
+  );
+}
+
 describe('RoutineCollection', () => {
   it('expose les deux intentions de l\u2019\u00e9tat vide', async () => {
     const user = userEvent.setup();
     const onIntent = vi.fn();
-    render(<RoutineCollection summaries={[]} folders={[]} onIntent={onIntent} />);
+    render(<Collection summaries={[]} folders={[]} onIntent={onIntent} />);
 
     await user.click(screen.getByRole('button', { name: 'Routine vide' }));
     await user.click(screen.getByRole('button', { name: 'Partir d\u2019un mod\u00e8le' }));
@@ -49,7 +64,7 @@ describe('RoutineCollection', () => {
     const legsFolder = folder('folder-legs', 'Jambes', 1);
     const legsRoutine = routine('routine-legs', 'Squat', legsFolder.id, 1);
     render(
-      <RoutineCollection
+      <Collection
         summaries={[summary(rootRoutine), summary(pushRoutine), summary(legsRoutine)]}
         folders={[pushFolder, legsFolder]}
         onIntent={vi.fn()}
@@ -72,7 +87,7 @@ describe('RoutineCollection', () => {
 
   it('rend une routine racine sans titre lorsqu’aucun dossier n’existe', () => {
     render(
-      <RoutineCollection
+      <Collection
         summaries={[summary(routine('routine-root', 'Racine'))]}
         folders={[]}
         onIntent={vi.fn()}
@@ -85,7 +100,7 @@ describe('RoutineCollection', () => {
 
   it('rend la racine m\u00eame vide d\u00e8s qu\u2019un dossier existe', () => {
     render(
-      <RoutineCollection
+      <Collection
         summaries={[]}
         folders={[folder('folder-push', 'Push')]}
         onIntent={vi.fn()}
@@ -94,7 +109,10 @@ describe('RoutineCollection', () => {
 
     expect(screen.getByRole('heading', { name: 'Sans dossier' })).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Push' })).toBeVisible();
-    expect(screen.queryByText('0')).not.toBeInTheDocument();
+    // L'assertion visait l'état vide, pas le chiffre : un en-tête de dossier
+    // affiche désormais son nombre de routines, et « 0 » y est une information
+    // juste. On vérifie donc l'absence de l'état vide lui-même.
+    expect(screen.queryByRole('button', { name: 'Routine vide' })).not.toBeInTheDocument();
   });
 
   it('traduit les ouvertures en intentions portant les entit\u00e9s courantes', async () => {
@@ -103,7 +121,7 @@ describe('RoutineCollection', () => {
     const pushFolder = folder('folder-push', 'Push');
     const pushRoutine = routine('routine-push', 'Pouss\u00e9e', pushFolder.id);
     render(
-      <RoutineCollection
+      <Collection
         summaries={[summary(pushRoutine)]}
         folders={[pushFolder]}
         onIntent={onIntent}
@@ -140,7 +158,7 @@ describe('RoutineCollection', () => {
     ]);
     const folders = Object.freeze([Object.freeze(pushFolder)]);
     render(
-      <RoutineCollection summaries={summaries} folders={folders} onIntent={onIntent} />,
+      <Collection summaries={summaries} folders={folders} onIntent={onIntent} />,
     );
 
     screen.getByRole('button', { name: 'D\u00e9placer Racine' }).focus();
@@ -163,7 +181,7 @@ describe('RoutineCollection', () => {
     const pushFolder = folder('folder-push', 'Push');
     const pushRoutine = routine('routine-push', 'Pouss\u00e9e', pushFolder.id);
     render(
-      <RoutineCollection
+      <Collection
         summaries={[summary(pushRoutine)]}
         folders={[pushFolder]}
         onIntent={onIntent}
@@ -176,6 +194,108 @@ describe('RoutineCollection', () => {
     expect(onIntent).toHaveBeenLastCalledWith({
       kind: 'reorderRoutines',
       placement: [{ id: pushRoutine.id, folderId: '' }],
+    });
+  });
+});
+
+describe('RoutineCollection repli et verrou', () => {
+  const rootRoutine = routine('routine-root', 'Racine');
+  const pushFolder = folder('folder-push', 'Push');
+  const pushRoutine = routine('routine-push', 'Poussée', pushFolder.id, 1);
+  const summaries = [summary(rootRoutine), summary(pushRoutine)];
+  const folders = [pushFolder];
+
+  it('annonce l’état de chaque dossier et son nombre de routines', () => {
+    render(
+      <Collection
+        summaries={summaries}
+        folders={folders}
+        onIntent={vi.fn()}
+        reorderUnlocked={false}
+      />,
+    );
+
+    const header = screen.getByRole('button', { expanded: true, name: /Push/u });
+    expect(header).toHaveTextContent('1');
+    expect(screen.getByRole('button', { expanded: true, name: /Sans dossier/u })).toBeVisible();
+  });
+
+  it('masque le contenu d’un dossier replié sans toucher au repository', async () => {
+    const user = userEvent.setup();
+    const onIntent = vi.fn();
+    const onToggleFolder = vi.fn();
+    render(
+      <Collection
+        summaries={summaries}
+        folders={folders}
+        onIntent={onIntent}
+        reorderUnlocked={false}
+        collapsedFolderIds={new Set(['folder-push'])}
+        onToggleFolder={onToggleFolder}
+      />,
+    );
+
+    expect(screen.queryByText('Poussée')).toBeNull();
+    expect(screen.getByText('Racine')).toBeVisible();
+    expect(screen.getByRole('button', { expanded: false, name: /Push/u })).toBeVisible();
+
+    await user.click(screen.getByRole('button', { expanded: false, name: /Push/u }));
+    expect(onToggleFolder).toHaveBeenCalledWith('folder-push');
+    // Replier est un état de lecture : aucune écriture ne doit partir.
+    expect(onIntent).not.toHaveBeenCalled();
+  });
+
+  it('ne rend aucune poignée quand l’ordre est verrouillé', () => {
+    render(
+      <Collection
+        summaries={summaries}
+        folders={folders}
+        onIntent={vi.fn()}
+        reorderUnlocked={false}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: /Déplacer/u })).toBeNull();
+  });
+
+  it('gèle le repli pendant un réordonnancement', () => {
+    render(<Collection summaries={summaries} folders={folders} onIntent={vi.fn()} />);
+
+    // Un dossier qui se ferme sous un doigt en train de déplacer une routine
+    // ferait disparaître la cible du geste.
+    expect(screen.getByRole('button', { expanded: true, name: /Push/u })).toBeDisabled();
+  });
+
+  it('garde la liste complète pendant un réordonnancement, repli ignoré', () => {
+    // L'invariant du design : un déplacement ne se calcule jamais sur une liste
+    // amputée. La racine est marquée repliée alors que l'ordre est déverrouillé
+    // — une combinaison que le store empêche, et que le composant doit quand
+    // même traiter sans perdre une routine.
+    const onIntent = vi.fn();
+    render(
+      <Collection
+        summaries={summaries}
+        folders={folders}
+        onIntent={onIntent}
+        collapsedFolderIds={new Set(['root'])}
+      />,
+    );
+
+    expect(screen.getByText('Racine')).toBeVisible();
+    expect(screen.getByText('Poussée')).toBeVisible();
+
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Déplacer Racine' }), {
+      key: 'ArrowDown',
+    });
+
+    // Les deux routines sont dans le placement, avec leur dossier d'arrivée.
+    // Un placement calculé sur la liste visible en aurait perdu une.
+    expect(onIntent).toHaveBeenCalledWith({
+      kind: 'reorderRoutines',
+      placement: [
+        { id: 'routine-root', folderId: 'folder-push' },
+        { id: 'routine-push', folderId: 'folder-push' },
+      ],
     });
   });
 });
