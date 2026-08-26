@@ -2,7 +2,11 @@ import { createHash } from 'node:crypto';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { auditCoverageLedger } from './coverage.mjs';
 import { postprocessClaims } from './postprocess.mjs';
-import { providerClaimToCanonical, providerPredictionToCanonical } from './provider-dto.mjs';
+import {
+  corpusHierarchy,
+  providerClaimToCanonical,
+  providerPredictionToCanonical
+} from './provider-dto.mjs';
 
 const RETRYABLE_CODES = new Set([
   'ANCHOR_NOT_FOUND',
@@ -766,9 +770,9 @@ export function validateAndMaterialize({
     axisCoherence(claim.assessmentDraft.confidenceByAspect, 'confidenceByAspect', diagnostics, claimRef);
     axisCoherence(claim.assessmentDraft.directness, 'directness', diagnostics, claimRef);
     axisCoherence(claim.assessmentDraft.evidenceTypes, 'evidenceTypes', diagnostics, claimRef);
-    const expectedHierarchy = expectedFragment.corpusFileId.startsWith('corpus.f2.')
-      ? 'biomechanics'
-      : 'clinical';
+    // Règle partagée avec provider-dto.mjs. Elle était recopiée ici sous forme
+    // binaire (« f2, sinon clinique »), ce qui aurait étiqueté F1 comme clinique.
+    const expectedHierarchy = corpusHierarchy(expectedFragment.corpusFileId);
     if (claim.assessmentDraft.hierarchyHint !== expectedHierarchy) {
       diagnostics.push(
         diagnostic('SCHEMA_FAILURE', 'hierarchyHint contredit la règle déterministe du corpus', {

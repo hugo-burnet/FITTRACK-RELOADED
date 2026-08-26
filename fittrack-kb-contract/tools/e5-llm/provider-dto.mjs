@@ -229,9 +229,29 @@ export function mergeAnchorRepairs(providerPrediction, repairPrediction, repaira
   return merged;
 }
 
+/**
+ * La hiérarchie de domaine d'un fichier du corpus.
+ *
+ * Cette règle était écrite à trois endroits — ici, dans validate.mjs et dans
+ * build-e5-gold.mjs — et deux de ces copies étaient binaires : « f2, sinon
+ * clinique ». F1 y aurait donc été étiqueté *clinique* en silence, alors que
+ * c'est de la programmation d'entraînement. Une règle recopiée finit par
+ * diverger ; celle-ci avait déjà divergé avant qu'on s'en serve.
+ *
+ * `training` n'est pas un terme nouveau : le vocabulaire `domain` le porte
+ * depuis l'origine, libellé « Programmation ». F1 n'y avait jamais été branché
+ * parce que l'étage E5 ne traitait que F2 et F3.
+ */
+export function corpusHierarchy(corpusFileId) {
+  if (corpusFileId.startsWith('corpus.f1.')) return 'training';
+  if (corpusFileId.startsWith('corpus.f2.')) return 'biomechanics';
+  if (corpusFileId.startsWith('corpus.f3.')) return 'clinical';
+  return null;
+}
+
 function expectedHierarchy(fragment) {
-  if (fragment.corpusFileId.startsWith('corpus.f2.')) return 'biomechanics';
-  if (fragment.corpusFileId.startsWith('corpus.f3.')) return 'clinical';
+  const hierarchy = corpusHierarchy(fragment.corpusFileId);
+  if (hierarchy !== null) return hierarchy;
   throw new ProviderDtoError('provider_dto_fragment_corpus_unsupported', {
     code: 'FRAGMENT_CORPUS_UNSUPPORTED',
     fragmentId: fragment.fragmentId

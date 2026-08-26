@@ -267,7 +267,15 @@ export function searchEvidence(query: string, limit = 8): EvidenceSearchOutcome 
   for (const candidate of candidates) {
     const claim = searchable[candidate.index];
     if (!claim) continue;
-    if (claim.kind === 'programming' && programmingTaken === PROGRAMMING_SLOTS) continue;
+    if (claim.kind === 'programming') {
+      if (programmingTaken === PROGRAMMING_SLOTS) continue;
+      // Les deux places bonus se remplissaient dès qu'une fiche marquait le
+      // moindre point : sur « triceps overhead », « 3. Fréquence » et
+      // « 12. Périodisation » sortaient sans rapport. Une fiche doit toucher au
+      // moins deux termes distincts de la question pour valoir la peine — un
+      // seul mot commun n'est pas un sujet commun.
+      if (candidate.matchedTerms.length < 2) continue;
+    }
     if (claim.kind === 'claim' && claimsTaken === limit) continue;
     // La déduplication ne vaut qu'à l'intérieur d'une même famille. Elle existe
     // parce que les affirmations E5 partagent des contextes projetés ; une fiche

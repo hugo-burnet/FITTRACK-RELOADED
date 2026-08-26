@@ -26,7 +26,11 @@ const TYPES = {
 const ROUTES = {
   '/lab/corpus.json': join(contractRoot, 'candidates/e5-corpus.json'),
   '/lab/fragments.json': join(contractRoot, 'candidates/e5-prose-fragments.json'),
-  '/lab/questions.json': join(contractRoot, 'benchmark/e5-retrieval/questions-30.json')
+  '/lab/questions.json': join(contractRoot, 'benchmark/e5-retrieval/questions-30.json'),
+  // Le vivier de la recherche embarquée, produit par scripts/dump-search-pool.mjs
+  // à la racine. Il porte déjà les identifiants attendus par l'annotation, donc
+  // le labo peut mesurer un reclassement sans refaire de recherche ici.
+  '/lab/search-pool.json': join(contractRoot, 'benchmark/e5-retrieval/search-pool-dev.json')
 };
 
 const port = Number(process.argv[2] ?? 5210);

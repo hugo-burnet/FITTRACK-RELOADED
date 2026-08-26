@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { doubleAnnotationMetrics } from "./e5-gold-comparison.mjs";
+import { corpusHierarchy } from "./e5-llm/provider-dto.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const goldenRoot = path.join(root, "golden", "e5");
@@ -85,7 +86,9 @@ function materializeClaim(fragment, specification, ordinal) {
   }
 
   const assessment = specification.assessment;
-  const hierarchyHint = fragment.corpusFileId.startsWith("corpus.f2.") ? "biomechanics" : "clinical";
+  // Règle partagée : voir corpusHierarchy dans e5-llm/provider-dto.mjs. Elle
+  // était recopiée ici sous forme binaire, comme dans le validateur.
+  const hierarchyHint = corpusHierarchy(fragment.corpusFileId);
   const unresolvedAxes = specification.unresolvedAxes ?? {};
   const citationOccurrenceIds = specification.citations ?? [];
 

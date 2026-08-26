@@ -1,0 +1,114 @@
+<!-- Mesure du reclassement cross-encoder sur le vivier de la recherche embarquée.
+
+     Pourquoi le navigateur et pas Node : onnxruntime-node n'arrive pas à charger
+     ses DLL sur ce poste, et c'est de toute façon l'environnement du téléphone —
+     mesurer ailleurs mesurerait autre chose.
+
+     Entrée  : /lab/search-pool.json, écrit par scripts/dump-search-pool.mjs.
+     Sortie  : window.__measure, à lire depuis l'extérieur.
+
+     Le vivier vient de la recherche RÉELLEMENT livrée. On ne compare donc pas
+     deux idées, on compare la page telle qu'elle est à la même page reclassée.
+-->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mesure — reclassement cross-encoder</title>
+<style>
+  body { font: 14px/1.6 system-ui, sans-serif; margin: 2rem; max-width: 58rem; }
+  pre { background: #f2f4f2; padding: 1rem; border-radius: 4px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Reclassement cross-encoder</h1>
+<pre id="out">Chargement…</pre>
+<script type="module">
+import {
+  AutoModelForSequenceClassification,
+  AutoTokenizer,
+  env
+} from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6';
+
+const TOP_K = 8;
+// Même modèle et même révision épinglée que rerank-lab.html : une mesure qui
+// flotterait avec la dernière version publiée ne serait pas reproductible.
+const MODEL = {
+  id: 'onnx-community/bge-reranker-v2-m3-ONNX',
+  revision: 'a3046abee880d6e78833e4e885939754355156bd',
+  dtype: 'q8'
+};
+
+const out = document.getElementById('out');
+const log = (line) => { out.textContent += `\n${line}`; };
+
+try {
+  env.allowLocalModels = false;
+  out.textContent = 'Téléchargement du modèle…';
+  const started = Date.now();
+  const tokenizer = await AutoTokenizer.from_pretrained(MODEL.id, { revision: MODEL.revision });
+  const reranker = await AutoModelForSequenceClassification.from_pretrained(MODEL.id, {
+    revision: MODEL.revision,
+    dtype: MODEL.dtype
+  });
+  log(`modèle prêt en ${Math.round((Date.now() - started) / 1000)} s`);
+
+  const pool = await (await fetch('/lab/search-pool.json')).json();
+  let baseline = 0;
+  let baselineAt1 = 0;
+  let reranked = 0;
+  let rerankedAt1 = 0;
+  const recovered = [];
+  const lost = [];
+  const rankStarted = Date.now();
+
+  for (const [index, entry] of pool.entries.entries()) {
+    const gold = new Set(entry.gold);
+    const before = entry.pool.slice(0, TOP_K).map((item) => item.claimId);
+    const hitBefore = before.some((id) => gold.has(id));
+    if (hitBefore) baseline += 1;
+    if (before.length > 0 && gold.has(before[0])) baselineAt1 += 1;
+
+    // Le contexte affiché, pas la citation seule : c'est ce que le lecteur lit.
+    const inputs = tokenizer(
+      entry.pool.map(() => entry.question),
+      { text_pair: entry.pool.map((item) => item.displayContext), padding: true, truncation: true }
+    );
+    const { logits } = await reranker(inputs);
+    const scores = logits.tolist().map((row) => row[0]);
+    const after = entry.pool
+      .map((item, position) => ({ item, score: scores[position] }))
+      .sort((left, right) => right.score - left.score)
+      .slice(0, TOP_K)
+      .map(({ item }) => item.claimId);
+
+    const hitAfter = after.some((id) => gold.has(id));
+    if (hitAfter) reranked += 1;
+    if (after.length > 0 && gold.has(after[0])) rerankedAt1 += 1;
+    if (hitAfter && !hitBefore) recovered.push(entry.question);
+    if (!hitAfter && hitBefore) lost.push(entry.question);
+    out.textContent = `${index + 1}/${pool.entries.length}`;
+  }
+
+  const total = pool.entries.length;
+  const result = {
+    model: MODEL.id,
+    dtype: MODEL.dtype,
+    poolSize: pool.poolSize,
+    topK: TOP_K,
+    questions: total,
+    msPerQuestion: Math.round((Date.now() - rankStarted) / total),
+    lexical: { recall: baseline, precisionAt1: baselineAt1 },
+    reranked: { recall: reranked, precisionAt1: rerankedAt1 },
+    recovered,
+    lost
+  };
+  window.__measure = result;
+  out.textContent = JSON.stringify(result, null, 2);
+} catch (error) {
+  window.__measure = { error: String(error && error.message ? error.message : error) };
+  out.textContent = `ERREUR : ${out.textContent}\n${String(error)}`;
+}
+</script>
+</body>
+</html>
