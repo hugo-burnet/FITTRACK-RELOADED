@@ -35,9 +35,23 @@ const ROUTES = {
 
 const port = Number(process.argv[2] ?? 5210);
 
+// Isolation multi-origine. Sans ces deux en-têtes le navigateur refuse
+// `SharedArrayBuffer`, et transformers.js retombe alors sur du WASM MONO-THREAD
+// sans le dire. Le premier banc de reclassement a tourné comme ça : un modèle de
+// 568 M sur un seul cœur, plusieurs minutes par lot de 4 paires. Le verdict
+// « ce modèle est trop lourd » portait en réalité sur le serveur.
+const ISOLATION = {
+  'cross-origin-opener-policy': 'same-origin',
+  // `credentialless` et non `require-corp` : les poids viennent de
+  // huggingface.co, qui ne renvoie pas de `cross-origin-resource-policy`.
+  // Avec `require-corp` le téléchargement du modèle serait bloqué net.
+  'cross-origin-embedder-policy': 'credentialless'
+};
+
 createServer((request, response) => {
   const url = new URL(request.url, `http://localhost:${port}`);
   const path = url.pathname === '/' ? '/index.html' : url.pathname;
+  for (const [name, value] of Object.entries(ISOLATION)) response.setHeader(name, value);
 
   // Les bancs tournent dans le navigateur mais leurs mesures doivent finir versionnees
   // dans le depot. Les faire transiter par la console tronque le JSON et coute cher :
