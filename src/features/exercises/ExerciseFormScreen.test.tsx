@@ -2,7 +2,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createCustomExercise, listExercises } from '@/data/repositories/exercises';
+import {
+  createCustomExercise,
+  getExercise,
+  listExercises,
+} from '@/data/repositories/exercises';
 import { resetDb } from '@/test/resetDb';
 import { ExerciseFormScreen } from './ExerciseFormScreen';
 
@@ -11,6 +15,17 @@ function renderCreate() {
     <MemoryRouter initialEntries={['/exercises/new']}>
       <Routes>
         <Route path="/exercises/new" element={<ExerciseFormScreen />} />
+        <Route path="*" element={<div>destination</div>} />
+      </Routes>
+    </MemoryRouter>,
+  );
+}
+
+function renderEdit(id: string) {
+  return render(
+    <MemoryRouter initialEntries={['/exercises/' + id + '/edit']}>
+      <Routes>
+        <Route path="/exercises/:id/edit" element={<ExerciseFormScreen />} />
         <Route path="*" element={<div>destination</div>} />
       </Routes>
     </MemoryRouter>,
@@ -232,6 +247,96 @@ describe('ExerciseFormScreen secondary muscles', () => {
       expect(
         (await listExercises({ search: 'Traction prise neutre' }))[0]?.secondaryMuscles,
       ).toEqual(['biceps', 'upper_back']);
+    });
+  });
+});
+
+/**
+ * La famille de mouvement est le seul champ du formulaire dont l'absence est
+ * une **réponse** : sans elle, la fiche documente les muscles déclarés et
+ * annonce qu'aucune relation mécanique n'est justifiée. Rien n'est deviné du
+ * nom, et ces tests existent pour que ça le reste.
+ */
+describe('ExerciseFormScreen famille de mouvement', () => {
+  beforeEach(resetDb);
+
+  it('propose le champ et accepte de le laisser vide', async () => {
+    const user = userEvent.setup();
+    renderCreate();
+
+    expect(screen.getByRole('button', { name: /Famille de mouvement/u })).toBeInTheDocument();
+    await setName(user, 'Machine sans nom');
+    await user.click(screen.getByRole('button', { name: 'Créer l’exercice' }));
+
+    await waitFor(async () => {
+      const [created] = await listExercises({ search: 'Machine sans nom' });
+      expect(created?.movementPattern).toBeUndefined();
+    });
+  });
+
+  it('enregistre la famille choisie à la création', async () => {
+    const user = userEvent.setup();
+    renderCreate();
+
+    await setName(user, 'Extension maison');
+    await user.click(screen.getByRole('button', { name: /Famille de mouvement/u }));
+    await user.click(screen.getByRole('radio', { name: 'Isolation du coude' }));
+    await user.click(screen.getByRole('button', { name: 'Créer l’exercice' }));
+
+    await waitFor(async () => {
+      const [created] = await listExercises({ search: 'Extension maison' });
+      expect(created?.movementPattern).toBe('isolation_coude');
+    });
+  });
+
+  it('efface la famille d’un exercice existant', async () => {
+    const existing = await createCustomExercise({
+      name: 'Presse de ma salle',
+      primaryMuscle: 'quads',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+      movementPattern: 'squat',
+    });
+    const user = userEvent.setup();
+    renderEdit(existing.id);
+
+    const row = await screen.findByRole('button', { name: /Famille de mouvement/u });
+    await waitFor(() => expect(row).toHaveTextContent('Squat'));
+    await user.click(row);
+    await user.click(screen.getByRole('radio', { name: 'Aucune' }));
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+
+    await waitFor(async () => {
+      const reloaded = await getExercise(existing.id);
+      expect(reloaded?.movementPattern).toBeUndefined();
+    });
+  });
+
+  it('ne change pas la famille quand on renomme', async () => {
+    const existing = await createCustomExercise({
+      name: 'Presse de ma salle',
+      primaryMuscle: 'quads',
+      secondaryMuscles: [],
+      equipment: 'machine',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+      movementPattern: 'squat',
+    });
+    const user = userEvent.setup();
+    renderEdit(existing.id);
+
+    const field = await screen.findByLabelText('Nom');
+    await waitFor(() => expect(field).toHaveValue('Presse de ma salle'));
+    await user.clear(field);
+    await user.type(field, 'Presse inclinée');
+    await user.click(screen.getByRole('button', { name: 'Enregistrer' }));
+
+    await waitFor(async () => {
+      const reloaded = await getExercise(existing.id);
+      expect(reloaded?.name).toBe('Presse inclinée');
+      expect(reloaded?.movementPattern).toBe('squat');
     });
   });
 });

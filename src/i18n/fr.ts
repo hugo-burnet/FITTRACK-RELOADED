@@ -1252,6 +1252,8 @@ const fr = {
     namePlaceholder: 'Presse à cuisses inclinée',
     muscleLabel: 'Muscle principal',
     equipmentLabel: 'Matériel',
+    movementPatternLabel: 'Famille de mouvement',
+    movementPatternNone: 'Aucune',
     measurementLabel: 'Ce que tu saisis',
     /**
      * Le pluriel est le sujet : une traction en prise neutre travaille le dos

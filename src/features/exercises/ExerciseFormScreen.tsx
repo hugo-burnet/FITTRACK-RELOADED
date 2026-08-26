@@ -3,10 +3,16 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { createCustomExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
-import { EQUIPMENT, MEASUREMENT_TYPES, MUSCLE_GROUPS } from '@/data/types';
-import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
+import { EQUIPMENT, MEASUREMENT_TYPES, MOVEMENT_PATTERNS, MUSCLE_GROUPS } from '@/data/types';
+import type { Equipment, MeasurementType, MovementPattern, MuscleGroup } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { equipmentLabel, measurementHint, measurementLabel, muscleLabel } from '@/i18n/labels';
+import {
+  equipmentLabel,
+  measurementHint,
+  measurementLabel,
+  movementPatternLabel,
+  muscleLabel,
+} from '@/i18n/labels';
 import {
   defaultBodyweightLoadFactor,
   factorToPercent,
@@ -26,6 +32,8 @@ type Draft = {
   measurementType: MeasurementType;
   isUnilateral: 0 | 1;
   bodyweightLoadFactor?: number;
+  /** Facultative : l'absence est une réponse, pas un champ à remplir. */
+  movementPattern?: MovementPattern;
 };
 
 /** Bench press. The four fields after the name are adjustments, not questions. */
@@ -55,7 +63,15 @@ const MEASUREMENT_OPTIONS: Option<MeasurementType>[] = MEASUREMENT_TYPES.map((me
   hint: measurementHint(measurement),
 }));
 
-type Field = 'muscle' | 'secondaryMuscles' | 'equipment' | 'measurement';
+// Le vocabulaire est fermé : il n'y a rien à taper, seulement à choisir dans
+// une liste que le contrat KB gèle. « Aucune » ouvre la liste parce que ne pas
+// classer un mouvement est une décision comme une autre.
+const MOVEMENT_OPTIONS: Option<MovementPattern>[] = MOVEMENT_PATTERNS.map((pattern) => ({
+  value: pattern,
+  label: movementPatternLabel(pattern),
+}));
+
+type Field = 'muscle' | 'secondaryMuscles' | 'equipment' | 'measurement' | 'movement';
 
 /**
  * « Biceps · Haut du dos », « 3 muscles », « Aucun ».
@@ -116,6 +132,7 @@ export function ExerciseFormScreen() {
       measurementType: existing.measurementType,
       isUnilateral: existing.isUnilateral,
       bodyweightLoadFactor: existing.bodyweightLoadFactor,
+      movementPattern: existing.movementPattern,
     });
   }
 
@@ -166,6 +183,9 @@ export function ExerciseFormScreen() {
       equipment: draft.equipment,
       measurementType: draft.measurementType,
       isUnilateral: draft.isUnilateral,
+      // Transmis même absent : à l'édition, `undefined` doit effacer la famille
+      // au lieu de laisser l'ancienne valeur en place.
+      movementPattern: draft.movementPattern,
     };
     const withFactor =
       supportsBodyweightFactor && draft.bodyweightLoadFactor !== undefined
@@ -268,6 +288,19 @@ export function ExerciseFormScreen() {
             value={measurementLabel(draft.measurementType)}
             onOpen={() => setPicker('measurement')}
           />
+          {/* La famille de mouvement ne change rien à la séance : elle décide
+              quels articles du wiki s'affichent sur la fiche. La laisser vide
+              n'enlève ni les muscles ni les records, seulement l'explication
+              d'une coopération que le corpus ne pourrait pas justifier. */}
+          <PickerRow
+            label={t('exerciseForm.movementPatternLabel')}
+            value={
+              draft.movementPattern === undefined
+                ? t('exerciseForm.movementPatternNone')
+                : movementPatternLabel(draft.movementPattern)
+            }
+            onOpen={() => setPicker('movement')}
+          />
         </Card>
 
         <Card padded>
@@ -353,6 +386,20 @@ export function ExerciseFormScreen() {
         options={EQUIPMENT_OPTIONS}
         value={draft.equipment}
         onSelect={(equipment) => setDraft(withBodyweightDefault({ ...draft, equipment }))}
+      />
+
+      <OptionSheet<MovementPattern | ''>
+        open={picker === 'movement'}
+        onClose={() => setPicker(null)}
+        title={t('exerciseForm.movementPatternLabel')}
+        options={[
+          { value: '', label: t('exerciseForm.movementPatternNone') },
+          ...MOVEMENT_OPTIONS,
+        ]}
+        value={draft.movementPattern ?? ''}
+        onSelect={(value) =>
+          setDraft({ ...draft, movementPattern: value === '' ? undefined : value })
+        }
       />
 
       <OptionSheet<MeasurementType>
