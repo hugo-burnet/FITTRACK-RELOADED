@@ -1311,6 +1311,24 @@ const fr = {
         'Ces questions n’ont pas de réponse dans les documents embarqués. Elles sont listées plutôt que cachées : une page absente se dit, elle ne se devine pas.',
       uncoveredBadge: 'Hors corpus',
     },
+
+    /**
+     * Le volet programmation. Il vient d'un document à 79 % tabulaire, dont les
+     * tableaux avaient été extraits de façon déterministe en 2026-08 et n'étaient
+     * consommés par rien. Chaque ligne est une fiche, pas une phrase — et aucune
+     * n'a été relue par un humain, ce que le bandeau dit sans détour.
+     */
+    programming: {
+      title: 'Programmation',
+      entry: 'Volume, fréquence, deload…',
+      intro:
+        'Volume, fréquence, tempo, ordre des exercices, deload, progression. Chaque ligne vient d’un tableau du document source : affirmation, niveau de confiance, population étudiée, type de preuve, contradictions et limites.',
+      rowCount: '{count} fiches',
+      unreviewedLabel: 'Non relu',
+      unreviewedBody:
+        'Ces fiches ont été extraites automatiquement des tableaux du document, sans reformulation et sans modèle génératif. Elles sont donc fidèles au texte source, mais personne ne les a encore vérifiées une par une.',
+      referencesTitle: 'Références citées',
+    },
   },
 
   settings: {

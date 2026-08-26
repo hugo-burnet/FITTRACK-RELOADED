@@ -36,6 +36,26 @@ export function WikiBrowse() {
         </span>
       </Link>
 
+      {/* La programmation vient d'un autre document et d'un autre étage
+          d'extraction. Elle a sa propre entrée plutôt que d'être fondue dans la
+          liste des sections : sa matière est faite de fiches, pas de prose. */}
+      <Link
+        to="/knowledge/programmation"
+        className="flex min-h-12 items-center justify-between gap-4 rounded-2xl bg-[var(--accent-soft)] px-5 py-4"
+      >
+        <span className="min-w-0">
+          <span className="block font-semibold text-[var(--accent-ink)]">
+            {t('knowledge.programming.title')}
+          </span>
+          <span className="mt-1 block text-sm leading-6 text-[var(--text-2)]">
+            {t('knowledge.programming.entry')}
+          </span>
+        </span>
+        <span aria-hidden="true" className="shrink-0 text-[var(--accent-ink)]">
+          →
+        </span>
+      </Link>
+
       {wikiDocuments.map((document) => {
         const passages = document.sections.reduce(
           (total, section) => total + section.passages.length,

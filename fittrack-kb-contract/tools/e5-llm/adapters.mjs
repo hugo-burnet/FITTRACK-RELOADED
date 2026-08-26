@@ -307,3 +307,94 @@ export function createReplayAdapter(responsesByFragment) {
     }
   };
 }
+
+// Grok en ligne de commande, installé localement (`grok.exe`).
+//
+// Ce n'est pas un endpoint de complétion mais un agent : sans précaution, chaque
+// appel traîne ~15 500 tokens d'entrée de contexte d'outillage, mesurés sur une
+// question triviale. Trois options les suppriment, et elles ne sont pas
+// optionnelles : `--system-prompt-override` remplace le prompt de l'agent par le
+// nôtre, `--tools ''` retire les outils intégrés, `--disable-web-search` coupe
+// le reste. Un extracteur qui peut aller chercher sur le web n'extrait plus, il
+// complète — et c'est précisément ce que tout le contrat sert à empêcher.
+//
+// Le prompt passe par un fichier : un fragment de prose dépasse largement la
+// longueur d'argument que Windows accepte, et `--prompt-file` existe pour ça.
+export function createGrokCliAdapter({
+  binaryPath = 'grok',
+  execFileImpl,
+  tempDir
+} = {}) {
+  return {
+    async generate({ systemPrompt, input, outputSchema, runConfig, callType = 'full' }) {
+      const started = Date.now();
+      const projection = projectProviderSchema(outputSchema);
+      const { execFile } = await import('node:child_process');
+      const { mkdtempSync, writeFileSync, rmSync } = await import('node:fs');
+      const { join } = await import('node:path');
+      const { tmpdir } = await import('node:os');
+      const run = execFileImpl ?? ((file, args, options) =>
+        new Promise((resolve, reject) => {
+          execFile(file, args, options, (error, stdout, stderr) => {
+            if (error) {
+              error.stdout = stdout;
+              error.stderr = stderr;
+              reject(error);
+              return;
+            }
+            resolve({ stdout, stderr });
+          });
+        }));
+
+      const directory = mkdtempSync(join(tempDir ?? tmpdir(), 'e5-grok-'));
+      const promptFile = join(directory, 'prompt.txt');
+      writeFileSync(promptFile, input, 'utf8');
+      try {
+        const args = [
+          '--prompt-file', promptFile,
+          '--system-prompt-override', systemPrompt,
+          '--json-schema', JSON.stringify(projection.providerSchema),
+          '--output-format', 'json',
+          '--max-turns', '1',
+          '--tools', '',
+          '--disable-web-search'
+        ];
+        if (runConfig.model) args.push('--model', runConfig.model);
+        const { stdout } = await run(binaryPath, args, {
+          encoding: 'utf8',
+          maxBuffer: 64 * 1024 * 1024,
+          timeout: runConfig.requestTimeoutMs ?? 600000
+        });
+        const providerResponse = JSON.parse(stdout);
+        // `structuredOutput` est déjà l'objet contraint par le schéma. On
+        // renvoie tout de même sa forme texte : le validateur canonique du
+        // contrat parse lui-même, et lui donner l'objet court-circuiterait une
+        // vérification qu'on veut garder.
+        const rawResponse = providerResponse.structuredOutput === undefined
+          ? providerResponse.text
+          : JSON.stringify(providerResponse.structuredOutput);
+        const usage = providerResponse.usage ?? {};
+        return {
+          rawResponse,
+          providerResponse,
+          responseId: providerResponse.requestId ?? providerResponse.sessionId ?? null,
+          modelVersion: Object.keys(providerResponse.modelUsage ?? {})[0] ?? runConfig.model,
+          usage: {
+            inputTokens: usage.input_tokens ?? 0,
+            outputTokens: (usage.output_tokens ?? 0) + (usage.reasoning_tokens ?? 0),
+            // Le coût est rapporté par la CLI elle-même : on ne le remodélise
+            // pas à partir d'une grille tarifaire qui dériverait en silence.
+            cost: providerResponse.total_cost_usd ?? 0
+          },
+          latencyMs: Date.now() - started,
+          callType,
+          providerSchemaDroppedKeywords: projection.providerSchemaDroppedKeywords,
+          providerEnumTypesInjected: projection.providerEnumTypesInjected,
+          providerSchemaAssertions: projection.providerSchemaAssertions
+        };
+      } finally {
+        rmSync(directory, { recursive: true, force: true });
+      }
+    }
+  };
+}

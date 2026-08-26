@@ -16,3 +16,8 @@ export const WikiQuestionsRoute = lazyRoute(
   () => import('./WikiQuestionsScreen'),
   'WikiQuestionsScreen',
 );
+
+export const WikiProgrammingRoute = lazyRoute(
+  () => import('./WikiProgrammingScreen'),
+  'WikiProgrammingScreen',
+);

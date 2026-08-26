@@ -1,0 +1,83 @@
+{
+  "status": "FAIL",
+  "provider": "openrouter",
+  "baseURL": "https://openrouter.ai/api/v1",
+  "runVariant": "openrouter-google-gemini-3-7-flash",
+  "configFile": "config.gemini.json",
+  "requestedModel": "google/gemini-3.7-flash",
+  "reasoningEffortRequested": null,
+  "providerDiagnostic": {
+    "provider": "openrouter",
+    "status": 404,
+    "message": "No endpoints found that can handle the requested parameters. To learn more about provider routing, visit: https://openrouter.ai/docs/guides/routing/provider-selection",
+    "code": 404,
+    "type": null,
+    "metadata": null,
+    "providerDetail": null,
+    "requestId": null,
+    "responseId": null,
+    "providerSchemaDroppedKeywords": [
+      {
+        "keyword": "maxItems",
+        "paths": [
+          "#/$defs/claim/properties/supportAnchors/maxItems",
+          "#/properties/claims/maxItems"
+        ]
+      },
+      {
+        "keyword": "minItems",
+        "paths": [
+          "#/$defs/claim/properties/coverageUnitIndexes/minItems",
+          "#/$defs/claim/properties/supportAnchors/minItems"
+        ]
+      },
+      {
+        "keyword": "minLength",
+        "paths": [
+          "#/$defs/claim/properties/cannotConclude/items/minLength",
+          "#/$defs/claim/properties/conditions/items/minLength",
+          "#/$defs/claim/properties/limitations/items/minLength",
+          "#/$defs/claim/properties/supportAnchors/items/minLength",
+          "#/$defs/claim/properties/unresolved/items/minLength"
+        ]
+      },
+      {
+        "keyword": "minimum",
+        "paths": [
+          "#/$defs/claim/properties/coverageUnitIndexes/items/minimum",
+          "#/$defs/claim/properties/rawStatementAnchorIndex/minimum",
+          "#/$defs/coverageLedgerEntry/properties/unitIndex/minimum"
+        ]
+      },
+      {
+        "keyword": "pattern",
+        "paths": [
+          "#/$defs/claim/properties/citationOccurrenceRefs/items/pattern"
+        ]
+      },
+      {
+        "keyword": "uniqueItems",
+        "paths": [
+          "#/$defs/claim/properties/citationOccurrenceRefs/uniqueItems",
+          "#/$defs/claim/properties/coverageUnitIndexes/uniqueItems",
+          "#/$defs/claim/properties/evidenceTypes/uniqueItems",
+          "#/$defs/claim/properties/flags/uniqueItems"
+        ]
+      }
+    ],
+    "providerEnumTypesInjected": [],
+    "providerSchemaAssertions": {
+      "passed": true,
+      "maxDepth": 5,
+      "maxDepthLimit": 5,
+      "propertyCount": 37,
+      "propertyLimit": 5000,
+      "enumValueCount": 123,
+      "enumValueLimit": 1000,
+      "schemaStringLength": 2204,
+      "schemaStringLengthLimit": 120000,
+      "refsChecked": 2,
+      "errors": []
+    }
+  }
+}

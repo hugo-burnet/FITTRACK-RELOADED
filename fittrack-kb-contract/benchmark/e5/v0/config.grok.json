@@ -1,0 +1,31 @@
+{
+  "benchmarkVersion": "e5-llm-benchmark-v0",
+  "extractorVersion": "0.3.0-e5-llm-v0.4",
+  "provider": "grok-cli",
+  "baseURL": null,
+  "runVariant": "grok-cli-grok-4-6-build",
+  "model": null,
+  "modelVersion": null,
+  "promptVersion": "e5-llm-v0.4.4",
+  "schemaVersion": "1.0.0-e5-llm-benchmark-prediction",
+  "temperature": null,
+  "topP": null,
+  "reasoningEffort": null,
+  "maxOutputTokens": 16000,
+  "seed": null,
+  "maxFullRetries": 0,
+  "maxAnchorRepairRetries": 1,
+  "maxRepairOutputTokens": 4000,
+  "concurrency": 1,
+  "maxRunCostUsd": 1,
+  "goldenCommit": "4ff2ae6ebf2e0c587e315c527a8fb1f75d05bf2f",
+  "corpusCommit": "75f49f7e5bda67b1582a9ae5b9f2b8a0f16e74f2",
+  "pricingUsdPerMillionTokens": {
+    "input": 0,
+    "output": 0,
+    "basis": "Le coût est rapporté par la CLI elle-même, pas remodélisé depuis une grille."
+  },
+  "expectedOutputTokensPerFragment": 5500,
+  "expectedRepairOutputTokensPerFragment": 1500,
+  "apiKeyEnvironmentVariable": null
+}

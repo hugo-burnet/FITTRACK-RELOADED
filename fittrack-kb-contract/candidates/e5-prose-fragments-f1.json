@@ -1,0 +1,990 @@
+{
+  "schemaVersion": "1.0.0-e5-prose-fragments-f1",
+  "corpusFileId": "corpus.f1.programmation-hypertrophie",
+  "title": "Programmation hypertrophie — État des connaissances",
+  "contentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b",
+  "byteLength": 71455,
+  "fragmentCount": 61,
+  "diagnosticCount": 0,
+  "errorCount": 0,
+  "fragments": [
+    {
+      "fragmentId": "frag.e5f1.00000086",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire"
+      ],
+      "startLine": 3,
+      "endLine": 3,
+      "startByte": 86,
+      "endByte": 229,
+      "blockType": "paragraph",
+      "rawText": "**État des connaissances scientifiques au 23 août 2026 — rapport structuré pour base de connaissances, wiki et dataset d’entraînement**",
+      "textHash": "sha256:8a441db1f82705dac076e0591652843106a442be4e69314a79fdaeef6ad9dc4b",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00000254",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "Résumé exécutif"
+      ],
+      "startLine": 7,
+      "endLine": 7,
+      "startByte": 254,
+      "endByte": 1004,
+      "blockType": "paragraph",
+      "rawText": "L’entraînement en résistance augmente de façon robuste la taille musculaire, la force et plusieurs dimensions de la fonction physique chez l’adulte sain. Le *position stand* 2026 de l’American College of Sports Medicine (ACSM), fondé sur 137 revues systématiques et plus de 30 000 participants, retient comme principal levier spécifique de l’hypertrophie un volume hebdomadaire relativement élevé, autour d’au moins 10 séries par groupe musculaire, tout en soulignant que l’échec momentané, un matériel particulier et une périodisation complexe ne sont pas indispensables ([ACSM, 2026](https://acsm.org/resistance-training-guidelines-update-2026/); [Currier et al., 2026](https://pmc.ncbi.nlm.nih.gov/articles/PMC12965823/)).",
+      "textHash": "sha256:a69ad629b8244478d2fc608de44848dbb689261b2b55261f850d7d88638352d9",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00001006",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "Résumé exécutif"
+      ],
+      "startLine": 9,
+      "endLine": 9,
+      "startByte": 1006,
+      "endByte": 1697,
+      "blockType": "paragraph",
+      "rawText": "La conclusion la plus défendable n’est toutefois pas « 10 séries sont optimales ». La méta-régression la plus récente trouve une relation dose-réponse positive entre séries hebdomadaires et hypertrophie, mais avec rendements décroissants, incertitude croissante aux volumes élevés, forte variabilité interindividuelle et aucune frontière universelle entre volume minimal efficace, optimum et volume maximal récupérable ([Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)). Une série directe supplémentaire est, en moyenne, associée à un bénéfice de plus en plus faible; le modèle ne mesure ni la durabilité, ni les blessures, ni la fatigue chronique.",
+      "textHash": "sha256:057c2cd417119cdf313eb3df2b3443d8af8bfb893412f37e0d34bdcede458674",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00001699",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "Résumé exécutif"
+      ],
+      "startLine": 11,
+      "endLine": 11,
+      "startByte": 1699,
+      "endByte": 2532,
+      "blockType": "paragraph",
+      "rawText": "À volume égalisé, la fréquence et le type de split ont peu ou pas d’effet indépendant détectable sur l’hypertrophie. Leur utilité principale est logistique : répartir le volume, préserver la qualité des séries, limiter la fatigue par séance et respecter les préférences ([Schoenfeld et al., 2019](https://www.tandfonline.com/doi/full/10.1080/02640414.2018.1555906); [Ramos-Campo et al., 2024](https://pubmed.ncbi.nlm.nih.gov/38595233/)). Une large gamme de charges peut produire de l’hypertrophie lorsque les séries sont suffisamment exigeantes; les charges lourdes restent supérieures pour le gain de 1RM et les charges très légères imposent généralement des séries plus proches de l’échec, plus longues et plus inconfortables ([Lopez et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8126497/)).",
+      "textHash": "sha256:654b4a5856e0d85d3f80bdb817e193e7ce1b742c1952bead147c864b3dd3de83",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00002534",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "Résumé exécutif"
+      ],
+      "startLine": 13,
+      "endLine": 13,
+      "startByte": 2534,
+      "endByte": 3177,
+      "blockType": "paragraph",
+      "rawText": "Aller à l’échec n’est pas nécessaire. L’ensemble des données soutient l’idée que des séries proches de l’échec stimulent efficacement l’hypertrophie, mais ne permet pas d’identifier un seuil universel précis en RIR. L’échec augmente nettement la fatigue aiguë et peut prolonger la récupération sans avantage hypertrophique démontré lorsqu’effort et volume sont raisonnablement comparables ([Grgic et al., 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC9068575/); [Refalo et al., 2023](https://pmc.ncbi.nlm.nih.gov/articles/PMC9935748/); [Morán-Navarro et al., 2017](https://pubmed.ncbi.nlm.nih.gov/28965198/)).",
+      "textHash": "sha256:0ffed409cca7d5c0dfa44d0bfcfeb9e8960ab9ecec9e8c843c1b0b8f6d6036b6",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00003179",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "Résumé exécutif"
+      ],
+      "startLine": 15,
+      "endLine": 15,
+      "startByte": 3179,
+      "endByte": 3782,
+      "blockType": "paragraph",
+      "rawText": "Les preuves concernant l’amplitude évoluent. Une amplitude complète est une règle par défaut solide, mais le facteur vraisemblablement important est l’exposition à des longueurs musculaires élevées. Les répétitions partielles en position allongée peuvent égaler l’amplitude complète dans certains muscles et protocoles; elles ne sont pas démontrées supérieures de façon générale ([Schoenfeld et Grgic, 2020](https://pmc.ncbi.nlm.nih.gov/articles/PMC6977096/); [Wolf et al., 2025](https://pubmed.ncbi.nlm.nih.gov/39959841/)). Les extrapolations muscle par muscle restent fragiles.",
+      "textHash": "sha256:fc721c848ec93cefb5fda88f511e9ce3c58388a97547fcd2e88cd18580369d71",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00003784",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "Résumé exécutif"
+      ],
+      "startLine": 17,
+      "endLine": 17,
+      "startByte": 3784,
+      "endByte": 4413,
+      "blockType": "paragraph",
+      "rawText": "Enfin, des concepts répandus en pratique — « séries stimulantes », volume maximal récupérable, blocs de spécialisation, deload obligatoire toutes les quatre à six semaines — ne disposent pas d’une validation directe suffisante pour devenir des règles fortes. Deux essais sur le deload montrent surtout qu’une réduction ou interruption brève ne compromet pas nécessairement l’hypertrophie; ils ne démontrent ni nécessité, ni supériorité d’un calendrier fixe ([Coleman et al., 2024](https://pmc.ncbi.nlm.nih.gov/articles/PMC10809978/); [Pancar et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41730991/)).",
+      "textHash": "sha256:b3de04d5d72d75bde20f749ffc62a28d55348b94848935c8e38da13f58eb4dd2",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00004500",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "1. Méthode, périmètre et langage de certitude",
+        "1.1 Hiérarchie appliquée"
+      ],
+      "startLine": 23,
+      "endLine": 23,
+      "startByte": 4500,
+      "endByte": 4950,
+      "blockType": "paragraph",
+      "rawText": "L’interprétation suit l’ordre demandé : (1) recommandations officielles et *position stands*; (2) revues parapluie; (3) revues systématiques et méta-analyses; (4) essais randomisés; (5) études longitudinales; (6) observationnel; (7) mécanistique; (8) expertise/pratique. Les conclusions ont été confrontées aux sources contradictoires ou aux résultats nuls. Une étude EMG n’est jamais traitée comme preuve directe d’hypertrophie.",
+      "textHash": "sha256:a8ea4785bc439cd8bcc22f36a0cf09ce94b48122b4a582a56ca74201659bfd9d",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00005714",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "1. Méthode, périmètre et langage de certitude",
+        "1.3 Limites transversales"
+      ],
+      "startLine": 36,
+      "endLine": 36,
+      "startByte": 5714,
+      "endByte": 6345,
+      "blockType": "paragraph",
+      "rawText": "La littérature est dominée par des interventions de 6 à 16 semaines, de petits échantillons, des jeunes adultes et souvent des hommes; de nombreuses analyses comprennent surtout des sujets non entraînés. Les mesures d’« hypertrophie » ne sont pas interchangeables : IRM/CT et échographie localisée sont plus spécifiques que DXA, masse maigre globale, circonférences ou bio-impédance. Un changement local peut être régional et une mesure précoce peut être contaminée par l’œdème. L’absence de différence statistique n’établit pas toujours l’équivalence, surtout lorsque l’étude est peu puissante.",
+      "textHash": "sha256:662731509090e90f6325066a93447c2e82ab0336ebd7a3bb393cab5bb6916413",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00007948",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "2. Volume"
+      ],
+      "startLine": 50,
+      "endLine": 50,
+      "startByte": 7948,
+      "endByte": 8678,
+      "blockType": "paragraph",
+      "rawText": "**Définitions recommandées pour la base de connaissances.** Une *série de travail* est une série planifiée, techniquement valide et suffisamment exigeante. Une *série directe* cible le muscle comme moteur principal; une *série indirecte* le sollicite comme synergiste. Le comptage « fractionnel » à 0,5 pour une série indirecte a amélioré l’ajustement de la méta-régression récente, mais demeure une heuristique et non une constante physiologique ([Pelland et al., 2026](https://pubmed.ncbi.nlm.nih.gov/41343037/)). Une « série stimulante » n’a pas de définition empirique universelle : elle dépend de la charge, du RIR réel, de l’exercice, de l’amplitude, de la technique et de l’état de fatigue.",
+      "textHash": "sha256:d3049b5617dc202ec5a5bcbc8c6f382feede617bfeef6227250337d97e7e2b53",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00019291",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "5. Proximité de l’échec, RIR et RPE"
+      ],
+      "startLine": 79,
+      "endLine": 79,
+      "startByte": 19291,
+      "endByte": 19807,
+      "blockType": "paragraph",
+      "rawText": "**Terminologie.** *Échec musculaire momentané* : incapacité à achever la phase concentrique suivante avec la technique définie malgré un effort maximal. *Échec volontaire* : arrêt choisi; il ne garantit pas l’échec momentané. RIR : répétitions estimées encore réalisables; RPE spécifique aux séries peut être converti approximativement en RIR, mais la précision n’est pas parfaite et s’améliore avec l’expérience ([Steele et al., 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5712461/)).",
+      "textHash": "sha256:337a5dfd5b4c254eba182163e521a366c430074450f960a071f57ce091f13311",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00046719",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "15. Fatigue et récupération"
+      ],
+      "startLine": 166,
+      "endLine": 166,
+      "startByte": 46719,
+      "endByte": 47039,
+      "blockType": "paragraph",
+      "rawText": "**Distinction utile.** La fatigue périphérique concerne surtout le muscle et la jonction neuromusculaire; la fatigue centrale/systémique décrit des réductions de commande, de performance générale ou de disponibilité psychologique. En pratique, elles se chevauchent et ne se mesurent pas par une sensation unique.",
+      "textHash": "sha256:4684f2891e2ed9484d584b50ab7a5441e5f9bf773970da38d7f7b15326bf50e1",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00057680",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 208,
+      "endLine": 208,
+      "startByte": 57680,
+      "endByte": 57856,
+      "blockType": "list_item",
+      "rawText": "1. **Établir le contexte** : âge, sexe si pertinent, expérience, disponibilité, douleurs, sommeil, stress, nutrition, objectifs hypertrophie/force et exercices maîtrisés.",
+      "textHash": "sha256:2fe5560aaa7488aaedbbf897c2272621558444ec6a524f70365436344b41bf0c",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00057857",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 209,
+      "endLine": 209,
+      "startByte": 57857,
+      "endByte": 58070,
+      "blockType": "list_item",
+      "rawText": "2. **Prescrire une base conservatrice** : 2 expositions par muscle, ~6–10 séries fractionnelles/semaine, majorité 5–30 reps, 1–4 RIR, repos suffisant, ROM active tolérable avec tension à grande longueur.",
+      "textHash": "sha256:2812f8b82eb6bae85b14db97db6237020e97d3b3974da91fb923360d3352c63d",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00058071",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 210,
+      "endLine": 210,
+      "startByte": 58071,
+      "endByte": 58261,
+      "blockType": "list_item",
+      "rawText": "3. **Mesurer pendant 3–6 semaines** : progression charge/répétitions à RIR comparable, tendance de performance, technique, poids/mensurations, douleur, motivation, sommeil et adhésion.",
+      "textHash": "sha256:76015e8d5d8f547e3bcfdc6bbf15283831a4ef296305b503a3b0bf68f39b2a51",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00058262",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 211,
+      "endLine": 211,
+      "startByte": 58262,
+      "endByte": 58542,
+      "blockType": "list_item",
+      "rawText": "4. **Modifier un levier** : si progression et récupération bonnes, conserver ou ajouter peu de volume; si performance stagne avec récupération bonne, vérifier effort/technique puis ajouter 1–2 séries; si récupération mauvaise, réduire échec/volume ou mieux distribuer.",
+      "textHash": "sha256:bf8db310096c02b1ae4016c6b6c86aa4f43f8edd5c518727f9bbce5798cf1ad3",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00058543",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 212,
+      "endLine": 212,
+      "startByte": 58543,
+      "endByte": 58710,
+      "blockType": "list_item",
+      "rawText": "5. **Éviter les diagnostics automatiques** : une mauvaise séance, des courbatures ou l’absence de congestion ne prouvent ni sous-entraînement ni besoin de deload.",
+      "textHash": "sha256:678f5ffbdff708c2ef022f9ff40af4cd52e75b3c921fe860b7d2d8e6e342463b",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00058711",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 213,
+      "endLine": 213,
+      "startByte": 58711,
+      "endByte": 58830,
+      "blockType": "list_item",
+      "rawText": "6. **Recalibrer périodiquement le RIR** sur des exercices sûrs; ne pas considérer l’auto-évaluation comme exacte.",
+      "textHash": "sha256:823a87346efdab70a60ee02a1de626e88ff412ef009a90fee67b1d9d069ccb13",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00058831",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "19. Schéma décisionnel utilisable par une IA"
+      ],
+      "startLine": 214,
+      "endLine": 214,
+      "startByte": 58831,
+      "endByte": 58981,
+      "blockType": "list_item",
+      "rawText": "7. **Spécialiser par redistribution**, pas nécessairement par addition : volume/ordre/exercices au muscle prioritaire, dose de maintenance ailleurs.",
+      "textHash": "sha256:f284e757abfabd3f4a2633ed2a398fe8793406d20475c93a3e047e62f32532d8",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00065781",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 249,
+      "endLine": 249,
+      "startByte": 65781,
+      "endByte": 65913,
+      "blockType": "list_item",
+      "rawText": "1. **L’entraînement en résistance progressif produit de l’hypertrophie et de la force** dans une large diversité d’adultes.",
+      "textHash": "sha256:54bd894beb88f4b32237cb048aa3ddbc37c79fc6d7f089b5739e21927a197d39",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00065914",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 250,
+      "endLine": 250,
+      "startByte": 65914,
+      "endByte": 66061,
+      "blockType": "list_item",
+      "rawText": "2. **Le volume hebdomadaire est un levier majeur de l’hypertrophie**, avec rendements décroissants; davantage n’est pas automatiquement mieux.",
+      "textHash": "sha256:4540e5622954c9acde187e4444e8ca7370b5dd7f715f8849c3ce905d7da1c368",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00066062",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 251,
+      "endLine": 251,
+      "startByte": 66062,
+      "endByte": 66224,
+      "blockType": "list_item",
+      "rawText": "3. **Des gains sont possibles avec moins de 10 séries par muscle/semaine**; ~10 séries est un repère moyen, non un minimum biologique ni un optimum individuel.",
+      "textHash": "sha256:8677c661b9bb40fc8525b7e7a7aa437cb7b05e61003b6f820c93530814bdd480",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00066225",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 252,
+      "endLine": 252,
+      "startByte": 66225,
+      "endByte": 66411,
+      "blockType": "list_item",
+      "rawText": "4. **La fréquence et le split ont peu d’effet indépendant lorsque le volume est égalisé**; ils servent principalement à organiser volume, qualité, récupération et préférence.",
+      "textHash": "sha256:074500a1bd842e38a09a5152b99cfe2ee144966c92e8964d5fced69a2ca5a25b",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00066412",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 253,
+      "endLine": 253,
+      "startByte": 66412,
+      "endByte": 66589,
+      "blockType": "list_item",
+      "rawText": "5. **Une large gamme de charges construit du muscle lorsque les séries sont suffisamment exigeantes**; les charges lourdes sont supérieures pour la force maximale spécifique.",
+      "textHash": "sha256:e345e70b649b90a429368204cca2e8f39318429d0837d2b459170eb4ac103c20",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00066590",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 254,
+      "endLine": 254,
+      "startByte": 66590,
+      "endByte": 66725,
+      "blockType": "list_item",
+      "rawText": "6. **L’échec momentané n’est pas requis** et augmente la fatigue; la majorité des séries peut être arrêtée avant l’échec.",
+      "textHash": "sha256:82f4876a963fc6dec7bc4b86e5fb1172502e80dd8f2e3b9f00300fed2611ce35",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00066726",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 255,
+      "endLine": 255,
+      "startByte": 66726,
+      "endByte": 66877,
+      "blockType": "list_item",
+      "rawText": "7. **Des repos suffisants pour préserver la performance sont préférables**, généralement plus longs pour les exercices polyarticulaires exigeants.",
+      "textHash": "sha256:0c76980ed791a0845101b008d6a96332545d9b85caff66db05d58bf2e66173da",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00066878",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 256,
+      "endLine": 256,
+      "startByte": 66878,
+      "endByte": 67038,
+      "blockType": "list_item",
+      "rawText": "8. **Une amplitude complète et contrôlée est une bonne règle par défaut**, avec priorité à l’exposition tolérable à de grandes longueurs musculaires.",
+      "textHash": "sha256:6e34c168a31d05934d4d398175440d064d66a252c22e3af9466fd80b0fc58e69",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067039",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 257,
+      "endLine": 257,
+      "startByte": 67039,
+      "endByte": 67207,
+      "blockType": "list_item",
+      "rawText": "9. **Machines et poids libres peuvent tous deux produire de l’hypertrophie**; le choix dépend de la spécificité, du confort, de la stabilité et de la progression.",
+      "textHash": "sha256:4699f1942be572ce5522b2b91798cd5acfc3a6487fea2586376845db7690d87e",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067208",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 258,
+      "endLine": 258,
+      "startByte": 67208,
+      "endByte": 67323,
+      "blockType": "list_item",
+      "rawText": "10. **L’exercice prioritaire doit être placé tôt** si la force ou la qualité de ce mouvement est prioritaire.",
+      "textHash": "sha256:0b97169576fcee5a1356c619bbe3905fb3fe776fea554fb413983ae10fc46794",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067324",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 259,
+      "endLine": 259,
+      "startByte": 67324,
+      "endByte": 67456,
+      "blockType": "list_item",
+      "rawText": "11. **La progression peut se faire par répétitions ou charge**; la double progression est une méthode simple, non une loi unique.",
+      "textHash": "sha256:2f816b06836a31614b37ad59cdd686b8efff9617ca956996e56c9bfcc0950d68",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067457",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 260,
+      "endLine": 260,
+      "startByte": 67457,
+      "endByte": 67594,
+      "blockType": "list_item",
+      "rawText": "12. **Full-body, upper/lower, PPL et body-part split sont tous viables** si les variables essentielles et l’adhésion sont comparables.",
+      "textHash": "sha256:dfd2c2e591045e565aebd05d9e8db376a0dfd20616387a36b1bdad9083dd05b3",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067595",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 261,
+      "endLine": 261,
+      "startByte": 67595,
+      "endByte": 67690,
+      "blockType": "list_item",
+      "rawText": "13. **Les courbatures ne valident pas une séance** et ne sont pas requises pour la croissance.",
+      "textHash": "sha256:3288ee34e03227bff519d9360539d91df474c7314be58ee1e9a2d948c0996cfe",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067691",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "21. Consensus robuste — règles fortes pour une IA de coaching"
+      ],
+      "startLine": 262,
+      "endLine": 262,
+      "startByte": 67691,
+      "endByte": 67817,
+      "blockType": "list_item",
+      "rawText": "14. **Les femmes ont un potentiel relatif d’hypertrophie globalement similaire aux hommes** dans les populations étudiées.",
+      "textHash": "sha256:e9be6dfee287fac61e996008b88bc25743928a7a2df8c34a65a4acec11cf81b8",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00067851",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 266,
+      "endLine": 266,
+      "startByte": 67851,
+      "endByte": 68037,
+      "blockType": "list_item",
+      "rawText": "1. **Charges légères** : efficaces surtout si la série approche davantage l’échec; utiles en cas de contrainte articulaire, moins efficaces en temps et souvent plus inconfortables.",
+      "textHash": "sha256:da99dad61961bf04e9dbfe18ebb8065cac1fc22d310a37b0d09a22a6f04d4882",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068038",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 267,
+      "endLine": 267,
+      "startByte": 68038,
+      "endByte": 68210,
+      "blockType": "list_item",
+      "rawText": "2. **Échec musculaire** : option ponctuelle sur isolation/machines ou pour calibrer le RIR; moins approprié systématiquement sur polyarticulaires lourds et gros volumes.",
+      "textHash": "sha256:e70f6837e3e0dc459516a4b67b1478f5e5bb9655835958db5daafa1ba90a8788",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068211",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 268,
+      "endLine": 268,
+      "startByte": 68211,
+      "endByte": 68354,
+      "blockType": "list_item",
+      "rawText": "3. **Fréquence >2/semaine** : utile si elle répartit un grand volume, améliore la pratique de force ou réduit la durée/fatigue de séance.",
+      "textHash": "sha256:b755ae6b31b73140a884f17f811798a9402a256a9407295a128a92ae8b9e0bb6",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068355",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 269,
+      "endLine": 269,
+      "startByte": 68355,
+      "endByte": 68505,
+      "blockType": "list_item",
+      "rawText": "4. **Volumes >15–20 séries** : parfois utiles chez entraînés et muscles prioritaires; nécessitent progression, suivi et possibilité de retrait.",
+      "textHash": "sha256:c7dbcde0ccafa23cc58b2041671997256e3567b7976c496d65a97dffa8c6dd1a",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068506",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 270,
+      "endLine": 270,
+      "startByte": 68506,
+      "endByte": 68680,
+      "blockType": "list_item",
+      "rawText": "5. **Lengthened partials** : option prometteuse et parfois équivalente à la ROM complète; usage muscle/exercice spécifique, sans prétention de supériorité universelle.",
+      "textHash": "sha256:00a5eb79287fb0db763b1ea098e76f3b095bfdf63a8eae7987668d5df59f1527",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068681",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 271,
+      "endLine": 271,
+      "startByte": 68681,
+      "endByte": 68836,
+      "blockType": "list_item",
+      "rawText": "6. **Variation d’exercices** : utile si systématique et anatomiquement complémentaire; nuisible potentiellement si aléatoire, excessive ou redondante.",
+      "textHash": "sha256:8d95b194342850ff29f5ead5534e7a6462556d7a68c98cce366b8aa9e1e278f6",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068837",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 272,
+      "endLine": 272,
+      "startByte": 68837,
+      "endByte": 68996,
+      "blockType": "list_item",
+      "rawText": "7. **Périodisation** : utile pour gérer plusieurs objectifs et la fatigue; aucun modèle n’est clairement supérieur pour l’hypertrophie à volume égal.",
+      "textHash": "sha256:77a4c23a99a748322390440cb494fbec1a1dc5a45f8857440347135a444951f0",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00068997",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 273,
+      "endLine": 273,
+      "startByte": 68997,
+      "endByte": 69236,
+      "blockType": "list_item",
+      "rawText": "8. **Deload** : raisonnable face à une fatigue persistante ou à des contraintes calendaires; réduction du volume et augmentation du RIR sont plus directement alignées avec l’objectif de dissiper la fatigue qu’un arrêt obligatoire.",
+      "textHash": "sha256:7462b1e96683e2e00c3c3e2282ae6edc5d78b904481408c084cc91bca84eda28",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069237",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 274,
+      "endLine": 274,
+      "startByte": 69237,
+      "endByte": 69388,
+      "blockType": "list_item",
+      "rawText": "9. **Spécialisation** : augmenter les ressources du muscle cible tout en réduisant le volume des autres; maintenir intensité et exposition ailleurs.",
+      "textHash": "sha256:52aa129c7dbbfe8f0982c92252ebcbd1df0454430515013d1458bef6a12bc678",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069389",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "22. Principes conditionnels"
+      ],
+      "startLine": 275,
+      "endLine": 275,
+      "startByte": 69389,
+      "endByte": 69540,
+      "blockType": "list_item",
+      "rawText": "10. **Adultes âgés** : progression conservatrice, exercices stables et supervision accrue, sans présumer qu’une faible dose est toujours optimale.",
+      "textHash": "sha256:2b7d4ded4e81bc9681e64f4c1e4624226a653250c1f0e4f80153f0d82390dca2",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069639",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 279,
+      "endLine": 279,
+      "startByte": 69639,
+      "endByte": 69715,
+      "blockType": "list_item",
+      "rawText": "1. Nombre exact de séries optimales par muscle, par séance et par semaine.",
+      "textHash": "sha256:58729bda74bded97084f10005880878d2eebd2ce238a26d6bfb84c2fefef5a55",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069716",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 280,
+      "endLine": 280,
+      "startByte": 69716,
+      "endByte": 69818,
+      "blockType": "list_item",
+      "rawText": "2. Définition universelle d’une « série stimulante » et nombre de « répétitions efficaces ».",
+      "textHash": "sha256:80e141e237955ff22e8b3b131ec233edf3e0dff7f6a3ed5b0132bf860d003643",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069819",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 281,
+      "endLine": 281,
+      "startByte": 69819,
+      "endByte": 69900,
+      "blockType": "list_item",
+      "rawText": "3. Seuils individuels de volume minimal efficace et volume maximal récupérable.",
+      "textHash": "sha256:4540d40b12683f135db8720b944dc14aaacf2a5b46cc5388af5c6db14c1f5584",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069901",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 282,
+      "endLine": 282,
+      "startByte": 69901,
+      "endByte": 69989,
+      "blockType": "list_item",
+      "rawText": "4. Distance optimale exacte de l’échec selon charge, exercice, muscle et expérience.",
+      "textHash": "sha256:5d2baaf1fecaf66b8321612f81516f11151754ba47b1d81bb991b587025c60c1",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00069990",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 283,
+      "endLine": 283,
+      "startByte": 69990,
+      "endByte": 70085,
+      "blockType": "list_item",
+      "rawText": "5. Effet indépendant d’une fréquence très élevée sur l’hypertrophie chez les avancés.",
+      "textHash": "sha256:f710f873c43063d36749b333a97becad18658ae752dde51bc97c4a2821b8488e",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070086",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 284,
+      "endLine": 284,
+      "startByte": 70086,
+      "endByte": 70161,
+      "blockType": "list_item",
+      "rawText": "6. Supériorité générale des *lengthened partials* sur la ROM complète.",
+      "textHash": "sha256:05663600c820ef6f67f718de0f1b4ee110ae32035ae917f2a1c4504ee3369fb3",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070162",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 285,
+      "endLine": 285,
+      "startByte": 70162,
+      "endByte": 70243,
+      "blockType": "list_item",
+      "rawText": "7. Meilleur tempo excentrique précis ou meilleur ratio concentrique/excentrique.",
+      "textHash": "sha256:f2973598731922a54bdae374be3381132ef15de3eec1aef10a3bdf1630fdff6c",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070244",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 286,
+      "endLine": 286,
+      "startByte": 70244,
+      "endByte": 70327,
+      "blockType": "list_item",
+      "rawText": "8. Meilleure combinaison d’exercices/angles pour chaque région de chaque muscle.",
+      "textHash": "sha256:224304fca068f6582231e86674fdfde9ad777f42f18884399798bc65e7bef093",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070328",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 287,
+      "endLine": 287,
+      "startByte": 70328,
+      "endByte": 70377,
+      "blockType": "list_item",
+      "rawText": "9. Fréquence optimale de rotation des exercices.",
+      "textHash": "sha256:7363e39b04ec64757cd3c55b4cf5c0e69e28b8a7941840a2b87ce6c195375008",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070378",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 288,
+      "endLine": 288,
+      "startByte": 70378,
+      "endByte": 70449,
+      "blockType": "list_item",
+      "rawText": "10. Algorithme optimal de progression pour intermédiaires et avancés.",
+      "textHash": "sha256:e4f3b2fb4079e30a08ccd8de0c1dbcc4d83d3466f6dc0be9992918a9da0e8578",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070450",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 289,
+      "endLine": 289,
+      "startByte": 70450,
+      "endByte": 70542,
+      "blockType": "list_item",
+      "rawText": "11. Supériorité hypertrophique d’une périodisation linéaire, ondulatoire ou par blocs.",
+      "textHash": "sha256:f7d27e7a81db0c3162ba8ed422ba49a32f1d15537aed27d3dfc55ce8e5b3470c",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070543",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 290,
+      "endLine": 290,
+      "startByte": 70543,
+      "endByte": 70601,
+      "blockType": "list_item",
+      "rawText": "12. Nécessité, timing et modalités optimales du deload.",
+      "textHash": "sha256:badcb3379220ff5adb2a792fb2a8e3e2b4d384cc99e5d8878ecb8d03eee2cd06",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070602",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 291,
+      "endLine": 291,
+      "startByte": 70602,
+      "endByte": 70686,
+      "blockType": "list_item",
+      "rawText": "13. Marqueur simple et validé de récupération systémique ou de besoin de deload.",
+      "textHash": "sha256:1adce701e4f02492f84ad508243ad4bf583dc34aeabe5d7969c34824a9e40fef",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070687",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 292,
+      "endLine": 292,
+      "startByte": 70687,
+      "endByte": 70760,
+      "blockType": "list_item",
+      "rawText": "14. Dose minimale exacte de maintien pour chaque muscle et chaque niveau.",
+      "textHash": "sha256:1e10bcf06dd902666678f610a79d35e50ae7e862278967e4bd7e3eb3d928a6c3",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070761",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 293,
+      "endLine": 293,
+      "startByte": 70761,
+      "endByte": 70837,
+      "blockType": "list_item",
+      "rawText": "15. Durée et structure optimales d’un bloc de spécialisation musculaire.",
+      "textHash": "sha256:7ef21c3f210df29840b2fdc67c2e7e3bc2dcea701a6c14b44de0192eda8d9934",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070838",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 294,
+      "endLine": 294,
+      "startByte": 70838,
+      "endByte": 70928,
+      "blockType": "list_item",
+      "rawText": "16. Effets à long terme du sommeil insuffisant sur l’hypertrophie mesurée directement.",
+      "textHash": "sha256:8f836af79e5d0a08f7b95900da5aee4f1fe3303a337df1936824cb868ecab2dd",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00070929",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 295,
+      "endLine": 295,
+      "startByte": 70929,
+      "endByte": 71049,
+      "blockType": "list_item",
+      "rawText": "17. Généralisation des résultats aux femmes très entraînées, aux athlètes d’élite et aux adultes très âgés.",
+      "textHash": "sha256:8164801c2fb0aa82db81383ccbc1235027a4d0ff1a07b9abad8bfc008ba529b3",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    },
+    {
+      "fragmentId": "frag.e5f1.00071056",
+      "corpusFileId": "corpus.f1.programmation-hypertrophie",
+      "headingPath": [
+        "Programmation de l’entraînement en résistance pour l’hypertrophie musculaire",
+        "23. Zones d’incertitude — sujets sur lesquels l’IA doit éviter d’être catégorique"
+      ],
+      "startLine": 299,
+      "endLine": 299,
+      "startByte": 71056,
+      "endByte": 71454,
+      "blockType": "paragraph",
+      "rawText": "**Règle de prudence pour le dataset :** toute recommandation chiffrée doit être encodée comme *plage de départ révisable*, avec population, objectif, mesure de résultat, niveau de confiance et conditions d’application. Les termes « optimal », « nécessaire », « inutile » et « maximal récupérable » ne doivent être générés sans justification explicite et contexte individuel.",
+      "textHash": "sha256:65ace0e98e667f3aeb62f5b7dadf3f6f120f2eda35920a1834a9a0722fff1ad5",
+      "corpusFileContentHash": "sha256:c50b0a31982a300cbe73fa4414c3ce8690896689fa7232c8293c126fdf21a65b"
+    }
+  ],
+  "diagnostics": []
+}

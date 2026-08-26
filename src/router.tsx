@@ -24,6 +24,7 @@ import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
 import {
   KnowledgeRoute,
+  WikiProgrammingRoute,
   WikiQuestionsRoute,
   WikiSectionRoute,
 } from './features/knowledge/routes';
@@ -80,6 +81,8 @@ export const router = createHashRouter([
       { path: 'settings', element: <SettingsScreen /> },
       { path: 'knowledge', element: <KnowledgeRoute /> },
       { path: 'knowledge/questions', element: <WikiQuestionsRoute /> },
+      { path: 'knowledge/programmation', element: <WikiProgrammingRoute /> },
+      { path: 'knowledge/p/:sectionId', element: <WikiProgrammingRoute /> },
       { path: 'knowledge/s/:sectionId', element: <WikiSectionRoute /> },
       { path: 'settings/debug', element: <DebugRoute /> },
       { path: 'settings/about', element: <CreditsRoute /> },

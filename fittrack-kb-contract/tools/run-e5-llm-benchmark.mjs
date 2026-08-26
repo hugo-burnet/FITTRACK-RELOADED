@@ -10,7 +10,11 @@ import {
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createLlamaCppAdapter, createOpenRouterAdapter } from './e5-llm/adapters.mjs';
+import {
+  createGrokCliAdapter,
+  createLlamaCppAdapter,
+  createOpenRouterAdapter
+} from './e5-llm/adapters.mjs';
 import { extractProseFragment } from './e5-llm/extractor.mjs';
 import {
   APPROVAL_FLAGS,
@@ -50,6 +54,12 @@ function createProviderAdapter(base, apiKey) {
   }
   if (base.provider === 'llamacpp') {
     return createLlamaCppAdapter({ baseURL: base.baseURL });
+  }
+  // La CLI Grok est locale : aucune clé à lire, mais un binaire à localiser.
+  // GROK_BIN existe parce que l'exécutable n'est pas toujours dans le PATH du
+  // processus qui lance le banc, même quand il l'est dans celui de l'opérateur.
+  if (base.provider === 'grok-cli') {
+    return createGrokCliAdapter({ binaryPath: process.env.GROK_BIN ?? 'grok' });
   }
   throw new Error(`unsupported_provider:${base.provider}`);
 }

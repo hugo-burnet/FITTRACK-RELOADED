@@ -40,7 +40,31 @@ describe('KnowledgeScreen', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Chercher dans les preuves' }));
 
-    expect((await screen.findAllByText('Citation exacte')).length).toBeGreaterThan(0);
+    expect(await screen.findByText('Passages retrouvés')).toBeVisible();
+    // L'ancrage est la promesse de l'écran : un passage sans coordonnées de
+    // source n'est plus une preuve, c'est une affirmation.
     expect(screen.getAllByText(/^claim\.[a-f0-9]{16}/u)[0]).toBeVisible();
+  });
+
+  it('ne répète la citation que lorsqu’elle dépasse le contexte affiché', async () => {
+    const user = userEvent.setup();
+    renderScreen();
+
+    await user.type(
+      screen.getByRole('searchbox', { name: 'Ta question' }),
+      'amplitude EMG hypertrophie',
+    );
+    await user.click(screen.getByRole('button', { name: 'Chercher dans les preuves' }));
+    await screen.findByText('Passages retrouvés');
+
+    // Le contexte contient presque toujours la citation. La montrer deux fois
+    // doublait la hauteur des cartes : sur une question réelle posée depuis le
+    // téléphone, les huit cartes répétaient leur propre texte.
+    for (const label of screen.queryAllByText('Citation exacte')) {
+      const card = label.closest('article');
+      const quote = card?.querySelector('q')?.textContent ?? '';
+      const context = card?.querySelector('blockquote')?.textContent ?? '';
+      expect(context, 'une citation répétée doit ajouter du texte').not.toContain(quote);
+    }
   });
 });

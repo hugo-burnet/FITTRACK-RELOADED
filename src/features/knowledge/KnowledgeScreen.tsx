@@ -28,8 +28,27 @@ function statusLabel(status: EpistemicStatus | null): string {
   return status === null ? t('knowledge.status.unqualified') : t(STATUS_KEYS[status]);
 }
 
+/**
+ * Les affirmations gardent l'emphase Markdown de leur document source, et
+ * l'écran l'affichait telle quelle : « les chefs **latéral** et **médial** ».
+ * On ne peut pas la rendre en gras sans réinterpréter le texte cité, alors on
+ * la retire — une citation exacte se juge sur ses mots, pas sur ses astérisques.
+ */
+function stripEmphasis(text: string): string {
+  return text.replace(/\*\*(.+?)\*\*/gsu, '$1').replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/gsu, '$1');
+}
+
 function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: number }) {
-  const contextRepeatsQuote = evidence.displayContext === evidence.rawQuote;
+  // On affiche toujours le contexte — c'est lui la prose lisible — et on ne
+  // répète la citation en dessous que si elle apporte un cadrage absent du
+  // contexte. Le contexte contenant presque toujours la citation, la montrer
+  // deux fois doublait la hauteur de la carte pour rien.
+  // La comparaison porte sur les formes *affichées* : le contexte et la citation
+  // ne portent pas toujours la même emphase Markdown pour le même texte, et
+  // comparer les formes brutes laissait passer des répétitions bien visibles.
+  const quoteIsRedundant = stripEmphasis(evidence.displayContext).includes(
+    stripEmphasis(evidence.rawQuote),
+  );
   const sectionId = findSectionIdForClaim(evidence.claimId);
 
   return (
@@ -44,25 +63,29 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
           <p className="label-xs font-semibold text-[var(--accent-ink)]">
             {t('knowledge.proofNumber', { rank })}
           </p>
-          <p className="label-xs text-right font-semibold text-[var(--text-2)]">
-            {statusLabel(evidence.epistemicStatus)}
-          </p>
+          {/* Un statut absent n'a rien à annoncer. « Cadre non qualifié »
+              sortait sur presque chaque carte : du bruit, pas du sens. */}
+          {evidence.epistemicStatus !== null && (
+            <p className="label-xs text-right font-semibold text-[var(--text-2)]">
+              {statusLabel(evidence.epistemicStatus)}
+            </p>
+          )}
         </div>
 
-        {!contextRepeatsQuote && (
-          <blockquote className="mt-4 text-base leading-7 text-[var(--text-1)]">
-            {evidence.displayContext}
-          </blockquote>
+        <blockquote className="mt-4 text-base leading-7 text-[var(--text-1)]">
+          {stripEmphasis(evidence.displayContext)}
+        </blockquote>
+
+        {!quoteIsRedundant && (
+          <div className="mt-5 rounded-xl bg-[var(--surface-2)] p-4">
+            <p className="label-xs font-semibold text-[var(--text-2)]">
+              {t('knowledge.exactQuote')}
+            </p>
+            <q className="mt-2 block text-sm leading-6 text-[var(--text-1)]">
+              {stripEmphasis(evidence.rawQuote)}
+            </q>
+          </div>
         )}
-
-        <div className={`${contextRepeatsQuote ? 'mt-4' : 'mt-5'} rounded-xl bg-[var(--surface-2)] p-4`}>
-          <p className="label-xs font-semibold text-[var(--text-2)]">
-            {t('knowledge.exactQuote')}
-          </p>
-          <q className="mt-2 block text-sm leading-6 text-[var(--text-1)]">
-            {evidence.rawQuote}
-          </q>
-        </div>
 
         <div className="mt-5 border-t border-[var(--border)] pt-4">
           <p className="text-sm leading-6 text-[var(--text-2)]">{evidence.sourceTitle}</p>

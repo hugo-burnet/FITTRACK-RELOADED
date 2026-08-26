@@ -101,7 +101,31 @@ export function tokenizeEvidenceText(text: string): string[] {
     .map(normalizeGymTerm);
 }
 
-const documents = evidenceIndex.claims.map((claim) => tokenizeEvidenceText(claim.retrievalText));
+/**
+ * Le document indexé n'est pas `retrievalText` tel quel, mais ses trois parties
+ * repondérées par répétition.
+ *
+ * `retrievalText` concatène titre + contexte + citation à poids égal, et le
+ * contexte est la partie la plus large : une affirmation sur la largeur de prise
+ * en rowing remontait sur « poulie » parce que sa phrase voisine énumérait le
+ * matériel. Le contexte sert à comprendre, pas à décider de la pertinence.
+ *
+ * Le chemin de titres, lui, est le signal topique le plus fiable du corpus —
+ * « 6.2 Coude » dit de quoi parle la section mieux que n'importe quelle phrase.
+ */
+const TITLE_WEIGHT = 3;
+const QUOTE_WEIGHT = 1;
+const CONTEXT_WEIGHT = 1;
+
+function weightedDocument(claim: EvidenceRecord): string[] {
+  const parts: string[] = [];
+  for (let index = 0; index < TITLE_WEIGHT; index += 1) parts.push(claim.sourceTitle);
+  for (let index = 0; index < QUOTE_WEIGHT; index += 1) parts.push(claim.rawQuote);
+  for (let index = 0; index < CONTEXT_WEIGHT; index += 1) parts.push(claim.displayContext);
+  return tokenizeEvidenceText(parts.join(' '));
+}
+
+const documents = evidenceIndex.claims.map(weightedDocument);
 const documentFrequency = new Map<string, number>();
 for (const tokens of documents) {
   for (const token of new Set(tokens)) {
@@ -148,12 +172,23 @@ export function searchEvidence(query: string, limit = 8): EvidenceSearchOutcome 
 
   if (candidates.length === 0) return { kind: 'NO_LEXICAL_EVIDENCE', candidates: [] };
 
-  const seenContexts = new Set<string>();
+  // L'égalité stricte ne suffit pas : 77 des 408 affirmations ont un contexte
+  // *inclus* dans celui d'une autre — l'une porte la phrase, l'autre le
+  // paragraphe qui la contient. Sur une vraie question posée depuis l'app
+  // (« pourquoi le triceps à la poulie me fait mal au coude »), trois des huit
+  // résultats étaient le même passage découpé à trois endroits. Le chevauchement
+  // dans un sens ou dans l'autre vaut donc doublon, et le premier arrivé gagne :
+  // il a le meilleur score.
+  const selectedContexts: string[] = [];
   const selected: EvidenceCandidate[] = [];
   for (const candidate of candidates) {
     const claim = evidenceIndex.claims[candidate.index];
-    if (!claim || seenContexts.has(claim.displayContext)) continue;
-    seenContexts.add(claim.displayContext);
+    if (!claim) continue;
+    const overlaps = selectedContexts.some(
+      (context) => context.includes(claim.displayContext) || claim.displayContext.includes(context),
+    );
+    if (overlaps) continue;
+    selectedContexts.push(claim.displayContext);
     selected.push({ ...claim, matchedTerms: candidate.matchedTerms, score: candidate.score });
     if (selected.length === limit) break;
   }
