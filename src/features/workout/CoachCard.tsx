@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { CoachSignal } from '@/lib/coach';
 import { t } from '@/i18n/fr';
-import { ChevronRightIcon } from '@/ui/icons';
+import { Button } from '@/ui';
 import { formatNumber } from '@/ui/numberField';
 import { coachSignalMessage } from './coachCopy';
 
@@ -13,11 +14,10 @@ type Props = {
   /** Optional dismiss for live pending recommendations. */
   onDismiss?: () => void;
   /**
-   * Optional apply for a live objective that carries a load. Tapping the card
-   * body writes it onto the sets left to do — the plan's "never pre-fill" rule
-   * is about the app deciding alone, not about the user asking for it.
+   * Optional apply for a live objective that carries a load. Only the explicit
+   * action writes it onto the sets left to do.
    */
-  onApply?: () => void;
+  onApply?: () => void | Promise<void>;
   /** Visual register: objective (next session) vs observation (finish / live). */
   tone?: 'objective' | 'signal';
   /**
@@ -61,8 +61,26 @@ export function CoachCard({
   // figure to write into the grid.
   const applicable = hasLoad && onApply !== undefined;
   const role =
-    tone === 'objective' ? t('coach.objective') : t('coach.title');
+    variant === 'strip'
+      ? t('coach.title')
+      : tone === 'objective'
+        ? t('coach.objective')
+        : t('coach.title');
   const reason = coachSignalMessage(signal);
+  const weight = hasLoad ? formatNumber(signal.nextLoadKg!) : undefined;
+  const [applying, setApplying] = useState(false);
+
+  const apply = async () => {
+    if (onApply === undefined || applying) return;
+    setApplying(true);
+    try {
+      await onApply();
+    } catch {
+      // The pending recommendation remains visible and can be tried again.
+    } finally {
+      setApplying(false);
+    }
+  };
 
   const shell =
     variant === 'strip'
@@ -71,48 +89,6 @@ export function CoachCard({
       : // One engraved reading in a Card — hairline only, no rounded island on island.
         'w-full border-b border-[var(--border)] px-4 py-4 last:border-b-0';
 
-  const body = (
-    <>
-      {/* Meta row: role + optional journal chrome. Engraved, never a kicker parade. */}
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <p className="label-xs font-semibold text-[var(--text-2)]">{role}</p>
-        {dateLabel !== undefined && <p className="text-sm text-[var(--text-2)]">{dateLabel}</p>}
-        {statusLabel !== undefined && (
-          <p className="label-xs font-semibold text-[var(--text-2)]">{statusLabel}</p>
-        )}
-      </div>
-
-      {exerciseName !== undefined && exerciseName !== '' && (
-        <p className="mt-1.5 truncate text-base font-medium text-[var(--text-1)]">
-          {exerciseName}
-        </p>
-      )}
-
-      {/*
-        The plate stamp: only when the rule proposes a load.
-        Observations (drop, plateau, rest) lead with prose — a fake hero
-        metric would invent precision the signal does not have.
-      */}
-      {hasLoad ? (
-        <p className="record-figure mt-2 text-[1.75rem] leading-none font-semibold tracking-tight text-[var(--text-1)]">
-          {formatNumber(signal.nextLoadKg!)}
-          <span className="ml-1.5 text-base font-semibold tracking-normal text-[var(--text-2)]">
-            {t('units.kg')}
-          </span>
-        </p>
-      ) : null}
-
-      <p
-        className={`text-sm leading-snug text-pretty text-[var(--text-1)] ${
-          hasLoad || exerciseName ? 'mt-2' : 'mt-1.5'
-        }`}
-      >
-        {reason}
-      </p>
-
-    </>
-  );
-
   return (
     <article
       className={shell}
@@ -120,41 +96,64 @@ export function CoachCard({
       data-coach-tone={tone}
       aria-label={role}
     >
-      <div className="flex items-start gap-3">
-        {applicable ? (
-          // The whole reading is the button — one big target, thumb-sized by
-          // construction. `-m*/p*` keeps the text where it was while the
-          // pressable area covers the band. The chevron carries the affordance:
-          // a sentence explaining that a card is tappable is a sentence you read
-          // once and then have to skip forever.
-          <button
-            type="button"
-            onClick={onApply}
-            aria-label={t('coach.applyAction', { weight: formatNumber(signal.nextLoadKg!) })}
-            className="-m-2 flex min-w-0 flex-1 items-center gap-2 rounded-xl p-2 text-left
-              transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-1)]"
-          >
-            <span className="min-w-0 flex-1">{body}</span>
-            <ChevronRightIcon className="shrink-0 text-[var(--text-2)]" />
-          </button>
-        ) : (
-          <div className="min-w-0 flex-1">{body}</div>
-        )}
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p className="label-xs font-semibold text-[var(--text-2)]">{role}</p>
+            {dateLabel !== undefined && <p className="text-sm text-[var(--text-2)]">{dateLabel}</p>}
+            {statusLabel !== undefined && (
+              <p className="label-xs font-semibold text-[var(--text-2)]">{statusLabel}</p>
+            )}
+          </div>
+          {exerciseName !== undefined && exerciseName !== '' && (
+            <p className="mt-1.5 truncate text-base font-medium text-[var(--text-1)]">
+              {exerciseName}
+            </p>
+          )}
+        </div>
 
-        {onDismiss !== undefined && (
-          <button
-            type="button"
-            onClick={onDismiss}
-            // 48×48 — one thumb, sweaty; never a tiny text link.
-            className="label-xs flex h-12 min-w-12 shrink-0 items-center justify-center
-              rounded-xl px-3 font-semibold text-[var(--text-2)]
-              transition-colors duration-[var(--dur-1)]
-              active:bg-[var(--surface-1)]"
+        {weight !== undefined && (
+          <p
+            className="record-figure shrink-0 text-[1.75rem] leading-none font-semibold
+              tracking-tight text-[var(--text-1)]"
           >
-            {t('coach.dismiss')}
-          </button>
+            {weight}
+            <span className="ml-1 text-sm font-semibold tracking-normal text-[var(--text-2)]">
+              {t('units.kg')}
+            </span>
+          </p>
         )}
       </div>
+
+      <p className="mt-2 text-sm leading-snug text-pretty text-[var(--text-1)]">{reason}</p>
+
+      {(applicable || onDismiss !== undefined) && (
+        <div
+          className={`mt-3 flex flex-col gap-2 ${applicable ? 'min-[23rem]:flex-row' : 'items-end'}`}
+        >
+          {applicable && weight !== undefined && (
+            <Button
+              variant="primary"
+              fullWidth
+              disabled={applying}
+              aria-label={t('coach.applyAction', { weight })}
+              onClick={() => void apply()}
+            >
+              {t('coach.applyButton', { weight })}
+            </Button>
+          )}
+          {onDismiss !== undefined && (
+            <Button
+              variant="ghost"
+              disabled={applying}
+              onClick={onDismiss}
+              className={applicable ? 'min-[23rem]:shrink-0' : ''}
+            >
+              {t(hasLoad ? 'coach.dismiss' : 'coach.hideObservation')}
+            </Button>
+          )}
+        </div>
+      )}
     </article>
   );
 }

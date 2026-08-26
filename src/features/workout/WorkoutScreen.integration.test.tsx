@@ -262,9 +262,13 @@ describe('WorkoutScreen — objectif du coach', () => {
     renderWorkout();
 
     // La carte porte le chiffre et la phrase qui l'explique, sans « + » trompeur.
-    expect(
-      await screen.findByText('47,5 → 50 kg car 3 × 12 a atteint le haut de la fourchette.'),
-    ).toBeVisible();
+    const reason = await screen.findByText(
+      '47,5 → 50 kg car 3 × 12 a atteint le haut de la fourchette.',
+    );
+    expect(reason).toBeVisible();
+
+    await user.click(reason);
+    expect((await firstSet(workoutId))?.targetWeight).toBeUndefined();
 
     await user.click(screen.getByRole('button', { name: 'Appliquer 50 kg aux séries restantes' }));
 

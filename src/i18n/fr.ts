@@ -485,6 +485,8 @@ const fr = {
     dismiss: 'Ignorer',
     objective: 'Objectif proposé',
     applyAction: 'Appliquer {weight} kg aux séries restantes',
+    applyButton: 'Appliquer {weight} kg',
+    hideObservation: 'Masquer',
     nextLoad: 'Prochaine charge : {weight} kg',
     range_ceiling_reached:
       '{current} → {weight} kg car {sets} × {reps} a atteint le haut de la fourchette.',

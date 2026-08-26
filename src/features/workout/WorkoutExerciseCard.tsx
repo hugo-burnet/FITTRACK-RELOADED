@@ -134,7 +134,7 @@ type Props = {
   coachObjective?: CoachRecommendation;
   onDismissCoach?: () => void;
   /** Tap on the objective writes its load onto the sets left to do. */
-  onApplyCoach?: () => void;
+  onApplyCoach?: () => void | Promise<void>;
 };
 
 const alternationMark = (index: number): string => String.fromCharCode(65 + index);
