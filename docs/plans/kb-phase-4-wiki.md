@@ -118,7 +118,10 @@ soit vérifié, soit explicitement marqué comme non relu.
       > sections des 64.** Plus d'une page sur deux se répétait à quelques lignes
       > d'intervalle. Après fusion : **209 passages**, 408 affirmations toutes conservées.
       > Même famille que le défaut du banc hybride, un cran plus subtil.
-- [ ] **T7 — Checkpoint téléphone.** Parcourir le sommaire, ouvrir trois sections, chercher
+- [x] **T7 — Checkpoint téléphone.** Fait le 2026-08-26 : trois défauts trouvés sur
+      appareil réel (doublons de passage, fiches hors sujet, emphase Markdown affichée),
+      tous corrigés. Version testée : v1.4.2, corrigés en v1.4.3.
+- [x] **T7 bis (ancien libellé) — Checkpoint téléphone.** Parcourir le sommaire, ouvrir trois sections, chercher
       « mon tendon tire », suivre un résultat jusqu'à sa section. À faire sur le vrai
       appareil : le panneau navigateur ne compose pas d'images quand il est masqué, donc
       aucune capture n'a pu valider la mise en page.
@@ -141,3 +144,38 @@ Ils s'appliquent au wiki comme à l'extraction : pas de diagnostic, pas de
 contre-indication universelle, pas de saut biomécanique vers un danger. Le dépôt est
 public. L'application reste en mode `UNCALIBRATED` et n'appelle jamais un passage une
 « réponse ».
+
+## Le refus n'est pas calibrable sur un score lexical (2026-08-26)
+
+`scripts/calibrate-refusal.mjs --split DEV` cherche, parmi quatre signaux que la
+recherche connaît au moment de décider, celui qui sépare le mieux les 31
+questions répondables des 28 qui ne le sont pas.
+
+| signal | seuil | répondables gardées | non-répondables refusées | score |
+|---|---:|---:|---:|---:|
+| score du top-1 | 11,94 | 21/31 | 16/28 | 0,620 |
+| nombre de termes appariés | 3 | 23/31 | 14/28 | 0,597 |
+| couverture des termes | 0,40 | 14/31 | 21/28 | 0,564 |
+| marge top1–top3 | 3,77 | 15/31 | 13/28 | 0,474 |
+
+Le meilleur seuil refuse 16 questions de bruit sur 28 **en refusant aussi 10
+questions sur 31 auxquelles le corpus répond**. Inutilisable : on dégraderait
+l'écran pour filtrer la moitié du bruit.
+
+**Conséquence sur CAL.** CAL sert une fois, à choisir le seuil de refus. Il n'y
+a rien à calibrer tant que le signal n'existe pas — l'ouvrir maintenant
+dépenserait la partition pour rien. **CAL reste fermé.**
+
+**Conséquence sur l'ordre des travaux.** Un score BM25 mesure un recouvrement de
+mots, jamais une couverture de sujet ; c'est la cause du taux de faux positifs
+de 100 % constaté toute la journée. Un cross-encoder, lui, produit un score de
+*pertinence* — la quantité dont le refus a besoin. Le reclassement n'est donc
+pas seulement un gain de classement : **c'est le préalable à tout refus**, et
+donc à CAL.
+
+- [ ] **T8 — Mesurer le reclassement.** `tools/e5-retrieval/measure-rerank-lab.html`,
+      servi par `serve-lab.mjs`, sur le vivier de `scripts/dump-search-pool.mjs`.
+      À lancer avec le panneau navigateur **visible** : masqué, le rendu est bridé
+      et l'inférence gèle le fil principal. Non exécutable en session agent.
+- [ ] **T9 — Recalibrer le refus sur le score de reclassement**, si T8 est concluant.
+      Puis, et seulement puis, CAL.
