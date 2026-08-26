@@ -2,10 +2,11 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-27 (**reprise de lecture après retours téléphone** : libellé de
-routine décollé du bord de sa carte, commande d'une observation coach rendue lisible, et hiérarchie
-de lecture des articles wiki. Voir la section v2.1.0 ci-dessous — **checkpoint téléphone à
-faire**). Plus tôt (**reprise UI Routines, Wiki et coach en séance** : les
+**Dernière mise à jour :** 2026-08-27 (**lecture du wiki, deuxième passe** : filtre de la
+documentation supprimé, sources affichées en clair au lieu d'identifiants, et rythme rendu aux
+articles de prose. Voir la section v2.2.0 ci-dessous — **checkpoint téléphone à faire**). Plus tôt
+le même jour (**reprise de lecture après retours téléphone** : libellé de routine décollé du bord
+de sa carte, commande d'une observation coach rendue lisible, hiérarchie des fiches de preuve). Plus tôt (**reprise UI Routines, Wiki et coach en séance** : les
 commandes de la bibliothèque suivent désormais les motifs existants, les articles ont été allégés
 et le coach exige une action explicite avant d'appliquer une charge. Voir la section dédiée
 ci-dessous — **checkpoint téléphone à faire**). Plus tôt le même jour (**wiki structuré relu,
@@ -111,6 +112,30 @@ mais c'est le checkpoint 2 ci-dessous qui la tranche.
    distingue, les limites se lisent en liste, et « Sources » contient bien Confiance, Population,
    Type de preuve et Sources principales.
 4. Ouvrir une page « Publications majeures » : ses champs sont restés dépliés et complets.
+
+## Lecture du wiki, deuxième passe (v2.2.0)
+
+Retours téléphone sur la v2.1.0, tous sur la lecture.
+
+- **Filtre de la documentation d'un exercice : supprimé.** Il filtrait au maximum six cartes
+  (1 à 5 muscles par exercice ; 164 des 175 exercices en projettent quatre ou moins), alors que
+  l'encadré du dessus listait déjà tous les titres. `filterArticles` et `normalise` partent avec.
+- **Les sources ne sont plus des hashes.** « claim.6f33aaaeadcc53d9 · … » devient
+  « 1.1 Pectoraux — 3 affirmations ». La table est projetée au build dans `claim-sources.json`
+  (21 Ko, 510 identifiants, 83 libellés) plutôt que d'embarquer les 1,1 Mo de
+  `evidence-index.json` + `f1-programming.json` sur la route d'un article. `kb:check-articles`
+  la vérifie comme le bundle.
+- **Les articles de prose ont un rythme.** Titres de section en `--accent-ink` avec filet, et la
+  prose sort de la dalle grise : une fiche est une carte, de la prose est un document.
+
+### CHECKPOINT MANUEL — à faire sur le téléphone
+
+1. Fiche d'un exercice → Documentation : plus de champ « Filtrer ces articles », les cartes sont
+   toutes là.
+2. Article « Pectoraux » : titres de section colorés, paragraphes sur le fond de page, et sous
+   « Sources » une vraie référence de section au lieu des identifiants.
+3. Article « Volume » : la fiche de preuve garde bien sa carte grise.
+4. Une page « Publications majeures » : ses champs restent dépliés et complets.
 
 ## Relecture du corpus, et ce qui a été ajouté après
 
