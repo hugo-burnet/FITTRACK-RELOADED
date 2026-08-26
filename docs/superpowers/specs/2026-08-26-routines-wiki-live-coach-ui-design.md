@@ -1,7 +1,7 @@
 # Routines, lecture du Wiki et retours du coach en séance
 
 **Date :** 2026-08-26
-**Statut :** conception demandée par l’utilisateur, à relire avant implémentation
+**Statut :** direction validée ; variante visuelle A retenue pour le coach
 **Branche :** `master`
 
 ## 1. Décision
@@ -159,22 +159,28 @@ navigation.
 
 ### 6.1 Objectif avec charge
 
-Une recommandation numérique conserve la charge comme lecture principale, mais la carte entière
-n’est plus un bouton :
+Une recommandation numérique reprend la variante **A · Décision claire** choisie dans le compagnon
+visuel. Elle conserve la charge comme lecture principale, mais la carte entière n’est plus un
+bouton :
 
 ```text
-Objectif proposé
-52,5 kg
-47,5 → 52,5 kg car 4 × 10 a atteint le haut de la fourchette.
+Coach                                      52,5 kg
+La dernière séance était solide. Passe au palier suivant.
 
 [ Appliquer 52,5 kg ]   [ Ignorer ]
 ```
 
+- le bloc forme une seule surface calme intégrée à la carte d’exercice, sans rail accent ni carte
+  imbriquée supplémentaire ;
+- le label, la raison et l’objectif restent distincts afin que la lecture puisse être balayée sans
+  interpréter une ligne compacte ;
 - `Appliquer … kg` est un `Button` primaire de 48 px minimum ;
 - `Ignorer` est un `Button` fantôme de 48 px minimum ;
-- les deux boutons restent utilisables à 320 px sans couper leur libellé ;
+- les deux boutons restent côte à côte quand leurs libellés tiennent et se réorganisent en pile à
+  320 px plutôt que de couper leur texte ;
 - seule l’action primaire appelle `applyCoachObjective`, puis marque la recommandation suivie ;
-- aucune touche sur la prose, la charge ou le chevron ne modifie les séries.
+- aucun chevron d’application n’est rendu et aucune touche sur la prose ou la charge ne modifie les
+  séries.
 
 L’action explicite évite une écriture accidentelle tout en restant à un pouce de la grille qu’elle
 prépare.
