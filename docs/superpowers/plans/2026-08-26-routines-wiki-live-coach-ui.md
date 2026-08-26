@@ -18,6 +18,8 @@
 - Le Wiki ne rend plus l’aide contextuelle ; le tutoriel reste inchangé ailleurs.
 - L’objectif coach n’écrit qu’après activation du bouton `Appliquer … kg`.
 - Le nettoyage de `wikiDocuments` et de l’export mort `wikiSections` reste dans cette livraison.
+- Les choix isolés « Aucun » et « Par défaut partout » occupent toute leur rangée et utilisent
+  `--accent-soft` / `--accent-ink` lorsqu’ils sont actifs.
 
 ---
 
@@ -614,7 +616,121 @@ git commit -m "fix: expliciter la décision du coach en séance"
 
 ---
 
-### Task 6: Vérification mobile, documentation et livraison
+### Task 6: Aligner les choix isolés de repos et de cadence
+
+**Files:**
+- Modify: `src/ui/RestPicker.tsx`
+- Modify: `src/features/workout/PaceSheet.tsx`
+
+**Interfaces:**
+- Preserves: `RestPicker` props, `PaceSheet` props, toutes les écritures et tous les libellés.
+- Produces: une rangée pleine largeur et visuellement secondaire pour chaque choix non numérique
+  isolé.
+
+Cette tâche est une correction d’affichage pur : conformément aux conventions du projet, elle est
+contrôlée dans le navigateur mobile plutôt que par une assertion de classes Tailwind.
+
+- [ ] **Step 1: Élargir et calmer l’état vide de `RestPicker`**
+
+Ajouter une variante silencieuse au composant local `Chip` :
+
+```tsx
+function Chip({
+  label,
+  active,
+  numeric = false,
+  fill = false,
+  quietActive = false,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  numeric?: boolean;
+  fill?: boolean;
+  quietActive?: boolean;
+  onClick: () => void;
+}) {
+  const activeClass = quietActive
+    ? 'bg-[var(--accent-soft)] text-[var(--accent-ink)]'
+    : 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]';
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`min-h-12 rounded-xl text-base font-semibold transition-colors
+        duration-[var(--dur-1)] ease-[var(--ease-mech)] ${fill ? 'w-full px-1' : 'px-4'} ${
+          numeric ? 'metric' : ''
+        } ${active ? activeClass : 'bg-[var(--surface-2)] text-[var(--text-1)]'}`}
+    >
+      {label}
+    </button>
+  );
+}
+```
+
+Puis rendre le choix vide sur toute la largeur :
+
+```tsx
+<div className="mt-2">
+  <Chip
+    label={clearLabel}
+    active={!isSet}
+    fill
+    quietActive
+    onClick={() => onChange(undefined)}
+  />
+</div>
+```
+
+- [ ] **Step 2: Regrouper la préférence globale de cadence**
+
+Dans `PaceSheet.tsx`, remplacer le bouton isolé et le paragraphe suivant par :
+
+```tsx
+{view.kind === 'reps' && (
+  <div className="mt-2 flex flex-col gap-2">
+    <button
+      type="button"
+      aria-pressed={view.defaultRepSeconds === repSeconds}
+      onClick={() => onSetDefault(repSeconds)}
+      className={`min-h-12 w-full rounded-xl px-4 text-base font-semibold
+        transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)] ${
+          view.defaultRepSeconds === repSeconds
+            ? 'bg-[var(--accent-soft)] text-[var(--accent-ink)]'
+            : 'bg-[var(--surface-2)] text-[var(--text-1)]'
+        }`}
+    >
+      {t('workout.paceSetDefault')}
+    </button>
+    <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('workout.paceHelp')}</p>
+  </div>
+)}
+```
+
+Le `mt-2` ajouté au `gap-4` du parent crée 24 px après l’action primaire ; le `gap-2` lie la
+préférence à son explication.
+
+- [ ] **Step 3: Contrôler les deux surfaces dans le navigateur**
+
+À 375 × 812 puis 320 px :
+
+- ouvrir Cadence et vérifier que « Par défaut partout » remplit la largeur sans reprendre l’orange
+  plein de « Lancer la cadence » ;
+- ouvrir Tes réglages et vérifier qu’« Aucun » remplit la rangée sous les cinq durées ;
+- mesurer `scrollWidth === clientWidth` et une hauteur de bouton d’au moins 48 px.
+
+- [ ] **Step 4: Committer le correctif**
+
+```bash
+git add -- src/ui/RestPicker.tsx src/features/workout/PaceSheet.tsx
+git commit -m "fix: aligner les choix isolés de réglage"
+```
+
+---
+
+### Task 7: Vérification mobile, documentation et livraison
 
 **Files:**
 - Modify: `PROGRESS.md`
