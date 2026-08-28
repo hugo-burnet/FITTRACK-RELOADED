@@ -275,3 +275,223 @@
   background: var(--accent-ink);
   box-shadow: 0 0 0 1px var(--text-2);
 }
+
+/*
+ * L'ouverture de l'app.
+ *
+ * Ces gestes sont déclarés ici et non dans le bloc `@theme` du haut : les quatre
+ * gestes de l'app doivent rester quatre, et ceux-ci ne servent qu'à un écran vu
+ * une fois par démarrage. Même précédent que `.rpe-gauge` juste au-dessus.
+ *
+ * Trois temps, et le troisième est la conséquence des deux premiers : les
+ * manchons s'enfilent, les petites plaques s'enfilent, puis la barre chargée se
+ * lève. Le principe apparaît sur cette frame-là — c'est le seul endroit de la
+ * séquence où deux choses bougent ensemble, et c'est ce qui en fait la chute.
+ *
+ * Tous les délais sont dans `.boot[data-phase='in']` : la phase de sortie ne
+ * fait correspondre aucune de ces règles, donc l'écran qui s'efface est déjà
+ * dans son état final, sans rejouer une seule entrée.
+ */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-0);
+}
+
+.boot-mark {
+  font-size: clamp(2.25rem, 12vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--text-1);
+}
+
+.boot-bar {
+  width: clamp(7rem, 34vw, 8.5rem);
+  height: auto;
+  /* Les plaques entrent depuis l'extérieur du `viewBox`. Sans ça le SVG les
+     coupe net à son bord : la plus externe apparaît d'un coup, déjà à moitié
+     opaque, au lieu de glisser depuis le bout de la barre. */
+  overflow: visible;
+}
+
+.boot-principle {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  /* L'interlettrage ajoute un blanc après la dernière lettre ; sans ce retrait
+     la ligne est visiblement décalée à gauche de l'axe. */
+  text-indent: 0.3em;
+  color: var(--accent-ink);
+}
+
+.boot-tagline {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+/* Les transformations SVG se lisent dans le repère du `viewBox`, pas dans la
+   boîte de l'élément — sans ça, l'origine dépend du navigateur. */
+.boot-rail,
+.boot-plate {
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+.boot[data-phase='in'] .boot-rail {
+  animation: boot-rack 360ms var(--ease-mech) 100ms both;
+}
+
+.boot[data-phase='in'] .boot-mark {
+  animation: boot-rise 460ms var(--ease-mech) 300ms both;
+}
+
+/* Le flou est la seule chose coûteuse de l'écran, et il porte sur quatre traits
+   de 13 px de large. C'est le cas que `will-change` sert : borné à la phase
+   d'entrée, sur un écran détruit deux secondes plus tard. */
+.boot[data-phase='in'] .boot-plate {
+  will-change: transform, filter;
+}
+
+.boot[data-phase='in'] .boot-plate--l {
+  animation: boot-load-l 300ms var(--ease-mech) var(--boot-delay, 0ms) both;
+}
+
+.boot[data-phase='in'] .boot-plate--r {
+  animation: boot-load-r 300ms var(--ease-mech) var(--boot-delay, 0ms) both;
+}
+
+/* Troisième temps. Le levé et la chute du principe partent à 40 ms d'écart :
+   assez pour que l'un ait l'air de déclencher l'autre, trop peu pour qu'on les
+   compte séparément. `linear` ici parce que la courbe est déclarée palier par
+   palier dans `boot-lift` : monter et reposer ne se font pas au même rythme. */
+.boot[data-phase='in'] .boot-lift {
+  animation: boot-lift 520ms linear 1300ms both;
+}
+
+/* `pop` est le geste que l'app donne déjà à une série validée et à un record :
+   ça arrive, ça pose. Le principe mérite exactement celui-là, pas un de plus. */
+.boot[data-phase='in'] .boot-principle {
+  animation: pop 380ms var(--ease-mech) 1340ms both;
+}
+
+.boot[data-phase='in'] .boot-tagline {
+  animation: boot-fade 520ms var(--ease-mech) 1860ms both;
+}
+
+.boot[data-phase='out'] {
+  animation: boot-curtain 320ms var(--ease-mech) both;
+  /* L'app est vivante sous le rideau pendant qu'il s'efface : un pouce pressé
+     doit atteindre le premier bouton, pas un calque qui part. */
+  pointer-events: none;
+}
+
+@keyframes boot-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes boot-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Le manchon se pose : il s'ouvre depuis le centre, là où on l'empoigne. */
+@keyframes boot-rack {
+  from {
+    opacity: 0;
+    transform: scaleX(0.12);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Une plaque n'apparaît pas : elle vient du bout de la barre et s'arrête net.
+   C'est `--ease-mech` qui fait le bruit — décélération sèche, pas de rebond. */
+@keyframes boot-load-l {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--boot-travel, 8px) * -1));
+    filter: blur(2.5px);
+  }
+  50% {
+    filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0px);
+  }
+}
+
+@keyframes boot-load-r {
+  from {
+    opacity: 0;
+    transform: translateX(var(--boot-travel, 8px));
+    filter: blur(2.5px);
+  }
+  50% {
+    filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0px);
+  }
+}
+
+/* La barre est chargée : on la lève. Elle monte plus vite qu'elle ne redescend
+   — 40 % du temps pour la montée, 60 % pour la repose — parce que c'est dans ce
+   sens-là qu'une répétition se fait. */
+@keyframes boot-lift {
+  from {
+    transform: none;
+    /* Elle s'arrache : lent au départ, vite au milieu, posé en haut. C'est le
+       seul endroit de l'app où une chose a un poids, et `--ease-mech`, qui ne
+       sait que décélérer, ferait décoller la barre toute seule. */
+    animation-timing-function: cubic-bezier(0.62, 0, 0.3, 1);
+  }
+  40% {
+    transform: translateY(-11px);
+    /* La repose est la descente de toujours : elle part et elle amortit. C'est
+       la valeur de `--ease-mech`, écrite en clair : un `var()` dans un keyframe
+       ne se résout pas pour `animation-timing-function` — mesuré, la descente
+       repartait en linéaire. Les deux doivent rester égales. */
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes boot-curtain {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}

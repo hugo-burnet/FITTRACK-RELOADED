@@ -22,6 +22,13 @@ export function CreditsScreen() {
   return (
     <Screen title={t('credits.title')} onBack={() => void navigate('/settings')}>
       <div className="flex flex-col gap-9">
+        {/* La signature, en une ligne, sur le seul écran qui répond à « c'est
+            quoi, cette app ». L'ouverture la joue en trois temps ; ici elle se
+            lit d'un coup, et sans accent comme le reste de cette page. */}
+        <p className="px-1 text-[0.9375rem] leading-relaxed font-semibold text-[var(--text-1)]">
+          {t('app.slogan')}
+        </p>
+
         <p className="px-1 text-sm leading-relaxed text-[var(--text-2)]">{t('credits.intro')}</p>
 
         <section>

@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { BootScreen, SeedErrorBanner } from './app/Boot';
+import { BOOT_HOLD_MS, BootCurtain, BootScreen, SeedErrorBanner } from './app/Boot';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
 import { initializePersistentData } from './data/initialize';
@@ -31,6 +31,7 @@ function mount(seedFailed: boolean) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
+        <BootCurtain />
         {seedFailed && <SeedErrorBanner />}
         <UpdateBanner />
         <RouterProvider router={router} />
@@ -40,15 +41,22 @@ function mount(seedFailed: boolean) {
 }
 
 // Persistent projections have to be ready before the first screen queries
-// them, so the boot screen holds until initialization resolves.
+// them, so the opening screen holds until initialization resolves.
 root.render(<BootScreen />);
 
-void initializePersistentData().then(
-  () => mount(false),
-  (error: unknown) => {
-    // A failed seed must never leave a blank screen. The app starts anyway and
-    // says so: the user's own data does not depend on the catalogue.
-    console.error('Le seed du catalogue a échoué', error);
-    mount(true);
-  },
-);
+/**
+ * Les deux attentes courent ensemble, jamais l'une après l'autre : le rideau
+ * dure ce qu'il dure, et une base lente le prolonge au lieu de s'y ajouter.
+ */
+void Promise.all([
+  initializePersistentData().then(
+    () => false,
+    (error: unknown) => {
+      // A failed seed must never leave a blank screen. The app starts anyway and
+      // says so: the user's own data does not depend on the catalogue.
+      console.error('Le seed du catalogue a échoué', error);
+      return true;
+    },
+  ),
+  new Promise((resolve) => setTimeout(resolve, BOOT_HOLD_MS)),
+]).then(([seedFailed]) => mount(seedFailed));
