@@ -2120,11 +2120,10 @@ const fr = {
     offScreenNotice:
       'Cet écran n’existe que pendant une séance : la visite le décrit sans l’ouvrir.',
 
-    activation: {
-      title: 'Préparer ma première séance',
-      body: 'Choisis un point de départ. FitTrack te laissera effectuer chaque geste sur tes propres données.',
-      template: 'Choisir un modèle',
-      blank: 'Créer ma routine',
+    campaign: {
+      title: 'Ma première séance guidée',
+      body: 'FitTrack ouvre chaque écran et attend ton geste. Rien n’est créé, rempli ni validé à ta place.',
+      start: 'Commencer la découverte',
       later: 'Plus tard',
     },
 
@@ -2145,10 +2144,10 @@ const fr = {
       label: 'Mission guidée',
       counter: 'Étape {index} sur {count}',
       dismiss: 'Passer cette mission',
-      activation: {
-        title: 'Choisir un modèle',
-        instruction: 'Ouvre le menu de création, puis choisis un modèle.',
-        detail: 'Le modèle reste entièrement modifiable avant de démarrer.',
+      campaign: {
+        title: 'Créer la séance découverte',
+        instruction: 'Ouvre le menu de création, puis choisis Routine vide.',
+        detail: 'Le nom et chaque modification sont enregistrés immédiatement.',
       },
       recovery: {
         title: 'Résoudre la séance en attente',

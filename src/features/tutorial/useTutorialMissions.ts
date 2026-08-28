@@ -11,11 +11,10 @@ import {
 import { movesForward, pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
 import { loadTutorialState, saveTutorialState } from './tutorialStore';
 import type {
-  TutorialActivationPath,
   TutorialCompletion,
   TutorialEvent,
   TutorialMissionId,
-  TutorialStateV2,
+  TutorialStateV3,
 } from './tutorialTypes';
 
 export function useTutorialMissions(
@@ -23,10 +22,10 @@ export function useTutorialMissions(
   navigate: NavigateFunction,
   facts: TutorialMissionFacts,
 ) {
-  const [state, setState] = useState<TutorialStateV2>(loadTutorialState);
+  const [state, setState] = useState<TutorialStateV3>(loadTutorialState);
   const stateRef = useRef(state);
 
-  const commit = useCallback((change: (current: TutorialStateV2) => TutorialStateV2) => {
+  const commit = useCallback((change: (current: TutorialStateV3) => TutorialStateV3) => {
     const current = stateRef.current;
     const next = change(current);
     if (next === current) return false;
@@ -86,18 +85,29 @@ export function useTutorialMissions(
     (orientation: TutorialCompletion) => commit((current) => ({ ...current, orientation })),
     [commit],
   );
-  const chooseActivation = useCallback(
-    (activationPath: TutorialActivationPath | null) =>
+  /*
+   * L'entrée dans la campagne, et sa seule alternative : plus tard.
+   *
+   * Le démarrage et la mission sont écrits d'un seul tenant. Deux écritures
+   * laisseraient, entre les deux, un état où la campagne est « en préparation »
+   * sans mission active — c'est-à-dire un tutoriel qui se croit commencé et ne
+   * dirige rien.
+   */
+  const startCampaign = useCallback(
+    () =>
       commit((current) => {
         if (current.activeMissionId !== null) return current;
-        if (activationPath === null) {
-          return current.activationPath === null ? current : { ...current, activationPath };
-        }
-        const missionId = activationPath === 'template' ? 'TUT-ACT-01' : 'TUT-ROU-01';
-        if (!isMissionAvailable(missionFor(missionId), facts)) return current;
-        return { ...startMission(current, missionId), activationPath };
+        if (!isMissionAvailable(missionFor('TUT-CAM-01'), facts)) return current;
+        return { ...startMission(current, 'TUT-CAM-01'), campaign: 'preparing' };
       }),
     [commit, facts],
+  );
+  const postponeCampaign = useCallback(
+    () =>
+      commit((current) =>
+        current.campaign === 'not-started' ? { ...current, campaign: 'dismissed' } : current,
+      ),
+    [commit],
   );
 
   const activeMission = useMemo(
@@ -162,6 +172,7 @@ export function useTutorialMissions(
     report,
     dismiss,
     setOrientation,
-    chooseActivation,
+    startCampaign,
+    postponeCampaign,
   };
 }

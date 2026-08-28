@@ -1,14 +1,14 @@
 import { missionFor } from './tutorialMissions';
-import type { TutorialEvent, TutorialMissionId, TutorialStateV2 } from './tutorialTypes';
+import type { TutorialEvent, TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
 
 export function startMission(
-  state: TutorialStateV2,
+  state: TutorialStateV3,
   missionId: TutorialMissionId,
-): TutorialStateV2 {
+): TutorialStateV3 {
   return { ...state, activeMissionId: missionId, activeStepIndex: 0 };
 }
 
-export function advanceMission(state: TutorialStateV2, event: TutorialEvent): TutorialStateV2 {
+export function advanceMission(state: TutorialStateV3, event: TutorialEvent): TutorialStateV3 {
   if (state.activeMissionId === null) return state;
   const mission = missionFor(state.activeMissionId);
   const step = mission.steps[state.activeStepIndex];
@@ -24,7 +24,7 @@ export function advanceMission(state: TutorialStateV2, event: TutorialEvent): Tu
   };
 }
 
-export function dismissMission(state: TutorialStateV2): TutorialStateV2 {
+export function dismissMission(state: TutorialStateV3): TutorialStateV3 {
   if (state.activeMissionId === null) return state;
   return {
     ...state,

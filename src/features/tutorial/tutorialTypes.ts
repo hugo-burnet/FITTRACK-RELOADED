@@ -1,8 +1,24 @@
 export type TutorialCompletion = 'completed' | 'skipped';
-export type TutorialActivationPath = 'template' | 'blank';
+
+/**
+ * Où en est la campagne débutant.
+ *
+ * `routine-ready` est le seul état qui compte vraiment : la préparation est
+ * faite, et le tutoriel **attend** que l'utilisateur démarre lui-même cette
+ * routine. Sans lui, la seule façon d'enchaîner sur la séance serait d'en
+ * fabriquer une — ce que la spec interdit.
+ */
+export type TutorialCampaignStatus =
+  | 'not-started'
+  | 'preparing'
+  | 'routine-ready'
+  | 'workout-active'
+  | 'completed'
+  | 'dismissed';
 
 export const TUTORIAL_MISSION_IDS = [
-  'TUT-ACT-01',
+  'TUT-CAM-01',
+  'TUT-CAM-02',
   'TUT-REC-01',
   'TUT-ROU-01',
   'TUT-ROU-02',
@@ -14,19 +30,52 @@ export const TUTORIAL_MISSION_IDS = [
   'TUT-WRK-04',
   'TUT-DAT-01',
   'TUT-DAT-02',
+  'TUT-PRG-01',
+  'TUT-PRG-02',
+  'TUT-PRG-03',
+  'TUT-PRG-04',
+  'TUT-WRK-05',
+  'TUT-WRK-06',
+  'TUT-WRK-07',
+  'TUT-WRK-08',
+  'TUT-WRK-09',
+  'TUT-WRK-10',
+  'TUT-WRK-11',
+  'TUT-WRK-12',
+  'TUT-HIS-01',
+  'TUT-HIS-02',
+  'TUT-HIS-03',
+  'TUT-IMP-01',
+  'TUT-ANA-01',
+  'TUT-ANA-02',
+  'TUT-EXE-01',
+  'TUT-EXE-02',
+  'TUT-KNW-01',
+  'TUT-KNW-02',
+  'TUT-HOME-01',
+  'TUT-SET-01',
+  'TUT-SET-02',
 ] as const;
 
 export type TutorialMissionId = (typeof TUTORIAL_MISSION_IDS)[number];
 
 export type TutorialMissionStatus = 'completed' | 'dismissed';
 
-export interface TutorialStateV2 {
-  version: 2;
-  scriptVersion: 1;
+export interface TutorialStateV3 {
+  version: 3;
+  scriptVersion: 2;
   orientation: TutorialCompletion | null;
-  activationPath: TutorialActivationPath | null;
+  campaign: TutorialCampaignStatus;
   activeMissionId: TutorialMissionId | null;
   activeStepIndex: number;
+  /**
+   * La routine créée pendant la campagne — « Séance découverte ».
+   *
+   * Distincte de `missionRoutineId` : la campagne doit reconnaître **son**
+   * `workout-started`, pas n'importe lequel. Une séance lancée sur une autre
+   * routine ne reprend pas l'acte 2.
+   */
+  campaignRoutineId: string | null;
   /**
    * La routine dont les missions de composition parlent — la dernière ouverte.
    *
@@ -36,6 +85,8 @@ export interface TutorialStateV2 {
    * reste : une mission reprise après un rechargement doit retrouver la sienne.
    */
   missionRoutineId: string | null;
+  /** Même rôle que `missionRoutineId`, pour `/programs/:id`. */
+  missionProgramId: string | null;
   missions: Partial<Record<TutorialMissionId, TutorialMissionStatus>>;
 }
 

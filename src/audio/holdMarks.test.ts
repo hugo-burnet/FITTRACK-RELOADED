@@ -61,14 +61,33 @@ describe('le cue du changement de côté', () => {
  * qui n'en est pas un, et passait donc à travers le contrôle. Dix clips sur
  * quatre-vingts n'étaient pas vérifiés, et les missions guidées seraient tombées
  * dans le même angle mort.
+ *
+ * **`pending` est la seule dérogation, et elle se referme toute seule.** Le
+ * texte d'une consigne se relit et se corrige à l'écran ; l'enregistrer coûte
+ * une génération payante, qu'on ne refait pas à chaque reformulation. Une ligne
+ * marquée `pending` déclare donc une phrase écrite mais pas encore dite — le
+ * lecteur retombe sur le texte, qui suffit. Le second test interdit qu'elle le
+ * reste : dès que le MP3 existe, le drapeau doit disparaître, sans quoi il
+ * deviendrait l'excuse permanente que ce fichier existe pour empêcher.
  */
+const isPending = (line: { id: string }): boolean => 'pending' in line;
+const hasClip = (id: string): boolean =>
+  existsSync(join(process.cwd(), 'public', 'voice', `${id}.mp3`));
+
 describe('le manifeste', () => {
-  it('a un MP3 pour chaque identifiant déclaré', () => {
+  it('a un MP3 pour chaque identifiant déclaré et non différé', () => {
     const missing = script.lines
+      .filter((line) => !isPending(line))
       .map((line) => line.id)
-      .filter((clip) => !existsSync(join(process.cwd(), 'public', 'voice', `${clip}.mp3`)));
+      .filter((clip) => !hasClip(clip));
 
     expect(missing, `clips déclarés sans MP3 : ${missing.join(', ')}`).toEqual([]);
+  });
+
+  it('ne laisse pas un clip différé alors qu’il a été enregistré', () => {
+    const recorded = script.lines.filter(isPending).map((line) => line.id).filter(hasClip);
+
+    expect(recorded, `clips à sortir de « pending » : ${recorded.join(', ')}`).toEqual([]);
   });
 
   it('couvre bien plus que les clips rattachés à un cue', () => {

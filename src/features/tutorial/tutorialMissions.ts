@@ -1,6 +1,6 @@
 import type { TranslationKey } from '@/i18n/fr';
 import { pathForScreen, type TutorialScreen } from './tutorialScreens';
-import type { TutorialEvent, TutorialMissionId, TutorialStateV2 } from './tutorialTypes';
+import type { TutorialEvent, TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
 
 export interface TutorialMissionStep {
   id: string;
@@ -55,21 +55,29 @@ export function isMissionAvailable(mission: TutorialMission, facts: TutorialMiss
   return mission.guard === 'always';
 }
 
-const ACTIVATE: TutorialMission = {
-  id: 'TUT-ACT-01',
+/**
+ * Acte 1 de la campagne : préparer la « Séance découverte ».
+ *
+ * Remplace le choix « modèle ou routine vide » de l'activation. Faire choisir
+ * un point de départ à quelqu'un qui n'a encore rien vu, c'est lui demander de
+ * décider avant d'avoir appris ; la campagne, elle, fait faire. Les étapes
+ * C04 à C12 de la spec s'ajouteront ici.
+ */
+const CAMPAIGN_PREPARE: TutorialMission = {
+  id: 'TUT-CAM-01',
   routePrefix: '/routines',
-  titleKey: 'tutorial.mission.activation.title',
+  titleKey: 'tutorial.mission.campaign.title',
   guard: 'requires-no-active-workout',
   steps: [
     {
-      id: 'pick-template',
+      id: 'create-discovery-routine',
       screen: 'routines',
       reach: 'navigate',
       targetId: 'routine-create',
-      instructionKey: 'tutorial.mission.activation.instruction',
-      clipId: 'mission-activation-1',
-      detailKey: 'tutorial.mission.activation.detail',
-      advanceWhen: eventIs('routine-opened'),
+      instructionKey: 'tutorial.mission.campaign.instruction',
+      clipId: 'mission-campaign-create-1',
+      detailKey: 'tutorial.mission.campaign.detail',
+      advanceWhen: eventIs('routine-created'),
     },
   ],
   nextMissionId: 'TUT-ROU-02',
@@ -326,7 +334,7 @@ const BACKUP_RESTORE: TutorialMission = {
 };
 
 export const P1_MISSIONS: readonly TutorialMission[] = [
-  ACTIVATE,
+  CAMPAIGN_PREPARE,
   RECOVER,
   ROUTINE_CREATE,
   ROUTINE_EXERCISE,
@@ -376,12 +384,12 @@ export function isMissionReachable(mission: TutorialMission, routineId: string |
 
 export function contextualMissionsForPath(
   pathname: string,
-  state: TutorialStateV2,
+  state: TutorialStateV3,
   facts: TutorialMissionFacts,
 ): readonly TutorialMission[] {
   return P1_MISSIONS.filter(
     (mission) =>
-      mission.id !== 'TUT-ACT-01' &&
+      mission.id !== 'TUT-CAM-01' &&
       mission.id !== 'TUT-REC-01' &&
       pathname.startsWith(mission.routePrefix) &&
       isMissionAvailable(mission, facts) &&

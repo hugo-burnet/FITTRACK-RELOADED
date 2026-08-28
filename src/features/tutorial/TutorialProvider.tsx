@@ -33,7 +33,7 @@ import { useTutorialMissions } from './useTutorialMissions';
 import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
 type TourKind = 'full' | 'contextual';
-type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice' | 'activation';
+type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice' | 'campaign';
 
 function TutorialOverlay({
   step,
@@ -359,7 +359,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     applyAnnouncerMode(mode);
     const firstRun = missions.state.orientation === null;
     missions.setOrientation(completion);
-    setPhase(firstRun ? 'activation' : 'idle');
+    setPhase(firstRun ? 'campaign' : 'idle');
     navigate('/', { replace: true });
   };
 
@@ -456,13 +456,11 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
       </Sheet>
 
       <Sheet
-        open={phase === 'activation'}
+        open={phase === 'campaign'}
         onClose={() => setPhase('idle')}
-        title={t('tutorial.activation.title')}
+        title={t('tutorial.campaign.title')}
       >
-        <p className="text-sm leading-relaxed text-[var(--text-2)]">
-          {t('tutorial.activation.body')}
-        </p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('tutorial.campaign.body')}</p>
         <div className="mt-5 flex flex-col gap-2">
           <Button
             variant="primary"
@@ -470,23 +468,21 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
             fullWidth
             disabled={missionFacts.hasActiveWorkout !== false}
             onClick={() => {
-              if (missions.chooseActivation('template')) setPhase('idle');
+              if (missions.startCampaign()) setPhase('idle');
             }}
           >
-            {t('tutorial.activation.template')}
+            {t('tutorial.campaign.start')}
           </Button>
           <Button
+            variant="ghost"
             size="lg"
             fullWidth
-            disabled={missionFacts.hasActiveWorkout !== false}
             onClick={() => {
-              if (missions.chooseActivation('blank')) setPhase('idle');
+              missions.postponeCampaign();
+              setPhase('idle');
             }}
           >
-            {t('tutorial.activation.blank')}
-          </Button>
-          <Button variant="ghost" size="lg" fullWidth onClick={() => setPhase('idle')}>
-            {t('tutorial.activation.later')}
+            {t('tutorial.campaign.later')}
           </Button>
         </div>
       </Sheet>

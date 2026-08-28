@@ -79,23 +79,24 @@ describe('sauvegarde complète', () => {
     expect(localStorage.getItem('fittrack:theme')).toBe('light');
   });
 
-  it('conserve la progression namespacée du tutoriel v2 après restauration', async () => {
+  it('conserve la progression namespacée du tutoriel v3 après restauration', async () => {
     const tutorial = JSON.stringify({
-      version: 2,
-      scriptVersion: 1,
+      version: 3,
+      scriptVersion: 2,
       orientation: 'completed',
-      activationPath: 'blank',
+      campaign: 'routine-ready',
       activeMissionId: 'TUT-WRK-02',
       activeStepIndex: 0,
+      campaignRoutineId: 'r-decouverte',
       missions: { 'TUT-ROU-01': 'completed' },
     });
-    localStorage.setItem('fittrack:tutorial:v2', tutorial);
+    localStorage.setItem('fittrack:tutorial:v3', tutorial);
 
     const backup = await buildBackup();
-    localStorage.removeItem('fittrack:tutorial:v2');
+    localStorage.removeItem('fittrack:tutorial:v3');
     await restoreBackup(backup);
 
-    expect(localStorage.getItem('fittrack:tutorial:v2')).toBe(tutorial);
+    expect(localStorage.getItem('fittrack:tutorial:v3')).toBe(tutorial);
   });
 
   it('emporte la famille de mouvement d’un exercice personnel, et accepte son absence', async () => {

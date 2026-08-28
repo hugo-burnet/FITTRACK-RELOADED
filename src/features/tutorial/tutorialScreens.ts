@@ -88,7 +88,7 @@ export function screenHolds(
 /**
  * Le tutoriel n'a jamais le droit de faire **reculer** l'utilisateur.
  *
- * `TUT-ACT-01` vise le bouton de création, sur la liste, mais s'achève sur
+ * `TUT-CAM-01` vise le bouton de création, sur la liste, mais s'achève sur
  * `routine-opened` — c'est-à-dire dans l'éditeur, une fois la routine lue en
  * base, plusieurs images après l'arrivée. Entre les deux, l'étape courante
  * désigne encore la liste : sans cette règle, la visite renvoyait à la liste

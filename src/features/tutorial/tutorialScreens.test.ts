@@ -48,7 +48,7 @@ describe('les écrans des missions guidées', () => {
   });
 
   /*
-   * `TUT-ACT-01` vise le bouton de création, sur la liste, et s'achève sur
+   * `TUT-CAM-01` vise le bouton de création, sur la liste, et s'achève sur
    * `routine-opened` — dans l'éditeur, une fois la routine lue en base. Entre
    * les deux, l'étape désigne encore la liste : sans cette règle, la visite
    * renvoyait à la liste quelqu'un qui venait d'ouvrir la routine demandée.

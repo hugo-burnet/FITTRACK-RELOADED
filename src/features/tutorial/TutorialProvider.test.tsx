@@ -72,7 +72,7 @@ describe('TutorialProvider', () => {
 
     await user.click(screen.getByRole('button', { name: /Sons uniquement/ }));
     expect(JSON.parse(localStorage.getItem(TUTORIAL_STORAGE_KEY) ?? '{}')).toMatchObject({
-      version: 2,
+      version: 3,
       orientation: 'skipped',
     });
     expect(localStorage.getItem(ANNOUNCER_STORAGE_KEY)).toBe('sounds');
@@ -123,36 +123,49 @@ describe('TutorialProvider', () => {
     expect(screen.getByText('Environ vingt secondes.')).toBeVisible();
   });
 
-  it('offers a real activation path after the first orientation choice', async () => {
+  it('propose la campagne, et rien d’autre, après le premier choix audio', async () => {
     const user = userEvent.setup();
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
     await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
 
-    expect(
-      await screen.findByRole('dialog', { name: 'Préparer ma première séance' }),
-    ).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Choisir un modèle' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Créer ma routine' })).toBeVisible();
+    expect(await screen.findByRole('dialog', { name: 'Ma première séance guidée' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Commencer la découverte' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Plus tard' })).toBeVisible();
   });
 
-  it('starts the blank-routine mission without creating data', async () => {
+  it('démarre la campagne sans créer la moindre donnée', async () => {
     const user = userEvent.setup();
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
     await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
-    const blankChoice = await screen.findByRole('button', { name: 'Créer ma routine' });
-    await waitFor(() => expect(blankChoice).toBeEnabled());
-    await user.click(blankChoice);
+    const startChoice = await screen.findByRole('button', { name: 'Commencer la découverte' });
+    await waitFor(() => expect(startChoice).toBeEnabled());
+    await user.click(startChoice);
 
     const state = loadTutorialState();
-    expect(state.activationPath).toBe('blank');
-    expect(state.activeMissionId).toBe('TUT-ROU-01');
+    expect(state.campaign).toBe('preparing');
+    expect(state.activeMissionId).toBe('TUT-CAM-01');
+    expect(state.campaignRoutineId).toBeNull();
   });
 
-  it('persists the activation choice and mission atomically once in StrictMode', async () => {
+  it('retient « plus tard » plutôt que de reposer la question à chaque lancement', async () => {
+    const user = userEvent.setup();
+    renderTutorial();
+
+    await user.click(await screen.findByRole('button', { name: 'Passer' }));
+    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    await user.click(await screen.findByRole('button', { name: 'Plus tard' }));
+
+    expect(loadTutorialState()).toMatchObject({
+      campaign: 'dismissed',
+      activeMissionId: null,
+    });
+  });
+
+  it('persists the campaign entry and its mission atomically once in StrictMode', async () => {
     const storageSpy = vi.spyOn(Storage.prototype, 'setItem');
     try {
       const user = userEvent.setup();
@@ -160,29 +173,29 @@ describe('TutorialProvider', () => {
 
       await user.click(await screen.findByRole('button', { name: 'Passer' }));
       await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
-      const blankChoice = await screen.findByRole('button', { name: 'Créer ma routine' });
-      await waitFor(() => expect(blankChoice).toBeEnabled());
+      const startChoice = await screen.findByRole('button', { name: 'Commencer la découverte' });
+      await waitFor(() => expect(startChoice).toBeEnabled());
       storageSpy.mockClear();
 
-      await user.click(blankChoice);
+      await user.click(startChoice);
 
-      const activationWrites = storageSpy.mock.calls
+      const campaignWrites = storageSpy.mock.calls
         .filter(([key]) => key === TUTORIAL_STORAGE_KEY)
         .map(([, value]) => JSON.parse(String(value)) as Record<string, unknown>);
-      expect(activationWrites).toHaveLength(1);
-      expect(activationWrites).not.toContainEqual(
-        expect.objectContaining({ activationPath: 'blank', activeMissionId: null }),
+      expect(campaignWrites).toHaveLength(1);
+      expect(campaignWrites).not.toContainEqual(
+        expect.objectContaining({ campaign: 'preparing', activeMissionId: null }),
       );
-      expect(activationWrites[0]).toMatchObject({
-        activationPath: 'blank',
-        activeMissionId: 'TUT-ROU-01',
+      expect(campaignWrites[0]).toMatchObject({
+        campaign: 'preparing',
+        activeMissionId: 'TUT-CAM-01',
       });
     } finally {
       storageSpy.mockRestore();
     }
   });
 
-  it('preserves an active mission when activation is reached defensively', async () => {
+  it('preserves an active mission when the campaign invite is reached defensively', async () => {
     saveTutorialState({
       ...createTutorialState(),
       orientation: null,
@@ -195,21 +208,21 @@ describe('TutorialProvider', () => {
 
       await user.click(await screen.findByRole('button', { name: 'Passer' }));
       await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
-      const activation = await screen.findByRole('dialog', {
-        name: 'Préparer ma première séance',
+      const invite = await screen.findByRole('dialog', {
+        name: 'Ma première séance guidée',
       });
-      const blankChoice = screen.getByRole('button', { name: 'Créer ma routine' });
-      await waitFor(() => expect(blankChoice).toBeEnabled());
+      const startChoice = screen.getByRole('button', { name: 'Commencer la découverte' });
+      await waitFor(() => expect(startChoice).toBeEnabled());
       storageSpy.mockClear();
 
-      await user.click(blankChoice);
+      await user.click(startChoice);
 
       expect(storageSpy.mock.calls.filter(([key]) => key === TUTORIAL_STORAGE_KEY)).toHaveLength(0);
       expect(loadTutorialState()).toMatchObject({
-        activationPath: null,
+        campaign: 'not-started',
         activeMissionId: 'TUT-ROU-02',
       });
-      expect(activation).toBeVisible();
+      expect(invite).toBeVisible();
     } finally {
       storageSpy.mockRestore();
     }
@@ -274,14 +287,14 @@ describe('TutorialProvider', () => {
   });
 
   it('ne renvoie pas à la liste quelqu’un qui vient d’ouvrir une routine', async () => {
-    // `TUT-ACT-01` vise le bouton de création de la liste, et s'achève sur
-    // l'ouverture d'une routine — donc depuis l'éditeur, quelques images plus
+    // `TUT-CAM-01` vise le bouton de création de la liste, et s'achève sur la
+    // création d'une routine — donc depuis l'éditeur, quelques images plus
     // tard. La visite ne doit pas l'en faire sortir entre-temps.
     saveTutorialState({
       ...createTutorialState(),
       orientation: 'completed',
-      activationPath: 'template',
-      activeMissionId: 'TUT-ACT-01',
+      campaign: 'preparing',
+      activeMissionId: 'TUT-CAM-01',
     });
 
     renderTutorial('/routines/r-1');
@@ -354,37 +367,35 @@ describe('TutorialProvider', () => {
     expect(screen.getByText(/Un bloc étale tes routines/)).toBeVisible();
   });
 
-  it('does not offer activation to a migrated v1 user', () => {
+  it('does not offer the campaign to a migrated v1 user', () => {
     localStorage.setItem(LEGACY_TUTORIAL_STORAGE_KEY, 'completed');
 
     renderTutorial();
 
     expect(
-      screen.queryByRole('dialog', { name: 'Préparer ma première séance' }),
+      screen.queryByRole('dialog', { name: 'Ma première séance guidée' }),
     ).not.toBeInTheDocument();
     expect(screen.queryByRole('dialog', { name: 'Visite guidée' })).not.toBeInTheDocument();
   });
 
-  it('keeps guarded activation choices inert until the workout fact is known', async () => {
+  it('keeps the campaign start inert until the workout fact is known', async () => {
     getActiveWorkoutMock.mockReturnValue(new Promise(() => undefined));
     const user = userEvent.setup();
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
     await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
-    const activation = await screen.findByRole('dialog', {
-      name: 'Préparer ma première séance',
+    const invite = await screen.findByRole('dialog', {
+      name: 'Ma première séance guidée',
     });
-    const templateChoice = screen.getByRole('button', { name: 'Choisir un modèle' });
-    const blankChoice = screen.getByRole('button', { name: 'Créer ma routine' });
+    const startChoice = screen.getByRole('button', { name: 'Commencer la découverte' });
 
-    expect(templateChoice).toBeDisabled();
-    expect(blankChoice).toBeDisabled();
-    await user.click(blankChoice);
+    expect(startChoice).toBeDisabled();
+    await user.click(startChoice);
 
-    expect(activation).toBeVisible();
+    expect(invite).toBeVisible();
     expect(loadTutorialState()).toMatchObject({
-      activationPath: null,
+      campaign: 'not-started',
       activeMissionId: null,
     });
   });
