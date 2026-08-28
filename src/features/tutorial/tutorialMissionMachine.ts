@@ -13,12 +13,13 @@ function step(state: TutorialStateV3, mission: TutorialMission): TutorialStateV3
   if (state.activeStepIndex + 1 < mission.steps.length) {
     return { ...state, activeStepIndex: state.activeStepIndex + 1 };
   }
-  return {
+  const done: TutorialStateV3 = {
     ...state,
     activeMissionId: mission.nextMissionId,
     activeStepIndex: 0,
     missions: { ...state.missions, [mission.id]: 'completed' },
   };
+  return mission.completes?.(done) ?? done;
 }
 
 export function advanceMission(state: TutorialStateV3, event: TutorialEvent): TutorialStateV3 {
@@ -27,7 +28,35 @@ export function advanceMission(state: TutorialStateV3, event: TutorialEvent): Tu
   const current = mission.steps[state.activeStepIndex];
   if (current === undefined) return state;
   if (current.advance.kind !== 'event' || !current.advance.accepts(event, state)) return state;
-  return step(state, mission);
+  // Ce que l'étape retient est écrit avant d'avancer : l'identité de la routine
+  // que ce geste vient de créer sert déjà de garde à l'étape suivante.
+  return step(current.remember?.(state, event) ?? state, mission);
+}
+
+/** L'entrée dans la campagne : l'acte 1 s'ouvre, et la préparation commence. */
+export function startCampaign(state: TutorialStateV3): TutorialStateV3 {
+  if (state.activeMissionId !== null) return state;
+  return { ...startMission(state, 'TUT-CAM-01'), campaign: 'preparing' };
+}
+
+/**
+ * La reprise de la campagne, et la seule.
+ *
+ * Entre les deux actes, le tutoriel n'a rien à faire : la routine découverte
+ * existe, et il attend. Il ne reprend que sur **cette** routine réellement
+ * démarrée — une séance lancée sur une autre n'est pas la suite de cette leçon,
+ * et fabriquer la séance nous-mêmes reviendrait à écrire un faux historique
+ * pour les besoins d'une démonstration.
+ */
+export function resumeCampaignForWorkout(
+  state: TutorialStateV3,
+  workout: { workoutId: string; routineId?: string },
+): TutorialStateV3 {
+  if (state.campaign !== 'routine-ready' || state.activeMissionId !== null) return state;
+  if (state.campaignRoutineId === null || workout.routineId !== state.campaignRoutineId) {
+    return state;
+  }
+  return { ...startMission(state, 'TUT-CAM-02'), campaign: 'workout-active' };
 }
 
 /**

@@ -140,22 +140,25 @@ export function RoutineEditorScreen() {
 
   const { routine, exercises } = detail;
 
-  const reportTargetUpdate = (changes: RoutineSetTargets) => {
+  const reportTargetUpdate = (setId: string, changes: RoutineSetTargets) => {
     const hasTarget = Object.entries(changes).some(
       ([key, value]) => key.startsWith('target') && typeof value === 'number',
     );
-    if (hasTarget) report?.({ type: 'routine-target-updated', routineId: routine.id });
+    if (hasTarget) report?.({ type: 'routine-target-updated', routineId: routine.id, setId });
   };
 
   const saveSetTargets = (setId: string, changes: RoutineSetTargets) => {
     void updateRoutineSet(setId, changes).then(() => {
-      reportTargetUpdate(changes);
+      reportTargetUpdate(setId, changes);
     });
   };
 
   const applySetTargets = (rowId: string, changes: RoutineSetTargets) => {
     void applyToAllSets(rowId, changes).then(() => {
-      reportTargetUpdate(changes);
+      // Un geste, plusieurs séries : la première porte l'identité, parce que
+      // c'est celle que l'utilisateur avait sous les yeux en la répercutant.
+      const first = exercises.find((line) => line.row.id === rowId)?.sets[0];
+      if (first !== undefined) reportTargetUpdate(first.id, changes);
     });
   };
 
@@ -229,11 +232,17 @@ export function RoutineEditorScreen() {
             <Input
               label={t('routine.nameLabel')}
               placeholder={t('routine.namePlaceholder')}
+              tutorialId="routine-name"
               value={draft.name}
               enterKeyHint="done"
               onChange={(event) => {
                 setDraft({ ...draft, name: event.target.value });
                 void updateRoutine(routine.id, { name: event.target.value });
+                report?.({
+                  type: 'routine-renamed',
+                  routineId: routine.id,
+                  name: event.target.value,
+                });
               }}
             />
             {/* Everything the name should not have to carry, so the title stays
@@ -307,7 +316,16 @@ export function RoutineEditorScreen() {
                   onDeleteSet={(set) => void deleteRoutineSet(set.id)}
                   onAddSet={() => {
                     void addRoutineSet(line.row.id).then((set) => {
-                      report?.({ type: 'routine-set-added', routineId: routine.id, setId: set.id });
+                      // Le compte part de la liste rendue : une étape qui
+                      // demande « une deuxième série » a besoin de savoir
+                      // combien il y en a, pas seulement qu'il y en a une de
+                      // plus.
+                      report?.({
+                        type: 'routine-set-added',
+                        routineId: routine.id,
+                        setId: set.id,
+                        count: line.sets.length + 1,
+                      });
                     });
                   }}
                 />
@@ -324,7 +342,10 @@ export function RoutineEditorScreen() {
           <AddRow
             label={t('routine.addExercise')}
             tutorialId="routine-add-exercise"
-            onClick={() => void navigate(`/routines/${routine.id}/add`)}
+            onClick={() => {
+              report?.({ type: 'routine-picker-opened', routineId: routine.id });
+              void navigate(`/routines/${routine.id}/add`);
+            }}
           />
         </Card>
       </div>

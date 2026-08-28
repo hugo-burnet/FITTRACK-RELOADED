@@ -74,6 +74,12 @@ function Row({
     <ListRow
       title={exercise.name}
       subtitle={exerciseSubtitle(exercise)}
+      /* Chaque exercice du catalogue porte son slug : une mission qui en
+         désigne un précis — le curl de la campagne — n'a pas d'autre façon de
+         le viser dans une liste de 168 lignes dont l'ordre dépend de la
+         recherche. Un exercice personnel n'en a pas, et aucune mission ne peut
+         parler de lui. */
+      tutorialId={exercise.slug === undefined ? undefined : `exercise-${exercise.slug}`}
       onClick={() => onOpen(exercise)}
       checked={selectable ? selected : undefined}
       leading={selectable ? <SelectionBox selected={selected} /> : undefined}

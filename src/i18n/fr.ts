@@ -2136,6 +2136,92 @@ const fr = {
       body: 'FitTrack ouvre chaque écran et attend ton geste. Rien n’est créé, rempli ni validé à ta place.',
       start: 'Commencer la découverte',
       later: 'Plus tard',
+
+      prepare: { title: 'Préparer la séance découverte' },
+      workout: { title: 'Ta première séance' },
+
+      openCreate: {
+        instruction: 'Ouvre le menu de création.',
+        detail: 'Une routine est une séance que tu prépares une fois et que tu relances ensuite.',
+      },
+      createBlank: {
+        instruction: 'Choisis Routine vide.',
+        detail:
+          'Elle est créée immédiatement : le nom et chaque modification sont enregistrés au fur et à mesure.',
+      },
+      name: {
+        instruction: 'Nomme-la Séance découverte.',
+        detail: 'Le nom sert à la retrouver dans ta liste. Tu peux le changer quand tu veux.',
+      },
+      openPicker: {
+        instruction: 'Ouvre le catalogue d’exercices.',
+        detail: 'Il contient les exercices fournis et ceux que tu créeras toi-même.',
+      },
+      search: {
+        instruction: 'Cherche « curl ».',
+        detail: 'La recherche filtre les 168 exercices sur le nom, sans distinguer les accents.',
+      },
+      curl: {
+        instruction: 'Sélectionne Curl haltères.',
+        detail:
+          'Tu feras les répétitions avec les deux bras ensemble : une seule ligne et une seule validation.',
+      },
+      add: {
+        instruction: 'Ajoute-le à la routine.',
+        detail: 'La barre du bas n’apparaît qu’une fois quelque chose de sélectionné.',
+      },
+      secondSet: {
+        instruction: 'Ajoute une deuxième série.',
+        detail: 'Deux séries suffisent à voir ce qui se passe entre deux efforts : le repos.',
+      },
+      target: {
+        instruction: 'Ouvre la première série et donne-lui une cible de répétitions.',
+        detail:
+          'La cible est une intention, pas une contrainte : pendant la séance tu saisiras ce que tu as réellement fait.',
+      },
+      rest: {
+        instruction: 'Ouvre le menu de l’exercice et règle un repos.',
+        detail:
+          'Il démarre tout seul à chaque série validée, et reste ajustable pendant la séance.',
+      },
+      ready: {
+        instruction: 'La routine est prête, et déjà enregistrée.',
+        detail:
+          'Le guide s’arrête ici. Il reprendra tout seul quand tu appuieras sur Démarrer — c’est à toi de choisir le moment.',
+      },
+
+      write: {
+        instruction: 'Saisis la charge et les répétitions de la première série.',
+        detail: 'Rien n’est encore enregistré comme fait : la saisie prépare la validation.',
+      },
+      validate: {
+        instruction: 'Valide la série avec la coche.',
+        detail:
+          'C’est la coche qui écrit en base. Une séance interrompue à cet instant garderait cette série.',
+      },
+      restRail: {
+        instruction: 'Le repos a démarré tout seul. Laisse-le finir.',
+        detail:
+          'Il tourne sur l’horloge du téléphone : il continue écran éteint, et même application fermée.',
+      },
+      secondEffort: {
+        instruction: 'Fais la deuxième série, puis valide-la.',
+        detail: 'Même geste que la première : saisir ce qui a été fait, puis la coche.',
+      },
+      finish: {
+        instruction: 'Ouvre le bilan de la séance.',
+        detail:
+          'Rien n’est perdu : la séance existe déjà, le bilan sert à la relire avant de la ranger.',
+      },
+      save: {
+        instruction: 'Enregistre la séance.',
+        detail: 'Elle rejoint ton historique, et alimente records et progression.',
+      },
+      done: {
+        instruction: 'C’est fini : tu as une séance derrière toi.',
+        detail:
+          'Historique garde ce que tu as fait, Progression ce que ça donne dans le temps. Le point d’interrogation ouvre l’aide de chaque écran.',
+      },
     },
 
     recovery: {

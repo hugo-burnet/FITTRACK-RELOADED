@@ -130,7 +130,10 @@ export function RoutinesScreen() {
         <HeaderAction
           label={t('routines.create')}
           tutorialId="routine-create"
-          onClick={() => setSheet({ kind: 'create' })}
+          onClick={() => {
+            tutorial?.report({ type: 'routine-create-opened' });
+            setSheet({ kind: 'create' });
+          }}
         >
           <PlusIcon />
         </HeaderAction>
@@ -189,7 +192,12 @@ export function RoutinesScreen() {
         onClose={() => setSheet(null)}
         title={t('routines.createTitle')}
         actions={[
-          { label: t('routines.newBlank'), hint: t('routines.newBlankHint'), onSelect: startBlank },
+          {
+            label: t('routines.newBlank'),
+            hint: t('routines.newBlankHint'),
+            tutorialId: 'routine-create-blank',
+            onSelect: startBlank,
+          },
           {
             label: t('routines.newFromTemplate'),
             hint: t('routines.newFromTemplateHint'),

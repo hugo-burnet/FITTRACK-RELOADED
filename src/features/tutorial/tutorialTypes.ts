@@ -9,12 +9,7 @@ export type TutorialCompletion = 'completed' | 'skipped';
  * fabriquer une — ce que la spec interdit.
  */
 export type TutorialCampaignStatus =
-  | 'not-started'
-  | 'preparing'
-  | 'routine-ready'
-  | 'workout-active'
-  | 'completed'
-  | 'dismissed';
+  'not-started' | 'preparing' | 'routine-ready' | 'workout-active' | 'completed' | 'dismissed';
 
 export const TUTORIAL_MISSION_IDS = [
   'TUT-CAM-01',
@@ -103,16 +98,30 @@ export type TutorialAdvance =
   | { kind: 'event'; accepts: (event: TutorialEvent, state: TutorialStateV3) => boolean }
   | { kind: 'manual' };
 
+/**
+ * Ce que l'application a réellement fait — jamais ce que le tutoriel espérait.
+ *
+ * Chaque événement porte l'identité de ce qu'il touche. Sans elle, la campagne
+ * avançait sur n'importe quelle routine et n'importe quelle série : ajouter un
+ * exercice à une *autre* routine, dans un autre onglet, validait l'étape en
+ * cours. Une étape ne peut donc accepter que ce qui concerne **sa** routine,
+ * **son** programme ou **sa** séance.
+ */
 export type TutorialEvent =
+  | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }
-  | { type: 'routine-exercise-added'; routineId: string; count: number }
-  | { type: 'routine-set-added'; routineId: string; setId: string }
-  | { type: 'routine-target-updated'; routineId: string }
+  | { type: 'routine-renamed'; routineId: string; name: string }
+  | { type: 'routine-picker-opened'; routineId: string }
+  | { type: 'routine-exercise-query-changed'; routineId: string; query: string }
+  | { type: 'routine-exercise-selected'; routineId: string; exerciseSlug: string }
+  | { type: 'routine-exercise-added'; routineId: string; exerciseSlugs: readonly string[] }
+  | { type: 'routine-set-added'; routineId: string; setId: string; count: number }
+  | { type: 'routine-target-updated'; routineId: string; setId: string }
   | { type: 'routine-rest-updated'; routineId: string; seconds: number }
-  | { type: 'workout-started'; workoutId: string; routineId: string }
-  | { type: 'workout-set-written'; setId: string; recordable: boolean }
-  | { type: 'workout-set-completed'; setId: string }
+  | { type: 'workout-started'; workoutId: string; routineId?: string; programId?: string }
+  | { type: 'workout-set-written'; workoutId: string; setId: string; recordable: boolean }
+  | { type: 'workout-set-completed'; workoutId: string; setId: string }
   | { type: 'rest-finished'; setId: string }
   | { type: 'workout-finish-opened'; workoutId: string }
   | { type: 'workout-saved'; workoutId: string }

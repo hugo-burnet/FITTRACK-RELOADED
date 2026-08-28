@@ -239,10 +239,13 @@ describe('parcours de composition d’une routine', () => {
     await screen.findByRole('textbox', { name: 'Nom de la routine' });
 
     await waitFor(() => {
+      // Deux exercices personnels : ils n'ont pas de slug, et l'événement ne
+      // s'en invente pas. Une mission ne peut donc désigner qu'un exercice du
+      // catalogue — celui de la campagne en est un.
       expect(reportedEvent(report, 'routine-exercise-added')).toEqual({
         type: 'routine-exercise-added',
         routineId: routine.id,
-        count: 2,
+        exerciseSlugs: [],
       });
     });
     expect(
@@ -270,6 +273,7 @@ describe('parcours de composition d’une routine', () => {
       type: 'routine-set-added',
       routineId: routine.id,
       setId: expect.any(String),
+      count: 2,
     });
     const detailAfterSet = await getRoutineDetail(routine.id);
     expect(detailAfterSet?.exercises[0]?.sets.map((set) => set.id)).toContain(addedSet.setId);
@@ -284,6 +288,7 @@ describe('parcours de composition d’une routine', () => {
       expect(reportedEvent(report, 'routine-target-updated')).toEqual({
         type: 'routine-target-updated',
         routineId: routine.id,
+        setId: expect.any(String),
       });
     });
     await user.click(screen.getByRole('button', { name: 'Appliquer à toutes les séries' }));

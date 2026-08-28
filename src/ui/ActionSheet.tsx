@@ -7,6 +7,8 @@ export type SheetAction = {
   hint?: string;
   danger?: boolean;
   disabled?: boolean;
+  /** L'ancre du tutoriel, quand une étape désigne cette action précise. */
+  tutorialId?: string;
   onSelect: () => void;
 };
 
@@ -37,6 +39,7 @@ export function ActionSheet({ open, onClose, title, actions, children }: Props) 
           <button
             key={action.label}
             type="button"
+            data-tutorial-id={action.tutorialId}
             disabled={action.disabled}
             onClick={() => {
               // Close FIRST, then act. Both calls land in one React batch, so

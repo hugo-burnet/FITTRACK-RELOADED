@@ -4,6 +4,8 @@ import {
   advanceMission,
   continueMission,
   dismissMission,
+  resumeCampaignForWorkout,
+  startCampaign as openCampaign,
   startMission,
 } from './tutorialMissionMachine';
 import {
@@ -89,8 +91,21 @@ export function useTutorialMissions(
       }),
     [commit, facts],
   );
+  /*
+   * Un événement traverse la reprise de campagne avant les étapes.
+   *
+   * `workout-started` a deux lecteurs : l'étape qui l'attend, et la campagne
+   * suspendue entre ses deux actes. Rendre la main à la campagne d'abord
+   * garantit que la séance qui la relance est bien la sienne ; un état sans
+   * campagne en attente traverse sans rien changer.
+   */
   const report = useCallback(
-    (event: TutorialEvent) => commit((current) => advanceMission(current, event)),
+    (event: TutorialEvent) =>
+      commit((current) => {
+        const resumed =
+          event.type === 'workout-started' ? resumeCampaignForWorkout(current, event) : current;
+        return advanceMission(resumed, event);
+      }),
     [commit],
   );
   const dismiss = useCallback(() => commit(dismissMission), [commit]);
@@ -125,11 +140,9 @@ export function useTutorialMissions(
    */
   const startCampaign = useCallback(
     () =>
-      commit((current) => {
-        if (current.activeMissionId !== null) return current;
-        if (!isMissionAvailable(missionFor('TUT-CAM-01'), facts)) return current;
-        return { ...startMission(current, 'TUT-CAM-01'), campaign: 'preparing' };
-      }),
+      commit((current) =>
+        isMissionAvailable(missionFor('TUT-CAM-01'), facts) ? openCampaign(current) : current,
+      ),
     [commit, facts],
   );
   const postponeCampaign = useCallback(

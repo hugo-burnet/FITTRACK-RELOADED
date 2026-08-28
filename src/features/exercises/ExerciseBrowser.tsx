@@ -92,6 +92,7 @@ export function ExerciseBrowser({
           <Input
             label={t('exercises.searchLabel')}
             labelHidden
+            tutorialId="exercise-search"
             type="search"
             inputMode="search"
             enterKeyHint="search"

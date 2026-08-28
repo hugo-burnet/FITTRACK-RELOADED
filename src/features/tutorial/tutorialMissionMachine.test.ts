@@ -22,6 +22,7 @@ describe('tutorial mission machine', () => {
     const targeted = advanceMission(started, {
       type: 'routine-target-updated',
       routineId: 'r1',
+      setId: 's1',
     });
     expect(targeted.activeStepIndex).toBe(1);
     const rested = advanceMission(targeted, {
@@ -62,7 +63,7 @@ describe('tutorial mission machine', () => {
   it('does not advance when no exercise was added', () => {
     const state = startMission(createTutorialState(), 'TUT-ROU-02');
     expect(
-      advanceMission(state, { type: 'routine-exercise-added', routineId: 'r1', count: 0 }),
+      advanceMission(state, { type: 'routine-exercise-added', routineId: 'r1', exerciseSlugs: [] }),
     ).toBe(state);
   });
 
@@ -70,6 +71,7 @@ describe('tutorial mission machine', () => {
     const state = advanceMission(startMission(createTutorialState(), 'TUT-ROU-03'), {
       type: 'routine-target-updated',
       routineId: 'r1',
+      setId: 's1',
     });
     expect(
       advanceMission(state, { type: 'routine-rest-updated', routineId: 'r1', seconds: 0 }),
@@ -79,21 +81,33 @@ describe('tutorial mission machine', () => {
   it('does not advance when a written workout set is not recordable', () => {
     const state = startMission(createTutorialState(), 'TUT-WRK-01');
     expect(
-      advanceMission(state, { type: 'workout-set-written', setId: 's1', recordable: false }),
+      advanceMission(state, {
+        type: 'workout-set-written',
+        workoutId: 'w1',
+        setId: 's1',
+        recordable: false,
+      }),
     ).toBe(state);
   });
 
-  // Le contrat s'est inversé : les missions parlent désormais. Ce qui compte est
-  // qu'aucune n'annonce un clip absent du script — un `clipId` orphelin serait un
-  // silence qui se fait passer pour une consigne.
-  it('donne à chaque étape P1 un clip déclaré dans le script vocal', () => {
+  /*
+   * Ce qui compte est qu'aucune étape n'annonce un clip absent du script : un
+   * `clipId` orphelin serait un silence qui se fait passer pour une consigne.
+   *
+   * Une étape *sans* `clipId` est un autre cas, et il est licite : sa consigne
+   * a été écrite dans ce chantier et pas encore enregistrée. Le panneau la
+   * porte alors en entier, comme en mode Silence. Exiger un clip partout
+   * reviendrait à commander la voix avant d'avoir relu les textes à l'écran —
+   * l'ordre que la phase de validation impose est l'inverse.
+   */
+  it('n’annonce jamais un clip absent du script vocal', () => {
     const declared = new Set(script.lines.map((line) => line.id));
     const steps = P1_MISSIONS.flatMap((mission) => mission.steps);
 
     expect(steps).not.toHaveLength(0);
     for (const step of steps) {
-      expect(step.clipId, `${step.id} n'a pas de clip`).toBeDefined();
-      expect(declared.has(step.clipId ?? ''), `${step.clipId} absent du script`).toBe(true);
+      if (step.clipId === undefined) continue;
+      expect(declared.has(step.clipId), `${step.clipId} absent du script`).toBe(true);
     }
   });
 });

@@ -40,7 +40,14 @@ type Props = {
   columns: EntryColumn[];
   /** The same rank from the previous session. */
   previous: WorkoutSet | undefined;
-  tutorial?: boolean;
+  /**
+   * Le rang de cette ligne pour le tutoriel, quand il en désigne une.
+   *
+   * Deux rangs suffisent : la campagne fait valider une première série, puis
+   * une seconde, et une consigne qui vise « la série » sans dire laquelle
+   * encadrerait la mauvaise dès qu'il y en a deux.
+   */
+  tutorialRank?: 'first' | 'second';
   /**
    * Vrai tant que le chrono tourne sur cette série. La coche est alors le geste
    * qui l'arrête : la désactiver parce qu'aucune durée n'est encore tapée
@@ -60,7 +67,7 @@ export function WorkoutSetRow({
   number,
   columns,
   previous,
-  tutorial = false,
+  tutorialRank,
   holding = false,
   onWrite,
   onComplete,
@@ -137,7 +144,7 @@ export function WorkoutSetRow({
 
   return (
     <div
-      data-tutorial-id={tutorial ? 'workout-first-set' : undefined}
+      data-tutorial-id={tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set`}
       className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
@@ -198,7 +205,9 @@ export function WorkoutSetRow({
 
       <button
         type="button"
-        data-tutorial-id={tutorial ? 'workout-first-set-complete' : undefined}
+        data-tutorial-id={
+          tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-complete`
+        }
         aria-pressed={done}
         disabled={!done && !recordable}
         aria-label={done ? t('workout.uncomplete', { number }) : t('workout.complete', { number })}

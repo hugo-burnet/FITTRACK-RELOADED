@@ -28,6 +28,15 @@ export function ExercisePickerScreen() {
 
   const [query, setQuery] = useState<BrowserQuery>({ search: '' });
   const [selected, setSelected] = useState<string[]>([]);
+  /*
+   * Le slug de chaque exercice retenu, appris au moment du choix.
+   *
+   * L'écran ne manipule que des identifiants, et un identifiant ne dit pas
+   * *quel* exercice c'est : une mission qui demande le curl haltères ne peut
+   * pas le reconnaître dans un UUID. Le slug est relevé sur la ligne touchée,
+   * là où l'exercice complet est encore sous la main.
+   */
+  const [slugs] = useState(() => new Map<string, string>());
 
   const toggle = (exerciseId: string) =>
     setSelected((current) =>
@@ -37,9 +46,13 @@ export function ExercisePickerScreen() {
     );
 
   const add = () => {
+    const picked = selected.flatMap((exerciseId) => {
+      const slug = slugs.get(exerciseId);
+      return slug === undefined ? [] : [slug];
+    });
     // Added in the order they were tapped, which is the order they were meant.
     void addExercisesToRoutine(id, selected).then(() => {
-      tutorial?.report({ type: 'routine-exercise-added', routineId: id, count: selected.length });
+      tutorial?.report({ type: 'routine-exercise-added', routineId: id, exerciseSlugs: picked });
       navigate(-1);
     });
   };
@@ -58,6 +71,7 @@ export function ExercisePickerScreen() {
                 ? t('picker.addOne')
                 : t('picker.add', { count: selected.length })
             }
+            tutorialId="routine-exercise-add-confirm"
             onClick={add}
           />
         ) : undefined
@@ -65,8 +79,27 @@ export function ExercisePickerScreen() {
     >
       <ExerciseBrowser
         query={query}
-        onQueryChange={setQuery}
-        onPick={(exercise) => toggle(exercise.id)}
+        onQueryChange={(next) => {
+          setQuery(next);
+          tutorial?.report({
+            type: 'routine-exercise-query-changed',
+            routineId: id,
+            query: next.search,
+          });
+        }}
+        onPick={(exercise) => {
+          toggle(exercise.id);
+          // Un exercice personnel n'a pas de slug : rien à retenir et rien à
+          // annoncer, puisque aucune mission ne peut en désigner un qui
+          // n'existe que chez cet utilisateur.
+          if (exercise.slug === undefined) return;
+          slugs.set(exercise.id, exercise.slug);
+          tutorial?.report({
+            type: 'routine-exercise-selected',
+            routineId: id,
+            exerciseSlug: exercise.slug,
+          });
+        }}
         selectedIds={new Set(selected)}
       />
     </Screen>

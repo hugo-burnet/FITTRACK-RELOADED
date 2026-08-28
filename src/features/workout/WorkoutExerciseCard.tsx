@@ -465,7 +465,9 @@ export function WorkoutExerciseCard({
                       number={index + 1}
                       columns={columns}
                       previous={previous[index]}
-                      tutorial={tutorial && index === 0}
+                      tutorialRank={
+                        tutorial && index < 2 ? (index === 0 ? 'first' : 'second') : undefined
+                      }
                       holding={hold?.setId === set.id}
                       onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
                       onComplete={(values) => onComplete(set.id, values, set)}

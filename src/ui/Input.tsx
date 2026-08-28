@@ -6,12 +6,15 @@ type Props = {
   hint?: string;
   /** Hides the label visually but keeps it for screen readers. */
   labelHidden?: boolean;
+  /** L'ancre du tutoriel, quand une étape désigne ce champ. */
+  tutorialId?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'id'>;
 
 export function Input({
   label,
   hint,
   labelHidden = false,
+  tutorialId,
   className = '',
   onKeyDown,
   ...rest
@@ -32,6 +35,7 @@ export function Input({
           for values that really are echoes — Lot 5's previous set. */}
       <input
         id={id}
+        data-tutorial-id={tutorialId}
         aria-describedby={hint ? hintId : undefined}
         onKeyDown={(event) => {
           // The phone keyboard's "done" key. Left alone it does nothing at all:

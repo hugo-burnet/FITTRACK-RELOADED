@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode, type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
@@ -46,17 +46,24 @@ function Address() {
  * exactement comme l'écran réel le fait.
  */
 function renderTutorial(path = '/', strict = false, anchors: ReactNode = null) {
-  const tutorial = (
-    <MemoryRouter initialEntries={[path]}>
-      <TutorialProvider>
-        <Screen title="Écran de test">
-          <Address />
-          {anchors}
-        </Screen>
-      </TutorialProvider>
-    </MemoryRouter>
-  );
-  return render(strict ? <StrictMode>{tutorial}</StrictMode> : tutorial);
+  const tree = (content: ReactNode) => {
+    const tutorial = (
+      <MemoryRouter initialEntries={[path]}>
+        <TutorialProvider>
+          <Screen title="Écran de test">
+            <Address />
+            {content}
+          </Screen>
+        </TutorialProvider>
+      </MemoryRouter>
+    );
+    return strict ? <StrictMode>{tutorial}</StrictMode> : tutorial;
+  };
+  const view = render(tree(anchors));
+  // L'ancre apparaît par un rendu, jamais par un `append` sur `document.body` :
+  // un nœud posé hors du conteneur survit au nettoyage de Testing Library dès
+  // qu'un test échoue avant de le retirer, et pollue les suivants.
+  return { ...view, showAnchors: (content: ReactNode) => view.rerender(tree(content)) };
 }
 
 describe('TutorialProvider', () => {
@@ -321,18 +328,16 @@ describe('TutorialProvider', () => {
       activeMissionId: 'TUT-DAT-01',
     });
 
-    renderTutorial('/settings');
+    const { showAnchors } = renderTutorial('/settings');
 
     await screen.findByText('adresse : /settings');
     expect(await screen.findByText('Recherche de la commande sur cet écran…')).toBeVisible();
-    expect(screen.queryByText('Exporte une sauvegarde complète de FitTrack.')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Exporte une sauvegarde complète de FitTrack.'),
+    ).not.toBeInTheDocument();
     expect(playTutorialNarrationMock).not.toHaveBeenCalled();
 
-    const late = document.createElement('button');
-    late.setAttribute('data-tutorial-id', 'backup-export');
-    act(() => {
-      document.body.append(late);
-    });
+    showAnchors(<button data-tutorial-id="backup-export">Exporter</button>);
 
     expect(await screen.findByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
     expect(playTutorialNarrationMock).toHaveBeenCalledWith(
@@ -340,7 +345,7 @@ describe('TutorialProvider', () => {
       expect.any(Function),
     );
 
-    act(() => late.remove());
+    showAnchors(null);
     await waitFor(() =>
       expect(screen.getByText('Recherche de la commande sur cet écran…')).toBeVisible(),
     );

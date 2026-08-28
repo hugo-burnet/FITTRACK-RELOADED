@@ -517,7 +517,12 @@ export function WorkoutScreen() {
                     onWrite={(setId, values, recordable) => {
                       void updateSetValues(setId, values)
                         .then(() => {
-                          tutorial?.report({ type: 'workout-set-written', setId, recordable });
+                          tutorial?.report({
+                            type: 'workout-set-written',
+                            workoutId: workout.id,
+                            setId,
+                            recordable,
+                          });
                         })
                         .catch(() => undefined);
                       pace.armFromTypedReps(line, setId, values.reps);
@@ -543,7 +548,11 @@ export function WorkoutScreen() {
                         held === undefined ? values : { ...values, durationSeconds: held };
                       void completeSet(setId, written)
                         .then(() => {
-                          tutorial?.report({ type: 'workout-set-completed', setId });
+                          tutorial?.report({
+                            type: 'workout-set-completed',
+                            workoutId: workout.id,
+                            setId,
+                          });
                         })
                         .catch(() => undefined);
                       // The metronome or the chronometer owned this set; it is over.

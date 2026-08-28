@@ -408,6 +408,7 @@ describe('WorkoutScreen — tutoriel durable', () => {
     await waitFor(() =>
       expect(report).toHaveBeenCalledWith({
         type: 'workout-set-written',
+        workoutId,
         setId: set.id,
         recordable: false,
       }),
@@ -438,6 +439,7 @@ describe('WorkoutScreen — tutoriel durable', () => {
     await waitFor(() =>
       expect(report).toHaveBeenCalledWith({
         type: 'workout-set-written',
+        workoutId,
         setId: set.id,
         recordable: true,
       }),
@@ -491,7 +493,11 @@ describe('WorkoutScreen — tutoriel durable', () => {
 
     gate.resolve();
     await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'workout-set-completed', setId: set.id }),
+      expect(report).toHaveBeenCalledWith({
+        type: 'workout-set-completed',
+        workoutId,
+        setId: set.id,
+      }),
     );
     expect(await firstSet(workoutId)).toMatchObject({ isCompleted: 1 });
   });
@@ -528,7 +534,11 @@ describe('WorkoutScreen — tutoriel durable', () => {
     await waitFor(() => expect(complete).toBeEnabled());
     await userEvent.click(complete);
     await waitFor(() =>
-      expect(report).toHaveBeenCalledWith({ type: 'workout-set-completed', setId: set.id }),
+      expect(report).toHaveBeenCalledWith({
+        type: 'workout-set-completed',
+        workoutId,
+        setId: set.id,
+      }),
     );
     report.mockClear();
 

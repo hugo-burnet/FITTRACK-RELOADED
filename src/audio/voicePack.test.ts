@@ -30,9 +30,14 @@ describe('voicePack', () => {
   // ne partage son clip avec une autre : deux étapes sur le même enregistrement,
   // et l'une des deux dirait la consigne de sa voisine.
   it('donne à chaque mission son propre clip', () => {
-    const clips = P1_MISSIONS.flatMap((mission) => mission.steps).map((step) => step.clipId);
+    const clips = P1_MISSIONS.flatMap((mission) => mission.steps).flatMap((step) =>
+      step.clipId === undefined ? [] : [step.clipId],
+    );
 
-    expect(clips.every((clip) => clip !== undefined)).toBe(true);
+    // Une étape sans clip parle par son texte ; deux étapes sur le même
+    // enregistrement, en revanche, feraient dire à l'une la consigne de sa
+    // voisine.
+    expect(clips).not.toHaveLength(0);
     expect(new Set(clips).size).toBe(clips.length);
   });
 
