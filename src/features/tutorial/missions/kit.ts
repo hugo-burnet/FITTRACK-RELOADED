@@ -48,17 +48,40 @@ export interface TutorialMissionStep {
 export interface TutorialMission {
   id: TutorialMissionId;
   /** La zone de l'application dont la mission parle — pour l'aide de la page. */
-  routePrefix: '/routines' | '/workout' | '/settings' | '/programs' | '/';
+  routePrefix:
+    | '/routines'
+    | '/workout'
+    | '/settings'
+    | '/programs'
+    | '/history'
+    | '/analytics'
+    | '/exercises'
+    | '/knowledge'
+    | '/';
   titleKey: TranslationKey;
-  guard: 'always' | 'requires-active-workout' | 'requires-no-active-workout' | 'external';
+  guard:
+    | 'always'
+    | 'requires-active-workout'
+    | 'requires-no-active-workout'
+    | 'requires-history'
+    | 'external';
   steps: readonly TutorialMissionStep[];
   nextMissionId: TutorialMissionId | null;
   /** L'état de campagne que la dernière étape laisse derrière elle. */
   completes?: (state: TutorialStateV3) => TutorialStateV3;
 }
 
+/**
+ * Ce que l'application sait de la base, au moment de proposer une mission.
+ *
+ * `null` veut dire « pas encore lu » et non « non » : une mission n'est ni
+ * proposée ni refusée sur une lecture en cours, sinon l'aide clignote au
+ * chargement de chaque écran.
+ */
 export interface TutorialMissionFacts {
   hasActiveWorkout: boolean | null;
+  /** Au moins une séance terminée — sans quoi l'historique est vide. */
+  hasHistory: boolean | null;
 }
 
 /** Une étape que seul un geste métier fait avancer — le cas courant. */
@@ -86,5 +109,6 @@ export const recordableSet = (event: TutorialEvent): boolean =>
 export function isMissionAvailable(mission: TutorialMission, facts: TutorialMissionFacts): boolean {
   if (mission.guard === 'requires-active-workout') return facts.hasActiveWorkout === true;
   if (mission.guard === 'requires-no-active-workout') return facts.hasActiveWorkout === false;
+  if (mission.guard === 'requires-history') return facts.hasHistory === true;
   return mission.guard === 'always';
 }

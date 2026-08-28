@@ -53,6 +53,7 @@ describe('tutorialStore v3', () => {
       campaignRoutineId: null,
       missionRoutineId: 'r-old',
       missionProgramId: null,
+      missionWorkoutId: null,
       missions: { 'TUT-DAT-01': 'completed' },
     });
   });

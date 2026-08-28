@@ -4,6 +4,8 @@ type Props = {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'md' | 'lg';
   fullWidth?: boolean;
+  /** L'ancre du tutoriel, quand une étape désigne ce bouton. */
+  tutorialId?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const VARIANTS = {
@@ -19,6 +21,7 @@ export function Button({
   variant = 'secondary',
   size = 'md',
   fullWidth = false,
+  tutorialId,
   className = '',
   ...rest
 }: Props) {
@@ -26,6 +29,7 @@ export function Button({
   const sizes = size === 'lg' ? 'min-h-14 px-6 text-lg' : 'min-h-12 px-4 text-base';
   return (
     <button
+      data-tutorial-id={tutorialId}
       className={`inline-flex items-center justify-center gap-2 rounded-xl font-semibold
         transition-[filter,background-color,transform] duration-[var(--dur-1)] ease-[var(--ease-mech)]
         active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40

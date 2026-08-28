@@ -22,6 +22,9 @@ export type TutorialScreen =
   | 'workout'
   | 'workout-finish'
   | 'history'
+  | 'history-detail'
+  | 'history-edit'
+  | 'history-import'
   | 'analytics'
   | 'exercises'
   | 'settings'
@@ -40,6 +43,8 @@ export type TutorialScreen =
 export interface TutorialRouteContext {
   routineId: string | null;
   programId: string | null;
+  /** La séance archivée dont une mission d'historique parle. */
+  workoutId: string | null;
 }
 
 /** L'identifiant de routine lu dans l'URL, `null` hors de l'éditeur. */
@@ -50,6 +55,13 @@ export function routineIdFromPath(pathname: string): string | null {
   // désignerait un écran et non une routine : ne rien retenir vaut mieux que
   // retenir une adresse morte vers laquelle on renverrait ensuite l'utilisateur.
   return id === undefined || id === 'new' ? null : id;
+}
+
+/** La séance archivée lue dans l'URL — `import` est un écran, pas une séance. */
+export function workoutIdFromPath(pathname: string): string | null {
+  const match = /^\/history\/([^/]+)/.exec(pathname);
+  const id = match?.[1];
+  return id === undefined || id === 'import' ? null : id;
 }
 
 /** L'identifiant de programme lu dans l'URL — `/programs/new` n'en est pas un. */
@@ -72,7 +84,7 @@ export function pathForScreen(
   screen: TutorialScreen,
   context: TutorialRouteContext,
 ): string | null {
-  const { routineId, programId } = context;
+  const { routineId, programId, workoutId } = context;
   switch (screen) {
     case 'home':
       return '/';
@@ -94,6 +106,12 @@ export function pathForScreen(
       return '/workout/finish';
     case 'history':
       return '/history';
+    case 'history-detail':
+      return workoutId === null ? null : `/history/${workoutId}`;
+    case 'history-edit':
+      return workoutId === null ? null : `/history/${workoutId}/edit`;
+    case 'history-import':
+      return '/history/import';
     case 'analytics':
       return '/analytics';
     case 'exercises':
@@ -160,6 +178,18 @@ export function screenHolds(
       return pathname.startsWith('/workout/finish');
     case 'history':
       return pathname === '/history';
+    case 'history-detail': {
+      const own = workoutIdFromPath(pathname);
+      if (own === null || pathname !== `/history/${own}`) return false;
+      return context.workoutId === null || own === context.workoutId;
+    }
+    case 'history-edit': {
+      const own = workoutIdFromPath(pathname);
+      if (own === null || pathname !== `/history/${own}/edit`) return false;
+      return context.workoutId === null || own === context.workoutId;
+    }
+    case 'history-import':
+      return pathname === '/history/import';
     case 'analytics':
       return pathname === '/analytics';
     case 'exercises':

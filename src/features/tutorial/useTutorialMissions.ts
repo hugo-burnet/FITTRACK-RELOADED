@@ -22,6 +22,7 @@ import {
   programIdFromPath,
   routineIdFromPath,
   screenHolds,
+  workoutIdFromPath,
 } from './tutorialScreens';
 import { useTutorialAnchor } from './useTutorialAnchor';
 import { loadTutorialState, saveTutorialState } from './tutorialStore';
@@ -194,6 +195,16 @@ export function useTutorialMissions(
         : { ...current, missionRoutineId: pathRoutineId },
     );
   }, [commit, pathRoutineId]);
+
+  const pathWorkoutId = workoutIdFromPath(pathname);
+  useEffect(() => {
+    if (pathWorkoutId === null) return;
+    commit((current) =>
+      current.missionWorkoutId === pathWorkoutId
+        ? current
+        : { ...current, missionWorkoutId: pathWorkoutId },
+    );
+  }, [commit, pathWorkoutId]);
 
   const pathProgramId = programIdFromPath(pathname);
   useEffect(() => {

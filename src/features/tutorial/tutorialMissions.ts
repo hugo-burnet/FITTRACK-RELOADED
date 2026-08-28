@@ -14,6 +14,7 @@ import {
   WORKOUT_REST,
   WORKOUT_VALIDATE,
 } from './missions/core';
+import { HEVY_IMPORT, HISTORY_EDIT, HISTORY_FIND, HISTORY_SHARE } from './missions/history';
 import { PROGRAM } from './missions/program';
 
 /*
@@ -38,6 +39,10 @@ export const P1_MISSIONS: readonly TutorialMission[] = [
   CAMPAIGN_PREPARE,
   CAMPAIGN_WORKOUT,
   PROGRAM,
+  HISTORY_FIND,
+  HISTORY_EDIT,
+  HISTORY_SHARE,
+  HEVY_IMPORT,
   RECOVER,
   ROUTINE_CREATE,
   ROUTINE_EXERCISE,
@@ -90,7 +95,11 @@ export function isMissionReachable(
 
 /** Ce que la progression sait des adresses dynamiques, sous la forme attendue. */
 export function routeContextOf(state: TutorialStateV3): TutorialRouteContext {
-  return { routineId: state.missionRoutineId, programId: state.missionProgramId };
+  return {
+    routineId: state.missionRoutineId,
+    programId: state.missionProgramId,
+    workoutId: state.missionWorkoutId,
+  };
 }
 
 export function contextualMissionsForPath(

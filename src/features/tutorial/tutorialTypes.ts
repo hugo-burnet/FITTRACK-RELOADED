@@ -82,6 +82,8 @@ export interface TutorialStateV3 {
   missionRoutineId: string | null;
   /** Même rôle que `missionRoutineId`, pour `/programs/:id`. */
   missionProgramId: string | null;
+  /** Même rôle, pour la séance archivée de `/history/:workoutId`. */
+  missionWorkoutId: string | null;
   missions: Partial<Record<TutorialMissionId, TutorialMissionStatus>>;
 }
 
@@ -98,15 +100,6 @@ export type TutorialAdvance =
   | { kind: 'event'; accepts: (event: TutorialEvent, state: TutorialStateV3) => boolean }
   | { kind: 'manual' };
 
-/**
- * Ce que l'application a réellement fait — jamais ce que le tutoriel espérait.
- *
- * Chaque événement porte l'identité de ce qu'il touche. Sans elle, la campagne
- * avançait sur n'importe quelle routine et n'importe quelle série : ajouter un
- * exercice à une *autre* routine, dans un autre onglet, validait l'étape en
- * cours. Une étape ne peut donc accepter que ce qui concerne **sa** routine,
- * **son** programme ou **sa** séance.
- */
 /**
  * Les gestes de la construction d'un bloc.
  *
@@ -130,8 +123,32 @@ export type TutorialProgramEvent =
   | { type: 'program-session-selected'; programId: string; entryId: string }
   | { type: 'program-actions-opened'; programId: string };
 
+/** Les gestes de l'historique : retrouver, corriger, partager, importer. */
+export type TutorialHistoryEvent =
+  | { type: 'history-view-changed'; view: 'journal' | 'calendar' }
+  | { type: 'history-day-selected'; timestamp: number }
+  | { type: 'history-exercise-filter-changed'; exerciseId: string | null }
+  | { type: 'history-workout-opened'; workoutId: string }
+  | { type: 'history-actions-opened'; workoutId: string }
+  | { type: 'history-edit-opened'; workoutId: string }
+  | { type: 'history-edit-saved'; workoutId: string }
+  | { type: 'history-share-opened'; workoutId: string }
+  | { type: 'hevy-import-opened' }
+  | { type: 'hevy-file-parsed'; workoutCount: number }
+  | { type: 'hevy-review-opened'; workoutCount: number };
+
+/**
+ * Ce que l'application a réellement fait — jamais ce que le tutoriel espérait.
+ *
+ * Chaque événement porte l'identité de ce qu'il touche. Sans elle, la campagne
+ * avançait sur n'importe quelle routine et n'importe quelle série : ajouter un
+ * exercice à une *autre* routine, dans un autre onglet, validait l'étape en
+ * cours. Une étape ne peut donc accepter que ce qui concerne **sa** routine,
+ * **son** programme ou **sa** séance.
+ */
 export type TutorialEvent =
   | TutorialProgramEvent
+  | TutorialHistoryEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

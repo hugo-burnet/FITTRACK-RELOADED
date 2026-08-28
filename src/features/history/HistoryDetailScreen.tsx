@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import {
   deleteArchivedWorkout,
   getArchivedWorkoutDetail,
@@ -26,6 +27,7 @@ const longDate = new Intl.DateTimeFormat('fr-FR', {
 export function HistoryDetailScreen() {
   const { workoutId = '' } = useParams();
   const navigate = useAppNavigate();
+  const tutorial = useTutorialControls();
   const [actionsOpen, setActionsOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleteFailed, setDeleteFailed] = useState(false);
@@ -113,7 +115,11 @@ export function HistoryDetailScreen() {
       action={
         <HeaderAction
           label={t('history.detailActions')}
-          onClick={() => setActionsOpen(true)}
+          tutorialId="history-detail-actions"
+          onClick={() => {
+            tutorial?.report({ type: 'history-actions-opened', workoutId: detail.workout.id });
+            setActionsOpen(true);
+          }}
         >
           <MoreIcon />
         </HeaderAction>
@@ -158,7 +164,11 @@ export function HistoryDetailScreen() {
             // rather than hidden: an entry that appears a beat later moves the
             // two below it under a finger already on its way down.
             disabled: markdown === undefined || markdown === '',
-            onSelect: share,
+            tutorialId: 'history-share',
+            onSelect: () => {
+              tutorial?.report({ type: 'history-share-opened', workoutId: detail.workout.id });
+              share();
+            },
           },
           {
             label: t('history.shareCopy'),
@@ -167,7 +177,9 @@ export function HistoryDetailScreen() {
           },
           {
             label: t('history.edit'),
+            tutorialId: 'history-edit',
             onSelect: () => {
+              tutorial?.report({ type: 'history-edit-opened', workoutId: detail.workout.id });
               void navigate(`/history/${detail.workout.id}/edit`);
             },
           },

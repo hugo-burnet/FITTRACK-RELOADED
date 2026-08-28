@@ -25,7 +25,10 @@ export const PROGRAM: TutorialMission = {
       id: 'what-is-a-block',
       screen: 'programs',
       reach: 'navigate',
-      targetId: 'program-create',
+      // Rien à encadrer : l'étape dit la différence entre une routine et un
+      // bloc, pas où appuyer. Encadrer le « + » ici, puis le réencadrer à
+      // l'étape suivante, ferait deux consignes que le cadre ne distingue pas.
+      targetId: null,
       instructionKey: 'tutorial.program.whatIsABlock.instruction',
       detailKey: 'tutorial.program.whatIsABlock.detail',
       advance: MANUAL,

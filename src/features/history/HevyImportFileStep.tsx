@@ -62,6 +62,7 @@ export function HevyImportFileStep({
           size="lg"
           fullWidth
           className="mt-5"
+          tutorialId="hevy-choose-file"
           onClick={() => inputRef.current?.click()}
         >
           {t('history.importChooseFile')}

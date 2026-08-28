@@ -5,6 +5,7 @@ import { useAppNavigate } from '@/app/navigation';
 import { primeAnnouncer } from '@/audio/announce';
 import { textOf } from '@/audio/cues';
 import type { AnnouncerMode } from '@/audio/announcer';
+import { countCompletedWorkouts } from '@/data/repositories/history';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
@@ -62,7 +63,22 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const topic = tutorialTopicForPath(pathname);
   const activeWorkout = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const hasActiveWorkout = activeWorkout === undefined ? null : activeWorkout !== null;
-  const missionFacts = useMemo(() => ({ hasActiveWorkout }), [hasActiveWorkout]);
+  /*
+   * Une mission d'historique n'a rien à proposer devant un historique vide.
+   *
+   * Le compte est demandé plutôt que la liste : c'est la seule chose à en
+   * savoir ici, et l'aide s'ouvre sur n'importe quel écran — y compris pendant
+   * une séance, où lire tout l'historique pour afficher trois entrées de menu
+   * serait payé à chaque écriture.
+   */
+  const completedWorkouts = useLiveQuery(countCompletedWorkouts);
+  const missionFacts = useMemo(
+    () => ({
+      hasActiveWorkout,
+      hasHistory: completedWorkouts === undefined ? null : completedWorkouts > 0,
+    }),
+    [completedWorkouts, hasActiveWorkout],
+  );
   const missions = useTutorialMissions(pathname, navigate, missionFacts);
   const pacer = useRepPacer();
   const rest = useRestTimer();

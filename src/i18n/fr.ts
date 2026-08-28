@@ -2131,6 +2131,74 @@ const fr = {
       stuck: 'La commande n’est pas apparue sur cet écran.',
     },
 
+    history: {
+      find: { title: 'Retrouver une séance' },
+      edit: { title: 'Corriger une séance' },
+      share: { title: 'Sortir une séance de l’app' },
+      import: { title: 'Reprendre un historique Hevy' },
+      calendarView: {
+        instruction: 'Passe en vue Calendrier.',
+        detail: 'Le Journal liste les séances, le Calendrier les situe.',
+      },
+      pickDay: {
+        instruction: 'Touche un jour où il y a eu une séance.',
+        detail: 'Les jours d’entraînement sont marqués.',
+      },
+      filterExercise: {
+        instruction: 'Filtre par exercice.',
+        detail: 'Le filtre s’applique au Journal comme au Calendrier.',
+      },
+      openWorkout: {
+        instruction: 'Ouvre la séance.',
+        detail: 'Elle s’ouvre en lecture : rien n’est modifié.',
+      },
+      openActions: {
+        instruction: 'Ouvre le menu Actions de la séance.',
+        detail: 'Tu y trouves Modifier, Partager et Supprimer.',
+      },
+      openEdit: {
+        instruction: 'Ouvre Modifier.',
+        detail: 'Un brouillon s’ouvre : la séance enregistrée ne bouge pas encore.',
+      },
+      saveEdit: {
+        instruction: 'Enregistre la séance avec Enregistrer.',
+        detail:
+          'Enregistrer écrase la séance. Les séries retirées du brouillon sont supprimées, et les records sont recalculés.',
+      },
+      shareActions: {
+        instruction: 'Rouvre le menu Actions de la séance.',
+        detail: 'Partager et Supprimer y vivent.',
+      },
+      shareAction: {
+        instruction: 'Choisis Partager.',
+        detail:
+          'Il produit un texte lisible de la séance. Rien ne quitte le téléphone tant que tu n’as pas choisi où l’envoyer.',
+      },
+      deleteLivesHere: {
+        instruction: 'La même feuille porte Supprimer.',
+        detail:
+          'Il efface la séance de l’historique et des records. Le guide te montre où il vit et n’y touche pas.',
+      },
+      openImport: {
+        instruction: 'Ouvre Importer depuis Hevy.',
+        detail: 'Le parcours s’ouvre, sans lire de fichier.',
+      },
+      chooseFile: {
+        instruction: 'Choisis le CSV.',
+        detail:
+          'Le fichier attendu est workout_data.csv, l’export Hevy. Rien n’est écrit à la lecture.',
+      },
+      review: {
+        instruction: 'Passe à la revue avec Continuer.',
+        detail: 'Les exercices que FitTrack ne reconnaît pas doivent d’abord être associés.',
+      },
+      yoursToPress: {
+        instruction: 'Importer écrit toutes les séances d’un coup.',
+        detail:
+          'Une seule transaction — tout ou rien. C’est le geste le plus lourd de l’app, et il t’appartient.',
+      },
+    },
+
     program: {
       title: 'Construire et suivre un programme',
       whatIsABlock: {

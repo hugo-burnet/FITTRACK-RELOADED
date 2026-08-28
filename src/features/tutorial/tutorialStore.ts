@@ -30,6 +30,7 @@ export function createTutorialState(): TutorialStateV3 {
     campaignRoutineId: null,
     missionRoutineId: null,
     missionProgramId: null,
+    missionWorkoutId: null,
     missions: {},
   };
 }
@@ -73,6 +74,7 @@ function isTutorialState(value: unknown): value is TutorialStateV3 {
     isOptionalId(state.campaignRoutineId) &&
     isOptionalId(state.missionRoutineId) &&
     isOptionalId(state.missionProgramId) &&
+    isOptionalId(state.missionWorkoutId) &&
     Object.entries(state.missions).every(
       ([missionId, status]) => isMissionId(missionId) && isMissionStatus(status),
     )

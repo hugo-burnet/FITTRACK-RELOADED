@@ -10,8 +10,8 @@ import {
 } from './tutorialScreens';
 import { createTutorialState } from './tutorialStore';
 
-const NO_WORKOUT = { hasActiveWorkout: false };
-const NOWHERE: TutorialRouteContext = { routineId: null, programId: null };
+const NO_WORKOUT = { hasActiveWorkout: false, hasHistory: false };
+const NOWHERE: TutorialRouteContext = { routineId: null, programId: null, workoutId: null };
 const at = (partial: Partial<TutorialRouteContext>): TutorialRouteContext => ({
   ...NOWHERE,
   ...partial,

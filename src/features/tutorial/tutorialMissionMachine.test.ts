@@ -56,8 +56,12 @@ describe('tutorial mission machine', () => {
 
   it('hides incompatible route missions', () => {
     const state = createTutorialState();
-    expect(contextualMissionsForPath('/routines', state, { hasActiveWorkout: true })).toEqual([]);
-    expect(contextualMissionsForPath('/workout', state, { hasActiveWorkout: false })).toEqual([]);
+    expect(
+      contextualMissionsForPath('/routines', state, { hasActiveWorkout: true, hasHistory: true }),
+    ).toEqual([]);
+    expect(
+      contextualMissionsForPath('/workout', state, { hasActiveWorkout: false, hasHistory: true }),
+    ).toEqual([]);
   });
 
   it('does not advance when no exercise was added', () => {

@@ -129,6 +129,9 @@ describe('chapitre Programmes', () => {
     const wizard = mission.steps.filter((step) => step.screen === 'program-editor');
     expect(wizard.map((step) => step.id)).toContain('save-basics');
     expect(wizard.map((step) => step.id)).toContain('activate');
-    expect(mission.steps.every((step) => step.targetId !== null)).toBe(true);
+    // Une seule étape sans cible : celle qui explique ce qu'est un bloc. Toutes
+    // les autres désignent une commande.
+    const withoutTarget = mission.steps.filter((step) => step.targetId === null);
+    expect(withoutTarget.map((step) => step.id)).toEqual(['what-is-a-block']);
   });
 });
