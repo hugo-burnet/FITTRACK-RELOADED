@@ -9,6 +9,7 @@ import {
   type ProgramRecipeId,
 } from '@/lib/programs';
 import { t } from '@/i18n/fr';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { Button, ListRow, NumberInput, Sheet } from '@/ui';
 import {
   LOAD_INDEX_PRESETS,
@@ -39,6 +40,7 @@ interface WeekEditor {
 }
 
 export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }: Props) {
+  const tutorial = useTutorialControls();
   const [editor, setEditor] = useState<WeekEditor | null>(null);
   // The weeks are the source of truth. Deriving the recipe is what makes an
   // already-prefilled draft look selected on first render, without persisting a
@@ -62,6 +64,7 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
         effectiveFromWeekIndex,
       }),
     );
+    tutorial?.report({ type: 'program-recipe-applied', recipe: id });
   };
 
   const saveEditor = () => {
@@ -82,7 +85,7 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
           Pas de FilterChip : son chevron promet un sélecteur, or ces boutons
           appliquent. Même traitement plein/creux que les niveaux de la feuille.
         */}
-        <div className="flex gap-2">
+        <div className="flex gap-2" data-tutorial-id="program-recipe">
           {PROGRAM_RECIPE_IDS.map((id) => {
             const label = t(RECIPE_LABEL_KEYS[id]);
             const active = recipe === id;
@@ -136,7 +139,14 @@ export function ProgramWeeksStep({ weeks, onChange, effectiveFromWeekIndex = 0 }
                       number,
                       line: weekLine(week),
                     }),
-                    onClick: () => setEditor({ index, week: { ...week } }),
+                    tutorialId: index === 0 ? 'program-week-row' : undefined,
+                    onClick: () => {
+                      setEditor({ index, week: { ...week } });
+                      tutorial?.report({
+                        type: 'program-week-opened',
+                        weekIndex: week.weekIndex,
+                      });
+                    },
                   })}
               leading={
                 <span

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { RoutineSummary } from '@/data/repositories/routines';
 import { t } from '@/i18n/fr';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { Button, Card, Input, Sheet } from '@/ui';
 
 export interface ProgramSplitDraftEntry {
@@ -43,6 +44,7 @@ const dayLabel = (day: number) =>
 const DAY_SHORT = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'] as const;
 
 export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine }: Props) {
+  const tutorial = useTutorialControls();
   const [creatingFor, setCreatingFor] = useState<number | null>(null);
   const [newName, setNewName] = useState('');
 
@@ -110,6 +112,10 @@ export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine 
                   <div
                     role="group"
                     aria-label={t('program.sessionDayLabel', { number })}
+                    /* Seule la première séance porte l'ancre : une consigne qui
+                       dit « choisis le jour » doit désigner une rangée, pas
+                       toutes celles de la liste. */
+                    data-tutorial-id={index === 0 ? 'program-split-day' : undefined}
                     className="grid grid-cols-4 gap-2"
                   >
                     {DAYS.map((day, dayIndex) => {
@@ -120,7 +126,14 @@ export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine 
                           type="button"
                           aria-pressed={active}
                           aria-label={dayLabel(day)}
-                          onClick={() => updateEntry(index, { dayOfWeek: day })}
+                          onClick={() => {
+                            updateEntry(index, { dayOfWeek: day });
+                            tutorial?.report({
+                              type: 'program-split-day-set',
+                              index,
+                              dayOfWeek: day,
+                            });
+                          }}
                           className={`min-h-12 rounded-xl text-sm font-semibold
                             transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
                             ${
@@ -144,9 +157,17 @@ export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine 
                   </span>
                   <select
                     aria-label={t('program.sessionRoutineLabel', { number })}
+                    data-tutorial-id={index === 0 ? 'program-split-routine' : undefined}
                     value={entry.routineId}
                     disabled={routines === undefined}
-                    onChange={(event) => updateEntry(index, { routineId: event.target.value })}
+                    onChange={(event) => {
+                      updateEntry(index, { routineId: event.target.value });
+                      tutorial?.report({
+                        type: 'program-split-routine-set',
+                        index,
+                        routineId: event.target.value,
+                      });
+                    }}
                     className={selectClass}
                   >
                     <option value="">
@@ -177,7 +198,7 @@ export function ProgramSplitStep({ entries, routines, onChange, onCreateRoutine 
               </section>
             );
           })}
-          <div className="p-2">
+          <div className="p-2" data-tutorial-id="program-split-add">
             <Button
               type="button"
               variant="ghost"

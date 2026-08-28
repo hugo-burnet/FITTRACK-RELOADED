@@ -53,7 +53,7 @@ const DAY_KEYS: TranslationKey[] = [
 export function UpcomingWeeks({ weeks }: { weeks: ProgramWeek[] }) {
   if (weeks.length === 0) return null;
   return (
-    <section>
+    <section data-tutorial-id="program-upcoming">
       <SectionTitle>{t('program.upcomingTitle')}</SectionTitle>
       <div className="border-y border-[var(--border)]">
         {groupWeekRuns(weeks).map((run) => (
@@ -201,7 +201,7 @@ export function ProgramSessionList({
   onRepair,
 }: Props) {
   return (
-    <section>
+    <section data-tutorial-id="program-session-list">
       <SectionTitle>{t('program.sessionsTitle')}</SectionTitle>
       <div className="border-y border-[var(--border)]">
         {WEEK_DAYS.map((dayOfWeek) => {

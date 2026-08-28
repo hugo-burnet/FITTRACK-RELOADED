@@ -2131,6 +2131,83 @@ const fr = {
       stuck: 'La commande n’est pas apparue sur cet écran.',
     },
 
+    program: {
+      title: 'Construire et suivre un programme',
+      whatIsABlock: {
+        instruction: 'Une routine décrit une séance.',
+        detail: 'Un programme organise plusieurs routines dans le temps, en semaines.',
+      },
+      openWizard: {
+        instruction: 'Ouvre l’assistant par le +.',
+        detail: 'Il se déroule en trois étapes : Cadre, Split, Semaines.',
+      },
+      nameBlock: {
+        instruction: 'Saisis le Nom du bloc.',
+        detail: 'Rien n’est encore enregistré à ce stade.',
+      },
+      startDate: {
+        instruction: 'Choisis le Lundi de départ.',
+        detail: 'Les semaines se comptent du lundi au dimanche : c’est pour ça que c’est un lundi.',
+      },
+      duration: {
+        instruction: 'Choisis la Durée.',
+        detail: 'Elle va de 4 à 12 semaines, et se modifie tant que le bloc est un brouillon.',
+      },
+      saveBasics: {
+        instruction: 'Enregistre le cadre avec Continuer.',
+        detail: 'Le brouillon existe alors vraiment : tu peux le quitter et y revenir.',
+      },
+      splitDay: {
+        instruction: 'Choisis le Jour de la séance 1.',
+        detail: 'Le split se répète chaque semaine du bloc.',
+      },
+      splitRoutine: {
+        instruction: 'Choisis la Routine de la séance 1.',
+        detail: 'La liste reprend les routines déjà créées.',
+      },
+      splitMore: {
+        instruction: 'Ajouter une séance permet d’en poser d’autres.',
+        detail: 'Une seule suffit pour comprendre : un bloc à une séance par semaine est valide.',
+      },
+      saveSplit: {
+        instruction: 'Enregistre le split avec Continuer.',
+        detail: 'Les séances de la semaine sont écrites dans le brouillon.',
+      },
+      recipe: {
+        instruction: 'Applique une recette : Hypertrophie, Force ou Reprise.',
+        detail: 'Elle pose une intention par semaine, plutôt que de les régler une à une.',
+      },
+      weekSheet: {
+        instruction: 'Ouvre la première semaine.',
+        detail: 'Tu y lis et règles sa phase et son niveau de charge.',
+      },
+      activate: {
+        instruction: 'Active le bloc.',
+        detail: 'Les semaines sont écrites. Un seul bloc est actif à la fois.',
+      },
+      readWeek: {
+        instruction: 'L’Intention de la semaine décrit la semaine en cours.',
+        detail: 'Elle porte la phase, le niveau, et ce que ça change aux charges.',
+      },
+      pickSession: {
+        instruction: 'Sélectionne une séance dans La semaine.',
+        detail: 'C’est cette séance que Démarrer lance.',
+      },
+      upcoming: {
+        instruction: 'Les Semaines suivantes, repliées, montrent l’arc du bloc.',
+        detail: 'Tu y vois la montée, puis la décharge.',
+      },
+      actionsMenu: {
+        instruction: 'Ouvre le menu Options du bloc.',
+        detail: 'Tu y trouves Modifier à partir de…, Décaler le bloc et Terminer le bloc.',
+      },
+      beforeStart: {
+        instruction: 'Démarrer lance une vraie séance.',
+        detail:
+          'Les charges sont projetées par le niveau de la semaine. Le guide s’arrête ici et laisse ce geste.',
+      },
+    },
+
     campaign: {
       title: 'Ma première séance guidée',
       body: 'FitTrack ouvre chaque écran et attend ton geste. Rien n’est créé, rempli ni validé à ta place.',

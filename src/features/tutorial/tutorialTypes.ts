@@ -107,7 +107,31 @@ export type TutorialAdvance =
  * cours. Une étape ne peut donc accepter que ce qui concerne **sa** routine,
  * **son** programme ou **sa** séance.
  */
+/**
+ * Les gestes de la construction d'un bloc.
+ *
+ * Les trois étapes de l'assistant vivent toutes sur `/programs/new` et
+ * l'identifiant du brouillon n'entre dans l'URL qu'à l'activation : ces
+ * événements sont donc le seul moyen de savoir où en est la construction, et
+ * lequel des brouillons elle concerne.
+ */
+export type TutorialProgramEvent =
+  | { type: 'program-create-opened' }
+  | { type: 'program-basics-named'; name: string }
+  | { type: 'program-basics-dated'; startsAt: number }
+  | { type: 'program-basics-duration-set'; weeks: number }
+  | { type: 'program-draft-created'; programId: string }
+  | { type: 'program-split-day-set'; index: number; dayOfWeek: number }
+  | { type: 'program-split-routine-set'; index: number; routineId: string }
+  | { type: 'program-split-saved'; programId: string; entries: number }
+  | { type: 'program-recipe-applied'; recipe: string }
+  | { type: 'program-week-opened'; weekIndex: number }
+  | { type: 'program-activated'; programId: string }
+  | { type: 'program-session-selected'; programId: string; entryId: string }
+  | { type: 'program-actions-opened'; programId: string };
+
 export type TutorialEvent =
+  | TutorialProgramEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

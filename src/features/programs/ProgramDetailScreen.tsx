@@ -22,6 +22,7 @@ import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { pickProgramSession, programPosition, resolveSchedule } from '@/lib/programs';
 import type { ProgramPosition } from '@/lib/programs';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionBand, ConfirmSheet, HeaderAction } from '@/ui';
 import { MoreIcon } from '@/ui/icons';
 import { ProgramActionsSheet } from './ProgramActionsSheet';
@@ -92,7 +93,7 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
   const intention = loadRuleReading(week);
   const evidence = phaseEvidenceFor(week.phase);
   return (
-    <section className="border-y border-[var(--border)] py-4">
+    <section data-tutorial-id="program-intention" className="border-y border-[var(--border)] py-4">
       <p className="label-xs font-semibold text-[var(--text-2)]">{t('program.intentionTitle')}</p>
       <p
         className={`mt-2 text-xl font-semibold ${
@@ -227,6 +228,7 @@ export function ProgramDetailScreen() {
   const { id = '' } = useParams();
   const navigate = useAppNavigate();
   const [actionsOpen, setActionsOpen] = useState(false);
+  const tutorial = useTutorialControls();
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [actionErrorKey, setActionErrorKey] = useState<TranslationKey | null>(null);
   const [replacementOpen, setReplacementOpen] = useState(false);
@@ -359,7 +361,14 @@ export function ProgramDetailScreen() {
       onBack={goBack}
       action={
         // Même un bloc terminé garde son menu : il reste à supprimer.
-        <HeaderAction label={t('program.actionsLabel')} onClick={() => setActionsOpen(true)}>
+        <HeaderAction
+          label={t('program.actionsLabel')}
+          tutorialId="program-actions"
+          onClick={() => {
+            tutorial?.report({ type: 'program-actions-opened', programId: detail.program.id });
+            setActionsOpen(true);
+          }}
+        >
           <MoreIcon />
         </HeaderAction>
       }
@@ -367,6 +376,7 @@ export function ProgramDetailScreen() {
         canStart ? (
           <ActionBand
             label={t('program.startSession', { name: effectiveSelected.routineName! })}
+            tutorialId="program-start"
             disabled={starting}
             onClick={() => void beginStart()}
           />
@@ -405,7 +415,14 @@ export function ProgramDetailScreen() {
             sessions={sessions}
             selectedEntryId={effectiveSelected?.entryId ?? null}
             startDisabled={activeWorkoutExists || detail.program.status !== 'active'}
-            onSelect={setSelectedEntryId}
+            onSelect={(entryId) => {
+              setSelectedEntryId(entryId);
+              tutorial?.report({
+                type: 'program-session-selected',
+                programId: detail.program.id,
+                entryId,
+              });
+            }}
             onRepair={setReplacementTarget}
           />
         )}
