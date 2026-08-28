@@ -10,6 +10,10 @@ import { lazyRoute } from '@/app/lazyRoute';
  *
  * The archived-session editor goes the same way, for the milder version of the
  * same reason: reading the history is a daily gesture, correcting it is not.
+ *
+ * La fiche d'une séance passée suit, au même titre : `HistoryScreen` est
+ * l'onglet et reste chargé d'avance, ouvrir une séance pour la relire est un
+ * cran plus loin. Onglet chargé d’avance, profondeur à la demande.
  */
 
 export const HevyImportRoute = lazyRoute(
@@ -20,4 +24,9 @@ export const HevyImportRoute = lazyRoute(
 export const HistoryEditRoute = lazyRoute(
   () => import('./HistoryEditScreen'),
   'HistoryEditScreen',
+);
+
+export const HistoryDetailRoute = lazyRoute(
+  () => import('./HistoryDetailScreen'),
+  'HistoryDetailScreen',
 );

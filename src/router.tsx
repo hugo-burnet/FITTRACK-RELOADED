@@ -9,17 +9,19 @@ import {
   WeeklySessionsRoute,
   WeeklyVolumeRoute,
 } from './features/analytics/routes';
-import { HevyImportRoute, HistoryEditRoute } from './features/history/routes';
+import {
+  HevyImportRoute,
+  HistoryDetailRoute,
+  HistoryEditRoute,
+} from './features/history/routes';
 import {
   ProgramDetailRoute,
   ProgramEditorRoute,
   ProgramListRoute,
 } from './features/programs/routes';
 import { CreditsRoute, DebugRoute } from './features/settings/routes';
-import { ExerciseDetailScreen } from './features/exercises/ExerciseDetailScreen';
-import { ExerciseFormScreen } from './features/exercises/ExerciseFormScreen';
+import { ExerciseDetailRoute, ExerciseFormRoute } from './features/exercises/routes';
 import { ExercisesScreen } from './features/exercises/ExercisesScreen';
-import { HistoryDetailScreen } from './features/history/HistoryDetailScreen';
 import { HistoryScreen } from './features/history/HistoryScreen';
 import { HomeScreen } from './features/home/HomeScreen';
 import {
@@ -30,8 +32,7 @@ import {
   WikiQuestionsRoute,
   WikiSectionRoute,
 } from './features/knowledge/routes';
-import { ExercisePickerScreen } from './features/routines/ExercisePickerScreen';
-import { RoutineEditorScreen } from './features/routines/RoutineEditorScreen';
+import { ExercisePickerRoute, RoutineEditorRoute } from './features/routines/routes';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { WorkoutAddExerciseScreen } from './features/workout/WorkoutAddExerciseScreen';
@@ -53,8 +54,8 @@ export const router = createHashRouter([
       { path: 'programs/:id/edit', element: <ProgramEditorRoute /> },
       // A routine's screen is its editor: everything is written as it is typed,
       // so there is no read-only view to separate from it.
-      { path: 'routines/:id', element: <RoutineEditorScreen /> },
-      { path: 'routines/:id/add', element: <ExercisePickerScreen /> },
+      { path: 'routines/:id', element: <RoutineEditorRoute /> },
+      { path: 'routines/:id/add', element: <ExercisePickerRoute /> },
       // No id in the path: the active session *is* the query, which is what
       // makes resuming after a kill free (RF-25). Reading a past session is
       // Lot 7, and it will have its own route.
@@ -64,7 +65,7 @@ export const router = createHashRouter([
       { path: 'history', element: <HistoryScreen /> },
       { path: 'history/import', element: <HevyImportRoute /> },
       { path: 'history/:workoutId/edit', element: <HistoryEditRoute /> },
-      { path: 'history/:workoutId', element: <HistoryDetailScreen /> },
+      { path: 'history/:workoutId', element: <HistoryDetailRoute /> },
       // Pas de sixième onglet (§12.1) : la barre en compte cinq depuis le Lot 1.
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
@@ -77,9 +78,9 @@ export const router = createHashRouter([
       { path: 'exercises', element: <ExercisesScreen /> },
       // Static before dynamic. React Router ranks them that way on its own, but
       // reading `new` as an exercise id would be a very confusing bug.
-      { path: 'exercises/new', element: <ExerciseFormScreen /> },
-      { path: 'exercises/:id', element: <ExerciseDetailScreen /> },
-      { path: 'exercises/:id/edit', element: <ExerciseFormScreen /> },
+      { path: 'exercises/new', element: <ExerciseFormRoute /> },
+      { path: 'exercises/:id', element: <ExerciseDetailRoute /> },
+      { path: 'exercises/:id/edit', element: <ExerciseFormRoute /> },
       { path: 'settings', element: <SettingsScreen /> },
       { path: 'knowledge', element: <KnowledgeRoute /> },
       { path: 'knowledge/apprendre', element: <LearnProgrammingRoute /> },
