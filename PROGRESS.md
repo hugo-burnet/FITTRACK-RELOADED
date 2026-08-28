@@ -6851,6 +6851,33 @@ Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
 _(Toute décision qui contredit ou complète `docs/plans/01-ARCHITECTURE.md` est consignée ici,
 avec la date et la raison.)_
 
+### 2026-08-28 — Le mouvement de l'app a désormais des sorties, et un mode réduit qui réduit
+
+**Ce qui change.** Toute navigation passe par `startViewTransition` (`app/navigation.ts`,
+`useAppNavigate`), et le sens du déplacement vit sur `<html data-nav>`. `Screen` perd ses
+`animate-rise` / `animate-fade` de montage : la transition porte l'arrivée **et** le départ.
+
+**Pourquoi.** L'app n'avait que des entrées. Aller et revenir produisaient exactement la même
+animation, donc l'app ne disait jamais dans quel sens on se déplaçait — et c'était ça, la
+cause de « les transitions manquent de fluidité », pas la qualité des gestes eux-mêmes.
+
+**Le pas fait 18 px, et ça se défend.** Une largeur d’écran coûterait 400 ms pour la même
+information. On navigue ici entre deux séries (règle n° 5) : il suffit de dire d'où ça vient.
+L'écran qui part recule moins loin (11 px) que celui qui arrive n'avance, donc il passe dessous
+au lieu d'être poussé dehors — c'est le décalage qui fait la profondeur, pas la distance.
+
+**Le mouvement réduit ne coupe plus, il réduit.** La règle globale reste comme filet, mais
+chaque geste porteur de sens a sa version : déplacement, échelle et flou partent, opacité et
+couleur restent. `flash` récupère au contraire sa durée entière — une couleur qui s'efface n'a
+rien de spatial. WCAG 2.3.3 demande de désactiver le mouvement *non essentiel* ; un retour
+d'état n'en est pas un.
+
+**Ce qui reste ouvert.** Les micro-interactions des moments de la séance (série validée, record,
+minuteur à zéro) ne sont pas faites : elles demandent de l’état dans `WorkoutScreen`, et elles
+doivent se juger à l'œil sur le téléphone, pas au relevé de géométrie. `animate-flash` reste
+donc déclaré et utilisé zéro fois — son emploi naturel serait la ligne de la série suivante
+quand le repos tombe à zéro.
+
 ### 2026-08-11 — Les muscles secondaires entrent dans l'instantané (`version(4)`)
 
 **Ce qui change.** `WorkoutExercise` gagne `exerciseSecondaryMuscles?: MuscleGroup[]`, écrit par
@@ -6985,6 +7012,22 @@ vérifiées à l'exécution.
 
 _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
+- **Pour les déclarations `!important`, l'ordre des couches CSS est INVERSÉ.** Une règle dans
+  `@layer base` bat une règle hors couche, quelle que soit sa spécificité. Un override de
+  `prefers-reduced-motion` écrit plus bas dans `index.css`, avec `!important` et un sélecteur de
+  classe, était donc **silencieusement inerte** face à la règle globale sur `*` — aucune erreur,
+  aucun avertissement, juste un correctif qui ne corrige rien. Le repère : à couche égale la
+  spécificité tranche normalement, c'est le franchissement de couche qui s'inverse. D'où le
+  regroupement de tout le mouvement réduit **dans** `@layer base`. Vérifiable en trois lignes
+  dans la console : deux règles `!important` sur la même classe, une dans `@layer`, une dehors.
+- **Un `var()` dans un `@keyframes` ne se résout pas pour `animation-timing-function`.** Le levé
+  de l'écran d'ouverture déclarait `animation-timing-function: var(--ease-mech)` sur un palier :
+  la valeur est ignorée et le segment repart en `linear`. Rien ne le signale — il faut échantillonner
+  la position dans le temps pour le voir. Écrire la `cubic-bezier` en clair, et dire en commentaire
+  de quel jeton elle est la copie. Plus généralement : **une animation se vérifie en la figeant.**
+  `document.getAnimations().forEach(a => { a.pause(); a.currentTime = T })` puis un
+  `getBoundingClientRect()` par élément donne toute la chorégraphie sans compositer une frame —
+  utile quand le panneau navigateur est replié et que `screenshot` échoue.
 - **`github-pages` était verrouillé sur la branche `main` alors qu'on travaille sur `master`.**
   Symptôme : le job `build` est **entièrement vert**, le job `deploy` échoue en **1 seconde avec
   0 étape exécutée**. Ce n'est ni le `base`, ni les permissions, ni les versions d'actions — c'est
