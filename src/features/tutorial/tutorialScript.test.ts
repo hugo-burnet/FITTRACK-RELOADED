@@ -23,9 +23,15 @@ describe('script du tutoriel', () => {
     expect(tutorialTopicForPath('/exercises/bench')).toBe('exercises');
   });
 
-  it('garde le tutoriel contextuel sur la page courante', () => {
+  /*
+   * L'aide effaçait la route du chapitre pour ne pas déplacer l'utilisateur.
+   * Depuis `/routines/:id`, elle expliquait donc Routines devant un éditeur :
+   * le chapitre parle de la liste et encadre son onglet, et rien de ce qu'il
+   * décrivait n'était à l'écran.
+   */
+  it('ouvre le chapitre contextuel sur la page dont il parle', () => {
     expect(contextualTutorial('history')).toEqual([
-      expect.objectContaining({ id: 'history', route: undefined }),
+      expect.objectContaining({ id: 'history', route: '/history' }),
     ]);
   });
 });

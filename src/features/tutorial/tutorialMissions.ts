@@ -1,5 +1,5 @@
 import type { TranslationKey } from '@/i18n/fr';
-import { pathForScreen, type TutorialScreen } from './tutorialScreens';
+import { pathForScreen, type TutorialRouteContext, type TutorialScreen } from './tutorialScreens';
 import type { TutorialEvent, TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
 
 export interface TutorialMissionStep {
@@ -376,10 +376,18 @@ export function stepOf(
  * éditeur qu'aucune routine retenue ne permettait d'ouvrir. Une mission dont on
  * ne sait pas rejoindre la première étape n'est pas proposée du tout.
  */
-export function isMissionReachable(mission: TutorialMission, routineId: string | null): boolean {
+export function isMissionReachable(
+  mission: TutorialMission,
+  context: TutorialRouteContext,
+): boolean {
   const first = mission.steps[0];
   if (first === undefined) return false;
-  return first.screen === 'anywhere' || pathForScreen(first.screen, routineId) !== null;
+  return first.screen === 'anywhere' || pathForScreen(first.screen, context) !== null;
+}
+
+/** Ce que la progression sait des adresses dynamiques, sous la forme attendue. */
+export function routeContextOf(state: TutorialStateV3): TutorialRouteContext {
+  return { routineId: state.missionRoutineId, programId: state.missionProgramId };
 }
 
 export function contextualMissionsForPath(
@@ -387,6 +395,7 @@ export function contextualMissionsForPath(
   state: TutorialStateV3,
   facts: TutorialMissionFacts,
 ): readonly TutorialMission[] {
+  const context = routeContextOf(state);
   return P1_MISSIONS.filter(
     (mission) =>
       mission.id !== 'TUT-CAM-01' &&
@@ -394,6 +403,6 @@ export function contextualMissionsForPath(
       pathname.startsWith(mission.routePrefix) &&
       isMissionAvailable(mission, facts) &&
       state.missions[mission.id] !== 'completed' &&
-      isMissionReachable(mission, state.missionRoutineId),
+      isMissionReachable(mission, context),
   );
 }

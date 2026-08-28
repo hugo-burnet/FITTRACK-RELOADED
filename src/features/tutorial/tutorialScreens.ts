@@ -12,13 +12,35 @@
  * emmener l'utilisateur (`pathForScreen`) et savoir s'il y est (`screenHolds`).
  */
 export type TutorialScreen =
+  | 'home'
   | 'routines'
   | 'routine-editor'
+  | 'routine-picker'
+  | 'programs'
+  | 'program-editor'
+  | 'program-detail'
   | 'workout'
   | 'workout-finish'
+  | 'history'
+  | 'analytics'
+  | 'exercises'
   | 'settings'
+  | 'knowledge'
   /** Une commande présente sur toute l'application — la barre de séance active. */
   | 'anywhere';
+
+/**
+ * Ce qu'il faut savoir en plus du nom de l'écran pour en faire une adresse.
+ *
+ * Les deux identifiants sont persistés dans la progression : une mission
+ * reprise après un rechargement doit retrouver la routine ou le programme dont
+ * elle parle, faute de quoi `/routines/:id` n'est pas une adresse mais un
+ * gabarit.
+ */
+export interface TutorialRouteContext {
+  routineId: string | null;
+  programId: string | null;
+}
 
 /** L'identifiant de routine lu dans l'URL, `null` hors de l'éditeur. */
 export function routineIdFromPath(pathname: string): string | null {
@@ -30,23 +52,56 @@ export function routineIdFromPath(pathname: string): string | null {
   return id === undefined || id === 'new' ? null : id;
 }
 
+/** L'identifiant de programme lu dans l'URL — `/programs/new` n'en est pas un. */
+export function programIdFromPath(pathname: string): string | null {
+  const match = /^\/programs\/([^/]+)/.exec(pathname);
+  const id = match?.[1];
+  return id === undefined || id === 'new' ? null : id;
+}
+
 /**
  * L'adresse où emmener l'utilisateur pour cette étape. `null` quand elle n'est
  * pas connue — l'éditeur d'une routine sans routine retenue — auquel cas on ne
  * navigue nulle part plutôt que d'inventer une destination.
+ *
+ * `program-editor` est la seule exception assumée : sans programme retenu,
+ * l'assistant de création *est* sa page, et c'est exactement là qu'une mission
+ * « créer un bloc » doit commencer.
  */
-export function pathForScreen(screen: TutorialScreen, routineId: string | null): string | null {
+export function pathForScreen(
+  screen: TutorialScreen,
+  context: TutorialRouteContext,
+): string | null {
+  const { routineId, programId } = context;
   switch (screen) {
+    case 'home':
+      return '/';
     case 'routines':
       return '/routines';
     case 'routine-editor':
       return routineId === null ? null : `/routines/${routineId}`;
+    case 'routine-picker':
+      return routineId === null ? null : `/routines/${routineId}/add`;
+    case 'programs':
+      return '/programs';
+    case 'program-editor':
+      return programId === null ? '/programs/new' : `/programs/${programId}/edit`;
+    case 'program-detail':
+      return programId === null ? null : `/programs/${programId}`;
     case 'workout':
       return '/workout';
     case 'workout-finish':
       return '/workout/finish';
+    case 'history':
+      return '/history';
+    case 'analytics':
+      return '/analytics';
+    case 'exercises':
+      return '/exercises';
     case 'settings':
       return '/settings';
+    case 'knowledge':
+      return '/knowledge';
     case 'anywhere':
       return null;
   }
@@ -55,31 +110,64 @@ export function pathForScreen(screen: TutorialScreen, routineId: string | null):
 /**
  * L'utilisateur est-il là où l'étape a un sens ?
  *
- * Tolérant vers le bas, strict vers le côté. Le sélecteur d'exercices vit sous
- * `/routines/:id/add` : c'est *l'étape elle-même* qui vient de l'ouvrir, donc
- * le renvoyer à l'éditeur casserait le geste qu'on lui demande. En revanche la
- * liste `/routines` n'est pas l'éditeur, et c'est toute la différence que le
- * préfixe ne savait pas faire.
+ * Strict, désormais, y compris vers le bas. La version tolérante laissait
+ * l'éditeur d'une routine « tenir » le sélecteur d'exercices, parce que c'était
+ * l'étape elle-même qui venait de l'ouvrir et qu'un retour l'aurait refermé.
+ * Ce n'est plus le compromis à faire : le sélecteur a son propre écran, l'étape
+ * qui parle de lui le déclare, et le retour en arrière est empêché là où il
+ * doit l'être — par `movesForward`, qui ne remonte jamais.
+ *
+ * Ce que la tolérance coûtait : une consigne lue devant un écran qui ne la
+ * contient pas. Une liste n'est pas un éditeur, une création n'est pas un
+ * détail, et le tutoriel n'a rien à dire tant qu'il n'est pas au bon endroit.
  */
 export function screenHolds(
   pathname: string,
   screen: TutorialScreen,
-  routineId: string | null,
+  context: TutorialRouteContext,
 ): boolean {
   switch (screen) {
+    case 'home':
+      return pathname === '/';
     case 'routines':
       return pathname === '/routines';
     case 'routine-editor': {
       const own = routineIdFromPath(pathname);
-      if (own === null) return false;
-      return routineId === null || own === routineId;
+      if (own === null || pathname !== `/routines/${own}`) return false;
+      return context.routineId === null || own === context.routineId;
+    }
+    case 'routine-picker': {
+      const own = routineIdFromPath(pathname);
+      if (own === null || pathname !== `/routines/${own}/add`) return false;
+      return context.routineId === null || own === context.routineId;
+    }
+    case 'programs':
+      return pathname === '/programs';
+    case 'program-editor': {
+      if (pathname === '/programs/new') return true;
+      const own = programIdFromPath(pathname);
+      if (own === null || pathname !== `/programs/${own}/edit`) return false;
+      return context.programId === null || own === context.programId;
+    }
+    case 'program-detail': {
+      const own = programIdFromPath(pathname);
+      if (own === null || pathname !== `/programs/${own}`) return false;
+      return context.programId === null || own === context.programId;
     }
     case 'workout':
       return pathname === '/workout' || pathname === '/workout/add';
     case 'workout-finish':
       return pathname.startsWith('/workout/finish');
+    case 'history':
+      return pathname === '/history';
+    case 'analytics':
+      return pathname === '/analytics';
+    case 'exercises':
+      return pathname === '/exercises';
     case 'settings':
-      return pathname.startsWith('/settings');
+      return pathname === '/settings';
+    case 'knowledge':
+      return pathname === '/knowledge';
     case 'anywhere':
       return true;
   }
@@ -89,8 +177,8 @@ export function screenHolds(
  * Le tutoriel n'a jamais le droit de faire **reculer** l'utilisateur.
  *
  * `TUT-CAM-01` vise le bouton de création, sur la liste, mais s'achève sur
- * `routine-opened` — c'est-à-dire dans l'éditeur, une fois la routine lue en
- * base, plusieurs images après l'arrivée. Entre les deux, l'étape courante
+ * `routine-created` — c'est-à-dire dans l'éditeur, une fois la routine écrite
+ * en base, plusieurs images après l'arrivée. Entre les deux, l'étape courante
  * désigne encore la liste : sans cette règle, la visite renvoyait à la liste
  * quelqu'un qui venait d'ouvrir exactement ce qu'on lui demandait d'ouvrir.
  *

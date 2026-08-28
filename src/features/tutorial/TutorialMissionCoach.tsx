@@ -5,22 +5,28 @@ import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import type { TutorialMission } from './tutorialMissions';
 import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
-import { useTutorialAnchor } from './useTutorialAnchor';
 import { isWorkoutAudioBusy } from './workoutAudioBusy';
 
 export function TutorialMissionCoach({
   mission,
   stepIndex,
+  rect,
   onDismiss,
 }: {
   mission: TutorialMission;
   stepIndex: number;
+  /**
+   * Mesurée par `useTutorialMissions`, pas ici.
+   *
+   * C'est la même mesure qui décide que l'étape est prête à parler et qui
+   * place le cadre. En la refaisant, ce composant ouvrait un second observateur
+   * sur le même élément — deux boucles d'images pour un seul rectangle, et deux
+   * réponses possibles à « la cible est-elle là ? ».
+   */
+  rect: DOMRect | null;
   onDismiss: () => void;
 }) {
   const step = mission.steps[stepIndex];
-  const rect = useTutorialAnchor(
-    step === undefined ? null : `[data-tutorial-id="${step.targetId}"]`,
-  );
 
   /*
    * La consigne se dit une fois, en arrivant sur l'étape — et seulement si rien

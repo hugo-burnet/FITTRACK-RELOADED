@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { contextualMissionsForPath, missionFor } from './tutorialMissions';
-import { movesForward, pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
+import {
+  movesForward,
+  pathForScreen,
+  programIdFromPath,
+  routineIdFromPath,
+  screenHolds,
+  type TutorialRouteContext,
+} from './tutorialScreens';
 import { createTutorialState } from './tutorialStore';
 
 const NO_WORKOUT = { hasActiveWorkout: false };
+const NOWHERE: TutorialRouteContext = { routineId: null, programId: null };
+const at = (partial: Partial<TutorialRouteContext>): TutorialRouteContext => ({
+  ...NOWHERE,
+  ...partial,
+});
 
 describe('les écrans des missions guidées', () => {
   it('lit la routine de l’URL, et rien d’autre', () => {
@@ -13,29 +25,87 @@ describe('les écrans des missions guidées', () => {
     expect(routineIdFromPath('/programs/p-1')).toBeNull();
   });
 
+  it('lit le programme de l’URL, sans confondre la création avec un bloc', () => {
+    expect(programIdFromPath('/programs/p-1')).toBe('p-1');
+    expect(programIdFromPath('/programs/p-1/edit')).toBe('p-1');
+    expect(programIdFromPath('/programs/new')).toBeNull();
+    expect(programIdFromPath('/programs')).toBeNull();
+  });
+
+  it.each([
+    ['home', {}, '/'],
+    ['routines', {}, '/routines'],
+    ['routine-editor', { routineId: 'r1' }, '/routines/r1'],
+    ['routine-picker', { routineId: 'r1' }, '/routines/r1/add'],
+    ['programs', {}, '/programs'],
+    ['program-editor', {}, '/programs/new'],
+    ['program-editor', { programId: 'p1' }, '/programs/p1/edit'],
+    ['program-detail', { programId: 'p1' }, '/programs/p1'],
+    ['workout', {}, '/workout'],
+    ['workout-finish', {}, '/workout/finish'],
+    ['history', {}, '/history'],
+    ['analytics', {}, '/analytics'],
+    ['exercises', {}, '/exercises'],
+    ['settings', {}, '/settings'],
+    ['knowledge', {}, '/knowledge'],
+  ] as const)('résout %s', (screen, partial, expected) => {
+    expect(pathForScreen(screen, at(partial))).toBe(expected);
+  });
+
   it('distingue la liste des routines de l’éditeur d’une routine', () => {
-    expect(screenHolds('/routines', 'routines', 'r-1')).toBe(true);
-    expect(screenHolds('/routines/r-1', 'routines', 'r-1')).toBe(false);
-    expect(screenHolds('/routines', 'routine-editor', 'r-1')).toBe(false);
-    expect(screenHolds('/routines/r-1', 'routine-editor', 'r-1')).toBe(true);
+    expect(screenHolds('/routines', 'routines', at({ routineId: 'r-1' }))).toBe(true);
+    expect(screenHolds('/routines/r-1', 'routines', at({ routineId: 'r-1' }))).toBe(false);
+    expect(screenHolds('/routines', 'routine-editor', at({ routineId: 'r-1' }))).toBe(false);
+    expect(screenHolds('/routines/r-1', 'routine-editor', at({ routineId: 'r-1' }))).toBe(true);
+    expect(screenHolds('/routines/autre', 'routine-editor', at({ routineId: 'r-1' }))).toBe(false);
   });
 
   /*
-   * Le sélecteur d'exercices est ouvert par l'étape elle-même. Le compter
-   * comme « ailleurs » renverrait l'utilisateur à l'éditeur au moment précis
-   * où il fait le geste demandé.
+   * Le sélecteur d'exercices était compté comme faisant partie de l'éditeur,
+   * parce que l'étape qui l'ouvrait s'y serait sinon fait renvoyer en arrière.
+   * Il a désormais son propre écran, et c'est `movesForward` qui empêche le
+   * retour : une consigne n'a plus à être lue devant un écran qui ne la
+   * contient pas pour que le geste demandé reste possible.
    */
-  it('reste dans l’étape pendant le sélecteur d’exercices', () => {
-    expect(screenHolds('/routines/r-1/add', 'routine-editor', 'r-1')).toBe(true);
-    expect(screenHolds('/workout/add', 'workout', null)).toBe(true);
-    expect(screenHolds('/routines/autre', 'routine-editor', 'r-1')).toBe(false);
+  it('sépare le sélecteur d’exercices de l’éditeur qui l’ouvre', () => {
+    expect(screenHolds('/routines/r-1/add', 'routine-editor', at({ routineId: 'r-1' }))).toBe(
+      false,
+    );
+    expect(screenHolds('/routines/r-1/add', 'routine-picker', at({ routineId: 'r-1' }))).toBe(true);
+    expect(screenHolds('/routines/r-1', 'routine-picker', at({ routineId: 'r-1' }))).toBe(false);
+    expect(movesForward('/routines/r-1/add', '/routines/r-1')).toBe(false);
+    // La séance et son ajout d'exercice restent un seul écran : l'ajout n'a pas
+    // d'étape à lui, et la barre de séance vit sur les deux.
+    expect(screenHolds('/workout/add', 'workout', NOWHERE)).toBe(true);
+  });
+
+  it('distingue création, détail et édition d’un bloc', () => {
+    expect(screenHolds('/programs', 'programs', NOWHERE)).toBe(true);
+    expect(screenHolds('/programs/new', 'programs', NOWHERE)).toBe(false);
+    expect(screenHolds('/programs/new', 'program-editor', NOWHERE)).toBe(true);
+    expect(screenHolds('/programs/p-1', 'program-editor', at({ programId: 'p-1' }))).toBe(false);
+    expect(screenHolds('/programs/p-1/edit', 'program-editor', at({ programId: 'p-1' }))).toBe(
+      true,
+    );
+    expect(screenHolds('/programs/p-1', 'program-detail', at({ programId: 'p-1' }))).toBe(true);
+    expect(screenHolds('/programs/p-1/edit', 'program-detail', at({ programId: 'p-1' }))).toBe(
+      false,
+    );
+    expect(screenHolds('/programs/autre', 'program-detail', at({ programId: 'p-1' }))).toBe(false);
+  });
+
+  it('ne prend pas une sous-page pour la page dont l’étape parle', () => {
+    expect(screenHolds('/settings', 'settings', NOWHERE)).toBe(true);
+    expect(screenHolds('/settings/debug', 'settings', NOWHERE)).toBe(false);
+    expect(screenHolds('/history/import', 'history', NOWHERE)).toBe(false);
+    expect(screenHolds('/analytics/records', 'analytics', NOWHERE)).toBe(false);
   });
 
   it('sait où emmener, et se tait quand la routine est inconnue', () => {
-    expect(pathForScreen('routine-editor', 'r-1')).toBe('/routines/r-1');
-    expect(pathForScreen('routine-editor', null)).toBeNull();
-    expect(pathForScreen('anywhere', 'r-1')).toBeNull();
-    expect(pathForScreen('settings', null)).toBe('/settings');
+    expect(pathForScreen('routine-editor', NOWHERE)).toBeNull();
+    expect(pathForScreen('routine-picker', NOWHERE)).toBeNull();
+    expect(pathForScreen('program-detail', NOWHERE)).toBeNull();
+    expect(pathForScreen('anywhere', at({ routineId: 'r-1' }))).toBeNull();
   });
 
   it('ne fait pas du bilan de séance une destination', () => {
@@ -49,9 +119,10 @@ describe('les écrans des missions guidées', () => {
 
   /*
    * `TUT-CAM-01` vise le bouton de création, sur la liste, et s'achève sur
-   * `routine-opened` — dans l'éditeur, une fois la routine lue en base. Entre
-   * les deux, l'étape désigne encore la liste : sans cette règle, la visite
-   * renvoyait à la liste quelqu'un qui venait d'ouvrir la routine demandée.
+   * `routine-created` — dans l'éditeur, une fois la routine écrite en base.
+   * Entre les deux, l'étape désigne encore la liste : sans cette règle, la
+   * visite renvoyait à la liste quelqu'un qui venait de créer la routine
+   * demandée.
    */
   it('ne renvoie jamais vers un écran déjà dépassé', () => {
     expect(movesForward('/routines/r-1', '/routines')).toBe(false);
@@ -69,8 +140,8 @@ describe('les écrans des missions guidées', () => {
     expect(offered.map((mission) => mission.id)).toEqual(['TUT-ROU-01']);
 
     const knownRoutine = { ...unknownRoutine, missionRoutineId: 'r-1' };
-    expect(contextualMissionsForPath('/routines', knownRoutine, NO_WORKOUT).map((m) => m.id)).toEqual(
-      ['TUT-ROU-01', 'TUT-ROU-02', 'TUT-ROU-03', 'TUT-ROU-04'],
-    );
+    expect(
+      contextualMissionsForPath('/routines', knownRoutine, NO_WORKOUT).map((m) => m.id),
+    ).toEqual(['TUT-ROU-01', 'TUT-ROU-02', 'TUT-ROU-03', 'TUT-ROU-04']);
   });
 });

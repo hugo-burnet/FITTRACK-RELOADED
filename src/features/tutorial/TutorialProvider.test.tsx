@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { StrictMode } from 'react';
+import { StrictMode, type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Screen } from '@/app/Screen';
@@ -38,12 +38,20 @@ function Address() {
   return <p>adresse : {useLocation().pathname}</p>;
 }
 
-function renderTutorial(path = '/', strict = false) {
+/**
+ * L'écran de test, et ce qu'il porte.
+ *
+ * Une consigne ne s'affiche plus tant que sa commande n'est pas à l'écran :
+ * un test qui attend le coach doit donc rendre l'ancre que l'étape désigne,
+ * exactement comme l'écran réel le fait.
+ */
+function renderTutorial(path = '/', strict = false, anchors: ReactNode = null) {
   const tutorial = (
     <MemoryRouter initialEntries={[path]}>
       <TutorialProvider>
         <Screen title="Écran de test">
           <Address />
+          {anchors}
         </Screen>
       </TutorialProvider>
     </MemoryRouter>
@@ -90,6 +98,23 @@ describe('TutorialProvider', () => {
     expect(await screen.findByRole('dialog', { name: 'Visite guidée' })).toBeVisible();
     expect(screen.getByText('Progression')).toBeVisible();
     expect(screen.getByText(/Suis tes records/)).toBeVisible();
+  });
+
+  /*
+   * L'aide n'effaçait pas seulement la route du chapitre : elle le jouait sur
+   * place. Depuis l'éditeur d'une routine, « Expliquer cette page · Routines »
+   * décrivait donc la liste — et encadrait son onglet — devant un écran qui
+   * n'en est pas. Ouvrir la bonne page est le moindre déplacement des deux.
+   */
+  it('envoie l’aide Routines sur la liste plutôt que la laisser dans un éditeur', async () => {
+    saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
+    const user = userEvent.setup();
+    renderTutorial('/routines/r-1');
+
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(screen.getByRole('button', { name: /Expliquer cette page · Routines/ }));
+
+    expect(await screen.findByText('adresse : /routines')).toBeVisible();
   });
 
   it('replie automatiquement la transcription pendant la narration', async () => {
@@ -257,13 +282,52 @@ describe('TutorialProvider', () => {
       activeMissionId: 'TUT-DAT-01',
     });
 
-    renderTutorial('/settings');
+    renderTutorial('/settings', false, <button data-tutorial-id="backup-export">Exporter</button>);
 
     expect(await screen.findByRole('region', { name: 'Mission guidée' })).toBeVisible();
     expect(screen.getByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
     expect(
       screen.getByText('Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.'),
     ).toBeVisible();
+  });
+
+  /*
+   * L'ancre arrive après la route, pas avant.
+   *
+   * La consigne partait dès l'arrivée sur l'écran. Or la route est paresseuse
+   * et la liste vient de Dexie : pendant quelques images, la commande décrite
+   * n'existe pas encore, et la voix décrivait un bouton que personne ne voyait.
+   * Le coach attend désormais la cible — et repart avec elle.
+   */
+  it('attend que la commande décrite existe avant de parler', async () => {
+    saveTutorialState({
+      ...createTutorialState(),
+      orientation: 'completed',
+      activeMissionId: 'TUT-DAT-01',
+    });
+
+    renderTutorial('/settings');
+
+    await screen.findByText('adresse : /settings');
+    expect(screen.queryByRole('region', { name: 'Mission guidée' })).not.toBeInTheDocument();
+    expect(playTutorialNarrationMock).not.toHaveBeenCalled();
+
+    const late = document.createElement('button');
+    late.setAttribute('data-tutorial-id', 'backup-export');
+    act(() => {
+      document.body.append(late);
+    });
+
+    expect(await screen.findByRole('region', { name: 'Mission guidée' })).toBeVisible();
+    expect(playTutorialNarrationMock).toHaveBeenCalledWith(
+      'mission-backup-export-1',
+      expect.any(Function),
+    );
+
+    act(() => late.remove());
+    await waitFor(() =>
+      expect(screen.queryByRole('region', { name: 'Mission guidée' })).not.toBeInTheDocument(),
+    );
   });
 
   /*

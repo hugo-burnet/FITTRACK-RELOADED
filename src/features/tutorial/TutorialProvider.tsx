@@ -296,29 +296,32 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     if (step?.route !== undefined && pathname !== step.route) navigate(step.route);
   }, [index, navigate, pathname, phase, steps]);
 
+  /*
+   * La voix accompagne le chapitre ; elle ne le fait plus avancer.
+   *
+   * L'ancienne visite enchaînait sur la fin du clip, ou sur un minuteur de
+   * secours quand il n'y avait pas de clip. Le rythme appartenait alors à
+   * l'enregistrement : lire lentement, relire une phrase, regarder ce qui est
+   * encadré, et l'écran avait déjà changé. Un chapitre se termine désormais
+   * parce qu'on appuie sur « Suivant » — et la fin du clip ne fait que
+   * refermer la transcription.
+   */
   useEffect(() => {
     if (phase !== 'tour') return;
     const step = steps[index];
     if (step === undefined) return;
     let cancelled = false;
-    let timer: number | undefined;
     const ended = () => {
-      if (!cancelled) {
-        setNarrationActive(false);
-        timer = window.setTimeout(next, 650);
-      }
+      if (!cancelled) setNarrationActive(false);
     };
     void playTutorialNarration(step.clip, ended).then((started) => {
-      if (cancelled) return;
-      setNarrationActive(started);
-      if (!started) timer = window.setTimeout(next, step.fallbackMs);
+      if (!cancelled) setNarrationActive(started);
     });
     return () => {
       cancelled = true;
-      if (timer !== undefined) window.clearTimeout(timer);
       stopTutorialNarration();
     };
-  }, [index, next, phase, steps]);
+  }, [index, phase, steps]);
 
   useEffect(() => {
     if (phase !== 'voice-choice') return;
@@ -460,7 +463,9 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         onClose={() => setPhase('idle')}
         title={t('tutorial.campaign.title')}
       >
-        <p className="text-sm leading-relaxed text-[var(--text-2)]">{t('tutorial.campaign.body')}</p>
+        <p className="text-sm leading-relaxed text-[var(--text-2)]">
+          {t('tutorial.campaign.body')}
+        </p>
         <div className="mt-5 flex flex-col gap-2">
           <Button
             variant="primary"
@@ -487,12 +492,14 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         </div>
       </Sheet>
 
-      {/* Jamais ailleurs que sur l'écran de l'étape : une consigne lue devant
-          une page qui ne la contient pas ne s'explique pas, elle s'endure. */}
-      {missions.activeMission !== null && missions.onStepScreen && phase === 'idle' && (
+      {/* Jamais ailleurs que sur l'écran de l'étape, et jamais avant que sa
+          commande soit là : une consigne lue devant une page qui ne la contient
+          pas ne s'explique pas, elle s'endure. */}
+      {missions.activeMission !== null && missions.stepReady && phase === 'idle' && (
         <TutorialMissionCoach
           mission={missions.activeMission}
           stepIndex={missions.state.activeStepIndex}
+          rect={missions.anchorRect}
           onDismiss={missions.dismiss}
         />
       )}

@@ -5,10 +5,18 @@ import {
   isMissionAvailable,
   isMissionReachable,
   missionFor,
+  routeContextOf,
   stepOf,
   type TutorialMissionFacts,
 } from './tutorialMissions';
-import { movesForward, pathForScreen, routineIdFromPath, screenHolds } from './tutorialScreens';
+import {
+  movesForward,
+  pathForScreen,
+  programIdFromPath,
+  routineIdFromPath,
+  screenHolds,
+} from './tutorialScreens';
+import { useTutorialAnchor } from './useTutorialAnchor';
 import { loadTutorialState, saveTutorialState } from './tutorialStore';
 import type {
   TutorialCompletion,
@@ -45,15 +53,15 @@ export function useTutorialMissions(
       const started = commit((current) => {
         const mission = missionFor(missionId);
         if (!isMissionAvailable(mission, facts)) return current;
-        if (!isMissionReachable(mission, current.missionRoutineId)) return current;
+        if (!isMissionReachable(mission, routeContextOf(current))) return current;
         return startMission(current, missionId);
       });
       if (!started) return false;
       const first = missionFor(missionId).steps[0];
       if (first === undefined) return true;
-      const { missionRoutineId } = stateRef.current;
-      const destination = pathForScreen(first.screen, missionRoutineId);
-      if (destination !== null && !screenHolds(pathname, first.screen, missionRoutineId)) {
+      const context = routeContextOf(stateRef.current);
+      const destination = pathForScreen(first.screen, context);
+      if (destination !== null && !screenHolds(pathname, first.screen, context)) {
         navigate(destination);
       }
       return true;
@@ -68,7 +76,7 @@ export function useTutorialMissions(
           current.activeMissionId !== null ||
           current.missions[missionId] !== undefined ||
           (mission.guard !== 'external' && !isMissionAvailable(mission, facts)) ||
-          !isMissionReachable(mission, current.missionRoutineId)
+          !isMissionReachable(mission, routeContextOf(current))
         ) {
           return current;
         }
@@ -115,13 +123,28 @@ export function useTutorialMissions(
     [state.activeMissionId],
   );
 
+  const routeContext = useMemo(() => routeContextOf(state), [state]);
   const activeStep = stepOf(activeMission, state.activeStepIndex);
   const onStepScreen =
-    activeStep !== null && screenHolds(pathname, activeStep.screen, state.missionRoutineId);
+    activeStep !== null && screenHolds(pathname, activeStep.screen, routeContext);
 
   /*
-   * La routine dont parlent les missions de composition, retenue dès qu'on
-   * entre dans son éditeur.
+   * La cible existe-t-elle, là, maintenant ?
+   *
+   * Être sur le bon écran ne suffit pas : la route est paresseuse, la liste
+   * vient de Dexie, et l'ancre apparaît quelques images après l'adresse. La
+   * consigne partait pendant cet intervalle — une voix qui décrit un bouton que
+   * personne ne voit encore. `useTutorialAnchor` suit l'apparition et la
+   * disparition de l'ancre ; on ne parle qu'une fois qu'elle est là.
+   */
+  const anchorSelector =
+    activeStep === null || !onStepScreen ? null : `[data-tutorial-id="${activeStep.targetId}"]`;
+  const anchorRect = useTutorialAnchor(anchorSelector);
+  const stepReady = activeStep !== null && onStepScreen && anchorRect !== null;
+
+  /*
+   * La routine et le programme dont parlent les missions, retenus dès qu'on
+   * entre dans leur écran.
    *
    * C'est l'URL qui l'apprend, et non les événements : une mission lancée
    * depuis l'aide de la page n'en a émis aucun, et c'est précisément le cas où
@@ -137,12 +160,22 @@ export function useTutorialMissions(
     );
   }, [commit, pathRoutineId]);
 
+  const pathProgramId = programIdFromPath(pathname);
+  useEffect(() => {
+    if (pathProgramId === null) return;
+    commit((current) =>
+      current.missionProgramId === pathProgramId
+        ? current
+        : { ...current, missionProgramId: pathProgramId },
+    );
+  }, [commit, pathProgramId]);
+
   useEffect(() => {
     if (activeStep === null || onStepScreen || activeStep.reach === 'wait') return;
-    const destination = pathForScreen(activeStep.screen, state.missionRoutineId);
+    const destination = pathForScreen(activeStep.screen, routeContext);
     if (destination === null || !movesForward(pathname, destination)) return;
     navigate(destination);
-  }, [activeStep, navigate, onStepScreen, pathname, state.missionRoutineId]);
+  }, [activeStep, navigate, onStepScreen, pathname, routeContext]);
 
   useEffect(() => {
     if (
@@ -167,6 +200,8 @@ export function useTutorialMissions(
     activeMission,
     activeStep,
     onStepScreen,
+    stepReady,
+    anchorRect,
     start,
     offer,
     report,

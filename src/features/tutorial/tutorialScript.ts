@@ -41,8 +41,6 @@ export interface TutorialStep {
    * que l'accueil derrière est le sujet.
    */
   offScreen?: true;
-  /** Reading time when the recorded clip is absent. */
-  fallbackMs: number;
 }
 
 const STEPS: readonly TutorialStep[] = [
@@ -53,7 +51,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.intro',
     route: '/',
     spotlight: null,
-    fallbackMs: 9_000,
   },
   {
     id: 'home',
@@ -62,7 +59,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.home',
     route: '/',
     spotlight: { kind: 'nav', to: '/' },
-    fallbackMs: 16_000,
   },
   {
     id: 'routines',
@@ -71,7 +67,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.routines',
     route: '/routines',
     spotlight: { kind: 'nav', to: '/routines' },
-    fallbackMs: 20_000,
   },
   /*
    * Les blocs, enfin montrés.
@@ -89,7 +84,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.programs',
     route: '/programs',
     spotlight: { kind: 'anchor', id: 'program-create' },
-    fallbackMs: 13_000,
   },
   {
     id: 'workout',
@@ -99,7 +93,6 @@ const STEPS: readonly TutorialStep[] = [
     route: '/',
     spotlight: null,
     offScreen: true,
-    fallbackMs: 29_000,
   },
   {
     id: 'coach',
@@ -109,7 +102,6 @@ const STEPS: readonly TutorialStep[] = [
     route: '/',
     spotlight: null,
     offScreen: true,
-    fallbackMs: 18_000,
   },
   {
     id: 'history',
@@ -118,7 +110,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.history',
     route: '/history',
     spotlight: { kind: 'nav', to: '/history' },
-    fallbackMs: 15_000,
   },
   {
     id: 'analytics',
@@ -127,7 +118,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.analytics',
     route: '/analytics',
     spotlight: { kind: 'nav', to: '/analytics' },
-    fallbackMs: 16_000,
   },
   {
     id: 'exercises',
@@ -136,7 +126,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.exercises',
     route: '/exercises',
     spotlight: { kind: 'nav', to: '/exercises' },
-    fallbackMs: 13_000,
   },
   {
     id: 'settings',
@@ -145,7 +134,6 @@ const STEPS: readonly TutorialStep[] = [
     summaryKey: 'tutorial.step.settings',
     route: '/settings',
     spotlight: null,
-    fallbackMs: 14_000,
   },
 ];
 
@@ -159,10 +147,18 @@ export function spotlightSelector(spotlight: TutorialSpotlight | null): string |
     : `[data-tutorial-id="${spotlight.id}"]`;
 }
 
-/** The page help reuses the relevant chapter without taking the user elsewhere. */
+/**
+ * Le chapitre de cette page — sur sa page.
+ *
+ * L'aide effaçait la route du chapitre pour « ne pas déplacer l'utilisateur ».
+ * Depuis `/routines/:id`, elle expliquait donc Routines devant un éditeur : le
+ * chapitre parle de la liste, encadre l'onglet Routines, et rien de ce qu'il
+ * décrit n'était à l'écran. Ouvrir la bonne page est le moindre déplacement des
+ * deux.
+ */
 export function contextualTutorial(topic: TutorialTopic): readonly TutorialStep[] {
   const step = STEPS.find((candidate) => candidate.id === topic) ?? STEPS[1]!;
-  return [{ ...step, route: undefined }];
+  return [step];
 }
 
 export function tutorialTopicForPath(pathname: string): TutorialTopic {

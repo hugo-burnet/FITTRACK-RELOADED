@@ -4,7 +4,7 @@ const { playTutorialNarration, stopTutorialNarration } = vi.hoisted(() => ({
 }));
 vi.mock('./tutorialNarration', () => ({ playTutorialNarration, stopTutorialNarration }));
 
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Sheet } from '@/ui';
@@ -13,6 +13,20 @@ import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { TutorialMissionCoach } from './TutorialMissionCoach';
 import { missionFor } from './tutorialMissions';
+
+/** Une cible haute de 48 px, telle que la mesure du hook la remet au coach. */
+const boxAt = (top: number): DOMRect =>
+  ({
+    top,
+    right: 116,
+    bottom: top + 48,
+    left: 16,
+    width: 100,
+    height: 48,
+    x: 16,
+    y: top,
+    toJSON: () => ({}),
+  }) satisfies DOMRect;
 
 describe('TutorialMissionCoach', () => {
   afterEach(() => {
@@ -29,6 +43,7 @@ describe('TutorialMissionCoach', () => {
         <TutorialMissionCoach
           mission={missionFor('TUT-ROU-01')}
           stepIndex={0}
+          rect={null}
           onDismiss={vi.fn()}
         />
       </>,
@@ -41,7 +56,12 @@ describe('TutorialMissionCoach', () => {
 
   it('keeps the screen layer non-interactive while the coach panel receives events', () => {
     render(
-      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
 
     const panel = screen.getByRole('region', { name: /Mission guidée/ });
@@ -55,6 +75,7 @@ describe('TutorialMissionCoach', () => {
         <TutorialMissionCoach
           mission={missionFor('TUT-ROU-01')}
           stepIndex={0}
+          rect={null}
           onDismiss={vi.fn()}
         />
         <Sheet open onClose={vi.fn()} title="Créer">
@@ -76,45 +97,14 @@ describe('TutorialMissionCoach', () => {
     { position: 'when its target is near the bottom', targetTop: 700, placement: 'top-[5rem]' },
   ])('keeps the coach away from the actionable area $position', ({ targetTop, placement }) => {
     vi.stubGlobal('innerHeight', 844);
-    vi.stubGlobal(
-      'requestAnimationFrame',
-      vi.fn((callback: FrameRequestCallback) => {
-        callback(0);
-        return 1;
-      }),
-    );
-    vi.stubGlobal('cancelAnimationFrame', vi.fn());
 
     render(
-      <>
-        {targetTop !== null && (
-          <button
-            data-tutorial-id="routine-create"
-            ref={(element) => {
-              if (element === null) return;
-              element.getBoundingClientRect = () =>
-                ({
-                  top: targetTop,
-                  right: 116,
-                  bottom: targetTop + 48,
-                  left: 16,
-                  width: 100,
-                  height: 48,
-                  x: 16,
-                  y: targetTop,
-                  toJSON: () => ({}),
-                }) satisfies DOMRect;
-            }}
-          >
-            Créer
-          </button>
-        )}
-        <TutorialMissionCoach
-          mission={missionFor('TUT-ROU-01')}
-          stepIndex={0}
-          onDismiss={vi.fn()}
-        />
-      </>,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={targetTop === null ? null : boxAt(targetTop)}
+        onDismiss={vi.fn()}
+      />,
     );
 
     expect(screen.getByRole('region', { name: /Mission guidée/ })).toHaveClass(placement);
@@ -156,6 +146,7 @@ describe('TutorialMissionCoach', () => {
         <TutorialMissionCoach
           mission={missionFor('TUT-ROU-01')}
           stepIndex={0}
+          rect={null}
           onDismiss={vi.fn()}
         />
       </>,
@@ -166,37 +157,49 @@ describe('TutorialMissionCoach', () => {
   });
 
   /*
-   * L'ancre arrive après le coach, pas avant.
+   * Le cadre suit la mesure, il ne la fait plus.
    *
-   * La mesure tenait dans une seule `requestAnimationFrame`, jamais reprise :
-   * une cible montée ensuite — route paresseuse, lecture Dexie, carte dépliée —
-   * n'était plus jamais encadrée, et l'utilisateur voyait une consigne sans
-   * rien de désigné. C'est le décalage remonté du téléphone.
+   * Le coach mesurait sa propre cible pendant que `useTutorialMissions`
+   * mesurait la même pour décider si l'étape pouvait parler : deux
+   * observateurs, deux réponses possibles à « la cible est-elle là ». Le
+   * rectangle descend désormais d'en haut, et l'apparition tardive d'une ancre
+   * — route paresseuse, lecture Dexie, carte dépliée — se joue là où le coach
+   * est monté, ce que `TutorialProvider.test` épingle.
    */
-  it('encadre une cible qui n’apparaît qu’après lui', async () => {
-    const { container } = render(
-      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+  it('encadre exactement ce que la mesure lui donne', () => {
+    const { container, rerender } = render(
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
-    const ring = () => container.querySelector('[aria-hidden="true"].ring-2');
-    await waitFor(() => expect(screen.getByRole('region', { name: /Mission guidée/ })).toBeVisible());
+    const ring = () => container.querySelector<HTMLElement>('[aria-hidden="true"].ring-2');
     expect(ring()).toBeNull();
 
-    const late = document.createElement('button');
-    late.setAttribute('data-tutorial-id', 'routine-create');
-    act(() => {
-      document.body.append(late);
-    });
+    rerender(
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={boxAt(120)}
+        onDismiss={vi.fn()}
+      />,
+    );
 
-    await waitFor(() => expect(ring()).not.toBeNull());
-
-    act(() => late.remove());
-    await waitFor(() => expect(ring()).toBeNull());
+    expect(ring()?.style.top).toBe('114px');
+    expect(ring()?.style.height).toBe('60px');
   });
 
   it('dismisses immediately', async () => {
     const dismiss = vi.fn();
     render(
-      <TutorialMissionCoach mission={missionFor('TUT-DAT-01')} stepIndex={0} onDismiss={dismiss} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-DAT-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={dismiss}
+      />,
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'Passer cette mission' }));
@@ -220,10 +223,18 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
 
   it('dit la consigne de l’étape en arrivant dessus', () => {
     render(
-      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
 
-    expect(playTutorialNarration).toHaveBeenCalledWith('mission-routine-create-1', expect.any(Function));
+    expect(playTutorialNarration).toHaveBeenCalledWith(
+      'mission-routine-create-1',
+      expect.any(Function),
+    );
   });
 
   // Le décompte d'un repos est cadencé sur l'horloge murale : il ne se met pas
@@ -232,7 +243,12 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
     useRestTimer.getState().start('set-1', 60);
 
     render(
-      <TutorialMissionCoach mission={missionFor('TUT-WRK-03')} stepIndex={0} onDismiss={vi.fn()} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-WRK-03')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
 
     expect(playTutorialNarration).not.toHaveBeenCalled();
@@ -241,21 +257,36 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
   it('se tait aussi pendant la cadence et pendant un maintien', () => {
     useRepPacer.getState().start('row', 'set-1', 8, 3);
     render(
-      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
     expect(playTutorialNarration).not.toHaveBeenCalled();
 
     useRepPacer.getState().stop();
     useHoldTimer.getState().start('row', 'set-1');
     render(
-      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
     expect(playTutorialNarration).not.toHaveBeenCalled();
   });
 
   it('coupe la consigne en quittant l’étape', () => {
     const view = render(
-      <TutorialMissionCoach mission={missionFor('TUT-ROU-01')} stepIndex={0} onDismiss={vi.fn()} />,
+      <TutorialMissionCoach
+        mission={missionFor('TUT-ROU-01')}
+        stepIndex={0}
+        rect={null}
+        onDismiss={vi.fn()}
+      />,
     );
     view.unmount();
 
