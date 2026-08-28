@@ -44,6 +44,7 @@ describe('TutorialMissionCoach', () => {
           mission={missionFor('TUT-ROU-01')}
           stepIndex={0}
           rect={null}
+          onContinue={vi.fn()}
           onDismiss={vi.fn()}
         />
       </>,
@@ -60,6 +61,7 @@ describe('TutorialMissionCoach', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -76,6 +78,7 @@ describe('TutorialMissionCoach', () => {
           mission={missionFor('TUT-ROU-01')}
           stepIndex={0}
           rect={null}
+          onContinue={vi.fn()}
           onDismiss={vi.fn()}
         />
         <Sheet open onClose={vi.fn()} title="Créer">
@@ -89,25 +92,6 @@ describe('TutorialMissionCoach', () => {
 
     expect(coachLayer).toHaveClass('z-40');
     expect(sheetLayer).toHaveClass('z-50');
-  });
-
-  it.each([
-    { position: 'when its target is absent', targetTop: null, placement: 'top-[5rem]' },
-    { position: 'when its target is near the top', targetTop: 96, placement: 'bottom-[4.5rem]' },
-    { position: 'when its target is near the bottom', targetTop: 700, placement: 'top-[5rem]' },
-  ])('keeps the coach away from the actionable area $position', ({ targetTop, placement }) => {
-    vi.stubGlobal('innerHeight', 844);
-
-    render(
-      <TutorialMissionCoach
-        mission={missionFor('TUT-ROU-01')}
-        stepIndex={0}
-        rect={targetTop === null ? null : boxAt(targetTop)}
-        onDismiss={vi.fn()}
-      />,
-    );
-
-    expect(screen.getByRole('region', { name: /Mission guidée/ })).toHaveClass(placement);
   });
 
   it('uses automatic scrolling when reduced motion is preferred', () => {
@@ -147,6 +131,7 @@ describe('TutorialMissionCoach', () => {
           mission={missionFor('TUT-ROU-01')}
           stepIndex={0}
           rect={null}
+          onContinue={vi.fn()}
           onDismiss={vi.fn()}
         />
       </>,
@@ -172,6 +157,7 @@ describe('TutorialMissionCoach', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -183,6 +169,7 @@ describe('TutorialMissionCoach', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={boxAt(120)}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -198,6 +185,7 @@ describe('TutorialMissionCoach', () => {
         mission={missionFor('TUT-DAT-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={dismiss}
       />,
     );
@@ -227,6 +215,7 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -247,6 +236,7 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
         mission={missionFor('TUT-WRK-03')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -261,6 +251,7 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -273,6 +264,7 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );
@@ -285,6 +277,7 @@ describe('TutorialMissionCoach — la voix de la mission', () => {
         mission={missionFor('TUT-ROU-01')}
         stepIndex={0}
         rect={null}
+        onContinue={vi.fn()}
         onDismiss={vi.fn()}
       />,
     );

@@ -90,6 +90,19 @@ export interface TutorialStateV3 {
   missions: Partial<Record<TutorialMissionId, TutorialMissionStatus>>;
 }
 
+/**
+ * Ce qui fait passer à l'étape suivante.
+ *
+ * `event` est la règle : un geste métier réel, observé là où il a lieu.
+ * `manual` est l'exception nécessaire — une étape qui n'a rien à faire faire,
+ * seulement quelque chose à montrer. L'ancienne visite enchaînait sur la fin de
+ * la voix, ce qui revenait à confier le rythme à l'enregistrement ; il n'y a
+ * plus de troisième cas, et surtout plus d'avance sans intention.
+ */
+export type TutorialAdvance =
+  | { kind: 'event'; accepts: (event: TutorialEvent, state: TutorialStateV3) => boolean }
+  | { kind: 'manual' };
+
 export type TutorialEvent =
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
-import { advanceMission, dismissMission, startMission } from './tutorialMissionMachine';
+import {
+  advanceMission,
+  continueMission,
+  dismissMission,
+  startMission,
+} from './tutorialMissionMachine';
 import {
   isMissionAvailable,
   isMissionReachable,
@@ -89,6 +94,23 @@ export function useTutorialMissions(
     [commit],
   );
   const dismiss = useCallback(() => commit(dismissMission), [commit]);
+  const advanceManually = useCallback(() => commit(continueMission), [commit]);
+  /*
+   * Rouvrir l'écran de l'étape quand sa commande ne s'y trouve pas.
+   *
+   * Une route paresseuse peut échouer à charger, une liste peut rester vide sur
+   * une lecture ratée : la cible n'arrive alors jamais, et attendre en silence
+   * est une impasse. Redemander l'adresse remonte la route ; si la commande
+   * manque encore, l'utilisateur a l'autre sortie sous les yeux.
+   */
+  const retryStep = useCallback(() => {
+    const current = stateRef.current;
+    if (current.activeMissionId === null) return;
+    const step = stepOf(missionFor(current.activeMissionId), current.activeStepIndex);
+    if (step === null) return;
+    const destination = pathForScreen(step.screen, routeContextOf(current));
+    if (destination !== null) navigate(destination, { replace: true });
+  }, [navigate]);
   const setOrientation = useCallback(
     (orientation: TutorialCompletion) => commit((current) => ({ ...current, orientation })),
     [commit],
@@ -206,6 +228,8 @@ export function useTutorialMissions(
     offer,
     report,
     dismiss,
+    advanceManually,
+    retryStep,
     setOrientation,
     startCampaign,
     postponeCampaign,

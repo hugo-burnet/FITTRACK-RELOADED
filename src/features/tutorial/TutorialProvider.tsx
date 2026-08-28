@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useLocation } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
@@ -12,8 +12,8 @@ import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
 import { ActionSheet, Button, Sheet } from '@/ui';
-import { ChevronDownIcon } from '@/ui/icons';
 import { TutorialContext, type TutorialControls } from './tutorialContext';
+import { TutorialHud } from './TutorialHud';
 import { TutorialMissionCoach } from './TutorialMissionCoach';
 import { contextualMissionsForPath } from './tutorialMissions';
 import { playTutorialNarration, stopTutorialNarration } from './tutorialNarration';
@@ -35,211 +35,6 @@ import { isWorkoutAudioBusy } from './workoutAudioBusy';
 type TourKind = 'full' | 'contextual';
 type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice' | 'campaign';
 
-function TutorialOverlay({
-  step,
-  index,
-  count,
-  narrationActive,
-  onPrevious,
-  onNext,
-  onSkip,
-}: {
-  step: TutorialStep;
-  index: number;
-  count: number;
-  narrationActive: boolean;
-  onPrevious: () => void;
-  onNext: () => void;
-  onSkip: () => void;
-}) {
-  const [expanded, setExpanded] = useState(true);
-  const userToggled = useRef(false);
-  // Suivie en continu : la route du chapitre vient d'être demandée, et l'écran
-  // qu'elle amène — chargé paresseusement, rempli par Dexie — n'existe pas
-  // encore à la première image.
-  const rect = useTutorialAnchor(spotlightSelector(step.spotlight));
-
-  useEffect(() => {
-    if (!narrationActive || userToggled.current) return;
-    const timer = window.setTimeout(() => setExpanded(false), 1_800);
-    return () => window.clearTimeout(timer);
-  }, [narrationActive, step.id]);
-
-  const inset = 6;
-  const focus =
-    rect === null
-      ? null
-      : {
-          top: Math.max(0, rect.top - inset),
-          left: Math.max(0, rect.left - inset),
-          right: Math.min(window.innerWidth, rect.right + inset),
-          bottom: Math.min(window.innerHeight, rect.bottom + inset),
-        };
-  const scrim = 'bg-black/65';
-
-  return (
-    <div
-      className="fixed inset-0 z-[70]"
-      role="dialog"
-      aria-modal="true"
-      aria-label={t('tutorial.tourLabel')}
-    >
-      {focus === null ? (
-        <div className={`absolute inset-0 ${scrim}`} />
-      ) : (
-        <>
-          <div className={`absolute inset-x-0 top-0 ${scrim}`} style={{ height: focus.top }} />
-          <div
-            className={`absolute left-0 ${scrim}`}
-            style={{ top: focus.top, width: focus.left, height: focus.bottom - focus.top }}
-          />
-          <div
-            className={`absolute right-0 ${scrim}`}
-            style={{
-              top: focus.top,
-              width: window.innerWidth - focus.right,
-              height: focus.bottom - focus.top,
-            }}
-          />
-          <div className={`absolute inset-x-0 bottom-0 ${scrim}`} style={{ top: focus.bottom }} />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute rounded-[1.25rem] border border-[var(--accent-ink)]
-              shadow-[0_0_0_1px_color-mix(in_srgb,var(--accent-ink)_35%,transparent)]
-              transition-[top,left,width,height] duration-[var(--dur-2)] ease-[var(--ease-mech)]"
-            style={{
-              top: focus.top,
-              left: focus.left,
-              width: focus.right - focus.left,
-              height: focus.bottom - focus.top,
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute"
-            style={{
-              top: focus.top,
-              left: focus.left,
-              width: focus.right - focus.left,
-              height: focus.bottom - focus.top,
-            }}
-          />
-        </>
-      )}
-
-      <section
-        className="safe-bottom absolute right-4 bottom-[4.5rem] left-4 mx-auto max-w-[34rem]
-          max-h-[calc(100dvh-6rem)] overflow-hidden rounded-2xl border border-[var(--border)]
-          bg-[var(--surface-1)]
-          shadow-[0_18px_48px_rgba(0,0,0,0.45)] transition-[max-height]
-          duration-[var(--dur-2)] ease-[var(--ease-mech)]"
-      >
-        <div className="flex gap-1 px-4 pt-3" aria-hidden="true">
-          {Array.from({ length: count }, (_, position) => (
-            <span
-              key={position}
-              className={`h-[3px] flex-1 rounded-full ${
-                position <= index ? 'bg-[var(--accent-ink)]' : 'bg-[var(--border)]'
-              }`}
-            />
-          ))}
-        </div>
-        <div className="px-4 pt-3 pb-2">
-          <div className="flex items-start gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="label-xs font-semibold text-[var(--accent-ink)]">
-                {t('tutorial.stepCounter', {
-                  index: String(index + 1).padStart(2, '0'),
-                  count: String(count).padStart(2, '0'),
-                })}
-              </p>
-              <h2 className="mt-1 truncate text-base font-semibold text-[var(--text-1)]">
-                {step.id === 'intro'
-                  ? t('tutorial.introTitle')
-                  : t(TUTORIAL_TOPIC_LABEL_KEYS[step.topic])}
-              </h2>
-            </div>
-            <button
-              type="button"
-              aria-expanded={expanded}
-              aria-controls="tutorial-transcript"
-              onClick={() => {
-                userToggled.current = true;
-                setExpanded((current) => !current);
-              }}
-              className="flex min-h-10 shrink-0 items-center gap-1 rounded-xl px-2 text-sm
-                font-semibold text-[var(--text-2)] active:bg-[var(--surface-2)]"
-            >
-              {t(expanded ? 'tutorial.collapseText' : 'tutorial.readText')}
-              <ChevronDownIcon
-                aria-hidden="true"
-                className={`transition-transform duration-[var(--dur-2)] ${
-                  expanded ? 'rotate-180' : ''
-                }`}
-              />
-            </button>
-          </div>
-
-          <p className="mt-2 text-sm leading-snug text-[var(--text-2)]" aria-live="polite">
-            {t(step.summaryKey)}
-          </p>
-
-          {step.offScreen === true && (
-            <p className="mt-2 text-xs leading-snug text-[var(--text-2)]">
-              {t('tutorial.offScreenNotice')}
-            </p>
-          )}
-
-          <div
-            id="tutorial-transcript"
-            aria-hidden={!expanded}
-            className={`grid transition-[grid-template-rows,opacity] duration-[var(--dur-2)]
-              ease-[var(--ease-mech)] ${
-                expanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-              }`}
-          >
-            <div className="overflow-hidden">
-              <div className="max-h-[42dvh] overflow-y-auto">
-                <p
-                  className="mt-3 border-t border-[var(--border)] pt-3 text-sm leading-relaxed
-                  text-[var(--text-2)]"
-                >
-                  {textOf(step.clip)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center border-t border-[var(--border)] px-2 py-1">
-          <button
-            type="button"
-            onClick={onSkip}
-            className="min-h-12 px-3 text-sm font-semibold text-[var(--text-2)]"
-          >
-            {t('tutorial.skip')}
-          </button>
-          <span className="flex-1" />
-          <button
-            type="button"
-            disabled={index === 0}
-            onClick={onPrevious}
-            className="min-h-12 px-3 text-sm font-semibold text-[var(--text-2)] disabled:opacity-30"
-          >
-            {t('tutorial.previous')}
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            className="min-h-12 px-3 text-sm font-semibold text-[var(--accent-ink)]"
-          >
-            {t(index === count - 1 ? 'tutorial.finish' : 'tutorial.next')}
-          </button>
-        </div>
-      </section>
-    </div>
-  );
-}
-
 const AUDIO_OPTIONS: { mode: AnnouncerMode; labelKey: TranslationKey; hintKey: TranslationKey }[] =
   [
     { mode: 'voice', labelKey: 'tutorial.modeVoice', hintKey: 'tutorial.modeVoiceHint' },
@@ -257,7 +52,13 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const [index, setIndex] = useState(0);
   const [kind, setKind] = useState<TourKind>('full');
   const [completion, setCompletion] = useState<TutorialCompletion>('completed');
-  const [narrationActive, setNarrationActive] = useState(false);
+  const current = steps[index];
+  // Mesurée en continu : la route du chapitre vient d’être demandée, et l’écran
+  // qu’elle amène — chargé paresseusement, rempli par Dexie — n’existe pas
+  // encore à la première image.
+  const tourRect = useTutorialAnchor(
+    phase === 'tour' && current !== undefined ? spotlightSelector(current.spotlight) : null,
+  );
   const topic = tutorialTopicForPath(pathname);
   const activeWorkout = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const hasActiveWorkout = activeWorkout === undefined ? null : activeWorkout !== null;
@@ -273,7 +74,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const showVoiceChoice = useCallback((result: TutorialCompletion) => {
     primeAnnouncer();
     stopTutorialNarration();
-    setNarrationActive(false);
     setCompletion(result);
     setPhase('voice-choice');
   }, []);
@@ -285,7 +85,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   }, [kind, showVoiceChoice]);
 
   const next = useCallback(() => {
-    setNarrationActive(false);
     if (index >= steps.length - 1) finishCurrent();
     else setIndex((current) => current + 1);
   }, [finishCurrent, index, steps.length]);
@@ -310,17 +109,8 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     if (phase !== 'tour') return;
     const step = steps[index];
     if (step === undefined) return;
-    let cancelled = false;
-    const ended = () => {
-      if (!cancelled) setNarrationActive(false);
-    };
-    void playTutorialNarration(step.clip, ended).then((started) => {
-      if (!cancelled) setNarrationActive(started);
-    });
-    return () => {
-      cancelled = true;
-      stopTutorialNarration();
-    };
+    void playTutorialNarration(step.clip, () => undefined);
+    return stopTutorialNarration;
   }, [index, phase, steps]);
 
   useEffect(() => {
@@ -331,7 +121,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const startFull = () => {
     primeAnnouncer();
-    setNarrationActive(false);
     setSteps(FULL_TUTORIAL);
     setIndex(0);
     setKind('full');
@@ -341,7 +130,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const startContextual = () => {
     primeAnnouncer();
-    setNarrationActive(false);
     setSteps(contextualTutorial(topic));
     setIndex(0);
     setKind('contextual');
@@ -349,7 +137,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   };
 
   const skipTour = () => {
-    setNarrationActive(false);
     if (kind === 'full') showVoiceChoice('skipped');
     else {
       stopTutorialNarration();
@@ -375,7 +162,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     }),
     [missions.offer, missions.report, missions.start, phase],
   );
-  const current = steps[index];
   // Every mode has a row here, so the fallback never runs — it is what lets
   // the reading below be a plain value rather than an optional one.
   const currentMode = loadAnnouncerMode();
@@ -492,31 +278,41 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         </div>
       </Sheet>
 
-      {/* Jamais ailleurs que sur l'écran de l'étape, et jamais avant que sa
-          commande soit là : une consigne lue devant une page qui ne la contient
-          pas ne s'explique pas, elle s'endure. */}
-      {missions.activeMission !== null && missions.stepReady && phase === 'idle' && (
+      {/* Jamais ailleurs que sur l'écran de l'étape : une consigne lue devant
+          une page qui ne la contient pas ne s'explique pas, elle s'endure. Sur
+          la bonne page mais sans la commande, le panneau attend au lieu de
+          parler — c'est `awaitingTarget`. */}
+      {missions.activeMission !== null && missions.onStepScreen && phase === 'idle' && (
         <TutorialMissionCoach
           mission={missions.activeMission}
           stepIndex={missions.state.activeStepIndex}
           rect={missions.anchorRect}
+          awaitingTarget={!missions.stepReady}
+          onContinue={missions.advanceManually}
           onDismiss={missions.dismiss}
+          onRetry={missions.retryStep}
         />
       )}
 
       {phase === 'tour' && current !== undefined && (
-        <TutorialOverlay
+        <TutorialHud
           key={`${kind}:${String(index)}:${current.id}`}
-          step={current}
+          targetRect={tourRect}
           index={index}
           count={steps.length}
-          narrationActive={narrationActive}
-          onPrevious={() => {
-            setNarrationActive(false);
-            setIndex((position) => Math.max(0, position - 1));
-          }}
-          onNext={next}
-          onSkip={skipTour}
+          label={t('tutorial.tourLabel')}
+          title={
+            current.id === 'intro'
+              ? t('tutorial.introTitle')
+              : t(TUTORIAL_TOPIC_LABEL_KEYS[current.topic])
+          }
+          instruction={t(current.summaryKey)}
+          detail={textOf(current.clip) ?? ''}
+          notice={current.offScreen === true ? t('tutorial.offScreenNotice') : undefined}
+          advanceKind="manual"
+          dismissLabel={t('tutorial.skip')}
+          onContinue={next}
+          onDismiss={skipTour}
         />
       )}
     </TutorialContext.Provider>

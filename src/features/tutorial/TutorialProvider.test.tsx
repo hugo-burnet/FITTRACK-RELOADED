@@ -95,7 +95,7 @@ describe('TutorialProvider', () => {
     expect(await screen.findByRole('dialog', { name: 'Aide' })).toBeVisible();
     await user.click(screen.getByRole('button', { name: /Expliquer cette page · Progression/ }));
 
-    expect(await screen.findByRole('dialog', { name: 'Visite guidée' })).toBeVisible();
+    expect(await screen.findByRole('region', { name: 'Visite guidée' })).toBeVisible();
     expect(screen.getByText('Progression')).toBeVisible();
     expect(screen.getByText(/Suis tes records/)).toBeVisible();
   });
@@ -117,7 +117,12 @@ describe('TutorialProvider', () => {
     expect(await screen.findByText('adresse : /routines')).toBeVisible();
   });
 
-  it('replie automatiquement la transcription pendant la narration', async () => {
+  /*
+   * La transcription s'ouvrait au montage, puis se repliait toute seule 1,8 s
+   * plus tard — une animation qu'on subit au moment où l'on commence à lire.
+   * Elle naît repliée : le résumé suffit, et le texte intégral se demande.
+   */
+  it('n’ouvre pas la transcription à la place de l’utilisateur', async () => {
     saveTutorialState({ ...createTutorialState(), orientation: 'completed' });
     const user = userEvent.setup();
     renderTutorial('/routines');
@@ -125,10 +130,14 @@ describe('TutorialProvider', () => {
     await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
     await user.click(screen.getByRole('button', { name: /Expliquer cette page/ }));
 
-    expect(await screen.findByRole('button', { name: 'Réduire' })).toBeVisible();
-    expect(
-      await screen.findByRole('button', { name: 'Lire le texte' }, { timeout: 3_000 }),
-    ).toHaveAttribute('aria-expanded', 'false');
+    const toggle = await screen.findByRole('button', { name: 'Lire le détail' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(toggle);
+    expect(screen.getByRole('button', { name: 'Masquer le détail' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
   });
 
   it('laisse ouvrir l’aide quand le chrono conservé dans le store est déjà fini', async () => {
@@ -285,9 +294,15 @@ describe('TutorialProvider', () => {
     renderTutorial('/settings', false, <button data-tutorial-id="backup-export">Exporter</button>);
 
     expect(await screen.findByRole('region', { name: 'Mission guidée' })).toBeVisible();
-    expect(screen.getByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
+    expect(await screen.findByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
+
+    // Le détail est replié au montage : il se lit sur demande, et il n'y a
+    // aucune voix pour le porter à sa place.
+    await userEvent.click(screen.getByRole('button', { name: 'Lire le détail' }));
     expect(
-      screen.getByText('Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.'),
+      screen.getByText(
+        'Le fichier contient tes séances, routines, exercices, réglages et progression du tutoriel.',
+      ),
     ).toBeVisible();
   });
 
@@ -309,7 +324,8 @@ describe('TutorialProvider', () => {
     renderTutorial('/settings');
 
     await screen.findByText('adresse : /settings');
-    expect(screen.queryByRole('region', { name: 'Mission guidée' })).not.toBeInTheDocument();
+    expect(await screen.findByText('Recherche de la commande sur cet écran…')).toBeVisible();
+    expect(screen.queryByText('Exporte une sauvegarde complète de FitTrack.')).not.toBeInTheDocument();
     expect(playTutorialNarrationMock).not.toHaveBeenCalled();
 
     const late = document.createElement('button');
@@ -318,7 +334,7 @@ describe('TutorialProvider', () => {
       document.body.append(late);
     });
 
-    expect(await screen.findByRole('region', { name: 'Mission guidée' })).toBeVisible();
+    expect(await screen.findByText('Exporte une sauvegarde complète de FitTrack.')).toBeVisible();
     expect(playTutorialNarrationMock).toHaveBeenCalledWith(
       'mission-backup-export-1',
       expect.any(Function),
@@ -326,7 +342,7 @@ describe('TutorialProvider', () => {
 
     act(() => late.remove());
     await waitFor(() =>
-      expect(screen.queryByRole('region', { name: 'Mission guidée' })).not.toBeInTheDocument(),
+      expect(screen.getByText('Recherche de la commande sur cet écran…')).toBeVisible(),
     );
   });
 
@@ -427,7 +443,7 @@ describe('TutorialProvider', () => {
     await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
     await user.click(screen.getByRole('button', { name: /Expliquer cette page · Blocs/ }));
 
-    expect(await screen.findByRole('dialog', { name: 'Visite guidée' })).toBeVisible();
+    expect(await screen.findByRole('region', { name: 'Visite guidée' })).toBeVisible();
     expect(screen.getByText(/Un bloc étale tes routines/)).toBeVisible();
   });
 

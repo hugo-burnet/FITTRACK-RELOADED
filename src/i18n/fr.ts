@@ -2120,6 +2120,17 @@ const fr = {
     offScreenNotice:
       'Cet écran n’existe que pendant une séance : la visite le décrit sans l’ouvrir.',
 
+    hud: {
+      counter: '{index} / {count}',
+      continue: 'Continuer',
+      readDetail: 'Lire le détail',
+      hideDetail: 'Masquer le détail',
+      quit: 'Quitter le guide',
+      retry: 'Réessayer',
+      loadingTarget: 'Recherche de la commande sur cet écran…',
+      stuck: 'La commande n’est pas apparue sur cet écran.',
+    },
+
     campaign: {
       title: 'Ma première séance guidée',
       body: 'FitTrack ouvre chaque écran et attend ton geste. Rien n’est créé, rempli ni validé à ta place.',

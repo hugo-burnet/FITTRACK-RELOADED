@@ -1,6 +1,11 @@
 import type { TranslationKey } from '@/i18n/fr';
 import { pathForScreen, type TutorialRouteContext, type TutorialScreen } from './tutorialScreens';
-import type { TutorialEvent, TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
+import type {
+  TutorialAdvance,
+  TutorialEvent,
+  TutorialMissionId,
+  TutorialStateV3,
+} from './tutorialTypes';
 
 export interface TutorialMissionStep {
   id: string;
@@ -21,7 +26,7 @@ export interface TutorialMissionStep {
   instructionKey: TranslationKey;
   detailKey: TranslationKey;
   clipId?: string;
-  advanceWhen: (event: TutorialEvent) => boolean;
+  advance: TutorialAdvance;
 }
 
 export interface TutorialMission {
@@ -37,6 +42,12 @@ export interface TutorialMission {
 export interface TutorialMissionFacts {
   hasActiveWorkout: boolean | null;
 }
+
+/** Une étape que seul un geste métier fait avancer — le cas courant. */
+const onEvent = (accepts: (event: TutorialEvent) => boolean): TutorialAdvance => ({
+  kind: 'event',
+  accepts,
+});
 
 const eventIs =
   <T extends TutorialEvent['type']>(type: T) =>
@@ -77,7 +88,7 @@ const CAMPAIGN_PREPARE: TutorialMission = {
       instructionKey: 'tutorial.mission.campaign.instruction',
       clipId: 'mission-campaign-create-1',
       detailKey: 'tutorial.mission.campaign.detail',
-      advanceWhen: eventIs('routine-created'),
+      advance: onEvent(eventIs('routine-created')),
     },
   ],
   nextMissionId: 'TUT-ROU-02',
@@ -97,7 +108,7 @@ const RECOVER: TutorialMission = {
       instructionKey: 'tutorial.mission.recovery.instruction',
       clipId: 'mission-recovery-1',
       detailKey: 'tutorial.mission.recovery.detail',
-      advanceWhen: eventIs('stale-workout-choice'),
+      advance: onEvent(eventIs('stale-workout-choice')),
     },
   ],
   nextMissionId: null,
@@ -117,7 +128,7 @@ const ROUTINE_CREATE: TutorialMission = {
       instructionKey: 'tutorial.mission.routineCreate.instruction',
       clipId: 'mission-routine-create-1',
       detailKey: 'tutorial.mission.routineCreate.detail',
-      advanceWhen: eventIs('routine-created'),
+      advance: onEvent(eventIs('routine-created')),
     },
   ],
   nextMissionId: 'TUT-ROU-02',
@@ -137,7 +148,7 @@ const ROUTINE_EXERCISE: TutorialMission = {
       instructionKey: 'tutorial.mission.routineExercise.instruction',
       clipId: 'mission-routine-exercise-1',
       detailKey: 'tutorial.mission.routineExercise.detail',
-      advanceWhen: (event) => event.type === 'routine-exercise-added' && event.count > 0,
+      advance: onEvent((event) => event.type === 'routine-exercise-added' && event.count > 0),
     },
     {
       id: 'add-set',
@@ -147,7 +158,7 @@ const ROUTINE_EXERCISE: TutorialMission = {
       instructionKey: 'tutorial.mission.routineSet.instruction',
       clipId: 'mission-routine-set-1',
       detailKey: 'tutorial.mission.routineSet.detail',
-      advanceWhen: eventIs('routine-set-added'),
+      advance: onEvent(eventIs('routine-set-added')),
     },
   ],
   nextMissionId: 'TUT-ROU-03',
@@ -167,7 +178,7 @@ const ROUTINE_TARGETS: TutorialMission = {
       instructionKey: 'tutorial.mission.routineTargets.instruction',
       clipId: 'mission-routine-targets-1',
       detailKey: 'tutorial.mission.routineTargets.detail',
-      advanceWhen: eventIs('routine-target-updated'),
+      advance: onEvent(eventIs('routine-target-updated')),
     },
     {
       id: 'set-rest',
@@ -177,7 +188,7 @@ const ROUTINE_TARGETS: TutorialMission = {
       instructionKey: 'tutorial.mission.routineRest.instruction',
       clipId: 'mission-routine-rest-1',
       detailKey: 'tutorial.mission.routineRest.detail',
-      advanceWhen: positiveRest,
+      advance: onEvent(positiveRest),
     },
   ],
   nextMissionId: 'TUT-ROU-04',
@@ -197,7 +208,7 @@ const ROUTINE_START: TutorialMission = {
       instructionKey: 'tutorial.mission.routineStart.instruction',
       clipId: 'mission-routine-start-1',
       detailKey: 'tutorial.mission.routineStart.detail',
-      advanceWhen: eventIs('workout-started'),
+      advance: onEvent(eventIs('workout-started')),
     },
   ],
   nextMissionId: 'TUT-WRK-01',
@@ -217,7 +228,7 @@ const WORKOUT_INPUT: TutorialMission = {
       instructionKey: 'tutorial.mission.setInput.instruction',
       clipId: 'mission-set-input-1',
       detailKey: 'tutorial.mission.setInput.detail',
-      advanceWhen: recordableSet,
+      advance: onEvent(recordableSet),
     },
   ],
   nextMissionId: 'TUT-WRK-02',
@@ -237,7 +248,7 @@ const WORKOUT_VALIDATE: TutorialMission = {
       instructionKey: 'tutorial.mission.setValidate.instruction',
       clipId: 'mission-set-validate-1',
       detailKey: 'tutorial.mission.setValidate.detail',
-      advanceWhen: eventIs('workout-set-completed'),
+      advance: onEvent(eventIs('workout-set-completed')),
     },
   ],
   nextMissionId: 'TUT-WRK-03',
@@ -257,7 +268,7 @@ const WORKOUT_REST: TutorialMission = {
       instructionKey: 'tutorial.mission.rest.instruction',
       clipId: 'mission-rest-1',
       detailKey: 'tutorial.mission.rest.detail',
-      advanceWhen: eventIs('rest-finished'),
+      advance: onEvent(eventIs('rest-finished')),
     },
   ],
   nextMissionId: 'TUT-WRK-04',
@@ -277,7 +288,7 @@ const WORKOUT_FINISH: TutorialMission = {
       instructionKey: 'tutorial.mission.workoutFinish.instruction',
       clipId: 'mission-workout-finish-1',
       detailKey: 'tutorial.mission.workoutFinish.detail',
-      advanceWhen: eventIs('workout-finish-opened'),
+      advance: onEvent(eventIs('workout-finish-opened')),
     },
     {
       id: 'save',
@@ -287,7 +298,7 @@ const WORKOUT_FINISH: TutorialMission = {
       instructionKey: 'tutorial.mission.workoutSave.instruction',
       clipId: 'mission-workout-save-1',
       detailKey: 'tutorial.mission.workoutSave.detail',
-      advanceWhen: eventIs('workout-saved'),
+      advance: onEvent(eventIs('workout-saved')),
     },
   ],
   nextMissionId: 'TUT-DAT-01',
@@ -307,7 +318,7 @@ const BACKUP_EXPORT: TutorialMission = {
       instructionKey: 'tutorial.mission.backupExport.instruction',
       clipId: 'mission-backup-export-1',
       detailKey: 'tutorial.mission.backupExport.detail',
-      advanceWhen: eventIs('backup-exported'),
+      advance: onEvent(eventIs('backup-exported')),
     },
   ],
   nextMissionId: 'TUT-DAT-02',
@@ -327,7 +338,7 @@ const BACKUP_RESTORE: TutorialMission = {
       instructionKey: 'tutorial.mission.backupRestore.instruction',
       clipId: 'mission-backup-restore-1',
       detailKey: 'tutorial.mission.backupRestore.detail',
-      advanceWhen: eventIs('restore-confirmation-opened'),
+      advance: onEvent(eventIs('restore-confirmation-opened')),
     },
   ],
   nextMissionId: null,
