@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { announce, primeAnnouncer } from '@/audio/announce';
+import { guidancePolicy } from '@/audio/announcer';
+import { loadAnnouncerMode } from '@/stores/announcer';
 import {
   workoutExerciseIdentityOf,
   type WorkoutExerciseDetail,
@@ -25,16 +27,7 @@ import {
   prepareNextPace,
   type PaceTarget,
 } from './paceTarget';
-import {
-  IDLE_SIDE_CYCLE,
-  SIDE_CHANGE_LEAD_SECONDS,
-  openSideCycle,
-  sideCycleWithoutSet,
-  sideStageAt,
-  turnSide,
-  type SideCycle,
-  type SideStage,
-} from './sideCycle';
+import { sideStageFor, type SideStage } from './sideProgress';
 
 /**
  * The whole preparation of a cadence, kept in one place.
@@ -73,17 +66,21 @@ export interface WorkoutPace {
   stop: (setId?: string) => void;
   /** What the tempo sheet shows for a line, `null` when no line is open. */
   viewFor: (line: Line | null, name: string) => PaceSheetView | null;
-  /** Où en est le cycle deux côtés de cette série, `null` hors cycle. */
+  /**
+   * Où en est le cycle deux côtés de cette série, `null` hors cycle.
+   *
+   * Lu dans la série elle-même : l'échéance du second côté est en base depuis
+   * qu'elle doit survivre à un écran éteint. Ce module ne détient donc plus
+   * l'état, il le déduit.
+   */
   sideStageOf: (setId: string) => SideStage | null;
   /**
-   * Un côté vient de finir.
-   *
-   * `'changed'` veut dire que la série continue : **rien de durable ne doit en
-   * découler** — ni validation, ni repos, ni RPE, ni record. `'completed'` rend
-   * la main à l'appelant, et `'none'` dit que cette série n'est pas dans un
-   * cycle.
+   * Relance l'horloge sur **la même série**, à l'instant que le repository a
+   * écrit. Ni validation, ni repos, ni RPE : la série n'est pas finie, seul un
+   * côté l'est. C'est l'appelant qui a écrit l'échéance ; ici on ne fait que
+   * reprendre le tempo dessus.
    */
-  turnSideOf: (line: Line, setId: string) => 'changed' | 'completed' | 'none';
+  startSecondSide: (line: Line, setId: string, startsAt: number) => void;
 }
 
 export function useWorkoutPace(
@@ -92,23 +89,6 @@ export function useWorkoutPace(
 ): WorkoutPace {
   /** The one cadence being prepared — waiting for reps, or armed by them. */
   const [plan, setPlan] = useState<PacePlan>(IDLE_PACE_PLAN);
-  /**
-   * Le cycle deux côtés de la série unilatérale en cours, s'il y en a une.
-   *
-   * **Une référence pour décider, un état pour redessiner.** Ouvrir le cycle et
-   * en tourner un côté peuvent tomber dans le même tour de boucle — le relais
-   * d'un repos vers un maintien unilatéral, par exemple. Une décision qui lit
-   * l'état de la fermeture de rendu y verrait encore le cycle d'avant et
-   * repartirait du premier côté, indéfiniment. Chaque écriture touche les deux :
-   * la référence est toujours au moins aussi fraîche que l'état, et un rendu
-   * suit toujours.
-   */
-  const cycleRef = useRef<SideCycle>(IDLE_SIDE_CYCLE);
-  const [, setSideCycle] = useState<SideCycle>(IDLE_SIDE_CYCLE);
-  const writeCycle = (next: SideCycle): void => {
-    cycleRef.current = next;
-    setSideCycle(next);
-  };
   const armedTypedSets = useRef(new Set<string>());
   const pacer = useRepPacer();
   const startPace = useRepPacer((state) => state.start);
@@ -129,8 +109,30 @@ export function useWorkoutPace(
   /** Lu dans l'instantané avant la bibliothèque, comme le reste de l'identité. */
   const unilateralOf = (line: Line): boolean => workoutExerciseIdentityOf(line).isUnilateral === 1;
 
-  const sideStageOf = (setId: string): SideStage | null =>
-    sideStageAt(cycleRef.current, setId, Date.now());
+  /**
+   * La série est cherchée dans les lignes plutôt que passée en paramètre : tous
+   * les appelants tenaient déjà un `setId` et rien d'autre, et changer leur
+   * signature aurait fait remonter la question du côté dans des composants qui
+   * n'ont pas à la connaître.
+   */
+  const sideStageOf = (setId: string): SideStage | null => {
+    for (const line of lines) {
+      const set = line.sets.find((candidate) => candidate.id === setId);
+      if (set !== undefined) return sideStageFor(set, unilateralOf(line));
+    }
+    return null;
+  };
+
+  /**
+   * Le métronome de répétitions a-t-il le droit d'exister ?
+   *
+   * Refusé ici et pas seulement dans le magasin : sans cette garde, la
+   * préparation partait quand même — « dans dix secondes », puis le 3-2-1 —
+   * pour armer une horloge que le magasin rejetterait ensuite en silence. Le
+   * maintien n'est pas concerné : ce n'est pas une cadence, c'est la mesure de
+   * la série.
+   */
+  const repPacingEnabled = (): boolean => guidancePolicy(loadAnnouncerMode()).repPacing;
 
   /**
    * Une seule horloge à la fois, et c'est ici que ça se décide.
@@ -140,19 +142,7 @@ export function useWorkoutPace(
    * règle que « un seul repos à la fois », et elle est épinglée par un test
    * plutôt que laissée à la discipline des appelants.
    */
-  const startClock = (
-    rowId: string,
-    target: PaceTarget,
-    leadSeconds: number,
-    unilateral: boolean,
-  ): void => {
-    // Le cycle s'ouvre au démarrage d'une horloge — jamais à la reprise du
-    // second côté, qui court déjà sur ce `setId` et le ferait repartir du
-    // premier, indéfiniment.
-    if (sideStageAt(cycleRef.current, target.setId, Date.now()) === null) {
-      writeCycle(openSideCycle(target.setId, unilateral));
-    }
-
+  const startClock = (rowId: string, target: PaceTarget, leadSeconds: number): void => {
     if (target.kind === 'hold') {
       stopPace();
       startHold(rowId, target.setId, leadSeconds);
@@ -205,7 +195,6 @@ export function useWorkoutPace(
         // Read now, not when the decision was taken: the settle delay must not
         // push the beat back.
         leadSecondsAt(decision.launchAt, Date.now()),
-        line !== undefined && unilateralOf(line),
       );
       setPlan((current) => planWithoutSet(current, decision.setId));
     }, decision.delayMs);
@@ -219,7 +208,9 @@ export function useWorkoutPace(
   }, [lines, plan, startPace, defaultRepSeconds]);
 
   const startFor = (line: Line, afterSetId?: string): boolean => {
-    const preparation = prepareNextPace(line.sets, cadenceOf(line), afterSetId);
+    const cadence = cadenceOf(line);
+    if (cadence.kind !== 'hold' && !repPacingEnabled()) return false;
+    const preparation = prepareNextPace(line.sets, cadence, afterSetId);
     if (preparation.kind === 'done') return false;
     primeAnnouncer();
     // Starting the next set is the clearest possible signal that rest is over.
@@ -257,37 +248,29 @@ export function useWorkoutPace(
      */
     const lead = target.kind === 'hold' ? PACE_LEAD_SECONDS : 0;
     if (lead > 0) announce('pace-start-10');
-    startClock(line.row.id, target, lead, unilateralOf(line));
+    startClock(line.row.id, target, lead);
     return true;
   };
 
   /**
-   * Un côté vient de finir.
+   * Reprend le tempo sur le second côté, à l'échéance déjà écrite en base.
    *
-   * Sur le premier, la même horloge repart **sur le même `setId`** après dix
-   * secondes : c'est la même série, et le contrat l'exige. Sur le second, le
-   * cycle se referme et l'appelant reprend la main — c'est lui qui valide,
-   * démarre le repos et ouvre le RPE, ce qu'aucun premier côté ne doit faire.
+   * Les dix secondes ne sont pas comptées deux fois : `startsAt` **est** le
+   * `startedAt` de l'horloge. Le décalage est recalculé sur l'heure courante
+   * plutôt que sur celle de l'écriture, pour qu'un aller-retour en base ne
+   * pousse pas le premier battement.
    */
-  const turnSideOf = (line: Line, setId: string): 'changed' | 'completed' | 'none' => {
-    const turn = turnSide(cycleRef.current, setId, Date.now());
-    if (turn.kind === 'ignore') return 'none';
-    if (turn.kind === 'complete') {
-      writeCycle(sideCycleWithoutSet(cycleRef.current, setId));
-      return 'completed';
-    }
-
-    writeCycle(turn.cycle);
-    announce('side-change');
-    const preparation = prepareNextPace(line.sets, cadenceOf(line));
+  const startSecondSide = (line: Line, setId: string, startsAt: number): void => {
+    const cadence = cadenceOf(line);
+    if (cadence.kind !== 'hold' && !repPacingEnabled()) return;
+    const preparation = prepareNextPace(line.sets, cadence);
     // La série n'est pas validée : elle est toujours la prochaine à faire.
-    if (preparation.kind === 'ready' && preparation.target.setId === setId) {
-      startClock(line.row.id, preparation.target, SIDE_CHANGE_LEAD_SECONDS, unilateralOf(line));
-    }
-    return 'changed';
+    if (preparation.kind !== 'ready' || preparation.target.setId !== setId) return;
+    startClock(line.row.id, preparation.target, Math.max(0, (startsAt - Date.now()) / 1_000));
   };
 
   const startFollowing = (completedLine: Line): boolean => {
+    if (cadenceOf(completedLine).kind !== 'hold' && !repPacingEnabled()) return false;
     const following = prepareFollowingExercisePace(
       lines.map((line) => ({
         rowId: line.row.id,
@@ -315,13 +298,7 @@ export function useWorkoutPace(
     // A new exercise needs its own preparation window. The rest has just
     // finished; this is a fresh "dans dix secondes", followed by 3–2–1.
     announce('pace-start-10');
-    const followingLine = lines.find(({ row }) => row.id === following.rowId);
-    startClock(
-      following.rowId,
-      target,
-      PACE_LEAD_SECONDS,
-      followingLine !== undefined && unilateralOf(followingLine),
-    );
+    startClock(following.rowId, target, PACE_LEAD_SECONDS);
     return true;
   };
 
@@ -330,6 +307,7 @@ export function useWorkoutPace(
     // Une ligne chronométrée n'a pas de colonne « répétitions » : rien ne peut y
     // être tapé, et rien ne doit y armer une cadence qui n'a rien à battre.
     if (cadenceOf(line).kind === 'hold') return;
+    if (!repPacingEnabled()) return;
     const nextWorkingSet = line.sets.find(
       (set) => set.deletedAt === 0 && set.setType !== 'warmup' && set.isCompleted === 0,
     );
@@ -377,15 +355,10 @@ export function useWorkoutPace(
     });
   };
 
-  /**
-   * Arrête l'horloge de ce set, quelle que soit celle des deux qui le suivait —
-   * et referme le cycle deux côtés avec elle : rien ne doit rester armé derrière
-   * un arrêt.
-   */
+  /** Arrête l'horloge de ce set, quelle que soit celle des deux qui le suivait. */
   const stop = (setId?: string): void => {
     stopPace(setId);
     stopHold(setId);
-    writeCycle(sideCycleWithoutSet(cycleRef.current, setId));
   };
 
   return {
@@ -396,6 +369,6 @@ export function useWorkoutPace(
     stop,
     viewFor,
     sideStageOf,
-    turnSideOf,
+    startSecondSide,
   };
 }

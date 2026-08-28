@@ -4,7 +4,7 @@ import type { RepPacer } from '@/stores/repPacer';
 import { formatNumber } from '@/ui/numberField';
 import { armRepPacer } from './repBeats';
 import { fireCountdown } from './restCountdown';
-import type { SideStage } from './sideCycle';
+import type { SideStage } from './sideProgress';
 
 /**
  * The metronome of the set under way: it arms the beats, says where you are

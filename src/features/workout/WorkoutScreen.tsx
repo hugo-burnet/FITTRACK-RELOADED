@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
   applyWorkoutDeload,
+  completeFirstSide,
   completeSet,
   deleteSet,
   duplicateLastSet,
@@ -45,6 +46,7 @@ import { DELOAD_PERCENT, isDeloadEligibleMeasurement } from '@/lib/deload';
 import { platesConfigFor } from '@/lib/plateLoading';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
 import { isRestTriggering, restPlans } from '@/lib/rest';
+import { sideStageFor } from './sideProgress';
 import { supersetPlaces } from '@/lib/routineOrder';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { loadEffortPrompt } from '@/stores/effortPrompt';
@@ -178,6 +180,33 @@ export function WorkoutScreen() {
   const stopHold = useHoldTimer((state) => state.stop);
   const holdSetId = hold.setId;
   const pace = useWorkoutPace(detail?.exercises ?? EMPTY_LINES, defaultRepSeconds);
+
+  /**
+   * Fin du premier côté — le seul chemin, qu'on y arrive par la coche ou par la
+   * cadence qui s'achève d'elle-même.
+   *
+   * **Rien de durable n'en découle** : ni validation, ni repos, ni RPE, ni
+   * record. La série n'est pas finie, elle est à moitié faite, et l'écrire
+   * autrement enregistrerait une demi-série comme une série entière.
+   *
+   * L'annonce et la reprise du tempo n'ont lieu que sur `started` : un second
+   * appui pendant la transition répond `existing`, et réannoncer « changement
+   * de côté » à ce moment-là dirait deux fois une chose qui n'est arrivée
+   * qu'une.
+   */
+  const finishFirstSide = (line: WorkoutExerciseDetail, setId: string): void => {
+    void completeFirstSide(setId)
+      .then((result) => {
+        if (result.kind !== 'started') return;
+        announce('side-change');
+        pace.startSecondSide(line, setId, result.startsAt);
+      })
+      .catch(() => undefined);
+  };
+
+  /** Le stade de cette série, ou `null` si elle n'est pas unilatérale. */
+  const stageOf = (line: WorkoutExerciseDetail, set: WorkoutSet) =>
+    sideStageFor(set, workoutExerciseIdentityOf(line).isUnilateral === 1);
 
   // Stop rests whose set was deleted with its row or exercise.
   useEffect(() => {
@@ -412,7 +441,16 @@ export function WorkoutScreen() {
                             // dix secondes, sur la même série.
                             onFinished: () => {
                               const setId = pacer.setId;
-                              if (setId !== null && pace.turnSideOf(line, setId) === 'changed') {
+                              const set =
+                                setId === null
+                                  ? undefined
+                                  : line.sets.find((candidate) => candidate.id === setId);
+                              if (
+                                setId !== null &&
+                                set !== undefined &&
+                                stageOf(line, set) === 'first'
+                              ) {
+                                finishFirstSide(line, setId);
                                 return;
                               }
                               pace.stop();
@@ -528,12 +566,21 @@ export function WorkoutScreen() {
                       pace.armFromTypedReps(line, setId, values.reps);
                     }}
                     onComplete={(setId, values, set) => {
-                      // Sur une ligne unilatérale tenue, la première coche finit
-                      // le côté et non la série : un maintien ne sait pas quand
-                      // il s'arrête, donc ce geste est le seul signal disponible.
-                      // Rien de durable n'en découle — ni validation, ni repos,
-                      // ni RPE, ni record.
-                      if (hold.setId === setId && pace.turnSideOf(line, setId) === 'changed') {
+                      /*
+                       * Sur une ligne unilatérale, la première coche finit le
+                       * côté et non la série. Le stade est lu dans la série
+                       * elle-même : il survit ainsi à un écran éteint, à un
+                       * appel et à un kill — un cycle en mémoire renvoyait au
+                       * premier côté quelqu'un qui venait de finir les deux.
+                       *
+                       * Pendant la transition, le bouton est déjà désactivé ;
+                       * la garde reste parce qu'une coche peut arriver par un
+                       * autre chemin que le doigt.
+                       */
+                      const stage = stageOf(line, set);
+                      if (stage === 'transition') return;
+                      if (stage === 'first') {
+                        finishFirstSide(line, setId);
                         return;
                       }
                       // Le chrono est ce qui sait combien de temps a été tenu, et

@@ -355,6 +355,11 @@ const fr = {
     paceHelp:
       'Le tempo est celui de cet exercice. « Par défaut partout » le donne à ceux qui n’ont pas encore le leur.',
     complete: 'Valider la série {number}',
+    completeFirstSide: 'Premier côté terminé — série {number}',
+    completeSecondSide: 'Second côté — valider la série {number}',
+    sideFirst: 'Premier côté en cours',
+    sideTransition: 'Changement de côté · {seconds}',
+    sideSecond: 'Second côté en cours',
     uncomplete: 'Annuler la série {number}',
     previous: 'Précédent',
     noPrevious: '—',

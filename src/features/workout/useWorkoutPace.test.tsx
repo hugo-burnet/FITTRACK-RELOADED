@@ -4,6 +4,7 @@ import type { Exercise, WorkoutExercise, WorkoutSet } from '@/data/types';
 import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
+import { applyAnnouncerMode } from '@/stores/announcer';
 import { useWorkoutPace, type WorkoutPace } from './useWorkoutPace';
 
 const announce = vi.hoisted(() => vi.fn(() => true));
@@ -193,22 +194,35 @@ describe('useWorkoutPace', () => {
     expect(announce).toHaveBeenCalledWith('pace-start-10');
   });
 
-  it('ouvre le cycle deux côtés sur une ligne unilatérale, et pas ailleurs', () => {
-    const uni = mount('weight_reps', [workoutSet('s1', 8)], true);
-    act(() => {
-      uni.pace().startFor(uni.line);
-    });
-    expect(uni.pace().sideStageOf('s1')).toBe('first');
+  /*
+   * Le stade ne s'ouvre plus au démarrage d'une horloge : il se **lit dans la
+   * série**, où le repository a écrit l'échéance du second côté. C'est ce qui
+   * lui permet de survivre à un écran éteint, à un appel et à un kill — un
+   * cycle en mémoire repartait de zéro et renvoyait au premier côté quelqu'un
+   * qui venait de finir les deux.
+   */
+  it('lit le stade dans la série, pas dans une horloge', () => {
+    const pending = mount('weight_reps', [workoutSet('s1', 8)], true);
+    expect(pending.pace().sideStageOf('s1')).toBe('first');
 
-    const bi = mount('weight_reps');
-    act(() => {
-      bi.pace().startFor(bi.line);
-    });
+    const turning = mount(
+      'weight_reps',
+      [{ ...workoutSet('s1', 8), unilateralSecondSideStartsAt: now + 10_000 }],
+      true,
+    );
+    expect(turning.pace().sideStageOf('s1')).toBe('transition');
+
+    vi.setSystemTime(now + 10_000);
+    expect(turning.pace().sideStageOf('s1')).toBe('second');
+  });
+
+  it('ne connaît aucun côté sur une ligne bilatérale', () => {
+    const bi = mount('weight_reps', [workoutSet('s1', 8)]);
     expect(bi.pace().sideStageOf('s1')).toBeNull();
   });
 
   // Le contrat : même série, même identifiant, dix secondes réelles.
-  it('reprend le second côté sur le même setId, dix secondes plus tard', () => {
+  it('reprend le second côté sur le même setId, à l’échéance écrite', () => {
     const { line, pace } = mount('weight_reps', [workoutSet('s1', 8)], true);
     act(() => {
       pace().startFor(line);
@@ -216,45 +230,77 @@ describe('useWorkoutPace', () => {
     expect(useRepPacer.getState().startedAt).toBe(now);
 
     act(() => {
-      expect(pace().turnSideOf(line, 's1')).toBe('changed');
+      pace().startSecondSide(line, 's1', now + 10_000);
     });
 
-    expect(announce).toHaveBeenCalledWith('side-change');
     expect(useRepPacer.getState().setId).toBe('s1');
     expect(useRepPacer.getState().startedAt).toBe(now + 10_000);
-    expect(pace().sideStageOf('s1')).toBe('transition');
   });
 
-  it('termine la série au bout du second côté', () => {
-    const { line, pace } = mount('time_only', [workoutSet('s1')], true);
-    act(() => {
-      pace().startFor(line);
-      pace().turnSideOf(line, 's1');
+  /*
+   * « Voix uniquement » n'a pas de cadence du tout, pas une cadence muette. La
+   * refuser ici et pas seulement dans le magasin évite d'annoncer « dans dix
+   * secondes » avant d'armer une horloge qui serait ensuite rejetée en silence.
+   *
+   * Le maintien n'est pas concerné : ce n'est pas un tempo, c'est la mesure de
+   * la série, et la retirer effacerait la valeur écrite.
+   */
+  describe('Voix uniquement', () => {
+    beforeEach(() => applyAnnouncerMode('voice-only'));
+    afterEach(() => applyAnnouncerMode('voice'));
+
+    it('ne lance jamais le métronome de répétitions', () => {
+      const { line, pace } = mount('weight_reps', [workoutSet('s1', 8)]);
+
+      act(() => {
+        expect(pace().startFor(line)).toBe(false);
+      });
+
+      expect(useRepPacer.getState().setId).toBeNull();
+      expect(announce).not.toHaveBeenCalledWith('pace-start-10');
     });
 
-    // Les dix secondes passées, le second côté a commencé.
-    vi.setSystemTime(now + 30_000);
-    act(() => {
-      expect(pace().turnSideOf(line, 's1')).toBe('completed');
+    it('n’arme rien non plus depuis la saisie des répétitions', () => {
+      const { line, pace } = mount('weight_reps', [workoutSet('s1')]);
+
+      act(() => {
+        pace().armFromTypedReps(line, 's1', 8);
+      });
+
+      expect(announce).not.toHaveBeenCalledWith('pace-start-10');
     });
-    expect(pace().sideStageOf('s1')).toBeNull();
+
+    it('garde le chrono de maintien', () => {
+      const { line, pace } = mount('time_only', [workoutSet('h1')]);
+
+      act(() => {
+        expect(pace().startFor(line)).toBe(true);
+      });
+
+      expect(useHoldTimer.getState().setId).toBe('h1');
+    });
   });
 
-  it('ne tourne rien sur une ligne bilatérale', () => {
-    const { line, pace } = mount('weight_reps');
-    act(() => {
-      pace().startFor(line);
-      expect(pace().turnSideOf(line, 's1')).toBe('none');
-    });
-  });
+  /*
+   * Arrêter l'horloge n'oublie plus le côté déjà fait, et c'est le changement.
+   *
+   * Le cycle en mémoire se refermait avec le métronome : couper le son au
+   * milieu d'une série unilatérale, ou simplement laisser l'écran s'éteindre,
+   * renvoyait au premier côté. La progression vit maintenant dans la série, et
+   * seules la validation, la décoche et `resetUnilateralProgress` l'effacent.
+   */
+  it('n’oublie pas le côté déjà fait quand l’horloge s’arrête', () => {
+    const turning = mount(
+      'weight_reps',
+      [{ ...workoutSet('s1', 8), unilateralSecondSideStartsAt: now + 10_000 }],
+      true,
+    );
 
-  it('referme le cycle avec l’horloge', () => {
-    const { line, pace } = mount('weight_reps', [workoutSet('s1', 8)], true);
     act(() => {
-      pace().startFor(line);
-      pace().stop();
+      turning.pace().stop();
     });
-    expect(pace().sideStageOf('s1')).toBeNull();
+
+    expect(turning.pace().sideStageOf('s1')).toBe('transition');
   });
 
   it('dit à la feuille ce qu’elle pilote', () => {

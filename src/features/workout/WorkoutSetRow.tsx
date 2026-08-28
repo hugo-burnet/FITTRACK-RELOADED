@@ -1,5 +1,6 @@
-import type { ComponentType, SVGProps } from 'react';
+import { useEffect, useState, type ComponentType, type SVGProps } from 'react';
 import type { SetValues } from '@/data/repositories/workouts';
+import type { SideStage } from './sideProgress';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeLabel, unitLabel } from '@/i18n/labels';
@@ -55,6 +56,14 @@ type Props = {
    * qui l'écrit. Il n'écrit qu'elle : les autres colonnes gardent leur garde.
    */
   holding?: boolean;
+  /**
+   * Où en est le cycle deux côtés, `null` hors d'un exercice unilatéral.
+   *
+   * La coche change alors de sens : elle ferme un côté avant de fermer la
+   * série. Le libellé le dit, parce qu'une coche qui ne coche pas est un
+   * bouton cassé tant qu'on ne sait pas ce qu'elle fait.
+   */
+  sideStage?: SideStage | null;
   onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
   onComplete: (values: Partial<SetValues>) => void;
   onUncomplete: () => void;
@@ -69,6 +78,7 @@ export function WorkoutSetRow({
   previous,
   tutorialRank,
   holding = false,
+  sideStage = null,
   onWrite,
   onComplete,
   onUncomplete,
@@ -76,6 +86,36 @@ export function WorkoutSetRow({
 }: Props) {
   const done = set.isCompleted === 1;
   const Mark = TYPE_MARK[set.setType];
+
+  /*
+   * Le compte à rebours du changement de côté, redessiné quatre fois par
+   * seconde et **seulement** pendant la transition : le stade reste dérivé de
+   * l'échéance persistée, l'intervalle ne sert qu'à rafraîchir le nombre. Un
+   * minuteur permanent redessinerait toute la grille pendant une séance
+   * entière pour un libellé qui ne bouge pas.
+   */
+  const [now, setNow] = useState(() => Date.now());
+  const deadline = set.unilateralSecondSideStartsAt;
+  useEffect(() => {
+    if (deadline === undefined) return;
+    const id = setInterval(() => {
+      const at = Date.now();
+      setNow(at);
+      if (at >= deadline) clearInterval(id);
+    }, 250);
+    return () => clearInterval(id);
+  }, [deadline]);
+
+  const turning = sideStage === 'transition';
+  const remainingSides =
+    deadline === undefined ? 0 : Math.max(0, Math.ceil((deadline - now) / 1_000));
+
+  const completeLabel =
+    sideStage === 'first'
+      ? t('workout.completeFirstSide', { number })
+      : sideStage === 'second'
+        ? t('workout.completeSecondSide', { number })
+        : t('workout.complete', { number });
 
   // Never borrow another rank: proposed values may be recorded with one tap.
   const previousValue = (field: TargetField): number | undefined => previous?.[FIELD_KEY[field]];
@@ -209,8 +249,16 @@ export function WorkoutSetRow({
           tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-complete`
         }
         aria-pressed={done}
-        disabled={!done && !recordable}
-        aria-label={done ? t('workout.uncomplete', { number }) : t('workout.complete', { number })}
+        // Pendant la transition, la coche n'a rien à fermer : le premier côté est
+        // fini et le second n'a pas commencé.
+        disabled={(!done && !recordable) || turning}
+        aria-label={
+          done
+            ? t('workout.uncomplete', { number })
+            : turning
+              ? t('workout.sideTransition', { seconds: remainingSides })
+              : completeLabel
+        }
         onClick={() =>
           done ? onUncomplete() : onComplete(collect((f) => valueOf(f) ?? ghostNumberOf(f)))
         }

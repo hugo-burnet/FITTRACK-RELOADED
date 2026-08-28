@@ -29,7 +29,7 @@ import { EffortStrip } from './EffortStrip';
 import { recommendationAsSignal } from './coachCopy';
 import { RecordNote } from './RecordNote';
 import { HoldRail } from './HoldRail';
-import type { SideStage } from './sideCycle';
+import type { SideStage } from './sideProgress';
 import { RepPaceRail } from './RepPaceRail';
 import { RestRail, RestStatus } from './RestRail';
 import { WorkoutSetRow } from './WorkoutSetRow';
@@ -469,6 +469,7 @@ export function WorkoutExerciseCard({
                         tutorial && index < 2 ? (index === 0 ? 'first' : 'second') : undefined
                       }
                       holding={hold?.setId === set.id}
+                      sideStage={sideStageOf(set.id)}
                       onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
                       onComplete={(values) => onComplete(set.id, values, set)}
                       onUncomplete={() => onUncomplete(set.id)}

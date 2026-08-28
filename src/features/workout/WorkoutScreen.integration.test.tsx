@@ -1143,9 +1143,13 @@ describe('WorkoutScreen — exercice unilatéral', () => {
     act(() => {
       useHoldTimer.setState({ startedAt: Date.now() - 42_000 });
     });
-    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+    // La coche ferme le côté, pas la série, et son libellé le dit.
+    await user.click(screen.getByRole('button', { name: 'Premier côté terminé — série 1' }));
 
     // Rien de durable : ni validation, ni repos, ni RPE.
+    await waitFor(async () => {
+      expect((await firstSet(workoutId)).unilateralSecondSideStartsAt).toBeDefined();
+    });
     expect((await firstSet(workoutId)).isCompleted).toBe(0);
     expect((await firstSet(workoutId)).durationSeconds).toBeUndefined();
     expect(useRestTimer.getState().setId).toBeNull();
@@ -1155,11 +1159,21 @@ describe('WorkoutScreen — exercice unilatéral', () => {
     // Même série : changer de côté ne crée pas de ligne.
     expect(useHoldTimer.getState().setId).toBe(setId);
 
-    // Second côté, une fois les dix secondes passées.
-    act(() => {
+    /*
+     * Les dix secondes passent. L'échéance est déplacée dans le passé plutôt
+     * que l'horloge avancée : c'est précisément ce que la persistance permet de
+     * tester sans minuteur, et ce qui se produit réellement quand l'écran est
+     * resté éteint pendant la transition.
+     */
+    const turning = await firstSet(workoutId);
+    await act(async () => {
+      await db.workoutSets.put({ ...turning, unilateralSecondSideStartsAt: Date.now() - 1 });
       useHoldTimer.setState({ startedAt: Date.now() - 40_000 });
     });
-    await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Second côté — valider la série 1' }),
+    );
 
     await waitFor(async () => {
       expect(await firstSet(workoutId)).toMatchObject({ durationSeconds: 38, isCompleted: 1 });

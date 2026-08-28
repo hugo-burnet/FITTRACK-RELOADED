@@ -4,7 +4,7 @@ import { formatRest } from '@/lib/rest';
 import type { HoldTimer } from '@/stores/holdTimer';
 import { armHoldChrono } from './holdBeats';
 import { fireCountdown } from './restCountdown';
-import type { SideStage } from './sideCycle';
+import type { SideStage } from './sideProgress';
 
 /**
  * Le chrono du maintien en cours : il arme les repères, dit depuis combien de

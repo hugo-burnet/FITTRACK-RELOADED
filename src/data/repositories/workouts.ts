@@ -17,6 +17,7 @@ export {
 
 export {
   addSet,
+  completeFirstSide,
   completeSet,
   deleteSet,
   duplicateLastSet,
@@ -26,7 +27,8 @@ export {
   updateSetType,
   updateSetValues,
 } from './workoutSets';
-export type { NewSetValues, SetValues } from './workoutSets';
+export { resetUnilateralProgress } from './workoutSets';
+export type { FirstSideWrite, NewSetValues, SetValues } from './workoutSets';
 
 export { ProgramWorkoutError, startWorkoutFromProgram } from './programWorkout';
 export type {
