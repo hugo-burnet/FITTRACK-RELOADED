@@ -2,11 +2,16 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-28 (**inventaire écran par écran pour terminer le tutoriel** :
-les 36 routes, leurs feuilles et états secondaires sont répertoriés avec leurs effets réels et la
-couverture du tutoriel ; le document maître est aligné sur v2.2.0, les 10 chapitres, 12 missions,
-15 clips de mission et 96 MP3. Voir la section dédiée ci-dessous — **aucun checkpoint téléphone :
-l'application et ses données n'ont pas été modifiées**). Précédemment, le 2026-08-27 (**lecture du
+**Dernière mise à jour :** 2026-08-28 (**passe mouvement** : écran d'ouverture qui charge le logo,
+transitions d'écran directionnelles — l'app avait des entrées mais aucune sortie —, mode mouvement
+réduit qui réduit au lieu de couper, cible RPE portée à 48 px, cinq écrans sortis du chunk
+d'entrée, et la carte de charge alignée sur les règles du sélecteur de repos. Voir la section
+dédiée ci-dessous — **checkpoint téléphone à faire : le rideau de démarrage, le sens des
+transitions, et le sélecteur de charge**). Le même jour (**inventaire écran par écran pour
+terminer le tutoriel** : les 36 routes, leurs feuilles et états secondaires sont répertoriés avec
+leurs effets réels et la couverture du tutoriel ; le document maître est aligné sur v2.2.0, les 10
+chapitres, 12 missions, 15 clips de mission et 96 MP3 — ce travail-là n'a touché aucun code
+applicatif). Précédemment, le 2026-08-27 (**lecture du
 wiki, deuxième passe** : filtre de la
 documentation supprimé, sources affichées en clair au lieu d'identifiants, et rythme rendu aux
 articles de prose. Voir la section v2.2.0 ci-dessous — **checkpoint téléphone à faire**). Plus tôt
