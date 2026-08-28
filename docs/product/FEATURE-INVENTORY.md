@@ -1,7 +1,7 @@
 # FitTrack — Inventaire maître des fonctionnalités et du tutoriel
 
-> **Statut :** document produit de référence, vérifié sur FitTrack `v2.2.0` (`b110e3f`) le
-> 28 août 2026.
+> **Statut :** document produit de référence, vérifié sur FitTrack `v2.2.0` après la fusion
+> mouvement (`f439f16`) le 28 août 2026.
 >
 > **But :** dire ce que FitTrack sait réellement faire, où cela vit, ce qui reste incomplet et
 > ce que le tutoriel doit apprendre avant de refaire les voix.
@@ -107,9 +107,13 @@ de route, mais ce sont bien des surfaces que le tutoriel peut devoir expliquer.
 ### 3.1 Coquille commune et états transverses
 
 | Surface                        | Vérification | Ce que l'utilisateur voit et peut faire                                                                                                            | Couverture actuelle |
-| ------------------------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| ------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| Écran d'ouverture               | S            | Anime le chargement de la barre, puis affiche « FitTrack », « Progressive Overload » et « Production was the gym ». Il tient 2,5 s en parallèle de l'initialisation, mais disparaît immédiatement si une séance non périmée est déjà en cours.                 | Sans objet          |
+| Échec du catalogue au démarrage | S            | L'app s'ouvre quand même, préserve les données personnelles et affiche une bannière explicite que l'utilisateur peut masquer.                                                                                                                                  | Absent              |
 | Navigation basse               | B            | Ouvre Accueil, Planifier, Historique, Progression et Exercices. L'onglet actif est indiqué.                                                        | Survolé             |
 | En-tête d'écran                | B            | Retour ou titre, action principale éventuelle et bouton `?`.                                                                                       | Survolé             |
+| Transitions de navigation       | S            | Une ouverture avance vers la droite et un retour revient vers la gauche ; l'ancien écran sort pendant que le nouveau entre. La navigation basse et la barre de reprise restent stables. Sans API compatible, la navigation reste instantanée et fonctionnelle. | Sans objet          |
+| Mouvement réduit du système     | S            | Retire déplacement, échelle et flou, tout en conservant les changements utiles d'opacité et de couleur ; l'ouverture et les transitions gardent donc un retour d'état sans mouvement spatial.                                                                  | Sans objet          |
 | Aide `?`                       | B+S          | Propose les missions pertinentes pour la page, rejoue l'explication courte de la zone ou relance la visite complète.                               | Action              |
 | Barre de séance active         | B            | Reste visible sur les autres écrans et ramène à la séance. À partir de 12 h, ouvre Reprendre, Terminer ou Abandonner sans suppression automatique. | Action              |
 | Bannière de mise à jour        | S            | Signale une nouvelle version ; Recharger l'applique, Plus tard la reporte au prochain démarrage à froid.                                           | Absent              |
@@ -224,7 +228,7 @@ de route, mais ce sont bien des surfaces que le tutoriel peut devoir expliquer.
 ### 4.1 Fondations, stockage et plateforme
 
 | ID | Fonctionnalité | État | Tutoriel | Suite recommandée |
-| ------ | ---------------------------------------------------------- | ----- | ---------- | --------------------------------------------------------------------------------- |
+| ------ | --------------------------------------------------------------------------------------- | ----- | ---------- | --------------------------------------------------------------------------------- |
 | FND-01 | Fonctionnement intégral hors ligne, sans compte | Livré | Survolé | L'annoncer dès le premier écran. |
 | FND-02 | Persistance IndexedDB via Dexie et repositories | Livré | Absent | Expliquer simplement où vivent les données. |
 | FND-03 | Écriture en base à chaque série validée | Livré | Action | La mission de validation attend la réussite de l'écriture durable. |
@@ -234,12 +238,14 @@ de route, mais ce sont bien des surfaces que le tutoriel peut devoir expliquer.
 | FND-07 | PWA installable et mise à jour contrôlée | Livré | Absent | Ajouter une aide d'installation et de mise à jour. |
 | FND-08 | APK Android et ponts natifs | Livré | Absent | Expliquer les capacités réservées à Android. |
 | FND-09 | Thèmes sombre/clair et préférence mémorisée | Livré | Survolé | Ajouter une micro-aide depuis Réglages. |
-| FND-10 | Réduction des animations système | Livré | Absent | Conserver et inclure dans l'audit accessibilité. |
+| FND-10 | Mouvement réduit : pas de déplacement/échelle/flou, retours d'opacité/couleur conservés | Livré | Sans objet | Valider le rendu sur un téléphone avec l'option système activée.                  |
 | FND-11 | Gestion d'erreur globale et routes lourdes différées | Livré | Sans objet | Conserver le découpage ; surveiller les écrans différés sur téléphone. |
+| FND-12 | Écran d'ouverture parallèle au seed, sauté pendant une séance active                    | Livré | Sans objet | Vérifier le rideau, sa sortie et le démarrage immédiat entre deux séries.         |
+| FND-13 | Transitions avant/arrière avec sortie de l'ancien écran et fallback sans API            | Livré | Sans objet | Vérifier direction, fluidité et surfaces stables sur téléphone.                   |
 
 **Traçabilité :** `src/data/db.ts`, `src/data/repositories/*`, `src/router.tsx`,
-`src/app/lazyRoute.tsx`, `src/platform/*`, `src/index.css`, Lots 0–2, 9 et 10, RF-25, RF-51,
-RF-69.
+`src/app/Boot.tsx`, `src/app/navigation.ts`, `src/app/lazyRoute.tsx`, `src/platform/*`,
+`src/index.css`, Lots 0–2, 9 et 10, RF-25, RF-51, RF-69.
 
 ### 4.2 Accueil
 

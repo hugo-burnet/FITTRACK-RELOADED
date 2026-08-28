@@ -63,6 +63,13 @@ nombre de colonnes cohérent et le manifeste vocal correspond aux 96 fichiers. A
 donnée et aucun comportement de l'application n'ont été modifiés ; il n'y a donc pas de checkpoint
 téléphone pour cette session.
 
+Après la fusion de la passe mouvement, l'inventaire a été revalidé contre le nouveau `HEAD` : le
+routeur conserve ses 36 routes et le tutoriel ses 10 chapitres, 12 missions et 15 clips de mission.
+La coquille commune répertorie désormais le rideau d'ouverture, son saut pendant une séance active,
+le repli sûr en cas d'échec du catalogue, les transitions avant/arrière et le comportement de
+mouvement réduit. Cette actualisation reste documentaire ; son contrôle téléphone est celui déjà
+demandé par la passe mouvement.
+
 ## Reprise UI Routines, Wiki et coach en séance
 
 > Conception : `docs/superpowers/specs/2026-08-26-routines-wiki-live-coach-ui-design.md`
