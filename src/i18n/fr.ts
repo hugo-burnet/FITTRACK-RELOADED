@@ -1525,6 +1525,9 @@ const fr = {
     announcerSilence: 'Silence',
     announcerSounds: 'Sons',
     announcerVoice: 'Sons + voix',
+    announcerVoiceOnly: 'Voix uniquement',
+    announcerVoiceOnlyHint:
+      'Garde les annonces utiles, sans cadence ni décompte des dernières répétitions.',
     announcerHint:
       'Un son à chaque série validée, un décompte sur les trois dernières secondes de repos, ' +
       'et une voix qui annonce la dernière série, un record, la fin de la séance.',
@@ -2115,6 +2118,8 @@ const fr = {
     modeVoiceHint: 'Guidage complet pendant la séance.',
     modeSounds: 'Sons uniquement',
     modeSoundsHint: 'Impacts, cadence et validations, sans parole.',
+    modeVoiceOnly: 'Voix uniquement',
+    modeVoiceOnlyHint: 'Les annonces utiles, sans le battement des répétitions.',
     modeSilence: 'Silence',
     modeSilenceHint: 'Aucun son produit par FitTrack.',
     offScreenNotice:

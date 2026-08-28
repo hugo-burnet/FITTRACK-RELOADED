@@ -26,7 +26,7 @@ export const ANNOUNCER_STORAGE_KEY = 'fittrack:announcer';
  */
 export const ANNOUNCER_ECHO_STORAGE_KEY = 'fittrack:announcerEcho';
 
-const MODES: readonly AnnouncerMode[] = ['silence', 'sounds', 'voice'];
+const MODES: readonly AnnouncerMode[] = ['silence', 'sounds', 'voice', 'voice-only'];
 
 let current: AnnouncerMode | null = null;
 let echo: boolean | null = null;

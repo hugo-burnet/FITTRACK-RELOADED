@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { clipsFor } from './cues';
-import { EMPTY_MEMORY, planCue, type AnnouncerMemory } from './announcer';
+import { clipsFor, REP_CADENCE_CUES } from './cues';
+import { holdMarkCue } from './holdMarks';
+import { EMPTY_MEMORY, guidancePolicy, planCue, type AnnouncerMemory } from './announcer';
 
 const first = (clips: readonly string[]): string => clips[0] ?? '';
 
@@ -120,5 +121,65 @@ describe('planCue', () => {
     ]);
 
     expect(plans[1]?.clip).toBe(clipsFor('last-set-ahead')[0]);
+  });
+
+  /*
+   * « Voix uniquement » n'est pas un volume, c'est un tri.
+   *
+   * Ce qui part : la cadence des répétitions — le battement, le décompte des
+   * trois dernières, l'annonce de départ, la fin de série. Elles tombent
+   * pendant l'effort, plusieurs fois par série, et ce sont elles qui font
+   * couper le guidage au bout de deux semaines.
+   *
+   * Ce qui reste : tout ce qui tombe *entre* les séries. Le 3-2-1 du repos est
+   * une information qu'on attend les yeux fermés ; le changement de côté et les
+   * repères de maintien disent quoi faire, pas à quel rythme.
+   */
+  describe('voix uniquement', () => {
+    const plan = (mode: Parameters<typeof planCue>[1], cue: Parameters<typeof planCue>[2]) =>
+      planCue(EMPTY_MEMORY, mode, cue, 10_000, first).plan;
+
+    it('retire la cadence des répétitions, tonalité comprise', () => {
+      for (const cue of REP_CADENCE_CUES) {
+        expect(plan('voice-only', cue), cue).toEqual({ tone: null, clip: null });
+      }
+    });
+
+    it('garde le décompte du repos, le côté et les maintiens', () => {
+      expect(plan('voice-only', 'rest-3').tone).toBe('tick');
+      expect(plan('voice-only', 'rest-3').clip).toBe(clipsFor('rest-3')[0]);
+      expect(plan('voice-only', 'side-change').clip).toBe(clipsFor('side-change')[0]);
+      expect(plan('voice-only', holdMarkCue(30)).tone).not.toBeNull();
+    });
+
+    /*
+     * Le tri ne vaut que pour ce mode : « Sons + voix » garde la cadence, et
+     * « Sons » garde sa tonalité. Sans quoi le mode aurait retiré le battement
+     * à tout le monde.
+     */
+    it('ne retire rien aux trois autres modes', () => {
+      expect(plan('voice', 'rep-3').clip).toBe(clipsFor('rep-3')[0]);
+      expect(plan('voice', 'rep-tick').tone).not.toBeNull();
+      expect(plan('sounds', 'rep-tick').tone).not.toBeNull();
+      expect(plan('silence', 'rep-tick')).toEqual({ tone: null, clip: null });
+    });
+  });
+
+  /*
+   * La politique est le seul endroit qui décide. Un composant qui rejouerait la
+   * règle avec un `if` finirait par diverger d'elle — c'est ce que la tâche
+   * voulait empêcher.
+   */
+  describe('guidancePolicy', () => {
+    it('refuse la cadence des répétitions au seul mode Voix uniquement', () => {
+      expect(guidancePolicy('voice-only').repPacing).toBe(false);
+      expect(guidancePolicy('voice').repPacing).toBe(true);
+      expect(guidancePolicy('sounds').repPacing).toBe(true);
+      expect(guidancePolicy('silence').repPacing).toBe(true);
+    });
+
+    it('garde la voix et les tonalités en Voix uniquement', () => {
+      expect(guidancePolicy('voice-only')).toEqual({ voice: true, tones: true, repPacing: false });
+    });
   });
 });

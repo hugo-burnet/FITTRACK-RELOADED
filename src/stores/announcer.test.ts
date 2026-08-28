@@ -31,6 +31,14 @@ describe('réglage des annonces', () => {
     expect(setAudioVolume).toHaveBeenLastCalledWith(1);
   });
 
+  it('retient Voix uniquement comme les autres modes', () => {
+    applyAnnouncerMode('voice-only');
+    expect(localStorage.getItem(ANNOUNCER_STORAGE_KEY)).toBe('voice-only');
+    expect(loadAnnouncerMode()).toBe('voice-only');
+    // Ce mode parle : il ne coupe pas le bus, contrairement au Silence.
+    expect(setAudioVolume).toHaveBeenLastCalledWith(1);
+  });
+
   it('ignore une valeur inconnue en base', async () => {
     localStorage.setItem(ANNOUNCER_STORAGE_KEY, 'trompette');
     vi.resetModules();

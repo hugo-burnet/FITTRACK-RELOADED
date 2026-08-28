@@ -1,4 +1,4 @@
-import { CUES, clipsFor, type CueId } from './cues';
+import { CUES, clipsFor, isRepCadence, type CueId } from './cues';
 import type { ToneId } from './tones';
 
 /**
@@ -17,7 +17,35 @@ import type { ToneId } from './tones';
  * Pure and injected with its clock and its picker, so a session's worth of
  * announcements can be replayed in a test without an audio device.
  */
-export type AnnouncerMode = 'silence' | 'sounds' | 'voice';
+export type AnnouncerMode = 'silence' | 'sounds' | 'voice' | 'voice-only';
+
+/**
+ * Ce qu'un mode autorise — la seule autorité, et volontairement pas un `if`.
+ *
+ * Trois questions séparées parce qu'elles ne se recouvrent pas : « Voix
+ * uniquement » parle et sonne comme le mode complet, et ne diffère que sur la
+ * cadence. Un composant qui rejouerait la règle chez lui finirait par diverger
+ * d'elle le jour où un quatrième mode arrive.
+ */
+export interface GuidancePolicy {
+  voice: boolean;
+  tones: boolean;
+  /** Le métronome de répétitions a-t-il le droit d'être armé ? */
+  repPacing: boolean;
+}
+
+export function guidancePolicy(mode: AnnouncerMode): GuidancePolicy {
+  switch (mode) {
+    case 'silence':
+      return { voice: false, tones: false, repPacing: true };
+    case 'sounds':
+      return { voice: false, tones: true, repPacing: true };
+    case 'voice':
+      return { voice: true, tones: true, repPacing: true };
+    case 'voice-only':
+      return { voice: true, tones: true, repPacing: false };
+  }
+}
 
 export interface AnnouncerMemory {
   /** When the last line started, on the wall clock. */
@@ -54,7 +82,13 @@ export function planCue(
   now: number,
   choose: ClipPicker,
 ): { plan: CuePlan; memory: AnnouncerMemory } {
-  if (mode === 'silence') return { plan: SILENT, memory };
+  const policy = guidancePolicy(mode);
+  if (!policy.voice && !policy.tones) return { plan: SILENT, memory };
+
+  // Le tri du mode « Voix uniquement » : la tonalité part avec la phrase. Ne
+  // retirer que la phrase aurait laissé le battement, qui est justement ce
+  // qu'on ne supporte plus au bout de deux semaines.
+  if (!policy.repPacing && isRepCadence(cue)) return { plan: SILENT, memory };
 
   const definition = CUES[cue];
   const previous = memory.firedAt[cue];
@@ -62,7 +96,7 @@ export function planCue(
     return { plan: SILENT, memory };
   }
 
-  const clip = mode === 'voice' ? chooseLine(memory, cue, now, choose) : null;
+  const clip = policy.voice ? chooseLine(memory, cue, now, choose) : null;
   const plan: CuePlan = { tone: definition.tone, clip };
 
   return {

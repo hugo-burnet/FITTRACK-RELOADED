@@ -39,6 +39,11 @@ type Phase = 'idle' | 'prompt' | 'help' | 'tour' | 'voice-choice' | 'campaign';
 const AUDIO_OPTIONS: { mode: AnnouncerMode; labelKey: TranslationKey; hintKey: TranslationKey }[] =
   [
     { mode: 'voice', labelKey: 'tutorial.modeVoice', hintKey: 'tutorial.modeVoiceHint' },
+    {
+      mode: 'voice-only',
+      labelKey: 'tutorial.modeVoiceOnly',
+      hintKey: 'tutorial.modeVoiceOnlyHint',
+    },
     { mode: 'sounds', labelKey: 'tutorial.modeSounds', hintKey: 'tutorial.modeSoundsHint' },
     { mode: 'silence', labelKey: 'tutorial.modeSilence', hintKey: 'tutorial.modeSilenceHint' },
   ];

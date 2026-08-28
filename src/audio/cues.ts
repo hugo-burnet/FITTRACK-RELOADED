@@ -80,6 +80,62 @@ const HOLD_MARK_CUES = Object.fromEntries(
   ]),
 ) as Record<HoldMarkCue, CueDefinition>;
 
+/**
+ * Ce que « Voix uniquement » retire, cue par cue.
+ *
+ * Un `Record<CueId, boolean>` et non un `Set` : TypeScript exige alors une
+ * réponse pour **chaque** cue, y compris ceux qui n'existent pas encore. Un
+ * nouveau battement ajouté sans se poser la question ne compilerait pas, là où
+ * une liste d'exclusion l'aurait accueilli en silence — et le mode aurait
+ * recommencé à parler pendant l'effort sans que rien ne le signale.
+ *
+ * La ligne de partage est temporelle, pas sémantique : appartient à la cadence
+ * ce qui tombe **pendant** une série. Le 3-2-1 du repos, le changement de côté
+ * et les repères de maintien tombent entre les séries ou pendant un maintien —
+ * ils disent quoi faire, pas à quel rythme pousser.
+ */
+const REP_CADENCE_BY_CUE: Record<CueId, boolean> = {
+  ...(Object.fromEntries(
+    HOLD_MARK_SECONDS.map((seconds) => [holdMarkCue(seconds), false]),
+  ) as Record<HoldMarkCue, boolean>),
+  'workout-started': false,
+  'set-validated': false,
+  'last-set-ahead': false,
+  'exercise-cleared': false,
+  'record-beaten': false,
+  'rest-10': false,
+  'rest-3': false,
+  'rest-2': false,
+  'rest-1': false,
+  'rest-over': false,
+  'rest-extended': false,
+  'pace-start-10': true,
+  'pace-reps-missing': true,
+  'rep-tick': true,
+  'rep-3': true,
+  'rep-2': true,
+  'rep-1': true,
+  'set-done': true,
+  'side-change': false,
+  'workout-recap-start': false,
+  'coach-recap-steady': false,
+  'coach-recap-progress': false,
+  'coach-recap-increase': false,
+  'coach-recap-adjust': false,
+  'coach-recap-fatigue': false,
+  'coach-recap-plateau': false,
+  'workout-finished': false,
+};
+
+/** Les cues de la cadence, dans l'ordre du tableau — pour les tests et le tri. */
+export const REP_CADENCE_CUES: readonly CueId[] = (
+  Object.keys(REP_CADENCE_BY_CUE) as CueId[]
+).filter((cue) => REP_CADENCE_BY_CUE[cue]);
+
+export function isRepCadence(cue: CueId): boolean {
+  return REP_CADENCE_BY_CUE[cue];
+}
+
 export const CUES: Record<CueId, CueDefinition> = {
   'workout-started': {
     tone: 'chime',

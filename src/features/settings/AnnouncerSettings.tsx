@@ -19,6 +19,7 @@ const MODES: { value: AnnouncerMode; labelKey: TranslationKey }[] = [
   { value: 'silence', labelKey: 'settings.announcerSilence' },
   { value: 'sounds', labelKey: 'settings.announcerSounds' },
   { value: 'voice', labelKey: 'settings.announcerVoice' },
+  { value: 'voice-only', labelKey: 'settings.announcerVoiceOnly' },
 ];
 
 /**
@@ -83,7 +84,10 @@ export function AnnouncerSettings() {
         <div
           role="radiogroup"
           aria-label={t('settings.announcer')}
-          className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
+          /* Deux colonnes depuis qu'il y a quatre modes : « Voix uniquement »
+             ne tient pas sur un quart de 375 px, et une rangée qui tronque ses
+             propres libellés ne se choisit pas. */
+          className="grid grid-cols-2 gap-1 rounded-xl bg-[var(--surface-2)] p-1"
         >
           {MODES.map(({ value, labelKey }) => (
             <button
@@ -92,7 +96,7 @@ export function AnnouncerSettings() {
               role="radio"
               aria-checked={mode === value}
               onClick={() => choose(value)}
-              className={`min-h-12 flex-1 rounded-lg text-base font-semibold
+              className={`min-h-12 rounded-lg px-2 text-base font-semibold
                 transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
                 ${
                   mode === value
@@ -110,7 +114,13 @@ export function AnnouncerSettings() {
         <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
           {t('settings.announcerMusicHint')}
         </p>
-        {mode === 'voice' && (
+        {mode === 'voice-only' && (
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
+            {t('settings.announcerVoiceOnlyHint')}
+          </p>
+        )}
+        {/* Le pack manquant concerne les deux modes qui parlent. */}
+        {(mode === 'voice' || mode === 'voice-only') && (
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">{t(voiceNote)}</p>
         )}
       </div>
