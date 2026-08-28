@@ -17,6 +17,7 @@ import {
 import { ANALYTICS_READ, ANALYTICS_SHARE } from './missions/analytics';
 import { EXERCISE_CREATE, EXERCISE_FIND } from './missions/exercises';
 import { HEVY_IMPORT, HISTORY_EDIT, HISTORY_FIND, HISTORY_SHARE } from './missions/history';
+import { KNOWLEDGE_LEARNING_PATH, KNOWLEDGE_SEARCH } from './missions/knowledge';
 import { PROGRAM } from './missions/program';
 
 /*
@@ -49,6 +50,8 @@ export const P1_MISSIONS: readonly TutorialMission[] = [
   EXERCISE_CREATE,
   ANALYTICS_READ,
   ANALYTICS_SHARE,
+  KNOWLEDGE_SEARCH,
+  KNOWLEDGE_LEARNING_PATH,
   RECOVER,
   ROUTINE_CREATE,
   ROUTINE_EXERCISE,

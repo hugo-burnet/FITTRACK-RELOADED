@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { articleHref } from './articleCatalogue';
 import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
@@ -19,6 +20,7 @@ import { loadReadSteps, resolveLearningPath, saveReadSteps } from './learningPat
  */
 export function LearnProgrammingScreen() {
   const navigate = useAppNavigate();
+  const tutorial = useTutorialControls();
   const steps = resolveLearningPath();
   const [read, setRead] = useState<ReadonlySet<string>>(() => loadReadSteps());
 
@@ -68,6 +70,13 @@ export function LearnProgrammingScreen() {
                   <Link
                     viewTransition
                     to={articleHref(step.article)}
+                    data-tutorial-id={index === 0 ? 'knowledge-first-step' : undefined}
+                    onClick={() =>
+                      tutorial?.report({
+                        type: 'learning-step-opened',
+                        articleId: step.article.articleId,
+                      })
+                    }
                     className="flex min-h-12 flex-1 items-center gap-2 text-sm font-semibold
                       text-[var(--accent-ink)]"
                   >
@@ -79,6 +88,9 @@ export function LearnProgrammingScreen() {
                     role="switch"
                     aria-checked={isRead}
                     aria-label={t('learn.markRead', { title: step.article.title })}
+                    // Montré par le guide, jamais pressé par lui : cocher « Lu »
+                    // est une affirmation sur ce que le lecteur a fait.
+                    data-tutorial-id={index === 0 ? 'knowledge-step-toggle' : undefined}
                     onClick={() => toggle(step.article.articleId)}
                     className={`flex min-h-12 shrink-0 items-center rounded-xl px-4 text-sm
                       font-semibold transition-colors duration-[var(--dur-1)]

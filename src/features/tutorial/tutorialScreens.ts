@@ -33,6 +33,16 @@ export type TutorialScreen =
   | 'exercise-form'
   | 'settings'
   | 'knowledge'
+  /** Le parcours de lecture du Guide, `/knowledge/apprendre`. */
+  | 'learning-path'
+  /**
+   * Un article du wiki, quel qu'il soit.
+   *
+   * Le seul écran sans adresse : deux routes y mènent et rien ne dit lequel des
+   * soixante-quatre articles il faut. Une étape qui le vise attend donc le
+   * lecteur là où l'étape précédente l'a envoyé.
+   */
+  | 'knowledge-article'
   /** Une commande présente sur toute l'application — la barre de séance active. */
   | 'anywhere';
 
@@ -128,9 +138,20 @@ export function pathForScreen(
       return '/settings';
     case 'knowledge':
       return '/knowledge';
+    case 'learning-path':
+      return '/knowledge/apprendre';
+    case 'knowledge-article':
+      return null;
     case 'anywhere':
       return null;
   }
+}
+
+/** Un identifiant d'article sous ce préfixe, et rien de plus profond. */
+function isArticleUnder(prefix: string, pathname: string): boolean {
+  if (!pathname.startsWith(prefix)) return false;
+  const rest = pathname.slice(prefix.length);
+  return rest !== '' && !rest.includes('/');
 }
 
 /**
@@ -210,6 +231,15 @@ export function screenHolds(
       return pathname === '/settings';
     case 'knowledge':
       return pathname === '/knowledge';
+    case 'learning-path':
+      return pathname === '/knowledge/apprendre';
+    case 'knowledge-article':
+      // `/knowledge/programmation` tout seul est l'index du Guide, pas un
+      // article : le segment d'identifiant est ce qui distingue les deux.
+      return (
+        isArticleUnder('/knowledge/a/', pathname) ||
+        isArticleUnder('/knowledge/programmation/', pathname)
+      );
     case 'anywhere':
       return true;
   }

@@ -18,10 +18,21 @@ function renderScreen() {
 }
 
 describe('KnowledgeScreen', () => {
-  it('n’affiche pas l’aide contextuelle du tutoriel', () => {
+  /*
+   * La règle a changé, et pas par accident. `KnowledgeScreenFrame` retirait
+   * l'aide à TOUTES les routes du corpus, y compris celle-ci, parce qu'un
+   * article se lit et ne se manipule pas. C'est toujours vrai des articles —
+   * `LearnProgrammingScreen` le vérifie encore.
+   *
+   * Ce hub n'est pas une surface de lecture : c'est une surface de recherche, et
+   * le bouton d'aide est la seule porte d'entrée des missions contextuelles.
+   * Sans lui, les deux missions qui apprennent à interroger le corpus
+   * existaient dans le catalogue sans qu'aucun écran ne sache les proposer.
+   */
+  it('garde l’aide contextuelle, seule porte des missions du corpus', () => {
     renderScreen();
 
-    expect(screen.queryByRole('button', { name: 'Aide sur cette page' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Aide sur cette page' })).toBeVisible();
   });
 
   it('présente l’outil comme un navigateur non calibré, jamais comme un coach', () => {

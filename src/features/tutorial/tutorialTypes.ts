@@ -159,6 +159,26 @@ export type TutorialExerciseEvent =
   | { type: 'exercise-unilateral-set'; isUnilateral: 0 | 1 }
   | { type: 'exercise-created'; exerciseId: string };
 
+/**
+ * Les gestes du corpus embarqué : chercher, lire, remonter aux sources.
+ *
+ * `results` n'est pas décoratif. Le corpus refuse plutôt que de combler : une
+ * question sans correspondance lexicale ne rend aucune carte, et l'étape
+ * suivante demande d'ouvrir la première. Sans le compte, elle aurait désigné
+ * une commande que l'écran n'avait pas rendue.
+ *
+ * `article-sources-opened` ne porte rien : le bloc Sources est répété une fois
+ * par affirmation dans un article, et ouvrir n'importe lequel est exactement ce
+ * que l'étape demande. Il n'y a donc pas d'identité qui la protégerait de
+ * quelque chose — seulement un détail qui ne servirait à rien.
+ */
+export type TutorialKnowledgeEvent =
+  | { type: 'knowledge-search-ran'; query: string; results: number }
+  | { type: 'knowledge-result-opened'; rank: number }
+  | { type: 'learning-path-opened' }
+  | { type: 'learning-step-opened'; articleId: string }
+  | { type: 'article-sources-opened' };
+
 /** L'analyse dont un événement de la Progression parle. */
 export type TutorialAnalyticsView = 'records' | 'weekly' | 'volume' | 'muscles' | 'monthly';
 
@@ -193,6 +213,7 @@ export type TutorialEvent =
   | TutorialHistoryEvent
   | TutorialExerciseEvent
   | TutorialAnalyticsEvent
+  | TutorialKnowledgeEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

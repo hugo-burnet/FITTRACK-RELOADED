@@ -1,19 +1,36 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { LearnProgrammingScreen } from './LearnProgrammingScreen';
 
 function renderScreen() {
   render(
-    <MemoryRouter>
-      <LearnProgrammingScreen />
-    </MemoryRouter>,
+    <TutorialContext.Provider
+      value={{ openHelp: vi.fn(), startMission: vi.fn(), offerMission: vi.fn(), report: vi.fn() }}
+    >
+      <MemoryRouter>
+        <LearnProgrammingScreen />
+      </MemoryRouter>
+    </TutorialContext.Provider>,
   );
 }
 
 describe('LearnProgrammingScreen', () => {
   beforeEach(() => localStorage.clear());
+
+  /*
+   * Ce que `KnowledgeScreenFrame` protège encore. Le hub `/knowledge` a repris
+   * l'aide contextuelle — c'est la porte de ses missions — mais les surfaces où
+   * l'on lit le corpus n'en ont toujours pas : une mission s'y poursuit, elle
+   * ne s'y choisit pas.
+   */
+  it('ne propose pas l’aide contextuelle sur une surface de lecture', () => {
+    renderScreen();
+
+    expect(screen.queryByRole('button', { name: 'Aide sur cette page' })).not.toBeInTheDocument();
+  });
 
   it('ouvre sur la progression, pas sur le premier chapitre du document source', () => {
     renderScreen();

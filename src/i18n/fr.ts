@@ -2199,6 +2199,41 @@ const fr = {
       },
     },
 
+    knowledge: {
+      search: { title: 'Chercher dans les preuves' },
+      learn: { title: 'Apprendre à programmer' },
+      query: {
+        instruction: 'Pose une question, puis lance Chercher dans les preuves.',
+        detail:
+          'La recherche est lexicale et tourne sur l’appareil : elle ne rend que les passages qui portent tes mots, et affiche un refus quand il n’y en a aucun.',
+      },
+      openResult: {
+        instruction: 'Ouvre la première preuve avec Lire dans sa section.',
+        detail:
+          'Un extrait seul ne dit pas ce qu’il y avait autour. Le lien remet le passage dans son texte d’origine.',
+      },
+      openPath: {
+        instruction: 'Ouvre Apprendre à programmer.',
+        detail:
+          'Quatorze articles du Guide, rangés dans l’ordre où ils s’éclairent. Le parcours explique ; il n’écrit aucun programme.',
+      },
+      markRead: {
+        instruction: 'Le bouton À lire sert à suivre ta progression.',
+        detail:
+          'C’est toi qui déclares avoir lu, et le guide n’y touche pas. Le suivi reste sur cet appareil et se décoche aussi bien qu’il se coche.',
+      },
+      openStep: {
+        instruction: 'Ouvre la première étape avec Lire cette étape.',
+        detail:
+          'Progression et autorégulation : le seul paramètre dont l’absence annule les autres.',
+      },
+      sources: {
+        instruction: 'Déplie Sources sous un passage.',
+        detail:
+          'Chaque affirmation porte de quoi la vérifier. Il y a un bloc Sources par affirmation, pas un seul pour l’article.',
+      },
+    },
+
     analytics: {
       read: { title: 'Lire tes analyses' },
       share: { title: 'Sortir un graphique de l’app' },

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
 import type { ArticleFamilyGroup } from './articleCatalogue';
@@ -50,6 +51,7 @@ function FamilyCard({ family }: { family: ArticleFamilyGroup }) {
  * écrans où elle n'a rien à faire.
  */
 export function WikiBrowse() {
+  const tutorial = useTutorialControls();
   const families = listArticleFamilies();
   const content = families.filter((family) => family.id !== 'method');
   const method = families.find((family) => family.id === 'method');
@@ -71,6 +73,8 @@ export function WikiBrowse() {
       <Link
         viewTransition
         to="/knowledge/apprendre"
+        data-tutorial-id="knowledge-programming-path"
+        onClick={() => tutorial?.report({ type: 'learning-path-opened' })}
         className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
           bg-[var(--accent-soft)] px-5 py-4"
       >

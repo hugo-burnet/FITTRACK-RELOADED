@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
+import { Screen } from '@/app/Screen';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { Button } from '@/ui';
 import { WikiBrowse } from './WikiBrowse';
 import { stripEmphasis } from './markdownText';
 import { articleHref, findArticleForRow } from './articleCatalogue';
-import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
 import {
   evidenceIndexStatus,
   searchEvidence,
@@ -31,6 +32,7 @@ function statusLabel(status: EpistemicStatus | null): string {
 }
 
 function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: number }) {
+  const tutorial = useTutorialControls();
   // On affiche toujours le contexte — c'est lui la prose lisible — et on ne
   // répète la citation en dessous que si elle apporte un cadrage absent du
   // contexte. Le contexte contenant presque toujours la citation, la montrer
@@ -103,6 +105,10 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
             <Link
               viewTransition
               to={sectionHref}
+              // La première carte est la seule que le guide sache désigner : les
+              // suivantes n'ont pas de rang stable d'une question à l'autre.
+              data-tutorial-id={rank === 1 ? 'knowledge-first-result' : undefined}
+              onClick={() => tutorial?.report({ type: 'knowledge-result-opened', rank })}
               className="mt-4 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
             >
               {t('knowledge.wiki.readInSection')}
@@ -161,13 +167,26 @@ function SearchResult({ outcome }: { outcome: EvidenceSearchOutcome }) {
 
 export function KnowledgeScreen() {
   const navigate = useAppNavigate();
+  const tutorial = useTutorialControls();
   const [query, setQuery] = useState('');
   const [outcome, setOutcome] = useState<EvidenceSearchOutcome | null>(null);
 
-  const runSearch = () => setOutcome(searchEvidence(query));
+  const runSearch = () => {
+    const next = searchEvidence(query);
+    setOutcome(next);
+    // Le compte, et pas seulement le fait d'avoir cherché : une question sans
+    // correspondance ne rend aucune carte, et l'étape suivante en désigne une.
+    tutorial?.report({ type: 'knowledge-search-ran', query, results: next.candidates.length });
+  };
 
   return (
-    <KnowledgeScreenFrame title={t('knowledge.title')} onBack={() => void navigate(-1)}>
+    /* Le seul écran de cette zone qui garde l'aide contextuelle.
+       `KnowledgeScreenFrame` la retire aux surfaces de lecture du corpus, et
+       c'est toujours juste : un article se lit, il ne se manipule pas. Celle-ci
+       est une surface de recherche, et c'est la seule porte d'entrée des deux
+       missions qui apprennent à interroger le corpus — sans elle, elles
+       n'étaient joignables depuis nulle part. */
+    <Screen title={t('knowledge.title')} onBack={() => void navigate(-1)}>
       <div className="space-y-7">
         <section className="rounded-2xl bg-[var(--accent-soft)] p-5">
           <p className="label-xs font-semibold text-[var(--accent-ink)]">
@@ -237,6 +256,6 @@ export function KnowledgeScreen() {
           <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">{t('knowledge.limitBody')}</p>
         </section>
       </div>
-    </KnowledgeScreenFrame>
+    </Screen>
   );
 }

@@ -1,3 +1,4 @@
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import type { WikiArticle, WikiArticleBlock } from './articleTypes';
 import { stripEmphasis } from './markdownText';
@@ -82,8 +83,19 @@ function Provenance({
   sources: readonly string[];
   fields?: readonly Field[];
 }) {
+  const tutorial = useTutorialControls();
+
   return (
-    <details className="mt-4 border-t border-[var(--border)] pt-1">
+    /* L'ancre est posée sur chacun : un article porte un bloc Sources par
+       affirmation, pas un seul. Le guide encadre le premier du document et
+       l'étape se valide sur celui que le lecteur ouvre, quel qu'il soit. */
+    <details
+      className="mt-4 border-t border-[var(--border)] pt-1"
+      data-tutorial-id="knowledge-sources"
+      onToggle={(event) => {
+        if (event.currentTarget.open) tutorial?.report({ type: 'article-sources-opened' });
+      }}
+    >
       <summary
         className="label-xs flex min-h-12 cursor-pointer items-center font-semibold
           text-[var(--text-2)]"
