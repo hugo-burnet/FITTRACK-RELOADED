@@ -2199,6 +2199,50 @@ const fr = {
       },
     },
 
+    exercises: {
+      find: { title: 'Trouver le bon exercice' },
+      create: { title: 'Créer un exercice à toi' },
+      search: {
+        instruction: 'Cherche un exercice par son nom.',
+        detail: 'Les accents et la casse sont ignorés : « developpe » trouve Développé couché.',
+      },
+      filterMuscle: {
+        instruction: 'Ouvre Muscle et choisis un groupe.',
+        detail:
+          'Le filtre s’ajoute à la recherche au lieu de la remplacer. Le compteur au-dessus de la liste dit combien de lignes restent.',
+      },
+      filterEquipment: {
+        instruction: 'Ouvre Matériel et choisis un équipement.',
+        detail:
+          'Les trois critères se cumulent. Quand plus rien ne correspond, Retirer les filtres enlève les deux et garde la recherche.',
+      },
+      openForm: {
+        instruction: 'Ouvre Nouvel exercice, le + en haut.',
+        detail:
+          'Rien n’est créé à l’ouverture : le formulaire reste un brouillon tant que tu n’enregistres pas.',
+      },
+      name: {
+        instruction: 'Donne-lui un nom.',
+        detail:
+          'C’est le seul champ obligatoire : Créer l’exercice reste éteint tant qu’il est vide.',
+      },
+      measurement: {
+        instruction: 'Ouvre Ce que tu saisis et choisis la mesure.',
+        detail:
+          'Elle décide des champs de saisie pendant la séance : poids et répétitions, durée seule, distance et durée.',
+      },
+      unilateral: {
+        instruction: 'Réponds à Unilatéral.',
+        detail:
+          'Oui quand le mouvement se fait un côté à la fois. L’une ou l’autre réponse convient : le guide te montre où la question se pose.',
+      },
+      save: {
+        instruction: 'Appuie sur Créer l’exercice.',
+        detail:
+          'Il rejoint le catalogue avec les autres, sans limite de nombre, et s’ouvre aussitôt sur sa fiche.',
+      },
+    },
+
     program: {
       title: 'Construire et suivre un programme',
       whatIsABlock: {

@@ -14,6 +14,7 @@ import {
   WORKOUT_REST,
   WORKOUT_VALIDATE,
 } from './missions/core';
+import { EXERCISE_CREATE, EXERCISE_FIND } from './missions/exercises';
 import { HEVY_IMPORT, HISTORY_EDIT, HISTORY_FIND, HISTORY_SHARE } from './missions/history';
 import { PROGRAM } from './missions/program';
 
@@ -43,6 +44,8 @@ export const P1_MISSIONS: readonly TutorialMission[] = [
   HISTORY_EDIT,
   HISTORY_SHARE,
   HEVY_IMPORT,
+  EXERCISE_FIND,
+  EXERCISE_CREATE,
   RECOVER,
   ROUTINE_CREATE,
   ROUTINE_EXERCISE,

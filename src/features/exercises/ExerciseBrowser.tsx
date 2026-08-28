@@ -122,6 +122,7 @@ export function ExerciseBrowser({
           <FilterChip
             label={muscle === undefined ? t('exercises.filterMuscle') : muscleLabel(muscle)}
             active={muscle !== undefined}
+            tutorialId="exercise-muscle-filter"
             onClick={() => setPicker('muscle')}
           />
           <FilterChip
@@ -129,6 +130,7 @@ export function ExerciseBrowser({
               equipment === undefined ? t('exercises.filterEquipment') : equipmentLabel(equipment)
             }
             active={equipment !== undefined}
+            tutorialId="exercise-equipment-filter"
             onClick={() => setPicker('equipment')}
           />
 

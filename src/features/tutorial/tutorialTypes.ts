@@ -1,3 +1,5 @@
+import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
+
 export type TutorialCompletion = 'completed' | 'skipped';
 
 /**
@@ -138,6 +140,25 @@ export type TutorialHistoryEvent =
   | { type: 'hevy-review-opened'; workoutCount: number };
 
 /**
+ * Les gestes de la bibliothèque : trouver un exercice, en fabriquer un.
+ *
+ * Les trois premiers portent la valeur choisie, et pas seulement le fait
+ * d'avoir touché la commande : le champ publie à chaque frappe et « Tous les
+ * muscles » est une option comme une autre, donc effacer une recherche ou
+ * retirer un filtre émet exactement ce qu'émet le geste inverse. C'est la
+ * valeur qui les distingue, jamais le type.
+ */
+export type TutorialExerciseEvent =
+  | { type: 'exercise-query-changed'; query: string }
+  | { type: 'exercise-muscle-filter-changed'; muscle: MuscleGroup | null }
+  | { type: 'exercise-equipment-filter-changed'; equipment: Equipment | null }
+  | { type: 'exercise-create-opened' }
+  | { type: 'exercise-named'; name: string }
+  | { type: 'exercise-measurement-set'; measurementType: MeasurementType }
+  | { type: 'exercise-unilateral-set'; isUnilateral: 0 | 1 }
+  | { type: 'exercise-created'; exerciseId: string };
+
+/**
  * Ce que l'application a réellement fait — jamais ce que le tutoriel espérait.
  *
  * Chaque événement porte l'identité de ce qu'il touche. Sans elle, la campagne
@@ -149,6 +170,7 @@ export type TutorialHistoryEvent =
 export type TutorialEvent =
   | TutorialProgramEvent
   | TutorialHistoryEvent
+  | TutorialExerciseEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

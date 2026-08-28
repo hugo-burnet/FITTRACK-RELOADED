@@ -27,6 +27,8 @@ export type TutorialScreen =
   | 'history-import'
   | 'analytics'
   | 'exercises'
+  /** Le formulaire de création — `/exercises/:id/edit` est un autre écran. */
+  | 'exercise-form'
   | 'settings'
   | 'knowledge'
   /** Une commande présente sur toute l'application — la barre de séance active. */
@@ -116,6 +118,8 @@ export function pathForScreen(
       return '/analytics';
     case 'exercises':
       return '/exercises';
+    case 'exercise-form':
+      return '/exercises/new';
     case 'settings':
       return '/settings';
     case 'knowledge':
@@ -194,6 +198,8 @@ export function screenHolds(
       return pathname === '/analytics';
     case 'exercises':
       return pathname === '/exercises';
+    case 'exercise-form':
+      return pathname === '/exercises/new';
     case 'settings':
       return pathname === '/settings';
     case 'knowledge':

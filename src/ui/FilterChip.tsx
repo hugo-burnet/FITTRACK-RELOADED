@@ -5,6 +5,8 @@ type Props = {
   label: string;
   active: boolean;
   onClick: () => void;
+  /** L'ancre du tutoriel, quand une étape désigne ce filtre. */
+  tutorialId?: string;
 };
 
 /**
@@ -19,10 +21,11 @@ type Props = {
  * set it — the picker's first row — or in the empty state, on a full-size
  * button, at the one moment it is actually urgent.
  */
-export function FilterChip({ label, active, onClick }: Props) {
+export function FilterChip({ label, active, onClick, tutorialId }: Props) {
   return (
     <button
       type="button"
+      data-tutorial-id={tutorialId}
       onClick={onClick}
       aria-pressed={active}
       className={`inline-flex min-h-12 shrink-0 items-center gap-1.5 rounded-xl pr-2.5 pl-4

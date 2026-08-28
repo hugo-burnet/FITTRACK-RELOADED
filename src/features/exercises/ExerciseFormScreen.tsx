@@ -6,6 +6,7 @@ import { Screen } from '@/app/Screen';
 import { createCustomExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
 import { EQUIPMENT, MEASUREMENT_TYPES, MOVEMENT_PATTERNS, MUSCLE_GROUPS } from '@/data/types';
 import type { Equipment, MeasurementType, MovementPattern, MuscleGroup } from '@/data/types';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import {
   equipmentLabel,
@@ -86,10 +87,21 @@ function secondaryMusclesReading(muscles: readonly MuscleGroup[]): string {
   return muscles.map(muscleLabel).join(' · ');
 }
 
-function PickerRow({ label, value, onOpen }: { label: string; value: string; onOpen: () => void }) {
+function PickerRow({
+  label,
+  value,
+  onOpen,
+  tutorialId,
+}: {
+  label: string;
+  value: string;
+  onOpen: () => void;
+  tutorialId?: string;
+}) {
   return (
     <ListRow
       title={label}
+      tutorialId={tutorialId}
       onClick={onOpen}
       trailing={
         <span className="flex items-center gap-1 text-base text-[var(--text-1)]">
@@ -102,6 +114,7 @@ function PickerRow({ label, value, onOpen }: { label: string; value: string; onO
 }
 
 export function ExerciseFormScreen() {
+  const tutorial = useTutorialControls();
   const { id } = useParams();
   const navigate = useAppNavigate();
   const [params] = useSearchParams();
@@ -204,10 +217,16 @@ export function ExerciseFormScreen() {
       return;
     }
 
-    void createCustomExercise({ ...withFactor, bodyweightLoadFactorIsCustom: 1 }).then((created) =>
-      // `replace`: going back from the new exercise returns to the library, not
-      // to a form that would create a second copy.
-      navigate(`/exercises/${created.id}`, { replace: true }),
+    void createCustomExercise({ ...withFactor, bodyweightLoadFactorIsCustom: 1 }).then(
+      (created) => {
+        // Après la résolution, jamais avant : annoncer l'intention ferait
+        // terminer une mission de création sur un exercice que Dexie aurait pu
+        // refuser d'écrire.
+        tutorial?.report({ type: 'exercise-created', exerciseId: created.id });
+        // `replace`: going back from the new exercise returns to the library, not
+        // to a form that would create a second copy.
+        void navigate(`/exercises/${created.id}`, { replace: true });
+      },
     );
   };
 
@@ -220,11 +239,15 @@ export function ExerciseFormScreen() {
         <Card padded>
           <Input
             label={t('exerciseForm.nameLabel')}
+            tutorialId="exercise-name"
             placeholder={t('exerciseForm.namePlaceholder')}
             value={draft.name}
             autoFocus={!editing}
             enterKeyHint="done"
-            onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+            onChange={(event) => {
+              setDraft({ ...draft, name: event.target.value });
+              tutorial?.report({ type: 'exercise-named', name: event.target.value });
+            }}
           />
         </Card>
 
@@ -286,6 +309,7 @@ export function ExerciseFormScreen() {
           />
           <PickerRow
             label={t('exerciseForm.measurementLabel')}
+            tutorialId="exercise-measurement"
             value={measurementLabel(draft.measurementType)}
             onOpen={() => setPicker('measurement')}
           />
@@ -308,6 +332,7 @@ export function ExerciseFormScreen() {
           <div
             role="radiogroup"
             aria-label={t('exerciseForm.unilateralLabel')}
+            data-tutorial-id="exercise-unilateral"
             className="flex items-center gap-4"
           >
             <span className="flex-1 text-base text-[var(--text-1)]">
@@ -320,7 +345,10 @@ export function ExerciseFormScreen() {
                   type="button"
                   role="radio"
                   aria-checked={draft.isUnilateral === value}
-                  onClick={() => setDraft({ ...draft, isUnilateral: value })}
+                  onClick={() => {
+                    setDraft({ ...draft, isUnilateral: value });
+                    tutorial?.report({ type: 'exercise-unilateral-set', isUnilateral: value });
+                  }}
                   className={`min-h-12 w-16 rounded-lg text-base font-semibold
                     transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
                     ${
@@ -344,6 +372,7 @@ export function ExerciseFormScreen() {
           variant="primary"
           size="lg"
           fullWidth
+          tutorialId="exercise-save"
           disabled={name === '' || factorInvalid}
           onClick={submit}
         >
@@ -416,7 +445,10 @@ export function ExerciseFormScreen() {
          * `lib/bodyweightLoad` decides the figure; the field above shows it, and
          * one tap changes it.
          */
-        onSelect={(measurementType) => setDraft(withBodyweightDefault({ ...draft, measurementType }))}
+        onSelect={(measurementType) => {
+          setDraft(withBodyweightDefault({ ...draft, measurementType }));
+          tutorial?.report({ type: 'exercise-measurement-set', measurementType });
+        }}
       />
     </Screen>
   );
