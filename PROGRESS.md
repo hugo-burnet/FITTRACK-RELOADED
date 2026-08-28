@@ -2,7 +2,13 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-28 (**passe mouvement** : écran d'ouverture qui charge le logo,
+**Dernière mise à jour :** 2026-08-29 (**tutoriel campagne : tâches 6 à 11 terminées** — les cinq
+zones restantes de la couverture contextuelle, le mode « Voix uniquement », les côtés unilatéraux
+persistés, le contrôle manuel des côtés, l'enquête sur la double annonce et l'audit navigateur.
+Dix commits, 28 missions sur 39, suite complète et build verts. **Checkpoint téléphone à faire :
+le sélecteur de guidage à quatre modes, et une série unilatérale menée jusqu'au bout.** Voir la
+section dédiée ci-dessous). Précédemment, le 2026-08-28
+(**passe mouvement** : écran d'ouverture qui charge le logo,
 transitions d'écran directionnelles — l'app avait des entrées mais aucune sortie —, mode mouvement
 réduit qui réduit au lieu de couper, cible RPE portée à 48 px, cinq écrans sortis du chunk
 d'entrée, et la carte de charge alignée sur les règles du sélecteur de repos. Voir la section
@@ -40,6 +46,101 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Tutoriel campagne — tâches 6 à 11 (2026-08-29)
+
+Branche `claude/tutorial-hybrid-campaign-76f6d8`. Dix commits, un par zone ou par tâche.
+
+### Ce qui est livré
+
+**Tâche 6, les cinq zones restantes.** Exercices, Progression, Connaissances, Accueil, Réglages —
+douze missions, leurs ancres et toute la copie française. Le catalogue passe de 16 à 28 missions
+implémentées sur 39 déclarées.
+
+**Tâche 7 — mode « Voix uniquement ».** `guidancePolicy(mode)` est la seule autorité : voix,
+tonalités, métronome, trois questions séparées. Ce qui part est la cadence des répétitions, ce qui
+tombe *pendant* l'effort ; ce qui reste est tout ce qui tombe entre les séries.
+
+**Tâche 8 — les côtés en base.** `WorkoutSet.unilateralSecondSideStartsAt`, une échéance absolue.
+Champ optionnel non indexé : aucune version Dexie.
+
+**Tâche 9 — contrôle manuel des côtés.** Le cycle deux côtés quitte la mémoire du composant.
+`sideCycle.ts` est supprimé.
+
+**Tâche 10 — la double annonce.** Reproduction instrumentée écrite avant tout correctif. Le code
+émet exactement une `side-change` ; aucun correctif de machine n'était nécessaire.
+
+**Tâche 11 — audit navigateur.** 390 × 844 émulé, thèmes sombre et clair, base vide.
+
+### Ce que l'audit a trouvé, et que les tests ne pouvaient pas voir
+
+Deux missions désignaient une commande **que personne n'avait ancrée** : le bouton « Chercher dans
+les preuves » (`knowledge-search`) et le filtre par exercice de l'Historique
+(`history-exercise-filter`, absent depuis le lot d'historique). Les tests de missions parlent de la
+machine et jamais du DOM, donc tout était vert. À l'usage, le panneau aurait cherché sa cible six
+secondes puis proposé de rouvrir l'écran où elle n'est déjà pas.
+
+`src/features/tutorial/tutorialAnchors.test.ts` ferme la classe entière : chaque `targetId` de
+mission doit se retrouver écrit littéralement dans un composant, sauf les ancres composées à
+l'exécution, nommées une par une.
+
+Mesures de l'audit, toutes conformes : sélecteur de guidage à quatre modes en deux colonnes,
+150 × 48 px, aucun libellé tronqué dans les deux thèmes ; aucun débordement horizontal sur les six
+routes visitées ; aucune cible tactile sous 48 px sur Réglages et Historique. Le bouton « Créer
+l'exercice » est bien désactivé à l'ouverture du formulaire — ce qui confirme sur pièce pourquoi
+`TUT-EXE-02` a dû gagner une étape de nom que le plan n'avait pas.
+
+### Écarts au plan, tous dictés par un écran
+
+1. **L'objectif hebdomadaire n'existe pas sur l'Accueil.** La tuile est un lien vers Progression ;
+   `setWeeklyTrainingGoal` est piloté depuis l'Historique. La mission ne le promet pas.
+2. **Le parcours d'apprentissage n'a ni étape courante ni bouton « Reprendre ».** `TUT-KNW-02`
+   ouvre la première étape, ce que l'écran sait faire.
+3. **Les notifications n'ont pas de bouton « enregistrer ».** Chaque bascule écrit immédiatement.
+4. **`repCadence` est un `Record<CueId, boolean>`** et non un champ par `CueDefinition` : même
+   exhaustivité imposée par le compilateur, pour un dixième du diff.
+5. **`completeFirstSide` vit dans `workoutSets.ts`**, avec les deux mutations qui doivent effacer
+   le champ.
+
+### Deux décisions produit à valider
+
+- **`/knowledge` a récupéré le bouton « Aide sur cette page ».** `KnowledgeScreenFrame` le retirait
+  à toutes les routes du corpus. C'était juste quand l'aide était un chapitre de diaporama ; depuis
+  la v3 elle est la **seule** porte d'entrée des missions contextuelles, et les deux missions
+  Connaissances n'étaient joignables de nulle part. Le hub est une surface de recherche ; les
+  articles restent sans aide, et le test qui le vérifiait a été déplacé sur
+  `LearnProgrammingScreen`.
+- **La feuille d'aide n'a plus de plafond à trois missions.** Avec quatre missions sur
+  `/settings`, « Comprendre une restauration » sortait de la liste : elle existait sans qu'aucun
+  écran ne sache la proposer. La feuille défile déjà.
+
+### Ce qui reste
+
+**`TUT-WRK-05` à `TUT-WRK-12`** — les huit missions avancées de l'écran de séance, dernier reliquat
+de la tâche 6. Elles n'ont ni ancre ni copie. `TUT-WRK-10` (cadence) et `TUT-WRK-11` (maintien et
+unilatéral) sont désormais débloquées : les tâches 7 et 9 sont faites, donc les ancres
+`workout-first-side` / `workout-second-side` peuvent être posées sur des commandes réelles.
+
+**La phase voix.** Aucune étape écrite dans ce chantier ne porte de `clipId` : la consigne se lit
+en entier dans le panneau. Les textes se relisent à l'écran avant d'être enregistrés.
+
+### Portes
+
+`npm run typecheck`, `npm run lint` (zéro erreur ; l'avertissement `RoutineCollection.tsx` est
+préexistant), `npm run test:run` (**223 fichiers, 2339 tests**) et `npm run build` passent au
+dernier commit.
+
+### Checkpoint téléphone
+
+1. **Réglages → guidage.** Quatre modes en deux colonnes. Choisir « Voix uniquement », puis faire
+   une série de répétitions : aucun battement, aucun décompte des dernières répétitions, et le
+   3-2-1 du repos toujours là.
+2. **Une série unilatérale, en entier.** La coche annonce « Premier côté terminé », rien ne
+   s'enregistre, le décompte de changement de côté tourne dix secondes, la coche est éteinte
+   pendant ce temps, puis « Second côté ». **Verrouiller l'écran pendant la transition et revenir**
+   — c'est le défaut que la tâche 8 ferme.
+3. **Le changement de côté à l'oreille.** Une seule « reprise dans dix secondes ». Si elle est dite
+   deux fois, le fichier `side-change-1.mp3` est en cause, pas le code.
 
 ## Inventaire écran par écran pour le tutoriel (v2.2.0)
 

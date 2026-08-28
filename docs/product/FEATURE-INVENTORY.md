@@ -621,6 +621,35 @@ missions possèdent deux gestes successifs, soit quinze clips d'instruction au t
 
 ### P2 — Maîtrise des outils
 
+**État au 29 août 2026 — 28 missions sur 39 sont implémentées.** Sont livrées : Programmes
+(`TUT-PRG-01`, un seul chapitre de 18 étapes qui absorbe `TUT-PRG-02` à `04`), Historique et
+import (`TUT-HIS-01` à `03`, `TUT-IMP-01`), Progression (`TUT-ANA-01`, `02`), Exercices
+(`TUT-EXE-01`, `02`), Connaissances (`TUT-KNW-01`, `02`), Accueil (`TUT-HOME-01`, `02`) et
+Réglages (`TUT-SET-01`, `02`).
+
+**Restent `TUT-WRK-05` à `TUT-WRK-12`** — les missions avancées de l'écran de séance. Elles n'ont
+ni ancre ni copie.
+
+La colonne « Voix future » de ce tableau reste une intention : **aucune étape de mission écrite
+dans ce chantier ne porte de `clipId`.** Le panneau affiche la consigne en entier, ce qui est déjà
+le comportement en mode Silence. Les textes se relisent à l'écran avant d'être enregistrés ; la
+génération coûte de l'argent réel et vient après validation.
+
+Deux lignes de ce tableau ne décrivent plus l'implémentation, et c'est délibéré :
+
+- `TUT-ANA-01` part du hub Progression vers **« Séances par semaine »**, et non de n'importe
+  quelle analyse : « Records » — la première ligne — n'a ni filtre de période ni export.
+- `TUT-SET-02` ne fait rien « enregistrer » : les notifications n'ont pas de bouton, chaque
+  bascule écrit immédiatement.
+
+Deux entrées manquent au tableau parce qu'elles n'existaient pas au moment de sa rédaction :
+`TUT-KNW-01` (chercher dans les preuves, puis ouvrir un résultat), `TUT-KNW-02` (le parcours
+« Apprendre à programmer » jusqu'aux sources d'un article), et l'Accueil a été scindé en
+`TUT-HOME-01` (le dessin musculaire) et `TUT-HOME-02` (la pesée du jour) — chacune finit dans la
+feuille qu'elle vient d'ouvrir, parce qu'enchaîner deux feuilles modales aurait fait désigner une
+commande restée sous un voile.
+
+
 | ID | Mission | Départ | Réussite observée | Voix future |
 | ---------- | ---------------------------------- | ----------------- | ---------------------------------------- | ----------------------------- |
 | TUT-PRG-01 | Créer le cadre d'un bloc | Programmes | Étape Cadre valide | `tutorial-program-frame-1` |
@@ -662,6 +691,13 @@ Ces sujets appartiennent à l'aide à la demande, jamais à l'orientation initia
 - `voiceScript.json` déclare **96 identifiants uniques** ;
 - `public/voice/` contient **96 MP3 correspondants** ;
 - **10 clips** appartiennent à l'orientation et **15** aux missions P1 ;
+- les missions écrites depuis le 28 août 2026 — Programmes, Historique, Progression, Exercices,
+  Connaissances, Accueil, Réglages — **n'ont aucun clip** : leur consigne se lit en entier dans le
+  panneau, et un test du manifeste interdit un `clipId` qui ne serait pas déclaré au script ;
+- `side-change` n'a qu'un clip et son texte ne contient qu'une occurrence de « reprise dans dix
+  secondes ». Si le navigateur fait entendre la phrase deux fois avec un seul appel `announce`, la
+  répétition est dans `public/voice/side-change-1.mp3` : **remplacer le fichier**, jamais supprimer
+  l'annonce pour masquer l'enregistrement ;
 - aucun fichier déclaré par le manifeste actuel ne manque au moment de l'inventaire ;
 - les clips de maintien, changement de côté, cadence, repos, records et coach complètent le pack.
 
