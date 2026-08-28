@@ -1128,6 +1128,52 @@ describe('WorkoutScreen — exercice unilatéral', () => {
     useHoldTimer.getState().stop();
   });
 
+  /*
+   * La reproduction instrumentée du défaut « double annonce », écrite avant tout
+   * correctif : un geste de fin de premier côté doit produire **un** appel
+   * `announce`, et celui-là.
+   *
+   * Ce qu'elle exclut nommément : `rest-10` et `pace-start-10`. Les dix
+   * secondes du changement de côté ne sont pas un repos et ne sont pas une
+   * préparation de cadence — les annoncer comme telles ferait entendre deux
+   * reprises pour un seul changement.
+   */
+  it('n’annonce qu’une seule reprise au changement de côté', async () => {
+    await seedUnilateralHoldWorkout();
+    const user = userEvent.setup();
+    renderWorkout();
+
+    await screen.findByText('Planche latérale');
+    await user.click(screen.getByRole('button', { name: 'Chrono de Planche latérale' }));
+    await user.click(await screen.findByRole('button', { name: t('workout.holdStart') }));
+    act(() => {
+      useHoldTimer.setState({ startedAt: Date.now() - 30_000 });
+    });
+
+    const announce = vi.spyOn(announcer, 'announce').mockReturnValue(true);
+    announce.mockClear();
+    await user.click(screen.getByRole('button', { name: 'Premier côté terminé — série 1' }));
+
+    await waitFor(() => {
+      expect(announce).toHaveBeenCalledWith('side-change');
+    });
+    /*
+     * L'invariant porte sur les annonces de **reprise**, pas sur le silence
+     * total : les repères du chrono — ici `hold-30`, déclenché par le décalage
+     * d'horloge de ce test — sont des tonalités de maintien, pas des reprises,
+     * et ils doivent continuer de tomber pendant le premier côté.
+     *
+     * Ce qui est interdit : une seconde `side-change`, et les deux cues qui
+     * feraient entendre une reprise sans en être une.
+     */
+    const cues = announce.mock.calls.map(([cue]) => cue);
+    expect(cues.filter((cue) => cue === 'side-change')).toHaveLength(1);
+    expect(cues).not.toContain('rest-10');
+    expect(cues).not.toContain('pace-start-10');
+    expect(useRestTimer.getState().setId).toBeNull();
+    announce.mockRestore();
+  });
+
   it('fait deux côtés et une seule validation sur la même série', async () => {
     const workoutId = await seedUnilateralHoldWorkout();
     const user = userEvent.setup();

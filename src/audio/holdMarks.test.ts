@@ -90,6 +90,24 @@ describe('le manifeste', () => {
     expect(recorded, `clips à sortir de « pending » : ${recorded.join(', ')}`).toEqual([]);
   });
 
+  /*
+   * L'autre moitié de l'enquête sur la double annonce. Si le code n'émet qu'un
+   * cue et qu'on entend deux fois « reprise dans dix secondes », la répétition
+   * est dans l'artefact et pas dans la machine. Ce test épingle la source :
+   * un seul clip pour ce cue, et une seule occurrence de la phrase dedans.
+   *
+   * Il ne peut pas écouter le MP3. C'est écrit dans PROGRESS.md, et la règle
+   * qui va avec : on remplace le fichier, on ne supprime pas une annonce
+   * légitime pour masquer un enregistrement fautif.
+   */
+  it('ne dit la reprise qu’une fois dans le texte du changement de côté', () => {
+    const lines = script.lines.filter((line) => line.cue === 'side-change');
+
+    expect(lines).toHaveLength(1);
+    const text = lines[0]?.text.toLowerCase() ?? '';
+    expect(text.split('reprise dans dix secondes')).toHaveLength(2);
+  });
+
   it('couvre bien plus que les clips rattachés à un cue', () => {
     expect(script.lines.length).toBeGreaterThan(allClips().length);
   });
