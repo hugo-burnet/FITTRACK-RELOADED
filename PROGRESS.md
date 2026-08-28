@@ -2,7 +2,12 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-27 (**lecture du wiki, deuxième passe** : filtre de la
+**Dernière mise à jour :** 2026-08-28 (**inventaire écran par écran pour terminer le tutoriel** :
+les 36 routes, leurs feuilles et états secondaires sont répertoriés avec leurs effets réels et la
+couverture du tutoriel ; le document maître est aligné sur v2.2.0, les 10 chapitres, 12 missions,
+15 clips de mission et 96 MP3. Voir la section dédiée ci-dessous — **aucun checkpoint téléphone :
+l'application et ses données n'ont pas été modifiées**). Précédemment, le 2026-08-27 (**lecture du
+wiki, deuxième passe** : filtre de la
 documentation supprimé, sources affichées en clair au lieu d'identifiants, et rythme rendu aux
 articles de prose. Voir la section v2.2.0 ci-dessous — **checkpoint téléphone à faire**). Plus tôt
 le même jour (**reprise de lecture après retours téléphone** : libellé de routine décollé du bord
@@ -30,6 +35,28 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Inventaire écran par écran pour le tutoriel (v2.2.0)
+
+Le document `docs/product/FEATURE-INVENTORY.md` est redevenu la source de vérité du tutoriel :
+
+- ses **36 routes** sont toutes présentes dans le répertoire écran par écran ;
+- les feuilles, confirmations, états vides, reprises après interruption et actions destructrices
+  sont rattachés à leur écran d'origine ;
+- chaque ligne dit ce que le geste produit et si le tutoriel le fait pratiquer, le survole ou
+  l'ignore ;
+- les écrans récents de la base de preuves, la documentation d'exercice, le maintien chronométré
+  et le cycle unilatéral ont été ajoutés à l'inventaire fonctionnel ;
+- l'état réel du tutoriel est corrigé : 10 chapitres d'orientation, 12 missions, 15 instructions
+  vocales de mission et 96 identifiants/MP3 sans fichier manquant ;
+- l'inventaire signale une incohérence de copie : Réglages promet encore une cadence qui s'allonge
+  automatiquement avec la fatigue, alors que `src/lib/tempo.ts` donne désormais le contrôle
+  manuel à l'utilisateur.
+
+Vérification documentaire : aucune route du routeur ne manque, les tables Markdown gardent un
+nombre de colonnes cohérent et le manifeste vocal correspond aux 96 fichiers. Aucun écran, aucune
+donnée et aucun comportement de l'application n'ont été modifiés ; il n'y a donc pas de checkpoint
+téléphone pour cette session.
 
 ## Reprise UI Routines, Wiki et coach en séance
 
