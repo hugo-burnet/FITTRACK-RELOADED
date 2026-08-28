@@ -21,7 +21,7 @@ import {
 } from '@/lib/plateLoading';
 import { measurementShape } from '@/lib/measurement';
 import { computePlateLoad } from '@/lib/plates';
-import { Card, NumberInput, OptionSheet, SectionTitle } from '@/ui';
+import { Card, ChoiceChip, NumberInput, OptionSheet, SectionTitle } from '@/ui';
 import type { Option } from '@/ui';
 import { ChevronDownIcon } from '@/ui/icons';
 import { formatNumber } from '@/ui/numberField';
@@ -231,22 +231,10 @@ function BodyweightFactorRow({
         {t('exercise.bodyweightFactorLabel')}
       </p>
 
-      <div className="mb-3 flex flex-wrap gap-2">
-        {BODYWEIGHT_FACTOR_PRESETS.map((preset) => (
-          <PresetChip
-            key={preset}
-            label={t('exercise.bodyweightFactorPreset', { percent: preset })}
-            selected={percent === preset}
-            onClick={() => onChange(percentToFactor(preset))}
-          />
-        ))}
-        <PresetChip
-          label={t('exercise.bodyweightFactorNone')}
-          selected={percent === undefined}
-          onClick={() => onChange(undefined)}
-        />
-      </div>
-
+      {/* La valeur d'abord, et elle se tape : les préréglages sont des raccourcis
+          vers ce champ, pas l'inverse. Le repos range ses commandes dans cet
+          ordre-là — le réglage, ses raccourcis, le mode, puis la phrase qui
+          explique — et la charge disait la même chose à l’envers. */}
       <NumberInput
         aria-label={t('exercise.bodyweightFactorLabel')}
         value={percent}
@@ -257,6 +245,36 @@ function BodyweightFactorRow({
         suffix={t('units.percent')}
         placeholder={t('exercise.bodyweightFactorNone')}
       />
+
+      {/* Une grille, pas une rangée qui passe à la ligne : à largeur de contenu
+          les quatre chips ne font pas la même taille et « 100 % » pèse plus que
+          « 50 % » sans rien vouloir dire de plus. Même raison que la grille du
+          repos, qui porte déjà cette leçon en commentaire. */}
+      <div className="mt-3 grid grid-cols-4 gap-2">
+        {BODYWEIGHT_FACTOR_PRESETS.map((preset) => (
+          <ChoiceChip
+            key={preset}
+            numeric
+            fill
+            label={t('exercise.bodyweightFactorPreset', { percent: preset })}
+            active={percent === preset}
+            onClick={() => onChange(percentToFactor(preset))}
+          />
+        ))}
+      </div>
+
+      {/* Sur sa propre ligne et en accent doux : « Non comptée » est un mode, pas
+          un cinquième pourcentage. Rangé parmi les valeurs et en aplat plein, il
+          criait plus fort qu'elles en disant exactement l'inverse. */}
+      <div className="mt-2">
+        <ChoiceChip
+          label={t('exercise.bodyweightFactorNone')}
+          active={percent === undefined}
+          fill
+          quietActive
+          onClick={() => onChange(undefined)}
+        />
+      </div>
 
       <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
         {t('exercise.bodyweightFactorHint')}
@@ -277,35 +295,6 @@ function BodyweightFactorRow({
         </p>
       )}
     </div>
-  );
-}
-
-function PresetChip({
-  label,
-  selected,
-  onClick,
-}: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={selected}
-      onClick={onClick}
-      className={`metric min-h-12 rounded-xl border px-4 text-sm
-        transition-[background-color,border-color,color,transform] duration-[var(--dur-1)]
-        ease-[var(--ease-mech)] active:scale-[0.97]
-        ${
-          selected
-            ? `border-[var(--color-accent)] bg-[var(--color-accent)] font-bold
-              text-[var(--color-accent-fg)]`
-            : 'border-[var(--border)] bg-[var(--surface-2)] font-medium text-[var(--text-2)]'
-        }`}
-    >
-      {label}
-    </button>
   );
 }
 

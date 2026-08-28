@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   hasExistingHistory,
@@ -112,7 +112,7 @@ function DetectedCounts({ data }: { data: HevyImportData }) {
 }
 
 export function HevyImportScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [state, setState] = useState<ImportState>({
     step: 'file',
     issues: [],

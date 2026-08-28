@@ -40,6 +40,7 @@ function WorkoutRow({ summary }: { summary: HistoryWorkoutSummary }) {
   return (
     <article className="border-b border-[var(--border)] last:border-b-0">
       <Link
+        viewTransition
         to={`/history/${summary.workoutId}`}
         className="flex min-h-12 w-full items-center gap-3 px-4 py-4 text-left
           transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"

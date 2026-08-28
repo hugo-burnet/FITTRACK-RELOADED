@@ -1,7 +1,18 @@
 /** Centralized French UI copy. */
 const fr = {
+  /**
+   * La signature de l’app. Elle reste en anglais, telle qu’elle se dit : ce
+   * n’est pas une phrase d’interface qu’on traduit, c’est un nom.
+   *
+   * En trois morceaux parce que l’ouverture les fait entrer l’un après
+   * l’autre, et en une ligne parce que « À propos » la cite entière. Les
+   * trois morceaux et la ligne doivent rester d’accord.
+   */
   app: {
     name: 'FitTrack',
+    principle: 'Progressive Overload',
+    tagline: 'Production was the gym',
+    slogan: 'FitTrack — Progressive Overload — Production was the gym',
   },
 
   update: {
@@ -1787,7 +1798,6 @@ const fr = {
   },
 
   boot: {
-    loading: 'préparation de la base',
     seedFailed:
       'Le catalogue d’exercices n’a pas pu être chargé. Tes données sont intactes, le reste de l’app fonctionne.',
     dismiss: 'Masquer',

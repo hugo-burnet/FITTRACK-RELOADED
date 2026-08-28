@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import type { HomeProgramProjection } from '@/data/repositories/home';
 import { startWorkoutFromProgram } from '@/data/repositories/programWorkout';
 import { t } from '@/i18n/fr';
@@ -53,7 +53,7 @@ interface Props {
 
 /** Displays the repository's exact pick; ranking stays out of the component. */
 export function ProgramHeroCard({ program, disabled, leadWith = 'session' }: Props) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [failed, setFailed] = useState(false);
   const [starting, setStarting] = useState(false);
   const [replacementOpen, setReplacementOpen] = useState(false);

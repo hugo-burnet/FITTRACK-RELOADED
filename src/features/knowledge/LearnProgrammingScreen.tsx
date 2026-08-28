@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { articleHref } from './articleCatalogue';
 import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
@@ -17,7 +18,7 @@ import { loadReadSteps, resolveLearningPath, saveReadSteps } from './learningPat
  * elle vit dans `localStorage` et son absence ne casse rien.
  */
 export function LearnProgrammingScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const steps = resolveLearningPath();
   const [read, setRead] = useState<ReadonlySet<string>>(() => loadReadSteps());
 
@@ -65,6 +66,7 @@ export function LearnProgrammingScreen() {
                 <div className="mt-3 flex items-center gap-3">
                   {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
                   <Link
+                    viewTransition
                     to={articleHref(step.article)}
                     className="flex min-h-12 flex-1 items-center gap-2 text-sm font-semibold
                       text-[var(--accent-ink)]"

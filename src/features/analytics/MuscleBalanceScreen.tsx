@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { muscleLabel, muscleSetsReading, periodLabel } from '@/i18n/labels';
@@ -24,7 +24,7 @@ import { useHistoricalPeriod } from './useHistoricalPeriod';
  * returns the window and its earlier-history signal as one coherent snapshot.
  */
 export function MuscleBalanceScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [periodOpen, setPeriodOpen] = useState(false);
   /** Read once: the bounds must not slide under the reader at midnight. */
   const [openedAt] = useState(() => Date.now());

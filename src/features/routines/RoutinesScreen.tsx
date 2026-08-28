@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
@@ -42,7 +42,7 @@ type SheetState =
   | { kind: 'routineDelete'; routine: Routine };
 
 export function RoutinesScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
   const summaries = useLiveQuery(listRoutineSummaries);
   const folders = useLiveQuery(listFolders);

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import type { TranslationKey } from '@/i18n/fr';
 import { Card } from '@/ui';
@@ -45,7 +45,7 @@ const LINKS: Array<{ to: string; labelKey: TranslationKey; nameKey: TranslationK
 ];
 
 export function HomeBodyCard() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   // `null` tant que le dessin n'a pas répondu : la carte tient sa place pendant
   // ce temps-là plutôt que d'apparaître après coup sous le pouce.
   const [drawn, setDrawn] = useState<boolean | null>(null);

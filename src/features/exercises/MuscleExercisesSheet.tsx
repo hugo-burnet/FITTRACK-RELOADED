@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { listExercises } from '@/data/repositories/exercises';
 import { t } from '@/i18n/fr';
@@ -44,7 +44,7 @@ interface Props {
  * not there would make the same muscle answer two different numbers.
  */
 export function MuscleExercisesSheet({ open, muscle, onClose }: Props) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const group = muscle === null ? null : groupOfMuscleId(muscle);
 
   const exercises = useLiveQuery(

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import type { HomeDashboardData, SuggestedRoutine } from '@/data/repositories/home';
 import { startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
@@ -74,7 +74,7 @@ function HomeSuggestionCardContent({
   disabled,
   routineContext,
 }: Props) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [contextSheetOpen, setContextSheetOpen] = useState(() => routineContext.required);
 
   const selectedContext = routineContext.options.find(

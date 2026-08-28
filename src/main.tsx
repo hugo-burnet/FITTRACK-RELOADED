@@ -1,12 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { BootScreen, SeedErrorBanner } from './app/Boot';
+import { BOOT_HOLD_MS, BootCurtain, BootScreen, SeedErrorBanner } from './app/Boot';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
 import { initializePersistentData } from './data/initialize';
+import { getActiveWorkout } from './data/repositories/workouts';
+import { isWorkoutStale } from './app/staleWorkout';
 import { watchAppUpdate } from './platform/appUpdate';
 import { watchInstall } from './platform/install';
+import { watchNavDirection } from './app/navigation';
 import { router } from './router';
 import { applyTheme, loadTheme } from './stores/theme';
 import './index.css';
@@ -21,6 +24,7 @@ applyTheme(loadTheme());
 // work offline — neither has any reason to wait on the exercise catalogue.
 watchInstall();
 watchAppUpdate();
+watchNavDirection();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');
@@ -31,6 +35,7 @@ function mount(seedFailed: boolean) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
+        <BootCurtain />
         {seedFailed && <SeedErrorBanner />}
         <UpdateBanner />
         <RouterProvider router={router} />
@@ -40,15 +45,52 @@ function mount(seedFailed: boolean) {
 }
 
 // Persistent projections have to be ready before the first screen queries
-// them, so the boot screen holds until initialization resolves.
+// them, so the opening screen holds until initialization resolves.
 root.render(<BootScreen />);
 
-void initializePersistentData().then(
-  () => mount(false),
-  (error: unknown) => {
-    // A failed seed must never leave a blank screen. The app starts anyway and
-    // says so: the user's own data does not depend on the catalogue.
-    console.error('Le seed du catalogue a échoué', error);
-    mount(true);
-  },
-);
+/**
+ * Le rideau ne s'attarde pas quand une séance est en cours.
+ *
+ * Il présente l'app, et on ne présente pas une app à quelqu'un qui l'a ouverte
+ * il y a huit minutes pour saisir sa série suivante. La règle n° 5 est
+ * explicite : une main, en sueur, entre deux séries — 2,5 s y sont un mur, pas
+ * une entrée en matière. C'est le seul endroit où l'ouverture coûtait quelque
+ * chose, et le seul où elle ne raconte plus rien.
+ *
+ * La condition est celle de la barre de reprise, pas une autre : une séance
+ * périmée n'est pas une séance en cours, et son propriétaire mérite l'ouverture
+ * comme tout le monde.
+ *
+ * Le minuteur part quand même et se fait couper : interroger la base **avant**
+ * de l'armer ferait payer le temps de la requête à tous les démarrages, y
+ * compris ceux qui gardent le rideau. Une base illisible ne saute rien — on
+ * laisse alors le minuteur faire son travail.
+ */
+const openingHeld = new Promise<void>((resolve) => {
+  const timer = setTimeout(resolve, BOOT_HOLD_MS);
+  void getActiveWorkout().then(
+    (active) => {
+      if (active === undefined || isWorkoutStale(active.startedAt)) return;
+      clearTimeout(timer);
+      resolve();
+    },
+    () => {},
+  );
+});
+
+/**
+ * Les deux attentes courent ensemble, jamais l'une après l'autre : le rideau
+ * dure ce qu'il dure, et une base lente le prolonge au lieu de s'y ajouter.
+ */
+void Promise.all([
+  initializePersistentData().then(
+    () => false,
+    (error: unknown) => {
+      // A failed seed must never leave a blank screen. The app starts anyway and
+      // says so: the user's own data does not depend on the catalogue.
+      console.error('Le seed du catalogue a échoué', error);
+      return true;
+    },
+  ),
+  openingHeld,
+]).then(([seedFailed]) => mount(seedFailed));

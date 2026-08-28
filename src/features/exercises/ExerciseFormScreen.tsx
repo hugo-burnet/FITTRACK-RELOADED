@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { createCustomExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
@@ -102,7 +103,7 @@ function PickerRow({ label, value, onOpen }: { label: string; value: string; onO
 
 export function ExerciseFormScreen() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [params] = useSearchParams();
   const [picker, setPicker] = useState<Field | null>(null);
 

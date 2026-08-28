@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { getActiveProgramProjection } from '@/data/repositories/home';
 import type { HomeProgramProjection } from '@/data/repositories/home';
@@ -40,7 +40,7 @@ function otherPrograms(query: Extract<ProgramsQuery, { status: 'ready' }>) {
 }
 
 export function ProgramListScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const query = useLiveQuery<ProgramsQuery>(async () => {
     try {
       const [programs, hero, active] = await Promise.all([

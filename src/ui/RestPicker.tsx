@@ -1,3 +1,4 @@
+import { ChoiceChip } from './ChoiceChip';
 import { formatRest } from '@/lib/rest';
 import { t } from '@/i18n/fr';
 
@@ -113,7 +114,7 @@ export function RestPicker({
           them on one row and equal-width whatever the system font measures. */}
       <div className="mt-3 grid grid-cols-5 gap-2">
         {PRESETS.map((seconds) => (
-          <Chip
+          <ChoiceChip
             key={seconds}
             numeric
             fill
@@ -127,7 +128,7 @@ export function RestPicker({
       {/* On its own line: it is a mode ("inherit"), not another duration, and the
           gap keeps it from reading as a sixth value chip. */}
       <div className="mt-2">
-        <Chip
+        <ChoiceChip
           label={clearLabel}
           active={!isSet}
           fill
@@ -136,49 +137,5 @@ export function RestPicker({
         />
       </div>
     </div>
-  );
-}
-
-/**
- * The same fill/ink split as `FilterChip`, without its chevron: this chip *is*
- * the choice, it does not open a further picker. Durations take the tabular face
- * so "2:30" lines up with the reading in the well; the inherit chip is a word
- * and takes the plain one.
- */
-function Chip({
-  label,
-  active,
-  numeric = false,
-  fill = false,
-  quietActive = false,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  numeric?: boolean;
-  /** Stretch to the grid cell (presets) rather than hug the label (clear chip). */
-  fill?: boolean;
-  /** A selected mode stays subordinate to the numeric choices and primary action. */
-  quietActive?: boolean;
-  onClick: () => void;
-}) {
-  const activeClass = quietActive
-    ? 'bg-[var(--accent-soft)] text-[var(--accent-ink)]'
-    : 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]';
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={`min-h-12 rounded-xl text-base font-semibold transition-colors
-        duration-[var(--dur-1)] ease-[var(--ease-mech)] ${fill ? 'w-full px-1' : 'px-4'} ${
-          numeric ? 'metric' : ''
-        } ${
-          active ? activeClass : 'bg-[var(--surface-2)] text-[var(--text-1)]'
-        }`}
-    >
-      {label}
-    </button>
   );
 }

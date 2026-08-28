@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import questionsDocument from './wiki-questions.json';
 import { findSectionIdForClaim, findWikiSection } from './wikiIndex';
@@ -40,6 +41,7 @@ function CoveredCard({ question }: { question: CoveredQuestion }) {
           {sections.map((section) => (
             <li key={section.sectionId}>
               <Link
+                viewTransition
                 to={`/knowledge/s/${section.sectionId}`}
                 className="flex min-h-12 items-center justify-between gap-3 rounded-xl bg-[var(--surface-2)] px-4 py-2 text-sm leading-6 text-[var(--text-1)]"
               >
@@ -73,7 +75,7 @@ function UncoveredCard({ question }: { question: UncoveredQuestion }) {
 }
 
 export function WikiQuestionsScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
 
   return (
     <KnowledgeScreenFrame

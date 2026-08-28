@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { getActiveWorkout } from '@/data/repositories/workouts';
@@ -36,7 +36,7 @@ import { useHomeDashboard } from './useHomeDashboard';
  * barre du bas n'a que cinq places (§12.1).
  */
 export function HomeScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const state = useHomeDashboard();
 

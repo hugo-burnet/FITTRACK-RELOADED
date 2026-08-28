@@ -24,6 +24,7 @@ export function HomeRecentWorkouts({ items }: { items: readonly HistoryWorkoutSu
           {t('home.recentSection')}
         </h2>
         <Link
+          viewTransition
           to="/history"
           className="-my-2 flex min-h-12 items-center px-1 text-sm font-semibold
             text-[var(--accent-ink)] transition-opacity duration-[var(--dur-1)] active:opacity-70"

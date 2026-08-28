@@ -4,6 +4,7 @@ export type { SheetAction } from './ActionSheet';
 export { AddRow } from './AddRow';
 export { Button } from './Button';
 export { Card } from './Card';
+export { ChoiceChip } from './ChoiceChip';
 export { ConfirmAction } from './ConfirmAction';
 export { ConfirmSheet } from './ConfirmSheet';
 export { EmptyState } from './EmptyState';

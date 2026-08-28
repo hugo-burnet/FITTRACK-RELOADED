@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   isRecordProjectionCurrent,
@@ -16,7 +17,7 @@ import { RecordRail } from './RecordRail';
 const ALL = '';
 
 export function RecordsScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const exerciseId = searchParams.get('exerciseId') ?? ALL;
   const [type, setType] = useState<PersonalRecordType | typeof ALL>(ALL);

@@ -1,4 +1,5 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { EQUIPMENT, MUSCLE_GROUPS } from '@/data/types';
 import { t } from '@/i18n/fr';
@@ -18,7 +19,7 @@ function pickFrom<T extends string>(values: readonly T[], raw: string | null): T
  * screen's own — keeping the query in the URL.
  */
 export function ExercisesScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [params, setParams] = useSearchParams();
 
   // The URL is the source of truth for the search and the two filters: opening

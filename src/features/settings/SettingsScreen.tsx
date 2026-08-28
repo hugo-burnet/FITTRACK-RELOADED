@@ -1,6 +1,6 @@
 import { useState, useSyncExternalStore } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { ChevronRightIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
 import { countCompletedWorkouts } from '@/data/repositories/history';
@@ -43,7 +43,7 @@ const INSTALL_MESSAGE = {
 } as const satisfies Record<InstallOutcome, TranslationKey>;
 
 export function SettingsScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
   /** Ce que la sauvegarde CSV a donné, dit une fois sous la liste. */

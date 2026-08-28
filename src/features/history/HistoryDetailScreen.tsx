@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   deleteArchivedWorkout,
@@ -24,7 +25,7 @@ const longDate = new Intl.DateTimeFormat('fr-FR', {
 
 export function HistoryDetailScreen() {
   const { workoutId = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [actionsOpen, setActionsOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleteFailed, setDeleteFailed] = useState(false);

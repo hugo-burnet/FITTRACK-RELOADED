@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { addWorkoutExercise, getActiveWorkout } from '@/data/repositories/workouts';
@@ -17,7 +17,7 @@ import { ActionBand } from '@/ui';
  * the Android back button of Lot 10 behaves correctly for free.
  */
 export function WorkoutAddExerciseScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
 
   const [query, setQuery] = useState<BrowserQuery>({ search: '' });

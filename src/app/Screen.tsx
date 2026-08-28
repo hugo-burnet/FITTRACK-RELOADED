@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { HeaderAction } from '@/ui/HeaderAction';
+import { navigatingBack } from './navigation';
 import { ArrowLeftIcon, HelpIcon } from '@/ui/icons';
 
 export type ScreenProps = {
@@ -73,15 +74,22 @@ export function Screen({
 
   return (
     <section className="mx-auto flex min-h-0 w-full max-w-[36rem] flex-1 flex-col">
-      {/* L'en-tête arrive une fraction avant son contenu : le titre pose le
-          décor, la page se remplit derrière. `animate-*` ne rejoue qu'au
-          montage, donc une fois par écran et jamais à chaque série validée. */}
-      <header className="animate-fade flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
+      {/* Ni l'en-tête ni le contenu n'ont plus d'animation de montage à eux.
+          C'est la transition de vue qui porte l'arrivée d'un écran, et surtout
+          son départ — que ces `animate-*` ne savaient pas faire : ils jouaient
+          à chaque entrée, jamais à la sortie, donc aller et revenir se
+          ressemblaient. Les superposer ferait deux mouvements pour un pas. */}
+      <header className="flex min-h-16 shrink-0 items-center gap-2 px-4 pt-5 pb-4">
         {onBack && (
           <button
             type="button"
             aria-label={t('common.back')}
-            onClick={onBack}
+            onClick={() => {
+              // Le seul geste de l'app qui remonte d'un cran, et il vit ici seul.
+              // Il le dit avant de partir ; tout le reste avance par défaut.
+              navigatingBack();
+              onBack();
+            }}
             className="-ml-3 flex size-12 shrink-0 items-center justify-center rounded-xl
               text-[var(--text-1)] active:bg-[var(--surface-1)]"
           >
@@ -119,7 +127,7 @@ export function Screen({
           vingt écrans qui se souviennent chacun d'une valeur finissent par en
           oublier une. */}
       <div
-        className="animate-rise flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain
           px-4 pt-3 pb-8"
       >
         {children}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   ProgramRepositoryError,
@@ -43,7 +44,7 @@ import { useProgramEditorData } from './useProgramEditorData';
 
 export function ProgramEditorScreen() {
   const { id: routeProgramId } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [editorOpenedAt] = useState(() => Date.now());
   const [step, setStep] = useState<ProgramEditorStep>('basics');
   const [basics, setBasics] = useState<ProgramBasicsDraft>({

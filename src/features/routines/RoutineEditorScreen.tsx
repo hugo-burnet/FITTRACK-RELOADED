@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
@@ -63,7 +64,7 @@ type SheetState =
  */
 export function RoutineEditorScreen() {
   const { id = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
   const report = tutorial?.report;
   const [sheet, setSheet] = useState<SheetState | null>(null);

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { primeAnnouncer } from '@/audio/announce';
 import { textOf } from '@/audio/cues';
 import type { AnnouncerMode } from '@/audio/announcer';
@@ -247,7 +248,7 @@ const AUDIO_OPTIONS: { mode: AnnouncerMode; labelKey: TranslationKey; hintKey: T
   ];
 
 export function TutorialProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { pathname } = useLocation();
   const [phase, setPhase] = useState<Phase>(() =>
     loadTutorialState().orientation === null ? 'prompt' : 'idle',

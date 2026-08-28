@@ -23,6 +23,7 @@ function FamilyCard({ family }: { family: ArticleFamilyGroup }) {
           <li key={article.articleId}>
             {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
             <Link
+              viewTransition
               to={articleHref(article)}
               className="flex min-h-12 items-center justify-between gap-4 rounded-xl px-3 py-2
                 text-sm leading-6 text-[var(--text-1)]"
@@ -68,6 +69,7 @@ export function WikiBrowse() {
           cherche dans l'urgence : par où commencer, et qu'est-ce que je fais si
           j'ai mal. Le reste se parcourt. */}
       <Link
+        viewTransition
         to="/knowledge/apprendre"
         className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
           bg-[var(--accent-soft)] px-5 py-4"
@@ -84,6 +86,7 @@ export function WikiBrowse() {
       </Link>
 
       <Link
+        viewTransition
         to="/knowledge/a/clinical-red-flags"
         className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
           border border-[var(--border)] px-5 py-4"
@@ -100,6 +103,7 @@ export function WikiBrowse() {
       </Link>
 
       <Link
+        viewTransition
         to="/knowledge/questions"
         className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
           bg-[var(--accent-soft)] px-5 py-4"

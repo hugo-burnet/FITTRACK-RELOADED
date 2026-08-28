@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { getLatestBodyWeight } from '@/data/repositories/bodyMeasurements';
 import { t } from '@/i18n/fr';
@@ -23,7 +23,7 @@ import { HomeBodyWeightSheet } from './HomeBodyWeightSheet';
  * des mots.
  */
 export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const latest = useLiveQuery(async () => (await getLatestBodyWeight()) ?? null);
   const [weightOpen, setWeightOpen] = useState(false);
 

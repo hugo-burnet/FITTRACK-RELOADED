@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import {
@@ -74,7 +74,7 @@ const deltaOf = (line: Line, delta: ReturnType<typeof monthlyDelta>): number | u
  * turns "1 200 kg" into information.
  */
 export function MonthlyReportScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [openedAt] = useState(() => Date.now());
   const [monthOpen, setMonthOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<number>();

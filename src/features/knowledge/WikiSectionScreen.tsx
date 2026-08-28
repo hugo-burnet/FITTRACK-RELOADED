@@ -1,4 +1,5 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { findWikiSection, type WikiPassage } from './wikiIndex';
 import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
@@ -27,7 +28,7 @@ function PassageCard({ passage, rank }: { passage: WikiPassage; rank: number }) 
 }
 
 export function WikiSectionScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
   const section = sectionId === undefined ? undefined : findWikiSection(sectionId);
 
