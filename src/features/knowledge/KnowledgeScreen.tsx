@@ -238,7 +238,7 @@ export function KnowledgeScreen() {
               text-[var(--text-1)] outline-none placeholder:text-[var(--text-2)]
               focus:ring-2 focus:ring-[var(--accent-ink)]"
           />
-          <Button type="submit" variant="primary" size="lg" fullWidth>
+          <Button type="submit" variant="primary" size="lg" fullWidth tutorialId="knowledge-search">
             {t('knowledge.searchAction')}
           </Button>
         </form>
