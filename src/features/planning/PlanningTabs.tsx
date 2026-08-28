@@ -28,6 +28,7 @@ export function PlanningTabs() {
             <li key={to} className="flex-1">
               {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
               <Link
+                viewTransition
                 to={to}
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex min-h-12 items-center justify-center rounded-lg px-2 text-sm

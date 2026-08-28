@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { Button } from '@/ui';
 import { WikiBrowse } from './WikiBrowse';
@@ -100,6 +101,7 @@ function EvidenceCard({ evidence, rank }: { evidence: EvidenceCandidate; rank: n
               différence entre une recherche et un corpus qu'on peut lire. */}
           {sectionHref !== undefined && (
             <Link
+              viewTransition
               to={sectionHref}
               className="mt-4 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
             >
@@ -158,7 +160,7 @@ function SearchResult({ outcome }: { outcome: EvidenceSearchOutcome }) {
 }
 
 export function KnowledgeScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [query, setQuery] = useState('');
   const [outcome, setOutcome] = useState<EvidenceSearchOutcome | null>(null);
 

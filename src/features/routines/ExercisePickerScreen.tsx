@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { addExercisesToRoutine } from '@/data/repositories/routines';
 import { ExerciseBrowser } from '@/features/exercises/ExerciseBrowser';
@@ -22,7 +23,7 @@ import { ActionBand } from '@/ui';
  */
 export function ExercisePickerScreen() {
   const { id = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
 
   const [query, setQuery] = useState<BrowserQuery>({ search: '' });

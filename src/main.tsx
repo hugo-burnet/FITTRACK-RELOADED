@@ -7,6 +7,7 @@ import { UpdateBanner } from './app/UpdateBanner';
 import { initializePersistentData } from './data/initialize';
 import { watchAppUpdate } from './platform/appUpdate';
 import { watchInstall } from './platform/install';
+import { watchNavDirection } from './app/navigation';
 import { router } from './router';
 import { applyTheme, loadTheme } from './stores/theme';
 import './index.css';
@@ -21,6 +22,7 @@ applyTheme(loadTheme());
 // work offline — neither has any reason to wait on the exercise catalogue.
 watchInstall();
 watchAppUpdate();
+watchNavDirection();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');

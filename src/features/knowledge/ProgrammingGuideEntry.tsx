@@ -17,6 +17,7 @@ export function ProgrammingGuideEntry() {
       <p className="text-sm leading-6 text-[var(--text-2)]">{t('planning.applyGuideHint')}</p>
       {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
       <Link
+        viewTransition
         to="/programs/new"
         className="mt-4 flex min-h-12 items-center justify-center rounded-xl
           bg-[var(--color-accent)] px-4 text-base font-semibold text-[var(--color-accent-fg)]"

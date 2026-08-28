@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react';
 import { App } from '@capacitor/app';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { navigatingBack, useAppNavigate } from '@/app/navigation';
 import { getNotificationPreferences } from '@/data/repositories/notificationSettings';
 import type { NotificationPreferences } from '@/lib/notificationPreferences';
 import { getActiveWorkout } from '@/data/repositories/workouts';
@@ -16,7 +17,7 @@ export function NativeRuntimeBridge() {
   const preferences = useLiveQuery(getNotificationPreferences);
   const rest = useRestTimer();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const activeRef = useRef(active);
   const preferencesRef = useRef(preferences);
   const restRef = useRef(rest);
@@ -102,9 +103,19 @@ export function NativeRuntimeBridge() {
 
     void App.addListener('backButton', ({ canGoBack }) => {
       const decision = androidBackDecision(pathnameRef.current, canGoBack);
-      if (decision.kind === 'history') navigate(-1);
-      else if (decision.kind === 'navigate') navigate(decision.to, { replace: true });
-      else void App.exitApp();
+      // Le bouton physique remonte, quelle que soit la forme que prend la
+      // décision. `navigate(-1)` le déduirait du signe, mais le repli vers un
+      // chemin, non : il partirait en marche avant, soit exactement le
+      // contraire du geste qu'on vient de faire.
+      if (decision.kind === 'history') {
+        navigatingBack();
+        navigate(-1);
+      } else if (decision.kind === 'navigate') {
+        navigatingBack();
+        navigate(decision.to, { replace: true });
+      } else {
+        void App.exitApp();
+      }
     }).then((registered) => {
       if (disposed) void registered.remove();
       else handle = registered;

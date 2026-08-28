@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import { Card, SectionTitle } from '@/ui';
@@ -17,7 +17,7 @@ import { Card, SectionTitle } from '@/ui';
  * records, and a credits page is none of those.
  */
 export function CreditsScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
 
   return (
     <Screen title={t('credits.title')} onBack={() => void navigate('/settings')}>

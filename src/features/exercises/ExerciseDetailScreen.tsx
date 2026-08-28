@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { listRecommendationsForExercise } from '@/data/repositories/coachRecommendations';
@@ -97,7 +98,7 @@ function Reading({ label, value, context }: { label: string; value: string; cont
 
 export function ExerciseDetailScreen() {
   const { id = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
 
   // `null` is "gone", `undefined` is "not answered yet" — without the
   // distinction a freshly opened screen flashes "cet exercice n'existe plus".

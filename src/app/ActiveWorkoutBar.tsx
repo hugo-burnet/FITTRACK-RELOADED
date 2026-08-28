@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useAppNavigate } from './navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { discardWorkout, getActiveWorkout, getWorkoutDetail } from '@/data/repositories/workouts';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
@@ -23,7 +24,7 @@ import { isWorkoutStale } from './staleWorkout';
  */
 export function ActiveWorkoutBar() {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
   const [recoveryOpen, setRecoveryOpen] = useState(false);
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
@@ -49,9 +50,10 @@ export function ActiveWorkoutBar() {
   if (!isWorkoutStale(active.startedAt)) {
     return (
       <Link
+        viewTransition
         to="/workout"
-        className="animate-rise flex min-h-14 shrink-0 items-center gap-3 border-t border-[var(--border)]
-          bg-[var(--color-accent)] px-4 text-[var(--color-accent-fg)]
+        className="resume-bar animate-rise flex min-h-14 shrink-0 items-center gap-3
+          border-t border-[var(--border)] bg-[var(--color-accent)] px-4 text-[var(--color-accent-fg)]
           transition-[filter] duration-[var(--dur-1)] active:brightness-95"
       >
         {content}

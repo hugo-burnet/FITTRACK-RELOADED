@@ -1,4 +1,5 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { ArticleBody } from './ArticleBody';
 import { findArticle } from './articleCatalogue';
@@ -10,7 +11,7 @@ import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
  * exactement comme un autre ; seul l'espace d'où l'on vient change.
  */
 export function WikiArticleScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const { articleId } = useParams<{ articleId: string }>();
   const article = articleId === undefined ? undefined : findArticle(articleId);
 

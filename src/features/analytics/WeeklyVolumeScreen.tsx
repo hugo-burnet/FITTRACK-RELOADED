@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import {
@@ -30,7 +30,7 @@ const longDate = (at: number): string =>
  * moves a week under the reader's finger.
  */
 export function WeeklyVolumeScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [periodOpen, setPeriodOpen] = useState(false);
   const [metricOpen, setMetricOpen] = useState(false);
   const [openedAt] = useState(() => Date.now());

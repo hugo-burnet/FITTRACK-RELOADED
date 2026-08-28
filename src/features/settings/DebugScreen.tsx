@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { db } from '@/data/db';
@@ -25,7 +25,7 @@ const megabytes = (bytes: number): string =>
   (bytes / 1_048_576).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
 
 export function DebugScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [storage, setStorage] = useState<StorageEstimate | null>(null);

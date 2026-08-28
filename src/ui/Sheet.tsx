@@ -95,8 +95,8 @@ export function Sheet({ open, onClose, title, children }: Props) {
         type="button"
         aria-label={t('common.close')}
         onClick={onClose}
-        className="absolute inset-0 bg-[var(--scrim)] transition-opacity duration-[var(--dur-2)]
-          ease-[var(--ease-mech)]"
+        className="sheet-scrim absolute inset-0 bg-[var(--scrim)] transition-opacity
+          duration-[var(--dur-2)] ease-[var(--ease-mech)]"
         style={{ opacity: raised ? 1 : 0 }}
       />
 
@@ -109,8 +109,16 @@ export function Sheet({ open, onClose, title, children }: Props) {
         onTransitionEnd={() => {
           if (!open) setMounted(false);
         }}
-        className="relative max-h-[88%] overflow-y-auto overscroll-contain rounded-t-3xl
-          border-t border-[var(--border)] bg-[var(--surface-1)] outline-none"
+        className="sheet-panel relative max-h-[88%] overflow-y-auto overscroll-contain
+          rounded-t-3xl border-t border-[var(--border)] bg-[var(--surface-1)] outline-none"
+        /*
+         * Les deux seuls états que le CSS a besoin de distinguer, et il en a
+         * besoin en mouvement réduit : posée, la feuille paraît au lieu de
+         * monter — mais pendant un glissement au doigt elle doit suivre le
+         * doigt, parce que ça, ce n’est pas une animation.
+         */
+        data-raised={raised ? 'true' : 'false'}
+        data-dragging={dragging ? 'true' : 'false'}
         style={{
           transform: raised ? `translateY(${dragY}px)` : 'translateY(100%)',
           transition: dragging ? 'none' : 'transform var(--dur-2) var(--ease-mech)',

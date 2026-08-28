@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { getExercise } from '@/data/repositories/exercises';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
@@ -32,7 +33,7 @@ const longDate = (at: number): string =>
 
 export function ExerciseAnalyticsScreen() {
   const { exerciseId = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
 
   const [metricOpen, setMetricOpen] = useState(false);
   const [periodOpen, setPeriodOpen] = useState(false);

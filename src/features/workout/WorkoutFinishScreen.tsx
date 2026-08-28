@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
@@ -49,7 +49,7 @@ function Reading({ value, label }: { value: ReactNode; label: string }) {
  * read as a session that never happened.
  */
 export function WorkoutFinishScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
   const [confirming, setConfirming] = useState(false);
 

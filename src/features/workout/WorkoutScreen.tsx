@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
@@ -121,7 +121,7 @@ const EMPTY_LINES: WorkoutExerciseDetail[] = [];
 
 /** Live workout backed entirely by the persisted active-workout query. */
 export function WorkoutScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);

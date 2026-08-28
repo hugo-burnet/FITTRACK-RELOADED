@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   ProgramRepositoryError,
@@ -109,6 +110,7 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
           lecteur que le lien ment. */}
       {evidence !== null && (
         <Link
+          viewTransition
           to={`/knowledge/p/${evidence.sectionId}`}
           className="mt-4 flex min-h-12 items-center justify-between gap-3 rounded-xl bg-[var(--surface-1)] px-4 py-2"
         >
@@ -223,7 +225,7 @@ async function readProjection(programId: string): Promise<DetailQuery> {
 
 export function ProgramDetailScreen() {
   const { id = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [actionsOpen, setActionsOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [actionErrorKey, setActionErrorKey] = useState<TranslationKey | null>(null);

@@ -24,6 +24,7 @@ function ArticleCard({ article }: { article: WikiArticle }) {
       <p className="mt-2 text-sm leading-6 text-[var(--text-2)]">{article.summary}</p>
       {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
       <Link
+        viewTransition
         to={articleHref(article)}
         className="mt-3 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
       >
@@ -79,6 +80,7 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
           </ul>
         )}
         <Link
+          viewTransition
           to="/knowledge"
           className="mt-3 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
         >
@@ -140,6 +142,7 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
               </p>
               {item.article !== null && (
                 <Link
+                  viewTransition
                   to={articleHref(item.article)}
                   className="mt-3 flex min-h-12 items-center gap-2 text-sm font-semibold
                     text-[var(--accent-ink)]"

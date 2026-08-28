@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { getWeeklyTrainingGoalHistory } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
@@ -30,7 +30,7 @@ const longDate = (at: number): string =>
   new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
 export function WeeklySessionsScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [periodOpen, setPeriodOpen] = useState(false);
   /** Read once: the bounds must not slide under the reader at midnight. */
   const [openedAt] = useState(() => Date.now());

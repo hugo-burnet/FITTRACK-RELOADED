@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import {
-  useBlocker,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import { useBlocker, useParams } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   getArchivedWorkoutDetail,
@@ -50,7 +47,7 @@ const copyValues = (values: EditValues): EditValues =>
 
 export function HistoryEditScreen() {
   const { workoutId = '' } = useParams();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const detail = useLiveQuery(
     () => getArchivedWorkoutDetail(workoutId),
     [workoutId],

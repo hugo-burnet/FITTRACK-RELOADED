@@ -39,7 +39,8 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t('nav.label')}
-      className="safe-bottom shrink-0 border-t border-[var(--border)] bg-[var(--surface-1)]"
+      className="bottom-nav safe-bottom shrink-0 border-t border-[var(--border)]
+        bg-[var(--surface-1)]"
     >
       <ul className="mx-auto flex max-w-[36rem]">
         {TABS.map((tab) => {
@@ -48,6 +49,7 @@ export function BottomNav() {
           return (
             <li key={to} className="flex-1">
               <Link
+                viewTransition
                 to={to}
                 data-tutorial-nav={to}
                 aria-current={isActive ? 'page' : undefined}

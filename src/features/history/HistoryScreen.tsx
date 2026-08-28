@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   listCompletedWorkoutTimestamps,
@@ -37,7 +38,7 @@ function readHistoryNotice(state: unknown): HistoryNotice | undefined {
 
 export function HistoryScreen() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [historyNotice] = useState(() => readHistoryNotice(location.state));
   const [openedAt] = useState(() => Date.now());
   const [view, setView] = useState<HistoryView>('journal');

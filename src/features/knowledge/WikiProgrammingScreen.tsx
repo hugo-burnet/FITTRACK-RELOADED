@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { t } from '@/i18n/fr';
 import { PlanningTabs } from '@/features/planning/PlanningTabs';
 import { articleHref, listArticleFamilies } from './articleCatalogue';
@@ -17,7 +18,7 @@ import { KnowledgeScreenFrame } from './KnowledgeScreenFrame';
  * vérifié par un humain. Aucune transformation de format ne retire ce statut.
  */
 export function WikiProgrammingScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const guide = listArticleFamilies().find((family) => family.id === 'programming');
   const articles = guide?.articles ?? [];
   const unreviewed = articles.some((article) => article.reviewState === 'pending_human_review');
@@ -60,6 +61,7 @@ export function WikiProgrammingScreen() {
         {/* Le Guide est complet et dans l'ordre du document source. Pour qui
             construit son premier programme, cet ordre n'est pas le bon. */}
         <Link
+          viewTransition
           to="/knowledge/apprendre"
           className="flex min-h-12 items-center justify-between gap-4 rounded-2xl
             bg-[var(--accent-soft)] px-5 py-4"
@@ -82,6 +84,7 @@ export function WikiProgrammingScreen() {
             <li key={article.articleId}>
               {/* min-h-12 = 48 px : une cible tactile pour une main en sueur. */}
               <Link
+                viewTransition
                 to={articleHref(article)}
                 className="flex min-h-12 items-center justify-between gap-4 rounded-xl
                   bg-[var(--surface-1)] px-4 py-2 text-sm leading-6 text-[var(--text-1)]"

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import type { HomeProgramProjection } from '@/data/repositories/home';
 import { t } from '@/i18n/fr';
 import { Card, ListRow } from '@/ui';
@@ -23,7 +23,7 @@ interface Props {
  * ne pas dire la même chose.
  */
 export function HomeProgramsRow({ program }: Props) {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
 
   return (
     // `section` comme tous les blocs de cet écran : ils forment un rythme, et

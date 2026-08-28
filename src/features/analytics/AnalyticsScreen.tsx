@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useNavigate } from 'react-router-dom';
+import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
   listCompletedWorkoutTimestamps,
@@ -18,7 +18,7 @@ import { Card, ListRow, SectionTitle } from '@/ui';
  * it is not offered rather than opening on twelve bars at zero.
  */
 export function AnalyticsScreen() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const options = useLiveQuery(listHistoryExerciseOptions, []);
   const completed = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
 

@@ -192,7 +192,26 @@ describe('NativeRuntimeBridge', () => {
 
     act(() => state.backListener?.({ canGoBack: false }));
 
-    expect(state.navigate).toHaveBeenCalledWith('/workout', { replace: true });
+    expect(state.navigate).toHaveBeenCalledWith('/workout', {
+      replace: true,
+      viewTransition: true,
+    });
+  });
+
+  // The hardware button is a back gesture whichever branch it takes. The
+  // deterministic-parent branch is the one that quietly went forward: a delta
+  // carries its direction in its sign, a path does not.
+  it('marks both Android back branches as backward navigation', async () => {
+    render(<NativeRuntimeBridge />);
+    await waitFor(() => expect(state.backListener).toBeTypeOf('function'));
+
+    document.documentElement.dataset.nav = 'forward';
+    act(() => state.backListener?.({ canGoBack: false }));
+    expect(document.documentElement.dataset.nav).toBe('back');
+
+    document.documentElement.dataset.nav = 'forward';
+    act(() => state.backListener?.({ canGoBack: true }));
+    expect(document.documentElement.dataset.nav).toBe('back');
   });
 
   it('exits from a tab root on Android back without history', async () => {

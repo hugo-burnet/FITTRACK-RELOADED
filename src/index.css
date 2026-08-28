@@ -25,8 +25,10 @@
    * d'une frame avant de commencer, ce qui est exactement le défaut qu'on
    * cherche à corriger.
    *
-   * La règle `prefers-reduced-motion` du bas du fichier les ramène tous à
-   * 0,01 ms d'un coup : aucun de ces quatre n'a besoin d'être désarmé à la main.
+   * En mouvement réduit, chacun a sa version : `rise` et `pop` perdent leur
+   * déplacement et gardent leur fondu, `flash` garde tout — une couleur qui
+   * s'efface n'a rien de spatial. Le bloc est dans `@layer base`, avec la règle
+   * globale, et la raison de cet emplacement y est écrite.
    */
   --animate-rise: rise var(--dur-2) var(--ease-mech) both;
   --animate-fade: fade var(--dur-2) var(--ease-mech) both;
@@ -213,6 +215,26 @@
     outline-offset: 2px;
   }
 
+  /*
+   * Mouvement réduit : moins de mouvement, pas aucun.
+   *
+   * La règle `*` reste le filet : elle attrape ce qui n'a pas été prévu, et un
+   * mouvement inconnu vaut mieux coupé que subi. Mais coupée seule, elle efface
+   * aussi ce qui **dit** quelque chose — un panneau qui se téléporte au lieu de
+   * monter, une série validée qui est là sans être arrivée. WCAG 2.3.3 demande
+   * de pouvoir désactiver le mouvement *non essentiel* ; un retour d'état n'en
+   * est pas un.
+   *
+   * Chaque geste porteur de sens reçoit donc plus bas sa version réduite : le
+   * déplacement, l'échelle et le flou disparaissent, l'opacité et la couleur
+   * restent — et restent assez lentes pour être vues.
+   *
+   * **Tout est dans cette couche, et rien plus bas dans le fichier.** Pour les
+   * déclarations `!important`, l'ordre des couches est *inversé* : une règle de
+   * `@layer` bat une règle hors couche, quelle que soit sa spécificité. Un
+   * override écrit sous ce bloc serait silencieusement inerte — vérifié dans le
+   * navigateur, pas supposé.
+   */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -221,6 +243,87 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+
+    /* Les gestes de l'app gardent leur fondu et perdent leur déplacement : les
+       huit pixels de `rise`, le changement d'échelle de `pop`. Ce qui arrivait
+       arrive encore, ça ne vient juste plus de quelque part. */
+    .animate-rise,
+    .animate-pop {
+      animation-name: fade !important;
+      animation-duration: var(--dur-2) !important;
+    }
+
+    .animate-fade {
+      animation-duration: var(--dur-2) !important;
+    }
+
+    /* `flash` n'est qu'une couleur qui s'efface : rien de spatial à lui retirer,
+       et une couleur qui change est précisément ce que le mouvement réduit
+       conserve. Il récupère sa durée entière. */
+    .animate-flash {
+      animation-duration: 640ms !important;
+    }
+
+    /* La feuille ne monte plus : elle paraît. La transition reste — sur
+       `opacity` — et surtout elle garde une durée : `Sheet` démonte ses enfants
+       sur `transitionend`, et une transition de durée nulle n'émet jamais cet
+       événement. La couper ici ferait fuir le contenu de chaque feuille. */
+    .sheet-panel:not([data-dragging='true']) {
+      transition-property: opacity !important;
+      transition-duration: var(--dur-2) !important;
+    }
+
+    .sheet-panel[data-raised='false'] {
+      transform: none !important;
+      opacity: 0;
+    }
+
+    /* Le voile garde son fondu : il ne se déplace pas, et il porte à lui seul
+       le « quelque chose vient de se poser par-dessus ». */
+    .sheet-scrim {
+      transition-duration: var(--dur-2) !important;
+    }
+
+    /* L'ouverture de l'app garde sa séquence et son ordre, en opacité seule. En
+       n'écrasant que le nom, la durée et le remplissage, l'échelonnement des
+       règles de `.boot` survit tel quel : les délais ne sont pas redéclarés. */
+    .boot[data-phase='in'] .boot-rail,
+    .boot[data-phase='in'] .boot-mark,
+    .boot[data-phase='in'] .boot-plate,
+    .boot[data-phase='in'] .boot-principle,
+    .boot[data-phase='in'] .boot-tagline {
+      animation-name: boot-fade !important;
+      animation-duration: 240ms !important;
+      animation-fill-mode: both !important;
+    }
+
+    /* Rien à promouvoir quand plus rien ne bouge ni ne floute. */
+    .boot[data-phase='in'] .boot-plate {
+      will-change: auto;
+    }
+
+    /* Le levé ne révèle rien : il n'a pas d'équivalent en opacité, on le retire. */
+    .boot[data-phase='in'] .boot-lift {
+      animation: none !important;
+    }
+
+    .boot[data-phase='out'] {
+      animation-name: fade-out !important;
+      animation-duration: 240ms !important;
+    }
+
+    /* Le passage d'un écran à l'autre perd son pas et garde son fondu.
+       C'est ici et nulle part ailleurs : un `*` ne matche que des éléments,
+       donc la règle globale du haut ne touche pas les pseudo-éléments de
+       transition de vue. Sans ces deux lignes, le déplacement resterait
+       entier pour quelqu’un qui a demandé le contraire. */
+    html[data-nav]::view-transition-new(root) {
+      animation-name: fade !important;
+    }
+
+    html[data-nav]::view-transition-old(root) {
+      animation-name: fade-out !important;
     }
   }
 }
@@ -494,4 +597,118 @@
     opacity: 0;
     transform: scale(1.03);
   }
+}
+
+
+
+
+/*
+ * Le passage d'un écran à l'autre.
+ *
+ * L'app n'avait que des entrées : un écran arrivait en fondu et en montée, et
+ * repartait en cessant simplement d’exister. Aller et revenir produisaient donc
+ * exactement la même animation, et rien ne disait jamais dans quel sens on se
+ * déplaçait.
+ *
+ * `startViewTransition` fournit la moitié manquante — l'écran qui part est
+ * capturé, donc il peut s'animer — et `data-nav`, posé sur <html> par
+ * `app/navigation.ts`, fournit le sens.
+ *
+ * **Le pas est court : 18 px, pas une largeur d’écran.** On navigue ici entre
+ * deux séries, et un écran qu’on attend est un écran qui gêne (règle n° 5). Il
+ * suffit de dire d'où ça vient ; faire tout le voyage serait payer 400 ms pour
+ * la même information.
+ */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-2);
+  animation-timing-function: var(--ease-mech);
+  animation-fill-mode: both;
+}
+
+html[data-nav='forward']::view-transition-new(root) {
+  animation-name: nav-enter-right;
+}
+
+html[data-nav='forward']::view-transition-old(root) {
+  animation-name: nav-leave-left;
+}
+
+html[data-nav='back']::view-transition-new(root) {
+  animation-name: nav-enter-left;
+}
+
+html[data-nav='back']::view-transition-old(root) {
+  animation-name: nav-leave-right;
+}
+
+/* L'écran qui part recule moins loin que celui qui arrive n'avance : il passe
+   dessous au lieu d’être poussé dehors. C’est ce décalage qui fait la
+   profondeur, pas la distance parcourue. */
+@keyframes nav-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+}
+
+@keyframes nav-leave-left {
+  to {
+    opacity: 0;
+    transform: translateX(-11px);
+  }
+}
+
+@keyframes nav-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+
+@keyframes nav-leave-right {
+  to {
+    opacity: 0;
+    transform: translateX(11px);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/*
+ * La chrome ne voyage pas avec le contenu : elle est le cadre.
+ *
+ * Nommée, elle est capturée à part et sort du cliché de `root`. On lui retire
+ * alors son fondu croisé — sans ça la barre clignote une fois par navigation,
+ * ce qui est exactement ce qu’un élément persistant ne doit pas faire.
+ *
+ * Deux noms distincts et pas un seul partagé : deux éléments portant le même
+ * `view-transition-name` dans un même cliché annulent la transition entière.
+ */
+.bottom-nav {
+  view-transition-name: bottom-nav;
+}
+
+.resume-bar {
+  view-transition-name: resume-bar;
+}
+
+::view-transition-old(bottom-nav),
+::view-transition-old(resume-bar) {
+  animation: none;
+  opacity: 0;
+}
+
+::view-transition-new(bottom-nav),
+::view-transition-new(resume-bar) {
+  animation: none;
+  opacity: 1;
 }
