@@ -97,7 +97,7 @@ export function EffortStrip({
               setClosing(true);
               onAnswer(value);
             }}
-            className="flex size-10 shrink-0 items-center justify-center rounded-lg
+            className="flex size-12 shrink-0 items-center justify-center rounded-lg
               text-[var(--accent-ink)] transition-colors duration-[var(--dur-1)]
               active:bg-[var(--surface-1)]"
           >
