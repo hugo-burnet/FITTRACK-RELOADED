@@ -2204,6 +2204,31 @@ const fr = {
       },
     },
 
+    settings: {
+      announcer: { title: 'Régler la voix du guidage' },
+      notifications: { title: 'Quand l’app a le droit de parler' },
+      mode: {
+        instruction: 'Choisis un mode de guidage.',
+        detail:
+          'Chaque choix se fait entendre aussitôt. Silence coupe tout, y compris la ligne d’écho juste en dessous : le guide attend un mode qui parle ou qui sonne.',
+      },
+      echo: {
+        instruction: 'Règle l’écho.',
+        detail:
+          'Il donne à la voix le grain d’une annonce de salle. Au casque à six heures du matin, l’éteindre change tout.',
+      },
+      reminders: {
+        instruction: 'Allume Rappels d’entraînement.',
+        detail:
+          'C’est la seule des trois qui sonne un jour où tu n’as pas ouvert l’app. Le même interrupteur l’éteint.',
+      },
+      days: {
+        instruction: 'Choisis les jours du rappel.',
+        detail:
+          'La semaine et l’heure n’apparaissent qu’une fois les rappels allumés. Il n’y a rien à enregistrer : chaque réglage est écrit au moment où tu le touches.',
+      },
+    },
+
     home: {
       body: { title: 'Le corps que l’Accueil dessine' },
       weight: { title: 'Ta pesée du jour' },

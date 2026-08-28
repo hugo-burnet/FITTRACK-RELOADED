@@ -217,12 +217,20 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         onClose={() => setPhase('idle')}
         title={t('tutorial.helpTitle')}
         actions={[
-          ...contextualMissionsForPath(pathname, missions.state, missionFacts)
-            .slice(0, 3)
-            .map((mission) => ({
-              label: t(mission.titleKey),
-              onSelect: () => missions.start(mission.id),
-            })),
+          /*
+           * Toutes, et non les trois premières. Le plafond était une garde
+           * contre une feuille trop longue, mais `contextualMissionsForPath`
+           * filtre déjà dur — zone, disponibilité, joignabilité, et les
+           * missions faites disparaissent — donc la liste est courte par
+           * construction et raccourcit à l'usage. Ce qu'il coûtait est pire que
+           * ce qu'il évitait : une quatrième mission sur une même zone
+           * existait sans qu'aucun écran ne sache la proposer. La feuille
+           * défile déjà (`Sheet` : max-h-[88%] overflow-y-auto).
+           */
+          ...contextualMissionsForPath(pathname, missions.state, missionFacts).map((mission) => ({
+            label: t(mission.titleKey),
+            onSelect: () => missions.start(mission.id),
+          })),
           {
             label: t('tutorial.explainPage', { topic: t(TUTORIAL_TOPIC_LABEL_KEYS[topic]) }),
             hint: workoutAudioBusy ? t('tutorial.busyHint') : t('tutorial.explainDuration'),

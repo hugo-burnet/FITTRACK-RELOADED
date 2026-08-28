@@ -1,4 +1,5 @@
 import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
+import type { AnnouncerMode } from '@/audio/announcer';
 import type { PeriodKey } from '@/lib/analytics/periods';
 
 export type TutorialCompletion = 'completed' | 'skipped';
@@ -181,6 +182,24 @@ export type TutorialKnowledgeEvent =
   | { type: 'article-sources-opened' };
 
 /**
+ * Les gestes des Réglages.
+ *
+ * `enabled` porte le sens du geste et pas seulement son objet : les trois
+ * bascules de notifications écrivent avec le même événement, et éteindre les
+ * rappels replie la semaine que l'étape suivante demande de régler. Allumer et
+ * éteindre ne se distinguent que par cette valeur.
+ */
+export type TutorialSettingsEvent =
+  | { type: 'announcer-mode-changed'; mode: AnnouncerMode }
+  | { type: 'announcer-echo-changed'; enabled: boolean }
+  | {
+      type: 'notification-preference-changed';
+      key: 'rest' | 'records' | 'reminders';
+      enabled: boolean;
+    }
+  | { type: 'notification-days-changed'; days: number };
+
+/**
  * Les gestes de l'Accueil.
  *
  * Le dessin musculaire n'est pas une illustration : il interroge le catalogue.
@@ -226,6 +245,7 @@ export type TutorialEvent =
   | TutorialAnalyticsEvent
   | TutorialKnowledgeEvent
   | TutorialHomeEvent
+  | TutorialSettingsEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

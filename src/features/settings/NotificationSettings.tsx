@@ -4,6 +4,7 @@ import {
   getNotificationPreferences,
   setNotificationPreferences,
 } from '@/data/repositories/notificationSettings';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { reminderMoment, weekdayInitial, weekdayLabel } from '@/i18n/labels';
 import type { NotificationPreferences } from '@/lib/notificationPreferences';
@@ -29,6 +30,7 @@ import { Input, ListRow, SectionTitle, Toggle } from '@/ui';
  * clock under a switch that is off are seven boxes that do nothing.
  */
 export function NotificationSettings() {
+  const tutorial = useTutorialControls();
   const preferences = useLiveQuery(getNotificationPreferences);
   // Read once, like every screen that dates something: a clock re-read at each
   // render moves the sentence under the reader for no new information.
@@ -45,6 +47,7 @@ export function NotificationSettings() {
       ? preferences.schedule.days.filter((checked) => checked !== day)
       : [...preferences.schedule.days, day];
     save({ schedule: { ...preferences.schedule, days } });
+    tutorial?.report({ type: 'notification-days-changed', days: days.length });
   };
 
   const [next] = nextReminderOccurrences(preferences.schedule, openedAt, 1);
@@ -61,7 +64,14 @@ export function NotificationSettings() {
               label={t('settings.notificationsRest')}
               mark={t(preferences.rest ? 'settings.notificationsOn' : 'settings.notificationsOff')}
               checked={preferences.rest}
-              onChange={() => save({ rest: !preferences.rest })}
+              onChange={() => {
+                save({ rest: !preferences.rest });
+                tutorial?.report({
+                  type: 'notification-preference-changed',
+                  key: 'rest',
+                  enabled: !preferences.rest,
+                });
+              }}
             />
           }
         />
@@ -75,13 +85,21 @@ export function NotificationSettings() {
                 preferences.records ? 'settings.notificationsOn' : 'settings.notificationsOff',
               )}
               checked={preferences.records}
-              onChange={() => save({ records: !preferences.records })}
+              onChange={() => {
+                save({ records: !preferences.records });
+                tutorial?.report({
+                  type: 'notification-preference-changed',
+                  key: 'records',
+                  enabled: !preferences.records,
+                });
+              }}
             />
           }
         />
         <ListRow
           title={t('settings.notificationsReminders')}
           subtitle={t('settings.notificationsRemindersHint')}
+          tutorialId="notification-reminders"
           trailing={
             <Toggle
               label={t('settings.notificationsReminders')}
@@ -89,7 +107,14 @@ export function NotificationSettings() {
                 preferences.reminders ? 'settings.notificationsOn' : 'settings.notificationsOff',
               )}
               checked={preferences.reminders}
-              onChange={() => save({ reminders: !preferences.reminders })}
+              onChange={() => {
+                save({ reminders: !preferences.reminders });
+                tutorial?.report({
+                  type: 'notification-preference-changed',
+                  key: 'reminders',
+                  enabled: !preferences.reminders,
+                });
+              }}
             />
           }
         />
@@ -100,7 +125,12 @@ export function NotificationSettings() {
           <p className="label-xs mb-2 font-semibold text-[var(--text-2)]">
             {t('settings.notificationsDays')}
           </p>
-          <div role="group" aria-label={t('settings.notificationsDays')} className="flex gap-1.5">
+          <div
+            role="group"
+            aria-label={t('settings.notificationsDays')}
+            data-tutorial-id="notification-days"
+            className="flex gap-1.5"
+          >
             {REMINDER_WEEK_ORDER.map((day) => {
               const checked = preferences.schedule.days.includes(day);
 

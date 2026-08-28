@@ -2,6 +2,7 @@ import { pathForScreen, type TutorialRouteContext } from './tutorialScreens';
 import type { TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
 import { CAMPAIGN_PREPARE, CAMPAIGN_WORKOUT } from './missions/campaign';
 import { HOME_BODY, HOME_WEIGHT } from './missions/home';
+import { ANNOUNCER_TUNE, NOTIFICATION_TUNE } from './missions/settings';
 import {
   BACKUP_EXPORT,
   BACKUP_RESTORE,
@@ -55,6 +56,8 @@ export const P1_MISSIONS: readonly TutorialMission[] = [
   KNOWLEDGE_LEARNING_PATH,
   HOME_BODY,
   HOME_WEIGHT,
+  ANNOUNCER_TUNE,
+  NOTIFICATION_TUNE,
   RECOVER,
   ROUTINE_CREATE,
   ROUTINE_EXERCISE,
