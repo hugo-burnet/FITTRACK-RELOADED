@@ -5,6 +5,8 @@ import {
   listCompletedWorkoutTimestamps,
   listHistoryExerciseOptions,
 } from '@/data/repositories/history';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
+import type { TutorialAnalyticsView } from '@/features/tutorial/tutorialTypes';
 import { t } from '@/i18n/fr';
 import { Card, ListRow, SectionTitle } from '@/ui';
 
@@ -22,6 +24,18 @@ export function AnalyticsScreen() {
   const options = useLiveQuery(listHistoryExerciseOptions, []);
   const completed = useLiveQuery(() => listCompletedWorkoutTimestamps(), []);
 
+  const tutorial = useTutorialControls();
+
+  /*
+   * Les cinq lignes ouvrent la même sorte d'écran : c'est `view` qui dit
+   * laquelle. Sans elle, ouvrir « Volume d'entraînement » validait l'étape du
+   * tutoriel qui demande « Séances par semaine ».
+   */
+  const openView = (view: TutorialAnalyticsView, path: string) => {
+    tutorial?.report({ type: 'analytics-view-opened', view });
+    void navigate(path);
+  };
+
   const hasHistory = completed !== undefined && completed.length > 0;
   const hasExercises = options !== undefined && options.length > 0;
 
@@ -37,29 +51,30 @@ export function AnalyticsScreen() {
             <ListRow
               title={t('records.link')}
               subtitle={t('records.subtitle')}
-              onClick={() => void navigate('/analytics/records')}
+              onClick={() => openView('records', '/analytics/records')}
             />
             {hasHistory && (
               <>
               <ListRow
                 title={t('weekly.link')}
                 subtitle={t('weekly.subtitle')}
-                onClick={() => void navigate('/analytics/weekly')}
+                tutorialId="analytics-weekly"
+                onClick={() => openView('weekly', '/analytics/weekly')}
               />
               <ListRow
                 title={t('volume.link')}
                 subtitle={t('volume.subtitle')}
-                onClick={() => void navigate('/analytics/volume')}
+                onClick={() => openView('volume', '/analytics/volume')}
               />
               <ListRow
                 title={t('muscles.link')}
                 subtitle={t('muscles.subtitle')}
-                onClick={() => void navigate('/analytics/muscles')}
+                onClick={() => openView('muscles', '/analytics/muscles')}
               />
               <ListRow
                 title={t('monthly.link')}
                 subtitle={t('monthly.subtitle')}
-                onClick={() => void navigate('/analytics/months')}
+                onClick={() => openView('monthly', '/analytics/months')}
               />
               </>
             )}

@@ -1,4 +1,5 @@
 import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
+import type { PeriodKey } from '@/lib/analytics/periods';
 
 export type TutorialCompletion = 'completed' | 'skipped';
 
@@ -158,6 +159,26 @@ export type TutorialExerciseEvent =
   | { type: 'exercise-unilateral-set'; isUnilateral: 0 | 1 }
   | { type: 'exercise-created'; exerciseId: string };
 
+/** L'analyse dont un événement de la Progression parle. */
+export type TutorialAnalyticsView = 'records' | 'weekly' | 'volume' | 'muscles' | 'monthly';
+
+/**
+ * Les gestes de la Progression : choisir une analyse, la cadrer, la sortir.
+ *
+ * Les cinq lignes du hub ouvrent la même sorte d'écran et quatre d'entre eux
+ * portent un filtre de période identique. Sans `view`, ouvrir « Volume » aurait
+ * validé l'étape qui demande « Séances par semaine », et la mission aurait
+ * ensuite attendu une période sur un écran où l'utilisateur n'était pas.
+ *
+ * `chart` est le slug du fichier produit — « seances », « volume »,
+ * « progression ». C'est la seule identité que le bouton d'export connaisse, et
+ * elle suffit : les trois écrans qui le montent en passent un différent.
+ */
+export type TutorialAnalyticsEvent =
+  | { type: 'analytics-view-opened'; view: TutorialAnalyticsView }
+  | { type: 'analytics-period-changed'; view: TutorialAnalyticsView; period: PeriodKey }
+  | { type: 'chart-share-opened'; chart: string };
+
 /**
  * Ce que l'application a réellement fait — jamais ce que le tutoriel espérait.
  *
@@ -171,6 +192,7 @@ export type TutorialEvent =
   | TutorialProgramEvent
   | TutorialHistoryEvent
   | TutorialExerciseEvent
+  | TutorialAnalyticsEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

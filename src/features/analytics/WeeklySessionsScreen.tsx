@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { getWeeklyTrainingGoalHistory } from '@/data/repositories/settings';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { periodLabel, weeklySessionsReading } from '@/i18n/labels';
 import { PERIOD_KEYS, type PeriodKey } from '@/lib/analytics/periods';
@@ -31,6 +32,7 @@ const longDate = (at: number): string =>
 
 export function WeeklySessionsScreen() {
   const navigate = useAppNavigate();
+  const tutorial = useTutorialControls();
   const [periodOpen, setPeriodOpen] = useState(false);
   /** Read once: the bounds must not slide under the reader at midnight. */
   const [openedAt] = useState(() => Date.now());
@@ -65,6 +67,13 @@ export function WeeklySessionsScreen() {
   const changePeriod = (next: PeriodKey) => {
     setPeriod(next);
     setSelectedIndex(undefined);
+    // Rechoisir la période courante ne change rien à l'écran : l'annoncer
+    // ferait avancer une étape qui demande justement de voir le graphique
+    // bouger. « Voir tout l'historique » passe aussi par ici, et lui change
+    // bien quelque chose.
+    if (next !== period) {
+      tutorial?.report({ type: 'analytics-period-changed', view: 'weekly', period: next });
+    }
   };
 
   const openHistory = () => void navigate('/history');
@@ -76,6 +85,7 @@ export function WeeklySessionsScreen() {
           <FilterChip
             label={periodLabel(period)}
             active={false}
+            tutorialId="analytics-period"
             onClick={() => setPeriodOpen(true)}
           />
         </div>

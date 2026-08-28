@@ -1,4 +1,5 @@
 import { useState, type RefObject } from 'react';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t, type TranslationKey } from '@/i18n/fr';
 import {
   chartImageFileName,
@@ -56,6 +57,7 @@ export function ChartExportAction({
   /** The reading the chart is showing, carried into the image. */
   subtitle?: string;
 }) {
+  const tutorial = useTutorialControls();
   const [busy, setBusy] = useState(false);
   const [outcome, setOutcome] = useState<SaveOutcome | null>(null);
 
@@ -82,7 +84,14 @@ export function ChartExportAction({
         },
         palette(),
       );
-      setOutcome(await saveBlobFile({ name: chartImageFileName(slug, at), blob, title }));
+      const saved = await saveBlobFile({ name: chartImageFileName(slug, at), blob, title });
+      setOutcome(saved);
+      // Une annulation compte : l'image a été fabriquée et le système a rendu
+      // la main à l'utilisateur, ce qui est exactement la leçon. Un échec non —
+      // il n'y a rien eu à voir.
+      if (saved !== 'failed') {
+        tutorial?.report({ type: 'chart-share-opened', chart: slug });
+      }
     } catch {
       setOutcome('failed');
     } finally {
@@ -92,7 +101,12 @@ export function ChartExportAction({
 
   return (
     <div className="mt-3">
-      <Button variant="ghost" disabled={busy} onClick={() => void exportImage()}>
+      <Button
+        variant="ghost"
+        tutorialId="analytics-share"
+        disabled={busy}
+        onClick={() => void exportImage()}
+      >
         {t('analytics.exportImage')}
       </Button>
       {/* Une annulation n'est pas un échec, et n'a rien à dire : cf. `share.ts`. */}

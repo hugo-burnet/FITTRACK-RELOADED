@@ -26,6 +26,8 @@ export type TutorialScreen =
   | 'history-edit'
   | 'history-import'
   | 'analytics'
+  /** L'analyse qui porte à la fois un filtre de période et un export. */
+  | 'analytics-weekly'
   | 'exercises'
   /** Le formulaire de création — `/exercises/:id/edit` est un autre écran. */
   | 'exercise-form'
@@ -116,6 +118,8 @@ export function pathForScreen(
       return '/history/import';
     case 'analytics':
       return '/analytics';
+    case 'analytics-weekly':
+      return '/analytics/weekly';
     case 'exercises':
       return '/exercises';
     case 'exercise-form':
@@ -196,6 +200,8 @@ export function screenHolds(
       return pathname === '/history/import';
     case 'analytics':
       return pathname === '/analytics';
+    case 'analytics-weekly':
+      return pathname === '/analytics/weekly';
     case 'exercises':
       return pathname === '/exercises';
     case 'exercise-form':

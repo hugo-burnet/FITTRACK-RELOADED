@@ -2199,6 +2199,31 @@ const fr = {
       },
     },
 
+    analytics: {
+      read: { title: 'Lire tes analyses' },
+      share: { title: 'Sortir un graphique de l’app' },
+      openWeekly: {
+        instruction: 'Ouvre Séances par semaine.',
+        detail:
+          'Les analyses ne se remplissent qu’avec des séances terminées : sans historique, cette ligne n’est même pas là.',
+      },
+      period: {
+        instruction: 'Ouvre le filtre de période et choisis-en une autre.',
+        detail:
+          'Douze semaines par défaut, et rien ne le dit à l’écran. Le filtre ne change que l’affichage : aucune séance n’est touchée.',
+      },
+      openWeeklyForShare: {
+        instruction: 'Ouvre Séances par semaine.',
+        detail:
+          'Exporter en image n’apparaît que sous un graphique tracé. Sans séance sur la période, il n’y a rien à sortir.',
+      },
+      exportImage: {
+        instruction: 'Appuie sur Exporter en image.',
+        detail:
+          'L’image est fabriquée sur l’appareil. Selon le téléphone, elle part ensuite dans le partage du système ou dans les téléchargements.',
+      },
+    },
+
     exercises: {
       find: { title: 'Trouver le bon exercice' },
       create: { title: 'Créer un exercice à toi' },
