@@ -353,6 +353,19 @@ export interface WorkoutSet extends Syncable {
 
   isCompleted: 0 | 1;
   performedAt: number; // 0 until validated
+
+  /**
+   * Quand le second côté commence, pour une série unilatérale en cours.
+   *
+   * Absent tant que le premier côté n'est pas fini, et effacé dès que la série
+   * est validée ou décochée : c'est une progression *intermédiaire*, pas une
+   * donnée de la séance. Un instant absolu et non une durée restante — la
+   * transition doit survivre à un écran éteint, à un appel et à un kill.
+   *
+   * Non indexé, donc pas de version Dexie. Il traverse la sauvegarde JSON comme
+   * n'importe quel champ de la ligne.
+   */
+  unilateralSecondSideStartsAt?: number;
 }
 
 export type PersonalRecordType =

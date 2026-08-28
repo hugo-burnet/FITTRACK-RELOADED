@@ -1,5 +1,6 @@
 import { db } from '@/data/db';
 import type { SetType, Syncable, WorkoutSet } from '@/data/types';
+import { SIDE_TRANSITION_MS } from '@/features/workout/sideProgress';
 import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { alive, newEntity, softDelete, touch } from './base';
 import {
@@ -263,6 +264,10 @@ export async function completeSet(
         ...values,
         isCompleted: 1,
         performedAt: newlyCompleted ? Date.now() : set.performedAt,
+        // La progression des côtés est intermédiaire : une série validée n'a
+        // plus de côté en cours, et laisser l'échéance ferait rouvrir la
+        // série sur « second côté » après une décoche.
+        unilateralSecondSideStartsAt: undefined,
       }),
     );
 
@@ -280,7 +285,66 @@ export async function completeSet(
  * the history and out of the previous-value column.
  */
 export async function uncompleteSet(setId: string): Promise<void> {
-  await reconcileCompletedSetMutation(setId, () => ({ isCompleted: 0, performedAt: 0 }));
+  await reconcileCompletedSetMutation(setId, () => ({
+    isCompleted: 0,
+    performedAt: 0,
+    // Une série décochée repart du premier côté. C'est la seule lecture qui ne
+    // mente pas sur ce qu'il reste à faire : on ne sait pas lequel des deux
+    // côtés la validation couvrait.
+    unilateralSecondSideStartsAt: undefined,
+  }));
+}
+
+/**
+ * Ce qu'a fait l'appui sur « premier côté fini ».
+ *
+ * `existing` n'est pas une erreur : c'est un second appui pendant la
+ * transition, et il ne doit pas repousser le second côté de dix secondes de
+ * plus. L'appelant s'en sert pour ne pas réannoncer le changement.
+ */
+export type FirstSideWrite =
+  | { kind: 'started'; startsAt: number }
+  | { kind: 'existing'; startsAt: number }
+  | { kind: 'ignored' };
+
+/**
+ * Fin du premier côté — une écriture, pas une validation.
+ *
+ * Marquer `isCompleted` ici aurait enregistré la moitié d'une série comme une
+ * série entière, et déclenché les records sur elle. Seule l'échéance du second
+ * côté est écrite, dans une transaction : deux appuis rapprochés ne doivent pas
+ * lire la même ligne avant que l'un ait écrit.
+ */
+export async function completeFirstSide(
+  setId: string,
+  now = Date.now(),
+): Promise<FirstSideWrite> {
+  return db.transaction('rw', db.workoutSets, async () => {
+    const set = await db.workoutSets.get(setId);
+    if (
+      set === undefined ||
+      set.deletedAt !== 0 ||
+      set.isCompleted === 1 ||
+      set.setType === 'warmup'
+    ) {
+      return { kind: 'ignored' };
+    }
+    if (set.unilateralSecondSideStartsAt !== undefined) {
+      return { kind: 'existing', startsAt: set.unilateralSecondSideStartsAt };
+    }
+    const startsAt = now + SIDE_TRANSITION_MS;
+    await db.workoutSets.put(touch(set, { unilateralSecondSideStartsAt: startsAt }));
+    return { kind: 'started', startsAt };
+  });
+}
+
+/** Retour au premier côté, sans toucher au reste de la série. */
+export async function resetUnilateralProgress(setId: string): Promise<void> {
+  await db.transaction('rw', db.workoutSets, async () => {
+    const set = await db.workoutSets.get(setId);
+    if (set === undefined || set.unilateralSecondSideStartsAt === undefined) return;
+    await db.workoutSets.put(touch(set, { unilateralSecondSideStartsAt: undefined }));
+  });
 }
 
 /** Renumbers what is left: "série 1, série 3" is a hole you can read on screen. */
