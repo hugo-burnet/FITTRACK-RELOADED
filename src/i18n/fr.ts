@@ -2199,6 +2199,30 @@ const fr = {
       },
     },
 
+    home: {
+      body: { title: 'Le corps que l’Accueil dessine' },
+      weight: { title: 'Ta pesée du jour' },
+      muscleMap: {
+        instruction: 'Touche un muscle sur le dessin.',
+        detail:
+          'Il montre ce que tu as travaillé sur les douze dernières semaines. Ce n’est pas une image : chaque muscle est une question posée au catalogue.',
+      },
+      muscleSheet: {
+        instruction: 'La feuille liste les exercices de ce muscle.',
+        detail:
+          'Voir dans le catalogue ouvre la bibliothèque déjà filtrée sur lui. Rien n’est modifié en passant par ici.',
+      },
+      openWeight: {
+        instruction: 'Ouvre la tuile poids du jour.',
+        detail: 'Elle affiche ta dernière pesée, et un tiret tant qu’il n’y en a aucune.',
+      },
+      saveWeight: {
+        instruction: 'Enregistrer écrit la pesée du jour.',
+        detail:
+          'Le guide ne la remplit pas à ta place : un poids de corps est une mesure réelle, pas une démonstration.',
+      },
+    },
+
     knowledge: {
       search: { title: 'Chercher dans les preuves' },
       learn: { title: 'Apprendre à programmer' },

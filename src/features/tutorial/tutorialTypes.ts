@@ -51,6 +51,7 @@ export const TUTORIAL_MISSION_IDS = [
   'TUT-KNW-01',
   'TUT-KNW-02',
   'TUT-HOME-01',
+  'TUT-HOME-02',
   'TUT-SET-01',
   'TUT-SET-02',
 ] as const;
@@ -179,6 +180,16 @@ export type TutorialKnowledgeEvent =
   | { type: 'learning-step-opened'; articleId: string }
   | { type: 'article-sources-opened' };
 
+/**
+ * Les gestes de l'Accueil.
+ *
+ * Le dessin musculaire n'est pas une illustration : il interroge le catalogue.
+ * La pesée s'ouvre en feuille et ne s'écrit qu'au bouton, que le guide ne
+ * touche pas — une mesure de corps est une donnée réelle, pas une démonstration.
+ */
+export type TutorialHomeEvent =
+  { type: 'home-muscle-selected'; muscle: string | null } | { type: 'home-weight-opened' };
+
 /** L'analyse dont un événement de la Progression parle. */
 export type TutorialAnalyticsView = 'records' | 'weekly' | 'volume' | 'muscles' | 'monthly';
 
@@ -214,6 +225,7 @@ export type TutorialEvent =
   | TutorialExerciseEvent
   | TutorialAnalyticsEvent
   | TutorialKnowledgeEvent
+  | TutorialHomeEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

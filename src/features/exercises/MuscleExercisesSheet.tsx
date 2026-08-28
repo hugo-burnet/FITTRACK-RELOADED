@@ -94,7 +94,12 @@ export function MuscleExercisesSheet({ open, muscle, onClose }: Props) {
             </div>
           )}
 
-          <Button variant="secondary" fullWidth onClick={() => goTo(`/exercises?muscle=${group}`)}>
+          <Button
+            variant="secondary"
+            fullWidth
+            tutorialId="muscle-sheet-catalogue"
+            onClick={() => goTo(`/exercises?muscle=${group}`)}
+          >
             {t('muscleSheet.all')}
           </Button>
         </div>

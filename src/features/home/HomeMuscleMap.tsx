@@ -4,6 +4,7 @@ import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { toMuscleRows } from '@/lib/analytics/muscles';
 import { periodBounds } from '@/lib/analytics/periods';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { MuscleMap, balanceHighlight, type MuscleId } from '@/ui/muscleMap';
 import { MuscleExercisesSheet } from '@/features/exercises/MuscleExercisesSheet';
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export function HomeMuscleMap({ onResolved }: Props) {
+  const tutorial = useTutorialControls();
   // Frozen on open, like every other historical window in the app: the bounds
   // must not slide under the reader at midnight.
   const [openedAt] = useState(() => Date.now());
@@ -114,13 +116,16 @@ export function HomeMuscleMap({ onResolved }: Props) {
   return (
     <>
       <div className="border-b border-[var(--border)] px-4 pt-4 pb-2">
-        <div className="mx-auto max-w-[19rem]">
+        {/* L'ancre est sur le cadre du dessin : `MuscleMap` rend un SVG dont
+            aucune partie ne représente « le dessin » à elle seule. */}
+        <div className="mx-auto max-w-[19rem]" data-tutorial-id="home-muscle-map">
           <MuscleMap
             highlight={highlight}
             label={t('home.bodyLabel')}
             onSelectMuscle={(id) => {
               setSelected(id);
               setSheetOpen(true);
+              tutorial?.report({ type: 'home-muscle-selected', muscle: id });
             }}
           />
         </div>

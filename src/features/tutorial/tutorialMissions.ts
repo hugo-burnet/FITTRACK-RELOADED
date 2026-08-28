@@ -1,6 +1,7 @@
 import { pathForScreen, type TutorialRouteContext } from './tutorialScreens';
 import type { TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
 import { CAMPAIGN_PREPARE, CAMPAIGN_WORKOUT } from './missions/campaign';
+import { HOME_BODY, HOME_WEIGHT } from './missions/home';
 import {
   BACKUP_EXPORT,
   BACKUP_RESTORE,
@@ -52,6 +53,8 @@ export const P1_MISSIONS: readonly TutorialMission[] = [
   ANALYTICS_SHARE,
   KNOWLEDGE_SEARCH,
   KNOWLEDGE_LEARNING_PATH,
+  HOME_BODY,
+  HOME_WEIGHT,
   RECOVER,
   ROUTINE_CREATE,
   ROUTINE_EXERCISE,
@@ -111,6 +114,21 @@ export function routeContextOf(state: TutorialStateV3): TutorialRouteContext {
   };
 }
 
+/**
+ * Cette adresse appartient-elle à la zone de la mission ?
+ *
+ * Deux défauts que `startsWith` seul laissait passer. `/` est un préfixe de
+ * **toutes** les adresses : les missions de l'Accueil se proposaient sur
+ * l'Historique, les Réglages, partout, et l'aide d'une page finissait par
+ * offrir des consignes qui parlent d'un autre écran. Et dans l'autre sens,
+ * `/history` attrapait une hypothétique `/historyx` — une zone est une
+ * adresse ou ce qui est dessous, pas ce qui commence par les mêmes lettres.
+ */
+function routeHolds(routePrefix: string, pathname: string): boolean {
+  if (routePrefix === '/') return pathname === '/';
+  return pathname === routePrefix || pathname.startsWith(`${routePrefix}/`);
+}
+
 export function contextualMissionsForPath(
   pathname: string,
   state: TutorialStateV3,
@@ -122,7 +140,7 @@ export function contextualMissionsForPath(
       mission.id !== 'TUT-CAM-01' &&
       mission.id !== 'TUT-CAM-02' &&
       mission.id !== 'TUT-REC-01' &&
-      pathname.startsWith(mission.routePrefix) &&
+      routeHolds(mission.routePrefix, pathname) &&
       isMissionAvailable(mission, facts) &&
       state.missions[mission.id] !== 'completed' &&
       isMissionReachable(mission, context),

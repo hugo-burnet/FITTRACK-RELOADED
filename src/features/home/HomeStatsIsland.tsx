@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { getLatestBodyWeight } from '@/data/repositories/bodyMeasurements';
+import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import type { WeeklyRegularity } from '@/lib/history';
 import { Card } from '@/ui';
@@ -24,6 +25,7 @@ import { HomeBodyWeightSheet } from './HomeBodyWeightSheet';
  */
 export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }) {
   const navigate = useAppNavigate();
+  const tutorial = useTutorialControls();
   const latest = useLiveQuery(async () => (await getLatestBodyWeight()) ?? null);
   const [weightOpen, setWeightOpen] = useState(false);
 
@@ -49,7 +51,11 @@ export function HomeStatsIsland({ regularity }: { regularity: WeeklyRegularity }
             value={latest === undefined ? ' ' : latest === null ? '—' : formatNumber(latest.valueKg)}
             suffix={latest == null ? undefined : t('units.kg')}
             ariaLabel={t('home.weightLink')}
-            onClick={() => setWeightOpen(true)}
+            tutorialId="home-body-weight"
+            onClick={() => {
+              setWeightOpen(true);
+              tutorial?.report({ type: 'home-weight-opened' });
+            }}
             divided
           />
         </div>
@@ -68,13 +74,15 @@ interface TileProps {
   onClick: () => void;
   /** La seule séparation entre deux tuiles — la carte n'en porte aucune. */
   divided?: boolean;
+  tutorialId?: string;
 }
 
-function Tile({ label, value, suffix, ariaLabel, onClick, divided }: TileProps) {
+function Tile({ label, value, suffix, ariaLabel, onClick, divided, tutorialId }: TileProps) {
   return (
     <button
       type="button"
       aria-label={ariaLabel}
+      data-tutorial-id={tutorialId}
       onClick={onClick}
       className={`flex min-h-20 flex-col justify-between p-4 text-left
         transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]

@@ -126,6 +126,7 @@ export function HomeBodyWeightSheet({ open, onClose }: Props) {
           variant="primary"
           size="lg"
           fullWidth
+          tutorialId="home-weight-save"
           disabled={disabled}
           onClick={() => void submit()}
         >
