@@ -4,7 +4,7 @@
 
 **Dernière mise à jour :** 2026-08-29 (**impact de la barre au démarrage** — le petit saut vertical
 est remplacé par une chute, une compression au sol, une secousse amortie et six particules SVG de
-poussière. Le mode mouvement réduit garde des fondus sans déplacement. 2 353 tests, typecheck,
+poussière. Le mode mouvement réduit garde des fondus sans déplacement. 2 355 tests, typecheck,
 build et contrôle navigateur mobile verts. **Checkpoint téléphone à faire : relancer l'app à froid
 et juger le poids de l'impact et la discrétion de la poussière.** Voir la section dédiée ci-dessous).
 Le même jour (**tutoriel campagne : tâches 6 à 11 terminées** — les cinq zones restantes de la
@@ -69,11 +69,14 @@ exécutable, aucun code de l'application touché.
 
 - Test TDD : structure de la scène, six particules et contrat CSS de poussière sans mouvement.
 - `npm run typecheck` : vert.
-- `npm run test:run` : **225 fichiers, 2 353 tests, tous verts**.
+- `npm run test:run` : **225 fichiers, 2 355 tests, tous verts**.
 - `npm run build` : vert, artefact du wiki à jour et PWA générée.
 - Navigateur intégré, viewport 390 × 844 : impact contrôlé pendant et après l'animation, aucune
   erreur ni aucun avertissement console ; la barre et la secousse reviennent exactement au repos,
   la poussière finit à `opacity: 0`.
+- Relecture indépendante : le premier passage a trouvé un flash de poussière pendant le fondu de
+  sortie. Le correctif TDD donne au sol et à la poussière un état de repos stable ; le second passage
+  ne relève plus aucun problème critique ou important.
 
 ### Checkpoint téléphone
 
