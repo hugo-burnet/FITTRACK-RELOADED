@@ -32,6 +32,9 @@ describe('BootScreen', () => {
 
     expect(reducedMotion).toContain('animation-name: boot-dust-fade !important;');
     expect(reducedMotion).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-ground,[^{]*{[^}]*animation-name: boot-fade !important;/s,
+    );
+    expect(reducedMotion).toMatch(
       /\.boot\[data-phase='in'\] \.boot-impact,[^}]*\.boot-barbell\s*{[^}]*animation: none !important;/s,
     );
     expect(dustFade).toContain('opacity:');
@@ -55,5 +58,15 @@ describe('BootScreen', () => {
     expect(bootStyles).toMatch(
       /@keyframes boot-drop\s*{.*?53\.333%\s*{[^}]*translateY\(0\) scaleX\(1\.06\) scaleY\(0\.82\)/s,
     );
+
+    for (const animationName of [
+      'boot-impact-shake',
+      'boot-ground-reveal',
+      'boot-dust-l',
+      'boot-dust-r',
+      'pop',
+    ]) {
+      expect(bootStyles).toMatch(new RegExp(`animation: ${animationName} [^;]* 1600ms both;`));
+    }
   });
 });
