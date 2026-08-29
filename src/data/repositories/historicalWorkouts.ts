@@ -145,19 +145,23 @@ function projectExercise(
   defaultRepSeconds: number,
 ): HistoricalExercise {
   const identity = resolveExerciseIdentity(row, exercise);
-  /*
-   * Le drapeau unilatéral n'entre pas dans la projection.
-   *
-   * Elle est lue par les exports et les analyses, et aucun des deux ne s'en
-   * sert. Un champ transporté que personne ne lit est exactement la dette que
-   * ce lot vient de solder ailleurs — `isUnilateral` a passé cinq lots déclaré
-   * et lu par personne. Il reste sur la ligne de séance, où l'écran en direct
-   * le lit pour savoir qu'une ligne représente deux côtés.
-   */
-  delete identity.isUnilateral;
 
   return {
     exerciseId: row.exerciseId,
+    /*
+     * Le slug vient de la bibliothèque d'aujourd'hui, et non d'un instantané.
+     *
+     * Ce n'est pas la relecture du passé que les instantanés interdisent : cette
+     * règle vise ce qui **change** — un nom, un muscle, un coefficient — et qui
+     * ferait lire une séance de 2023 avec le catalogue de 2027. Le slug, lui,
+     * est l'identité de catalogue de l'exercice : il est posé par le seed, il
+     * est sa clé d'idempotence, et rien dans l'app ne le réécrit jamais.
+     *
+     * Un exercice supprimé n'en a pas moins : les suppressions sont douces, la
+     * ligne reste lisible. Un exercice personnel, lui, n'en a pas du tout, et
+     * c'est la réponse attendue — cf. `MilestoneDefinition.slugs`.
+     */
+    ...(exercise?.slug === undefined ? {} : { slug: exercise.slug }),
     ...identity,
     repSeconds: resolveRepSeconds(row.repSeconds, defaultRepSeconds),
     ...(row.notes === undefined ? {} : { notes: row.notes }),
