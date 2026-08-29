@@ -16,6 +16,7 @@
 - Add no dependency, network request, image, or canvas; FitTrack remains fully offline.
 - Animate only `transform` and `opacity` in the impact correction.
 - Use one damped rebound, not elastic or repeated bouncing.
+- Anchor the barbell squash itself to `y = 16.2` so its lower edge cannot lift during compression.
 - Anchor dust to the ground path at `y = 16.2` and keep the left/right clouds symmetrical.
 - Under `prefers-reduced-motion: reduce`, keep the existing opacity-only dust and disable barbell movement.
 
@@ -85,6 +86,7 @@ it('starts the shake only after the barbell has touched the ground', () => {
   );
 
   expect(bootStyles).toMatch(/animation: boot-impact-shake 360ms linear 1640ms both;/);
+  expect(bootStyles).toMatch(/\.boot-barbell\s*{[^}]*transform-origin:\s*center 16\.2px;/s);
   expect(shake).toMatch(/0%,\s*10%,\s*100%\s*{[^}]*transform:\s*none;/s);
 });
 ```
@@ -94,8 +96,8 @@ it('starts the shake only after the barbell has touched the ground', () => {
 Run: `npm run test:run -- src/app/Boot.test.tsx`
 
 Expected: FAIL because `boot-drop` has no `translateY(-2px)`, two particle rows are above `15.9`,
-the dust groups still inherit the center of the SVG as their transform origin, and the shake starts
-at `1600ms` without a still opening segment.
+the barbell and dust groups still inherit the center of the SVG as their transform origin, and the
+shake starts at `1600ms` without a still opening segment.
 
 - [ ] **Step 5: Commit the regression tests**
 
@@ -136,9 +138,14 @@ Replace the six circle coordinates with mirrored positions whose centers stay be
 
 - [ ] **Step 2: Ground each dust transform and refine its flight**
 
-Add dedicated origins after `.boot-dust circle`, then make the particles start almost unscaled on the contact line before moving outward and upward:
+Override the shared center origin after the common transform block, then make the particles start
+almost unscaled on the contact line before moving outward and upward:
 
 ```css
+.boot-barbell {
+  transform-origin: center 16.2px;
+}
+
 .boot-dust--l {
   transform-origin: 9.65px 16.2px;
 }

@@ -45,10 +45,12 @@ de l'altère.
 Trois corrections ont été comparées : ajouter un second wrapper React réservé au rebond, redessiner
 la poussière comme une nappe continue, ou affiner les transformations CSS de la scène existante. La
 troisième est retenue : elle conserve la structure, n'ajoute aucun coût et permet un mouvement plus
-précis. Après le premier contact, la barre remonte d'environ 2 px une seule fois, revient au sol puis
-termine par un amortissement inférieur au pixel. Ce rebond reste court et non élastique. Les deux
-groupes de poussière prennent désormais comme origine les points de contact gauche et droit sur la
-ligne `y = 16.2`; leurs particules naissent au ras de cette ligne avant de s'écarter et de monter.
+précis. La compression de la barre est elle-même ancrée sur `y = 16.2` afin que son bord inférieur
+reste en contact au lieu de remonter quand elle s'écrase. Après le premier contact, la barre remonte
+d'environ 2 px une seule fois, revient au sol puis termine par un amortissement inférieur au pixel.
+Ce rebond reste court et non élastique. Les deux groupes de poussière prennent désormais comme
+origine les points de contact gauche et droit sur la ligne `y = 16.2`; leurs particules naissent au
+ras de cette ligne avant de s'écarter et de monter.
 
 Le contact, le sol et la poussière restent fixés à 1 600 ms. La secousse attend 40 ms de plus et son
 premier palier reste immobile : elle ne peut ainsi jamais être perçue avant que la barre touche le
