@@ -437,12 +437,15 @@
 }
 
 .boot-ground {
+  opacity: 0.28;
+  transform: scaleX(0.94);
   stroke: var(--border);
   stroke-width: 0.55;
   stroke-linecap: round;
 }
 
 .boot-dust {
+  opacity: 0;
   color: var(--text-2);
 }
 
@@ -631,7 +634,9 @@
     transform: translateY(-12px);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
-  58% {
+  /* 320 ms après le départ : la poussière, le sol et la secousse utilisent le
+     même délai absolu de 1 600 ms, donc aucune conséquence ne précède le choc. */
+  53.333% {
     transform: translateY(0) scaleX(1.06) scaleY(0.82);
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
   }

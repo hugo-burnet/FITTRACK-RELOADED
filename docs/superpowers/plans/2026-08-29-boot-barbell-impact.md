@@ -22,10 +22,12 @@
 ### Task 1: Define the impact scene contract
 
 **Files:**
+
 - Create: `src/app/Boot.test.tsx`
 - Modify: `src/app/Boot.tsx:41-96`
 
 **Interfaces:**
+
 - Consumes: `BootScreen({ exiting?: boolean })` and the existing `PLATES` geometry.
 - Produces: `.boot-impact`, `.boot-barbell`, `.boot-ground`, and two `.boot-dust` SVG layers consumed by `src/index.css`.
 
@@ -63,7 +65,13 @@ Change the SVG view box to `2 6 20 12`, render the ground before the barbell, an
 <svg className="boot-bar" viewBox="2 6 20 12" fill="none" aria-hidden="true">
   <path className="boot-ground" d="M1.5 16.2H22.5" />
   <g className="boot-barbell">
-    <path className="boot-rail" d="M8 12h8" stroke="var(--accent-ink)" strokeWidth="2" strokeLinecap="round" />
+    <path
+      className="boot-rail"
+      d="M8 12h8"
+      stroke="var(--accent-ink)"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
     {PLATES.flatMap(({ x, half, travel, delay }) =>
       [x, 24 - x].map((cx) => (
         <path
@@ -111,9 +119,11 @@ git commit -m "test: cadrer l'impact de la barre au démarrage"
 ### Task 2: Animate the fall, compression, shake, and dust
 
 **Files:**
+
 - Modify: `src/index.css:286-322,384-603`
 
 **Interfaces:**
+
 - Consumes: `.boot-impact`, `.boot-barbell`, `.boot-ground`, `.boot-dust--l`, and `.boot-dust--r` from Task 1.
 - Produces: `boot-drop`, `boot-impact-shake`, `boot-ground-reveal`, `boot-dust-l`, and `boot-dust-r` keyframes plus reduced-motion overrides.
 
@@ -152,12 +162,23 @@ Move `.boot-principle` to `animation: pop 380ms var(--ease-mech) 1600ms both;` a
 Add transform origins for the new layers, style the ground with `var(--border)`, and style the dust with `var(--text-2)`, rounded strokes, and low opacity. Replace `@keyframes boot-lift` with the following motion:
 
 ```css
+.boot-ground {
+  opacity: 0.28;
+  transform: scaleX(0.94);
+  stroke: var(--border);
+}
+
+.boot-dust {
+  opacity: 0;
+  color: var(--text-2);
+}
+
 @keyframes boot-drop {
   0% {
     transform: translateY(-12px);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
-  58% {
+  53.333% {
     transform: translateY(0) scaleX(1.06) scaleY(0.82);
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
   }
@@ -173,35 +194,71 @@ Add transform origins for the new layers, style the ground with `var(--border)`,
 }
 
 @keyframes boot-impact-shake {
-  0%, 100% { transform: none; }
-  16% { transform: translateX(-3px) rotate(-0.6deg); }
-  32% { transform: translateX(2.5px) rotate(0.45deg); }
-  48% { transform: translateX(-1.5px) rotate(-0.25deg); }
-  64% { transform: translateX(0.75px) rotate(0.12deg); }
+  0%,
+  100% {
+    transform: none;
+  }
+  16% {
+    transform: translateX(-3px) rotate(-0.6deg);
+  }
+  32% {
+    transform: translateX(2.5px) rotate(0.45deg);
+  }
+  48% {
+    transform: translateX(-1.5px) rotate(-0.25deg);
+  }
+  64% {
+    transform: translateX(0.75px) rotate(0.12deg);
+  }
 }
 
 @keyframes boot-ground-reveal {
-  from { opacity: 0; transform: scaleX(0.18); }
-  35% { opacity: 0.5; transform: scaleX(1); }
-  to { opacity: 0.28; transform: scaleX(0.94); }
+  from {
+    opacity: 0;
+    transform: scaleX(0.18);
+  }
+  35% {
+    opacity: 0.5;
+    transform: scaleX(1);
+  }
+  to {
+    opacity: 0.28;
+    transform: scaleX(0.94);
+  }
 }
 
 @keyframes boot-dust-l {
-  from { opacity: 0; transform: translate(2px, 1px) scale(0.35); }
-  24% { opacity: 0.5; }
-  to { opacity: 0; transform: translate(-7px, -5px) scale(1.35); }
+  from {
+    opacity: 0;
+    transform: translate(2px, 1px) scale(0.35);
+  }
+  24% {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+    transform: translate(-7px, -5px) scale(1.35);
+  }
 }
 
 @keyframes boot-dust-r {
-  from { opacity: 0; transform: translate(-2px, 1px) scale(0.35); }
-  24% { opacity: 0.5; }
-  to { opacity: 0; transform: translate(7px, -5px) scale(1.35); }
+  from {
+    opacity: 0;
+    transform: translate(-2px, 1px) scale(0.35);
+  }
+  24% {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+    transform: translate(7px, -5px) scale(1.35);
+  }
 }
 ```
 
-- [ ] **Step 3: Preserve the reduced-motion contract**
+- [ ] **Step 3: Preserve the reduced-motion and exit-remount contracts**
 
-Add `.boot-ground` and `.boot-dust` to the existing `boot-fade` override. Replace the `.boot-lift` reset with:
+Add `.boot-ground` to the existing `boot-fade` override. Give `.boot-dust` a dedicated opacity-only `boot-dust-fade` keyframe so it also disappears under reduced motion. Replace the `.boot-lift` reset with:
 
 ```css
 .boot[data-phase='in'] .boot-impact,
@@ -212,6 +269,10 @@ Add `.boot-ground` and `.boot-dust` to the existing `boot-fade` override. Replac
 ```
 
 Keep dust and ground opacity-only fades and set all new impact layers' `will-change` back to `auto` in the reduced-motion block.
+
+The base `opacity: 0` on dust and the settled base ground state above are required because
+`BootCurtain` remounts `BootScreen` with `data-phase="out"`; that new tree must inherit the settled
+visual state without replaying or flashing any transient layer.
 
 - [ ] **Step 4: Run focused and global verification**
 
@@ -241,9 +302,11 @@ git commit -m "feat: donner du poids à l'impact de la barre"
 ### Task 3: Record the session and perform final repository checks
 
 **Files:**
+
 - Modify: `PROGRESS.md`
 
 **Interfaces:**
+
 - Consumes: the verified startup animation from Tasks 1 and 2.
 - Produces: a durable project handoff describing the changed opening motion and mobile checkpoint.
 
