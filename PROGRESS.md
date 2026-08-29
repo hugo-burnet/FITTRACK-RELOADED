@@ -2,7 +2,13 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-29 (**les paliers** — un catalogue de 56 seuils écrits à la
+**Dernière mise à jour :** 2026-08-29 (**intégration des paliers, nettoyage du dépôt et revue de
+code** — la branche `claude/secret-vivre-vieux-01bl4s` est fusionnée après revue ; deux défauts y
+sont corrigés. Les résidus de session sortent du dépôt, `docs/superpowers/` devient `docs/design/`,
+le journal des versions closes se détache de ce fichier, et `deploy.yml` lance enfin le lint.
+2 444 tests, lint sans avertissement, typecheck et build verts. **Checkpoint téléphone à faire :
+celui des paliers ci-dessous, inchangé.** Voir la section dédiée ci-dessous). Le même jour
+(**les paliers** — un catalogue de 56 seuils écrits à la
 main, acquis à vie, plus une rétrospective d'anniversaire. Nouvelle table Dexie `milestones`
 (schéma 12). **Checkpoint téléphone à faire : l'écran Progression › Paliers, et la carte d'accueil
 après une séance qui en franchit un.** Voir la section dédiée ci-dessous). Le même jour (**impact
@@ -54,6 +60,79 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Intégration des paliers, nettoyage du dépôt et revue de code (2026-08-29)
+
+Branche `claude/animation-github-cleanup-s7j573`. Demande : « clear un peu le GitHub » et « une
+grosse code review pour rendre le projet propre, solide et pro ».
+
+### Les paliers, relus puis fusionnés
+
+`claude/secret-vivre-vieux-01bl4s` portait quatre commits jamais fusionnés. La relecture a trouvé
+le code solide — le moteur est pur, le catalogue est vérifié contre le seed par un test, le tonnage
+des paliers passe par `volumeEntriesOf` pour ne pas contredire le rapport mensuel — et **deux
+défauts réels** :
+
+1. **L'import Hevy ne rattrapait pas les paliers.** `importHevyWorkouts` réconcilie les records
+   dans sa transaction et ne faisait rien des paliers. Un CSV de dix ans écrivait donc son
+   historique sans que la projection bouge, puis les quarante seuils tombaient d'un coup à la fin
+   de la séance suivante — avec `celebrate: true` — en une carte d'accueil de quarante lignes.
+   C'est la situation exacte que `syncMilestones` documente comme la raison d'être de
+   `celebrate: false` ; personne ne l'appelait. Corrigé dans l'écran, pas dans le dépôt : le moteur
+   relit l'historique projeté, donc d'autres tables que celles réservées par la transaction.
+2. **Un seuil retiré du catalogue faisait taire les anniversaires.** La ligne orpheline qu'il laisse
+   en base reste non acquittée — plus aucune carte ne peut l'afficher, donc aucun doigt ne peut la
+   fermer — et la carte d'accueil sortait sur `return null` avant même de chercher une
+   rétrospective. Les lignes sans phrase sont désormais sautées, jamais comptées.
+
+Les deux corrections sont verrouillées par un test prouvé rouge avant d'être vert. Seul
+`PROGRESS.md` entrait en conflit à la fusion ; le code n'a touché aucun fichier de l'animation.
+
+### Le dépôt
+
+- **Les résidus de session sortent.** Deux prompts de reprise et une passation qui citaient des
+  worktrees disparus, un rapport de tâche — listé dans `.gitignore` tout en étant suivi — et une
+  critique de conception. `.impeccable/` rejoint `.gitignore`.
+- **`docs/superpowers/` devient `docs/design/`.** Le dossier reste : quatre fichiers de `src/` en
+  citent les spécifications, et c'est la trace de pourquoi les écrans sont comme ils sont. Ce qui
+  part, c'est le nom d'un outil dans l'arborescence. Les 21 renvois suivent.
+- **`PROGRESS.md` passe de 7 427 à 1 608 lignes.** Les versions v0.1.0 à v1.3.1 vivent dans
+  `docs/journal/2026-08-29-versions-v0-v1.md`, sans une ligne réécrite. Les quatre sections
+  transverses — Avancement, Décisions, Pièges, Dette — restent ici : elles n'ont pas d'âge.
+- **Le README ne ment plus.** Il pointait vers `AGENTS.md`, qui est dans `.gitignore` : lien mort
+  pour tout visiteur. Il annonçait aussi `v1.0.1`, six versions en arrière.
+
+### La revue
+
+- **`deploy.yml` ne lançait pas `npm run lint`.** Le workflow Android le faisait : une règle pouvait
+  casser la publication de l'APK sans jamais empêcher la mise en ligne de la PWA.
+- **Le seul avertissement restant est levé** — `collapsibleRoutineFolderIds` sort du fichier de son
+  composant, ce qui lui rend aussi son rafraîchissement à chaud.
+- **Code mort.** `noUnusedLocals` ne voit pas un export que personne n'importe. Quatre symboles
+  étaient vraiment morts, dont `MUSCLE_LABELS` et ses vingt-six noms de muscles en dur —
+  désaccentués, donc jamais affichés. Dix-neuf autres perdent un `export` que rien ne lisait.
+- **Ce qui est propre et l'était déjà** : aucun `any`, aucune chaîne d'interface en dur, aucun
+  `console.log` de mise au point, aucun `TODO`, aucun secret, `DebugScreen` seul à importer `db`.
+  Les écouteurs globaux sans `remove` sont des verrous de durée de vie du processus, posés une
+  fois depuis `main.tsx` — ce sont des choix, pas des fuites.
+
+### Ce qui reste, et qui n'a pas été fait
+
+**`WorkoutScreen.tsx` fait 944 lignes** pour une règle à ~300 — trois fois la limite, sur l'écran le
+plus important de l'app. Trente-trois autres fichiers dépassent, mais aucun de plus de 700. Le
+découpage n'a pas été tenté ici : c'est une opération à faire seule, sur une branche à elle, et pas
+en fin de session de nettoyage.
+
+### Vérifications
+
+- `npm run lint` : **zéro avertissement** (il en restait un).
+- `npm run typecheck` : vert.
+- `npm run test:run` : **231 fichiers, 2 444 tests, tous verts** (2 355 avant la fusion).
+- `npm run build` : vert.
+
+### Checkpoint téléphone
+
+Aucun nouveau. Celui des paliers, ci-dessous, reste dû.
 
 ## Les paliers (2026-08-29)
 
