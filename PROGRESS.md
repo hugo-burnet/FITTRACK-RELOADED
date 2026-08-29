@@ -2,8 +2,11 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-29 (**intégration des paliers, nettoyage du dépôt et revue de
-code** — la branche `claude/secret-vivre-vieux-01bl4s` est fusionnée après revue ; deux défauts y
+**Dernière mise à jour :** 2026-08-29 (**découpage de l'écran de séance** — `WorkoutScreen.tsx`
+passe de 944 à 434 lignes ; les douze feuilles, les gestes sur une série, le chargement de la
+séance et les recherches vivent dans quatre modules. Aucun comportement changé, 2 452 tests verts.
+Voir la section dédiée ci-dessous). Le même jour (**intégration des paliers, nettoyage du dépôt et
+revue de code** — la branche `claude/secret-vivre-vieux-01bl4s` est fusionnée après revue ; deux défauts y
 sont corrigés. Les résidus de session sortent du dépôt, `docs/superpowers/` devient `docs/design/`,
 le journal des versions closes se détache de ce fichier, et `deploy.yml` lance enfin le lint.
 2 444 tests, lint sans avertissement, typecheck et build verts. **Checkpoint téléphone à faire :
@@ -60,6 +63,59 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Découpage de l'écran de séance (2026-08-29)
+
+`WorkoutScreen.tsx` faisait **944 lignes** pour une règle à ~300, sur l'écran qu'on tient d'une
+main entre deux séries. Il portait quatre métiers : charger la séance, gérer les minuteurs,
+dessiner les cartes, et tenir les douze feuilles.
+
+### Ce qui en sort
+
+| Module | Lignes | Responsabilité |
+|---|---:|---|
+| `workoutLookups.ts` | 93 | Retrouver une ligne, une série, un nom depuis un identifiant. |
+| `useActiveWorkout.ts` | 132 | Les six lectures vivantes, les deux ménages de minuteurs, le brouillon. |
+| `useWorkoutSetActions.ts` | 197 | Ce qui arrive à une série quand on la saisit, la valide ou la défait. |
+| `WorkoutSheets.tsx` | 389 | Les douze feuilles. |
+| `WorkoutScreen.tsx` | **434** | L'écran lui-même : entête, liste des cartes, et la délégation. |
+
+**Le découpage suit les responsabilités, pas le compte de lignes.** Les douze feuilles restent
+ensemble parce qu'elles partagent un unique état qui n'en laisse ouvrir qu'une et qu'elles se
+renvoient la main — les répartir par famille aurait fait remonter `setSheet` et redescendre le même
+état dans trois composants, pour la seule satisfaction de compter moins de lignes par fichier.
+
+`workoutLookups` gagne huit tests. Ils verrouillent **les replis**, pas les chemins heureux : les
+cas nominaux sont déjà couverts par les 34 cas d'intégration, mais aucun d'eux n'atteint l'instant
+où une feuille demande une ligne que la base n'a plus. Cet instant dure une animation de fermeture,
+et c'est là qu'une exception ferait tomber une séance en cours.
+
+### Ce que le lint a attrapé
+
+`useWorkoutSetActions` a d'abord été appelé **après** les retours anticipés de l'écran, ce qui le
+sautait un rendu sur deux — 37 tests d'intégration sont tombés d'un coup. C'est
+`react-hooks/rules-of-hooks` qui l'a nommé, par `npm run lint` : l'étape que `deploy.yml` ne
+lançait pas avant cette semaine. Le hook est désormais monté avant les retours, comme
+`useWorkoutAnnouncements`, et reçoit un `workoutId` qui peut être absent le temps du chargement.
+
+### Ce qui reste au-dessus de 300 lignes
+
+Trente-cinq fichiers, dont quatre au-dessus de 500 : `i18n/fr.ts` (2 889 — un dictionnaire est une
+seule responsabilité, la règle vise la logique), `lib/coach/evaluate.ts` (654), 
+`WorkoutExerciseCard.tsx` (510) et `hevyImport.ts` (503). Aucun n'est le cas criant que celui-ci
+était ; ils attendront d'avoir une raison autre que leur taille.
+
+### Vérifications
+
+- `npm run typecheck`, `npm run lint` (zéro avertissement), `npm run build` : verts.
+- `npm run test:run` : **232 fichiers, 2 452 tests**, dont les 34 cas d'intégration de l'écran de
+  séance, **sans une seule modification** — c'est ce qui prouve qu'aucun comportement n'a bougé.
+
+### Checkpoint téléphone
+
+Aucun nouveau au sens strict, mais l'écran touché est le plus important de l'app : une séance
+complète menée de bout en bout — saisie, validation, repos, cadence, une série unilatérale, une
+feuille de plaques et le menu d'un exercice — vaut d'être refaite une fois.
 
 ## Intégration des paliers, nettoyage du dépôt et revue de code (2026-08-29)
 

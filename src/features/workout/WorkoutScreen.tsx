@@ -1,28 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import {
   deleteSet,
-  getActiveWorkout,
-  getWorkoutDetail,
   reorderWorkoutExercises,
   restoreSet,
   updateSetValues,
   workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
-import {
-  getAvailablePlateWeightsKg,
-  getDefaultRepSeconds,
-} from '@/data/repositories/settings';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { applyCoachObjective } from '@/data/repositories/coachApply';
 import {
   dismissRecommendation,
-  listPendingRecommendations,
   markRecommendationFollowed,
 } from '@/data/repositories/coachRecommendations';
-import { listRecordsForWorkout } from '@/data/repositories/personalRecords';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { DELOAD_PERCENT, isDeloadEligibleMeasurement } from '@/lib/deload';
@@ -47,9 +38,9 @@ import { CollapseAllIcon, ExpandAllIcon, MoreIcon } from '@/ui/icons';
 import { ElapsedTime } from './ElapsedTime';
 import { announce } from '@/audio/announce';
 import { restBonusSecondsFor } from '@/lib/restBonus';
-import { useWorkoutAnnouncements } from './useWorkoutAnnouncements';
 import { useWorkoutPace } from './useWorkoutPace';
 import { useWorkoutSetActions } from './useWorkoutSetActions';
+import { useActiveWorkout } from './useActiveWorkout';
 import { workoutExerciseLoads } from './workoutLookups';
 import { WorkoutExerciseCard, workoutRecordNotices } from './WorkoutExerciseCard';
 import { INITIAL_WORKOUT_FOLD_COMMAND, nextWorkoutFoldCommand } from './workoutFold';
@@ -74,50 +65,21 @@ export function WorkoutScreen() {
   const willExpandAll = !foldCommand.expanded;
   const rest = useRestTimer();
 
-  // Keep loading (`undefined`) distinct from no active workout (`null`).
-  const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
-  const detail = useLiveQuery(
-    async () => (active == null ? null : await getWorkoutDetail(active.id)),
-    [active?.id],
-  );
-  const availablePlateWeightsKg = useLiveQuery(getAvailablePlateWeightsKg);
-  const defaultRepSeconds = useLiveQuery(getDefaultRepSeconds);
+  const {
+    active,
+    detail,
+    workoutId,
+    availablePlateWeightsKg,
+    defaultRepSeconds,
+    recordEntries,
+    pendingCoach,
+    draft,
+    setDraft,
+  } = useActiveWorkout();
 
-  const recordEntries = useLiveQuery(
-    async () => (active == null ? undefined : listRecordsForWorkout(active.id)),
-    [active?.id],
-  );
-
-  const pendingCoach = useLiveQuery(async () => {
-    if (detail == null) return [] as Awaited<ReturnType<typeof listPendingRecommendations>>;
-    const ids = detail.exercises.map((line) => line.row.exerciseId);
-    const pending = await listPendingRecommendations(ids);
-    return detail.workout.programId === undefined
-      ? pending
-      : pending.filter((recommendation) => recommendation.nextLoadKg === undefined);
-  }, [detail?.workout.id, detail?.exercises.map((line) => line.row.exerciseId).join('|')]);
-
-  const workoutId = detail?.workout.id;
-  const openedSets =
-    detail?.exercises.reduce(
-      (count, line) => count + line.sets.filter((set) => set.isCompleted === 1).length,
-      0,
-    ) ?? 0;
-  const availableSets =
-    detail?.exercises.reduce(
-      (count, line) => count + line.sets.filter((set) => set.deletedAt === 0).length,
-      0,
-    ) ?? 0;
-
-  useWorkoutAnnouncements({ workoutId, openedSets, availableSets, recordEntries });
-
-  const stopRest = useRestTimer((state) => state.stop);
   const extendRest = useRestTimer((state) => state.extend);
-  const restingSetId = rest.setId;
   const pacer = useRepPacer();
   const hold = useHoldTimer();
-  const stopHold = useHoldTimer((state) => state.stop);
-  const holdSetId = hold.setId;
   const pace = useWorkoutPace(detail?.exercises ?? EMPTY_LINES, defaultRepSeconds);
 
   /*
@@ -136,30 +98,6 @@ export function WorkoutScreen() {
     pace,
     setEffortSetId,
   });
-
-  // Stop rests whose set was deleted with its row or exercise.
-  useEffect(() => {
-    if (restingSetId === null || detail == null) return;
-    const alive = detail.exercises.some((line) => line.sets.some((set) => set.id === restingSetId));
-    if (!alive) stopRest(restingSetId);
-  }, [restingSetId, detail, stopRest]);
-
-  // Même raison que pour le repos : un chrono qui suit un set supprimé avec sa
-  // ligne ou son exercice ne s'arrêterait jamais tout seul.
-  useEffect(() => {
-    if (holdSetId === null || detail == null) return;
-    const alive = detail.exercises.some((line) => line.sets.some((set) => set.id === holdSetId));
-    if (!alive) stopHold(holdSetId);
-  }, [holdSetId, detail, stopHold]);
-
-  const [draft, setDraft] = useState<{ id: string; name: string; notes: string } | null>(null);
-  if (detail != null && draft?.id !== detail.workout.id) {
-    setDraft({
-      id: detail.workout.id,
-      name: detail.workout.name,
-      notes: detail.workout.notes ?? '',
-    });
-  }
 
   if (active === null) {
     return (
