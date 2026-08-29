@@ -19,6 +19,19 @@ describe('BootScreen', () => {
     expect(container.querySelectorAll('.boot-dust circle')).toHaveLength(6);
   });
 
+  it('anchors both dust clouds to the ground line', () => {
+    const { container } = render(<BootScreen />);
+    const particleY = [...container.querySelectorAll<SVGCircleElement>('.boot-dust circle')].map(
+      (particle) => Number(particle.getAttribute('cy')),
+    );
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+
+    expect(particleY).toHaveLength(6);
+    expect(particleY.every((cy) => cy >= 15.9 && cy <= 16.2)).toBe(true);
+    expect(stylesheet).toMatch(/\.boot-dust--l\s*{[^}]*transform-origin:\s*9\.65px 16\.2px;/s);
+    expect(stylesheet).toMatch(/\.boot-dust--r\s*{[^}]*transform-origin:\s*14\.35px 16\.2px;/s);
+  });
+
   it('keeps reduced-motion dust opacity-only', () => {
     const stylesheet = readFileSync('src/index.css', 'utf8');
     const reducedMotion = stylesheet.slice(
@@ -51,7 +64,7 @@ describe('BootScreen', () => {
     );
   });
 
-  it('starts the impact layers on the barbell contact frame', () => {
+  it('starts the contact effects on the barbell contact frame', () => {
     const stylesheet = readFileSync('src/index.css', 'utf8');
     const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
 
@@ -60,7 +73,6 @@ describe('BootScreen', () => {
     );
 
     for (const animationName of [
-      'boot-impact-shake',
       'boot-ground-reveal',
       'boot-dust-l',
       'boot-dust-r',
@@ -68,5 +80,29 @@ describe('BootScreen', () => {
     ]) {
       expect(bootStyles).toMatch(new RegExp(`animation: ${animationName} [^;]* 1600ms both;`));
     }
+  });
+
+  it('gives the barbell one small rebound after ground contact', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const drop = stylesheet.slice(
+      stylesheet.indexOf('@keyframes boot-drop'),
+      stylesheet.indexOf('@keyframes boot-impact-shake'),
+    );
+
+    expect(drop).toMatch(/53\.333%\s*{[^}]*translateY\(0\)/s);
+    expect(drop).toMatch(/70%\s*{[^}]*translateY\(-2px\)/s);
+    expect(drop).toMatch(/84%\s*{[^}]*translateY\(0\)/s);
+  });
+
+  it('starts the shake only after the barbell has touched the ground', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
+    const shake = stylesheet.slice(
+      stylesheet.indexOf('@keyframes boot-impact-shake'),
+      stylesheet.indexOf('@keyframes boot-ground-reveal'),
+    );
+
+    expect(bootStyles).toMatch(/animation: boot-impact-shake 360ms linear 1640ms both;/);
+    expect(shake).toMatch(/0%,\s*10%,\s*100%\s*{[^}]*transform:\s*none;/s);
   });
 });
