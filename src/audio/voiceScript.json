@@ -681,7 +681,6 @@
     {
       "id": "mission-campaign-create-1",
       "cue": "tutorial",
-      "pending": true,
       "text": "Ouvrez le menu de création, puis choisissez Routine vide. Chaque modification est enregistrée immédiatement.",
       "direction": "Consigne de mission, dite une fois. Elle constate ce qu’il y a à faire et ce que l’app garantit — aucune insistance, aucun encouragement. Pause nette entre les deux phrases : la première dit le geste, la seconde ce qui en découle.",
       "settings": { "stability": 0.8, "style": 0.05 }
