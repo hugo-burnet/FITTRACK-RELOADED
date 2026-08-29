@@ -33,6 +33,24 @@ Le principe de l'application apparaît sur l'impact, comme dans l'animation actu
 signature apparaît avant le fondu de sortie. La durée totale de l'ouverture reste de 2,5 secondes :
 aucun délai supplémentaire n'est ajouté au démarrage.
 
+## Ajustement après contrôle sur téléphone — 2026-08-30
+
+Le premier rendu donne bien le poids de la chute, mais deux détails contredisent la lecture physique
+attendue : la barre ne quitte jamais le sol après sa compression et la mise à l'échelle des groupes
+de poussière se fait autour du centre du `viewBox`, ce qui fait apparaître les particules au milieu
+de l'altère.
+
+Trois corrections ont été comparées : ajouter un second wrapper React réservé au rebond, redessiner
+la poussière comme une nappe continue, ou affiner les transformations CSS de la scène existante. La
+troisième est retenue : elle conserve la structure, n'ajoute aucun coût et permet un mouvement plus
+précis. Après le premier contact, la barre remonte d'environ 2 px une seule fois, revient au sol puis
+termine par un amortissement inférieur au pixel. Ce rebond reste court et non élastique. Les deux
+groupes de poussière prennent désormais comme origine les points de contact gauche et droit sur la
+ligne `y = 16.2`; leurs particules naissent au ras de cette ligne avant de s'écarter et de monter.
+
+Le contact reste fixé à 1 600 ms, la durée totale reste inchangée et le mode mouvement réduit ne
+reçoit aucun déplacement supplémentaire.
+
 ## Structure et style
 
 `LoadedBar` devient une petite scène SVG. La barre existante reste la source du logo ; elle est
