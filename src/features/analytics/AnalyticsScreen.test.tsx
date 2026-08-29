@@ -35,6 +35,9 @@ describe('AnalyticsScreen', () => {
     const rows = within(overview!).getAllByRole('button');
     expect(rows.map((row) => row.querySelector('span > span')?.textContent)).toEqual([
       'Records',
+      // Les paliers juste sous les records, et comme eux sans condition
+      // d'historique : les deux écrans savent dire pourquoi ils sont vides.
+      'Paliers',
       'Séances par semaine',
       'Volume d’entraînement',
       'Séries par muscle',

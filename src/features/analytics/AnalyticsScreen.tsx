@@ -53,6 +53,17 @@ export function AnalyticsScreen() {
               subtitle={t('records.subtitle')}
               onClick={() => openView('records', '/analytics/records')}
             />
+            {/*
+              Juste sous les records, et sans passer par `openView` : le
+              tutoriel ne couvre pas cet écran, et lui inventer une vue
+              validerait l'étape d'un autre. Inconditionnel comme les records —
+              l'écran a son état vide, qui dit précisément pourquoi il l'est.
+            */}
+            <ListRow
+              title={t('milestone.link')}
+              subtitle={t('milestone.subtitle')}
+              onClick={() => void navigate('/analytics/milestones')}
+            />
             {hasHistory && (
               <>
               <ListRow

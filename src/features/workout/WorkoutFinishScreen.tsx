@@ -7,6 +7,7 @@ import {
   evaluateCoachForWorkout,
   finalizeCoachForWorkout,
 } from '@/data/repositories/coachEvaluate';
+import { syncMilestones } from '@/data/repositories/milestones';
 import {
   discardWorkout,
   finishWorkout,
@@ -147,6 +148,11 @@ export function WorkoutFinishScreen() {
         tutorial?.report({ type: 'workout-saved', workoutId: workout.id });
         return finalizeCoachForWorkout(workout.id).catch(() => undefined);
       })
+      // Les paliers après le coach, et jamais avant `finishWorkout` : le moteur
+      // ne lit que les séances closes, donc celle-ci doit déjà l'être. Comme le
+      // coach, ce n'est pas une barrière — un calcul qui échoue ne doit pas
+      // laisser l'utilisateur bloqué sur un écran de fin déjà enregistré.
+      .then(() => syncMilestones({ celebrate: true }).catch(() => undefined))
       .then(() => navigate('/', { replace: true }))
       .catch(() => undefined);
   };

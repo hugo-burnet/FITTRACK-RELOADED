@@ -32,6 +32,7 @@ import {
   WikiQuestionsRoute,
   WikiSectionRoute,
 } from './features/knowledge/routes';
+import { MilestonesRoute } from './features/milestones/routes';
 import { ExercisePickerRoute, RoutineEditorRoute } from './features/routines/routes';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
@@ -70,6 +71,7 @@ export const router = createHashRouter([
       // On entre par l'Historique et par la fiche d'un exercice.
       { path: 'analytics', element: <AnalyticsRoute /> },
       { path: 'analytics/records', element: <RecordsRoute /> },
+      { path: 'analytics/milestones', element: <MilestonesRoute /> },
       { path: 'analytics/weekly', element: <WeeklySessionsRoute /> },
       { path: 'analytics/volume', element: <WeeklyVolumeRoute /> },
       { path: 'analytics/muscles', element: <MuscleBalanceRoute /> },
