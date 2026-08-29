@@ -14,14 +14,20 @@
 >
 > **Deux écarts, tous deux volontaires.**
 >
-> 1. *La barre ne remonte pas après le choc.* La conception prévoyait qu'elle « remonte de quelques
->    pixels » ; `boot-drop` ne rend la hauteur que par deux compressions décroissantes, sans aucun
->    `translateY` après le contact. Un rebond vertical, même court, redonnait l'impression de saut
->    que tout ce chantier existe pour supprimer.
+> 1. ~~*La barre ne remonte pas après le choc.*~~ **Revenu le 2026-08-29 sur décision de
+>    l'utilisateur.** L'écart tenait tant que la barre tombait de nulle part : un rebond seul
+>    ressemblait au saut que ce chantier supprimait. Une fois l'élévation ajoutée avant la chute, le
+>    geste se lit « on soulève, on lâche », et le rebond en est la conséquence attendue. Il reste
+>    trois fois plus court que l'élévation — c'est ce rapport qui dit « lourd ».
 > 2. *La poussière n'est pas floutée.* La conception mentionnait « un flou très limité aux petits
 >    éléments de poussière ». Le flou est resté sur les plaques, où il existait déjà ; six disques
 >    de moins d'un pixel de rayon ne gagnent rien à être floutés, et chaque `filter` animé est une
 >    couche de composition de plus sur le premier écran de l'app.
+>
+> Un **défaut** a par ailleurs été trouvé et corrigé le 2026-08-29 : la poussière ne partait pas du
+> point de contact. `transform-origin: center` sous `transform-box: view-box` désigne le centre du
+> viewBox et non celui du groupe ; à petite échelle les particules naissaient donc au milieu de la
+> barre, là où rien ne heurte. Chaque nappe a désormais son origine sur sa grande plaque.
 >
 > Deux commits vont par ailleurs au-delà du plan : `d80ee40` donne au sol et à la poussière un état
 > de repos stable — sans lui, la poussière re-clignotait pendant le fondu de sortie, parce que

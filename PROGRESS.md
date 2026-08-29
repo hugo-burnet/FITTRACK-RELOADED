@@ -2,7 +2,11 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-29 (**découpage de l'écran de séance** — `WorkoutScreen.tsx`
+**Dernière mise à jour :** 2026-08-29 (**reprise de l'animation d'ouverture** — la barre se
+charge au sol, s'élève de huit pixels, tombe, s'écrase, tremble et rebondit ; la poussière naît
+enfin **aux deux points de contact** et non au milieu de la barre. **Checkpoint téléphone à
+faire : relancer l'app à froid.** Voir la section dédiée ci-dessous). Le même jour (**découpage de
+l'écran de séance** — `WorkoutScreen.tsx`
 passe de 944 à 434 lignes ; les douze feuilles, les gestes sur une série, le chargement de la
 séance et les recherches vivent dans quatre modules. Aucun comportement changé, 2 452 tests verts.
 Voir la section dédiée ci-dessous). Le même jour (**intégration des paliers, nettoyage du dépôt et
@@ -63,6 +67,59 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Reprise de l'animation d'ouverture (2026-08-29)
+
+Demande de l'utilisateur : que l'haltère se construise progressivement, s'élève un peu, tombe,
+tremble, rebondisse, et que la poussière parte **du point d'impact** — « actuellement c'est au
+milieu de l'haltère ».
+
+### Le défaut, et sa vraie cause
+
+Déplacer les cercles ne suffisait pas. `.boot-dust` porte `transform-box: view-box` et
+`transform-origin: center`, et sous `view-box` ce `center` désigne **le centre du viewBox**, pas
+celui du groupe. La poussière était donc ramenée vers le milieu de la barre à petite échelle et ne
+rejoignait le bas des plaques qu'à pleine taille — c'est exactement ce qu'on voyait. Chaque nappe a
+maintenant son origine sur sa grande plaque, `6.5` et `17.5`.
+
+Le point de contact est bien celui-là : les deux grandes plaques descendent à `y = 15.5` et leur
+terminaison ronde de 2 unités les fait franchir la ligne de sol, tandis que le manchon s'arrête à
+`13` et les petites plaques à `14.5`, tous deux en l'air.
+
+### Ce que la mesure au navigateur a corrigé
+
+Les longueurs d'un `transform` sont ici en **unités du viewBox**, pas en pixels CSS : la scène fait
+douze unités pour 79 px. Une élévation écrite `-9px` soulevait donc la barre de 60 px — hors du
+cadre, sur une barre haute de 46 px. Ramenée à `-1.2px`, elle vaut 8 px à l'écran. Même erreur sur
+la course de la poussière, qui l'envoyait à mi-hauteur de la barre.
+
+La ligne de sol remonte de `16.2` à `15.55` : l'écart mesuré entre le bas des plaques et la ligne
+était de 4,6 px, soit un « impact » qui ne touchait pas. Il est désormais de 0,3 px.
+
+### Le geste
+
+Chargement au sol → élévation de 8 px (156 ms) → chute accélérée → contact à 1 600 ms, inchangé →
+compression, secousse, poussière → rebond trois fois plus court que l'élévation → second contact,
+trois fois plus court que le premier. La durée totale reste `BOOT_HOLD_MS = 2500` ms.
+
+### Vérifications
+
+- Trois tests écrits **avant** le correctif, rouges puis verts : la poussière aux deux points de
+  contact, la poussière posée sur la ligne de sol — lue dans le dessin, pas recopiée — et
+  l'élévation avant la chute avec un rebond plus petit qu'elle.
+- Navigateur intégré, 390 × 844, animations mises en pause et déplacées image par image : contact,
+  rebond et retombée contrôlés ; aucune erreur console.
+- En `prefers-reduced-motion: reduce`, les trois couches rendent `transform: none` — vérifié dans
+  le navigateur, pas seulement dans la feuille de style.
+- `npm run typecheck`, `npm run lint`, `npm run test:run` (**232 fichiers, 2 455 tests**) et
+  `npm run build` : verts.
+
+### Checkpoint téléphone
+
+Fermer complètement FitTrack et la relancer. La barre doit se charger au sol, se soulever d'un
+rien, tomber et **frapper** la ligne — pas la survoler —, trembler puis rebondir une fois. La
+poussière doit sortir de sous les deux grandes plaques, rester basse et disparaître avant le
+rideau. Réduction des animations activée : il ne reste que des fondus.
 
 ## Découpage de l'écran de séance (2026-08-29)
 

@@ -483,6 +483,21 @@
   transform-origin: center;
 }
 
+/* Chaque nappe grandit depuis **son** point de contact.
+
+   Avec `transform-box: view-box`, `transform-origin: center` désigne le centre
+   du viewBox — pas celui du groupe. La poussière naissait donc au milieu de la
+   barre à petite échelle et ne rejoignait le bas des plaques qu'à pleine
+   taille : c'est ce qu'on voyait à l'écran, et déplacer les cercles seuls n'y
+   changeait rien. Les longueurs sont en unités du viewBox, comme le reste. */
+.boot-dust--l {
+  transform-origin: 6.5px 15.35px;
+}
+
+.boot-dust--r {
+  transform-origin: 17.5px 15.35px;
+}
+
 .boot[data-phase='in'] .boot-rail {
   animation: boot-rack 360ms var(--ease-mech) 100ms both;
 }
@@ -626,12 +641,27 @@
   }
 }
 
-/* La barre ne décolle jamais : le remplissage `both` la garde douze pixels au-
-   dessus du sol pendant le chargement. Elle tombe, s'écrase et retrouve sa
-   géométrie par deux compressions décroissantes, sans rebond vertical. */
+/* On soulève, on lâche, ça rebondit.
+
+   Le remplissage `both` garde le 0 % pendant tout le chargement : les plaques
+   s'enfilent donc sur une barre **posée**, et non suspendue en l'air sans
+   raison. L'élévation qui suit est ce qui explique la chute — sans elle, la
+   barre tombait d'une hauteur que rien n'avait justifiée.
+
+   Le rebond est trois fois plus court que l'élévation, et le second contact
+   trois fois plus court que le premier. C'est ce rapport qui dit « lourd » :
+   une barre chargée ne remonte pas d'où elle vient. */
 @keyframes boot-drop {
   0% {
-    transform: translateY(-12px);
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.25, 0, 0.3, 1);
+  }
+  /* L'élévation : 156 ms, 1,2 unité de viewBox — huit pixels à l'écran, mesurés.
+     Les longueurs d'un `transform` sont ici en unités du viewBox, pas en pixels
+     CSS : la scène fait douze unités de haut pour 79 px, donc une valeur qui se
+     lit « petite » en CSS soulève la barre hors du cadre. */
+  26% {
+    transform: translateY(-1.2px);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
   /* 320 ms après le départ : la poussière, le sol et la secousse utilisent le
@@ -640,11 +670,16 @@
     transform: translateY(0) scaleX(1.06) scaleY(0.82);
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
   }
-  74% {
-    transform: scaleX(0.99) scaleY(1.025);
+  67% {
+    transform: translateY(-0.4px) scaleX(0.99) scaleY(1.025);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
-  88% {
-    transform: scaleX(1.015) scaleY(0.985);
+  82% {
+    transform: translateY(0) scaleX(1.02) scaleY(0.97);
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+  92% {
+    transform: translateY(-0.12px) scaleX(0.996) scaleY(1.008);
   }
   100% {
     transform: none;
@@ -685,31 +720,37 @@
   }
 }
 
+/* Une bouffée, pas un panache. La poussière naît **au** contact — les circles
+   sont posés sur les deux grandes plaques dans `Boot.tsx` — et s'écarte vers
+   l'extérieur de la barre. Sa course est **basse et large** : la poussière d'un
+   choc rampe au sol avant de retomber, elle ne s'élève pas. Mesurée au
+   navigateur — les unités sont celles du viewBox, et 3,4 d'entre elles
+   envoyaient les particules à mi-hauteur de la barre. */
 @keyframes boot-dust-l {
   from {
     opacity: 0;
-    transform: translate(2px, 1px) scale(0.35);
+    transform: translate(0.5px, 0.25px) scale(0.3);
   }
-  24% {
-    opacity: 0.68;
+  26% {
+    opacity: 0.62;
   }
   to {
     opacity: 0;
-    transform: translate(-9px, -7px) scale(1.45);
+    transform: translate(-2.6px, -1.25px) scale(1.5);
   }
 }
 
 @keyframes boot-dust-r {
   from {
     opacity: 0;
-    transform: translate(-2px, 1px) scale(0.35);
+    transform: translate(-0.5px, 0.25px) scale(0.3);
   }
-  24% {
-    opacity: 0.68;
+  26% {
+    opacity: 0.62;
   }
   to {
     opacity: 0;
-    transform: translate(9px, -7px) scale(1.45);
+    transform: translate(2.6px, -1.25px) scale(1.5);
   }
 }
 

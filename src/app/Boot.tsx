@@ -40,7 +40,7 @@ const PLATES = [
 function LoadedBar() {
   return (
     <svg className="boot-bar" viewBox="2 6 20 12" fill="none" aria-hidden="true">
-      <path className="boot-ground" d="M1.5 16.2H22.5" />
+      <path className="boot-ground" d="M1.5 15.55H22.5" />
 
       <g className="boot-barbell">
         <path
@@ -67,15 +67,23 @@ function LoadedBar() {
         )}
       </g>
 
+      {/*
+        La poussière naît **là où ça touche**, et nulle part ailleurs.
+        Les deux grandes plaques descendent à y = 15.5 ; leur terminaison ronde
+        de 2 unités les fait franchir la ligne de sol. Le manchon s'arrête à
+        y = 13 et les petites plaques à 14.5 — tous deux en l'air. Une poussière
+        au centre de la barre montrait donc un choc à un endroit où rien ne
+        heurte, et c'est ce qu'on voyait.
+      */}
       <g className="boot-dust boot-dust--l">
-        <circle cx="10.15" cy="15.45" r="1" />
-        <circle cx="8.25" cy="14.75" r=".72" opacity=".72" />
-        <circle cx="6.3" cy="15.35" r=".48" opacity=".46" />
+        <circle cx="6.5" cy="15.35" r=".62" />
+        <circle cx="5.35" cy="15.5" r=".42" opacity=".7" />
+        <circle cx="7.6" cy="15.55" r=".3" opacity=".5" />
       </g>
       <g className="boot-dust boot-dust--r">
-        <circle cx="13.85" cy="15.45" r="1" />
-        <circle cx="15.75" cy="14.75" r=".72" opacity=".72" />
-        <circle cx="17.7" cy="15.35" r=".48" opacity=".46" />
+        <circle cx="17.5" cy="15.35" r=".62" />
+        <circle cx="18.65" cy="15.5" r=".42" opacity=".7" />
+        <circle cx="16.4" cy="15.55" r=".3" opacity=".5" />
       </g>
     </svg>
   );
