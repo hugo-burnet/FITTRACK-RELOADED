@@ -2,12 +2,17 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-29 (**tutoriel campagne : tâches 6 à 11 terminées** — les cinq
-zones restantes de la couverture contextuelle, le mode « Voix uniquement », les côtés unilatéraux
-persistés, le contrôle manuel des côtés, l'enquête sur la double annonce et l'audit navigateur.
-Douze commits, 36 missions sur 39, suite complète et build verts. **Checkpoint téléphone à faire :
-le sélecteur de guidage à quatre modes, et une série unilatérale menée jusqu'au bout.** Voir la
-section dédiée ci-dessous). Précédemment, le 2026-08-28
+**Dernière mise à jour :** 2026-08-29 (**impact de la barre au démarrage** — le petit saut vertical
+est remplacé par une chute, une compression au sol, une secousse amortie et six particules SVG de
+poussière. Le mode mouvement réduit garde des fondus sans déplacement. 2 353 tests, typecheck,
+build et contrôle navigateur mobile verts. **Checkpoint téléphone à faire : relancer l'app à froid
+et juger le poids de l'impact et la discrétion de la poussière.** Voir la section dédiée ci-dessous).
+Le même jour (**tutoriel campagne : tâches 6 à 11 terminées** — les cinq zones restantes de la
+couverture contextuelle, le mode « Voix uniquement », les côtés unilatéraux persistés, le contrôle
+manuel des côtés, l'enquête sur la double annonce et l'audit navigateur. Douze commits, 36 missions
+sur 39, suite complète et build verts. **Checkpoint téléphone à faire : le sélecteur de guidage à
+quatre modes, et une série unilatérale menée jusqu'au bout.** Voir la section dédiée ci-dessous).
+Précédemment, le 2026-08-28
 (**passe mouvement** : écran d'ouverture qui charge le logo,
 transitions d'écran directionnelles — l'app avait des entrées mais aucune sortie —, mode mouvement
 réduit qui réduit au lieu de couper, cible RPE portée à 48 px, cinq écrans sortis du chunk
@@ -46,6 +51,36 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Impact de la barre au démarrage (2026-08-29)
+
+### Ce qui change
+
+- La barre chargée ne monte plus avant de retomber : elle attend au-dessus du sol, accélère vers
+  lui, s'écrase brièvement sur l'axe vertical puis retrouve sa géométrie sans rebond.
+- Le contact déclenche une secousse horizontale amortie, une ligne de sol et deux nappes de trois
+  particules SVG. La poussière disparaît avant le rideau ; aucune image ni dépendance n'est ajoutée.
+- Le principe « Progressive overload » apparaît sur l'impact. La durée totale reste exactement
+  `BOOT_HOLD_MS = 2500` ms et une séance active continue de court-circuiter le rideau.
+- Avec `prefers-reduced-motion: reduce`, la chute, la compression et la secousse sont supprimées.
+  La poussière apparaît puis disparaît uniquement par opacité.
+
+### Vérifications
+
+- Test TDD : structure de la scène, six particules et contrat CSS de poussière sans mouvement.
+- `npm run typecheck` : vert.
+- `npm run test:run` : **225 fichiers, 2 353 tests, tous verts**.
+- `npm run build` : vert, artefact du wiki à jour et PWA générée.
+- Navigateur intégré, viewport 390 × 844 : impact contrôlé pendant et après l'animation, aucune
+  erreur ni aucun avertissement console ; la barre et la secousse reviennent exactement au repos,
+  la poussière finit à `opacity: 0`.
+
+### Checkpoint téléphone
+
+Fermer complètement FitTrack puis la relancer. Vérifier que la barre paraît tomber et frapper le
+sol — sans donner l'impression de sauter —, que le tremblement reste court et que la poussière ne
+masque pas le logo. Activer ensuite la réduction des animations du téléphone et confirmer qu'il ne
+reste que les fondus.
 
 ## Tutoriel campagne — tâches 6 à 11 (2026-08-29)
 
