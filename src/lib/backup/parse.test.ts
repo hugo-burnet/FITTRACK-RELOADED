@@ -20,6 +20,7 @@ function file(overrides: Partial<BackupFile> = {}): BackupFile {
       workoutExercises: [],
       workoutSets: [],
       personalRecords: [],
+      milestones: [],
       coachRecommendations: [],
       bodyMeasurements: [],
       progressPhotos: [],

@@ -5,6 +5,7 @@ import { getActiveWorkout } from '@/data/repositories/workouts';
 import { t } from '@/i18n/fr';
 import { Card, HeaderAction } from '@/ui';
 import { SlidersIcon } from '@/ui/icons';
+import { HomeMilestoneCard } from '@/features/milestones/HomeMilestoneCard';
 import { HomeBodyCard } from './HomeBodyCard';
 import { ProgramHeroCard } from '@/features/programs/ProgramHeroCard';
 import { HomeProgramsRow } from './HomeProgramsRow';
@@ -50,6 +51,14 @@ export function HomeScreen() {
       }
     >
       <div className="space-y-6">
+        {/* En tête, et au-dessus même de la séance à lancer.
+            Cette carte n'existe que quelques jours par an — un palier qui vient
+            de tomber, ou l'anniversaire d'un ancien — et ces jours-là elle est
+            le sujet de l'écran. Le reste du temps elle ne rend rien du tout, et
+            l'ordre documenté plus haut est intact. Comme le corps, elle lit ses
+            propres tables et ne dépend pas du tableau de bord. */}
+        <HomeMilestoneCard />
+
         {state.status === 'loading' && (
           // Deux blocs de la hauteur de ce qu'ils remplacent — la carte du jour
           // et la ligne des blocs : l'écran ne sursaute pas quand les données

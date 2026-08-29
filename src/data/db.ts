@@ -7,6 +7,7 @@ import type {
   CoachRecommendation,
   Exercise,
   ExternalExerciseBinding,
+  Milestone,
   PersonalRecord,
   ProgressPhoto,
   Program,
@@ -40,6 +41,7 @@ export class FitTrackDB extends Dexie {
   workoutExercises!: EntityTable<WorkoutExercise, 'id'>;
   workoutSets!: EntityTable<WorkoutSet, 'id'>;
   personalRecords!: EntityTable<PersonalRecord, 'id'>;
+  milestones!: EntityTable<Milestone, 'id'>;
   coachRecommendations!: EntityTable<CoachRecommendation, 'id'>;
   bodyMeasurements!: EntityTable<BodyMeasurement, 'id'>;
   progressPhotos!: EntityTable<ProgressPhoto, 'id'>;
@@ -321,6 +323,26 @@ export class FitTrackDB extends Dexie {
             row.evidence = row.evidence.filter((item) => item.label !== 'next_load_kg');
           }
         });
+    });
+
+    /**
+     * Les paliers — une table neuve, donc une déclaration `.stores()` et aucun
+     * `upgrade()`.
+     *
+     * **Rien à rattraper ici, et c'est délibéré.** Le contenu de cette table est
+     * entièrement recalculable depuis l'historique : le remplir dans une
+     * migration Dexie obligerait à embarquer le catalogue et le moteur dans
+     * `db.ts`, que `lib/` importe déjà en sens inverse. Le rattrapage se fait
+     * donc au démarrage, dans `initializePersistentData`, où il peut échouer
+     * sans empêcher l'app de s'ouvrir — exactement le statut que la projection
+     * des records a depuis le Lot 7.
+     *
+     * `definitionId` est indexé sans être unique : l'unicité est une invariante
+     * de la réconciliation, et un index unique aurait fait échouer une écriture
+     * concurrente au lieu de la laisser converger.
+     */
+    this.version(12).stores({
+      milestones: 'id, definitionId, achievedAt, acknowledgedAt, deletedAt',
     });
   }
 }

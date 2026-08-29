@@ -394,6 +394,34 @@ export interface PersonalRecord extends Syncable {
 }
 
 /**
+ * Un palier franchi — la projection persistée de `lib/milestones`.
+ *
+ * **Une projection, comme les records, et pour la même raison.** Le moteur sait
+ * recalculer la liste entière depuis l'historique et le fait à chaque fin de
+ * séance ; ces lignes existent pour que l'accueil et l'écran des paliers ne
+ * relisent pas dix ans de séries à chaque rendu.
+ *
+ * Deux champs ne se recalculent pas et sont la vraie raison d'écrire en base :
+ * `acknowledgedAt`, sans quoi la même carte reviendrait à chaque ouverture ;
+ * et l'existence même de la ligne, qui dit ce que l'app avait **déjà** vu et
+ * permet donc de reconnaître ce qui vient de tomber.
+ */
+export interface Milestone extends Syncable {
+  /** L'identifiant du catalogue. Unique parmi les lignes vivantes. */
+  definitionId: string;
+  achievedAt: number;
+  workoutId: string;
+  /** La valeur qui a franchi le seuil — 102,5 pour un palier à 100 kg. */
+  value: number;
+  /**
+   * `0` tant que le palier n'a pas été montré. Le rattrapage initial, lui, écrit
+   * l'instant du rattrapage : dix ans d'historique importés d'un coup ne
+   * produisent pas quarante célébrations, ils produisent une liste à consulter.
+   */
+  acknowledgedAt: number;
+}
+
+/**
  * Lot 18 — journal of coach signals the user saw.
  *
  * `status` is how we learn whether the engine is useful: pending → followed or

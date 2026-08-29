@@ -41,6 +41,7 @@ export const BACKUP_TABLES = [
   'workoutExercises',
   'workoutSets',
   'personalRecords',
+  'milestones',
   'coachRecommendations',
   'bodyMeasurements',
   'progressPhotos',

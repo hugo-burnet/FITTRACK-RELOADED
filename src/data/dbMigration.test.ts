@@ -217,7 +217,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(11);
+    expect(db.verno).toBe(12);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -299,7 +299,7 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(11);
+    expect(db.verno).toBe(12);
 
     const week = await db.programWeeks.get('legacy-week');
     expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });
