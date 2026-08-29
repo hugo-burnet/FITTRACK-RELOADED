@@ -11,7 +11,7 @@ export const CAMPAIGN_EXERCISE_SLUG = 'dumbbell-curl';
  * faisait avancer la découverte : le tutoriel déclarait acquis un geste fait
  * ailleurs, sur des données qu'il n'a jamais montrées.
  */
-export const forCampaignRoutine =
+const forCampaignRoutine =
   <T extends TutorialEvent['type']>(
     type: T,
     extra?: (event: Extract<TutorialEvent, { type: T }>) => boolean,
@@ -23,7 +23,7 @@ export const forCampaignRoutine =
     (extra?.(event as Extract<TutorialEvent, { type: T }>) ?? true);
 
 /** Une recherche qui amène le curl — l'utilisateur reste libre de son orthographe. */
-export const looksLikeCurl = (query: string): boolean => query.toLowerCase().includes('curl');
+const looksLikeCurl = (query: string): boolean => query.toLowerCase().includes('curl');
 
 /**
  * Acte 1 de la campagne : préparer la « Séance découverte ».

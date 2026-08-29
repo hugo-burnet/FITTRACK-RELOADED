@@ -19,7 +19,7 @@ export interface HevyRoutineSource {
 }
 
 /** Le regroupement de l'import et le rattachement de l'accueil, même règle. */
-export const normalizeHevyRoutineName = normalizeRoutineName;
+const normalizeHevyRoutineName = normalizeRoutineName;
 
 function displayName(name: string): string {
   return name.trim().replace(/\s+/g, ' ');
@@ -62,7 +62,7 @@ function routineNameOf(
  * l'utilisateur compte reprendre) et mieux que de tout mélanger (la liste des
  * routines actives est ce qu'on regarde avant chaque séance).
  */
-export const ROUTINE_DORMANT_AFTER_DAYS = 30;
+const ROUTINE_DORMANT_AFTER_DAYS = 30;
 
 export function isDormantRoutine(
   source: HevyRoutineSource,

@@ -51,7 +51,7 @@ export interface ShareOptions {
   native?: NativeTextShare;
 }
 
-export const capacitorTextShare: NativeTextShare = {
+const capacitorTextShare: NativeTextShare = {
   async share(payload) {
     await Share.share({
       title: payload.title,

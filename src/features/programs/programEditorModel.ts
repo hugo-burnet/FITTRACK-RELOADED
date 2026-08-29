@@ -13,8 +13,8 @@ import type { ProgramBasicsDraft } from './ProgramBasicsStep';
 import type { ProgramSplitDraftEntry } from './ProgramSplitStep';
 import type { ProgramWeekDraft } from './ProgramWeeksStep';
 
-export const MIN_DURATION_WEEKS = 4;
-export const MAX_DURATION_WEEKS = 12;
+const MIN_DURATION_WEEKS = 4;
+const MAX_DURATION_WEEKS = 12;
 
 export const emptySplit = (): ProgramSplitDraftEntry[] => [
   { routineId: '', dayOfWeek: 1, order: 0 },

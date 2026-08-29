@@ -2,7 +2,7 @@ import type { MeasurementType } from '@/data/types';
 import { measurementShape } from './measurement';
 
 export const DELOAD_PERCENT = 80;
-export const DELOAD_INCREMENT_KG = 2.5;
+const DELOAD_INCREMENT_KG = 2.5;
 
 export function isDeloadEligibleMeasurement(
   measurementType: MeasurementType | undefined,

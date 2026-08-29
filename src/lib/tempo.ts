@@ -30,7 +30,7 @@ export const MAX_REP_SECONDS = 10;
  * Quarter seconds: the ear hears the difference between 3 and 3,25 s across ten
  * reps, and nothing below that is worth carrying around.
  */
-export const REP_SECONDS_STEP = 0.25;
+const REP_SECONDS_STEP = 0.25;
 
 /** The tempos a lifter actually reaches for, one tap away in the picker. */
 export const REP_SECONDS_PRESETS = [2, 2.5, 3, 4, 5] as const;

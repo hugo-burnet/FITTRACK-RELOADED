@@ -58,7 +58,7 @@ for (const section of programmingDocument.sections as Omit<ProgrammingSection, '
   built.push({ ...section, sectionId });
 }
 
-export const programmingTitle: string = programmingDocument.title;
+const programmingTitle: string = programmingDocument.title;
 export const programmingSections: readonly ProgrammingSection[] = built;
 
 /** Les fiches, sans les 26 lignes de métadonnées bibliographiques. */
