@@ -68,12 +68,14 @@ function LoadedBar() {
       </g>
 
       <g className="boot-dust boot-dust--l">
-        <path d="M10.8 15.7c-1.4-.9-2.8-.9-4.1-.2-1.1.6-2.2.6-3.3.2" />
-        <circle cx="7" cy="14.8" r=".35" />
+        <circle cx="10.15" cy="15.45" r="1" />
+        <circle cx="8.25" cy="14.75" r=".72" opacity=".72" />
+        <circle cx="6.3" cy="15.35" r=".48" opacity=".46" />
       </g>
       <g className="boot-dust boot-dust--r">
-        <path d="M13.2 15.7c1.4-.9 2.8-.9 4.1-.2 1.1.6 2.2.6 3.3.2" />
-        <circle cx="17" cy="14.8" r=".35" />
+        <circle cx="13.85" cy="15.45" r="1" />
+        <circle cx="15.75" cy="14.75" r=".72" opacity=".72" />
+        <circle cx="17.7" cy="15.35" r=".48" opacity=".46" />
       </g>
     </svg>
   );
