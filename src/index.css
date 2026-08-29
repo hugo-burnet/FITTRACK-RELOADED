@@ -400,8 +400,9 @@
  *
  * Trois temps, et le troisième est la conséquence des deux premiers : les
  * manchons s'enfilent, les petites plaques s'enfilent, puis la barre chargée
- * tombe. Le principe, le sol, la poussière et la secousse partent au contact —
- * quatre couches pour un seul événement, pas quatre effets décoratifs.
+ * tombe. Le principe, le sol et la poussière partent au contact ; la secousse
+ * suit quarante millisecondes plus tard. Quatre couches pour une seule chaîne
+ * de cause à effet, pas quatre effets décoratifs.
  *
  * Tous les délais sont dans `.boot[data-phase='in']` : la phase de sortie ne
  * fait correspondre aucune de ces règles, donc l'écran qui s'efface est déjà
@@ -483,6 +484,21 @@
   transform-origin: center;
 }
 
+/* L'écrasement pivote autour du bord posé, pas du centre du dessin : la barre
+   ne remonte donc jamais avant le petit rebond. Les nuages ont chacun leur
+   propre point de contact sur la même ligne de sol. */
+.boot-barbell {
+  transform-origin: center 16.2px;
+}
+
+.boot-dust--l {
+  transform-origin: 9.65px 16.2px;
+}
+
+.boot-dust--r {
+  transform-origin: 14.35px 16.2px;
+}
+
 .boot[data-phase='in'] .boot-rail {
   animation: boot-rack 360ms var(--ease-mech) 100ms both;
 }
@@ -514,10 +530,11 @@
   will-change: transform;
 }
 
-/* La secousse est bornée au dessin. La page qui se prépare sous le rideau ne
-   bouge jamais, et le pouce garde donc une cible stable. */
+/* La secousse est bornée au dessin et attend que la compression soit lisible.
+   La page qui se prépare sous le rideau ne bouge jamais, et le pouce garde donc
+   une cible stable. */
 .boot[data-phase='in'] .boot-impact {
-  animation: boot-impact-shake 360ms linear 1600ms both;
+  animation: boot-impact-shake 360ms linear 1640ms both;
   will-change: transform;
 }
 
@@ -626,25 +643,27 @@
   }
 }
 
-/* La barre ne décolle jamais : le remplissage `both` la garde douze pixels au-
-   dessus du sol pendant le chargement. Elle tombe, s'écrase et retrouve sa
-   géométrie par deux compressions décroissantes, sans rebond vertical. */
+/* Avant sa chute, le remplissage `both` garde la barre douze pixels au-dessus
+   du sol. Elle tombe, s'écrase autour de son bord inférieur, remonte de deux
+   pixels une seule fois puis se repose sans courbe élastique. */
 @keyframes boot-drop {
   0% {
     transform: translateY(-12px);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
-  /* 320 ms après le départ : la poussière, le sol et la secousse utilisent le
-     même délai absolu de 1 600 ms, donc aucune conséquence ne précède le choc. */
+  /* 320 ms après le départ : la poussière et le sol utilisent ce même instant
+     absolu de 1 600 ms. La secousse attend encore 40 ms. */
   53.333% {
     transform: translateY(0) scaleX(1.06) scaleY(0.82);
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
   }
-  74% {
-    transform: scaleX(0.99) scaleY(1.025);
+  70% {
+    transform: translateY(-2px) scaleX(0.99) scaleY(1.025);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
-  88% {
-    transform: scaleX(1.015) scaleY(0.985);
+  84% {
+    transform: translateY(0) scaleX(1.012) scaleY(0.99);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
   100% {
     transform: none;
@@ -653,19 +672,20 @@
 
 @keyframes boot-impact-shake {
   0%,
+  10%,
   100% {
     transform: none;
   }
-  16% {
+  26% {
     transform: translateX(-3px) rotate(-0.6deg);
   }
-  32% {
+  42% {
     transform: translateX(2.5px) rotate(0.45deg);
   }
-  48% {
+  58% {
     transform: translateX(-1.5px) rotate(-0.25deg);
   }
-  64% {
+  74% {
     transform: translateX(0.75px) rotate(0.12deg);
   }
 }
@@ -688,28 +708,28 @@
 @keyframes boot-dust-l {
   from {
     opacity: 0;
-    transform: translate(2px, 1px) scale(0.35);
+    transform: translate(1px, 0.2px) scale(0.3);
   }
-  24% {
+  22% {
     opacity: 0.68;
   }
   to {
     opacity: 0;
-    transform: translate(-9px, -7px) scale(1.45);
+    transform: translate(-9px, -6px) scale(1.35);
   }
 }
 
 @keyframes boot-dust-r {
   from {
     opacity: 0;
-    transform: translate(-2px, 1px) scale(0.35);
+    transform: translate(-1px, 0.2px) scale(0.3);
   }
-  24% {
+  22% {
     opacity: 0.68;
   }
   to {
     opacity: 0;
-    transform: translate(9px, -7px) scale(1.45);
+    transform: translate(9px, -6px) scale(1.35);
   }
 }
 
