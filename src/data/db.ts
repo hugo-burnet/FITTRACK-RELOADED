@@ -44,6 +44,20 @@ export class FitTrackDB extends Dexie {
   milestones!: EntityTable<Milestone, 'id'>;
   coachRecommendations!: EntityTable<CoachRecommendation, 'id'>;
   bodyMeasurements!: EntityTable<BodyMeasurement, 'id'>;
+  /**
+   * Déclarées, vides, et **volontairement sans lecteur** — décision du 2026-08-29.
+   *
+   * Les photos de progression étaient la seconde moitié du Lot 11. Elles ne
+   * seront pas écrites : elles demandent la caméra, des `Blob` en base et une
+   * surface de données personnelles que cette app n'a aucune raison d'ouvrir
+   * pour une fonctionnalité de confort. Aucun code de `src/` ne les touche, et
+   * c'est l'état voulu — pas un chantier qu'on aurait oublié.
+   *
+   * Les tables restent parce que les retirer coûterait une migration Dexie sur
+   * des bases réelles, pour supprimer deux tables vides : le remède serait plus
+   * risqué que le mal. `lib/backup/types.ts` explique séparément pourquoi la
+   * sauvegarde ignore `photoBlobs`.
+   */
   progressPhotos!: EntityTable<ProgressPhoto, 'id'>;
   photoBlobs!: EntityTable<PhotoBlob, 'key'>;
   settings!: EntityTable<Setting, 'key'>;

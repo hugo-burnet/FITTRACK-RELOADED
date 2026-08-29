@@ -1672,6 +1672,15 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
+- **Assumée le 2026-08-29 — les photos de progression ne seront pas faites, et leurs tables
+  restent.** `progressPhotos` et `photoBlobs` sont déclarées depuis le Lot 2 et **aucun code de
+  `src/` ne les écrit ni ne les lit**. Ce n'est plus un reste à faire : la seconde moitié du Lot 11
+  est abandonnée. Des photos veulent la caméra, des `Blob` en base et une surface de données
+  personnelles qu'une app de suivi perso n'a pas de raison d'ouvrir pour du confort. **Les tables
+  ne sont pas retirées** : une migration Dexie qui supprime des tables sur des bases réelles est un
+  risque plus grand que deux tables vides. Les mesures autres que le poids de corps tombent avec —
+  `BodyMeasurement.type` reste une chaîne libre qui les accepterait, personne ne s'en sert.
+
 - **Assumée le 2026-08-10 — l'accueil lit tout l'historique pour afficher trois lignes.**
   `getHomeDashboard` charge toutes les séances terminées et relit les trois tables de routines
   en entier, à chaque écriture dans l'une des six tables observées. Mesurée à ~71 ms sur
