@@ -3,7 +3,7 @@ import { advanceMission, startMission } from './tutorialMissionMachine';
 import { contextualMissionsForPath } from './tutorialMissions';
 import { createTutorialState } from './tutorialStore';
 
-const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false };
+const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
 
 describe('missions des Réglages', () => {
   it('fait choisir un mode, puis régler l’écho', () => {

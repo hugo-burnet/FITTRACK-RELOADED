@@ -346,6 +346,7 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t(hold !== null ? 'workout.holdStop' : 'workout.paceStop')}
+              data-tutorial-id={tutorial ? 'workout-pace-stop' : undefined}
               onClick={onStopPace}
               className="flex w-12 shrink-0 items-center justify-center text-[var(--accent-ink)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -356,6 +357,7 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t(timed ? 'workout.holdOpen' : 'workout.paceOpen', { name })}
+              data-tutorial-id={tutorial ? 'workout-pace' : undefined}
               onClick={onPace}
               className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -368,6 +370,7 @@ export function WorkoutExerciseCard({
             <button
               type="button"
               aria-label={t('workout.plates')}
+              data-tutorial-id={tutorial ? 'workout-plates' : undefined}
               onClick={onPlates}
               className="flex w-11 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -379,6 +382,7 @@ export function WorkoutExerciseCard({
           <button
             type="button"
             aria-label={t('workout.exerciseMenu', { name })}
+            data-tutorial-id={tutorial ? 'workout-exercise-menu' : undefined}
             onClick={onMenu}
             className="flex w-12 shrink-0 items-center justify-center text-[var(--text-2)]
               transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
@@ -486,7 +490,11 @@ export function WorkoutExerciseCard({
 
             {deleted !== null && deleted.rank >= sets.length && undoRow}
 
-            <AddRow label={t('workout.addSet')} onClick={onAddSet} />
+            <AddRow
+              label={t('workout.addSet')}
+              tutorialId={tutorial ? 'workout-add-set' : undefined}
+              onClick={onAddSet}
+            />
           </>
         )}
 

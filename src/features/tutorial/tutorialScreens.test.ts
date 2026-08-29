@@ -10,7 +10,7 @@ import {
 } from './tutorialScreens';
 import { createTutorialState } from './tutorialStore';
 
-const NO_WORKOUT = { hasActiveWorkout: false, hasHistory: false };
+const NO_WORKOUT = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
 const NOWHERE: TutorialRouteContext = { routineId: null, programId: null, workoutId: null };
 const at = (partial: Partial<TutorialRouteContext>): TutorialRouteContext => ({
   ...NOWHERE,

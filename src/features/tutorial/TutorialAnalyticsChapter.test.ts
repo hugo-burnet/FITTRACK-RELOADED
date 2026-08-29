@@ -3,8 +3,8 @@ import { advanceMission, startMission } from './tutorialMissionMachine';
 import { contextualMissionsForPath, missionFor } from './tutorialMissions';
 import { createTutorialState } from './tutorialStore';
 
-const WITH_HISTORY = { hasActiveWorkout: false, hasHistory: true };
-const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false };
+const WITH_HISTORY = { hasActiveWorkout: false, hasHistory: true, hasEffortPrompt: true, hasRepPacing: true };
+const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
 
 describe('missions de la Progression', () => {
   it('ouvre une analyse, puis en change la période', () => {

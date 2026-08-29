@@ -17,6 +17,7 @@ export function Toggle({
   checked,
   disabled = false,
   onChange,
+  tutorialId,
 }: {
   /** Announced name — the mark alone ("80%") does not say what it does. */
   label: string;
@@ -25,6 +26,8 @@ export function Toggle({
   checked: boolean;
   disabled?: boolean;
   onChange: () => void;
+  /** L'ancre du tutoriel, quand une étape désigne cet interrupteur. */
+  tutorialId?: string;
 }) {
   return (
     <button
@@ -32,6 +35,7 @@ export function Toggle({
       role="switch"
       aria-label={label}
       aria-checked={checked}
+      data-tutorial-id={tutorialId}
       disabled={disabled}
       onClick={onChange}
       // Dimmed only when it is off AND unavailable. A switch that is on stays at

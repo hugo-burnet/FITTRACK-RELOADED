@@ -266,6 +266,7 @@ export function WarmupSheet({
           type="button"
           variant="secondary"
           fullWidth
+          tutorialId="workout-warmup-insert"
           disabled={validationMessage !== null || submitting}
           onClick={() => void insert()}
         >

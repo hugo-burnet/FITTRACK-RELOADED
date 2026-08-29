@@ -3,7 +3,7 @@ import { advanceMission, startMission } from './tutorialMissionMachine';
 import { contextualMissionsForPath, missionFor } from './tutorialMissions';
 import { createTutorialState } from './tutorialStore';
 
-const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false };
+const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
 
 describe('missions de la bibliothèque d’exercices', () => {
   it('fait chercher, puis filtrer sur les deux axes', () => {

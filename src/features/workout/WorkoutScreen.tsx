@@ -199,6 +199,7 @@ export function WorkoutScreen() {
       .then((result) => {
         if (result.kind !== 'started') return;
         announce('side-change');
+        tutorial?.report({ type: 'workout-side-turned', setId });
         pace.startSecondSide(line, setId, result.startsAt);
       })
       .catch(() => undefined);
@@ -368,7 +369,11 @@ export function WorkoutScreen() {
               mark={t('workout.deloadMark')}
               checked={deloadActive}
               disabled={deloadActive || !canDeload}
-              onChange={() => setSheet({ kind: 'deload' })}
+              tutorialId="workout-deload"
+              onChange={() => {
+                setSheet({ kind: 'deload' });
+                tutorial?.report({ type: 'deload-sheet-opened', workoutId: workout.id });
+              }}
             />
             <OrderLockButton unlocked={reorderUnlocked} onToggle={() => toggleReorder('workout')} />
             <button
@@ -467,7 +472,11 @@ export function WorkoutScreen() {
                     onStopPace={
                       (pacer.rowId === line.row.id && pacer.setId !== null) ||
                       (hold.rowId === line.row.id && hold.setId !== null)
-                        ? () => pace.stop()
+                        ? () => {
+                            const stopping = pacer.setId;
+                            pace.stop();
+                            tutorial?.report({ type: 'pace-stopped', setId: stopping });
+                          }
                         : undefined
                     }
                     rest={
@@ -511,6 +520,11 @@ export function WorkoutScreen() {
                               ),
                             onAnswer: (rpe) => {
                               void updateSetValues(effortSetId, { rpe });
+                              tutorial?.report({
+                                type: 'workout-rpe-updated',
+                                setId: effortSetId,
+                                rpe,
+                              });
                               const bonus = restBonusSecondsFor(rpe);
                               // Only when the rest being extended is this set’s:
                               // a superset round and a set followed by a drop
@@ -529,10 +543,17 @@ export function WorkoutScreen() {
                     state={state}
                     reorderEnabled={reorderUnlocked}
                     foldCommand={foldCommand}
-                    onMenu={() =>
-                      setSheet({ kind: 'exercise', rowId: line.row.id, openedAt: Date.now() })
-                    }
-                    onPace={() => setSheet({ kind: 'pace', rowId: line.row.id })}
+                    onMenu={() => {
+                      setSheet({ kind: 'exercise', rowId: line.row.id, openedAt: Date.now() });
+                      tutorial?.report({
+                        type: 'workout-exercise-menu-opened',
+                        rowId: line.row.id,
+                      });
+                    }}
+                    onPace={() => {
+                      setSheet({ kind: 'pace', rowId: line.row.id });
+                      tutorial?.report({ type: 'pace-sheet-opened', rowId: line.row.id });
+                    }}
                     onPlates={
                       config !== null && loads.length > 0
                         ? () => {
@@ -548,10 +569,14 @@ export function WorkoutScreen() {
                               loading: config.loading,
                             });
                             setSheet({ kind: 'plates' });
+                            tutorial?.report({ type: 'plate-sheet-opened', rowId: line.row.id });
                           }
                         : undefined
                     }
-                    onSetMenu={(set, number) => setSheet({ kind: 'set', setId: set.id, number })}
+                    onSetMenu={(set, number) => {
+                      setSheet({ kind: 'set', setId: set.id, number });
+                      tutorial?.report({ type: 'workout-set-menu-opened', setId: set.id });
+                    }}
                     onWrite={(setId, values, recordable) => {
                       void updateSetValues(setId, values)
                         .then(() => {
@@ -619,7 +644,13 @@ export function WorkoutScreen() {
                     }}
                     onDeleteSet={(setId) => void deleteSet(setId)}
                     onRestoreSet={(setId) => void restoreSet(setId)}
-                    onAddSet={() => void duplicateLastSet(line.row.id)}
+                    onAddSet={() =>
+                      void duplicateLastSet(line.row.id)
+                        .then(() =>
+                          tutorial?.report({ type: 'workout-set-added', rowId: line.row.id }),
+                        )
+                        .catch(() => undefined)
+                    }
                     coachObjective={coachByExercise.get(line.row.exerciseId)}
                     onDismissCoach={
                       coachByExercise.get(line.row.exerciseId) === undefined
@@ -652,7 +683,14 @@ export function WorkoutScreen() {
         )}
 
         <Card>
-          <AddRow label={t('workout.addExercise')} onClick={() => void navigate('/workout/add')} />
+          <AddRow
+            label={t('workout.addExercise')}
+            tutorialId="workout-add-exercise"
+            onClick={() => {
+              tutorial?.report({ type: 'workout-exercise-picker-opened' });
+              void navigate('/workout/add');
+            }}
+          />
         </Card>
       </div>
 
@@ -724,7 +762,9 @@ export function WorkoutScreen() {
                   })
                 : undefined,
             onSelect: () => {
-              if (sheet?.kind === 'exercise') setSheet({ kind: 'pace', rowId: sheet.rowId });
+              if (sheet?.kind !== 'exercise') return;
+              setSheet({ kind: 'pace', rowId: sheet.rowId });
+              tutorial?.report({ type: 'pace-sheet-opened', rowId: sheet.rowId });
             },
           },
           {
@@ -737,10 +777,11 @@ export function WorkoutScreen() {
             ? [
                 {
                   label: t('workout.warmupAction'),
+                  tutorialId: 'workout-warmup',
                   onSelect: () => {
-                    if (sheet?.kind === 'exercise') {
-                      setSheet({ kind: 'warmup', rowId: sheet.rowId });
-                    }
+                    if (sheet?.kind !== 'exercise') return;
+                    setSheet({ kind: 'warmup', rowId: sheet.rowId });
+                    tutorial?.report({ type: 'warmup-sheet-opened', rowId: sheet.rowId });
                   },
                 },
               ]
@@ -770,7 +811,11 @@ export function WorkoutScreen() {
         minimumWeightKg={warmupContext?.minimumWeightKg ?? 0}
         onInsert={async (suggestions) => {
           if (sheet?.kind !== 'warmup') return;
-          await insertWarmupSets(sheet.rowId, suggestions);
+          const rowId = sheet.rowId;
+          await insertWarmupSets(rowId, suggestions);
+          // Après l'écriture, et avec le compte : une feuille vidée de ses
+          // étapes insère zéro série, ce qui n'est pas insérer.
+          tutorial?.report({ type: 'warmup-inserted', rowId, count: suggestions.length });
         }}
       />
 
@@ -799,6 +844,7 @@ export function WorkoutScreen() {
         actions={[
           {
             label: t('workout.setTypeAction'),
+            tutorialId: 'workout-set-type',
             // The current type, so the entry says what it is about to change
             // rather than making you open the sheet to find out.
             hint: sheet?.kind === 'set' ? setTypeLabel(typeOf(sheet.setId)) : undefined,
@@ -833,7 +879,11 @@ export function WorkoutScreen() {
         options={SET_TYPE_OPTIONS}
         value={sheet?.kind === 'setType' ? typeOf(sheet.setId) : 'normal'}
         onSelect={(setType) => {
-          if (sheet?.kind === 'setType') void updateSetType(sheet.setId, setType);
+          if (sheet?.kind !== 'setType') return;
+          const setId = sheet.setId;
+          void updateSetType(setId, setType)
+            .then(() => tutorial?.report({ type: 'workout-set-type-updated', setId, setType }))
+            .catch(() => undefined);
         }}
       />
 
@@ -849,9 +899,23 @@ export function WorkoutScreen() {
         }}
         onSetDefault={(repSeconds) => void setDefaultRepSeconds(repSeconds)}
         onStart={() => {
-          if (paceSheetLine !== null) pace.startFor(paceSheetLine);
+          if (paceSheetLine === null) return;
+          if (!pace.startFor(paceSheetLine)) return;
+          // L'horloge qui vient de partir dit laquelle des deux c'était : le
+          // maintien mesure la série, la cadence la rythme, et deux missions
+          // différentes les apprennent.
+          const startedHold = useHoldTimer.getState().setId;
+          const startedPace = useRepPacer.getState().setId;
+          if (startedHold !== null) tutorial?.report({ type: 'hold-started', setId: startedHold });
+          else if (startedPace !== null) {
+            tutorial?.report({ type: 'pace-started', setId: startedPace });
+          }
         }}
-        onStop={() => pace.stop()}
+        onStop={() => {
+          const stopping = useRepPacer.getState().setId;
+          pace.stop();
+          tutorial?.report({ type: 'pace-stopped', setId: stopping });
+        }}
       />
 
       <PlateLoadSheet
@@ -864,6 +928,7 @@ export function WorkoutScreen() {
         availablePlateWeightsKg={availablePlateWeightsKg ?? [...DEFAULT_PLATES_KG]}
         onAvailablePlateWeightsChange={async (weights) => {
           await setAvailablePlateWeightsKg(weights);
+          tutorial?.report({ type: 'plate-availability-changed', count: weights.length });
         }}
         onBarWeightChange={(barWeight) => {
           if (platesView === null) return;

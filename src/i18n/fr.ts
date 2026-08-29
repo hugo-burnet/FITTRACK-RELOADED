@@ -2209,6 +2209,113 @@ const fr = {
       },
     },
 
+    workout: {
+      compose: { title: 'Allonger la séance en cours' },
+      setType: { title: 'Dire ce qu’est une série' },
+      effort: { title: 'Noter l’effort d’une série' },
+      plates: { title: 'Ce qu’il faut mettre sur la barre' },
+      warmup: { title: 'Monter en charge avant la série' },
+      pace: { title: 'Lancer et arrêter la cadence' },
+      holdSides: { title: 'Un maintien, deux côtés' },
+      deload: { title: 'Alléger une séance qui ne passe pas' },
+      addSet: {
+        instruction: 'Ajoute une série au pied de la carte.',
+        detail:
+          'Elle reprend les valeurs de la précédente. Aucune limite de nombre, ici comme partout.',
+      },
+      addExercise: {
+        instruction: 'Ouvre Ajouter un exercice, sous la liste.',
+        detail:
+          'Le sélecteur s’ouvre sur son propre écran ; la séance en cours n’est pas quittée et rien n’est ajouté tant que tu n’as pas confirmé.',
+      },
+      setMenu: {
+        instruction: 'Touche le numéro de la première série.',
+        detail: 'Le numéro est un bouton : il ouvre le menu de cette série-là.',
+      },
+      chooseType: {
+        instruction: 'Ouvre Type de série et choisis autre chose que Normale.',
+        detail:
+          'Le type décide si la série compte dans le volume et dans les records. Un échauffement ne compte ni dans l’un ni dans l’autre.',
+      },
+      completeSet: {
+        instruction: 'Valide la première série.',
+        detail: 'Elle est écrite en base immédiatement, pas à la fin de la séance.',
+      },
+      rpe: {
+        instruction: 'Réponds à la bande Effort perçu.',
+        detail:
+          'Elle allonge le repos quand ça a été dur. L’ignorer ne coûte rien : elle s’efface seule.',
+      },
+      openPlates: {
+        instruction: 'Ouvre Plaques à charger dans le bandeau de la carte.',
+        detail:
+          'Elle n’apparaît que sur un exercice à barre ou à disques, et seulement quand une charge est saisie.',
+      },
+      availablePlates: {
+        instruction: 'Déplie Plaques disponibles et retire celles que tu n’as pas.',
+        detail:
+          'Le calcul ne propose plus que ce qui existe dans ta salle. Ce réglage est global, il ne touche pas cette série.',
+      },
+      exerciseMenu: {
+        instruction: 'Ouvre le menu de l’exercice, à droite de son nom.',
+        detail: 'Il porte ce qui ne tient pas sur la carte : cadence, échauffement, notes.',
+      },
+      openWarmup: {
+        instruction: 'Choisis Calculer l’échauffement.',
+        detail:
+          'L’action n’existe que sur un exercice à charge : sans charge de travail, il n’y a pas de pourcentage à calculer.',
+      },
+      insertWarmup: {
+        instruction: 'Appuie sur Insérer les séries.',
+        detail:
+          'Elles sont ajoutées avant tes séries de travail, marquées Échauffement, donc hors volume et hors records.',
+      },
+      openPace: {
+        instruction: 'Ouvre Cadence dans le bandeau de la carte.',
+        detail: 'La feuille montre le tempo en vigueur et ce qu’il donne sur la prochaine série.',
+      },
+      startPace: {
+        instruction: 'Appuie sur Lancer la cadence.',
+        detail:
+          'Dix secondes pour te mettre en place, puis un battement par répétition et le décompte des trois dernières.',
+      },
+      stopPace: {
+        instruction: 'Arrête la cadence.',
+        detail:
+          'Le carré du bandeau l’arrête sans ouvrir la feuille. Valider la série l’arrête aussi.',
+      },
+      openHold: {
+        instruction: 'Ouvre Chrono dans le bandeau de la carte.',
+        detail:
+          'Sur un exercice mesuré en durée, l’horloge n’est pas un tempo : c’est elle qui écrit la valeur de la série.',
+      },
+      startHold: {
+        instruction: 'Appuie sur Démarrer le chrono.',
+        detail:
+          'Dix secondes pour te mettre en position. Elles ne sont pas comptées dans la durée tenue.',
+      },
+      firstSide: {
+        instruction: 'Premier côté fini : appuie sur la coche.',
+        detail:
+          'Elle ferme le côté, pas la série. Rien n’est enregistré, aucun repos ne démarre, et dix secondes courent pour changer de côté.',
+      },
+      secondSide: {
+        instruction: 'Le décompte fini, la même coche ferme la série.',
+        detail:
+          'Une ligne représente les deux côtés : une saisie, une validation, un enregistrement. Verrouiller l’écran entre les deux ne perd rien.',
+      },
+      openDeload: {
+        instruction: 'Active le deload à 80 %.',
+        detail:
+          'Il ne s’active pas seul : la feuille demande confirmation avant de toucher quoi que ce soit.',
+      },
+      applyDeload: {
+        instruction: 'Appliquer réécrit les séries restantes.',
+        detail:
+          'Toutes passent à 80 %, arrondies à 2,5 kg. Le guide te montre où vit ce geste et n’y touche pas.',
+      },
+    },
+
     settings: {
       announcer: { title: 'Régler la voix du guidage' },
       notifications: { title: 'Quand l’app a le droit de parler' },

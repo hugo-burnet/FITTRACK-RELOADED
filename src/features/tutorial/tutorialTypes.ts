@@ -1,5 +1,6 @@
 import type { Equipment, MeasurementType, MuscleGroup } from '@/data/types';
 import type { AnnouncerMode } from '@/audio/announcer';
+import type { SetType } from '@/data/types';
 import type { PeriodKey } from '@/lib/analytics/periods';
 
 export type TutorialCompletion = 'completed' | 'skipped';
@@ -182,6 +183,36 @@ export type TutorialKnowledgeEvent =
   | { type: 'article-sources-opened' };
 
 /**
+ * Les gestes avancés de l'écran de séance.
+ *
+ * Tous portent l'identité de la ligne ou de la série qu'ils touchent. C'est
+ * l'écran où il y a le plus d'objets simultanés — plusieurs exercices, plusieurs
+ * séries par exercice —, donc celui où un événement anonyme validerait le plus
+ * facilement une étape depuis la mauvaise carte.
+ *
+ * `workout-side-turned` est le seul qui n'ajoute pas de commande : il double
+ * l'écriture de `completeFirstSide`, pour que le guide sache qu'un côté vient
+ * de se fermer sans avoir à relire la base.
+ */
+export type TutorialWorkoutEvent =
+  | { type: 'workout-set-added'; rowId: string }
+  | { type: 'workout-exercise-picker-opened' }
+  | { type: 'workout-set-menu-opened'; setId: string }
+  | { type: 'workout-set-type-updated'; setId: string; setType: SetType }
+  | { type: 'workout-rpe-updated'; setId: string; rpe: number }
+  | { type: 'workout-exercise-menu-opened'; rowId: string }
+  | { type: 'plate-sheet-opened'; rowId: string }
+  | { type: 'plate-availability-changed'; count: number }
+  | { type: 'warmup-sheet-opened'; rowId: string }
+  | { type: 'warmup-inserted'; rowId: string; count: number }
+  | { type: 'pace-sheet-opened'; rowId: string }
+  | { type: 'pace-started'; setId: string }
+  | { type: 'pace-stopped'; setId: string | null }
+  | { type: 'hold-started'; setId: string }
+  | { type: 'workout-side-turned'; setId: string }
+  | { type: 'deload-sheet-opened'; workoutId: string };
+
+/**
  * Les gestes des Réglages.
  *
  * `enabled` porte le sens du geste et pas seulement son objet : les trois
@@ -246,6 +277,7 @@ export type TutorialEvent =
   | TutorialKnowledgeEvent
   | TutorialHomeEvent
   | TutorialSettingsEvent
+  | TutorialWorkoutEvent
   | { type: 'routine-create-opened' }
   | { type: 'routine-opened'; routineId: string }
   | { type: 'routine-created'; routineId: string }

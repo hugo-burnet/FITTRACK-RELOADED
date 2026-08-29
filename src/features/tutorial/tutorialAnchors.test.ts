@@ -15,6 +15,8 @@ const BUILT_AT_RUNTIME = new Set([
   'workout-second-set',
   'workout-first-set-complete',
   'workout-second-set-complete',
+  'workout-first-set-menu',
+  'workout-second-set-menu',
   // `ExerciseList` compose `exercise-${slug}` — un identifiant par ligne du
   // catalogue, qu'aucun composant n'écrit en toutes lettres.
   'exercise-dumbbell-curl',

@@ -4,7 +4,7 @@ import { contextualMissionsForPath, missionFor } from './tutorialMissions';
 import { pathForScreen, screenHolds } from './tutorialScreens';
 import { createTutorialState } from './tutorialStore';
 
-const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false };
+const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
 const NO_CONTEXT = { routineId: null, programId: null, workoutId: null };
 
 describe('missions des Connaissances', () => {

@@ -4,11 +4,12 @@ import { useLocation } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { primeAnnouncer } from '@/audio/announce';
 import { textOf } from '@/audio/cues';
-import type { AnnouncerMode } from '@/audio/announcer';
+import { guidancePolicy, type AnnouncerMode } from '@/audio/announcer';
 import { countCompletedWorkouts } from '@/data/repositories/history';
 import { getActiveWorkout } from '@/data/repositories/workouts';
 import { t, type TranslationKey } from '@/i18n/fr';
 import { applyAnnouncerMode, loadAnnouncerMode } from '@/stores/announcer';
+import { loadEffortPrompt } from '@/stores/effortPrompt';
 import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { useRestTimer } from '@/stores/restTimer';
@@ -81,6 +82,11 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     () => ({
       hasActiveWorkout,
       hasHistory: completedWorkouts === undefined ? null : completedWorkouts > 0,
+      // Deux réglages, lus au rendu et non observés : ils ne changent que
+      // depuis les Réglages, donc jamais pendant qu'une aide de page est
+      // ouverte sur l'écran de séance.
+      hasEffortPrompt: loadEffortPrompt(),
+      hasRepPacing: guidancePolicy(loadAnnouncerMode()).repPacing,
     }),
     [completedWorkouts, hasActiveWorkout],
   );

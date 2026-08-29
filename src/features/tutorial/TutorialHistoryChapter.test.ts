@@ -3,8 +3,8 @@ import { advanceMission, continueMission, startMission } from './tutorialMission
 import { contextualMissionsForPath, missionFor, P1_MISSIONS } from './tutorialMissions';
 import { createTutorialState } from './tutorialStore';
 
-const WITH_HISTORY = { hasActiveWorkout: false, hasHistory: true };
-const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false };
+const WITH_HISTORY = { hasActiveWorkout: false, hasHistory: true, hasEffortPrompt: true, hasRepPacing: true };
+const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
 
 describe('missions d’historique', () => {
   it('retrouve une séance par le calendrier, un jour et un exercice', () => {

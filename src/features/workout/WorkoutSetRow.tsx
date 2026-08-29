@@ -197,6 +197,9 @@ export function WorkoutSetRow({
             ? t('workout.setNumber', { number })
             : `${t('workout.setNumber', { number })} — ${setTypeLabel(set.setType)}`
         }
+        data-tutorial-id={
+          tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set-menu`
+        }
         onClick={onMenu}
         className="flex size-12 shrink-0 items-center justify-center rounded-lg text-sm
           text-[var(--text-2)] active:bg-[var(--surface-2)]"

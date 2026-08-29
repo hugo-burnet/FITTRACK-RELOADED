@@ -64,6 +64,8 @@ export interface TutorialMission {
     | 'requires-active-workout'
     | 'requires-no-active-workout'
     | 'requires-history'
+    | 'requires-effort-prompt'
+    | 'requires-rep-pacing'
     | 'external';
   steps: readonly TutorialMissionStep[];
   nextMissionId: TutorialMissionId | null;
@@ -82,6 +84,22 @@ export interface TutorialMissionFacts {
   hasActiveWorkout: boolean | null;
   /** Au moins une séance terminée — sans quoi l'historique est vide. */
   hasHistory: boolean | null;
+  /**
+   * La bande d'effort apparaît-elle après une série validée ?
+   *
+   * Un réglage, pas une donnée : `fittrack:effortPrompt`. Éteint, la bande
+   * n'est jamais rendue, et une mission qui demande d'y répondre désignerait
+   * une commande absente de la page — pas dans certains cas, jamais.
+   */
+  hasEffortPrompt: boolean | null;
+  /**
+   * Le métronome de répétitions a-t-il le droit de tourner ?
+   *
+   * Faux en « Voix uniquement », où il n'existe pas du tout — cf.
+   * `guidancePolicy`. La mission qui apprend à le lancer ne se propose donc pas
+   * dans ce mode : elle attendrait un départ que le moteur refuse.
+   */
+  hasRepPacing: boolean | null;
 }
 
 /** Une étape que seul un geste métier fait avancer — le cas courant. */
@@ -110,5 +128,11 @@ export function isMissionAvailable(mission: TutorialMission, facts: TutorialMiss
   if (mission.guard === 'requires-active-workout') return facts.hasActiveWorkout === true;
   if (mission.guard === 'requires-no-active-workout') return facts.hasActiveWorkout === false;
   if (mission.guard === 'requires-history') return facts.hasHistory === true;
+  if (mission.guard === 'requires-effort-prompt') {
+    return facts.hasActiveWorkout === true && facts.hasEffortPrompt === true;
+  }
+  if (mission.guard === 'requires-rep-pacing') {
+    return facts.hasActiveWorkout === true && facts.hasRepPacing === true;
+  }
   return mission.guard === 'always';
 }

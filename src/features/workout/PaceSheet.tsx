@@ -167,6 +167,13 @@ export function PaceSheet({ open, onClose, view, onChange, onSetDefault, onStart
             size="lg"
             fullWidth
             disabled={!view.running && !view.canStart}
+            tutorialId={
+              view.running
+                ? 'workout-pace-stop-sheet'
+                : view.kind === 'hold'
+                  ? 'workout-hold-start'
+                  : 'workout-pace-start'
+            }
             onClick={() => {
               onClose();
               if (view.running) onStop();

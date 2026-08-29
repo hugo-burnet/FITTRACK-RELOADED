@@ -93,6 +93,7 @@ export function EffortStrip({
           <button
             type="button"
             aria-label={t('workout.rpeConfirm', { value: formatNumber(value) })}
+            data-tutorial-id="workout-rpe"
             onClick={() => {
               setClosing(true);
               onAnswer(value);

@@ -140,7 +140,10 @@ export function PlateLoadSheet({
           </p>
         </div>
 
-        <details className="group mb-6 border-b border-[var(--border)] pb-6">
+        <details
+          className="group mb-6 border-b border-[var(--border)] pb-6"
+          data-tutorial-id="workout-plates-available"
+        >
           <summary
             className="flex min-h-12 cursor-pointer list-none items-center gap-3 rounded-xl
               px-1 text-left active:bg-[var(--surface-2)]
