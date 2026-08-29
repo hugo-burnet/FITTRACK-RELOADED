@@ -24,6 +24,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Les mêmes portes que le workflow Android, et dans le même ordre. Le lint
+      # y était et manquait ici : une règle pouvait donc casser la publication
+      # de l'APK sans jamais empêcher la mise en ligne de la PWA, et les deux
+      # branches d'un même commit ne disaient pas la même chose de sa santé.
+      - run: npm run lint
       - run: npm run typecheck
       - run: npm run test:run
       - run: npm run build

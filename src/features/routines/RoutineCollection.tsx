@@ -38,17 +38,6 @@ type Entry =
   | { kind: 'heading'; id: string; folder?: RoutineFolder }
   | { kind: 'routine'; id: string; folderId: string; summary: RoutineSummary };
 
-export function collapsibleRoutineFolderIds(
-  summaries: readonly RoutineSummary[],
-  folders: readonly RoutineFolder[],
-): string[] {
-  const hasRootRoutines = summaries.some((summary) => summary.routine.folderId === '');
-  return [
-    ...(hasRootRoutines && folders.length > 0 ? ['root'] : []),
-    ...folders.map(({ id }) => id),
-  ];
-}
-
 function projectEntries(
   summaries: readonly RoutineSummary[],
   folders: readonly RoutineFolder[],

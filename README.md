@@ -10,7 +10,7 @@ Suivi de musculation personnel. Local-first, hors-ligne, sans compte, sans fil s
 Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol sans 4G, pas un réseau social.
 
 **En ligne :** [hugo-burnet.github.io/FITTRACK-RELOADED](https://hugo-burnet.github.io/FITTRACK-RELOADED/)  
-**Dernier tag :** [`v1.0.1`](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases/tag/v1.0.1)
+**Téléchargements :** [Releases](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases) — le badge `tag` ci-dessus donne la dernière version publiée.
 
 ---
 
@@ -24,6 +24,7 @@ Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol
 - **Blocs** — périodisation par intention (`loadIndex` + phase). La routine reste le 100 %. Le Coach tranche sur les perfs, il n’invente pas de permissions.
 - **Carte du corps** — les muscles travaillés sur douze semaines ; toucher un muscle donne ses exercices.
 - **Historique & records** — 1RM, volume, import CSV Hevy, export CSV / Markdown.
+- **Paliers** — 56 seuils écrits à la main, acquis à vie. Aucun compteur qui redescend, aucun objectif affiché avant d'être franchi.
 - **Sauvegarde complète** — tout le compte (tables, réglages, préférences) dans un JSON que l’app sait restaurer.
 - **PWA et APK** — même code. Capacitor pour Android.
 
@@ -46,7 +47,8 @@ Un tag `v*` publie l’APK dans une GitHub Release. Pousser `master` seul met à
 
 ```bash
 git push origin master
-git tag -a v1.0.1 -m "FitTrack v1.0.1" && git push origin v1.0.1
+version="v$(node -p "require('./package.json').version")"
+git tag -a "$version" -m "FitTrack $version" && git push origin "$version"
 ```
 
 ---
@@ -78,7 +80,7 @@ Le `base` Vite suit le nom du dépôt. En local : [http://localhost:5173/FITTRAC
 | `npm run lint` | ESLint |
 | `npm run android:sync` | Build web Android + `cap sync` |
 
-Un push sur `master` lance typecheck, tests, build, puis GitHub Pages. Un échec bloque la mise en ligne.
+Un push sur `master` lance lint, typecheck, tests, build, puis GitHub Pages. Un échec bloque la mise en ligne.
 
 ---
 
@@ -86,11 +88,12 @@ Un push sur `master` lance typecheck, tests, build, puis GitHub Pages. Un échec
 
 | Document | Contenu |
 | --- | --- |
-| [AGENTS.md](AGENTS.md) | Règles non négociables (agents et humains) |
+| [CLAUDE.md](CLAUDE.md) | Règles non négociables (agents et humains) |
 | [docs/plans/00-ROADMAP.md](docs/plans/00-ROADMAP.md) | Lots |
 | [docs/plans/01-ARCHITECTURE.md](docs/plans/01-ARCHITECTURE.md) | ADR, modèle |
 | [PROGRESS.md](PROGRESS.md) | État réel |
 | [audit-hevy-cahier-des-charges.md](audit-hevy-cahier-des-charges.md) | Cahier des charges source (`RF-xx`) |
+| [docs/design/](docs/design/) | Spécifications et plans d'exécution, par fonctionnalité |
 
 ---
 

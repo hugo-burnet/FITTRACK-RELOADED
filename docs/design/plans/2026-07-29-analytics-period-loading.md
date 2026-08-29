@@ -183,7 +183,7 @@ Run:
 git diff --check
 git diff --stat
 git status --short
-git add docs/superpowers/specs/2026-07-29-analytics-period-loading-design.md docs/superpowers/plans/2026-07-29-analytics-period-loading.md src/features/analytics/useHistoricalPeriod.ts src/features/analytics/useHistoricalPeriod.test.tsx src/features/analytics/WeeklySessionsScreen.tsx src/features/analytics/MuscleBalanceScreen.tsx src/features/analytics/WeeklyVolumeScreen.tsx PROGRESS.md
+git add docs/design/specs/2026-07-29-analytics-period-loading-design.md docs/design/plans/2026-07-29-analytics-period-loading.md src/features/analytics/useHistoricalPeriod.ts src/features/analytics/useHistoricalPeriod.test.tsx src/features/analytics/WeeklySessionsScreen.tsx src/features/analytics/MuscleBalanceScreen.tsx src/features/analytics/WeeklyVolumeScreen.tsx PROGRESS.md
 git commit -m "refactor: centralise le chargement des périodes d’analyse"
 ```
 

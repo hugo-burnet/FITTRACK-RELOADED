@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { RoutineSummary } from '@/data/repositories/routines';
 import type { Routine, RoutineFolder } from '@/data/types';
-import { collapsibleRoutineFolderIds, RoutineCollection } from './RoutineCollection';
+import { RoutineCollection } from './RoutineCollection';
+import { collapsibleRoutineFolderIds } from './collapsibleFolders';
 import type { RoutineCollectionProps } from './RoutineCollection';
 
 const stamps = {

@@ -4,7 +4,7 @@
 
 **Goal:** Figer sur chaque `WorkoutExercise` le nom, le type de mesure, le muscle principal et le matériel de son exercice au moment où la ligne entre dans la séance, et écrire le fuseau d'origine sur chaque `Workout`.
 
-**Architecture:** Cf. `docs/superpowers/specs/2026-07-28-workout-exercise-snapshot-design.md`. Champs plats optionnels, aucun index, `version(2).upgrade()` pour le rattrapage. L'instantané est écrit quand l'`exerciseId` de la ligne est écrit, jamais rafraîchi ensuite.
+**Architecture:** Cf. `docs/design/specs/2026-07-28-workout-exercise-snapshot-design.md`. Champs plats optionnels, aucun index, `version(2).upgrade()` pour le rattrapage. L'instantané est écrit quand l'`exerciseId` de la ligne est écrit, jamais rafraîchi ensuite.
 
 **Tech Stack:** TypeScript strict, Dexie 4, Vitest, fake-indexeddb.
 

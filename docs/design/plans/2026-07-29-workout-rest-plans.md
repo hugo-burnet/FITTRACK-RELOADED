@@ -285,7 +285,7 @@ Expected: uniquement `rest.ts`, `rest.test.ts`, `WorkoutScreen.tsx`,
 Run:
 
 ```powershell
-git add docs/superpowers/plans/2026-07-29-workout-rest-plans.md src/lib/rest.ts src/lib/rest.test.ts src/features/workout/WorkoutScreen.tsx PROGRESS.md
+git add docs/design/plans/2026-07-29-workout-rest-plans.md src/lib/rest.ts src/lib/rest.test.ts src/features/workout/WorkoutScreen.tsx PROGRESS.md
 git commit -m "refactor: centralise les plans de repos"
 ```
 

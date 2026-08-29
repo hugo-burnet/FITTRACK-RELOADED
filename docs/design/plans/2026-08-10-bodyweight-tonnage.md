@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Implement `docs/superpowers/specs/2026-08-10-bodyweight-tonnage-design.md` exactly.
+- Implement `docs/design/specs/2026-08-10-bodyweight-tonnage-design.md` exactly.
 - `bodyweightLoadFactor` is optional and, when present, finite and in `(0, 1]`.
 - Push-ups use `0.70`; bodyweight squats use `0.90`; full suspended movements use `1.00`.
 - Formula: `(bodyWeightKg × factor + addedLoad − assistance) × reps`, with assistance clamped at zero and roles applied separately.

@@ -5,9 +5,11 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  // `.claude` et `.worktrees` portent les worktrees des agents : d'autres projets TypeScript
-  // complet, dans lequel ESLint voit une deuxième racine de tsconfig et cesse
-  // alors de parser **tout** le dépôt. Il est déjà dans `.gitignore`.
+  // `.claude` et `.worktrees` portent les worktrees des agents : chacun est une copie
+  // complète du projet, avec son propre `tsconfig.json`. ESLint y voit une seconde racine
+  // de configuration TypeScript et cesse alors de parser **tout** le dépôt. Les deux sont
+  // déjà dans `.gitignore` ; les ignorer ici aussi est ce qui garde `npm run lint`
+  // utilisable pendant qu'une session d'agent travaille à côté.
   { ignores: ['dist', 'coverage', 'node_modules', '.claude', '.worktrees', 'android/**/build/**'] },
   {
     files: ['**/*.{ts,tsx}'],

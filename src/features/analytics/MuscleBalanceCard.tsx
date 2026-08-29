@@ -7,7 +7,7 @@ import { CardHeadline } from './CardHeadline';
 
 /**
  * The distribution — a ranked horizontal bar per muscle, and the third form of
- * this app's charts. Cf. `docs/superpowers/specs/2026-07-28-analytics-muscle-group-series-design.md`.
+ * this app's charts. Cf. `docs/design/specs/2026-07-28-analytics-muscle-group-series-design.md`.
  *
  * **The drawing is the list**, and that is what makes this milestone different
  * from the two before it. A point on a curve and a column of a histogram cannot

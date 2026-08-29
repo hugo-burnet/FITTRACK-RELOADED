@@ -10,7 +10,7 @@
 
 ## Global constraints
 
-- Implement `docs/superpowers/specs/2026-08-11-persisted-records-one-rep-max-design.md` exactly.
+- Implement `docs/design/specs/2026-08-11-persisted-records-one-rep-max-design.md` exactly.
 - A first qualifying performance is persisted as an initial mark; only a strict improvement is celebrated.
 - Compare raw numeric values and round only display values to `0.1 kg`.
 - 1RM accepts finite positive weight and integer reps `1..12`; one rep returns the exact load.

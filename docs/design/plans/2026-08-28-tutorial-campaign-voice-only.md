@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Spécification : `docs/superpowers/specs/2026-08-28-tutorial-campaign-voice-only-design.md`.
+- Spécification : `docs/design/specs/2026-08-28-tutorial-campaign-voice-only-design.md`.
 - Inventaire source : `docs/product/FEATURE-INVENTORY.md`.
 - Aucun écran, composant ou comportement frontend n'est modifié sans appliquer brainstorming, Impeccable, frontend-design puis contrôle navigateur.
 - Aucune mission ne crée, remplit, valide, active, supprime ou restaure une donnée à la place de l'utilisateur.

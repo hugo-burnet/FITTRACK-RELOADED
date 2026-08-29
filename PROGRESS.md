@@ -297,8 +297,8 @@ demandé par la passe mouvement.
 
 ## Reprise UI Routines, Wiki et coach en séance
 
-> Conception : `docs/superpowers/specs/2026-08-26-routines-wiki-live-coach-ui-design.md`
-> Plan : `docs/superpowers/plans/2026-08-26-routines-wiki-live-coach-ui.md`
+> Conception : `docs/design/specs/2026-08-26-routines-wiki-live-coach-ui-design.md`
+> Plan : `docs/design/plans/2026-08-26-routines-wiki-live-coach-ui.md`
 
 ### Ce qui change
 
@@ -463,8 +463,8 @@ cliniques sauf deux) à 100 % (`exercise-families`, `exercise-substitutions`,
 
 ## Wiki structuré, documentation des exercices et Planifier
 
-> Conception : `docs/superpowers/specs/2026-08-26-structured-wiki-planning-exercise-documentation-design.md`
-> Plan : `docs/superpowers/plans/2026-08-26-structured-wiki-exercise-documentation-planifier.md`
+> Conception : `docs/design/specs/2026-08-26-structured-wiki-planning-exercise-documentation-design.md`
+> Plan : `docs/design/plans/2026-08-26-structured-wiki-exercise-documentation-planifier.md`
 > Branche `claude/implemente-d65485`, commit testé **a744aa7**, 13 commits au-dessus de `master`.
 
 ### Le changement qui compte
@@ -637,9 +637,8 @@ d'answerability à prendre**, c'est le lecteur qui juge si la page répond. Les 
 sans réponse cessent d'être une béance et redeviennent des pages qui n'existent pas.
 
 Plan et suivi : `docs/plans/kb-phase-4-wiki.md`, dont les cases se cochent au fil des
-sessions. `kb-phase-3-restitution.md` est marqué dépassé sur ses étapes 4 à 6, et
-`kb-prompt-de-reprise.md` porte en tête la mise à jour du diagnostic. **C'est le trio à
-relire pour reprendre** — aucun autre mécanisme de suivi n'a été inventé, ceux-là
+sessions. `kb-phase-3-restitution.md` est marqué dépassé sur ses étapes 4 à 6. **C'est la
+paire à relire pour reprendre** — aucun autre mécanisme de suivi n'a été inventé, ceux-là
 existaient.
 
 Matière disponible pour la v1, mesurée : **266 passages de prose distincts** (les 408
@@ -4341,7 +4340,7 @@ la phase 0 est une référence de mesure.**
 **Dernière mise à jour :** 2026-07-28 (**jalon G4 — volume d’entraînement
 hebdomadaire**). Le quatrième et dernier graphique de la première couche
 d’analyse existe : `Historique → Analyses → Volume d’entraînement`. Spec :
-`docs/superpowers/specs/2026-07-28-analytics-weekly-volume-design.md`.
+`docs/design/specs/2026-07-28-analytics-weekly-volume-design.md`.
 
 **Un écran, deux cadrans, les semaines ne bougent pas.** `Tonnage` additionne
 les charges externes réellement soulevées ; `Durée` additionne
@@ -4577,7 +4576,7 @@ réparation ne touche que le nom, le muscle, le matériel et le type de mesure.
 
 **Historique précédent :** 2026-07-28 (**jalon G3 — séries par muscle**). La répartition existe :
 `Historique → Analyses → Séries par muscle`. Spec :
-`docs/superpowers/specs/2026-07-28-analytics-muscle-group-series-design.md`.
+`docs/design/specs/2026-07-28-analytics-muscle-group-series-design.md`.
 
 **Aucune requête neuve, troisième fois de suite.** `listExportSources({ kind: 'period', from, to })`
 et `periodBounds()`, comme G1 et G2. Un troisième fichier de requêtes ferait **une troisième
@@ -4686,7 +4685,7 @@ s'effondrer quand la fenêtre est plus large que ton historique.
 
 **Historique précédent :** 2026-07-28 (**jalon G2 — séances par semaine**). Le rythme
 d'entraînement a son histogramme : `Historique → Analyses → Séances par semaine`. Spec :
-`docs/superpowers/specs/2026-07-28-analytics-weekly-sessions-design.md`.
+`docs/design/specs/2026-07-28-analytics-weekly-sessions-design.md`.
 
 **Aucune requête neuve, et l'alternative légère a été refusée pour une raison de fond.**
 `listCompletedWorkoutTimestamps()` (Lot 07) rend exactement ce qu'un compte de séances demande —
@@ -4832,7 +4831,7 @@ semaines et Tout.
 **Historique précédent :** 2026-07-28 (**jalons G0 + G1 — la couche d'analyse et la première
 courbe**). Un exercice a maintenant sa progression : `Historique → Analyses`, ou « Voir la
 progression » depuis sa fiche. Spec :
-`docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md`.
+`docs/design/specs/2026-07-28-analytics-exercise-progress-design.md`.
 
 **G0 n'a ajouté aucune requête, et c'est le point de conception du jalon.** Le document de
 finition demandait trois lectures bornées neuves (§9.1) ; les trois existaient déjà sous un autre
@@ -5262,8 +5261,8 @@ enfin le même import et confirmer que les quatre séances sont ignorées sans d
 
 **Livré dans cette session :**
 
-- spec validée : `docs/superpowers/specs/2026-07-25-lot-07-historique-design.md` ;
-- plan d’exécution : `docs/superpowers/plans/2026-07-25-lot-07a-consultation-regularite.md` ;
+- spec validée : `docs/design/specs/2026-07-25-lot-07-historique-design.md` ;
+- plan d’exécution : `docs/design/plans/2026-07-25-lot-07a-consultation-regularite.md` ;
 - moteur pur `src/lib/history.ts` : semaine locale lundi–dimanche, traversée DST, résolution de
   l’objectif applicable et streak qui ne casse pas sur une semaine courante incomplète ;
 - réglage `weeklyTrainingGoalHistory` dans `settings` : premier objectif rétroactif, changements
