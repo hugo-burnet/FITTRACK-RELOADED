@@ -102,6 +102,7 @@ describe('BootScreen', () => {
       stylesheet.indexOf('@keyframes boot-ground-reveal'),
     );
 
+    expect(bootStyles).toMatch(/\.boot-barbell\s*{[^}]*transform-origin:\s*center 16\.2px;/s);
     expect(bootStyles).toMatch(/animation: boot-impact-shake 360ms linear 1640ms both;/);
     expect(shake).toMatch(/0%,\s*10%,\s*100%\s*{[^}]*transform:\s*none;/s);
   });
