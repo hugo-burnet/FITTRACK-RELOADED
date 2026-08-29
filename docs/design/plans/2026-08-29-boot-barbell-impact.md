@@ -8,6 +8,25 @@
 
 **Tech Stack:** React 19, TypeScript 6, SVG, CSS keyframes, Vitest, Testing Library
 
+> **Livré le 2026-08-29**, commits `dc0d27f` → `6e67585`. Les cases ci-dessous sont cochées après
+> relecture du code contre le plan, et non au fil de l'exécution : elles étaient toutes restées
+> vides alors que les trois tâches étaient faites.
+>
+> **Deux écarts, tous deux volontaires.**
+>
+> 1. *La barre ne remonte pas après le choc.* La conception prévoyait qu'elle « remonte de quelques
+>    pixels » ; `boot-drop` ne rend la hauteur que par deux compressions décroissantes, sans aucun
+>    `translateY` après le contact. Un rebond vertical, même court, redonnait l'impression de saut
+>    que tout ce chantier existe pour supprimer.
+> 2. *La poussière n'est pas floutée.* La conception mentionnait « un flou très limité aux petits
+>    éléments de poussière ». Le flou est resté sur les plaques, où il existait déjà ; six disques
+>    de moins d'un pixel de rayon ne gagnent rien à être floutés, et chaque `filter` animé est une
+>    couche de composition de plus sur le premier écran de l'app.
+>
+> Deux commits vont par ailleurs au-delà du plan : `d80ee40` donne au sol et à la poussière un état
+> de repos stable — sans lui, la poussière re-clignotait pendant le fondu de sortie, parce que
+> `BootCurtain` remonte `BootScreen` — et `49f761d` verrouille ce contrat par des tests.
+
 ## Global Constraints
 
 - Keep `BOOT_HOLD_MS` at exactly `2500`; the effect must not delay app startup.
@@ -31,7 +50,7 @@
 - Consumes: `BootScreen({ exiting?: boolean })` and the existing `PLATES` geometry.
 - Produces: `.boot-impact`, `.boot-barbell`, `.boot-ground`, and two `.boot-dust` SVG layers consumed by `src/index.css`.
 
-- [ ] **Step 1: Write the failing structural test**
+- [x] **Step 1: Write the failing structural test**
 
 ```tsx
 import { render } from '@testing-library/react';
@@ -50,13 +69,13 @@ describe('BootScreen', () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused test and verify the missing layers fail**
+- [x] **Step 2: Run the focused test and verify the missing layers fail**
 
 Run: `npm run test:run -- src/app/Boot.test.tsx`
 
 Expected: FAIL because `.boot-impact`, `.boot-barbell`, `.boot-ground`, and `.boot-dust` do not exist.
 
-- [ ] **Step 3: Layer the existing barbell with ground and dust geometry**
+- [x] **Step 3: Layer the existing barbell with ground and dust geometry**
 
 In `LoadedBar`, keep the current paths and plate mapping inside `<g className="boot-barbell">`.
 Change the SVG view box to `2 6 20 12`, render the ground before the barbell, and render dust after it:
@@ -99,7 +118,7 @@ Change the SVG view box to `2 6 20 12`, render the ground before the barbell, an
 
 Replace the `.boot-lift` wrapper around `<LoadedBar />` with `.boot-impact` and update the adjacent comments so they describe the fall and impact rather than a lift.
 
-- [ ] **Step 4: Run the focused test and typecheck**
+- [x] **Step 4: Run the focused test and typecheck**
 
 Run: `npm run test:run -- src/app/Boot.test.tsx`
 
@@ -109,7 +128,7 @@ Run: `npm run typecheck`
 
 Expected: exit code 0 with no TypeScript errors.
 
-- [ ] **Step 5: Commit the scene structure**
+- [x] **Step 5: Commit the scene structure**
 
 ```bash
 git add -- src/app/Boot.tsx src/app/Boot.test.tsx
@@ -127,7 +146,7 @@ git commit -m "test: cadrer l'impact de la barre au démarrage"
 - Consumes: `.boot-impact`, `.boot-barbell`, `.boot-ground`, `.boot-dust--l`, and `.boot-dust--r` from Task 1.
 - Produces: `boot-drop`, `boot-impact-shake`, `boot-ground-reveal`, `boot-dust-l`, and `boot-dust-r` keyframes plus reduced-motion overrides.
 
-- [ ] **Step 1: Replace the lift trigger with coordinated impact triggers**
+- [x] **Step 1: Replace the lift trigger with coordinated impact triggers**
 
 At the existing third-beat rules, remove the `.boot-lift` animation and add:
 
@@ -157,7 +176,7 @@ At the existing third-beat rules, remove the `.boot-lift` animation and add:
 
 Move `.boot-principle` to `animation: pop 380ms var(--ease-mech) 1600ms both;` and keep the tagline at `1860ms`.
 
-- [ ] **Step 2: Add the scene styling and physical keyframes**
+- [x] **Step 2: Add the scene styling and physical keyframes**
 
 Add transform origins for the new layers, style the ground with `var(--border)`, and style the dust with `var(--text-2)`, rounded strokes, and low opacity. Replace `@keyframes boot-lift` with the following motion:
 
@@ -256,7 +275,7 @@ Add transform origins for the new layers, style the ground with `var(--border)`,
 }
 ```
 
-- [ ] **Step 3: Preserve the reduced-motion and exit-remount contracts**
+- [x] **Step 3: Preserve the reduced-motion and exit-remount contracts**
 
 Add `.boot-ground` to the existing `boot-fade` override. Give `.boot-dust` a dedicated opacity-only `boot-dust-fade` keyframe so it also disappears under reduced motion. Replace the `.boot-lift` reset with:
 
@@ -274,7 +293,7 @@ The base `opacity: 0` on dust and the settled base ground state above are requir
 `BootCurtain` remounts `BootScreen` with `data-phase="out"`; that new tree must inherit the settled
 visual state without replaying or flashing any transient layer.
 
-- [ ] **Step 4: Run focused and global verification**
+- [x] **Step 4: Run focused and global verification**
 
 Run: `npm run test:run -- src/app/Boot.test.tsx`
 
@@ -292,7 +311,7 @@ Run: `npm run build`
 
 Expected: production build completes successfully.
 
-- [ ] **Step 5: Commit the animation**
+- [x] **Step 5: Commit the animation**
 
 ```bash
 git add -- src/index.css
@@ -310,11 +329,11 @@ git commit -m "feat: donner du poids à l'impact de la barre"
 - Consumes: the verified startup animation from Tasks 1 and 2.
 - Produces: a durable project handoff describing the changed opening motion and mobile checkpoint.
 
-- [ ] **Step 1: Add the session outcome to `PROGRESS.md`**
+- [x] **Step 1: Add the session outcome to `PROGRESS.md`**
 
 Record that the opening barbell now falls into a compressed ground impact with a damped shake and SVG dust, that reduced motion uses fades only, and that the full typecheck, test suite, and production build passed on 2026-08-29.
 
-- [ ] **Step 2: Verify the final diff and repository state**
+- [x] **Step 2: Verify the final diff and repository state**
 
 Run: `git diff --check`
 
@@ -324,14 +343,14 @@ Run: `git status --short`
 
 Expected: only the intended `PROGRESS.md` change plus the pre-existing `.codex-remote-attachments/` entry.
 
-- [ ] **Step 3: Commit the progress handoff**
+- [x] **Step 3: Commit the progress handoff**
 
 ```bash
 git add -- PROGRESS.md
 git commit -m "docs: consigner le nouvel impact de démarrage"
 ```
 
-- [ ] **Step 4: Re-run the mandatory completion gate after the last commit**
+- [x] **Step 4: Re-run the mandatory completion gate after the last commit**
 
 Run: `npm run typecheck`
 
