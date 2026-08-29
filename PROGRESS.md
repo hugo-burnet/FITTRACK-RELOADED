@@ -5,7 +5,7 @@
 **Dernière mise à jour :** 2026-08-29 (**tutoriel campagne : tâches 6 à 11 terminées** — les cinq
 zones restantes de la couverture contextuelle, le mode « Voix uniquement », les côtés unilatéraux
 persistés, le contrôle manuel des côtés, l'enquête sur la double annonce et l'audit navigateur.
-Dix commits, 28 missions sur 39, suite complète et build verts. **Checkpoint téléphone à faire :
+Douze commits, 36 missions sur 39, suite complète et build verts. **Checkpoint téléphone à faire :
 le sélecteur de guidage à quatre modes, et une série unilatérale menée jusqu'au bout.** Voir la
 section dédiée ci-dessous). Précédemment, le 2026-08-28
 (**passe mouvement** : écran d'ouverture qui charge le logo,
@@ -53,9 +53,15 @@ Branche `claude/tutorial-hybrid-campaign-76f6d8`. Dix commits, un par zone ou pa
 
 ### Ce qui est livré
 
-**Tâche 6, les cinq zones restantes.** Exercices, Progression, Connaissances, Accueil, Réglages —
-douze missions, leurs ancres et toute la copie française. Le catalogue passe de 16 à 28 missions
-implémentées sur 39 déclarées.
+**Tâche 6, terminée.** Les cinq zones — Exercices, Progression, Connaissances, Accueil, Réglages —
+puis les huit missions avancées de l'écran de séance, `TUT-WRK-05` à `TUT-WRK-12`. Le catalogue
+passe de 16 à **36 missions implémentées sur 39 déclarées** ; les trois manquantes, `TUT-PRG-02`
+à `04`, sont absorbées par le chapitre Programmes en un seul parcours de 18 étapes.
+
+L'écran de séance a demandé **deux gardes nouvelles**, parce que deux cibles y dépendent d'un
+réglage et non d'une donnée : la bande d'effort peut être éteinte, et la cadence n'existe pas en
+« Voix uniquement ». `TutorialMissionFacts` gagne `hasEffortPrompt` et `hasRepPacing`, tous deux
+exigés par l'interface — aucune mission future ne pourra les ignorer par oubli.
 
 **Tâche 7 — mode « Voix uniquement ».** `guidancePolicy(mode)` est la seule autorité : voix,
 tonalités, métronome, trois questions séparées. Ce qui part est la cadence des répétitions, ce qui
@@ -116,18 +122,14 @@ l'exercice » est bien désactivé à l'ouverture du formulaire — ce qui confi
 
 ### Ce qui reste
 
-**`TUT-WRK-05` à `TUT-WRK-12`** — les huit missions avancées de l'écran de séance, dernier reliquat
-de la tâche 6. Elles n'ont ni ancre ni copie. `TUT-WRK-10` (cadence) et `TUT-WRK-11` (maintien et
-unilatéral) sont désormais débloquées : les tâches 7 et 9 sont faites, donc les ancres
-`workout-first-side` / `workout-second-side` peuvent être posées sur des commandes réelles.
-
-**La phase voix.** Aucune étape écrite dans ce chantier ne porte de `clipId` : la consigne se lit
+**La phase voix**, et elle seule. Aucune étape écrite dans ce chantier ne porte de `clipId` :
+la consigne se lit
 en entier dans le panneau. Les textes se relisent à l'écran avant d'être enregistrés.
 
 ### Portes
 
 `npm run typecheck`, `npm run lint` (zéro erreur ; l'avertissement `RoutineCollection.tsx` est
-préexistant), `npm run test:run` (**223 fichiers, 2339 tests**) et `npm run build` passent au
+préexistant), `npm run test:run` (**224 fichiers, 2350 tests**) et `npm run build` passent au
 dernier commit.
 
 ### Checkpoint téléphone

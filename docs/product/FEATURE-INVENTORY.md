@@ -621,14 +621,23 @@ missions possèdent deux gestes successifs, soit quinze clips d'instruction au t
 
 ### P2 — Maîtrise des outils
 
-**État au 29 août 2026 — 28 missions sur 39 sont implémentées.** Sont livrées : Programmes
+**État au 29 août 2026 — 36 missions sur 39 sont implémentées.** Sont livrées : Programmes
 (`TUT-PRG-01`, un seul chapitre de 18 étapes qui absorbe `TUT-PRG-02` à `04`), Historique et
 import (`TUT-HIS-01` à `03`, `TUT-IMP-01`), Progression (`TUT-ANA-01`, `02`), Exercices
 (`TUT-EXE-01`, `02`), Connaissances (`TUT-KNW-01`, `02`), Accueil (`TUT-HOME-01`, `02`) et
-Réglages (`TUT-SET-01`, `02`).
+Réglages (`TUT-SET-01`, `02`) et l'écran de séance (`TUT-WRK-05` à `TUT-WRK-12`).
 
-**Restent `TUT-WRK-05` à `TUT-WRK-12`** — les missions avancées de l'écran de séance. Elles n'ont
-ni ancre ni copie.
+Les trois seules manquantes sont `TUT-PRG-02` à `04`, absorbées par le chapitre Programmes en un
+seul parcours de 18 étapes.
+
+Deux missions de séance ne sont pas proposées à tout le monde, et c'est voulu : `TUT-WRK-07`
+demande que la bande d'effort soit allumée dans les Réglages, `TUT-WRK-10` que le mode de guidage
+ne soit pas « Voix uniquement ». Leur cible dépend d'un réglage, pas d'une donnée : sans ces
+gardes, elles désigneraient une commande qui n'est jamais rendue.
+
+`TUT-WRK-11` s'écarte du tableau : les ancres `workout-first-side` / `workout-second-side` qu'il
+prévoit n'existent pas. Une ligne représente les deux côtés, et c'est le **libellé de la même
+coche** qui change. Sa dernière étape n'a donc pas de cible du tout.
 
 La colonne « Voix future » de ce tableau reste une intention : **aucune étape de mission écrite
 dans ce chantier ne porte de `clipId`.** Le panneau affiche la consigne en entier, ce qui est déjà
