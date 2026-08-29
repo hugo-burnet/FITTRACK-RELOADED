@@ -17,7 +17,9 @@ via Capacitor. Usage strictement personnel, mono-utilisateur, **local-first**.
 | `docs/plans/00-ROADMAP.md` | Découpage en lots + checkpoints. **Lire avant de commencer un lot.** |
 | `docs/plans/01-ARCHITECTURE.md` | Stack, modèle de données, décisions techniques (ADR). |
 | `docs/plans/lot-NN-*.md` | Plan détaillé tâche par tâche d'un lot. |
+| `docs/design/` | Spécifications et plans d'exécution, une paire de fichiers par fonctionnalité. |
 | `PROGRESS.md` | État d'avancement réel. **À mettre à jour en fin de chaque session.** |
+| `docs/journal/` | Les versions livrées et closes, détachées de `PROGRESS.md`. En lecture seule. |
 
 ## Règles non négociables
 

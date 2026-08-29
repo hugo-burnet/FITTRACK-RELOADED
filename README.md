@@ -92,6 +92,7 @@ Un push sur `master` lance lint, typecheck, tests, build, puis GitHub Pages. Un 
 | [docs/plans/00-ROADMAP.md](docs/plans/00-ROADMAP.md) | Lots |
 | [docs/plans/01-ARCHITECTURE.md](docs/plans/01-ARCHITECTURE.md) | ADR, modèle |
 | [PROGRESS.md](PROGRESS.md) | État réel |
+| [docs/journal/](docs/journal/) | Journal des versions livrées (v0.1.0 → v1.3.1) |
 | [audit-hevy-cahier-des-charges.md](audit-hevy-cahier-des-charges.md) | Cahier des charges source (`RF-xx`) |
 | [docs/design/](docs/design/) | Spécifications et plans d'exécution, par fonctionnalité |
 
