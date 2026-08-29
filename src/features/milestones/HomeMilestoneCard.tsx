@@ -44,13 +44,18 @@ export function HomeMilestoneCard() {
   // `!= null` et non `!== undefined` : la lecture vaut `undefined` tant qu'elle
   // n'a pas répondu, et une carte d'accueil ne doit pas faire tomber tout
   // l'écran parce qu'une lecture lui est revenue vide d'une façon inattendue.
-  if (unlocked != null && unlocked.length > 0) {
-    const lines = unlocked.flatMap((row) => {
-      const reading = milestoneReading(row.definitionId, row.value);
-      return reading === undefined ? [] : [{ ...reading, id: row.id }];
-    });
-    if (lines.length === 0) return null;
+  //
+  // Une ligne sans phrase est sautée, jamais comptée : un palier retiré du
+  // catalogue laisse derrière lui une ligne non acquittée que plus rien
+  // n'acquitte — elle ne peut donc pas devenir la raison pour laquelle
+  // l'anniversaire d'un autre palier ne s'affiche plus. C'est le rattrapage de
+  // `syncMilestones` qui la retirera, à la prochaine séance.
+  const lines = (unlocked ?? []).flatMap((row) => {
+    const reading = milestoneReading(row.definitionId, row.value);
+    return reading === undefined ? [] : [{ ...reading, id: row.id }];
+  });
 
+  if (lines.length > 0) {
     return (
       <section>
         <Card padded>
