@@ -33,43 +33,57 @@ const PLATES = [
 ];
 
 /**
- * Le logo, chargé sous nos yeux. Le `viewBox` est serré sur le dessin — l'icône
- * le noie dans sa tuile arrondie, qui ne sert qu'au lanceur.
+ * Le logo devient une petite scène d'impact. La barre reste exactement celle de
+ * `public/icon.svg` ; le sol et la poussière ne servent qu'à donner une masse à
+ * sa chute, sans asset ni particules pilotées en JavaScript.
  */
 function LoadedBar() {
   return (
-    <svg className="boot-bar" viewBox="2 7 20 10" fill="none" aria-hidden="true">
-      <path
-        className="boot-rail"
-        d="M8 12h8"
-        stroke="var(--accent-ink)"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      {PLATES.flatMap(({ x, half, travel, delay }) =>
-        [x, 24 - x].map((cx) => (
-          <path
-            key={cx}
-            className={`boot-plate boot-plate--${cx < 12 ? 'l' : 'r'}`}
-            style={
-              { '--boot-delay': `${delay}ms`, '--boot-travel': `${travel}px` } as CSSProperties
-            }
-            d={`M${cx} ${12 - half}v${half * 2}`}
-            stroke="var(--accent-ink)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        )),
-      )}
+    <svg className="boot-bar" viewBox="2 6 20 12" fill="none" aria-hidden="true">
+      <path className="boot-ground" d="M1.5 16.2H22.5" />
+
+      <g className="boot-barbell">
+        <path
+          className="boot-rail"
+          d="M8 12h8"
+          stroke="var(--accent-ink)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        {PLATES.flatMap(({ x, half, travel, delay }) =>
+          [x, 24 - x].map((cx) => (
+            <path
+              key={cx}
+              className={`boot-plate boot-plate--${cx < 12 ? 'l' : 'r'}`}
+              style={
+                { '--boot-delay': `${delay}ms`, '--boot-travel': `${travel}px` } as CSSProperties
+              }
+              d={`M${cx} ${12 - half}v${half * 2}`}
+              stroke="var(--accent-ink)"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          )),
+        )}
+      </g>
+
+      <g className="boot-dust boot-dust--l">
+        <path d="M10.8 15.7c-1.4-.9-2.8-.9-4.1-.2-1.1.6-2.2.6-3.3.2" />
+        <circle cx="7" cy="14.8" r=".35" />
+      </g>
+      <g className="boot-dust boot-dust--r">
+        <path d="M13.2 15.7c1.4-.9 2.8-.9 4.1-.2 1.1.6 2.2.6 3.3.2" />
+        <circle cx="17" cy="14.8" r=".35" />
+      </g>
     </svg>
   );
 }
 
 /**
  * L'ouverture de l'app, en trois temps : le manchon se pose, les deux paires de
- * plaques s'enfilent — puis la barre chargée se soulève, et c'est sur cette
- * frame-là que le principe apparaît. Charger, charger, lever. Rien ne tourne et
- * rien ne pulse : le mouvement a un début et une fin, comme une série.
+ * plaques s'enfilent — puis la barre chargée tombe et frappe le sol. Sa courte
+ * compression, le tremblement amorti et la poussière racontent son poids sans
+ * transformer l'ouverture en cinématique. Le principe apparaît sur l'impact.
  *
  * `exiting` rend le même écran **sans** aucune animation d'entrée : au moment où
  * `main.tsx` monte le routeur, ce composant est démonté puis remonté, et sans ce
@@ -82,8 +96,8 @@ export function BootScreen({ exiting = false }: { exiting?: boolean }) {
     // l'entrée, c'est le seul contenu à l'écran.
     <div className="boot" data-phase={exiting ? 'out' : 'in'} aria-hidden={exiting || undefined}>
       <div className="flex flex-col items-center gap-5">
-        {/* Le levé porte sur le logo seul : c'est la barre qui monte, pas la page. */}
-        <div className="boot-lift">
+        {/* La secousse porte sur la scène seule : l'interface dessous ne tremble jamais. */}
+        <div className="boot-impact">
           <LoadedBar />
         </div>
         <p className="boot-mark">{t('app.name')}</p>
