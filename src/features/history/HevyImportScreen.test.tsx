@@ -18,6 +18,29 @@ import { resetDb } from '@/test/resetDb';
 import fixture from './__fixtures__/hevy-workout-data-real-anonymized.csv?raw';
 import { HevyImportScreen } from './HevyImportScreen';
 
+/**
+ * Le rattrapage des paliers après l'import — le câblage, et lui seul.
+ *
+ * **Pourquoi une espionne et pas un décompte de la table `milestones`.** La
+ * fixture anonymisée ne porte que six séances à 20 kg × 10 répétitions : elle ne
+ * franchit délibérément aucun seuil, et compter ses lignes affirmerait « zéro »
+ * aussi bien avec l'appel que sans lui. C'est donc l'appel qu'on observe, avec
+ * son argument — qui est tout le sujet.
+ *
+ * **Ce que son absence donnait.** L'import écrivait dix ans de séances sans
+ * jamais recalculer les paliers. Ils tombaient alors tous ensemble à la fin de
+ * la séance suivante, celle-là avec `celebrate: true`, et l'accueil ouvrait une
+ * carte de félicitations de quarante lignes. `syncMilestones` documente cette
+ * exacte situation comme celle que `celebrate: false` existe pour éviter ; il
+ * manquait seulement quelqu'un pour l'appeler.
+ */
+const syncMilestones = vi.hoisted(() => vi.fn(async () => []));
+
+vi.mock('@/data/repositories/milestones', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/data/repositories/milestones')>()),
+  syncMilestones,
+}));
+
 const EXPECTED_CATALOGUE_SLUGS = {
   'Abduction Hanche': 'hip-abduction-machine',
   'Adduction Hanche': 'hip-adduction-machine',
@@ -242,6 +265,11 @@ describe('HevyImportScreen — parcours CSV réel', () => {
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
     await user.click(screen.getByRole('button', { name: 'Importer' }));
     await screen.findByRole('heading', { name: 'Import terminé' });
+
+    // `celebrate: false` est la moitié qui compte : un rattrapage entre acquis,
+    // il ne se fête pas.
+    await waitFor(() => expect(syncMilestones).toHaveBeenCalledWith({ celebrate: false }));
+
     await waitFor(async () => {
       expect(await importedTableCounts()).toEqual({
         exercises: CATALOGUE_SIZE + 1,
