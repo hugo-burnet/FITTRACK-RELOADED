@@ -11,6 +11,8 @@
 ## Global Constraints
 
 - Keep `BOOT_HOLD_MS` at exactly `2500` and the impact contact at exactly `1600ms`.
+- Start `boot-impact-shake` at `1640ms` and keep its opening frame still so the shake always follows
+  the visible contact.
 - Add no dependency, network request, image, or canvas; FitTrack remains fully offline.
 - Animate only `transform` and `opacity` in the impact correction.
 - Use one damped rebound, not elastic or repeated bouncing.
@@ -68,13 +70,34 @@ it('anchors both dust clouds to the ground line', () => {
 });
 ```
 
-- [ ] **Step 3: Run the focused tests and verify RED**
+- [ ] **Step 3: Write the failing post-contact shake test**
+
+Add a test that requires a 40 ms causal gap between contact and shake, plus an immobile opening
+segment:
+
+```tsx
+it('starts the shake only after the barbell has touched the ground', () => {
+  const stylesheet = readFileSync('src/index.css', 'utf8');
+  const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
+  const shake = stylesheet.slice(
+    stylesheet.indexOf('@keyframes boot-impact-shake'),
+    stylesheet.indexOf('@keyframes boot-ground-reveal'),
+  );
+
+  expect(bootStyles).toMatch(/animation: boot-impact-shake 360ms linear 1640ms both;/);
+  expect(shake).toMatch(/0%,\s*10%,\s*100%\s*{[^}]*transform:\s*none;/s);
+});
+```
+
+- [ ] **Step 4: Run the focused tests and verify RED**
 
 Run: `npm run test:run -- src/app/Boot.test.tsx`
 
-Expected: FAIL because `boot-drop` has no `translateY(-2px)`, two particle rows are above `15.9`, and the dust groups still inherit the center of the SVG as their transform origin.
+Expected: FAIL because `boot-drop` has no `translateY(-2px)`, two particle rows are above `15.9`,
+the dust groups still inherit the center of the SVG as their transform origin, and the shake starts
+at `1600ms` without a still opening segment.
 
-- [ ] **Step 4: Commit the regression tests**
+- [ ] **Step 5: Commit the regression tests**
 
 ```bash
 git add -- src/app/Boot.test.tsx
@@ -171,13 +194,44 @@ Replace only the post-contact frames of `boot-drop`; keep the fall and `53.333%`
 }
 ```
 
-- [ ] **Step 4: Run the focused tests and verify GREEN**
+- [ ] **Step 4: Delay the shake until after contact**
+
+Move the shake trigger 40 ms after contact and keep the first 10% of its timeline still:
+
+```css
+.boot[data-phase='in'] .boot-impact {
+  animation: boot-impact-shake 360ms linear 1640ms both;
+  will-change: transform;
+}
+
+@keyframes boot-impact-shake {
+  0%,
+  10%,
+  100% {
+    transform: none;
+  }
+  26% {
+    transform: translateX(-3px) rotate(-0.6deg);
+  }
+  42% {
+    transform: translateX(2.5px) rotate(0.45deg);
+  }
+  58% {
+    transform: translateX(-1.5px) rotate(-0.25deg);
+  }
+  74% {
+    transform: translateX(0.75px) rotate(0.12deg);
+  }
+}
+```
+
+- [ ] **Step 5: Run the focused tests and verify GREEN**
 
 Run: `npm run test:run -- src/app/Boot.test.tsx`
 
 Expected: PASS, all `BootScreen` tests green.
 
-- [ ] **Step 5: Commit the implementation**
+- [ ] **Step 6: Commit the implementation**
 
 ```bash
 git add -- src/app/Boot.tsx src/index.css

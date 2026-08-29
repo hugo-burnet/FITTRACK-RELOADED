@@ -25,8 +25,10 @@ barre chargée :
 - elle commence légèrement au-dessus de sa position finale et accélère vers le sol ;
 - au contact, elle s'aplatit très brièvement sur l'axe vertical et s'élargit légèrement ;
 - elle remonte de quelques pixels, puis se stabilise sans rebond élastique ;
-- le bloc visuel entier subit une secousse horizontale amortie ;
-- deux nappes de poussière partent du centre vers les côtés, montent légèrement et disparaissent ;
+- le bloc visuel entier subit une secousse horizontale amortie, déclenchée seulement après que la
+  compression a rendu le contact lisible ;
+- deux nappes de poussière partent des points de contact sur le sol, s'écartent, montent légèrement
+  et disparaissent ;
 - une fine ligne de sol se révèle au moment du contact et reste visible jusqu'à la sortie du rideau.
 
 Le principe de l'application apparaît sur l'impact, comme dans l'animation actuelle, puis la
@@ -48,8 +50,10 @@ termine par un amortissement inférieur au pixel. Ce rebond reste court et non �
 groupes de poussière prennent désormais comme origine les points de contact gauche et droit sur la
 ligne `y = 16.2`; leurs particules naissent au ras de cette ligne avant de s'écarter et de monter.
 
-Le contact reste fixé à 1 600 ms, la durée totale reste inchangée et le mode mouvement réduit ne
-reçoit aucun déplacement supplémentaire.
+Le contact, le sol et la poussière restent fixés à 1 600 ms. La secousse attend 40 ms de plus et son
+premier palier reste immobile : elle ne peut ainsi jamais être perçue avant que la barre touche le
+sol. La durée totale reste inchangée et le mode mouvement réduit ne reçoit aucun déplacement
+supplémentaire.
 
 ## Structure et style
 
