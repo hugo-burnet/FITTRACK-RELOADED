@@ -3,8 +3,8 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-08-30 (**jetons de paliers en mèmes** — 22 JPEG embarqués, mapping
-des 56 ids. Le chiffre reste dans le titre. Hors-ligne, précachés.).
+**Dernière mise à jour :** 2026-08-30 (**liens de documentation des programmes et transition
+unilatérale corrigés** ; jetons de paliers en mèmes livrés en parallèle.).
 
 ## Archives
 
@@ -17,12 +17,30 @@ des 56 ids. Le chiffre reste dans le titre. Hors-ligne, précachés.).
 
 ## Checkpoints téléphone encore dus
 
-1. **Paliers** — Progression › Paliers : jetons-images (Pepe, git gud, stonks…) à la place du
+1. **Programme** — ouvrir un bloc actif puis toucher « Ce qu’en dit le corpus » : l’article du
+   Guide correspondant à la phase doit s’ouvrir, sans page d’erreur React Router.
+2. **Unilatéral sans cadence** — cocher le premier côté : la coche reste grisée dix secondes,
+   affiche le décompte, puis se réactive seule pour valider le second côté sans changer de menu.
+3. **Paliers** — Progression › Paliers : jetons-images (Pepe, git gud, stonks…) à la place du
    disque chiffré. L'état vide reste vide. Après une séance qui franchit un palier, la carte
    d'accueil porte le même visuel avec un anneau accent. Thème clair aussi.
-2. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
+4. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
    le terminal (clé `fittrack.bootEasterEggAfter` due) : écran noir, glyphes blancs, comme GRUB.
-3. **Tutoriel** — sélecteur de guidage à quatre modes, série unilatérale menée jusqu'au bout.
+5. **Tutoriel** — sélecteur de guidage à quatre modes, série unilatérale menée jusqu'au bout.
+
+## Documentation des programmes et transition unilatérale (2026-08-30)
+
+- Le lien de preuve d’une phase ne reconstruit plus l’ancienne route supprimée
+  `/knowledge/p/:sectionId`. Il résout l’article actuel du Guide et ouvre sa route
+  `/knowledge/programmation/:articleId` ; les phases décharge, progression, surcharge et reprise
+  sont couvertes.
+- La ligne de série unilatérale dérive désormais son état depuis sa propre horloge. Après la
+  première coche, le verrou de dix secondes expire donc sans dépendre d’un nouveau rendu du parent
+  ni d’un passage par un menu — notamment quand aucune cadence ne fait bouger l’écran.
+- Vérification : typecheck et build de production verts. La passe Vitest unique demandée a validé
+  2 473 tests sur 2 474, dont les nouvelles régressions ; l’unique échec était une attente exacte
+  de 38 s ayant mesuré 39 s. Cette attente a été rendue déterministe après la passe, sans relancer
+  la suite conformément à la consigne utilisateur.
 
 ## Ouverture simplifiée et terminal GRUB (2026-08-30)
 
