@@ -33,15 +33,20 @@ const PLATES = [
 ];
 
 /**
- * Le logo devient une petite scène d'impact. La barre reste exactement celle de
- * `public/icon.svg` ; le sol et la poussière ne servent qu'à donner une masse à
- * sa chute, sans asset ni particules pilotées en JavaScript.
+ * Le logo devient une petite scène d'impact.
+ *
+ * **Aucune ligne de sol n'est dessinée.** Elle a existé, et elle disait la
+ * mauvaise chose : un trait sous le logo transforme une marque en illustration,
+ * et fixe une scène là où il n'y a qu'un signe. Le choc se raconte entièrement
+ * par ce qui bouge — la chute, l'écrasement, la secousse et la poussière — et
+ * un sol n'a pas besoin d'être visible pour qu'on comprenne qu'on l'a heurté.
+ *
+ * La barre reste exactement celle de `public/icon.svg` ; seule la poussière
+ * s'ajoute, sans asset ni particule pilotée en JavaScript.
  */
 function LoadedBar() {
   return (
     <svg className="boot-bar" viewBox="2 6 20 12" fill="none" aria-hidden="true">
-      <path className="boot-ground" d="M1.5 15.55H22.5" />
-
       <g className="boot-barbell">
         <path
           className="boot-rail"

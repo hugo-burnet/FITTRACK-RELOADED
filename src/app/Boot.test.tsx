@@ -9,7 +9,6 @@ describe('BootScreen', () => {
 
     expect(container.querySelector('.boot-impact')).not.toBeNull();
     expect(container.querySelector('.boot-barbell')).not.toBeNull();
-    expect(container.querySelector('.boot-ground')).not.toBeNull();
     expect(container.querySelectorAll('.boot-dust')).toHaveLength(2);
   });
 
@@ -32,7 +31,7 @@ describe('BootScreen', () => {
 
     expect(reducedMotion).toContain('animation-name: boot-dust-fade !important;');
     expect(reducedMotion).toMatch(
-      /\.boot\[data-phase='in'\] \.boot-ground,[^{]*{[^}]*animation-name: boot-fade !important;/s,
+      /\.boot\[data-phase='in'\] \.boot-rail,[^{]*{[^}]*animation-name: boot-fade !important;/s,
     );
     expect(reducedMotion).toMatch(
       /\.boot\[data-phase='in'\] \.boot-impact,[^}]*\.boot-barbell\s*{[^}]*animation: none !important;/s,
@@ -46,9 +45,6 @@ describe('BootScreen', () => {
     const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
 
     expect(bootStyles).toMatch(/\.boot-dust\s*{[^}]*opacity:\s*0;/s);
-    expect(bootStyles).toMatch(
-      /\.boot-ground\s*{(?=[^}]*opacity:\s*0\.28;)(?=[^}]*transform:\s*scaleX\(0\.94\);)[^}]*}/s,
-    );
   });
 
   /**
@@ -74,19 +70,27 @@ describe('BootScreen', () => {
     }
   });
 
-  it('pose la poussière sur la ligne de sol, et la lit dans le dessin', () => {
+  it('pose la poussière au pied des plaques, jamais le long de la barre', () => {
     const { container } = render(<BootScreen />);
 
-    // Lue sur place plutôt que recopiée : le jour où le sol bouge, ce test
-    // suit au lieu de réclamer une valeur qu'on aurait oublié de changer.
-    const ground = container.querySelector('.boot-ground')?.getAttribute('d') ?? '';
-    const groundY = Number(/^M[\d.]+ ([\d.]+)H/.exec(ground)?.[1]);
-    expect(groundY).toBeGreaterThan(0);
+    // Le bas des grandes plaques : leur axe est en y = 12 et leur demi-hauteur
+    // vaut 3.5, donc elles s'arrêtent à 15.5. Il n'y a plus de ligne de sol à
+    // interroger — c'est la géométrie de la barre qui donne le point de contact.
+    const CONTACT_Y = 15.5;
 
     for (const circle of container.querySelectorAll('.boot-dust circle')) {
       const cy = Number(circle.getAttribute('cy'));
-      expect(Math.abs(cy - groundY), `particule à cy=${String(cy)}`).toBeLessThanOrEqual(0.7);
+      expect(Math.abs(cy - CONTACT_Y), `particule à cy=${String(cy)}`).toBeLessThanOrEqual(0.7);
     }
+  });
+
+  it('ne dessine aucune ligne de sol', () => {
+    const { container } = render(<BootScreen />);
+
+    // Un trait sous le logo transforme une marque en illustration. Le choc se
+    // raconte par ce qui bouge ; le sol n'a pas besoin d'être vu pour qu'on
+    // comprenne qu'on l'a heurté.
+    expect(container.querySelector('.boot-ground')).toBeNull();
   });
 
   /**
@@ -109,11 +113,15 @@ describe('BootScreen', () => {
     }));
 
     const IMPACT = 53.333;
+    // La barre est **tenue en hauteur** pendant tout le chargement : le
+    // remplissage `both` applique le 0 % dès la première frame. C'est de là
+    // qu'elle s'effondre, et c'est ce qui donne son poids à la chute.
+    expect(frames.find((frame) => frame.at === 0)?.lift ?? 0).toBeLessThanOrEqual(-5);
     expect(frames.some((frame) => frame.at < IMPACT && frame.lift < 0)).toBe(true);
     expect(frames.some((frame) => frame.at > IMPACT && frame.lift < 0)).toBe(true);
     // Le rebond reste plus petit que l'élévation : une barre chargée ne remonte
     // pas d'où elle vient.
-    const lift = Math.min(...frames.filter((f) => f.at < IMPACT).map((f) => f.lift));
+    const lift = Math.min(...frames.filter((f) => f.at > 0 && f.at < IMPACT).map((f) => f.lift));
     const bounce = Math.min(...frames.filter((f) => f.at > IMPACT).map((f) => f.lift));
     expect(bounce).toBeGreaterThan(lift);
   });
@@ -128,7 +136,6 @@ describe('BootScreen', () => {
 
     for (const animationName of [
       'boot-impact-shake',
-      'boot-ground-reveal',
       'boot-dust-l',
       'boot-dust-r',
       'pop',

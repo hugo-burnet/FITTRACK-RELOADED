@@ -291,7 +291,6 @@
     .boot[data-phase='in'] .boot-rail,
     .boot[data-phase='in'] .boot-mark,
     .boot[data-phase='in'] .boot-plate,
-    .boot[data-phase='in'] .boot-ground,
     .boot[data-phase='in'] .boot-principle,
     .boot[data-phase='in'] .boot-tagline {
       animation-name: boot-fade !important;
@@ -436,14 +435,6 @@
   overflow: visible;
 }
 
-.boot-ground {
-  opacity: 0.28;
-  transform: scaleX(0.94);
-  stroke: var(--border);
-  stroke-width: 0.55;
-  stroke-linecap: round;
-}
-
 .boot-dust {
   opacity: 0;
   color: var(--text-2);
@@ -477,7 +468,6 @@
 .boot-rail,
 .boot-plate,
 .boot-barbell,
-.boot-ground,
 .boot-dust {
   transform-box: view-box;
   transform-origin: center;
@@ -534,10 +524,6 @@
 .boot[data-phase='in'] .boot-impact {
   animation: boot-impact-shake 360ms linear 1600ms both;
   will-change: transform;
-}
-
-.boot[data-phase='in'] .boot-ground {
-  animation: boot-ground-reveal 420ms var(--ease-mech) 1600ms both;
 }
 
 .boot[data-phase='in'] .boot-dust--l {
@@ -641,27 +627,30 @@
   }
 }
 
-/* On soulève, on lâche, ça rebondit.
+/* On tient en l'air, on lâche, ça s'écrase.
 
    Le remplissage `both` garde le 0 % pendant tout le chargement : les plaques
-   s'enfilent donc sur une barre **posée**, et non suspendue en l'air sans
-   raison. L'élévation qui suit est ce qui explique la chute — sans elle, la
-   barre tombait d'une hauteur que rien n'avait justifiée.
+   s'enfilent donc sur une barre **tenue en hauteur**, et c'est de là qu'elle
+   tombe. `overflow: visible` sur `.boot-bar` est ce qui la garde à l'écran
+   au-dessus du viewBox pendant ce temps.
+
+   L'élan d'une unité juste avant la chute est ce qui dit qu'on la lâche : sans
+   lui, la barre partirait vers le bas sans que rien l'ait déclenché.
 
    Le rebond est trois fois plus court que l'élévation, et le second contact
    trois fois plus court que le premier. C'est ce rapport qui dit « lourd » :
    une barre chargée ne remonte pas d'où elle vient. */
 @keyframes boot-drop {
   0% {
-    transform: translateY(0);
+    transform: translateY(-7px);
     animation-timing-function: cubic-bezier(0.25, 0, 0.3, 1);
   }
-  /* L'élévation : 156 ms, 1,2 unité de viewBox — huit pixels à l'écran, mesurés.
-     Les longueurs d'un `transform` sont ici en unités du viewBox, pas en pixels
-     CSS : la scène fait douze unités de haut pour 79 px, donc une valeur qui se
-     lit « petite » en CSS soulève la barre hors du cadre. */
-  26% {
-    transform: translateY(-1.2px);
+  /* L'élan, avant la chute : une unité de plus, pas davantage. C'est ce qui
+     dit qu'on tient la barre — sans lui, elle tomberait sans que rien l'ait
+     lâchée. Les longueurs sont en unités du viewBox et non en pixels CSS : la
+     scène fait douze unités pour 79 px. */
+  22% {
+    transform: translateY(-8.2px);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
   /* 320 ms après le départ : la poussière, le sol et la secousse utilisent le
@@ -671,7 +660,7 @@
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
   }
   67% {
-    transform: translateY(-0.4px) scaleX(0.99) scaleY(1.025);
+    transform: translateY(-1.1px) scaleX(0.99) scaleY(1.025);
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
   }
   82% {
@@ -679,7 +668,7 @@
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
   }
   92% {
-    transform: translateY(-0.12px) scaleX(0.996) scaleY(1.008);
+    transform: translateY(-0.3px) scaleX(0.996) scaleY(1.008);
   }
   100% {
     transform: none;
@@ -705,27 +694,6 @@
   }
 }
 
-@keyframes boot-ground-reveal {
-  from {
-    opacity: 0;
-    transform: scaleX(0.18);
-  }
-  35% {
-    opacity: 0.5;
-    transform: scaleX(1);
-  }
-  to {
-    opacity: 0.28;
-    transform: scaleX(0.94);
-  }
-}
-
-/* Une bouffée, pas un panache. La poussière naît **au** contact — les circles
-   sont posés sur les deux grandes plaques dans `Boot.tsx` — et s'écarte vers
-   l'extérieur de la barre. Sa course est **basse et large** : la poussière d'un
-   choc rampe au sol avant de retomber, elle ne s'élève pas. Mesurée au
-   navigateur — les unités sont celles du viewBox, et 3,4 d'entre elles
-   envoyaient les particules à mi-hauteur de la barre. */
 @keyframes boot-dust-l {
   from {
     opacity: 0;

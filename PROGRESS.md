@@ -2,7 +2,10 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-29 (**reprise de l'animation d'ouverture** — la barre se
+**Dernière mise à jour :** 2026-08-30 (**l'ouverture, deuxième passe** — la barre se charge
+**tenue en hauteur** et s'effondre de toute cette hauteur ; la ligne de sol est supprimée.
+**Checkpoint téléphone à faire.** Voir la section dédiée ci-dessous). Précédemment, le 2026-08-29
+(**reprise de l'animation d'ouverture** — la barre se
 charge au sol, s'élève de huit pixels, tombe, s'écrase, tremble et rebondit ; la poussière naît
 enfin **aux deux points de contact** et non au milieu de la barre. **Checkpoint téléphone à
 faire : relancer l'app à froid.** Voir la section dédiée ci-dessous). Le même jour (**découpage de
@@ -67,6 +70,50 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## L'ouverture, deuxième passe (2026-08-30)
+
+Retours de l'utilisateur sur la version de la veille : l'élan avant la chute est bon, mais la barre
+doit s'effondrer **de beaucoup plus haut**, et on ne veut pas voir le sol.
+
+### Ce qui change
+
+- **La barre est chargée en hauteur, et c'est de là qu'elle tombe.** Le remplissage `both` applique
+  le 0 % de `boot-drop` dès la première frame : les plaques s'enfilent donc sur une barre tenue à
+  sept unités au-dessus de sa place, soit 46 px. `overflow: visible` sur `.boot-bar`, posé à
+  l'origine pour les plaques qui entrent par les côtés, est ce qui la garde à l'écran pendant ce
+  temps. La chute suivante fait toute cette hauteur au lieu des huit pixels de la veille.
+- **L'élan est conservé** — une unité de plus juste avant de lâcher. C'est lui qui dit qu'on tient
+  la barre ; sans lui elle partirait vers le bas sans que rien l'ait déclenchée.
+- **La ligne de sol est supprimée**, avec sa règle, son animation `boot-ground-reveal` et son
+  entrée en mouvement réduit. Un trait sous le logo transforme une marque en illustration et fixe
+  une scène là où il n'y a qu'un signe. Le choc se raconte entièrement par ce qui bouge — chute,
+  écrasement, secousse, poussière — et un sol n'a pas besoin d'être vu pour qu'on comprenne qu'on
+  l'a heurté.
+- Le rebond passe de 0,4 à 1,1 unité, à l'échelle de la nouvelle chute.
+
+Le contact reste à 1 600 ms et la durée totale à `BOOT_HOLD_MS = 2500` ms : rien d'autre n'a bougé.
+
+### Le test qui perd son point d'appui
+
+Celui de la poussière lisait l'ordonnée du sol dans le dessin. Le sol n'existant plus, il s'appuie
+désormais sur la géométrie de la barre : les grandes plaques ont leur axe en `y = 12` et une
+demi-hauteur de 3,5, donc leur pied est à `15.5`. Un test de plus interdit le retour d'une ligne de
+sol, et un autre exige que le 0 % de `boot-drop` parte d'au moins cinq unités de haut.
+
+### Vérifications
+
+- `npm run typecheck`, `npm run lint`, `npm run test:run` (**232 fichiers, 2 456 tests**) et
+  `npm run build` : verts.
+- Navigateur intégré, 390 × 844, animations mises en pause et déplacées image par image : barre
+  tenue en hauteur au chargement, chute, écrasement, poussière au pied des plaques, aucun sol.
+- `prefers-reduced-motion: reduce` : les trois couches rendent `transform: none`.
+
+### Checkpoint téléphone
+
+Relancer l'app à froid. La barre doit se construire **en l'air**, marquer un temps, puis tomber de
+toute sa hauteur et s'écraser. Aucun trait ne doit apparaître sous elle. La poussière sort de sous
+les deux grandes plaques et disparaît avant le rideau.
 
 ## Reprise de l'animation d'ouverture (2026-08-29)
 
