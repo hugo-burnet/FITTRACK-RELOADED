@@ -16,7 +16,7 @@ export interface HevyRoutineEntities {
   sets: RoutineSet[];
 }
 
-export function hevyImportFolderBaseName(importedAt: number): string {
+function hevyImportFolderBaseName(importedAt: number): string {
   const date = new Intl.DateTimeFormat('fr-FR', {
     day: '2-digit',
     month: '2-digit',

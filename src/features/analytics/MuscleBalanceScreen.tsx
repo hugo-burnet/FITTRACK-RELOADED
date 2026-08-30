@@ -14,7 +14,7 @@ import { useHistoricalPeriod } from './useHistoricalPeriod';
 
 /**
  * RF-42 — how the working sets of a period are shared out between muscles.
- * Cf. `docs/superpowers/specs/2026-07-28-analytics-muscle-group-series-design.md`.
+ * Cf. `docs/design/specs/2026-07-28-analytics-muscle-group-series-design.md`.
  *
  * No metric picker: one quantity, the working set. Tonnage per muscle is another
  * reading — a set of calf raises and a set of squats do not weigh the same — and

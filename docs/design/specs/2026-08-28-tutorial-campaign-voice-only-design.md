@@ -8,7 +8,7 @@
 design unilatéral du 22 août 2026.
 
 **Plan d'exécution :**
-`docs/superpowers/plans/2026-08-28-tutorial-campaign-voice-only.md`.
+`docs/design/plans/2026-08-28-tutorial-campaign-voice-only.md`.
 
 ## 1. Objectif
 

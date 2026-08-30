@@ -1,8 +1,8 @@
 # Jalon G3 — séries par muscle
 
 > Spec de conception. Suite de
-> `docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md` (G0 + G1)
-> et de `docs/superpowers/specs/2026-07-28-analytics-weekly-sessions-design.md` (G2),
+> `docs/design/specs/2026-07-28-analytics-exercise-progress-design.md` (G0 + G1)
+> et de `docs/design/specs/2026-07-28-analytics-weekly-sessions-design.md` (G2),
 > qui l'annonçaient hors périmètre en §5 et §10.
 > Cadrage arrêté avec l'utilisateur : aucune nouvelle requête, **l'instantané ne
 > porte que le muscle principal**, G3 est une **troisième forme** et non une

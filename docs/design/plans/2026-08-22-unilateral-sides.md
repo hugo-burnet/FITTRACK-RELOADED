@@ -15,7 +15,7 @@ second côté — pas un second décompte.
 
 **Tech Stack :** React 19 + TypeScript strict, Dexie 4, Zustand, Vitest + Testing Library.
 
-**Spec :** `docs/superpowers/specs/2026-08-22-unilateral-sides-design.md`
+**Spec :** `docs/design/specs/2026-08-22-unilateral-sides-design.md`
 
 ## Global Constraints
 

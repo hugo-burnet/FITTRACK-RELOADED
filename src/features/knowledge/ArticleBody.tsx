@@ -5,7 +5,7 @@ import { stripEmphasis } from './markdownText';
 import { resolveSources } from './claimSources';
 
 /** Le bandeau qui dit que la matière n'a pas été relue. Il ne se ferme pas. */
-export function UnreviewedNotice({ article }: { article: WikiArticle }) {
+function UnreviewedNotice({ article }: { article: WikiArticle }) {
   if (article.reviewState !== 'pending_human_review') return null;
   return (
     <section className="border-y border-[var(--border)] px-1 py-3">

@@ -89,7 +89,7 @@ function isShareCancelled(error: unknown): boolean {
   return message.includes('cancel') || message.includes('abort');
 }
 
-export const capacitorFileSave: NativeFileSave = {
+const capacitorFileSave: NativeFileSave = {
   async writeCache(name, text) {
     const written = await Filesystem.writeFile({
       path: name,

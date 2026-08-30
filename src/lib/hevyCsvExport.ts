@@ -64,7 +64,7 @@ const pad = (value: number): string => String(value).padStart(2, '0');
  * c'est l'heure que l'app affiche partout ailleurs, et celle qu'un export Hevy
  * aurait contenue.
  */
-export function formatHevyDate(at: number, offsetMinutes: number): string {
+function formatHevyDate(at: number, offsetMinutes: number): string {
   const local = new Date(shiftToOffset(at, offsetMinutes));
   const month = FRENCH_MONTH_LABELS[local.getUTCMonth()];
   return (

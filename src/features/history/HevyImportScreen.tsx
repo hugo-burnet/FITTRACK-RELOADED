@@ -10,6 +10,7 @@ import {
   type HevyImportPreparation,
   type HevyImportResult,
 } from '@/data/repositories/hevyImport';
+import { syncMilestones } from '@/data/repositories/milestones';
 import type { HevyCsvIssue, HevyImportData } from '@/lib/hevyCsv';
 import { parseHevyCsv } from '@/lib/hevyCsv';
 import { t } from '@/i18n/fr';
@@ -214,6 +215,27 @@ export function HevyImportScreen() {
         resolutionsFromHevyDraft(ready.draft),
         ready.draft.importedAt,
       );
+      /*
+       * Le rattrapage des paliers, silencieux, et ici plutôt que dans l'import.
+       *
+       * `importHevyWorkouts` réconcilie déjà les records dans sa transaction ;
+       * les paliers ne peuvent pas l'y rejoindre — leur moteur relit
+       * l'historique projeté, donc d'autres tables que celles réservées par
+       * cette transaction. Ils se rattrapent juste après, une fois les séances
+       * écrites.
+       *
+       * `celebrate: false` est la seule valeur correcte ici : dix ans de Hevy
+       * franchissent quarante paliers d'un coup, et sans ce rattrapage ils
+       * seraient tombés **tous ensemble** à la fin de la séance suivante, en une
+       * carte d'accueil de quarante lignes — exactement le spam contre lequel
+       * tout le module est écrit. Ils entrent donc acquis et consultables, et
+       * les anniversaires les retrouveront un par un.
+       *
+       * Sans barrière, comme à la fin d'une séance : un import réussi ne se
+       * transforme pas en échec parce qu'une projection n'a pas pu se
+       * recalculer. Le prochain démarrage la reprendra.
+       */
+      await syncMilestones({ celebrate: false }).catch(() => undefined);
       setState({ step: 'done', result });
     } catch {
       setState({ step: 'review', ...ready, failed: true });

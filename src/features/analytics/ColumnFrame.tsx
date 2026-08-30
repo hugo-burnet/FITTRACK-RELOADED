@@ -24,7 +24,7 @@ import type { BarSlot, PlotBox } from '@/lib/analytics/plot';
  * pixels of the axis's own colour say "this bucket exists, and it is zero"
  * without ever reading as a small quantity.
  */
-export const ZERO_STUB = 4;
+const ZERO_STUB = 4;
 
 /** How thick the selection mark is, and how far it clears the baseline. */
 const CURSOR = 3;

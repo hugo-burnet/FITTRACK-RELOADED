@@ -8,8 +8,8 @@ export interface HighlightedExercise {
 }
 
 /** Full intensity, and the dimmer step a secondary muscle is drawn at. */
-export const PRIMARY_INTENSITY = 1;
-export const SECONDARY_INTENSITY = 0.4;
+const PRIMARY_INTENSITY = 1;
+const SECONDARY_INTENSITY = 0.4;
 
 /**
  * An exercise's muscles, as intensities the body map can draw.

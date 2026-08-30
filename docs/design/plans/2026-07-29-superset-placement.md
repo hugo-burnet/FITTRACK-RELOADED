@@ -265,7 +265,7 @@ Expected: uniquement les six fichiers applicatifs, `PROGRESS.md` et ce plan.
 Run:
 
 ```powershell
-git add docs/superpowers/plans/2026-07-29-superset-placement.md src/lib/routineOrder.ts src/lib/routineOrder.test.ts src/features/routines/RoutineEditorScreen.tsx src/features/routines/RoutineExerciseCard.tsx src/features/workout/WorkoutScreen.tsx src/features/workout/WorkoutExerciseCard.tsx PROGRESS.md
+git add docs/design/plans/2026-07-29-superset-placement.md src/lib/routineOrder.ts src/lib/routineOrder.test.ts src/features/routines/RoutineEditorScreen.tsx src/features/routines/RoutineExerciseCard.tsx src/features/workout/WorkoutScreen.tsx src/features/workout/WorkoutExerciseCard.tsx PROGRESS.md
 git commit -m "refactor: centralise le placement des supersets"
 ```
 

@@ -29,8 +29,11 @@ AGENTS.md
 # propres licences — que ce dépôt PUBLIC redistribuerait s'il les versionnait.
 .agents/
 
-# Artefacts locaux de conception et d'analyse Codex
+# Artefacts locaux d'outils d'agent : rapports de tâche, critiques de conception.
+# Ce qui mérite de survivre à une session est recopié dans `docs/design/`, écrit
+# pour être lu par quelqu'un qui n'était pas là ; le reste est un brouillon.
 .superpowers/
+.impeccable/
 .tmp/
 
 # Sources de la carte musculaire : le projet Blender Z-Anatomy et tout ce qui a

@@ -120,7 +120,8 @@ que de croire ce plan.
 ## La forme retenue — le filet, seul
 
 > Dessinée et **mesurée** le 2026-07-22, avant d'écrire une ligne de composant. Cinq jets, quatre
-> écartés au doigt par l'utilisateur. Critique complète archivée dans `.impeccable/critique/`.
+> écartés au doigt par l'utilisateur. La critique complète a servi à trancher puis n'a pas été
+> versionnée : ce qu'elle a changé est ci-dessous, le reste était un brouillon de séance.
 
 ### La forme, en une phrase
 

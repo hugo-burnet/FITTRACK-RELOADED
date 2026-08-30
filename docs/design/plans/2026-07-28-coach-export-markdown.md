@@ -4,7 +4,7 @@
 
 **Goal:** Sortir une séance de l'app en Markdown, en trois gestes, à partir d'une projection pure et versionnée — et prouver au passage que l'instantané du jalon 08A est juste.
 
-**Architecture:** Cf. `docs/superpowers/specs/2026-07-28-coach-export-markdown-design.md`. Chaîne `exportQueries` → `projectCoachExport` → `serializeMarkdown` → `share`. Seul le premier maillon touche Dexie ; les deux suivants sont purs et testés sans base.
+**Architecture:** Cf. `docs/design/specs/2026-07-28-coach-export-markdown-design.md`. Chaîne `exportQueries` → `projectCoachExport` → `serializeMarkdown` → `share`. Seul le premier maillon touche Dexie ; les deux suivants sont purs et testés sans base.
 
 **Tech Stack:** TypeScript strict, Dexie 4, Vitest, fake-indexeddb, Testing Library.
 

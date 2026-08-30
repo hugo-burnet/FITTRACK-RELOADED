@@ -276,7 +276,7 @@ Expected: uniquement `records.ts`, `records.test.ts`, `WorkoutScreen.tsx`,
 Run:
 
 ```powershell
-git add docs/superpowers/plans/2026-07-29-workout-record-kinds.md src/lib/records.ts src/lib/records.test.ts src/features/workout/WorkoutScreen.tsx PROGRESS.md
+git add docs/design/plans/2026-07-29-workout-record-kinds.md src/lib/records.ts src/lib/records.test.ts src/features/workout/WorkoutScreen.tsx PROGRESS.md
 git commit -m "refactor: centralise les records de séance"
 ```
 

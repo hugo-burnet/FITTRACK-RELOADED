@@ -15,7 +15,7 @@ import { useHistoricalPeriod } from './useHistoricalPeriod';
 
 /**
  * RF-34, en graphique — le rythme d'entraînement, semaine par semaine.
- * Cf. `docs/superpowers/specs/2026-07-28-analytics-weekly-sessions-design.md`.
+ * Cf. `docs/design/specs/2026-07-28-analytics-weekly-sessions-design.md`.
  *
  * No metric picker, and that is a decision rather than an omission: tonnage and
  * duration per week are milestone G4. A count of small integers and a sum of

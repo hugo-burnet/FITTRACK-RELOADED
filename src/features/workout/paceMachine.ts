@@ -56,7 +56,7 @@ export type PaceDecision =
  * being the one to pace: validated, deleted, or simply overtaken. A plan left
  * behind is not inert — it blocks every later arming.
  */
-export function pacedSetIdOf(preparation: PacePreparation): string | null {
+function pacedSetIdOf(preparation: PacePreparation): string | null {
   if (preparation.kind === 'ready') return preparation.target.setId;
   if (preparation.kind === 'missing-reps') return preparation.setId;
   return null;

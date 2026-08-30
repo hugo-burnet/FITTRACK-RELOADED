@@ -91,8 +91,7 @@ soit vérifié, soit explicitement marqué comme non relu.
 ## Tâches
 
 - [x] **T1 — Plan et suivi multi-session.** Ce fichier, `kb-phase-3-restitution.md` marqué
-      comme dépassé sur ses étapes 4 à 6, `kb-prompt-de-reprise.md` remis à jour,
-      `PROGRESS.md` complété.
+      comme dépassé sur ses étapes 4 à 6, `PROGRESS.md` complété.
 - [x] **T2 — Dérivation de la structure.** `src/features/knowledge/wikiIndex.ts`, 10 tests.
       Produit **2 documents, 64 sections, 209 passages**, dans l'ordre du document source.
       `findWikiSection(id)` pour la route de section.

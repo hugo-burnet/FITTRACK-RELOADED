@@ -24,7 +24,7 @@ export const ANNOUNCER_STORAGE_KEY = 'fittrack:announcer';
  * switchable all the same — headphones at 6 a.m. are not a gym at 7 p.m., and
  * a reverb tail under a podcast is a reverb tail too many.
  */
-export const ANNOUNCER_ECHO_STORAGE_KEY = 'fittrack:announcerEcho';
+const ANNOUNCER_ECHO_STORAGE_KEY = 'fittrack:announcerEcho';
 
 const MODES: readonly AnnouncerMode[] = ['silence', 'sounds', 'voice', 'voice-only'];
 

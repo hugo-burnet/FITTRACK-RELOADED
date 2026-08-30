@@ -26,7 +26,7 @@
 ### Task 1: Freeze and measure the clean starting point
 
 **Files:**
-- Read: `docs/superpowers/specs/2026-07-28-refactor-phase-0-baseline-design.md`
+- Read: `docs/design/specs/2026-07-28-refactor-phase-0-baseline-design.md`
 - Read: `docs/plans/01-ARCHITECTURE.md`
 - Read: `package.json`
 - Create Git tag only: `refactor-phase-0-start-2026-07-28`
@@ -596,7 +596,7 @@ Expected: one atomic `test:` commit; `.tmp/history-benchmark.json` remains ignor
 
 **Files:**
 - Read: `docs/plans/01-ARCHITECTURE.md`
-- Read: `docs/superpowers/specs/2026-07-28-refactor-phase-0-baseline-design.md`
+- Read: `docs/design/specs/2026-07-28-refactor-phase-0-baseline-design.md`
 - Read: `PROGRESS.md`
 - Read: recent files under `src/data/repositories/`, `src/features/analytics/`, `src/features/history/`, `src/features/workout/`, and `src/features/routines/`
 - Create outside repository: `%TEMP%\architecture-review-20260728-phase0.html`

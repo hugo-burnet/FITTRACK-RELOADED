@@ -15,7 +15,7 @@ font face. `useWorkoutPace` devient l'arbitre unique : la cible de cadence devie
 **Tech Stack :** React 19 + TypeScript strict, Zustand (état éphémère), Vitest + Testing
 Library, Web Audio via `src/audio/*`.
 
-**Spec :** `docs/superpowers/specs/2026-08-22-hold-chrono-design.md`
+**Spec :** `docs/design/specs/2026-08-22-hold-chrono-design.md`
 
 ## Global Constraints
 

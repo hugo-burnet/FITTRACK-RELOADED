@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Spec : `docs/superpowers/specs/2026-08-13-program-intention-coach-design.md`. Ne pas rouvrir l’architecture.
+- Spec : `docs/design/specs/2026-08-13-program-intention-coach-design.md`. Ne pas rouvrir l’architecture.
 - `loadIndex` : entier, non dimensionnel, non multiplicatif. Interdit dans `nextLoad`, 1RM, recette Décharge.
 - Code / commentaires en anglais. UI en français, uniquement `src/i18n/fr.ts`.
 - Accès données uniquement via `src/data/repositories/*`.

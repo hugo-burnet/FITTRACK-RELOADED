@@ -16,10 +16,6 @@ import type { ArticleScope, WikiArticle, WikiArticleBundle, WikiFamily } from '.
 
 const bundle = bundleDocument as unknown as WikiArticleBundle;
 
-export const wikiArticles: readonly WikiArticle[] = bundle.articles;
-
-export const wikiArticleCoverage = bundle.coverage;
-
 const FAMILY_LABELS = {
   muscles: 'knowledge.article.familyMuscles',
   movements: 'knowledge.article.familyMovements',

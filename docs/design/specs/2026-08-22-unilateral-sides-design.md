@@ -3,7 +3,7 @@
 > **Date :** 22 août 2026 · **Branche :** `codex/tutorial-v2-p1-tail`
 > **Statut :** contrat fixé par l'utilisateur, complété par deux décisions prises
 > après la livraison du chrono.
-> **Socle :** `docs/superpowers/specs/2026-08-22-hold-chrono-design.md` — la
+> **Socle :** `docs/design/specs/2026-08-22-hold-chrono-design.md` — la
 > cadence d'une ligne est déjà soit des répétitions, soit un maintien, et le
 > cycle deux côtés doit fonctionner sur les deux.
 

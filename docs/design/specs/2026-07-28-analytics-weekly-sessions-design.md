@@ -1,7 +1,7 @@
 # Jalon G2 — séances par semaine
 
 > Spec de conception. Suite de
-> `docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md` (G0 + G1),
+> `docs/design/specs/2026-07-28-analytics-exercise-progress-design.md` (G0 + G1),
 > qui l'annonçait hors périmètre en §5.
 > Cadrage arrêté avec l'utilisateur : aucune nouvelle requête, le moteur de
 > régularité du Lot 07 est réutilisé, et **c'est ici qu'on décide ce que G1 et G2

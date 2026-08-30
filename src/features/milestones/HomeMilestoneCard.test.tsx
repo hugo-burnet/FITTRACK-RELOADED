@@ -162,4 +162,34 @@ describe('la carte des paliers sur l’accueil', () => {
     await settle();
     expect(container).toBeEmptyDOMElement();
   });
+
+  /**
+   * Le cas qui a motivé la correction.
+   *
+   * Retirer un seuil du catalogue est une opération prévue — le commentaire de
+   * `MilestoneDefinition.id` la décrit. La ligne qu'il laisse en base reste non
+   * acquittée, parce que plus aucune carte ne peut l'afficher et donc plus
+   * aucun doigt ne peut la fermer. Elle comptait pourtant comme « un palier à
+   * célébrer », et coupait l'anniversaire d'un autre palier avant même qu'il
+   * soit cherché. Un seuil retiré n'a aucune raison de faire taire dix ans de
+   * pratique.
+   */
+  it('laisse passer un anniversaire malgré un palier retiré resté non acquitté', async () => {
+    await seedMilestone({
+      definitionId: 'palier-supprime',
+      value: 1,
+      achievedAt: Date.now(),
+      acknowledgedAt: 0,
+    });
+    await seedMilestone({
+      definitionId: 'pullup-1',
+      value: 1,
+      achievedAt: yearsAgo(1),
+      acknowledgedAt: yearsAgo(1),
+    });
+
+    render(<HomeMilestoneCard />);
+
+    expect(await screen.findByText('Il y a un an')).toBeInTheDocument();
+  });
 });

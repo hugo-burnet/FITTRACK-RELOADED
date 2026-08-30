@@ -21,7 +21,7 @@ import { ProgressCard } from './ProgressCard';
 
 /**
  * RF-41 — how one exercise has moved, in the metric its own measurement type
- * allows. Cf. `docs/superpowers/specs/2026-07-28-analytics-exercise-progress-design.md`.
+ * allows. Cf. `docs/design/specs/2026-07-28-analytics-exercise-progress-design.md`.
  *
  * Every rule about *what counts* lives in `lib/analytics/` and every rule about
  * *what is read* lives in `listHistoricalWorkouts`; this screen orchestrates and

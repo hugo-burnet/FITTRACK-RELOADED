@@ -65,37 +65,3 @@ export const MUSCLE_VIEWS: Record<MuscleId, MuscleView[]> = {
   calves: ['back'],
   tibialis_anterior: ['front'],
 };
-
-export const MUSCLE_LABELS: Record<MuscleId, string> = {
-  erector_spinae: 'Erecteurs du rachis',
-  rotator_cuff: 'Coiffe des rotateurs',
-  rhomboids: 'Rhomboides',
-  neck: 'Cou',
-  hip_flexors: 'Flechisseurs de hanche',
-  serratus_anterior: 'Grand dentele',
-  obliques: 'Obliques',
-  rectus_abdominis: 'Grand droit de l\'abdomen',
-  latissimus_dorsi: 'Grand dorsal',
-  pectoralis_major: 'Grand pectoral',
-  trapezius_lower: 'Trapeze moyen et inferieur',
-  trapezius_upper: 'Trapeze superieur',
-  deltoid_anterior: 'Deltoide anterieur',
-  deltoid_lateral: 'Deltoide lateral',
-  deltoid_posterior: 'Deltoide posterieur',
-  biceps_brachii: 'Biceps brachial',
-  triceps_brachii: 'Triceps brachial',
-  forearm_flexors: 'Flechisseurs de l\'avant-bras',
-  forearm_extensors: 'Extenseurs de l\'avant-bras',
-  gluteus_medius: 'Moyen fessier',
-  gluteus_maximus: 'Grand fessier',
-  adductors: 'Adducteurs',
-  quadriceps: 'Quadriceps',
-  hamstrings: 'Ischio-jambiers',
-  calves: 'Mollets',
-  tibialis_anterior: 'Jambier anterieur',
-};
-
-/** Ordre de dessin dans le SVG, du plus profond au plus superficiel.
- *  Utile pour remonter un path en tete de son groupe sans casser le
- *  reste de l'empilement. */
-export const DRAW_ORDER: readonly MuscleId[] = MUSCLE_IDS;
