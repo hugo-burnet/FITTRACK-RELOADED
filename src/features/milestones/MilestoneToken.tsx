@@ -8,10 +8,9 @@ import { artForMilestone, milestoneArtUrl } from '@/lib/milestones/art';
  * est `aria-hidden` pour la même raison que l'ancien disque.
  *
  * **Carré arrondi, pas un disque.** Un `rounded-full` coupe les visages
- * (Pepe, Wojak, trollface) pile là où on les reconnaît.
- *
- * L'accent est un anneau, pas un fond : un orange plein sur l'accueil
- * transformerait le mème en pastille, exactement ce qu'on quitte.
+ * (Pepe, Wojak, trollface) pile là où on les reconnaît. Pas d'anneau
+ * neutre : le trait autour du jeton mangeait l'image. L'accent de
+ * l'accueil reste un anneau, pas un fond orange.
  */
 export function MilestoneToken({
   definitionId,
@@ -22,18 +21,15 @@ export function MilestoneToken({
   tone?: 'neutral' | 'accent';
   size?: 'md' | 'lg';
 }) {
-  const box = size === 'lg' ? 'h-14 w-14' : 'h-12 w-12';
-  const ring =
-    tone === 'accent'
-      ? 'ring-2 ring-[var(--color-accent)]'
-      : 'ring-1 ring-[var(--border)]';
+  const box = size === 'lg' ? 'h-20 w-20' : 'h-16 w-16';
+  const ring = tone === 'accent' ? 'ring-2 ring-[var(--color-accent)]' : '';
   const key = artForMilestone(definitionId);
 
   if (key === undefined) {
     return (
       <span
         aria-hidden="true"
-        className={`shrink-0 rounded-xl bg-[var(--surface-2)] ${box} ${ring}`}
+        className={`shrink-0 rounded-lg bg-[var(--surface-2)] ${box} ${ring}`}
       />
     );
   }
@@ -43,7 +39,7 @@ export function MilestoneToken({
       src={milestoneArtUrl(key)}
       alt=""
       aria-hidden="true"
-      className={`shrink-0 rounded-xl object-cover ${box} ${ring}`}
+      className={`shrink-0 rounded-lg object-cover ${box} ${ring}`}
     />
   );
 }
