@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-label="FitTrack — Progressive Overload">
+  <rect width="1280" height="640" fill="#12110f"/>
+
+  <g transform="translate(640 214) scale(15) translate(-12 -12)" fill="none" stroke="#ff8a3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 12h8"/>
+    <path d="M6.5 8.5v7"/>
+    <path d="M17.5 8.5v7"/>
+    <path d="M3.5 10.5v3"/>
+    <path d="M20.5 10.5v3"/>
+  </g>
+
+  <text
+    x="640"
+    y="390"
+    text-anchor="middle"
+    fill="#f5f3f0"
+    font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif"
+    font-size="72"
+    font-weight="600"
+    letter-spacing="-2.4"
+  >FitTrack</text>
+
+  <text
+    x="640"
+    y="448"
+    text-anchor="middle"
+    fill="#ff8a3d"
+    font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif"
+    font-size="18"
+    font-weight="600"
+    letter-spacing="7.2"
+  >PROGRESSIVE OVERLOAD</text>
+
+  <text
+    x="640"
+    y="492"
+    text-anchor="middle"
+    fill="#b9b1a8"
+    font-family="system-ui, Segoe UI, Helvetica, Arial, sans-serif"
+    font-size="22"
+    font-weight="400"
+  >Production was the gym</text>
+</svg>

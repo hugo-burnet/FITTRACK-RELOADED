@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/github-banner.png" alt="FitTrack — Progressive Overload" width="1280">
+</p>
+
 # FitTrack
 
 [![Version](https://img.shields.io/github/v/tag/hugo-burnet/FITTRACK-RELOADED?label=tag&color=2f6f4e)](https://github.com/hugo-burnet/FITTRACK-RELOADED/releases)
