@@ -1,0 +1,1905 @@
+# Lots 0 à 7 — journaux
+
+> Archive extraite de PROGRESS.md le 2026-08-30. Le journal vivant est PROGRESS.md.
+
+## Lot 07 — journal de session (instantané historique ; le lot est terminé)
+
+### Jalon 07C — import CSV Hevy hors ligne
+
+**Livré dans cette session :**
+
+- parseur pur RFC 4180 des 14 colonnes Hevy : BOM, guillemets, virgules, retours à la ligne,
+  dates locales françaises, nombres décimaux, types de séries et cinq formes de mesure ;
+- regroupement stable des séances, exercices, supersets et séries, avec provenance
+  `importSource: 'hevy_csv'` et clé d’import déterministe ;
+- suggestions déterministes, choix explicite parmi tous les exercices de mesure compatible,
+  création personnalisée et mappings mémorisés seulement vers des exercices encore vivants ;
+- préparation en lecture seule puis transaction Dexie unique couvrant exercices, séances, blocs,
+  séries et mappings ; rollback testé et aucune écriture avant l’action finale ;
+- assistant mobile `/history/import` avec erreurs françaises par ligne, compteurs, revue,
+  résultat séparant importées/ignorées et raccourci depuis l’Historique ;
+- fixture strictement anonymisée de quatre séances couvrant notes multilignes, supersets,
+  `normal`, `warmup`, `dropset`, `failure` et les cinq formes de mesure.
+
+**TDD, revue et portes :**
+
+- tests rouges puis verts pour le parseur, les suggestions, les mappings, le repository atomique,
+  le brouillon d’interface, la fixture complète et le refus d’un en-tête connu dupliqué ;
+- revue finale : le nom d’un exercice choisi hors proposition est maintenant restitué dans la
+  liste ; une réimportation faite uniquement de doublons peut aller jusqu’au récapitulatif final ;
+- suite complète : **31 fichiers, 472 tests** ;
+- `lint`, `typecheck`, `test:run` et `build` passent. Le seul avertissement reste le chunk Vite
+  principal supérieur à 500 kB (**630,58 kB**, gzip **181,71 kB**).
+
+**Vérification du fichier réel :**
+
+- export détecté : **4 séances, 24 exercices, 90 séries** ;
+- premier import : **4 importées, 0 ignorée** ; le Journal affiche les quatre séances et leurs
+  nombres d’exercices/séries ;
+- seconde passe : mappings repris, **0 importée, 4 ignorées**, aucune erreur console ;
+- rendu 375 × 812 px sans débordement horizontal ni cible visible sous 48 px.
+
+**Prochaine reprise exacte :**
+
+1. effectuer le checkpoint téléphone complet 07B ;
+2. effectuer le checkpoint téléphone 07C ci-dessous ;
+3. une fois ces validations manuelles obtenues, clôturer officiellement le Lot 07 et reprendre
+   le prochain lot de `docs/plans/00-ROADMAP.md`.
+
+**Checkpoint manuel demandé :** sur Android, ouvrir Historique → Importer depuis Hevy, choisir
+`workout_data.csv`, contrôler plusieurs associations, terminer l’import puis recharger en mode
+avion. Ouvrir une séance importée, corriger une charge, enregistrer et vérifier le total. Relancer
+enfin le même import et confirmer que les quatre séances sont ignorées sans doublon.
+
+### Jalons 07A et 07B — consultation, régularité et correction
+
+**Livré dans cette session :**
+
+- spec validée : `docs/superpowers/specs/2026-07-25-lot-07-historique-design.md` ;
+- plan d’exécution : `docs/superpowers/plans/2026-07-25-lot-07a-consultation-regularite.md` ;
+- moteur pur `src/lib/history.ts` : semaine locale lundi–dimanche, traversée DST, résolution de
+  l’objectif applicable et streak qui ne casse pas sur une semaine courante incomplète ;
+- réglage `weeklyTrainingGoalHistory` dans `settings` : premier objectif rétroactif, changements
+  suivants effectifs au lundi, remplacement dans la même semaine, entier positif sans maximum ;
+- repository `src/data/repositories/history.ts` : journal récent d’abord, pagination 20 + 1,
+  filtre exercice prêt, lecture d’un jour local et options d’exercices réellement pratiqués ;
+- écran Journal : carte Régularité, objectif initialisable et modifiable au tap, rail
+  proportionnel, état vide et séances archivées réelles ;
+- grille mensuelle pure en TDD, vue Calendrier conforme au langage visuel FitTrack et filtre par
+  exercice partagé entre Journal et Calendrier ;
+- navigation depuis les résumés vers le détail archivé, totaux et séries en lecture seule,
+  confirmation de suppression et notice de retour au Journal ;
+- éditeur rétroactif à brouillon local : métadonnées, exercices et séries, ajout/suppression/réordre
+  sans quota, sortie protégée et sauvegarde transactionnelle unique.
+
+**TDD et portes :**
+
+- `src/lib/history.test.ts` : 15 tests ;
+- `src/data/repositories/settings.test.ts` : 10 nouveaux tests, 17 au total ;
+- `src/data/repositories/history.test.ts` : 32 tests, dont les mutations transactionnelles 07B ;
+- `src/features/history/historyDraft.test.ts` : 8 tests purs de dates locales, copie indépendante et
+  brouillons temporaires ;
+- suite complète : **27 fichiers, 401 tests** ;
+- `lint`, `typecheck`, `test:run` et `build` passent. Le warning Vite historique sur le chunk
+  principal supérieur à 500 kB reste inchangé.
+
+**Prochaine reprise exacte :**
+
+1. effectuer le checkpoint téléphone complet de 07B : détail, modification persistée et
+   suppression d’une séance de test ;
+2. écrire/exécuter le plan 07C : import `workout_data.csv` Hevy, aperçu, mapping, déduplication et
+   transaction atomique. `measurement_data.csv` reste réservé au futur lot Mesures.
+
+**Checkpoint manuel demandé :** sur téléphone, ouvrir une séance terminée depuis le Journal,
+modifier une charge et le type d’une série, enregistrer puis recharger pour vérifier les totaux.
+Ensuite supprimer uniquement une séance de test et confirmer sa disparition du Journal, du
+Calendrier et des records.
+
+## Dernier lot terminé
+
+**Lot 6, tranche 1 — Minuteur de repos.** Code livré, vérifié en pilotant l'écran, puis **validé sur
+une vraie séance en salle (2026-07-24)**. La tranche est close.
+
+**Lot 6, tranche 2 — Calculateur de plaques (RF-28).** Code et configuration des dénominations
+livrés (cf. sections dédiées ci-dessous). La vérification navigateur en 375 × 812 px est faite ;
+**le checkpoint final sur téléphone est validé par l’utilisateur (2026-07-25)**.
+
+**Lot 6, tranche 3 — Le reste, en 5 tâches, une par une, arrêt entre chaque.** La tranche est
+**terminée et validée en usage réel (2026-07-24)**. L'ordre était celui de la valeur en salle,
+arbitré au début de la session :
+
+1. ✅ **Types de séries en séance (RF-20)** — `ed70013`, cf. la section dédiée ci-dessous.
+2. ✅ **Record battu en direct (RF-23)** — `825c66b`, cf. la section dédiée ci-dessous.
+3. ✅ **RPE, masquable (RF-30).** Saisie repliable dans la feuille de série, aucune colonne ni badge
+   dans la grille. `updateSetValues` existant écrit ou efface la valeur ; aucun changement de
+   repository, de schéma ou de réglage global. `629abc7`, cf. la section dédiée ci-dessous.
+4. ✅ **Calculateur d'échauffement (RF-29).** Rampe en pourcentages configurable dans le menu `⋯`
+   de l’exercice, moteur pur en TDD et insertion transactionnelle immédiate avant les séries de
+   travail. Spécification `6db57de`, implémentation `b90ecae`, cf. la section dédiée ci-dessous.
+5. ✅ **Poids de barre (RF-31).** Réglable **dans la feuille des plaques**, là où le besoin naît
+   (« aujourd'hui je suis sur une barre de 15 »). Choix éphémère par exercice tant que l’écran de
+   séance reste monté, retenu après fermeture/réouverture de la feuille. Le comptage des paires,
+   le poids de barre global et les autres réglages matériels restent au **Lot 8** ; seule la
+   sélection durable des dénominations a finalement été sortie pour achever RF-28. `1e03a31` ;
+   checkpoint validé sur téléphone et en usage réel.
+
+**Clôture officielle du Lot 6 : terminée le 2026-07-25.** Toute l’implémentation, les vérifications
+automatisées/navigateur et les checkpoints téléphone sont validés. Le Lot 5bis, le Lot 7 et le
+Lot 8 ne sont pas commencés.
+
+### Plaques disponibles configurables (RF-28) — 2026-07-24
+
+**Une source de vérité globale, durable et sans migration.** Le repository
+`src/data/repositories/settings.ts` lit et écrit la clé `availablePlateWeightsKg` dans la table
+`settings` existante. Il normalise les valeurs sur les dix dénominations canoniques
+25 / 20 / 15 / 10 / 5 / 2,5 / 1,25 / 1 / 0,5 / 0,25 kg, supprime doublons et valeurs invalides,
+et conserve l’ordre canonique. Une absence de réglage ou une valeur historique inutilisable
+retombe sur toutes les plaques ; un tableau vide explicite reste valide. Chaque sauvegarde tient
+dans un seul `db.settings.put`. Aucun composant n’importe `db` et le schéma Dexie ne change pas.
+
+**Le flux reste local-first et réactif.** `WorkoutScreen` observe le repository avec
+`useLiveQuery`, fournit toutes les plaques pendant la lecture initiale, puis transmet la sélection
+à `PlateLoadSheet`. La feuille construit un `PlateInventory` et le passe à chaque appel de
+`computePlateLoad` : tous les schémas se recalculent immédiatement, sans modifier le moteur pur.
+La sauvegarde est attendue ; en cas d’échec, le choix courant reste visible et un message localisé
+invite à réessayer.
+
+**Interface dans « Plaques à charger ».** Une section native repliable « Plaques disponibles »
+est placée après le poids de barre et avant les schémas. Elle affiche le compte sélectionné, puis
+une grille 5 × 2 de boutons `aria-pressed` de 48 px minimum. Les états sélectionné, désélectionné
+et focus emploient la palette neutre : aucun accent visuel réservé aux records. Toutes les
+dénominations peuvent être retirées ; l’état vide affiche explicitement qu’aucune plaque n’est
+sélectionnée et les schémas rendent le poids manquant. Le poids de barre RF-31 reste éphémère par
+exercice.
+
+**TDD et régression :**
+
+- repository : import absent au rouge, puis **7 tests verts** sur valeur par défaut, lecture,
+  normalisation, persistance, inventaire vide, repli sûr et écriture atomique ;
+- feuille : cinq comportements ajoutés au rouge, puis **8 tests verts** au total sur l’affichage,
+  le recalcul, la persistance déléguée, l’état vide et le message d’échec ;
+- un test rouge supplémentaire a reproduit la double ponctuation de l’annonce lecteur d’écran
+  « Barre nue… », puis le gabarit localisé a été corrigé ;
+- suite complète : **24 fichiers, 332 tests** — soit 12 tests de plus que le checkpoint RF-31.
+
+**Pilotage réel, 375 × 812 px, port 5173, base `/FITTRACK-RELOADED/` :**
+
+- `innerWidth === document.body.scrollWidth === 375` ; aucun débordement horizontal ;
+- les dix boutons mesurent **57,6 × 48 px** et restent actionnables à une main ;
+- retirer 25 kg passe le compteur à 9/10 et transforme 100 kg sur barre de 20 kg en
+  **2 × 20 kg par côté** ; les schémas 40/60/80 kg se recalculent aussi ;
+- recharger l’app conserve 9/10 et **2 × 20 kg** ;
+- remettre 25 kg restaure 10/10 et **25 + 15 kg par côté** ;
+- retirer les dix plaques donne 0/10, le message d’état vide, une barre nue et 80 kg manquants
+  pour une cible de 100 kg ;
+- les dix plaques ont été restaurées à la fin ; aucune erreur ni aucun avertissement navigateur.
+
+`typecheck`, `lint`, `test:run` et `build` passent. Le build conserve seulement l’avertissement Vite
+déjà connu sur le chunk principal supérieur à 500 kB.
+
+**✅ Checkpoint téléphone RF-28 : validé par l’utilisateur le 2026-07-25.** Sans 25 kg, 100 kg sur
+une barre de 20 kg donne **2 × 20 kg par côté** et le choix survit au rechargement. Après
+resélection de 25 kg, le schéma retrouve **25 + 15 kg par côté**.
+
+### Poids de barre réglable (RF-31) — 2026-07-24
+
+**La durée de vie est volontairement courte et explicite.** `WorkoutScreen` garde le poids choisi
+dans un état React indexé par `WorkoutExercise.id`. Fermer puis rouvrir « Plaques à charger » sur le
+même exercice conserve donc le choix du jour. Changer d’exercice n’emporte pas la valeur avec lui ;
+quitter/recharger l’écran la remet au défaut matériel. Rien n’est écrit dans IndexedDB,
+`localStorage`, Zustand ou un repository. Ce n’est ni un réglage global anticipé, ni un début
+d’inventaire de salle.
+
+**Le contrat matériel reste étroit :**
+
+- barre olympique et Smith : défaut 20 kg, poids réglable sans quota, par pas de 2,5 kg ou saisie
+  décimale directe ;
+- machine à plaques : base fixe 0 kg, texte honnête « Charge à vide 0 kg », aucun contrôle nommé
+  « Poids de la barre » ;
+- machine à broche, haltère fixe, charge ajoutée/assistée : toujours exclus par les deux portes
+  existantes de `platesConfigFor`.
+
+`plateConfig.ts` expose maintenant `barWeightAdjustable` avec le poids et le nombre de côtés.
+`PlateLoadSheet` réutilise le `NumberInput` existant au-dessus des schémas : trois contrôles de
+48 px, surfaces et focus neutres, aucun accent. Le contrôle remplace le rappel passif de barre au
+lieu d’ajouter une nouvelle carte ou une seconde feuille. Toute modification repasse immédiatement
+les charges distinctes dans `computePlateLoad` ; le moteur reste pur, sans accès réseau et
+entièrement disponible hors-ligne.
+
+**TDD :** deux cycles rouges puis verts, plus la régression trouvée en revue :
+
+- 4 cas sur `platesConfigFor` : barre, Smith, machine à plaques et mesure non chargeable ;
+- 3 cas sur `PlateLoadSheet` : recalcul 20 → 15 kg, machine sans faux réglage et effacement ramené
+  visiblement à 0 kg plutôt qu’interprété en silence ;
+- suite complète : **23 fichiers, 320 tests**.
+
+**Pilotage réel, 375 × 812 px, port 5173, base `/FITTRACK-RELOADED/` :**
+
+- `innerWidth === document.body.scrollWidth === 375` ; feuille sans débordement horizontal
+  (`375,2 px` de boîte composée sur un viewport de 375 px, sans hausse du `scrollWidth`) ;
+- boutons − / + / fermer : **48 × 48 px** ; champ : **216 × 48 px** ;
+- `getComputedStyle` du focus : halo et `outlineColor` `rgb(161, 161, 170)` (`--text-2`), jamais
+  l’accent réservé aux records et séries validées ;
+- sur les charges 40/60/80/100 kg, passer la barre de 20 à 15 kg recalcule immédiatement les quatre
+  lectures ; 100 kg devient **25 · 15 · 2,5 par côté** ;
+- après fermeture complète puis réouverture, le champ lit encore **15** et le schéma de 100 kg
+  porte encore **25 · 15 · 2,5** ;
+- aucune erreur ni aucun avertissement navigateur.
+
+`typecheck`, `lint`, `test:run` et `build` passent. Le build conserve seulement l’avertissement Vite
+déjà connu sur le chunk principal supérieur à 500 kB.
+
+**✅ Checkpoint salle RF-31 : validé par l'utilisateur sur téléphone et en usage réel
+(2026-07-24).** Le poids de barre réglable recalcule correctement les plaques, reste propre à
+l'exercice, survit à la fermeture/réouverture de la feuille et revient au défaut après navigation
+ou rechargement. Barre et Smith sont réglables ; la machine à plaques reste fixée à 0 kg.
+
+### Calculateur d’échauffement (RF-29) — 2026-07-24
+
+**Le calcul reste explicite et modifiable.** L’action « Calculer l’échauffement » vit dans le menu
+`⋯` de chaque exercice dont la mesure porte une vraie charge (`weightRole: 'load'`) ; elle ne
+surcharge ni le header ni la grille. La feuille propose 40 % × 10, 60 % × 5 et 80 % × 3, avec
+pourcentage et répétitions éditables, suppression et ajout d’étapes sans quota. La charge de travail
+vient de la première série non-échauffement (`weight`, puis `targetWeight`) et reste modifiable.
+Les exercices au poids du corps, assistés, ou mesurés seulement en temps/distance n’exposent pas
+l’action.
+
+**Règles du moteur pur `lib/warmup.ts` :**
+
+- calcul en centièmes de kilogramme entiers, puis arrondi **vers le bas** au pas de 2,5 kg ;
+- charge minimale de 20 kg pour une barre ou une Smith, zéro pour les autres charges ;
+- résultat conservé seulement si `0 < charge d’approche < charge de travail` ;
+- deux étapes aboutissant au même poids restent deux séries distinctes ;
+- validation stricte des nombres finis, des pourcentages dans `]0, 100[` et des répétitions
+  entières positives ;
+- aucune limite artificielle sur le nombre d’étapes.
+
+**La persistance est une seule décision transactionnelle.** `insertWarmupSets` lit le parent et les
+séries vivantes, crée toutes les nouvelles lignes avec `setType: 'warmup'`, `targetWeight` et
+`targetReps` seulement, puis décale les séries existantes dans la même transaction Dexie. Les tests
+couvrent l’ordre, les soft-deletes, deux insertions concurrentes, le parent absent et le rollback
+après échec de renumérotation. Les séries générées restent non validées (`isCompleted: 0`,
+`performedAt: 0`) : les règles déjà livrées les excluent du volume, des records et du repos.
+
+**TDD :** les trois nouveaux blocs ont été vus rouges puis verts :
+
+- 15 cas exécutés pour le moteur et ses entrées invalides ;
+- 5 cas repository ajoutés au fichier de séances ;
+- 9 cas exécutés pour l’éligibilité et le préremplissage.
+
+Suite complète : **21 fichiers, 313 tests**. `typecheck`, `lint`, `test:run` et `build` sont verts.
+Le build garde l’avertissement Vite déjà connu sur le chunk principal supérieur à 500 kB ; aucune
+erreur de production.
+
+**Pilotage réel, 375 × 812 px, base `/FITTRACK-RELOADED/` :**
+
+- `document.body.scrollWidth === innerWidth === 375` et la feuille mesure 375 px sans débordement ;
+- chaque bouton et champ mesuré fait **48 px de haut minimum** ;
+- le focus du champ de charge est `rgb(161, 161, 170)` (`--text-2`), pas l’accent ;
+- l’ajout d’une quatrième étape fonctionne et invalide correctement une ligne incomplète ;
+- après insertion, la grille lit 40 × 10, 60 × 5, 80 × 3 puis la série de travail 100 × 5 ;
+- après rechargement complet, le même ordre et les mêmes cibles sont relus par la vue Dexie ;
+- aucune erreur ni aucun avertissement navigateur.
+
+**✅ Checkpoint salle RF-29 : validé en usage réel (2026-07-24).** Sur un exercice barre prévu à
+100 kg, la rampe 40/60/80 s'insère avant la série de travail, persiste après fermeture/réouverture
+de l'app, ne lance pas de repos et reste naturelle avec le matériel réellement disponible.
+
+### RPE masquable (RF-30) — 2026-07-24
+
+**« Masquable » ne crée pas un réglage avant le Lot 8.** Le RPE ne prend jamais une colonne, un
+badge ou une préférence dans la grille principale. L'entrée « Effort perçu (RPE) » reste en revanche
+toujours visible dans la feuille de la série : c'est elle qui rend la fonction découvrable. Son
+sous-titre dit « Non renseigné » ou la valeur courante ; un appui déplie l'échelle dans la même
+feuille.
+
+**État et persistance sont volontairement séparés :**
+
+- l'ouverture de l'échelle est un `useState` local à `WorkoutRpeField` ; fermer la feuille l'oublie ;
+- la valeur appartient toujours à `WorkoutSet.rpe`, déjà prévu au Lot 2 ;
+- `WorkoutScreen` relaie seulement `{ rpe }` à `updateSetValues`, qui écrivait déjà `SetValues` ;
+- « — » écrit `undefined` et efface donc réellement la propriété ;
+- aucun changement de repository, de schéma Dexie, de Zustand ou de réglage global.
+
+**La forme vient de la salle, pas d'un formulaire de bureau.** Les neuf valeurs de 6 à 10 par pas
+de 0,5 et l'effacement tiennent en **2 × 5**. La sélection gagne un fond, une graisse et une double
+bordure neutres ; elle n'emprunte jamais l'accent réservé aux records et aux séries validées.
+`aria-pressed` porte la sélection et la valeur courante est reliée comme description accessible au
+bouton de divulgation.
+
+**TDD :** quatre tests de composant ont été vus rouges puis verts : masquage jusqu'à la demande,
+description accessible de la valeur courante, choix de 8,5 et effacement vers `undefined`.
+
+**Pilotage réel, 375 × 812 px :**
+
+- les dix cibles mesurent toutes **48 px de haut** et **60,64 px de large au minimum** ;
+- la feuille ouverte tient entièrement dans le viewport ;
+- `getComputedStyle` mesure la sélection à `font-weight: 700`, fond `rgb(161, 161, 170)` et texte
+  sombre, contre `500`, fond `rgb(30, 30, 33)` et texte secondaire pour une valeur non choisie ;
+- aucun contrôle RPE ne prend la couleur `--accent-ink` ;
+- 8,5 reste lu après un rechargement complet, puis « Non renseigné » reste lu après effacement et
+  second rechargement : dans les deux cas, le rendu est réhydraté par l'abonnement Dexie, pas gardé
+  par l'état React.
+
+**Pièges trouvés uniquement en pilotant :** le premier câblage avait placé le composant dans la
+feuille d'exercice, où sa condition était impossible ; puis le focus global dessinait une ligne
+accent sous la divulgation. Le composant vit maintenant dans la vraie feuille de série et ses focus
+utilisent `--text-2`, tout en restant visibles au clavier.
+
+**✅ Checkpoint salle RF-30 : validé en usage réel (2026-07-24).**
+
+### Record battu en direct (RF-23) — 2026-07-24
+
+**La décision qui commande tout le reste : rien n'est écrit.** `personalRecords` existe depuis le
+Lot 2 et reste vide ; la détection en direct est **dérivée**, comme le Lot 3 dérive les records de
+l'historique qu'il lit. C'était le point à trancher, et voici pourquoi il tombe de ce côté :
+
+- **Un record est un fait sur l'historique, pas un événement.** Écrit à la validation, il devient un
+  mensonge à la seconde où on décoche la série, où on la supprime, où on retape un chiffre — et
+  depuis la tâche 1, où on la **requalifie en échauffement en pleine séance**. Chacun de ces gestes
+  est à un appui sur cet écran. Il faudrait donc cinq chemins d'invalidation en cascade, tous à
+  garder synchrones avec la vérité. **Dérivé, ça ne coûte rien : la question est simplement reposée
+  à chaque rendu.** Vérifié en pilotant, les trois cas.
+- **Le Lot 13 (recalcul complet) lira la même fonction**, donc une seule règle pour les trois
+  consommateurs — ce que l'en-tête de `records.ts` promet depuis le Lot 3.
+- `personalRecords` reste ce qu'elle est : **un cache**. Le jour où la lecture d'historique coûterait
+  (une année de séances, six exercices, à chaque frappe), c'est elle qu'on remplit — avec **cette**
+  fonction, pas une autre. La remplir aujourd'hui serait un cache sans lecteur, et un cache qui peut
+  mentir.
+
+**`recordsBeatenBy(candidate, others)`** (TDD, 15 tests) répond littéralement à « qu'est-ce que cette
+série vient de battre » : elle rend les records battus, le plus significatif d'abord, **avec la série
+qui les tenait**. Trois règles méritent leur ligne :
+
+- **Un record demande un tenant du titre.** La première série d'un exercice jamais fait ne bat rien,
+  elle _devient_ la marque. Sinon la félicitation partirait sur la première série de travail de
+  chaque nouvel exercice, sans pouvoir nommer ce qu'elle a battu. L'égalité ne compte pas non plus —
+  c'est la règle de `pickBest` lue par l'autre bout : un record s'établit la première fois qu'on
+  l'atteint.
+- **Les reps ne comptent que là où il n'y a aucune charge à battre.** Au développé, le maximum de
+  répétitions est une série légère, et l'appeler record est un mensonge. La fiche exercice appliquait
+  déjà cette règle **à son affichage** (`showReps`) ; elle descend là où elle appartient.
+- **La candidate se filtre elle-même** des `others`. Le site d'appel passe tout l'exercice — c'est ce
+  qui rend l'appel impossible à rater.
+
+**La comparaison inclut les séries déjà validées aujourd'hui.** `listRecordSets` est **l'exact
+opposé de `getLastPerformance`** : celle-là existe pour tenir la séance en cours _dehors_ (la colonne
+« précédent » est une référence, pas un miroir), celle-ci pour l'y faire entrer (un record battu à la
+série 2 est un record). Une requête par exercice sur `[exerciseId+performedAt]`, qui saute les séries
+non validées au lieu de les lire pour les jeter.
+
+> **Conséquence assumée : le bandeau suit le record, il ne fige pas l'instant.** Si la série 2 bat
+> l'historique puis que la série 3 bat la série 2, le bandeau **descend** sur la 3. Deux « records »
+> pour un même exercice seraient un écran qui se contredit ; et figer l'instant demanderait de
+> stocker l'événement — exactement ce qu'on vient d'écarter.
+
+#### La félicitation vit dans la card, pas dans un toast
+
+Un bandeau en pied d'écran ne peut pas dire **laquelle** des vingt lignes a battu **quoi** — et le
+temps de la chercher, il est parti. C'est le raisonnement d'`UndoRow` (Lot 5), appliqué à l'émotion
+inverse : ici la **position est la moitié du message**.
+
+- **Un bandeau sous la ligne** (`RecordNote`), sur la surface de la série validée, à 12 px — le
+  retrait de `RestRail`, pour que les deux choses qui pendent sous une série s'accordent. Il ne
+  répète pas les chiffres battus : la colonne « précédent » de cette ligne-là les montre déjà, deux
+  centimètres au-dessus.
+- **Pas dans la pastille de rang.** Ce créneau de 48 px appartient au **type** de série depuis la
+  tâche 1, et un record peut parfaitement être une dégressive ou une série à l'échec — **vérifié en
+  pilotant : la marque dégressive et le bandeau cohabitent** sans se disputer la place.
+- **Une étoile sur la card repliée, et ce n'est pas un ornement.** Cocher la **dernière** série
+  replie l'exercice, et la dernière est souvent la plus lourde : sans marque au repli, le seul record
+  qu'on voulait voir serait celui qu'on ne voit jamais — apparu et refermé dans la même image.
+  **Constaté en pilotant, c'est exactement ce qui s'est passé.** Le header dit _qu'il y en a un_,
+  déplier dit _laquelle et lequel_ : la même divulgation que le repli applique déjà aux chiffres.
+- **L'accent est légitime ici comme nulle part ailleurs** : la charte le réserve aux séries validées
+  **et aux records**, et c'est les deux à la fois.
+- **Une étoile, pas un trophée.** Un trophée a été dessiné puis écarté : sa silhouette est une forme
+  fermée arrondie sur un pied, c'est-à-dire **celle de la flamme** à bout de bras — et les marques de
+  la tâche 1 tiennent sur des silhouettes maximalement distinctes. L'étoile est radiale et pointue :
+  elle ne rentre en collision avec aucune des trois.
+- **Les trois records sont nommés une seule fois** pour toute l'app (`record.*` + `recordLabel`), et
+  la fiche exercice lit désormais les mêmes noms — ses trois clés `exercise.record{Heaviest,MostReps,
+BestVolume}` sont supprimées. Un même fait ne peut pas avoir deux noms.
+
+#### Ce qui a été mesuré, en pilotant l'app en 375 px
+
+Sur une vraie séance montée dans l'app (une séance terminée à 100 kg × 5 comme historique, puis une
+séance à trois séries) — pas sur des données injectées.
+
+- **L'égalité ne fête rien** : la série 1 à 100 × 5 face à un historique à 100 kg n'affiche aucun
+  bandeau, et aucune étoile n'apparaît au repli.
+- **Deux records distincts sur deux lignes distinctes** : « Record · Charge max » sous la série 2
+  (102,5 × 5) et « Record · Meilleure série » sous la série 3 (60 × 12, soit 720 contre 512,5). Une
+  seule ligne d'écran ne pourrait pas dire ça.
+- **Les trois invalidations, en direct** : requalifier la série 2 en échauffement **efface son
+  record** en gardant ses 102,5 × 5 affichés ; décocher la série 3 efface le sien ; recocher le
+  rend. Aucun code d'invalidation n'existe.
+- **Survie au rechargement complet** : les deux bandeaux sont là après un F5, et l'exercice replié
+  garde son étoile — mesuré à 5 instants sur 2 s, deux rechargements de suite, pour écarter une
+  bascule tardive.
+- **Contraste, deux thèmes** : **12,87:1** en sombre et **5,23:1** en clair (accent-ink sur
+  `--surface-2`, la paire déjà mesurée pour le statut de repos).
+- **Géométrie** : bandeau 343,2 × **24 px** à x = 16, étoile 14 px ; les lignes de série restent à
+  **60 px** et les coches à **48 × 48** — le bandeau s'ajoute _sous_ la ligne sans la toucher. Aucun
+  bouton sous 44 px, **aucun débordement horizontal**, **aucune erreur console**.
+- **Le bandeau balaye avec sa ligne** : il est le second enfant du bloc qui porte le `translateX`
+  (vérifié dans le DOM), donc supprimer une série de record ne laisse pas sa félicitation derrière.
+
+#### ✅ Checkpoint en salle — RF-23, validé en usage réel le 2026-07-24
+
+- [x] **Un record se voit sans le chercher, entre deux séries.** C'est tout le pari : si le bandeau
+      passe inaperçu à bout de bras, c'est le repère qui est trop discret — pas la détection.
+- [x] **L'étoile sur l'exo replié se comprend.** C'est le seul endroit où la forme est seule, sans le
+      mot à côté. Si elle se lit « favori » plutôt que « record », le repli est le bon endroit mais
+      pas la bonne marque.
+- [x] **« Record · Meilleure série » veut dire quelque chose en salle.** « Charge max » est évident ;
+      le volume d'une série l'est moins. Si ça ne parle pas, ce record ne mérite peut-être pas un
+      bandeau — le montrer serait alors du bruit sur l'écran le plus chargé de l'app.
+- [x] **Le bandeau qui descend d'une ligne** quand une série suivante fait mieux : est-ce que ça se
+      lit comme « le record a bougé », ou comme « j'ai perdu mon record » ? C'est le point où la
+      dérivation se voit à l'œil nu.
+- [x] **Rien ne fête une première fois.** Un exercice jamais fait ne dit rien à sa première série de
+      travail. Si ça donne l'impression que la détection ne marche pas, c'est la règle « il faut un
+      tenant du titre » qu'il faut revoir — pas le code.
+
+### Types de séries modifiables en séance (RF-20) — 2026-07-24
+
+**Le chemin était déjà dessiné.** Le bouton de rang de `WorkoutSetRow` portait depuis le Lot 5 le
+commentaire « Lot 6 hangs the set type here, which is why it is a button already », et `fr.ts`
+écrivait les quatre `setType.*` **avec leurs quatre `setTypeHint.*`** depuis le Lot 4 — quatre
+phrases que rien ne lisait. Le menu de série gagne « Type de série », avec le type courant en
+sous-titre (sinon il faut ouvrir la feuille pour savoir ce qu'on est en train de changer), puis un
+`OptionSheet` — le composant existait, les phrases aussi. Rien d'inventé.
+
+`updateSetType` ne touche **jamais** aux chiffres : requalifier une série change ce qu'elle _est_,
+pas ce qu'elle dit. Une série repassée en échauffement garde ses 60 × 12 et reste en base ; c'est
+`isWorkingSet` qui l'écarte du volume et des records, une seule règle pour les deux.
+
+**Les marques sont des pictogrammes, pas des mots — décision de l'utilisateur.** J'avais proposé
+trois abréviations ; il a répondu « et si on remplaçait ça par des SVG plutôt qu'une écriture ». Il a
+raison, et pour une raison qui rend le reste évident : **« ÉCH. » et « ÉCHEC » ne se séparent pas à
+bout de bras, une main, essoufflé** — et c'est la seule distance à laquelle cet écran se lit. Une
+forme se reconnaît sans se déchiffrer. Trois silhouettes volontairement éloignées :
+
+| Type            | Marque                                                       | Pourquoi cette forme                                |
+| --------------- | ------------------------------------------------------------ | --------------------------------------------------- |
+| Échauffement    | flamme (courbe fermée)                                       | chauffer, littéralement                             |
+| Dégressive      | trois barres qui descendent et raccourcissent (horizontales) | c'est le geste : on retire des plaques et on repart |
+| Jusqu'à l'échec | éclair (zigzag diagonal)                                     | tout ce qui restait y est passé                     |
+
+- **Une seule couleur, et ce n'est pas un compromis.** La charte n'a qu'un accent, et le rouge veut
+  déjà dire « destructif » partout dans l'app — un troisième ton aurait demandé un jeton neuf
+  (`--warn-ink` n'existe pas, `--color-warn` est un aplat à ~2:1 sur blanc). C'est donc la **forme**
+  qui porte le sens et l'accent qui appuie : exactement la règle du Lot 4, où un accent seul ne peut
+  rien porter (plein soleil, daltonisme). **Si les trois formes ne se séparent pas en salle, la
+  couleur est le repli** — et elle passera par un vrai jeton, pas par un hex en dur.
+- **La marque n'est pas une légende.** Le type se choisit dans une feuille qui l'écrit en toutes
+  lettres avec sa phrase ; le pictogramme ne fait que rappeler ce qu'on a choisi. Il n'a donc pas à
+  être devinable de zéro, seulement reconnaissable.
+- **Le numéro reste sur une série normale.** C'est lui qui dit où on en est dans l'exercice. La
+  marque le **remplace** au lieu de se serrer à côté : 48 px ne tiennent pas deux glyphes qui doivent
+  tous les deux se lire sans regarder.
+- `RoutineExerciseCard` (Lot 4) **n'a pas bougé** : sa marque « ÉCH. » se pose _à côté_ du numéro, pas
+  à sa place, et l'éditeur de routine ne planifie que normale/échauffement. Ce n'est pas le même slot,
+  donc ce n'est pas la même décision.
+
+#### La règle de repos qui manquait, trouvée en lisant
+
+`setTypeHint.dropset` promet depuis le Lot 4 « enchaînée à la précédente, charge allégée, **sans
+repos** », pendant que `rest.test.ts` assérait qu'une dégressive **déclenche** un repos. Les deux ne
+peuvent pas être vrais — et **c'est le test qui a raison sur le fond** : une dégressive _termine_ la
+chaîne, donc elle est due sa récup comme n'importe quelle série de travail.
+
+Ce qui manquait est **en amont** : la série _avant_ une dégressive ne doit pas reposer, puisqu'on
+allège la barre et on repart. `isRestTriggering` prend donc un `nextSetType`, et une suite de
+dégressives (100 → 80 → 60) s'enchaîne sans repos jusqu'à la dernière. Le calcul du « suivant » se
+fait dans la grille de l'exercice, pas dans le bloc de superset : ce sont deux questions différentes,
+et les deux exclusions se cumulent.
+
+**Une contradiction entre une chaîne d'UI et un test est un défaut**, pas un détail de rédaction : la
+phrase promettait un comportement que le code ne rendait pas.
+
+#### Ce qui a été mesuré, en pilotant l'app en 375 px
+
+- Les trois marques rendent : **20 px de glyphe dans une cible de 48 × 48**, jamais réduite.
+- `aria-label` = « Série 2 — Dégressive » : le type est **dit**, le dessin reste `aria-hidden` comme
+  toutes les icônes de l'app. Une série normale garde « Série 2 » tout court.
+- **Contraste, deux thèmes, aucun échec** : 12,87:1 (ligne validée) et 14,24:1 (ligne intacte) en
+  sombre ; **5,23:1 et 6,04:1 en clair**. Le plancher WCAG 1.4.11 des éléments non textuels est 3:1.
+- **La règle de la dégressive vérifiée en direct** : cocher la série 1 quand la 2 est dégressive ne
+  démarre **rien** (aucun `progressbar`, aucun « Repos » à l'écran) ; cocher la dégressive démarre
+  « Repos 1:55 » avec `aria-valuetext` « Repos, 2:00 restantes ».
+- Aucun débordement horizontal, aucune erreur console.
+- `workout.warmupShort` est **supprimé** de `fr.ts` : son dernier consommateur vient de partir.
+
+#### ✅ Checkpoint en salle — RF-20, validé en usage réel le 2026-07-24
+
+- [x] **Les trois pictogrammes se distinguent d'un coup d'œil, bras tendu, sans les chercher.** C'est
+      le point fragile de la tâche : une forme ne se déchiffre pas, elle se reconnaît — ou pas. Si
+      deux d'entre eux se confondent, **le repli est la couleur** (un jeton propre, pas un hex), pas
+      un retour aux mots.
+- [x] **La flamme se lit bien comme « échauffement »** et pas comme « série chaude / lourde ». C'est
+      le seul des trois dont la métaphore peut basculer.
+- [x] Marquer une série en dégressive **en pleine séance**, la barre en main : le chemin
+      rang → « Type de série » → choix se fait-il d'une main, entre deux séries ?
+- [x] **La série qui précède une dégressive ne déclenche aucun repos** — et ça ne surprend pas. Le
+      pari est que c'est ce que tu attends (on allège et on repart) ; si ça donne l'impression d'un
+      minuteur qui a raté son départ, c'est la règle qu'il faut revoir, pas le code.
+- [x] Une série repassée en échauffement **après** avoir été validée : ses kilos restent affichés,
+      et elle disparaît du volume et des records. Vérifiable sur l'écran de fin.
+
+> **Un défaut hors périmètre, trouvé en lisant la base — deux séries au même rang.** Le dump
+> IndexedDB de la séance de test montrait **deux séries vivantes à `order: 1`**. `addSet` calcule le
+> rang avec `(await liveSetsOf(...)).length` **puis** écrit, sans transaction — alors que `deleteSet`
+> et `restoreSet`, juste en dessous dans le même fichier, sont déjà enveloppés dans
+> `db.transaction('rw', …)`. Deux ajouts qui se chevauchent lisent donc la même longueur. Reproduit
+> par deux clics dans le même tick JS ; sur téléphone, un double appui ou une frame en retard suffit.
+> **C'est la famille du « piège n°2 » du Lot 2** (le `.count()` qui comptait les supprimées) — même
+> symptôme, autre cause. Sorti du chemin en tâche à part pour ne pas gonfler le commit du Lot 6 ;
+> `addWorkoutExercise` est à vérifier au même titre.
+
+#### ✅ Corrigé — le rang d'une série se lit et s'écrit sous transaction — 2026-07-24
+
+La lecture du rang et l'écriture de la ligne sont désormais **une seule** `db.transaction('rw',
+db.workoutExercises, db.workoutSets, …)`. IndexedDB sérialise deux transactions `readwrite` de
+portées qui se recouvrent, donc la seconde ne lit plus qu'après le commit de la première.
+
+- **`addSet` et `duplicateLastSet` passent par un seul chemin d'écriture**, `appendSet`, qui lit les
+  voisines vivantes **une fois** et en tire les deux réponses : le rang, et la série à reproposer.
+  C'étaient deux lectures pour une seule décision — `duplicateLastSet` lisait la dernière série
+  _avant_ d'appeler `addSet`, qui relisait la même liste pour compter.
+- **`addWorkoutExercise` avait bien le même trou**, et il était réel : la transaction existait déjà
+  mais la lecture du compte était restée _dehors_, juste au-dessus. Le test l'a confirmé avant le
+  correctif (deux exercices ajoutés en même temps, tous deux à `order: 0`). La lecture est rentrée
+  dans la transaction ; celle de la fiche exercice (repos par défaut) reste dehors, ce n'est pas
+  l'objet de la course et la valeur est un instantané de toute façon.
+- **Trois tests** (`workouts.test.ts`, « rangs concurrents — deux appuis dans le même tick ») lancent
+  deux appels en `Promise.all` et assèrent des rangs distincts. **Les trois échouent sans le
+  correctif** — vérifié : `[0, 0]`, `[0, 1, 1]`, `[0, 0]`.
+
+**Une transaction n'est pas un ornement de la ligne qui écrit** : ici les deux appels de `deleteSet`
+et `restoreSet` étaient enveloppés, celui d'`addSet` non, et rien ne le signalait — c'est la
+_lecture_ qui décide, pas l'écriture. Toute lecture qui sert à calculer ce qu'on va écrire appartient
+à la transaction de cette écriture.
+
+État vérifié : `typecheck`, `lint`, `test:run` (**259**, +3), `build` — les quatre passent.
+
+### Calculateur de plaques (RF-28) — 2026-07-24
+
+**Le moteur** (`src/lib/plates.ts`, pur, TDD, 10 tests) décompose une charge en plaques **par côté** :
+greedy du plus lourd au plus léger, ce qui est aussi le compte de plaques minimal qu'un pratiquant
+saisit. Tout tourne en **centièmes entiers** (0,25 kg → 25) pour qu'aucune soustraction ne croise un
+fantôme de flottant. Ce qu'il ne peut pas composer exactement est rendu comme `remainderKg` (« il
+manque 1 kg »), jamais arrondi en douce. Pas barbell-only (recommandation audit M5) : `sides: 1` =
+machine à plaques à un seul peg, `barWeight` bas + `sides: 2` = haltère chargeable, et un rack fini
+(`countPerSide`) modélise la paire unique de 25 que rationne toute salle.
+
+- **Un test corrigé, pas son assertion.** Le premier test supposait un jeu s'arrêtant à 1,25 kg —
+  faux, le jeu par défaut descend à 0,25, donc 40,5/côté = 25+15+0,5 **est** atteignable et le moteur
+  a raison de renvoyer 101. J'ai changé le **rack du test** (rack grossier), pas le résultat. C'est la
+  règle CLAUDE.md : un test qui échoue ne se « corrige » pas sur l'assertion sans comprendre pourquoi.
+
+**La face** (`PlateLoadSheet.tsx`) : une barre **vue de face**, plaques dessinées comme des dalles
+dont la **hauteur porte le poids** (√ du poids, comme le diamètre du vrai disque), plus la lecture
+exacte « De chaque côté · 25 · 15 · 1,25 kg ». Accrochée au menu ⋯ d'une série, `platesConfigFor`
+(`plateConfig.ts`) ne l'offre que sur une **vraie charge de barre** : `weightRole === 'load'` **et**
+équipement ∈ {barbell, Smith, plaque}. Une machine à broche ou un haltère fixe n'a rien à charger —
+lui montrer un schéma serait un mensonge assuré. Cas limites honnêtes : reliquat, et charge sous la
+barre (« plus léger que la barre seule »).
+
+- **Le schéma est monochrome, en encre — un choix, pas un défaut.** La charte n'a **qu'un accent**,
+  réservé aux records et aux séries validées ; six couleurs de plaques réelles (IPF) casseraient à la
+  fois cette règle et le plancher de contraste. La hauteur + l'étiquette portent la distinction. C'est
+  « réutiliser le vocabulaire avant d'inventer » appliqué. Alternative colorée gardée en réserve si une
+  séance la réclame. **À trancher au checkpoint visuel.**
+- **`platesConfigFor` extrait dans son propre fichier** (`plateConfig.ts`) : cohabiter avec un
+  composant cassait le fast-refresh (react-refresh), et ça garde `lib/plates` sans le vocabulaire
+  `Equipment` de l'app.
+
+État vérifié le 2026-07-24 : `typecheck`, `lint` (0 warning), `test:run` (**252**, +10), `build` —
+les quatre passent. Le cas du checkpoint (102,5 kg → 25+15+1,25 par côté) **est** un test qui passe.
+
+#### Trois retours d'usage — plaques + repos — 2026-07-24
+
+Pilotés depuis le téléphone sur ton serveur de dev (la pane navigateur de la session Claude ne
+s'affichait pas — aucune capture possible ici, mais le HMR montrait tout à chaud).
+
+**1. Le picker de repos débordait — `3:00` passait à la ligne.** Les 5 chips (`1:00 … 3:00`) étaient
+en `flex flex-wrap` : à 375 px la dernière tombait seule sur une 2ᵉ ligne. Passées en
+**`grid grid-cols-5`** → une seule ligne, largeurs égales, garanti quelle que soit la police système.
+Le chip « hériter » garde sa ligne à lui (c'est un mode, pas une 6ᵉ durée).
+
+**2. Le filet de repos vivait sous « Ajouter une série » — ça n'avait pas de sens déplié.** `RestRail`
+était en `absolute … bottom-1`, ancré au conteneur de la carte, donc collé tout en bas. Remonté **sur
+le séparateur header/corps** : le header passe `relative`, le filet en `bottom-0` dedans. Bonus gratuit
+— cocher la dernière série **replie** l'exo, et le bas du header devient alors le bas de la carte, donc
+le filet **reste visible replié** (le cas courant) sans layout shift.
+
+**3. Les plaques étaient introuvables, et figées sur une seule charge.** Deux défauts en un :
+
+- _Découvrabilité_ : l'accès était planqué derrière l'appui sur le **numéro** de série, qui ne se lit
+  pas comme un bouton. Déplacé sur une **icône plaque** (`PlateIcon`, déjà dans l'app — réutilisée, pas
+  inventée) posée dans le header de la carte, à droite du bloc titre/sous-titre, avant le ⋯. Rendue
+  seulement pour un exercice de barre. Retirée du menu ⋯ (une seule porte). Passage intermédiaire par
+  le menu ⋯ de l'exercice, abandonné au profit de l'icône sur retour utilisateur.
+- _Correction_ : le calcul prenait **une seule charge** (la dernière série de travail) pour tout
+  l'exercice — « on fait une série à 100 puis une à 55, et ça prend 55 pour tous ». `PlateLoadSheet`
+  prend désormais la **liste des charges distinctes** (`exerciseLoads` dédoublonne dans l'ordre,
+  échauffements compris — on charge la barre pour eux aussi) et dessine **un schéma par charge**. La
+  barre nue est rappelée une seule fois en bas.
+
+`typecheck`, `lint`, `test:run` (**252**, inchangé — corrections de composants + moteur déjà couvert),
+`build` : les quatre passent après les trois correctifs. ⬜ Checkpoint visuel toujours à valider en
+salle (icône plaque → un schéma par charge ; filet sur le séparateur ; picker sur une ligne).
+
+Plan détaillé : `docs/plans/lot-06-minuteur.md`. Cinq formes dessinées, quatre écartées par
+l'utilisateur — le détail et les raisons sont dans le plan, section « La forme retenue ».
+
+### La forme, en une phrase
+
+**Le minuteur est une barre de 3 px dans une voie, sous la série qu'on vient de cocher**, plus
+`REPOS 1:30` sur la ligne de relevés. Aucune commande, aucun appui, aucune cible tactile ajoutée.
+
+### État vérifié le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**238 tests**), `npm run build`.
+- ✅ **Vérifié dans la vraie app, sur une vraie séance** : cocher une série démarre le repos, la
+  barre avance, atteint 100 %, et **le repos se referme seul après la grâce**.
+- ✅ Contrastes mesurés aux deux thèmes : barre/ligne **12,87:1 sombre, 5,23:1 clair** ; barre/voie
+  11,06 et 4,49 ; relevé « Repos » 15,31 et 6,63. Aucune cible sous 48 × 44, aucun débordement.
+- ✅ Géométrie mesurée : ligne 60 px, voie 3 px, **3 px d'air au-dessus, 4 px en dessous**, 12 px de
+  retrait de chaque côté.
+- ✅ **Checkpoint en salle : validé.** Les **trois paris** tiennent sur une vraie séance — cf. la
+  fin du plan.
+
+### Ce qui a été abandonné, et pourquoi
+
+- **`±15 s` n'existe pas.** Décision de l'utilisateur sur son usage réel : il ne s'en sert jamais
+  sur Hevy. Le repos par défaut est réglable par exercice depuis le Lot 3 — ajuster à chaque série
+  rustinait un défaut mal réglé au lieu de le corriger une fois. Une fonctionnalité retirée ne peut
+  pas mal se comporter. La variante avec pas-à-pas est dessinée **et mesurée** dans le plan, à
+  reprendre telle quelle si une séance la réclame.
+- **« Visible en haut de l'écran »** (roadmap) est devenu « sur la ligne de la série ». Trois
+  tentatives en haut de l'écran ont été rejetées au doigt : « un peu fat, ça prend beaucoup de
+  place », puis « ça fait posé, pas intégré à l'app » — le mot exact du Lot 5 sur les barres
+  collantes.
+
+### Les trois défauts trouvés en pilotant, pas en relisant
+
+**1. La grâce ne se déclenchait jamais.** L'effet qui l'arme dépendait de `now`, qui change chaque
+seconde : chaque battement annulait le `setTimeout` et en repartait un neuf. La barre serait restée
+affichée toute la séance. **C'est exactement le piège que `UndoRow` documente depuis le Lot 5**, et
+j'y suis retombé en l'ayant sous les yeux. Les deux minuteries — le son et la grâce — sont
+maintenant armées **une fois, depuis l'instant de fin**, et ne dépendent plus du battement. Calculer
+le délai depuis l'instant plutôt que passer une durée fixe rend aussi un montage tardif correct au
+lieu de relancer le repos.
+
+**2. `restSeconds` est `undefined` sur les séances déjà en base.** Le champ n'est pas indexé, donc
+il n'y a pas eu de migration à écrire — et rien n'a rempli les lignes existantes. `Math.max` sur un
+`undefined` rend `NaN`, `endsAt` devient `NaN`, et le repos se termine à l'instant où il démarre. La
+lecture passe désormais par `resolveRestSeconds`, qui retombe sur 120 s. **Aucun test ne pouvait le
+voir** : il fallait une base antérieure au champ.
+
+**3. La barre passait sous le bouton de validation.** 48 px de contrôles centrés dans 56 px ne
+laissent que 4 px de marge, et une barre de 3 px dedans traversait la coche — c'est ce qui faisait
+« pas fini » à l'écran. La ligne passe à **60 px** avec une réserve permanente en bas, réservée sur
+**toutes** les lignes : une ligne qui grandirait au démarrage d'un repos décalerait la liste soixante
+fois par séance.
+
+### Trois défauts de plus, trouvés en s'en servant — 2026-07-23
+
+Le minuteur livré la veille était vérifié en pilotant l'écran de dev. Trois réglages plus tard,
+l'utilisateur en a remonté trois défauts qu'aucune vérification au clavier ne pouvait voir : il
+fallait _régler_ un repos et _cocher_ une série pour de vrai.
+
+**1. Un repos réglé « 2:30 » durait deux secondes.** Le champ demandait des **secondes**, alors que
+toute l'app écrit ses durées en `m:ss` (« Repos 2:00 », « 1:30 min · 20 kg »). L'utilisateur a tapé
+« 2,3 » en pensant deux minutes et demie ; le champ, qui accepte le décimal pour la charge
+(« 102,5 »), a stocké **2,3 secondes**. Au démarrage de la séance, `resolveRestSeconds` arrondit —
+`Math.round(2.3)` = 2 — et comme 2 > 0 la valeur passe pour un override valide qui bat même le
+défaut de l'exercice. Un champ dont l'unité diffère de la façon dont l'app _montre_ la même grandeur
+partout ailleurs : c'est le piège qui se referme.
+
+Correctif : `ui/RestPicker`, qui parle la langue du reste de l'app — une lecture d'horloge `m:ss`,
+des raccourcis tapotables (1:00 · 1:30 · 2:00 · 2:30 · 3:00) et des `±15 s`. **Aucun champ texte :
+retaper « 2,3 » est devenu impossible.** Aux deux points de réglage (fiche exercice, feuille de
+routine) ; `NumberInput` reste tel quel, la virgule y étant indispensable pour la charge. Une donnée
+déjà corrompue ne se devine pas, mais le picker la **rend visible** : un `2.3` stocké s'affiche
+« 0:02 », aucun raccourci allumé, et un seul appui le répare.
+
+_(Ces `±15 s` règlent la durée par défaut ; ils ne contredisent pas le « ±15 s n'existe pas » plus
+haut, qui parlait d'ajuster le compte à rebours **en pleine séance** — ça n'existe toujours pas.)_
+
+**2. La barre avançait par à-coups d'une seconde.** Elle était pilotée par un `setState` à chaque
+seconde, donc elle sautait d'un cran par battement ; l'utilisateur attendait « une ligne bien
+fluide ». Remplacée par **une seule transition CSS linéaire**, armée une fois de la position courante
+jusqu'au plein, sur la durée restante : le compositeur remplit chaque image. Une transition CSS est
+calée sur l'horloge murale, donc elle reste juste après un passage en arrière-plan — là où l'ancien
+battement était étranglé à ~1 cran/minute. Repli **pas-à-pas** sous `prefers-reduced-motion`.
+
+**3. Décocher une série ne coupait pas son repos.** Le code défendait _exactement_ ce comportement :
+« corriger une faute de frappe ne doit pas coûter ta récup ». La prémisse était fausse : les chiffres
+d'une série **restent modifiables une fois cochée** (`SetValueCell` n'a aucun état désactivé), donc
+on ne décoche jamais pour corriger un chiffre — décocher veut dire « pas faite », et le repos s'arrête
+avec elle. `stop(setId)` ne touche que le repos de cette série, jamais celui qu'une autre fait
+tourner. **Un raisonnement écrit dans le code n'est pas une preuve sur l'usage** : il faut aller
+vérifier si sa prémisse tient à l'écran.
+
+Vérifié en pilotant la vraie app : le picker stocke des entiers propres (150, 165, jamais 2.3) ;
+cocher arme une `CSSTransition` `width` linéaire sur la durée restante ; décocher démonte la barre ;
+recocher repart. `typecheck`, `test:run` (**238, inchangé** — trois correctifs de composant, couverts
+par l'E2E), `build` : les trois passent. Le rendu fluide se juge sur un écran allumé — **checkpoint
+en salle.**
+
+### Le même piège, une cellule plus loin — la durée d'une série — 2026-07-23
+
+Le picker a réglé le **repos**, mais la même virgule attendait deux cellules plus loin, sur la durée
+_saisie_. Dans la grille de séance, une série chronométrée s'entre dans `SetValueCell` — le même champ
+que la charge, qui _doit_ accepter le décimal (« 102,5 » pour une demi-plaque). Conséquence exacte du
+défaut du minuteur : sur un gainage, « 1:30 » tapé « 1,3 » y stockait **1,3 seconde**. Et la « Durée
+visée » d'une routine (`RoutineSetSheet`, un `NumberInput`) portait le même trou, **jamais corrigé**
+par la tranche minuteur — celle-ci n'avait touché que le _repos_, pas la durée prescrite.
+
+Pas de picker cette fois. Une cellule de 3,5 rem n'a pas la place des `±48 px` (c'est écrit dans
+`SetValueCell`), et surtout un clavier numérique n'a pas de touche `:` — un `m:ss` tapé n'y est pas
+atteignable. Le champ reste, on lui retire le séparateur : `ui/numberField` gagne `INTEGER` à côté de
+`NUMERIC`, et la colonne durée — grille **et** routine — refuse la virgule et passe le clavier en
+`numeric`. La charge et les reps gardent leur décimal. C'est la préférence déjà consignée en mémoire :
+_contraindre la saisie plutôt que la remplacer par des chips_.
+
+Une durée reste **en secondes entières**, comme le Lot 5 l'avait décidé (« une durée se saisit en
+secondes, pas en m:ss ») ; la grille lit déjà « 90 » partout (précédent, fantôme), donc rien ne change
+à l'affichage — seul le décimal disparaît. Aucune chaîne d'UI ajoutée.
+
+Vérifié en pilotant la vraie app sur « Gainage planche » (`time_only`) : « 1,3 » tapé dans la cellule
+devient « 13 », `inputMode="numeric"`, aucune virgule ne s'inscrit. `typecheck`, `test:run` (**242**,
++4 : la cellule et le champ entier), `build` : les trois passent.
+
+> **Note de comptage.** Les entrées de la tranche minuteur annonçaient « 458 tests », un chiffre qui
+> ne correspond pas au dépôt : `test:run` en compte **242** ici (238 avant ce correctif). Le vrai fil
+> est 217 (Lot 5) → 238 → 242. Les deux « 458 » ci-dessus ont été ramenés à 238.
+
+### Retour post-séance, et la refonte de l'écran de séance décidée — 2026-07-24
+
+Premier vrai usage en salle du Lot 5 + minuteur. **Survie au kill et mode avion : OK.** Sept retours
+remontés, tous triés **avant** de toucher au code (le code lu et l'app pilotée en 375×812).
+
+**Deux « bugs », deux verdicts opposés :**
+
+- **Historique vide après la séance — ce n'est pas un bug.** `HistoryScreen` est une souche : l'écran
+  d'historique est le **Lot 7**, pas encore fait. La donnée, elle, est bien écrite par
+  `finishWorkout` — c'est _pourquoi_ une routine déjà faite se pré-remplit ensuite
+  (`getLastPerformance`). Rien de perdu, juste pas encore d'écran pour la relire.
+- **Aucun bouton pour ajouter un exo en séance vide — vrai bug, corrigé (tâche 1, commit `614e523`).**
+  Pas un commit oublié : le sélecteur `/workout/add` et l'`AddRow` existaient. Le bouton était
+  seulement **enfermé dans la branche `exercises.length > 0`** de `WorkoutScreen`, alors que
+  l'éditeur de routine le rend toujours au pied de la liste. Sorti de la condition, même carte, même
+  geste dans les deux états. Le cas se produit via « Démarrer une séance vide » (accueil). Vérifié en
+  pilotant : bouton présent (48×343), mène à `/workout/add`.
+
+**Cinq réglages, mesurés dans l'app, en attente :**
+
+- **#7 — 1ère carte collée au header.** Gap meter→carte = **0 px** contre **12 px** entre cartes
+  (`Screen`, conteneur de scroll `padding-top: 0`). À reprendre **après** la refonte, qui rebat cette
+  mise en page.
+- **#6 — nombre mal centré dans le well du `RestPicker`** (feuille « Dans cette routine »). Le nombre
+  tombe **10 px trop haut** : le well est en `items-baseline` au lieu de `items-center`.
+- **#4 — phrase de repos trop longue.** `routine.restFromExercise` fait **2 lignes à 375 px** (3 avec
+  une police système plus grande). À raccourcir.
+- **#5 — chrono en header : absorbé par la refonte** (chrono global épinglé au header).
+- **Export JSON en fin de séance** (a. séance seule / b. historique complet) : **n'existe pas**, c'est
+  le **Lot 8** (Réglages & export/import). Aligné local-first. À cadrer plus tard.
+
+**La refonte de l'écran de séance — décidée avec l'utilisateur, à construire.**
+
+Principe : **chaque timer va où vit son sens**, et les exos finis quittent le board.
+
+- **Repli des exos terminés** en header gris/vert, dépliables au clic (accordéon). C'est le _repli_
+  qui porte « où j'en suis » — pas une horloge qui voyage. Règle de repli : replier quand toutes les
+  séries _actuelles_ sont cochées ; re-déplier si on décoche ou ajoute une série ; toggle manuel au
+  clic. L'édition d'une série cochée reste possible (rouvrir l'exo — décision Lot 5 conservée).
+- **Chrono global épinglé au header** (fait de _séance_, jamais scrollé). Pas dans une card : une card
+  scrolle, et y parquer l'horloge lui donnerait deux contrats (temps + « tu es ici ») — le piège du
+  « slot à deux contrats » déjà consigné.
+- **Repos dans le statut de la card active.** Le statut « ● en cours » devient « ● Repos 0:47 » le
+  temps du repos (le point `●` reste, seul le texte bascule), en `--accent-ink`. **Le filet reste
+  inchangé** (la barre fluide du Lot 6). Le repos n'est pas un 3ᵉ élément : c'est le statut du moment.
+  Idée de l'utilisateur, retenue telle quelle. C'est un **retour** au placement pré-Lot-6-final (le
+  repos vivait sur la série), réhabilité par le repli : la card active reste près du haut.
+- **Écarté : le chrono qui « voyage » de card en card.** Il suppose une progression linéaire que
+  l'app refuse (désordre, superset, insertion mid-séance) et il double le sens que le repli porte déjà.
+- **À juger en salle** : si un repos déborde pendant qu'on prépare l'exo suivant, le décompte est sur
+  le header de l'exo _précédent_ ; avec le repli il n'est qu'à un header de distance — probablement un
+  faux problème, mais à sentir au doigt.
+
+**File des tâches (ordre d'importance), une par une, arrêt entre chaque :**
+
+1. ✅ Bouton d'ajout en séance vide (`614e523`).
+2. ✅ **Repli des exos terminés** (`2e69376`) — dans `WorkoutExerciseCard` seul, pas `WorkoutScreen`.
+   Le header devient le bouton de repli ; repli/dépli piloté par la complétion (état ajusté pendant
+   le rendu, motif `NumberInput`), toggle manuel, re-dépli sur décochage/ajout. Vérifié en pilotant,
+   deux thèmes. **Repli instantané, pas d'animation de hauteur** : le chevron tourne (`rotate` v4),
+   le corps apparaît d'un coup. Choix de v1 — à juger en salle : si le « pop » gêne, l'animation
+   `1fr → 0fr` (celle d'`UndoRow`) est le repli tout prêt. **Point de checkpoint.**
+3. ✅ **Chrono au header + repos dans le statut** (`b41b221`) — bandeau `WorkoutMeter` dissous et
+   supprimé, fix #5 absorbé. Le chrono global monte au header (titre | chrono | menu) ; le repos
+   descend dans le statut de la card (le sous-titre devient « ● Repos 0:47 », `RestStatus`) et le
+   filet (`RestRail`) se pose au bas de la card, visible même repliée — c'est le cas courant, cocher
+   la dernière série referme l'exo pendant que le repos coule. L'avancement « N séries sur M » passe
+   au-dessus de la liste. Écarté comme décidé : chrono qui voyage, statut « en cours » permanent.
+   Vérifié en pilotant, deux thèmes (repos sombre 12,87 / clair 5,23). **La refonte de l'écran de
+   séance est complète (briques 2+3) — reste à la juger en salle, d'un bloc.**
+4. ✅ **#7 espacement 1ère carte — re-mesuré, rien à corriger.** Le bandeau `WorkoutMeter` dissous
+   en tâche 3, l'écran de séance retombe sur la frame `Screen` partagée : header→contenu = **24 px**
+   (les 16 px de `pb-4` du header + l'interligne), **identique à l'écran Exercices** (24 px aussi),
+   mesuré dans l'app. Le « collé à 0 px » était le _bandeau_ qui butait contre la 1ère carte, pas la
+   frame ; il n'existe plus. Aucun changement de code — le correctif était la suppression du bandeau.
+5. ✅ **#6 centrage du well `RestPicker`** — `items-baseline` → `items-center` sur le well, la paire
+   nombre+unité passant dans un span interne qui garde son `items-baseline` à elle. Les chiffres
+   montaient ~10 px trop haut parce que l'alignement baseline calait tout le groupe sur la ligne de
+   base au lieu de le centrer. Mesuré dans l'app : « 1:30 » à **10 px du haut / 10 px du bas** du well
+   (centré au pixel), le « min » toujours calé sur la ligne de base des chiffres.
+6. ✅ **#4 phrase de repos raccourcie** — `routine.restFromExercise` passe de « Repos de l'exercice :
+   {seconds} s. Renseigne pour le remplacer ici. » (**2 lignes**) à « Vide : le repos de l'exercice
+   s'applique. » (**1 ligne**, mesurée à 335 px). Le nombre est retiré de la phrase : il vit déjà dans
+   le well juste au-dessus (`emptyReading`, en `m:ss`), donc le répéter en « s » était à la fois
+   redondant _et_ incohérent avec le well. Param `{seconds}` retiré du call site en conséquence.
+
+> **Un même utilitaire ne peut pas poser `padding-bottom` deux fois — le sheet mangeait ses boutons.**
+> Retour de l'utilisateur en pilotant : dans un `ConfirmSheet` (« Abandonner cette séance ? »), les
+> boutons étaient collés au bas de l'écran. Cause : le corps du `Sheet` était `safe-bottom px-5 pb-5`,
+> et `safe-bottom` **comme** `pb-5` posent tous deux `padding-bottom` — deux utilitaires du même calque
+> qui s'écrasent, l'inset (0 px sur un écran sans encoche) l'emportant. Le gap voulu de 20 px était
+> annulé, et sur téléphone il ne restait que la barre de gestes. Nouvel utilitaire dédié `sheet-bottom`
+> = `calc(env(safe-area-inset-bottom, 0px) + 1.75rem)` : **une** déclaration, additive (gap réel **plus**
+> barre de gestes). `safe-bottom` reste tel quel pour `BottomNav`, où il est seul et correct. Mesuré :
+> **28 px** sous les boutons du `ConfirmSheet` (était 0). C'est le pendant `padding-bottom` de la note
+> Lot 1 sur le calque des utilitaires — deux propriétés identiques ne s'additionnent jamais, la
+> dernière gagne.
+
+> **Piège d'outillage trouvé au passage — vitest exécutait les worktrees d'agent.** `test:run` n'avait
+> aucun `exclude`, donc il ramassait les tests des trois copies du dépôt sous `.claude/worktrees/` :
+> **943 tests** au lieu de 242, run 4× plus long, et un test cassé dans un vieux worktree aurait fait
+> échouer la CI sans rapport avec le code. **C'est le pendant exact de la note « ESLint ignore
+> `.claude` »**, jamais transposé à vitest. Corrigé (`b7dda06`) : `exclude` reprend
+> `configDefaults.exclude` + `**/.claude/**`, et `defineConfig` vient de `vitest/config` (au lieu de
+> la triple-slash). **Le vrai compte est 242** ; toute entrée plus ancienne qui cite un autre chiffre
+> comptait peut-être les worktrees.
+
+### Ce que le Lot 6 ajoute à la charte
+
+- **Le balayage de contraste doit s'étendre aux éléments non textuels.** Il parcourt les nœuds de
+  texte depuis le Lot 3 ; un filet de 3 px n'en est pas un. C'est ce qui a laissé passer le rail de
+  superset du Lot 4, mesuré ici à **1,29:1 en thème clair** — quasi invisible. Corrigé à part.
+- **`--color-accent` ne peut pas servir de filet.** Sur `--surface-2` en thème clair il mesure
+  **1,02:1** : le vert acide et le gris clair ont la même luminance. Un trait doit être lisible
+  _contre_ une surface, donc c'est de l'encre — `--accent-ink`.
+- **ESLint ignore `.claude`.** Un worktree d'agent y pose un second projet TypeScript complet, et
+  ESLint cesse alors de parser **tout** le dépôt : 193 erreurs de parsing, aucune réelle.
+
+### Ce que cette tranche ne fait pas
+
+À la livraison de cette tranche, le reste du Lot 6 — plaques, échauffement, RPE, record en direct
+et types de séries — était intact. C'était une tranche, décidée comme telle.
+
+> **Périmé depuis.** Les plaques ont été livrées en tranche 2, puis les types de séries et le record
+> en direct en tranche 3, tâches 1 et 2. Restent : RPE, échauffement et poids de barre — cf.
+> « Lot en cours ».
+
+---
+
+## Lot 5 — Séance en direct (cœur)
+
+### État vérifié le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**217 tests**, +69), `npm run build`.
+- ✅ **Les quatre pièges du Lot 2 vérifiés en base**, chacun avec son test (cf. ci-dessous).
+- ✅ **Reprise après un rechargement complet** : chronomètre juste, série cochée intacte, et le
+  `107,5` **tapé mais pas coché** toujours là.
+- ✅ **Chemin à un appui mesuré** : un `click` sur la coche d'une ligne intacte a écrit
+  `weight: 100, reps: 5` en base, la ligne est passée en `--surface-2`, la coche en accent.
+- ✅ **Focus vérifié comme au Lot 4** : `102,5` tapé caractère par caractère dans la grille,
+  `document.activeElement` reste le champ aux 5 frappes, `selectionStart` va de 1 à 5 — malgré une
+  écriture en base à **chaque** caractère.
+- ✅ Contrastes mesurés sur les 3 écrans × 2 thèmes : **zéro échec, minimum 6,04:1**. Un échec
+  trouvé et corrigé, cf. ci-dessous.
+- ✅ Cibles tactiles en 375 × 812 : aucun élément sous 48 px de haut ni 44 px de large, **coche et
+  cellules comprises**. Aucun débordement horizontal sur les 6 types de mesure.
+- ✅ **Clôture vérifiée en base** : séance à 7 séries dont 1 cochée → 6 séries supprimées,
+  3 exercices retirés, 1 exercice et 1 série gardés, statut `completed`, durée 247 s.
+- ✅ **Non-régression Lot 3** : la fiche exercice affiche maintenant de vraies données produites
+  par le Lot 5 — record 100 kg × 5, historique à deux dates, échauffements exclus du relevé.
+- ✅ **Checkpoint en salle : validé par l'utilisateur.**
+
+### Les quatre pièges du Lot 2, trouvés en lisant le code
+
+Aucun n'était détectable avant ce lot : **rien ne créait de `WorkoutSet`**, donc ce code n'avait
+jamais été exercé. Chacun a son test, qui échoue sans son correctif.
+
+1. **`getLastPerformance` renvoyait la séance en cours.** Elle remonte l'index et s'arrête sur la
+   première série validée ; dès que la série 1 d'aujourd'hui était cochée, c'était elle. La colonne
+   « précédent » aurait cessé d'être une référence pour devenir **un miroir de ce qu'on venait de
+   taper**. → `excludeWorkoutId`. Le test assère les deux comportements côte à côte.
+2. **`addSet` comptait les séries supprimées** : le `.count()` de Dexie ne filtre pas `deletedAt`.
+   Supprimer une série puis en ajouter une produisait deux séries de même `order`.
+3. **Une séance abandonnée aurait continué d'alimenter l'historique.** Le statut seul ne suffit
+   pas : `getLastPerformance` et les records du Lot 3 lisent des séries **sans jamais regarder le
+   statut de leur séance**. Une séance ratée serait devenue la référence de la suivante.
+   → `discardWorkout` cascade le _soft delete_.
+4. **`finishWorkout` gardait les séries jamais cochées.** Une routine de 6 × 4 pose 24 lignes, on
+   en fait 17 : les 7 autres ne sont pas des séries à zéro, ce sont des séries qui n'ont pas eu lieu.
+
+### Le geste — trois états, un seul appui
+
+| Ce que la cellule montre       | D'où ça vient                                        | Ce que la coche enregistre |
+| ------------------------------ | ---------------------------------------------------- | -------------------------- |
+| Un chiffre en **encre, gras**  | **tu l'as tapé** — rien d'autre n'atterrit jamais là | ce chiffre                 |
+| Un chiffre en **gris, maigre** | la prescription du jour, sinon la dernière fois      | **ce chiffre**             |
+| Rien                           | ni prescription ni historique                        | rien                       |
+
+Une série identique à ce qui est proposé coûte donc **un appui**, là où le cadrage en tolérait
+deux. Toucher le champ **ne recopie pas** le gris : une valeur que tu n'as pas tapée ne doit jamais
+être indiscernable d'une valeur que tu as tapée.
+
+### Décisions et écarts par rapport au plan
+
+- **La saisie est en ligne, pas dans une feuille** — et ça ne contredit pas le Lot 4. Une routine,
+  c'est trois valeurs × cinq séries × six exercices posées d'un coup, assis ; une séance, c'est une
+  ligne à la fois, entre deux séries, une main. Une feuille coûte déjà deux appuis pour s'ouvrir et
+  se fermer.
+- **La colonne « précédent » reste une colonne**, pas un simple placeholder. Le moment où elle sert
+  vraiment, c'est **quand on ne la reprend pas** : « la dernière fois 97,5 × 5, aujourd'hui
+  j'essaie 100 ». Un placeholder disparaît à la première frappe, précisément là. Elle est tapable,
+  et elle écrit la dernière fois par-dessus la prescription.
+- **La ligne d'en-têtes (`PRÉCÉDENT · kg · REPS`) est ce qui permet à la colonne « précédent » de
+  se passer d'unités.** Les chiffres sont dans les mêmes colonnes que les champs : « 97,5 × 5 » se
+  lit une fois contre l'en-tête, pas sur chaque ligne. Sur 375 px c'est la différence entre une
+  grille et un mur de texte.
+- **Aucun store Zustand.** Le chronomètre se dérive de `startedAt`, la séance en cours se lit par
+  `getActiveWorkout()`. Un store recopierait des données persistées, ce qu'ADR-004 interdit — et
+  c'est précisément là que naissent les pertes de séance. `stores/activeWorkout.ts` n'existe pas.
+  Le Lot 6 en aura un vrai besoin (minuteur), pas celui-ci.
+- **Écriture en base à la frappe**, plus tôt que la règle non négociable n°4 ne l'exige :
+  `isCompleted` reste 0 tant que ce n'est pas coché, donc rien n'entre dans l'historique, mais un
+  kill de l'app ne coûte même pas les caractères en cours.
+- **La barre de reprise est permanente, il n'y a pas de redirection au démarrage.** Rouvrir l'app
+  en pleine séance ne prouve pas qu'on veut l'écran de séance : aller chercher un réglage de
+  machine sur une fiche exercice est exactement la raison d'en sortir. Une barre répond aux deux
+  besoins — reprendre après un kill, et revenir après être allé voir autre chose.
+- **`Démarrer` est en bas, pas en haut.** `PROGRESS.md` annonçait « en haut de l'éditeur de
+  routine » ; c'était contraire à la règle du Lot 1 (« actions primaires en bas, jamais en haut »)
+  et au défaut que l'utilisateur avait lui-même remonté au Lot 3. Arbitré avec lui : la barre
+  collante devient **« Terminé » + « Démarrer la séance »**, et « Ajouter un exercice » descend en
+  fin de liste, comme « Ajouter une série » est déjà en pied de carte. Trois boutons sur 343 px,
+  c'est trois libellés tronqués — et en salle le verbe de cet écran est _démarrer_.
+- **Une séance à la fois.** L'accueil ne propose rien quand une séance tourne, et « Démarrer »
+  devient « Reprendre » : un bouton qui ne peut rien démarrer est pire que pas de bouton.
+- **Le tonnage ne compte que les kilos qui sont vraiment la charge.** Un lest de 10 kg sur une
+  traction et une assistance de 20 kg sur une machine vivent dans le même champ qu'un développé à
+  100 kg ; les additionner produit un nombre faux. Conséquence assumée : une séance de tractions
+  affiche un tonnage nul — c'est pour ça que l'écran de fin montre **trois chiffres**.
+- **La colonne « précédent » est indexée strictement.** La série 5 ne retombe jamais sur la série 4
+  de la dernière fois : le gris n'est pas décoratif, la coche l'enregistre, donc emprunter la
+  charge d'une autre série écrirait un nombre que personne n'a soulevé.
+- **`workoutHistory.ts` extrait de `workouts.ts`.** 617 lignes, bien au-delà de la règle des 300.
+  La coupe n'est pas arbitraire : ces deux requêtes lisent **à travers** les séances (fiche
+  exercice du Lot 3, écran de séance, historique du Lot 7) alors que tout le reste écrit **dans**
+  la séance en cours.
+
+### Le défaut trouvé en pilotant l'écran — la fourchette de reps disparaissait
+
+Le premier écran réel, monté depuis une vraie routine, montrait **une case vide** là où la routine
+prescrivait 8 – 12.
+
+Cause : la prescription était recopiée dans `weight`/`reps`. Or **« 8 – 12 » n'est pas un nombre** :
+elle n'avait littéralement nulle part où aller. Et la prescription qui _passait_ (100 kg) arrivait
+en texte foncé, **indiscernable de ce qu'on venait de taper**.
+
+`WorkoutSet` porte désormais sa prescription dans des champs `target*` (non indexés, donc **aucune
+migration** — même précédent que `Routine.subtitle` au Lot 4). De là découle la règle sur laquelle
+tient tout l'écran : **rien n'est en encre tant que ce n'est pas tapé.** La séance se souvient de
+ce qu'on lui a demandé même si la routine change ensuite — et le Lot 18 lira les mêmes champs :
+savoir si tu as atteint le haut de la fourchette est _toute_ l'entrée de l'auto-progression.
+
+### Le défaut trouvé en mesurant — la valeur proposée était illisible
+
+Le balayage de contraste a échoué sur **chaque** valeur grisée de la grille : **3,44:1 en sombre,
+2,02:1 en clair**. Un appui y enregistrait un nombre que personne ne pouvait lire.
+
+Le Lot 1 avait rangé cette valeur sous `--text-3` en la décrivant comme « une valeur volontairement
+atténuée, un écho de donnée qu'on peut réutiliser ». **Elle ne l'est pas** : dans cette grille, le
+gris est _ce que la coche écrit_. C'est le nombre le plus lourd de conséquence de l'écran.
+
+Le gris passe donc à `--text-2`, et c'est la **graisse** qui porte la distinction proposé/saisi
+(`font-normal` contre `font-semibold`) — exactement le couple que `NumberInput` appliquait déjà à
+ses placeholders depuis le Lot 1. Mesuré après : proposé 6,49:1 en graisse 400, saisi 15,13:1 en
+graisse 600.
+
+**`--text-3` n'a plus aucun consommateur dans l'app.** Le Lot 3 l'avait déjà retiré des
+placeholders, le Lot 2 des quotas, le Lot 1 des micro-libellés ; le Lot 5 lui retire son dernier
+usage annoncé. Le jeton reste déclaré avec la raison écrite en clair dans `index.css`, pour que
+personne ne le réintroduise sans lire pourquoi.
+
+### Le défaut signalé — le filet de superset était invisible en thème clair
+
+Le filet de 3 px qui matérialise un superset était peint en `--color-accent`. Mesuré : **1,29:1 sur
+`--surface-0` en clair**, contre 15,31:1 en sombre — d'où le fait que personne ne l'ait vu. Le seuil
+WCAG 1.4.11 pour un élément non textuel porteur d'information est **3:1**.
+
+C'est la troisième occurrence du **même** défaut : le partage aplat/encre, posé au Lot 1 pour
+l'accent, transposé au rouge au Lot 4 (`--danger-ink`), et ici **pas appliqué alors que le jeton
+existait déjà**. La règle est pourtant écrite dans `index.css` : `--color-accent` est un **aplat**
+(une forme qui porte `--color-accent-fg`), `--accent-ink` est ce qui doit être **lisible contre**
+une surface. Un filet de 3 px ne porte rien par-dessus — c'est de l'encre.
+
+Les deux appels étaient de l'encre : `WorkoutExerciseCard` (Lot 5) et `RoutineExerciseCard`
+(Lot 4), le même filet dessiné deux fois. Mesuré après bascule sur `--accent-ink`, dans l'app qui
+tourne : **6,63:1 sur `--surface-0`, 6,04:1 sur `--surface-1`, 5,23:1 sur `--surface-2`** en clair ;
+le thème sombre est inchangé au bit près (15,31:1), les deux jetons y étant la même valeur.
+
+Audit fait dans la foulée : **les neuf `--color-accent` restants portent tous `--color-accent-fg`
+sur le même élément**, donc tous des aplats légitimes. Ces deux filets étaient les seuls écarts.
+
+**Les lettres A / B / C ne bougent pas.** Le correctif rend le filet visible, il ne rend pas les
+lettres inutiles — un accent seul ne peut pas porter du sens (plein soleil, daltonisme), et c'est
+la décision du Lot 4 rappelée plus bas.
+
+### Le retour sur les boutons — quatre passes, quatre fois juste
+
+Remonté après lecture du code livré : « les boutons ne s'intègrent pas correctement dans l'app ».
+Quatre allers-retours ont suivi. **Aucun de ces défauts n'était visible au typecheck, au lint ni
+aux tests** ; trois d'entre eux ont été trouvés en regardant une capture d'écran.
+
+**1. J'avais inventé un composant visuel.** Une boîte en pointillés pour « Ajouter un exercice ».
+`border-dashed` n'existait **nulle part ailleurs** dans le dépôt — toutes les surfaces d'ici sont
+pleines et sans bordure, donc un contour vide se lit comme un emplacement à remplir. Deux « + »
+cohabitaient sur le même écran en deux langues.
+
+**2. « Démarrer la séance » passait à la ligne dans son bouton.** J'avais mesuré `168x56` et conclu
+que ça allait : la boîte allait, le texte cassait dedans.
+
+**3. Le chronomètre était un menu secret.** Il occupait le coin haut-droit, là où tous les autres
+écrans posent une icône, et cachait le seul accès à « Renommer » et « Notes ». En `--accent-ink`,
+qui dans cette charte veut dire _engagé_ — une horloge en vert accent se lit comme un témoin.
+
+**4. Deux commandes empilées pour une seule action.** « Reprendre » dans la barre collante et la
+barre de reprise 32 px dessous : même vert exact (`rgb(199,242,82)`), même hauteur, même
+destination, et **toutes deux conditionnées par la même séance active** — elles ne pouvaient pas
+apparaître l'une sans l'autre.
+
+**5. « Ça chevauche, ça fait posé là. »** Les barres d'action étaient des `position: sticky` posées
+par-dessus le contenu. J'ai d'abord rustiné la couleur (`--surface-1`) : **pire**, c'est la couleur
+des cartes, mesurée identique, donc la dernière carte fondait dans la bande.
+
+**6. « Pourquoi j'ai Terminé et Démarrer ? »** — la meilleure question du lot. « Terminé » appelait
+le **même `goBack` que la flèche de l'en-tête**. Il datait du Lot 3, quand une fiche n'avait pour
+seule sortie qu'un mot en haut à droite ; la flèche est arrivée au Lot 4 et le doublon lui a
+survécu.
+
+### Ce que le Lot 5 ajoute à la charte du Lot 1
+
+La charte est figée depuis le Lot 1 et les lots suivants s'appuient dessus. Le Lot 5 n'ajoute donc
+**aucun vocabulaire visuel neuf** : il nomme ce qui existait déjà en double, et supprime ce qui
+faisait doublon.
+
+| Primitive         | Ce qu'elle nomme                                      | Points d'appel |
+| ----------------- | ----------------------------------------------------- | -------------- |
+| `ui/AddRow`       | « encore un de ceux-là » — le seul geste d'ajout      | 4              |
+| `ui/HeaderAction` | le bouton du coin haut-droit, une icône jamais un mot | 3              |
+| `ui/ActionBand`   | l'action primaire, en bande pleine largeur            | 6              |
+| `ui/numberField`  | le cœur décimal partagé avec `NumberInput`            | 2              |
+
+Trois règles en découlent, à respecter dans les lots suivants :
+
+- **Une action primaire par écran, et jamais une navigation.** Revenir en arrière est le travail de
+  la flèche de l'en-tête. Un bouton qui appelle `goBack` en double est un bouton en trop.
+- **La bande d'action est un frère flex, jamais une superposition.** C'est le raisonnement que le
+  Lot 1 avait tenu pour la barre de navigation et jamais transposé. Le défilement vit dans `Screen`,
+  entre l'en-tête et le pied ; rien ne peut passer dessous.
+- **Sa forme est celle de la barre de reprise** — bord à bord, sans retrait, sans arrondi, 56 px.
+  C'est la seule grande surface d'accent de l'app dont l'utilisateur ne se soit jamais plaint.
+
+**`--text-3` n'a plus aucun consommateur.** Le Lot 1 le réservait à « la valeur précédente du
+Lot 5 » ; cette valeur s'est révélée être ce que la coche enregistre, et le jeton y mesurait
+2,02:1 en clair. Il reste déclaré dans `index.css` avec la raison écrite, pour que personne ne le
+réintroduise sans la lire.
+
+### Le balayage pour supprimer une série — et le seuil qui est un mot
+
+Demandé après le premier essai en salle : « parfois on met une série par erreur, ou on veut en
+faire moins ». La suppression existait déjà (appui sur le rang → feuille → « Supprimer la série »),
+mais à deux appuis et une feuille modale, entre deux séries, essoufflé.
+
+Trois décisions, dans l'ordre où elles se sont imposées :
+
+- **Le seuil, c'est le mot.** Le balayage découvre « SUPPRIMER » gravé dans la surface sous la
+  ligne, et la suppression part quand le mot est **entièrement lisible**. Pas de compteur de pixels
+  à apprendre, pas de jauge à lire : la typographie _est_ la jauge, et un mot à moitié découvert
+  dit « pas encore » sans légende. La largeur est **mesurée sur le span rendu**, jamais écrite en
+  dur — l'app n'embarque aucune police, donc le mot fait la largeur que le téléphone lui donne.
+  C'est la leçon du Lot 5 sur la fourchette de reps, appliquée avant d'avoir le bug. Mesuré ici :
+  71,2 px, soit un seuil de 103 px, borné à \[72, 170\] pour qu'une police exotique ne rende pas le
+  geste impossible ni gratuit.
+- **Pas de bandeau rouge.** La charte réserve `--color-danger` comme **aplat**, et un aplat rouge
+  sous le pouce serait la chose la plus forte de l'écran — plus forte qu'une série validée, qui est
+  censée l'être. Le danger reste de l'**encre**, sur le mot : `--text-2` avant le seuil,
+  `--danger-ink` après, plus la pastille haptique de 10 ms que `ReorderableList` emploie déjà à la
+  prise. Mesuré : 5,49:1 en sombre, 5,10:1 en clair sur `--surface-2`.
+- **L'annulation tient la place du disparu, pas un toast.** Un toast en pied d'écran peut dire
+  *qu'*une série est partie, jamais **laquelle** — or cet écran empile vingt lignes de deux
+  nombres. Un bandeau posé entre la 2 et la 3 n'a besoin d'aucun mot pour le dire, et il apparaît
+  sous le pouce qui vient de balayer. Coût : aucun portail, aucune surcouche, aucun z-index. Six
+  secondes, puis il se referme en `1fr → 0fr`. `restoreSet` remet la série **à son rang** (tri à
+  deux clés : l'ordre, puis la rescapée d'abord à égalité) — sans ça, une série reprise en
+  deuxième place réapparaît en troisième.
+
+**Trois défauts trouvés en pilotant, pas en relisant :**
+
+- **`touch-action` est le seul levier qui compte.** `none` (le réflexe) fige le défilement de
+  l'écran le plus défilé de l'app ; écouter sans lui fait bagarrer le geste contre le scroll
+  pendant les premières frames. `pan-y` est la réponse : le navigateur garde le vertical, en natif,
+  et cède l'horizontal.
+- **`setPointerCapture` lançait une exception et tuait le geste entier.** La capture n'est qu'un
+  confort — elle sert si le doigt sort de la ligne. Un navigateur qui la refuse laissait la ligne
+  **bloquée à moitié ouverte**, mot affiché, plus rien pour la refermer. Elle est maintenant en
+  `try`/`catch` : jamais une précondition.
+- **La suppression était déclenchée par `transitionend`.** Ça lie une **écriture en base à une
+  peinture** : un onglet mis en arrière-plan par un appel entrant — le cas que la règle n°4 nomme
+  explicitement — laissait le geste fait, la ligne partie de l'écran et **rien d'écrit**. Remplacé
+  par un `setTimeout` de 220 ms, qui se résout toujours ; et si l'app meurt dans cet intervalle, la
+  série est encore là, ce qui est le bon sens de l'échec pour une suppression.
+
+**Ce qui reste vrai après :** le balayage est un **raccourci**, pas le seul chemin. L'appui sur le
+rang ouvre toujours la feuille avec « Supprimer la série » — c'est elle qui porte l'accessibilité
+clavier et lecteur d'écran, et elle était là avant.
+
+### Ce que le Lot 5 ne fait pas — à savoir avant de tester
+
+- **Le minuteur de repos** (Lot 6, RF-22/RF-27). Le repos par exercice est stocké et affiché, rien
+  ne le déclenche.
+- ~~**Changer le type d'une série en séance** (Lot 6, RF-20). Le type est **repris de la routine** et
+  affiché (« ÉCH. »), il ne se modifie pas ici.~~ **Fait au Lot 6, tranche 3, tâche 1** — et le
+  « ÉCH. » de l'écran de séance est devenu un pictogramme.
+- ~~**Le RPE** (Lot 6, RF-30).~~ **Fait au Lot 6, tranche 3, tâche 3** — repliable dans la feuille de
+  série, jamais ajouté à la grille. ~~La détection de record en direct (Lot 6, RF-23).~~ **Fait au
+  Lot 6, tranche 3, tâche 2** — dérivé de l'historique et des séries validées de la séance.
+- **Relire ou corriger une séance passée** (Lot 7). Cet écran ne connaît que la séance `active`.
+- **Une durée se saisit en secondes**, pas en `m:ss`. À rouvrir si ça gêne.
+- **`isUnilateral` n'est toujours lu par personne.** Le champ existe depuis le Lot 2 ; ni le
+  Lot 3, ni le 4, ni le 5 ne le consomment. C'est le contrôle de fin de lot institué au Lot 4 —
+  consigné ici comme **en attente**, pas comme oublié.
+
+### ✅ Checkpoint Lot 5 — **validé en salle (2026-07-24)**
+
+- [ ] **Une vraie séance complète avec l'app.**
+- [ ] En pleine séance : tuer l'app depuis le gestionnaire de tâches, la rouvrir → la séance
+      reprend où elle en était, aucune série perdue.
+- [ ] Mode avion pendant toute la séance → aucune différence.
+- [ ] Saisir une série sans lunettes, d'une main, en 3 secondes.
+- [ ] Ajouter un exercice non prévu au milieu, et en réordonner deux au doigt.
+- [ ] Se tromper de ligne, décocher, corriger.
+- [ ] **Balayer une série vers la droite** : le mot « SUPPRIMER » se découvre, la ligne devient
+      plus lourde au seuil, la pastille haptique se sent **sans regarder**.
+- [ ] Balayer par erreur puis appuyer sur « Annuler » → la série revient **à sa place**.
+- [ ] Défiler la liste en partant d'une ligne de série → la page défile normalement, rien ne bouge
+      latéralement. C'est le point qui casse en premier si `touch-action` bouge.
+- [ ] Balayer en partant d'un champ de saisie → **rien ne doit se passer** (le clavier ne doit pas
+      s'ouvrir en route).
+
+---
+
+## Lot 4 — Routines
+
+### Definition of Done — vérifiée le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**146 tests**, +62), `npm run build`
+  passent tous les quatre.
+- ✅ **Glisser-déposer vérifié par événements `pointerType: 'touch'` synthétiques**, avec relecture
+  de l'ordre **dans IndexedDB** et pas seulement du DOM : la ligne bouge, `order` est renuméroté
+  0…n sans trou, le superset survit.
+- ✅ **La page défile toujours** : `touch-action` calculé vaut `none` sur la poignée (44 × 72 px) et
+  `auto` sur la ligne et sur la carte.
+- ✅ **Duplication vérifiée dans le vrai écran** : copie à 9 exercices / 22 séries / 82,5 kg, puis
+  renommage de la copie **et** retrait d'un de ses exercices → l'original est resté à 9 exercices,
+  22 séries, 82,5 kg. Aucun identifiant partagé entre les deux arbres (test unitaire).
+- ✅ **Dossier supprimé, routines intactes** : les deux routines sont toujours là, à la racine. Le
+  texte de confirmation accorde au singulier (« Sa routine remonte à la racine. »).
+- ✅ Sélection multiple vérifiée : « curl » → 15 résultats, 3 touchés, bouton « Ajouter
+  3 exercices », lignes ajoutées aux rangs 6, 7 et 8.
+- ✅ Superset vérifié de bout en bout : groupement, lettres **A / B / C**, 3 filets d'accent de 3 px
+  (dont deux de 277 px qui enjambent la gouttière de 12 px, et un de 265 px qui s'arrête), puis
+  dissociation du groupe entier.
+- ✅ Contrastes **mesurés** sur les 3 écrans × 2 thèmes : **934 nœuds de texte, zéro échec**,
+  minimum **6,04:1**.
+- ✅ Cibles tactiles en 375×812 : **aucun élément sous 48 px de haut ni 44 px de large**.
+- ✅ Aucun débordement horizontal (`scrollWidth === innerWidth === 375`), **36 px** de dégagement
+  entre la dernière carte et la barre collante.
+- ✅ **Non-régression Lot 3 vérifiée** après l'extraction de `ExerciseBrowser` : « developpe
+  couche » → 4 résultats, `#/exercises?q=developpe+couche&muscle=chest`, et le retour depuis une
+  fiche restitue **la recherche et le filtre**.
+
+### Décisions et écarts par rapport au plan
+
+- **Les six modèles ne sont pas seedés.** Le seed du catalogue tourne à chaque démarrage ; le même
+  mécanisme ferait réapparaître « Poussée » chaque fois qu'on la supprime. La ligne de partage
+  écrite au Lot 2 s'applique telle quelle : le catalogue appartient à l'app et revient toujours, ce
+  que l'utilisateur compose lui appartient et ne revient jamais. Un modèle est donc un **choix**,
+  qui produit une routine ordinaire. Un test vérifie que **chaque slug cité existe au catalogue** —
+  sinon la routine produite manquerait silencieusement un exercice.
+- **Supprimer un dossier ne supprime pas ses routines.** Elles remontent à la racine, et le nombre
+  concerné est annoncé dans la confirmation. Ranger et détruire sont deux gestes différents.
+- **L'écran d'une routine _est_ son éditeur.** Tout s'écrit à la frappe (précédent du Lot 3), donc
+  il n'y a ni état modifié à valider ni mode lecture à en distinguer.
+- **Aucun bouton « Démarrer ».** C'est le Lot 5. Un bouton qui ne fait rien est pire que pas de
+  bouton — et l'emplacement est réservé en haut de ce même écran.
+- **Pointer Events, pas l'API HTML5 de glisser-déposer.** Chrome Android n'émet **jamais**
+  `dragstart` depuis un événement tactile : un lot bâti dessus ne marcherait que sur le PC du
+  développeur, alors que le checkpoint dit « au doigt sur ton téléphone ».
+- **`touch-action: none` sur la poignée seule**, jamais sur la ligne ni sur la liste. Posé sur la
+  liste, c'est tout l'écran qui cesse de défiler.
+- **Le superset se lit à la lettre autant qu'à la couleur.** Les exercices groupés portent **A / B /
+  C** — l'ordre d'alternance, la seule information que le lecteur d'un superset a besoin de lire —
+  en plus du filet d'accent. La charte n'a qu'un accent, et un accent seul ne peut pas porter du
+  sens (plein soleil, daltonisme). Un exercice non groupé n'a pas de lettre : **l'absence de marque
+  est elle-même l'information**.
+- **« Dissocier » dissout le groupe entier**, jamais un membre. Retirer le membre du milieu d'un
+  groupe de trois n'aurait pas le même sens que retirer le premier, et une action dont l'effet
+  dépend de l'endroit où on a touché est une action à laquelle personne ne se fie.
+- **Une ligne déposée entre deux membres d'un même groupe le rejoint.** Le filet dessine un
+  contenant ; déposer dans un contenant met dedans. **La règle n'est volontairement pas généralisée**
+  à une ligne portant déjà un groupe : `[B:1, C:2, A:1, D:2]` ne dit pas si A est entré dans (C, D)
+  ou C dans (B, A) — l'information de « qui a bougé » n'est pas dans le tableau. Une règle qui
+  tranche devine. Les deux groupes se dissolvent, ce qui est **visible à l'écran**, et un test fige
+  ce comportement pour que personne ne le « répare » à l'aveugle.
+- **`originRoutineId` reste vide à la duplication.** Une copie n'est pas une version ; le champ
+  décrit une filiation qu'aucun écran ne lit. Le versionnage est du Lot 17.
+- **Le sélecteur d'exercices est un écran, pas une feuille.** Trois raisons, toutes issues des
+  168 lignes : une feuille plafonne à 88 % et imbriquerait une zone de défilement dans une autre ;
+  les en-têtes de lettre collants sont dessinés sur le fond de page et peindraient par-dessus la
+  surface de la feuille ; et le bouton retour Android du Lot 10 se comporte correctement sans rien
+  ajouter.
+- **Le sélecteur ne propose pas « Créer « x » »** sur une recherche infructueuse — créer un exercice
+  abandonnerait la routine en cours d'écriture, et le retour ne saurait pas restituer la sélection.
+  Sa sortie est **« Effacer la recherche »**, qui ne quitte pas le geste en cours.
+- **Une série se modifie dans une feuille, pas en ligne.** Trois valeurs × cinq séries × six
+  exercices sur 375 px, c'est un marécage de cibles à 24 px. **« Ajouter une série » recopie la
+  précédente** (3 × 8-12 @ 80 kg = une saisie et deux appuis) et **« Appliquer à toutes les
+  séries »** couvre la montée de charge, l'entretien le plus fréquent d'une routine.
+- **Seul l'échauffement est planifiable au Lot 4.** Dégressive et échec sont du Lot 6, où RF-20 leur
+  donne un comportement ; et une dégressive ne se planifie pas vraiment, elle se décide la barre en
+  main.
+- **Les dossiers et les routines ne se réordonnent pas au doigt.** Le budget de glisser-déposer va
+  aux exercices, où le checkpoint l'exige. Tri par création ; déplacement entre dossiers par le menu.
+
+### Le défaut trouvé en testant — les feuilles enchaînées ne s'ouvraient pas
+
+`ActionSheet` appelait `action.onSelect()` **puis** `onClose()`. Les deux atterrissent dans le même
+lot de rendu React, donc la dernière écriture gagne : toute action qui **ouvre une autre feuille**
+posait son état, que la fermeture effaçait aussitôt. _Nouveau dossier_, _Déplacer vers un dossier_,
+_Supprimer la routine_, _Renommer_ — **aucune ne s'ouvrait**.
+
+Invisible aux tests unitaires (c'est de l'ordonnancement d'état React) et invisible à la lecture du
+code. **Trouvé en pilotant l'interface pour de vrai.** Correctif d'une ligne : fermer d'abord, agir
+ensuite. `OptionSheet` portait le même motif, latent — corrigé aussi.
+
+### Deux « bugs » qui n'en étaient pas — le panneau navigateur ne compose jamais
+
+Deux mesures ont paru révéler des défauts. **Les deux venaient de l'environnement de test, pas du
+code**, et les deux auraient conduit à « corriger » du code correct :
+
+1. **Le fond de la carte soulevée** restait `--surface-1` alors que la classe
+   `bg-[var(--surface-2)]` était bien posée, la règle CSS bien émise et la variable bien résolue.
+   Cause : la transition ne démarre jamais faute d'occasion de rendu. `card.style.transition =
+'none'` → la valeur saute immédiatement à `rgb(30,30,33)`. **Le CSS était juste.**
+2. **Le défilement automatique** ne bougeait pas. Cause : `requestAnimationFrame` **ne se déclenche
+   jamais** ici — mesuré, `0 frame en 1 s`, `document.visibilityState === 'hidden'`.
+
+La conséquence tirée : la partie du drag qui ne peut pas être exercée dans ce panneau ne devait pas
+être la seule sans test. `edgeScrollDelta` a donc été **extrait en fonction pure** (`ui/edgeScroll.ts`,
+8 tests). En l'écrivant, un vrai défaut est apparu : la vitesse n'était pas bornée, donc un doigt
+traîné **au-delà** du haut de l'écran faisait accélérer la liste indéfiniment — exactement quand on
+ne peut plus corriger. Bornée.
+
+### Les cinq retours du premier essai sur téléphone — tous corrigés
+
+Remontés par l'utilisateur après une vraie session de saisie. **Cinq sur cinq étaient justes.**
+
+**1. Le clavier se fermait à la première frappe.** Le pire des cinq : il rendait la saisie décimale
+(`102,5`, quatre caractères) littéralement impossible.
+
+`Sheet` déclare son effet avec `[open, onClose]`, et cet effet appelle `panelRef.current?.focus()`.
+Or les appelants passent `onClose` en **flèche inline**, donc son identité change à chaque rendu du
+parent ; et une feuille dont les champs écrivent en base à la frappe se re-rend **à chaque
+caractère**. L'effet rejouait donc, et reprenait le focus. Mesuré : `document.activeElement`
+devenait `DIV[dialog]` dès le **premier** caractère.
+
+Le focus d'ouverture vit maintenant dans son propre effet, dépendant de `open` **seul**. Vérifié
+après correctif : `102,5` se tape en entier, focus conservé, curseur de 1 à 5 ; idem sur les notes
+(11 caractères, curseur à 11).
+
+**Pourquoi les tests ne l'ont pas vu** : je posais les valeurs par `dispatchEvent` sans jamais
+vérifier `document.activeElement`. Une saisie programmatique ne perd pas le focus de la même façon
+qu'un doigt. **Toute vérification de champ doit désormais assurer le focus, pas seulement la valeur.**
+
+**2. On ne pouvait pas glisser une routine dans un dossier.** J'avais écarté le besoin (« le budget
+de drag va aux exercices »). À tort.
+
+La liste est maintenant **plate, et un en-tête est une position, pas un contenant** : le dossier
+d'une routine **est** l'en-tête au-dessus d'elle. Déposer réordonne et range d'un seul geste, sans
+cible de dépôt à viser au pouce ni logique de transfert entre conteneurs. L'en-tête « Sans dossier »
+n'apparaît qu'à partir du premier dossier — mais alors toujours, sinon une routine entrée dans un
+dossier ne pourrait plus en ressortir. Vérifié dans les deux sens.
+
+Conséquence de mise en page : chaque routine devient **sa propre carte**, comme les exercices de
+l'éditeur — une ligne doit pouvoir se détacher de ses voisines pour être soulevée.
+
+**« Déplacer vers un dossier » reste dans le menu ⋯.** Le glisser est rapide, le sélecteur est
+précis, et avec une douzaine de routines le dossier visé peut être à deux écrans du pouce.
+
+**3. L'en-tête de l'éditeur était illisible en responsive.** Le titre est le **nom choisi par
+l'utilisateur** : lui opposer un relevé « 22 SÉRIES » _et_ un lien « Routines » faisait trois
+éléments en concurrence sur 375 px, et ça cassait dès que le nom dépassait « Poussée ».
+
+L'en-tête ne porte plus que le titre et le retour — **exactement la forme de la fiche exercice du
+Lot 3**. Le relevé descend au-dessus de la liste qu'il compte, là où il est réellement informatif.
+
+**4 et 5. Les routines ont un sous-titre.** `Routine.subtitle` (non indexé, donc **aucune migration**).
+Sans lui, une routine qu'on veut décrire devient un titre qui passe à la ligne trois fois et se lit
+comme un paragraphe — et une liste de paragraphes ne se parcourt pas.
+
+Trois registres distincts sur la ligne, au lieu de deux gris identiques :
+
+| Ligne                                   | Registre                                                               |
+| --------------------------------------- | ---------------------------------------------------------------------- |
+| `Poussée`                               | `text-base` / `--text-1`                                               |
+| `Lourde — barre et accessoires épaules` | `text-sm` / `--text-2` — de la prose                                   |
+| `9 EXERCICES · 22 SÉRIES`               | `.label-xs` gravé / `--text-2` — un décompte annote, il ne raconte pas |
+
+Mesuré : 87 px avec sous-titre, 64 px sans (la ligne se referme proprement).
+
+Re-vérifié après ces cinq correctifs : contrastes **0 échec / min 6,04:1**, aucune cible sous
+48 × 44, aucun débordement horizontal, **148 tests**.
+
+### Deux retours du deuxième essai — la navigation et le clavier
+
+**1. Le retour est une flèche, plus le nom de la page.** Depuis le Lot 3, revenir en arrière se
+faisait en touchant le **nom de la destination** en haut à droite (« Exercices », « Routines »,
+« Réglages »). Remonté du téléphone : un mot dans un coin se lit comme une **étiquette**, pas comme
+une commande — et il posait un second texte à côté d'un titre choisi par l'utilisateur, sur 375 px.
+
+La flèche est maintenant **centralisée dans `Screen`** (prop `onBack`), à **gauche**, avant le
+titre : cinq écrans qui déclaraient chacun leur bouton en partagent un seul, identique. Le titre
+gagne toute la largeur restante et **tronque** au lieu de passer à la ligne.
+
+Atteindre le coin haut-gauche d'un pouce n'est pas le problème que ce serait pour une action
+primaire : tout écran assez long porte déjà sa vraie sortie sur une barre collante dans la zone du
+pouce (règle du Lot 3). Quatre chaînes mortes supprimées de `fr.ts` au passage.
+
+**2. La touche « OK » du clavier ne faisait rien.** Et c'est exact : **hors d'un `<form>`, `Entrée`
+n'a aucune action par défaut sur un `<input>`**. Le clavier restait donc devant la feuille, et la
+seule issue était de faire glisser la feuille vers le bas.
+
+Deux correctifs, parce que la plainte contenait deux choses :
+
+- `Input` et `NumberInput` interceptent `Entrée` → `blur()`, ce qui referme le clavier. (Pas
+  `Textarea` : là, `Entrée` doit insérer une ligne.)
+- **`Sheet` a maintenant une croix visible.** Le glissement vers le bas marche et reste, mais c'est
+  un geste qu'il faut déjà connaître — et c'était la seule façon de ranger une feuille.
+  `stopPropagation` sur le `pointerdown` de la croix : l'en-tête est la surface de glissement, sans
+  ça appuyer sur la croix aurait commencé un drag. **Vérifié : le `transform` du panneau ne bouge
+  pas à l'appui.**
+
+Mesuré : flèche et croix à **48 × 48** sur les quatre écrans, flèche bien à gauche du `h1`, retour
+qui navigue réellement (`#/routines/xxx` → `#/routines`), `Entrée` qui défocalise champ texte **et**
+champ numérique, contrastes des deux icônes **7,03:1 à 18:1** sur les deux thèmes.
+
+### Le huitième retour — le type de mesure n'était branché sur rien
+
+Remonté après validation du checkpoint, et c'est le défaut le plus profond du lot : **une planche,
+un rameur et un développé couché avaient le même écran de configuration.**
+
+Trois choses, une seule cause :
+
+1. **`RoutineSet` n'avait ni durée ni distance.** Le schéma ne pouvait littéralement pas stocker
+   « planche 45 s ». Deux champs ajoutés (`targetDurationSeconds`, `targetDistanceMeters`), non
+   indexés donc **sans migration**.
+2. **`measurementType` n'était lu nulle part** en dehors du formulaire de création. Choisi au
+   Lot 2, porté par les 168 exercices, et consommé par zéro écran. C'est exactement le
+   « la création de l'exercice n'est pas reliée à l'exo dans la routine » de l'utilisateur.
+3. **Le repos par défaut de l'exercice n'était jamais consulté.** La carte n'affichait que
+   `row.restSeconds`, alors que `0` veut dire « prends celui de l'exercice » (§4.2). Un repos réglé
+   dans la bibliothèque au Lot 3 avait donc l'air perdu.
+
+**`lib/measurement.ts` (TDD, 17 tests)** est le fil manquant : un type de mesure entre, la forme
+sort. La feuille rend ses champs à partir d'elle, la ligne formate à partir d'elle — les deux ne
+peuvent plus se contredire.
+
+| Type de mesure         | Champs                | Ce que la ligne affiche  |
+| ---------------------- | --------------------- | ------------------------ |
+| `weight_reps`          | reps + charge         | `8 – 12 REPS · 102,5 kg` |
+| `reps_only`            | reps + **lest**       | `8 REPS · +10 kg`        |
+| `assisted_weight_reps` | reps + **assistance** | `8 REPS · −20 kg`        |
+| `time_only`            | durée                 | `45 s`                   |
+| `weight_time`          | durée + charge        | `1:30 min · 20 kg`       |
+| `distance_time`        | distance + durée      | `1,5 km · 6:00 min`      |
+
+**Le même champ de kilos veut dire trois choses**, et les appeler tous « charge » est la façon la
+plus simple pour une routine de mentir : une charge sur un développé, un **lest** qu'on ajoute à son
+poids de corps sur une traction, une **assistance** que la machine retire. D'où trois libellés et
+les signes `+` / `−` sur la ligne.
+
+Le repos affiché est désormais **le repos effectif** (l'override de la routine, sinon celui de
+l'exercice), et le champ vide porte la valeur héritée en placeholder avec la phrase qui l'explique.
+
+### Le défaut trouvé en mesurant — le rouge était illisible en thème clair
+
+Trouvé par le balayage de contraste de ce correctif, et **il ne datait pas du Lot 4** : `#ff5c5c`
+mesure **3,03:1 sur blanc, 2,75:1 sur une carte, 2,39:1 sur une ligne pressée**. Toutes les
+commandes destructives de l'app étaient concernées, y compris « Supprimer l'exercice » du Lot 3.
+
+C'est le piège que le Lot 1 avait résolu pour l'accent et **jamais transposé au rouge**. Même
+correctif, même raisonnement : `--danger-ink` (`#ff5c5c` en sombre, `#b91c1c` en clair) pour tout ce
+qui doit se lire **contre** une surface ; `--color-danger` reste le remplissage. Les deux seuls
+appels étaient de l'encre.
+
+Après : **6,08:1 en sombre, 5,89:1 en clair**, sur les six commandes destructives de l'app.
+
+### Checkpoint Lot 4 — ✅ validé le 2026-07-22
+
+Validé par l'utilisateur **sur le site déployé, au doigt**, après trois passes de correctifs
+(sept défauts au total : cinq au premier essai, deux au second).
+
+- [x] Tu crées ta vraie routine de séance, avec tes exercices, tes séries et tes charges cibles.
+- [x] **Tu tapes `102,5` en entier dans une charge cible, sans que le clavier se ferme.**
+- [x] Tu donnes un nom court à une routine et un sous-titre : la liste se lit d'un coup d'œil.
+- [x] **Tu fais glisser une routine sous un en-tête de dossier : elle y entre. Tu la remontes au-dessus :
+      elle en ressort.**
+- [x] Tu réordonnes les exercices **au doigt**, sans frustration — et la page défile encore
+      normalement quand tu ne touches pas la poignée.
+- [x] Tu dupliques une routine et tu la modifies : l'originale n'a pas bougé.
+- [x] Tu groupes deux exercices en superset : le filet et les lettres A/B apparaissent.
+- [x] Tu pars d'un modèle (Poussée), tu le modifies, tu le supprimes : il ne revient pas au
+      rechargement.
+- [x] Tu ranges deux routines dans un dossier, tu supprimes le dossier : **tes routines sont
+      toujours là.**
+
+**Sept défauts remontés, sept justes, zéro faux positif.** Aucun n'était visible en relecture de
+code, et aucun n'a été trouvé par les tests : tous demandaient un pouce et un vrai écran. La leçon
+de méthode est consignée dans « Pièges rencontrés » — vérifier le **focus**, pas seulement la
+valeur, et douter d'un différé de fonctionnalité qui n'a pas été discuté avec l'utilisateur.
+
+---
+
+## Lot 3 — Bibliothèque d'exercices
+
+### Definition of Done — vérifiée le 2026-07-22
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**84 tests**, +19), `npm run build`
+  passent tous les quatre.
+- ✅ **Recherche vérifiée dans un vrai navigateur** : « squat » → 9 sur 168 ; « developpe couche »
+  **sans accent** → 4 sur 168 dont « Développé couché (barre) » ; « zzzz » → 0 sur 168 avec le
+  bouton _Créer « zzzz »_. Latence de frappe **inférieure à 10 ms**.
+- ✅ **Filtres vérifiés** : Haltères → 26 sur 168 ; Haltères + Biceps → 5 sur 168. L'URL suit
+  (`#/exercises?equipment=dumbbell&muscle=biceps`).
+- ✅ **Retour arrière vérifié** : depuis une fiche, revenir retombe sur
+  `#/exercises?q=developpe%20couche`, avec le champ rempli et le relevé à 4 sur 168.
+- ✅ **Cycle complet création → note → suppression** vérifié en lisant IndexedDB directement, pas
+  le DOM : `isCustom: 1`, `isUnilateral: 1`, `quads`/`machine`, **pas de slug**,
+  `userNotes: 'siège position 4'`, `defaultRestSeconds: 45`.
+- ✅ **Pas de saut de curseur** : 16 caractères tapés un par un dans les notes,
+  `selectionStart` reste à 16 malgré une écriture en base à chaque frappe.
+- ✅ **Records et historique vérifiés avec de vraies données** (deux séances fabriquées en base,
+  puis effacées) : charge max 102,5 kg × 5, meilleure série 90 kg × 10 — deux séries différentes,
+  donc les deux lignes s'affichent bien. L'échauffement de 60 kg × 10 n'apparaît nulle part.
+- ✅ Contrastes **mesurés** sur les trois écrans + le sélecteur ouvert, thème sombre **et** clair :
+  minimum **6,49:1** en sombre, **6,04:1** en clair. Un échec trouvé et corrigé, cf. ci-dessous.
+- ✅ Cibles tactiles mesurées en 375×812 sur les trois écrans : **aucun élément sous 48 px de haut
+  ni 44 px de large**. Lignes du sélecteur : 56 px.
+- ✅ Mise en page mesurée en 375×812 : `scrollWidth === innerWidth === 375` partout (aucun
+  débordement horizontal), **32 px** sous le dernier élément une fois défilé tout en bas, sur la
+  bibliothèque comme sur la fiche.
+- ✅ En-tête de lettre collant vérifié : à 4 000 px de défilement, « E » est épinglé à 0 px du haut
+  de la zone de défilement.
+
+### Le catalogue avait 168 exercices, il en a toujours 168
+
+Aucun exercice n'a été ajouté ni retiré. Ce lot ne fait qu'exposer le catalogue du Lot 2.
+
+### Décisions et écarts par rapport au plan
+
+- **La virtualisation demandée par le cadrage n'a pas été faite — après mesure.** Un forçage
+  complet du calcul de mise en page des 168 lignes coûte **18 à 22 ms** sur cette machine, pour
+  **752 nœuds DOM** et 12 950 px de hauteur défilable ; et ce coût n'est payé qu'au rendu complet,
+  pas au défilement. Une virtualisation JS casserait la recherche du navigateur, l'ancrage du
+  défilement et les en-têtes collants, et le §8 de l'architecture exclut les composants tiers.
+  `content-visibility: auto` était le repli prévu : **il n'a pas été jugé nécessaire non plus**.
+  À rouvrir si la liste devient nettement plus longue, avec un chiffre à l'appui.
+- **La recherche et les filtres vivent dans l'URL** (`?q=`, `?muscle=`, `?equipment=`), écrits en
+  `replace`. Sans ça, ouvrir un exercice puis revenir remet la liste à zéro — l'annulation de ce
+  qu'on venait de chercher. Le `replace` évite que chaque frappe crée une entrée d'historique et
+  rende le bouton retour inutilisable. Les valeurs lues de l'URL sont **validées contre
+  `MUSCLE_GROUPS` / `EQUIPMENT`**, jamais castées : une URL est saisissable à la main.
+- **Les en-têtes de lettre disparaissent pendant une recherche.** Ils existent pour découper une
+  liste trop longue à lire d'un coup ; sur six résultats ils ne découpent rien. L'initiale est
+  calculée sur le **nom normalisé**, donc « Élévations » se range sous E — vérifié.
+- **`FilterChip` n'a pas de croix d'effacement.** Une cible de 20 px collée à une cible de 48 px
+  est ce qu'on rate les doigts moites. Retirer un filtre se fait par la première ligne du
+  sélecteur (« Tous les muscles »), ou par le bouton pleine largeur de l'état vide — au moment
+  précis où c'est urgent.
+- **Les états vides de cet écran utilisent la variante `title`, pas `reading`.** L'écran porte déjà
+  son propre relevé : un `0` de 72 px juste dessous dirait deux fois la même chose. La variante
+  `reading` du Lot 1 reste la bonne pour les écrans qui n'ont pas de compteur (Accueil, Routines,
+  Historique).
+- **Trois impasses, trois sorties différentes.** Recherche infructueuse → _Créer « ce que tu as
+  tapé »_, avec le nom déjà pré-rempli dans le formulaire. Filtres trop serrés → _Retirer les
+  filtres_. Catalogue réellement vide → l'explication du Lot 1.
+- **Les records sont dérivés de l'historique, pas lus dans `personalRecords`.** Cette table reste
+  vide jusqu'au Lot 6 : écrire un moteur incrémental maintenant serait du Lot 6 fait à moitié,
+  sans la validation de série qui l'alimente. `lib/records.ts` définit **une fois** ce qui compte
+  comme un record ; le Lot 6 (détection en direct) et le Lot 13 (recalcul complet) consomment ces
+  mêmes fonctions au lieu de redire les règles.
+- **`isWorkingSet` est exporté**, pas seulement utilisé en interne : le nombre de séries d'une
+  ligne d'historique et la valeur affichée à côté doivent parler des mêmes séries. « 4 séries ·
+  100 kg × 5 » où le 4 compte l'échauffement et le 100 kg ne le compte pas, ce sont deux réponses
+  à une seule question. **Trouvé en regardant l'écran avec de vraies données.**
+- **Les reps maximales ne s'affichent que s'il n'y a aucune charge à battre.** Sur un développé
+  couché, le maximum de répétitions est une série légère : l'appeler « record » est un mensonge.
+  Pour une traction au poids du corps, c'est le seul record qui existe.
+- **`labels.ts` vit dans `i18n/`, pas dans `features/exercises/`** comme le plan le disait. Les
+  routines (Lot 4) et la séance (Lot 5) nomment les mêmes muscles et le même matériel ; une
+  feature qui importe une autre feature est le bug de découpage que le §7 signale. Les types
+  _template literal_ font **échouer le typecheck** si une valeur est ajoutée à `MUSCLE_GROUPS`
+  sans son libellé — vérifié en essayant.
+- **Les listes de muscles et de matériel restent dans l'ordre du schéma**, pas alphabétique.
+  `MUSCLE_GROUPS` suit l'anatomie (poussée, tirage, épaules, bras, jambes, gainage) et `EQUIPMENT`
+  la fréquence d'usage. Trier par libellé français rangerait quadriceps et ischio-jambiers aux
+  deux bouts de la feuille.
+- **`NavIcons.tsx` est devenu `ui/icons.tsx`.** Un jeu d'icônes est un composant générique
+  réutilisable : sa place est `ui/`. Un composant de `ui/` qui remonte chercher un glyphe dans
+  `app/` serait une dépendance à l'envers. Trois tracés ajoutés sur la même grille : chevron bas,
+  coche, plus.
+- **`Card` et `ConfirmAction` sortent de l'écran de diagnostic vers `ui/`.** Ils y étaient locaux
+  et servent maintenant quatre écrans. `ConfirmAction` prend un `confirmLabel` : le bouton de
+  confirmation reprend le verbe du bouton qui l'a armé (« Supprimer » confirme « Supprimer »).
+- **Un exercice du catalogue ne se modifie ni ne se supprime, mais ses notes et son repos, si.**
+  C'est la ligne de partage retenue au Lot 2, écrite noir sur blanc dans l'interface.
+
+### Le défaut trouvé en mesurant — les placeholders
+
+Le placeholder du champ de recherche mesurait **2,02:1 en thème clair** et 3,44:1 en sombre. Ce
+n'est pas un détail : le label du champ est en `sr-only`, donc **le placeholder est le seul nom
+visible du contrôle principal de l'écran**.
+
+Le Lot 1 rangeait les placeholders avec la « valeur précédente » du Lot 5 sous `--text-3`. Les deux
+ne demandent pourtant pas la même chose : une valeur précédente est un **écho de donnée** qu'on
+peut réutiliser, un placeholder est une **consigne qu'il faut lire**. Seule la première reste en
+`--text-3`. Après correction : **6,49:1 en sombre, 6,09:1 en clair** (commit `ee1ac2c`).
+
+**La règle du Lot 1 est donc amendée**, et `index.css` le dit maintenant explicitement.
+
+### Le défaut trouvé par l'utilisateur — la fiche n'avait pas de sortie
+
+Remonté au premier essai en ligne : « il n'y a pas de bouton pour valider l'exo, c'est pas très
+ergonomique, car ça ne ferme pas la page de configuration ».
+
+**C'est une contrainte du Lot 1 que j'avais laissée passer** : « les actions primaires en bas
+d'écran, jamais en haut ». La fiche n'avait qu'une sortie, le lien « Exercices » en haut à droite —
+le seul endroit d'un téléphone qu'une main seule n'atteint pas, et qui défile hors de l'écran dès
+qu'on descend.
+
+Deux choses ont été trouvées **en mesurant**, pas en regardant, et la première correction ne
+suffisait pas :
+
+1. Un bouton simplement placé en fin de flux tombait à **86 px sous la ligne de flottaison** sur un
+   exercice fraîchement créé, et serait à un millier de pixels sur un exercice avec des mois
+   d'historique. Il est donc **collant**, épinglé au-dessus de la barre de navigation. Vérifié :
+   visible sans défiler (`top: 699` dans une fenêtre de 812) **et** une fois défilé tout en bas,
+   avec 49 px de dégagement au-dessus — rien n'est masqué dessous.
+2. **`navigate(-1)` ne faisait rien** après une création. La garde reposait sur
+   `location.key === 'default'` ; or arriver ici par un `replace` forge une clé neuve tout en
+   laissant l'index d'historique à 0. La clé disait donc « tu peux revenir » alors qu'il n'y avait
+   rien à dépiler. La garde lit maintenant `window.history.state.idx`.
+
+Le bouton dit **« Terminé »** et non « Enregistrer » : il n'y a rien à enregistrer, chaque frappe
+est déjà en base. Il ramène là d'où on vient, donc **la recherche survit au trajet** — vérifié sur
+les deux chemins (`?q=curl` et `?q=tirage+bulgare+xy`).
+
+### Checkpoint Lot 3 — ✅ validé le 2026-07-22
+
+Validé par l'utilisateur **sur le site déployé**, après la correction du bouton de sortie.
+
+- [x] Tu cherches « squat » : tu trouves. Tu tapes « developpe » **sans accent** : tu trouves quand
+      même.
+- [x] Tu filtres sur « Haltères » : la liste se réduit et le relevé en haut à droite décompte.
+- [x] Tu crées un exercice à toi, il apparaît dans la liste et survit à un rechargement complet.
+- [x] Tu écris une note sur une machine (« siège position 4 »), tu quittes l'écran, tu reviens :
+      elle est là.
+- [x] Tu fais défiler les 168 exercices d'un coup de pouce : c'est fluide, sans à-coups.
+- [x] Tu ouvres un exercice depuis une recherche puis tu reviens : **ta recherche est toujours là**.
+- [x] Sur une fiche d'exercice, le bouton **Terminé** est toujours sous ton pouce, sans défiler, et
+      il referme bien l'écran.
+
+**Un seul défaut remonté sur tout le lot**, et c'était le bon : l'absence de sortie sur la fiche.
+Corrigé, redéployé, revérifié.
+
+---
+
+## Lot 2 — Couche de données
+
+### Definition of Done — vérifiée le 2026-07-21
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (**65 tests**), `npm run build`
+  passent tous les quatre.
+- ✅ **168 exercices** au catalogue. Un test vérifie la couverture des **18 groupes musculaires**,
+  des **10 équipements** et des **6 types de mesure** — aucun trou.
+- ✅ **Seed idempotent vérifié dans un vrai navigateur**, pas seulement en test : 168 → relance →
+  168, message « Seed terminé. ».
+- ✅ **Cycle complet vérifié** : 168 → _Réinitialiser la base_ → 0 (état vide affiché) → _Relancer
+  le seed_ → 168. **Zéro erreur console.** `useLiveQuery` survit bien à `db.delete()` + `db.open()`,
+  ce qui était le point risqué de l'écran.
+- ✅ Contrastes **mesurés** sur l'écran de diagnostic, thème sombre **et** clair : toutes les paires
+  texte/fond ≥ 4,5:1 (min. relevé 6,63:1). Un échec trouvé et corrigé, cf. ci-dessous.
+- ✅ Mise en page mesurée en 375×812 : aucun débordement horizontal, 32 px de marge sous le dernier
+  élément une fois défilé tout en bas. Cibles tactiles : boutons 48 px, ligne « Diagnostic » 90 px.
+
+### Catalogue d'exercices — verdict de licence
+
+> ⚠️ **Corrigé le 2026-07-22 — cette section affirmait plus que ce qui avait été vérifié.**
+> Le contrôle a porté sur la **licence du dépôt** (Unlicense, confirmée deux fois via l'API
+> GitHub), **pas sur la provenance des images qu'il contient**, que son README ne documente nulle
+> part. La distinction n'est pas théorique : `hasaneyldrm/exercises-dataset` est sous MIT tout en
+> contenant des images © Gym Visual qu'il n'a le droit de redistribuer que sous conditions. Un
+> dépôt peut être libre et contenir des œuvres que le déposant n'avait pas le droit d'y mettre.
+> **La phrase « sans aucune réserve » ci-dessous ne vaut donc que pour le JSON.**
+
+`yuhonas/free-exercise-db` est sous **The Unlicense** (domaine public), vérifié via l'API GitHub.
+**Juridiquement utilisable sans aucune réserve.** Il a quand même été **écarté**, pour deux raisons
+qui n'ont rien à voir avec la licence :
+
+1. Le jeu est **entièrement en anglais**. L'interface est en français (ADR-007). Traduire 800 noms
+   d'exercices est un projet en soi, et un catalogue à moitié traduit est pire que pas de catalogue.
+2. Les images sont référencées par **URL distante** — incompatible avec la règle non négociable
+   n°2 (100 % hors-ligne, une salle = un sous-sol sans 4G).
+
+**Option 2 retenue** : 168 exercices écrits à la main en français. Largement au-dessus des ~150
+visés, et l'utilisateur peut créer les siens sans limite (RF-08).
+
+### Décisions et écarts par rapport au plan
+
+- **`getLastPerformance` ne suit pas le §5.1 de l'architecture à la lettre.** Le plan lit la
+  dernière série de l'index puis filtre les supprimées. Conséquence **vérifiée en remettant le code
+  du plan** : supprimer une séance mal saisie **vide** l'affichage de la valeur précédente au lieu
+  de faire réapparaître la séance d'avant. L'implémentation retenue remonte l'index et s'arrête sur
+  la première série vivante. Un test fige la différence — et il échoue bien avec la version du plan.
+- **`MUSCLE_GROUPS` / `EQUIPMENT` / `MEASUREMENT_TYPES` sont des tableaux `const`**, les unions en
+  sont dérivées. `exercises.json` n'est pas typé à la compilation : sans ça, une faute de frappe
+  dans un `primaryMuscle` produit un exercice qu'**aucun filtre du Lot 3 ne trouvera jamais**, et
+  rien dans la pile ne le signale. Un test valide chaque ligne du catalogue contre ces tableaux.
+  Les chips de filtre du Lot 3 s'en serviront aussi.
+- **`softDelete` prend une interface structurelle étroite**, pas un `EntityTable<T, 'id'>`. La
+  fonction ne lit jamais `T`, et TypeScript ne sait pas prouver que `IDType<T, 'id'>` vaut `string`
+  tant que `T` est un paramètre de type. Typer au plus juste évite un double cast.
+- **`touch` prend `NoInfer` sur ses changements.** Sans ça, un appelant passant un type de
+  changement plus étroit fait inférer `T` à `Syncable` et l'écriture est rejetée.
+- **`addSet` dérive `exerciseId` et `workoutId` de la ligne parente** au lieu de les accepter de
+  l'appelant : ils sont dénormalisés pour l'index, et une copie qui peut diverger de sa source est
+  un bug en attente.
+- **`createCustomExercise` n'attribue pas de slug** (le slug est la clé du catalogue) et
+  **`updateExercise` interdit d'écrire les champs `Syncable`** — signatures plus strictes que celles
+  du plan.
+- **Un exercice du catalogue supprimé n'est pas ressuscité** par un seed suivant : il garde son
+  slug. Supprimer un exercice qu'on ne fait jamais est une décision, pas un accident à annuler.
+- **`\p{M}` au lieu de la plage `[U+0300-U+036F]` écrite littéralement** pour retirer les accents.
+  Écrite en clair, cette plage est une suite de **caractères invisibles** qu'aucun relecteur ne voit
+  et qu'un éditeur peut manger : le fichier a effectivement été écrit deux fois avant que ce soit
+  repéré.
+- **`SectionTitle` extrait dans `ui/`** (il était dupliqué dans Réglages), **`ChevronRightIcon`
+  dessiné à la main** dans `NavIcons.tsx` plutôt qu'un caractère `›` emprunté à la police courante —
+  §8 de l'architecture exclut les composants tiers, et le Lot 1 dessine déjà ses icônes.
+- **Le quota de stockage est en `--text-2`, pas `--text-3`.** Mesuré : `--text-3` sur une carte en
+  thème clair donne **2,33:1**, et 3,81:1 en sombre. `--text-3` reste réservé aux valeurs qui sont
+  volontairement des échos (la valeur précédente du Lot 5, les placeholders) — un quota est un
+  chiffre qu'on lit. **Trouvé en mesurant, pas en regardant**, encore une fois.
+- **Sur l'écran de diagnostic, l'explication est au-dessus du bouton**, et à la confirmation
+  « Annuler » est le bouton **rempli**, placé en premier. Les variantes `danger` et `ghost` sont
+  toutes deux transparentes par charte : côte à côte, effacer la base ressemblait exactement à
+  renoncer à l'effacer.
+
+### Checkpoint Lot 2 — ✅ validé le 2026-07-21
+
+**Validé sur PC**, pas sur téléphone : c'est équivalent ici (le Lot 2 ne livre aucune interaction
+tactile), mais le Lot 3 devra bien être vérifié au doigt.
+
+- [x] `npm run test:run` : 65 tests passent (le plan en annonçait ~20).
+- [x] Sur `#/settings/debug` : **168** exercices, la liste s'affiche.
+- [x] Navigateur entièrement fermé puis rouvert : les données sont toujours là.
+- [x] Trois rechargements de suite : le nombre ne bouge pas.
+- [x] _Réinitialiser la base_ vide réellement la base, et le catalogue revient au rechargement
+      suivant. Le bouton _Relancer le seed_ a été vérifié côté agent : 168 → 168, sans doublon.
+
+**Un point relevé par l'utilisateur pendant le checkpoint** : « si j'efface tout, les exos se
+wipent, mais si je fais Ctrl+F5 ils reviennent ». Comportement **correct** — le seed tourne à chaque
+démarrage — mais le message de l'écran **mentait** en laissant croire que le bouton était le seul
+chemin de retour. Réécrit (commit `17ef1cf`). La bonne ligne de partage à retenir pour toute la
+suite : **le catalogue appartient à l'app et revient toujours ; les séances et les exercices
+personnalisés appartiennent à l'utilisateur et ne reviennent jamais.**
+
+**Deuxième point relevé** : `GET /favicon.ico 404` à chaque chargement, réclamé à la racine du
+domaine. Corrigé par une icône SVG inline de 305 octets (commit `5b6d7ca`) — pas cosmétique, ce
+bruit permanent aurait masqué de vraies erreurs pendant les Lots 3 à 8.
+
+---
+
+## Lot 1 — Design system & coquille
+
+### Definition of Done — vérifiée le 2026-07-21
+
+- ✅ `npm run typecheck`, `npm run lint`, `npm run test:run` (11 tests), `npm run build` passent.
+- ✅ Les 5 écrans répondent en mode hash, l'onglet actif porte `aria-current="page"`.
+- ✅ Contrastes mesurés dans le navigateur, **thème sombre et thème clair** : chaque paire
+  texte/fond de l'app est ≥ 4,5:1. Aucun échec.
+- ✅ Cibles tactiles vérifiées en pixels réels : onglets 56 px, boutons ± 48×48, segments de
+  thème 48 px.
+- ✅ Vérifié en descendant tout en bas de Réglages sur un écran court (375×520) : rien n'est
+  masqué par la barre de navigation, 32 px de marge restent sous le dernier élément.
+- ✅ Saisie décimale vérifiée dans un vrai navigateur : `102,5` et `102.5` donnent tous deux
+  102,5 ; les boutons ± affichent `102,5`.
+
+### Décisions et écarts par rapport au plan
+
+- **`--accent-ink` ajouté** (absent du plan). Le plan n'override pas l'accent en thème clair :
+  `#c7f252` en **texte** sur blanc vaut **1,3:1**, invisible. D'où la scission
+  **fill / ink** : `--color-accent` reste le vert acide et n'est jamais qu'un _remplissage_
+  portant `--color-accent-fg` par-dessus ; `--accent-ink` est tout ce qui doit se lire _contre_
+  une surface (texte, icônes, barre d'onglet actif, anneau de focus) et vaut `#46660a` en clair.
+  **Trouvé en mesurant, pas en regardant** — la barre d'onglet actif était à 1,18:1.
+- **`--text-3` n'est plus utilisé pour les micro-libellés.** `#a1a1aa` sur blanc = 2,3:1. Tous
+  les libellés gravés (unités, titres de section) sont en `--text-2`. `--text-3` est réservé aux
+  valeurs volontairement atténuées : la « valeur précédente » du Lot 5, les placeholders.
+- **`@utility` au lieu de classes CSS nues** pour `tabular`, `safe-bottom`, `safe-top`. Une règle
+  `.safe-bottom` hors couche bat silencieusement tous les `pb-*` avec lesquels on la combine.
+- **`NumberInput` : resynchronisation pendant le rendu, pas dans un `useEffect`.**
+  `react-hooks` v7 (installé ici) interdit `setState` synchrone dans un effet
+  (`set-state-in-effect`) et l'accès aux refs pendant le rendu (`refs`) — les deux snippets du
+  plan échouent au lint. Motif React officiel « ajuster un état quand une prop change ». Même
+  comportement, une frame de moins. **L'état `draft` — le vrai garde-fou — est intact.**
+- **`NumberInput` affiche la virgule pour les valeurs venues de l'extérieur.** Après `+2,5` le
+  plan affichait `102.5` (point) alors que la frappe clavier donne `102,5`. Le séparateur
+  décimal est du texte d'interface, et l'interface est en français. **Une assertion du plan a été
+  changée** en conséquence (`toHaveValue('102,5')`), et un test a été ajouté pour figer le fait
+  qu'on **ne réécrit jamais ce que l'utilisateur vient de taper**.
+- **Barre de navigation en frère flex, pas en `position: fixed`.** Elle est épinglée en bas de la
+  même façon, mais aucun écran ne peut plus cacher sa dernière ligne derrière elle — le bug que
+  l'étape 4.4 du plan signale devient structurellement impossible.
+- **`#root { height: 100dvh }`** en plus du `height: 100%` du plan : avec `100%`, la barre
+  d'URL rétractable des navigateurs mobiles laisse la barre de navigation sous le chrome.
+- **Script bloquant dans `index.html`** pour poser `data-theme` avant le premier rendu. Le module
+  principal est différé : sans lui, un utilisateur en thème clair voit un flash noir à chaque
+  démarrage. `applyTheme` met aussi à jour `<meta name="theme-color">`.
+- **`Screen.tsx` ajouté** (hors plan) : cadre commun h1 + gouttières + `max-w-[36rem]`, pour
+  qu'aucun écran ne redérive ses marges.
+- **Icônes dessinées à la main**, pas de librairie : §8 de l'architecture exclut les composants
+  UI tiers, et le vocabulaire de la salle (barre, disque, curseurs de charge) est plus juste
+  qu'un jeu générique. Zéro dépendance ajoutée.
+- **Tâche 5 (i18n) faite avant la tâche 4 (écrans)** : écrire les écrans puis remplacer les
+  chaînes en dur aurait été deux fois le travail.
+
+### Parti pris visuel (à respecter dans les lots suivants)
+
+Le plan fixe la palette. Les axes qu'il laissait libres ont été tranchés ainsi :
+
+- **Deux registres typographiques, pas trois.** Cette app n'a presque pas de prose. Le couple
+  n'est donc pas « display / texte courant » mais **chiffres tabulaires** (`.metric`, serrés à
+  −0,03em) **vs micro-libellés gravés** (`.label-xs` : 11 px, capitales, +0,12em). Le texte
+  courant est l'exception. **Exception à `.label-xs` : jamais sur un symbole SI** — c'est `kg`,
+  pas `KG`.
+- **L'état vide est un relevé à zéro**, pas un échec. `EmptyState` affiche le compteur de la
+  collection (`0` + unité) dans exactement la typo qu'il aura une fois plein. Le type l'impose :
+  une collection fournit `reading` + `unit`, tout le reste fournit `title`.
+- **Mouvement mécanique** : une courbe (`--ease-mech`), deux durées (`--dur-1`, `--dur-2`), et
+  seulement deux usages (barre d'onglet actif, montée du Sheet). Rien d'élastique, rien d'autre
+  n'est animé. `prefers-reduced-motion` neutralise tout.
+
+### Checkpoint Lot 1 — ✅ validé le 2026-07-21
+
+- [x] Les 5 onglets du bas fonctionnent, l'onglet actif est visuellement évident.
+- [x] Ça ressemble à une application : pas de zoom au double-tap, pas de rebond
+      « pull to refresh », les cibles se touchent sans viser.
+- [x] La bascule clair/sombre (Réglages → Apparence) marche et survit à un rechargement.
+- [x] Tu descends tout en bas d'un écran : rien n'est caché derrière la barre de navigation.
+- [x] Réglages → Saisie : tu tapes `102,5`, la virgule reste affichée et « valeur retenue »
+      indique bien 102,5 kg.
+
+Validé par l'utilisateur sur téléphone. **La charte visuelle et les primitives sont donc figées :
+les lots suivants s'appuient dessus au lieu de les redécider.** La section « parti pris visuel »
+ci-dessus fait foi.
+
+---
+
+## Lot 0 — Bootstrap & déploiement
+
+### Definition of Done du Lot 0 — vérifiée le 2026-07-21
+
+- ✅ `npm run typecheck`, `npm run test:run` (1 test), `npm run build`, `npm run lint` passent en local.
+- ✅ Le workflow passe sur le runner Ubuntu : `npm ci`, typecheck, tests, build, `configure-pages`,
+  `upload-pages-artifact`, `deploy-pages` — tous verts (run #2 après correctif de branche).
+- ✅ `https://hugo-burnet.github.io/FITTRACK-RELOADED/` répond **HTTP 200**, les deux assets
+  (`index-*.js` 190 793 o, `index-*.css` 10 751 o) répondent **200** — donc `base` est correct,
+  pas de 404 sur `assets/`.
+- ✅ Rendu réel vérifié dans un navigateur : React monté, `<h1>FitTrack</h1>`, fond
+  `oklch(0.145 0 none)` (Tailwind v4 compile bien).
+- ✅ Les versions d'actions du plan (`checkout@v4`, `setup-node@v4`, `configure-pages@v5`,
+  `upload-pages-artifact@v3`, `deploy-pages@v4`) sont acceptées telles quelles, aucune obsolescence.
+
+### Checkpoint Lot 0 — ✅ validé le 2026-07-21
+
+- [x] L'URL s'ouvre et affiche « FitTrack » sur fond sombre (vérifié par l'utilisateur).
+- [x] Modifier un texte de `src/App.tsx` → pousser → site à jour. Mesuré : **~40 s** entre le push
+      et la fin du job `deploy`. Le hash du bundle change bien
+      (`index-8UZIjSV8.js` → `index-Bvk5C3d_.js`), donc c'est un vrai redéploiement.
+
+## Avancement
+
+| Lot  | Titre                    | État        | Session(s)         | Checkpoint validé                              |
+| ---- | ------------------------ | ----------- | ------------------ | ---------------------------------------------- |
+| 0    | Bootstrap & déploiement  | ✅ terminé  | 1                  | ✅                                             |
+| 1    | Design system & coquille | ✅ terminé  | 2                  | ✅                                             |
+| 2    | Couche de données        | ✅ terminé  | 3                  | ✅                                             |
+| 3    | Bibliothèque d'exercices | ✅ terminé  | 4                  | ✅                                             |
+| 4    | Routines                 | ✅ terminé  | 5                  | ✅                                             |
+| 5    | Séance en direct (cœur)  | ✅ terminé  | 6                  | ✅ **en salle**                                |
+| 5bis | Schéma musculaire        | ✅ terminé  | 2026-08-11         | ✅ 2026-08-12                                  |
+| 6    | Outils de séance         | ✅ terminé  | 6–7                | ✅ **en salle**                                |
+| 7    | Historique & calendrier  | ✅ terminé  | 07A–07C            | ✅ 2026-08-12                                  |
+| 8    | Réglages & export/import | ✅ terminé  | —                  | ✅ 2026-08-12                                  |
+| 9    | PWA & installation       | ✅ terminé  | 2026-08-02         | ✅ 2026-08-12                                  |
+| 10   | Android (Capacitor)      | ✅ terminé  | 2026-08-09         | ✅ 2026-08-12                                  |
+| 11   | Mesures & photos         | 🟨 en cours | —                  | ⬜                                             |
+| 12   | Statistiques             | ✅ terminé  | 2026-08-11, 08-22  | ✅ 2026-08-22                                  |
+| 13   | Records & notifications  | ✅ terminé  | 2026-08-11, 08-22  | ✅ 2026-08-22                                  |
+| 14   | Sync cloud (optionnel)   | ⬜ à faire  | —                  | ⬜                                             |
+| 15   | Health Connect           | ⬜ à faire  | —                  | ⬜                                             |
+| 16   | Widgets                  | ⬜ à faire  | —                  | ⬜                                             |
+| 17   | Périodisation            | ✅ terminé  | 2026-08-13         | 🟨 à valider sur le téléphone                  |
+| 18   | Auto-progression         | 🟨 en cours | 2026-08-11 → 08-12 | 🟨 **partiel** (carte en séance à revoir)      |
+| 19   | Assistant IA             | ⬜ à faire  | —                  | ⬜                                             |
+| 20   | Voix & accessibilité     | ⬜ à faire  | —                  | ⬜                                             |
+
+Légende : ⬜ à faire · 🟨 en cours · ✅ terminé · ⏭️ sauté
+
+> **Reprise du 2026-08-11.** Le tableau était en retard de trois lots entiers : 7, 8 et 12
+> étaient marqués « à faire » alors que le code les contient. La colonne **État** est désormais
+> établie à la lecture du code ; la colonne **Checkpoint** ne l'est pas et ne peut pas l'être —
+> **seul l'utilisateur valide un checkpoint**, donc les lots dont le code est là mais dont la
+> validation n'a jamais été consignée portent « à confirmer » plutôt qu'un ✅ deviné. C'est le
+> raisonnement posé au Lot 9, appliqué cette fois sans laisser l'État en souffrance avec.
+
+### Le lot partiel qui reste, et ce qui lui manque exactement
+
+> **Mise à jour du 2026-08-22.** Les Lots 12 et 13 sont fermés : le rapport mensuel (RF-44) et
+> l'export PNG d'un graphique pour le premier, les rappels programmables et la notification de
+> record (RF-53) pour le second. Le paragraphe qui suit décrivait les trois lots partiels ; seul
+> le Lot 11 est encore ouvert, et il appartient à la V2.
+
+- **Lot 11 — Mesures & photos.** Livré : le poids de corps (`bodyMeasurements`,
+  `HomeBodyWeightCard`, `resolveBodyWeightsAt` pour la tonnage au poids de corps). Manquant :
+  **toute autre mesure** (tour de taille, masse grasse…) alors que `BodyMeasurement.type` est
+  une chaîne libre qui les accepte déjà, et **les photos de progression** — `progressPhotos` et
+  `photoBlobs` sont dans le schéma depuis le Lot 2 et **aucun code ne les écrit**.
+- ~~**Lot 12 — Statistiques.**~~ **Fermé le 2026-08-22.** Livré : progression par exercice (RF-41),
+  volume hebdomadaire et répartition des séries par groupe musculaire (RF-42), séances par semaine, le **1RM estimé
+  (RF-46)** — formule configurable en réglages, traçable comme métrique et filtrable dans le rail
+  des records — et la **carte de chaleur musculaire (RF-43)**, rendue par le schéma du Lot 5bis
+  sur l'écran d'équilibre. Manquant, vérifié dans le code : le **rapport mensuel (RF-44)** —
+  `PERIOD_KEYS` ne connaît que des fenêtres en semaines — et l'**export PNG d'un graphique**.
+  **Les deux sont écrits** : `lib/analytics/months.ts` + `monthlyReport.ts` pour le rapport,
+  `platform/chartImage.ts` pour l'image. Cf. la section v1.0.0 en tête de fichier.
+- ~~**Lot 13 — Records & notifications.**~~ **Fermé le 2026-08-22.** Livré le 2026-08-11 : les records
+  sont **persistés** dans `personalRecords`, écrits dans la même transaction que la série, réconciliés à chaque
+  mutation, avec une page « mes records » filtrable par exercice et par type, un rail de
+  progression, et une réparation manuelle idempotente. Manquant : les **rappels d'entraînement
+  programmables (RF-53)** — `nativeNotifications` ne planifie que la fin du repos — et la
+  **notification système quand un record tombe**, la détection restant à l'écran. **Les deux sont
+  écrits** : `lib/reminders.ts` pose douze rappels d'avance sur les jours et l'heure choisis, et un
+  record persisté part sur un canal muet. Cf. la section v1.0.0 en tête de fichier.
+
