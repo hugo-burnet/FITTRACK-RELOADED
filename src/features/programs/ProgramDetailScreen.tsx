@@ -112,7 +112,7 @@ function CurrentIntention({ week }: { week: ProgramWeek }) {
       {evidence !== null && (
         <Link
           viewTransition
-          to={`/knowledge/p/${evidence.sectionId}`}
+          to={evidence.href}
           className="mt-4 flex min-h-12 items-center justify-between gap-3 rounded-xl bg-[var(--surface-1)] px-4 py-2"
         >
           <span className="min-w-0">

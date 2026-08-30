@@ -10,6 +10,7 @@
 // section dédiée, et les envoyer vers un chapitre vaguement voisin serait pire
 // que de ne rien proposer — ça apprendrait au lecteur que le lien ment.
 import { findProgrammingSection } from '@/features/knowledge/programmingIndex';
+import { articleHref, findArticleForRow } from '@/features/knowledge/articleCatalogue';
 import type { ProgramPhase } from '@/data/types';
 
 const PHASE_SECTIONS: Partial<Record<ProgramPhase, string>> = {
@@ -24,6 +25,7 @@ export type PhaseEvidence = {
   title: string;
   /** Nombre de fiches, hors références bibliographiques. */
   count: number;
+  href: string;
 };
 
 /**
@@ -37,7 +39,14 @@ export function phaseEvidenceFor(phase: ProgramPhase): PhaseEvidence | null {
   // Un identifiant qui ne résout plus veut dire que le corpus a bougé sous nos
   // pieds. On se tait plutôt que de proposer un lien mort.
   if (section === undefined) return null;
-  const count = section.rows.filter((row) => !row.isBibliography).length;
-  if (count === 0) return null;
-  return { sectionId, title: section.title, count };
+  const rows = section.rows.filter((row) => !row.isBibliography);
+  if (rows.length === 0) return null;
+  const article = findArticleForRow(rows[0]!.rowId);
+  if (article === undefined) return null;
+  return {
+    sectionId,
+    title: section.title,
+    count: rows.length,
+    href: articleHref(article),
+  };
 }

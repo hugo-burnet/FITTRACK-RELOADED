@@ -10,6 +10,19 @@ describe('phaseEvidenceFor', () => {
     expect(evidence?.count).toBeGreaterThan(0);
   });
 
+  it('mène chaque phase documentée à son article actuel du Guide', () => {
+    const expected = {
+      deload: '/knowledge/programmation/programming-deload',
+      progression: '/knowledge/programmation/programming-progression',
+      overload: '/knowledge/programmation/programming-volume',
+      return: '/knowledge/programmation/programming-fatigue-recovery',
+    } as const;
+
+    for (const [phase, href] of Object.entries(expected)) {
+      expect(phaseEvidenceFor(phase as keyof typeof expected)?.href, phase).toBe(href);
+    }
+  });
+
   it('se tait sur les phases que le corpus ne traite pas', () => {
     // Envoyer « construction » vers un chapitre vaguement voisin apprendrait au
     // lecteur que le lien ment. Mieux vaut ne rien proposer.
@@ -26,6 +39,7 @@ describe('phaseEvidenceFor', () => {
       expect(evidence.sectionId, phase).toMatch(/^f1-[a-z0-9-]+$/u);
       expect(evidence.title.length, phase).toBeGreaterThan(3);
       expect(evidence.count, phase).toBeGreaterThan(0);
+      expect(evidence.href, phase).toMatch(/^\/knowledge\/programmation\/[a-z0-9-]+$/u);
     }
   });
 

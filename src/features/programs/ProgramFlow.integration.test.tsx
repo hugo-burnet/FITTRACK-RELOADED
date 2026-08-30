@@ -112,6 +112,33 @@ describe('parcours de création d’un programme', () => {
   beforeEach(resetDb);
   afterEach(() => vi.restoreAllMocks());
 
+  it('ouvre l’article du Guide correspondant à la phase courante', async () => {
+    const routine = await createRoutine('Décharge');
+    const program = await createProgramDraft({
+      name: 'Bloc décharge',
+      startsAt: mondayWeeksAgo(0),
+      durationWeeks: 4,
+    });
+    await createScheduleRevision(program.id, 0, [
+      { routineId: routine.id, dayOfWeek: 1, order: 0 },
+    ]);
+    await replaceProgramWeeks(
+      program.id,
+      Array.from({ length: 4 }, (_, weekIndex) => ({
+        weekIndex,
+        loadIndex: weekIndex === 0 ? 60 : 100,
+        phase: weekIndex === 0 ? ('deload' as const) : ('construction' as const),
+      })),
+    );
+    await activateProgram(program.id);
+
+    renderProgramFlow(`/programs/${program.id}`);
+
+    expect(
+      await screen.findByRole('link', { name: /Ce qu’en dit le corpus/u }),
+    ).toHaveAttribute('href', '/knowledge/programmation/programming-deload');
+  });
+
   it('active un bloc de huit semaines avec un split lundi/jeudi et une décharge en semaine 5', async () => {
     const mondayRoutine = await createRoutine('Force A');
     const thursdayRoutine = await createRoutine('Force B');
