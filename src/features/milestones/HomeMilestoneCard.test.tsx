@@ -78,6 +78,20 @@ describe('la carte des paliers sur l’accueil', () => {
     );
   });
 
+  it('ouvre le mème en grand, avec sa ligne', async () => {
+    await seedMilestone({
+      definitionId: 'bench-100',
+      value: 100,
+      achievedAt: Date.now(),
+      acknowledgedAt: 0,
+    });
+    const user = userEvent.setup();
+    render(<HomeMilestoneCard />);
+    await screen.findByText('Palier franchi');
+    await user.click(screen.getByRole('button', { name: /Développé couché à 100 kg/ }));
+    expect(await screen.findByText('Le graphe ne monte que d’un côté.')).toBeInTheDocument();
+  });
+
   it('ne se ferme qu’au doigt, jamais toute seule', async () => {
     const row = await seedMilestone({
       definitionId: 'bench-100',

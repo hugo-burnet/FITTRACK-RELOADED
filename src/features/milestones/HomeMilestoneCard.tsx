@@ -10,6 +10,7 @@ import {
 import { t } from '@/i18n/fr';
 import { pickRetrospective } from '@/lib/milestones/retrospective';
 import { Button, Card } from '@/ui';
+import { MilestonePeek } from './MilestonePeek';
 import { MilestoneToken } from './MilestoneToken';
 import { milestoneReading } from './milestoneCopy';
 
@@ -36,6 +37,7 @@ export function HomeMilestoneCard() {
   // Figé à l'ouverture, comme la régularité de l'accueil : un anniversaire ne
   // doit pas apparaître sous les yeux à minuit pile.
   const [openedAt] = useState(() => Date.now());
+  const [peek, setPeek] = useState<{ definitionId: string; title: string } | null>(null);
 
   const unlocked = useLiveQuery(listUnacknowledgedMilestones, []);
   const all = useLiveQuery(listMilestones, []);
@@ -69,14 +71,26 @@ export function HomeMilestoneCard() {
 
           <ul className="mt-4 flex flex-col gap-3">
             {lines.map((line) => (
-              <li key={line.id} className="flex items-center gap-3">
-                <MilestoneToken definitionId={line.definitionId} tone="accent" size="lg" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-base font-semibold text-[var(--text-1)]">{line.title}</p>
-                  {line.reached !== undefined && (
-                    <p className="mt-0.5 text-sm text-[var(--text-2)]">{line.reached}</p>
-                  )}
-                </div>
+              <li key={line.id}>
+                <button
+                  type="button"
+                  onClick={() => setPeek({ definitionId: line.definitionId, title: line.title })}
+                  className="flex w-full items-center gap-3 rounded-xl text-left
+                    focus-visible:outline-2 focus-visible:outline-offset-2
+                    focus-visible:outline-[var(--color-accent)]"
+                >
+                  <MilestoneToken definitionId={line.definitionId} tone="accent" size="lg" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-base font-semibold text-[var(--text-1)]">
+                      {line.title}
+                    </span>
+                    {line.reached !== undefined && (
+                      <span className="mt-0.5 block text-sm text-[var(--text-2)]">
+                        {line.reached}
+                      </span>
+                    )}
+                  </span>
+                </button>
               </li>
             ))}
           </ul>
@@ -96,6 +110,11 @@ export function HomeMilestoneCard() {
             {t('common.close')}
           </Button>
         </Card>
+        <MilestonePeek
+          definitionId={peek?.definitionId ?? null}
+          title={peek?.title ?? t('milestone.title')}
+          onClose={() => setPeek(null)}
+        />
       </section>
     );
   }
@@ -119,12 +138,18 @@ export function HomeMilestoneCard() {
             : t('milestone.retrospective.years', { count: retrospective.years })}
         </p>
 
-        <div className="mt-4 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setPeek({ definitionId: row.definitionId, title: reading.title })}
+          className="mt-4 flex w-full items-center gap-3 rounded-xl text-left
+            focus-visible:outline-2 focus-visible:outline-offset-2
+            focus-visible:outline-[var(--color-accent)]"
+        >
           <MilestoneToken definitionId={row.definitionId} size="lg" />
           <p className="min-w-0 flex-1 text-base font-semibold text-[var(--text-1)]">
             {reading.title}
           </p>
-        </div>
+        </button>
 
         <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
           {t('milestone.retrospective.body')}
@@ -139,6 +164,11 @@ export function HomeMilestoneCard() {
           {t('milestone.retrospective.dismiss')}
         </Button>
       </Card>
+      <MilestonePeek
+        definitionId={peek?.definitionId ?? null}
+        title={peek?.title ?? t('milestone.title')}
+        onClose={() => setPeek(null)}
+      />
     </section>
   );
 }

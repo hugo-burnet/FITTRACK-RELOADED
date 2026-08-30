@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -6,6 +7,7 @@ import { t } from '@/i18n/fr';
 import { MILESTONES } from '@/lib/milestones/catalogue';
 import type { MilestoneGroup } from '@/lib/milestones/types';
 import { Card, EmptyState, SectionTitle } from '@/ui';
+import { MilestonePeek } from './MilestonePeek';
 import { MilestoneToken } from './MilestoneToken';
 import { milestoneReading, type MilestoneReading } from './milestoneCopy';
 
@@ -54,6 +56,7 @@ function demoLines(): Line[] | undefined {
  */
 export function MilestonesScreen() {
   const navigate = useAppNavigate();
+  const [peekId, setPeekId] = useState<string | null>(null);
   const live = useLiveQuery(listMilestones, []);
   const demo = demoLines();
   const lines: Line[] =
@@ -67,6 +70,7 @@ export function MilestonesScreen() {
         : [{ ...reading, id: row.id, definitionId: row.definitionId, achievedAt: row.achievedAt }];
     });
   const loaded = demo !== undefined || live !== undefined;
+  const peek = lines.find((line) => line.definitionId === peekId);
 
   return (
     <Screen title={t('milestone.title')} onBack={() => void navigate(-1)}>
@@ -83,22 +87,28 @@ export function MilestonesScreen() {
                 <SectionTitle>{t(`milestone.group.${group}` as const)}</SectionTitle>
                 <Card>
                   {inGroup.map((line) => (
-                    <div
+                    <button
                       key={line.id}
-                      className="flex min-h-20 items-center gap-3 border-b border-[var(--border)]
-                        px-3 py-2 last:border-b-0"
+                      type="button"
+                      onClick={() => setPeekId(line.definitionId)}
+                      className="flex min-h-20 w-full items-center gap-3 border-b border-[var(--border)]
+                        px-3 py-2 text-left last:border-b-0 active:bg-[var(--surface-2)]
+                        focus-visible:outline-2 focus-visible:outline-offset-[-2px]
+                        focus-visible:outline-[var(--color-accent)]"
                     >
                       <MilestoneToken definitionId={line.definitionId} />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-base text-[var(--text-1)]">{line.title}</p>
-                        <p className="mt-0.5 text-sm text-[var(--text-2)]">
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-base text-[var(--text-1)]">
+                          {line.title}
+                        </span>
+                        <span className="mt-0.5 block text-sm text-[var(--text-2)]">
                           {/* La date d'abord, parce que c'est elle qu'on relit :
                               un palier est un souvenir daté, pas une statistique. */}
                           {t('milestone.achievedOn', { date: longDate.format(line.achievedAt) })}
                           {line.reached !== undefined && ` · ${line.reached}`}
-                        </p>
-                      </div>
-                    </div>
+                        </span>
+                      </span>
+                    </button>
                   ))}
                 </Card>
               </section>
@@ -106,6 +116,11 @@ export function MilestonesScreen() {
           })}
         </div>
       )}
+      <MilestonePeek
+        definitionId={peek?.definitionId ?? null}
+        title={peek?.title ?? t('milestone.title')}
+        onClose={() => setPeekId(null)}
+      />
     </Screen>
   );
 }
