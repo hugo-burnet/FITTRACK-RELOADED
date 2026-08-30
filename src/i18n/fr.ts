@@ -1904,6 +1904,12 @@ const fr = {
     seedFailed:
       'Le catalogue d’exercices n’a pas pu être chargé. Tes données sont intactes, le reste de l’app fonctionne.',
     dismiss: 'Masquer',
+    consoleQuadriceps: '[ OK ] quadriceps.service active',
+    consoleCore: '[ OK ] core.stability mounted',
+    consoleEgo: '[ WARN ] ego-lifting detected',
+    consoleExcuses: '[ FAIL ] excuses.mount: permission denied',
+    consolePrompt: 'root@fittrack:~#',
+    consoleCommand: 'progressive_overload = true',
   },
 
   /**

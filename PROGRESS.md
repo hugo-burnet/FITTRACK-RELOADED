@@ -2,20 +2,14 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-29 (**les paliers** — un catalogue de 56 seuils écrits à la
-main, acquis à vie, plus une rétrospective d'anniversaire. Nouvelle table Dexie `milestones`
-(schéma 12), 88 tests, suite complète et build verts. **Checkpoint téléphone à faire : l'écran
-Progression › Paliers, et la carte d'accueil après une séance qui en franchit un.** Voir la
-section dédiée ci-dessous). Le même jour (**impact de la barre au démarrage** — le petit saut
-vertical est remplacé par une chute, une compression au sol, une secousse amortie et six
-particules SVG de poussière. **Checkpoint téléphone à faire : relancer l'app à froid et juger
-le poids de l'impact.** Voir la section dédiée ci-dessous). Le même jour (**tutoriel campagne :
-tâches 6 à 11 terminées** — les cinq zones restantes de la couverture contextuelle, le mode
-« Voix uniquement », les côtés unilatéraux persistés, le contrôle manuel des côtés, l'enquête
-sur la double annonce et l'audit navigateur. Douze commits, 36 missions sur 39, suite complète
-et build verts. **Checkpoint téléphone à faire : le sélecteur de guidage à quatre modes, et une
-série unilatérale menée jusqu'au bout.** Voir la section dédiée ci-dessous). Précédemment, le
-2026-08-28
+**Dernière mise à jour :** 2026-08-30 (**ouverture simplifiée + terminal GRUB** — la barre se
+charge sans chute, sol, poussière ni secousse ; les deux phrases apparaissent successivement puis
+le rideau révèle l'accueil. Tous les 14 à 28 jours environ, un terminal noir à écriture blanche
+remplace les phrases. **Checkpoint téléphone : cold start, puis le terminal noir.**). Le 2026-08-29
+(**les paliers** — 56 seuils acquis à vie, table Dexie milestones. **Checkpoint : Progression ›
+Paliers, et la carte d'accueil.**). Le même jour (**tutoriel campagne, tâches 6 à 11**).
+Précédemment, le 2026-08-28
+
 (**passe mouvement** : écran d'ouverture qui charge le logo,
 transitions d'écran directionnelles — l'app avait des entrées mais aucune sortie —, mode mouvement
 réduit qui réduit au lieu de couper, cible RPE portée à 48 px, cinq écrans sortis du chunk
@@ -54,6 +48,29 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## Ouverture simplifiée et console rare (2026-08-30)
+
+### Ce qui change
+
+- La barre conserve uniquement son chargement de plaques. La chute, la compression, la secousse,
+  le sol et la poussière sont supprimés.
+- « Progressive Overload » apparaît, puis « Production was the gym » 180 ms plus tard ; le rideau
+  fond ensuite vers l'accueil.
+- Une date stockée localement programme, sans serveur, une variante rare tous les 14 à 28 jours.
+  Elle affiche quatre logs sur un terminal **noir / blanc** (comme GRUB, hors thème de l'app),
+  laisse clignoter le curseur, écrit `progressive_overload = true`, puis révèle directement
+  l'accueil. La première installation ne la déclenche jamais immédiatement. La clé
+  `fittrack.bootEasterEggAfter` est hors sauvegarde (`fittrack:`). Une séance active qui saute le
+  rideau ne consomme pas cette date.
+- Le mode mouvement réduit remplace glitch, frappe et clignotement par des fondus ou des états
+  statiques.
+
+### Vérifications
+
+- Cycle TDD du sélecteur rare, du saut séance active, des deux scènes et du contrat GRUB :
+  **17 tests ciblés verts**.
+- Typecheck, suite complète et build : à rejouer après la fusion avec les paliers, sur `master`.
 
 ## Les paliers (2026-08-29)
 
@@ -135,6 +152,7 @@ d'haltères, elle, n'a pas cette restriction : un rack ne se falsifie pas en tap
    ne doit **jamais** revenir.
 3. **Thème clair** — le jeton accent (vert acide sur encre) et le jeton neutre doivent rester
    lisibles tous les deux.
+
 
 ## Impact de la barre au démarrage (2026-08-29)
 

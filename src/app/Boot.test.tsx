@@ -1,109 +1,107 @@
 import { readFileSync } from 'node:fs';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { t } from '@/i18n/fr';
 import { BootScreen } from './Boot';
 
 describe('BootScreen', () => {
-  it('exposes the layered scene used for the ground impact', () => {
+  it('keeps the loaded bar but removes every ground-impact layer', () => {
     const { container } = render(<BootScreen />);
 
-    expect(container.querySelector('.boot-impact')).not.toBeNull();
-    expect(container.querySelector('.boot-barbell')).not.toBeNull();
-    expect(container.querySelector('.boot-ground')).not.toBeNull();
-    expect(container.querySelectorAll('.boot-dust')).toHaveLength(2);
+    expect(container.querySelector('.boot-bar')).not.toBeNull();
+    expect(container.querySelectorAll('.boot-plate')).toHaveLength(4);
+    expect(container.querySelector('.boot-impact')).toBeNull();
+    expect(container.querySelector('.boot-ground')).toBeNull();
+    expect(container.querySelector('.boot-dust')).toBeNull();
   });
 
-  it('builds the dust from lightweight vector particles', () => {
-    const { container } = render(<BootScreen />);
+  it('shows the two brand lines on the normal path', () => {
+    const { container, getByText } = render(<BootScreen variant="normal" />);
 
-    expect(container.querySelectorAll('.boot-dust circle')).toHaveLength(6);
+    expect(getByText(t('app.principle'))).not.toBeNull();
+    expect(getByText(t('app.tagline'))).not.toBeNull();
+    expect(container.querySelector('.boot-console')).toBeNull();
   });
 
-  it('anchors both dust clouds to the ground line', () => {
-    const { container } = render(<BootScreen />);
-    const particleY = [...container.querySelectorAll<SVGCircleElement>('.boot-dust circle')].map(
-      (particle) => Number(particle.getAttribute('cy')),
+  it('replaces the brand lines with the fixed console on the rare path', () => {
+    const { container, getByText, queryByText } = render(<BootScreen variant="console" />);
+
+    expect(queryByText(t('app.principle'))).toBeNull();
+    expect(queryByText(t('app.tagline'))).toBeNull();
+    expect(container.querySelectorAll('.boot-console-line')).toHaveLength(4);
+    expect(getByText(t('boot.consoleCommand'))).not.toBeNull();
+  });
+
+  it('pops the two normal lines 180 ms apart', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
+
+    expect(bootStyles).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-principle\s*{[^}]*animation: pop 320ms [^;]* 1340ms both;/s,
     );
+    expect(bootStyles).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-tagline\s*{[^}]*animation: pop 320ms [^;]* 1520ms both;/s,
+    );
+  });
+
+  it('contains no drop, rebound, shake, dust, or ground keyframes', () => {
     const stylesheet = readFileSync('src/index.css', 'utf8');
 
-    expect(particleY).toHaveLength(6);
-    expect(particleY.every((cy) => cy >= 15.9 && cy <= 16.2)).toBe(true);
-    expect(stylesheet).toMatch(/\.boot-dust--l\s*{[^}]*transform-origin:\s*9\.65px 16\.2px;/s);
-    expect(stylesheet).toMatch(/\.boot-dust--r\s*{[^}]*transform-origin:\s*14\.35px 16\.2px;/s);
+    for (const removed of [
+      'boot-drop',
+      'boot-impact-shake',
+      'boot-ground-reveal',
+      'boot-dust-l',
+      'boot-dust-r',
+    ]) {
+      expect(stylesheet).not.toContain(`@keyframes ${removed}`);
+    }
   });
 
-  it('keeps reduced-motion dust opacity-only', () => {
+  it('turns the rare path into static fades for reduced motion', () => {
     const stylesheet = readFileSync('src/index.css', 'utf8');
     const reducedMotion = stylesheet.slice(
       stylesheet.indexOf('@media (prefers-reduced-motion: reduce)'),
       stylesheet.indexOf('/* A deliberately quiet effort rail.'),
     );
-    const dustFade = stylesheet.slice(
-      stylesheet.indexOf('@keyframes boot-dust-fade'),
-      stylesheet.indexOf('@keyframes boot-rack'),
-    );
 
-    expect(reducedMotion).toContain('animation-name: boot-dust-fade !important;');
     expect(reducedMotion).toMatch(
-      /\.boot\[data-phase='in'\] \.boot-ground,[^{]*{[^}]*animation-name: boot-fade !important;/s,
+      /\.boot\[data-phase='in'\]\[data-variant='console'\] \.boot-console\s*{[^}]*animation-name: boot-fade !important;/s,
     );
     expect(reducedMotion).toMatch(
-      /\.boot\[data-phase='in'\] \.boot-impact,[^}]*\.boot-barbell\s*{[^}]*animation: none !important;/s,
+      /\.boot-console-line,[^}]*\.boot-console-command,[^}]*\.boot-console-cursor\s*{[^}]*animation: none !important;/s,
     );
-    expect(dustFade).toContain('opacity:');
-    expect(dustFade).not.toContain('transform:');
   });
 
-  it('keeps transient layers stable when the exit curtain remounts', () => {
+  it('reveals the app with an opacity-only curtain', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const curtain = stylesheet.match(/@keyframes boot-curtain\s*{([\s\S]*?)\n}/)?.[1];
+
+    expect(curtain).toContain('opacity: 0');
+    expect(curtain).not.toContain('transform');
+  });
+
+  it('keeps the console compact enough for narrow phones', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+
+    expect(stylesheet).toMatch(/\.boot-console\s*{[^}]*padding: 1rem;/s);
+    expect(stylesheet).toMatch(
+      /\.boot-console-log\s*{[^}]*font-size: clamp\(0\.6875rem, 3\.125vw, 0\.75rem\);/s,
+    );
+    expect(stylesheet).toMatch(/\.boot-console-prompt\s*{[^}]*flex-wrap: wrap;/s);
+  });
+
+  it('paints the rare console as a GRUB terminal, black with white glyphs', () => {
     const stylesheet = readFileSync('src/index.css', 'utf8');
     const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
-
-    expect(bootStyles).toMatch(/\.boot-dust\s*{[^}]*opacity:\s*0;/s);
-    expect(bootStyles).toMatch(
-      /\.boot-ground\s*{(?=[^}]*opacity:\s*0\.28;)(?=[^}]*transform:\s*scaleX\(0\.94\);)[^}]*}/s,
-    );
-  });
-
-  it('starts the contact effects on the barbell contact frame', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
-
-    expect(bootStyles).toMatch(
-      /@keyframes boot-drop\s*{.*?53\.333%\s*{[^}]*translateY\(0\) scaleX\(1\.06\) scaleY\(0\.82\)/s,
+    const block = bootStyles.slice(
+      bootStyles.indexOf('.boot-console {'),
+      bootStyles.indexOf('.boot-console-command {'),
     );
 
-    for (const animationName of [
-      'boot-ground-reveal',
-      'boot-dust-l',
-      'boot-dust-r',
-      'pop',
-    ]) {
-      expect(bootStyles).toMatch(new RegExp(`animation: ${animationName} [^;]* 1600ms both;`));
-    }
-  });
-
-  it('gives the barbell one small rebound after ground contact', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const drop = stylesheet.slice(
-      stylesheet.indexOf('@keyframes boot-drop'),
-      stylesheet.indexOf('@keyframes boot-impact-shake'),
-    );
-
-    expect(drop).toMatch(/53\.333%\s*{[^}]*translateY\(0\)/s);
-    expect(drop).toMatch(/70%\s*{[^}]*translateY\(-2px\)/s);
-    expect(drop).toMatch(/84%\s*{[^}]*translateY\(0\)/s);
-  });
-
-  it('starts the shake only after the barbell has touched the ground', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
-    const shake = stylesheet.slice(
-      stylesheet.indexOf('@keyframes boot-impact-shake'),
-      stylesheet.indexOf('@keyframes boot-ground-reveal'),
-    );
-
-    expect(bootStyles).toMatch(/\.boot-barbell\s*{[^}]*transform-origin:\s*center 16\.2px;/s);
-    expect(bootStyles).toMatch(/animation: boot-impact-shake 360ms linear 1640ms both;/);
-    expect(shake).toMatch(/0%,\s*10%,\s*100%\s*{[^}]*transform:\s*none;/s);
+    expect(block).toMatch(/\.boot-console\s*{[^}]*background:\s*#000;/s);
+    expect(block).toMatch(/\.boot-console-log\s*{[^}]*color:\s*#fff;/s);
+    expect(block).not.toMatch(/var\(--surface-0\)/);
+    expect(block).not.toMatch(/var\(--text-1\)/);
   });
 });
