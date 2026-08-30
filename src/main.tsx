@@ -2,7 +2,12 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { BOOT_HOLD_MS, BootCurtain, BootScreen, SeedErrorBanner } from './app/Boot';
-import { selectBootVariant } from './app/bootEasterEgg';
+import {
+  getBootStorage,
+  holdBootOpening,
+  scheduleNextBootEasterEgg,
+  selectBootVariant,
+} from './app/bootEasterEgg';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
 import { initializePersistentData } from './data/initialize';
@@ -27,7 +32,8 @@ watchInstall();
 watchAppUpdate();
 watchNavDirection();
 
-const bootVariant = selectBootVariant(window.localStorage);
+const bootStorage = getBootStorage();
+const bootVariant = selectBootVariant(bootStorage);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');
@@ -56,9 +62,9 @@ root.render(<BootScreen variant={bootVariant} />);
  *
  * Il présente l'app, et on ne présente pas une app à quelqu'un qui l'a ouverte
  * il y a huit minutes pour saisir sa série suivante. La règle n° 5 est
- * explicite : une main, en sueur, entre deux séries — 2,5 s y sont un mur, pas
- * une entrée en matière. C'est le seul endroit où l'ouverture coûtait quelque
- * chose, et le seul où elle ne raconte plus rien.
+ * explicite : une main, en sueur, entre deux séries — deux secondes y sont un
+ * mur, pas une entrée en matière. C'est le seul endroit où l'ouverture coûtait
+ * quelque chose, et le seul où elle ne raconte plus rien.
  *
  * La condition est celle de la barre de reprise, pas une autre : une séance
  * périmée n'est pas une séance en cours, et son propriétaire mérite l'ouverture
@@ -69,17 +75,17 @@ root.render(<BootScreen variant={bootVariant} />);
  * compris ceux qui gardent le rideau. Une base illisible ne saute rien — on
  * laisse alors le minuteur faire son travail.
  */
-const openingHeld = new Promise<void>((resolve) => {
-  const timer = setTimeout(resolve, BOOT_HOLD_MS[bootVariant]);
-  void getActiveWorkout().then(
-    (active) => {
-      if (active === undefined || isWorkoutStale(active.startedAt)) return;
-      clearTimeout(timer);
-      resolve();
-    },
-    () => {},
-  );
-});
+const openingHeld = holdBootOpening(
+  BOOT_HOLD_MS[bootVariant],
+  () =>
+    getActiveWorkout().then(
+      (active) => active !== undefined && !isWorkoutStale(active.startedAt),
+      () => false,
+    ),
+  () => {
+    if (bootVariant === 'console') scheduleNextBootEasterEgg(bootStorage);
+  },
+);
 
 /**
  * Les deux attentes courent ensemble, jamais l'une après l'autre : le rideau

@@ -458,21 +458,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  background: var(--surface-0);
+  padding: 1rem;
+  /* GRUB textuel : noir et blanc, hors thème de l'app. */
+  background: #000;
+  color: #fff;
 }
 
 .boot-console-log {
   width: min(100%, 32rem);
-  color: var(--text-1);
+  color: #fff;
   font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
-  font-size: 0.75rem;
+  font-size: clamp(0.6875rem, 3.125vw, 0.75rem);
   line-height: 1.65;
 }
 
 .boot-console-line,
 .boot-console-prompt {
   white-space: nowrap;
+}
+
+.boot-console-prompt {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .boot-console-command {
@@ -707,11 +714,9 @@
 @keyframes boot-curtain {
   from {
     opacity: 1;
-    transform: none;
   }
   to {
     opacity: 0;
-    transform: scale(1.03);
   }
 }
 

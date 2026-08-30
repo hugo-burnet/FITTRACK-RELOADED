@@ -72,4 +72,36 @@ describe('BootScreen', () => {
       /\.boot-console-line,[^}]*\.boot-console-command,[^}]*\.boot-console-cursor\s*{[^}]*animation: none !important;/s,
     );
   });
+
+  it('reveals the app with an opacity-only curtain', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const curtain = stylesheet.match(/@keyframes boot-curtain\s*{([\s\S]*?)\n}/)?.[1];
+
+    expect(curtain).toContain('opacity: 0');
+    expect(curtain).not.toContain('transform');
+  });
+
+  it('keeps the console compact enough for narrow phones', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+
+    expect(stylesheet).toMatch(/\.boot-console\s*{[^}]*padding: 1rem;/s);
+    expect(stylesheet).toMatch(
+      /\.boot-console-log\s*{[^}]*font-size: clamp\(0\.6875rem, 3\.125vw, 0\.75rem\);/s,
+    );
+    expect(stylesheet).toMatch(/\.boot-console-prompt\s*{[^}]*flex-wrap: wrap;/s);
+  });
+
+  it('paints the rare console as a GRUB terminal, black with white glyphs', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
+    const block = bootStyles.slice(
+      bootStyles.indexOf('.boot-console {'),
+      bootStyles.indexOf('.boot-console-command {'),
+    );
+
+    expect(block).toMatch(/\.boot-console\s*{[^}]*background:\s*#000;/s);
+    expect(block).toMatch(/\.boot-console-log\s*{[^}]*color:\s*#fff;/s);
+    expect(block).not.toMatch(/var\(--surface-0\)/);
+    expect(block).not.toMatch(/var\(--text-1\)/);
+  });
 });
