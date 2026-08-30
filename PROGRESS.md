@@ -3,12 +3,10 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-08-30 (**ouverture simplifiée + terminal GRUB** — la barre se
-charge sans chute, sol, poussière ni secousse ; les deux phrases apparaissent successivement puis
-le rideau révèle l'accueil. Tous les 14 à 28 jours environ, un terminal noir à écriture blanche
-(comme GRUB, hors thème) remplace les phrases. Fusionné avec `origin/master` v2.4.0 : paliers,
-découpage de l'écran de séance, `docs/design/`. **Checkpoint téléphone : cold start, puis le
-terminal noir.**).
+**Dernière mise à jour :** 2026-08-30 (**ouverture simplifiée + terminal GRUB, v2.4.1** — la barre
+se charge sans chute ni poussière ; tous les 14 à 28 jours, un terminal noir à écriture blanche
+remplace les phrases. **APK en construction.** Checkpoint téléphone : installer par-dessus
+l'app actuelle, sans désinstaller, et juger l'ouverture à froid.).
 
 ## Archives
 

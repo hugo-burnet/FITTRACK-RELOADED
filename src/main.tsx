@@ -33,7 +33,11 @@ watchAppUpdate();
 watchNavDirection();
 
 const bootStorage = getBootStorage();
-const bootVariant = selectBootVariant(bootStorage);
+const requestedBoot = new URLSearchParams(window.location.search).get('boot');
+const bootVariant =
+  import.meta.env.DEV && (requestedBoot === 'console' || requestedBoot === 'normal')
+    ? requestedBoot
+    : selectBootVariant(bootStorage);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');
