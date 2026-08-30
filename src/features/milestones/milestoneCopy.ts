@@ -6,15 +6,10 @@ import { formatNumber } from '@/ui/numberField';
 /**
  * Ce qu'un palier dit, et ce que son jeton affiche.
  *
- * **Le jeton porte le chiffre, jamais un dessin.** C'est la décision de forme de
- * toute la fonctionnalité : « 100 » se reconnaît d'un coup d'œil et se raconte,
- * là où une médaille dorée aurait fait de la pratique un jeu — exactement ce que
- * l'accueil a refusé en supprimant son compteur de semaines. Le chiffre est
- * aussi ce qui rend le dessin inutile : aucune image à générer, aucun fichier à
- * embarquer, aucun réseau (règles n° 2 et 3).
- *
- * Le jeton n'a donc **pas d'unité** : la légende juste dessous la donne, et
- * « 100 kg » dans un disque de 48 px ne tient pas sans devenir illisible.
+ * **Le chiffre vit dans le titre, le jeton est l'illustration.** `token` reste
+ * le seuil dans son unité naturelle — les tests le lisent, et un palier retiré
+ * du catalogue n'a plus de dessin. Le visuel, lui, est dans `art.ts` : des
+ * JPEG embarqués, pas un appel réseau (règles n° 2 et 3).
  *
  * Pur, et testé à part : c'est la seule partie de l'affichage qui décide quelque
  * chose.

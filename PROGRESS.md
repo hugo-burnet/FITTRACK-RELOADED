@@ -3,10 +3,8 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-08-30 (**ouverture simplifiée + terminal GRUB, v2.4.1** — la barre
-se charge sans chute ni poussière ; tous les 14 à 28 jours, un terminal noir à écriture blanche
-remplace les phrases. **APK en construction.** Checkpoint téléphone : installer par-dessus
-l'app actuelle, sans désinstaller, et juger l'ouverture à froid.).
+**Dernière mise à jour :** 2026-08-30 (**jetons de paliers en mèmes** — 22 JPEG embarqués, mapping
+des 56 ids. Le chiffre reste dans le titre. Hors-ligne, précachés.).
 
 ## Archives
 
@@ -19,10 +17,11 @@ l'app actuelle, sans désinstaller, et juger l'ouverture à froid.).
 
 ## Checkpoints téléphone encore dus
 
-1. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
+1. **Paliers** — Progression › Paliers : jetons-images (Pepe, git gud, stonks…) à la place du
+   disque chiffré. L'état vide reste vide. Après une séance qui franchit un palier, la carte
+   d'accueil porte le même visuel avec un anneau accent. Thème clair aussi.
+2. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
    le terminal (clé `fittrack.bootEasterEggAfter` due) : écran noir, glyphes blancs, comme GRUB.
-2. **Paliers** — Progression › Paliers (état vide puis historique), carte d'accueil après une
-   séance qui en franchit un, thème clair.
 3. **Tutoriel** — sélecteur de guidage à quatre modes, série unilatérale menée jusqu'au bout.
 
 ## Ouverture simplifiée et terminal GRUB (2026-08-30)
@@ -49,9 +48,15 @@ l'app actuelle, sans désinstaller, et juger l'ouverture à froid.).
 ## Les paliers (2026-08-29)
 
 Catalogue de 56 seuils acquis à vie, table Dexie `milestones` (schéma 12), rétrospective
-d'anniversaire. Aucune notification. Une carte au maximum sur l'accueil. Jeton SVG, le contenu
-est le chiffre. Correctifs origin : un seuil retiré ne fait plus taire les anniversaires ;
-rattrapage après import Hevy.
+d'anniversaire. Aucune notification. Une carte au maximum sur l'accueil.
+
+**Jetons (2026-08-30).** Le disque chiffré cède la place à 22 illustrations originales de mèmes
+(`public/milestones/*.jpg`, ~192 px). Mapping dans `src/lib/milestones/art.ts`. Le chiffre reste
+dans le titre. Workbox précache les `jpg`. DEV : `?demoPaliers=1` affiche le mur sans écrire en
+base. Nintendo dehors. Pepe dedans (feels good, smug, feels bad, rare).
+
+Correctifs origin : un seuil retiré ne fait plus taire les anniversaires ; rattrapage après
+import Hevy.
 
 ## Découpage de l'écran de séance (2026-08-29)
 

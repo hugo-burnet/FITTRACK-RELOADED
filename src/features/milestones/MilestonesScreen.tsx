@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { listMilestones } from '@/data/repositories/milestones';
 import { t } from '@/i18n/fr';
+import { MILESTONES } from '@/lib/milestones/catalogue';
 import type { MilestoneGroup } from '@/lib/milestones/types';
 import { Card, EmptyState, SectionTitle } from '@/ui';
 import { MilestoneToken } from './MilestoneToken';
@@ -19,7 +20,24 @@ const GROUPS: MilestoneGroup[] = ['strength', 'gateway', 'practice', 'volume'];
 
 interface Line extends MilestoneReading {
   id: string;
+  definitionId: string;
   achievedAt: number;
+}
+
+/**
+ * Mur complet, sans écrire en base. DEV only, comme `?boot=console` : pour
+ * relire les 56 jetons sans fabriquer cinquante séances.
+ */
+function demoLines(): Line[] | undefined {
+  if (!import.meta.env.DEV) return undefined;
+  if (new URLSearchParams(window.location.search).get('demoPaliers') !== '1') return undefined;
+  const now = Date.now();
+  return MILESTONES.flatMap((definition) => {
+    const reading = milestoneReading(definition.id, definition.threshold);
+    return reading === undefined
+      ? []
+      : [{ ...reading, id: definition.id, definitionId: definition.id, achievedAt: now }];
+  });
 }
 
 /**
@@ -36,18 +54,23 @@ interface Line extends MilestoneReading {
  */
 export function MilestonesScreen() {
   const navigate = useAppNavigate();
-  const rows = useLiveQuery(listMilestones, []);
-
-  const lines: Line[] = (rows ?? []).flatMap((row) => {
-    const reading = milestoneReading(row.definitionId, row.value);
-    // Un palier retiré du catalogue garde sa ligne en base mais n'a plus de
-    // phrase : le sauter vaut mieux qu'afficher son identifiant.
-    return reading === undefined ? [] : [{ ...reading, id: row.id, achievedAt: row.achievedAt }];
-  });
+  const live = useLiveQuery(listMilestones, []);
+  const demo = demoLines();
+  const lines: Line[] =
+    demo ??
+    (live ?? []).flatMap((row) => {
+      const reading = milestoneReading(row.definitionId, row.value);
+      // Un palier retiré du catalogue garde sa ligne en base mais n'a plus de
+      // phrase : le sauter vaut mieux qu'afficher son identifiant.
+      return reading === undefined
+        ? []
+        : [{ ...reading, id: row.id, definitionId: row.definitionId, achievedAt: row.achievedAt }];
+    });
+  const loaded = demo !== undefined || live !== undefined;
 
   return (
     <Screen title={t('milestone.title')} onBack={() => void navigate(-1)}>
-      {rows !== undefined && lines.length === 0 ? (
+      {loaded && lines.length === 0 ? (
         <EmptyState title={t('milestone.emptyTitle')} body={t('milestone.emptyBody')} />
       ) : (
         <div className="space-y-7">
@@ -65,7 +88,7 @@ export function MilestonesScreen() {
                       className="flex min-h-16 items-center gap-3 border-b border-[var(--border)]
                         px-4 py-3 last:border-b-0"
                     >
-                      <MilestoneToken value={line.token} />
+                      <MilestoneToken definitionId={line.definitionId} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-base text-[var(--text-1)]">{line.title}</p>
                         <p className="mt-0.5 text-sm text-[var(--text-2)]">

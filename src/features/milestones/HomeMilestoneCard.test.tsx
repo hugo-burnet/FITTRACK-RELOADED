@@ -73,6 +73,9 @@ describe('la carte des paliers sur l’accueil', () => {
     expect(await screen.findByText('Palier franchi')).toBeInTheDocument();
     expect(screen.getByText('Développé couché à 100 kg')).toBeInTheDocument();
     expect(screen.getByText('Franchi à 102,5 kg')).toBeInTheDocument();
+    expect(document.querySelector('img')?.getAttribute('src')).toContain(
+      'milestones/stonks.jpg',
+    );
   });
 
   it('ne se ferme qu’au doigt, jamais toute seule', async () => {

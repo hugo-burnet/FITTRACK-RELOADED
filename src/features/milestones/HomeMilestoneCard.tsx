@@ -52,7 +52,9 @@ export function HomeMilestoneCard() {
   // `syncMilestones` qui la retirera, à la prochaine séance.
   const lines = (unlocked ?? []).flatMap((row) => {
     const reading = milestoneReading(row.definitionId, row.value);
-    return reading === undefined ? [] : [{ ...reading, id: row.id }];
+    return reading === undefined
+      ? []
+      : [{ ...reading, id: row.id, definitionId: row.definitionId }];
   });
 
   if (lines.length > 0) {
@@ -68,7 +70,7 @@ export function HomeMilestoneCard() {
           <ul className="mt-4 flex flex-col gap-3">
             {lines.map((line) => (
               <li key={line.id} className="flex items-center gap-3">
-                <MilestoneToken value={line.token} tone="accent" size="lg" />
+                <MilestoneToken definitionId={line.definitionId} tone="accent" size="lg" />
                 <div className="min-w-0 flex-1">
                   <p className="text-base font-semibold text-[var(--text-1)]">{line.title}</p>
                   {line.reached !== undefined && (
@@ -106,7 +108,7 @@ export function HomeMilestoneCard() {
   const row = all.find((item) => item.definitionId === retrospective.definitionId);
   const reading =
     row === undefined ? undefined : milestoneReading(row.definitionId, row.value);
-  if (reading === undefined) return null;
+  if (row === undefined || reading === undefined) return null;
 
   return (
     <section>
@@ -118,7 +120,7 @@ export function HomeMilestoneCard() {
         </p>
 
         <div className="mt-4 flex items-center gap-3">
-          <MilestoneToken value={reading.token} size="lg" />
+          <MilestoneToken definitionId={row.definitionId} size="lg" />
           <p className="min-w-0 flex-1 text-base font-semibold text-[var(--text-1)]">
             {reading.title}
           </p>
