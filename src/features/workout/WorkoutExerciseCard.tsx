@@ -473,7 +473,7 @@ export function WorkoutExerciseCard({
                         tutorial && index < 2 ? (index === 0 ? 'first' : 'second') : undefined
                       }
                       holding={hold?.setId === set.id}
-                      sideStage={sideStageOf(set.id)}
+                      unilateral={identity.isUnilateral === 1}
                       onWrite={(values, recordable) => onWrite(set.id, values, recordable)}
                       onComplete={(values) => onComplete(set.id, values, set)}
                       onUncomplete={() => onUncomplete(set.id)}

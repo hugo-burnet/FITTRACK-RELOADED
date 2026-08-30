@@ -1,6 +1,6 @@
 import { useEffect, useState, type ComponentType, type SVGProps } from 'react';
 import type { SetValues } from '@/data/repositories/workouts';
-import type { SideStage } from './sideProgress';
+import { sideStageFor } from './sideProgress';
 import type { SetType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeLabel, unitLabel } from '@/i18n/labels';
@@ -57,13 +57,13 @@ type Props = {
    */
   holding?: boolean;
   /**
-   * Où en est le cycle deux côtés, `null` hors d'un exercice unilatéral.
+   * Vrai quand cette ligne représente un exercice unilatéral.
    *
-   * La coche change alors de sens : elle ferme un côté avant de fermer la
-   * série. Le libellé le dit, parce qu'une coche qui ne coche pas est un
-   * bouton cassé tant qu'on ne sait pas ce qu'elle fait.
+   * Le stade reste dérivé ici, avec l'horloge qui redessine la ligne : le faire
+   * calculer par le parent le figerait sur « transition » jusqu'à son prochain
+   * rendu, même après l'échéance des dix secondes.
    */
-  sideStage?: SideStage | null;
+  unilateral?: boolean;
   onWrite: (values: Partial<SetValues>, recordable: boolean) => void;
   onComplete: (values: Partial<SetValues>) => void;
   onUncomplete: () => void;
@@ -78,7 +78,7 @@ export function WorkoutSetRow({
   previous,
   tutorialRank,
   holding = false,
-  sideStage = null,
+  unilateral = false,
   onWrite,
   onComplete,
   onUncomplete,
@@ -106,6 +106,7 @@ export function WorkoutSetRow({
     return () => clearInterval(id);
   }, [deadline]);
 
+  const sideStage = sideStageFor(set, unilateral, now);
   const turning = sideStage === 'transition';
   const remainingSides =
     deadline === undefined ? 0 : Math.max(0, Math.ceil((deadline - now) / 1_000));

@@ -24,6 +24,7 @@ import { recordCoachSignals } from '@/data/repositories/coachRecommendations';
 import * as announcer from '@/audio/announce';
 import { resetDb } from '@/test/resetDb';
 import { WorkoutScreen } from './WorkoutScreen';
+import { heldSecondsAt } from './holdDuration';
 
 async function seedActiveWorkout(): Promise<string> {
   const exercise = await createCustomExercise({
@@ -1212,17 +1213,24 @@ describe('WorkoutScreen — exercice unilatéral', () => {
      * resté éteint pendant la transition.
      */
     const turning = await firstSet(workoutId);
+    const secondSideStartedAt = Date.now() - 40_000;
     await act(async () => {
       await db.workoutSets.put({ ...turning, unilateralSecondSideStartsAt: Date.now() - 1 });
-      useHoldTimer.setState({ startedAt: Date.now() - 40_000 });
+      useHoldTimer.setState({ startedAt: secondSideStartedAt });
     });
 
+    const earliestDuration = heldSecondsAt(secondSideStartedAt, Date.now());
     await user.click(
       await screen.findByRole('button', { name: 'Second côté — valider la série 1' }),
     );
 
     await waitFor(async () => {
-      expect(await firstSet(workoutId)).toMatchObject({ durationSeconds: 38, isCompleted: 1 });
+      const completed = await firstSet(workoutId);
+      expect(completed.isCompleted).toBe(1);
+      expect(completed.durationSeconds).toBeGreaterThanOrEqual(earliestDuration);
+      expect(completed.durationSeconds).toBeLessThanOrEqual(
+        heldSecondsAt(secondSideStartedAt, Date.now()),
+      );
     });
 
     // Une seule série en base, et son côté n'a pas bougé : une ligne représente
