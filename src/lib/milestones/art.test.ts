@@ -41,6 +41,35 @@ describe('l’art d’un palier', () => {
     }
   });
 
+  it('pose gigachad sur les sommets de force', () => {
+    for (const id of [
+      'deadlift-180',
+      'overhead-80',
+      'hipthrust-200',
+      'pullup-20',
+      'dumbbell-50',
+      'tonnage-1000',
+    ]) {
+      expect(artForMilestone(id), id).toBe('gigachad');
+    }
+  });
+
+  it('ne répète que gigachad et rare Pepe', () => {
+    const counts = new Map<string, number>();
+    for (const row of MILESTONES) {
+      const key = artForMilestone(row.id);
+      if (key === undefined) continue;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    for (const [key, n] of counts) {
+      if (key === 'gigachad' || key === 'pepe-rare') {
+        expect(n, key).toBeGreaterThan(1);
+      } else {
+        expect(n, key).toBe(1);
+      }
+    }
+  });
+
   it('préfixe l’URL avec BASE_URL, comme la voix', () => {
     expect(milestoneArtUrl('pepe-classic')).toBe(
       `${import.meta.env.BASE_URL}milestones/pepe-classic.jpg`,
