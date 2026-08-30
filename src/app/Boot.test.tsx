@@ -1,146 +1,181 @@
 import { readFileSync } from 'node:fs';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { BootScreen } from './Boot';
+import { BOOT_HOLD_MS, BootScreen } from './Boot';
+
+const stylesheet = readFileSync('src/index.css', 'utf8');
+
+/** Le bloc d'ouverture, du commentaire d'en-tête jusqu'au composant suivant. */
+const bootStyles = stylesheet.slice(
+  stylesheet.indexOf(" * L'ouverture de l'app."),
+  stylesheet.indexOf('/*\n * Le passage d\'un écran à l\'autre.'),
+);
+
+const reducedMotion = stylesheet.slice(
+  stylesheet.indexOf('@media (prefers-reduced-motion: reduce)'),
+  stylesheet.indexOf('/* A deliberately quiet effort rail.'),
+);
 
 describe('BootScreen', () => {
-  it('exposes the layered scene used for the ground impact', () => {
+  /**
+   * Le chargement de la barre est la partie qui marche, et la seule qui reste.
+   * Les coordonnées sont celles de `public/icon.svg` : c'est le logo qu'on
+   * anime, pas un dessin qui lui ressemble.
+   */
+  it('charge la barre en deux paires de plaques, sur les coordonnées du logo', () => {
     const { container } = render(<BootScreen />);
 
-    expect(container.querySelector('.boot-impact')).not.toBeNull();
-    expect(container.querySelector('.boot-barbell')).not.toBeNull();
-    expect(container.querySelectorAll('.boot-dust')).toHaveLength(2);
-  });
+    expect(container.querySelector('.boot-rail')).not.toBeNull();
 
-  it('builds the dust from lightweight vector particles', () => {
-    const { container } = render(<BootScreen />);
+    const plates = [...container.querySelectorAll('.boot-plate')];
+    expect(plates.map((plate) => plate.getAttribute('d'))).toEqual([
+      'M6.5 8.5v7',
+      'M17.5 8.5v7',
+      'M3.5 10.5v3',
+      'M20.5 10.5v3',
+    ]);
 
-    expect(container.querySelectorAll('.boot-dust circle')).toHaveLength(6);
-  });
-
-  it('keeps reduced-motion dust opacity-only', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const reducedMotion = stylesheet.slice(
-      stylesheet.indexOf('@media (prefers-reduced-motion: reduce)'),
-      stylesheet.indexOf('/* A deliberately quiet effort rail.'),
-    );
-    const dustFade = stylesheet.slice(
-      stylesheet.indexOf('@keyframes boot-dust-fade'),
-      stylesheet.indexOf('@keyframes boot-rack'),
-    );
-
-    expect(reducedMotion).toContain('animation-name: boot-dust-fade !important;');
-    expect(reducedMotion).toMatch(
-      /\.boot\[data-phase='in'\] \.boot-rail,[^{]*{[^}]*animation-name: boot-fade !important;/s,
-    );
-    expect(reducedMotion).toMatch(
-      /\.boot\[data-phase='in'\] \.boot-impact,[^}]*\.boot-barbell\s*{[^}]*animation: none !important;/s,
-    );
-    expect(dustFade).toContain('opacity:');
-    expect(dustFade).not.toContain('transform:');
-  });
-
-  it('keeps transient layers stable when the exit curtain remounts', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
-
-    expect(bootStyles).toMatch(/\.boot-dust\s*{[^}]*opacity:\s*0;/s);
+    // Deux gestes, pas un effet répété : les deux paires ne partent pas
+    // ensemble et ne viennent pas d'aussi loin.
+    const delays = plates.map((plate) => plate.getAttribute('style'));
+    expect(delays[0]).toContain('--boot-delay: 640ms');
+    expect(delays[2]).toContain('--boot-delay: 940ms');
+    expect(delays[0]).toContain('--boot-travel: 8px');
+    expect(delays[2]).toContain('--boot-travel: 5px');
   });
 
   /**
-   * Le point de contact, et non le milieu de la barre.
+   * Le troisième temps est parti, et c'est le sujet du changement.
    *
-   * Les deux grandes plaques — `x = 6.5` et son miroir `17.5` — descendent à
-   * `y = 15.5`, et leur terminaison ronde de 2 unités les fait franchir la ligne
-   * de sol. Ce sont elles qui touchent : le manchon s'arrête à `y = 13` et les
-   * petites plaques à `14.5`, tous deux en l'air. Une poussière qui part du
-   * centre de la barre montre donc un choc là où rien ne heurte.
+   * La barre tombait, s'écrasait, secouait l'écran et levait de la poussière :
+   * quatre couches sur la même frame pour un seul événement, sur un dessin qui
+   * fait quatre traits. Ce test existe pour qu'aucune d'elles ne revienne par
+   * accident — le silence après le chargement **est** la fonctionnalité.
    */
-  it('fait naître la poussière aux deux points de contact, pas au centre de la barre', () => {
+  it('ne dessine plus aucune couche de choc', () => {
     const { container } = render(<BootScreen />);
-    const CONTACT_X = [6.5, 17.5];
 
-    const circles = [...container.querySelectorAll('.boot-dust circle')];
-    expect(circles).toHaveLength(6);
-
-    for (const circle of circles) {
-      const cx = Number(circle.getAttribute('cx'));
-      const nearest = Math.min(...CONTACT_X.map((contact) => Math.abs(cx - contact)));
-      expect(nearest, `particule à cx=${String(cx)}`).toBeLessThanOrEqual(1.5);
+    for (const selector of ['.boot-impact', '.boot-barbell', '.boot-dust', '.boot-ground']) {
+      expect(container.querySelector(selector), selector).toBeNull();
     }
+    expect(container.querySelectorAll('circle')).toHaveLength(0);
   });
 
-  it('pose la poussière au pied des plaques, jamais le long de la barre', () => {
-    const { container } = render(<BootScreen />);
-
-    // Le bas des grandes plaques : leur axe est en y = 12 et leur demi-hauteur
-    // vaut 3.5, donc elles s'arrêtent à 15.5. Il n'y a plus de ligne de sol à
-    // interroger — c'est la géométrie de la barre qui donne le point de contact.
-    const CONTACT_Y = 15.5;
-
-    for (const circle of container.querySelectorAll('.boot-dust circle')) {
-      const cy = Number(circle.getAttribute('cy'));
-      expect(Math.abs(cy - CONTACT_Y), `particule à cy=${String(cy)}`).toBeLessThanOrEqual(0.7);
-    }
-  });
-
-  it('ne dessine aucune ligne de sol', () => {
-    const { container } = render(<BootScreen />);
-
-    // Un trait sous le logo transforme une marque en illustration. Le choc se
-    // raconte par ce qui bouge ; le sol n'a pas besoin d'être vu pour qu'on
-    // comprenne qu'on l'a heurté.
-    expect(container.querySelector('.boot-ground')).toBeNull();
-  });
-
-  /**
-   * Le geste que l'utilisateur a demandé : on soulève, on lâche, ça rebondit.
-   *
-   * L'élévation dit que la barre est tenue avant de tomber — sans elle, la
-   * chute part d'une position que rien n'explique. Le rebond dit qu'elle est
-   * lourde et qu'elle retombe, pas qu'elle se colle au sol.
-   */
-  it('soulève la barre avant la chute, et la fait rebondir après le choc', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const drop = stylesheet.slice(
-      stylesheet.indexOf('@keyframes boot-drop'),
-      stylesheet.indexOf('@keyframes boot-impact-shake'),
-    );
-
-    const frames = [...drop.matchAll(/([\d.]+)%\s*{([^}]*)}/g)].map(([, at, body]) => ({
-      at: Number(at ?? ''),
-      lift: Number(/translateY\((-?[\d.]+)px\)/.exec(body ?? '')?.[1] ?? 0),
-    }));
-
-    const IMPACT = 53.333;
-    // La barre est **tenue en hauteur** pendant tout le chargement : le
-    // remplissage `both` applique le 0 % dès la première frame. C'est de là
-    // qu'elle s'effondre, et c'est ce qui donne son poids à la chute.
-    expect(frames.find((frame) => frame.at === 0)?.lift ?? 0).toBeLessThanOrEqual(-5);
-    expect(frames.some((frame) => frame.at < IMPACT && frame.lift < 0)).toBe(true);
-    expect(frames.some((frame) => frame.at > IMPACT && frame.lift < 0)).toBe(true);
-    // Le rebond reste plus petit que l'élévation : une barre chargée ne remonte
-    // pas d'où elle vient.
-    const lift = Math.min(...frames.filter((f) => f.at > 0 && f.at < IMPACT).map((f) => f.lift));
-    const bounce = Math.min(...frames.filter((f) => f.at > IMPACT).map((f) => f.lift));
-    expect(bounce).toBeGreaterThan(lift);
-  });
-
-  it('starts the impact layers on the barbell contact frame', () => {
-    const stylesheet = readFileSync('src/index.css', 'utf8');
-    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
-
-    expect(bootStyles).toMatch(
-      /@keyframes boot-drop\s*{.*?53\.333%\s*{[^}]*translateY\(0\) scaleX\(1\.06\) scaleY\(0\.82\)/s,
-    );
-
-    for (const animationName of [
+  it('ne garde ni chute, ni secousse, ni poussière dans la feuille de style', () => {
+    for (const name of [
+      'boot-drop',
       'boot-impact-shake',
       'boot-dust-l',
       'boot-dust-r',
-      'pop',
+      'boot-dust-fade',
     ]) {
-      expect(bootStyles).toMatch(new RegExp(`animation: ${animationName} [^;]* 1600ms both;`));
+      expect(stylesheet, name).not.toContain(name);
     }
+  });
+
+  /**
+   * Une fois la dernière plaque posée, le dessin ne rebouge plus. C'est ce que
+   * `pop` sur le principe trahissait déjà : un geste de plus après le geste.
+   * Aucune règle de la séquence d'entrée ne doit viser la barre ou son cadre.
+   */
+  it('laisse la barre immobile après le chargement', () => {
+    const entryRules = [...bootStyles.matchAll(/\.boot\[data-phase='in'\] ([^{]+){([^}]*)}/g)];
+    const animated = entryRules
+      .filter(([, , body]) => /animation:/.test(body ?? ''))
+      .map(([, selector]) => (selector ?? '').trim());
+
+    expect(animated).toEqual([
+      '.boot-rail',
+      '.boot-mark',
+      '.boot-plate--l',
+      '.boot-plate--r',
+      '.boot-principle',
+      '.boot-tagline',
+    ]);
+  });
+
+  /**
+   * Le seul événement qui reste est typographique. S'il redevenait spatial —
+   * un `transform`, une échelle — on aurait remplacé une chute par un sursaut,
+   * ce qui est le défaut qu'on corrige.
+   */
+  it('ferme la séquence sur un geste typographique, pas sur un déplacement', () => {
+    expect(bootStyles).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-principle\s*{[^}]*animation: boot-track-in /s,
+    );
+
+    const trackIn = bootStyles.slice(
+      bootStyles.indexOf('@keyframes boot-track-in'),
+      bootStyles.indexOf('@keyframes boot-curtain'),
+    );
+
+    expect(trackIn).toContain('letter-spacing:');
+    expect(trackIn).not.toContain('transform:');
+    expect(trackIn).not.toContain('scale');
+  });
+
+  /**
+   * L'interlettrage ajoute son blanc **après** la dernière lettre : sans un
+   * `text-indent` qui le suit exactement, la ligne dérive vers la gauche
+   * pendant tout le resserrement au lieu de rester sur son axe. Le défaut est
+   * connu — la règle statique de `.boot-principle` le corrigeait déjà — et
+   * l'animation le ferait revenir, en mouvement, si elle l'oubliait.
+   */
+  it('garde le principe sur son axe pendant le resserrement', () => {
+    const trackIn = bootStyles.slice(
+      bootStyles.indexOf('@keyframes boot-track-in'),
+      bootStyles.indexOf('@keyframes boot-curtain'),
+    );
+
+    const frames = [...trackIn.matchAll(/(from|to)\s*{([^}]*)}/g)].map(([, at, body]) => ({
+      at,
+      spacing: /letter-spacing:\s*([\d.]+)em/.exec(body ?? '')?.[1],
+      indent: /text-indent:\s*([\d.]+)em/.exec(body ?? '')?.[1],
+    }));
+
+    expect(frames).toHaveLength(2);
+    for (const frame of frames) {
+      expect(frame.indent, `text-indent à « ${frame.at ?? ''} »`).toBe(frame.spacing);
+    }
+
+    // L'arrivée doit être l'état statique de `.boot-principle`, sinon le mot
+    // finit à un interlettrage que la feuille de style ne déclare nulle part.
+    expect(frames[1]?.spacing).toBe('0.3');
+    expect(bootStyles).toMatch(/\.boot-principle\s*{[^}]*letter-spacing:\s*0\.3em;/s);
+
+    // Le départ est un plafond mesuré : au-delà de 0,6 em, « Progressive
+    // Overload » passe à deux lignes sur un écran de 320 px, puis revient à
+    // une seule au milieu de l'animation — et le bloc centré saute de 5,5 px.
+    expect(Number(frames[0]?.spacing)).toBeLessThanOrEqual(0.6);
+    expect(bootStyles).toMatch(/\.boot-principle\s*{[^}]*white-space:\s*nowrap;/s);
+  });
+
+  /**
+   * `BOOT_HOLD_MS` n'est pas une mesure mais une durée choisie : elle doit
+   * couvrir la séquence en entier, sinon le rideau se lève sur une signature
+   * encore en train d'apparaître.
+   */
+  it('lève le rideau après la fin de la dernière animation', () => {
+    // Les quatre règles à délai littéral : le manchon, le nom, le principe et
+    // la signature. Les plaques n'y sont pas, et c'est normal — leur délai est
+    // un `var(--boot-delay)` que le composant écrit sur chaque trait ; elles se
+    // posent de toute façon à 1 240 ms, bien avant la dernière ligne de texte.
+    const timings = [...bootStyles.matchAll(/animation: \S+ (\d+)ms [^;]*?(\d+)ms both;/g)].map(
+      ([, duration, delay]) => Number(duration) + Number(delay),
+    );
+
+    expect(timings).toHaveLength(4);
+    expect(Math.max(...timings)).toBeLessThanOrEqual(BOOT_HOLD_MS);
+  });
+
+  it('rend la séquence en opacité seule en mouvement réduit', () => {
+    expect(reducedMotion).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-rail,[^{]*{[^}]*animation-name: boot-fade !important;/s,
+    );
+    // Le principe est dans cette liste : `boot-fade` ne déclare aucun
+    // `letter-spacing`, donc le resserrement disparaît avec le reste.
+    expect(reducedMotion).toMatch(/\.boot\[data-phase='in'\] \.boot-principle,/);
+    expect(reducedMotion).not.toContain('boot-dust');
+    expect(reducedMotion).not.toContain('boot-barbell');
   });
 });

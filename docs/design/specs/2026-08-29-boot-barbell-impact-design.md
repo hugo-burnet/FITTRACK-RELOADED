@@ -1,5 +1,25 @@
 # Impact de la barre au démarrage — conception
 
+> ## ⛔ Révoqué le 2026-08-30 — l'impact est entièrement supprimé de l'app
+>
+> Cette fonctionnalité n'existe plus. Sur retour de l'utilisateur (« la suite est un peu naze, ça
+> fait cheap »), la chute, l'écrasement, la secousse et la poussière ont été retirés du code : il ne
+> reste que le chargement des plaques, suivi d'un silence, puis d'un resserrement d'interlettrage
+> sur le principe. `boot-drop`, `boot-impact-shake`, `boot-dust-l`, `boot-dust-r`,
+> `boot-dust-fade`, `.boot-impact`, `.boot-barbell` et `.boot-dust` ne sont plus dans le dépôt.
+>
+> **Ce que ce chantier a appris, et qui vaut au-delà de lui.** Le défaut n'était pas dans la courbe
+> de chute — elle était juste. Il était dans le nombre de couches démarrant sur la même frame :
+> quatre animations à 1 600 ms pour un seul événement, sur un dessin qui fait quatre traits, se
+> lisent comme un effet et non comme une conséquence. Chacune des quatre était défendable seule ;
+> c'est leur somme qui a coûté la fonctionnalité. Un écran vu une fois par démarrage supporte un
+> geste, pas une cinématique.
+>
+> Le détail de la suppression, le défaut de saut vertical trouvé en la vérifiant et le nouveau
+> contrat de test sont dans « L'ouverture, troisième passe » de `PROGRESS.md`. Ce document reste en
+> lecture seule, comme trace de la décision et de son motif.
+
+
 ## Objectif
 
 Remplacer le petit aller-retour vertical de la barre chargée par une chute qui donne une impression

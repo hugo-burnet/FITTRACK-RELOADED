@@ -293,30 +293,17 @@
     .boot[data-phase='in'] .boot-plate,
     .boot[data-phase='in'] .boot-principle,
     .boot[data-phase='in'] .boot-tagline {
+      /* Le principe perd son resserrement d'interlettrage avec le reste :
+         `boot-fade` ne déclare aucun `letter-spacing`, donc la valeur statique
+         de `.boot-principle` s'applique dès la première frame. */
       animation-name: boot-fade !important;
       animation-duration: 240ms !important;
       animation-fill-mode: both !important;
     }
 
-    /* La poussière vit puis disparaît, mais ne voyage plus latéralement. */
-    .boot[data-phase='in'] .boot-dust {
-      animation-name: boot-dust-fade !important;
-      animation-duration: 520ms !important;
-      animation-fill-mode: both !important;
-    }
-
     /* Rien à promouvoir quand plus rien ne bouge ni ne floute. */
-    .boot[data-phase='in'] .boot-plate,
-    .boot[data-phase='in'] .boot-impact,
-    .boot[data-phase='in'] .boot-barbell {
+    .boot[data-phase='in'] .boot-plate {
       will-change: auto;
-    }
-
-    /* La chute et la secousse ne révèlent rien : leur version accessible est
-       portée par les fondus des couches ci-dessus, donc on les retire. */
-    .boot[data-phase='in'] .boot-impact,
-    .boot[data-phase='in'] .boot-barbell {
-      animation: none !important;
     }
 
     .boot[data-phase='out'] {
@@ -397,10 +384,13 @@
  * gestes de l'app doivent rester quatre, et ceux-ci ne servent qu'à un écran vu
  * une fois par démarrage. Même précédent que `.rpe-gauge` juste au-dessus.
  *
- * Trois temps, et le troisième est la conséquence des deux premiers : les
- * manchons s'enfilent, les petites plaques s'enfilent, puis la barre chargée
- * tombe. Le principe, le sol, la poussière et la secousse partent au contact —
- * quatre couches pour un seul événement, pas quatre effets décoratifs.
+ * Deux temps, et un silence : le manchon s'ouvre, les deux paires de plaques
+ * s'enfilent, puis **plus rien ne bouge**. Le troisième temps a existé — la
+ * barre tombait, s'écrasait, secouait l'écran et levait de la poussière — et il
+ * a été retiré le 2026-08-30 : quatre couches démarrant sur la même frame pour
+ * un seul événement se lisent comme un effet, pas comme une conséquence.
+ * Ce qui le remplace n'est pas un autre geste, c'est son absence. Le seul
+ * événement restant est typographique, et il est plus bas : `boot-track-in`.
  *
  * Tous les délais sont dans `.boot[data-phase='in']` : la phase de sortie ne
  * fait correspondre aucune de ces règles, donc l'écran qui s'efface est déjà
@@ -435,16 +425,6 @@
   overflow: visible;
 }
 
-.boot-dust {
-  opacity: 0;
-  color: var(--text-2);
-}
-
-.boot-dust circle {
-  fill: currentColor;
-  stroke: none;
-}
-
 .boot-principle {
   font-size: 0.6875rem;
   font-weight: 600;
@@ -454,6 +434,15 @@
   /* L'interlettrage ajoute un blanc après la dernière lettre ; sans ce retrait
      la ligne est visiblement décalée à gauche de l'axe. */
   text-indent: 0.3em;
+  /* La ligne ne se coupe jamais, et c'est structurel, pas cosmétique.
+     `boot-track-in` la fait démarrer à un interlettrage bien plus large :
+     mesuré sur un écran de 320 px, elle passait à deux lignes au début de
+     l'animation puis revenait à une seule au milieu, et **tout le bloc centré
+     sautait de 5,5 px** à ce moment-là — le logo tressautait sans que rien ne
+     l'ait touché, ce qui est le défaut même que cette ouverture corrige.
+     Avec `nowrap`, une chaîne trop longue déborderait au lieu de déplacer le
+     logo : sur un écran de démarrage, c'est la bonne panne des deux. */
+  white-space: nowrap;
   color: var(--accent-ink);
 }
 
@@ -466,26 +455,9 @@
 /* Les transformations SVG se lisent dans le repère du `viewBox`, pas dans la
    boîte de l'élément — sans ça, l'origine dépend du navigateur. */
 .boot-rail,
-.boot-plate,
-.boot-barbell,
-.boot-dust {
+.boot-plate {
   transform-box: view-box;
   transform-origin: center;
-}
-
-/* Chaque nappe grandit depuis **son** point de contact.
-
-   Avec `transform-box: view-box`, `transform-origin: center` désigne le centre
-   du viewBox — pas celui du groupe. La poussière naissait donc au milieu de la
-   barre à petite échelle et ne rejoignait le bas des plaques qu'à pleine
-   taille : c'est ce qu'on voyait à l'écran, et déplacer les cercles seuls n'y
-   changeait rien. Les longueurs sont en unités du viewBox, comme le reste. */
-.boot-dust--l {
-  transform-origin: 6.5px 15.35px;
-}
-
-.boot-dust--r {
-  transform-origin: 17.5px 15.35px;
 }
 
 .boot[data-phase='in'] .boot-rail {
@@ -511,37 +483,21 @@
   animation: boot-load-r 300ms var(--ease-mech) var(--boot-delay, 0ms) both;
 }
 
-/* Troisième temps. La barre attend déjà en hauteur pendant le chargement, puis
-   accélère vers le sol. Les paliers de `boot-drop` dessinent l'impact et son
-   amortissement sans courbe élastique. */
-.boot[data-phase='in'] .boot-barbell {
-  animation: boot-drop 600ms linear 1280ms both;
-  will-change: transform;
-}
+/* La dernière plaque se pose à 1 240 ms, et le dessin s'arrête là pour de bon :
+   aucune règle ne vise plus la barre après cette frame. Les 120 ms qui suivent
+   sont vides exprès — c'est ce blanc qui fait lire la suite comme une réponse
+   au chargement, et non comme sa continuation.
 
-/* La secousse est bornée au dessin. La page qui se prépare sous le rideau ne
-   bouge jamais, et le pouce garde donc une cible stable. */
-.boot[data-phase='in'] .boot-impact {
-  animation: boot-impact-shake 360ms linear 1600ms both;
-  will-change: transform;
-}
-
-.boot[data-phase='in'] .boot-dust--l {
-  animation: boot-dust-l 520ms var(--ease-mech) 1600ms both;
-}
-
-.boot[data-phase='in'] .boot-dust--r {
-  animation: boot-dust-r 520ms var(--ease-mech) 1600ms both;
-}
-
-/* `pop` est le geste que l'app donne déjà à une série validée et à un record :
-   ça arrive, ça pose. Le principe mérite exactement celui-là, pas un de plus. */
+   Le principe ne « pop » plus. `pop` est le geste d'une série validée : ça
+   arrive, ça pose — il dit qu'une valeur vient d'être enregistrée, et il n'y a
+   rien à enregistrer ici. Le resserrement d'interlettrage dit autre chose, et
+   c'est ce qu'on veut : le mot était déjà là, il se met en place. */
 .boot[data-phase='in'] .boot-principle {
-  animation: pop 380ms var(--ease-mech) 1600ms both;
+  animation: boot-track-in 640ms var(--ease-mech) 1360ms both;
 }
 
 .boot[data-phase='in'] .boot-tagline {
-  animation: boot-fade 520ms var(--ease-mech) 1860ms both;
+  animation: boot-fade 520ms var(--ease-mech) 1880ms both;
 }
 
 .boot[data-phase='out'] {
@@ -568,16 +524,6 @@
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes boot-dust-fade {
-  from,
-  to {
-    opacity: 0;
-  }
-  35% {
-    opacity: 0.3;
   }
 }
 
@@ -627,98 +573,28 @@
   }
 }
 
-/* On tient en l'air, on lâche, ça s'écrase.
+/* Le mot était déjà là ; il se met en place.
 
-   Le remplissage `both` garde le 0 % pendant tout le chargement : les plaques
-   s'enfilent donc sur une barre **tenue en hauteur**, et c'est de là qu'elle
-   tombe. `overflow: visible` sur `.boot-bar` est ce qui la garde à l'écran
-   au-dessus du viewBox pendant ce temps.
+   L'interlettrage part de 0,6 em et revient au 0,3 em statique de
+   `.boot-principle`. Le doublement est l'effet ; 0,6 em en est le plafond et
+   il est mesuré, pas choisi : « Progressive Overload » fait vingt caractères,
+   et au-delà la ligne dépasse la largeur utile d'un écran de 320 px. Le `text-indent` le suit exactement : l'interlettrage
+   ajoute son blanc **après** la dernière lettre, donc sans ce retrait
+   proportionnel la ligne dérive visiblement vers la gauche pendant tout le
+   resserrement, au lieu de rester sur son axe.
 
-   L'élan d'une unité juste avant la chute est ce qui dit qu'on la lâche : sans
-   lui, la barre partirait vers le bas sans que rien l'ait déclenché.
-
-   Le rebond est trois fois plus court que l'élévation, et le second contact
-   trois fois plus court que le premier. C'est ce rapport qui dit « lourd » :
-   une barre chargée ne remonte pas d'où elle vient. */
-@keyframes boot-drop {
-  0% {
-    transform: translateY(-7px);
-    animation-timing-function: cubic-bezier(0.25, 0, 0.3, 1);
-  }
-  /* L'élan, avant la chute : une unité de plus, pas davantage. C'est ce qui
-     dit qu'on tient la barre — sans lui, elle tomberait sans que rien l'ait
-     lâchée. Les longueurs sont en unités du viewBox et non en pixels CSS : la
-     scène fait douze unités pour 79 px. */
-  22% {
-    transform: translateY(-8.2px);
-    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
-  }
-  /* 320 ms après le départ : la poussière, le sol et la secousse utilisent le
-     même délai absolu de 1 600 ms, donc aucune conséquence ne précède le choc. */
-  53.333% {
-    transform: translateY(0) scaleX(1.06) scaleY(0.82);
-    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
-  }
-  67% {
-    transform: translateY(-1.1px) scaleX(0.99) scaleY(1.025);
-    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
-  }
-  82% {
-    transform: translateY(0) scaleX(1.02) scaleY(0.97);
-    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
-  }
-  92% {
-    transform: translateY(-0.3px) scaleX(0.996) scaleY(1.008);
-  }
-  100% {
-    transform: none;
-  }
-}
-
-@keyframes boot-impact-shake {
-  0%,
-  100% {
-    transform: none;
-  }
-  16% {
-    transform: translateX(-3px) rotate(-0.6deg);
-  }
-  32% {
-    transform: translateX(2.5px) rotate(0.45deg);
-  }
-  48% {
-    transform: translateX(-1.5px) rotate(-0.25deg);
-  }
-  64% {
-    transform: translateX(0.75px) rotate(0.12deg);
-  }
-}
-
-@keyframes boot-dust-l {
+   C'est le seul geste qui reste après le chargement de la barre, et il est
+   typographique exprès : le dessin a fini de parler, le mot prend le relais. */
+@keyframes boot-track-in {
   from {
     opacity: 0;
-    transform: translate(0.5px, 0.25px) scale(0.3);
-  }
-  26% {
-    opacity: 0.62;
+    letter-spacing: 0.6em;
+    text-indent: 0.6em;
   }
   to {
-    opacity: 0;
-    transform: translate(-2.6px, -1.25px) scale(1.5);
-  }
-}
-
-@keyframes boot-dust-r {
-  from {
-    opacity: 0;
-    transform: translate(-0.5px, 0.25px) scale(0.3);
-  }
-  26% {
-    opacity: 0.62;
-  }
-  to {
-    opacity: 0;
-    transform: translate(2.6px, -1.25px) scale(1.5);
+    opacity: 1;
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
   }
 }
 

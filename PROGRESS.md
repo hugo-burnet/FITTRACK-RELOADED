@@ -2,9 +2,13 @@
 
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 
-**Dernière mise à jour :** 2026-08-30 (**l'ouverture, deuxième passe** — la barre se charge
+**Dernière mise à jour :** 2026-08-30 (**l'ouverture, troisième passe** — le troisième temps est
+**supprimé** : plus de chute, plus d'écrasement, plus de secousse, plus de poussière. Une fois
+chargée, la barre ne rebouge plus, et la séquence se ferme sur le seul resserrement d'interlettrage
+du principe. **Checkpoint téléphone à faire.** Voir la section dédiée ci-dessous). Le même jour
+(**l'ouverture, deuxième passe** — la barre se charge
 **tenue en hauteur** et s'effondre de toute cette hauteur ; la ligne de sol est supprimée.
-**Checkpoint téléphone à faire.** Voir la section dédiée ci-dessous). Précédemment, le 2026-08-29
+Cette passe est entièrement défaite par la troisième). Précédemment, le 2026-08-29
 (**reprise de l'animation d'ouverture** — la barre se
 charge au sol, s'élève de huit pixels, tombe, s'écrase, tremble et rebondit ; la poussière naît
 enfin **aux deux points de contact** et non au milieu de la barre. **Checkpoint téléphone à
@@ -70,6 +74,77 @@ fast-forward.** `src/` n'a pas bougé. Vitest ignore désormais `fittrack-kb-con
 tests tournent avec `node --test`. Le contrôle visuel du tutoriel sur téléphone reste dû).
 La **phase 2 de la Knowledge Base** est livrée à côté, dans `fittrack-kb-contract/` : contrat
 exécutable, aucun code de l'application touché.
+
+## L'ouverture, troisième passe : la chute est supprimée (2026-08-30)
+
+Retour de l'utilisateur : « l'haltère qui se construit progressivement c'est bien mais la suite est
+un peu naze, ça fait cheap ». Quatre remplacements lui ont été présentés animés côte à côte — le
+serrage, la montée, la barre qui devient un trait, et le silence. **Le silence est retenu**, contre
+le serrage recommandé, qui « ne fait pas fini ».
+
+### Le diagnostic
+
+Le défaut n'était pas dans la courbe de chute : l'écrasement et l'amorti étaient bien réglés. Il
+était dans **le nombre de couches qui parlent en même temps**. À 1 600 ms, quatre animations
+démarraient sur la même frame — impact, secousse, poussière, principe — pour dire un seul mot, sur
+un dessin qui fait quatre traits. Et la secousse d'écran est le seul geste que l'app ne justifie
+nulle part ailleurs : l'œil la reconnaît comme un effet, pas comme une conséquence. C'est de là que
+venait l'impression de démo, et aucun réglage de la chute ne l'aurait retirée.
+
+### Ce qui change
+
+- **Le troisième temps n'existe plus.** `boot-drop`, `boot-impact-shake`, `boot-dust-l`,
+  `boot-dust-r` et `boot-dust-fade` sont supprimés, avec les groupes `.boot-impact`,
+  `.boot-barbell` et les deux nappes `.boot-dust` du composant. La dernière plaque se pose à
+  1 240 ms et **aucune règle ne vise plus le dessin après cette frame**.
+- **La séquence se ferme sur un geste typographique.** Le principe ne « pop » plus : `pop` est le
+  geste d'une série validée — ça arrive, ça pose — et il dit qu'une valeur vient d'être
+  enregistrée, ce qui n'est pas ce qui se passe ici. `boot-track-in` resserre son interlettrage de
+  0,6 em à 0,3 em en 640 ms à partir de 1 360 ms. Le mot était déjà là ; il se met en place.
+- **Les 120 ms entre la dernière plaque et le principe sont vides exprès.** C'est ce blanc qui fait
+  lire la suite comme une réponse au chargement plutôt que comme sa continuation.
+- La signature passe de 1 860 à 1 880 ms. `BOOT_HOLD_MS` reste à **2 500** ms : la séquence finit à
+  2 400 ms, et les 100 ms restantes sont un temps d'arrêt, pas une attente.
+
+### Le défaut trouvé en vérifiant, et sa cause
+
+Le resserrement partait de 0,9 em. Mesuré au navigateur à 320, 360 et 390 px de large,
+« Progressive Overload » **passait à deux lignes** au début de l'animation et revenait à une seule
+au milieu : le bloc est centré verticalement, donc **tout le contenu sautait de 5,5 px** à ce
+moment-là. Le logo tressautait sans que rien ne l'ait touché — c'est-à-dire exactement le défaut
+que cette passe supprimait par ailleurs. Invisible à 430 px, visible sur tous les téléphones réels.
+
+Le départ est donc plafonné à **0,6 em**, qui est une mesure et non un choix : vingt caractères à
+11 px, la ligne tient dans la largeur utile d'un écran de 320 px. `.boot-principle` porte en plus
+`white-space: nowrap`, pour qu'une chaîne plus longue déborde au lieu de déplacer le logo — sur un
+écran de démarrage, c'est la bonne panne des deux.
+
+### Les tests
+
+`Boot.test.tsx` est réécrit : il ne décrivait plus qu'une scène de choc. Il verrouille maintenant
+le contrat inverse — le chargement des deux paires de plaques sur les coordonnées de
+`public/icon.svg`, l'**absence** de toute couche de choc dans le rendu comme dans la feuille de
+style, le fait qu'aucune règle d'entrée ne vise la barre après le chargement, le fait que le
+dernier geste soit typographique et non spatial, le `text-indent` qui suit l'interlettrage à ses
+deux bornes, le plafond de 0,6 em avec sa raison, et le fait que `BOOT_HOLD_MS` couvre la séquence
+entière.
+
+### Vérifications
+
+- `npm run typecheck`, `npm run lint`, `npm run test:run` (**232 fichiers, 2 455 tests**) et
+  `npm run build` : verts.
+- Chromium, animations mises en pause et avancées de 20 ms en 20 ms de 1 240 à 2 500 ms, à 320,
+  360, 390 et 430 px : **saut du logo de 0,0 px**, principe sur une seule ligne, aucun débordement
+  horizontal.
+- `prefers-reduced-motion: reduce` : les huit animations rendent `boot-fade`, l'interlettrage reste
+  à sa valeur statique et les plaques ne portent ni transformation ni flou.
+
+### Checkpoint téléphone
+
+Relancer l'app à froid. La barre doit se construire comme avant — le manchon, puis les deux paires
+de plaques — puis **ne plus jamais bouger**. Rien ne doit tomber, trembler ni fumer. Le seul
+mouvement après le chargement est « PROGRESSIVE OVERLOAD » qui se resserre sur place, sur une seule
+ligne, sans que le logo au-dessus ne bouge d'un pixel.
 
 ## L'ouverture, deuxième passe (2026-08-30)
 

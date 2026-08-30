@@ -33,72 +33,58 @@ const PLATES = [
 ];
 
 /**
- * Le logo devient une petite scène d'impact.
+ * Le logo se charge, plaque après plaque, et s'arrête là.
  *
- * **Aucune ligne de sol n'est dessinée.** Elle a existé, et elle disait la
- * mauvaise chose : un trait sous le logo transforme une marque en illustration,
- * et fixe une scène là où il n'y a qu'un signe. Le choc se raconte entièrement
- * par ce qui bouge — la chute, l'écrasement, la secousse et la poussière — et
- * un sol n'a pas besoin d'être visible pour qu'on comprenne qu'on l'a heurté.
+ * **Il n'y a plus de troisième temps.** La barre est tombée, s'est écrasée, a
+ * secoué l'écran et levé de la poussière ; quatre couches démarraient sur la
+ * même frame pour dire un seul mot, sur un dessin qui fait quatre traits. C'est
+ * le nombre de couches qui posait problème, pas la courbe de chute : l'œil y
+ * lisait un effet, jamais une conséquence, et c'est exactement ce qui donne à
+ * un écran d'ouverture son air de démonstration. Une fois la barre chargée, le
+ * dessin ne rebouge donc plus du tout, et le seul événement qui reste est
+ * typographique — le principe qui se resserre en place, dans `index.css`.
  *
- * La barre reste exactement celle de `public/icon.svg` ; seule la poussière
- * s'ajoute, sans asset ni particule pilotée en JavaScript.
+ * Il n'y a toujours pas de ligne de sol, et pour la même raison qu'avant : un
+ * trait sous le logo transforme une marque en illustration.
+ *
+ * La barre est exactement celle de `public/icon.svg` — aucun asset, aucune
+ * particule pilotée en JavaScript, et plus rien à composer après 1,24 s.
  */
 function LoadedBar() {
   return (
     <svg className="boot-bar" viewBox="2 6 20 12" fill="none" aria-hidden="true">
-      <g className="boot-barbell">
-        <path
-          className="boot-rail"
-          d="M8 12h8"
-          stroke="var(--accent-ink)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        {PLATES.flatMap(({ x, half, travel, delay }) =>
-          [x, 24 - x].map((cx) => (
-            <path
-              key={cx}
-              className={`boot-plate boot-plate--${cx < 12 ? 'l' : 'r'}`}
-              style={
-                { '--boot-delay': `${delay}ms`, '--boot-travel': `${travel}px` } as CSSProperties
-              }
-              d={`M${cx} ${12 - half}v${half * 2}`}
-              stroke="var(--accent-ink)"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          )),
-        )}
-      </g>
-
-      {/*
-        La poussière naît **là où ça touche**, et nulle part ailleurs.
-        Les deux grandes plaques descendent à y = 15.5 ; leur terminaison ronde
-        de 2 unités les fait franchir la ligne de sol. Le manchon s'arrête à
-        y = 13 et les petites plaques à 14.5 — tous deux en l'air. Une poussière
-        au centre de la barre montrait donc un choc à un endroit où rien ne
-        heurte, et c'est ce qu'on voyait.
-      */}
-      <g className="boot-dust boot-dust--l">
-        <circle cx="6.5" cy="15.35" r=".62" />
-        <circle cx="5.35" cy="15.5" r=".42" opacity=".7" />
-        <circle cx="7.6" cy="15.55" r=".3" opacity=".5" />
-      </g>
-      <g className="boot-dust boot-dust--r">
-        <circle cx="17.5" cy="15.35" r=".62" />
-        <circle cx="18.65" cy="15.5" r=".42" opacity=".7" />
-        <circle cx="16.4" cy="15.55" r=".3" opacity=".5" />
-      </g>
+      <path
+        className="boot-rail"
+        d="M8 12h8"
+        stroke="var(--accent-ink)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      {PLATES.flatMap(({ x, half, travel, delay }) =>
+        [x, 24 - x].map((cx) => (
+          <path
+            key={cx}
+            className={`boot-plate boot-plate--${cx < 12 ? 'l' : 'r'}`}
+            style={
+              { '--boot-delay': `${delay}ms`, '--boot-travel': `${travel}px` } as CSSProperties
+            }
+            d={`M${cx} ${12 - half}v${half * 2}`}
+            stroke="var(--accent-ink)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        )),
+      )}
     </svg>
   );
 }
 
 /**
- * L'ouverture de l'app, en trois temps : le manchon se pose, les deux paires de
- * plaques s'enfilent — puis la barre chargée tombe et frappe le sol. Sa courte
- * compression, le tremblement amorti et la poussière racontent son poids sans
- * transformer l'ouverture en cinématique. Le principe apparaît sur l'impact.
+ * L'ouverture de l'app, en deux temps et un silence : le manchon se pose, les
+ * deux paires de plaques s'enfilent — puis plus rien ne bouge. La barre chargée
+ * tient l'écran, et c'est le principe qui vient se resserrer sous elle. La
+ * retenue est le geste : un logo qui reste immobile a l'air posé là exprès,
+ * là où un logo qui rebondit a l'air de faire ses preuves.
  *
  * `exiting` rend le même écran **sans** aucune animation d'entrée : au moment où
  * `main.tsx` monte le routeur, ce composant est démonté puis remonté, et sans ce
@@ -111,10 +97,7 @@ export function BootScreen({ exiting = false }: { exiting?: boolean }) {
     // l'entrée, c'est le seul contenu à l'écran.
     <div className="boot" data-phase={exiting ? 'out' : 'in'} aria-hidden={exiting || undefined}>
       <div className="flex flex-col items-center gap-5">
-        {/* La secousse porte sur la scène seule : l'interface dessous ne tremble jamais. */}
-        <div className="boot-impact">
-          <LoadedBar />
-        </div>
+        <LoadedBar />
         <p className="boot-mark">{t('app.name')}</p>
       </div>
 
