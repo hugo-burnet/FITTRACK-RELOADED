@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { t } from '@/i18n/fr';
+import type { BootVariant } from './bootEasterEgg';
 
 /**
  * Combien de temps le rideau d'ouverture reste en place, en millisecondes.
@@ -7,9 +8,12 @@ import { t } from '@/i18n/fr';
  * C'est une durée choisie, pas une mesure : la base est prête bien avant sur un
  * démarrage à chaud. Le rideau ne rapporte donc aucune progression — il présente
  * l'app. `main.tsx` fait courir cette attente **en parallèle** de la préparation
- * de la base : une base lente absorbe ces 2,5 s au lieu de s'y ajouter.
+ * de la base : une base lente absorbe l'ouverture au lieu de s'y ajouter.
  */
-export const BOOT_HOLD_MS = 2500;
+export const BOOT_HOLD_MS: Record<BootVariant, number> = {
+  normal: 2180,
+  console: 3360,
+};
 
 /** Sa disparition. Doit rester égal à la durée de `boot-curtain` dans index.css. */
 const BOOT_EXIT_MS = 320;
@@ -33,16 +37,12 @@ const PLATES = [
 ];
 
 /**
- * Le logo devient une petite scène d'impact. La barre reste exactement celle de
- * `public/icon.svg` ; le sol et la poussière ne servent qu'à donner une masse à
- * sa chute, sans asset ni particules pilotées en JavaScript.
+ * La barre reste exactement celle de `public/icon.svg`, sans couche décorative.
  */
 function LoadedBar() {
   return (
     <svg className="boot-bar" viewBox="2 6 20 12" fill="none" aria-hidden="true">
-      <path className="boot-ground" d="M1.5 16.2H22.5" />
-
-      <g className="boot-barbell">
+      <g>
         <path
           className="boot-rail"
           d="M8 12h8"
@@ -66,49 +66,66 @@ function LoadedBar() {
           )),
         )}
       </g>
-
-      <g className="boot-dust boot-dust--l">
-        <circle cx="9.65" cy="16.05" r="1" />
-        <circle cx="8.1" cy="15.9" r=".72" opacity=".72" />
-        <circle cx="6.45" cy="16.1" r=".48" opacity=".46" />
-      </g>
-      <g className="boot-dust boot-dust--r">
-        <circle cx="14.35" cy="16.05" r="1" />
-        <circle cx="15.9" cy="15.9" r=".72" opacity=".72" />
-        <circle cx="17.55" cy="16.1" r=".48" opacity=".46" />
-      </g>
     </svg>
   );
 }
 
+function BootConsole() {
+  return (
+    <div className="boot-console" aria-hidden="true">
+      <div className="boot-console-log">
+        <p className="boot-console-line">{t('boot.consoleQuadriceps')}</p>
+        <p className="boot-console-line">{t('boot.consoleCore')}</p>
+        <p className="boot-console-line">{t('boot.consoleEgo')}</p>
+        <p className="boot-console-line">{t('boot.consoleExcuses')}</p>
+        <p className="boot-console-prompt">
+          <span>{t('boot.consolePrompt')}&nbsp;</span>
+          <span className="boot-console-command">{t('boot.consoleCommand')}</span>
+          <span className="boot-console-cursor">█</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /**
- * L'ouverture de l'app, en trois temps : le manchon se pose, les deux paires de
- * plaques s'enfilent — puis la barre chargée tombe et frappe le sol. Sa courte
- * compression, le tremblement amorti et la poussière racontent son poids sans
- * transformer l'ouverture en cinématique. Le principe apparaît sur l'impact.
+ * L'ouverture charge la barre, puis fait apparaître les deux phrases. La rare
+ * variante console bifurque seulement après le chargement des plaques.
  *
  * `exiting` rend le même écran **sans** aucune animation d'entrée : au moment où
  * `main.tsx` monte le routeur, ce composant est démonté puis remonté, et sans ce
  * drapeau la séquence entière repartirait de zéro pendant qu'elle s'efface.
  */
-export function BootScreen({ exiting = false }: { exiting?: boolean }) {
+export function BootScreen({
+  exiting = false,
+  variant = 'normal',
+}: {
+  exiting?: boolean;
+  variant?: BootVariant;
+}) {
   return (
     // `aria-hidden` seulement en sortie : à ce moment le vrai contenu est monté
     // dessous, et un lecteur d'écran n'a pas à relire un rideau qui s'efface. À
     // l'entrée, c'est le seul contenu à l'écran.
-    <div className="boot" data-phase={exiting ? 'out' : 'in'} aria-hidden={exiting || undefined}>
-      <div className="flex flex-col items-center gap-5">
-        {/* La secousse porte sur la scène seule : l'interface dessous ne tremble jamais. */}
-        <div className="boot-impact">
-          <LoadedBar />
-        </div>
+    <div
+      className="boot"
+      data-phase={exiting ? 'out' : 'in'}
+      data-variant={variant}
+      aria-hidden={exiting || undefined}
+    >
+      <div className="boot-lockup flex flex-col items-center gap-5">
+        <LoadedBar />
         <p className="boot-mark">{t('app.name')}</p>
       </div>
 
-      <div className="mt-8 flex flex-col items-center gap-3 px-6 text-center">
-        <p className="boot-principle">{t('app.principle')}</p>
-        <p className="boot-tagline">{t('app.tagline')}</p>
-      </div>
+      {variant === 'normal' ? (
+        <div className="mt-8 flex flex-col items-center gap-3 px-6 text-center">
+          <p className="boot-principle">{t('app.principle')}</p>
+          <p className="boot-tagline">{t('app.tagline')}</p>
+        </div>
+      ) : (
+        <BootConsole />
+      )}
     </div>
   );
 }
@@ -118,7 +135,7 @@ export function BootScreen({ exiting = false }: { exiting?: boolean }) {
  * Rendu au-dessus de l'app plutôt qu'à sa place, pour que le premier écran soit
  * déjà peint quand on le découvre.
  */
-export function BootCurtain() {
+export function BootCurtain({ variant = 'normal' }: { variant?: BootVariant }) {
   const [lifted, setLifted] = useState(false);
 
   useEffect(() => {
@@ -127,7 +144,7 @@ export function BootCurtain() {
   }, []);
 
   if (lifted) return null;
-  return <BootScreen exiting />;
+  return <BootScreen exiting variant={variant} />;
 }
 
 /**

@@ -291,7 +291,6 @@
     .boot[data-phase='in'] .boot-rail,
     .boot[data-phase='in'] .boot-mark,
     .boot[data-phase='in'] .boot-plate,
-    .boot[data-phase='in'] .boot-ground,
     .boot[data-phase='in'] .boot-principle,
     .boot[data-phase='in'] .boot-tagline {
       animation-name: boot-fade !important;
@@ -299,24 +298,25 @@
       animation-fill-mode: both !important;
     }
 
-    /* La poussière vit puis disparaît, mais ne voyage plus latéralement. */
-    .boot[data-phase='in'] .boot-dust {
-      animation-name: boot-dust-fade !important;
-      animation-duration: 520ms !important;
-      animation-fill-mode: both !important;
-    }
-
-    /* Rien à promouvoir quand plus rien ne bouge ni ne floute. */
-    .boot[data-phase='in'] .boot-plate,
-    .boot[data-phase='in'] .boot-impact,
-    .boot[data-phase='in'] .boot-barbell {
+    .boot[data-phase='in'] .boot-plate {
       will-change: auto;
     }
 
-    /* La chute et la secousse ne révèlent rien : leur version accessible est
-       portée par les fondus des couches ci-dessus, donc on les retire. */
-    .boot[data-phase='in'] .boot-impact,
-    .boot[data-phase='in'] .boot-barbell {
+    .boot[data-phase='in'][data-variant='console'] .boot-lockup {
+      animation-name: fade-out !important;
+      animation-duration: 240ms !important;
+    }
+
+    .boot[data-phase='in'][data-variant='console'] .boot-console {
+      animation-name: boot-fade !important;
+      animation-duration: 240ms !important;
+      animation-fill-mode: both !important;
+    }
+
+    .boot-console-line,
+    .boot-console-prompt,
+    .boot-console-command,
+    .boot-console-cursor {
       animation: none !important;
     }
 
@@ -398,11 +398,8 @@
  * gestes de l'app doivent rester quatre, et ceux-ci ne servent qu'à un écran vu
  * une fois par démarrage. Même précédent que `.rpe-gauge` juste au-dessus.
  *
- * Trois temps, et le troisième est la conséquence des deux premiers : les
- * manchons s'enfilent, les petites plaques s'enfilent, puis la barre chargée
- * tombe. Le principe, le sol et la poussière partent au contact ; la secousse
- * suit quarante millisecondes plus tard. Quatre couches pour une seule chaîne
- * de cause à effet, pas quatre effets décoratifs.
+ * Deux temps : les plaques s'enfilent, puis les deux phrases se posent. Une
+ * rare variante remplace ces phrases par un court terminal avant l'accueil.
  *
  * Tous les délais sont dans `.boot[data-phase='in']` : la phase de sortie ne
  * fait correspondre aucune de ces règles, donc l'écran qui s'efface est déjà
@@ -437,24 +434,6 @@
   overflow: visible;
 }
 
-.boot-ground {
-  opacity: 0.28;
-  transform: scaleX(0.94);
-  stroke: var(--border);
-  stroke-width: 0.55;
-  stroke-linecap: round;
-}
-
-.boot-dust {
-  opacity: 0;
-  color: var(--text-2);
-}
-
-.boot-dust circle {
-  fill: currentColor;
-  stroke: none;
-}
-
 .boot-principle {
   font-size: 0.6875rem;
   font-weight: 600;
@@ -473,30 +452,43 @@
   color: var(--text-2);
 }
 
+.boot-console {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--surface-0);
+}
+
+.boot-console-log {
+  width: min(100%, 32rem);
+  color: var(--text-1);
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+
+.boot-console-line,
+.boot-console-prompt {
+  white-space: nowrap;
+}
+
+.boot-console-command {
+  display: inline-block;
+  width: 27ch;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
 /* Les transformations SVG se lisent dans le repère du `viewBox`, pas dans la
    boîte de l'élément — sans ça, l'origine dépend du navigateur. */
 .boot-rail,
-.boot-plate,
-.boot-barbell,
-.boot-ground,
-.boot-dust {
+.boot-plate {
   transform-box: view-box;
   transform-origin: center;
-}
-
-/* L'écrasement pivote autour du bord posé, pas du centre du dessin : la barre
-   ne remonte donc jamais avant le petit rebond. Les nuages ont chacun leur
-   propre point de contact sur la même ligne de sol. */
-.boot-barbell {
-  transform-origin: center 16.2px;
-}
-
-.boot-dust--l {
-  transform-origin: 9.65px 16.2px;
-}
-
-.boot-dust--r {
-  transform-origin: 14.35px 16.2px;
 }
 
 .boot[data-phase='in'] .boot-rail {
@@ -522,42 +514,54 @@
   animation: boot-load-r 300ms var(--ease-mech) var(--boot-delay, 0ms) both;
 }
 
-/* Troisième temps. La barre attend déjà en hauteur pendant le chargement, puis
-   accélère vers le sol. Les paliers de `boot-drop` dessinent l'impact et son
-   amortissement sans courbe élastique. */
-.boot[data-phase='in'] .boot-barbell {
-  animation: boot-drop 600ms linear 1280ms both;
-  will-change: transform;
-}
-
-/* La secousse est bornée au dessin et attend que la compression soit lisible.
-   La page qui se prépare sous le rideau ne bouge jamais, et le pouce garde donc
-   une cible stable. */
-.boot[data-phase='in'] .boot-impact {
-  animation: boot-impact-shake 360ms linear 1640ms both;
-  will-change: transform;
-}
-
-.boot[data-phase='in'] .boot-ground {
-  animation: boot-ground-reveal 420ms var(--ease-mech) 1600ms both;
-}
-
-.boot[data-phase='in'] .boot-dust--l {
-  animation: boot-dust-l 520ms var(--ease-mech) 1600ms both;
-}
-
-.boot[data-phase='in'] .boot-dust--r {
-  animation: boot-dust-r 520ms var(--ease-mech) 1600ms both;
-}
-
-/* `pop` est le geste que l'app donne déjà à une série validée et à un record :
-   ça arrive, ça pose. Le principe mérite exactement celui-là, pas un de plus. */
+/* Le même pop, décalé de 180 ms, donne l'ordre de lecture sans ajouter de
+   nouvelle grammaire de mouvement. */
 .boot[data-phase='in'] .boot-principle {
-  animation: pop 380ms var(--ease-mech) 1600ms both;
+  animation: pop 320ms var(--ease-mech) 1340ms both;
 }
 
 .boot[data-phase='in'] .boot-tagline {
-  animation: boot-fade 520ms var(--ease-mech) 1860ms both;
+  animation: pop 320ms var(--ease-mech) 1520ms both;
+}
+
+.boot[data-phase='in'][data-variant='console'] .boot-lockup {
+  animation: boot-console-lockup 100ms steps(2, end) 1260ms both;
+}
+
+.boot[data-phase='in'][data-variant='console'] .boot-console {
+  animation: boot-console-enter 100ms steps(2, end) 1260ms both;
+}
+
+.boot[data-phase='in'] .boot-console-line {
+  animation: boot-console-line 60ms steps(2, end) both;
+}
+
+.boot[data-phase='in'] .boot-console-line:nth-child(1) {
+  animation-delay: 1440ms;
+}
+
+.boot[data-phase='in'] .boot-console-line:nth-child(2) {
+  animation-delay: 1600ms;
+}
+
+.boot[data-phase='in'] .boot-console-line:nth-child(3) {
+  animation-delay: 1760ms;
+}
+
+.boot[data-phase='in'] .boot-console-line:nth-child(4) {
+  animation-delay: 1920ms;
+}
+
+.boot[data-phase='in'] .boot-console-prompt {
+  animation: boot-console-line 60ms steps(2, end) 2100ms both;
+}
+
+.boot[data-phase='in'] .boot-console-command {
+  animation: boot-console-type 480ms steps(27, end) 2700ms both;
+}
+
+.boot[data-phase='in'] .boot-console-cursor {
+  animation: boot-console-cursor 500ms steps(1, end) 2160ms infinite;
 }
 
 .boot[data-phase='out'] {
@@ -584,16 +588,6 @@
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes boot-dust-fade {
-  from,
-  to {
-    opacity: 0;
-  }
-  35% {
-    opacity: 0.3;
   }
 }
 
@@ -643,93 +637,70 @@
   }
 }
 
-/* Avant sa chute, le remplissage `both` garde la barre douze pixels au-dessus
-   du sol. Elle tombe, s'écrase autour de son bord inférieur, remonte de deux
-   pixels une seule fois puis se repose sans courbe élastique. */
-@keyframes boot-drop {
+@keyframes boot-console-lockup {
   0% {
-    transform: translateY(-12px);
-    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
-  }
-  /* 320 ms après le départ : la poussière et le sol utilisent ce même instant
-     absolu de 1 600 ms. La secousse attend encore 40 ms. */
-  53.333% {
-    transform: translateY(0) scaleX(1.06) scaleY(0.82);
-    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
-  }
-  70% {
-    transform: translateY(-2px) scaleX(0.99) scaleY(1.025);
-    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
-  }
-  84% {
-    transform: translateY(0) scaleX(1.012) scaleY(0.99);
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  100% {
+    opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes boot-impact-shake {
-  0%,
-  10%,
-  100% {
-    transform: none;
-  }
-  26% {
-    transform: translateX(-3px) rotate(-0.6deg);
-  }
-  42% {
-    transform: translateX(2.5px) rotate(0.45deg);
-  }
-  58% {
-    transform: translateX(-1.5px) rotate(-0.25deg);
-  }
-  74% {
-    transform: translateX(0.75px) rotate(0.12deg);
-  }
-}
-
-@keyframes boot-ground-reveal {
-  from {
-    opacity: 0;
-    transform: scaleX(0.18);
   }
   35% {
-    opacity: 0.5;
-    transform: scaleX(1);
+    opacity: 0.35;
+    transform: translateX(-3px);
   }
-  to {
-    opacity: 0.28;
-    transform: scaleX(0.94);
+  65% {
+    opacity: 0.65;
+    transform: translateX(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: none;
   }
 }
 
-@keyframes boot-dust-l {
-  from {
+@keyframes boot-console-enter {
+  0% {
     opacity: 0;
-    transform: translate(1px, 0.2px) scale(0.3);
+    transform: translateX(3px);
   }
-  22% {
-    opacity: 0.68;
+  35% {
+    opacity: 0.65;
+    transform: translateX(-2px);
   }
-  to {
-    opacity: 0;
-    transform: translate(-9px, -6px) scale(1.35);
+  65% {
+    opacity: 0.35;
+    transform: translateX(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
   }
 }
 
-@keyframes boot-dust-r {
+@keyframes boot-console-line {
   from {
     opacity: 0;
-    transform: translate(-1px, 0.2px) scale(0.3);
-  }
-  22% {
-    opacity: 0.68;
   }
   to {
+    opacity: 1;
+  }
+}
+
+@keyframes boot-console-type {
+  from {
+    width: 0;
+  }
+  to {
+    width: 27ch;
+  }
+}
+
+@keyframes boot-console-cursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
     opacity: 0;
-    transform: translate(9px, -6px) scale(1.35);
   }
 }
 

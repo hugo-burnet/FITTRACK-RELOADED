@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { BOOT_HOLD_MS, BootCurtain, BootScreen, SeedErrorBanner } from './app/Boot';
+import { selectBootVariant } from './app/bootEasterEgg';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
 import { initializePersistentData } from './data/initialize';
@@ -26,6 +27,8 @@ watchInstall();
 watchAppUpdate();
 watchNavDirection();
 
+const bootVariant = selectBootVariant(window.localStorage);
+
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');
 
@@ -35,7 +38,7 @@ function mount(seedFailed: boolean) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
-        <BootCurtain />
+        <BootCurtain variant={bootVariant} />
         {seedFailed && <SeedErrorBanner />}
         <UpdateBanner />
         <RouterProvider router={router} />
@@ -46,7 +49,7 @@ function mount(seedFailed: boolean) {
 
 // Persistent projections have to be ready before the first screen queries
 // them, so the opening screen holds until initialization resolves.
-root.render(<BootScreen />);
+root.render(<BootScreen variant={bootVariant} />);
 
 /**
  * Le rideau ne s'attarde pas quand une séance est en cours.
@@ -67,7 +70,7 @@ root.render(<BootScreen />);
  * laisse alors le minuteur faire son travail.
  */
 const openingHeld = new Promise<void>((resolve) => {
-  const timer = setTimeout(resolve, BOOT_HOLD_MS);
+  const timer = setTimeout(resolve, BOOT_HOLD_MS[bootVariant]);
   void getActiveWorkout().then(
     (active) => {
       if (active === undefined || isWorkoutStale(active.startedAt)) return;
