@@ -1785,6 +1785,18 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
+- **Assumée le 2026-08-30 — trente-cinq fichiers dépassent les ~300 lignes.** Quatre au-dessus de
+  500, dix entre 400 et 500, vingt et un entre 300 et 400. Le dépôt annonçait une règle qu'il ne
+  suivait pas, et un écart muet est pire qu'un écart assumé : `CLAUDE.md` dit désormais que la
+  règle porte sur la **responsabilité**, dont les 300 lignes sont le symptôme mesurable.
+  Deux ne sont pas de la dette du tout : `i18n/fr.ts` (2 889) est un dictionnaire et
+  `data/types.ts` (483) le vocabulaire partagé — une seule responsabilité chacun.
+  Trois méritent d'être regardés le jour où on y touchera pour une autre raison :
+  `lib/coach/evaluate.ts` (654, logique pure et bien testée, donc découpable sans risque),
+  `WorkoutExerciseCard.tsx` (510) et `hevyImport.ts` (503). Aucun n'a le caractère criant qu'avait
+  `WorkoutScreen.tsx` à 944 lignes, remboursé ce jour-là. **Le seuil d'action est un second
+  métier dans le fichier, pas un nombre.**
+
 - **Assumée le 2026-08-29 — les photos de progression ne seront pas faites, et leurs tables
   restent.** `progressPhotos` et `photoBlobs` sont déclarées depuis le Lot 2 et **aucun code de
   `src/` ne les écrit ni ne les lit**. Ce n'est plus un reste à faire : la seconde moitié du Lot 11

@@ -64,7 +64,15 @@ npm run lint         # eslint
   **pourquoi** — quel défaut réel il empêche de revenir. Un commentaire juste en français vaut
   mieux qu'une traduction qui a perdu la nuance, et cette règle disait le contraire.
 - Tous les textes de l'UI vivent dans `src/i18n/fr.ts`. **Jamais de chaîne en dur dans un composant.**
-- Un fichier = une responsabilité. Si un fichier dépasse ~300 lignes, le découper.
+- **Un fichier = une responsabilité.** C'est la règle ; les ~300 lignes n'en sont que le
+  symptôme le plus commode à mesurer. Un fichier qui les dépasse est un fichier à **regarder**,
+  pas un fichier à couper : on le découpe s'il fait deux métiers, on le laisse s'il n'en fait
+  qu'un. Un dictionnaire (`src/i18n/fr.ts`) et un vocabulaire de types (`src/data/types.ts`)
+  sont chacun une seule responsabilité, quelle que soit leur longueur.
+  Découper au compteur produit des composants à vingt propriétés qui se repassent le même
+  état : moins de lignes par fichier, plus de couplage, et personne n'y gagne.
+  L'état réel du dépôt et les exceptions connues sont dans « Dette technique assumée »
+  de `PROGRESS.md` — un écart non consigné est le seul qui pose problème.
 - Accès aux données **uniquement** via `src/data/repositories/*`. Un composant n'importe jamais
   `db` directement. Seule exception, et elle est commentée sur place : `DebugScreen`, qui parle de
   *tables* et non de routines ou de séances.
