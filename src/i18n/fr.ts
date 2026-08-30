@@ -623,6 +623,101 @@ const fr = {
       'Les records n’ont pas pu être recalculés. Tes séances sont intactes, tu peux réessayer.',
   },
 
+  /**
+   * Les paliers — et non « les jalons », qui désignent déjà les marques du rail
+   * des records deux blocs plus haut. Deux mots pour deux choses : un record est
+   * relatif à soi et tombe toutes les trois semaines, un palier est un seuil
+   * écrit à l'avance qu'on ne franchit qu'une fois.
+   *
+   * « Franchir un palier » est en plus l'expression exacte du français pour ce
+   * que la fonctionnalité célèbre, ce qu'aucun mot de trophée n'aurait dit sans
+   * en faire un jeu.
+   */
+  milestone: {
+    title: 'Paliers',
+    link: 'Paliers',
+    subtitle: 'Ce qui est acquis pour de bon',
+
+    /** Fin de séance, à l'instant où il tombe. */
+    unlockedOne: 'Palier franchi',
+    unlockedMany: '{count} paliers franchis',
+    unlockedHint: 'Acquis pour de bon. Ni une pause, ni une blessure ne te le reprendront.',
+
+    achievedOn: 'le {date}',
+    countOne: '1 palier',
+    count: '{count} paliers',
+
+    emptyTitle: 'Rien encore, et c’est normal',
+    emptyBody:
+      'Les paliers sont rares — ce sont les jours dont on se souvient, pas les progrès de la semaine. Continue de venir : le premier arrivera tout seul.',
+
+    group: {
+      strength: 'Force',
+      gateway: 'Portes franchies',
+      practice: 'Pratique',
+      volume: 'Volume',
+    },
+
+    /**
+     * Le sujet est écrit ici et jamais lu en base : un palier acquis en 2023 se
+     * relit en 2027 même si l'exercice a été renommé ou supprimé.
+     */
+    subject: {
+      bench: 'Développé couché',
+      squat: 'Squat',
+      deadlift: 'Soulevé de terre',
+      overhead: 'Développé militaire',
+      hipThrust: 'Hip thrust',
+      row: 'Rowing barre',
+      pullUp: 'Traction pronation',
+      chinUp: 'Traction supination',
+      dip: 'Dips',
+      pistolSquat: 'Pistol squat',
+      plank: 'Gainage',
+      deadHang: 'Suspension à la barre',
+    },
+
+    /**
+     * Les premières fois ont leur phrase entière, une par mouvement.
+     *
+     * Un gabarit « Première {sujet} » aurait écrit « Première dips » et
+     * « Première pistol squat » : le genre du nom n'est pas une donnée qu'on
+     * dérive, et le français n'est pas négociable sur ce point.
+     */
+    first: {
+      pullUp: 'Ta première traction pronation',
+      chinUp: 'Ta première traction supination',
+      dip: 'Ton premier dips',
+      pistolSquat: 'Ton premier pistol squat',
+    },
+
+    load: '{subject} à {value} kg',
+    reps: '{subject} — {value} répétitions',
+    duration: '{subject} — {value} min',
+    dumbbellPair: 'La paire de {value} kg',
+    sessions: '{value} séances',
+    weeks: '{value} semaines d’entraînement',
+    yearOne: 'Un an de pratique',
+    years: '{value} ans de pratique',
+    tonnage: '{value} tonnes soulevées',
+
+    /** Ce que le palier a réellement valu, sous son titre. */
+    reachedLoad: 'Franchi à {value} kg',
+    reachedReps: 'Franchi à {value} répétitions',
+    reachedDuration: 'Franchi à {value}',
+
+    /**
+     * La rétrospective de l'accueil. Une carte, un anniversaire, puis plus
+     * jamais : elle s'efface d'elle-même une fois lue.
+     */
+    retrospective: {
+      oneYear: 'Il y a un an',
+      years: 'Il y a {count} ans',
+      body: 'Tu franchissais ce palier. Il est toujours à toi.',
+      dismiss: 'Fermer',
+    },
+  },
+
   setTypeHint: {
     normal: 'Une série de travail. Elle compte dans le volume et les records.',
     warmup: 'Ne compte ni dans le volume ni dans les records.',

@@ -53,7 +53,7 @@ import type { BackupRow, BackupTable } from './types';
  * imports this layer, and the cycle would be real. `schemaVersion.test.ts` in
  * `data/` asserts the two agree, so the constant cannot drift in silence.
  */
-export const CURRENT_SCHEMA_VERSION = 11;
+export const CURRENT_SCHEMA_VERSION = 12;
 
 /** `0` is what `parseBackup` writes when a file names no schema at all. */
 const UNKNOWN_SCHEMA_VERSION = 0;

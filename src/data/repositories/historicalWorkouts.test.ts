@@ -255,6 +255,11 @@ describe('listHistoricalWorkouts', () => {
             measurementType: 'weight_reps',
             primaryMuscle: 'chest',
             equipment: 'barbell',
+            // Le drapeau unilatéral est revenu dans la projection avec les
+            // paliers, qui doivent distinguer une paire d'haltères d'un rowing
+            // à un bras. Il en était sorti faute de lecteur ; il en ressortira
+            // le jour où il en reperdra un.
+            isUnilateral: 0,
             // La cadence de l'exercice, résolue contre la préférence : le temps
             // de travail d'une séance se compte avec, pas sans.
             repSeconds: 3,
