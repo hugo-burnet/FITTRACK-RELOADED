@@ -967,6 +967,9 @@ describe('liste des blocs', () => {
   });
 
   it('affiche les statuts brouillon, actif et terminé sans transformer la liste en tableau de bord', async () => {
+    // Même horloge que le bloc de suivi : un départ au 3 août 2026, lu au
+    // 31 août, a déjà quitté ses quatre semaines, et le héros disparaît.
+    vi.spyOn(Date, 'now').mockReturnValue(TRACKING_NOW);
     const completed = await createProgramDraft({
       name: 'Bloc terminé',
       startsAt: TRACKING_START,
