@@ -1,6 +1,11 @@
 import { db } from '@/data/db';
 import type { Milestone } from '@/data/types';
 import type { HistoricalWorkout } from '@/lib/historyProjection';
+import {
+  FIRST_DOMS_HOURS,
+  FIRST_DOMS_MILESTONE_ID,
+  FIRST_SESSION_MILESTONE_ID,
+} from '@/lib/milestones/catalogue';
 import { earnMilestones } from '@/lib/milestones/engine';
 import type { EarnedMilestone, MilestoneSet } from '@/lib/milestones/types';
 import { effectiveLoadKg } from '@/lib/volume';
@@ -24,7 +29,8 @@ import { listHistoricalWorkouts } from './historicalWorkouts';
 const PROJECTION_KEY = 'milestonesProjectionVersion';
 const RETROSPECTIVES_KEY = 'milestoneRetrospectivesSeen';
 
-export const MILESTONES_PROJECTION_VERSION = 1;
+export const MILESTONES_PROJECTION_VERSION = 2;
+export const DOMS_FOLLOW_UP_KEY = 'milestoneDomsFollowUp';
 
 /**
  * Une séance archivée, traduite pour le moteur.
@@ -68,7 +74,7 @@ function milestoneSetsOf(workout: HistoricalWorkout): MilestoneSet[] {
   });
 }
 
-async function readEarned(): Promise<EarnedMilestone[]> {
+async function readEarned(now: number): Promise<EarnedMilestone[]> {
   const workouts = await listHistoricalWorkouts({ kind: 'all-history' });
 
   return earnMilestones({
@@ -77,7 +83,20 @@ async function readEarned(): Promise<EarnedMilestone[]> {
       workoutId: workout.workoutId,
       startedAt: workout.startedAt,
     })),
+    now,
   });
+}
+
+function followUpDueAt(firstAchievedAt: number): number {
+  return firstAchievedAt + FIRST_DOMS_HOURS * 3_600_000;
+}
+
+export async function getDomsFollowUp(): Promise<{ dueAt: number } | null> {
+  const stored = await db.settings.get(DOMS_FOLLOW_UP_KEY);
+  const value: unknown = stored?.value;
+  if (typeof value !== 'object' || value === null) return null;
+  const dueAt = (value as { dueAt?: unknown }).dueAt;
+  return typeof dueAt === 'number' ? { dueAt } : null;
 }
 
 export interface MilestoneSyncOptions {
@@ -92,6 +111,7 @@ export interface MilestoneSyncOptions {
    * anniversaires, eux, les retrouveront un par un.
    */
   celebrate: boolean;
+  now?: number;
 }
 
 /**
@@ -103,13 +123,13 @@ export interface MilestoneSyncOptions {
  */
 export async function syncMilestones({
   celebrate,
+  now = Date.now(),
 }: MilestoneSyncOptions): Promise<Milestone[]> {
-  const earned = await readEarned();
+  const earned = await readEarned(now);
 
-  return db.transaction('rw', db.milestones, async () => {
+  return db.transaction('rw', db.milestones, db.settings, async () => {
     const existing = alive(await db.milestones.toArray());
     const byDefinition = new Map(existing.map((row) => [row.definitionId, row]));
-    const now = Date.now();
     const created: Milestone[] = [];
 
     for (const item of earned) {
@@ -162,6 +182,29 @@ export async function syncMilestones({
       await softDelete(db.milestones, orphan.id);
     }
 
+    // Le drapeau n'existe que pour une première séance fêtée en direct. Un
+    // rattrapage silencieux n'en pose pas : les DOMS d'un historique importé
+    // ne doivent pas sonner 48 h plus tard comme si c'était aujourd'hui.
+    const earnedIds = new Set(earned.map((item) => item.definitionId));
+    const firstCreated = created.find(
+      (row) => row.definitionId === FIRST_SESSION_MILESTONE_ID,
+    );
+    if (celebrate && firstCreated !== undefined) {
+      await db.settings.put({
+        key: DOMS_FOLLOW_UP_KEY,
+        value: { dueAt: followUpDueAt(firstCreated.achievedAt) },
+        updatedAt: now,
+      });
+    }
+    // Plus de première séance, ou les 48 h sont déjà écoulées : le rappel
+    // n'a plus rien à attendre. Écrit puis effacé dans le même sync si les
+    // deux paliers tombent ensemble (dueAt dans le passé).
+    if (
+      !earnedIds.has(FIRST_SESSION_MILESTONE_ID) ||
+      earnedIds.has(FIRST_DOMS_MILESTONE_ID)
+    ) {
+      await db.settings.delete(DOMS_FOLLOW_UP_KEY);
+    }
     return created;
   });
 }
@@ -174,16 +217,40 @@ export async function syncMilestones({
  * la projection des records a depuis le Lot 7, pour la même raison — rien de ce
  * qui est recalculable ne mérite d'empêcher une séance de commencer.
  */
-export async function ensureMilestoneProjection(): Promise<void> {
+export async function ensureMilestoneProjection(now = Date.now()): Promise<void> {
   const stored = await db.settings.get(PROJECTION_KEY);
   if (stored?.value === MILESTONES_PROJECTION_VERSION) return;
 
-  await syncMilestones({ celebrate: false });
+  // Un rattrapage silencieux ici écrirait les DOMS déjà acquittées et
+  // effacerait le drapeau — exactement le vol que le drapeau existe pour
+  // empêcher. Tant qu'un suivi live est armé, on ne fait que poser la version.
+  if ((await getDomsFollowUp()) === null) {
+    await syncMilestones({ celebrate: false, now });
+  }
   await db.settings.put({
     key: PROJECTION_KEY,
     value: MILESTONES_PROJECTION_VERSION,
-    updatedAt: Date.now(),
+    updatedAt: now,
   });
+}
+
+/**
+ * Au démarrage : rattrapage de version, puis soit la célébration des DOMS si
+ * le drapeau live est encore là, soit un sync silencieux tant que la première
+ * séance existe sans les 48 h.
+ */
+export async function bootMilestones(now = Date.now()): Promise<void> {
+  await ensureMilestoneProjection(now);
+  if ((await getDomsFollowUp()) !== null) {
+    await syncMilestones({ celebrate: true, now });
+    return;
+  }
+  const rows = alive(await db.milestones.toArray());
+  const hasFirst = rows.some((row) => row.definitionId === FIRST_SESSION_MILESTONE_ID);
+  const hasDoms = rows.some((row) => row.definitionId === FIRST_DOMS_MILESTONE_ID);
+  if (hasFirst && !hasDoms) {
+    await syncMilestones({ celebrate: false, now });
+  }
 }
 
 /** Tout ce qui est acquis, du plus récent au plus ancien. */
