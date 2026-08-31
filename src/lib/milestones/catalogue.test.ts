@@ -72,4 +72,20 @@ describe('le catalogue des jalons', () => {
     expect(milestoneById('bench-100')?.threshold).toBe(100);
     expect(milestoneById('jalon-qui-n-existe-plus')).toBeUndefined();
   });
+
+  it('place la première séance et les DOMS avant le palier des dix séances', () => {
+    expect(milestoneById('sessions-1')).toMatchObject({
+      kind: 'session_count',
+      threshold: 1,
+      group: 'practice',
+    });
+    expect(milestoneById('doms-48')).toMatchObject({
+      kind: 'hours_since_first_session',
+      threshold: 48,
+      group: 'practice',
+    });
+    const ids = MILESTONES.map((row) => row.id);
+    expect(ids.indexOf('sessions-1')).toBeLessThan(ids.indexOf('sessions-10'));
+    expect(ids.indexOf('doms-48')).toBeLessThan(ids.indexOf('sessions-10'));
+  });
 });

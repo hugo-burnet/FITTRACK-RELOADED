@@ -292,6 +292,64 @@ describe('les jalons de pratique', () => {
   });
 });
 
+describe('la première séance et les premières DOMS', () => {
+  const HOUR = 3_600_000;
+  const FORTY_EIGHT = 48 * HOUR;
+
+  it('accorde la première séance close', () => {
+    const earned = run({ sessions: [session(MONDAY)] });
+    expect(find(earned, 'sessions-1')).toMatchObject({
+      value: 1,
+      achievedAt: MONDAY,
+      workoutId: `w-${String(MONDAY)}`,
+    });
+  });
+
+  it('ne rend pas les DOMS sans now, même avec une séance vieille', () => {
+    expect(find(run({ sessions: [session(MONDAY)] }), 'doms-48')).toBeUndefined();
+  });
+
+  it('ne rend pas les DOMS une milliseconde trop tôt', () => {
+    const earned = earnMilestones({
+      sets: [],
+      sessions: [session(MONDAY)],
+      now: MONDAY + FORTY_EIGHT - 1,
+    });
+    expect(find(earned, 'doms-48')).toBeUndefined();
+  });
+
+  it('accorde les DOMS à startedAt + 48 h pile, rattachées à la première séance', () => {
+    const second = session(MONDAY + DAY);
+    const earned = earnMilestones({
+      sets: [],
+      sessions: [session(MONDAY), second],
+      now: MONDAY + FORTY_EIGHT,
+    });
+    expect(find(earned, 'doms-48')).toMatchObject({
+      value: 48,
+      achievedAt: MONDAY + FORTY_EIGHT,
+      workoutId: `w-${String(MONDAY)}`,
+    });
+  });
+
+  it('ignore une deuxième séance à +24 h pour dater les DOMS', () => {
+    const earned = earnMilestones({
+      sets: [],
+      sessions: [session(MONDAY), session(MONDAY + DAY)],
+      now: MONDAY + FORTY_EIGHT + DAY,
+    });
+    expect(find(earned, 'doms-48')?.workoutId).toBe(`w-${String(MONDAY)}`);
+    expect(find(earned, 'doms-48')?.achievedAt).toBe(MONDAY + FORTY_EIGHT);
+  });
+
+  it('ne rend ni l’un ni l’autre sans séance', () => {
+    expect(run({})).toEqual([]);
+    expect(
+      earnMilestones({ sets: [], sessions: [], now: MONDAY + FORTY_EIGHT }),
+    ).toEqual([]);
+  });
+});
+
 describe('la sortie du moteur', () => {
   it('rend les jalons du plus ancien au plus récent', () => {
     const earned = run({

@@ -41,7 +41,7 @@ export function earnMilestones(input: MilestoneInput): EarnedMilestone[] {
   const earned: (EarnedMilestone & { order: number })[] = [];
 
   MILESTONES.forEach((definition, order) => {
-    const hit = firstCrossing(definition, sets, sessions);
+    const hit = firstCrossing(definition, sets, sessions, input.now);
     if (hit !== undefined) earned.push({ ...hit, order });
   });
 
@@ -66,6 +66,7 @@ function firstCrossing(
   definition: MilestoneDefinition,
   sets: readonly MilestoneSet[],
   sessions: readonly MilestoneSession[],
+  now: number | undefined,
 ): Crossing | undefined {
   switch (definition.kind) {
     case 'exercise_load':
@@ -81,7 +82,29 @@ function firstCrossing(
       return trainingAnniversary(definition, sessions);
     case 'lifetime_tonnage':
       return tonnageCrossing(definition, sets);
+    case 'hours_since_first_session':
+      return hoursSinceFirstSession(definition, sessions, now);
   }
+}
+
+const HOUR_MS = 3_600_000;
+
+function hoursSinceFirstSession(
+  definition: MilestoneDefinition,
+  sessions: readonly MilestoneSession[],
+  now: number | undefined,
+): Crossing | undefined {
+  if (now === undefined) return undefined;
+  const first = sessions[0];
+  if (first === undefined) return undefined;
+  const dueAt = first.startedAt + definition.threshold * HOUR_MS;
+  if (now < dueAt) return undefined;
+  return {
+    definitionId: definition.id,
+    achievedAt: dueAt,
+    workoutId: first.workoutId,
+    value: definition.threshold,
+  };
 }
 
 /**

@@ -59,6 +59,10 @@ const SUBJECTS: Record<string, string> = {
   'dead-hang': 'deadHang',
 };
 
+export const FIRST_SESSION_MILESTONE_ID = 'sessions-1';
+export const FIRST_DOMS_MILESTONE_ID = 'doms-48';
+export const FIRST_DOMS_HOURS = 48;
+
 export const MILESTONES: readonly MilestoneDefinition[] = [
   // ── Force : six mouvements, des chiffres ronds ──────────────────────────────
   //
@@ -152,9 +156,12 @@ export const MILESTONES: readonly MilestoneDefinition[] = [
 
   // ── Pratique : ce que le temps donne, et que rien ne retire ─────────────────
   //
-  // Le cœur du sujet. Ces cinq-là ne dépendent d'aucune performance : ils
-  // récompensent le fait d'être venu, ce qui est la seule chose que tout le
-  // monde peut faire et la seule qui produit un résultat à dix ans.
+  // Le cœur du sujet. La première séance et les premières DOMS sont la porte ;
+  // dix séances et la suite récompensent le fait d'être venu, ce qui est la
+  // seule chose que tout le monde peut faire et la seule qui produit un
+  // résultat à dix ans.
+  practice(FIRST_SESSION_MILESTONE_ID, 'session_count', 1),
+  practice(FIRST_DOMS_MILESTONE_ID, 'hours_since_first_session', FIRST_DOMS_HOURS),
   practice('sessions-10', 'session_count', 10),
   practice('sessions-50', 'session_count', 50),
   practice('sessions-100', 'session_count', 100),
@@ -241,7 +248,12 @@ function dumbbells(id: string, threshold: number): MilestoneDefinition {
 
 function practice(
   id: string,
-  kind: 'session_count' | 'active_weeks' | 'training_years' | 'lifetime_tonnage',
+  kind:
+    | 'session_count'
+    | 'active_weeks'
+    | 'training_years'
+    | 'lifetime_tonnage'
+    | 'hours_since_first_session',
   threshold: number,
 ): MilestoneDefinition {
   return { id, kind, group: kind === 'lifetime_tonnage' ? 'volume' : 'practice', threshold };

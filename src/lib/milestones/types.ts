@@ -29,7 +29,9 @@ export type MilestoneKind =
   /** Des années écoulées depuis la première séance, et encore là. */
   | 'training_years'
   /** Des kilos soulevés depuis toujours. */
-  | 'lifetime_tonnage';
+  | 'lifetime_tonnage'
+  /** Des heures écoulées depuis la première séance close. */
+  | 'hours_since_first_session';
 
 /**
  * Les quatre rayons de l'écran des jalons. Un ordre de lecture, pas une
@@ -111,6 +113,11 @@ export interface MilestoneSession {
 export interface MilestoneInput {
   sets: readonly MilestoneSet[];
   sessions: readonly MilestoneSession[];
+  /**
+   * Instant d'évaluation. Absent, les genres horaires restent muets — c'est
+   * ce qui laisse les tests existants inchangés.
+   */
+  now?: number;
 }
 
 /** Un jalon franchi, avec la preuve de quand et par quoi. */
