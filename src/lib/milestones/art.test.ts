@@ -28,6 +28,11 @@ describe('l’art d’un palier', () => {
     expect(artForMilestone('pullup-1')).toBe('git-gud');
   });
 
+  it('réserve rock-solid à la première séance et la porte aux DOMS', () => {
+    expect(artForMilestone('sessions-1')).toBe('rock-solid');
+    expect(artForMilestone('doms-48')).toBe('doms-door');
+  });
+
   it('pose rare Pepe sur les plafonds', () => {
     for (const id of [
       'bench-140',

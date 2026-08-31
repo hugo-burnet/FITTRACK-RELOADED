@@ -59,6 +59,8 @@ export const MILESTONE_ART_KEYS = [
   'bonk',
   'always-has-been',
   'iceberg',
+  'rock-solid',
+  'doms-door',
 ] as const;
 
 export type MilestoneArtKey = (typeof MILESTONE_ART_KEYS)[number];
@@ -120,6 +122,8 @@ const ART_BY_MILESTONE: Readonly<Record<string, MilestoneArtKey>> = {
   'tonnage-500': 'iceberg',
   'tonnage-1000': 'gigachad',
   'tonnage-5000': 'pepe-rare',
+  'sessions-1': 'rock-solid',
+  'doms-48': 'doms-door',
 };
 
 /** `undefined` pour un palier retiré du catalogue : sa ligne en base survit. */
