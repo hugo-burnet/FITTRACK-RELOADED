@@ -28,7 +28,7 @@ Un clone fonctionnel de Hevy pour un seul utilisateur : la salle est un sous-sol
 - **Blocs** — périodisation par intention (`loadIndex` + phase). La routine reste le 100 %. Le Coach tranche sur les perfs, il n’invente pas de permissions.
 - **Carte du corps** — les muscles travaillés sur douze semaines ; toucher un muscle donne ses exercices.
 - **Historique & records** — 1RM, volume, import CSV Hevy, export CSV / Markdown.
-- **Paliers** — 56 seuils écrits à la main, acquis à vie. Aucun compteur qui redescend, aucun objectif affiché avant d'être franchi.
+- **Paliers** — 58 seuils écrits à la main, acquis à vie. Aucun compteur qui redescend, aucun objectif affiché avant d'être franchi.
 - **Sauvegarde complète** — tout le compte (tables, réglages, préférences) dans un JSON que l’app sait restaurer.
 - **PWA et APK** — même code. Capacitor pour Android.
 
