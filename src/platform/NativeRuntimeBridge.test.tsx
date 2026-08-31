@@ -29,6 +29,9 @@ const state = vi.hoisted(() => ({
   reconcileRest: vi.fn().mockResolvedValue(undefined),
   applyPreferences: vi.fn().mockResolvedValue(undefined),
   clearAll: vi.fn().mockResolvedValue(undefined),
+  bootMilestones: vi.fn().mockResolvedValue(undefined),
+  getDomsFollowUp: vi.fn().mockResolvedValue(null),
+  reconcileDoms: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Deux requêtes vives dans ce composant : la séance active et les préférences
@@ -65,7 +68,13 @@ vi.mock('./nativeNotifications', () => ({
     reconcileRest: state.reconcileRest,
     applyPreferences: state.applyPreferences,
     clearAll: state.clearAll,
+    reconcileDoms: state.reconcileDoms,
   },
+}));
+
+vi.mock('@/data/repositories/milestones', () => ({
+  bootMilestones: state.bootMilestones,
+  getDomsFollowUp: state.getDomsFollowUp,
 }));
 
 vi.mock('@capacitor/app', () => ({
@@ -97,6 +106,7 @@ describe('NativeRuntimeBridge', () => {
     state.appStateListener = undefined;
     state.backListener = undefined;
     vi.clearAllMocks();
+    state.getDomsFollowUp.mockResolvedValue(null);
   });
 
   it('reconciles the active workout name', async () => {
@@ -222,5 +232,30 @@ describe('NativeRuntimeBridge', () => {
     act(() => state.backListener?.({ canGoBack: false }));
 
     expect(state.exitApp).toHaveBeenCalledOnce();
+  });
+
+  it('boots paliers and the DOMS notification on mount', async () => {
+    state.getDomsFollowUp.mockResolvedValue({ dueAt: 1_700_000_000_000 });
+    render(<NativeRuntimeBridge />);
+
+    await waitFor(() => {
+      expect(state.bootMilestones).toHaveBeenCalled();
+      expect(state.reconcileDoms).toHaveBeenCalledWith(1_700_000_000_000);
+    });
+  });
+
+  it('resyncs time-based paliers and the DOMS notification when Android resumes', async () => {
+    state.getDomsFollowUp.mockResolvedValue({ dueAt: 1_700_000_000_000 });
+    render(<NativeRuntimeBridge />);
+    await waitFor(() => expect(state.appStateListener).toBeTypeOf('function'));
+    vi.clearAllMocks();
+    state.getDomsFollowUp.mockResolvedValue({ dueAt: 1_700_000_000_000 });
+
+    act(() => state.appStateListener?.({ isActive: true }));
+
+    await waitFor(() => {
+      expect(state.bootMilestones).toHaveBeenCalled();
+      expect(state.reconcileDoms).toHaveBeenCalledWith(1_700_000_000_000);
+    });
   });
 });

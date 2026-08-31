@@ -28,7 +28,7 @@ interface Line extends MilestoneReading {
 
 /**
  * Mur complet, sans écrire en base. DEV only, comme `?boot=console` : pour
- * relire les 56 jetons sans fabriquer cinquante séances.
+ * relire les 58 jetons sans fabriquer cinquante séances.
  */
 function demoLines(): Line[] | undefined {
   if (!import.meta.env.DEV) return undefined;

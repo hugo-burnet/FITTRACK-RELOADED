@@ -4,6 +4,7 @@ import type { PluginListenerHandle } from '@capacitor/core';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useLocation } from 'react-router-dom';
 import { navigatingBack, useAppNavigate } from '@/app/navigation';
+import { bootMilestones, getDomsFollowUp } from '@/data/repositories/milestones';
 import { getNotificationPreferences } from '@/data/repositories/notificationSettings';
 import type { NotificationPreferences } from '@/lib/notificationPreferences';
 import { getActiveWorkout } from '@/data/repositories/workouts';
@@ -11,6 +12,15 @@ import { useRestTimer } from '@/stores/restTimer';
 import { androidBackDecision } from './androidBack';
 import { isNativeAndroid } from './nativeEnvironment';
 import { nativeNotifications } from './nativeNotifications';
+
+function syncTimeBasedPaliers(): Promise<void> {
+  return bootMilestones()
+    .then(async () => {
+      const followUp = await getDomsFollowUp();
+      await nativeNotifications.reconcileDoms(followUp?.dueAt ?? null);
+    })
+    .catch(() => undefined);
+}
 
 export function NativeRuntimeBridge() {
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
@@ -68,6 +78,10 @@ export function NativeRuntimeBridge() {
   }, [preferencesKey]);
 
   useEffect(() => {
+    void syncTimeBasedPaliers();
+  }, []);
+
+  useEffect(() => {
     let handle: PluginListenerHandle | undefined;
     let disposed = false;
 
@@ -85,6 +99,9 @@ export function NativeRuntimeBridge() {
       if (currentPreferences !== undefined) {
         void nativeNotifications.applyPreferences(currentPreferences);
       }
+      // Un cold start Android ne rejoue pas appStateChange : le mount effect
+      // ci-dessus couvre l'ouverture, celui-ci la reprise.
+      void syncTimeBasedPaliers();
     }).then((registered) => {
       if (disposed) void registered.remove();
       else handle = registered;

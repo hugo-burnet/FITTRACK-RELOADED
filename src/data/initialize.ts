@@ -1,6 +1,7 @@
-import { ensureMilestoneProjection } from '@/data/repositories/milestones';
+import { bootMilestones, getDomsFollowUp } from '@/data/repositories/milestones';
 import { ensureRecordProjection } from '@/data/repositories/personalRecords';
 import { seedDatabase } from '@/data/seed/seedDatabase';
+import { nativeNotifications } from '@/platform/nativeNotifications';
 
 export interface InitializationResult {
   recordProjection: 'ready' | 'rebuilt' | 'stale';
@@ -25,7 +26,9 @@ export async function initializePersistentData(): Promise<InitializationResult> 
    * base fermée.
    */
   try {
-    await ensureMilestoneProjection();
+    await bootMilestones();
+    const followUp = await getDomsFollowUp();
+    await nativeNotifications.reconcileDoms(followUp?.dueAt ?? null);
   } catch (error) {
     console.error('Les paliers n’ont pas pu être calculés', error);
   }

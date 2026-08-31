@@ -7,7 +7,7 @@ import {
   evaluateCoachForWorkout,
   finalizeCoachForWorkout,
 } from '@/data/repositories/coachEvaluate';
-import { syncMilestones } from '@/data/repositories/milestones';
+import { getDomsFollowUp, syncMilestones } from '@/data/repositories/milestones';
 import {
   discardWorkout,
   finishWorkout,
@@ -17,6 +17,7 @@ import {
   workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import { announce } from '@/audio/announce';
+import { nativeNotifications } from '@/platform/nativeNotifications';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { partReading, unitLabel } from '@/i18n/labels';
@@ -153,6 +154,14 @@ export function WorkoutFinishScreen() {
       // coach, ce n'est pas une barrière — un calcul qui échoue ne doit pas
       // laisser l'utilisateur bloqué sur un écran de fin déjà enregistré.
       .then(() => syncMilestones({ celebrate: true }).catch(() => undefined))
+      .then(async () => {
+        try {
+          const followUp = await getDomsFollowUp();
+          await nativeNotifications.reconcileDoms(followUp?.dueAt ?? null);
+        } catch {
+          /* la notif n'est jamais une barrière */
+        }
+      })
       .then(() => navigate('/', { replace: true }))
       .catch(() => undefined);
   };
