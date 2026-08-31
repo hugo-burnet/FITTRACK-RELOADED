@@ -473,6 +473,10 @@ const fr = {
     recordTitle: 'Record battu',
     recordOne: '{exercise} · {record} {value}',
     recordMany: '{count} records · {exercises}',
+    domsChannel: 'Premières courbatures',
+    domsChannelDescription: 'Un message unique, 48 h après ta première séance.',
+    domsTitle: 'Tes premières DOMS',
+    domsBody: 'La porte résiste. Toi aussi.',
   },
 
   finish: {
@@ -695,7 +699,9 @@ const fr = {
     reps: '{subject} — {value} répétitions',
     duration: '{subject} — {value} min',
     dumbbellPair: 'La paire de {value} kg',
+    sessionOne: 'Ta première séance',
     sessions: '{value} séances',
+    doms: 'Tes premières DOMS',
     weeks: '{value} semaines d’entraînement',
     yearOne: 'Un an de pratique',
     years: '{value} ans de pratique',
@@ -765,6 +771,8 @@ const fr = {
       bonk: 'Stop au doute.',
       'always-has-been': 'C’était déjà ça. Toujours.',
       iceberg: 'Ce que tu vois, et tout ce qu’il y a dessous.',
+      'rock-solid': 'Rock solid.',
+      'doms-door': 'Ça fait mal. FitTrack est toujours là. Tu lâches pas.',
     },
   },
 

@@ -65,4 +65,15 @@ describe('la lecture d’un palier', () => {
       expect(reading?.token, definition.id).not.toBe('');
     }
   });
+
+  it('accorde la première séance au singulier', () => {
+    expect(milestoneReading('sessions-1', 1)?.title).toBe('Ta première séance');
+    expect(milestoneReading('sessions-1', 1)?.token).toBe('1');
+    expect(milestoneReading('sessions-10', 10)?.title).toBe('10 séances');
+  });
+
+  it('nomme les premières DOMS par leur phrase, pas un gabarit', () => {
+    expect(milestoneReading('doms-48', 48)?.title).toBe('Tes premières DOMS');
+    expect(milestoneReading('doms-48', 48)?.token).toBe('48');
+  });
 });

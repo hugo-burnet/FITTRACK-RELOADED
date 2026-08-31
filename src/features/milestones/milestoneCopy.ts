@@ -71,7 +71,11 @@ function titleOf(definition: MilestoneDefinition): string {
     case 'dumbbell_pair':
       return t('milestone.dumbbellPair', { value: formatNumber(value) });
     case 'session_count':
-      return t('milestone.sessions', { value });
+      return definition.threshold === 1
+        ? t('milestone.sessionOne')
+        : t('milestone.sessions', { value });
+    case 'hours_since_first_session':
+      return t('milestone.doms');
     case 'active_weeks':
       return t('milestone.weeks', { value });
     case 'training_years':
