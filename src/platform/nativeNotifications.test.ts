@@ -4,6 +4,8 @@ import type { RestTimer } from '@/stores/restTimer';
 import { DEFAULT_NOTIFICATION_PREFERENCES } from '@/lib/notificationPreferences';
 import {
   createNativeNotificationGateway,
+  DOMS_CHANNEL_ID,
+  DOMS_NOTIFICATION_ID,
   RECORD_CHANNEL_ID,
   RECORD_NOTIFICATION_ID,
   REMINDER_CHANNEL_ID,
@@ -60,8 +62,8 @@ describe('native notification gateway', () => {
     await gateway.reconcileWorkout('Lower A');
 
     expect(plugin.requestPermissions).toHaveBeenCalledOnce();
-    // Les quatre canaux de RF-53 : séance, repos, record, rappel.
-    expect(plugin.createChannel).toHaveBeenCalledTimes(4);
+    // Les cinq canaux : séance, repos, record, rappel, DOMS.
+    expect(plugin.createChannel).toHaveBeenCalledTimes(5);
     expect(plugin.schedule).toHaveBeenCalledOnce();
   });
 
@@ -311,6 +313,65 @@ describe('native notification gateway', () => {
 
     expect(plugin.schedule).toHaveBeenCalledOnce();
     expect(gateway.isRestAlertArmed()).toBe(true);
+  });
+
+  it('creates the DOMS channel with reminder-level importance', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    await gateway.reconcileWorkout('Lower A');
+    expect(plugin.createChannel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: DOMS_CHANNEL_ID,
+        importance: 4,
+        visibility: 1,
+        vibration: true,
+      }),
+    );
+  });
+
+  it('schedules the DOMS notification only when dueAt is in the future', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    const dueAt = Date.now() + 3_600_000;
+
+    await gateway.reconcileDoms(dueAt);
+
+    expect(plugin.schedule).toHaveBeenCalledWith({
+      notifications: [
+        expect.objectContaining({
+          id: DOMS_NOTIFICATION_ID,
+          title: t('androidNotification.domsTitle'),
+          body: t('androidNotification.domsBody'),
+          channelId: DOMS_CHANNEL_ID,
+          autoCancel: true,
+          schedule: expect.objectContaining({ allowWhileIdle: true }),
+        }),
+      ],
+    });
+  });
+
+  it('does not schedule a late DOMS notification, it cancels instead', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    await gateway.reconcileDoms(Date.now() - 1_000);
+    expect(plugin.schedule).not.toHaveBeenCalled();
+    expect(plugin.cancel).toHaveBeenCalledWith({ notifications: [{ id: DOMS_NOTIFICATION_ID }] });
+  });
+
+  it('does not schedule DOMS outside Android', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => false, vi.fn());
+    await gateway.reconcileDoms(Date.now() + 3_600_000);
+    expect(plugin.schedule).not.toHaveBeenCalled();
+  });
+
+  it('does not cancel the DOMS notification when a workout ends', async () => {
+    const plugin = createPlugin();
+    const gateway = createNativeNotificationGateway(plugin, () => true, vi.fn());
+    await gateway.clearAll();
+    expect(plugin.cancel).toHaveBeenCalledWith({
+      notifications: [{ id: WORKOUT_NOTIFICATION_ID }, { id: REST_NOTIFICATION_ID }],
+    });
   });
 });
 

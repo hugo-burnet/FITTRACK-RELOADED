@@ -31,12 +31,14 @@ export const REST_NOTIFICATION_ID = 41002;
  * trace you find later, and the last one is the one worth finding.
  */
 export const RECORD_NOTIFICATION_ID = 41003;
+export const DOMS_NOTIFICATION_ID = 41004;
 /** Reminders occupy `BASE … BASE + REMINDER_HORIZON - 1`, and nothing else. */
 export const REMINDER_NOTIFICATION_BASE_ID = 41100;
 export const WORKOUT_CHANNEL_ID = 'fittrack-workout';
 export const REST_CHANNEL_ID = 'fittrack-rest';
 export const RECORD_CHANNEL_ID = 'fittrack-record';
 export const REMINDER_CHANNEL_ID = 'fittrack-reminder';
+export const DOMS_CHANNEL_ID = 'fittrack-doms';
 
 /**
  * How many reminders are armed ahead — four weeks of a three-day week.
@@ -67,6 +69,11 @@ interface NativeNotificationGateway {
   applyPreferences: (preferences: NotificationPreferences, now?: number) => Promise<void>;
   /** Posts one record, now — the copy is the caller's, the channel is ours. */
   notifyRecord: (notice: { title: string; body: string }) => Promise<void>;
+  /**
+   * Arms or clears the one-shot DOMS follow-up from a caller-supplied deadline.
+   * Dexie stays outside: Task 6 reads `getDomsFollowUp` and passes `dueAt` in.
+   */
+  reconcileDoms: (dueAt: number | null, now?: number) => Promise<void>;
   clearAll: () => Promise<void>;
   isRestAlertArmed: () => boolean;
 }
@@ -131,6 +138,15 @@ export function createNativeNotificationGateway(
         id: REMINDER_CHANNEL_ID,
         name: t('androidNotification.reminderChannel'),
         description: t('androidNotification.reminderChannelDescription'),
+        importance: 4,
+        visibility: 1,
+        vibration: true,
+      });
+      // Same interrupt level as reminders: a one-shot 48 h after first workout.
+      await plugin.createChannel({
+        id: DOMS_CHANNEL_ID,
+        name: t('androidNotification.domsChannel'),
+        description: t('androidNotification.domsChannelDescription'),
         importance: 4,
         visibility: 1,
         vibration: true,
@@ -312,6 +328,29 @@ export function createNativeNotificationGateway(
               title: notice.title,
               body: notice.body,
               channelId: RECORD_CHANNEL_ID,
+              autoCancel: true,
+            },
+          ],
+        });
+      });
+    },
+
+    reconcileDoms(dueAt, now = Date.now()) {
+      return enqueue(async () => {
+        if (!isAndroid()) return;
+        if (dueAt === null || dueAt <= now) {
+          await cancel([DOMS_NOTIFICATION_ID]);
+          return;
+        }
+        if (!(await ensureReady())) return;
+        await plugin.schedule({
+          notifications: [
+            {
+              id: DOMS_NOTIFICATION_ID,
+              title: t('androidNotification.domsTitle'),
+              body: t('androidNotification.domsBody'),
+              channelId: DOMS_CHANNEL_ID,
+              schedule: { at: new Date(dueAt), allowWhileIdle: true },
               autoCancel: true,
             },
           ],
