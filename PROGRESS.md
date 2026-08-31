@@ -3,8 +3,7 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-08-30 (**liens de documentation des programmes et transition
-unilatérale corrigés** ; jetons de paliers en mèmes livrés en parallèle.).
+**Dernière mise à jour :** 2026-08-31 (**paliers première séance et premières DOMS**).
 
 ## Archives
 
@@ -27,6 +26,22 @@ unilatérale corrigés** ; jetons de paliers en mèmes livrés en parallèle.).
 4. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
    le terminal (clé `fittrack.bootEasterEggAfter` due) : écran noir, glyphes blancs, comme GRUB.
 5. **Tutoriel** — sélecteur de guidage à quatre modes, série unilatérale menée jusqu'au bout.
+6. **Première séance / DOMS** — install neuve (ou reset IndexedDB) : enregistrer une
+   première séance, voir le Malphite-Chad « Rock solid. » sur l'accueil. APK : 48 h plus
+   tard, notif « Tes premières DOMS » puis la porte au tap. Compte actuel : les deux
+   paliers sont déjà dans Progression › Paliers, sans carte ni notif.
+
+## Première séance et premières DOMS (2026-08-31)
+
+- Deux paliers de pratique : `sessions-1` (Ta première séance) et `doms-48` (Tes
+  premières DOMS), avant les 10 séances. Jetons `rock-solid` et `doms-door`.
+- Compte neuf : carte d'accueil à l'enregistrement, puis badge à la relance 48 h plus
+  tard. APK seulement : notification locale pile à 48 h si la première séance a été
+  fêtée en direct. PWA : pas de pop-up.
+- Compte déjà en route : projection v2, rattrapage silencieux, pas de fête.
+- Spec : `docs/design/specs/2026-08-31-first-session-doms-paliers-design.md`.
+- Vérification : typecheck et build verts. Vitest 2502/2503 ; l'échec restant est
+  `ProgramFlow` « Semaine N sur 4 » (date du 3 août 2026, hors de ce lot).
 
 ## Documentation des programmes et transition unilatérale (2026-08-30)
 
