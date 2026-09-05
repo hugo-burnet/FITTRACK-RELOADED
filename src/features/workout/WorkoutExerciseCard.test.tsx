@@ -315,4 +315,89 @@ describe('WorkoutExerciseCard', () => {
     expect(notices.get(completedSet.id)?.types).toEqual(['max_weight', 'max_volume_session']);
     expect(notices.get(completedSet.id)?.entries).toEqual([setRecord, sessionRecord]);
   });
+describe('échauffement reproposé', () => {
+    const warmupSet = (overrides: Partial<WorkoutSet>): WorkoutSet => ({
+      ...stamps,
+      id: crypto.randomUUID(),
+      workoutExerciseId: row.id,
+      exerciseId: exercise.id,
+      workoutId: row.workoutId,
+      order: 0,
+      setType: 'normal',
+      side: 'both',
+      isCompleted: 0,
+      performedAt: 0,
+      ...overrides,
+    });
+
+    /** Hier : 20 kg × 10 puis 40 kg × 5, pour 60 kg de travail. */
+    const yesterday = [
+      warmupSet({ setType: 'warmup', weight: 20, reps: 10, isCompleted: 1, performedAt: 1 }),
+      warmupSet({ order: 1, setType: 'warmup', weight: 40, reps: 5, isCompleted: 1, performedAt: 2 }),
+      warmupSet({ order: 2, weight: 60, reps: 8, isCompleted: 1, performedAt: 3 }),
+    ];
+
+    function renderOffer(onWarmup = vi.fn(), sets = [warmupSet({ targetWeight: 60, targetReps: 8 })]) {
+      render(
+        <WorkoutExerciseCard
+          line={{ row, exercise, sets, previous: yesterday }}
+          rest={null}
+          pace={null}
+          hold={null}
+          sideStageOf={() => null}
+          effort={null}
+          records={new Map()}
+          state={state}
+          reorderEnabled={false}
+          foldCommand={INITIAL_WORKOUT_FOLD_COMMAND}
+          onPace={vi.fn()}
+          onMenu={vi.fn()}
+          onSetMenu={vi.fn()}
+          onWrite={vi.fn()}
+          onComplete={vi.fn()}
+          onUncomplete={vi.fn()}
+          onDeleteSet={vi.fn()}
+          onRestoreSet={vi.fn()}
+          onAddSet={vi.fn()}
+          onWarmup={onWarmup}
+        />,
+      );
+      return onWarmup;
+    }
+
+    it('affiche la montée de la dernière fois et l’ajoute au premier appui', () => {
+      const onWarmup = renderOffer();
+
+      expect(screen.getByText('20 kg × 10 · 40 kg × 5')).toBeVisible();
+      screen.getByRole('button', { name: 'Ajouter' }).click();
+
+      expect(onWarmup).toHaveBeenCalledOnce();
+      expect(onWarmup.mock.calls[0]?.[1]).toBe('insert');
+      expect(onWarmup.mock.calls[0]?.[0].suggestions).toEqual([
+        // La barre pèse 20 kg : 33 % de 60 tombe dessous, et le plancher gagne.
+        { weightKg: 20, reps: 10 },
+        { weightKg: 40, reps: 5 },
+      ]);
+    });
+
+    it('ouvre la feuille sur ces paliers quand on les modifie', () => {
+      const onWarmup = renderOffer();
+
+      screen.getByRole('button', { name: 'Modifier' }).click();
+
+      expect(onWarmup.mock.calls[0]?.[1]).toBe('edit');
+      expect(onWarmup.mock.calls[0]?.[0].steps).toEqual([
+        { percentage: 33, reps: 10 },
+        { percentage: 67, reps: 5 },
+      ]);
+    });
+
+    it('ne propose plus rien dès la première série validée', () => {
+      renderOffer(vi.fn(), [
+        warmupSet({ weight: 60, reps: 8, isCompleted: 1, performedAt: 9 }),
+      ]);
+
+      expect(screen.queryByRole('button', { name: 'Ajouter' })).toBeNull();
+    });
+  });
 });

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import * as backupRepository from '@/data/repositories/backup';
 import { createCustomExercise } from '@/data/repositories/exercises';
-import { createRoutine } from '@/data/repositories/routines';
+import { addExercisesToRoutine, createRoutine } from '@/data/repositories/routines';
 import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { serializeBackup } from '@/lib/backup';
@@ -233,6 +233,63 @@ describe('BackupActions', () => {
       await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent(expectedMessage));
       expect(report).not.toHaveBeenCalled();
     }
+  });
+
+  it('nomme ce qui cloche dans une sauvegarde abîmée, sans rien remplacer', async () => {
+    await createRoutine('Poussée');
+    const raw = JSON.parse(serializeBackup(await backupRepository.buildBackup())) as Record<
+      string,
+      unknown
+    >;
+    // L'en-tête et la version sont bons ; la séance, non. C'est exactement le
+    // fichier que l'ancienne lecture acceptait.
+    (raw.tables as Record<string, unknown>).workouts = [{ id: 'broken' }];
+    const restoreSpy = vi.spyOn(backupRepository, 'restoreBackup');
+    const report = vi.fn();
+    const user = userEvent.setup();
+    renderBackupActions(report);
+
+    await chooseFile(user, jsonFile(JSON.stringify(raw)));
+
+    const status = await screen.findByRole('status');
+    expect(status).toHaveTextContent(/séances/);
+    expect(status).toHaveTextContent(/ligne 1/);
+    expect(status).toHaveTextContent(/Rien n.a été remplacé/);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(restoreSpy).not.toHaveBeenCalled();
+    expect(report).not.toHaveBeenCalled();
+    expect(await db.routines.count()).toBe(1);
+  });
+
+  it('annonce les références cassées dans le récapitulatif avant de remplacer', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Développé couché',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const routine = await createRoutine('Poussée');
+    await addExercisesToRoutine(routine.id, [exercise.id]);
+    const raw = JSON.parse(serializeBackup(await backupRepository.buildBackup())) as Record<
+      string,
+      unknown
+    >;
+    const routineExercises = (raw.tables as Record<string, Record<string, unknown>[]>)
+      .routineExercises;
+    if (routineExercises === undefined || routineExercises.length === 0) {
+      throw new Error('la routine du décor devrait porter un exercice');
+    }
+    routineExercises[0]!.exerciseId = 'ex-disparu';
+
+    const user = userEvent.setup();
+    renderBackupActions();
+
+    await chooseFile(user, jsonFile(JSON.stringify(raw)));
+
+    expect(await screen.findByRole('dialog', { name: /Restaurer cette sauvegarde/ })).toBeVisible();
+    expect(screen.getByText(/désignent une donnée absente du fichier/)).toBeVisible();
   });
 
   it('expose les ancres exactes des actions de sauvegarde', () => {

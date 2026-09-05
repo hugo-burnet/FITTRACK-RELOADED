@@ -57,10 +57,10 @@ describe('tutorial mission machine', () => {
   it('hides incompatible route missions', () => {
     const state = createTutorialState();
     expect(
-      contextualMissionsForPath('/routines', state, { hasActiveWorkout: true, hasHistory: true, hasEffortPrompt: true, hasRepPacing: true }),
+      contextualMissionsForPath('/routines', state, { hasActiveWorkout: true, hasHistory: true, hasEffortPrompt: true, hasRepPacing: true, hasAudibleGuidance: true }),
     ).toEqual([]);
     expect(
-      contextualMissionsForPath('/workout', state, { hasActiveWorkout: false, hasHistory: true, hasEffortPrompt: true, hasRepPacing: true }),
+      contextualMissionsForPath('/workout', state, { hasActiveWorkout: false, hasHistory: true, hasEffortPrompt: true, hasRepPacing: true, hasAudibleGuidance: true }),
     ).toEqual([]);
   });
 

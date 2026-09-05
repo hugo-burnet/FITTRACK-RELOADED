@@ -1,12 +1,20 @@
 import { onEvent, type TutorialMission } from './kit';
 
 /**
- * Régler ce que l'application dit à voix haute.
+ * Choisir ce que l'application dit à voix haute — Silence compris.
  *
- * Le mode d'abord, l'écho ensuite, et pas l'inverse : la ligne d'écho n'est
- * rendue que si quelque chose est audible. L'étape refuse donc le Silence —
- * l'accepter aurait envoyé l'étape suivante chercher une commande que le choix
- * précédent venait de retirer de la page. La consigne le dit avant, pas après.
+ * **Une étape, et une seule.** L'écho vivait ici, en seconde étape, et cela
+ * forçait la première à refuser le Silence : la ligne d'écho n'est rendue que
+ * si quelque chose est audible, et l'accepter aurait envoyé l'étape suivante
+ * chercher une commande que le choix précédent venait de retirer de la page.
+ *
+ * Le prix de cette garde était payé par la seule personne à qui la leçon
+ * servait vraiment : celle qui vient couper le son restait bloquée sur une
+ * étape qui lui redemandait de le rallumer, sans autre issue que l'abandon.
+ * Une consigne ne demande pas d'activer un mode que l'utilisateur a choisi de
+ * couper. Le mode se choisit donc librement, la mission se termine là, et
+ * l'écho est devenu `ANNOUNCER_ECHO` — une mission à part, proposée seulement
+ * quand sa commande existe.
  */
 export const ANNOUNCER_TUNE: TutorialMission = {
   id: 'TUT-SET-01',
@@ -21,10 +29,28 @@ export const ANNOUNCER_TUNE: TutorialMission = {
       targetId: 'announcer-modes',
       instructionKey: 'tutorial.settings.mode.instruction',
       detailKey: 'tutorial.settings.mode.detail',
-      advance: onEvent(
-        (event) => event.type === 'announcer-mode-changed' && event.mode !== 'silence',
-      ),
+      advance: onEvent((event) => event.type === 'announcer-mode-changed'),
     },
+  ],
+  nextMissionId: null,
+};
+
+/**
+ * L'écho de la voix — la mission qui n'existe que s'il y a une voix.
+ *
+ * `requires-audible-guidance` n'est pas une précaution de style : en Silence,
+ * `AnnouncerSettings` ne rend pas la ligne du tout. Sans cette garde, la
+ * mission serait proposée, démarrerait, et le coach attendrait indéfiniment une
+ * ancre qui n'est pas dans la page. Et si le mode passe au Silence pendant la
+ * mission, la garde la met en pause plutôt que de la compter refusée : elle
+ * reviendra intacte le jour où le son revient.
+ */
+export const ANNOUNCER_ECHO: TutorialMission = {
+  id: 'TUT-SET-03',
+  routePrefix: '/settings',
+  titleKey: 'tutorial.settings.echoTune.title',
+  guard: 'requires-audible-guidance',
+  steps: [
     {
       id: 'echo',
       screen: 'settings',

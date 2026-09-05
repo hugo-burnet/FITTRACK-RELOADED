@@ -3,7 +3,50 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-09-05 (**fluidité de séance et guidage**).
+**Dernière mise à jour :** 2026-09-06 (**sauvegardes, échauffements, tutoriel, commandes de séance**).
+
+## Sauvegardes validées, échauffements reproposés, commandes regroupées (2026-09-06)
+
+- **Import de sauvegarde.** Nouveau `src/lib/backup/validate.ts` : format, version de
+  fichier, version de schéma, structure complète et références sont vérifiés **avant**
+  toute écriture. Une table malformée, une ligne qui n'est pas un enregistrement, un champ
+  obligatoire absent ou d'un mauvais type, deux lignes sur le même identifiant : le fichier
+  est refusé et la base n'est pas touchée. Une table absente reste légitime quand le schéma
+  du fichier ne la connaissait pas (blocs à la version 6, paliers à la 12) ; sous ce seuil
+  c'est un trou et c'est refusé. Une sauvegarde écrite contre un schéma plus récent que
+  cette version est refusée (`unsupported-schema`). Les références cassées ne refusent pas
+  le fichier — elles sont comptées et annoncées dans le récapitulatif, qui porte désormais
+  la date du fichier et le nombre de lignes. Le message d'erreur nomme la table, la ligne et
+  le champ (`features/settings/backupMessages.ts`). `writePreferences` remet les préférences
+  d'avant si une écriture `localStorage` échoue à mi-chemin.
+- **Échauffements récurrents.** `src/lib/warmupMemory.ts` relit la montée de la dernière
+  séance de l'exercice — aucune table, aucune migration : l'historique *est* la mémoire, et
+  elle est donc par exercice quelle que soit la routine. Les paliers sont mémorisés en
+  pourcentage de la charge de travail du jour et **réappliqués à celle d'aujourd'hui** ; le
+  bandeau le dit quand la charge a changé. Proposé sur la seule carte de l'exercice en cours,
+  jamais imposé : Ajouter écrit la montée, Modifier rouvre la feuille sur ces paliers,
+  ignorer c'est commencer à soulever. Rien n'est proposé si la séance porte déjà un
+  échauffement, ni après la première série validée — ce qui règle aussi la reprise après un
+  kill. Distinction échauffement/travail inchangée (`isWorkingSet`, `matchPreviousSets`).
+- **Tutoriel des réglages.** Le choix du mode accepte désormais le Silence et termine la
+  mission : l'étape le refusait et bloquait net celui qui venait couper le son. L'écho est
+  devenu sa propre mission (`TUT-SET-03`), gardée par `requires-audible-guidance` — en
+  Silence la ligne n'est pas rendue, la mission n'est donc pas proposée. Le mode d'annonce
+  est suivi dans l'état du provider au lieu d'être relu à l'aveugle, ce qui corrige au
+  passage la fraîcheur de `hasRepPacing`. Une mission dont la garde tombe est **mise en
+  pause** (`suspendMission`) et non comptée refusée : elle revient intacte.
+- **Commandes de séance.** Le cadenas d'ordre et la commande de deload quittent le bandeau
+  pour le menu de séance, sous leur libellé et avec la raison de leur grisage. Le bandeau ne
+  garde que l'avancement, le repliage, et l'état « 80 % » **quand la décharge est
+  appliquée**. La mission `TUT-WRK-12` ouvre le menu avant de désigner la décharge.
+- **Vérification.** `typecheck`, 2 554 tests dans 241 fichiers, `build` et `lint` (le seul
+  avertissement restant est le Fast Refresh préexistant de `Boot.tsx`). Aucun essai
+  navigateur ni APK.
+- **Checkpoint téléphone.** Restaurer une vraie sauvegarde, puis une tronquée à la main
+  (vérifier que le message nomme la table et que rien ne bouge) ; séance A avec échauffement
+  puis séance B avec charge modifiée ; routine qui porte déjà son échauffement ; tutoriel
+  des réglages en Silence ; menu de séance au pouce, clavier ouvert ; premier côté →
+  changement → second côté → repos, sans son.
 
 ## Fluidité de séance et guidage (2026-09-05)
 
@@ -16,7 +59,7 @@
 - Exercices : état vide avec filtres corrigé ; création depuis le sélecteur sans perdre les choix ; liste ordonnée de sélection avec retrait.
 - UI : libellés plus lisibles, séparation cible/valeur dans les champs, même famille orange en clair, titre Progression cohérent, célébrations après la proposition de séance. Fermeture des feuilles robuste sans événement de transition et retrait immédiat de l'arbre d'accessibilité.
 - Vérification finale : 2 511 tests passent dans 238 fichiers ; typecheck et build réussis, lint sans erreur (avertissement Fast Refresh préexistant dans Boot.tsx). Groupes ciblés séance/tutoriel et import/reprise/bilan/migration également vérifiés.
-- Reste du backlog d'audit : validation structurelle des sauvegardes avant restauration, automatisation volontaire des échauffements récurrents, simplification plus poussée des commandes expertes et du tutoriel des réglages. Ces éléments ne sont pas présentés comme livrés.
+- Reste du backlog d'audit : validation structurelle des sauvegardes avant restauration, automatisation volontaire des échauffements récurrents, simplification plus poussée des commandes expertes et du tutoriel des réglages. **Traités le 2026-09-06** (section du haut).
 - Checkpoint téléphone : première ouverture sans surprise sonore ; séance unilatérale sans son, changement de côté lisible ; kill pendant repos ; séance suivante après échauffement ; créer une variante depuis la sélection puis revenir ; vérifier bilan et thème clair. Pas de nouvel essai navigateur/APK, conformément à la préférence utilisateur.
 
 ## Revue code et UX (2026-09-05)

@@ -192,6 +192,30 @@ describe('sauvegarde complète', () => {
     expect((await db.exercises.get('ex-traction'))?.bodyweightLoadFactor).toBe(1);
   });
 
+  /**
+   * `parseBackup` refuse déjà ce fichier-là ; ce test tient l'autre moitié de
+   * la promesse — si l'écriture casse malgré tout, à mi-chemin, la base doit
+   * rester celle d'avant. Une restauration à moitié faite est pire qu'une
+   * restauration refusée : elle ressemble à un succès.
+   */
+  it('ne laisse rien derrière elle quand l’écriture échoue à mi-chemin', async () => {
+    await seedAccount();
+    const backup = await buildBackup();
+    const before = await buildBackup(backup.exportedAt);
+
+    const broken = structuredClone(backup);
+    // `workoutSets` est écrite après `exercises` et `routines` : au moment où
+    // Dexie refuse cette ligne sans clé, plusieurs tables ont déjà été vidées.
+    broken.tables.workoutSets = [{ order: 0 }];
+    // Et un contenu différent, pour que « rien n'a bougé » veuille dire quelque chose.
+    broken.tables.routines = [];
+
+    await expect(restoreBackup(broken)).rejects.toBeDefined();
+
+    const after = await buildBackup(backup.exportedAt);
+    expect(after.tables).toEqual(before.tables);
+  });
+
   it('ne retouche rien quand le fichier vient du schéma courant', async () => {
     await seedAccount();
     const backup = await buildBackup();

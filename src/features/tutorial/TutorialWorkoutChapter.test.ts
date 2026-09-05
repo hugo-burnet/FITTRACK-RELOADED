@@ -8,6 +8,7 @@ const IN_WORKOUT = {
   hasHistory: true,
   hasEffortPrompt: true,
   hasRepPacing: true,
+  hasAudibleGuidance: true,
 };
 
 describe('missions avancées de séance', () => {
@@ -138,10 +139,13 @@ describe('missions avancées de séance', () => {
    * « Supprimer » et « Importer ».
    */
   it('s’arrête devant l’application de la décharge', () => {
-    const state = advanceMission(startMission(createTutorialState(), 'TUT-WRK-12'), {
-      type: 'deload-sheet-opened',
+    // La décharge vit dans le menu de séance : la mission l'y fait ouvrir avant
+    // de désigner l'entrée.
+    let state = advanceMission(startMission(createTutorialState(), 'TUT-WRK-12'), {
+      type: 'workout-menu-opened',
       workoutId: 'w1',
     });
+    state = advanceMission(state, { type: 'deload-sheet-opened', workoutId: 'w1' });
 
     const mission = missionFor('TUT-WRK-12');
     const last = mission.steps[mission.steps.length - 1];

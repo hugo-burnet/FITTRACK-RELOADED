@@ -3,6 +3,7 @@ import {
   completeFirstSide,
   completeSet,
   duplicateLastSet,
+  insertWarmupSets,
   uncompleteSet,
   updateSetValues,
   workoutExerciseIdentityOf,
@@ -12,6 +13,7 @@ import type { SetType, WorkoutSet } from '@/data/types';
 import { announce } from '@/audio/announce';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { isRestTriggering, type restPlans } from '@/lib/rest';
+import type { WarmupSetSuggestion } from '@/lib/warmup';
 import { loadEffortPrompt } from '@/stores/effortPrompt';
 import { useHoldTimer } from '@/stores/holdTimer';
 import { useRestTimer } from '@/stores/restTimer';
@@ -183,6 +185,22 @@ export function useWorkoutSetActions({
   };
 
   /**
+   * L'échauffement de la dernière fois, accepté d'un doigt.
+   *
+   * Le même chemin d'écriture que la feuille, et le même aveu d'échec : une
+   * montée qui n'entre pas en base doit se voir, sinon on la croit posée et on
+   * attaque la barre sans elle.
+   */
+  const onInsertWarmup = (rowId: string, suggestions: readonly WarmupSetSuggestion[]): void => {
+    setWriteFailed(false);
+    void insertWarmupSets(rowId, suggestions)
+      .then(() =>
+        tutorial?.report({ type: 'warmup-inserted', rowId, count: suggestions.length }),
+      )
+      .catch(() => setWriteFailed(true));
+  };
+
+  /**
    * La cadence est arrivée au bout d'elle-même.
    *
    * Sur le premier côté d'une série unilatérale, ce n'est pas la fin de la
@@ -197,5 +215,13 @@ export function useWorkoutSetActions({
     pace.stop();
   };
 
-  return { onWrite, onComplete, onUncomplete, onAddSet, onPaceFinished, writeFailed };
+  return {
+    onWrite,
+    onComplete,
+    onUncomplete,
+    onAddSet,
+    onInsertWarmup,
+    onPaceFinished,
+    writeFailed,
+  };
 }

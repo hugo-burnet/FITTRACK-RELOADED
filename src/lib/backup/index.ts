@@ -11,3 +11,5 @@ export type { BackupCounts, BackupFile, BackupRow, BackupTable } from './types';
 export { CURRENT_SCHEMA_VERSION, backfillBackupTables } from './backfill';
 export { parseBackup } from './parse';
 export type { BackupParse, BackupProblem } from './parse';
+export { validateBackupTables } from './validate';
+export type { BackupFlaw, BackupOrphan, BackupStructure } from './validate';

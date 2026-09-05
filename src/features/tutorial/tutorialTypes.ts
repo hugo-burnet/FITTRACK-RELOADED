@@ -56,6 +56,7 @@ export const TUTORIAL_MISSION_IDS = [
   'TUT-HOME-02',
   'TUT-SET-01',
   'TUT-SET-02',
+  'TUT-SET-03',
 ] as const;
 
 export type TutorialMissionId = (typeof TUTORIAL_MISSION_IDS)[number];
@@ -210,6 +211,7 @@ export type TutorialWorkoutEvent =
   | { type: 'pace-stopped'; setId: string | null }
   | { type: 'hold-started'; setId: string }
   | { type: 'workout-side-turned'; setId: string }
+  | { type: 'workout-menu-opened'; workoutId: string }
   | { type: 'deload-sheet-opened'; workoutId: string };
 
 /**

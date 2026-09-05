@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { matchPreviousSets } from '@/lib/previousSets';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
@@ -7,7 +6,6 @@ import {
   reorderWorkoutExercises,
   restoreSet,
   updateSetValues,
-  workoutExerciseIdentityOf,
 } from '@/data/repositories/workouts';
 import type { WorkoutExerciseDetail } from '@/data/repositories/workouts';
 import { applyCoachObjective } from '@/data/repositories/coachApply';
@@ -17,7 +15,7 @@ import {
 } from '@/data/repositories/coachRecommendations';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
-import { DELOAD_PERCENT, isDeloadEligibleMeasurement } from '@/lib/deload';
+import { DELOAD_PERCENT } from '@/lib/deload';
 import { platesConfigFor } from '@/lib/plateLoading';
 import { restPlans } from '@/lib/rest';
 import { supersetPlaces } from '@/lib/routineOrder';
@@ -31,7 +29,6 @@ import {
   Card,
   EmptyState,
   HeaderAction,
-  OrderLockButton,
   ReorderableList,
   Toggle,
 } from '@/ui';
@@ -58,7 +55,6 @@ export function WorkoutScreen() {
   const tutorial = useTutorialControls();
   const [sheet, setSheet] = useState<SheetState | null>(null);
   const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
-  const toggleReorder = useExerciseOrderLock((state) => state.toggle);
   const [platesView, setPlatesView] = useState<PlatesView | null>(null);
   /** The one set currently being asked how hard it was. */
   const [effortSetId, setEffortSetId] = useState<string | null>(null);
@@ -93,7 +89,15 @@ export function WorkoutScreen() {
    * la première carte soit à l'écran.
    */
   const plans = restPlans((detail?.exercises ?? EMPTY_LINES).map(({ row }) => row));
-  const { onWrite, onComplete, onUncomplete, onAddSet, onPaceFinished, writeFailed } =
+  const {
+    onWrite,
+    onComplete,
+    onUncomplete,
+    onAddSet,
+    onInsertWarmup,
+    onPaceFinished,
+    writeFailed,
+  } =
     useWorkoutSetActions({
       workoutId,
       plans,
@@ -119,20 +123,6 @@ export function WorkoutScreen() {
 
   const { workout, exercises } = detail;
   const deloadActive = workout.deloadPercent === DELOAD_PERCENT;
-  const canDeload = exercises.some((line) =>
-    (() => {
-      return (
-        isDeloadEligibleMeasurement(workoutExerciseIdentityOf(line).measurementType) &&
-        line.sets.some(
-          (set, index) =>
-            set.isCompleted === 0 &&
-            (set.weight ??
-              set.targetWeight ??
-              matchPreviousSets(line.sets, line.previous)[index]?.weight) !== undefined,
-        )
-      );
-    })(),
-  );
   const places = supersetPlaces(exercises.map(({ row }) => row));
   const coachByExercise = new Map(
     (pendingCoach ?? []).map((row) => [row.exerciseId, row] as const),
@@ -159,7 +149,11 @@ export function WorkoutScreen() {
           />
           <HeaderAction
             label={t('workout.workoutMenu')}
-            onClick={() => setSheet({ kind: 'workout' })}
+            tutorialId="workout-menu"
+            onClick={() => {
+              setSheet({ kind: 'workout' });
+              tutorial?.report({ type: 'workout-menu-opened', workoutId: workout.id });
+            }}
           >
             <MoreIcon />
           </HeaderAction>
@@ -172,26 +166,31 @@ export function WorkoutScreen() {
               {t('workout.writeFailed')}
             </p>
           )}
+          {/*
+            Le bandeau ne garde que ce qui répond à « où j'en suis » et « que
+            suis-je en train de regarder ». Le cadenas d'ordre et la commande de
+            deload sont partis dans le menu de séance, sous leur vrai libellé :
+            deux icônes à apprendre, pour deux gestes qu'on ne fait presque
+            jamais, occupaient en permanence la barre qu'on lit entre deux
+            séries. L'allègement, lui, reste **affiché quand il est en cours** :
+            ce n'est plus une commande à ce moment-là, c'est l'état dans lequel
+            la séance se trouve, et c'est exactement ce qu'une place permanente
+            doit porter.
+          */}
           {exercises.length > 0 ? (
             <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
               <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
                 {workoutProgressLine(completedSets, totalSets)}
               </p>
-              <Toggle
-                label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
-                mark={t('workout.deloadMark')}
-                checked={deloadActive}
-                disabled={deloadActive || !canDeload}
-                tutorialId="workout-deload"
-                onChange={() => {
-                  setSheet({ kind: 'deload' });
-                  tutorial?.report({ type: 'deload-sheet-opened', workoutId: workout.id });
-                }}
-              />
-              <OrderLockButton
-                unlocked={reorderUnlocked}
-                onToggle={() => toggleReorder('workout')}
-              />
+              {deloadActive && (
+                <Toggle
+                  label={t('workout.deloadActive')}
+                  mark={t('workout.deloadMark')}
+                  checked
+                  disabled
+                  onChange={() => undefined}
+                />
+              )}
               <button
                 type="button"
                 aria-label={t(willExpandAll ? 'workout.expandAll' : 'workout.collapseAll')}
@@ -396,6 +395,17 @@ export function WorkoutScreen() {
                     onDeleteSet={(setId) => void deleteSet(setId)}
                     onRestoreSet={(setId) => void restoreSet(setId)}
                     onAddSet={() => onAddSet(line.row.id)}
+                    onWarmup={(offer, mode) => {
+                      if (mode === 'insert') {
+                        onInsertWarmup(line.row.id, offer.suggestions);
+                        return;
+                      }
+                      // « Modifier » rouvre la feuille sur les paliers proposés,
+                      // pas sur la rampe générique : on corrige une montée, on
+                      // n'en ressaisit pas une.
+                      setSheet({ kind: 'warmup', rowId: line.row.id, steps: offer.steps });
+                      tutorial?.report({ type: 'warmup-sheet-opened', rowId: line.row.id });
+                    }}
                     coachObjective={coachByExercise.get(line.row.exerciseId)}
                     onDismissCoach={
                       coachByExercise.get(line.row.exerciseId) === undefined

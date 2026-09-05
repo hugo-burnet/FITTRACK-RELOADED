@@ -19,10 +19,14 @@ import type { PlateLoading, Workout } from '@/data/types';
 import { t } from '@/i18n/fr';
 import { setTypeHint, setTypeLabel } from '@/i18n/labels';
 import { formatNumber } from '@/ui/numberField';
+import { DELOAD_PERCENT } from '@/lib/deload';
 import { DEFAULT_PLATES_KG } from '@/lib/plates';
+import type { WarmupStep } from '@/lib/warmup';
+import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { useHoldTimer } from '@/stores/holdTimer';
 import { useRepPacer } from '@/stores/repPacer';
 import { ActionSheet, ConfirmSheet, Input, OptionSheet, Sheet, Textarea } from '@/ui';
+import { canDeloadWorkout } from './deloadAvailability';
 import { DeloadSheet } from './DeloadSheet';
 import { ExerciseNotesSheet } from './ExerciseNotesSheet';
 import { PaceSheet } from './PaceSheet';
@@ -55,7 +59,7 @@ export type SheetState =
   | { kind: 'pace'; rowId: string }
   | { kind: 'exerciseNotes'; rowId: string }
   | { kind: 'removeExercise'; rowId: string }
-  | { kind: 'warmup'; rowId: string }
+  | { kind: 'warmup'; rowId: string; steps?: readonly WarmupStep[] }
   | { kind: 'set'; setId: string; number: number }
   | { kind: 'setType'; setId: string; number: number }
   | { kind: 'plates' };
@@ -121,6 +125,12 @@ export function WorkoutSheets({
   availablePlateWeightsKg,
 }: WorkoutSheetsProps) {
   const tutorial = useTutorialControls();
+  // Un magasin global, lu ici comme le tutoriel : le faire descendre en
+  // propriété depuis l'écran n'aurait rien dit de plus.
+  const reorderUnlocked = useExerciseOrderLock((state) => state.unlocked.workout);
+  const toggleReorder = useExerciseOrderLock((state) => state.toggle);
+  const deloadActive = workout.deloadPercent === DELOAD_PERCENT;
+  const canDeload = canDeloadWorkout(exercises);
 
   const lineOf = (rowId: string) => workoutLineOf(exercises, rowId);
   const nameOf = (rowId: string) => workoutExerciseNameOf(exercises, rowId);
@@ -143,7 +153,35 @@ export function WorkoutSheets({
         open={sheet?.kind === 'workout'}
         onClose={() => setSheet(null)}
         title={t('workout.workoutMenu')}
+        /*
+         * Les outils avancés de la séance, sous leur nom.
+         *
+         * Ils vivaient dans le bandeau, en icônes : un cadenas et une bascule
+         * « 80 % » occupaient à demeure la barre qu'on lit entre deux séries,
+         * pour deux gestes qu'on ne fait presque jamais. Ici, chacun dit ce
+         * qu'il fait et pourquoi il est grisé — un cadenas gris n'a jamais
+         * expliqué qu'il n'y avait rien à réordonner.
+         */
         actions={[
+          {
+            label: t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction'),
+            hint: deloadActive
+              ? t('workout.deloadDoneHint')
+              : canDeload
+                ? t('workout.deloadMenuHint')
+                : t('workout.deloadUnavailableHint'),
+            disabled: deloadActive || !canDeload,
+            tutorialId: 'workout-deload',
+            onSelect: () => {
+              setSheet({ kind: 'deload' });
+              tutorial?.report({ type: 'deload-sheet-opened', workoutId: workout.id });
+            },
+          },
+          {
+            label: t(reorderUnlocked ? 'common.lockExerciseOrder' : 'common.unlockExerciseOrder'),
+            hint: t('workout.reorderMenuHint'),
+            onSelect: () => toggleReorder('workout'),
+          },
           { label: t('workout.rename'), onSelect: () => setSheet({ kind: 'rename' }) },
           { label: t('workout.workoutNotesLabel'), onSelect: () => setSheet({ kind: 'notes' }) },
         ]}
@@ -253,6 +291,7 @@ export function WorkoutSheets({
         open={sheet?.kind === 'warmup' && warmupContext !== null}
         onClose={() => setSheet(null)}
         initialTargetWeightKg={warmupContext?.targetWeightKg}
+        initialSteps={sheet?.kind === 'warmup' ? sheet.steps : undefined}
         minimumWeightKg={warmupContext?.minimumWeightKg ?? 0}
         onInsert={async (suggestions) => {
           if (sheet?.kind !== 'warmup') return;

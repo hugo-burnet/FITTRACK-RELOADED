@@ -75,6 +75,21 @@ export function continueMission(state: TutorialStateV3): TutorialStateV3 {
   return step(state, mission);
 }
 
+/**
+ * La mission se retire sans rien décider — le décor a changé, pas l'envie.
+ *
+ * `dismissMission` écrit un refus, et un refus ne se reprend pas : la mission
+ * disparaît de l'aide pour de bon. C'est juste quand l'utilisateur ferme le
+ * panneau, et faux quand c'est le monde qui bouge — la séance se termine, le
+ * guidage passe au Silence, et la commande dont la mission parlait n'est plus
+ * dans la page. Elle est alors mise de côté, intacte, et se reproposera le jour
+ * où sa garde sera de nouveau satisfaite.
+ */
+export function suspendMission(state: TutorialStateV3): TutorialStateV3 {
+  if (state.activeMissionId === null) return state;
+  return { ...state, activeMissionId: null, activeStepIndex: 0 };
+}
+
 export function dismissMission(state: TutorialStateV3): TutorialStateV3 {
   if (state.activeMissionId === null) return state;
   return {

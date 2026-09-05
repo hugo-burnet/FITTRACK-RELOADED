@@ -117,7 +117,7 @@ describe('WorkoutScreen — persistance', () => {
     });
   });
 
-  it('applique le deload depuis la barre d’avancement et garde son état après remontage', async () => {
+  it('applique le deload depuis le menu de séance et garde son état après remontage', async () => {
     const workoutId = await seedActiveWorkout();
     const initial = await firstSet(workoutId);
     await db.workoutSets.update(initial.id, { targetWeight: 100, targetReps: 5 });
@@ -125,7 +125,10 @@ describe('WorkoutScreen — persistance', () => {
     const mounted = renderWorkout();
 
     await screen.findByText('Développé couché');
-    await user.click(screen.getByRole('switch', { name: 'Activer le deload à 80 %' }));
+    // La commande vit dans le menu, sous son libellé ; seule la barre garde
+    // l'état une fois la décharge appliquée.
+    await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
+    await user.click(screen.getByRole('button', { name: /Activer le deload à 80 %/ }));
     expect(
       screen.getByText('Les séries restantes passeront à 80 %, arrondies à 2,5 kg.'),
     ).toBeVisible();
@@ -171,8 +174,12 @@ describe('WorkoutScreen — persistance', () => {
     expect(t('workout.deloadMark')).toBe('80%');
     await screen.findByText('Tractions assistées retirées');
     expect(screen.getByText('−kg')).toBeVisible();
-    const action = screen.getByRole('switch', { name: 'Activer le deload à 80 %' });
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
+    const action = screen.getByRole('button', { name: /Activer le deload à 80 %/ });
     expect(action).toBeDisabled();
+    expect(screen.getByText('Aucune série restante ne porte de charge à alléger.')).toBeVisible();
+    await user.click(screen.getAllByRole('button', { name: 'Fermer' })[0]!);
     expect(screen.getByRole('textbox', { name: 'Série 1 — kg' })).toHaveAttribute(
       'placeholder',
       '100',
@@ -203,8 +210,11 @@ describe('WorkoutScreen — persistance', () => {
       screen.queryByRole('button', { name: 'Déplacer Développé couché' }),
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Déverrouiller l’ordre des exercices' }));
-    const firstHandle = screen.getByRole('button', { name: 'Déplacer Développé couché' });
+    await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
+    await user.click(screen.getByRole('button', { name: /Déverrouiller l’ordre des exercices/ }));
+    const firstHandle = await screen.findByRole('button', {
+      name: 'Déplacer Développé couché',
+    });
     expect(useExerciseOrderLock.getState().unlocked).toEqual({
       routine: true,
       workout: true,
@@ -219,7 +229,8 @@ describe('WorkoutScreen — persistance', () => {
     renderWorkout();
     expect(await screen.findByRole('button', { name: `Déplacer ${second.name}` })).toBeVisible();
 
-    await user.click(screen.getByRole('button', { name: 'Verrouiller l’ordre des exercices' }));
+    await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
+    await user.click(screen.getByRole('button', { name: /Verrouiller l’ordre des exercices/ }));
     expect(useExerciseOrderLock.getState().unlocked).toEqual({
       routine: true,
       workout: false,

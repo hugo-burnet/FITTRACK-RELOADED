@@ -35,7 +35,7 @@ export function ConfirmSheet({
 }: Props) {
   return (
     <Sheet open={open} onClose={onClose} title={title}>
-      <p className="mb-6 text-base leading-relaxed text-[var(--text-2)]">{body}</p>
+      <p className="mb-6 whitespace-pre-line text-base leading-relaxed text-[var(--text-2)]">{body}</p>
       <div className="flex gap-2">
         <Button variant="secondary" size="lg" onClick={onClose} fullWidth>
           {t('exercise.cancel')}

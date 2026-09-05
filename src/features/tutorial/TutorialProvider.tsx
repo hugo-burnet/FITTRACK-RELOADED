@@ -77,17 +77,27 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
    * serait payé à chaque écriture.
    */
   const completedWorkouts = useLiveQuery(countCompletedWorkouts);
+  /*
+   * Le mode d'annonce, suivi et non relu à l'aveugle.
+   *
+   * Il était lu au rendu, comme la bande d'effort, au motif qu'il ne change que
+   * depuis les Réglages. C'est vrai, et c'est précisément le problème : les
+   * missions des Réglages parlent de commandes que ce mode fait apparaître et
+   * disparaître, et elles se jouent sur cet écran-là. Le suivre est ce qui
+   * permet à une mission de se retirer quand sa commande s'en va.
+   */
+  const [announcerMode, setAnnouncerMode] = useState<AnnouncerMode>(loadAnnouncerMode);
   const missionFacts = useMemo(
     () => ({
       hasActiveWorkout,
       hasHistory: completedWorkouts === undefined ? null : completedWorkouts > 0,
-      // Deux réglages, lus au rendu et non observés : ils ne changent que
-      // depuis les Réglages, donc jamais pendant qu'une aide de page est
-      // ouverte sur l'écran de séance.
+      // Lue au rendu et non observée : elle ne change que depuis les Réglages,
+      // donc jamais pendant qu'une aide de page est ouverte ailleurs.
       hasEffortPrompt: loadEffortPrompt(),
-      hasRepPacing: guidancePolicy(loadAnnouncerMode()).repPacing,
+      hasRepPacing: guidancePolicy(announcerMode).repPacing,
+      hasAudibleGuidance: announcerMode !== 'silence',
     }),
-    [completedWorkouts, hasActiveWorkout],
+    [announcerMode, completedWorkouts, hasActiveWorkout],
   );
   const missions = useTutorialMissions(pathname, navigate, missionFacts);
   const pacer = useRepPacer();
@@ -96,6 +106,12 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   // Opening the help sheet renders this again, so expired wall-clock timers
   // cease blocking immediately even if their store identity was never cleared.
   const workoutAudioBusy = isWorkoutAudioBusy(pacer, rest, hold);
+
+  /** Le mode appliqué **et** retenu : les gardes des missions le relisent. */
+  const applyMode = useCallback((mode: AnnouncerMode) => {
+    applyAnnouncerMode(mode);
+    setAnnouncerMode(mode);
+  }, []);
 
   const showVoiceChoice = useCallback((result: TutorialCompletion) => {
     primeAnnouncer();
@@ -166,7 +182,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const chooseAudio = (mode: AnnouncerMode) => {
     stopTutorialNarration();
-    applyAnnouncerMode(mode);
+    applyMode(mode);
     missions.setOrientation(completion);
     setPhase('idle');
     navigate('/', { replace: true });
@@ -174,25 +190,30 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
   const dismissWelcome = () => {
     stopTutorialNarration();
-    applyAnnouncerMode('silence');
+    applyMode('silence');
     missions.setOrientation('skipped');
     setPhase('idle');
   };
 
+  const reportToMissions = missions.report;
   const controls = useMemo<TutorialControls>(
     () => ({
       openHelp: () => phase === 'idle' && setPhase('help'),
       startMission: missions.start,
       offerMission: missions.offer,
-      report: missions.report,
+      report: (event) => {
+        // Le mode traverse ici parce que les gardes en dépendent : c'est le
+        // seul endroit qui voit le changement au moment où il a lieu.
+        if (event.type === 'announcer-mode-changed') setAnnouncerMode(event.mode);
+        reportToMissions(event);
+      },
     }),
-    [missions.offer, missions.report, missions.start, phase],
+    [missions.offer, missions.start, phase, reportToMissions],
   );
   // Every mode has a row here, so the fallback never runs — it is what lets
   // the reading below be a plain value rather than an optional one.
-  const currentMode = loadAnnouncerMode();
   const currentModeOption =
-    AUDIO_OPTIONS.find((option) => option.mode === currentMode) ?? AUDIO_OPTIONS[0]!;
+    AUDIO_OPTIONS.find((option) => option.mode === announcerMode) ?? AUDIO_OPTIONS[0]!;
 
   return (
     <TutorialContext.Provider value={controls}>
@@ -213,7 +234,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
             size="lg"
             fullWidth
             onClick={() => {
-              applyAnnouncerMode('voice');
+              applyMode('voice');
               startFull();
             }}
           >
@@ -223,7 +244,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
             size="lg"
             fullWidth
             onClick={() => {
-              applyAnnouncerMode('silence');
+              applyMode('silence');
               startFull();
             }}
           >
@@ -275,7 +296,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
       <Sheet
         open={phase === 'voice-choice'}
-        onClose={() => chooseAudio(loadAnnouncerMode())}
+        onClose={() => chooseAudio(announcerMode)}
         title={t('tutorial.voiceChoiceTitle')}
       >
         <p className="text-sm leading-relaxed text-[var(--text-2)]">

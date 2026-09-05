@@ -405,6 +405,14 @@ const fr = {
     deloadAction: 'Activer le deload à 80 %',
     deloadActive: 'Deload actif à 80 %',
     deloadMark: '80%',
+    /**
+     * Les trois états de l'entrée de menu. Un libellé grisé sans raison est une
+     * énigme ; la ligne dit lequel des deux cas s'applique.
+     */
+    deloadMenuHint: 'Les séries restantes passent à 80 %, arrondies à 2,5 kg.',
+    deloadDoneHint: 'Déjà appliqué à cette séance.',
+    deloadUnavailableHint: 'Aucune série restante ne porte de charge à alléger.',
+    reorderMenuHint: 'Fait apparaître les poignées pour déplacer les exercices.',
     deloadTitle: 'Deload à 80 %',
     deloadBody: 'Les séries restantes passeront à 80 %, arrondies à 2,5 kg.',
     deloadConfirm: 'Appliquer',
@@ -433,6 +441,19 @@ const fr = {
     warmupNoSuggestion: 'Aucune charge d’approche inférieure n’est disponible avec ce pas.',
     warmupInsertError: 'Les séries n’ont pas été insérées. Réessaie.',
     warmupPreviewEmpty: '—',
+    /**
+     * L'échauffement de la dernière fois, reproposé sur la carte de l'exercice
+     * en cours. Il se propose et ne s'impose pas : rien n'est écrit tant qu'on
+     * n'a pas touché « Ajouter », et la ligne disparaît d'elle-même dès la
+     * première série validée — ignorer, c'est simplement commencer.
+     */
+    warmupOfferTitle: 'Ton échauffement de la dernière fois',
+    warmupOfferSeparator: ' · ',
+    warmupOfferStep: '{weight} kg × {reps}',
+    /** La charge de travail a bougé : les paliers suivent, et le disent. */
+    warmupOfferChanged: 'Recalculé pour {weight} kg.',
+    warmupOfferAccept: 'Ajouter',
+    warmupOfferEdit: 'Modifier',
     plates: 'Plaques à charger',
     platesTitle: 'Plaques à charger',
     platesPerSide: 'De chaque côté',
@@ -1818,6 +1839,13 @@ const fr = {
     // à une seule séance est exactement le cas où on relit deux fois.
     restoreConfirmBody:
       'Contenu du fichier — séances : {workouts}, routines : {routines}, exercices : {exercises}, records : {records}. Tout ce que contient l’app aujourd’hui sera remplacé.',
+    // Le fichier a une date : c'est le premier repère quand on hésite entre
+    // deux sauvegardes, avant même les comptes.
+    restoreConfirmFile: 'Fichier du {date} — {rows} lignes.',
+    // Des lignes qui désignent un parent absent du fichier. Elles ne justifient
+    // pas de refuser la seule sauvegarde de quelqu'un, mais se disent avant.
+    restoreConfirmOrphans:
+      '{count} ligne(s) désignent une donnée absente du fichier ; elles seront restaurées telles quelles.',
     restoreConfirmAction: 'Tout remplacer',
     restoreDone: 'Sauvegarde restaurée. L’app se recharge.',
     restoreFailed: 'La restauration a échoué : rien n’a été modifié.',
@@ -1826,7 +1854,44 @@ const fr = {
     restoreErrorNotBackup: 'Ce fichier n’est pas une sauvegarde FitTrack.',
     restoreErrorVersion:
       'Cette sauvegarde vient d’une version plus récente de l’app. Mets l’app à jour avant de la restaurer.',
+    restoreErrorSchema:
+      'Cette sauvegarde vient d’une base plus récente que cette version de l’app. Mets l’app à jour avant de la restaurer.',
     restoreErrorEmpty: 'Cette sauvegarde est vide : rien n’a été remplacé.',
+    /**
+     * Le refus dit **où** ça coince. « Fichier invalide » n'apprend rien et ne
+     * laisse aucun geste possible ; le nom de la table et la ligne permettent au
+     * moins de savoir quelle sauvegarde est en cause, et laquelle essayer.
+     */
+    restoreErrorStructure: 'Sauvegarde inutilisable — {detail}. Rien n’a été remplacé.',
+    restoreErrorStructureMore: '{detail} (et {rest} autre(s) problème(s))',
+    restoreFlawMissingTable: 'la table « {table} » manque',
+    restoreFlawNotAList: 'la table « {table} » n’est pas une liste',
+    restoreFlawNotARecord: '{table}, ligne {line} : ce n’est pas un enregistrement',
+    restoreFlawMissingField: '{table}, ligne {line} : champ « {field} » manquant',
+    restoreFlawInvalidField: '{table}, ligne {line} : champ « {field} » invalide',
+    restoreFlawDuplicateKey: '{table} : deux lignes portent l’identifiant « {key} »',
+    /** Les noms de tables tels qu'un humain les nommerait. */
+    restoreTable: {
+      exercises: 'exercices',
+      externalExerciseBindings: 'correspondances d’exercices importés',
+      routineFolders: 'dossiers de routines',
+      routines: 'routines',
+      routineExercises: 'exercices des routines',
+      routineSets: 'séries des routines',
+      workouts: 'séances',
+      workoutExercises: 'exercices des séances',
+      workoutSets: 'séries des séances',
+      personalRecords: 'records',
+      milestones: 'paliers',
+      coachRecommendations: 'journal du coach',
+      bodyMeasurements: 'mensurations',
+      progressPhotos: 'photos',
+      programs: 'blocs',
+      programWeeks: 'semaines de bloc',
+      programScheduleRevisions: 'plannings de bloc',
+      programScheduleEntries: 'séances planifiées',
+      settings: 'réglages',
+    },
 
     /**
      * Les crédits. Ce n'est pas une politesse : la carte musculaire est une
@@ -2481,8 +2546,13 @@ const fr = {
         detail:
           'Quand « Côté 2 sur 2 » apparaît, fais tes répétitions de l’autre côté. Appuie ensuite sur la coche : les deux côtés sont terminés, la série est enregistrée et le repos peut commencer. Une ligne représente toujours les deux côtés.',
       },
+      openWorkoutMenu: {
+        instruction: 'Ouvre le menu de la séance, en haut à droite.',
+        detail:
+          'Il rassemble ce qu’on ne fait pas à chaque série : alléger la séance, déverrouiller l’ordre des exercices, renommer, écrire une note.',
+      },
       openDeload: {
-        instruction: 'Active le deload à 80 %.',
+        instruction: 'Choisis « Deload à 80 % ».',
         detail:
           'Il ne s’active pas seul : la feuille demande confirmation avant de toucher quoi que ce soit.',
       },
@@ -2494,17 +2564,23 @@ const fr = {
     },
 
     settings: {
-      announcer: { title: 'Régler la voix du guidage' },
+      announcer: { title: 'Choisir le mode de guidage' },
+      echoTune: { title: 'Régler l’écho de la voix' },
       notifications: { title: 'Quand l’app a le droit de parler' },
       mode: {
         instruction: 'Choisis un mode de guidage.',
+        /*
+         * Silence est une réponse, pas un échec. L'ancienne consigne refusait
+         * d'avancer dessus : celui qui venait précisément couper le son restait
+         * bloqué sur une étape qui lui redemandait de le rallumer.
+         */
         detail:
-          'Chaque choix se fait entendre aussitôt. Silence coupe tout, y compris la ligne d’écho juste en dessous : le guide attend un mode qui parle ou qui sonne.',
+          'Les modes sonores se font entendre aussitôt. Silence est un choix comme un autre : la leçon s’arrête là, et le reste de l’app ne change pas.',
       },
       echo: {
         instruction: 'Règle l’écho.',
         detail:
-          'Il donne à la voix le grain d’une annonce de salle. Au casque à six heures du matin, l’éteindre change tout.',
+          'Il donne à la voix le grain d’une annonce de salle. Au casque à six heures du matin, l’éteindre change tout. La ligne n’existe qu’avec un mode qui parle ou qui sonne.',
       },
       reminders: {
         instruction: 'Allume Rappels d’entraînement.',

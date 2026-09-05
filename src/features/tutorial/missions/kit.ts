@@ -66,6 +66,8 @@ export interface TutorialMission {
     | 'requires-history'
     | 'requires-effort-prompt'
     | 'requires-rep-pacing'
+    /** Un mode qui parle ou qui sonne : sans lui, la commande n'est pas rendue. */
+    | 'requires-audible-guidance'
     | 'external';
   steps: readonly TutorialMissionStep[];
   nextMissionId: TutorialMissionId | null;
@@ -100,6 +102,13 @@ export interface TutorialMissionFacts {
    * dans ce mode : elle attendrait un départ que le moteur refuse.
    */
   hasRepPacing: boolean | null;
+  /**
+   * L'application a-t-elle le droit d'émettre quelque chose ?
+   *
+   * Faux en Silence, et c'est tout : la ligne d'écho n'est alors pas rendue, et
+   * une mission qui la désigne attendrait une ancre absente de la page.
+   */
+  hasAudibleGuidance: boolean | null;
 }
 
 /** Une étape que seul un geste métier fait avancer — le cas courant. */
@@ -134,5 +143,6 @@ export function isMissionAvailable(mission: TutorialMission, facts: TutorialMiss
   if (mission.guard === 'requires-rep-pacing') {
     return facts.hasActiveWorkout === true && facts.hasRepPacing === true;
   }
+  if (mission.guard === 'requires-audible-guidance') return facts.hasAudibleGuidance === true;
   return mission.guard === 'always';
 }

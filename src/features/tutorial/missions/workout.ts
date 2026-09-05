@@ -272,6 +272,18 @@ export const WORKOUT_DELOAD: TutorialMission = {
   titleKey: 'tutorial.workout.deload.title',
   guard: 'requires-active-workout',
   steps: [
+    // Le deload a quitté le bandeau pour le menu de séance, sous son libellé.
+    // La consigne suit : elle ne peut pas désigner une entrée qui n'est dans la
+    // page qu'une fois le menu ouvert.
+    {
+      id: 'open-menu',
+      screen: 'workout',
+      reach: 'navigate',
+      targetId: 'workout-menu',
+      instructionKey: 'tutorial.workout.openWorkoutMenu.instruction',
+      detailKey: 'tutorial.workout.openWorkoutMenu.detail',
+      advance: onEvent(eventIs('workout-menu-opened')),
+    },
     {
       id: 'open-deload',
       screen: 'workout',

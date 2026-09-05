@@ -5,7 +5,7 @@ import {
   DEFAULT_WARMUP_INCREMENT_KG,
   DEFAULT_WARMUP_STEPS,
 } from '@/lib/warmup';
-import type { WarmupSetSuggestion } from '@/lib/warmup';
+import type { WarmupSetSuggestion, WarmupStep } from '@/lib/warmup';
 import { Button, NumberInput, Sheet } from '@/ui';
 import { CloseIcon, PlusIcon } from '@/ui/icons';
 import { formatNumber } from '@/ui/numberField';
@@ -20,12 +20,14 @@ interface Props {
   open: boolean;
   onClose: () => void;
   initialTargetWeightKg: number | undefined;
+  /** La montée à rouvrir. Absente, la feuille repart de la rampe par défaut. */
+  initialSteps?: readonly WarmupStep[];
   minimumWeightKg: number;
   onInsert: (suggestions: readonly WarmupSetSuggestion[]) => Promise<void>;
 }
 
-const defaultSteps = (): DraftStep[] =>
-  DEFAULT_WARMUP_STEPS.map((step) => ({
+const draftSteps = (steps: readonly WarmupStep[]): DraftStep[] =>
+  steps.map((step) => ({
     id: crypto.randomUUID(),
     percentage: step.percentage,
     reps: step.reps,
@@ -66,11 +68,15 @@ export function WarmupSheet({
   open,
   onClose,
   initialTargetWeightKg,
+  // Rouvrir la montée d'hier plutôt que la rampe générique, quand l'écran en
+  // connaît une : « modifier » doit partir de ce qui a été proposé, sinon le
+  // premier geste après « modifier » est de tout ressaisir.
+  initialSteps = DEFAULT_WARMUP_STEPS,
   minimumWeightKg,
   onInsert,
 }: Props) {
   const [targetWeightKg, setTargetWeightKg] = useState(initialTargetWeightKg);
-  const [steps, setSteps] = useState(defaultSteps);
+  const [steps, setSteps] = useState(() => draftSteps(initialSteps));
   const [wasOpen, setWasOpen] = useState(open);
   const [submitting, setSubmitting] = useState(false);
   const [writeFailed, setWriteFailed] = useState(false);
@@ -79,7 +85,7 @@ export function WarmupSheet({
     setWasOpen(open);
     if (open) {
       setTargetWeightKg(initialTargetWeightKg);
-      setSteps(defaultSteps());
+      setSteps(draftSteps(initialSteps));
       setWriteFailed(false);
     }
   }

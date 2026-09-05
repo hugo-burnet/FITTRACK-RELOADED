@@ -37,17 +37,35 @@ function readPreferences(): Record<string, string> {
   return preferences;
 }
 
+/**
+ * Replaces this app's preferences, or leaves them exactly as they were.
+ *
+ * `localStorage` has no transaction, and a quota error halfway through would
+ * otherwise leave the app with the old preferences deleted and the new ones
+ * half-written — the one state neither the file nor the phone ever described.
+ * The previous block is held in memory and put back if any write refuses.
+ */
 function writePreferences(preferences: Record<string, string>): void {
-  const stale: string[] = [];
-  for (let index = 0; index < localStorage.length; index += 1) {
-    const key = localStorage.key(index);
-    if (key !== null && key.startsWith(PREFERENCE_PREFIX)) stale.push(key);
-  }
-  for (const key of stale) localStorage.removeItem(key);
-  for (const [key, value] of Object.entries(preferences)) {
-    // Only this app's namespace: a backup must not be a way to write anything
-    // it likes into the browser's storage.
-    if (key.startsWith(PREFERENCE_PREFIX)) localStorage.setItem(key, value);
+  const previous = readPreferences();
+  const stale = Object.keys(previous);
+
+  const clear = () => {
+    for (const key of stale) localStorage.removeItem(key);
+  };
+
+  try {
+    clear();
+    for (const [key, value] of Object.entries(preferences)) {
+      // Only this app's namespace: a backup must not be a way to write anything
+      // it likes into the browser's storage.
+      if (key.startsWith(PREFERENCE_PREFIX)) localStorage.setItem(key, value);
+    }
+  } catch (error) {
+    for (const key of Object.keys(preferences)) {
+      if (key.startsWith(PREFERENCE_PREFIX)) localStorage.removeItem(key);
+    }
+    for (const [key, value] of Object.entries(previous)) localStorage.setItem(key, value);
+    throw error;
   }
 }
 

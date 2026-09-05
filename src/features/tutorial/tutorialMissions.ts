@@ -2,7 +2,7 @@ import { pathForScreen, type TutorialRouteContext } from './tutorialScreens';
 import type { TutorialMissionId, TutorialStateV3 } from './tutorialTypes';
 import { CAMPAIGN_PREPARE, CAMPAIGN_WORKOUT } from './missions/campaign';
 import { HOME_BODY, HOME_WEIGHT } from './missions/home';
-import { ANNOUNCER_TUNE, NOTIFICATION_TUNE } from './missions/settings';
+import { ANNOUNCER_ECHO, ANNOUNCER_TUNE, NOTIFICATION_TUNE } from './missions/settings';
 import {
   WORKOUT_COMPOSE,
   WORKOUT_DELOAD,
@@ -67,6 +67,7 @@ export const P1_MISSIONS: readonly TutorialMission[] = [
   HOME_BODY,
   HOME_WEIGHT,
   ANNOUNCER_TUNE,
+  ANNOUNCER_ECHO,
   NOTIFICATION_TUNE,
   RECOVER,
   ROUTINE_CREATE,

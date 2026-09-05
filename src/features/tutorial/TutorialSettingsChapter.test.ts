@@ -3,26 +3,50 @@ import { advanceMission, startMission } from './tutorialMissionMachine';
 import { contextualMissionsForPath } from './tutorialMissions';
 import { createTutorialState } from './tutorialStore';
 
-const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true };
+const EMPTY_APP = { hasActiveWorkout: false, hasHistory: false, hasEffortPrompt: true, hasRepPacing: true, hasAudibleGuidance: true };
 
 describe('missions des Réglages', () => {
-  it('fait choisir un mode, puis régler l’écho', () => {
+  it('se termine sur le choix d’un mode, quel qu’il soit', () => {
     let state = startMission(createTutorialState(), 'TUT-SET-01');
     state = advanceMission(state, { type: 'announcer-mode-changed', mode: 'voice-only' });
-    state = advanceMission(state, { type: 'announcer-echo-changed', enabled: false });
 
     expect(state.missions['TUT-SET-01']).toBe('completed');
   });
 
   /*
-   * La ligne d'écho n'est rendue que si quelque chose est audible. Accepter le
-   * Silence aurait envoyé l'étape suivante chercher une commande que le choix
-   * précédent venait de retirer de la page.
+   * Le Silence est une réponse. L'étape le refusait pour protéger l'étape
+   * d'écho qui la suivait — et bloquait net celui qui venait couper le son.
    */
-  it('n’accepte pas le Silence, qui retire la commande suivante', () => {
-    const state = startMission(createTutorialState(), 'TUT-SET-01');
+  it('accepte le Silence sans bloquer', () => {
+    let state = startMission(createTutorialState(), 'TUT-SET-01');
+    state = advanceMission(state, { type: 'announcer-mode-changed', mode: 'silence' });
 
-    expect(advanceMission(state, { type: 'announcer-mode-changed', mode: 'silence' })).toBe(state);
+    expect(state.missions['TUT-SET-01']).toBe('completed');
+    expect(state.activeMissionId).toBeNull();
+  });
+
+  it('règle l’écho dans sa propre mission', () => {
+    let state = startMission(createTutorialState(), 'TUT-SET-03');
+    state = advanceMission(state, { type: 'announcer-echo-changed', enabled: false });
+
+    expect(state.missions['TUT-SET-03']).toBe('completed');
+  });
+
+  /*
+   * En Silence, `AnnouncerSettings` ne rend pas la ligne d'écho du tout : la
+   * proposer désignerait une commande absente de la page.
+   */
+  it('ne propose l’écho que si quelque chose est audible', () => {
+    const state = createTutorialState();
+    const offered = (hasAudibleGuidance: boolean) =>
+      contextualMissionsForPath('/settings', state, { ...EMPTY_APP, hasAudibleGuidance }).map(
+        (mission) => mission.id,
+      );
+
+    expect(offered(true)).toContain('TUT-SET-03');
+    expect(offered(false)).not.toContain('TUT-SET-03');
+    // Le choix du mode, lui, reste proposé : c'est lui qui rallume le son.
+    expect(offered(false)).toContain('TUT-SET-01');
   });
 
   it('fait allumer les rappels, puis choisir leurs jours', () => {
@@ -69,11 +93,12 @@ describe('missions des Réglages', () => {
     ).toBe(state);
   });
 
-  it('propose les deux missions sur les Réglages', () => {
+  it('propose les missions des Réglages sur les Réglages', () => {
     const state = createTutorialState();
     const offered = contextualMissionsForPath('/settings', state, EMPTY_APP).map((m) => m.id);
 
     expect(offered).toContain('TUT-SET-01');
     expect(offered).toContain('TUT-SET-02');
+    expect(offered).toContain('TUT-SET-03');
   });
 });

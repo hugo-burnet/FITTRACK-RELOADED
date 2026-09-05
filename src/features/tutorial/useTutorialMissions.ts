@@ -7,6 +7,7 @@ import {
   resumeCampaignForWorkout,
   startCampaign as openCampaign,
   startMission,
+  suspendMission,
 } from './tutorialMissionMachine';
 import {
   isMissionAvailable,
@@ -234,8 +235,10 @@ export function useTutorialMissions(
       return;
     }
     const timer = window.setTimeout(() => {
+      // Mise de côté, et non refusée : c'est le décor qui a changé, pas l'envie.
+      // Elle se reproposera dès que sa garde sera de nouveau satisfaite.
       commit((current) =>
-        current.activeMissionId === activeMission.id ? dismissMission(current) : current,
+        current.activeMissionId === activeMission.id ? suspendMission(current) : current,
       );
     }, 500);
     return () => window.clearTimeout(timer);

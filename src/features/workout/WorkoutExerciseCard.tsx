@@ -33,6 +33,8 @@ import { HoldRail } from './HoldRail';
 import type { SideStage } from './sideProgress';
 import { RepPaceRail } from './RepPaceRail';
 import { RestRail, RestStatus } from './RestRail';
+import { WarmupOfferRow } from './WarmupOfferRow';
+import { warmupOfferFor, type WarmupOffer } from './warmupOffer';
 import { WorkoutSetRow } from './WorkoutSetRow';
 import type { WorkoutFoldCommand } from './workoutFold';
 import { setReading } from './summary';
@@ -132,6 +134,11 @@ type Props = {
   onDeleteSet: (setId: string) => void;
   onRestoreSet: (setId: string) => void;
   onAddSet: () => void;
+  /**
+   * Reprendre l'échauffement de la dernière fois. `insert` l'écrit tel qu'il est
+   * proposé, `edit` ouvre la feuille sur ces mêmes paliers.
+   */
+  onWarmup?: (offer: WarmupOffer, mode: 'insert' | 'edit') => void;
   /** Pending coach objective from a previous session — display only, never pre-fills. */
   coachObjective?: CoachRecommendation;
   onDismissCoach?: () => void;
@@ -169,6 +176,7 @@ export function WorkoutExerciseCard({
   onDeleteSet,
   onRestoreSet,
   onAddSet,
+  onWarmup,
   coachObjective,
   onDismissCoach,
   onApplyCoach,
@@ -182,6 +190,11 @@ export function WorkoutExerciseCard({
   // Le même bouton ouvre une cadence ici et un chrono là : il ne peut pas
   // promettre la même chose dans les deux cas.
   const timed = isTimedMeasurement(identity.measurementType);
+
+  // Sur la seule carte de l'exercice en cours. Six bandeaux au début d'une
+  // séance de six exercices seraient six choses à écarter avant de commencer,
+  // et la proposition deviendrait le bruit qu'elle prétend éviter.
+  const warmupOffer = onWarmup !== undefined && preferred ? warmupOfferFor(line) : null;
 
   const first = superset !== undefined && superset.index === 0;
   const last = superset !== undefined && superset.index === superset.size - 1;
@@ -440,6 +453,14 @@ export function WorkoutExerciseCard({
                   onApply={onApplyCoach}
                 />
               </div>
+            )}
+
+            {warmupOffer !== null && onWarmup !== undefined && (
+              <WarmupOfferRow
+                offer={warmupOffer}
+                onAccept={() => onWarmup(warmupOffer, 'insert')}
+                onEdit={() => onWarmup(warmupOffer, 'edit')}
+              />
             )}
 
             <div className="flex items-center gap-1.5 px-2 pt-2 pb-1">

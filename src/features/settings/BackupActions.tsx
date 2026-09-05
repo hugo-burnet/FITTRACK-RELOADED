@@ -12,13 +12,19 @@ import {
 } from '@/lib/backup';
 import { saveTextFile } from '@/platform/saveFile';
 import { ConfirmSheet, ListRow, SectionTitle } from '@/ui';
+import { backupOrphanMessage, backupStructureMessage } from './backupMessages';
 
+/**
+ * Les refus qui tiennent en une phrase fixe. `invalid-structure` n'y est pas :
+ * son message nomme la table et la ligne, et se compose dans `backupMessages`.
+ */
 const PROBLEM_MESSAGE = {
   'not-json': 'settings.restoreErrorNotJson',
   'not-a-backup': 'settings.restoreErrorNotBackup',
   'unsupported-version': 'settings.restoreErrorVersion',
+  'unsupported-schema': 'settings.restoreErrorSchema',
   empty: 'settings.restoreErrorEmpty',
-} as const satisfies Record<BackupProblem, TranslationKey>;
+} as const satisfies Record<Exclude<BackupProblem, 'invalid-structure'>, TranslationKey>;
 
 type Notice = { text: string; failed: boolean };
 
@@ -50,7 +56,13 @@ export function BackupActions({
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
-  const [pending, setPending] = useState<{ backup: BackupFile; counts: BackupCounts } | null>(null);
+  const [pending, setPending] = useState<{
+    backup: BackupFile;
+    counts: BackupCounts;
+    total: number;
+    /** Déjà rédigé, ou `null` quand le fichier se tient. */
+    orphans: string | null;
+  } | null>(null);
 
   const fail = (key: TranslationKey) => setNotice({ text: t(key), failed: true });
 
@@ -91,10 +103,22 @@ export function BackupActions({
     }
     const parsed = parseBackup(text);
     if (!parsed.ok) {
-      fail(PROBLEM_MESSAGE[parsed.problem]);
+      if (parsed.problem === 'invalid-structure') {
+        setNotice({
+          text: backupStructureMessage(parsed.flaws ?? [], parsed.flawCount ?? 0),
+          failed: true,
+        });
+      } else {
+        fail(PROBLEM_MESSAGE[parsed.problem]);
+      }
       return;
     }
-    setPending({ backup: parsed.backup, counts: parsed.counts });
+    setPending({
+      backup: parsed.backup,
+      counts: parsed.counts,
+      total: parsed.total,
+      orphans: backupOrphanMessage(parsed.orphans),
+    });
     tutorial?.report({ type: 'restore-confirmation-opened' });
   };
 
@@ -166,13 +190,31 @@ export function BackupActions({
         onClose={() => setPending(null)}
         title={t('settings.restoreConfirmTitle')}
         // Numbers, not a generic warning: "tu vas perdre des données" is
-        // something you learn to tap through.
-        body={t('settings.restoreConfirmBody', {
-          workouts: pending?.counts.workouts ?? 0,
-          routines: pending?.counts.routines ?? 0,
-          exercises: pending?.counts.exercises ?? 0,
-          records: pending?.counts.personalRecords ?? 0,
-        })}
+        // something you learn to tap through. La date du fichier vient en
+        // premier — c'est le repère qui départage deux sauvegardes — et ce que
+        // le fichier a de bancal se dit avant la question, pas après.
+        body={[
+          // Un fichier sans date ne s'invente pas un 1er janvier 1970.
+          pending === null || pending.backup.exportedAt <= 0
+            ? ''
+            : t('settings.restoreConfirmFile', {
+                date: new Date(pending.backup.exportedAt).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                }),
+                rows: pending.total,
+              }),
+          t('settings.restoreConfirmBody', {
+            workouts: pending?.counts.workouts ?? 0,
+            routines: pending?.counts.routines ?? 0,
+            exercises: pending?.counts.exercises ?? 0,
+            records: pending?.counts.personalRecords ?? 0,
+          }),
+          pending?.orphans ?? '',
+        ]
+          .filter((line) => line !== '')
+          .join('\n')}
         confirmLabel={t('settings.restoreConfirmAction')}
         danger
         onConfirm={confirm}
