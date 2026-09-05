@@ -186,7 +186,7 @@ export function WorkoutSetRow({
   return (
     <div
       data-tutorial-id={tutorialRank === undefined ? undefined : `workout-${tutorialRank}-set`}
-      className={`relative flex min-h-[3.75rem] items-center gap-1.5 px-2 pb-2
+      className={`relative flex min-h-[3.75rem] flex-wrap items-center gap-1.5 px-2 pb-2
         transition-colors duration-[var(--dur-1)]
         ${done ? 'bg-[var(--surface-2)]' : ''}`}
     >
@@ -287,6 +287,16 @@ export function WorkoutSetRow({
           <CheckIcon width={14} height={14} />
         </span>
       </button>
+      {sideStage !== null && !done && (
+        <p
+          role="status"
+          className={`w-full px-2 pt-1 text-sm font-medium ${turning ? 'text-[var(--accent-ink)]' : 'text-[var(--text-2)]'}`}
+        >
+          {turning
+            ? t('workout.sideTransition', { seconds: remainingSides })
+            : t(sideStage === 'first' ? 'workout.sideFirst' : 'workout.sideSecond')}
+        </p>
+      )}
     </div>
   );
 }

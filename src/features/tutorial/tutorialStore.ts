@@ -22,7 +22,7 @@ const CAMPAIGN_STATUSES: readonly TutorialCampaignStatus[] = [
 export function createTutorialState(): TutorialStateV3 {
   return {
     version: 3,
-    scriptVersion: 2,
+    scriptVersion: 3,
     orientation: null,
     campaign: 'not-started',
     activeMissionId: null,
@@ -61,7 +61,7 @@ function isTutorialState(value: unknown): value is TutorialStateV3 {
   }
   return (
     state.version === 3 &&
-    state.scriptVersion === 2 &&
+    (state.scriptVersion === 2 || state.scriptVersion === 3) &&
     (state.orientation === null ||
       state.orientation === 'completed' ||
       state.orientation === 'skipped') &&
@@ -126,7 +126,16 @@ export function loadTutorialState(): TutorialStateV3 {
     const raw = localStorage.getItem(TUTORIAL_STORAGE_KEY);
     if (raw !== null) {
       const parsed: unknown = JSON.parse(raw);
-      if (isTutorialState(parsed)) return { ...createTutorialState(), ...parsed };
+      if (isTutorialState(parsed))
+        return {
+          ...createTutorialState(),
+          ...parsed,
+          scriptVersion: 3,
+          activeStepIndex:
+            parsed.scriptVersion === 2 && parsed.activeMissionId === 'TUT-WRK-11'
+              ? Math.min(1, Math.max(0, parsed.activeStepIndex - 2))
+              : parsed.activeStepIndex,
+        };
       return createTutorialState();
     }
   } catch {

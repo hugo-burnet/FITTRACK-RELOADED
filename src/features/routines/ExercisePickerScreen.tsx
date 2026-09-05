@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ExerciseFormScreen } from '@/features/exercises/ExerciseFormScreen';
+import { SelectionReview } from '@/features/exercises/SelectionReview';
 import { useParams } from 'react-router-dom';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
@@ -28,6 +30,7 @@ export function ExercisePickerScreen() {
 
   const [query, setQuery] = useState<BrowserQuery>({ search: '' });
   const [selected, setSelected] = useState<string[]>([]);
+  const [creating, setCreating] = useState<string | null>(null);
   /*
    * Le slug de chaque exercice retenu, appris au moment du choix.
    *
@@ -57,6 +60,18 @@ export function ExercisePickerScreen() {
     });
   };
 
+  if (creating !== null)
+    return (
+      <ExerciseFormScreen
+        initialName={creating}
+        onCancel={() => setCreating(null)}
+        onCreated={(exercise) => {
+          setSelected((current) => [...current, exercise.id]);
+          setCreating(null);
+        }}
+      />
+    );
+
   return (
     <Screen
       title={t('picker.title')}
@@ -77,7 +92,9 @@ export function ExercisePickerScreen() {
         ) : undefined
       }
     >
+      <SelectionReview ids={selected} onRemove={toggle} />
       <ExerciseBrowser
+        onCreate={setCreating}
         query={query}
         onQueryChange={(next) => {
           setQuery(next);

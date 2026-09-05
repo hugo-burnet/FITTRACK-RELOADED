@@ -5,7 +5,13 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
 import { createCustomExercise, getExercise, updateExercise } from '@/data/repositories/exercises';
 import { EQUIPMENT, MEASUREMENT_TYPES, MOVEMENT_PATTERNS, MUSCLE_GROUPS } from '@/data/types';
-import type { Equipment, MeasurementType, MovementPattern, MuscleGroup } from '@/data/types';
+import type {
+  Equipment,
+  Exercise,
+  MeasurementType,
+  MovementPattern,
+  MuscleGroup,
+} from '@/data/types';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import {
@@ -113,9 +119,18 @@ function PickerRow({
   );
 }
 
-export function ExerciseFormScreen() {
+export function ExerciseFormScreen({
+  initialName,
+  onCreated,
+  onCancel,
+}: {
+  initialName?: string;
+  onCreated?: (exercise: Exercise) => void;
+  onCancel?: () => void;
+} = {}) {
   const tutorial = useTutorialControls();
-  const { id } = useParams();
+  const { id: routeId } = useParams();
+  const id = onCreated === undefined ? routeId : undefined;
   const navigate = useAppNavigate();
   const [params] = useSearchParams();
   const [picker, setPicker] = useState<Field | null>(null);
@@ -130,7 +145,7 @@ export function ExerciseFormScreen() {
   // there, the name is already typed.
   const [draft, setDraft] = useState<Draft>(() => ({
     ...BLANK,
-    name: params.get('name') ?? '',
+    name: initialName ?? params.get('name') ?? '',
   }));
   const [loadedId, setLoadedId] = useState<string | null>(null);
 
@@ -156,7 +171,8 @@ export function ExerciseFormScreen() {
     draft.bodyweightLoadFactor === undefined
       ? undefined
       : factorToPercent(draft.bodyweightLoadFactor);
-  const factorInvalid = factorPercent !== undefined && !isValidBodyweightFactorPercent(factorPercent);
+  const factorInvalid =
+    factorPercent !== undefined && !isValidBodyweightFactorPercent(factorPercent);
 
   /**
    * The primary muscle is never also a secondary one. Filtered here rather than
@@ -223,6 +239,10 @@ export function ExerciseFormScreen() {
         // terminer une mission de création sur un exercice que Dexie aurait pu
         // refuser d'écrire.
         tutorial?.report({ type: 'exercise-created', exerciseId: created.id });
+        if (onCreated !== undefined) {
+          onCreated(created);
+          return;
+        }
         // `replace`: going back from the new exercise returns to the library, not
         // to a form that would create a second copy.
         void navigate(`/exercises/${created.id}`, { replace: true });
@@ -233,7 +253,7 @@ export function ExerciseFormScreen() {
   return (
     <Screen
       title={editing ? t('exerciseForm.editTitle') : t('exerciseForm.createTitle')}
-      onBack={() => void navigate(-1)}
+      onBack={onCancel ?? (() => void navigate(-1))}
     >
       <div className="flex flex-col gap-6">
         <Card padded>
@@ -422,10 +442,7 @@ export function ExerciseFormScreen() {
         open={picker === 'movement'}
         onClose={() => setPicker(null)}
         title={t('exerciseForm.movementPatternLabel')}
-        options={[
-          { value: '', label: t('exerciseForm.movementPatternNone') },
-          ...MOVEMENT_OPTIONS,
-        ]}
+        options={[{ value: '', label: t('exerciseForm.movementPatternNone') }, ...MOVEMENT_OPTIONS]}
         value={draft.movementPattern ?? ''}
         onSelect={(value) =>
           setDraft({ ...draft, movementPattern: value === '' ? undefined : value })

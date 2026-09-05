@@ -57,7 +57,6 @@ export function HomeScreen() {
             le sujet de l'écran. Le reste du temps elle ne rend rien du tout, et
             l'ordre documenté plus haut est intact. Comme le corps, elle lit ses
             propres tables et ne dépend pas du tableau de bord. */}
-        <HomeMilestoneCard />
 
         {state.status === 'loading' && (
           // Deux blocs de la hauteur de ce qu'ils remplacent — la carte du jour
@@ -100,6 +99,7 @@ export function HomeScreen() {
             que le reste charge et y compris si la lecture échoue. Il ne dessine
             rien du tout quand rien n'a été travaillé sur douze semaines, et il
             emporte alors ses trois liens avec lui. */}
+        <HomeMilestoneCard />
         <HomeBodyCard />
 
         {state.status === 'ready' && (

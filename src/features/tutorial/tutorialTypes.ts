@@ -64,7 +64,7 @@ export type TutorialMissionStatus = 'completed' | 'dismissed';
 
 export interface TutorialStateV3 {
   version: 3;
-  scriptVersion: 2;
+  scriptVersion: 2 | 3;
   orientation: TutorialCompletion | null;
   campaign: TutorialCampaignStatus;
   activeMissionId: TutorialMissionId | null;

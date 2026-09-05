@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -18,6 +18,7 @@ import {
 } from '@/data/repositories/workouts';
 import { announce } from '@/audio/announce';
 import { nativeNotifications } from '@/platform/nativeNotifications';
+import { useRestTimer } from '@/stores/restTimer';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
 import { partReading, unitLabel } from '@/i18n/labels';
@@ -54,6 +55,9 @@ export function WorkoutFinishScreen() {
   const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
   const [confirming, setConfirming] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const savingRef = useRef(false);
 
   const active = useLiveQuery(async () => (await getActiveWorkout()) ?? null);
   const detail = useLiveQuery(
@@ -139,13 +143,16 @@ export function WorkoutFinishScreen() {
     0,
   );
   const save = () => {
-    // Said on the tap, not after the write: the announcement belongs to the
-    // gesture that ended the session, and the screen is gone a beat later.
-    announce('workout-finished');
+    if (validated === 0 || savingRef.current) return;
+    savingRef.current = true;
+    setSaving(true);
+    setSaveFailed(false);
     void finishWorkout(workout.id)
       // The coach is never a gate. The session is already saved; a failed
       // evaluation must not strand you on this screen with nowhere to go.
       .then(() => {
+        useRestTimer.getState().stop();
+        announce('workout-finished');
         tutorial?.report({ type: 'workout-saved', workoutId: workout.id });
         return finalizeCoachForWorkout(workout.id).catch(() => undefined);
       })
@@ -163,20 +170,39 @@ export function WorkoutFinishScreen() {
         }
       })
       .then(() => navigate('/', { replace: true }))
-      .catch(() => undefined);
+      .catch(() => setSaveFailed(true))
+      .finally(() => {
+        savingRef.current = false;
+        setSaving(false);
+      });
   };
 
   const discard = () => {
-    void discardWorkout(workout.id).then(() => navigate('/', { replace: true }));
+    void discardWorkout(workout.id).then(() => {
+      useRestTimer.getState().stop();
+      return navigate('/', { replace: true });
+    });
   };
 
   return (
     <Screen
       title={t('finish.title')}
       onBack={() => void navigate(-1)}
-      footer={<ActionBand label={t('finish.save')} tutorialId="workout-save" onClick={save} />}
+      footer={
+        <ActionBand
+          label={t(saving ? 'finish.saving' : 'finish.save')}
+          disabled={saving || validated === 0}
+          tutorialId="workout-save"
+          onClick={save}
+        />
+      }
     >
       <div className="flex flex-col gap-6">
+        {saveFailed && (
+          <p role="alert" className="text-sm text-[var(--danger-ink)]">
+            {t('finish.saveFailed')}
+          </p>
+        )}
         <Card padded>
           <div className="flex items-start gap-2">
             {/* Toujours en marche : la séance n'est close qu'au moment où on
@@ -201,16 +227,6 @@ export function WorkoutFinishScreen() {
             </p>
           )}
         </Card>
-
-        {/* Nothing to draw before the first set is recorded — and nothing to
-            draw either for a session made entirely of exercises with no region.
-            `balanceHighlight` returning an empty object is the test, so the two
-            cases need no special handling here. */}
-        {Object.keys(sessionHighlight).length > 0 && (
-          <Card padded>
-            <MuscleMap highlight={sessionHighlight} />
-          </Card>
-        )}
 
         {coachSignals !== undefined && coachSignals.length > 0 && (
           <section>
@@ -255,7 +271,8 @@ export function WorkoutFinishScreen() {
                 .filter(({ done }) => done.length > 0)
                 .map(({ line, done }) => {
                   const best = done.at(-1);
-                  const type = line.exercise?.measurementType ?? 'weight_reps';
+                  const identity = workoutExerciseIdentityOf(line);
+                  const type = identity.measurementType ?? 'weight_reps';
                   const reading =
                     best === undefined
                       ? ''
@@ -264,20 +281,33 @@ export function WorkoutFinishScreen() {
                   return (
                     <div
                       key={line.row.id}
-                      className="flex min-h-14 items-center gap-3 border-b border-[var(--border)]
+                      className="flex min-h-14 flex-col items-start gap-1 border-b border-[var(--border)]
                         px-4 py-2 last:border-b-0"
                     >
                       <span className="min-w-0 flex-1 truncate text-base text-[var(--text-1)]">
-                        {line.exercise?.name ?? t('workout.deletedExercise')}
+                        {identity.name ?? t('workout.deletedExercise')}
                       </span>
                       <span className="shrink-0 text-right text-sm text-[var(--text-2)]">
-                        {done.length} × {reading}
+                        {t('finish.setSummary', { count: done.length, reading })}
                       </span>
                     </div>
                   );
                 })}
             </Card>
           </div>
+        )}
+
+        {/* Nothing to draw before the first set is recorded — and nothing to
+            draw either for a session made entirely of exercises with no region.
+            `balanceHighlight` returning an empty object is the test, so the two
+            cases need no special handling here. */}
+        {Object.keys(sessionHighlight).length > 0 && (
+          <details className="rounded-2xl bg-[var(--surface-1)] p-4">
+            <summary className="min-h-12 cursor-pointer py-3 font-medium">
+              {t('finish.muscleDetails')}
+            </summary>
+            <MuscleMap highlight={sessionHighlight} />
+          </details>
         )}
 
         <Textarea

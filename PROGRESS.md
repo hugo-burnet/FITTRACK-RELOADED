@@ -3,9 +3,31 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-08-31 (**paliers première séance et premières DOMS**).
+**Dernière mise à jour :** 2026-09-05 (**fluidité de séance et guidage**).
 
-## Archives
+## Fluidité de séance et guidage (2026-09-05)
+
+- Échauffement : références précédentes appariées indépendamment des séries de travail ; décharge cohérente avec cette règle. Aucun échauffement historique proposé comme charge de travail.
+- Séance : exercice à faire déplié, suivants compacts et librement ouvrables ; fin de séance secondaire avant la dernière validation. Indications visibles côté 1, changement de côté et côté 2, même sans cadence. Repos restauré à son échéance après rechargement, effacé à la sauvegarde/à l'abandon.
+- Fiabilité : repos et annonce de validation après écriture réussie, erreur affichée en cas de refus IndexedDB ; sauvegarde finale protégée du double appui et interdite sans série validée.
+- Bilan : résumé explicitement basé sur la dernière série, nom/type issus du snapshot ; carte musculaire dépliable après le détail.
+- Première ouverture : avertissement vocal avant tout son du tutoriel ; choix visite vocale, silencieuse ou Passer. Passer ouvre directement l'app en silence. Campagne à la demande dans l'aide ; narration interdite aussi en Sons uniquement. Tutoriel des deux côtés indépendant du démarrage d'un chrono, progression existante migrée vers le script 3.
+- Exercices : état vide avec filtres corrigé ; création depuis le sélecteur sans perdre les choix ; liste ordonnée de sélection avec retrait.
+- UI : libellés plus lisibles, séparation cible/valeur dans les champs, même famille orange en clair, titre Progression cohérent, célébrations après la proposition de séance. Fermeture des feuilles robuste sans événement de transition et retrait immédiat de l'arbre d'accessibilité.
+- Vérification finale : 2 511 tests passent dans 238 fichiers ; typecheck et build réussis, lint sans erreur (avertissement Fast Refresh préexistant dans Boot.tsx). Groupes ciblés séance/tutoriel et import/reprise/bilan/migration également vérifiés.
+- Reste du backlog d'audit : validation structurelle des sauvegardes avant restauration, automatisation volontaire des échauffements récurrents, simplification plus poussée des commandes expertes et du tutoriel des réglages. Ces éléments ne sont pas présentés comme livrés.
+- Checkpoint téléphone : première ouverture sans surprise sonore ; séance unilatérale sans son, changement de côté lisible ; kill pendant repos ; séance suivante après échauffement ; créer une variante depuis la sélection puis revenir ; vérifier bilan et thème clair. Pas de nouvel essai navigateur/APK, conformément à la préférence utilisateur.
+
+## Revue code et UX (2026-09-05)
+
+- Audit sans modification du code applicatif : `docs/audits/2026-09-05-code-ux-review.md`.
+- Complément demandé : appariement par position mélangeant échauffements précédents et séries de travail, choix vocal trop tardif, visibilité des deux côtés sans cadence et adéquation des tutoriels. Constats source, sans nouvelle visualisation ni correctif.
+- Approfondissement qualité UI : priorité visuelle de Terminer, densité de séance, commandes expertes, bilan mobile, taille des libellés, continuité des thèmes et vocabulaire. Recommandations ajoutées au même audit, sans refonte appliquée.
+- Priorités : erreurs d'écriture silencieuses et validation insuffisante des sauvegardes ; bilan de séries hétérogènes trompeur ; faux état vide avec filtres ; friction tutoriel et ajout d'exercices.
+- Typecheck/build réussis ; lint sans erreur (un avertissement). Suite complète interrompue sans bilan après blocage apparent, deux échecs de séance signalés. Vérification ciblée indépendante : 118/119, échec cadence reproduit seul. Aucun commit effectué, suite non verte.
+- Checkpoint téléphone : reprendre une séance après kill pendant repos, vérifier le bilan de deux séries différentes, tester recherche + filtre contradictoire et sortie réelle du tutoriel. APK et mode avion restent à vérifier.
+
+## Archives de progression
 
 | Fichier | Contenu |
 | --- | --- |

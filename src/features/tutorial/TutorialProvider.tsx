@@ -24,7 +24,6 @@ import {
   FULL_TUTORIAL,
   spotlightSelector,
   TUTORIAL_TOPIC_LABEL_KEYS,
-  TUTORIAL_VOICE_CHOICE_CLIP,
   tutorialTopicForPath,
   type TutorialStep,
 } from './tutorialScript';
@@ -140,12 +139,6 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     return stopTutorialNarration;
   }, [index, phase, steps]);
 
-  useEffect(() => {
-    if (phase !== 'voice-choice') return;
-    void playTutorialNarration(TUTORIAL_VOICE_CHOICE_CLIP, () => undefined);
-    return stopTutorialNarration;
-  }, [phase]);
-
   const startFull = () => {
     primeAnnouncer();
     setSteps(FULL_TUTORIAL);
@@ -174,10 +167,16 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   const chooseAudio = (mode: AnnouncerMode) => {
     stopTutorialNarration();
     applyAnnouncerMode(mode);
-    const firstRun = missions.state.orientation === null;
     missions.setOrientation(completion);
-    setPhase(firstRun ? 'campaign' : 'idle');
+    setPhase('idle');
     navigate('/', { replace: true });
+  };
+
+  const dismissWelcome = () => {
+    stopTutorialNarration();
+    applyAnnouncerMode('silence');
+    missions.setOrientation('skipped');
+    setPhase('idle');
   };
 
   const controls = useMemo<TutorialControls>(
@@ -201,18 +200,36 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
 
       <Sheet
         open={phase === 'prompt'}
-        onClose={() => showVoiceChoice('skipped')}
-        title={t('tutorial.tourLabel')}
+        onClose={dismissWelcome}
+        title={t('tutorial.audioWelcomeTitle')}
       >
         <p className="text-base leading-relaxed text-[var(--text-1)]">{t('tutorial.promptBody')}</p>
         <p className="mt-3 text-sm leading-relaxed text-[var(--text-2)]">
           {t('tutorial.promptReplay')}
         </p>
         <div className="mt-6 flex flex-col gap-2">
-          <Button variant="primary" size="lg" fullWidth onClick={startFull}>
-            {t('tutorial.start')}
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={() => {
+              applyAnnouncerMode('voice');
+              startFull();
+            }}
+          >
+            {t('tutorial.startWithVoice')}
           </Button>
-          <Button variant="ghost" size="lg" fullWidth onClick={() => showVoiceChoice('skipped')}>
+          <Button
+            size="lg"
+            fullWidth
+            onClick={() => {
+              applyAnnouncerMode('silence');
+              startFull();
+            }}
+          >
+            {t('tutorial.startWithoutVoice')}
+          </Button>
+          <Button variant="ghost" size="lg" fullWidth onClick={dismissWelcome}>
             {t('tutorial.skip')}
           </Button>
         </div>
@@ -223,6 +240,10 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         onClose={() => setPhase('idle')}
         title={t('tutorial.helpTitle')}
         actions={[
+          {
+            label: t('tutorial.campaign.title'),
+            onSelect: () => setPhase('campaign'),
+          },
           /*
            * Toutes, et non les trois premières. Le plafond était une garde
            * contre une feuille trop longue, mais `contextualMissionsForPath`
@@ -258,7 +279,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
         title={t('tutorial.voiceChoiceTitle')}
       >
         <p className="text-sm leading-relaxed text-[var(--text-2)]">
-          {textOf(TUTORIAL_VOICE_CHOICE_CLIP)}
+          {t('tutorial.audioChoiceBody')}
         </p>
         <div className="mt-5 overflow-hidden rounded-2xl bg-[var(--surface-2)]">
           {AUDIO_OPTIONS.map(({ mode, labelKey, hintKey }) => (

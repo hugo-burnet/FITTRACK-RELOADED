@@ -29,7 +29,7 @@ export async function playTutorialNarration(clip: string, onEnded: () => void): 
   // `Silence` means the app makes no sound, and this clip is a sound: the
   // overlay then falls back to its reading time, with the transcript carrying
   // the chapter. Announcements are filtered in `planCue`; this path is not.
-  if (loadAnnouncerMode() === 'silence') return false;
+  if (loadAnnouncerMode() === 'silence' || loadAnnouncerMode() === 'sounds') return false;
   const ownRequest = request;
   primeAnnouncer();
   const bus = audioBus();

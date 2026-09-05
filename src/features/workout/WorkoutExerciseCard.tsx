@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react';
+import { matchPreviousSets } from '@/lib/previousSets';
 import {
   workoutExerciseIdentityOf,
   type WorkoutExerciseDetail,
@@ -102,6 +103,7 @@ export type CardEffort = {
 type Props = {
   line: WorkoutExerciseDetail;
   tutorial?: boolean;
+  preferred?: boolean;
   superset?: SupersetPlace;
   rest: CardRest | null;
   /** The metronome running on this card's next set, if any. */
@@ -145,6 +147,7 @@ const WIDTH = { first: '4.75rem', second: '3.5rem' } as const;
 export function WorkoutExerciseCard({
   line,
   tutorial = false,
+  preferred = true,
   superset,
   rest,
   pace,
@@ -171,6 +174,7 @@ export function WorkoutExerciseCard({
   onApplyCoach,
 }: Props) {
   const { row, exercise, sets, previous } = line;
+  const matchedPrevious = matchPreviousSets(sets, previous);
   const identity = workoutExerciseIdentityOf(line);
   const name = identity.name ?? t('workout.deletedExercise');
   const columns = entryColumns(identity.measurementType);
@@ -185,7 +189,12 @@ export function WorkoutExerciseCard({
   const allDone = sets.length > 0 && sets.every((set) => set.isCompleted === 1);
 
   // Convergent render-time adjustment prevents one stale expanded frame.
-  const [expanded, setExpanded] = useState(!allDone);
+  const [expanded, setExpanded] = useState(!allDone && preferred);
+  const [wasPreferred, setWasPreferred] = useState(preferred);
+  if (preferred !== wasPreferred) {
+    setWasPreferred(preferred);
+    if (preferred && !allDone) setExpanded(true);
+  }
   const [wasAllDone, setWasAllDone] = useState(allDone);
   const [seenFoldVersion, setSeenFoldVersion] = useState(foldCommand.version);
   if (foldCommand.version !== seenFoldVersion) {
@@ -198,7 +207,14 @@ export function WorkoutExerciseCard({
   }
 
   const lastSet = sets.length > 0 ? sets[sets.length - 1] : undefined;
-  const doneReading = lastSet !== undefined ? setReading(lastSet, columns) : '';
+  const doneReading = !allDone
+    ? t('workout.exerciseProgress', {
+        done: sets.filter((set) => set.isCompleted === 1).length,
+        total: sets.length,
+      })
+    : lastSet !== undefined
+      ? setReading(lastSet, columns)
+      : '';
 
   // Preserve record feedback when completing a set folds the card.
   const hasRecord = sets.some((set) => records.has(set.id));
@@ -468,7 +484,7 @@ export function WorkoutExerciseCard({
                       set={set}
                       number={index + 1}
                       columns={columns}
-                      previous={previous[index]}
+                      previous={matchedPrevious[index]}
                       tutorialRank={
                         tutorial && index < 2 ? (index === 0 ? 'first' : 'second') : undefined
                       }

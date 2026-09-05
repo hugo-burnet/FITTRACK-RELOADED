@@ -467,7 +467,7 @@ describe('WorkoutScreen — tutoriel durable', () => {
     );
   });
 
-  it('starts rest immediately but reports completion only after the durable write', async () => {
+  it('starts rest and reports completion only after the durable write', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);
     await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
@@ -484,13 +484,11 @@ describe('WorkoutScreen — tutoriel durable', () => {
     await waitFor(() => expect(complete).toBeEnabled());
     await userEvent.click(complete);
 
-    expect(useRestTimer.getState().setId).toBe(set.id);
+    expect(useRestTimer.getState().setId).toBeNull();
     expect(report).not.toHaveBeenCalledWith(
       expect.objectContaining({ type: 'workout-set-completed' }),
     );
-    await waitFor(() =>
-      expect(document.querySelectorAll('[data-tutorial-id="workout-rest"]')).toHaveLength(1),
-    );
+    expect(document.querySelectorAll('[data-tutorial-id="workout-rest"]')).toHaveLength(0);
 
     gate.resolve();
     await waitFor(() =>
@@ -501,9 +499,10 @@ describe('WorkoutScreen — tutoriel durable', () => {
       }),
     );
     expect(await firstSet(workoutId)).toMatchObject({ isCompleted: 1 });
+    expect(useRestTimer.getState().setId).toBe(set.id);
   });
 
-  it('emits no completion event when completeSet rejects while preserving immediate rest', async () => {
+  it('reports a write error without starting rest or reporting completion', async () => {
     const workoutId = await seedTwoSetWorkout();
     const set = await firstSet(workoutId);
     await db.workoutSets.update(set.id, { weight: 80, reps: 10 });
@@ -518,7 +517,8 @@ describe('WorkoutScreen — tutoriel durable', () => {
     await userEvent.click(complete);
     await waitFor(() => expect(workoutsRepository.completeSet).toHaveBeenCalledOnce());
 
-    expect(useRestTimer.getState().setId).toBe(set.id);
+    expect(useRestTimer.getState().setId).toBeNull();
+    expect(await screen.findByRole('alert')).toHaveTextContent('Enregistrement impossible');
     expect(report).not.toHaveBeenCalledWith(
       expect.objectContaining({ type: 'workout-set-completed' }),
     );
@@ -835,10 +835,12 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await user.click(completeFirst);
     await waitFor(() => expect(useRestTimer.getState().setId).toBe(firstExerciseSet.id));
 
-    const nextCard = screen.getByRole('button', {
-      name: /Tirage horizontal/,
-      expanded: true,
-    }).parentElement?.parentElement;
+    const nextCard = (
+      await screen.findByRole('button', {
+        name: /Tirage horizontal/,
+        expanded: true,
+      })
+    ).parentElement?.parentElement;
     if (nextCard === null || nextCard === undefined) throw new Error('carte suivante absente');
     await user.type(within(nextCard).getByRole('textbox', { name: 'Série 1 — reps' }), '12');
     expect(useRepPacer.getState().setId).toBeNull();
@@ -893,6 +895,7 @@ describe('WorkoutScreen — effort et fatigue', () => {
     await screen.findByText('Développé couché');
     await user.type(screen.getByRole('textbox', { name: 'Série 1 — reps' }), '8');
     await user.click(screen.getByRole('button', { name: 'Valider la série 1' }));
+    await waitFor(() => expect(useRestTimer.getState().setId).toBe(first.id));
     act(() => useRestTimer.getState().start(first.id, 0.05));
 
     await waitFor(() => expect(useRestTimer.getState().setId).toBeNull());
@@ -1202,7 +1205,7 @@ describe('WorkoutScreen — exercice unilatéral', () => {
     expect(useRestTimer.getState().setId).toBeNull();
     expect(screen.queryByRole('group', { name: t('workout.effortQuestion') })).toBeNull();
     // Le relevé le dit, y compris en Silence.
-    expect(await screen.findByText(/Changement de côté ·/)).toBeInTheDocument();
+    expect(await screen.findByRole('status')).toHaveTextContent('Changement de côté');
     // Même série : changer de côté ne crée pas de ligne.
     expect(useHoldTimer.getState().setId).toBe(setId);
 

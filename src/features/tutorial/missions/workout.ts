@@ -238,24 +238,6 @@ export const WORKOUT_HOLD_SIDES: TutorialMission = {
   guard: 'requires-active-workout',
   steps: [
     {
-      id: 'open-hold',
-      screen: 'workout',
-      reach: 'navigate',
-      targetId: 'workout-pace',
-      instructionKey: 'tutorial.workout.openHold.instruction',
-      detailKey: 'tutorial.workout.openHold.detail',
-      advance: onEvent(eventIs('pace-sheet-opened')),
-    },
-    {
-      id: 'start-hold',
-      screen: 'workout',
-      reach: 'navigate',
-      targetId: 'workout-hold-start',
-      instructionKey: 'tutorial.workout.startHold.instruction',
-      detailKey: 'tutorial.workout.startHold.detail',
-      advance: onEvent(eventIs('hold-started')),
-    },
-    {
       id: 'first-side',
       screen: 'workout',
       reach: 'navigate',

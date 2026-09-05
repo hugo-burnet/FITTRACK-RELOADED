@@ -77,20 +77,16 @@ describe('TutorialProvider', () => {
     useRestTimer.getState().stop();
   });
 
-  it('propose la visite au premier lancement puis conserve le choix audio', async () => {
+  it('warns before audio and skipping enters the app silently without another modal', async () => {
     const user = userEvent.setup();
     renderTutorial();
-
-    expect(await screen.findByRole('dialog', { name: 'Visite guidée' })).toBeVisible();
+    expect(await screen.findByRole('dialog', { name: 'Avant le premier son' })).toBeVisible();
+    expect(playTutorialNarrationMock).not.toHaveBeenCalled();
     await user.click(screen.getByRole('button', { name: 'Passer' }));
-    expect(await screen.findByRole('dialog', { name: 'Guidage vocal' })).toBeVisible();
-
-    await user.click(screen.getByRole('button', { name: /Sons uniquement/ }));
-    expect(JSON.parse(localStorage.getItem(TUTORIAL_STORAGE_KEY) ?? '{}')).toMatchObject({
-      version: 3,
-      orientation: 'skipped',
-    });
-    expect(localStorage.getItem(ANNOUNCER_STORAGE_KEY)).toBe('sounds');
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(playTutorialNarrationMock).not.toHaveBeenCalled();
+    expect(loadTutorialState().orientation).toBe('skipped');
+    expect(localStorage.getItem(ANNOUNCER_STORAGE_KEY)).toBe('silence');
   });
 
   it('ouvre depuis le point d’interrogation le tutoriel de la page courante', async () => {
@@ -164,12 +160,13 @@ describe('TutorialProvider', () => {
     expect(screen.getByText('Environ vingt secondes.')).toBeVisible();
   });
 
-  it('propose la campagne, et rien d’autre, après le premier choix audio', async () => {
+  it('propose la campagne uniquement à la demande dans l’aide', async () => {
     const user = userEvent.setup();
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
-    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(await screen.findByRole('button', { name: 'Ma première séance guidée' }));
 
     expect(await screen.findByRole('dialog', { name: 'Ma première séance guidée' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Commencer la découverte' })).toBeVisible();
@@ -181,7 +178,8 @@ describe('TutorialProvider', () => {
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
-    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(await screen.findByRole('button', { name: 'Ma première séance guidée' }));
     const startChoice = await screen.findByRole('button', { name: 'Commencer la découverte' });
     await waitFor(() => expect(startChoice).toBeEnabled());
     await user.click(startChoice);
@@ -197,7 +195,8 @@ describe('TutorialProvider', () => {
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
-    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(await screen.findByRole('button', { name: 'Ma première séance guidée' }));
     await user.click(await screen.findByRole('button', { name: 'Plus tard' }));
 
     expect(loadTutorialState()).toMatchObject({
@@ -213,7 +212,8 @@ describe('TutorialProvider', () => {
       renderTutorial('/', true);
 
       await user.click(await screen.findByRole('button', { name: 'Passer' }));
-      await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+      await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+      await user.click(await screen.findByRole('button', { name: 'Ma première séance guidée' }));
       const startChoice = await screen.findByRole('button', { name: 'Commencer la découverte' });
       await waitFor(() => expect(startChoice).toBeEnabled());
       storageSpy.mockClear();
@@ -248,7 +248,8 @@ describe('TutorialProvider', () => {
       renderTutorial();
 
       await user.click(await screen.findByRole('button', { name: 'Passer' }));
-      await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+      await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+      await user.click(await screen.findByRole('button', { name: 'Ma première séance guidée' }));
       const invite = await screen.findByRole('dialog', {
         name: 'Ma première séance guidée',
       });
@@ -469,7 +470,8 @@ describe('TutorialProvider', () => {
     renderTutorial();
 
     await user.click(await screen.findByRole('button', { name: 'Passer' }));
-    await user.click(await screen.findByRole('button', { name: /Sons uniquement/ }));
+    await user.click(screen.getByRole('button', { name: 'Aide sur cette page' }));
+    await user.click(await screen.findByRole('button', { name: 'Ma première séance guidée' }));
     const invite = await screen.findByRole('dialog', {
       name: 'Ma première séance guidée',
     });

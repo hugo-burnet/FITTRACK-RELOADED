@@ -102,7 +102,7 @@ describe('ActiveWorkoutRecoverySheet', () => {
 
     rerender(<ActiveWorkoutRecoverySheet {...base} open={false} />);
     const confirmDialog = screen
-      .getByRole('button', { name: 'Confirmer l’abandon' })
+      .getByRole('button', { name: 'Confirmer l’abandon', hidden: true })
       .closest('[role="dialog"]');
     expect(confirmDialog).toHaveStyle({ transform: 'translateY(100%)' });
     rerender(<ActiveWorkoutRecoverySheet {...base} open />);

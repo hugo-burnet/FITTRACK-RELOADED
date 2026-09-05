@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { matchPreviousSets } from '@/lib/previousSets';
 import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import {
@@ -92,12 +93,13 @@ export function WorkoutScreen() {
    * la première carte soit à l'écran.
    */
   const plans = restPlans((detail?.exercises ?? EMPTY_LINES).map(({ row }) => row));
-  const { onWrite, onComplete, onUncomplete, onAddSet, onPaceFinished } = useWorkoutSetActions({
-    workoutId,
-    plans,
-    pace,
-    setEffortSetId,
-  });
+  const { onWrite, onComplete, onUncomplete, onAddSet, onPaceFinished, writeFailed } =
+    useWorkoutSetActions({
+      workoutId,
+      plans,
+      pace,
+      setEffortSetId,
+    });
 
   if (active === null) {
     return (
@@ -124,7 +126,9 @@ export function WorkoutScreen() {
         line.sets.some(
           (set, index) =>
             set.isCompleted === 0 &&
-            (set.weight ?? set.targetWeight ?? line.previous[index]?.weight) !== undefined,
+            (set.weight ??
+              set.targetWeight ??
+              matchPreviousSets(line.sets, line.previous)[index]?.weight) !== undefined,
         )
       );
     })(),
@@ -162,38 +166,49 @@ export function WorkoutScreen() {
         </div>
       }
       sub={
-        exercises.length > 0 ? (
-          <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
-            <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
-              {workoutProgressLine(completedSets, totalSets)}
+        <>
+          {writeFailed && (
+            <p role="alert" className="px-4 py-3 text-sm text-[var(--danger-ink)]">
+              {t('workout.writeFailed')}
             </p>
-            <Toggle
-              label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
-              mark={t('workout.deloadMark')}
-              checked={deloadActive}
-              disabled={deloadActive || !canDeload}
-              tutorialId="workout-deload"
-              onChange={() => {
-                setSheet({ kind: 'deload' });
-                tutorial?.report({ type: 'deload-sheet-opened', workoutId: workout.id });
-              }}
-            />
-            <OrderLockButton unlocked={reorderUnlocked} onToggle={() => toggleReorder('workout')} />
-            <button
-              type="button"
-              aria-label={t(willExpandAll ? 'workout.expandAll' : 'workout.collapseAll')}
-              onClick={() => setFoldCommand(nextWorkoutFoldCommand)}
-              className="flex size-12 shrink-0 items-center justify-center text-[var(--text-2)]
+          )}
+          {exercises.length > 0 ? (
+            <div className="flex min-h-12 items-center border-b border-[var(--border)] pl-4">
+              <p className="label-xs min-w-0 flex-1 truncate font-semibold text-[var(--text-2)]">
+                {workoutProgressLine(completedSets, totalSets)}
+              </p>
+              <Toggle
+                label={t(deloadActive ? 'workout.deloadActive' : 'workout.deloadAction')}
+                mark={t('workout.deloadMark')}
+                checked={deloadActive}
+                disabled={deloadActive || !canDeload}
+                tutorialId="workout-deload"
+                onChange={() => {
+                  setSheet({ kind: 'deload' });
+                  tutorial?.report({ type: 'deload-sheet-opened', workoutId: workout.id });
+                }}
+              />
+              <OrderLockButton
+                unlocked={reorderUnlocked}
+                onToggle={() => toggleReorder('workout')}
+              />
+              <button
+                type="button"
+                aria-label={t(willExpandAll ? 'workout.expandAll' : 'workout.collapseAll')}
+                onClick={() => setFoldCommand(nextWorkoutFoldCommand)}
+                className="flex size-12 shrink-0 items-center justify-center text-[var(--text-2)]
                 transition-colors duration-[var(--dur-1)] active:bg-[var(--surface-2)]"
-            >
-              {willExpandAll ? <ExpandAllIcon /> : <CollapseAllIcon />}
-            </button>
-          </div>
-        ) : undefined
+              >
+                {willExpandAll ? <ExpandAllIcon /> : <CollapseAllIcon />}
+              </button>
+            </div>
+          ) : null}
+        </>
       }
       footer={
         <ActionBand
           label={t('workout.finish')}
+          tone={completedSets > 0 && completedSets === totalSets ? 'accent' : 'quiet'}
           tutorialId="workout-finish"
           onClick={() => {
             tutorial?.report({ type: 'workout-finish-opened', workoutId: workout.id });
@@ -237,6 +252,11 @@ export function WorkoutScreen() {
                 return (
                   <WorkoutExerciseCard
                     line={line}
+                    preferred={
+                      line.row.id ===
+                      exercises.find((item) => item.sets.some((set) => set.isCompleted === 0))?.row
+                        .id
+                    }
                     tutorial={index === 0}
                     superset={places.get(line.row.id)}
                     pace={
@@ -368,7 +388,9 @@ export function WorkoutScreen() {
                       setSheet({ kind: 'set', setId: set.id, number });
                       tutorial?.report({ type: 'workout-set-menu-opened', setId: set.id });
                     }}
-                    onWrite={(setId, values, recordable) => onWrite(line, setId, values, recordable)}
+                    onWrite={(setId, values, recordable) =>
+                      onWrite(line, setId, values, recordable)
+                    }
                     onComplete={(setId, values, set) => onComplete(line, setId, values, set)}
                     onUncomplete={onUncomplete}
                     onDeleteSet={(setId) => void deleteSet(setId)}

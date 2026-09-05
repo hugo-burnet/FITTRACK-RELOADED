@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import { useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   completeFirstSide,
   completeSet,
@@ -57,6 +57,8 @@ export function useWorkoutSetActions({
   const rest = useRestTimer();
   const stopRest = useRestTimer((state) => state.stop);
   const hold = useHoldTimer();
+  const [writeFailed, setWriteFailed] = useState(false);
+  const completing = useRef(new Set<string>());
 
   /** Le stade de cette série, ou `null` si elle n'est pas unilatérale. */
   const stageOf = (line: WorkoutExerciseDetail, set: WorkoutSet) =>
@@ -76,6 +78,7 @@ export function useWorkoutSetActions({
    * qu'une.
    */
   const finishFirstSide = (line: WorkoutExerciseDetail, setId: string): void => {
+    setWriteFailed(false);
     void completeFirstSide(setId)
       .then((result) => {
         if (result.kind !== 'started') return;
@@ -83,7 +86,7 @@ export function useWorkoutSetActions({
         tutorial?.report({ type: 'workout-side-turned', setId });
         pace.startSecondSide(line, setId, result.startsAt);
       })
-      .catch(() => undefined);
+      .catch(() => setWriteFailed(true));
   };
 
   // Warm-ups, supersets, and chained drop sets do not trigger a rest.
@@ -110,6 +113,7 @@ export function useWorkoutSetActions({
     recordable: boolean,
   ): void => {
     if (workoutId === undefined) return;
+    setWriteFailed(false);
     void updateSetValues(setId, values)
       .then(() => {
         tutorial?.report({
@@ -119,7 +123,7 @@ export function useWorkoutSetActions({
           recordable,
         });
       })
-      .catch(() => undefined);
+      .catch(() => setWriteFailed(true));
     pace.armFromTypedReps(line, setId, values.reps);
   };
 
@@ -150,23 +154,23 @@ export function useWorkoutSetActions({
     // tourne, la saisie manuelle des secondes n'a plus lieu d'être.
     const held = hold.setId === setId ? heldSecondsAt(hold.startedAt, Date.now()) : undefined;
     const written = held === undefined ? values : { ...values, durationSeconds: held };
+    if (completing.current.has(setId)) return;
+    completing.current.add(setId);
+    setWriteFailed(false);
     void completeSet(setId, written)
       .then(() => {
         tutorial?.report({ type: 'workout-set-completed', workoutId, setId });
+        pace.stop(setId);
+        startRest(line, setId, set.setType);
+        announce(setValidationCue(line.sets, setId));
+        setEffortSetId(set.setType !== 'warmup' && loadEffortPrompt() ? setId : null);
       })
-      .catch(() => undefined);
-    // The metronome or the chronometer owned this set; it is over.
-    pace.stop(setId);
-    startRest(line, setId, set.setType);
-    announce(setValidationCue(line.sets, setId));
-    // A warm-up is not an effort to report, and one strip at a time: the
-    // previous question dies with the set that replaces it rather than stacking
-    // up down the card.
-    setEffortSetId(set.setType !== 'warmup' && loadEffortPrompt() ? setId : null);
+      .catch(() => setWriteFailed(true))
+      .finally(() => completing.current.delete(setId));
   };
 
   const onUncomplete = (setId: string): void => {
-    void uncompleteSet(setId);
+    void uncompleteSet(setId).catch(() => setWriteFailed(true));
     setEffortSetId((current) => (current === setId ? null : current));
     // Only stop the rest owned by this set.
     stopRest(setId);
@@ -175,7 +179,7 @@ export function useWorkoutSetActions({
   const onAddSet = (rowId: string): void => {
     void duplicateLastSet(rowId)
       .then(() => tutorial?.report({ type: 'workout-set-added', rowId }))
-      .catch(() => undefined);
+      .catch(() => setWriteFailed(true));
   };
 
   /**
@@ -193,5 +197,5 @@ export function useWorkoutSetActions({
     pace.stop();
   };
 
-  return { onWrite, onComplete, onUncomplete, onAddSet, onPaceFinished };
+  return { onWrite, onComplete, onUncomplete, onAddSet, onPaceFinished, writeFailed };
 }

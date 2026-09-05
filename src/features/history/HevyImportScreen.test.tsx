@@ -1,5 +1,4 @@
 import {
-  fireEvent,
   render,
   screen,
   waitFor,
@@ -222,7 +221,7 @@ describe('HevyImportScreen — parcours CSV réel', () => {
       );
     }
 
-    fireEvent.transitionEnd(screen.getByRole('dialog'));
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(screen.getAllByText('Confirmé')).toHaveLength(25);
     await user.click(screen.getByRole('button', { name: 'Continuer' }));
     await screen.findByRole('heading', { name: 'Vérifier l’import' });

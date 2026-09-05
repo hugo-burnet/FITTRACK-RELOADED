@@ -36,10 +36,17 @@ export function Sheet({ open, onClose, title, children }: Props) {
 
   // One frame after mounting so the browser has a "down" position to animate from.
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || !open) return;
     const frame = requestAnimationFrame(() => setRaised(true));
     return () => cancelAnimationFrame(frame);
-  }, [mounted]);
+  }, [mounted, open]);
+
+  // Transition events can be skipped by reduced motion or a background tab.
+  useEffect(() => {
+    if (open || !mounted) return;
+    const timer = setTimeout(() => setMounted(false), 250);
+    return () => clearTimeout(timer);
+  }, [open, mounted]);
 
   /**
    * Focus moves into the dialog **once, when it opens** — and never again.
@@ -90,7 +97,11 @@ export function Sheet({ open, onClose, title, children }: Props) {
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex flex-col justify-end">
+    <div
+      aria-hidden={!open}
+      inert={!open}
+      className={`fixed inset-0 z-50 flex flex-col justify-end ${!open ? 'pointer-events-none' : ''}`}
+    >
       <button
         type="button"
         aria-label={t('common.close')}

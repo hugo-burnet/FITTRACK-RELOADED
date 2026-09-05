@@ -357,9 +357,12 @@ const fr = {
     complete: 'Valider la série {number}',
     completeFirstSide: 'Premier côté terminé — série {number}',
     completeSecondSide: 'Second côté — valider la série {number}',
-    sideFirst: 'Premier côté en cours',
+    writeFailed:
+      'Enregistrement impossible. Garde cette séance ouverte, vérifie les valeurs et réessaie de saisir ou valider la série.',
+    exerciseProgress: '{done} sur {total} séries validées',
+    sideFirst: 'Côté 1 sur 2 · Valide après ce côté',
     sideTransition: 'Changement de côté · {seconds}',
-    sideSecond: 'Second côté en cours',
+    sideSecond: 'Côté 2 sur 2 · Valide pour terminer la série',
     uncomplete: 'Annuler la série {number}',
     previous: 'Précédent',
     noPrevious: '—',
@@ -496,7 +499,13 @@ const fr = {
     discardConfirm: 'Abandonner',
     tonnageHint:
       'Charge externe et poids du corps effectif estimé. Assistance soustraite, échauffements exclus.',
-    nothingDone: 'Aucune série validée. Rien ne sera enregistré.',
+    nothingDone:
+      'Aucune série validée. Reviens à la séance pour en compléter une, ou abandonne cette séance vide.',
+    saving: 'Enregistrement…',
+    muscleDetails: 'Voir les muscles travaillés',
+    saveFailed:
+      'La séance n’a pas pu être enregistrée. Elle reste ouverte. Réessaie avec « Enregistrer la séance ».',
+    setSummary: '{count} série(s) · dernière : {reading}',
     coachSection: 'Coach',
   },
 
@@ -1129,6 +1138,10 @@ const fr = {
   },
 
   picker: {
+    selection: 'Sélection ({count}) · voir l’ordre',
+    loadingSelection: 'Chargement…',
+    remove: 'Retirer',
+    removeNamed: 'Retirer {name} de la sélection',
     title: 'Ajouter des exercices',
     add: 'Ajouter {count} exercices',
     addOne: 'Ajouter 1 exercice',
@@ -1976,7 +1989,7 @@ const fr = {
    * chiffre est une courbe qu'on croit sur parole.
    */
   analytics: {
-    title: 'Analyses',
+    title: 'Progression',
     action: 'Analyses',
     /** L'entrée depuis la fiche exercice. */
     exerciseLink: 'Voir la progression',
@@ -2268,7 +2281,12 @@ const fr = {
     finish: 'Terminer',
     start: 'Commencer',
     promptBody:
-      'Découvrez l’essentiel de FitTrack en moins de deux minutes trente. La visite utilise la voix uniquement pendant la présentation.',
+      'FitTrack peut te parler pour guider ta séance. Choisis avant le premier son : une visite avec voix, une visite à lire, ou un accès direct et silencieux à l’app.',
+    audioWelcomeTitle: 'Avant le premier son',
+    startWithVoice: 'Découvrir avec la voix',
+    startWithoutVoice: 'Découvrir sans son',
+    audioChoiceBody:
+      'Choisis le guidage pour tes séances. Le mode sans voix conserve les indications visuelles. Ce choix reste modifiable dans les réglages.',
     promptReplay:
       'Vous pourrez la relancer à tout moment avec le point d’interrogation dans l’en-tête.',
     explainPage: 'Expliquer cette page · {topic}',
@@ -2375,7 +2393,7 @@ const fr = {
       plates: { title: 'Ce qu’il faut mettre sur la barre' },
       warmup: { title: 'Monter en charge avant la série' },
       pace: { title: 'Lancer et arrêter la cadence' },
-      holdSides: { title: 'Un maintien, deux côtés' },
+      holdSides: { title: 'Deux côtés, une série' },
       deload: { title: 'Alléger une séance qui ne passe pas' },
       addSet: {
         instruction: 'Ajoute une série au pied de la carte.',
@@ -2456,12 +2474,12 @@ const fr = {
       firstSide: {
         instruction: 'Premier côté fini : appuie sur la coche.',
         detail:
-          'Elle ferme le côté, pas la série. Rien n’est enregistré, aucun repos ne démarre, et dix secondes courent pour changer de côté.',
+          'Sur un exercice unilatéral, saisis les répétitions d’un côté, puis fais ce côté. La coche mémorise le premier côté et affiche dix secondes pour changer de côté. Le repos entre séries ne démarre pas encore. Ces indications restent visibles sans voix ni cadence.',
       },
       secondSide: {
-        instruction: 'Le décompte fini, la même coche ferme la série.',
+        instruction: 'Fais le second côté, puis valide la série.',
         detail:
-          'Une ligne représente les deux côtés : une saisie, une validation, un enregistrement. Verrouiller l’écran entre les deux ne perd rien.',
+          'Quand « Côté 2 sur 2 » apparaît, fais tes répétitions de l’autre côté. Appuie ensuite sur la coche : les deux côtés sont terminés, la série est enregistrée et le repos peut commencer. Une ligne représente toujours les deux côtés.',
       },
       openDeload: {
         instruction: 'Active le deload à 80 %.',

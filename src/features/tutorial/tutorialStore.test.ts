@@ -45,7 +45,7 @@ describe('tutorialStore v3', () => {
 
     expect(loadTutorialState()).toEqual({
       version: 3,
-      scriptVersion: 2,
+      scriptVersion: 3,
       orientation: 'completed',
       campaign: 'not-started',
       activeMissionId: null,
@@ -127,6 +127,24 @@ describe('tutorialStore v3', () => {
     saveTutorialState(state);
     expect(loadTutorialState()).toEqual(state);
     expect(localStorage.getItem(TUTORIAL_STORAGE_KEY)).toContain('TUT-ROU-03');
+  });
+
+  it('migrates an ongoing second side lesson without restarting completed missions', () => {
+    saveTutorialState({
+      ...createTutorialState(),
+      scriptVersion: 2,
+      activeMissionId: 'TUT-WRK-11',
+      activeStepIndex: 3,
+      missions: { 'TUT-ROU-02': 'completed' },
+    });
+    const migrated = loadTutorialState();
+    expect(migrated).toMatchObject({
+      scriptVersion: 3,
+      activeStepIndex: 1,
+      missions: { 'TUT-ROU-02': 'completed' },
+    });
+    saveTutorialState(migrated);
+    expect(loadTutorialState()).toEqual(migrated);
   });
 
   it('complète une progression v3 écrite avant qu’un champ existe', () => {

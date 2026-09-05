@@ -64,13 +64,7 @@ const EQUIPMENT_OPTIONS: Option<EquipmentFilter>[] = [
  * required: two lists that must find "developpe" without an accent are one list
  * with two callers.
  */
-export function ExerciseBrowser({
-  query,
-  onQueryChange,
-  onPick,
-  selectedIds,
-  onCreate,
-}: Props) {
+export function ExerciseBrowser({ query, onQueryChange, onPick, selectedIds, onCreate }: Props) {
   const [picker, setPicker] = useState<'muscle' | 'equipment' | null>(null);
 
   const { search, muscle, equipment } = query;
@@ -210,7 +204,7 @@ function EmptyResult({
   onClearSearch: () => void;
   onClearFilters: () => void;
 }) {
-  if (search !== '') {
+  if (search !== '' && !filtered) {
     return (
       <EmptyState
         title={t('exercises.noMatchTitle')}

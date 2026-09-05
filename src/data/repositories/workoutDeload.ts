@@ -1,13 +1,10 @@
 import { db } from '@/data/db';
 import type { Workout, WorkoutSet } from '@/data/types';
-import {
-  calculateDeloadWeight,
-  DELOAD_PERCENT,
-  isDeloadEligibleMeasurement,
-} from '@/lib/deload';
+import { calculateDeloadWeight, DELOAD_PERCENT, isDeloadEligibleMeasurement } from '@/lib/deload';
 import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
 import { alive, touch } from './base';
 import { getLastPerformance } from './workoutHistory';
+import { matchPreviousSets } from '@/lib/previousSets';
 
 const byOrder = (left: WorkoutSet, right: WorkoutSet): number => left.order - right.order;
 
@@ -27,10 +24,7 @@ function appendNote(notes: string | undefined, note: string): string | undefined
   return existing === '' ? addition : `${notes}\n\n${addition}`;
 }
 
-export async function applyWorkoutDeload(
-  workoutId: string,
-  note: string,
-): Promise<Workout | null> {
+export async function applyWorkoutDeload(workoutId: string, note: string): Promise<Workout | null> {
   return db.transaction(
     'rw',
     db.workouts,
@@ -48,9 +42,7 @@ export async function applyWorkoutDeload(
         return null;
       }
 
-      const rows = alive(
-        await db.workoutExercises.where('workoutId').equals(workoutId).toArray(),
-      );
+      const rows = alive(await db.workoutExercises.where('workoutId').equals(workoutId).toArray());
       const found = await db.exercises.bulkGet([...new Set(rows.map((row) => row.exerciseId))]);
       const library = new Map(
         found.flatMap((exercise) =>
@@ -79,20 +71,20 @@ export async function applyWorkoutDeload(
       const exerciseIds = [...new Set(live.map((set) => set.exerciseId))];
       const previous = new Map(
         await Promise.all(
-          exerciseIds.map(async (exerciseId) => [
-            exerciseId,
-            await getLastPerformance(exerciseId, workoutId),
-          ] as const),
+          exerciseIds.map(
+            async (exerciseId) =>
+              [exerciseId, await getLastPerformance(exerciseId, workoutId)] as const,
+          ),
         ),
       );
 
       const changed: WorkoutSet[] = [];
       for (const sets of blocks.values()) {
         sets.sort(byOrder);
+        const matched = matchPreviousSets(sets, previous.get(sets[0]!.exerciseId) ?? []);
         sets.forEach((set, index) => {
           if (set.isCompleted === 1) return;
-          const source =
-            set.weight ?? set.targetWeight ?? previous.get(set.exerciseId)?.[index]?.weight;
+          const source = set.weight ?? set.targetWeight ?? matched[index]?.weight;
           if (source === undefined) return;
           const reduced = calculateDeloadWeight(source);
           changed.push(

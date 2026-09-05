@@ -60,6 +60,35 @@ function deferred<T>() {
 }
 
 describe('WorkoutFinishScreen', () => {
+  it('does not save an empty workout', async () => {
+    const workout = await startWorkout('', 'Empty');
+    renderFinishScreen();
+    const save = await screen.findByRole('button', { name: 'Enregistrer la séance' });
+    expect(save).toBeDisabled();
+    await userEvent.click(save);
+    expect((await db.workouts.get(workout.id))?.status).toBe('active');
+  });
+
+  it('identifies the last set without pretending heterogeneous sets were identical', async () => {
+    const exercise = await createCustomExercise({
+      name: 'Pyramide',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const workout = await startWorkout('', 'Pyramide');
+    const row = await addWorkoutExercise(workout.id, exercise.id);
+    const first = await addSet(row.id);
+    const second = await addSet(row.id);
+    await completeSet(first.id, { weight: 20, reps: 8 });
+    await completeSet(second.id, { weight: 30, reps: 6 });
+    renderFinishScreen();
+    expect(await screen.findByText('2 série(s) · dernière : 6 reps · 30 kg')).toBeVisible();
+    expect(screen.getByText('340 kg')).toBeVisible();
+  });
+
   beforeEach(async () => {
     speakWorkoutRecapMock.mockReset();
     forgetWorkoutRecaps();
@@ -70,6 +99,17 @@ describe('WorkoutFinishScreen', () => {
 
   it('reports workout-saved only after completion is durable and exposes the save anchor', async () => {
     const workout = await startWorkout('', 'Séance sûre');
+    const exercise = await createCustomExercise({
+      name: 'Audit',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const row = await addWorkoutExercise(workout.id, exercise.id);
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 20, reps: 8 });
     const gate = deferred<void>();
     const realFinish = workoutsRepository.finishWorkout;
     vi.spyOn(workoutsRepository, 'finishWorkout').mockImplementation(async (workoutId) => {
@@ -81,7 +121,7 @@ describe('WorkoutFinishScreen', () => {
 
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
 
-    await screen.findByText('Aucune série validée. Rien ne sera enregistré.');
+    await screen.findByText('Enregistrer la séance');
     const saveAnchors = document.querySelectorAll('[data-tutorial-id="workout-save"]');
     expect(saveAnchors).toHaveLength(1);
     await userEvent.click(saveAnchors[0] as HTMLButtonElement);
@@ -98,6 +138,17 @@ describe('WorkoutFinishScreen', () => {
 
   it('never reports workout-saved when finishWorkout rejects', async () => {
     const workout = await startWorkout('', 'Séance en erreur');
+    const exercise = await createCustomExercise({
+      name: 'Audit',
+      primaryMuscle: 'chest',
+      secondaryMuscles: [],
+      equipment: 'barbell',
+      measurementType: 'weight_reps',
+      isUnilateral: 0,
+    });
+    const row = await addWorkoutExercise(workout.id, exercise.id);
+    const set = await addSet(row.id);
+    await completeSet(set.id, { weight: 20, reps: 8 });
     const finish = vi
       .spyOn(workoutsRepository, 'finishWorkout')
       .mockRejectedValueOnce(new Error('IndexedDB unavailable'));
@@ -116,6 +167,7 @@ describe('WorkoutFinishScreen', () => {
     expect((await db.workouts.get(workout.id))?.status).toBe('active');
     expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout/finish');
     expect(screen.queryByText('Destination accueil')).not.toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('n’a pas pu être enregistrée');
   });
 
   it('never reports workout-saved from the explicit discard path', async () => {

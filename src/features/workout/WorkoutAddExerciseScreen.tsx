@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ExerciseFormScreen } from '@/features/exercises/ExerciseFormScreen';
+import { SelectionReview } from '@/features/exercises/SelectionReview';
 import { useAppNavigate } from '@/app/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Screen } from '@/app/Screen';
@@ -22,6 +24,7 @@ export function WorkoutAddExerciseScreen() {
 
   const [query, setQuery] = useState<BrowserQuery>({ search: '' });
   const [selected, setSelected] = useState<string[]>([]);
+  const [creating, setCreating] = useState<string | null>(null);
 
   const toggle = (exerciseId: string) =>
     setSelected((current) =>
@@ -38,6 +41,18 @@ export function WorkoutAddExerciseScreen() {
     for (const exerciseId of selected) await addWorkoutExercise(active.id, exerciseId);
     void navigate(-1);
   };
+
+  if (creating !== null)
+    return (
+      <ExerciseFormScreen
+        initialName={creating}
+        onCancel={() => setCreating(null)}
+        onCreated={(exercise) => {
+          setSelected((current) => [...current, exercise.id]);
+          setCreating(null);
+        }}
+      />
+    );
 
   return (
     <Screen
@@ -56,7 +71,9 @@ export function WorkoutAddExerciseScreen() {
         ) : undefined
       }
     >
+      <SelectionReview ids={selected} onRemove={toggle} />
       <ExerciseBrowser
+        onCreate={setCreating}
         query={query}
         onQueryChange={setQuery}
         onPick={(exercise) => toggle(exercise.id)}

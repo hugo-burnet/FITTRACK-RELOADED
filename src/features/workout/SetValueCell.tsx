@@ -64,9 +64,9 @@ export function SetValueCell({ value, ghost, target, onChange, width, integer, .
           }
         }}
         onFocus={(event) => event.target.select()}
-        className="metric min-h-12 w-full rounded-lg bg-transparent text-center text-lg
+        className={`metric min-h-12 w-full rounded-lg bg-transparent text-center text-lg
           font-semibold text-[var(--text-1)] outline-none placeholder:font-normal
-          placeholder:text-[var(--text-2)]"
+          placeholder:text-[var(--text-2)] ${target !== undefined ? 'pt-4 pb-1' : ''}`}
         {...aria}
       />
     </label>

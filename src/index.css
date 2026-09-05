@@ -127,16 +127,16 @@
   --text-2: #5c675e; /* 5,9:1 on a card, 5,2:1 on --surface-2 */
   --text-3: #8e998f;
 
-  --accent-fill: #15803d;
-  --accent-fill-pressed: #166534;
-  --accent-on-fill: #ffffff; /* 5,0:1 on the fill */
+  --accent-fill: #b54708;
+  --accent-fill-pressed: #93370d;
+  --accent-on-fill: #ffffff;
 
   /* The fill misses text contrast on light surfaces; use the darker ink. */
-  --accent-ink: #166534; /* 7,1:1 on a card, 6,3:1 on --surface-2 */
+  --accent-ink: #93370d;
 
-  --accent-soft: #dcfce7;
+  --accent-soft: #ffedd5;
 
-  --accent-data: #4d9c72; /* 3,3:1 on a card, 3,1:1 on the page, 2,1:1 vs the ink */
+  --accent-data: #b96b35;
 
   --axis: #869087; /* 3,3:1 on a card, 3,1:1 on the page */
 
@@ -164,9 +164,9 @@
 
 /* Small labels must use --text-2, never the low-contrast --text-3. */
 @utility label-xs {
-  font-size: 0.6875rem;
-  line-height: 1;
-  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 

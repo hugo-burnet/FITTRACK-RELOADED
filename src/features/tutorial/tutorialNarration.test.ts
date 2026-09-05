@@ -15,6 +15,12 @@ import { playTutorialNarration } from './tutorialNarration';
  * appelant ne vérifie le mode à sa place.
  */
 describe('playTutorialNarration', () => {
+  it('does not speak in sounds-only mode', async () => {
+    applyAnnouncerMode('sounds');
+    await expect(playTutorialNarration('mission-activation-1', () => undefined)).resolves.toBe(
+      false,
+    );
+  });
   afterEach(() => {
     applyAnnouncerMode('voice');
     localStorage.removeItem(ANNOUNCER_STORAGE_KEY);
