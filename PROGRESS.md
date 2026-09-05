@@ -7,6 +7,7 @@
 
 ## Fluidité de séance et guidage (2026-09-05)
 
+- Publication : version 2.5.0 préparée sur master ; push et tag v2.5.0 pour publication PWA et génération de l’APK signé par GitHub Actions. Validation fonctionnelle : 2 511 tests réussis avant le changement de numéro de version.
 - Échauffement : références précédentes appariées indépendamment des séries de travail ; décharge cohérente avec cette règle. Aucun échauffement historique proposé comme charge de travail.
 - Séance : exercice à faire déplié, suivants compacts et librement ouvrables ; fin de séance secondaire avant la dernière validation. Indications visibles côté 1, changement de côté et côté 2, même sans cadence. Repos restauré à son échéance après rechargement, effacé à la sauvegarde/à l'abandon.
 - Fiabilité : repos et annonce de validation après écriture réussie, erreur affichée en cas de refus IndexedDB ; sauvegarde finale protégée du double appui et interdite sans série validée.
