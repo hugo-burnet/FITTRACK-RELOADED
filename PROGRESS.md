@@ -7,7 +7,7 @@
 
 ## Sauvegardes validées, échauffements reproposés, commandes regroupées (2026-09-06)
 
-- Publication : tag v2.5.1 pour la livraison principale, puis v2.5.2 pour le durcissement qui suit — un correctif poussé après un tag laisse la PWA devant l’APK, et c’est ce décalage que la seconde version referme. Publication PWA et APK signé par GitHub Actions. Validation avant changement de numéro : 2 557 tests réussis dans 241 fichiers, typecheck, build et lint verts.
+- Publication : trois tags dans la journée — v2.5.1 pour la livraison principale, v2.5.2 pour le durcissement de la validation, v2.5.3 pour les trois correctifs venus d’une revue Codex. Un correctif poussé après un tag laisse la PWA devant l’APK ; chaque tag referme ce décalage. Validation avant le dernier changement de numéro : 2 564 tests réussis dans 242 fichiers, typecheck, build et lint verts.
 - **Import de sauvegarde.** Nouveau `src/lib/backup/validate.ts` : format, version de
   fichier, version de schéma, structure complète et références sont vérifiés **avant**
   toute écriture. Une table malformée, une ligne qui n'est pas un enregistrement, un champ
@@ -49,7 +49,18 @@
   explicitement exempté du plancher, parce qu'il est négatif à l'ouest de Greenwich. La
   distinction entre lien de propriété et pointeur de contexte est consignée sur `links` :
   les deux sont comptés, aucun ne refuse le fichier. `schema.ts` a été retiré.
-- **Vérification.** `typecheck`, 2 557 tests dans 241 fichiers, `build` et `lint` (le seul
+- **Trois correctifs d’une revue externe (Codex).** *Décharge des petites charges* : l’arrondi
+  au pas de 2,5 kg retournait l’intention en bas de l’échelle — 2 kg devenaient 2,5, un
+  allègement qui alourdit, et 5 kg restaient 5. Sous le pas, la réduction exacte est gardée et
+  le libellé le dit. *Référence incompatible* : une traction assistée passée en répétitions
+  seules ramenait les kilos d’**assistance** de la séance précédente comme charge **ajoutée**
+  proposée, validable d’un doigt ; `getLastPerformance` reçoit le type de mesure de la ligne
+  et refuse une référence qui ne le partage pas. *Restauration à moitié faite* : les
+  préférences passent dans la transaction Dexie, et les deux sens sont couverts —
+  `localStorage` refuse et la base ne bouge pas, la base avorte et les préférences
+  reviennent. Les quatre tests livrés en un seul fichier fourre-tout ont été répartis dans
+  leurs modules.
+- **Vérification.** `typecheck`, 2 564 tests dans 242 fichiers, `build` et `lint` (le seul
   avertissement restant est le Fast Refresh préexistant de `Boot.tsx`). Aucun essai
   navigateur ni APK.
 - **Checkpoint téléphone.** Restaurer une vraie sauvegarde, puis une tronquée à la main
