@@ -82,6 +82,19 @@ type Check = (value: unknown) => boolean;
 const isString: Check = (value) => typeof value === 'string';
 const isId: Check = (value) => typeof value === 'string' && value.length > 0;
 const isNumber: Check = (value) => typeof value === 'number' && Number.isFinite(value);
+/**
+ * Un instant, une durée, un compte : jamais négatif.
+ *
+ * `isNumber` seul acceptait `performedAt: -1` et `reps: -3`, que rien en aval ne
+ * relit avec méfiance — un `deletedAt` négatif fait passer une ligne effacée pour
+ * vivante, et une série à −3 répétitions entre au tonnage. Le décalage horaire de
+ * la séance, lui, garde `isNumber` : il est négatif à l'ouest de Greenwich, et
+ * un plancher à zéro y refuserait la moitié du monde.
+ */
+const isStamp: Check = (value) => isNumber(value) && (value as number) >= 0;
+const isCount = isStamp;
+/** Un rang ou un index : entier, et positif. */
+const isRank: Check = (value) => typeof value === 'number' && Number.isInteger(value) && value >= 0;
 const isFlag: Check = (value) => value === 0 || value === 1;
 const isList: Check = (value) => Array.isArray(value);
 
@@ -146,16 +159,26 @@ interface TableSpec {
   key: string;
   required: Record<string, Check>;
   optional?: Record<string, Check>;
-  /** Champs qui désignent une ligne d'une autre table. `''` = pas de parent. */
+  /**
+   * Champs qui désignent une ligne d'une autre table. `''` = pas de parent.
+   *
+   * Deux natures s'y mêlent, et c'est voulu. Il y a la **propriété** — une série
+   * sans sa ligne d'exercice n'a aucun sens — et il y a le **pointeur de
+   * contexte** : `exerciseId`, le `routineId` d'une séance, le `workoutId` d'un
+   * record. Le second se casse légitimement quand on supprime une routine, et
+   * exiger qu'il résolve ferait refuser des sauvegardes parfaitement honnêtes.
+   * Les deux sont donc comptés, aucun ne refuse le fichier : c'est le
+   * récapitulatif qui les dit, et l'utilisateur qui tranche.
+   */
   links?: readonly { field: string; table: BackupTable }[];
 }
 
 /** `id`, `createdAt`, `updatedAt`, `deletedAt` — le contrat de `Syncable`. */
 const SYNCABLE: Record<string, Check> = {
   id: isId,
-  createdAt: isNumber,
-  updatedAt: isNumber,
-  deletedAt: isNumber,
+  createdAt: isStamp,
+  updatedAt: isStamp,
+  deletedAt: isStamp,
 };
 
 const SPECS: Record<BackupTable, TableSpec> = {
@@ -195,12 +218,12 @@ const SPECS: Record<BackupTable, TableSpec> = {
   routineFolders: {
     since: 1,
     key: 'id',
-    required: { ...SYNCABLE, name: isString, order: isNumber },
+    required: { ...SYNCABLE, name: isString, order: isRank },
   },
   routines: {
     since: 1,
     key: 'id',
-    required: { ...SYNCABLE, name: isString, folderId: isString, order: isNumber },
+    required: { ...SYNCABLE, name: isString, folderId: isString, order: isRank },
     links: [{ field: 'folderId', table: 'routineFolders' }],
   },
   routineExercises: {
@@ -210,9 +233,9 @@ const SPECS: Record<BackupTable, TableSpec> = {
       ...SYNCABLE,
       routineId: isId,
       exerciseId: isId,
-      order: isNumber,
-      supersetGroup: isNumber,
-      restSeconds: isNumber,
+      order: isRank,
+      supersetGroup: isRank,
+      restSeconds: isCount,
     },
     links: [
       { field: 'routineId', table: 'routines' },
@@ -225,7 +248,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
     required: {
       ...SYNCABLE,
       routineExerciseId: isId,
-      order: isNumber,
+      order: isRank,
       setType: oneOf(SET_TYPES),
     },
     links: [{ field: 'routineExerciseId', table: 'routineExercises' }],
@@ -238,11 +261,19 @@ const SPECS: Record<BackupTable, TableSpec> = {
       routineId: isString,
       name: isString,
       status: oneOf(WORKOUT_STATUSES),
-      startedAt: isNumber,
-      endedAt: isNumber,
-      durationSeconds: isNumber,
+      startedAt: isStamp,
+      endedAt: isStamp,
+      durationSeconds: isCount,
     },
-    optional: { programPhase: oneOf(PROGRAM_PHASES), programIsDeload: isFlag },
+    optional: {
+      programPhase: oneOf(PROGRAM_PHASES),
+      programIsDeload: isFlag,
+      programWeekIndex: isRank,
+      // `isNumber` et pas `isStamp` : le décalage est négatif à l'ouest de
+      // Greenwich, et c'est exactement le champ où un plancher à zéro se met
+      // tout seul par symétrie avec les voisins.
+      startedTimezoneOffsetMinutes: isNumber,
+    },
     links: [{ field: 'routineId', table: 'routines' }],
   },
   workoutExercises: {
@@ -252,9 +283,9 @@ const SPECS: Record<BackupTable, TableSpec> = {
       ...SYNCABLE,
       workoutId: isId,
       exerciseId: isId,
-      order: isNumber,
-      supersetGroup: isNumber,
-      restSeconds: isNumber,
+      order: isRank,
+      supersetGroup: isRank,
+      restSeconds: isCount,
     },
     optional: {
       exerciseMeasurementType: oneOf(MEASUREMENT_TYPES),
@@ -276,13 +307,13 @@ const SPECS: Record<BackupTable, TableSpec> = {
       workoutExerciseId: isId,
       exerciseId: isId,
       workoutId: isId,
-      order: isNumber,
+      order: isRank,
       setType: oneOf(SET_TYPES),
       side: oneOf(SIDES),
       isCompleted: isFlag,
-      performedAt: isNumber,
+      performedAt: isStamp,
     },
-    optional: { weight: isNumber, reps: isNumber, durationSeconds: isNumber, rpe: isNumber },
+    optional: { weight: isNumber, reps: isCount, durationSeconds: isCount, rpe: isNumber },
     links: [
       { field: 'workoutExerciseId', table: 'workoutExercises' },
       { field: 'workoutId', table: 'workouts' },
@@ -297,7 +328,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
       exerciseId: isId,
       type: oneOf(RECORD_TYPES),
       value: isNumber,
-      achievedAt: isNumber,
+      achievedAt: isStamp,
       workoutId: isString,
     },
     links: [
@@ -311,10 +342,10 @@ const SPECS: Record<BackupTable, TableSpec> = {
     required: {
       ...SYNCABLE,
       definitionId: isId,
-      achievedAt: isNumber,
+      achievedAt: isStamp,
       workoutId: isString,
       value: isNumber,
-      acknowledgedAt: isNumber,
+      acknowledgedAt: isStamp,
     },
     links: [{ field: 'workoutId', table: 'workouts' }],
   },
@@ -325,7 +356,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
       ...SYNCABLE,
       exerciseId: isId,
       code: oneOf(COACH_CODES),
-      recommendedAt: isNumber,
+      recommendedAt: isStamp,
       evidence: isList,
       status: oneOf(COACH_STATUSES),
     },
@@ -334,12 +365,12 @@ const SPECS: Record<BackupTable, TableSpec> = {
   bodyMeasurements: {
     since: 1,
     key: 'id',
-    required: { ...SYNCABLE, type: isId, value: isNumber, unit: isString, measuredAt: isNumber },
+    required: { ...SYNCABLE, type: isId, value: isNumber, unit: isString, measuredAt: isStamp },
   },
   progressPhotos: {
     since: 1,
     key: 'id',
-    required: { ...SYNCABLE, blobKey: isString, thumbnailDataUrl: isString, takenAt: isNumber },
+    required: { ...SYNCABLE, blobKey: isString, thumbnailDataUrl: isString, takenAt: isStamp },
   },
   programs: {
     since: 6,
@@ -347,8 +378,8 @@ const SPECS: Record<BackupTable, TableSpec> = {
     required: {
       ...SYNCABLE,
       name: isString,
-      startsAt: isNumber,
-      durationWeeks: isNumber,
+      startsAt: isStamp,
+      durationWeeks: isRank,
       status: oneOf(PROGRAM_STATUSES),
     },
   },
@@ -358,7 +389,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
     required: {
       ...SYNCABLE,
       programId: isId,
-      weekIndex: isNumber,
+      weekIndex: isRank,
       loadIndex: isNumber,
       phase: oneOf(PROGRAM_PHASES),
     },
@@ -367,7 +398,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
   programScheduleRevisions: {
     since: 6,
     key: 'id',
-    required: { ...SYNCABLE, programId: isId, effectiveFromWeekIndex: isNumber },
+    required: { ...SYNCABLE, programId: isId, effectiveFromWeekIndex: isRank },
     links: [{ field: 'programId', table: 'programs' }],
   },
   programScheduleEntries: {
@@ -377,8 +408,8 @@ const SPECS: Record<BackupTable, TableSpec> = {
       ...SYNCABLE,
       revisionId: isId,
       routineId: isString,
-      dayOfWeek: isNumber,
-      order: isNumber,
+      dayOfWeek: isRank,
+      order: isRank,
     },
     links: [
       { field: 'revisionId', table: 'programScheduleRevisions' },
@@ -389,7 +420,7 @@ const SPECS: Record<BackupTable, TableSpec> = {
   settings: {
     since: 1,
     key: 'key',
-    required: { key: isId, updatedAt: isNumber },
+    required: { key: isId, updatedAt: isStamp },
   },
 };
 

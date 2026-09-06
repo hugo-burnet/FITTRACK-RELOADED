@@ -40,7 +40,16 @@
   pour le menu de séance, sous leur libellé et avec la raison de leur grisage. Le bandeau ne
   garde que l'avancement, le repliage, et l'état « 80 % » **quand la décharge est
   appliquée**. La mission `TUT-WRK-12` ouvre le menu avant de désigner la décharge.
-- **Vérification.** `typecheck`, 2 554 tests dans 241 fichiers, `build` et `lint` (le seul
+- **Durcissement après coup.** Une seconde session avait commencé la même validation dans un
+  worktree voisin, sous la forme d'une table `src/lib/backup/schema.ts` jamais commitée. Les
+  deux dérivations s'accordaient sur les seuils `since` (paliers 12, blocs 6, coach 5,
+  correspondances 3), ce qui les confirme mutuellement. Deux apports en ont été repris dans
+  `validate.ts` : les instants, durées et comptes ne peuvent plus être négatifs, les rangs
+  et index doivent être des entiers positifs — et `startedTimezoneOffsetMinutes` est
+  explicitement exempté du plancher, parce qu'il est négatif à l'ouest de Greenwich. La
+  distinction entre lien de propriété et pointeur de contexte est consignée sur `links` :
+  les deux sont comptés, aucun ne refuse le fichier. `schema.ts` a été retiré.
+- **Vérification.** `typecheck`, 2 557 tests dans 241 fichiers, `build` et `lint` (le seul
   avertissement restant est le Fast Refresh préexistant de `Boot.tsx`). Aucun essai
   navigateur ni APK.
 - **Checkpoint téléphone.** Restaurer une vraie sauvegarde, puis une tronquée à la main

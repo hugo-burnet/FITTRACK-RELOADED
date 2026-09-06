@@ -68,6 +68,49 @@ describe('validateBackupTables', () => {
     });
   });
 
+  it('refuse un instant négatif', () => {
+    // Un `deletedAt` négatif fait passer une ligne effacée pour vivante, et
+    // rien en aval ne relit ce nombre avec méfiance.
+    const tables = account();
+    tables.workoutSets[0]!.performedAt = -1;
+
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'workoutSets',
+      index: 0,
+      field: 'performedAt',
+    });
+  });
+
+  it('refuse un rang qui n’est pas un entier positif', () => {
+    const tables = account();
+    tables.routineSets[0]!.order = 1.5;
+
+    const result = validateBackupTables(tables, NOW_SCHEMA);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.flaws).toContainEqual({
+      kind: 'invalid-field',
+      table: 'routineSets',
+      index: 0,
+      field: 'order',
+    });
+  });
+
+  it('accepte un décalage horaire négatif', () => {
+    // À l'ouest de Greenwich il l'est toujours : un plancher à zéro y refuserait
+    // la moitié du monde, et il se met tout seul par symétrie avec les voisins.
+    const tables = account();
+    tables.workouts[0]!.startedTimezoneOffsetMinutes = -300;
+
+    expect(validateBackupTables(tables, NOW_SCHEMA).ok).toBe(true);
+  });
+
   it('refuse deux lignes qui portent le même identifiant', () => {
     // `bulkPut` en écraserait une sans un mot : deux séances entrent, une seule
     // ressort, et le fichier disait pourtant qu'il y en avait deux.
