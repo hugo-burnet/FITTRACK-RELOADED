@@ -1,0 +1,811 @@
+<title>tty1 — skin FitTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cousine:wght@400;700&family=VT323&display=swap">
+
+<style>
+  /* ------------------------------------------------------------------
+     tty1 — second skin proposé pour FitTrack, après « Fonte ».
+     Maquette statique : aucun fichier de src/ n'est touché.
+
+     L'app a déjà un easter egg GRUB au démarrage (bootEasterEgg.ts,
+     `[ OK ] quadriceps.service active`, `root@fittrack:~#`, le curseur █).
+     Ce skin ne l'invente pas : il l'étend à l'app entière. La sélection
+     s'inverse au lieu de se border, les cadres sont dessinés, l'historique
+     est un journal systemd, Planifier est un `tree`, et le repos est
+     l'écran de compte à rebours de GRUB — que GRUB a déjà, mot pour mot.
+     ------------------------------------------------------------------ */
+
+  :root {
+    /* Noir pur, et c'est un choix : GRUB ne dessine pas sur une surface,
+       il dessine sur l'absence de surface. Un #0b0a09 « chaleureux » ici
+       serait une app qui imite un terminal ; le noir, c'est le terminal. */
+    --k: #000000;
+    --k1: #0b0b0b;
+    --k2: #161616;
+    --fg: #c9c9c4;      /* gris ANSI clair — 13,4:1 sur le noir */
+    --hi: #ffffff;      /* 21:1 */
+    --dim: #82827c;     /* 5,9:1 — traits, jamais un chiffre */
+    --amber: #ff8700;   /* xterm 208. 8,9:1 sur noir, 9,1:1 en inverse */
+    --green: #4ee44e;   /* [ OK ] — 12,6:1 */
+    --red: #ff5f5f;     /* [ FAIL ] — 7,6:1 */
+    --cyan: #5fd7d7;    /* le Guide, les renvois — 10,6:1 */
+    --f-mono: 'Cousine', 'Liberation Mono', 'DejaVu Sans Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --f-crt: 'VT323', 'Cousine', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--k);
+    color: var(--fg);
+    font-family: var(--f-mono);
+    font-variant-ligatures: none;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Le phosphore de la page : lignes de balayage + une bande qui descend
+     lentement. Fixe, sous le contenu, jamais cliquable. */
+  .phosphor {
+    position: fixed; inset: 0; z-index: 60; pointer-events: none;
+    background-image: repeating-linear-gradient(
+      to bottom, rgb(0 0 0 / 0.34) 0 1px, transparent 1px 3px);
+    mix-blend-mode: multiply;
+  }
+  .roll {
+    position: fixed; left: 0; right: 0; height: 180px; z-index: 61; pointer-events: none;
+    background: linear-gradient(to bottom, transparent, rgb(255 255 255 / 0.028), transparent);
+    animation: roll 7.5s linear infinite;
+  }
+  @keyframes roll { from { top: -180px; } to { top: 100%; } }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 1180px; margin: 0 auto;
+    padding: 48px 24px 96px;
+    display: flex; flex-direction: column; gap: 56px;
+  }
+
+  /* ---------- Grammaire de texte ---------------------------------------- */
+  .p { color: var(--green); }                       /* le prompt $ */
+  .cmd { color: var(--hi); }
+  .amber { color: var(--amber); }
+  .dim { color: var(--dim); }
+  .cy { color: var(--cyan); }
+  .ok { color: var(--green); }
+  .fail { color: var(--red); }
+  .inv { background: var(--amber); color: #000; padding: 0 4px; }
+
+  .cursor {
+    display: inline-block; width: 0.6em; height: 1.05em;
+    background: var(--fg); vertical-align: -0.18em;
+    animation: blink 1.06s steps(1) infinite;
+  }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+  /* ---------- En-tête ---------------------------------------------------- */
+  header { display: flex; flex-direction: column; gap: 18px; }
+
+  .banner {
+    font-family: var(--f-crt);
+    font-size: clamp(64px, 15vw, 168px);
+    line-height: 0.78;
+    color: var(--amber);
+    margin: 0;
+    letter-spacing: 0.01em;
+    text-shadow: 0 0 26px rgb(255 135 0 / 0.34);
+  }
+  .banner small { color: var(--dim); font-size: 0.24em; letter-spacing: 0.2em; display: block; margin-top: 10px; text-shadow: none; }
+
+  .thesis { max-width: 68ch; margin: 0; font-size: 15px; line-height: 1.7; }
+  .thesis b { color: var(--hi); font-weight: 400; background: rgb(255 135 0 / 0.14); }
+
+  .boot-log { display: flex; flex-direction: column; border: 1px solid #262626; background: var(--k1); padding: 12px 14px; }
+  .boot-log div { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---------- Sections --------------------------------------------------- */
+  section { display: flex; flex-direction: column; gap: 22px; }
+  .sec-head { display: flex; flex-direction: column; gap: 6px; }
+  .sec-head h2 { margin: 0; font-size: 22px; font-weight: 700; color: var(--hi); }
+  .sec-head h2::before { content: '$ '; color: var(--green); font-weight: 400; }
+  .sec-head p { margin: 0; max-width: 74ch; font-size: 14.5px; line-height: 1.7; color: var(--fg); }
+  .rule { border: 0; border-top: 1px solid #262626; margin: 0; }
+
+  /* ---------- Système ---------------------------------------------------- */
+  .system { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; }
+  .sw { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid #1e1e1e; font-size: 13.5px; }
+  .sw i { display: block; height: 20px; border: 1px solid #333; }
+  .sw em { font-style: normal; color: var(--dim); display: block; font-size: 12.5px; }
+  .spec { border: 1px solid #262626; background: var(--k1); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .spec .big { font-family: var(--f-crt); font-size: 76px; line-height: 0.8; color: var(--amber); }
+  .spec p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--fg); }
+
+  /* ---------- Rail des écrans -------------------------------------------- */
+  .toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--f-mono); font-size: 13px; cursor: pointer;
+    background: transparent; color: var(--amber); border: 1px solid var(--amber);
+    padding: 8px 14px;
+  }
+  .btn:hover, .btn:focus-visible { background: var(--amber); color: #000; outline: none; }
+
+  .rail { display: flex; gap: 36px; overflow-x: auto; padding: 4px 4px 22px; scroll-snap-type: x mandatory; }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: #333; }
+  .screen { flex: 0 0 auto; width: 340px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 14px; margin: 0; }
+  .screen figcaption { display: flex; flex-direction: column; gap: 6px; }
+  .screen figcaption h3 { margin: 0; font-size: 15px; color: var(--hi); font-weight: 700; }
+  .screen figcaption p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--dim); }
+  .screen figcaption p b { color: var(--fg); font-weight: 400; }
+  .tag { font-size: 11.5px; letter-spacing: 0.16em; color: var(--amber); }
+
+  /* ---------- L'écran ----------------------------------------------------- */
+  .phone {
+    --s0: #000000; --s1: #0b0b0b; --s2: #161616;
+    --t1: #c9c9c4; --t2: #82827c; --th: #ffffff;
+    --a: #ff8700; --a-ink: #000000;
+    --g: #4ee44e; --r: #ff5f5f; --c: #5fd7d7; --bd: #2b2b2b;
+    width: 340px; height: 700px;
+    background: var(--s0); color: var(--t1);
+    border: 1px solid #333;
+    display: flex; flex-direction: column;
+    overflow: hidden; position: relative;
+    font-size: 12.5px; line-height: 1.55;
+    box-shadow: 0 0 0 1px #111, 0 26px 70px rgb(0 0 0 / 0.8), 0 0 60px rgb(255 135 0 / 0.05);
+  }
+
+  /* Le listing papier : même skin, imprimé. Seuls les jetons changent. */
+  .phone--paper {
+    --s0: #ece9e0; --s1: #f5f3ec; --s2: #ded9cc;
+    --t1: #17170f; --t2: #63625a; --th: #000000;
+    --a: #9a4300; --a-ink: #ffffff;
+    --g: #16601b; --r: #a11111; --c: #0f5b66; --bd: #bdb8a8;
+  }
+
+  /* Scanlines + vignette propres à chaque écran. */
+  .phone::after {
+    content: ''; position: absolute; inset: 0; z-index: 20; pointer-events: none;
+    background-image: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.3) 0 1px, transparent 1px 3px);
+  }
+  .phone--paper::after { opacity: 0.35; }
+  .phone::before {
+    content: ''; position: absolute; inset: 0; z-index: 21; pointer-events: none;
+    background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.55));
+  }
+  .phone--paper::before { background: radial-gradient(120% 100% at 50% 50%, transparent 62%, rgb(90 84 62 / 0.22)); }
+
+  /* Le tearing : rare, court, jamais pendant qu'on lit un chiffre.
+     Chaque écran a son propre délai pour qu'ils ne clignotent pas ensemble. */
+  .tube { flex: 1; display: flex; flex-direction: column; min-height: 0; animation: tear 13s linear infinite; }
+  .s2 .tube { animation-delay: -3.4s; }
+  .s3 .tube { animation-delay: -7.1s; }
+  .s4 .tube { animation-delay: -10.2s; }
+  .s5 .tube { animation-delay: -5.6s; }
+
+  @keyframes tear {
+    0%, 88.4% { transform: none; text-shadow: none; }
+    88.6% { transform: translate3d(-3px, 0, 0); text-shadow: 1.5px 0 var(--r), -1.5px 0 var(--c); }
+    88.9% { transform: translate3d(2px, -1px, 0); text-shadow: -1px 0 var(--r), 1px 0 var(--c); }
+    89.2% { transform: translate3d(-1px, 1px, 0); text-shadow: none; }
+    89.5%, 96.2% { transform: none; text-shadow: none; }
+    96.4% { transform: translate3d(2px, 0, 0); text-shadow: 1px 0 var(--r), -1px 0 var(--c); }
+    96.7%, 100% { transform: none; text-shadow: none; }
+  }
+
+  /* ---------- Lignes ------------------------------------------------------ */
+  .tty { padding: 0 10px; }
+  .ln { white-space: pre; overflow: hidden; }
+  .row48 { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 10px; }
+
+  .hdr {
+    display: flex; justify-content: space-between; gap: 8px;
+    padding: 8px 10px 6px; color: var(--t2); font-size: 11px; letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--bd);
+  }
+
+  .scr { flex: 1; min-height: 0; overflow: hidden; padding: 10px 0 8px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* Un « cadre dessiné », mais en CSS : un fallback de police ne peut pas
+     casser l'alignement, et le titre s'incruste dans le filet comme ┌─ nom ─┐ */
+  .box { border: 1px solid var(--bd); margin: 0 10px; position: relative; padding: 12px 10px 10px; }
+  .box > .cap {
+    position: absolute; top: -0.75em; left: 8px;
+    background: var(--s0); padding: 0 6px;
+    color: var(--a); font-size: 11px; letter-spacing: 0.08em;
+  }
+  .box > .cap-r {
+    position: absolute; top: -0.75em; right: 8px;
+    background: var(--s0); padding: 0 6px;
+    color: var(--t2); font-size: 11px;
+  }
+
+  /* Sélection = inversion. C'est la seule emphase de tout le skin. */
+  .sel { background: var(--a); color: var(--a-ink); }
+  .sel .t2, .sel .dimc { color: rgb(0 0 0 / 0.62); }
+  .phone--paper .sel .t2 { color: rgb(255 255 255 / 0.7); }
+
+  .t2 { color: var(--t2); }
+  .g { color: var(--g); } .r { color: var(--r); } .c { color: var(--c); } .a { color: var(--a); } .h { color: var(--th); }
+
+  .cur { display: inline-block; width: 0.58em; height: 1em; background: currentColor; vertical-align: -0.14em; animation: blink 1.06s steps(1) infinite; }
+
+  /* ---------- Le repos : l'écran de compte à rebours de GRUB -------------- */
+  .rest { border-top: 1px solid var(--a); padding: 10px 10px 8px; display: flex; flex-direction: column; gap: 6px; background: var(--s0); }
+  .rest .cd { font-family: var(--f-crt); font-size: 56px; line-height: 0.8; color: var(--a); letter-spacing: 0.02em; }
+  .rest.hot { border-top-color: var(--r); }
+  .rest.hot .cd { color: var(--r); }
+  .rest.hot .meter b { color: var(--r); }
+  .meter { white-space: pre; overflow: hidden; font-size: 12.5px; }
+  .meter b { color: var(--a); font-weight: 400; }
+  .meter i { color: var(--t2); font-style: normal; }
+
+  /* ---------- La barre de touches (remplace la barre d'onglets) ----------- */
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--bd); }
+  .keys a {
+    min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    text-decoration: none; color: var(--t2); font-size: 10.5px; letter-spacing: 0.04em;
+  }
+  .keys a .k { background: var(--t2); color: var(--s0); padding: 0 4px; font-size: 10px; }
+  .keys a.on { color: var(--a); }
+  .keys a.on .k { background: var(--a); color: var(--a-ink); }
+
+  .cta {
+    min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--a); color: var(--a-ink); font-size: 13px; letter-spacing: 0.08em; font-weight: 700;
+  }
+
+  /* ---------- Notes ------------------------------------------------------- */
+  .moves { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: #262626; border: 1px solid #262626; }
+  .move { background: var(--k1); padding: 16px; display: flex; flex-direction: column; gap: 7px; }
+  .move h3 { margin: 0; font-size: 14.5px; color: var(--hi); font-weight: 700; }
+  .move h3::before { content: attr(data-n) '  '; color: var(--amber); font-weight: 400; }
+  .move p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--dim); }
+  .move p b { color: var(--fg); font-weight: 400; }
+
+  ul.keep { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 9px; max-width: 78ch; }
+  ul.keep li { font-size: 14px; line-height: 1.65; color: var(--dim); }
+  ul.keep li b { color: var(--fg); font-weight: 700; }
+  ul.keep li code { color: var(--cyan); }
+
+  .warn { border-left: 2px solid var(--red); padding: 12px 14px; background: var(--k1); max-width: 78ch; }
+  .warn p { margin: 0 0 8px; font-size: 14px; line-height: 1.7; }
+  .warn p:last-child { margin-bottom: 0; }
+  .warn b { color: var(--hi); font-weight: 700; }
+
+  footer { border-top: 1px solid #262626; padding-top: 18px; font-size: 13px; line-height: 1.7; color: var(--dim); max-width: 76ch; }
+  footer code, .sec-head code { color: var(--cyan); }
+
+  /* Une frappe qu'on subit est une frappe de trop : en mouvement réduit,
+     tout est écrit d'avance, le tube ne tremble plus, rien ne clignote. */
+  @media (prefers-reduced-motion: reduce) {
+    .tube, .roll, .cursor, .cur { animation: none !important; }
+    .ty-hidden { visibility: visible !important; }
+  }
+
+  .ty-hidden { visibility: hidden; }
+</style>
+
+<div class="phosphor" aria-hidden="true"></div>
+<div class="roll" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <header>
+    <p class="tag">PROPOSITION DE SKIN N°2 · FITTRACK · 06.09.2026</p>
+    <h1 class="banner">tty1<small>LE SKIN CONSOLE</small></h1>
+    <p class="thesis">
+      L'app a <b>déjà</b> un easter egg GRUB au démarrage : <code>bootEasterEgg.ts</code> tire au sort
+      tous les 14 à 29 jours un écran noir qui affiche <span class="ok">[ OK ] quadriceps.service active</span>,
+      <span class="fail">[ FAIL ] excuses.mount: permission denied</span>, puis <span class="cmd">root@fittrack:~#</span>
+      et un curseur █. Ce skin n'invente rien : il <b>arrête d'en faire une blague de 3 secondes</b> et
+      l'étend à l'app entière. Le meilleur argument, c'est que GRUB a déjà, mot pour mot,
+      l'écran dont tu as besoin entre deux séries : <b>un compte à rebours qui dit ce qui se passera à zéro.</b>
+    </p>
+    <div class="boot-log">
+      <div><span class="ok">[  OK  ]</span> Started <span class="cmd">fittrack.tty1</span> — skin console</div>
+      <div><span class="ok">[  OK  ]</span> Mounted <span class="cmd">/routines</span>, <span class="cmd">/programmes</span>, <span class="cmd">/historique</span></div>
+      <div><span class="ok">[  OK  ]</span> Reached target <span class="cmd">local-first.target</span> <span class="dim">(aucun réseau requis)</span></div>
+      <div><span class="amber">[ WARN ]</span> <span class="cmd">glitch.service</span> : décoratif, coupé en mouvement réduit</div>
+      <div><span class="cmd">root@fittrack:~#</span> <span class="amber">skin --set tty1</span><span class="cursor"></span></div>
+    </div>
+  </header>
+
+  <hr class="rule">
+
+  <!-- ================= SYSTÈME ================= -->
+  <section>
+    <div class="sec-head">
+      <h2>Le système : 16 couleurs ANSI, deux polices, aucune icône</h2>
+      <p>
+        Le hasard fait bien les choses : dans la palette d'un terminal Linux, le « jaune » non-brillant
+        n'est pas jaune, c'est un brun-orange. L'orange de FitTrack a donc une place légitime ici —
+        c'est <span class="amber">xterm 208</span>, la couleur d'un <code>ls</code> sur un exécutable.
+        Le skin ne perd pas l'identité de l'app, il l'explique.
+      </p>
+    </div>
+    <div class="system">
+      <div>
+        <div class="sw"><i style="background:#000000"></i><span>noir pur<em>Le fond. Pas de #0b0a09 « chaleureux » : ce serait imiter un terminal.</em></span><span class="dim">#000000</span></div>
+        <div class="sw"><i style="background:#c9c9c4"></i><span>gris ANSI<em>Le texte. 13,4:1.</em></span><span class="dim">#C9C9C4</span></div>
+        <div class="sw"><i style="background:#ff8700"></i><span>ambre 208<em>L'accent, et le fond de toute sélection.</em></span><span class="dim">#FF8700</span></div>
+        <div class="sw"><i style="background:#4ee44e"></i><span>vert [ OK ]<em>Une série faite, une semaine tenue. Rien d'autre.</em></span><span class="dim">#4EE44E</span></div>
+        <div class="sw"><i style="background:#ff5f5f"></i><span>rouge [ FAIL ]<em>Les 10 dernières secondes de repos. Une erreur d'écriture.</em></span><span class="dim">#FF5F5F</span></div>
+        <div class="sw"><i style="background:#5fd7d7"></i><span>cyan<em>Le Guide et les renvois — ce qui mène ailleurs.</em></span><span class="dim">#5FD7D7</span></div>
+      </div>
+      <div class="spec">
+        <div class="big">01:27</div>
+        <p><b class="h">VT323</b> — une vraie fonte de terminal DEC, à un seul gras.
+          Réservée aux trois moments où un chiffre doit se voir à trois mètres : le compte à rebours du repos,
+          la charge en cours, les compteurs de l'accueil. Nulle part ailleurs.</p>
+        <hr class="rule">
+        <p style="font-size:14px;color:var(--fg)">[ OK ] série 2&nbsp;&nbsp;&nbsp;80,0 kg × 8</p>
+        <p><b class="h">Cousine</b> — le clone métrique de Liberation Mono, donc littéralement la police
+          d'une console Linux. Elle porte <b>tout le reste</b>, à une seule chasse : c'est ce qui permet
+          d'aligner des kilos sans une seule colonne de tableau.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================= ÉCRANS ================= -->
+  <section>
+    <div class="sec-head">
+      <h2>Les quatre écrans</h2>
+      <p>
+        Mêmes données qu'aujourd'hui, mêmes mots (repris de <code>src/i18n/fr.ts</code>).
+        Chaque écran emprunte l'idiome terminal qui lui correspond vraiment : la séance est un
+        <b>menu GRUB</b>, l'accueil un <b>menu de démarrage</b>, l'historique un <b>journalctl</b>,
+        Planifier un <b>tree</b>. Le rail défile horizontalement.
+      </p>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn" id="replay" type="button">↻ rejouer la frappe</button>
+      <span class="dim" style="font-size:13px">Les écrans s'écrivent au chargement, comme un tty. Le tube glitche tout seul, toutes les ~13 s.</span>
+    </div>
+
+    <div class="rail">
+
+      <!-- ---------- 1. SÉANCE EN COURS ---------- -->
+      <figure class="screen s1">
+        <div class="phone" data-ty>
+          <div class="tube">
+            <div class="hdr ty"><span>fittrack tty1 — <span class="a">push_a</span></span><span>00:42:18</span></div>
+
+            <div class="scr">
+              <div class="tty">
+                <div class="ln ty"><span class="g">[  OK  ]</span> échauffement terminé</div>
+                <div class="ln ty"><span class="g">[  OK  ]</span> 5 séries sur 14 validées</div>
+                <div class="ln ty"><span class="t2">[######······················]</span></div>
+              </div>
+
+              <div class="box ty">
+                <span class="cap">développé_couché.barre</span>
+                <span class="cap-r">3 séries</span>
+                <div class="ln ty" style="padding:2px 0"><span class="g">[  OK  ]</span> série 1 <span class="t2">·</span> 80,0 kg <span class="t2">×</span> 8</div>
+                <div class="ln ty" style="padding:2px 0"><span class="g">[  OK  ]</span> série 2 <span class="t2">·</span> 80,0 kg <span class="t2">×</span> 8</div>
+                <div class="ln sel ty" style="padding:6px 0;min-height:48px;display:flex;align-items:center">
+                  <span>&nbsp;▸ série 3 <span class="t2">·</span> <b style="font-weight:700">82,5 kg</b> <span class="t2">×</span> 8</span><span class="cur"></span>
+                </div>
+                <div class="ln ty" style="padding:6px 0 0"><span class="a">[ REC  ]</span> 1rm_estimé=104kg <span class="g">(+2)</span></div>
+              </div>
+
+              <div class="tty" style="display:flex;flex-direction:column;gap:2px">
+                <div class="ln ty t2" style="padding-top:2px">  développé_incliné.haltères   <span class="t2">0/3</span></div>
+                <div class="ln ty t2">  élévations_latérales         <span class="t2">0/4</span></div>
+                <div class="ln ty t2">  extensions_triceps.poulie    <span class="t2">0/3</span></div>
+              </div>
+
+              <div class="tty ty" style="margin-top:auto">
+                <div class="ln t2">↑/↓ choisir · ⏎ valider · q terminer</div>
+              </div>
+            </div>
+
+            <!-- LA SIGNATURE : l'écran de compte à rebours de GRUB -->
+            <div class="rest ty" id="rest">
+              <div class="ln"><span class="a">REPOS</span> <span class="t2">— série 4 dans</span></div>
+              <div class="cd" id="cd">01:27</div>
+              <div class="meter" id="meter"></div>
+              <div class="ln t2" id="hint">Touche pour reprendre maintenant · ±15 s</div>
+            </div>
+            <div class="cta ty">q &nbsp;TERMINER LA SÉANCE</div>
+          </div>
+        </div>
+        <figcaption>
+          <span class="tag">ÉCRAN 01</span>
+          <h3>Séance en cours · repos lancé</h3>
+          <p>
+            GRUB affiche déjà « <i>The highlighted entry will be executed automatically in 27s</i> » avec
+            une jauge en caractères. C'est <b>exactement</b> l'écran du repos, et il existait avant nous.
+            La série en cours est <b>inversée</b>, pas bordée — c'est la seule emphase du skin, et elle
+            se voit de plus loin que n'importe quel liseré.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 2. ACCUEIL ---------- -->
+      <figure class="screen s2">
+        <div class="phone" data-ty>
+          <div class="tube">
+            <div class="hdr ty"><span>fittrack tty1</span><span>sam. 06 sept. 09:41</span></div>
+            <div class="scr">
+              <div class="tty" style="display:flex;flex-direction:column;gap:1px">
+                <div class="ln ty"><span class="g">[  OK  ]</span> 3 séances cette semaine</div>
+                <div class="ln ty"><span class="g">[  OK  ]</span> poids du jour : 78,4 kg</div>
+                <div class="ln ty"><span class="a">[ WARN ]</span> repos moyen 2m48 <span class="t2">(cible 2m00)</span></div>
+              </div>
+
+              <div class="box ty" style="padding-top:14px">
+                <span class="cap">à lancer</span>
+                <span class="cap-r">↑/↓ ⏎</span>
+                <div class="ln sel ty" style="min-height:48px;display:flex;align-items:center;padding:0 4px">
+                  <span>&nbsp;push_a<span class="t2">&nbsp;&nbsp;— il y a 4 jours</span></span>
+                </div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center;padding:0 4px">&nbsp;pull_a<span class="t2">&nbsp;&nbsp;— il y a 4 jours</span></div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center;padding:0 4px">&nbsp;jambes<span class="t2">&nbsp;&nbsp;— il y a 6 jours</span></div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center;padding:0 4px">&nbsp;séance_libre<span class="t2">&nbsp;&nbsp;— jamais</span></div>
+                <div class="ln ty t2" style="padding-top:8px">La plus ancienne de tes routines.</div>
+              </div>
+
+              <div class="box ty">
+                <span class="cap">bloc en cours</span>
+                <div class="ln ty">hypertrophie_haut_du_corps</div>
+                <div class="ln ty t2">semaine 3 sur 5</div>
+                <div class="ln ty"><span class="a">[##########........]</span> <span class="t2">S4 = décharge 80 %</span></div>
+              </div>
+
+              <div class="tty ty" style="display:flex;flex-direction:column;gap:1px;margin-top:auto">
+                <div class="ln t2">-- 3 dernières séances --------------</div>
+                <div class="ln ty">02.09 <span class="h">pull_a</span>   <span class="t2">6 240 kg</span></div>
+                <div class="ln ty">31.08 <span class="h">jambes</span>   <span class="t2">9 180 kg</span></div>
+                <div class="ln ty">29.08 <span class="h">push_a</span>   <span class="t2">5 910 kg</span></div>
+              </div>
+            </div>
+            <nav class="keys">
+              <a href="#" class="on"><span class="k">1</span><span>accueil</span></a>
+              <a href="#"><span class="k">2</span><span>plan</span></a>
+              <a href="#"><span class="k">3</span><span>hist</span></a>
+              <a href="#"><span class="k">4</span><span>prog</span></a>
+              <a href="#"><span class="k">5</span><span>exos</span></a>
+            </nav>
+          </div>
+        </div>
+        <figcaption>
+          <span class="tag">ÉCRAN 02</span>
+          <h3>Accueil = le menu de démarrage</h3>
+          <p>
+            L'accueil <b>est</b> le menu GRUB : tes routines sont les entrées, la suggestion est
+            l'entrée par défaut, en surbrillance. La règle de suggestion (« la plus ancienne de tes routines »)
+            est écrite dessous, à l'endroit exact où GRUB met sa ligne d'aide. Et la barre d'onglets
+            devient une <b>barre de touches numérotées</b>, comme nano ou mc.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 3. HISTORIQUE ---------- -->
+      <figure class="screen s3">
+        <div class="phone" data-ty>
+          <div class="tube">
+            <div class="hdr ty"><span>journalctl -u <span class="a">fittrack</span></span><span>217 unités</span></div>
+            <div class="scr">
+              <div class="tty ty">
+                <div class="ln"><span class="g">[  OK  ]</span> 11 semaines d'affilée</div>
+                <div class="ln"><span class="a">[ ---- ]</span> objectif hebdo : 3/4</div>
+              </div>
+
+              <div class="box ty">
+                <span class="cap">septembre 2026</span>
+                <span class="cap-r">· : ▒ █</span>
+                <div class="ln ty t2" style="letter-spacing:0.22em">L M M J V S D</div>
+                <div class="ln ty" style="letter-spacing:0.22em"><span class="t2">·</span><span class="a">:</span><span class="t2">·</span><span class="a">▒</span><span class="t2">·</span><span class="a">█</span><span class="t2">·</span></div>
+                <div class="ln ty" style="letter-spacing:0.22em"><span class="a">▒</span><span class="t2">·</span><span class="a">:</span><span class="t2">·</span><span class="a">█</span><span class="t2">·</span><span class="t2">·</span></div>
+                <div class="ln ty" style="letter-spacing:0.22em"><span class="a">▒</span><span class="t2">·</span><span class="a">:</span><span class="a">▒</span><span class="t2">·</span><span class="t2">·</span><span class="a">:</span></div>
+                <div class="ln ty" style="letter-spacing:0.22em"><span class="a">█</span><span class="t2">·</span><span class="a">▒</span><span class="t2">·</span><span class="a">:</span><span class="t2">·</span><span class="t2">·</span></div>
+                <div class="ln ty" style="letter-spacing:0.22em"><span class="a">▒</span><span class="t2">·</span><span class="a">:</span><span class="t2">·</span><span class="t2">·</span><span class="t2">·</span><span class="t2">·</span></div>
+                <div class="ln ty t2" style="padding-top:4px">densité = tonnage</div>
+              </div>
+
+              <div class="tty" style="display:flex;flex-direction:column;gap:5px">
+                <div class="ln ty t2">-- journal ---------------------------</div>
+                <div class="ty" style="min-height:48px">
+                  <div class="ln">sept 05 18:42 <span class="h">push_a</span><span class="t2">[7340]</span></div>
+                  <div class="ln t2">  1h08 · 5 exos · 17 séries <span class="g">[ OK ]</span></div>
+                </div>
+                <div class="ty" style="min-height:48px">
+                  <div class="ln">sept 03 19:05 <span class="h">jambes</span><span class="t2">[11260]</span></div>
+                  <div class="ln t2">  1h22 · 6 exos · 21 séries <span class="g">[ OK ]</span></div>
+                </div>
+                <div class="ty" style="min-height:48px">
+                  <div class="ln">sept 01 18:30 <span class="h">pull_a</span><span class="t2">[4980]</span></div>
+                  <div class="ln t2">  0h47 · 4 exos · 11 séries <span class="r">[ CUT ]</span></div>
+                </div>
+              </div>
+            </div>
+            <nav class="keys">
+              <a href="#"><span class="k">1</span><span>accueil</span></a>
+              <a href="#"><span class="k">2</span><span>plan</span></a>
+              <a href="#" class="on"><span class="k">3</span><span>hist</span></a>
+              <a href="#"><span class="k">4</span><span>prog</span></a>
+              <a href="#"><span class="k">5</span><span>exos</span></a>
+            </nav>
+          </div>
+        </div>
+        <figcaption>
+          <span class="tag">ÉCRAN 03</span>
+          <h3>Historique = journalctl</h3>
+          <p>
+            Une séance passée devient une <b>ligne de journal</b> : horodatage, nom d'unité, tonnage
+            entre crochets comme un PID, et un verdict à droite. Le calendrier devient une carte de
+            densité en quatre caractères — <span class="dim">· : ▒ █</span> — soit un mois entier lisible
+            sans une seule couleur de plus. <b>Séance écourtée = <span class="fail">[ CUT ]</span></b>, pas un échec moral.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 4. PLANIFIER ---------- -->
+      <figure class="screen s4">
+        <div class="phone" data-ty>
+          <div class="tube">
+            <div class="hdr ty"><span>~/planifier <span class="a">$</span> tree</span><span>2 blocs</span></div>
+            <div class="scr">
+              <div class="tty" style="display:flex;flex-direction:column">
+                <div class="ln ty"><span class="a">.</span></div>
+                <div class="ln ty">├── <span class="c">routines/</span></div>
+                <div class="ln ty">│   ├── <span class="c">haut-bas/</span></div>
+                <div class="ln sel ty" style="min-height:48px;display:flex;align-items:center">│   │&nbsp;&nbsp;&nbsp;├── push_a<span class="t2">&nbsp;&nbsp;5 exos · ~65 min</span></div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center">│   │&nbsp;&nbsp;&nbsp;├── pull_a<span class="t2">&nbsp;&nbsp;5 exos · ~60 min</span></div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center">│   │&nbsp;&nbsp;&nbsp;└── jambes<span class="t2">&nbsp;&nbsp;6 exos · ~80 min</span></div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center">│   └── <span class="c">full-body/</span><span class="t2">&nbsp;&nbsp;2 routines</span></div>
+                <div class="ln ty">├── <span class="c">programmes/</span></div>
+                <div class="ln ty" style="min-height:48px;display:flex;align-items:center">│   ├── <span class="h">hypertrophie_haut</span> <span class="g">[actif]</span></div>
+                <div class="ln ty t2">│   │&nbsp;&nbsp;&nbsp;S3/5 <span class="a">[##########........]</span></div>
+                <div class="ln ty t2" style="min-height:48px;display:flex;align-items:center">│   └── force_5x5<span class="t2">&nbsp;&nbsp;terminé le 12.07</span></div>
+                <div class="ln ty">└── <span class="c">guide/</span> <span class="t2">— man pages</span></div>
+                <div class="ln ty t2" style="min-height:48px;display:flex;align-items:center">&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="c">périodisation(7)</span></div>
+              </div>
+
+              <div class="tty ty" style="margin-top:auto">
+                <div class="ln t2">-------------------------------------</div>
+                <div class="ln"><span class="a">$</span> <span class="h">nouvelle routine</span><span class="cur"></span></div>
+              </div>
+            </div>
+            <nav class="keys">
+              <a href="#"><span class="k">1</span><span>accueil</span></a>
+              <a href="#" class="on"><span class="k">2</span><span>plan</span></a>
+              <a href="#"><span class="k">3</span><span>hist</span></a>
+              <a href="#"><span class="k">4</span><span>prog</span></a>
+              <a href="#"><span class="k">5</span><span>exos</span></a>
+            </nav>
+          </div>
+        </div>
+        <figcaption>
+          <span class="tag">ÉCRAN 04</span>
+          <h3>Planifier = tree</h3>
+          <p>
+            Les trois espaces gardent leurs mots mais deviennent <b>trois répertoires</b>, et la hiérarchie
+            dossier → routine se dessine toute seule avec <span class="dim">├──</span> et <span class="dim">└──</span> :
+            c'est la seule vue de l'app où l'imbrication est le sujet. Le Guide devient des
+            <b>pages de manuel</b> — <span class="cy">périodisation(7)</span> — ce qui dit mieux que n'importe quel
+            libellé que ça s'consulte et que ça n'écrit rien.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 5. LISTING PAPIER ---------- -->
+      <figure class="screen s5">
+        <div class="phone phone--paper" data-ty>
+          <div class="tube">
+            <div class="hdr ty"><span>fittrack lp0 — <span class="a">push_a</span></span><span>00:42:18</span></div>
+            <div class="scr">
+              <div class="tty">
+                <div class="ln ty"><span class="g">[  OK  ]</span> échauffement terminé</div>
+                <div class="ln ty"><span class="g">[  OK  ]</span> 5 séries sur 14 validées</div>
+                <div class="ln ty"><span class="t2">[######······················]</span></div>
+              </div>
+              <div class="box ty">
+                <span class="cap">développé_couché.barre</span>
+                <span class="cap-r">3 séries</span>
+                <div class="ln ty" style="padding:2px 0"><span class="g">[  OK  ]</span> série 1 <span class="t2">·</span> 80,0 kg <span class="t2">×</span> 8</div>
+                <div class="ln ty" style="padding:2px 0"><span class="g">[  OK  ]</span> série 2 <span class="t2">·</span> 80,0 kg <span class="t2">×</span> 8</div>
+                <div class="ln sel ty" style="padding:6px 0;min-height:48px;display:flex;align-items:center">
+                  <span>&nbsp;▸ série 3 <span class="t2">·</span> <b style="font-weight:700">82,5 kg</b> <span class="t2">×</span> 8</span>
+                </div>
+                <div class="ln ty" style="padding:6px 0 0"><span class="a">[ REC  ]</span> 1rm_estimé=104kg <span class="g">(+2)</span></div>
+              </div>
+              <div class="tty ty" style="margin-top:auto"><div class="ln t2">↑/↓ choisir · ⏎ valider · q terminer</div></div>
+            </div>
+            <div class="rest ty">
+              <div class="ln"><span class="a">REPOS</span> <span class="t2">— série 4 dans</span></div>
+              <div class="cd">01:27</div>
+              <div class="meter"><b>[############################</b><i>·············]</i></div>
+              <div class="ln t2">Touche pour reprendre maintenant · ±15 s</div>
+            </div>
+            <div class="cta ty">q &nbsp;TERMINER LA SÉANCE</div>
+          </div>
+        </div>
+        <figcaption>
+          <span class="tag">CONTRÔLE</span>
+          <h3>Le même écran, thème clair</h3>
+          <p>
+            Un terminal en thème clair n'est pas un terminal blanc : c'est un <b>listing sur papier
+            à bandes</b>. Fond <span class="dim">#ECE9E0</span>, encre noire, ambre descendu à
+            <span class="dim">#9A4300</span> pour tenir le contraste, et l'inversion devient une frappe
+            en surimpression. Mêmes jetons, mêmes composants — <b>le skin n'est pas « un thème sombre stylé »</b>.
+          </p>
+        </figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================= LES MOUVEMENTS ================= -->
+  <section>
+    <div class="sec-head">
+      <h2>Ce que ça change</h2>
+      <p>Sept décisions. Aucune ne touche une repository, un hook ou une règle métier.</p>
+    </div>
+    <div class="moves">
+      <div class="move">
+        <h3 data-n="01">La sélection s'inverse</h3>
+        <p>Plus un seul liseré d'accent : <b>fond ambre, texte noir</b>, pleine largeur.
+          C'est la mécanique de GRUB, et c'est aussi l'emphase la plus contrastée qui existe —
+          elle se voit à bout de bras mieux qu'une bordure de 2 px.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="02">Le repos devient le compte à rebours de GRUB</h3>
+        <p>Chiffres VT323 à 56 px, jauge en <b>[####····]</b>, et la phrase qui dit ce qui arrive à zéro.
+          Sous 10 s tout passe en rouge <span class="fail">[ FAIL ]</span>. GRUB avait déjà écrit cet écran.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="03">Les états deviennent des verdicts</h3>
+        <p><span class="ok">[  OK  ]</span> une série validée, <span class="amber">[ WARN ]</span> un repos trop long,
+          <span class="fail">[ CUT ]</span> une séance écourtée, <span class="amber">[ REC  ]</span> un record.
+          <b>Quatre crochets remplacent toutes les icônes de l'app</b>, et se lisent à voix haute tels quels.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="04">Les écrans s'écrivent</h3>
+        <p>Chaque écran se compose ligne à ligne, <b>~9 ms par ligne, 280 ms au total</b>, avec le curseur
+          qui court devant. Le premier appui l'interrompt et affiche tout d'un coup.
+          Jamais entre deux séries : la carte de l'exercice en cours ne se réécrit pas.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="05">Le tube n'est pas parfait</h3>
+        <p>Lignes de balayage permanentes, une bande qui descend toutes les 7 s, et un <b>tearing
+          avec décalage RVB toutes les ~13 s</b>, sur 0,3 s. Rare, court, et jamais déclenché
+          pendant qu'un chiffre est en cours de saisie.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="06">La navigation devient une barre de touches</h3>
+        <p><b>1 accueil · 2 plan · 3 hist · 4 prog · 5 exos</b>, comme nano ou Midnight Commander.
+          Les cibles restent des lignes pleine largeur de 48 px — on tape la ligne, pas le caractère.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="07">Les noms deviennent des chemins</h3>
+        <p><code>développé_couché.barre</code>, <code>/routines/haut-bas/push_a</code>,
+          <span class="cy">périodisation(7)</span>. Le vocabulaire de l'app ne change pas —
+          <b>sa mise en forme dit à quoi chaque chose sert</b> : un fichier s'ouvre, une page de man se lit.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ================= LA MISE EN GARDE ================= -->
+  <section>
+    <div class="sec-head">
+      <h2>Là où ça coince, et ce que je ferais</h2>
+    </div>
+    <div class="warn">
+      <p>
+        <b>Ce skin se bat contre deux de tes propres règles.</b> La règle 5 dit « mobile-first, une main,
+        en sueur » : une UI 100 % texte en chasse fixe est objectivement plus dure à viser qu'une grille
+        de gros boutons. Et le commentaire de <code>index.css</code> dit qu'« une animation qu'on attend
+        est une animation qui gêne » — une frappe de tty est, par définition, une animation qu'on attend.
+      </p>
+      <p>
+        <b>Ce que j'ai fait pour tenir quand même :</b> aucune cible n'est un caractère — toutes les lignes
+        touchables font 48 px de haut sur toute la largeur ; la frappe dure 280 ms au total et s'interrompt
+        au premier appui ; elle ne se rejoue jamais sur l'écran de séance en cours ; et
+        <code>prefers-reduced-motion</code> coupe la frappe, le tearing, la bande et les curseurs —
+        l'app reste alors parfaitement utilisable, juste immobile.
+      </p>
+      <p>
+        <b>Ma recommandation :</b> ne choisis pas entre les deux. <b>Fonte</b> est l'app — c'est le skin
+        qui tient une séance de 80 minutes sans fatiguer. <b>tty1</b> est un <b>troisième thème</b>,
+        à côté de Sombre et Clair, dans Réglages. Ton architecture de jetons le permet déjà presque tel quel :
+        c'est un jeu de valeurs de plus sur <code>:root[data-theme='console']</code>, plus deux polices,
+        plus le mode d'emphase par inversion. Et ça referme joliment la boucle : l'easter egg de boot
+        cesse d'être une blague isolée et devient <b>la porte d'entrée d'un thème</b> — celui qui l'a vu
+        au démarrage peut le garder.
+      </p>
+    </div>
+    <ul class="keep">
+      <li><b>Contraste.</b> Texte 13,4:1, ambre 8,9:1, vert 12,6:1, rouge 7,6:1, cyan 10,6:1 sur noir. En inversion, noir sur ambre : 9,1:1. Le gris <code>--dim</code> ne porte jamais un chiffre enregistrable, exactement comme <code>--text-3</code> aujourd'hui.</li>
+      <li><b>Aucun texte inventé.</b> Les libellés viennent de <code>src/i18n/fr.ts</code> ; ce qui est nouveau, ce sont les <b>gabarits</b> (<code>'[  OK  ] {label}'</code>), qui vivraient dans le dictionnaire comme le reste.</li>
+      <li><b>Local-first.</b> Cousine et VT323 sont sous licence libre (Apache 2.0 / OFL) et s'embarquent dans <code>public/</code> : ~90 ko de woff2 à deux fichiers, zéro requête réseau. Même contrainte que pour Fonte, même réponse.</li>
+      <li><b>Coût.</b> Un jeu de jetons, deux polices, et un composant d'emphase par inversion. Le vrai travail est ailleurs : <b>remplacer les icônes par des verdicts</b> écran par écran, ce qui touche beaucoup de fichiers mais aucun en profondeur.</li>
+      <li><b>Ce que je ne ferais pas.</b> Étendre la frappe aux feuilles modales, faire trembler un champ de saisie, ou mettre du glitch sur l'écran de séance. Le glitch est un décor de fond ; le jour où il masque un kilo, il a perdu.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p style="margin:0">
+      <span class="dim">tty1 · maquette statique · document de discussion, pas une implémentation.</span><br>
+      Aucun fichier de <code>src/</code> n'est modifié. Les chiffres sont des exemples plausibles, pas tes données.
+      La suite, si la direction te va : une spec dans <code>docs/design/specs/</code> qui liste le jeu de jetons
+      <code>console</code>, les composants à passer en inversion, et l'ordre des lots.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---- La frappe : chaque écran se compose ligne à ligne. -------------
+       Le défaut est « tout visible » : si ce script ne tourne pas, la
+       maquette reste lisible. C'est le script qui cache, puis révèle. */
+    function type(phone) {
+      if (reduced) return;
+      var lines = phone.querySelectorAll('.ty');
+      var i;
+      for (i = 0; i < lines.length; i++) lines[i].classList.add('ty-hidden');
+      var n = 0;
+      var step = function () {
+        if (n >= lines.length) return;
+        lines[n].classList.remove('ty-hidden');
+        n++;
+        setTimeout(step, 26);
+      };
+      setTimeout(step, 90);
+    }
+
+    function playAll() {
+      var phones = document.querySelectorAll('[data-ty]');
+      for (var i = 0; i < phones.length; i++) {
+        (function (p, d) { setTimeout(function () { type(p); }, d); })(phones[i], i * 130);
+      }
+    }
+
+    playAll();
+    var btn = document.getElementById('replay');
+    if (btn) btn.addEventListener('click', playAll);
+
+    /* ---- Le compte à rebours du repos, en vrai, en boucle. --------------
+       C'est le seul moment où ce skin se démarque vraiment : on doit
+       pouvoir regarder le passage au rouge sans recharger la page. */
+    var rest = document.getElementById('rest');
+    var cd = document.getElementById('cd');
+    var meter = document.getElementById('meter');
+    var hint = document.getElementById('hint');
+    if (!rest || !cd || !meter) return;
+
+    var TOTAL = 140, SLOTS = 28, left = 87;
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function paint() {
+      cd.textContent = pad(Math.floor(left / 60)) + ':' + pad(left % 60);
+      var on = Math.round(left / TOTAL * SLOTS);
+      var full = '', empty = '';
+      for (var i = 0; i < on; i++) full += '#';
+      for (var j = 0; j < SLOTS - on; j++) empty += '·';
+      meter.innerHTML = '<b>[' + full + '</b><i>' + empty + ']</i>';
+      var hot = left <= 10;
+      rest.classList.toggle('hot', hot);
+      if (hint) hint.textContent = hot
+        ? 'Remets-toi sous la barre.'
+        : 'Touche pour reprendre maintenant · ±15 s';
+    }
+
+    paint();
+    setInterval(function () { left = left > 0 ? left - 1 : 87; paint(); }, 1000);
+  })();
+</script>
