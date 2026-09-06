@@ -7,7 +7,7 @@
 
 ## Sauvegardes validées, échauffements reproposés, commandes regroupées (2026-09-06)
 
-- Publication : trois tags dans la journée — v2.5.1 pour la livraison principale, v2.5.2 pour le durcissement de la validation, v2.5.3 pour les trois correctifs venus d’une revue Codex. Un correctif poussé après un tag laisse la PWA devant l’APK ; chaque tag referme ce décalage. Validation avant le dernier changement de numéro : 2 564 tests réussis dans 242 fichiers, typecheck, build et lint verts.
+- Publication : quatre tags dans la journée — v2.5.1 pour la livraison principale, v2.5.2 pour le durcissement de la validation, v2.5.3 pour les trois correctifs venus d’une revue Codex, v2.5.4 pour le routage du sommaire de la Documentation. Un correctif poussé après un tag laisse la PWA devant l’APK ; chaque tag referme ce décalage. Validation avant le dernier changement de numéro : 2 566 tests réussis dans 242 fichiers, typecheck, build et lint verts.
 - **Import de sauvegarde.** Nouveau `src/lib/backup/validate.ts` : format, version de
   fichier, version de schéma, structure complète et références sont vérifiés **avant**
   toute écriture. Une table malformée, une ligne qui n'est pas un enregistrement, un champ
@@ -60,9 +60,28 @@
   `localStorage` refuse et la base ne bouge pas, la base avorte et les préférences
   reviennent. Les quatre tests livrés en un seul fichier fourre-tout ont été répartis dans
   leurs modules.
-- **Vérification.** `typecheck`, 2 564 tests dans 242 fichiers, `build` et `lint` (le seul
+- **Le sommaire de la Documentation ne menait qu’au wiki.** Défaut remonté à l’usage :
+  l’encadré « Ce que le wiki documente ici » listait les titres des articles rattachés à
+  l’exercice **en texte mort**, au-dessus d’un unique lien vers l’accueil du wiki. Sur une
+  adduction — qui projette pourtant trois articles — le geste évident ouvrait donc un
+  sommaire de soixante-quatre. Seuls les exercices de triceps semblaient marcher : ils sont
+  les seuls du catalogue à porter un article de portée, affiché en entier dans l’onglet, ce
+  qui masquait le défaut partout ailleurs. Chaque titre est maintenant son propre lien, sur
+  une cible de 48 px ; « Ouvrir le sommaire du wiki » reste, en second, parce que c’est une
+  sortie et non la réponse à « que dit le wiki sur cet exercice ». Quand le corpus ne
+  rattache **rien** — nuque, étirements, mobilité, rouleau : quatre exercices sur 175 — le
+  résolveur expose le cadre général (`listGeneralArticles`, les articles de choix
+  d’exercice qui ne déclarent aucune identité) plutôt que de laisser l’accueil pour seule
+  issue : ne rien déclarer est ici une propriété, donc ces pages ne prétendent pas parler de
+  cet exercice-là. La lacune reste écrite, et l’écran continue de ne connaître aucun
+  identifiant d’article — le repli vient du résolveur, comme le reste de la projection.
+- **Vérification.** `typecheck`, 2 566 tests dans 242 fichiers, `build` et `lint` (le seul
   avertissement restant est le Fast Refresh préexistant de `Boot.tsx`). Aucun essai
   navigateur ni APK.
+- **Checkpoint téléphone (v2.5.4).** Adduction à la machine → onglet Documentation → taper
+  « Adducteurs de hanche » dans l’encadré du haut : la fiche du muscle doit s’ouvrir, pas le
+  wiki. Un exercice de triceps ne doit rien avoir perdu. Étirements → Documentation : le
+  cadre général doit être proposé, l’accueil ne doit plus être la seule sortie.
 - **Checkpoint téléphone.** Restaurer une vraie sauvegarde, puis une tronquée à la main
   (vérifier que le message nomme la table et que rien ne bouge) ; séance A avec échauffement
   puis séance B avec charge modifiée ; routine qui porte déjà son échauffement ; tutoriel
@@ -92,6 +111,18 @@
 - Typecheck/build réussis ; lint sans erreur (un avertissement). Suite complète interrompue sans bilan après blocage apparent, deux échecs de séance signalés. Vérification ciblée indépendante : 118/119, échec cadence reproduit seul. Aucun commit effectué, suite non verte.
 - Checkpoint téléphone : reprendre une séance après kill pendant repos, vérifier le bilan de deux séries différentes, tester recherche + filtre contradictoire et sortie réelle du tutoriel. APK et mode avion restent à vérifier.
 
+## Lacunes connues
+
+- **Couverture du corpus éditorial.** Aucun article ne couvre les muscles `neck`, `full_body`,
+  `cardio` et `other`, ni la famille de mouvement `autre`. Conséquence mesurée sur le
+  catalogue : 4 exercices ne projettent aucun article (flexion de nuque, étirements,
+  mobilité, rouleau de massage) et 7 n'en projettent qu'un (crunchs, extensions de nuque,
+  corde à sauter). Un seul groupe musculaire porte un article **propre à ses exercices** —
+  le triceps, via `exercise-triceps-extensions` déclaré sur 8 slugs. Combler cela demande de
+  rédiger des articles sourcés dans `fittrack-kb-contract/editorial/articles/`, pas de
+  toucher à l'app : le validateur exige des `claimId` réels, et l'écran a pour règle de
+  montrer la lacune plutôt que de la deviner.
+
 ## Archives de progression
 
 | Fichier | Contenu |
@@ -117,6 +148,9 @@
    première séance, voir le Malphite-Chad « Rock solid. » sur l'accueil. APK : 48 h plus
    tard, notif « Tes premières DOMS » puis la porte au tap. Compte actuel : les deux
    paliers sont déjà dans Progression › Paliers, sans carte ni notif.
+7. **Documentation d'un exercice** — adduction à la machine › Documentation : taper un titre
+   de l'encadré du haut ouvre l'article nommé. Étirements : le cadre général est proposé,
+   l'accueil du wiki n'est plus la seule sortie.
 
 ## Première séance et premières DOMS (2026-08-31)
 
