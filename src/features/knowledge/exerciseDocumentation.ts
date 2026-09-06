@@ -10,7 +10,7 @@
 // qu'aucun score lexical ne sait décider quel contenu répond à quoi ; le
 // rattachement est déclaré dans le corpus et vérifié au build.
 import type { Exercise, MuscleGroup } from '@/data/types';
-import { articlesForScope } from './articleCatalogue';
+import { articlesForScope, listGeneralArticles } from './articleCatalogue';
 import type { ArticleScope, WikiArticle, WikiFamily } from './articleTypes';
 
 export type DocumentationExercise = Pick<
@@ -46,6 +46,18 @@ export type ExerciseDocumentation = Readonly<{
    */
   clinical: readonly WikiArticle[];
   secondary: readonly SecondaryMuscleDocumentation[];
+  /**
+   * Où aller quand le corpus ne rattache **rien** à cet exercice. Vide dès qu'il
+   * rattache quelque chose.
+   *
+   * Renvoyer alors vers l'accueil du wiki était le défaut remonté : quatre
+   * exercices du catalogue (nuque, étirements, mobilité, rouleau) n'ont aucune
+   * identité documentée, et leur onglet n'offrait qu'un lien vers un sommaire de
+   * soixante-quatre articles, à charge de l'utilisateur d'y retrouver le sien.
+   * Le cadre général ne parle pas de cet exercice — il ne le prétend pas — mais
+   * il ouvre sur la question qu'on se pose devant un exercice non documenté.
+   */
+  fallback: readonly WikiArticle[];
   /** L'ordre de lecture, dédupliqué. C'est une règle du module, pas de l'écran. */
   articleIds: string[];
   limitations: ExerciseDocumentationLimit[];
@@ -123,6 +135,7 @@ export function getDocumentationForExercise(
     specific,
     clinical,
     secondary,
+    fallback: ordered.length === 0 ? listGeneralArticles() : [],
     articleIds: ordered.map((article) => article.articleId),
     limitations,
   };

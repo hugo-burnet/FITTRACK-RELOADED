@@ -46,6 +46,34 @@ describe('ExerciseDocumentationView', () => {
     expect(screen.getByRole('heading', { name: 'Triceps' })).toBeVisible();
   });
 
+  // Le défaut remonté : sur une fiche pourtant documentée, le seul lien tapable
+  // ouvrait l'accueil du wiki. Les titres du sommaire mènent maintenant chacun à
+  // leur article.
+  it('fait du sommaire de la fiche un jeu de liens vers ses propres articles', () => {
+    renderView(pushdown);
+
+    expect(screen.getByRole('link', { name: /^Triceps/u })).toHaveAttribute(
+      'href',
+      '/knowledge/a/muscle-triceps',
+    );
+    expect(screen.getByRole('link', { name: /^Isolation du coude/u })).toHaveAttribute(
+      'href',
+      '/knowledge/a/movement-elbow-isolation',
+    );
+  });
+
+  // Étirements, mobilité, rouleau, flexion de nuque : aucune identité documentée.
+  // L'onglet n'a plus l'accueil du wiki pour seule sortie.
+  it('ouvre sur le cadre général quand le corpus ne rattache rien', () => {
+    renderView({ primaryMuscle: 'other', secondaryMuscles: [] });
+
+    expect(screen.getByText(/ne rattache encore aucun article à cet exercice/u)).toBeVisible();
+    expect(screen.getByRole('link', { name: /^Remplacer un exercice/u })).toHaveAttribute(
+      'href',
+      '/knowledge/a/exercise-substitutions',
+    );
+  });
+
   it('n’explique un muscle secondaire que si le corpus a balisé son rôle', () => {
     renderView({
       primaryMuscle: 'biceps',

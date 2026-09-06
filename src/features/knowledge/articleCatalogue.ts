@@ -69,6 +69,27 @@ export function findArticle(articleId: string): WikiArticle | undefined {
 }
 
 /**
+ * Le cadre général : les articles de choix d'exercice qui ne déclarent **aucune**
+ * identité — ni muscle, ni famille de mouvement, ni slug.
+ *
+ * Ne rien déclarer est ici une propriété, pas un oubli : ces pages parlent de la
+ * manière de choisir et de remplacer un exercice, pas de tel exercice. C'est ce
+ * qui les rend citables quand le corpus n'en rattache aucun, sans affirmer une
+ * relation que personne n'a écrite.
+ */
+const generalArticles = bundle.articles.filter(
+  (article) =>
+    article.family === 'exercise-choice' &&
+    article.muscleGroups.length === 0 &&
+    article.movementPatterns.length === 0 &&
+    article.exerciseSlugs.length === 0,
+);
+
+export function listGeneralArticles(): readonly WikiArticle[] {
+  return generalArticles;
+}
+
+/**
  * Les articles qui portent l'une des identités demandées, dédupliqués et rendus
  * dans l'ordre du bundle. La **priorité** entre muscle, mouvement et slug n'est
  * pas décidée ici : elle appartient au résolveur documentaire, qui sait dans

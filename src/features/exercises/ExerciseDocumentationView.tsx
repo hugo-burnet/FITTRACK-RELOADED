@@ -17,6 +17,29 @@ const LIMIT_KEYS = {
   movement_article_missing: 'exerciseDoc.limitMovementArticleMissing',
 } as const satisfies Record<ExerciseDocumentationLimit, string>;
 
+/**
+ * Une ligne du sommaire de la fiche : le titre **est** le lien, sur une cible de
+ * 48 px. Lire un titre et devoir chercher ailleurs comment l'ouvrir était le
+ * défaut ; ici le geste évident mène à l'article nommé.
+ */
+function SummaryLink({ article }: { article: WikiArticle }) {
+  return (
+    <li>
+      <Link
+        viewTransition
+        to={articleHref(article)}
+        className="flex min-h-12 items-center justify-between gap-3 text-sm font-semibold
+          leading-6 text-[var(--text-1)]"
+      >
+        {article.title}
+        <span aria-hidden="true" className="text-[var(--accent-ink)]">
+          →
+        </span>
+      </Link>
+    </li>
+  );
+}
+
 function ArticleCard({ article }: { article: WikiArticle }) {
   return (
     <article className="rounded-2xl bg-[var(--surface-1)] p-5">
@@ -47,6 +70,10 @@ function ArticleCard({ article }: { article: WikiArticle }) {
  * maximum six cartes — 164 exercices sur 175 en projettent quatre ou moins —
  * dont l'encadré du haut listait déjà tous les titres. Chercher dans tout le
  * corpus reste à un tap, par « Ouvrir le sommaire du wiki ».
+ *
+ * Cet encadré du haut est désormais un sommaire cliquable : chaque titre ouvre
+ * son article. Il ne l'était pas, et l'accueil du wiki était alors le seul
+ * endroit où un tap menait — d'où « la doc de l'exo renvoie au wiki global ».
  */
 export function ExerciseDocumentationView({ exercise }: { exercise: DocumentationExercise }) {
   const documentation = useMemo(() => getDocumentationForExercise(exercise), [exercise]);
@@ -62,27 +89,44 @@ export function ExerciseDocumentationView({ exercise }: { exercise: Documentatio
 
   return (
     <div className="flex flex-col gap-7">
+      {/* Le sommaire de la page, et il mène là où il nomme.
+          Les titres y étaient du texte mort au-dessus d'un unique lien vers
+          l'accueil du wiki : sur une fiche qui documentait bien trois articles,
+          le seul geste possible ouvrait un sommaire de soixante-quatre. C'est le
+          défaut remonté — « ça envoie au wiki global » — et il tenait à ça. */}
       <section aria-labelledby="exercise-doc-summary" className="rounded-2xl bg-[var(--surface-1)] p-5">
         <h2 id="exercise-doc-summary" className="label-xs font-semibold text-[var(--text-2)]">
           {t('exerciseDoc.summaryTitle')}
         </h2>
         {projected.length === 0 ? (
-          <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">
-            {t('exerciseDoc.emptyBody')}
-          </p>
+          <>
+            <p className="mt-3 text-sm leading-6 text-[var(--text-2)]">
+              {t('exerciseDoc.emptyBody')}
+            </p>
+            {/* Rien n'est rattaché à cet exercice : on ouvre sur le cadre
+                général, qui ne prétend pas parler de lui. C'est toujours mieux
+                qu'un sommaire où il faut retrouver soi-même quoi lire. */}
+            {documentation.fallback.length > 0 && (
+              <ul className="mt-2">
+                {documentation.fallback.map((article) => (
+                  <SummaryLink key={article.articleId} article={article} />
+                ))}
+              </ul>
+            )}
+          </>
         ) : (
-          <ul className="mt-3 space-y-1">
+          <ul className="mt-1">
             {projected.map((article) => (
-              <li key={article.articleId} className="text-sm leading-6 text-[var(--text-1)]">
-                {article.title}
-              </li>
+              <SummaryLink key={article.articleId} article={article} />
             ))}
           </ul>
         )}
+        {/* Le corpus entier reste à un tap, mais en second : c'est une sortie,
+            pas la réponse à « que dit le wiki sur cet exercice ». */}
         <Link
           viewTransition
           to="/knowledge"
-          className="mt-3 flex min-h-12 items-center gap-2 text-sm font-semibold text-[var(--accent-ink)]"
+          className="mt-2 flex min-h-12 items-center gap-2 text-sm text-[var(--text-2)]"
         >
           {t('exerciseDoc.toSummary')}
           <span aria-hidden="true">→</span>

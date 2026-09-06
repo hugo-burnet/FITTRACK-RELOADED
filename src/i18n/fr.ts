@@ -1508,7 +1508,7 @@ const fr = {
     tabDocumentation: 'Documentation',
     summaryTitle: 'Ce que le wiki documente ici',
     emptyBody:
-      'Aucun article ne couvre encore ce muscle. Le sommaire du wiki dit ce qui existe ; rien n’est cherché à sa place.',
+      'Le corpus ne rattache encore aucun article à cet exercice. Le cadre général ci-dessous ne parle pas de lui, mais de la question qu’on se pose devant un exercice non documenté ; rien n’est cherché à sa place.',
     toSummary: 'Ouvrir le sommaire du wiki',
     readArticle: 'Lire l’article',
     clinicalTitle: 'Douleur et tolérance',
