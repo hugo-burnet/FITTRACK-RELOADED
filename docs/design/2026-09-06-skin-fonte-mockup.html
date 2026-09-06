@@ -1,0 +1,1099 @@
+<title>Fonte — skin FitTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* ------------------------------------------------------------------
+     FONTE — proposition de skin pour FitTrack.
+     Maquette statique. Aucun code applicatif ici : c'est un document.
+
+     Le parti pris : l'app n'est pas une app de « bien-être », c'est un
+     instrument posé sur une machine. Fonte, acier, plaque gravée,
+     signalétique de sécurité. Une seule couleur crie, tout le reste se tait.
+     ------------------------------------------------------------------ */
+
+  :root {
+    /* Le document de présentation, engagé en sombre : c'est un atelier. */
+    --ground: #0b0a09;
+    --plate: #14120e;
+    --raised: #1e1b15;
+    --rule: #332e26;
+    --rule-hi: #4a4438;
+    --chalk: #f4f0e8;      /* 17,2:1 sur --ground */
+    --steel: #9a9285;      /* 7,6:1 sur --ground */
+    --steel-dim: #6b6459;  /* réservé aux traits, jamais au texte lisible */
+    --hazard: #ff5a00;     /* 6,4:1 sur --ground */
+    --hazard-ink: #170a02; /* 8,1:1 sur --hazard */
+    --hazard-soft: #3a1704;
+    --alert: #ff3b30;
+    --mag: #d7e6e1;        /* magnésie : la marque du « fait » */
+    --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--chalk);
+    font-family: var(--f-display);
+    font-variation-settings: 'wdth' 100;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Trame d'atelier : une grille très basse, presque invisible, qui donne
+     au fond la texture d'un plan technique plutôt que d'un vide noir. */
+  .sheet {
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+    background-size: 64px 64px, 64px 64px;
+    background-position: -1px -1px;
+    background-blend-mode: normal;
+  }
+  .sheet::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(120% 80% at 50% 0%, transparent 20%, var(--ground) 78%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  /* ---------- Étiquette gravée : le motif typographique de tout le skin --- */
+  .stamp {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--steel);
+  }
+  .stamp--hazard { color: var(--hazard); }
+
+  /* ---------- En-tête : la plaque signalétique --------------------------- */
+  header { display: flex; flex-direction: column; gap: 20px; }
+
+  .title {
+    font-size: clamp(56px, 12vw, 132px);
+    line-height: 0.84;
+    font-weight: 900;
+    font-variation-settings: 'wdth' 70;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .title span { color: var(--hazard); }
+
+  .thesis {
+    max-width: 60ch;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--chalk);
+    margin: 0;
+  }
+  .thesis b { color: var(--hazard); font-weight: 700; }
+
+  .plate-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    border: 1px solid var(--rule-hi);
+    background: var(--plate);
+  }
+  .plate-strip > div {
+    padding: 14px 16px;
+    border-right: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .plate-strip > div:last-child { border-right: 0; }
+  .plate-strip p { margin: 0; font-size: 13px; line-height: 1.4; color: var(--chalk); }
+
+  /* ---------- Sections --------------------------------------------------- */
+  section { display: flex; flex-direction: column; gap: 24px; }
+
+  .sec-head { display: flex; flex-direction: column; gap: 8px; border-top: 2px solid var(--hazard); padding-top: 12px; }
+  .sec-head h2 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    font-variation-settings: 'wdth' 82;
+    letter-spacing: -0.01em;
+  }
+  .sec-head p { margin: 0; max-width: 66ch; color: var(--steel); font-size: 15px; line-height: 1.55; }
+
+  /* ---------- Système : couleurs & typo ---------------------------------- */
+  .system { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+
+  .swatches { display: flex; flex-direction: column; }
+  .sw { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--rule); }
+  .sw i { display: block; height: 26px; border: 1px solid var(--rule-hi); }
+  .sw b { font-size: 13px; font-weight: 600; }
+  .sw em { display: block; font-style: normal; font-size: 12px; color: var(--steel); }
+
+  .specimen { display: flex; flex-direction: column; gap: 16px; }
+  .spec-row { border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  .spec-num {
+    font-size: 62px; font-weight: 800; font-variation-settings: 'wdth' 68;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.03em; line-height: 1;
+  }
+  .spec-body { font-size: 15px; line-height: 1.5; margin: 6px 0 0; }
+  .spec-mono { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--steel); }
+
+  /* ---------- Rail des écrans -------------------------------------------- */
+  .rail {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    padding: 4px 4px 24px;
+    scroll-snap-type: x mandatory;
+  }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: var(--rule-hi); }
+
+  .screen { flex: 0 0 auto; width: 340px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 14px; }
+  .screen > figcaption { display: flex; flex-direction: column; gap: 6px; }
+  .screen figcaption h3 { margin: 0; font-size: 17px; font-weight: 700; }
+  .screen figcaption p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--steel); }
+
+  /* ---------- Le téléphone ----------------------------------------------- */
+  .phone {
+    width: 340px;
+    height: 700px;
+    border: 1px solid var(--rule-hi);
+    background: var(--s0);
+    color: var(--t1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.55);
+  }
+
+  /* Jeu de jetons de l'app — sombre par défaut, la variante claire les
+     redéfinit sur .phone--light. Tout le reste ne connaît que ces noms. */
+  .phone {
+    --s0: #0d0c0a;
+    --s1: #17150f;
+    --s2: #232019;
+    --bd: #3a342a;
+    --t1: #f4f0e8;
+    --t2: #a49b8d;
+    --acc: #ff5a00;
+    --acc-ink: #170a02;
+    --acc-soft: #3a1704;
+    --done: #d7e6e1;
+    --warn: #ff3b30;
+  }
+  .phone--light {
+    --s0: #e9e5dc;
+    --s1: #fbf9f5;
+    --s2: #ddd7ca;
+    --bd: #c3bbaa;
+    --t1: #16140f;
+    --t2: #5f594d;
+    --acc: #bf3d00;
+    --acc-ink: #ffffff;
+    --acc-soft: #f6ddcd;
+    --done: #1f4f43;
+    --warn: #b3261e;
+  }
+
+  .status {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 16px 6px;
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; color: var(--t2);
+    background: var(--s0);
+  }
+
+  .body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  .lbl {
+    font-family: var(--f-mono); font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--t2);
+  }
+  .lbl--acc { color: var(--acc); }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-variation-settings: 'wdth' 72;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* Barre de titre d'écran : gros, condensé, collé à gauche. */
+  .screen-title {
+    padding: 6px 16px 12px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  }
+  .screen-title h4 {
+    margin: 0; font-size: 30px; font-weight: 900;
+    font-variation-settings: 'wdth' 68; letter-spacing: -0.01em; text-transform: uppercase;
+  }
+
+  /* Une plaque : pas une carte. Angles vifs, filet, aucune ombre. */
+  .pl { background: var(--s1); border: 1px solid var(--bd); }
+  .scroll { flex: 1; overflow: hidden; padding: 0 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* ---------- Séance en cours -------------------------------------------- */
+  .wk-head { display: flex; align-items: center; gap: 10px; padding: 4px 16px 10px; }
+  .wk-head .nm { font-size: 20px; font-weight: 800; font-variation-settings: 'wdth' 74; letter-spacing: -0.01em; }
+  .wk-head .tm { margin-left: auto; font-family: var(--f-mono); font-size: 14px; font-weight: 500; color: var(--acc); }
+
+  /* Le tonnage de la séance, dessiné comme une barre chargée : chaque
+     disque est un exercice fait. C'est le motif « barre » du skin. */
+  .bar { display: flex; align-items: center; gap: 2px; padding: 0 16px 12px; }
+  .bar .rod { flex: 1; height: 2px; background: var(--bd); }
+  .bar .disc { width: 7px; border-radius: 1px; background: var(--acc); }
+  .bar .disc.d1 { height: 26px; } .bar .disc.d2 { height: 20px; } .bar .disc.d3 { height: 14px; }
+  .bar .disc.off { background: var(--bd); }
+
+  .ex { padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 10px; }
+  .ex-top { display: flex; align-items: flex-start; gap: 8px; }
+  .ex-top h5 { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.15; }
+  .ex-top .meta { margin: 3px 0 0; }
+  .dots { margin-left: auto; font-size: 18px; color: var(--t2); line-height: 1; letter-spacing: 0.08em; }
+
+  .grid-head, .row {
+    display: grid;
+    grid-template-columns: 22px 58px 1fr 1fr 40px;
+    align-items: center;
+    gap: 8px;
+  }
+  .grid-head { padding-bottom: 4px; border-bottom: 1px solid var(--bd); }
+  .row { min-height: 48px; border-bottom: 1px solid var(--bd); }
+  .row:last-child { border-bottom: 0; }
+  .row .n { font-family: var(--f-mono); font-size: 13px; color: var(--t2); }
+  .row .prev { font-family: var(--f-mono); font-size: 11px; color: var(--t2); }
+  .cell {
+    height: 40px; display: flex; align-items: center; justify-content: center;
+    background: var(--s2); border: 1px solid transparent;
+    font-size: 19px;
+  }
+  .row.live .cell { border-color: var(--acc); background: var(--acc-soft); }
+  .row.live .cell.tgt { color: var(--t2); }
+  .row.done .cell { background: transparent; color: var(--t2); }
+  .tick {
+    height: 40px; width: 40px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--bd); font-size: 18px; color: var(--t2);
+  }
+  .row.done .tick { background: var(--done); border-color: var(--done); color: var(--s0); }
+  .row.live .tick { background: var(--acc); border-color: var(--acc); color: var(--acc-ink); font-weight: 700; }
+
+  .rec {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 9px; background: var(--acc-soft); border-left: 3px solid var(--acc);
+  }
+  .rec .v { font-family: var(--f-mono); font-size: 11px; color: var(--t1); }
+
+  .ex-next { display: flex; align-items: center; gap: 10px; padding: 12px; }
+  .ex-next h5 { margin: 0; font-size: 14px; font-weight: 600; color: var(--t1); }
+  .ex-next .cnt { margin-left: auto; font-family: var(--f-mono); font-size: 11px; color: var(--t2); }
+
+  /* ---------- Le bandeau de repos : la signature ------------------------- */
+  .rest { position: relative; border-top: 1px solid var(--acc); background: var(--s1); overflow: hidden; }
+  .rest .fill {
+    position: absolute; inset: 0 auto 0 0;
+    width: 62%;
+    background: var(--acc-soft);
+    border-right: 2px solid var(--acc);
+  }
+  .rest .hz {
+    position: absolute; inset: 0; opacity: 0;
+    background-image: repeating-linear-gradient(
+      -45deg, var(--acc) 0 8px, transparent 8px 20px);
+    opacity: 0.12;
+  }
+  .rest .in {
+    position: relative;
+    display: grid; grid-template-columns: 48px 1fr 48px; align-items: center; gap: 10px;
+    padding: 10px 12px;
+  }
+  .rest .cd {
+    font-size: 40px; line-height: 1; color: var(--acc);
+    font-variant-numeric: tabular-nums; font-variation-settings: 'wdth' 66; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .rest .txt { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+  .rest .adj {
+    height: 44px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--acc); color: var(--acc);
+    font-family: var(--f-mono); font-size: 12px; font-weight: 600;
+  }
+  .rest.hot .cd { color: var(--warn); }
+  .rest.hot { border-top-color: var(--warn); }
+  .rest.hot .fill { border-right-color: var(--warn); }
+
+  .cta {
+    display: block; text-align: center; padding: 15px;
+    background: var(--acc); color: var(--acc-ink);
+    font-size: 16px; font-weight: 800; letter-spacing: 0.02em;
+    font-variation-settings: 'wdth' 88; text-transform: uppercase;
+  }
+  .cta--ghost { background: transparent; color: var(--t1); border-top: 1px solid var(--bd); font-weight: 600; text-transform: none; }
+
+  /* ---------- Barre de navigation ---------------------------------------- */
+  nav.tabs {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--bd); background: var(--s1);
+  }
+  nav.tabs a {
+    padding: 9px 0 10px; text-align: center; text-decoration: none;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    color: var(--t2);
+  }
+  nav.tabs a.on { color: var(--acc); }
+  nav.tabs .gl { width: 20px; height: 20px; display: block; }
+  nav.tabs .tl { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+  nav.tabs a.on .gl { filter: none; }
+
+  /* ---------- Accueil ----------------------------------------------------- */
+  .island { display: grid; grid-template-columns: 1fr 1fr; }
+  .island > div { padding: 12px; border: 1px solid var(--bd); }
+  .island > div + div { border-left: 0; }
+  .island .v { font-size: 44px; line-height: 0.9; margin-top: 4px; }
+  .island .u { font-size: 15px; font-weight: 600; color: var(--t2); }
+
+  .go { padding: 14px 12px 0; display: flex; flex-direction: column; gap: 10px; }
+  .go h5 { margin: 0; font-size: 24px; font-weight: 800; font-variation-settings: 'wdth' 76; }
+  .go .meta { display: flex; gap: 8px; align-items: center; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.06em;
+    padding: 4px 7px; border: 1px solid var(--bd); color: var(--t2);
+  }
+
+  .weeks { display: flex; gap: 3px; margin-top: 8px; }
+  .weeks i { flex: 1; height: 6px; background: var(--bd); }
+  .weeks i.on { background: var(--acc); }
+  .weeks i.now { background: var(--acc); box-shadow: 0 0 0 2px var(--acc-soft); }
+
+  .rows { display: flex; flex-direction: column; }
+  .rw { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-bottom: 1px solid var(--bd); }
+  .rw:last-child { border-bottom: 0; }
+  .rw .d { font-family: var(--f-mono); font-size: 11px; color: var(--t2); width: 42px; flex: none; }
+  .rw .t { font-size: 14px; font-weight: 600; }
+  .rw .r { margin-left: auto; font-family: var(--f-mono); font-size: 11px; color: var(--t2); }
+
+  .token { display: flex; align-items: center; gap: 12px; padding: 12px; }
+  .token .medal {
+    width: 46px; height: 46px; flex: none; border-radius: 50%;
+    background: var(--s2); border: 2px solid var(--acc);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+
+  /* ---------- Historique : la trame perforée ------------------------------ */
+  .cal { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .cal .hd { display: flex; align-items: center; gap: 8px; }
+  .cal .hd .m { font-size: 15px; font-weight: 700; text-transform: uppercase; font-variation-settings: 'wdth' 80; }
+  .cal .hd .nav { margin-left: auto; display: flex; gap: 6px; color: var(--t2); font-family: var(--f-mono); font-size: 13px; }
+  .grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .grid7 .dw { text-align: center; }
+  .cellday {
+    aspect-ratio: 1; border: 1px solid var(--bd);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--f-mono); font-size: 10px; color: var(--t2);
+  }
+  .cellday.l1 { background: color-mix(in srgb, var(--acc) 26%, transparent); color: var(--t1); border-color: transparent; }
+  .cellday.l2 { background: color-mix(in srgb, var(--acc) 58%, transparent); color: var(--t1); border-color: transparent; }
+  .cellday.l3 { background: var(--acc); color: var(--acc-ink); border-color: var(--acc); font-weight: 600; }
+  .cellday.out { opacity: 0.28; }
+  .cal-key { display: inline-block; width: 14px; height: 8px; }
+
+  .seg { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--bd); margin: 0 12px; }
+  .seg span { padding: 9px 0; text-align: center; }
+  .seg span.on { background: var(--acc); color: var(--acc-ink); }
+
+  .hrow { display: grid; grid-template-columns: 46px 1fr auto; gap: 10px; padding: 12px; border-bottom: 1px solid var(--bd); align-items: center; }
+  .hrow .day { text-align: center; }
+  .hrow .day .dd { font-size: 22px; line-height: 1; }
+  .hrow h5 { margin: 0 0 3px; font-size: 14px; font-weight: 600; }
+  .hrow .tn { text-align: right; }
+  .hrow .tn .v { font-size: 17px; }
+
+  /* ---------- Planifier --------------------------------------------------- */
+  .tabs3 { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--bd); }
+  .tabs3 span { padding: 11px 0; text-align: center; color: var(--t2); border-bottom: 2px solid transparent; }
+  .tabs3 span.on { color: var(--t1); border-bottom-color: var(--acc); }
+
+  .folder { display: flex; align-items: center; gap: 8px; padding: 12px 12px 6px; }
+  .rt { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .rt-top { display: flex; align-items: baseline; gap: 8px; }
+  .rt-top h5 { margin: 0; font-size: 16px; font-weight: 700; }
+  .rt-top .n { margin-left: auto; font-family: var(--f-mono); font-size: 11px; color: var(--t2); }
+  .exlist { display: flex; flex-direction: column; gap: 4px; }
+  .exlist div { display: flex; gap: 8px; font-size: 12.5px; color: var(--t2); }
+  .exlist div b { color: var(--t1); font-weight: 500; }
+  .exlist div i { font-family: var(--f-mono); font-style: normal; margin-left: auto; }
+
+  .prog { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .prog .ph { display: flex; align-items: center; gap: 8px; }
+  .prog h5 { margin: 0; font-size: 16px; font-weight: 700; }
+
+  /* ---------- Notes de fin ------------------------------------------------ */
+  .moves { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .move { background: var(--plate); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .move h3 { margin: 0; font-size: 17px; font-weight: 700; }
+  .move p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--steel); }
+  .move p b { color: var(--chalk); font-weight: 600; }
+
+  .keep { display: flex; flex-direction: column; gap: 10px; max-width: 74ch; }
+  .keep li { font-size: 14.5px; line-height: 1.6; color: var(--steel); }
+  .keep li b { color: var(--chalk); font-weight: 600; }
+  ul.keep { padding-left: 18px; margin: 0; }
+
+  footer { border-top: 1px solid var(--rule); padding-top: 20px; color: var(--steel); font-size: 13px; line-height: 1.6; max-width: 70ch; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<div class="sheet">
+<div class="wrap">
+
+  <header>
+    <p class="stamp stamp--hazard">Proposition de skin · FitTrack · 06.09.2026</p>
+    <h1 class="title">FONTE<span>.</span></h1>
+    <p class="thesis">
+      FitTrack ne ressemble à rien parce qu'il ressemble à tout : sombre, orange, arrondi, poli.
+      <b>Fonte</b> arrête de faire une app de bien-être et fait un <b>instrument de salle</b> —
+      une plaque d'acier gravée, une signalétique de sécurité, des chiffres de compteur.
+      Rien de neuf dans les écrans : les mêmes données, la même hiérarchie, le même vocabulaire.
+      Ce qui change, c'est <b>l'échelle</b>, <b>la matière</b> et <b>une couleur qui ne s'excuse plus</b>.
+    </p>
+    <div class="plate-strip">
+      <div><span class="stamp">Le pari</span><p>Une seule couleur crie. Tout le reste est du gris de machine.</p></div>
+      <div><span class="stamp">La signature</span><p>Le bandeau de repos, orange pleine largeur, qui se vide.</p></div>
+      <div><span class="stamp">La règle</span><p>Zéro rondeur. 2 px de rayon, jamais plus. Des plaques, pas des cartes.</p></div>
+      <div><span class="stamp">L'invariant</span><p>Contrastes AA, cibles 48 px, thème clair complet.</p></div>
+    </div>
+  </header>
+
+  <!-- ================= SYSTÈME ================= -->
+  <section>
+    <div class="sec-head">
+      <span class="stamp">01 — Le système</span>
+      <h2>Six couleurs, deux familles, aucun dégradé</h2>
+      <p>
+        L'orange actuel (#ff8a3d) est un orange de coucher de soleil : chaleureux, poli, oubliable.
+        Fonte le remplace par un <strong>orange de sécurité</strong> — celui d'un carter de machine et
+        d'un panneau de chantier. Il est plus saturé, donc il s'emploie moins souvent et plus fort.
+        La magnésie remplace le vert de validation : une série faite est marquée à la craie, pas cochée en vert.
+      </p>
+    </div>
+    <div class="system">
+      <div class="swatches">
+        <div class="sw"><i style="background:#0b0a09"></i><span><b>Fonte brute</b><em>Le fond. Noir chaud, jamais #000.</em></span><span class="stamp">#0B0A09</span></div>
+        <div class="sw"><i style="background:#14120e"></i><span><b>Plaque</b><em>Listes, plaques, bandeaux.</em></span><span class="stamp">#14120E</span></div>
+        <div class="sw"><i style="background:#232019"></i><span><b>Alésage</b><em>Champs de saisie, creux.</em></span><span class="stamp">#232019</span></div>
+        <div class="sw"><i style="background:#ff5a00"></i><span><b>Orange sécurité</b><em>L'accent. 6,4:1 sur le fond.</em></span><span class="stamp">#FF5A00</span></div>
+        <div class="sw"><i style="background:#d7e6e1"></i><span><b>Magnésie</b><em>La marque du fait. Rien d'autre.</em></span><span class="stamp">#D7E6E1</span></div>
+        <div class="sw"><i style="background:#ff3b30"></i><span><b>Alerte</b><em>Les 10 dernières secondes. Danger réel.</em></span><span class="stamp">#FF3B30</span></div>
+      </div>
+      <div class="specimen">
+        <div class="spec-row">
+          <div class="spec-num">82,5&nbsp;<span style="font-size:26px;color:var(--steel)">kg</span></div>
+          <p class="spec-body"><b>Archivo</b>, graisse 800, largeur 68. Les chiffres sont l'interface :
+            une charge se lit du coin de l'œil, à bout de bras, en sueur. Chasse fixe obligatoire.</p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-mono">Série · Précédent · Repos · Record</p>
+          <p class="spec-body"><b>IBM Plex Mono</b>, 10 px, interlettrage 0,18 em, capitales.
+            Ce sont des <em>marquages</em>, pas des titres — comme les kilos frappés sur un disque.
+            Aucune micro-étiquette n'est en Archivo.</p>
+        </div>
+        <div class="spec-row">
+          <p class="spec-body" style="margin:0">Le texte courant reste Archivo largeur 100, 15–16 px, interligne 1,5.
+            Il est là pour être lu une fois — la consigne, la règle de suggestion, l'erreur — jamais pour porter un chiffre.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ÉCRANS ================= -->
+  <section>
+    <div class="sec-head">
+      <span class="stamp">02 — Les écrans</span>
+      <h2>Quatre écrans, mêmes données qu'aujourd'hui</h2>
+      <p>
+        Aucune fonctionnalité inventée : tout ce qui est affiché ci-dessous existe déjà dans l'app
+        (suggestion de routine, bloc en cours, îlot de chiffres, journal et calendrier, routines et programmes).
+        Les valeurs sont des exemples. Faites glisser le rail horizontalement.
+      </p>
+    </div>
+
+    <div class="rail">
+
+      <!-- ---------- 1. SÉANCE EN COURS ---------- -->
+      <figure class="screen" style="margin:0">
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>SÉANCE · 5G · 78 %</span></div>
+          <div class="body">
+            <div class="wk-head">
+              <span class="nm">Push A</span>
+              <span class="tm">00:42:18</span>
+            </div>
+            <div class="bar" aria-hidden="true">
+              <span class="disc d3"></span><span class="disc d2"></span><span class="disc d1"></span>
+              <span class="rod"></span>
+              <span class="disc d1 off"></span><span class="disc d2 off"></span><span class="disc d3 off"></span>
+            </div>
+            <div style="padding:0 16px 10px;display:flex;gap:8px;align-items:baseline">
+              <span class="lbl">5 sur 14 séries validées</span>
+            </div>
+
+            <div class="scroll">
+              <div class="pl ex">
+                <div class="ex-top">
+                  <div>
+                    <h5>Développé couché — Barre</h5>
+                    <div class="meta"><span class="lbl">Pectoraux · 3 séries de travail</span></div>
+                  </div>
+                  <span class="dots">···</span>
+                </div>
+
+                <div>
+                  <div class="grid-head">
+                    <span class="lbl">N°</span><span class="lbl">Préc.</span>
+                    <span class="lbl" style="text-align:center">KG</span>
+                    <span class="lbl" style="text-align:center">REPS</span>
+                    <span></span>
+                  </div>
+                  <div class="row done">
+                    <span class="n">1</span><span class="prev">80×8</span>
+                    <span class="cell num">80</span><span class="cell num">8</span>
+                    <span class="tick">✓</span>
+                  </div>
+                  <div class="row done">
+                    <span class="n">2</span><span class="prev">80×8</span>
+                    <span class="cell num">80</span><span class="cell num">8</span>
+                    <span class="tick">✓</span>
+                  </div>
+                  <div class="row live">
+                    <span class="n">3</span><span class="prev">80×7</span>
+                    <span class="cell num">82,5</span><span class="cell num tgt">8</span>
+                    <span class="tick">✓</span>
+                  </div>
+                </div>
+
+                <div class="rec">
+                  <span class="lbl lbl--acc">Record</span>
+                  <span class="v">1RM estimé · 104 kg · +2 kg</span>
+                </div>
+              </div>
+
+              <div class="pl ex-next">
+                <div>
+                  <h5>Développé incliné — Haltères</h5>
+                  <span class="lbl">Repos 2:00</span>
+                </div>
+                <span class="cnt">0 / 3</span>
+              </div>
+
+              <div class="pl ex-next">
+                <div>
+                  <h5>Élévations latérales</h5>
+                  <span class="lbl">Repos 1:00</span>
+                </div>
+                <span class="cnt">0 / 4</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- LA SIGNATURE : le bandeau de repos -->
+          <div class="rest" id="rest">
+            <div class="fill" id="restFill"></div>
+            <div class="hz" id="restHz"></div>
+            <div class="in">
+              <span class="adj">−15</span>
+              <span class="txt">
+                <span class="lbl lbl--acc" id="restLbl">Repos</span>
+                <span class="cd" id="restCd">01:27</span>
+              </span>
+              <span class="adj">+15</span>
+            </div>
+          </div>
+          <span class="cta">Terminer la séance</span>
+        </div>
+        <figcaption>
+          <span class="stamp stamp--hazard">Écran 01</span>
+          <h3>Séance en cours · repos lancé</h3>
+          <p>
+            Le repos ne flotte plus dans une carte : il prend toute la largeur, sous le pouce, et se
+            <b style="color:var(--chalk);font-weight:600">vide de la droite vers la gauche</b> comme une barre qu'on décharge.
+            Sous 10 s il passe au rouge et la trame de sécurité apparaît — l'app dit
+            « remets-toi sous la barre » sans une phrase. La série en cours est la seule
+            en orange ; les faites sont marquées à la craie.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 2. ACCUEIL ---------- -->
+      <figure class="screen" style="margin:0">
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>5G · 78 %</span></div>
+          <div class="body">
+            <div class="screen-title">
+              <h4>Accueil</h4>
+              <span class="lbl">Samedi 6 septembre</span>
+            </div>
+            <div class="scroll">
+              <div class="island">
+                <div>
+                  <span class="lbl">cette semaine</span>
+                  <div class="v num">3</div>
+                  <span class="u">séances</span>
+                </div>
+                <div>
+                  <span class="lbl">poids du jour</span>
+                  <div class="v num">78,4</div>
+                  <span class="u">kg</span>
+                </div>
+              </div>
+
+              <div class="pl">
+                <div class="go">
+                  <span class="lbl lbl--acc">À lancer</span>
+                  <h5>Push A</h5>
+                  <div class="meta"><span class="lbl">Réalisée il y a 4 jours · la plus ancienne de tes routines</span></div>
+                  <div class="chips">
+                    <span class="chip">DÉV. COUCHÉ</span>
+                    <span class="chip">INCLINÉ HALT.</span>
+                    <span class="chip">+3</span>
+                  </div>
+                </div>
+                <span class="cta">Démarrer Push A</span>
+              </div>
+
+              <div class="pl" style="padding:12px">
+                <span class="lbl">Bloc en cours</span>
+                <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px">
+                  <span style="font-size:17px;font-weight:700">Hypertrophie haut du corps</span>
+                </div>
+                <div style="margin-top:4px"><span class="lbl">Semaine 3 sur 5</span></div>
+                <div class="weeks" aria-hidden="true">
+                  <i class="on"></i><i class="on"></i><i class="now"></i><i></i><i></i>
+                </div>
+              </div>
+
+              <div class="pl token">
+                <span class="medal">🗿</span>
+                <div>
+                  <div style="font-size:14px;font-weight:700">Palier franchi</div>
+                  <span class="lbl">100 kg au développé couché</span>
+                </div>
+              </div>
+
+              <div class="pl rows">
+                <div style="padding:10px 12px 4px"><span class="lbl">Dernières séances</span></div>
+                <div class="rw"><span class="d">02.09</span><span class="t">Pull A</span><span class="r">6 240 kg</span></div>
+                <div class="rw"><span class="d">31.08</span><span class="t">Jambes</span><span class="r">9 180 kg</span></div>
+                <div class="rw"><span class="d">29.08</span><span class="t">Push A</span><span class="r">5 910 kg</span></div>
+              </div>
+            </div>
+          </div>
+          <nav class="tabs">
+            <a href="#" class="on"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8.5 10 3l7 5.5V17H3z"/></svg><span class="tl">Accueil</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="14" height="13"/><path d="M3 8h14M7 2v4M13 2v4"/></svg><span class="tl">Planifier</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M10 5.5V10l3 2"/></svg><span class="tl">Histo.</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 15l4-5 3 3 7-8"/></svg><span class="tl">Progrès</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 10h2M16 10h2M5 6.5v7M15 6.5v7M7 10h6"/></svg><span class="tl">Exos</span></a>
+          </nav>
+        </div>
+        <figcaption>
+          <span class="stamp stamp--hazard">Écran 02</span>
+          <h3>Accueil</h3>
+          <p>
+            L'îlot de chiffres devient <b style="color:var(--chalk);font-weight:600">un compteur</b> : 44 px, chasse fixe,
+            unité en dessous. Le bloc en cours dessine ses semaines en cinq traits — un programme se lit,
+            pas se déchiffre. La suggestion de routine porte le seul bouton plein orange de l'écran :
+            l'app n'a qu'une chose à te faire faire.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 3. HISTORIQUE ---------- -->
+      <figure class="screen" style="margin:0">
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>5G · 78 %</span></div>
+          <div class="body">
+            <div class="screen-title">
+              <h4>Historique</h4>
+              <span class="lbl">217 séances</span>
+            </div>
+
+            <div style="padding:0 12px 10px">
+              <div class="pl" style="display:grid;grid-template-columns:1fr 1fr">
+                <div style="padding:12px;border-right:1px solid var(--bd)">
+                  <span class="lbl">Régularité</span>
+                  <div class="num" style="font-size:34px;line-height:1;margin-top:4px">11</div>
+                  <span class="lbl">semaines d'affilée</span>
+                </div>
+                <div style="padding:12px">
+                  <span class="lbl">Objectif hebdo</span>
+                  <div class="num" style="font-size:34px;line-height:1;margin-top:4px">3<span style="color:var(--t2)">/4</span></div>
+                  <span class="lbl">cette semaine</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="seg"><span>Journal</span><span class="on">Calendrier</span></div>
+
+            <div class="scroll" style="padding-top:10px">
+              <div class="pl cal">
+                <div class="hd">
+                  <span class="m">Septembre 2026</span>
+                  <span class="nav">‹&nbsp;&nbsp;›</span>
+                </div>
+                <div class="grid7">
+                  <span class="lbl dw">L</span><span class="lbl dw">M</span><span class="lbl dw">M</span>
+                  <span class="lbl dw">J</span><span class="lbl dw">V</span><span class="lbl dw">S</span><span class="lbl dw">D</span>
+                  <span class="cellday out">31</span><span class="cellday l1">1</span><span class="cellday">2</span>
+                  <span class="cellday l2">3</span><span class="cellday">4</span><span class="cellday l3">5</span><span class="cellday">6</span>
+                  <span class="cellday l2">7</span><span class="cellday">8</span><span class="cellday l1">9</span>
+                  <span class="cellday">10</span><span class="cellday l3">11</span><span class="cellday">12</span><span class="cellday">13</span>
+                  <span class="cellday l2">14</span><span class="cellday">15</span><span class="cellday l1">16</span>
+                  <span class="cellday l2">17</span><span class="cellday">18</span><span class="cellday">19</span><span class="cellday l1">20</span>
+                  <span class="cellday l3">21</span><span class="cellday">22</span><span class="cellday l2">23</span>
+                  <span class="cellday">24</span><span class="cellday l1">25</span><span class="cellday">26</span><span class="cellday">27</span>
+                  <span class="cellday l2">28</span><span class="cellday">29</span><span class="cellday l1">30</span>
+                  <span class="cellday out">1</span><span class="cellday out">2</span><span class="cellday out">3</span><span class="cellday out">4</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;padding-top:2px">
+                  <span class="lbl">Tonnage</span>
+                  <i class="cal-key" style="background:color-mix(in srgb,var(--acc) 26%,transparent)"></i>
+                  <i class="cal-key" style="background:color-mix(in srgb,var(--acc) 58%,transparent)"></i>
+                  <i class="cal-key" style="background:var(--acc)"></i>
+                </div>
+              </div>
+
+              <div class="pl">
+                <div class="hrow">
+                  <div class="day"><div class="dd num">05</div><span class="lbl">VEN</span></div>
+                  <div>
+                    <h5>Push A</h5>
+                    <span class="lbl">1 h 08 · 5 exercices · 17 séries</span>
+                  </div>
+                  <div class="tn"><div class="v num">7 340</div><span class="lbl">kg</span></div>
+                </div>
+                <div class="hrow" style="border-bottom:0">
+                  <div class="day"><div class="dd num">03</div><span class="lbl">MER</span></div>
+                  <div>
+                    <h5>Jambes</h5>
+                    <span class="lbl">1 h 22 · 6 exercices · 21 séries</span>
+                  </div>
+                  <div class="tn"><div class="v num">11 260</div><span class="lbl">kg</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nav class="tabs">
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8.5 10 3l7 5.5V17H3z"/></svg><span class="tl">Accueil</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="14" height="13"/><path d="M3 8h14M7 2v4M13 2v4"/></svg><span class="tl">Planifier</span></a>
+            <a href="#" class="on"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M10 5.5V10l3 2"/></svg><span class="tl">Histo.</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 15l4-5 3 3 7-8"/></svg><span class="tl">Progrès</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 10h2M16 10h2M5 6.5v7M15 6.5v7M7 10h6"/></svg><span class="tl">Exos</span></a>
+          </nav>
+        </div>
+        <figcaption>
+          <span class="stamp stamp--hazard">Écran 03</span>
+          <h3>Historique</h3>
+          <p>
+            Le calendrier devient <b style="color:var(--chalk);font-weight:600">une carte perforée</b> : trois niveaux
+            d'orange pour le tonnage, des cases carrées, aucune pastille. Un mois d'entraînement se lit
+            comme un relevé de machine. Le journal en dessous met la date en compteur et le tonnage à droite,
+            alignés en chasse fixe : deux séances se comparent sans les lire.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 4. PLANIFIER ---------- -->
+      <figure class="screen" style="margin:0">
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>5G · 78 %</span></div>
+          <div class="body">
+            <div class="screen-title">
+              <h4>Planifier</h4>
+            </div>
+            <div class="tabs3">
+              <span class="on">Routines</span><span>Programmes</span><span>Guide</span>
+            </div>
+
+            <div class="scroll" style="padding-top:0">
+              <div class="folder">
+                <span class="lbl lbl--acc">Dossier · Haut / Bas</span>
+                <span class="lbl" style="margin-left:auto">4 routines</span>
+              </div>
+
+              <div class="pl rt">
+                <div class="rt-top">
+                  <h5>Push A</h5>
+                  <span class="n">5 EXOS · ~65 MIN</span>
+                </div>
+                <div class="exlist">
+                  <div><b>Développé couché — Barre</b><i>3×8</i></div>
+                  <div><b>Développé incliné — Haltères</b><i>3×10</i></div>
+                  <div><b>Élévations latérales</b><i>4×12</i></div>
+                  <div style="color:var(--t2)">+ 2 exercices</div>
+                </div>
+                <div class="weeks" aria-hidden="true" style="margin-top:2px">
+                  <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i class="on"></i><i></i>
+                </div>
+                <span class="lbl">Réalisée 6 fois sur les 8 dernières semaines</span>
+              </div>
+
+              <div class="pl rt">
+                <div class="rt-top">
+                  <h5>Pull A</h5>
+                  <span class="n">5 EXOS · ~60 MIN</span>
+                </div>
+                <div class="exlist">
+                  <div><b>Traction — Assistée</b><i>4×6</i></div>
+                  <div><b>Rowing barre</b><i>4×8</i></div>
+                  <div style="color:var(--t2)">+ 3 exercices</div>
+                </div>
+              </div>
+
+              <div class="pl prog">
+                <div class="ph">
+                  <span class="lbl lbl--acc">Bloc actif</span>
+                  <span class="lbl" style="margin-left:auto">S3 / 5</span>
+                </div>
+                <h5>Hypertrophie haut du corps</h5>
+                <div class="weeks" aria-hidden="true">
+                  <i class="on"></i><i class="on"></i><i class="now"></i><i></i><i></i>
+                </div>
+                <span class="lbl">Semaine 4 : décharge planifiée · 80 %</span>
+              </div>
+
+              <span class="cta cta--ghost" style="border:1px dashed var(--bd)">+ Nouvelle routine</span>
+            </div>
+          </div>
+          <nav class="tabs">
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8.5 10 3l7 5.5V17H3z"/></svg><span class="tl">Accueil</span></a>
+            <a href="#" class="on"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="14" height="13"/><path d="M3 8h14M7 2v4M13 2v4"/></svg><span class="tl">Planifier</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><path d="M10 5.5V10l3 2"/></svg><span class="tl">Histo.</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 15l4-5 3 3 7-8"/></svg><span class="tl">Progrès</span></a>
+            <a href="#"><svg class="gl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 10h2M16 10h2M5 6.5v7M15 6.5v7M7 10h6"/></svg><span class="tl">Exos</span></a>
+          </nav>
+        </div>
+        <figcaption>
+          <span class="stamp stamp--hazard">Écran 04</span>
+          <h3>Planifier</h3>
+          <p>
+            Les trois espaces gardent leurs mots (Routines, Programmes, Guide) et leur séparation.
+            Une routine affiche enfin <b style="color:var(--chalk);font-weight:600">ce qu'elle contient</b> — trois exercices
+            avec leurs séries × reps en chasse fixe, alignés à droite comme un bordereau — et sa fréquence réelle
+            sur huit semaines, en huit traits.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- ---------- 5. THÈME CLAIR ---------- -->
+      <figure class="screen" style="margin:0">
+        <div class="phone phone--light">
+          <div class="status"><span>9:41</span><span>SÉANCE · 5G · 78 %</span></div>
+          <div class="body">
+            <div class="wk-head">
+              <span class="nm">Push A</span>
+              <span class="tm">00:42:18</span>
+            </div>
+            <div class="bar" aria-hidden="true">
+              <span class="disc d3"></span><span class="disc d2"></span><span class="disc d1"></span>
+              <span class="rod"></span>
+              <span class="disc d1 off"></span><span class="disc d2 off"></span><span class="disc d3 off"></span>
+            </div>
+            <div style="padding:0 16px 10px"><span class="lbl">5 sur 14 séries validées</span></div>
+            <div class="scroll">
+              <div class="pl ex">
+                <div class="ex-top">
+                  <div>
+                    <h5>Développé couché — Barre</h5>
+                    <div class="meta"><span class="lbl">Pectoraux · 3 séries de travail</span></div>
+                  </div>
+                  <span class="dots">···</span>
+                </div>
+                <div>
+                  <div class="grid-head">
+                    <span class="lbl">N°</span><span class="lbl">Préc.</span>
+                    <span class="lbl" style="text-align:center">KG</span>
+                    <span class="lbl" style="text-align:center">REPS</span>
+                    <span></span>
+                  </div>
+                  <div class="row done">
+                    <span class="n">1</span><span class="prev">80×8</span>
+                    <span class="cell num">80</span><span class="cell num">8</span><span class="tick">✓</span>
+                  </div>
+                  <div class="row done">
+                    <span class="n">2</span><span class="prev">80×8</span>
+                    <span class="cell num">80</span><span class="cell num">8</span><span class="tick">✓</span>
+                  </div>
+                  <div class="row live">
+                    <span class="n">3</span><span class="prev">80×7</span>
+                    <span class="cell num">82,5</span><span class="cell num tgt">8</span><span class="tick">✓</span>
+                  </div>
+                </div>
+                <div class="rec">
+                  <span class="lbl lbl--acc">Record</span>
+                  <span class="v">1RM estimé · 104 kg · +2 kg</span>
+                </div>
+              </div>
+              <div class="pl ex-next">
+                <div><h5>Développé incliné — Haltères</h5><span class="lbl">Repos 2:00</span></div>
+                <span class="cnt">0 / 3</span>
+              </div>
+            </div>
+          </div>
+          <div class="rest">
+            <div class="fill" style="width:62%"></div>
+            <div class="hz"></div>
+            <div class="in">
+              <span class="adj">−15</span>
+              <span class="txt"><span class="lbl lbl--acc">Repos</span><span class="cd">01:27</span></span>
+              <span class="adj">+15</span>
+            </div>
+          </div>
+          <span class="cta">Terminer la séance</span>
+        </div>
+        <figcaption>
+          <span class="stamp stamp--hazard">Contrôle</span>
+          <h3>Le même écran, thème clair</h3>
+          <p>
+            Le skin n'est pas « un thème sombre stylé » : il tient en clair. Le fond devient un
+            <b style="color:var(--chalk);font-weight:600">papier de chantier</b> (#E9E5DC, pas du blanc), l'orange descend à
+            #BF3D00 pour rester lisible sur clair, et la magnésie devient un vert-de-gris foncé.
+            Mêmes jetons, mêmes composants — seules les valeurs changent.
+          </p>
+        </figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ================= LES MOUVEMENTS ================= -->
+  <section>
+    <div class="sec-head">
+      <span class="stamp">03 — Ce qui change concrètement</span>
+      <h2>Six décisions, pas six cents</h2>
+      <p>Chacune est un changement de jetons ou d'un composant. Aucune ne touche une repository, un hook ou une règle métier.</p>
+    </div>
+    <div class="moves">
+      <div class="move">
+        <span class="stamp stamp--hazard">01</span>
+        <h3>L'orange devient un orange de sécurité</h3>
+        <p><b>#FF8A3D → #FF5A00</b> en sombre, <b>#B54708 → #BF3D00</b> en clair. Un seul jeton change et
+          l'app change d'humeur. C'est le changement le moins cher et le plus visible de la liste.</p>
+      </div>
+      <div class="move">
+        <span class="stamp stamp--hazard">02</span>
+        <h3>Le repos sort de sa carte</h3>
+        <p>Bandeau pleine largeur au-dessus du bouton Terminer, remplissage qui se vide,
+          <b>rouge + trame de sécurité sous 10 s</b>. C'est la signature : un écran que tu reconnais
+          à un mètre, dans la main de quelqu'un d'autre.</p>
+      </div>
+      <div class="move">
+        <span class="stamp stamp--hazard">03</span>
+        <h3>Les chiffres passent en compteur</h3>
+        <p>Archivo largeur 68, graisse 800, chasse fixe. Charges, reps, tonnages, compteurs de l'accueil.
+          <b>Un chiffre n'est jamais dans la même graisse qu'une phrase</b>, et une phrase n'est jamais grosse.</p>
+      </div>
+      <div class="move">
+        <span class="stamp stamp--hazard">04</span>
+        <h3>Les micro-étiquettes sont gravées</h3>
+        <p>IBM Plex Mono, 10 px, capitales, 0,18 em. <b>SÉRIE · PRÉC. · KG · REPS · REPOS · RECORD.</b>
+          Ce sont les marquages d'un disque de fonte, et ils remplacent tous les petits libellés gris actuels.</p>
+      </div>
+      <div class="move">
+        <span class="stamp stamp--hazard">05</span>
+        <h3>Zéro rondeur, zéro ombre</h3>
+        <p>Rayon 2 px maximum, filets à 1 px, aucune ombre portée dans l'app.
+          <b>Une plaque n'a pas d'ombre</b> — elle a un bord. C'est ce qui distingue Fonte de tous les
+          clones d'app fitness d'un coup d'œil.</p>
+      </div>
+      <div class="move">
+        <span class="stamp stamp--hazard">06</span>
+        <h3>Le vert de validation devient de la magnésie</h3>
+        <p>Une série faite est marquée <b>#D7E6E1</b>, la couleur de la craie sur les mains.
+          Le vert « succès » générique disparaît de l'app, et le rouge redevient ce qu'il doit être :
+          rare, et vraiment alarmant.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CE QUI NE BOUGE PAS ================= -->
+  <section>
+    <div class="sec-head">
+      <span class="stamp">04 — Ce que la proposition ne casse pas</span>
+      <h2>Les règles non négociables tiennent</h2>
+    </div>
+    <ul class="keep">
+      <li><b>Contraste.</b> Orange #FF5A00 à 6,4:1 sur le fond, texte principal à 17:1, secondaire à 7,6:1. En clair, l'orange descend à #BF3D00 (5,6:1 sur le papier) — l'accent de remplissage et l'accent d'encre restent deux jetons distincts, comme aujourd'hui.</li>
+      <li><b>Cibles tactiles.</b> Toutes les lignes de série font 48 px, les coches 40×40 dans une zone de 48, les boutons ±15 s du bandeau de repos 44 px de haut sur toute leur colonne.</li>
+      <li><b>Une main, en sueur.</b> Rien de nouveau à viser : le repos et Terminer sont en bas, la coche reste à droite, la navigation ne bouge pas.</li>
+      <li><b>Aucun texte en dur.</b> Tout le vocabulaire de la maquette est déjà dans <code>src/i18n/fr.ts</code> — « À lancer », « Bloc en cours », « Réalisée il y a {count} jours », « Repos {duration} », « Record ». Aucun mot inventé.</li>
+      <li><b>Mouvement.</b> Les quatre gestes existants (rise, fade, pop, flash) restent. Le remplissage du bandeau est une transformation continue, pas une animation d'entrée, et il est neutralisé en mouvement réduit — seuls les chiffres continuent de descendre.</li>
+      <li><b>Coût.</b> L'essentiel tient dans <code>src/index.css</code> (jetons + deux polices) et dans <code>RestRail</code>. Le reste est du réglage de tailles et de graisses composant par composant, faisable par lots sans rien casser.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p style="margin:0 0 8px"><span class="stamp">Fonte · maquette statique</span></p>
+    <p style="margin:0">
+      Document de discussion, pas une implémentation : aucun fichier de <code>src/</code> n'est modifié.
+      Les chiffres affichés sont des exemples plausibles, pas des données réelles.
+      Si la direction te va, l'étape suivante est une spec dans <code>docs/design/specs/</code>
+      qui liste les jetons à changer et les composants touchés, dans l'ordre.
+    </p>
+  </footer>
+
+</div>
+</div>
+
+<script>
+  /* Le compte à rebours du bandeau de repos tourne pour de vrai : la maquette
+     doit montrer le seul moment où ce skin se démarque vraiment — le passage
+     au rouge sous 10 s. Il boucle pour qu'on n'ait pas à recharger la page. */
+  (function () {
+    var rest = document.getElementById('rest');
+    var cd = document.getElementById('restCd');
+    var fill = document.getElementById('restFill');
+    var hz = document.getElementById('restHz');
+    var lbl = document.getElementById('restLbl');
+    if (!rest || !cd || !fill) return;
+
+    var TOTAL = 140;
+    var left = 87;
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function paint() {
+      cd.textContent = pad(Math.floor(left / 60)) + ':' + pad(left % 60);
+      fill.style.width = (left / TOTAL * 100).toFixed(1) + '%';
+      var hot = left <= 10;
+      rest.classList.toggle('hot', hot);
+      hz.style.opacity = hot ? '0.28' : '0.12';
+      lbl.textContent = hot ? 'Reprends' : 'Repos';
+    }
+
+    paint();
+    setInterval(function () {
+      left = left > 0 ? left - 1 : 87;
+      paint();
+    }, 1000);
+  })();
+</script>
