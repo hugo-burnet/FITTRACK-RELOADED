@@ -1,0 +1,653 @@
+<title>/boot — skin FitTrack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cousine:wght@400;700&display=swap">
+
+<style>
+  /* ------------------------------------------------------------------
+     /boot — troisième skin proposé pour FitTrack.
+     Maquette statique. Aucun fichier de src/ n'est touché.
+
+     Différence avec « tty1 » : celui-là déguisait l'app en terminal.
+     Celui-ci ne déguise rien — il prétend que le téléphone démarre, et
+     il tient la fiction jusqu'au bout. Donc :
+
+       - une seule police, une seule taille, une seule grille de caractères ;
+       - la palette VGA 16 couleurs, aux valeurs exactes ;
+       - le texte de GRUB au mot près, y compris ses `guillemets' bâtards ;
+       - aucun effet cathodique. Un téléphone qui démarre n'a pas de tube.
+         Les lignes de balayage de tty1 étaient la partie « déguisement » :
+         elles disaient « ceci imite un terminal ». Elles sautent.
+
+     Le seul mouvement conservé est celui qui existe pour de vrai : le
+     journal qui s'imprime, et le compte à rebours qui descend.
+     ------------------------------------------------------------------ */
+
+  :root {
+    /* Palette VGA/CGA 16 couleurs. Ce ne sont pas des couleurs choisies :
+       ce sont LES seize, aux valeurs du registre. Le ratio de contraste sur
+       le noir est noté — c'est ce qui décide de l'emploi, pas le goût. */
+    --vga-black: #000000;
+    --vga-blue: #0000aa;
+    --vga-green: #00aa00;
+    --vga-cyan: #00aaaa;
+    --vga-red: #aa0000;
+    --vga-magenta: #aa00aa;
+    --vga-brown: #aa5500;   /*  3,1:1 — objets graphiques seulement */
+    --vga-grey: #aaaaaa;    /*  6,9:1 — le texte courant */
+    --vga-dgrey: #555555;   /*  2,0:1 — filets éteints, jamais du texte */
+    --vga-lblue: #5555ff;
+    --vga-lgreen: #55ff55;  /* 15,3:1 — [  OK  ] */
+    --vga-lcyan: #55ffff;   /* 14,6:1 — les chemins */
+    --vga-lred: #ff5555;    /*  7,6:1 — [FAILED] */
+    --vga-lmagenta: #ff55ff;
+    --vga-yellow: #ffff55;  /* 16,9:1 — [ WARN ] */
+    --vga-white: #ffffff;   /* 21,0:1 — les valeurs, les chiffres */
+
+    --f: 'Cousine', 'Liberation Mono', 'DejaVu Sans Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* Une seule police, un seul corps, une seule interligne. Toute la rigueur
+     du skin tient dans cette déclaration : rien, nulle part, n'a le droit
+     de sortir de la grille. */
+  body {
+    margin: 0;
+    background: var(--vga-black);
+    color: var(--vga-grey);
+    font-family: var(--f);
+    font-size: 14px;
+    line-height: 1.55;
+    font-variant-ligatures: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .man { max-width: 82ch; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* L'en-tête et le pied d'une page de manuel : nom(section) à gauche,
+     au centre, à droite. C'est la seule mise en page de ce document. */
+  .man-head, .man-foot {
+    display: flex; justify-content: space-between; gap: 16px;
+    color: var(--vga-white); border-bottom: 1px solid #222;
+    padding-bottom: 6px; margin-bottom: 28px; white-space: nowrap;
+    overflow: hidden;
+  }
+  .man-foot { border-bottom: 0; border-top: 1px solid #222; padding: 6px 0 0; margin: 32px 0 0; }
+
+  h2.sh {
+    color: var(--vga-white); font-size: 14px; font-weight: 700;
+    letter-spacing: 0.06em; margin: 34px 0 10px; text-transform: uppercase;
+  }
+  h3.ss { color: var(--vga-white); font-size: 14px; font-weight: 700; margin: 22px 0 6px; }
+
+  .man p, .man li { margin: 0 0 10px; }
+  .man .ind { padding-left: 7ch; }
+  .man .ind2 { padding-left: 3.5ch; }
+  pre { margin: 0 0 12px; padding-left: 7ch; white-space: pre-wrap; color: var(--vga-grey); font: inherit; }
+
+  b { color: var(--vga-white); font-weight: 700; }
+  em { font-style: normal; color: var(--vga-white); }
+  code, kbd { color: var(--vga-lcyan); }
+  .ok { color: var(--vga-lgreen); }
+  .wn { color: var(--vga-yellow); }
+  .fl { color: var(--vga-lred); }
+  .br { color: var(--vga-brown); }
+  .dg { color: var(--vga-dgrey); }
+  .wh { color: var(--vga-white); }
+
+  ul { padding-left: 7ch; margin: 0 0 12px; list-style: none; }
+  ul li::before { content: '·   '; color: var(--vga-brown); }
+  dl { margin: 0 0 12px; }
+  dt { padding-left: 3.5ch; color: var(--vga-white); }
+  dd { padding-left: 7ch; margin: 0 0 10px; }
+
+  .tbl { padding-left: 3.5ch; margin-bottom: 12px; overflow-x: auto; }
+  .tbl table { border-collapse: collapse; font: inherit; }
+  .tbl td { padding: 1px 2ch 1px 0; white-space: nowrap; vertical-align: middle; }
+  .tbl td i { display: inline-block; width: 3ch; height: 1em; vertical-align: -0.15em; }
+
+  .cursor { display: inline-block; width: 0.62em; height: 1.05em; background: var(--vga-grey); vertical-align: -0.16em; animation: blink 1.06s steps(1) infinite; }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+  .btn {
+    font: inherit; cursor: pointer; background: transparent;
+    color: var(--vga-yellow); border: 1px solid var(--vga-brown); padding: 5px 12px;
+  }
+  .btn:hover, .btn:focus-visible { background: var(--vga-yellow); color: #000; border-color: var(--vga-yellow); outline: none; }
+
+  /* ---------- Le rail des écrans ---------------------------------------- */
+  .rail { display: flex; gap: 32px; overflow-x: auto; padding: 6px 0 20px 3.5ch; scroll-snap-type: x mandatory; }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-thumb { background: #333; }
+  .screen { flex: 0 0 auto; width: 320px; scroll-snap-align: start; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .screen figcaption p { margin: 0; font-size: 13px; line-height: 1.55; }
+  .screen figcaption .cap-t { color: var(--vga-white); font-weight: 700; }
+  .screen figcaption .cap-n { color: var(--vga-brown); }
+
+  /* ---------- L'écran ---------------------------------------------------- */
+  .phone {
+    width: 320px; height: 660px;
+    background: #000; color: var(--vga-grey);
+    border: 1px solid #333;
+    padding: 8px 7px;
+    display: flex; flex-direction: column;
+    overflow: hidden; position: relative;
+    font-size: 11.5px; line-height: 1.42;
+    white-space: pre;
+  }
+  /* 320px - 14px de marge = 306px utiles. Cousine fait 0,6 em de chasse,
+     soit 6,9 px à 11,5 px : l'écran fait très exactement 44 colonnes. */
+
+  .phone .fill { flex: 1; min-height: 0; }
+  .phone .push { margin-top: auto; }
+
+  /* La sélection GRUB : inversion en gris clair, texte noir. C'est ce que
+     fait le thème texte de GRUB, et rien d'autre n'a le droit d'insister. */
+  .sel { background: var(--vga-grey); color: #000; display: block; }
+  .sel b { color: #000; }
+
+  /* Un cadre GRUB, en vrais caractères de filet. Le risque de repli de
+     police est assumé ici et seulement ici : Cousine porte U+2500. */
+  .frame { color: var(--vga-grey); }
+
+  .cd { color: var(--vga-white); }
+  .cd.hot { color: var(--vga-lred); }
+
+  .lgrey { color: var(--vga-grey); }
+  .k { color: var(--vga-white); }
+
+  /* Le journal s'imprime : c'est le seul mouvement du skin, et il existe
+     pour de vrai. Défaut = tout visible, pour que la maquette reste lisible
+     si le script ne tourne pas. */
+  .hid { visibility: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+    .hid { visibility: visible !important; }
+  }
+
+  @media (max-width: 640px) {
+    .man { padding: 24px 14px 60px; }
+    pre, .ind { padding-left: 2ch; }
+    .rail { padding-left: 0; }
+  }
+</style>
+
+<div class="man">
+
+  <div class="man-head"><span>FITTRACK-BOOT(7)</span><span>Skins FitTrack</span><span>FITTRACK-BOOT(7)</span></div>
+
+  <h2 class="sh">Nom</h2>
+  <p class="ind"><b>/boot</b> — skin console de FitTrack. Non pas une app qui ressemble à un terminal,
+    mais un téléphone qui prétend démarrer, et qui tient la fiction jusqu'au bout.</p>
+
+  <h2 class="sh">Synopsis</h2>
+  <pre><span class="wh">skin</span> --set <span class="wn">boot</span> [--autoboot <span class="wh">30s</span>|off] [--locale <span class="wh">fr</span>|C]
+     [--recovery-as-deload] [--verbose]</pre>
+
+  <h2 class="sh">Description</h2>
+  <p class="ind">
+    Le dépôt contient déjà <code>src/app/bootEasterEgg.ts</code> : tous les 14 à 29 jours, tiré au sort,
+    le rideau d'ouverture bascule sur une variante <b>console</b> — <span class="ok">[ OK ] quadriceps.service active</span>,
+    <span class="fl">[ FAIL ] excuses.mount: permission denied</span>, <code>root@fittrack:~#</code>, un curseur █.
+    <b>Ce skin n'ajoute pas un écran : il prolonge celui-là.</b> <code>Boot.tsx</code> tient déjà l'ouverture
+    <b>3 360 ms</b> en variante console (contre 2 180 ms en normal), en parallèle de la préparation de la base.
+    Le budget existe, il est déjà écrit, il est déjà dépensé.
+  </p>
+  <p class="ind">
+    La proposition précédente — <b>tty1</b> — déguisait l'app : lignes de balayage, tearing, décalage RVB,
+    une fonte DEC pour les gros chiffres. C'était joli et c'était un costume. <b>/boot</b> enlève le costume
+    et applique trois contraintes à la place :
+  </p>
+  <dl>
+    <dt>Une seule grille.</dt>
+    <dd>Une police (Cousine, le clone métrique de Liberation Mono, donc littéralement la police d'une console
+      Linux), <b>un seul corps, une seule interligne</b>. Aucun titre, aucun chiffre, aucun compte à rebours
+      ne sort de la grille de caractères. L'écran fait exactement <b>44 colonnes</b>.</dd>
+    <dt>Une palette imposée.</dt>
+    <dd>Les <b>seize couleurs VGA</b>, aux valeurs du registre. Pas un orange choisi : le <em>brun</em> VGA,
+      <code>#AA5500</code>, qui se trouve être l'ancêtre de l'orange de FitTrack.</dd>
+    <dt>Le texte d'origine.</dt>
+    <dd>Les phrases de GRUB au mot près, structure et ponctuation comprises — jusqu'à ses
+      <span class="wh">`guillemets'</span> bâtards, qui survivent même à la traduction.</dd>
+  </dl>
+
+  <h2 class="sh">La chaîne de démarrage</h2>
+  <p class="ind">
+    C'est l'ancrage. L'app n'est pas « présentée comme » un boot : elle en suit l'ordre réel, et chaque
+    étape correspond à une vraie fonction de l'app.
+  </p>
+  <pre><span class="dg">    splash Capacitor  </span>→<span class="wh">  POST</span>          <span class="dg">l'APK s'ouvre</span>
+<span class="dg">    Boot.tsx          </span>→<span class="wh">  GRUB</span>          <span class="dg">choisir la routine</span>
+<span class="dg">    chargement base   </span>→<span class="wh">  dmesg</span>         <span class="dg">Dexie, catalogue, records</span>
+<span class="dg">    services prêts    </span>→<span class="wh">  systemd</span>       <span class="dg">échauffement, repos, coach</span>
+<span class="dg">    écran de séance   </span>→<span class="wh">  tty1</span>          <span class="dg">le shell</span>
+<span class="dg">    historique        </span>→<span class="wh">  journalctl</span>    <span class="dg">lecture seule, horodatée</span>
+<span class="dg">    éditeur routine   </span>→<span class="wh">  grub.cfg</span>      <span class="dg">`e' depuis le menu</span>
+<span class="dg">    décharge          </span>→<span class="wh">  recovery</span>      <span class="dg">Advanced options ></span></pre>
+
+  <h2 class="sh">Écrans</h2>
+  <p class="ind2"><button class="btn" id="replay" type="button">↻ relancer le boot</button>
+    <span class="dg">  le journal s'imprime, le repos descend. Rien d'autre ne bouge.</span></p>
+
+  <div class="rail">
+
+    <!-- ---------- 01. GRUB ---------- -->
+    <figure class="screen">
+      <div class="phone">
+<span class="k">                GNU GRUB  version 2.12</span>
+
+<span class="frame">┌──────────────────────────────────────────┐</span>
+<span class="frame">│</span><span class="sel"> push_a                                   </span><span class="frame">│</span>
+<span class="frame">│</span> pull_a                                   <span class="frame">│</span>
+<span class="frame">│</span> jambes                                   <span class="frame">│</span>
+<span class="frame">│</span> séance libre                             <span class="frame">│</span>
+<span class="frame">│</span> Options avancées pour FitTrack         <span class="k">></span><span class="frame">│</span>
+<span class="frame">│</span> Historique (journalctl)                  <span class="frame">│</span>
+<span class="frame">│</span> Réglages du micrologiciel UEFI           <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">└──────────────────────────────────────────┘</span>
+
+<span class="lgrey">   Utilise les touches</span> <span class="k">^</span> <span class="lgrey">et</span> <span class="k">v</span> <span class="lgrey">pour sélectionner
+   l'entrée à surligner. Appuie sur</span> <span class="k">entrée</span> <span class="lgrey">pour
+   démarrer la routine sélectionnée, sur</span> <span class="k">`e'</span> <span class="lgrey">pour
+   modifier ses commandes avant de démarrer, ou
+   sur</span> <span class="k">`c'</span> <span class="lgrey">pour une ligne de commande.</span>
+
+<span class="lgrey">   La routine surlignée démarrera automati-
+   quement dans</span> <span class="k" id="ab">24</span><span class="lgrey"> s.</span>
+
+<span class="dg">   push_a — la plus ancienne de tes routines.</span>
+      </div>
+      <figcaption>
+        <p class="cap-n">ÉCRAN 01 — accueil</p>
+        <p class="cap-t">Le menu GRUB, tel quel</p>
+        <p>Tes routines <b>sont</b> les entrées. Le bloc d'aide est celui de GRUB, traduit sans être réécrit —
+          la ligne « <b>Réglages du micrologiciel UEFI</b> » existe pour de vrai dans un menu GRUB, et c'est
+          exactement où doivent aller les réglages. La règle de suggestion est à l'endroit précis où GRUB met
+          sa dernière ligne.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ---------- 02. RECOVERY ---------- -->
+    <figure class="screen">
+      <div class="phone">
+<span class="k">                GNU GRUB  version 2.12</span>
+
+<span class="frame">┌──────────────────────────────────────────┐</span>
+<span class="frame">│</span> push_a                                   <span class="frame">│</span>
+<span class="frame">│</span><span class="sel"> push_a (mode dégradé)                    </span><span class="frame">│</span>
+<span class="frame">│</span> push_a <span class="dg">--rest=180</span>                        <span class="frame">│</span>
+<span class="frame">│</span> pull_a                                   <span class="frame">│</span>
+<span class="frame">│</span> pull_a (mode dégradé)                    <span class="frame">│</span>
+<span class="frame">│</span> jambes                                   <span class="frame">│</span>
+<span class="frame">│</span> jambes (mode dégradé)                    <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">└──────────────────────────────────────────┘</span>
+
+<span class="lgrey">   Le mode dégradé démarre la routine à</span> <span class="k">80 %</span>
+<span class="lgrey">   des charges du jour, arrondies au pas de la
+   barre. Les séries et les répétitions ne
+   changent pas.</span>
+
+<span class="wn">   [ WARN ]</span> <span class="lgrey">4 semaines sans décharge sur ce bloc.</span>
+
+<span class="lgrey">   Appuie sur</span> <span class="k">échap</span> <span class="lgrey">pour revenir au menu
+   précédent.</span>
+      </div>
+      <figcaption>
+        <p class="cap-n">ÉCRAN 02 — options avancées</p>
+        <p class="cap-t">Une décharge est un mode de récupération</p>
+        <p>C'est le meilleur emprunt de tout le skin, et il n'est pas décoratif : GRUB range sous
+          « Options avancées » une variante <b>dégradée</b> de la même entrée, pour les jours où la normale
+          ne passe pas. <b>C'est la définition d'une décharge.</b> La commande de deload arrête d'être une
+          option cachée dans un menu de séance : elle devient une manière de démarrer.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ---------- 03. DMESG ---------- -->
+    <figure class="screen">
+      <div class="phone" data-boot>
+<span class="b-l">Loading fittrack 6.1.0-gym ...</span>
+<span class="b-l">Loading initial ramdisk ...</span>
+<span class="b-l"> </span>
+<span class="b-l"><span class="dg">[    0.000000]</span> Linux version 6.1.0-gym</span>
+<span class="b-l"><span class="dg">[    0.000000]</span> Command line: BOOT_IMAGE=/boot/</span>
+<span class="b-l"><span class="dg">              </span> vmlinuz-6.1.0-gym routine=push_a ro</span>
+<span class="b-l"><span class="dg">[    0.184220]</span> Memory: 3072K/8192K available</span>
+<span class="b-l"><span class="dg">[    0.612704]</span> IndexedDB: schema v14, 0 migration</span>
+<span class="b-l"><span class="dg">[    0.988311]</span> EXT4-fs (mmcblk0p2): mounted</span>
+<span class="b-l"><span class="dg">[    1.204553]</span> catalogue: 84 exercices</span>
+<span class="b-l"><span class="dg">[    1.377010]</span> historique: 217 séances, 3 641 séries</span>
+<span class="b-l"><span class="dg">[    1.902884]</span> records: 41 chargés</span>
+<span class="b-l"> </span>
+<span class="b-l"><span class="k">Welcome to FitTrack GNU/Linux 2.5.3 (tty1)!</span></span>
+<span class="b-l"> </span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Reached target <span class="k">local-first.target</span></span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Mounted <span class="k">/routines</span></span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Mounted <span class="k">/programmes</span></span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Started <span class="k">warmup.service</span></span>
+<span class="b-l"><span class="dg">        </span> 3 paliers repris de la séance du 02.09</span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Started <span class="k">rest-timer.service</span></span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Started <span class="k">plate-calculator.service</span></span>
+<span class="b-l"><span class="wn">[ WARN ]</span> <span class="k">progression.service</span>: 2 semaines sans</span>
+<span class="b-l"><span class="dg">        </span> record sur pull_a</span>
+<span class="b-l"><span class="ok">[  OK  ]</span> Reached target <span class="k">push_a.target</span></span>
+<span class="b-l"> </span>
+<span class="b-l">fittrack login: <span class="k">hugo</span></span>
+<span class="b-l">Password: </span>
+<span class="b-l">Last login: ven. sept.  4 19:05:11 sur tty1</span>
+<span class="b-l"> </span>
+<span class="b-l"><span class="ok">hugo@fittrack</span>:<span class="k">~</span>$ <span class="cursor"></span></span>
+      </div>
+      <figcaption>
+        <p class="cap-n">ÉCRAN 03 — chargement</p>
+        <p class="cap-t">Le journal, avec de vrais horodatages</p>
+        <p>Les <code>[    1.204553]</code> sont au format du noyau : secondes monotones, six décimales,
+          alignées à droite sur douze caractères. Ce qui défile est <b>vrai</b> — nombre d'exercices, version de
+          schéma, paliers repris, semaines sans record. <b>Un écran de chargement qui ment est un écran de
+          chargement ; celui-là rapporte.</b> Il occupe les 3 360 ms que <code>Boot.tsx</code> tient déjà.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ---------- 04. SÉANCE ---------- -->
+    <figure class="screen">
+      <div class="phone">
+<span class="ok">hugo@fittrack</span>:<span class="k">~</span>$ push_a
+<span class="dg">-- séance démarrée 18:42 --------------------</span>
+
+<span class="k">développé_couché.barre</span> <span class="dg">— 3 séries</span>
+<span class="ok">  [  OK  ]</span> 1  <span class="k">80,0</span> kg × <span class="k">8</span>   <span class="dg">rpe 7</span>
+<span class="ok">  [  OK  ]</span> 2  <span class="k">80,0</span> kg × <span class="k">8</span>   <span class="dg">rpe 8</span>
+<span class="sel">  [ ---- ] 3  82,5 kg × 8   ⏎ valider     </span>
+<span class="br">  [ REC  ]</span> 1rm=<span class="k">104,0</span> <span class="ok">(+2,0)</span>
+
+<span class="dg">développé_incliné.haltères        0/3
+élévations_latérales              0/4
+extensions_triceps.poulie         0/3</span>
+
+<span class="dg">--------------------------------------------</span>
+<span class="k">REPOS</span> <span class="lgrey">— la série 4 démarrera automatiquement
+dans :</span>
+
+<span class="cd" id="big">                                            </span>
+
+<span class="lgrey" id="meter"></span>
+<span class="dg" id="hint">une touche pour reprendre · ±15 s</span>
+<span class="dg">--------------------------------------------</span>
+<span class="push"><span class="lgrey">5/14 séries · 00:42:18 ·</span> <span class="k">q</span><span class="lgrey"> terminer</span></span>
+      </div>
+      <figcaption>
+        <p class="cap-n">ÉCRAN 04 — séance en cours</p>
+        <p class="cap-t">Le compte à rebours, en caractères</p>
+        <p>La règle « une seule taille » interdit un gros chiffre. La sortie est celle qu'un terminal
+          emploie vraiment : <b>des chiffres dessinés en blocs █, sur la grille</b>. Ils font 30 colonnes de
+          large et se lisent à bout de bras — sans qu'une seule déclaration de <code>font-size</code>
+          existe en dehors du corps commun. La phrase est celle de GRUB : elle dit ce qui arrive à zéro.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ---------- 05. GRUB.CFG ---------- -->
+    <figure class="screen">
+      <div class="phone">
+<span class="k">                GNU GRUB  version 2.12</span>
+
+<span class="frame">┌──────────────────────────────────────────┐</span>
+<span class="frame">│</span><span class="dg">menuentry</span> <span class="k">'push_a'</span> <span class="dg">--class routine \</span>    <span class="frame">│</span>
+<span class="frame">│</span>  <span class="dg">$menuentry_id_option</span> <span class="k">'routine-push-a'</span> <span class="frame">│</span>
+<span class="frame">│</span><span class="dg">{</span>                                         <span class="frame">│</span>
+<span class="frame">│</span>  <span class="dg">set</span> warmup=<span class="k">auto</span>                        <span class="frame">│</span>
+<span class="frame">│</span>  <span class="dg">set</span> rest=<span class="k">120</span>                            <span class="frame">│</span>
+<span class="frame">│</span>  <span class="dg">set</span> unit=<span class="k">kg</span>                             <span class="frame">│</span>
+<span class="frame">│</span>                                          <span class="frame">│</span>
+<span class="frame">│</span>  exercise dev_couche.barre   <span class="k">3x8</span>  <span class="k">82.5</span> <span class="frame">│</span>
+<span class="frame">│</span>  exercise dev_incline.halt   <span class="k">3x10</span> <span class="k">30.0</span> <span class="frame">│</span>
+<span class="frame">│</span>  exercise elev_laterales     <span class="k">4x12</span> <span class="k">12.0</span> <span class="frame">│</span>
+<span class="frame">│</span><span class="sel">  exercise ext_triceps.poulie 3x12 25.0 </span><span class="frame">│</span>
+<span class="frame">│</span><span class="dg">}</span>                                         <span class="frame">│</span>
+<span class="frame">└──────────────────────────────────────────┘</span>
+
+<span class="lgrey">   Édition à l'écran de type Emacs.</span> <span class="k">TAB</span> <span class="lgrey">liste
+   les complétions. Appuie sur</span> <span class="k">Ctrl-x</span> <span class="lgrey">ou</span> <span class="k">F10</span>
+   <span class="lgrey">pour démarrer,</span> <span class="k">Ctrl-c</span> <span class="lgrey">ou</span> <span class="k">F2</span> <span class="lgrey">pour une ligne
+   de commande, ou</span> <span class="k">échap</span> <span class="lgrey">pour annuler les
+   modifications et revenir au menu GRUB.</span>
+
+<span class="dg">   TAB sur un nom d'exercice ouvre le
+   catalogue. Les 84 sont complétables.</span>
+      </div>
+      <figcaption>
+        <p class="cap-n">ÉCRAN 05 — planifier</p>
+        <p class="cap-t">Modifier une routine = modifier son menuentry</p>
+        <p>Depuis le menu, <span class="k">`e'</span> ouvre la routine comme GRUB ouvre une entrée : sa
+          strophe, éditable. Le pied de page est le vrai texte de l'éditeur GRUB, traduit.
+          <b>Et ce n'est pas qu'une image :</b> <code>TAB</code> complète sur les 84 exercices du catalogue,
+          ce qui est un ajout d'exercice plus rapide que n'importe quelle feuille modale.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ---------- 06. JOURNALCTL ---------- -->
+    <figure class="screen">
+      <div class="phone">
+<span class="ok">hugo@fittrack</span>:<span class="k">~</span>$ journalctl --since <span class="k">-30d</span>
+<span class="dg">-- Journal begins at Fri 2025-11-14 08:12:03.</span>
+
+sept 05 18:42 <span class="k">push_a</span><span class="dg">[7340]</span>: session start
+sept 05 18:47 <span class="k">push_a</span><span class="dg">[7340]</span>: set ok w=82.5 r=8
+sept 05 18:47 <span class="br">records</span><span class="dg">[7340]</span>: 1rm=104.0 <span class="ok">NEW</span>
+sept 05 19:50 <span class="k">push_a</span><span class="dg">[7340]</span>: end 1h08 17 sets
+sept 03 19:05 <span class="k">jambes</span><span class="dg">[11260]</span>: end 1h22 21 sets
+sept 01 18:30 <span class="k">pull_a</span><span class="dg">[4980]</span>: end 0h47 11 sets
+sept 01 18:30 <span class="k">pull_a</span><span class="dg">[4980]</span>: <span class="wn">warning: écourtée</span>
+août 29 18:22 <span class="k">push_a</span><span class="dg">[5910]</span>: end 1h04 17 sets
+
+<span class="ok">hugo@fittrack</span>:<span class="k">~</span>$ cal --tonnage <span class="k">09/2026</span>
+<span class="dg">        septembre 2026</span>
+<span class="dg">   Lu Ma Me Je Ve Sa Di</span>
+       <span class="dg">·</span>  <span class="dg">·</span>  <span class="br">▒</span>  <span class="dg">·</span>  <span class="k">█</span>  <span class="dg">·</span>
+    <span class="br">▒</span>  <span class="dg">·</span>  <span class="dg">·</span>  <span class="dg">·</span>  <span class="k">█</span>  <span class="dg">·</span>  <span class="dg">·</span>
+    <span class="br">▒</span>  <span class="dg">·</span>  <span class="dg">·</span>  <span class="br">▒</span>  <span class="dg">·</span>  <span class="dg">·</span>  <span class="dg">·</span>
+    <span class="k">█</span>  <span class="dg">·</span>  <span class="br">▒</span>  <span class="dg">·</span>  <span class="dg">·</span>  <span class="dg">·</span>  <span class="dg">·</span>
+    <span class="br">▒</span>  <span class="dg">·</span>  <span class="dg">·</span>
+<span class="dg">   densité = tonnage · 217 séances au total</span>
+
+<span class="ok">hugo@fittrack</span>:<span class="k">~</span>$ uptime
+<span class="dg"> 11 semaines consécutives, charge 3/4 hebdo</span>
+
+<span class="push"><span class="ok">hugo@fittrack</span>:<span class="k">~</span>$ <span class="cursor"></span></span>
+      </div>
+      <figcaption>
+        <p class="cap-n">ÉCRAN 06 — historique</p>
+        <p class="cap-t">journalctl, et pas une métaphore</p>
+        <p>Le tonnage entre crochets tient la place du PID, le verdict est en fin de ligne, et une séance
+          écourtée est un <span class="wn">warning</span>, pas un échec moral. En dessous, <code>cal</code>
+          en carte de densité à trois caractères. <b>L'historique est le seul écran de l'app qui est
+          vraiment en lecture seule</b> — un journal l'est aussi, et le dire de cette façon vaut mieux
+          qu'un cadenas dessiné.</p>
+      </figcaption>
+    </figure>
+
+  </div>
+
+  <h2 class="sh">Palette</h2>
+  <p class="ind">Les seize registres VGA. Le ratio décide de l'emploi ; deux couleurs sont écartées du texte
+    et le disent.</p>
+  <div class="tbl">
+    <table>
+      <tr><td><i style="background:#000000;outline:1px solid #333"></i></td><td class="wh">#000000</td><td>noir</td><td class="dg">—</td><td>le fond, partout</td></tr>
+      <tr><td><i style="background:#aaaaaa"></i></td><td class="wh">#AAAAAA</td><td>gris clair</td><td class="wh">6,9:1</td><td>le texte courant</td></tr>
+      <tr><td><i style="background:#ffffff"></i></td><td class="wh">#FFFFFF</td><td>blanc</td><td class="wh">21,0:1</td><td>toute valeur enregistrable</td></tr>
+      <tr><td><i style="background:#55ff55"></i></td><td class="wh">#55FF55</td><td>vert vif</td><td class="wh">15,3:1</td><td><span class="ok">[  OK  ]</span>, le prompt</td></tr>
+      <tr><td><i style="background:#ffff55"></i></td><td class="wh">#FFFF55</td><td>jaune</td><td class="wh">16,9:1</td><td><span class="wn">[ WARN ]</span></td></tr>
+      <tr><td><i style="background:#ff5555"></i></td><td class="wh">#FF5555</td><td>rouge vif</td><td class="wh">7,6:1</td><td><span class="fl">[FAILED]</span>, les 10 dernières s</td></tr>
+      <tr><td><i style="background:#55ffff"></i></td><td class="wh">#55FFFF</td><td>cyan vif</td><td class="wh">14,6:1</td><td>les chemins, le Guide</td></tr>
+      <tr><td><i style="background:#aa5500"></i></td><td class="wh">#AA5500</td><td>brun</td><td class="fl">3,1:1</td><td class="dg">filets et jauges — <b>jamais du texte</b></td></tr>
+      <tr><td><i style="background:#555555"></i></td><td class="wh">#555555</td><td>gris foncé</td><td class="fl">2,0:1</td><td class="dg">décor éteint — <b>jamais du texte</b></td></tr>
+    </table>
+  </div>
+  <p class="ind">
+    Les sept autres registres (bleu, vert, cyan, rouge, magenta sombres, bleu et magenta vifs) <b>ne sont
+    pas employés</b>. Un skin qui utilise ses seize couleurs n'a pas de palette, il a un nuancier.
+    Et c'est ici que la rigueur coûte quelque chose : le brun VGA — l'ancêtre de l'orange de FitTrack —
+    <b>ne passe pas en texte</b>. Il tient les filets et les jauges, et le compte à rebours est en blanc.
+    L'app perd sa couleur de marque dans ce skin ; c'est le prix de l'exactitude, et c'est une raison
+    de plus pour que ce soit un thème et non le défaut.
+  </p>
+
+  <h2 class="sh">Options</h2>
+  <dl>
+    <dt>--autoboot <span class="wh">30s</span>|off</dt>
+    <dd>GRUB démarre l'entrée par défaut à la fin du décompte. Ici, ça veut dire que <b>ton téléphone posé
+      sur le banc lance push_a tout seul</b> si tu le regardes trente secondes. C'est drôle, c'est fidèle,
+      et c'est la seule chose du skin qui a des dents : n'importe quel appui l'annule (GRUB fait pareil),
+      et par défaut <b>c'est off</b>. Tu l'allumes si tu le veux.</dd>
+    <dt>--locale <span class="wh">fr</span>|C</dt>
+    <dd>GRUB n'est pas traduit sur la plupart des distributions : la version rigoureuse serait en anglais.
+      Mais la règle du dépôt dit « interface en français », et une règle non négociable ne se négocie pas
+      pour une blague. Le défaut est donc <b>fr</b>, structure et ponctuation d'origine préservées.
+      <code>--locale C</code> existe pour les puristes, et n'est pas dans le dictionnaire par défaut.</dd>
+    <dt>--recovery-as-deload</dt>
+    <dd>Range les décharges sous « Options avancées », comme à l'écran 02. Activé par défaut : c'est
+      l'emprunt le plus juste du skin.</dd>
+  </dl>
+
+  <h2 class="sh">Notes</h2>
+  <ul>
+    <li><b>Pas de thème clair.</b> Un bootloader clair n'existe pas, et un faux serait le retour du costume.
+      Choisir ce skin <b>force le sombre</b> et grise le sélecteur clair/sombre dans les réglages, en disant
+      pourquoi. C'est une contrainte assumée, pas un oubli — et c'est une deuxième raison de ne pas en faire
+      le thème par défaut.</li>
+    <li><b>Rien ne glitche.</b> Ni balayage, ni tearing, ni décalage RVB. Un téléphone qui démarre affiche du
+      texte net sur un écran net. Si tu veux le tube, il est dans <b>tty1</b> — c'est précisément ce qui
+      sépare les deux propositions.</li>
+    <li><b>Les cibles restent des lignes.</b> Chaque ligne touchable fait 48 px de haut sur les 44 colonnes.
+      On tape la ligne, jamais le caractère. L'inversion GRUB donne 6,9:1 entre le fond de sélection et
+      son texte : c'est plus contrasté que n'importe quel liseré.</li>
+    <li><b>Les deux polices tombent à une.</b> Cousine seule, ~45 ko de woff2 dans <code>public/</code>,
+      aucune requête réseau. Moins cher que Fonte et que tty1.</li>
+  </ul>
+
+  <h2 class="sh">Bugs</h2>
+  <ul>
+    <li>Une grille de caractères ne se redimensionne pas : sur un très petit écran, 44 colonnes deviennent
+      illisibles avant de se réagencer. Il faudra un plancher de taille, et donc accepter le défilement
+      horizontal sur les lignes les plus longues — ce que l'app n'a jamais fait ailleurs.</li>
+    <li>Le poids d'une saisie au doigt dans une strophe <code>grub.cfg</code> reste à démontrer. L'écran 05
+      est le seul de la série que je ne signerais pas sans l'avoir tenu en main.</li>
+    <li>Ce skin est illisible pour quiconque n'a jamais vu un boot Linux. C'est revendiqué — mais ça veut
+      dire qu'il ne peut jamais être le défaut d'une installation neuve, tutoriel compris.</li>
+  </ul>
+
+  <h2 class="sh">Voir aussi</h2>
+  <p class="ind">
+    <b>fonte</b>(7), <b>tty1</b>(7),<br>
+    <code>src/app/bootEasterEgg.ts</code>, <code>src/app/Boot.tsx</code>, <code>src/index.css</code>
+  </p>
+  <p class="ind">
+    Recommandation inchangée : <b>Fonte</b> est l'app, celle qui tient 80 minutes de séance sans fatiguer.
+    <b>/boot</b> est le quatrième thème, sous Réglages, et il referme la boucle mieux que tty1 — l'easter egg
+    du démarrage cesse d'être une blague isolée pour devenir <b>l'invitation à un thème</b> : celui qui l'a
+    vu passer peut le garder.
+  </p>
+
+  <div class="man-foot"><span>FitTrack 2.5.3</span><span>2026-09-06</span><span>FITTRACK-BOOT(7)</span></div>
+</div>
+
+<script>
+  (function () {
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---- Le journal s'imprime -------------------------------------------
+       Défaut : tout est visible. C'est le script qui cache puis révèle, pour
+       que la maquette reste lisible s'il ne tourne pas. */
+    function printBoot() {
+      var host = document.querySelector('[data-boot]');
+      if (!host || reduced) return;
+      var lines = host.querySelectorAll('.b-l');
+      var i;
+      for (i = 0; i < lines.length; i++) lines[i].classList.add('hid');
+      var n = 0;
+      (function step() {
+        if (n >= lines.length) return;
+        lines[n].classList.remove('hid');
+        n++;
+        /* Un journal ne défile pas à cadence régulière : il s'arrête sur un
+           service lent puis rattrape. C'est ce qui le rend crédible. */
+        setTimeout(step, n % 7 === 0 ? 190 : 42);
+      })();
+    }
+
+    printBoot();
+    var btn = document.getElementById('replay');
+    if (btn) btn.addEventListener('click', printBoot);
+
+    /* ---- Le compte à rebours, en chiffres de blocs ----------------------
+       6 colonnes par chiffre, 5 lignes, sur la grille commune. Aucune
+       déclaration de taille : c'est du texte, comme le reste de l'écran. */
+    var GLYPH = {
+      '0': ['██████', '██  ██', '██  ██', '██  ██', '██████'],
+      '1': ['    ██', '    ██', '    ██', '    ██', '    ██'],
+      '2': ['██████', '    ██', '██████', '██    ', '██████'],
+      '3': ['██████', '    ██', '██████', '    ██', '██████'],
+      '4': ['██  ██', '██  ██', '██████', '    ██', '    ██'],
+      '5': ['██████', '██    ', '██████', '    ██', '██████'],
+      '6': ['██████', '██    ', '██████', '██  ██', '██████'],
+      '7': ['██████', '    ██', '    ██', '    ██', '    ██'],
+      '8': ['██████', '██  ██', '██████', '██  ██', '██████'],
+      '9': ['██████', '██  ██', '██████', '    ██', '██████'],
+      ':': ['  ', '██', '  ', '██', '  ']
+    };
+
+    function banner(text) {
+      var rows = ['', '', '', '', ''];
+      for (var i = 0; i < text.length; i++) {
+        var g = GLYPH[text.charAt(i)];
+        if (!g) continue;
+        for (var r = 0; r < 5; r++) rows[r] += g[r] + (i < text.length - 1 ? ' ' : '');
+      }
+      return rows.join('\n');
+    }
+
+    var big = document.getElementById('big');
+    var meter = document.getElementById('meter');
+    var hint = document.getElementById('hint');
+    if (!big || !meter) return;
+
+    var TOTAL = 140, SLOTS = 34, left = 87;
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function paint() {
+      var txt = pad(Math.floor(left / 60)) + ':' + pad(left % 60);
+      big.textContent = banner(txt);
+      var on = Math.round(left / TOTAL * SLOTS), bar = '', i;
+      for (i = 0; i < on; i++) bar += '#';
+      for (i = on; i < SLOTS; i++) bar += '.';
+      meter.textContent = '[' + bar + ']';
+      var hot = left <= 10;
+      big.classList.toggle('hot', hot);
+      if (hint) hint.textContent = hot
+        ? 'remets-toi sous la barre'
+        : 'une touche pour reprendre · ±15 s';
+    }
+
+    paint();
+    setInterval(function () { left = left > 0 ? left - 1 : 87; paint(); }, 1000);
+
+    /* Le décompte d'autoboot du menu GRUB, purement pour la démonstration. */
+    var ab = document.getElementById('ab');
+    if (ab) {
+      var a = 24;
+      setInterval(function () { a = a > 0 ? a - 1 : 24; ab.textContent = String(a); }, 1000);
+    }
+  })();
+</script>
