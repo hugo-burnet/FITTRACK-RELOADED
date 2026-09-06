@@ -10,6 +10,20 @@ describe('calculateDeloadWeight', () => {
   ])('reduces %s kg to %s kg', (weightKg, expected) => {
     expect(calculateDeloadWeight(weightKg)).toBe(expected);
   });
+
+  /*
+   * L'arrondi au pas de 2,5 kg suppose des charges où 2,5 kg est petit. En bas
+   * de l'échelle il retournait l'intention : 2 kg devenaient 2,5 — un
+   * allègement qui *alourdit* — et 5 kg restaient 5. Sous le pas, la réduction
+   * exacte vaut mieux qu'un arrondi qui ment, et le libellé le dit.
+   */
+  it.each([
+    [2, 1.6],
+    [5, 4],
+    [1, 0.8],
+  ])('réduit %s kg à %s kg plutôt que d’arrondir vers le haut', (weightKg, expected) => {
+    expect(calculateDeloadWeight(weightKg)).toBe(expected);
+  });
 });
 
 describe('isDeloadEligibleMeasurement', () => {

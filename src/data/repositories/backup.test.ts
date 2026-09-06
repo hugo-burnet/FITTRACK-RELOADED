@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import Dexie from 'dexie';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/data/db';
 import { parseBackup, serializeBackup } from '@/lib/backup';
 import { resetDb } from '@/test/resetDb';
@@ -38,6 +39,8 @@ describe('sauvegarde complète', () => {
     localStorage.clear();
     await resetDb();
   });
+
+  afterEach(() => vi.restoreAllMocks());
 
   it('emporte les tables, les réglages et les préférences', async () => {
     const { exerciseId, routineId } = await seedAccount();
@@ -214,6 +217,55 @@ describe('sauvegarde complète', () => {
 
     const after = await buildBackup(backup.exportedAt);
     expect(after.tables).toEqual(before.tables);
+  });
+
+  /*
+   * Les préférences sont écrites **dans** la transaction Dexie, et c'est tout
+   * l'objet de ces deux tests. Écrites après elle, une base restaurée pouvait
+   * cohabiter avec les préférences de l'ancien téléphone : un état que ni le
+   * fichier ni l'appareil n'ont jamais décrit. Les deux sens doivent tenir —
+   * `localStorage` refuse et la base ne bouge pas, la base avorte et les
+   * préférences reviennent.
+   */
+  it('ne touche ni la base ni les préférences quand localStorage refuse', async () => {
+    await createRoutine('Routine sauvegardée');
+    localStorage.setItem('fittrack:theme', 'light');
+    const backup = await buildBackup();
+    const local = await createRoutine('Routine de cet appareil');
+    localStorage.setItem('fittrack:theme', 'dark');
+
+    const original = Storage.prototype.setItem;
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key, value) {
+      if (key === 'fittrack:theme' && value === 'light') {
+        throw new DOMException('Quota full', 'QuotaExceededError');
+      }
+      return original.call(this, key, value);
+    });
+
+    await expect(restoreBackup(backup)).rejects.toBeDefined();
+
+    expect(await db.routines.get(local.id)).toEqual(local);
+    expect(localStorage.getItem('fittrack:theme')).toBe('dark');
+  });
+
+  it('remet les préférences quand la base avorte après les avoir écrites', async () => {
+    await createRoutine('Routine sauvegardée');
+    localStorage.setItem('fittrack:theme', 'light');
+    const backup = await buildBackup();
+    const local = await createRoutine('Routine de cet appareil');
+    localStorage.setItem('fittrack:theme', 'dark');
+
+    const original = Storage.prototype.setItem;
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key, value) {
+      original.call(this, key, value);
+      // L'écriture a réussi, c'est le commit IndexedDB qui échoue ensuite.
+      if (key === 'fittrack:theme' && value === 'light') Dexie.currentTransaction?.abort();
+    });
+
+    await expect(restoreBackup(backup)).rejects.toBeDefined();
+
+    expect(await db.routines.get(local.id)).toEqual(local);
+    expect(localStorage.getItem('fittrack:theme')).toBe('dark');
   });
 
   it('ne retouche rien quand le fichier vient du schéma courant', async () => {
