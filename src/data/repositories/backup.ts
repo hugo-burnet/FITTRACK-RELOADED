@@ -75,10 +75,8 @@ function tableOf(name: (typeof BACKUP_TABLES)[number]) {
 }
 
 export async function buildBackup(now = Date.now()): Promise<BackupFile> {
-  const rows = await db.transaction(
-    'r',
-    BACKUP_TABLES.map(tableOf),
-    async () => Promise.all(BACKUP_TABLES.map(async (name) => tableOf(name).toArray())),
+  const rows = await db.transaction('r', BACKUP_TABLES.map(tableOf), async () =>
+    Promise.all(BACKUP_TABLES.map(async (name) => tableOf(name).toArray())),
   );
 
   return {
@@ -99,9 +97,9 @@ export async function buildBackup(now = Date.now()): Promise<BackupFile> {
  * **A replacement, not a merge.** Every table is emptied before it is written:
  * restoring is "this phone is now that phone", and a merge would have to invent
  * an answer for a row that exists on both sides with different values — the
- * kind of guess that silently duplicates a year of sessions. The whole thing
- * runs in one Dexie transaction, so a failure halfway leaves the app exactly as
- * it was rather than half-restored.
+ * kind of guess that silently duplicates a year of sessions. Table replacement
+ * runs in one Dexie transaction. Preferences are written before it commits so
+ * a preference failure also aborts the database writes.
  *
  * `photoBlobs` is left alone: the format does not carry binaries, and wiping a
  * table a backup cannot refill would destroy what it was meant to protect.
@@ -121,15 +119,24 @@ export async function buildBackup(now = Date.now()): Promise<BackupFile> {
 export async function restoreBackup(backup: BackupFile): Promise<BackupCounts> {
   const tables = backfillBackupTables(backup.tables, backup.app.schemaVersion);
 
-  await db.transaction('rw', BACKUP_TABLES.map(tableOf), async () => {
-    for (const name of BACKUP_TABLES) {
-      const table = tableOf(name);
-      await table.clear();
-      const rows = tables[name] ?? [];
-      if (rows.length > 0) await table.bulkPut(rows);
-    }
-  });
-
-  writePreferences(backup.preferences);
+  const previousPreferences = readPreferences();
+  let preferencesWritten = false;
+  try {
+    await db.transaction('rw', BACKUP_TABLES.map(tableOf), async () => {
+      for (const name of BACKUP_TABLES) {
+        const table = tableOf(name);
+        await table.clear();
+        const rows = tables[name] ?? [];
+        if (rows.length > 0) await table.bulkPut(rows);
+      }
+      // Synchronous: a failure here rejects the still-open IndexedDB transaction.
+      writePreferences(backup.preferences);
+      preferencesWritten = true;
+    });
+  } catch (error) {
+    // A database commit can itself fail after the preference write succeeded.
+    if (preferencesWritten) writePreferences(previousPreferences);
+    throw error;
+  }
   return backupCounts(backup);
 }

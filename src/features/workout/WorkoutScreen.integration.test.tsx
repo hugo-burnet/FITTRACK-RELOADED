@@ -130,7 +130,7 @@ describe('WorkoutScreen — persistance', () => {
     await user.click(screen.getByRole('button', { name: 'Options de la séance' }));
     await user.click(screen.getByRole('button', { name: /Activer le deload à 80 %/ }));
     expect(
-      screen.getByText('Les séries restantes passeront à 80 %, arrondies à 2,5 kg.'),
+      screen.getByText('Les séries restantes passeront à 80 %, arrondies à 2,5 kg sauf pour les petites charges.'),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Appliquer' }));
 

@@ -68,20 +68,29 @@ export async function applyWorkoutDeload(workoutId: string, note: string): Promi
         else block.push(set);
       }
 
-      const exerciseIds = [...new Set(live.map((set) => set.exerciseId))];
       const previous = new Map(
         await Promise.all(
-          exerciseIds.map(
-            async (exerciseId) =>
-              [exerciseId, await getLastPerformance(exerciseId, workoutId)] as const,
-          ),
+          rows
+            .filter((row) => eligibleRows.has(row.id))
+            .map(
+              async (row) =>
+                [
+                  row.id,
+                  await getLastPerformance(
+                    row.exerciseId,
+                    workoutId,
+                    resolveWorkoutExerciseIdentity(row, library.get(row.exerciseId))
+                      .measurementType,
+                  ),
+                ] as const,
+            ),
         ),
       );
 
       const changed: WorkoutSet[] = [];
       for (const sets of blocks.values()) {
         sets.sort(byOrder);
-        const matched = matchPreviousSets(sets, previous.get(sets[0]!.exerciseId) ?? []);
+        const matched = matchPreviousSets(sets, previous.get(sets[0]!.workoutExerciseId) ?? []);
         sets.forEach((set, index) => {
           if (set.isCompleted === 1) return;
           const source = set.weight ?? set.targetWeight ?? matched[index]?.weight;

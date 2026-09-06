@@ -76,12 +76,15 @@ export async function getWorkoutDetail(workoutId: string): Promise<WorkoutDetail
     else list.push(set);
   }
 
-  // One lookup per distinct exercise, not per row: the same movement done twice
-  // in a session has one and the same "last time".
+  // Each row owns its measurement snapshot, even if the library changes mid-session.
   const history = new Map<string, WorkoutSet[]>();
   await Promise.all(
-    [...new Set(rows.map((row) => row.exerciseId))].map(async (exerciseId) => {
-      history.set(exerciseId, await getLastPerformance(exerciseId, workoutId));
+    rows.map(async (row) => {
+      const identity = resolveWorkoutExerciseIdentity(row, library.get(row.exerciseId));
+      history.set(
+        row.id,
+        await getLastPerformance(row.exerciseId, workoutId, identity.measurementType),
+      );
     }),
   );
 
@@ -95,7 +98,7 @@ export async function getWorkoutDetail(workoutId: string): Promise<WorkoutDetail
       exercise: activeLibrary.get(row.exerciseId),
       identity: resolveWorkoutExerciseIdentity(row, library.get(row.exerciseId)),
       sets: (setsPerRow.get(row.id) ?? []).sort(byOrder),
-      previous: history.get(row.exerciseId) ?? [],
+      previous: history.get(row.id) ?? [],
     })),
   };
 }

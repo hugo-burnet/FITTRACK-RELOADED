@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 import { db } from '@/data/db';
-import type { WorkoutSet } from '@/data/types';
+import { resolveWorkoutExerciseIdentity } from '@/lib/exerciseSnapshot';
+import type { MeasurementType, WorkoutSet } from '@/data/types';
 
 /**
  * What past sessions say — read across sessions, never inside one.
@@ -31,6 +32,7 @@ import type { WorkoutSet } from '@/data/types';
 export async function getLastPerformance(
   exerciseId: string,
   excludeWorkoutId?: string,
+  measurementType?: MeasurementType,
 ): Promise<WorkoutSet[]> {
   const lastSet = await db.workoutSets
     .where('[exerciseId+performedAt]')
@@ -43,6 +45,14 @@ export async function getLastPerformance(
     .first();
 
   if (lastSet === undefined) return [];
+
+  if (measurementType !== undefined) {
+    const row = await db.workoutExercises.get(lastSet.workoutExerciseId);
+    if (row === undefined) return [];
+    const exercise = await db.exercises.get(exerciseId);
+    if (resolveWorkoutExerciseIdentity(row, exercise).measurementType !== measurementType)
+      return [];
+  }
 
   return db.workoutSets
     .where({ workoutExerciseId: lastSet.workoutExerciseId })

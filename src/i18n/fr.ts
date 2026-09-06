@@ -409,12 +409,12 @@ const fr = {
      * Les trois états de l'entrée de menu. Un libellé grisé sans raison est une
      * énigme ; la ligne dit lequel des deux cas s'applique.
      */
-    deloadMenuHint: 'Les séries restantes passent à 80 %, arrondies à 2,5 kg.',
+    deloadMenuHint: 'Les séries restantes passent à 80 %, arrondies à 2,5 kg sauf pour les petites charges.',
     deloadDoneHint: 'Déjà appliqué à cette séance.',
     deloadUnavailableHint: 'Aucune série restante ne porte de charge à alléger.',
     reorderMenuHint: 'Fait apparaître les poignées pour déplacer les exercices.',
     deloadTitle: 'Deload à 80 %',
-    deloadBody: 'Les séries restantes passeront à 80 %, arrondies à 2,5 kg.',
+    deloadBody: 'Les séries restantes passeront à 80 %, arrondies à 2,5 kg sauf pour les petites charges.',
     deloadConfirm: 'Appliquer',
     deloadNote: 'Deload — charges réduites à 80 %.',
     deloadError: 'Le deload n’a pas pu être appliqué. Réessaie.',
@@ -1848,7 +1848,7 @@ const fr = {
       '{count} ligne(s) désignent une donnée absente du fichier ; elles seront restaurées telles quelles.',
     restoreConfirmAction: 'Tout remplacer',
     restoreDone: 'Sauvegarde restaurée. L’app se recharge.',
-    restoreFailed: 'La restauration a échoué : rien n’a été modifié.',
+    restoreFailed: 'La restauration a échoué. Les données de la base ont été conservées.',
     restoreErrorUnreadable: 'Le fichier n’a pas pu être lu.',
     restoreErrorNotJson: 'Ce fichier n’est pas une sauvegarde FitTrack (JSON attendu).',
     restoreErrorNotBackup: 'Ce fichier n’est pas une sauvegarde FitTrack.',
@@ -2559,7 +2559,7 @@ const fr = {
       applyDeload: {
         instruction: 'Appliquer réécrit les séries restantes.',
         detail:
-          'Toutes passent à 80 %, arrondies à 2,5 kg. Le guide te montre où vit ce geste et n’y touche pas.',
+          'Toutes passent à 80 %, arrondies à 2,5 kg sauf pour les petites charges. Le guide te montre où vit ce geste et n’y touche pas.',
       },
     },
 
