@@ -20,6 +20,11 @@
      disaient « ceci imite un terminal » ; ce skin n'imite pas, il emprunte
      une grammaire. Ce qui reste en mouvement est un comportement réel de
      terminal : la frappe ligne à ligne, le curseur, le compte à rebours.
+
+     Seconde révision du 06.09 : le thème clair est retiré, écran de contrôle
+     compris. Un terminal clair n'existe pas ; en fabriquer un aurait ramené
+     le costume par l'autre bout. Choisir ce skin force donc le sombre, ce
+     qui est consigné dans « Là où ça coince » et vaut pour toute la suite.
      ------------------------------------------------------------------ */
 
   :root {
@@ -147,14 +152,6 @@
     box-shadow: 0 0 0 1px #111, 0 26px 70px rgb(0 0 0 / 0.85);
   }
 
-  /* Le listing papier : même skin, imprimé. Seuls les jetons changent. */
-  .phone--paper {
-    --s0: #ece9e0; --s1: #f5f3ec; --s2: #ded9cc;
-    --t1: #17170f; --t2: #63625a; --th: #000000;
-    --a: #9a4300; --a-ink: #ffffff;
-    --g: #16601b; --r: #a11111; --c: #0f5b66; --bd: #bdb8a8;
-  }
-
   /* La colonne de l'écran. Aucune animation ici : les effets cathodiques ont
      sauté avec le costume (cf. la note « Ce qui a sauté »), il ne reste que
      la mise en page. */
@@ -190,7 +187,6 @@
   /* Sélection = inversion. C'est la seule emphase de tout le skin. */
   .sel { background: var(--a); color: var(--a-ink); }
   .sel .t2, .sel .dimc { color: rgb(0 0 0 / 0.62); }
-  .phone--paper .sel .t2 { color: rgb(255 255 255 / 0.7); }
 
   .t2 { color: var(--t2); }
   .g { color: var(--g); } .r { color: var(--r); } .c { color: var(--c); } .a { color: var(--a); } .h { color: var(--th); }
@@ -321,7 +317,8 @@
         Mêmes données qu'aujourd'hui, mêmes mots (repris de <code>src/i18n/fr.ts</code>).
         Chaque écran emprunte l'idiome terminal qui lui correspond vraiment : la séance est un
         <b>menu GRUB</b>, l'accueil un <b>menu de démarrage</b>, l'historique un <b>journalctl</b>,
-        Planifier un <b>tree</b>. Le rail défile horizontalement.
+        Planifier un <b>tree</b>. Le rail défile horizontalement. Il n'y a pas de variante claire,
+        et c'est une décision — voir plus bas.
       </p>
     </div>
 
@@ -552,51 +549,7 @@
             dossier → routine se dessine toute seule avec <span class="dim">├──</span> et <span class="dim">└──</span> :
             c'est la seule vue de l'app où l'imbrication est le sujet. Le Guide devient des
             <b>pages de manuel</b> — <span class="cy">périodisation(7)</span> — ce qui dit mieux que n'importe quel
-            libellé que ça s'consulte et que ça n'écrit rien.
-          </p>
-        </figcaption>
-      </figure>
-
-      <!-- ---------- 5. LISTING PAPIER ---------- -->
-      <figure class="screen s5">
-        <div class="phone phone--paper" data-ty>
-          <div class="tube">
-            <div class="hdr ty"><span>fittrack lp0 — <span class="a">push_a</span></span><span>00:42:18</span></div>
-            <div class="scr">
-              <div class="tty">
-                <div class="ln ty"><span class="g">[  OK  ]</span> échauffement terminé</div>
-                <div class="ln ty"><span class="g">[  OK  ]</span> 5 séries sur 14 validées</div>
-                <div class="ln ty"><span class="t2">[######······················]</span></div>
-              </div>
-              <div class="box ty">
-                <span class="cap">développé_couché.barre</span>
-                <span class="cap-r">3 séries</span>
-                <div class="ln ty" style="padding:2px 0"><span class="g">[  OK  ]</span> série 1 <span class="t2">·</span> 80,0 kg <span class="t2">×</span> 8</div>
-                <div class="ln ty" style="padding:2px 0"><span class="g">[  OK  ]</span> série 2 <span class="t2">·</span> 80,0 kg <span class="t2">×</span> 8</div>
-                <div class="ln sel ty" style="padding:6px 0;min-height:48px;display:flex;align-items:center">
-                  <span>&nbsp;▸ série 3 <span class="t2">·</span> <b style="font-weight:700">82,5 kg</b> <span class="t2">×</span> 8</span>
-                </div>
-                <div class="ln ty" style="padding:6px 0 0"><span class="a">[ REC  ]</span> 1rm_estimé=104kg <span class="g">(+2)</span></div>
-              </div>
-              <div class="tty ty" style="margin-top:auto"><div class="ln t2">↑/↓ choisir · ⏎ valider · q terminer</div></div>
-            </div>
-            <div class="rest ty">
-              <div class="ln"><span class="a">REPOS</span> <span class="t2">— série 4 dans</span></div>
-              <div class="cd">01:27</div>
-              <div class="meter"><b>[############################</b><i>·············]</i></div>
-              <div class="ln t2">Touche pour reprendre maintenant · ±15 s</div>
-            </div>
-            <div class="cta ty">q &nbsp;TERMINER LA SÉANCE</div>
-          </div>
-        </div>
-        <figcaption>
-          <span class="tag">CONTRÔLE</span>
-          <h3>Le même écran, thème clair</h3>
-          <p>
-            Un terminal en thème clair n'est pas un terminal blanc : c'est un <b>listing sur papier
-            à bandes</b>. Fond <span class="dim">#ECE9E0</span>, encre noire, ambre descendu à
-            <span class="dim">#9A4300</span> pour tenir le contraste, et l'inversion devient une frappe
-            en surimpression. Mêmes jetons, mêmes composants — <b>le skin n'est pas « un thème sombre stylé »</b>.
+            libellé que ça se consulte et que ça n'écrit rien.
           </p>
         </figcaption>
       </figure>
@@ -610,7 +563,7 @@
   <section>
     <div class="sec-head">
       <h2>Ce que ça change</h2>
-      <p>Huit décisions. Aucune ne touche une repository, un hook ou une règle métier.</p>
+      <p>Neuf décisions. Aucune ne touche une repository, un hook ou une règle métier.</p>
     </div>
     <div class="moves">
       <div class="move">
@@ -656,7 +609,14 @@
           dans un menu de séance et devient <b>une manière de démarrer</b> : <span class="cmd">push_a (mode dégradé)</span>.</p>
       </div>
       <div class="move">
-        <h3 data-n="08">Les noms deviennent des chemins</h3>
+        <h3 data-n="08">Il n'y a pas de thème clair</h3>
+        <p>Un terminal clair n'existe pas. En fabriquer un — fond papier, encre noire — ramènerait le
+          costume par l'autre bout : ce serait à nouveau une app <em>déguisée</em>. Choisir ce skin
+          <b>force le sombre</b> et grise le sélecteur clair/sombre des réglages, en disant pourquoi.
+          C'est une contrainte assumée, pas un oubli.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="09">Les noms deviennent des chemins</h3>
         <p><code>développé_couché.barre</code>, <code>/routines/haut-bas/push_a</code>,
           <span class="cy">périodisation(7)</span>. Le vocabulaire de l'app ne change pas —
           <b>sa mise en forme dit à quoi chaque chose sert</b> : un fichier s'ouvre, une page de man se lit.</p>
@@ -700,6 +660,12 @@
       <li><b>Aucun texte inventé.</b> Les libellés viennent de <code>src/i18n/fr.ts</code> ; ce qui est nouveau, ce sont les <b>gabarits</b> (<code>'[  OK  ] {label}'</code>), qui vivraient dans le dictionnaire comme le reste.</li>
       <li><b>Local-first.</b> Cousine et VT323 sont sous licence libre (Apache 2.0 / OFL) et s'embarquent dans <code>public/</code> : ~90 ko de woff2 à deux fichiers, zéro requête réseau. Même contrainte que pour Fonte, même réponse.</li>
       <li><b>Coût.</b> Un jeu de jetons, deux polices, et un composant d'emphase par inversion. Le vrai travail est ailleurs : <b>remplacer les icônes par des verdicts</b> écran par écran, ce qui touche beaucoup de fichiers mais aucun en profondeur.</li>
+      <li><b>Le thème clair, et ce que ça coûte.</b> C'est le seul skin des trois qui n'en a pas, et il
+        faut le regarder en face : l'app propose aujourd'hui Sombre et Clair partout, et ce thème-là
+        casse la symétrie. Concrètement, <code>Réglages › Thème</code> doit gérer un troisième état qui
+        <b>désactive</b> le choix clair/sombre au lieu de s'y ajouter, et le dire à l'écran plutôt que de
+        griser un bouton sans explication. C'est une vraie complication du modèle de réglages —
+        et une raison de plus pour que ce soit un thème et non le défaut.</li>
       <li><b>Ce qui a sauté, et pourquoi.</b> Les lignes de balayage, la bande descendante, le tearing avec décalage RVB et la vignette. C'était joliment fait et c'était un <b>costume</b> : ça disait « ceci imite un terminal », alors que tout l'intérêt du skin est qu'il <b>emprunte une grammaire</b> — l'inversion, les verdicts, le journal, l'arbre. Un décor qui tremble par-dessus une charge de 82,5 kg n'a de toute façon jamais rien gagné. Ce qui reste en mouvement existe pour de vrai dans un terminal : la frappe, le curseur, le décompte.</li>
       <li><b>Ce que je ne ferais pas.</b> Étendre la frappe aux feuilles modales, ni la rejouer sur un écran qu'on rouvre. Une frappe se mérite une fois, à l'entrée.</li>
     </ul>
