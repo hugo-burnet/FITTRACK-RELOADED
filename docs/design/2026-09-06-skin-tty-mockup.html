@@ -14,6 +14,12 @@
      s'inverse au lieu de se border, les cadres sont dessinés, l'historique
      est un journal systemd, Planifier est un `tree`, et le repos est
      l'écran de compte à rebours de GRUB — que GRUB a déjà, mot pour mot.
+
+     Révision du 06.09 : les effets cathodiques (lignes de balayage, bande
+     descendante, tearing, décalage RVB, vignette) ont été retirés. Ils
+     disaient « ceci imite un terminal » ; ce skin n'imite pas, il emprunte
+     une grammaire. Ce qui reste en mouvement est un comportement réel de
+     terminal : la frappe ligne à ligne, le curseur, le compte à rebours.
      ------------------------------------------------------------------ */
 
   :root {
@@ -31,7 +37,7 @@
     --red: #ff5f5f;     /* [ FAIL ] — 7,6:1 */
     --cyan: #5fd7d7;    /* le Guide, les renvois — 10,6:1 */
     --f-mono: 'Cousine', 'Liberation Mono', 'DejaVu Sans Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    --f-crt: 'VT323', 'Cousine', ui-monospace, monospace;
+    --f-big: 'VT323', 'Cousine', ui-monospace, monospace;
   }
 
   * { box-sizing: border-box; }
@@ -46,21 +52,6 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* Le phosphore de la page : lignes de balayage + une bande qui descend
-     lentement. Fixe, sous le contenu, jamais cliquable. */
-  .phosphor {
-    position: fixed; inset: 0; z-index: 60; pointer-events: none;
-    background-image: repeating-linear-gradient(
-      to bottom, rgb(0 0 0 / 0.34) 0 1px, transparent 1px 3px);
-    mix-blend-mode: multiply;
-  }
-  .roll {
-    position: fixed; left: 0; right: 0; height: 180px; z-index: 61; pointer-events: none;
-    background: linear-gradient(to bottom, transparent, rgb(255 255 255 / 0.028), transparent);
-    animation: roll 7.5s linear infinite;
-  }
-  @keyframes roll { from { top: -180px; } to { top: 100%; } }
 
   .wrap {
     position: relative; z-index: 1;
@@ -90,15 +81,14 @@
   header { display: flex; flex-direction: column; gap: 18px; }
 
   .banner {
-    font-family: var(--f-crt);
+    font-family: var(--f-big);
     font-size: clamp(64px, 15vw, 168px);
     line-height: 0.78;
     color: var(--amber);
     margin: 0;
     letter-spacing: 0.01em;
-    text-shadow: 0 0 26px rgb(255 135 0 / 0.34);
   }
-  .banner small { color: var(--dim); font-size: 0.24em; letter-spacing: 0.2em; display: block; margin-top: 10px; text-shadow: none; }
+  .banner small { color: var(--dim); font-size: 0.24em; letter-spacing: 0.2em; display: block; margin-top: 10px; }
 
   .thesis { max-width: 68ch; margin: 0; font-size: 15px; line-height: 1.7; }
   .thesis b { color: var(--hi); font-weight: 400; background: rgb(255 135 0 / 0.14); }
@@ -120,7 +110,7 @@
   .sw i { display: block; height: 20px; border: 1px solid #333; }
   .sw em { font-style: normal; color: var(--dim); display: block; font-size: 12.5px; }
   .spec { border: 1px solid #262626; background: var(--k1); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-  .spec .big { font-family: var(--f-crt); font-size: 76px; line-height: 0.8; color: var(--amber); }
+  .spec .big { font-family: var(--f-big); font-size: 76px; line-height: 0.8; color: var(--amber); }
   .spec p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--fg); }
 
   /* ---------- Rail des écrans -------------------------------------------- */
@@ -154,7 +144,7 @@
     display: flex; flex-direction: column;
     overflow: hidden; position: relative;
     font-size: 12.5px; line-height: 1.55;
-    box-shadow: 0 0 0 1px #111, 0 26px 70px rgb(0 0 0 / 0.8), 0 0 60px rgb(255 135 0 / 0.05);
+    box-shadow: 0 0 0 1px #111, 0 26px 70px rgb(0 0 0 / 0.85);
   }
 
   /* Le listing papier : même skin, imprimé. Seuls les jetons changent. */
@@ -165,35 +155,10 @@
     --g: #16601b; --r: #a11111; --c: #0f5b66; --bd: #bdb8a8;
   }
 
-  /* Scanlines + vignette propres à chaque écran. */
-  .phone::after {
-    content: ''; position: absolute; inset: 0; z-index: 20; pointer-events: none;
-    background-image: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.3) 0 1px, transparent 1px 3px);
-  }
-  .phone--paper::after { opacity: 0.35; }
-  .phone::before {
-    content: ''; position: absolute; inset: 0; z-index: 21; pointer-events: none;
-    background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.55));
-  }
-  .phone--paper::before { background: radial-gradient(120% 100% at 50% 50%, transparent 62%, rgb(90 84 62 / 0.22)); }
-
-  /* Le tearing : rare, court, jamais pendant qu'on lit un chiffre.
-     Chaque écran a son propre délai pour qu'ils ne clignotent pas ensemble. */
-  .tube { flex: 1; display: flex; flex-direction: column; min-height: 0; animation: tear 13s linear infinite; }
-  .s2 .tube { animation-delay: -3.4s; }
-  .s3 .tube { animation-delay: -7.1s; }
-  .s4 .tube { animation-delay: -10.2s; }
-  .s5 .tube { animation-delay: -5.6s; }
-
-  @keyframes tear {
-    0%, 88.4% { transform: none; text-shadow: none; }
-    88.6% { transform: translate3d(-3px, 0, 0); text-shadow: 1.5px 0 var(--r), -1.5px 0 var(--c); }
-    88.9% { transform: translate3d(2px, -1px, 0); text-shadow: -1px 0 var(--r), 1px 0 var(--c); }
-    89.2% { transform: translate3d(-1px, 1px, 0); text-shadow: none; }
-    89.5%, 96.2% { transform: none; text-shadow: none; }
-    96.4% { transform: translate3d(2px, 0, 0); text-shadow: 1px 0 var(--r), -1px 0 var(--c); }
-    96.7%, 100% { transform: none; text-shadow: none; }
-  }
+  /* La colonne de l'écran. Aucune animation ici : les effets cathodiques ont
+     sauté avec le costume (cf. la note « Ce qui a sauté »), il ne reste que
+     la mise en page. */
+  .tube { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
   /* ---------- Lignes ------------------------------------------------------ */
   .tty { padding: 0 10px; }
@@ -234,7 +199,7 @@
 
   /* ---------- Le repos : l'écran de compte à rebours de GRUB -------------- */
   .rest { border-top: 1px solid var(--a); padding: 10px 10px 8px; display: flex; flex-direction: column; gap: 6px; background: var(--s0); }
-  .rest .cd { font-family: var(--f-crt); font-size: 56px; line-height: 0.8; color: var(--a); letter-spacing: 0.02em; }
+  .rest .cd { font-family: var(--f-big); font-size: 56px; line-height: 0.8; color: var(--a); letter-spacing: 0.02em; }
   .rest.hot { border-top-color: var(--r); }
   .rest.hot .cd { color: var(--r); }
   .rest.hot .meter b { color: var(--r); }
@@ -279,17 +244,14 @@
   footer code, .sec-head code { color: var(--cyan); }
 
   /* Une frappe qu'on subit est une frappe de trop : en mouvement réduit,
-     tout est écrit d'avance, le tube ne tremble plus, rien ne clignote. */
+     tout est écrit d'avance, et rien ne clignote. */
   @media (prefers-reduced-motion: reduce) {
-    .tube, .roll, .cursor, .cur { animation: none !important; }
+    .cursor, .cur { animation: none !important; }
     .ty-hidden { visibility: visible !important; }
   }
 
   .ty-hidden { visibility: hidden; }
 </style>
-
-<div class="phosphor" aria-hidden="true"></div>
-<div class="roll" aria-hidden="true"></div>
 
 <div class="wrap">
 
@@ -308,7 +270,7 @@
       <div><span class="ok">[  OK  ]</span> Started <span class="cmd">fittrack.tty1</span> — skin console</div>
       <div><span class="ok">[  OK  ]</span> Mounted <span class="cmd">/routines</span>, <span class="cmd">/programmes</span>, <span class="cmd">/historique</span></div>
       <div><span class="ok">[  OK  ]</span> Reached target <span class="cmd">local-first.target</span> <span class="dim">(aucun réseau requis)</span></div>
-      <div><span class="amber">[ WARN ]</span> <span class="cmd">glitch.service</span> : décoratif, coupé en mouvement réduit</div>
+      <div><span class="fail">[FAILED]</span> Failed to start <span class="cmd">crt.service</span> <span class="dim">(retiré : c'était le costume)</span></div>
       <div><span class="cmd">root@fittrack:~#</span> <span class="amber">skin --set tty1</span><span class="cursor"></span></div>
     </div>
   </header>
@@ -365,7 +327,7 @@
 
     <div class="toolbar">
       <button class="btn" id="replay" type="button">↻ rejouer la frappe</button>
-      <span class="dim" style="font-size:13px">Les écrans s'écrivent au chargement, comme un tty. Le tube glitche tout seul, toutes les ~13 s.</span>
+      <span class="dim" style="font-size:13px">Les écrans s'écrivent au chargement, comme un tty. C'est le seul mouvement du skin, avec le curseur et le décompte.</span>
     </div>
 
     <div class="rail">
@@ -648,7 +610,7 @@
   <section>
     <div class="sec-head">
       <h2>Ce que ça change</h2>
-      <p>Sept décisions. Aucune ne touche une repository, un hook ou une règle métier.</p>
+      <p>Huit décisions. Aucune ne touche une repository, un hook ou une règle métier.</p>
     </div>
     <div class="moves">
       <div class="move">
@@ -675,10 +637,11 @@
           Jamais entre deux séries : la carte de l'exercice en cours ne se réécrit pas.</p>
       </div>
       <div class="move">
-        <h3 data-n="05">Le tube n'est pas parfait</h3>
-        <p>Lignes de balayage permanentes, une bande qui descend toutes les 7 s, et un <b>tearing
-          avec décalage RVB toutes les ~13 s</b>, sur 0,3 s. Rare, court, et jamais déclenché
-          pendant qu'un chiffre est en cours de saisie.</p>
+        <h3 data-n="05">Le curseur remplace tous les anneaux de focus</h3>
+        <p>Dans un terminal, <b>l'endroit où clignote le curseur est l'endroit où tu es</b> — il n'existe
+          pas d'autre indicateur, et il n'en faut pas d'autre. Le bloc █ se pose sur la valeur en cours de
+          saisie et suit la sélection. Un seul objet porte le focus dans toute l'app, et il se voit de plus
+          loin qu'un liseré de 2 px.</p>
       </div>
       <div class="move">
         <h3 data-n="06">La navigation devient une barre de touches</h3>
@@ -686,7 +649,14 @@
           Les cibles restent des lignes pleine largeur de 48 px — on tape la ligne, pas le caractère.</p>
       </div>
       <div class="move">
-        <h3 data-n="07">Les noms deviennent des chemins</h3>
+        <h3 data-n="07">La décharge est un mode de récupération</h3>
+        <p>Repris de la proposition <b>/boot</b>, parce que c'est le meilleur emprunt des trois : GRUB range
+          sous « Options avancées » une variante <b>dégradée</b> de la même entrée, pour les jours où la
+          normale ne passe pas. C'est la définition d'une décharge. Elle cesse d'être une option cachée
+          dans un menu de séance et devient <b>une manière de démarrer</b> : <span class="cmd">push_a (mode dégradé)</span>.</p>
+      </div>
+      <div class="move">
+        <h3 data-n="08">Les noms deviennent des chemins</h3>
         <p><code>développé_couché.barre</code>, <code>/routines/haut-bas/push_a</code>,
           <span class="cy">périodisation(7)</span>. Le vocabulaire de l'app ne change pas —
           <b>sa mise en forme dit à quoi chaque chose sert</b> : un fichier s'ouvre, une page de man se lit.</p>
@@ -712,7 +682,7 @@
         <b>Ce que j'ai fait pour tenir quand même :</b> aucune cible n'est un caractère — toutes les lignes
         touchables font 48 px de haut sur toute la largeur ; la frappe dure 280 ms au total et s'interrompt
         au premier appui ; elle ne se rejoue jamais sur l'écran de séance en cours ; et
-        <code>prefers-reduced-motion</code> coupe la frappe, le tearing, la bande et les curseurs —
+        <code>prefers-reduced-motion</code> coupe la frappe et les curseurs —
         l'app reste alors parfaitement utilisable, juste immobile.
       </p>
       <p>
@@ -730,7 +700,8 @@
       <li><b>Aucun texte inventé.</b> Les libellés viennent de <code>src/i18n/fr.ts</code> ; ce qui est nouveau, ce sont les <b>gabarits</b> (<code>'[  OK  ] {label}'</code>), qui vivraient dans le dictionnaire comme le reste.</li>
       <li><b>Local-first.</b> Cousine et VT323 sont sous licence libre (Apache 2.0 / OFL) et s'embarquent dans <code>public/</code> : ~90 ko de woff2 à deux fichiers, zéro requête réseau. Même contrainte que pour Fonte, même réponse.</li>
       <li><b>Coût.</b> Un jeu de jetons, deux polices, et un composant d'emphase par inversion. Le vrai travail est ailleurs : <b>remplacer les icônes par des verdicts</b> écran par écran, ce qui touche beaucoup de fichiers mais aucun en profondeur.</li>
-      <li><b>Ce que je ne ferais pas.</b> Étendre la frappe aux feuilles modales, faire trembler un champ de saisie, ou mettre du glitch sur l'écran de séance. Le glitch est un décor de fond ; le jour où il masque un kilo, il a perdu.</li>
+      <li><b>Ce qui a sauté, et pourquoi.</b> Les lignes de balayage, la bande descendante, le tearing avec décalage RVB et la vignette. C'était joliment fait et c'était un <b>costume</b> : ça disait « ceci imite un terminal », alors que tout l'intérêt du skin est qu'il <b>emprunte une grammaire</b> — l'inversion, les verdicts, le journal, l'arbre. Un décor qui tremble par-dessus une charge de 82,5 kg n'a de toute façon jamais rien gagné. Ce qui reste en mouvement existe pour de vrai dans un terminal : la frappe, le curseur, le décompte.</li>
+      <li><b>Ce que je ne ferais pas.</b> Étendre la frappe aux feuilles modales, ni la rejouer sur un écran qu'on rouvre. Une frappe se mérite une fois, à l'entrée.</li>
     </ul>
   </section>
 
