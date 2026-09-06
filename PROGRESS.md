@@ -7,7 +7,7 @@
 
 ## Sauvegardes validées, échauffements reproposés, commandes regroupées (2026-09-06)
 
-- Publication : version 2.5.1 préparée sur master ; push et tag v2.5.1 pour publication PWA et génération de l’APK signé par GitHub Actions. Validation avant changement de numéro : 2 554 tests réussis dans 241 fichiers, typecheck, build et lint verts.
+- Publication : tag v2.5.1 pour la livraison principale, puis v2.5.2 pour le durcissement qui suit — un correctif poussé après un tag laisse la PWA devant l’APK, et c’est ce décalage que la seconde version referme. Publication PWA et APK signé par GitHub Actions. Validation avant changement de numéro : 2 557 tests réussis dans 241 fichiers, typecheck, build et lint verts.
 - **Import de sauvegarde.** Nouveau `src/lib/backup/validate.ts` : format, version de
   fichier, version de schéma, structure complète et références sont vérifiés **avant**
   toute écriture. Une table malformée, une ligne qui n'est pas un enregistrement, un champ
