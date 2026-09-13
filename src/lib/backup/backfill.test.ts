@@ -54,6 +54,44 @@ describe('backfillBackupTables', () => {
     });
   });
 
+  describe('v13 — la note de réglage d’une ligne de routine', () => {
+    const LINE: BackupRow = {
+      id: 're-1',
+      routineId: 'r-1',
+      exerciseId: 'ex-1',
+      order: 0,
+      supersetGroup: 0,
+      restSeconds: 0,
+    };
+
+    it('donne une note vide à une ligne écrite avant que le champ existe', () => {
+      const migrated = backfillBackupTables(tables({ routineExercises: [LINE] }), 12);
+
+      expect(migrated.routineExercises[0]?.notes).toBe('');
+    });
+
+    it('ne touche pas une note déjà écrite', () => {
+      const migrated = backfillBackupTables(
+        tables({ routineExercises: [{ ...LINE, notes: 'Siège cran 4' }] }),
+        12,
+      );
+
+      expect(migrated.routineExercises[0]?.notes).toBe('Siège cran 4');
+    });
+
+    it('laisse une note vidée exprès telle quelle', () => {
+      // `typeof === 'string'` et pas `?? ''` : les deux donnent la même valeur
+      // ici, et un seul des deux dit pourquoi. La garde vaut pour le jour où la
+      // chaîne vide cessera d'être le défaut.
+      const migrated = backfillBackupTables(
+        tables({ routineExercises: [{ ...LINE, notes: '' }] }),
+        12,
+      );
+
+      expect(migrated.routineExercises[0]?.notes).toBe('');
+    });
+  });
+
   describe('v2 — l’instantané d’exercice et le fuseau de la séance', () => {
     it('gèle l’identité de l’exercice sur une ligne qui n’en porte aucune', () => {
       const migrated = backfillBackupTables(

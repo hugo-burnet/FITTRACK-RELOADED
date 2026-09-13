@@ -43,8 +43,10 @@ async function seedExercise(overrides: Partial<Exercise> = {}): Promise<Exercise
 beforeEach(resetDb);
 
 describe('le schéma', () => {
-  it('ouvre la table des paliers en version 12', async () => {
-    expect(db.verno).toBe(12);
+  // Sans le numéro de version : il appartient à `data/schemaVersion.test.ts`,
+  // et le répéter ici faisait échouer un test de paliers à chaque montée de
+  // schéma sans rien dire de plus sur les paliers.
+  it('ouvre la table des paliers', async () => {
     expect(db.tables.map((table) => table.name)).toContain('milestones');
   });
 });

@@ -237,6 +237,12 @@ const SPECS: Record<BackupTable, TableSpec> = {
       supersetGroup: isRank,
       restSeconds: isCount,
     },
+    // Optionnel et pas requis, alors que la version 13 garantit le champ en
+    // base : un fichier écrit en 12 est légitime et ne le porte pas. C'est
+    // `backfillBackupTables` qui le comble, après ce contrôle — l'exiger ici
+    // refuserait précisément les sauvegardes que le rattrapage existe pour
+    // faire passer.
+    optional: { notes: isString },
     links: [
       { field: 'routineId', table: 'routines' },
       { field: 'exerciseId', table: 'exercises' },
@@ -293,6 +299,11 @@ const SPECS: Record<BackupTable, TableSpec> = {
       exerciseSecondaryMuscles: listOf(MUSCLE_GROUPS),
       exerciseEquipment: oneOf(EQUIPMENT),
       exerciseIsUnilateral: isFlag,
+      // La note de séance, qui existait bien avant d'être déclarée ici : un
+      // champ non déclaré traverse ce module sans être vu, et c'est celui que
+      // la note de routine vient alimenter au démarrage. Les deux bouts du
+      // report sont désormais typés du même côté de la porte.
+      notes: isString,
     },
     links: [
       { field: 'workoutId', table: 'workouts' },

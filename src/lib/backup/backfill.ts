@@ -53,7 +53,7 @@ import type { BackupRow, BackupTable } from './types';
  * imports this layer, and the cycle would be real. `schemaVersion.test.ts` in
  * `data/` asserts the two agree, so the constant cannot drift in silence.
  */
-export const CURRENT_SCHEMA_VERSION = 12;
+export const CURRENT_SCHEMA_VERSION = 13;
 
 /** `0` is what `parseBackup` writes when a file names no schema at all. */
 const UNKNOWN_SCHEMA_VERSION = 0;
@@ -241,6 +241,25 @@ function toVersion11(tables: Tables): Tables {
   });
 }
 
+/**
+ * Version 13 — la note de réglage d'une ligne de routine.
+ *
+ * Le pendant exact du bloc Dexie : une sauvegarde en version 12 ne porte pas le
+ * champ, et ses lignes arriveraient dans une base courante sans avoir été vues
+ * par la migration qui l'a introduit — c'est toute la raison d'être de ce
+ * module.
+ *
+ * Gardé comme les autres étapes, et ici la garde fait un vrai travail : un
+ * fichier plus récent peut porter une note **vide volontairement**, et
+ * `typeof === 'string'` la distingue de l'absence, ce que `?? ''` aurait écrasé
+ * sans le dire. Seule l'absence est comblée.
+ */
+function toVersion13(tables: Tables): Tables {
+  return mapTable(tables, 'routineExercises', (row) =>
+    typeof row.notes === 'string' ? row : { ...row, notes: '' },
+  );
+}
+
 /** Each backfill, and the schema version that first shipped it. */
 const BACKFILLS: readonly { version: number; apply: (tables: Tables) => Tables }[] = [
   { version: 2, apply: toVersion2 },
@@ -250,6 +269,7 @@ const BACKFILLS: readonly { version: number; apply: (tables: Tables) => Tables }
   { version: 9, apply: toVersion9 },
   { version: 10, apply: toVersion10 },
   { version: 11, apply: toVersion11 },
+  { version: 13, apply: toVersion13 },
 ];
 
 /**

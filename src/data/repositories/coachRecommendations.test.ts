@@ -21,8 +21,11 @@ const signal = (partial: Partial<CoachSignal> & Pick<CoachSignal, 'exerciseId' |
 describe('coachRecommendations repository', () => {
   beforeEach(resetDb);
 
-  it('opens at schema version 10 with the coach journal table', async () => {
-    expect(db.verno).toBe(12);
+  // Le numéro de version n'est pas épinglé ici : il l'était, à 12, sous un titre
+  // qui annonçait 10 — la dérive s'est produite. `data/schemaVersion.test.ts`
+  // tient ce numéro, et `dbMigration.test.ts` les montées. Ce test-ci ne répond
+  // que de la présence de la table.
+  it('ouvre la table du journal du coach', async () => {
     expect(db.tables.map((table) => table.name)).toContain('coachRecommendations');
   });
 

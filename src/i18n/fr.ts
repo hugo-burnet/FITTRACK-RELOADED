@@ -1119,6 +1119,9 @@ const fr = {
     restNoDefault: 'Aucun repos par défaut sur cet exercice.',
     notesLabel: 'Notes',
     notesPlaceholder: 'Prise large, tempo lent, cale sous les talons…',
+    /** Le repli : ce que dit la ligne tant que la note est vide. */
+    notesAdd: 'Ajouter une note',
+    notesHint: 'Reprise au démarrage de la séance. La modifier là-bas ne change pas la routine.',
     groupWithPrevious: 'Grouper avec le précédent',
     groupHint: 'Un superset : tu alternes entre les deux, sans repos entre eux.',
     ungroup: 'Dissocier le superset',

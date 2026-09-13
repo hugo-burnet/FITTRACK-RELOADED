@@ -217,7 +217,7 @@ describe('migration depuis la version 1', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(12);
+    expect(db.verno).toBe(13);
     expect(db.tables.map((table) => table.name)).toEqual(
       expect.arrayContaining([
         'programs',
@@ -299,7 +299,7 @@ describe('migration version 6 → 7 (intention de semaine)', () => {
     const { db } = await import('./db');
     await db.open();
 
-    expect(db.verno).toBe(12);
+    expect(db.verno).toBe(13);
 
     const week = await db.programWeeks.get('legacy-week');
     expect(week).toMatchObject({ loadIndex: 75, phase: 'construction' });
@@ -516,5 +516,91 @@ describe('migration version 10 → 11 (allègement à zéro du coach)', () => {
     const row = await db.coachRecommendations.get('assisted');
     expect(row?.nextLoadKg).toBe(0);
     expect(row?.evidence.map((item) => item.label)).toContain('next_load_kg');
+  });
+});
+
+describe('migration version 12 → 13 (note de réglage d’une ligne de routine)', () => {
+  afterEach(async () => {
+    const { db } = await import('./db');
+    await db.delete();
+  });
+
+  /** Le chemin complet jusqu'à la 12, pour que la 13 soit la seule à s'exécuter. */
+  async function seedVersion12RoutineExercises(
+    rows: readonly Record<string, unknown>[],
+  ): Promise<void> {
+    const legacy = new Dexie('fittrack');
+    legacy.version(1).stores(V1_STORES);
+    legacy.version(2).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(3).stores(V3_STORES);
+    legacy.version(4).upgrade(() => {
+      /* match FitTrackDB: no store change */
+    });
+    legacy.version(5).stores({
+      coachRecommendations:
+        'id, exerciseId, status, [exerciseId+status], recommendedAt, deletedAt',
+    });
+    legacy.version(6).stores({
+      programs: 'id, status, startsAt, updatedAt, deletedAt',
+      programWeeks: 'id, programId, [programId+weekIndex], deletedAt',
+      programScheduleRevisions: 'id, programId, [programId+effectiveFromWeekIndex], deletedAt',
+      programScheduleEntries: 'id, revisionId, [revisionId+order], routineId, deletedAt',
+    });
+    for (const version of [7, 8, 9, 10, 11]) {
+      legacy.version(version).upgrade(() => {
+        /* match FitTrackDB: no store change */
+      });
+    }
+    legacy.version(12).stores({
+      milestones: 'id, definitionId, achievedAt, acknowledgedAt, deletedAt',
+    });
+    await legacy.open();
+    await legacy.table('routineExercises').bulkAdd([...rows]);
+    legacy.close();
+  }
+
+  const line = (overrides: Record<string, unknown> = {}): Record<string, unknown> => ({
+    ...stamps,
+    id: 'line',
+    routineId: 'push',
+    exerciseId: 'bench',
+    order: 0,
+    supersetGroup: 0,
+    restSeconds: 0,
+    ...overrides,
+  });
+
+  it('écrit une note vide sur les lignes qui n’en portaient pas', async () => {
+    await seedVersion12RoutineExercises([line()]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.routineExercises.get('line'))?.notes).toBe('');
+  });
+
+  it('ne touche pas au reste de la ligne', async () => {
+    await seedVersion12RoutineExercises([
+      line({ id: 'grouped', order: 3, supersetGroup: 2, restSeconds: 90 }),
+    ]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    const row = await db.routineExercises.get('grouped');
+    expect(row?.order).toBe(3);
+    expect(row?.supersetGroup).toBe(2);
+    expect(row?.restSeconds).toBe(90);
+  });
+
+  it('n’écrase pas une note qu’une version future aurait déjà écrite', async () => {
+    await seedVersion12RoutineExercises([line({ id: 'noted', notes: 'Cran 3' })]);
+
+    const { db } = await import('./db');
+    await db.open();
+
+    expect((await db.routineExercises.get('noted'))?.notes).toBe('Cran 3');
   });
 });

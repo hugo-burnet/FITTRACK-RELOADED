@@ -60,6 +60,11 @@ export async function addExercisesToRoutine(
         order: count + index,
         supersetGroup: 0,
         restSeconds: 0,
+        // La valeur par défaut du champ, écrite à la création plutôt que
+        // devinée à la lecture : la migration 13 a comblé les lignes d'avant,
+        // et une ligne neuve qui repartirait en `undefined` rouvrirait le
+        // partage que cette version vient de refermer.
+        notes: '',
       }),
     );
 

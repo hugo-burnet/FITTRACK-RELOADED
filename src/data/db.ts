@@ -358,6 +358,42 @@ export class FitTrackDB extends Dexie {
     this.version(12).stores({
       milestones: 'id, definitionId, achievedAt, acknowledgedAt, deletedAt',
     });
+
+    /**
+     * La consigne de réglage d'un exercice **dans une routine** — hauteur de
+     * poulie, angle du buste, position du siège.
+     *
+     * Le champ existait déjà côté séance (`workoutExercises.notes`) et côté
+     * type, mais aucune ligne de routine ne le portait : une ligne d'avant cette
+     * version répond `undefined`, une ligne d'après répond `''`. Les deux se
+     * lisent pareil à l'écran, et c'est exactement le problème — le jour où
+     * quelque chose distingue « pas de note » de « note effacée », il n'y a plus
+     * d'après-coup possible sur des bases réelles. On tranche ici, une fois,
+     * pendant que les deux réponses sont encore équivalentes.
+     *
+     * **Écriture inconditionnelle sur `routineExercises`, et sur rien d'autre.**
+     * Aucune donnée d'entraînement n'est touchée : `workouts`, `workoutSets` et
+     * `personalRecords` ne sont pas ouverts par ce bloc. Une routine est un
+     * modèle, pas un fait — la réécrire ne réécrit aucune histoire.
+     *
+     * Essayé et écarté : laisser `notes` absent et normaliser à la lecture.
+     * Ça marche tant qu'il n'y a qu'un lecteur ; il y en a quatre (la carte, la
+     * feuille, le report en séance, l'export markdown du Lot suivant), et le
+     * quatrième qui oublie le `?? ''` affiche « undefined » sur un document
+     * qu'on fait relire à quelqu'un d'autre.
+     *
+     * Pas de `.stores()` : le champ n'est pas indexé, donc la déclaration de la
+     * version 12 reporte.
+     */
+    this.version(13).upgrade(async (tx) => {
+      await tx
+        .table<RoutineExercise>('routineExercises')
+        .toCollection()
+        .modify((row) => {
+          if (typeof row.notes === 'string') return;
+          row.notes = '';
+        });
+    });
   }
 }
 

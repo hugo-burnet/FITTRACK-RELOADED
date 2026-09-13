@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { RoutineExerciseDetail } from '@/data/repositories/routines';
 import { t } from '@/i18n/fr';
 import { DEFAULT_REST_SECONDS, formatRest } from '@/lib/rest';
-import { Button, ConfirmAction, RestPicker, Sheet, Textarea } from '@/ui';
+import { AddRow, Button, ConfirmAction, RestPicker, Sheet, Textarea } from '@/ui';
 
 type Props = {
   open: boolean;
@@ -37,6 +37,7 @@ export function RoutineExerciseSheet({
 }: Props) {
   const [draft, setDraft] = useState<{ rest?: number; notes: string }>({ notes: '' });
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   // Adjusted during render rather than in an effect, per the Lot 1 note: an
   // effect would paint one frame carrying the previous exercise's notes.
@@ -48,6 +49,10 @@ export function RoutineExerciseSheet({
       rest: line !== null && line.row.restSeconds > 0 ? line.row.restSeconds : undefined,
       notes: line?.row.notes ?? '',
     });
+    // Ouverte d'office quand il y a quelque chose à lire, refermée sinon —
+    // recalculé ici, avec le brouillon, plutôt que dans un effet : un effet
+    // peindrait une image du repli de l'exercice précédent.
+    setNotesOpen((line?.row.notes ?? '') !== '');
   }
 
   const grouped = (line?.row.supersetGroup ?? 0) !== 0;
@@ -83,15 +88,38 @@ export function RoutineExerciseSheet({
           </p>
         </div>
 
-        <Textarea
-          label={t('routine.notesLabel')}
-          placeholder={t('routine.notesPlaceholder')}
-          value={draft.notes}
-          onChange={(event) => {
-            setDraft({ ...draft, notes: event.target.value });
-            onWrite({ notes: event.target.value });
-          }}
-        />
+        {/* Repliée tant qu'il n'y a rien à lire.
+
+            Un `<textarea rows={4}>` ouvert en permanence coûtait un tiers de la
+            hauteur de la feuille à une ligne sur dix qui s'en sert, et poussait
+            « Grouper » et « Retirer » sous le pli sur un écran de téléphone —
+            les deux actions pour lesquelles on ouvre cette feuille le plus
+            souvent. Une note déjà écrite, elle, s'ouvre d'office : la replier
+            la cacherait derrière un geste, ce qui est exactement le défaut
+            qu'on vient corriger côté carte.
+
+            L'état d'ouverture est local et non persisté, volontairement : il se
+            reconstruit de la note elle-même à chaque ouverture, donc il n'y a
+            rien à remettre en phase quand la note change ailleurs. */}
+        {notesOpen ? (
+          <Textarea
+            label={t('routine.notesLabel')}
+            hint={t('routine.notesHint')}
+            placeholder={t('routine.notesPlaceholder')}
+            value={draft.notes}
+            onChange={(event) => {
+              setDraft({ ...draft, notes: event.target.value });
+              onWrite({ notes: event.target.value });
+            }}
+          />
+        ) : (
+          // `AddRow` et pas un bouton maison : c'est le seul geste d'ajout de
+          // l'app, et en inventer un deuxième ici ferait cohabiter deux langues
+          // sur la même feuille — le défaut que ce composant raconte lui-même.
+          <div className="-mx-4">
+            <AddRow label={t('routine.notesAdd')} onClick={() => setNotesOpen(true)} />
+          </div>
+        )}
 
         <div className="flex flex-col gap-2 border-t border-[var(--border)] pt-6">
           {grouped ? (

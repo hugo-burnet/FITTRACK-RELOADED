@@ -246,6 +246,15 @@ export interface RoutineExercise extends Syncable {
   order: number;
   supersetGroup: number; // 0 = no superset, otherwise group number (RF-14)
   restSeconds: number; // 0 = use the exercise default
+  /**
+   * La consigne de réglage — hauteur de poulie, angle du buste, position du
+   * siège. `''` depuis la version 13 du schéma, qui l'a écrite sur les lignes
+   * d'avant ; l'optionnel qui reste ne décrit plus qu'une ligne lue hors de la
+   * base (une sauvegarde en cours de rattrapage), pas un état que l'app écrit.
+   *
+   * Reportée sur `WorkoutExercise.notes` au démarrage d'une séance, et **pas
+   * l'inverse** : ce qu'on corrige sur le banc appartient à la séance.
+   */
   notes?: string;
 }
 

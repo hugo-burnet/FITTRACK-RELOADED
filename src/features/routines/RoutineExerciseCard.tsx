@@ -236,6 +236,28 @@ export function RoutineExerciseCard({
           </button>
         </div>
 
+        {/* Sous le nom, et pas en pied de carte.
+
+            Elle y était, sous la dernière série et sous « Ajouter une série » —
+            c'est-à-dire après la seule zone qu'on fait défiler, sur la carte
+            d'un exercice qui en porte cinq. Une consigne de réglage se lit
+            *avant* de toucher à la barre, pas après avoir fait défiler ses
+            séries ; et à cet endroit-là elle se confondait avec un pied de
+            carte, ce qui est la raison pour laquelle on pouvait avoir le champ
+            depuis des mois sans jamais le voir.
+
+            Le même emplacement qu'en séance (`WorkoutExerciseCard`) : les deux
+            écrans montrent la même note et n'ont aucune raison de la ranger à
+            deux endroits différents. */}
+        {row.notes !== undefined && row.notes !== '' && (
+          <p
+            className="border-b border-[var(--border)] px-4 py-2 text-sm leading-relaxed
+              text-[var(--text-2)]"
+          >
+            {row.notes}
+          </p>
+        )}
+
         {/* Même geste que la séance en direct : un glissé vers la droite
             découvre « Supprimer » et retire la série, sans passer par la
             feuille. Un simple appui ouvre toujours cette feuille — le balayage
@@ -266,9 +288,6 @@ export function RoutineExerciseCard({
         />
       </div>
 
-      {row.notes !== undefined && row.notes !== '' && (
-        <p className="px-4 pt-2 text-sm leading-relaxed text-[var(--text-2)]">{row.notes}</p>
-      )}
     </div>
   );
 }
