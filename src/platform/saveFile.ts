@@ -12,9 +12,21 @@
  *    reaches Drive or Fichiers.
  * 3. **A plain download**, for the desktop browser that cannot share files.
  *
- * The BOM is deliberate: without it Excel reads `Développé couché` as mojibake,
- * and the CSV's first destination after the phone is a spreadsheet. Every CSV
- * reader in the app strips it (`readCsvRows`).
+ * The BOM is deliberate — **for the CSV, and only for it**: without it Excel
+ * reads `Développé couché` as mojibake, and the CSV's first destination after
+ * the phone is a spreadsheet. Every CSV reader in the app strips it
+ * (`readCsvRows`).
+ *
+ * It used to be added here, to every text file, unconditionally. The JSON
+ * backup went out with three bytes no JSON parser accepts: `json.load()` fails
+ * on `Unexpected UTF-8 BOM`, and so does anything else reading the file without
+ * knowing. It survived this long because nothing inside the app ever noticed —
+ * `Blob.text()` decodes UTF-8 and strips the BOM on the way in, so the restore
+ * kept working and only an outside reader ever saw the defect.
+ *
+ * So the decision moved to the caller. `bom` is opt-in rather than opt-out on
+ * purpose: an export added later is a plain UTF-8 file unless someone states
+ * otherwise, and the one format that needs it says so where it is produced.
  */
 
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
@@ -34,6 +46,12 @@ export interface SaveFilePayload {
   type: string;
   /** Shown by the share sheet above the file. */
   title: string;
+  /**
+   * Prefix the bytes with a UTF-8 BOM. For Excel, which needs it to read the
+   * accents of a CSV — and for nothing else: it makes a JSON file unreadable
+   * to a standard parser.
+   */
+  bom?: boolean;
 }
 
 /** Android-only file write + share. Injected in tests so jsdom never loads the plugins. */
@@ -172,7 +190,7 @@ export async function saveTextFile(
   payload: SaveFilePayload,
   options: SaveFileOptions = {},
 ): Promise<SaveOutcome> {
-  const text = BOM + payload.text;
+  const text = payload.bom === true ? BOM + payload.text : payload.text;
   return saveFile(
     new File([text], payload.name, { type: payload.type }),
     payload.title,

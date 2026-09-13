@@ -112,6 +112,10 @@ export function SettingsScreen() {
         text: csv,
         type: 'text/csv;charset=utf-8',
         title: t('settings.exportCsvTitle'),
+        // Le seul fichier de l'app qui part avec un BOM, et la seule raison
+        // valable d'en mettre un : sans lui, Excel lit « Développé couché » en
+        // mojibake. Le JSON de sauvegarde n'en veut surtout pas (cf. saveFile).
+        bom: true,
       });
       if (outcome === 'failed') {
         setCsvFailed(true);

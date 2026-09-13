@@ -1,11 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { saveBlobFile, saveTextFile } from './saveFile';
 
+/** Le CSV : le seul format de l'app qui demande un BOM, et qui le demande ici. */
 const PAYLOAD = {
   name: 'fittrack-2026-08-02.csv',
   text: 'title,reps\r\nLOWER A,12\r\n',
   type: 'text/csv',
   title: 'Sauvegarde FitTrack',
+  bom: true,
 };
 
 function install(world: { share?: unknown; canShare?: unknown }) {
@@ -138,17 +140,41 @@ describe('saveTextFile', () => {
     expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
 
-  it('préfixe le contenu d’un BOM pour qu’Excel lise les accents', async () => {
+  /** Les octets, pas `.text()` : lire un Blob décode l'UTF-8 et retire le BOM au
+   *  passage, donc cette lecture-là ne peut pas dire s'il est là. C'est la même
+   *  indulgence qui a laissé le JSON partir avec un BOM sans que rien ne le
+   *  remarque de l'intérieur de l'app. */
+  const firstBytes = async (share: ReturnType<typeof vi.fn>): Promise<number[]> => {
+    const shared = share.mock.calls[0]?.[0] as { files: File[] };
+    const bytes = new Uint8Array(await shared.files[0]!.arrayBuffer());
+    return [...bytes.slice(0, 3)];
+  };
+
+  it('préfixe le CSV d’un BOM pour qu’Excel lise les accents', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
     install({ share, canShare: () => true });
 
     await saveTextFile({ ...PAYLOAD, text: 'Développé' });
 
-    // Sur les octets, pas sur `.text()` : la lecture d'un Blob décode l'UTF-8
-    // et retire le BOM au passage, donc elle ne peut pas dire s'il est là.
-    const shared = share.mock.calls[0]?.[0] as { files: File[] };
-    const bytes = new Uint8Array(await shared.files[0]!.arrayBuffer());
-    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+    expect(await firstBytes(share)).toEqual([0xef, 0xbb, 0xbf]);
+  });
+
+  it('n’en met aucun quand le format n’en demande pas', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    install({ share, canShare: () => true });
+
+    // Le JSON de la sauvegarde : trois octets de plus, et `json.load()` répond
+    // « Unexpected UTF-8 BOM » à qui relit le fichier hors de l'app.
+    await saveTextFile({
+      name: 'fittrack-sauvegarde-2026-08-02.json',
+      text: '{"format":"fittrack-backup"}',
+      type: 'application/json;charset=utf-8',
+      title: 'Sauvegarde FitTrack',
+    });
+
+    const bytes = await firstBytes(share);
+    expect(bytes).not.toEqual([0xef, 0xbb, 0xbf]);
+    expect(String.fromCharCode(bytes[0]!)).toBe('{');
   });
 });
 

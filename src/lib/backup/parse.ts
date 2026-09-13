@@ -88,10 +88,27 @@ function readNumber(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
+/**
+ * Le BOM d'un fichier écrit avant que l'export cesse d'en mettre un.
+ *
+ * `JSON.parse` refuse ces trois octets, et le refus ressortirait ici en
+ * « ce n'est pas du JSON » — sur la seule sauvegarde de quelqu'un, produite par
+ * cette app même. Retiré plutôt que toléré en amont : `Blob.text()` le retire
+ * déjà au décodage, donc l'app n'a jamais vu le défaut, mais ce module est
+ * aussi appelé sur du texte qui n'est pas passé par un `Blob` — et c'est
+ * exactement le genre d'écart dont on découvre l'existence par un rapport
+ * depuis un téléphone.
+ *
+ * En tête seulement : au milieu d'un document, U+FEFF est un caractère comme un
+ * autre, et une note de séance a le droit d'en contenir un.
+ */
+const withoutBom = (text: string): string =>
+  text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
+
 export function parseBackup(text: string): BackupParse {
   let value: unknown;
   try {
-    value = JSON.parse(text);
+    value = JSON.parse(withoutBom(text));
   } catch {
     return { ok: false, problem: 'not-json' };
   }

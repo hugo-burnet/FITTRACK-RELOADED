@@ -37,6 +37,23 @@ describe('parseBackup', () => {
     expect(result.backup.preferences).toEqual({ 'fittrack:theme': 'light' });
   });
 
+  describe('le BOM des fichiers déjà écrits', () => {
+    // Non-régression. L'export a mis un BOM en tête de *tout* fichier texte
+    // pendant des mois, BOM compris sur le JSON, et ces sauvegardes-là existent
+    // sur de vrais téléphones. Elles doivent continuer de se relire.
+    it('relit une sauvegarde écrite avec un BOM en tête', () => {
+      const result = parseBackup(`\uFEFF${serializeBackup(file())}`);
+      if (!result.ok) throw new Error(`refusé : ${result.problem}`);
+
+      expect(result.counts.workouts).toBe(1);
+    });
+
+    it('ne retire qu’un BOM, et seulement en tête', () => {
+      // Deux BOM d'affilée : le second appartient au document et le casse.
+      expect(parseBackup(`\uFEFF\uFEFF${serializeBackup(file())}`).ok).toBe(false);
+    });
+  });
+
   it('refuse ce qui n’est pas du JSON', () => {
     expect(parseBackup('title,reps\r\nLOWER A,12')).toEqual({
       ok: false,
