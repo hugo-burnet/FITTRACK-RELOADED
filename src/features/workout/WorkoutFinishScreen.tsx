@@ -21,7 +21,7 @@ import { nativeNotifications } from '@/platform/nativeNotifications';
 import { useRestTimer } from '@/stores/restTimer';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
-import { partReading, unitLabel } from '@/i18n/labels';
+import { exerciseDisplayName, partReading, unitLabel } from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { measurementShape, performedParts } from '@/lib/measurement';
 import { sessionTotals } from '@/lib/volume';
@@ -285,7 +285,9 @@ export function WorkoutFinishScreen() {
                         px-4 py-2 last:border-b-0"
                     >
                       <span className="min-w-0 flex-1 truncate text-base text-[var(--text-1)]">
-                        {identity.name ?? t('workout.deletedExercise')}
+                        {identity.name === undefined
+                          ? t('workout.deletedExercise')
+                          : exerciseDisplayName(identity.name, identity.isUnilateral)}
                       </span>
                       <span className="shrink-0 text-right text-sm text-[var(--text-2)]">
                         {t('finish.setSummary', { count: done.length, reading })}

@@ -1,4 +1,5 @@
 import { t } from '@/i18n/fr';
+import { exerciseDisplayName } from '@/i18n/labels';
 import { moveItem } from '@/lib/routineOrder';
 import { AddRow, ReorderableList, Textarea, type ItemState } from '@/ui';
 import { CloseIcon, GripIcon } from '@/ui/icons';
@@ -21,6 +22,10 @@ export function HistoryExerciseEditor({
   onChange,
   onRemove,
 }: Props) {
+  // Le drapeau du brouillon, pas celui du catalogue : on édite une séance déjà
+  // faite, et son instantané dit à combien de mains elle a été faite.
+  const displayName = exerciseDisplayName(exercise.exerciseName, exercise.isUnilateral);
+
   return (
     <article
       className={`overflow-hidden rounded-2xl transition-colors duration-[var(--dur-1)]
@@ -33,7 +38,7 @@ export function HistoryExerciseEditor({
       <header className="flex min-h-14 items-stretch border-b border-[var(--border)]">
         <button
           type="button"
-          aria-label={t('history.editDragExercise', { name: exercise.exerciseName })}
+          aria-label={t('history.editDragExercise', { name: displayName })}
           className="flex w-12 shrink-0 cursor-grab items-center justify-center
             text-[var(--text-2)] active:cursor-grabbing"
           {...state.handleProps}
@@ -43,7 +48,7 @@ export function HistoryExerciseEditor({
 
         <div className="flex min-w-0 flex-1 items-center py-3">
           <h2 className="truncate text-base font-semibold text-[var(--text-1)]">
-            {exercise.exerciseName}
+            {displayName}
           </h2>
         </div>
 

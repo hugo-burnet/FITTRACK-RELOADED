@@ -202,6 +202,36 @@ export const exerciseSubtitle = (exercise: Exercise): string =>
   `${muscleLabel(exercise.primaryMuscle)} · ${equipmentLabel(exercise.equipment)}`;
 
 /**
+ * Le nom d'un exercice tel qu'un écran le montre — unilatéral compris.
+ *
+ * **Le drapeau se lit dans les charges avant de se lire dans le nom.** « Ext.
+ * triceps corde » à 6,5 kg sous « Ext. triceps à la poulie (corde) » à 15 kg,
+ * c'est un côté à la fois contre deux, et rien à l'écran ne le disait : le même
+ * mouvement paraissait avoir régressé de moitié, ou avoir été saisi deux fois.
+ * Le doute a été signalé depuis le téléphone, sur ses propres données.
+ *
+ * **Ici et pas en base.** Le suffixe est une lecture, pas une identité :
+ * `Exercise.name` reste ce que l'utilisateur a tapé, l'export markdown et la
+ * sauvegarde JSON emportent ce nom-là, et décocher le drapeau fait disparaître
+ * le suffixe sans qu'aucune ligne n'ait été réécrite.
+ *
+ * **Le drapeau vient de l'appelant, jamais du catalogue d'aujourd'hui.** Un
+ * écran d'historique ou de records passe celui que `resolveExerciseIdentity` a
+ * résolu — l'instantané d'abord — sinon une séance faite à deux mains
+ * s'annoncerait unilatérale le jour où le drapeau est coché sur l'exercice.
+ * C'est la règle que les instantanés existent pour tenir, et ce suffixe n'y
+ * fait pas exception.
+ *
+ * `undefined` est traité comme « pas unilatéral » : c'est ce que répond une
+ * ligne trop ancienne pour porter le drapeau, et suffixer sur une supposition
+ * serait pire que ne rien dire.
+ */
+export const exerciseDisplayName = (
+  name: string,
+  isUnilateral: 0 | 1 | undefined,
+): string => (isUnilateral === 1 ? t('exercise.unilateralSuffix', { name }) : name);
+
+/**
  * The unit keys of `lib/measurement` become words only here — the routine card
  * and the live grid must not spell them out twice and drift apart.
  */

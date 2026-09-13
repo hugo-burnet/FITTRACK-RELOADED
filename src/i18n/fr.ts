@@ -1429,6 +1429,18 @@ const fr = {
     notFound: 'Cet exercice n’existe plus.',
 
     /**
+     * Le suffixe d'affichage d'un exercice unilatéral, partout où son nom
+     * paraît.
+     *
+     * Purement présentationnel : le champ `name` en base ne le porte pas, et
+     * l'export non plus. Il existe parce que deux exercices proches — « à la
+     * poulie (corde) » et « corde », le second unilatéral — affichaient 15 kg
+     * et 6,5 kg sans que rien n'explique l'écart, qui se lisait comme une
+     * régression ou un doublon.
+     */
+    unilateralSuffix: '{name} (unilatéral)',
+
+    /**
      * The drawing is `aria-hidden`, so these two lines are what the muscles
      * actually *are* for a screen reader — and for anyone reading rather than
      * looking. They are not a caption.

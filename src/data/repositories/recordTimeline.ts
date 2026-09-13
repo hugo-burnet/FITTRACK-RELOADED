@@ -17,6 +17,13 @@ export interface RecordTimelineFilters {
 export interface RecordTimelineEntry {
   record: PersonalRecord;
   exerciseName: string;
+  /**
+   * Pour l'affichage seul — `exerciseDisplayName` en fait « (unilatéral) ».
+   * Résolu à la même source que le nom, et c'est la seule chose qui compte ici :
+   * un record affiché sous un nom gelé et un drapeau d'aujourd'hui pourrait
+   * annoncer unilatéral un record établi à deux mains.
+   */
+  isUnilateral?: 0 | 1;
   workoutStatus: 'active' | 'completed';
   previousValue?: number;
   triggerWorkoutSetId?: string;
@@ -48,14 +55,23 @@ function compareRecordTimeline(
   );
 }
 
-function exerciseNameFor(
+/**
+ * Le nom du record, et le drapeau qui va avec.
+ *
+ * Les deux sortent de la même ligne, champ par champ : l'instantané de la
+ * séance d'abord, le catalogue d'aujourd'hui ensuite — la règle de
+ * `resolveExerciseIdentity`, restreinte aux deux champs dont cet écran a
+ * besoin. Les prendre à deux sources différentes est exactement ce qui a déjà
+ * fait afficher deux noms pour une même séance sur un même écran.
+ */
+function exerciseIdentityFor(
   record: PersonalRecord,
   triggerWorkoutSetId: string | undefined,
   rowsByWorkoutExercise: ReadonlyMap<string, WorkoutExercise[]>,
   exercises: ReadonlyMap<string, Exercise>,
   setById: ReadonlyMap<string, WorkoutSet>,
   rowById: ReadonlyMap<string, WorkoutExercise>,
-): string {
+): { name: string; isUnilateral?: 0 | 1 } {
   const triggerSet = triggerWorkoutSetId === undefined ? undefined : setById.get(triggerWorkoutSetId);
   const triggerRow = triggerSet === undefined ? undefined : rowById.get(triggerSet.workoutExerciseId);
   const workoutRow =
@@ -64,7 +80,13 @@ function exerciseNameFor(
     triggerRow.exerciseId === record.exerciseId
       ? triggerRow
       : rowsByWorkoutExercise.get(workoutExerciseKey(record.workoutId, record.exerciseId))?.[0];
-  return workoutRow?.exerciseName ?? exercises.get(record.exerciseId)?.name ?? '';
+  const exercise = exercises.get(record.exerciseId);
+  const isUnilateral = workoutRow?.exerciseIsUnilateral ?? exercise?.isUnilateral;
+
+  return {
+    name: workoutRow?.exerciseName ?? exercise?.name ?? '',
+    ...(isUnilateral === undefined ? {} : { isUnilateral }),
+  };
 }
 
 function lastContributingSetId(
@@ -207,16 +229,18 @@ async function listRecordTimelineScoped(
         };
         const previousValue = previousById.get(record.id);
         const triggerWorkoutSetId = triggerByRecordId.get(record.id);
+        const identity = exerciseIdentityFor(
+          record,
+          triggerWorkoutSetId,
+          rowsByWorkoutExercise,
+          exerciseById,
+          setById,
+          rowById,
+        );
         return {
           record,
-          exerciseName: exerciseNameFor(
-            record,
-            triggerWorkoutSetId,
-            rowsByWorkoutExercise,
-            exerciseById,
-            setById,
-            rowById,
-          ),
+          exerciseName: identity.name,
+          ...(identity.isUnilateral === undefined ? {} : { isUnilateral: identity.isUnilateral }),
           workoutStatus: workout.status,
           ...(previousValue === undefined ? {} : { previousValue }),
           ...(triggerWorkoutSetId === undefined ? {} : { triggerWorkoutSetId }),

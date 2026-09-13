@@ -22,6 +22,8 @@ export interface MonthlyExercise {
   exerciseId: string;
   /** Absent when the exercise was deleted before the snapshot existed. */
   name?: string;
+  /** Affichage seul : le suffixe « (unilatéral) » du nom, gelé avec l'instantané. */
+  isUnilateral?: 0 | 1;
   tonnage: number;
   workingSets: number;
   /** Sessions of the month this exercise appeared in. */
@@ -87,6 +89,7 @@ function collect(accumulator: Accumulator, workout: HistoricalWorkout): void {
     const current = accumulator.exercises.get(exercise.exerciseId) ?? {
       exerciseId: exercise.exerciseId,
       ...(exercise.name === undefined ? {} : { name: exercise.name }),
+      ...(exercise.isUnilateral === undefined ? {} : { isUnilateral: exercise.isUnilateral }),
       tonnage: 0,
       workingSets: 0,
       sessions: 0,
@@ -104,9 +107,10 @@ function collect(accumulator: Accumulator, workout: HistoricalWorkout): void {
 function report(monthStart: number, accumulator: Accumulator): MonthlyReport {
   const exercises = [...accumulator.exercises.values()]
     .map(
-      ({ exerciseId, name, tonnage, workingSets, sessions }): MonthlyExercise => ({
+      ({ exerciseId, name, isUnilateral, tonnage, workingSets, sessions }): MonthlyExercise => ({
         exerciseId,
         ...(name === undefined ? {} : { name }),
+        ...(isUnilateral === undefined ? {} : { isUnilateral }),
         tonnage: Math.round(tonnage * 100) / 100,
         workingSets,
         sessions,

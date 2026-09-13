@@ -7,7 +7,13 @@ import {
 } from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { formatDuration, partReading, setTypeLabel, unitLabel } from '@/i18n/labels';
+import {
+  exerciseDisplayName,
+  formatDuration,
+  partReading,
+  setTypeLabel,
+  unitLabel,
+} from '@/i18n/labels';
 import { muscleInvolvement } from '@/lib/analytics/involvement';
 import { isTimedMeasurement, measurementShape, performedParts } from '@/lib/measurement';
 import type { TargetPart } from '@/lib/measurement';
@@ -203,7 +209,9 @@ export function HistoryWorkoutDetail({ detail }: { detail: WorkoutDetail }) {
               <Card key={line.row.id}>
                 <div className="border-b border-[var(--border)] px-4 py-3">
                   <h3 className="text-base font-semibold text-[var(--text-1)]">
-                    {identity.name ?? t('history.deletedExercise')}
+                    {identity.name === undefined
+                      ? t('history.deletedExercise')
+                      : exerciseDisplayName(identity.name, identity.isUnilateral)}
                   </h3>
                   {line.row.notes?.trim() && (
                     <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-[var(--text-2)]">

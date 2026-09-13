@@ -1,7 +1,7 @@
 import type { RoutineExerciseDetail } from '@/data/repositories/routines';
 import type { MeasurementType, RoutineSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
+import { exerciseDisplayName, exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { targetParts } from '@/lib/measurement';
 import type { TargetUnit } from '@/lib/measurement';
 import type { SupersetPlace } from '@/lib/routineOrder';
@@ -150,7 +150,10 @@ export function RoutineExerciseCard({
   onAddSet,
 }: Props) {
   const { row, exercise, sets } = line;
-  const name = exercise?.name ?? t('routine.deletedExercise');
+  const name =
+    exercise === undefined
+      ? t('routine.deletedExercise')
+      : exerciseDisplayName(exercise.name, exercise.isUnilateral);
 
   // The rest that will actually be used: this routine's override, or failing
   // that the one set on the exercise itself in the library (schema §4.2 makes 0

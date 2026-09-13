@@ -1,7 +1,7 @@
 import { normalizeSearch } from '@/data/repositories/exercises';
 import type { Exercise } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle } from '@/i18n/labels';
+import { exerciseDisplayName, exerciseSubtitle } from '@/i18n/labels';
 import { Card, ListRow } from '@/ui';
 import { CheckIcon } from '@/ui/icons';
 
@@ -72,7 +72,7 @@ function Row({
 
   return (
     <ListRow
-      title={exercise.name}
+      title={exerciseDisplayName(exercise.name, exercise.isUnilateral)}
       subtitle={exerciseSubtitle(exercise)}
       /* Chaque exercice du catalogue porte son slug : une mission qui en
          désigne un précis — le curl de la campagne — n'a pas d'autre façon de

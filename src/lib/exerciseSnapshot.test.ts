@@ -225,6 +225,20 @@ describe('le drapeau unilatéral', () => {
     expect(exerciseSnapshotOfRow(row())).not.toHaveProperty('exerciseIsUnilateral');
   });
 
+  it('ne déteint pas sur le nom gelé', () => {
+    // Le suffixe « (unilatéral) » est une lecture d'écran (`exerciseDisplayName`)
+    // et doit le rester : il entrerait ici dans une identité que la sauvegarde
+    // emporte et que l'export markdown recopie, et un aller-retour finirait par
+    // le graver dans le nom lui-même — « Fente (unilatéral) (unilatéral) ».
+    const snapshot = snapshotOf(exercise({ name: 'Fente', isUnilateral: 1 }));
+
+    expect(snapshot.exerciseName).toBe('Fente');
+    expect(snapshot.exerciseName).not.toContain('unilatéral');
+    expect(resolveExerciseIdentity(row(), exercise({ name: 'Fente', isUnilateral: 1 })).name).toBe(
+      'Fente',
+    );
+  });
+
   // L'instantané gagne, comme les autres champs : décocher l'exercice
   // aujourd'hui ne réécrit pas la séance où il était unilatéral.
   it('se lit dans l’instantané avant la bibliothèque', () => {

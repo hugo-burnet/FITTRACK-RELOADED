@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { t } from './fr';
 import {
+  exerciseDisplayName,
   oneRepMaxFormulaLabel,
   metricLabel,
   metricReading,
@@ -133,5 +134,35 @@ describe('weekly volume labels', () => {
 
   it('grave les grands tonnages sous une forme compacte', () => {
     expect(weeklyVolumeScaleReading(12_400, 'tonnage')).toMatch(/^12,4\s?k$/);
+  });
+});
+
+describe('exerciseDisplayName', () => {
+  it('marque un exercice unilatéral', () => {
+    expect(exerciseDisplayName('Extension triceps corde', 1)).toBe(
+      'Extension triceps corde (unilatéral)',
+    );
+  });
+
+  it('laisse un exercice bilatéral tel quel', () => {
+    expect(exerciseDisplayName('Extension triceps à la poulie (corde)', 0)).toBe(
+      'Extension triceps à la poulie (corde)',
+    );
+  });
+
+  it('ne suffixe pas une ligne trop ancienne pour porter le drapeau', () => {
+    // `undefined` n'est pas « bilatéral », c'est « on ne sait pas ». Suffixer
+    // sur une supposition dirait quelque chose de faux la moitié du temps.
+    expect(exerciseDisplayName('Curl marteau', undefined)).toBe('Curl marteau');
+  });
+
+  it('sépare deux exercices proches que seul le drapeau distingue', () => {
+    // Le cas réel : 15 kg contre 6,5 kg, et rien à l'écran pour dire pourquoi.
+    const both = exerciseDisplayName('Extension triceps à la poulie (corde)', 0);
+    const oneSide = exerciseDisplayName('Extension triceps corde', 1);
+
+    expect(both).not.toBe(oneSide);
+    expect(oneSide).toContain('unilatéral');
+    expect(both).not.toContain('unilatéral');
   });
 });

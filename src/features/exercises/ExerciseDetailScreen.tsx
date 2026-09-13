@@ -9,7 +9,13 @@ import { listCurrentRecordsForExercise } from '@/data/repositories/personalRecor
 import { listSessionsForExercise } from '@/data/repositories/workoutHistory';
 import type { CoachRecommendation, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle, recordContext, recordLabel, recordValue } from '@/i18n/labels';
+import {
+  exerciseDisplayName,
+  exerciseSubtitle,
+  recordContext,
+  recordLabel,
+  recordValue,
+} from '@/i18n/labels';
 import { defaultLoadIncrementKg } from '@/lib/loadIncrement';
 import { isWorkingSet } from '@/lib/records';
 import { DEFAULT_REST_SECONDS } from '@/lib/rest';
@@ -191,7 +197,7 @@ export function ExerciseDetailScreen() {
 
   return (
     <Screen
-      title={exercise.name}
+      title={exerciseDisplayName(exercise.name, exercise.isUnilateral)}
       onBack={goBack}
       /* Le seul « Terminé » qui reste, et il a un travail : au Lot 3 cette fiche
          n'avait aucune sortie et c'est le défaut que l'utilisateur a remonté.

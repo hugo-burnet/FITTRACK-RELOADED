@@ -8,7 +8,7 @@ import {
 import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import type { CoachRecommendation, PersonalRecordType, WorkoutSet } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { exerciseSubtitle, unitLabel } from '@/i18n/labels';
+import { exerciseDisplayName, exerciseSubtitle, unitLabel } from '@/i18n/labels';
 import { entryColumns, isTimedMeasurement } from '@/lib/measurement';
 import type { SupersetPlace } from '@/lib/routineOrder';
 import type { HoldTimer } from '@/stores/holdTimer';
@@ -184,7 +184,10 @@ export function WorkoutExerciseCard({
   const { row, exercise, sets, previous } = line;
   const matchedPrevious = matchPreviousSets(sets, previous);
   const identity = workoutExerciseIdentityOf(line);
-  const name = identity.name ?? t('workout.deletedExercise');
+  const name =
+    identity.name === undefined
+      ? t('workout.deletedExercise')
+      : exerciseDisplayName(identity.name, identity.isUnilateral);
   const columns = entryColumns(identity.measurementType);
   // La carte sait déjà de quoi la série est faite ; le bandeau doit le dire.
   // Le même bouton ouvre une cadence ici et un chrono là : il ne peut pas

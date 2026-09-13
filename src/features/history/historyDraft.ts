@@ -18,6 +18,9 @@ export interface HistoryExerciseDraft
   extends Omit<ArchivedExerciseDraft, 'sets'> {
   draftId: string;
   exerciseName: string;
+  /** Pour l'affichage seul : le suffixe « (unilatéral) » de `exerciseDisplayName`.
+   *  Gelé avec le reste de l'instantané quand la séance en porte un. */
+  isUnilateral?: 0 | 1;
   measurementType?: MeasurementType;
   sets: HistorySetDraft[];
 }
@@ -101,6 +104,7 @@ export function newHistoryExerciseDraft(exercise: Exercise): HistoryExerciseDraf
     draftId: crypto.randomUUID(),
     exerciseId: exercise.id,
     exerciseName: exercise.name,
+    ...(exercise.isUnilateral === undefined ? {} : { isUnilateral: exercise.isUnilateral }),
     measurementType: exercise.measurementType,
     supersetGroup: 0,
     restSeconds: resolveRestSeconds(undefined, exercise.defaultRestSeconds),
@@ -137,6 +141,7 @@ export function draftFromArchivedDetail(detail: WorkoutDetail): HistoryWorkoutDr
         draftId: row.id,
         exerciseId: row.exerciseId,
         exerciseName: identity.name ?? t('history.deletedExercise'),
+        ...(identity.isUnilateral === undefined ? {} : { isUnilateral: identity.isUnilateral }),
         ...(identity.measurementType === undefined
           ? {}
           : { measurementType: identity.measurementType }),

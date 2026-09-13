@@ -375,6 +375,53 @@ describe('personal record reconciliation', () => {
     expect(entry?.exerciseName).toBe('Second snapshot');
   });
 
+  it('lit le drapeau unilatéral à la source du nom, pas dans le catalogue du jour', async () => {
+    // La séance a été faite à deux mains et l'a gelé ; l'exercice est passé
+    // unilatéral depuis. Le nom vient de l'instantané — le drapeau doit venir
+    // du même endroit, sinon l'écran des records annonce « (unilatéral) » sur
+    // un record établi autrement.
+    const bench = { ...exercise('bench', 'Nom actuel'), isUnilateral: 1 as const };
+    const completedWorkout = workout('workout', 'completed', at(1));
+    const workoutRow = {
+      ...row('row', completedWorkout.id, bench.id, 'Nom de la séance'),
+      exerciseIsUnilateral: 0 as const,
+    };
+    const performed = set('performed', workoutRow, 0, at(1, 10), 60, 5);
+    await db.transaction('rw', db.exercises, db.workouts, db.workoutExercises, db.workoutSets, async () => {
+      await db.exercises.add(bench);
+      await db.workouts.add(completedWorkout);
+      await db.workoutExercises.add(workoutRow);
+      await db.workoutSets.add(performed);
+    });
+    await rebuildAllRecords();
+
+    const entry = (await listRecordTimeline({ exerciseId: bench.id })).at(0);
+
+    expect(entry?.exerciseName).toBe('Nom de la séance');
+    expect(entry?.isUnilateral).toBe(0);
+  });
+
+  it('retombe sur le catalogue quand la ligne de séance ne dit rien', async () => {
+    const bench = { ...exercise('lunge', 'Fente'), isUnilateral: 1 as const };
+    const completedWorkout = workout('workout', 'completed', at(1));
+    // Sans instantané du tout : c'est le repli que `resolveExerciseIdentity`
+    // décrit, et la bibliothèque est alors la seule information disponible.
+    const workoutRow = row('row', completedWorkout.id, bench.id);
+    const performed = set('performed', workoutRow, 0, at(1, 10), 60, 5);
+    await db.transaction('rw', db.exercises, db.workouts, db.workoutExercises, db.workoutSets, async () => {
+      await db.exercises.add(bench);
+      await db.workouts.add(completedWorkout);
+      await db.workoutExercises.add(workoutRow);
+      await db.workoutSets.add(performed);
+    });
+    await rebuildAllRecords();
+
+    const entry = (await listRecordTimeline({ exerciseId: bench.id })).at(0);
+
+    expect(entry?.exerciseName).toBe('Fente');
+    expect(entry?.isUnilateral).toBe(1);
+  });
+
   it('uses canonical set order for previous and current records at equal timestamps', async () => {
     const bench = exercise('bench', 'Développé');
     const completedWorkout = workout('workout', 'completed', at(1));

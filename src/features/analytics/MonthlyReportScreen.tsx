@@ -3,6 +3,7 @@ import { useAppNavigate } from '@/app/navigation';
 import { Screen } from '@/app/Screen';
 import { t } from '@/i18n/fr';
 import {
+  exerciseDisplayName,
   monthLabel,
   monthlyDeltaReading,
   monthlyReading,
@@ -155,7 +156,11 @@ export function MonthlyReportScreen() {
                   {current.exercises.slice(0, TOP_EXERCISES).map((exercise) => (
                     <ListRow
                       key={exercise.exerciseId}
-                      title={exercise.name ?? t('workout.deletedExercise')}
+                      title={
+                        exercise.name === undefined
+                          ? t('workout.deletedExercise')
+                          : exerciseDisplayName(exercise.name, exercise.isUnilateral)
+                      }
                       subtitle={t(
                         exercise.sessions === 1
                           ? 'monthly.exerciseSession'

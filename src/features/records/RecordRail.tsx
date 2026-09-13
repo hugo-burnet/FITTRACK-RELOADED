@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react';
 import type { RecordTimelineEntry } from '@/data/repositories/personalRecords';
 import { t } from '@/i18n/fr';
-import { recordContext, recordGain, recordLabel, recordValue } from '@/i18n/labels';
+import {
+  exerciseDisplayName,
+  recordContext,
+  recordGain,
+  recordLabel,
+  recordValue,
+} from '@/i18n/labels';
 
 type Props = {
   entries: readonly RecordTimelineEntry[];
@@ -81,6 +87,9 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
     >
       {entries.map((entry, index) => {
         const current = index === 0;
+        // Le drapeau que l'entrée porte, résolu à la même source que son nom
+        // (cf. `recordTimeline`) — jamais relu dans le catalogue d'aujourd'hui.
+        const displayName = exerciseDisplayName(entry.exerciseName, entry.isUnilateral);
         const context = recordContext(entry.record);
         const gain = recordGain(entry.record, entry.previousValue);
         const value = recordValue(entry.record);
@@ -127,7 +136,7 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
               type="button"
               aria-current={current ? 'true' : undefined}
               aria-label={t('records.openMark', {
-                exercise: entry.exerciseName,
+                exercise: displayName,
                 category: recordLabel(entry.record.type),
                 value,
                 date,
@@ -146,7 +155,7 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                     {t('records.currentMark')}
                   </span>
                   <span className="mt-2 block break-words text-xl leading-tight font-semibold text-[var(--text-1)]">
-                    {entry.exerciseName}
+                    {displayName}
                   </span>
                   <span className="mt-1 block text-sm text-[var(--text-2)]">
                     {recordLabel(entry.record.type)} · {date}
@@ -188,7 +197,7 @@ export function RecordRail({ entries, knownRecordIds, visibleKnownRecordIds, onO
                 <span className="grid min-w-0 grid-cols-1 gap-2 min-[360px]:grid-cols-[minmax(0,1fr)_auto] min-[360px]:items-start">
                   <span className="min-w-0">
                     <span className="block break-words text-base leading-snug font-semibold text-[var(--text-2)]">
-                      {entry.exerciseName}
+                      {displayName}
                     </span>
                     <span className="mt-1 block text-sm leading-snug text-[var(--text-2)]">
                       {recordLabel(entry.record.type)} · {date}

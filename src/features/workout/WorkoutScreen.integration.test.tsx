@@ -15,6 +15,7 @@ import * as workoutsRepository from '@/data/repositories/workouts';
 import type { WorkoutSet } from '@/data/types';
 import { TutorialContext } from '@/features/tutorial/tutorialContext';
 import { t } from '@/i18n/fr';
+import { exerciseDisplayName } from '@/i18n/labels';
 import { useExerciseOrderLock } from '@/stores/exerciseOrderLock';
 import { applyEffortPrompt } from '@/stores/effortPrompt';
 import { useHoldTimer } from '@/stores/holdTimer';
@@ -1116,6 +1117,14 @@ describe('WorkoutScreen — chrono de maintien', () => {
   });
 });
 
+/**
+ * Le nom tel que l'écran l'affiche : suffixé, parce que l'exercice est
+ * unilatéral (cf. `exerciseDisplayName`). Les deux tests ci-dessous le
+ * cherchaient sous son nom nu, et c'est le suffixe qui les a fait échouer —
+ * la fonctionnalité, pas une régression.
+ */
+const SIDE_PLANK = exerciseDisplayName('Planche latérale', 1);
+
 async function seedUnilateralHoldWorkout(): Promise<string> {
   const exercise = await createCustomExercise({
     name: 'Planche latérale',
@@ -1160,8 +1169,8 @@ describe('WorkoutScreen — exercice unilatéral', () => {
     const user = userEvent.setup();
     renderWorkout();
 
-    await screen.findByText('Planche latérale');
-    await user.click(screen.getByRole('button', { name: 'Chrono de Planche latérale' }));
+    await screen.findByText(SIDE_PLANK);
+    await user.click(screen.getByRole('button', { name: `Chrono de ${SIDE_PLANK}` }));
     await user.click(await screen.findByRole('button', { name: t('workout.holdStart') }));
     act(() => {
       useHoldTimer.setState({ startedAt: Date.now() - 30_000 });
@@ -1196,8 +1205,8 @@ describe('WorkoutScreen — exercice unilatéral', () => {
     const user = userEvent.setup();
     renderWorkout();
 
-    await screen.findByText('Planche latérale');
-    await user.click(screen.getByRole('button', { name: 'Chrono de Planche latérale' }));
+    await screen.findByText(SIDE_PLANK);
+    await user.click(screen.getByRole('button', { name: `Chrono de ${SIDE_PLANK}` }));
     await user.click(await screen.findByRole('button', { name: t('workout.holdStart') }));
     const setId = useHoldTimer.getState().setId;
     expect(setId).not.toBeNull();

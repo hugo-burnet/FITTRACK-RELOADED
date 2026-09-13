@@ -10,7 +10,7 @@ import {
 } from '@/data/repositories/personalRecords';
 import type { PersonalRecordType } from '@/data/types';
 import { t } from '@/i18n/fr';
-import { recordLabel } from '@/i18n/labels';
+import { exerciseDisplayName, recordLabel } from '@/i18n/labels';
 import { Button, EmptyState, FilterChip, OptionSheet, type Option } from '@/ui';
 import { RecordRail } from './RecordRail';
 
@@ -43,7 +43,19 @@ export function RecordsScreen() {
 
   const exerciseOptions: Option<string>[] = [
     { value: ALL, label: t('records.allExercises') },
-    ...[...new Map([...(allEntries ?? [])].reverse().map((entry) => [entry.record.exerciseId, entry.exerciseName]))]
+    // Le filtre montre le même nom que la frise, suffixe compris : deux
+    // exercices proches dont un seul est unilatéral sont indiscernables ici
+    // sans lui, et c'est précisément la liste où l'on vient les départager.
+    ...[
+      ...new Map(
+        [...(allEntries ?? [])]
+          .reverse()
+          .map((entry) => [
+            entry.record.exerciseId,
+            exerciseDisplayName(entry.exerciseName, entry.isUnilateral),
+          ]),
+      ),
+    ]
       .sort((left, right) => left[1].localeCompare(right[1], 'fr'))
       .map(([value, label]) => ({ value, label })),
   ];

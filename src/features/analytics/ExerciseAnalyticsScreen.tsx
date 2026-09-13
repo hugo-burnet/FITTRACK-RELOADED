@@ -7,7 +7,12 @@ import { getExercise } from '@/data/repositories/exercises';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
 import { getOneRepMaxFormula } from '@/data/repositories/settings';
 import { t } from '@/i18n/fr';
-import { metricLabel, metricReading, periodLabel } from '@/i18n/labels';
+import {
+  exerciseDisplayName,
+  metricLabel,
+  metricReading,
+  periodLabel,
+} from '@/i18n/labels';
 import {
   availableMetrics,
   metricSeries,
@@ -104,13 +109,18 @@ export function ExerciseAnalyticsScreen() {
   const points =
     metric === undefined || formula === undefined ? [] : metricSeries(metric.key, sessions, formula);
   const selected = Math.min(selectedIndex ?? points.length - 1, points.length - 1);
+  // Le catalogue : cet écran parle de l'exercice tel qu'il est aujourd'hui, pas
+  // d'une séance en particulier. `undefined` tant que la bibliothèque n'a pas
+  // répondu — le titre a déjà son repli pour ce cas.
+  const displayName =
+    exercise === undefined ? undefined : exerciseDisplayName(exercise.name, exercise.isUnilateral);
 
   // The selection belongs to a point that may not exist in the new slice.
   const changePeriod = (next: PeriodKey) =>
     setView((current) => ({ ...current, period: next, selectedIndex: undefined }));
 
   return (
-    <Screen title={exercise?.name ?? ''} onBack={() => void navigate(-1)}>
+    <Screen title={displayName ?? ''} onBack={() => void navigate(-1)}>
       <div className="space-y-7" aria-busy={loading}>
         {/* One filter row, above everything it scopes — never inside the chart
             card, where a control reads as part of the drawing. */}
@@ -162,7 +172,7 @@ export function ExerciseAnalyticsScreen() {
             <ChartExportAction
               chartRef={chartRef}
               slug="progression"
-              title={exercise?.name ?? t('analytics.title')}
+              title={displayName ?? t('analytics.title')}
               subtitle={`${metricLabel(metric.key)} · ${periodLabel(period)}`}
             />
           </div>
