@@ -3,7 +3,53 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-09-06 (**sauvegardes, échauffements, tutoriel, commandes de séance**).
+**Dernière mise à jour :** 2026-09-13 (**note de routine, BOM, unilatéral visible, export des routines**).
+
+## Quatre évolutions : note de routine, BOM, unilatéral, export markdown (2026-09-13)
+
+Quatre chantiers indépendants, livrés un par un. Validation finale : 2 623 tests
+réussis dans 246 fichiers, typecheck, lint et build verts.
+
+- **Schéma 13 — la note de réglage d'une ligne de routine.** Le champ `notes` sur
+  `routineExercises` existait déjà en type, dans la feuille de l'éditeur, sur la carte,
+  et son report vers `workoutExercises` au démarrage d'une séance était écrit.
+  Ce qui manquait était tout le reste : la version 13 écrit `''` sur les lignes d'avant,
+  `lib/backup/backfill` fait le même rattrapage sur un fichier restauré (aucun `upgrade()`
+  Dexie ne se déclenche sur une restauration), et `notes` est enfin **déclaré** dans
+  `lib/backup/validate` des deux côtés du report — un champ non déclaré traversait la
+  validation sans être vu. Un fichier en version 12 continue de s'importer. La migration
+  n'ouvre que `routineExercises` : aucune donnée d'entraînement touchée.
+- **Pourquoi on ne voyait pas le champ.** La note s'affichait en **pied de carte**, sous
+  « Ajouter une série », après la seule zone qu'on fait défiler. Elle est remontée sous le
+  nom de l'exercice, au même endroit qu'en séance. Et le `<textarea rows={4}>` de la feuille,
+  ouvert en permanence, poussait « Grouper » et « Retirer » sous le pli : il se replie
+  maintenant tant que la note est vide (`AddRow`, le seul geste d'ajout de l'app).
+- **BOM.** `saveTextFile` préfixait un BOM à **tout** fichier texte. Délibéré pour le CSV
+  (Excel lit sinon « Développé couché » en mojibake), désastreux pour le JSON :
+  `json.load()` répond « Unexpected UTF-8 BOM ». Invisible de l'intérieur parce que
+  `Blob.text()` retire le BOM au décodage — seul un lecteur extérieur tombait dessus. La
+  décision passe à l'appelant, **en opt-in** : un export ajouté plus tard part en UTF-8 nu,
+  et le CSV demande son BOM là où il est produit. `parseBackup` retire un BOM de tête avant
+  `JSON.parse` : les sauvegardes déjà écrites avec en existent sur de vrais téléphones.
+- **Unilatéral visible.** `exerciseDisplayName(name, isUnilateral)` dans `i18n/labels`
+  suffixe « (unilatéral) » au catalogue, aux sélecteurs, à la fiche, à l'éditeur de routine,
+  à la séance et son récapitulatif, à l'historique, aux records et aux deux écrans d'analyse.
+  Purement présentationnel : `name` en base, l'instantané de séance et les deux exports
+  portent le nom nu, et un test verrouille cette frontière — le suffixe entrerait sinon dans
+  une identité que la sauvegarde emporte. Le drapeau vient toujours de la source qui répond
+  déjà du nom à cet endroit : l'instantané pour l'historique et les records, la bibliothèque
+  pour le catalogue et les routines.
+- **Export markdown des routines.** `lib/export/projectRoutineExport` +
+  `serializeRoutineMarkdown`, sur la même plomberie que l'historique ; les mécaniques
+  communes aux deux documents sortent dans `lib/export/markdown`. Une ligne par exercice
+  (séries, fourchette de reps, charge, durée, note), les lectures répétées jointes une fois,
+  une montée en charge écrite en entier, les colonnes de chiffres seulement si un exercice
+  les remplit, les échauffements signalés dans le compte, les supersets nommés sous le
+  tableau. Deux modes — une routine, ou un dossier — dans les feuilles d'actions existantes.
+- **Deux épingles de version retirées.** `coachRecommendations.test.ts` et
+  `milestones.test.ts` assertaient `db.verno` en double de `schemaVersion.test.ts`, dont
+  l'une sous un titre annonçant la version 10 en assertant 12 : la dérive avait déjà eu
+  lieu. Ces tests ne répondent plus que de la présence de leur table.
 
 ## Sauvegardes validées, échauffements reproposés, commandes regroupées (2026-09-06)
 
@@ -134,6 +180,13 @@
 
 ## Checkpoints téléphone encore dus
 
+0. **Note de routine et export markdown** (2026-09-13) — ouvrir une routine, taper le menu
+   d'un exercice : « Ajouter une note » remplace le grand champ vide ; écrire une consigne,
+   la voir apparaître **sous le nom** sur la carte. Démarrer la séance : la même consigne
+   sous le nom de l'exercice ; la corriger là, revenir à la routine — la routine n'a pas
+   bougé. Puis Bibliothèque › menu d'une routine › « Partager en markdown », et le même
+   geste sur un dossier. Enfin : exporter la sauvegarde JSON et l'ouvrir ailleurs — plus de
+   BOM en tête. Le CSV, lui, doit toujours s'ouvrir avec ses accents dans un tableur.
 1. **Programme** — ouvrir un bloc actif puis toucher « Ce qu’en dit le corpus » : l’article du
    Guide correspondant à la phase doit s’ouvrir, sans page d’erreur React Router.
 2. **Unilatéral sans cadence** — cocher le premier côté : la coche reste grisée dix secondes,
