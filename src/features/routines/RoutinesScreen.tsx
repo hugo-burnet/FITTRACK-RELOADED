@@ -15,10 +15,15 @@ import {
   reorderRoutines,
   updateRoutine,
 } from '@/data/repositories/routines';
+import { readRoutineExportSources } from '@/data/repositories/routineExport';
 import { getActiveWorkout, startWorkoutFromRoutine } from '@/data/repositories/workouts';
 import { ROUTINE_TEMPLATES, instantiateTemplate } from '@/data/seed/routineTemplates';
 import type { Routine, RoutineFolder } from '@/data/types';
 import { t } from '@/i18n/fr';
+import { projectRoutineExport } from '@/lib/export/projectRoutineExport';
+import { serializeRoutineMarkdown } from '@/lib/export/serializeRoutineMarkdown';
+import { DEFAULT_EXPORT_OPTIONS, type RoutineExportScope } from '@/lib/export/types';
+import { copyText, shareText, type ShareOutcome } from '@/platform/share';
 import { useTutorialControls } from '@/features/tutorial/tutorialContext';
 import { ActionSheet, ConfirmSheet, HeaderAction, OptionSheet } from '@/ui';
 import type { Option } from '@/ui';
@@ -42,6 +47,9 @@ type SheetState =
   | { kind: 'routineMove'; routine: Routine }
   | { kind: 'routineDelete'; routine: Routine };
 
+const scopeIdOf = (scope: RoutineExportScope): string =>
+  scope.kind === 'routine' ? scope.routineId : scope.folderId;
+
 export function RoutinesScreen() {
   const navigate = useAppNavigate();
   const tutorial = useTutorialControls();
@@ -55,8 +63,60 @@ export function RoutinesScreen() {
   const setReorderUnlocked = useRoutineLibraryView((state) => state.setReorderUnlocked);
 
   const [sheet, setSheet] = useState<SheetState | null>(null);
+  const [shareOutcome, setShareOutcome] = useState<ShareOutcome | null>(null);
 
   const openEditor = (routine: Routine) => void navigate(`/routines/${routine.id}`);
+
+  /**
+   * Le périmètre que la feuille ouverte désigne — une routine, ou un dossier.
+   *
+   * Les deux modes de l'export partagent tout sauf cette ligne : c'est le même
+   * document, la même projection et le même sérialiseur, et deux feuilles
+   * d'actions qui existaient déjà.
+   */
+  const exportScope: RoutineExportScope | null =
+    sheet?.kind === 'routineActions'
+      ? { kind: 'routine', routineId: sheet.routine.id }
+      : sheet?.kind === 'folderActions'
+        ? { kind: 'folder', folderId: sheet.folder.id }
+        : null;
+  const scopeKey = exportScope === null ? '' : `${exportScope.kind}:${scopeIdOf(exportScope)}`;
+
+  /**
+   * Sérialisé à l'ouverture de la feuille, pas au moment du tap.
+   *
+   * La feuille de partage du système ne s'ouvre que tant que le geste est
+   * encore « frais » : un `await` sur Dexie entre le clic et `navigator.share`
+   * dépense ce crédit et Android refuse d'ouvrir la feuille. La même raison, et
+   * le même remède, que sur le détail d'une séance — sauf qu'ici le temps
+   * d'avance est offert par la feuille d'actions elle-même.
+   */
+  const markdown = useLiveQuery(async () => {
+    if (exportScope === null) return '';
+    const { sources, folderName } = await readRoutineExportSources(exportScope);
+    return serializeRoutineMarkdown(
+      projectRoutineExport(exportScope, sources, DEFAULT_EXPORT_OPTIONS, Date.now(), folderName),
+    );
+    // `scopeKey` et non l'objet : une dépendance recréée à chaque rendu
+    // relancerait la lecture en boucle.
+  }, [scopeKey]);
+
+  const shareReady = markdown !== undefined && markdown !== '';
+
+  // « Partagé » et « annulé » ne disent rien, comme sur le détail d'une séance :
+  // la feuille était visible, et celui qui l'a refermée sait ce qu'il a fait.
+  const announceShare = (outcome: ShareOutcome) =>
+    setShareOutcome(outcome === 'copied' || outcome === 'failed' ? outcome : null);
+
+  const shareDocument = (title: string) => {
+    setShareOutcome(null);
+    void shareText({ title, text: markdown ?? '' }).then(announceShare);
+  };
+
+  const copyDocument = () => {
+    setShareOutcome(null);
+    void copyText(markdown ?? '').then(announceShare);
+  };
 
   const startBlank = () => {
     void createRoutine(t('routines.defaultName'))
@@ -186,6 +246,19 @@ export function RoutinesScreen() {
             onToggleFolder={toggleFolder}
           />
         )}
+
+        {/* Sous la bibliothèque, et seulement quand il y a quelque chose à dire :
+            un partage réussi ne s'annonce pas, la copie et l'échec si. */}
+        {shareOutcome !== null && (
+          <p
+            role="status"
+            className={`px-1 text-sm leading-relaxed ${
+              shareOutcome === 'failed' ? 'text-[var(--danger-ink)]' : 'text-[var(--text-2)]'
+            }`}
+          >
+            {t(shareOutcome === 'failed' ? 'routines.shareFailed' : 'routines.shareCopied')}
+          </p>
+        )}
       </div>
 
       <ActionSheet
@@ -245,6 +318,22 @@ export function RoutinesScreen() {
                   onSelect: () => setSheet({ kind: 'folderForm', folder: sheet.folder }),
                 },
                 {
+                  label: t('routines.folderShare'),
+                  hint: t('routines.folderShareHint'),
+                  // Rien à partager tant que la sérialisation n'a pas répondu.
+                  // Désactivée plutôt que masquée : une entrée qui apparaît un
+                  // instant plus tard déplace celles d'en dessous sous un pouce
+                  // déjà en route — le raisonnement de la feuille d'historique.
+                  disabled: !shareReady,
+                  onSelect: () =>
+                    shareDocument(t('routines.shareTitle', { name: sheet.folder.name })),
+                },
+                {
+                  label: t('routines.folderShareCopy'),
+                  disabled: !shareReady,
+                  onSelect: copyDocument,
+                },
+                {
                   label: t('routines.folderDelete'),
                   danger: true,
                   onSelect: () =>
@@ -290,6 +379,18 @@ export function RoutinesScreen() {
                   disabled: active != null,
                   hint: active != null ? t('routines.startBusyHint') : undefined,
                   onSelect: () => start(sheet.routine.id),
+                },
+                {
+                  label: t('routines.share'),
+                  hint: t('routines.shareHint'),
+                  disabled: !shareReady,
+                  onSelect: () =>
+                    shareDocument(t('routines.shareTitle', { name: sheet.routine.name })),
+                },
+                {
+                  label: t('routines.shareCopy'),
+                  disabled: !shareReady,
+                  onSelect: copyDocument,
                 },
                 {
                   label: t('routines.duplicate'),

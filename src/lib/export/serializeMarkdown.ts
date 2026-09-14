@@ -15,6 +15,14 @@ import {
   performedParts,
   type TargetField,
 } from '@/lib/measurement';
+import {
+  decimal,
+  frenchDate,
+  frenchDateOf,
+  markdownTable,
+  renderDocument,
+  type MarkdownColumn,
+} from './markdown';
 import type { CoachExport, ExportExercise, ExportScope, ExportSet, ExportWorkout } from './types';
 
 /**
@@ -32,27 +40,6 @@ import type { CoachExport, ExportExercise, ExportScope, ExportSet, ExportWorkout
  * that disagreed with the screen that produced it would be the real defect.
  */
 
-const decimal = (value: number): string => value.toLocaleString('fr-FR');
-
-const MONTHS = new Intl.DateTimeFormat('fr-FR', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
-/** `'2026-07-27'` → « 27 juillet 2026 », read as a calendar day and nothing else. */
-function frenchDate(isoDate: string): string {
-  const [year = '0', month = '1', day = '1'] = isoDate.split('-');
-  return MONTHS.format(Date.UTC(Number(year), Number(month) - 1, Number(day)));
-}
-
-/** A timestamp as the civil day it falls on **where the reader is**. */
-function frenchDateOf(at: number): string {
-  const local = new Date(at);
-  return MONTHS.format(Date.UTC(local.getFullYear(), local.getMonth(), local.getDate()));
-}
-
 /**
  * « 27 juillet 2026 à 18:20 » from the ISO the projection wrote.
  *
@@ -63,9 +50,6 @@ function frenchDateOf(at: number): string {
 function frenchDateTime(workout: ExportWorkout): string {
   return `${frenchDate(workout.localDate)} à ${workout.startedAt.slice(11, 16)}`;
 }
-
-/** A pipe closes a cell and a newline closes a row. Nothing else can break one. */
-const cell = (text: string): string => text.replace(/\|/g, '\\|').replace(/\s*\n\s*/g, ' ');
 
 // ---------------------------------------------------------------------------
 // Colonnes
@@ -118,12 +102,7 @@ function reading(set: ExportSet, field: TargetField, type: MeasurementType | und
   return `${part.value} ${unitLabel(part.unit)}`;
 }
 
-interface Column {
-  label: string;
-  /** Numbers right, words left — the only alignment a Markdown table can carry. */
-  numeric: boolean;
-  of: (set: ExportSet) => string;
-}
+type Column = MarkdownColumn<ExportSet>;
 
 function columnsFor(exercise: ExportExercise): Column[] {
   const type = exercise.measurementType;
@@ -170,16 +149,8 @@ function columnsFor(exercise: ExportExercise): Column[] {
   return columns;
 }
 
-const tableRow = (cells: string[]): string => `| ${cells.map(cell).join(' | ')} |`;
-
 function table(exercise: ExportExercise): string[] {
-  const columns = columnsFor(exercise);
-
-  return [
-    tableRow(columns.map((column) => column.label)),
-    `|${columns.map((column) => (column.numeric ? '---:' : '---')).join('|')}|`,
-    ...exercise.sets.map((set) => tableRow(columns.map((column) => column.of(set)))),
-  ];
+  return markdownTable(columnsFor(exercise), exercise.sets);
 }
 
 // ---------------------------------------------------------------------------
@@ -270,7 +241,5 @@ export function serializeMarkdown(data: CoachExport): string {
       : data.workouts.flatMap(workoutSection)),
   ];
 
-  // A single trailing newline: a document pasted into a chat should not open on
-  // a blank screen's worth of whitespace.
-  return `${lines.join('\n').replace(/\n{3,}/g, '\n\n').trimEnd()}\n`;
+  return renderDocument(lines);
 }

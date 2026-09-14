@@ -854,6 +854,20 @@ const fr = {
     duplicate: 'Dupliquer',
     duplicateHint: 'Une copie indépendante. Modifier l’une ne touche pas à l’autre.',
     moveTo: 'Déplacer vers un dossier',
+    /**
+     * L'export markdown — le même geste que sur une séance de l'historique, et
+     * les mêmes deux entrées : la feuille du système d'abord, le presse-papiers
+     * pour le navigateur qui ne sait pas partager.
+     */
+    share: 'Partager en markdown',
+    shareHint: 'Le détail de la routine, en texte, à relire ou à faire relire.',
+    shareCopy: 'Copier en markdown',
+    folderShare: 'Partager le dossier en markdown',
+    folderShareHint: 'Toutes les routines du dossier, dans un seul document.',
+    folderShareCopy: 'Copier le dossier en markdown',
+    shareTitle: 'FitTrack — {name}',
+    shareCopied: 'Routines copiées dans le presse-papiers.',
+    shareFailed: 'Les routines n’ont pas pu être partagées ni copiées.',
     delete: 'Supprimer la routine',
     deleteHint: 'Elle disparaît avec ses exercices et ses séries prévues.',
     deleteConfirm: 'Supprimer',
@@ -2049,6 +2063,32 @@ const fr = {
     columnWeightAdded: 'Charge ajoutée',
     columnWeightAssist: 'Assistance',
     empty: 'Aucune séance sur ce périmètre.',
+
+    /**
+     * L'export des routines — ce qu'on compte faire, là où le reste de ce bloc
+     * dit ce qui a été fait. Un document séparé, et donc son propre titre : les
+     * deux se partagent en même temps et se retrouvent côte à côte.
+     */
+    routineTitle: 'Routines FitTrack',
+    routineScopeNamed: 'Périmètre : la routine « {name} »',
+    routineScopeOne: 'Périmètre : une routine',
+    routineScopeFolder: 'Périmètre : le dossier « {name} »',
+    routineScopeRootFolder: 'Périmètre : les routines hors dossier',
+    routineCount: 'Routines : {count}',
+    routineNone: 'Aucune routine sur ce périmètre.',
+    routineEmpty: 'Aucun exercice dans cette routine.',
+    routineUntitled: 'Routine sans nom',
+    routineFolder: 'Dossier : {name}',
+    routineNoFolder: 'Hors dossier',
+    routineSuperset: 'Superset : {names}',
+    /** Le compte de séries porte la mention : avec une ligne par exercice, une
+     *  colonne « Type » n'aurait rien à dire d'une ligne aux séries mêlées.
+     *  Deux clés parce que le pluriel de l'app s'écrit, il ne se calcule pas. */
+    routineSetsWithWarmupsOne: '{count} + 1 échauffement',
+    routineSetsWithWarmups: '{count} + {warmups} échauffements',
+    columnExercise: 'Exercice',
+    columnSets: 'Séries',
+    columnNote: 'Note',
   },
 
   boot: {

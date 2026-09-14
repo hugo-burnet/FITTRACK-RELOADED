@@ -117,3 +117,77 @@ export interface ExportSet {
   distanceMeters?: number;
   rpe?: number;
 }
+
+
+// ---------------------------------------------------------------------------
+// Routines
+// ---------------------------------------------------------------------------
+
+/**
+ * Le pendant de `CoachExport` pour ce qui n'a pas encore été fait.
+ *
+ * Un document séparé, et pas un champ de plus dans l'export d'historique : les
+ * deux répondent à deux questions qu'on ne pose jamais en même temps — « voilà
+ * ce que j'ai fait » et « voilà ce que je compte faire ». Les mélanger
+ * obligerait chaque lecteur à trier, et les tableaux n'ont même pas les mêmes
+ * colonnes : une séance a des séries faites, une routine a des cibles.
+ */
+export type RoutineExportScope =
+  | { kind: 'routine'; routineId: string }
+  /** `''` = la racine, comme partout ailleurs dans le modèle. */
+  | { kind: 'folder'; folderId: string };
+
+export interface RoutineExport {
+  format: 'fittrack-routine-export';
+  /** Déclarée dès le premier export, pour la même raison que `CoachExport`. */
+  schemaVersion: 1;
+  /** ISO UTC — quand le document a été produit. */
+  exportedAt: string;
+  scope: RoutineExportScope;
+  /** Le nom du dossier d'un périmètre `folder`, quand il en a un. */
+  folderName?: string;
+  routineCount: number;
+  routines: ExportRoutine[];
+}
+
+export interface ExportRoutine {
+  id?: string;
+  name: string;
+  subtitle?: string;
+  /** Absent à la racine : « aucun dossier » est une place, pas un nom. */
+  folderName?: string;
+  exercises: ExportRoutineExercise[];
+}
+
+export interface ExportRoutineExercise {
+  id?: string;
+  /**
+   * Absent quand l'exercice a quitté la bibliothèque. Une routine ne gèle
+   * aucun instantané — elle décrit ce qu'on fera, donc elle désigne l'exercice
+   * tel qu'il est aujourd'hui — et il n'y a rien à lire quand il n'est plus là.
+   */
+  name?: string;
+  measurementType?: MeasurementType;
+  primaryMuscle?: MuscleGroup;
+  equipment?: Equipment;
+  /** La consigne de réglage de la ligne (schéma 13). */
+  notes?: string;
+  /** 0 = hors superset, sinon le numéro de groupe. */
+  supersetGroup: number;
+  /** Secondes ; 0 = « le repos par défaut de l'exercice », cf. §4.2. */
+  restSeconds: number;
+  sets: ExportRoutineSet[];
+}
+
+/** Une série **prescrite** : des cibles, jamais des valeurs réalisées. */
+export interface ExportRoutineSet {
+  /** Rang 1-based parmi les séries exportées. */
+  number: number;
+  type: SetType;
+  targetReps?: number;
+  targetRepsMax?: number;
+  /** Toujours des kilogrammes. Ce qu'ils veulent dire est décidé par `measurementType`. */
+  targetWeight?: number;
+  targetDurationSeconds?: number;
+  targetDistanceMeters?: number;
+}
