@@ -10,6 +10,12 @@
 Quatre chantiers indépendants, livrés un par un. Validation finale : 2 623 tests
 réussis dans 246 fichiers, typecheck, lint et build verts.
 
+- Publication : un tag, **v2.6.0** — mineur et non correctif, parce que trois des quatre
+  chantiers ajoutent une capacité (la note de routine et son schéma 13, le suffixe
+  unilatéral, l'export markdown des routines) et que le quatrième change le contenu d'un
+  fichier que des outils extérieurs lisent. Un correctif poussé après un tag laisse la PWA
+  devant l'APK ; le tag referme ce décalage.
+
 - **Schéma 13 — la note de réglage d'une ligne de routine.** Le champ `notes` sur
   `routineExercises` existait déjà en type, dans la feuille de l'éditeur, sur la carte,
   et son report vers `workoutExercises` au démarrage d'une séance était écrit.
