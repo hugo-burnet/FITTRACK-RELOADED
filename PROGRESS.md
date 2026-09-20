@@ -7,6 +7,11 @@
 
 ## Revue des cibles d'une routine (2026-09-20)
 
+Publication : un tag, **v2.7.0** — mineur et non correctif : la revue ajoute une capacité
+(un moteur, un écran, une route) sans rien changer à ce qui existait, et sans toucher au
+schéma. Un correctif poussé après un tag laisse la PWA devant l'APK ; le tag referme ce
+décalage.
+
 Les cibles d'une routine sont figées à sa création ; l'historique, lui, progresse. Un rowing
 prescrit à 57,5 kg et tiré à 70 depuis trois séances fait de la routine une **donnée morte**,
 que toute fonctionnalité la lisant comme source de vérité propage ensuite. La revue met les
