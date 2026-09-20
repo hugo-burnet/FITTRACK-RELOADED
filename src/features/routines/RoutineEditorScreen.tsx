@@ -273,6 +273,22 @@ export function RoutineEditorScreen() {
           />
         </Card>
 
+        {/* La porte de la revue des cibles, et le seul endroit d'où elle
+            s'ouvre. Elle ne dit pas combien de propositions attendent : le
+            savoir demanderait de relire l'historique de chaque exercice à
+            chaque ouverture de l'éditeur, pour une phrase. L'écran de revue
+            fait ce travail quand on le lui demande. */}
+        {exercises.length > 0 && (
+          <Card>
+            <ListRow
+              title={t('routineReview.entry')}
+              subtitle={t('routineReview.entryHint')}
+              onClick={() => void navigate(`/routines/${routine.id}/review`)}
+              trailing={<ChevronDownIcon className="-rotate-90 text-[var(--text-2)]" />}
+            />
+          </Card>
+        )}
+
         {exercises.length === 0 ? (
           <EmptyState reading="0" unit={t('routine.emptyUnit')} body={t('routine.emptyBody')} />
         ) : (
