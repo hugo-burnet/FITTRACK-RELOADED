@@ -21,3 +21,13 @@ export const ExercisePickerRoute = lazyRoute(
   () => import('./ExercisePickerScreen'),
   'ExercisePickerScreen',
 );
+
+/**
+ * La revue des cibles : lue depuis le canapé, comme l'éditeur, et jamais sur le
+ * chemin Accueil → Séance que le Lot 1 protège. Même règle que le reste de cet
+ * onglet — l'onglet d'avance, la profondeur à la demande.
+ */
+export const RoutineTargetReviewRoute = lazyRoute(
+  () => import('./RoutineTargetReviewScreen'),
+  'RoutineTargetReviewScreen',
+);

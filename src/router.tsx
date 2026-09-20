@@ -33,7 +33,11 @@ import {
   WikiSectionRoute,
 } from './features/knowledge/routes';
 import { MilestonesRoute } from './features/milestones/routes';
-import { ExercisePickerRoute, RoutineEditorRoute } from './features/routines/routes';
+import {
+  ExercisePickerRoute,
+  RoutineEditorRoute,
+  RoutineTargetReviewRoute,
+} from './features/routines/routes';
 import { RoutinesScreen } from './features/routines/RoutinesScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { WorkoutAddExerciseScreen } from './features/workout/WorkoutAddExerciseScreen';
@@ -57,6 +61,10 @@ export const router = createHashRouter([
       // so there is no read-only view to separate from it.
       { path: 'routines/:id', element: <RoutineEditorRoute /> },
       { path: 'routines/:id/add', element: <ExercisePickerRoute /> },
+      // Ce que l'historique propose de changer aux cibles. Un écran à part et
+      // non une feuille de fin de séance : choisir ses charges n'est pas un
+      // geste de salle.
+      { path: 'routines/:id/review', element: <RoutineTargetReviewRoute /> },
       // No id in the path: the active session *is* the query, which is what
       // makes resuming after a kill free (RF-25). Reading a past session is
       // Lot 7, and it will have its own route.

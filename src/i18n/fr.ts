@@ -1175,6 +1175,69 @@ const fr = {
     moveDown: 'Descendre',
   },
 
+  /**
+   * La revue des cibles — ce que l'historique propose de changer à la routine.
+   *
+   * Chaque libellé y est écrit au conditionnel ou à l'impératif de l'utilisateur,
+   * jamais à l'indicatif de l'app : rien n'est écrit ici sans un geste, et une
+   * phrase comme « cibles mises à jour » avant l'appui mentirait sur l'état de
+   * la base.
+   */
+  routineReview: {
+    title: 'Mettre à jour les cibles',
+    entry: 'Mettre à jour les cibles',
+    entryHint: 'D’après tes 3 dernières séances.',
+
+    loading: 'Lecture de l’historique…',
+    emptyTitle: 'Rien à proposer',
+    emptyBody:
+      'Tes cibles correspondent à ce que tu soulèves. Reviens après quelques séances.',
+
+    proposalsTitle: 'Propositions',
+    /** Le sous-titre d'une carte : d'où vient le chiffre proposé. */
+    referenceOn: 'Meilleure des 3 dernières séances · {date}',
+    currentTarget: 'Cible actuelle',
+    performed: 'Réalisé',
+    proposal: 'Proposition',
+    noCurrentTarget: 'Aucune',
+    repsAt: '{weight} × {reps}',
+    effortNoted: 'Effort noté {rpe}/10',
+    effortNotNoted: 'Effort non noté',
+    setsHeld: '{count} séries de travail',
+    setsHeldOne: '1 série de travail',
+
+    kindAlign: 'Aligner sur ce que tu soulèves',
+    kindIncrease: 'Un pas de plus (+{increment} kg)',
+
+    accept: 'Accepter',
+    refuse: 'Refuser',
+    accepted: 'Accepté',
+    refused: 'Refusé',
+    acceptAll: 'Tout accepter',
+    acceptAllCount: 'Tout accepter ({count})',
+
+    missingTitle: 'Fait, mais absent de la routine',
+    missingBody:
+      'Ces exercices reviennent dans tes séances de cette routine. Rien n’a été modifié.',
+    missingLast: 'Dernière fois le {date}',
+    missingAdd: 'Ajouter à la routine',
+    missingAdded: 'Ajouté',
+
+    unchangedTitle: 'Laissées telles quelles',
+    /**
+     * Les raisons, une par ligne écartée. Elles existent parce qu'un écran qui
+     * ne propose rien sans dire pourquoi se lit comme une panne.
+     */
+    reasonNoWorkingSets: 'Aucune série de travail.',
+    reasonNoWeightTarget: 'Pas de charge à comparer.',
+    reasonNoRepTarget: 'Pas de fourchette de répétitions prescrite.',
+    reasonNoHistory: 'Pas encore d’historique.',
+    reasonBelowTarget: 'Réalisé sous la cible — jamais de baisse proposée.',
+    reasonRangeNotCompleted: 'La fourchette n’a pas été tenue sur toutes les séries.',
+    reasonEffortTooHigh: 'Effort supérieur à 8 sur la séance de référence.',
+    reasonIncrementUnavailable: 'Plus de pas disponible à cette charge.',
+  },
+
   picker: {
     selection: 'Sélection ({count}) · voir l’ordre',
     loadingSelection: 'Chargement…',

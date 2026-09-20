@@ -3,7 +3,63 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-09-13 (**note de routine, BOM, unilatéral visible, export des routines**).
+**Dernière mise à jour :** 2026-09-20 (**revue des cibles d'une routine depuis l'historique**).
+
+## Revue des cibles d'une routine (2026-09-20)
+
+Les cibles d'une routine sont figées à sa création ; l'historique, lui, progresse. Un rowing
+prescrit à 57,5 kg et tiré à 70 depuis trois séances fait de la routine une **donnée morte**,
+que toute fonctionnalité la lisant comme source de vérité propage ensuite. La revue met les
+deux côte à côte et attend un doigt.
+
+- **Aucune table, aucun index, donc aucune version de schéma.** Tout ce que la revue lit
+  existe déjà : `routineSets.target*` d'un côté, `workoutSets.weight / reps / rpe` de l'autre,
+  et `workouts.routineId` pour savoir d'où une séance est partie. Un fichier de sauvegarde
+  n'a pas bougé.
+- **`src/lib/routineTargets/` — le moteur, pur.** `computeRoutineUpdates(input)` prend des
+  enregistrements structurels et rend `{ proposals, missingExercises, unchanged }`. Ni Dexie,
+  ni `Date.now()` : même frontière que `lib/coach` depuis le Lot 18, et c'est elle qui rend
+  les quatre règles vérifiables sans base. `data/repositories/routineTargetReview.ts` apporte
+  les lignes — un `routineId` seul ne peut pas être pur.
+- **Quatre règles, et une seule direction.** Jamais de baisse : un réalisé sous la cible ne
+  produit rien, pas même un avertissement à accepter d'un doigt. La référence est la
+  **meilleure des 3 dernières séances contenant l'exercice** et non la dernière seule —
+  fenêtre d'abord, meilleure ensuite. Hausse d'un pas si toutes les séries du palier le plus
+  dur atteignent `targetRepsMax` ; alignement si le réalisé dépasse déjà la cible. Les deux
+  ne se cumulent pas : **rien n'est jamais proposé au-dessus de ce qui a été soulevé**, la
+  hausse vient à la revue suivante, une fois l'alignement accepté.
+- **Le RPE absent n'est pas un RPE supérieur à 8.** L'entrée est repliée dans la feuille de
+  série et le plus souvent vide (RF-30) ; la traiter comme un refus rendait la règle
+  inapplicable sur un historique réel. Un RPE noté au-dessus de 8 bloque, l'absence laisse
+  passer, et la carte écrit « effort non noté » au lieu de faire semblant.
+- **Le sens des kilos vient de la mesure, pas du nombre.** `weightRole` distingue charge,
+  lest et **assistance**, où moins de poids est un effort plus dur ; `nextLoad` porte déjà
+  l'inversion. Sans elle, une traction assistée se voyait proposer d'alourdir son
+  assistance — exactement le défaut que la revue Codex avait relevé sur `getLastPerformance`.
+- **Le palier, pas la séance entière.** Un back-off et une série dégressive sont légers
+  *exprès* ; on ne compare que les séries au palier le plus dur, de chaque côté. Une routine
+  en pyramide (60/70/80) se compare donc par son sommet et se **décale entière** du même
+  écart au lieu d'être aplatie sur un chiffre.
+- **`unchanged` porte une raison par ligne écartée.** Ce n'est pas du décor : un écran qui ne
+  propose rien sans dire pourquoi se lit comme une panne, et une règle testée contre un
+  tableau vide est verte pour n'importe quel motif.
+- **Règle 6 — l'exercice fait hors routine**, borné aux séances **parties de cette routine** :
+  sans cette borne, tout exercice jamais pratiqué se présenterait comme « manquant » de
+  celle-ci. Signalé à part, avec un bouton qui l'ajoute, et rien d'appliqué d'office.
+- **Piège relevé en écrivant la collecte.** Les deux fenêtres de lecture se recouvrent —
+  l'historique de l'exercice et les séances de la routine. Un bloc compté deux fois double
+  son nombre de séries de travail et fait donc passer pour « tenue en entier » une
+  prescription qui ne l'était pas. Dédupliqué par `workoutExerciseId`, avec un test qui
+  verrouille le cas.
+- **L'écran** (`routines/:id/review`, ouvert depuis la routine et **pas** d'une feuille de fin
+  de séance) : une carte par exercice — cible actuelle, réalisé de référence avec sa date,
+  proposition, Refuser / Accepter — et une bande « Tout accepter (n) ». Instantané et non
+  `useLiveQuery`, seule exception assumée à la règle de réactivité : accepter écrit la cible,
+  ce qui ferait disparaître sous le doigt la carte qu'on vient de toucher.
+- **Vérification.** `typecheck`, **2 657 tests dans 248 fichiers**, `lint` (seul l'avertissement
+  Fast Refresh préexistant de `Boot.tsx`) et `build` verts. 34 tests nouveaux, dont les quatre
+  demandés : aucune hausse si RPE > 8, aucune baisse jamais, exercice hors routine listé à
+  part, exercice sans historique ignoré. Aucun essai navigateur ni APK.
 
 ## Quatre évolutions : note de routine, BOM, unilatéral, export markdown (2026-09-13)
 
@@ -186,28 +242,34 @@ réussis dans 246 fichiers, typecheck, lint et build verts.
 
 ## Checkpoints téléphone encore dus
 
-0. **Note de routine et export markdown** (2026-09-13) — ouvrir une routine, taper le menu
+0. **Revue des cibles** (2026-09-20) — ouvrir une routine dont une charge a été dépassée en
+   séance, taper « Mettre à jour les cibles » sous le dossier. Vérifier que la carte du rowing
+   affiche bien 57,5 → 70, que « Refuser » ne change rien à la routine et qu'« Accepter »
+   l'écrit. Vérifier surtout qu'un exercice **descendu** en charge n'apparaît pas du tout, et
+   qu'il se lit dans « Laissées telles quelles » avec sa raison. Un exercice fait en plus dans
+   ces séances doit figurer en bas, avec son bouton d'ajout.
+1. **Note de routine et export markdown** (2026-09-13) — ouvrir une routine, taper le menu
    d'un exercice : « Ajouter une note » remplace le grand champ vide ; écrire une consigne,
    la voir apparaître **sous le nom** sur la carte. Démarrer la séance : la même consigne
    sous le nom de l'exercice ; la corriger là, revenir à la routine — la routine n'a pas
    bougé. Puis Bibliothèque › menu d'une routine › « Partager en markdown », et le même
    geste sur un dossier. Enfin : exporter la sauvegarde JSON et l'ouvrir ailleurs — plus de
    BOM en tête. Le CSV, lui, doit toujours s'ouvrir avec ses accents dans un tableur.
-1. **Programme** — ouvrir un bloc actif puis toucher « Ce qu’en dit le corpus » : l’article du
+2. **Programme** — ouvrir un bloc actif puis toucher « Ce qu’en dit le corpus » : l’article du
    Guide correspondant à la phase doit s’ouvrir, sans page d’erreur React Router.
-2. **Unilatéral sans cadence** — cocher le premier côté : la coche reste grisée dix secondes,
+3. **Unilatéral sans cadence** — cocher le premier côté : la coche reste grisée dix secondes,
    affiche le décompte, puis se réactive seule pour valider le second côté sans changer de menu.
-3. **Paliers** — Progression › Paliers : jetons-images (Pepe, git gud, stonks…) à la place du
+4. **Paliers** — Progression › Paliers : jetons-images (Pepe, git gud, stonks…) à la place du
    disque chiffré. L'état vide reste vide. Après une séance qui franchit un palier, la carte
    d'accueil porte le même visuel avec un anneau accent. Thème clair aussi.
-4. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
+5. **Ouverture** — fermer l'app, la relancer à froid : plaques, deux phrases, accueil. Puis forcer
    le terminal (clé `fittrack.bootEasterEggAfter` due) : écran noir, glyphes blancs, comme GRUB.
-5. **Tutoriel** — sélecteur de guidage à quatre modes, série unilatérale menée jusqu'au bout.
-6. **Première séance / DOMS** — install neuve (ou reset IndexedDB) : enregistrer une
+6. **Tutoriel** — sélecteur de guidage à quatre modes, série unilatérale menée jusqu'au bout.
+7. **Première séance / DOMS** — install neuve (ou reset IndexedDB) : enregistrer une
    première séance, voir le Malphite-Chad « Rock solid. » sur l'accueil. APK : 48 h plus
    tard, notif « Tes premières DOMS » puis la porte au tap. Compte actuel : les deux
    paliers sont déjà dans Progression › Paliers, sans carte ni notif.
-7. **Documentation d'un exercice** — adduction à la machine › Documentation : taper un titre
+8. **Documentation d'un exercice** — adduction à la machine › Documentation : taper un titre
    de l'encadré du haut ouvre l'article nommé. Étirements : le cadre général est proposé,
    l'accueil du wiki n'est plus la seule sortie.
 
