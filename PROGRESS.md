@@ -3,7 +3,24 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-09-20 (**revue des cibles d'une routine depuis l'historique**).
+**Dernière mise à jour :** 2026-09-29 (**lisibilité du générateur d'historique volumineux**).
+
+## Lisibilité du générateur d'historique volumineux (2026-09-29)
+
+Une relecture humaine de `src/test/largeHistory.test.ts` a buté sur deux noms ; les deux
+remarques étaient justes, les autres (ids en chaîne, absence de `try/catch` dans un test,
+`.toArray()`) tenaient au modèle et à Dexie et n'appelaient pas de changement.
+
+- **`row` → `workoutExercise`** dans le générateur et son test : « row » ne disait pas qu'il
+  s'agit d'une ligne de `workoutExercises` (tel exercice, à telle position, dans telle
+  séance). Les ids semés passent de `large-row-…` à `large-workout-exercise-…` ; aucun
+  benchmark ne les lisait. Le code applicatif garde son vocabulaire `row`, qui n'est pas
+  touché ici.
+- **`workoutSpacingMs` commenté** : c'est l'écart entre le début de deux séances, pas entre
+  deux séries ou répétitions (`performedAt`). Le nom seul l'a laissé lire comme un temps entre répétitions.
+- Aucune ligne applicative, aucun schéma, aucune version : `typecheck`, `lint` (avertissement
+  Fast Refresh préexistant dans `Boot.tsx`), `test:run` (**248 fichiers, 2 657 tests**) et
+  `build` verts. Pas de checkpoint téléphone : l'app ne change pas.
 
 ## Revue des cibles d'une routine (2026-09-20)
 
