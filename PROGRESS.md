@@ -7,6 +7,10 @@
 
 ## Lisibilité du générateur d'historique volumineux (2026-09-29)
 
+Publication : un tag, **v2.7.1** — correctif et non mineur : rien n'est ajouté, et rien ne
+change pour l'utilisateur. Le bundle livré est celui de v2.7.0 au numéro près ; la version
+marque que `master` a bougé depuis le dernier tag.
+
 Une relecture humaine de `src/test/largeHistory.test.ts` a buté sur deux noms ; les deux
 remarques étaient justes, les autres (ids en chaîne, absence de `try/catch` dans un test,
 `.toArray()`) tenaient au modèle et à Dexie et n'appelaient pas de changement.
