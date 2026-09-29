@@ -17,10 +17,10 @@ const SMALL_PROFILE: LargeHistoryProfile = {
 async function snapshotIdsAndTimes(): Promise<{
   workoutIds: string[];
   workoutTimes: number[];
-  rowIds: string[];
+  workoutExerciseIds: string[];
   setIds: string[];
 }> {
-  const [workouts, rows, sets] = await Promise.all([
+  const [workouts, workoutExercises, sets] = await Promise.all([
     db.workouts.orderBy('startedAt').toArray(),
     db.workoutExercises.toArray(),
     db.workoutSets.toArray(),
@@ -29,7 +29,9 @@ async function snapshotIdsAndTimes(): Promise<{
   return {
     workoutIds: workouts.map((workout) => workout.id),
     workoutTimes: workouts.map((workout) => workout.startedAt),
-    rowIds: rows.map((row) => row.id).sort(),
+    workoutExerciseIds: workoutExercises
+      .map((workoutExercise) => workoutExercise.id)
+      .sort(),
     setIds: sets.map((set) => set.id).sort(),
   };
 }
@@ -51,14 +53,22 @@ describe('seedLargeHistory', () => {
     await expect(db.workoutExercises.count()).resolves.toBe(6);
     await expect(db.workoutSets.count()).resolves.toBe(12);
 
-    const workouts = new Set((await db.workouts.toArray()).map((row) => row.id));
-    const rows = await db.workoutExercises.toArray();
-    const rowIds = new Set(rows.map((row) => row.id));
+    const workoutIds = new Set(
+      (await db.workouts.toArray()).map((workout) => workout.id),
+    );
+    const workoutExercises = await db.workoutExercises.toArray();
+    const workoutExerciseIds = new Set(
+      workoutExercises.map((workoutExercise) => workoutExercise.id),
+    );
     const sets = await db.workoutSets.toArray();
 
-    expect(rows.every((row) => workouts.has(row.workoutId))).toBe(true);
-    expect(sets.every((set) => workouts.has(set.workoutId))).toBe(true);
-    expect(sets.every((set) => rowIds.has(set.workoutExerciseId))).toBe(true);
+    expect(
+      workoutExercises.every((workoutExercise) =>
+        workoutIds.has(workoutExercise.workoutId),
+      ),
+    ).toBe(true);
+    expect(sets.every((set) => workoutIds.has(set.workoutId))).toBe(true);
+    expect(sets.every((set) => workoutExerciseIds.has(set.workoutExerciseId))).toBe(true);
     expect(sets.every((set) => set.isCompleted === 1)).toBe(true);
   });
 
