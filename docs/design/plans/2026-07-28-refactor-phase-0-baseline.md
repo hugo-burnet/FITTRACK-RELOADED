@@ -127,6 +127,12 @@ Expected: every JavaScript and CSS asset has raw and gzip byte counts.
 
 ### Task 2: Add the deterministic large-history module with TDD
 
+> **Depuis le 2026-09-29**, le code livré s'écarte des blocs ci-dessous sur un seul point de
+> nommage : `row` / `rowId` / `rowIds` s'appellent `workoutExercise` / `workoutExerciseId` /
+> `workoutExerciseIds`, et les ids semés `large-workout-exercise-…` au lieu de `large-row-…`.
+> `workoutSpacingMs` y est commenté (écart entre le début de deux séances). Le plan est
+> laissé tel qu'il a été exécuté ; la source fait foi.
+
 **Files:**
 - Create: `src/test/largeHistory.test.ts`
 - Create: `src/test/largeHistory.ts`
