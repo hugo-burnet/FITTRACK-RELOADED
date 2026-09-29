@@ -14,7 +14,13 @@ export interface LargeHistoryProfile {
   workoutCount: number;
   exercisesPerWorkout: number;
   setsPerExercise: number;
+  /** Début de la première séance, en epoch ms. */
   startedAt: number;
+  /**
+   * Écart entre le début de deux séances consécutives — pas entre deux séries
+   * ni deux répétitions, qui ont leur propre horodatage (`performedAt`).
+   * Une relecture l'a pris pour un temps entre répétitions : le nom seul ne le dit pas.
+   */
   workoutSpacingMs: number;
 }
 
@@ -108,10 +114,10 @@ export async function seedLargeHistory(
       exerciseIndex += 1
     ) {
       const exercise = exercises[exerciseIndex]!;
-      const rowId = `large-row-${pad(workoutIndex)}-${pad(exerciseIndex)}`;
+      const workoutExerciseId = `large-workout-exercise-${pad(workoutIndex)}-${pad(exerciseIndex)}`;
 
       workoutExercises.push({
-        ...syncable(rowId, startedAt),
+        ...syncable(workoutExerciseId, startedAt),
         workoutId,
         exerciseId: exercise.id,
         order: exerciseIndex,
@@ -129,7 +135,7 @@ export async function seedLargeHistory(
             `large-set-${pad(workoutIndex)}-${pad(exerciseIndex)}-${pad(setIndex)}`,
             startedAt,
           ),
-          workoutExerciseId: rowId,
+          workoutExerciseId,
           exerciseId: exercise.id,
           workoutId,
           order: setIndex,
