@@ -546,3 +546,142 @@
   background: var(--accent-ink);
   animation: tty-blink 1.06s steps(1) infinite;
 }
+
+/*
+ * L'ouverture : le logo et le nom en haut, la console complète dessous (maquette, écran 1).
+ *
+ * Tout se pose par paliers, comme un écran de texte qui se redessine : les lignes d'état une à une,
+ * la commande qui se tape, puis la devise. Les keyframes sont celles de la variante `console` de
+ * `index.css` ; ce qui change ici, ce sont les temps, resserrés pour tenir dans les 2 180 ms de
+ * l'ouverture normale. Tout est dans la phase d'entrée : la phase de sortie rend l'écran déjà dans son
+ * état final.
+ */
+.boot[data-variant='tty1'] {
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding: 3rem 1rem 2rem;
+  background: #000;
+  color: #fff;
+}
+.boot[data-variant='tty1'] .boot-lockup {
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+.boot[data-variant='tty1'] .boot-bar {
+  width: 56px;
+}
+.boot[data-variant='tty1'] .boot-mark {
+  font: 700 2rem/2rem var(--tty1-32);
+  letter-spacing: 0;
+  color: #fff;
+}
+.boot-tty1-version {
+  font: 400 0.75rem/1rem var(--tty1-12);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.boot-tty1 {
+  font: 400 1rem/1.625rem var(--tty1-16);
+}
+.boot-tty1-line {
+  white-space: pre-wrap;
+}
+.boot-tty1-bracket {
+  color: var(--text-2);
+}
+.boot-tty1-tag[data-level='ok'] {
+  color: var(--accent-ink);
+}
+.boot-tty1-tag[data-level='warn'] {
+  color: #ffff55; /* ANSI 11 */
+}
+.boot-tty1-tag[data-level='fail'] {
+  color: var(--danger-ink);
+}
+.boot-tty1-prompt,
+.boot-tty1-comment {
+  margin-top: 1.625rem; /* une ligne blanche, comme sur la console */
+  color: var(--text-2);
+}
+/* L'invite et sa commande tiennent sur 45 caractères, soit 360 px : un téléphone de 390 px n'en
+   offre que 358 entre ses marges. La ligne mord donc sur la marge de droite, et le curseur ne compte
+   pour rien dans sa largeur. En dessous, la commande passe à la ligne suivante, avec son curseur. */
+.boot-tty1-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -1rem;
+}
+.boot-tty1-input {
+  white-space: nowrap;
+}
+.boot-tty1-cursor {
+  margin-right: -1ch;
+}
+.boot-tty1-command {
+  display: inline-block;
+  width: 27ch;
+  overflow: hidden;
+  vertical-align: bottom;
+  white-space: nowrap;
+  color: #fff;
+}
+
+/* Le logo se pose lui aussi par paliers : ni glissement, ni flou, ni fondu. */
+.boot[data-phase='in'][data-variant='tty1'] .boot-rail {
+  animation: boot-console-line 60ms steps(2, end) 100ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] :is(.boot-plate--l, .boot-plate--r) {
+  animation: boot-console-line 60ms steps(2, end) var(--boot-delay, 0ms) both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-mark {
+  animation: boot-console-line 60ms steps(2, end) 300ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-version {
+  animation: boot-console-line 60ms steps(2, end) 360ms both;
+}
+
+/* Les lignes se posent une à une, la commande se tape. */
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line {
+  animation: boot-console-line 60ms steps(2, end) both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(1) {
+  animation-delay: 600ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(2) {
+  animation-delay: 720ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(3) {
+  animation-delay: 840ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-line:nth-child(4) {
+  animation-delay: 960ms;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-prompt {
+  animation: boot-console-line 60ms steps(2, end) 1200ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-command {
+  animation: boot-console-type 480ms steps(27, end) 1300ms both;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-cursor {
+  animation: boot-console-cursor 500ms steps(1, end) 1260ms infinite;
+}
+.boot[data-phase='in'][data-variant='tty1'] .boot-tty1-comment {
+  animation: boot-console-line 60ms steps(2, end) 1900ms both;
+}
+
+/* En mouvement réduit, la console est là d'emblée. La règle globale de `index.css` coupe déjà les
+   durées ; les délais, eux, retarderaient encore l'apparition. */
+@media (prefers-reduced-motion: reduce) {
+  .boot-tty1-line,
+  .boot-tty1-prompt,
+  .boot-tty1-command,
+  .boot-tty1-cursor,
+  .boot-tty1-comment,
+  .boot-tty1-version {
+    animation: none !important;
+  }
+}

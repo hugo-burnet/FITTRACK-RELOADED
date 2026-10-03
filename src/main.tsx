@@ -21,8 +21,10 @@ import { applyTheme, loadTheme } from './stores/theme';
 import './index.css';
 
 // index.html already set data-theme before first paint to avoid a flash; this
-// re-applies it from the single source of truth so the two cannot drift.
-applyTheme(loadTheme());
+// re-applies it from the single source of truth so the two cannot drift. The theme is also
+// what the opening reads: TTY1 opens on its console every time.
+const theme = loadTheme();
+applyTheme(theme);
 
 // Both before `createRoot`, and both deliberately outside initialization:
 // `beforeinstallprompt` can fire before the first render and is lost if nothing
@@ -35,9 +37,10 @@ watchNavDirection();
 const bootStorage = getBootStorage();
 const requestedBoot = new URLSearchParams(window.location.search).get('boot');
 const bootVariant =
-  import.meta.env.DEV && (requestedBoot === 'console' || requestedBoot === 'normal')
+  import.meta.env.DEV &&
+  (requestedBoot === 'console' || requestedBoot === 'normal' || requestedBoot === 'tty1')
     ? requestedBoot
-    : selectBootVariant(bootStorage);
+    : selectBootVariant(bootStorage, Date.now(), Math.random(), theme);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');

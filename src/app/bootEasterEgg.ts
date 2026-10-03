@@ -1,4 +1,6 @@
-export type BootVariant = 'normal' | 'console';
+import type { Theme } from '@/stores/theme';
+
+export type BootVariant = 'normal' | 'console' | 'tty1';
 
 export const BOOT_EASTER_EGG_KEY = 'fittrack.bootEasterEggAfter';
 
@@ -37,7 +39,12 @@ export function selectBootVariant(
   storage: BootStorage | null,
   now = Date.now(),
   random = Math.random(),
+  theme: Theme = 'dark',
 ): BootVariant {
+  // TTY1 opens on its console every time, and leaves the surprise's date alone: the rare console
+  // picks up where it was the day the theme is left. It does not even need storage — the theme
+  // is the choice.
+  if (theme === 'tty1') return 'tty1';
   if (!storage) return 'normal';
 
   try {

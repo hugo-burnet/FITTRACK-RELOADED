@@ -2175,6 +2175,8 @@ const fr = {
     consoleExcuses: '[ FAIL ] excuses.mount: permission denied',
     consolePrompt: 'root@fittrack:~#',
     consoleCommand: 'progressive_overload = true',
+    /** Sous le nom, à l'ouverture TTY1 : le numéro de l'app, puis le thème qui l'habille. */
+    versionLine: '{version} · tty1',
   },
 
   /**
