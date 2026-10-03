@@ -22,11 +22,17 @@ Usage:
 See README.md for the source archive and its checksum.
 """
 import json
+import os
 import pathlib
 import sys
 
-from fontTools.fontBuilder import FontBuilder
-from fontTools.pens.ttGlyphPen import TTGlyphPen
+# fontTools stamps every font with the current time. A fixed stamp makes the build reproducible:
+# the same sources give the same bytes, so regenerating never shows up as a diff of eight binaries.
+# `setdefault` leaves a caller's own SOURCE_DATE_EPOCH in charge.
+os.environ.setdefault("SOURCE_DATE_EPOCH", "1700000000")
+
+from fontTools.fontBuilder import FontBuilder  # noqa: E402  (after the environment is set)
+from fontTools.pens.ttGlyphPen import TTGlyphPen  # noqa: E402
 
 UNIT = 64  # font units per bitmap pixel
 SIZES = (12, 16, 24, 32)
