@@ -181,7 +181,12 @@ describe('parcours de composition d’une routine', () => {
     expect(
       report.mock.calls.map(([event]) => event).filter((event) => event.type === 'workout-started'),
     ).toEqual([{ type: 'workout-started', workoutId: workout.id, routineId: routine.id }]);
-    expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout');
+    // `navigate` runs right after `report`, but through a React transition: the router's new
+    // location is committed a tick later. Asserting it at once passed on a quiet machine and read
+    // `/routines` on a busy CI runner.
+    await waitFor(() =>
+      expect(screen.getByTestId('location-probe')).toHaveTextContent('/workout'),
+    );
   });
 
   it('keeps the collection route and emits no event when workout start is rejected', async () => {
