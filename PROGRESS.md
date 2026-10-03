@@ -3,7 +3,7 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-10-03 (**TTY1 à débloquer, ouverture complète**).
+**Dernière mise à jour :** 2026-10-03 (**TTY1 à débloquer, ouverture complète, succès noclip**).
 
 ## TTY1 à débloquer, ouverture complète (2026-10-03)
 
@@ -65,6 +65,25 @@ fonction de l'app qui s'affiche sans qu'on sache pourquoi et qui, validée, lanc
   `pointerdown` : le geste finit sur l'écran d'ouverture, au lieu de tomber sur le premier bouton de
   l'accueil. Une ligne en bas le dit.
 
+**Le succès « noclip »** (demandé après coup : « quand tu vois le grub au moins une fois, le succès est
+noclip, avec un logo Matrix ; moi je l'aurai déjà, donc ça se met dans mon historique de succès »)
+
+- C'est un **palier** : l'app n'a pas d'autre système de succès (Analyses > Paliers, leurs jetons en
+  image, la carte d'accueil, la sauvegarde). Un nouveau genre, `secret`, que le moteur ignore et que la
+  synchronisation **laisse en place** : pour elle un secret est toujours orphelin, et la première séance
+  terminée l'aurait effacé (un test le garde). Un rayon « Secrets » à l'écran, qui n'existe qu'une fois un
+  secret acquis ; 59 paliers sur le plafond de 60. Spec et plan : `2026-10-03-succes-noclip`.
+- **Acquis si et seulement si TTY1 est débloqué** (`app/noclip.ts`, `grantNoclipIfUnlocked`) : le drapeau
+  reste la seule vérité, la ligne en est la mémoire datée, quel que soit le chemin du déblocage.
+  **Célébré** (carte « Palier franchi » sur l'accueil) quand la console rare vient de débloquer TTY1,
+  **silencieux** pour tout rattrapage : qui avait déjà TTY1 — l'utilisateur — le reçoit au premier
+  démarrage, acquitté, daté de ce jour (la vraie date n'est pas retrouvable). `workoutId` vaut `''`, le
+  « pas de parent » du modèle, que la validation de sauvegarde accepte sans orphelin.
+- Le jeton : une pluie de glyphes verts, `public/milestones/noclip.jpg`, 384 px, 29 Ko, **précaché**,
+  générée par `scripts/milestone-art/noclip.py` (glyphes tracés sur une grille de 5 × 7 points, sans
+  police ; le même fichier à chaque exécution). Légende : « Il n'y a pas de mur. Il n'y a pas de
+  cuillère. »
+
 **Vérifié**
 
 - Chromium à 390 × 844 et 360 × 740, horloge simulée et en temps réel : les lignes se posent à leur heure,
@@ -77,9 +96,14 @@ fonction de l'app qui s'affiche sans qu'on sache pourquoi et qui, validée, lanc
   antidatés) écrit le drapeau au démarrage suivant et Réglages montre TTY1 ouvert ; un doigt posé 500 ms
   n'arrête rien, son relâchement saute l'ouverture sans atteindre le bouton dessous. `?bootSeed=` n'est
   plus dans le paquet.
+- **noclip, dans Chromium** : TTY1 déjà débloqué → la ligne est écrite au démarrage, acquittée, sans
+  carte sur l'accueil, et l'écran des paliers la montre sous « Secrets » (liste, puis jeton en grand avec sa
+  légende) ; le thème TTY1 sans drapeau (la v2.8.0 telle qu'elle est) l'écrit aussi et lève le drapeau ;
+  installation verrouillée → aucune ligne, aucun rayon ; console rare qui débloque → carte « Palier
+  franchi » sur l'accueil, qui part à « Fermer » et ne revient pas au rechargement.
 - `typecheck`, `lint` (**zéro avertissement** : celui de `Boot.tsx`, préexistant, a disparu avec le
-  déplacement de `BOOT_HOLD_MS`), `test:run` (**261 fichiers, 2 827 tests**, contre 254 et 2 703 à la
-  v2.8.0) et `build` verts. Précache de 242 entrées, 8 272 Kio.
+  déplacement de `BOOT_HOLD_MS`), `test:run` (**263 fichiers, 2 854 tests**, contre 254 et 2 703 à la
+  v2.8.0) et `build` verts. Précache de 243 entrées, 8 301 Kio.
 
 **Pièges rencontrés**
 
@@ -98,6 +122,13 @@ fonction de l'app qui s'affiche sans qu'on sache pourquoi et qui, validée, lanc
   Les tests avancent par paliers.
 - `aria-disabled` est lu comme « désactivé » par Playwright, qui refuse de cliquer : `force: true` pour
   prouver qu'un toucher ne fait rien.
+- La projection des paliers retire toute ligne qu'aucune séance ne justifie. Un secret n'a pas de séance :
+  sans l'exception, la première séance terminée, un import ou une réparation d'historique effaçait
+  noclip. C'est le genre de défaut qu'un test d'intégration voit et qu'un essai à la main manque : la
+  ligne est là jusqu'à la première séance.
+- `page.goto` vers une URL dont la requête change recharge la page — et rejoue l'ouverture TTY1, 4,6 s —
+  au lieu de changer de route. Les captures naviguent par le hash. Et la feuille « Avant le premier son »
+  d'une installation neuve intercepte les clics : il faut la passer avant de cliquer derrière.
 - `pkill -f <motif>` a tué le shell de la session : le motif figurait dans sa propre ligne de commande.
   Tuer par PID.
 
@@ -116,6 +147,8 @@ sans conséquence).
 5. « Réduire les animations » : la console est là d'emblée, deux secondes.
 6. Pour voir la révélation : effacer `fittrack.tty1Unlocked` et rouvrir avec `?boot=console` (développement
    seulement), ou attendre la surprise de 14 à 28 jours sur une installation neuve.
+7. Après la mise à jour, Analyses > Paliers : **noclip** sous « Secrets », daté du jour de la mise à jour,
+   son jeton qui s'ouvre en grand avec sa légende. Pas de carte sur l'accueil : c'est un rattrapage.
 
 ## Skin TTY1 et version de l'app dans l'en-tête (2026-10-03)
 

@@ -145,3 +145,23 @@ Python 3 sans dépendance et ImageMagick pour le jeton, hors de `package.json`.
 - [ ] **Step 3 : commit** `docs: consigner le succès noclip`, puis `git push -u origin ccr-19a013d9-m9sh2y`.
 - [ ] **Step 4 : rappeler** à l'utilisateur que la fusion dans `master` et la version 2.9.0 attendent son
   accord.
+
+---
+
+## Écarts à l'exécution
+
+Ce que l'exécution a changé par rapport au plan, pour qui le relirait :
+
+- **Tasks 1 et 2 sont un seul commit.** Le catalogue a un test d'ensemble (`art.test.ts` : chaque palier a
+  une clé d'art, chaque clé est utilisée) : un commit qui ajoute le palier sans son jeton, ou l'inverse,
+  est rouge. Les deux se livrent ensemble.
+- **Task 2.** Le JPEG est en 4:2:0, qualité 80 : 29 Ko, contre 41 Ko en 4:4:4 pour une différence qu'on ne
+  voit pas sur des traits verts sur fond noir. La pluie est plus dense que le premier essai (88 % de
+  colonnes actives, têtes dans le cadre, traînes plus longues) : à 64 px, c'est la masse verte qui fait
+  reconnaître une pluie, pas les glyphes.
+- **Task 3.** Le test de sauvegarde (un palier sans séance n'est pas un orphelin) est dans
+  `validate.test.ts` ; il passait avant toute modification, et reste là comme garde : c'est la raison pour
+  laquelle `workoutId` peut valoir `''`. Le type du stockage de `grantNoclipIfUnlocked` est celui de
+  `isTty1Unlocked` (`Parameters<…>[0]`) plutôt qu'un troisième type de stockage.
+- **Vérification.** Dans Chromium, la navigation entre deux captures se fait par le hash : un changement de
+  requête recharge la page et rejoue l'ouverture TTY1.
