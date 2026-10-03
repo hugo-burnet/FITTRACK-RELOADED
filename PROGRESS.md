@@ -60,6 +60,9 @@ ce qui compte pour la suite.
   boutons de cadence et de plaques font 44 px de large dans les deux), aucun débordement horizontal. Les sept écrans de la maquette comparés à l'œil, côte à côte.
 - Le hors-ligne, le vrai : build servi, service worker actif, réseau coupé, page neuve. Le thème, les
   quatre familles de police et la version sont là, aucune requête n'échoue.
+- L'APK publié (`FitTrack-v2.8.0.apk`) ouvert et lu : les huit `woff2`, la version `2.8.0` dans le chunk de
+  `Screen` et dans le manifeste (`versionName`). Le site déployé n'a pas pu être ouvert depuis la session
+  (le domaine `github.io` est bloqué) : seul le succès du workflow de déploiement le garantit.
 - `typecheck`, `lint` (un avertissement Fast Refresh préexistant dans `Boot.tsx`), `test:run` (**254
   fichiers, 2 703 tests**, contre 248 et 2 657 au départ) et `build` verts ; le build Android web aussi.
   Précache de 242 entrées, 8 258,80 Kio.
@@ -80,6 +83,17 @@ ce qui compte pour la suite.
   huit binaires différents. `SOURCE_DATE_EPOCH` fixe rend le générateur reproductible.
 - La légende de la carte « À lancer » repose sur `:has()`. Son positionnement absolu vit dans le sélecteur
   de sa carte : sans `:has()`, le navigateur jette la règle entière et la légende reste dans la carte.
+- **Un test d'intégration préexistant a rougi le build Android du commit de la v2.8.0** :
+  `RoutineFlow.integration.test.tsx` lisait la position du routeur juste après avoir vu `report` appelé,
+  alors que `navigate` passe par une transition React et que la position est validée un tick plus tard.
+  Quatre passes complètes en local, le commit de la fusion et le déploiement du même commit passaient ; le
+  build Android déclenché par le push du commit de la release lisait `/routines`. Impossible à reproduire
+  en local, même sous charge (douze essais) : la cause est lue dans le code, pas observée. L'assertion
+  attend désormais la position (`c67ff85`) ; rien d'autre n'a changé, et la release, construite sur le même
+  commit par `workflow_dispatch`, est verte.
+- **Le push d'un tag est refusé à une session d'agent** (HTTP 403 du mandataire). La release est donc
+  publiée par `workflow_dispatch` d'`android.yml` avec `release_tag`, comme la v2.7.1 : c'est la voie que le
+  commentaire du workflow documente, et le tag désigne le commit construit.
 
 **Écarts avec la maquette, assumés** : `kg` reste en minuscules dans les en-têtes de colonne (un symbole du
 SI ne se met pas en capitales), l'icône de fermeture d'une feuille reste grise, et l'étoile d'un record suit
