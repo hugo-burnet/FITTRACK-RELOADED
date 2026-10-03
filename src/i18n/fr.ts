@@ -13,6 +13,7 @@ const fr = {
     principle: 'Progressive Overload',
     tagline: 'Production was the gym',
     slogan: 'FitTrack — Progressive Overload — Production was the gym',
+    versionLabel: 'v{version}',
   },
 
   update: {
