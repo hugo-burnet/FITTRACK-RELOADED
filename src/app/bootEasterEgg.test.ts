@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BOOT_EASTER_EGG_KEY,
+  BOOT_HOLD_MS,
+  bootHoldMs,
   getBootStorage,
   holdBootOpening,
   scheduleNextBootEasterEgg,
   selectBootVariant,
+  UNLOCK_REVEAL_EXTRA_MS,
 } from './bootEasterEgg';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -124,5 +127,97 @@ describe('holdBootOpening', () => {
     await opening;
     await vi.runAllTimersAsync();
     expect(onFullOpening).not.toHaveBeenCalled();
+  });
+});
+
+describe('holdBootOpening — the lifter cutting it short', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('stops waiting the moment the signal fires, and consumes nothing', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    const opening = holdBootOpening(
+      4_650,
+      () => Promise.resolve(false),
+      onFullOpening,
+      skip.signal,
+    );
+
+    await vi.advanceTimersByTimeAsync(1_000);
+    skip.abort();
+    await opening;
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).not.toHaveBeenCalled();
+  });
+
+  it('does not wait at all for a signal that has already fired', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    skip.abort();
+
+    await holdBootOpening(4_650, () => Promise.resolve(false), onFullOpening, skip.signal);
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).not.toHaveBeenCalled();
+  });
+
+  it('is deaf to a tap that comes once the opening is over', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    const opening = holdBootOpening(
+      4_650,
+      () => Promise.resolve(false),
+      onFullOpening,
+      skip.signal,
+    );
+
+    await vi.advanceTimersByTimeAsync(4_650);
+    await opening;
+    skip.abort();
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).toHaveBeenCalledOnce();
+  });
+
+  it('still lets a workout in progress skip it, signal or not', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    const opening = holdBootOpening(4_650, () => Promise.resolve(true), onFullOpening, skip.signal);
+
+    await opening;
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).not.toHaveBeenCalled();
+  });
+});
+
+describe('bootHoldMs', () => {
+  it('holds each opening for its own duration', () => {
+    expect(bootHoldMs('normal')).toBe(BOOT_HOLD_MS.normal);
+    expect(bootHoldMs('console')).toBe(BOOT_HOLD_MS.console);
+    expect(bootHoldMs('tty1')).toBe(BOOT_HOLD_MS.tty1);
+  });
+
+  it('gives the console that unlocks TTY1 the time to read its two extra lines', () => {
+    expect(UNLOCK_REVEAL_EXTRA_MS).toBe(1_400);
+    expect(bootHoldMs('console', { unlocking: true })).toBe(
+      BOOT_HOLD_MS.console + UNLOCK_REVEAL_EXTRA_MS,
+    );
+    expect(bootHoldMs('console', { unlocking: false })).toBe(BOOT_HOLD_MS.console);
+  });
+
+  it('extends no other opening, whatever it is told', () => {
+    expect(bootHoldMs('normal', { unlocking: true })).toBe(BOOT_HOLD_MS.normal);
+    expect(bootHoldMs('tty1', { unlocking: true })).toBe(BOOT_HOLD_MS.tty1);
+  });
+
+  it('shows the whole TTY1 console at once in reduced motion, and waits no longer than the normal opening', () => {
+    expect(bootHoldMs('tty1', { reducedMotion: true })).toBe(BOOT_HOLD_MS.normal);
+    expect(bootHoldMs('console', { reducedMotion: true })).toBe(BOOT_HOLD_MS.console);
   });
 });

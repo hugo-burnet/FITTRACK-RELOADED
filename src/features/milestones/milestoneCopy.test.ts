@@ -76,4 +76,12 @@ describe('la lecture d’un palier', () => {
     expect(milestoneReading('doms-48', 48)?.title).toBe('Tes premières DOMS');
     expect(milestoneReading('doms-48', 48)?.token).toBe('48');
   });
+
+  it('nomme un secret par son titre écrit dans fr.ts, sans chiffre ni franchissement', () => {
+    const reading = milestoneReading('noclip', 1);
+
+    expect(reading?.title).toBe('noclip');
+    expect(reading?.group).toBe('secret');
+    expect(reading?.reached).toBeUndefined();
+  });
 });

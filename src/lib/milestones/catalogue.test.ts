@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import catalogue from '@/data/seed/exercises.json';
 import { t, type TranslationKey } from '@/i18n/fr';
-import { MILESTONES, milestoneById } from './catalogue';
+import { MILESTONES, milestoneById, NOCLIP_MILESTONE_ID } from './catalogue';
 
 const SLUGS = new Set(catalogue.map((row) => row.slug));
 
@@ -87,5 +87,30 @@ describe('le catalogue des jalons', () => {
     const ids = MILESTONES.map((row) => row.id);
     expect(ids.indexOf('sessions-1')).toBeLessThan(ids.indexOf('sessions-10'));
     expect(ids.indexOf('doms-48')).toBeLessThan(ids.indexOf('sessions-10'));
+  });
+});
+
+describe('les secrets', () => {
+  it('range noclip dans son rayon, sans exercice ni sujet', () => {
+    expect(NOCLIP_MILESTONE_ID).toBe('noclip');
+    expect(milestoneById(NOCLIP_MILESTONE_ID)).toEqual({
+      id: 'noclip',
+      kind: 'secret',
+      group: 'secret',
+      threshold: 1,
+    });
+  });
+
+  it('ne met dans le rayon des secrets que des secrets, et tous', () => {
+    // Un secret rangé parmi la force s'afficherait à côté du développé couché ; un jalon
+    // d'entraînement rangé parmi les secrets disparaîtrait de l'écran tant qu'aucun n'est acquis.
+    for (const definition of MILESTONES) {
+      expect(definition.group === 'secret', definition.id).toBe(definition.kind === 'secret');
+    }
+  });
+
+  it('écrit ses secrets en dernier, après le volume', () => {
+    const ids = MILESTONES.map((row) => row.id);
+    expect(ids.at(-1)).toBe(NOCLIP_MILESTONE_ID);
   });
 });

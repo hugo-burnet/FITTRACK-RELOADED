@@ -18,7 +18,7 @@ const longDate = new Intl.DateTimeFormat('fr-FR', {
 });
 
 /** L'ordre de lecture des rayons, et non un classement : aucun ne vaut plus. */
-const GROUPS: MilestoneGroup[] = ['strength', 'gateway', 'practice', 'volume'];
+const GROUPS: MilestoneGroup[] = ['strength', 'gateway', 'practice', 'volume', 'secret'];
 
 interface Line extends MilestoneReading {
   id: string;

@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -6,6 +6,25 @@ import { MILESTONES } from './catalogue';
 import { artForMilestone, MILESTONE_ART_KEYS, milestoneArtUrl } from './art';
 
 const ART_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../../public/milestones');
+
+/**
+ * Les dimensions d'un JPEG, lues dans son premier marqueur de trame : le test n'a besoin que d'un
+ * chiffre, et une dépendance d'images pour le lire coûterait plus que ce qu'elle garde.
+ */
+function jpegSize(path: string): { width: number; height: number } {
+  const bytes = readFileSync(path);
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    if (bytes[offset] !== 0xff) throw new Error('marqueur JPEG attendu');
+    const marker = bytes[offset + 1] ?? 0;
+    const isFrame = marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker);
+    if (isFrame) {
+      return { height: bytes.readUInt16BE(offset + 5), width: bytes.readUInt16BE(offset + 7) };
+    }
+    offset += 2 + bytes.readUInt16BE(offset + 2);
+  }
+  throw new Error('aucune trame JPEG trouvée');
+}
 
 describe('l’art d’un palier', () => {
   it('donne une clé à chaque entrée du catalogue', () => {
@@ -85,5 +104,15 @@ describe('l’art d’un palier', () => {
     for (const key of MILESTONE_ART_KEYS) {
       expect(existsSync(join(ART_DIR, `${key}.jpg`)), key).toBe(true);
     }
+  });
+
+  it('donne à noclip sa propre image, qu’aucun autre palier ne partage', () => {
+    expect(artForMilestone('noclip')).toBe('noclip');
+    const sharing = MILESTONES.filter((row) => artForMilestone(row.id) === 'noclip');
+    expect(sharing.map((row) => row.id)).toEqual(['noclip']);
+  });
+
+  it('dessine noclip en 384 px, carré : une pluie de glyphes floue n’est plus une pluie', () => {
+    expect(jpegSize(join(ART_DIR, 'noclip.jpg'))).toEqual({ width: 384, height: 384 });
   });
 });

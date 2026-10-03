@@ -560,6 +560,16 @@
   animation-delay: 1920ms;
 }
 
+/* La révélation du déblocage de TTY1, sous l'invite : 100 ms après la fin de la frappe (2700 + 480),
+   puis 160 ms plus tard. */
+.boot[data-phase='in'] .boot-console-line:nth-child(6) {
+  animation-delay: 3280ms;
+}
+
+.boot[data-phase='in'] .boot-console-line:nth-child(7) {
+  animation-delay: 3440ms;
+}
+
 .boot[data-phase='in'] .boot-console-prompt {
   animation: boot-console-line 60ms steps(2, end) 2100ms both;
 }

@@ -50,7 +50,8 @@ function translated(key: string): string | undefined {
 }
 
 function titleOf(definition: MilestoneDefinition): string {
-  const subject = definition.subjectKey === undefined ? '' : translated(definition.subjectKey) ?? '';
+  const subject =
+    definition.subjectKey === undefined ? '' : (translated(definition.subjectKey) ?? '');
   const value = naturalThreshold(definition);
 
   switch (definition.kind) {
@@ -79,11 +80,12 @@ function titleOf(definition: MilestoneDefinition): string {
     case 'active_weeks':
       return t('milestone.weeks', { value });
     case 'training_years':
-      return definition.threshold === 1
-        ? t('milestone.yearOne')
-        : t('milestone.years', { value });
+      return definition.threshold === 1 ? t('milestone.yearOne') : t('milestone.years', { value });
     case 'lifetime_tonnage':
       return t('milestone.tonnage', { value: formatNumber(value) });
+    case 'secret':
+      // Un titre par secret, écrit dans `fr.ts` : le sien n'est ni un nombre ni un exercice.
+      return translated(`milestone.secret.${definition.id}`) ?? definition.id;
   }
 }
 

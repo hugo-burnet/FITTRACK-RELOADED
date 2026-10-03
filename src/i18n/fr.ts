@@ -691,6 +691,16 @@ const fr = {
       gateway: 'Portes franchies',
       practice: 'Pratique',
       volume: 'Volume',
+      /** Ce rayon n'existe à l'écran qu'une fois un secret acquis. */
+      secret: 'Secrets',
+    },
+
+    /**
+     * Le titre d'un secret. En minuscules : c'est une commande, comme tout ce que l'ouverture TTY1
+     * écrit.
+     */
+    secret: {
+      noclip: 'noclip',
     },
 
     /**
@@ -804,6 +814,7 @@ const fr = {
       iceberg: 'Ce que tu vois, et tout ce qu’il y a dessous.',
       'rock-solid': 'Rock solid.',
       'doms-door': 'Ça fait mal. FitTrack est toujours là. Tu lâches pas.',
+      noclip: 'Il n’y a pas de mur. Il n’y a pas de cuillère.',
     },
   },
 
@@ -1806,6 +1817,8 @@ const fr = {
     themeHint:
       'Sombre par défaut : une salle est mal éclairée et l’écran reste allumé une heure et demie.',
     themeTty1Hint: 'TTY1 : la console. Noir, gris, une seule couleur vive.',
+    /** Ne dit pas *comment* : la console rare reste une surprise, on sait seulement qu'il y a à trouver. */
+    themeTty1Locked: 'TTY1 est verrouillé. Garde un œil sur l’écran de chargement.',
 
     announcerSection: 'Annonces',
     announcer: 'Annonces sonores',
@@ -2175,8 +2188,165 @@ const fr = {
     consoleExcuses: '[ FAIL ] excuses.mount: permission denied',
     consolePrompt: 'root@fittrack:~#',
     consoleCommand: 'progressive_overload = true',
+    /** Sous la commande, le jour où la console débloque TTY1 : le résultat, puis où le trouver. */
+    consoleUnlocked: '[ OK ] tty1.skin unlocked',
+    consoleUnlockedHint: '# Réglages > Apparence',
     /** Sous le nom, à l'ouverture TTY1 : le numéro de l'app, puis le thème qui l'habille. */
     versionLine: '{version} · tty1',
+
+    /**
+     * L'ouverture TTY1 : un démarrage de machine, tiré au sort à chaque lancement
+     * (`app/bootTty1Script.ts`).
+     *
+     * Les listes (`flavors`, `facts`, `ok`, `warn`, `fail`, `checks`, `dosFiles`) sont des nœuds de
+     * chaînes que `tAll` énumère : ajouter une ligne, c'est l'écrire ici, et nulle part ailleurs.
+     * Elles disent des messages de système, en anglais comme les quatre lignes d'origine — seule la
+     * ligne pour passer est du français, parce que c'est une consigne à celui qui lit.
+     *
+     * **Une ligne fait 41 caractères au plus, préfixe compris** : c'est ce que tient un téléphone de
+     * 360 px en police de 16 px. Les placeholders sont remplis par le générateur, qui écarte les
+     * lignes dont il n'a pas la valeur ; `bootTty1Script.test.ts` mesure le résultat sur des centaines
+     * de tirages, pas ces modèles.
+     *
+     * Ce qui est chiffré est **vrai** : le catalogue compte ce qu'il compte, le repos par défaut dure
+     * ce qu'il dure. Une phrase qui écrirait « 1 247 exercices » en dur mentirait à la prochaine
+     * mise à jour du catalogue.
+     */
+    tty1: {
+      /** La ligne du bas : toucher l'écran saute l'ouverture. */
+      skipHint: 'Touche l’écran pour passer.',
+
+      grubTitle: 'GNU GRUB  version 2.12',
+      grubEntry: "Booting 'FitTrack GNU/Linux'",
+      grubKernel: 'Loading Linux 6.1.0-{flavor} ...',
+      grubInitrd: 'Loading initial ramdisk ...',
+
+      /** Le nom du noyau, après `6.1.0-`. */
+      flavors: {
+        biceps: 'biceps',
+        deadlift: 'deadlift',
+        squat: 'squat',
+        lats: 'lats',
+        pump: 'pump',
+        gains: 'gains',
+        hypertrophy: 'hypertrophy',
+        overload: 'overload',
+      },
+
+      /** Les lignes du noyau : l'heure de la machine, toujours, puis quelques faits tirés d'une liste. */
+      clock: 'rtc: {date} {time}',
+      networkOffline: 'offline, as designed',
+      networkOnline: 'online, not required',
+      facts: {
+        cores: 'cpu: {cores} cores online',
+        screen: 'fb0: {width}x{height} console',
+        network: 'net: {network}',
+        catalogue: 'idb: {catalogue} exercises mounted',
+        noAccount: 'auth: no account, no cloud',
+        noAds: 'ads: not found',
+        localData: 'data: stays on this device',
+        restTimer: 'rest: {rest} s default timer',
+        deload: 'deload: {deload} % of the load',
+        bar: 'bar: {bar} kg, {plateSizes} plate sizes',
+        warmup: 'warmup: {warmupSteps}-step ramp',
+        sync: 'sync: none (single user)',
+      },
+
+      /** Les services. Les quatre lignes de la console rare sont toujours là, celles-ci s'y intercalent. */
+      ok: {
+        restTimer: '[ OK ] Started rest_timer.service',
+        gains: '[ OK ] Mounted /gains (rw, relatime)',
+        offlineFirst: '[ OK ] Reached target Offline First',
+        plateCalc: '[ OK ] Started plate_calc.service',
+        hydration: '[ OK ] Started hydration.timer',
+        warmup: '[ OK ] Started warmup.service',
+        barbell: '[ OK ] Listening on barbell.socket',
+        biceps: '[ OK ] Mounted /dev/biceps',
+        pump: '[ OK ] Started pump.service',
+        grip: '[ OK ] Started grip_strength.service',
+        slice: '[ OK ] Created slice Workout Slice',
+        records: '[ OK ] Finished Update Personal Records',
+        progression: '[ OK ] Started auto-progression daemon',
+        protein: '[ OK ] Started protein.service',
+        hypertrophy: '[ OK ] Reached target Hypertrophy',
+        stretching: '[ OK ] Started stretching.service',
+      },
+      warn: {
+        network: '[ WARN ] network unreachable, ignoring',
+        restDay: '[ WARN ] rest_day.timer overdue',
+        cardio: '[ WARN ] cardio.service: skipped',
+        form: '[ WARN ] form.check: knees caving in',
+        sleep: '[ WARN ] sleep: below 7 h average',
+        broSplit: '[ WARN ] bro.split: still running',
+      },
+      fail: {
+        legDay: '[ FAIL ] leg_day.service: not found',
+        motivation: '[ FAIL ] motivation.timer: timed out',
+        cheatMeal: '[ FAIL ] cheat_meal: dependency failed',
+        monday: '[ FAIL ] monday.target: failed to start',
+        foamRoller: '[ FAIL ] foam_roller.mount: busy',
+      },
+
+      /** Les vérifications de disque, de mémoire et de santé. */
+      checks: {
+        fsck: 'fsck.idb: /gains clean, {catalogue} files',
+        smartBiceps: 'smartctl: biceps PASSED',
+        smartGrip: 'smartctl: grip strength PASSED',
+        memtest: 'memtest86: 5x5 passed',
+        badblocks: 'badblocks: 0 found in knees',
+        excuses: 'e2fsck: 0 excuses, 0 shortcuts',
+        sensors: 'sensors: core 36.6 C, normal',
+        posture: 'posture: spine neutral, OK',
+        plates: 'lsblk: 0 plates missing',
+      },
+
+      /** L'interlude DOS : une commande saisie et sa sortie, au format de MS-DOS. */
+      dosIntro: '[ OK ] Started dosemu.service',
+      dosPrompt: 'C:\\FITTRACK>',
+      dosDirCommand: 'dir /s',
+      dosVerCommand: 'ver',
+      dosMemCommand: 'mem',
+      dosVolume: ' Volume in drive C is GAINS',
+      dosSerial: ' Volume Serial Number is {serial}',
+      dosDirectory: ' Directory of {path}',
+      dosPathRoot: 'C:\\FITTRACK',
+      dosPathPlates: 'C:\\FITTRACK\\PLATES',
+      dosTotalListed: 'Total files listed:',
+      dosBytesFree: 'bytes free',
+      dosFileCount: 'file(s)',
+      dosBytes: 'bytes',
+      dosVersion: 'FitTrack [Version {version}]',
+      dosMemTotal: '  655360 bytes total conventional memory',
+      dosMemJoke: '  640K ought to be enough for anybody',
+      /** Des noms en 8.3 : de vrais fichiers de DOS parmi des fichiers de salle. */
+      dosFiles: {
+        squat: 'SQUAT.EXE',
+        bench: 'BENCH.EXE',
+        deadlift: 'DEADLIFT.EXE',
+        plates: 'PLATES.DAT',
+        warmup: 'WARMUP.BAT',
+        rest: 'REST.COM',
+        gains: 'GAINS.DAT',
+        pump: 'PUMP.SYS',
+        cable: 'CABLE.DLL',
+        barbell: 'BARBELL.EXE',
+        curl: 'CURL.COM',
+        row: 'ROW.EXE',
+        progress: 'PROGRESS.INI',
+        overload: 'OVERLOAD.SYS',
+        autoexec: 'AUTOEXEC.BAT',
+        config: 'CONFIG.SYS',
+        command: 'COMMAND.COM',
+      },
+
+      /**
+       * La porte : une fonction de l'app, attendue comme un service, validée avec son résultat réel.
+       * `{call}` est le nom de la fonction suivi de ses parenthèses, `{result}` ce qu'elle a rendu.
+       */
+      gateWaiting: 'Starting {call}',
+      gateDone: '[ OK ] {call} = {result}',
+      target: '[ OK ] Reached target Gym.',
+    },
   },
 
   /**
@@ -3148,6 +3318,21 @@ const fr = {
 
 type Dictionary = { [key: string]: string | Dictionary };
 
+/**
+ * Every dotted path that ends on a node whose children are all strings — a list, in the words of
+ * this dictionary, which has no arrays. `'weekday.long'` is one; `'weekday'` (a node of nodes) and
+ * `'common.yes'` (a leaf) are not.
+ */
+type PoolPath<T> = {
+  [K in keyof T & string]: T[K] extends string
+    ? never
+    : T[K] extends Record<string, string>
+      ? K
+      : `${K}.${PoolPath<T[K]>}`;
+}[keyof T & string];
+
+export type PoolKey = PoolPath<typeof fr>;
+
 /** Every dotted path that ends on a string, e.g. `'settings.themeDark'`. */
 type LeafPath<T> = {
   [K in keyof T & string]: T[K] extends string ? K : `${K}.${LeafPath<T[K]>}`;
@@ -3175,4 +3360,22 @@ export function t(key: TranslationKey, params?: Record<string, string | number>)
   return found.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
     name in params ? String(params[name]) : placeholder,
   );
+}
+
+/**
+ * The strings of a list node, in the order they are written. The opening of TTY1 draws from
+ * several of these (services, checks, facts): a list is read and completed in one place, and
+ * there is no second list of keys to keep in agreement with it. Placeholders are left as they are —
+ * the reader fills them, and drops the entries it has no value for.
+ */
+export function tAll(key: PoolKey): readonly string[] {
+  const node = key
+    .split('.')
+    .reduce<string | Dictionary | undefined>(
+      (parent, part) => (typeof parent === 'object' ? parent[part] : undefined),
+      fr,
+    );
+
+  if (typeof node !== 'object') return [];
+  return Object.values(node).filter((entry): entry is string => typeof entry === 'string');
 }

@@ -1,7 +1,8 @@
 import { useState, useSyncExternalStore } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { getBootStorage } from '@/app/bootEasterEgg';
 import { useAppNavigate } from '@/app/navigation';
-import { ChevronRightIcon } from '@/ui/icons';
+import { ChevronRightIcon, LockIcon } from '@/ui/icons';
 import { Screen } from '@/app/Screen';
 import { countCompletedWorkouts } from '@/data/repositories/history';
 import { listHistoricalWorkouts } from '@/data/repositories/historicalWorkouts';
@@ -20,6 +21,7 @@ import {
   type InstallOutcome,
 } from '@/platform/install';
 import { buildCsvExport, csvExportFileName } from '@/data/repositories/csvExport';
+import { isTty1Unlocked } from '@/stores/skinUnlock';
 import { applyTheme, loadTheme } from '@/stores/theme';
 import type { Theme } from '@/stores/theme';
 import { ListRow, SectionTitle } from '@/ui';
@@ -38,6 +40,9 @@ const THEME_OPTIONS: {
   { value: 'tty1', labelKey: 'settings.themeTty1' },
 ];
 
+/** La phrase sous le sélecteur : ce qui décrit l'option TTY1 tant qu'elle est verrouillée. */
+const TTY1_LOCKED_ID = 'theme-tty1-locked';
+
 /** Every answer the browser can give to "install this", each with its sentence. */
 const INSTALL_MESSAGE = {
   installed: 'settings.installDone',
@@ -49,6 +54,9 @@ const INSTALL_MESSAGE = {
 export function SettingsScreen() {
   const navigate = useAppNavigate();
   const [theme, setTheme] = useState<Theme>(loadTheme);
+  // Lu une fois : TTY1 ne se débloque qu'au démarrage (console rare, ancienneté), jamais pendant
+  // qu'on regarde Réglages.
+  const [tty1Unlocked] = useState(() => isTty1Unlocked(getBootStorage()));
   const [historyShareOutcome, setHistoryShareOutcome] = useState<ShareOutcome | null>(null);
   /** Ce que la sauvegarde CSV a donné, dit une fois sous la liste. */
   const [csvMessage, setCsvMessage] = useState<string>();
@@ -194,28 +202,45 @@ export function SettingsScreen() {
               data-part="segmented"
               className="flex gap-1 rounded-xl bg-[var(--surface-2)] p-1"
             >
-              {THEME_OPTIONS.map(({ value, labelKey }) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={theme === value}
-                  onClick={() => chooseTheme(value)}
-                  className={`min-h-12 flex-1 rounded-lg text-base font-semibold
-                    transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
-                    ${
-                      theme === value
-                        ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
-                        : 'text-[var(--text-2)]'
-                    }`}
-                >
-                  {t(labelKey)}
-                </button>
-              ))}
+              {THEME_OPTIONS.map(({ value, labelKey }) => {
+                const locked = value === 'tty1' && !tty1Unlocked;
+
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={theme === value}
+                    // `aria-disabled` et non `disabled` : le bouton garde le focus, et sa phrase
+                    // (`aria-describedby`) est lue à qui le touche au lieu de se taire.
+                    aria-disabled={locked || undefined}
+                    aria-describedby={locked ? TTY1_LOCKED_ID : undefined}
+                    onClick={() => {
+                      if (!locked) chooseTheme(value);
+                    }}
+                    className={`min-h-12 flex-1 rounded-lg text-base font-semibold
+                      transition-colors duration-[var(--dur-1)] ease-[var(--ease-mech)]
+                      ${
+                        theme === value
+                          ? 'bg-[var(--color-accent)] text-[var(--color-accent-fg)]'
+                          : 'text-[var(--text-2)]'
+                      }
+                      ${locked ? 'flex items-center justify-center gap-1.5 opacity-60' : ''}`}
+                  >
+                    {locked && <LockIcon width={16} height={16} />}
+                    {t(labelKey)}
+                  </button>
+                );
+              })}
             </div>
             <p className="mt-4 text-sm leading-relaxed text-[var(--text-2)]">
               {t(theme === 'tty1' ? 'settings.themeTty1Hint' : 'settings.themeHint')}
             </p>
+            {!tty1Unlocked && (
+              <p id={TTY1_LOCKED_ID} className="mt-2 text-sm leading-relaxed text-[var(--text-2)]">
+                {t('settings.themeTty1Locked')}
+              </p>
+            )}
           </div>
         </section>
 

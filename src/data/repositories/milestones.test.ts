@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '@/data/db';
-import type { Exercise } from '@/data/types';
+import type { Exercise, Milestone } from '@/data/types';
 import {
   FIRST_DOMS_HOURS,
   FIRST_DOMS_MILESTONE_ID,
@@ -14,6 +14,7 @@ import {
   bootMilestones,
   ensureMilestoneProjection,
   getDomsFollowUp,
+  grantSecretMilestone,
   listMilestones,
   listSeenRetrospectives,
   listUnacknowledgedMilestones,
@@ -112,7 +113,11 @@ describe('la projection des paliers', () => {
 
   it('retire un palier dont la séance a été supprimée', async () => {
     const bench = await seedExercise();
-    const workout = await seedWorkout({ performedAt: START, exerciseId: bench.id, sets: [[100, 1]] });
+    const workout = await seedWorkout({
+      performedAt: START,
+      exerciseId: bench.id,
+      sets: [[100, 1]],
+    });
 
     await syncMilestones({ celebrate: true });
     expect((await listMilestones()).map((row) => row.definitionId)).toContain('bench-100');
@@ -125,7 +130,11 @@ describe('la projection des paliers', () => {
 
   it('garde l’acquittement quand une séance corrigée redate un palier', async () => {
     const bench = await seedExercise();
-    const workout = await seedWorkout({ performedAt: START, exerciseId: bench.id, sets: [[100, 1]] });
+    const workout = await seedWorkout({
+      performedAt: START,
+      exerciseId: bench.id,
+      sets: [[100, 1]],
+    });
 
     const [first] = await syncMilestones({ celebrate: true });
     await acknowledgeMilestones([first!.id]);
@@ -282,5 +291,107 @@ describe('le drapeau de suivi des DOMS', () => {
     expect((await listMilestones()).map((row) => row.definitionId)).not.toContain(
       FIRST_SESSION_MILESTONE_ID,
     );
+  });
+});
+
+describe('les secrets', () => {
+  const NOW = day(400);
+
+  it('écrit la ligne une fois, sans séance, à célébrer ou déjà acquittée', async () => {
+    const celebrated = await grantSecretMilestone('noclip', { celebrate: true, now: NOW });
+
+    expect(celebrated).toMatchObject({
+      definitionId: 'noclip',
+      achievedAt: NOW,
+      workoutId: '',
+      value: 1,
+      acknowledgedAt: 0,
+    });
+    expect((await listUnacknowledgedMilestones()).map((row) => row.definitionId)).toEqual([
+      'noclip',
+    ]);
+  });
+
+  it('entre acquitté quand il rattrape : consultable, muet ailleurs', async () => {
+    const created = await grantSecretMilestone('noclip', { celebrate: false, now: NOW });
+
+    // Rien à célébrer, donc rien de rendu — le même contrat que la projection : ce qui revient est
+    // ce qui vient d'être franchi, pour qu'un appelant puisse l'appeler sans savoir s'il a déjà tourné.
+    expect(created).toBeUndefined();
+    const [row] = await listMilestones();
+    expect(row).toMatchObject({ definitionId: 'noclip', acknowledgedAt: NOW });
+    expect(await listUnacknowledgedMilestones()).toEqual([]);
+  });
+
+  it('ne l’écrit qu’une fois, quel que soit le nombre d’appels', async () => {
+    await grantSecretMilestone('noclip', { celebrate: false, now: NOW });
+    const again = await grantSecretMilestone('noclip', { celebrate: true, now: NOW + HOUR });
+
+    expect(again).toBeUndefined();
+    const rows = await listMilestones();
+    expect(rows).toHaveLength(1);
+    // Ni redaté, ni rendu à célébrer : ce qui est acquis le reste tel qu'il est.
+    expect(rows[0]).toMatchObject({ achievedAt: NOW, acknowledgedAt: NOW });
+  });
+
+  it('refuse d’écrire un palier d’entraînement, ou un identifiant inconnu', async () => {
+    // Un palier d'entraînement appartient à la projection : lui en fabriquer un à la main
+    // l'offrirait sans qu'aucune séance l'ait franchi.
+    expect(await grantSecretMilestone('bench-100', { celebrate: true, now: NOW })).toBeUndefined();
+    expect(
+      await grantSecretMilestone('secret-inconnu', { celebrate: true, now: NOW }),
+    ).toBeUndefined();
+
+    expect(await listMilestones()).toEqual([]);
+  });
+
+  it('survit à la projection, avec ou sans historique', async () => {
+    await grantSecretMilestone('noclip', { celebrate: false, now: NOW });
+    const [before] = await listMilestones();
+
+    // Aucune séance ne franchit un secret : pour la projection il est « orphelin », et la
+    // première séance terminée l'aurait effacé si elle ne savait pas le reconnaître.
+    await syncMilestones({ celebrate: true, now: NOW });
+    await syncMilestones({ celebrate: false, now: NOW });
+
+    const bench = await seedExercise();
+    await seedWorkout({ performedAt: START, exerciseId: bench.id, sets: [[100, 1]] });
+    await syncMilestones({ celebrate: true, now: NOW });
+    await ensureMilestoneProjection(NOW);
+    await bootMilestones(NOW);
+
+    const rows = await listMilestones();
+    const after = rows.find((row) => row.definitionId === 'noclip');
+    expect(after).toEqual(before);
+    expect(rows.map((row) => row.definitionId)).toContain('bench-100');
+  });
+
+  it('laisse la projection retirer un vrai orphelin, à côté du secret', async () => {
+    await grantSecretMilestone('noclip', { celebrate: false, now: NOW });
+    await db.milestones.add(
+      newEntity<Milestone>({
+        definitionId: 'bench-100',
+        achievedAt: START,
+        workoutId: 'w-disparue',
+        value: 100,
+        acknowledgedAt: START,
+      }),
+    );
+
+    await syncMilestones({ celebrate: false, now: NOW });
+
+    expect((await listMilestones()).map((row) => row.definitionId)).toEqual(['noclip']);
+  });
+
+  it('se lit dans la liste des paliers parmi les autres, du plus récent au plus ancien', async () => {
+    const bench = await seedExercise();
+    await seedWorkout({ performedAt: START, exerciseId: bench.id, sets: [[100, 1]] });
+    await syncMilestones({ celebrate: false, now: NOW });
+    await grantSecretMilestone('noclip', { celebrate: false, now: NOW });
+
+    const ids = (await listMilestones()).map((row) => row.definitionId);
+
+    expect(ids[0]).toBe('noclip');
+    expect(ids).toContain('bench-100');
   });
 });

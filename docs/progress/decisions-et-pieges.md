@@ -388,10 +388,12 @@ _(Ce que la prochaine session doit savoir pour ne pas perdre du temps.)_
 
 _(Raccourcis pris volontairement, à rembourser plus tard.)_
 
-- **Assumée le 2026-10-03 — `src/styles/tty1.css` dépasse la règle des ~300 lignes (environ 730).**
+- **Assumée le 2026-10-03 — `src/styles/tty1.css` dépasse la règle des ~300 lignes (environ 790).**
   Une feuille de style qui habille un thème est une seule responsabilité, comme `index.css`
   (833 lignes) et `fr.ts` : ses sections suivent l'ordre où le skin se lit (jetons, tailles, formes,
-  commandes, jauges, ouverture) et chacune cite l'écran de la maquette qu'elle reproduit. La couper
+  commandes, jauges, ouverture) et chacune cite l'écran de la maquette qu'elle reproduit. L'ouverture
+  y a grandi de 60 lignes avec le démarrage complet (la fenêtre, la frappe, la porte) sans changer de
+  nature : c'est toujours le même thème, et ses règles ne servent qu'à lui. La couper
   en plusieurs fichiers ferait lire un même thème en cinq endroits et obligerait `tty1.test.ts` et
   `Boot.test.tsx`, qui lisent ce fichier par ancres, à en connaître la carte. **À rouvrir** si un
   second thème de ce genre arrive : c'est alors la structure commune qui se dégagera, pas avant.
