@@ -3,7 +3,40 @@
 > Mis à jour à la fin de chaque session. C'est la mémoire du projet entre les sessions.
 > L'historique détaillé vit dans `docs/progress/` et `docs/journal/`.
 
-**Dernière mise à jour :** 2026-09-29 (**lisibilité du générateur d'historique volumineux**).
+**Dernière mise à jour :** 2026-10-03 (**maquette du skin TTY1**).
+
+## Maquette du skin TTY1 (2026-10-03)
+
+Aucune ligne applicative, aucun schéma, aucune version : une maquette HTML autonome,
+`docs/design/mockups/2026-10-03-skin-tty1.html`, qui s'ouvre telle quelle dans un navigateur.
+`typecheck`, `test:run` et `build` ne voient pas ce fichier et n'ont pas été rejoués.
+
+Le skin habille l'app comme la console virtuelle tty1 : police à chasse fixe, 16 couleurs
+ANSI, angles droits, vidéo inverse pour ce qui est pressé. Mêmes écrans, mêmes gestes, mêmes
+cibles de 48 px.
+
+- **Sept écrans, dessinés d'après le code** : ouverture (la variante console de `Boot`), accueil,
+  séance en direct, historique, volume, réglages (le thème gagne une troisième valeur) et la
+  feuille des plaques. Les champs, les coches, les replis, la jauge d'effort et le repos de la
+  séance répondent au toucher ; la carte du corps est le vrai `muscle-map.svg`.
+- **Les jetons gardent leurs noms** (`--surface-0`, `--text-2`, `--accent-ink`…) : le bloc `:root`
+  de la maquette est le brouillon de `:root[data-theme='tty1']`. Les contrastes sont calculés dans
+  la page. L'accent reste réservé aux actions principales, aux séries validées et aux records,
+  et la carte du corps garde sa rampe de gris.
+- **Police : Terminus 4.49.1** (SIL OFL 1.1, nom réservé), convertie de bitmap en contours aux
+  quatre tailles natives 12, 16, 24 et 32 px. Un pixel de police vaut un pixel CSS, chaque fichier
+  pèse 5 à 8 Ko et la maquette l'embarque en data-URI : elle tient elle-même la règle hors-ligne.
+  La police dérivée s'appelle « TTY1 ». Son sous-ensemble n'a pas U+202F, que les milliers fr-FR
+  emploient : à ajouter avant toute intégration.
+- **Pas tranché** (liste en bas de la maquette) : l'accent (vert ANSI proposé, ambre, ou l'orange
+  actuel), la trame CRT, les icônes redessinées ou des glyphes, le boot en permanence, un réglage
+  séparé ou un troisième thème, le nom.
+- **Pour intégrer** : trois clés de `fr.ts`, le type `Theme`, le script bloquant d'`index.html`,
+  `platform/systemBars.ts`, un `tty1.css` d'environ 250 lignes. Les variables Tailwind
+  `--font-sans`, `--radius-*` et `--text-*` seraient surchargées dans le même bloc de jetons, à
+  confirmer au premier essai.
+- **Checkpoint téléphone** : ouvrir la maquette sur le téléphone et juger la séance en direct à
+  bout de bras. Une police de 16 px en salle est la seule chose qu'un écran d'ordinateur ne dit pas.
 
 ## Lisibilité du générateur d'historique volumineux (2026-09-29)
 
