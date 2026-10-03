@@ -2177,6 +2177,9 @@ const fr = {
     consoleExcuses: '[ FAIL ] excuses.mount: permission denied',
     consolePrompt: 'root@fittrack:~#',
     consoleCommand: 'progressive_overload = true',
+    /** Sous la commande, le jour où la console débloque TTY1 : le résultat, puis où le trouver. */
+    consoleUnlocked: '[ OK ] tty1.skin unlocked',
+    consoleUnlockedHint: '# Réglages > Apparence',
     /** Sous le nom, à l'ouverture TTY1 : le numéro de l'app, puis le thème qui l'habille. */
     versionLine: '{version} · tty1',
   },

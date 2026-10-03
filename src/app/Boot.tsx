@@ -3,22 +3,6 @@ import { t } from '@/i18n/fr';
 import type { BootVariant } from './bootEasterEgg';
 import { APP_VERSION } from './version';
 
-/**
- * Combien de temps le rideau d'ouverture reste en place, en millisecondes.
- *
- * C'est une durée choisie, pas une mesure : la base est prête bien avant sur un
- * démarrage à chaud. Le rideau ne rapporte donc aucune progression — il présente
- * l'app. `main.tsx` fait courir cette attente **en parallèle** de la préparation
- * de la base : une base lente absorbe l'ouverture au lieu de s'y ajouter.
- */
-export const BOOT_HOLD_MS: Record<BootVariant, number> = {
-  normal: 2180,
-  console: 3360,
-  // La même durée que l'ouverture normale : TTY1 est jouée à chaque lancement, et un thème dont
-  // chaque démarrage coûterait trois secondes de plus se quitterait au bout d'une semaine.
-  tty1: 2180,
-};
-
 /** Sa disparition. Doit rester égal à la durée de `boot-curtain` dans index.css. */
 const BOOT_EXIT_MS = 320;
 
@@ -74,7 +58,7 @@ function LoadedBar() {
   );
 }
 
-function BootConsole() {
+function BootConsole({ unlocking }: { unlocking: boolean }) {
   return (
     <div className="boot-console" aria-hidden="true">
       <div className="boot-console-log">
@@ -87,6 +71,15 @@ function BootConsole() {
           <span className="boot-console-command">{t('boot.consoleCommand')}</span>
           <span className="boot-console-cursor">█</span>
         </p>
+        {/* Le résultat de la commande : le jour où elle débloque TTY1, la console le dit. Après
+            l'invite et non avant : les règles `nth-child(1..4)` des quatre premières lignes ne
+            bougent pas. */}
+        {unlocking && (
+          <>
+            <p className="boot-console-line">{t('boot.consoleUnlocked')}</p>
+            <p className="boot-console-line">{t('boot.consoleUnlockedHint')}</p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -151,9 +144,12 @@ function BootTty1() {
 export function BootScreen({
   exiting = false,
   variant = 'normal',
+  unlocking = false,
 }: {
   exiting?: boolean;
   variant?: BootVariant;
+  /** La console rare qui débloque TTY1 : elle seule en tient compte. */
+  unlocking?: boolean;
 }) {
   return (
     // `aria-hidden` seulement en sortie : à ce moment le vrai contenu est monté
@@ -183,7 +179,7 @@ export function BootScreen({
           <p className="boot-tagline">{t('app.tagline')}</p>
         </div>
       ) : variant === 'console' ? (
-        <BootConsole />
+        <BootConsole unlocking={unlocking} />
       ) : (
         <BootTty1 />
       )}
@@ -196,7 +192,13 @@ export function BootScreen({
  * Rendu au-dessus de l'app plutôt qu'à sa place, pour que le premier écran soit
  * déjà peint quand on le découvre.
  */
-export function BootCurtain({ variant = 'normal' }: { variant?: BootVariant }) {
+export function BootCurtain({
+  variant = 'normal',
+  unlocking = false,
+}: {
+  variant?: BootVariant;
+  unlocking?: boolean;
+}) {
   const [lifted, setLifted] = useState(false);
 
   useEffect(() => {
@@ -205,7 +207,7 @@ export function BootCurtain({ variant = 'normal' }: { variant?: BootVariant }) {
   }, []);
 
   if (lifted) return null;
-  return <BootScreen exiting variant={variant} />;
+  return <BootScreen exiting variant={variant} unlocking={unlocking} />;
 }
 
 /**

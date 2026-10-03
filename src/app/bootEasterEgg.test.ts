@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BOOT_EASTER_EGG_KEY,
+  BOOT_HOLD_MS,
+  bootHoldMs,
   getBootStorage,
   holdBootOpening,
   scheduleNextBootEasterEgg,
   selectBootVariant,
+  UNLOCK_REVEAL_EXTRA_MS,
 } from './bootEasterEgg';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -124,5 +127,31 @@ describe('holdBootOpening', () => {
     await opening;
     await vi.runAllTimersAsync();
     expect(onFullOpening).not.toHaveBeenCalled();
+  });
+});
+
+describe('bootHoldMs', () => {
+  it('holds each opening for its own duration', () => {
+    expect(bootHoldMs('normal')).toBe(BOOT_HOLD_MS.normal);
+    expect(bootHoldMs('console')).toBe(BOOT_HOLD_MS.console);
+    expect(bootHoldMs('tty1')).toBe(BOOT_HOLD_MS.tty1);
+  });
+
+  it('gives the console that unlocks TTY1 the time to read its two extra lines', () => {
+    expect(UNLOCK_REVEAL_EXTRA_MS).toBe(1_400);
+    expect(bootHoldMs('console', { unlocking: true })).toBe(
+      BOOT_HOLD_MS.console + UNLOCK_REVEAL_EXTRA_MS,
+    );
+    expect(bootHoldMs('console', { unlocking: false })).toBe(BOOT_HOLD_MS.console);
+  });
+
+  it('extends no other opening, whatever it is told', () => {
+    expect(bootHoldMs('normal', { unlocking: true })).toBe(BOOT_HOLD_MS.normal);
+    expect(bootHoldMs('tty1', { unlocking: true })).toBe(BOOT_HOLD_MS.tty1);
+  });
+
+  it('shows the whole TTY1 console at once in reduced motion, and waits no longer than the normal opening', () => {
+    expect(bootHoldMs('tty1', { reducedMotion: true })).toBe(BOOT_HOLD_MS.normal);
+    expect(bootHoldMs('console', { reducedMotion: true })).toBe(BOOT_HOLD_MS.console);
   });
 });

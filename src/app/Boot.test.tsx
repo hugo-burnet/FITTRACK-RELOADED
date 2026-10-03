@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { t } from '@/i18n/fr';
-import { BOOT_HOLD_MS, BootScreen } from './Boot';
+import { BootScreen } from './Boot';
+import { BOOT_HOLD_MS } from './bootEasterEgg';
 import { APP_VERSION } from './version';
 
 describe('BootScreen', () => {
@@ -31,6 +32,53 @@ describe('BootScreen', () => {
     expect(queryByText(t('app.tagline'))).toBeNull();
     expect(container.querySelectorAll('.boot-console-line')).toHaveLength(4);
     expect(getByText(t('boot.consoleCommand'))).not.toBeNull();
+  });
+
+  it('adds two lines under the typed command when the console unlocks TTY1', () => {
+    const { container, getByText } = render(<BootScreen variant="console" unlocking />);
+    const log = container.querySelector('.boot-console-log');
+
+    expect(container.querySelectorAll('.boot-console-line')).toHaveLength(6);
+    expect([...(log?.children ?? [])].map((child) => child.className)).toEqual([
+      'boot-console-line',
+      'boot-console-line',
+      'boot-console-line',
+      'boot-console-line',
+      'boot-console-prompt',
+      'boot-console-line',
+      'boot-console-line',
+    ]);
+    expect(getByText(t('boot.consoleUnlocked'))).not.toBeNull();
+    expect(getByText(t('boot.consoleUnlockedHint'))).not.toBeNull();
+  });
+
+  it('says nothing of an unlock when there is none to announce', () => {
+    const { container, queryByText } = render(<BootScreen variant="console" />);
+
+    expect(container.querySelectorAll('.boot-console-line')).toHaveLength(4);
+    expect(queryByText(t('boot.consoleUnlocked'))).toBeNull();
+    expect(queryByText(t('boot.consoleUnlockedHint'))).toBeNull();
+  });
+
+  it('keeps the unlock to the rare console: the other openings have no such lines', () => {
+    for (const variant of ['normal', 'tty1'] as const) {
+      const { queryByText, unmount } = render(<BootScreen variant={variant} unlocking />);
+
+      expect(queryByText(t('boot.consoleUnlocked'))).toBeNull();
+      unmount();
+    }
+  });
+
+  it('sets the two unlock lines after the typed command, 100 ms and 260 ms past its end', () => {
+    const stylesheet = readFileSync('src/index.css', 'utf8');
+    const bootStyles = stylesheet.slice(stylesheet.indexOf(" * L'ouverture de l'app."));
+
+    expect(bootStyles).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-console-line:nth-child\(6\)\s*{[^}]*animation-delay: 3280ms;/s,
+    );
+    expect(bootStyles).toMatch(
+      /\.boot\[data-phase='in'\] \.boot-console-line:nth-child\(7\)\s*{[^}]*animation-delay: 3440ms;/s,
+    );
   });
 
   it('pops the two normal lines 180 ms apart', () => {
@@ -121,7 +169,9 @@ describe('BootScreen', () => {
     const { container } = render(<BootScreen variant="tty1" />);
 
     expect(
-      [...container.querySelectorAll('.boot-tty1-tag')].map((tag) => tag.getAttribute('data-level')),
+      [...container.querySelectorAll('.boot-tty1-tag')].map((tag) =>
+        tag.getAttribute('data-level'),
+      ),
     ).toEqual(['ok', 'ok', 'warn', 'fail']);
   });
 

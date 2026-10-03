@@ -62,6 +62,29 @@ export function unlockTty1IfSeasoned(
 }
 
 /**
+ * L'ancienneté, lue dans la base : `readFirstUseAt` est `getFirstUseAt` en production, donné de
+ * l'extérieur pour que ce module reste sans Dexie.
+ *
+ * Rien n'est lu une fois TTY1 débloqué — la question ne se pose qu'une fois, pas à chaque
+ * démarrage — et une base illisible ne bloque jamais le démarrage : l'option se débloquera au
+ * lancement suivant, ou par la console rare.
+ */
+export async function unlockTty1WhenSeasoned(
+  storage: UnlockStorage,
+  readFirstUseAt: () => Promise<number | undefined>,
+  now = Date.now(),
+): Promise<void> {
+  if (isTty1Unlocked(storage)) return;
+
+  try {
+    const firstUseAt = await readFirstUseAt();
+    if (firstUseAt !== undefined) unlockTty1IfSeasoned(storage, firstUseAt, now);
+  } catch {
+    // Voir plus haut : le démarrage n'attend pas un déblocage.
+  }
+}
+
+/**
  * Le thème mémorisé prouve que l'option était accessible : la v2.8.0 a livré TTY1 ouvert, et le
  * retirer à qui le porte serait une régression. Sans ce passage, quitter le thème une fois
  * l'enfermerait dehors — le drapeau n'existait pas encore.

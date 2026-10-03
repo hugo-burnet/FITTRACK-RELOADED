@@ -7,6 +7,7 @@ import {
   unlockTty1,
   unlockTty1IfInUse,
   unlockTty1IfSeasoned,
+  unlockTty1WhenSeasoned,
 } from './skinUnlock';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -126,5 +127,50 @@ describe('unlocking by use', () => {
 
     expect(isTty1Unlocked(state.storage)).toBe(false);
     expect(state.storage.setItem).not.toHaveBeenCalled();
+  });
+});
+
+describe('unlocking by seniority, from the database', () => {
+  it('reads the first use and unlocks an old enough install', async () => {
+    const state = memoryStorage();
+    const readFirstUseAt = vi.fn(() => Promise.resolve(NOW - 90 * DAY_MS));
+
+    await unlockTty1WhenSeasoned(state.storage, readFirstUseAt, NOW);
+
+    expect(isTty1Unlocked(state.storage)).toBe(true);
+  });
+
+  it('leaves a young install locked', async () => {
+    const state = memoryStorage();
+
+    await unlockTty1WhenSeasoned(state.storage, () => Promise.resolve(NOW - 3 * DAY_MS), NOW);
+
+    expect(isTty1Unlocked(state.storage)).toBe(false);
+  });
+
+  it('does not touch the database once TTY1 is unlocked', async () => {
+    const state = memoryStorage('1');
+    const readFirstUseAt = vi.fn(() => Promise.resolve(0));
+
+    await unlockTty1WhenSeasoned(state.storage, readFirstUseAt, NOW);
+
+    expect(readFirstUseAt).not.toHaveBeenCalled();
+  });
+
+  it('does nothing when the catalogue has not been seeded yet', async () => {
+    const state = memoryStorage();
+
+    await unlockTty1WhenSeasoned(state.storage, () => Promise.resolve(undefined), NOW);
+
+    expect(isTty1Unlocked(state.storage)).toBe(false);
+  });
+
+  it('never makes the app fail to start when the database cannot be read', async () => {
+    const state = memoryStorage();
+
+    await expect(
+      unlockTty1WhenSeasoned(state.storage, () => Promise.reject(new Error('closed')), NOW),
+    ).resolves.toBeUndefined();
+    expect(isTty1Unlocked(state.storage)).toBe(false);
   });
 });
