@@ -9,7 +9,7 @@ import {
   DEFAULT_WARMUP_INCREMENT_KG,
   DEFAULT_WARMUP_STEPS,
 } from '@/lib/warmup';
-import type { BootFacts, BootProbe } from './bootTty1Script';
+import { buildBootScript, type BootFacts, type BootProbe, type BootScript } from './bootTty1Script';
 import { APP_VERSION } from './version';
 
 /**
@@ -135,4 +135,22 @@ export function runBootProbes(sources: readonly BootProbeSource[] = BOOT_PROBES)
       return [];
     }
   });
+}
+
+/**
+ * Le script de l'ouverture TTY1, tiré avec les vrais faits — ou `undefined` si quoi que ce soit
+ * a levé. L'ouverture est un agrément : un démarrage qui lève laisserait un écran blanc là où
+ * l'app devrait être, et `main.tsx` retombe alors sur l'ouverture normale.
+ */
+export function drawBootScript(
+  random: () => number,
+  now: number,
+  environment?: BootEnvironment,
+): BootScript | undefined {
+  try {
+    return buildBootScript(random, readBootFacts(now, environment));
+  } catch (error) {
+    console.error('L’ouverture TTY1 n’a pas pu être tirée', error);
+    return undefined;
+  }
 }

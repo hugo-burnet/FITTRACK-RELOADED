@@ -7,7 +7,7 @@ import { t, tAll, type PoolKey } from '@/i18n/fr';
  * varie lui est donné (`random`, `facts`), ce qui le rend rejouable à l'identique en test.
  *
  * Il rend une liste de lignes datées (`at`, en millisecondes depuis le montage de l'écran) que
- * `Boot.tsx` pose au fil d'une horloge. Une console défile : les anciennes lignes sortent par le
+ * `BootTty1Console.tsx` pose au fil d'une horloge. Une console défile : les anciennes lignes sortent par le
  * haut, et c'est ce que des délais CSS sur des lignes déjà présentes ne savent pas faire.
  */
 
@@ -122,7 +122,9 @@ function pickMany<T>(random: Random, list: readonly T[], count: number): T[] {
   const picked: T[] = [];
 
   while (picked.length < count && pool.length > 0) {
-    const [item] = pool.splice(Math.floor(random() * pool.length), 1);
+    // `min` : un tirage qui rendrait 1 — il ne le doit pas, mais une doublure de test le fait — ne
+    // doit pas viser une case qui n'existe pas et boucler pour toujours.
+    const [item] = pool.splice(Math.min(pool.length - 1, Math.floor(random() * pool.length)), 1);
     if (item !== undefined) picked.push(item);
   }
 

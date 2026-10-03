@@ -83,6 +83,11 @@ describe('seededRandom', () => {
 });
 
 describe('buildBootScript', () => {
+  it('does not hang on a random source that answers 1, which it never should', () => {
+    expect(() => buildBootScript(() => 1, FACTS)).not.toThrow();
+    expect(() => buildBootScript(() => 0, FACTS)).not.toThrow();
+  });
+
   it('draws the same boot from the same seed', () => {
     expect(build(7)).toEqual(build(7));
   });

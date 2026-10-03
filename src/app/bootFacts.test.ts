@@ -6,7 +6,13 @@ import * as plates from '@/lib/plates';
 import * as records from '@/lib/records';
 import * as rest from '@/lib/rest';
 import * as warmup from '@/lib/warmup';
-import { BOOT_PROBES, readBootEnvironment, readBootFacts, runBootProbes } from './bootFacts';
+import {
+  BOOT_PROBES,
+  drawBootScript,
+  readBootEnvironment,
+  readBootFacts,
+  runBootProbes,
+} from './bootFacts';
 import { buildBootScript, seededRandom } from './bootTty1Script';
 import { APP_VERSION } from './version';
 
@@ -174,5 +180,29 @@ describe('the real facts, in the script', () => {
     }
 
     expect(called.size).toBe(BOOT_PROBES.length);
+  });
+});
+
+describe('drawBootScript', () => {
+  it('draws a script from the real facts', () => {
+    const script = drawBootScript(seededRandom(5), NOW, { onLine: true });
+
+    expect(script?.lines.length).toBeGreaterThan(20);
+    expect(script?.lines.some((line) => line.kind === 'gate')).toBe(true);
+  });
+
+  it('gives back nothing, not an exception, when the facts cannot be read', () => {
+    // The opening is a nicety: a boot that throws would leave the lifter with a blank screen where
+    // the app should be. The caller falls back to the normal opening.
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const hostile = {
+      get hardwareConcurrency(): number {
+        throw new Error('no device');
+      },
+    };
+
+    expect(drawBootScript(seededRandom(5), NOW, hostile)).toBeUndefined();
+    expect(error).toHaveBeenCalled();
+    error.mockRestore();
   });
 });

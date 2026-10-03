@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { t } from '@/i18n/fr';
-import type { BootVariant } from './bootEasterEgg';
+import { BootTty1Console } from './BootTty1Console';
+import type { BootScript } from './bootTty1Script';
 import { APP_VERSION } from './version';
 
 /** Sa disparition. Doit rester égal à la durée de `boot-curtain` dans index.css. */
@@ -85,52 +86,18 @@ function BootConsole({ unlocking }: { unlocking: boolean }) {
   );
 }
 
-/** `[ OK ]`, `[ WARN ]`, `[ FAIL ]` : le niveau d'une ligne d'état, au début de son texte. */
-const LEVEL = /^\[ (OK|WARN|FAIL) \]/;
-
 /**
- * Une ligne d'état de la console TTY1. Les crochets restent gris et seul le mot prend sa couleur,
- * comme sur une console Linux : `[` OK `]`. Le texte reste celui de `fr.ts`, découpé ici plutôt
- * que réécrit, pour que la console de l'ouverture normale et celle-ci disent la même chose.
+ * Ce que l'écran d'ouverture sait de lui-même. La variante TTY1 **exige** son script : il est tiré
+ * une fois par `main.tsx`, parce que `BootScreen` est démonté puis remonté en `BootCurtain` quand le
+ * routeur arrive — un tirage dans le composant donnerait deux démarrages différents l'un après
+ * l'autre. Le type refuse donc un `tty1` sans script plutôt que d'en inventer un au rendu.
  */
-function BootTty1Line({ text }: { text: string }) {
-  const match = LEVEL.exec(text);
-  if (match === null) return <p className="boot-tty1-line">{text}</p>;
-
-  const level = match[1] ?? '';
-  return (
-    <p className="boot-tty1-line">
-      <span className="boot-tty1-bracket">[</span>{' '}
-      <span className="boot-tty1-tag" data-level={level.toLowerCase()}>
-        {level}
-      </span>{' '}
-      <span className="boot-tty1-bracket">]</span>
-      {text.slice(match[0].length)}
-    </p>
-  );
-}
-
-/** La console complète de l'ouverture TTY1 : les quatre lignes, l'invite, la commande, la devise. */
-function BootTty1() {
-  return (
-    <div className="boot-tty1" aria-hidden="true">
-      <BootTty1Line text={t('boot.consoleQuadriceps')} />
-      <BootTty1Line text={t('boot.consoleCore')} />
-      <BootTty1Line text={t('boot.consoleEgo')} />
-      <BootTty1Line text={t('boot.consoleExcuses')} />
-      <p className="boot-tty1-prompt">
-        <span>{t('boot.consolePrompt')}&nbsp;</span>
-        {/* La commande et son curseur voyagent ensemble : sur un téléphone trop étroit, c'est la
-            commande entière qui passe à la ligne suivante, jamais son curseur seul. */}
-        <span className="boot-tty1-input">
-          <span className="boot-tty1-command">{t('boot.consoleCommand')}</span>
-          <span className="boot-tty1-cursor">█</span>
-        </span>
-      </p>
-      <p className="boot-tty1-comment">{`# ${t('app.tagline')}`}</p>
-    </div>
-  );
-}
+export type BootProps = {
+  /** La console rare qui débloque TTY1 : elle seule en tient compte. */
+  unlocking?: boolean;
+} & (
+  { variant?: 'normal' | 'console'; script?: undefined } | { variant: 'tty1'; script: BootScript }
+);
 
 /**
  * L'ouverture charge la barre, puis fait apparaître les deux phrases. La rare
@@ -141,16 +108,13 @@ function BootTty1() {
  * `main.tsx` monte le routeur, ce composant est démonté puis remonté, et sans ce
  * drapeau la séquence entière repartirait de zéro pendant qu'elle s'efface.
  */
-export function BootScreen({
-  exiting = false,
-  variant = 'normal',
-  unlocking = false,
-}: {
-  exiting?: boolean;
-  variant?: BootVariant;
-  /** La console rare qui débloque TTY1 : elle seule en tient compte. */
-  unlocking?: boolean;
-}) {
+export function BootScreen(props: BootProps & { exiting?: boolean }) {
+  const { exiting = false, unlocking = false } = props;
+  const variant = props.variant ?? 'normal';
+  // Lu ici, là où le type est resserré : `variant === 'tty1'` garantit le script, et personne
+  // n'a à l'affirmer d'un `!`.
+  const script = props.variant === 'tty1' ? props.script : undefined;
+
   return (
     // `aria-hidden` seulement en sortie : à ce moment le vrai contenu est monté
     // dessous, et un lecteur d'écran n'a pas à relire un rideau qui s'efface. À
@@ -173,15 +137,19 @@ export function BootScreen({
         )}
       </div>
 
-      {variant === 'normal' ? (
+      {script !== undefined ? (
+        <>
+          <BootTty1Console script={script} exiting={exiting} />
+          {/* Pendant le jeu seulement : le rideau qui s'efface n'a rien à proposer. */}
+          {!exiting && <p className="boot-tty1-skip">{t('boot.tty1.skipHint')}</p>}
+        </>
+      ) : variant === 'console' ? (
+        <BootConsole unlocking={unlocking} />
+      ) : (
         <div className="mt-8 flex flex-col items-center gap-3 px-6 text-center">
           <p className="boot-principle">{t('app.principle')}</p>
           <p className="boot-tagline">{t('app.tagline')}</p>
         </div>
-      ) : variant === 'console' ? (
-        <BootConsole unlocking={unlocking} />
-      ) : (
-        <BootTty1 />
       )}
     </div>
   );
@@ -192,13 +160,7 @@ export function BootScreen({
  * Rendu au-dessus de l'app plutôt qu'à sa place, pour que le premier écran soit
  * déjà peint quand on le découvre.
  */
-export function BootCurtain({
-  variant = 'normal',
-  unlocking = false,
-}: {
-  variant?: BootVariant;
-  unlocking?: boolean;
-}) {
+export function BootCurtain(boot: BootProps) {
   const [lifted, setLifted] = useState(false);
 
   useEffect(() => {
@@ -207,7 +169,7 @@ export function BootCurtain({
   }, []);
 
   if (lifted) return null;
-  return <BootScreen exiting variant={variant} unlocking={unlocking} />;
+  return <BootScreen exiting {...boot} />;
 }
 
 /**

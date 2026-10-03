@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { BootCurtain, BootScreen, SeedErrorBanner } from './app/Boot';
+import { BootCurtain, BootScreen, SeedErrorBanner, type BootProps } from './app/Boot';
 import {
   bootHoldMs,
   getBootStorage,
@@ -9,6 +9,8 @@ import {
   scheduleNextBootEasterEgg,
   selectBootVariant,
 } from './app/bootEasterEgg';
+import { drawBootScript } from './app/bootFacts';
+import { seededRandom } from './app/bootTty1Script';
 import { ErrorBoundary } from './app/ErrorBoundary';
 import { UpdateBanner } from './app/UpdateBanner';
 import { initializePersistentData } from './data/initialize';
@@ -17,6 +19,7 @@ import { getActiveWorkout } from './data/repositories/workouts';
 import { isWorkoutStale } from './app/staleWorkout';
 import { watchAppUpdate } from './platform/appUpdate';
 import { watchInstall } from './platform/install';
+import { prefersReducedMotion } from './platform/reducedMotion';
 import { watchNavDirection } from './app/navigation';
 import { router } from './router';
 import {
@@ -47,12 +50,31 @@ const bootStorage = getBootStorage();
 // accessible, et la lui retirer serait une régression. Avant le choix de l'ouverture, qui le lit.
 unlockTty1IfInUse(bootStorage, theme);
 
-const requestedBoot = new URLSearchParams(window.location.search).get('boot');
-const bootVariant =
+const params = new URLSearchParams(window.location.search);
+const requestedBoot = params.get('boot');
+const chosenVariant =
   import.meta.env.DEV &&
   (requestedBoot === 'console' || requestedBoot === 'normal' || requestedBoot === 'tty1')
     ? requestedBoot
     : selectBootVariant(bootStorage, Date.now(), Math.random(), theme);
+
+/**
+ * L'ouverture TTY1 est tirée **ici**, une fois, et passée à l'écran puis au rideau : `BootScreen`
+ * est démonté puis remonté en `BootCurtain`, et un tirage dans le composant donnerait deux
+ * démarrages différents l'un après l'autre. En développement, `?bootSeed=7` rejoue le même.
+ *
+ * Un tirage qui échoue ne laisse pas un écran blanc : l'ouverture retombe sur la normale.
+ */
+const requestedSeed =
+  import.meta.env.DEV && params.has('bootSeed') ? Number(params.get('bootSeed')) : Number.NaN;
+const tty1Script =
+  chosenVariant === 'tty1'
+    ? drawBootScript(
+        Number.isInteger(requestedSeed) ? seededRandom(requestedSeed) : Math.random,
+        Date.now(),
+      )
+    : undefined;
+const bootVariant = chosenVariant === 'tty1' && tty1Script === undefined ? 'normal' : chosenVariant;
 
 /**
  * La console rare qui débloque TTY1 le dit, et seulement ce jour-là.
@@ -63,6 +85,11 @@ const bootVariant =
  */
 const unlocking = bootVariant === 'console' && !isTty1Unlocked(bootStorage);
 
+const boot: BootProps =
+  bootVariant === 'tty1' && tty1Script !== undefined
+    ? { variant: 'tty1', script: tty1Script }
+    : { variant: bootVariant === 'tty1' ? 'normal' : bootVariant, unlocking };
+
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Élément racine #root introuvable');
 
@@ -72,7 +99,7 @@ function mount(seedFailed: boolean) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
-        <BootCurtain variant={bootVariant} unlocking={unlocking} />
+        <BootCurtain {...boot} />
         {seedFailed && <SeedErrorBanner />}
         <UpdateBanner />
         <RouterProvider router={router} />
@@ -83,7 +110,7 @@ function mount(seedFailed: boolean) {
 
 // Persistent projections have to be ready before the first screen queries
 // them, so the opening screen holds until initialization resolves.
-root.render(<BootScreen variant={bootVariant} unlocking={unlocking} />);
+root.render(<BootScreen {...boot} />);
 
 /**
  * Le rideau ne s'attarde pas quand une séance est en cours.
@@ -103,8 +130,21 @@ root.render(<BootScreen variant={bootVariant} unlocking={unlocking} />);
  * compris ceux qui gardent le rideau. Une base illisible ne saute rien — on
  * laisse alors le minuteur faire son travail.
  */
+/**
+ * Toucher l'écran saute l'ouverture TTY1 — elle seule : la surprise est rare et l'ouverture normale
+ * est courte, alors que cinq secondes à chaque lancement sont ce que la règle n° 5 (une main, en
+ * sueur, entre deux séries) interdit à qui ne veut pas les regarder.
+ *
+ * `click` et non `pointerdown`, et ce n'est pas un détail : le geste doit finir sur l'écran
+ * d'ouverture, qui est encore là jusqu'à sa fin. Avec `pointerdown`, l'app se montait sous un doigt
+ * encore posé, et son relâchement pouvait tomber sur le premier bouton de l'accueil.
+ */
+const skipOpening = new AbortController();
+const skipOnTouch = () => skipOpening.abort();
+if (bootVariant === 'tty1') document.addEventListener('click', skipOnTouch, { once: true });
+
 const openingHeld = holdBootOpening(
-  bootHoldMs(bootVariant, { unlocking }),
+  bootHoldMs(bootVariant, { unlocking, reducedMotion: prefersReducedMotion() }),
   () =>
     getActiveWorkout().then(
       (active) => active !== undefined && !isWorkoutStale(active.startedAt),
@@ -117,7 +157,9 @@ const openingHeld = holdBootOpening(
     scheduleNextBootEasterEgg(bootStorage);
     unlockTty1(bootStorage);
   },
+  skipOpening.signal,
 );
+void openingHeld.then(() => document.removeEventListener('click', skipOnTouch));
 
 /**
  * Les deux attentes courent ensemble, jamais l'une après l'autre : le rideau

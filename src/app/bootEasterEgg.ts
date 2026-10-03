@@ -1,4 +1,5 @@
 import type { Theme } from '@/stores/theme';
+import { TTY1_BOOT_MS } from './bootTty1Script';
 
 export type BootVariant = 'normal' | 'console' | 'tty1';
 
@@ -31,9 +32,10 @@ type BootStorage = Pick<Storage, 'getItem' | 'setItem'>;
 export const BOOT_HOLD_MS: Record<BootVariant, number> = {
   normal: 2180,
   console: 3360,
-  // La même durée que l'ouverture normale : TTY1 est jouée à chaque lancement, et un thème dont
-  // chaque démarrage coûterait trois secondes de plus se quitterait au bout d'une semaine.
-  tty1: 2180,
+  // Celle du script : il se répartit sur ce temps, quel que soit le tirage. Une ouverture de près de
+  // cinq secondes à chaque lancement est ce qu'on a demandé — et la raison pour laquelle toucher
+  // l'écran la saute (`holdBootOpening`, son signal d'abandon).
+  tty1: TTY1_BOOT_MS,
 };
 
 /**
@@ -115,22 +117,40 @@ export function selectBootVariant(
   }
 }
 
+/**
+ * Attend l'ouverture, ou la laisse partir : une séance en cours la saute (`shouldSkip`), et
+ * `abort` est le toucher de l'utilisateur sur l'écran. Dans les deux cas elle se résout aussitôt
+ * **sans** appeler `onFullOpening` — une ouverture qu'on n'a pas vue jusqu'au bout ne consomme rien.
+ */
 export function holdBootOpening(
   durationMs: number,
   shouldSkip: () => Promise<boolean>,
   onFullOpening: () => void,
+  abort?: AbortSignal,
 ): Promise<void> {
   return new Promise((resolve) => {
+    if (abort?.aborted) {
+      resolve();
+      return;
+    }
+
+    const skip = () => {
+      clearTimeout(timer);
+      abort?.removeEventListener('abort', skip);
+      resolve();
+    };
+
     const timer = setTimeout(() => {
+      abort?.removeEventListener('abort', skip);
       onFullOpening();
       resolve();
     }, durationMs);
 
+    abort?.addEventListener('abort', skip, { once: true });
+
     void shouldSkip().then(
-      (skip) => {
-        if (!skip) return;
-        clearTimeout(timer);
-        resolve();
+      (skipped) => {
+        if (skipped) skip();
       },
       () => {},
     );

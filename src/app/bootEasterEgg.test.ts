@@ -130,6 +130,72 @@ describe('holdBootOpening', () => {
   });
 });
 
+describe('holdBootOpening — the lifter cutting it short', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('stops waiting the moment the signal fires, and consumes nothing', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    const opening = holdBootOpening(
+      4_650,
+      () => Promise.resolve(false),
+      onFullOpening,
+      skip.signal,
+    );
+
+    await vi.advanceTimersByTimeAsync(1_000);
+    skip.abort();
+    await opening;
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).not.toHaveBeenCalled();
+  });
+
+  it('does not wait at all for a signal that has already fired', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    skip.abort();
+
+    await holdBootOpening(4_650, () => Promise.resolve(false), onFullOpening, skip.signal);
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).not.toHaveBeenCalled();
+  });
+
+  it('is deaf to a tap that comes once the opening is over', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    const opening = holdBootOpening(
+      4_650,
+      () => Promise.resolve(false),
+      onFullOpening,
+      skip.signal,
+    );
+
+    await vi.advanceTimersByTimeAsync(4_650);
+    await opening;
+    skip.abort();
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).toHaveBeenCalledOnce();
+  });
+
+  it('still lets a workout in progress skip it, signal or not', async () => {
+    vi.useFakeTimers();
+    const onFullOpening = vi.fn();
+    const skip = new AbortController();
+    const opening = holdBootOpening(4_650, () => Promise.resolve(true), onFullOpening, skip.signal);
+
+    await opening;
+    await vi.runAllTimersAsync();
+
+    expect(onFullOpening).not.toHaveBeenCalled();
+  });
+});
+
 describe('bootHoldMs', () => {
   it('holds each opening for its own duration', () => {
     expect(bootHoldMs('normal')).toBe(BOOT_HOLD_MS.normal);
