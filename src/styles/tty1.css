@@ -1,0 +1,38 @@
+/*
+ * Le thème TTY1 : la première console virtuelle d'un Linux.
+ *
+ * Importé par `index.css`, qui n'en sait rien d'autre : `Boot.test.tsx` y lit des
+ * blocs par ancres, et un skin n'a pas à les déplacer.
+ *
+ * Ce fichier n'est dans aucune couche. Une règle sans couche l'emporte sur celles
+ * des couches de Tailwind, quelle que soit sa spécificité : c'est ce qui permet de
+ * surcharger ses utilitaires sans `!important`.
+ */
+
+:root[data-theme='tty1'] {
+  color-scheme: dark;
+
+  /* Les noms sont ceux de index.css. Un jeton oublié ici retomberait sur le thème
+     sombre ; `tty1.test.ts` compare ce bloc à celui du thème clair. */
+  --surface-0: #000000; /* le noir de la console */
+  --surface-1: #000000; /* une fenêtre : le même noir, cernée d'un filet */
+  --surface-2: #1c1c1c; /* champs et séries validées (gris xterm-256 n° 234) */
+  --border: #555555;
+  --text-1: #ffffff;
+  --text-2: #aaaaaa; /* le gris par défaut de tty1 */
+  --text-3: #555555; /* réservé : jamais pour une valeur qu'on lit */
+
+  --accent-fill: #55ff55; /* ANSI 10 */
+  --accent-fill-pressed: #aaffaa;
+  --accent-on-fill: #000000;
+  --accent-ink: #55ff55;
+  --accent-soft: #00260b;
+  --accent-data: #00aa00; /* ANSI 2 : barres de graphique ordinaires */
+  --axis: #878787;
+  --danger-ink: #ff5555; /* ANSI 9 */
+
+  --scrim: rgb(0 0 0 / 0.72);
+
+  /* Les gestes gardent leurs durées et avancent par paliers. */
+  --ease-mech: steps(3, end);
+}
