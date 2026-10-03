@@ -13,6 +13,13 @@ au schéma. Fusionné dans `master` et publié sur demande explicite de l'utilis
 terminée : l'accord donné pour la v2.8.0 ne valait que pour elle. Le numéro est celui de `package.json`, que
 l'APK lit aussi pour son `versionName`.
 
+La voie est celle de la v2.8.0 : fusion `--no-ff` (`1ef1215`), `chore: prepare release v2.9.0` (`674dde2`,
+`package.json`, le lock et ce fichier), `master` poussé sans force, le déploiement et le build Android du
+commit verts du premier coup (runs 178 et 164), puis la release par le `workflow_dispatch` d'`android.yml`
+avec `release_tag` (run 165) — le push d'un tag est refusé à une session d'agent, et le tag désigne ainsi le
+commit construit. La page : `releases/tag/v2.9.0`, l'asset `FitTrack-v2.9.0.apk` (11 076 524 octets, SHA-256
+`8b8b5298…cc4`).
+
 Deux demandes, une session : « ce skin se débloque lors de la première fois où l'on voit l'easter egg de
 l'écran de chargement » (et, après plus d'un mois d'usage, on l'a forcément vu), et « une fois ce skin
 activé, le grub se lance à chaque fois, plus complet, plus long, avec des infos au hasard sur l'app : une
@@ -98,6 +105,9 @@ noclip, avec un logo Matrix ; moi je l'aurai déjà, donc ça se met dans mon hi
   antidatés) écrit le drapeau au démarrage suivant et Réglages montre TTY1 ouvert ; un doigt posé 500 ms
   n'arrête rien, son relâchement saute l'ouverture sans atteindre le bouton dessous. `?bootSeed=` n'est
   plus dans le paquet.
+- **L'APK de la v2.9.0, ouvert et lu** : le jeton `noclip.jpg` y est, octet pour octet celui du dépôt ; les
+  huit `woff2` ; `2.9.0` dans le chunk de `Screen` et `versionName` du manifeste ; et il est signé par le
+  **même certificat** que celui de la v2.8.0 (SHA-256 `1bc42667…b931`, schéma v2) : il s'installe par-dessus.
 - **noclip, dans Chromium** : TTY1 déjà débloqué → la ligne est écrite au démarrage, acquittée, sans
   carte sur l'accueil, et l'écran des paliers la montre sous « Secrets » (liste, puis jeton en grand avec sa
   légende) ; le thème TTY1 sans drapeau (la v2.8.0 telle qu'elle est) l'écrit aussi et lève le drapeau ;
@@ -134,8 +144,8 @@ noclip, avec un logo Matrix ; moi je l'aurai déjà, donc ça se met dans mon hi
 - `pkill -f <motif>` a tué le shell de la session : le motif figurait dans sa propre ligne de commande.
   Tuer par PID.
 
-**Non vérifié** : le rendu sur un téléphone (police de 16 px à bout de bras, et la cadence de l'œil), l'APK,
-et le comportement de `round()` sur une vieille WebView Android (il retombe sur une ligne coupée, laide et
+**Non vérifié** : le rendu sur un téléphone (police de 16 px à bout de bras, et la cadence de l'œil), l'APK
+installé et lancé (il a été ouvert et lu, pas exécuté), et le comportement de `round()` sur une vieille WebView Android (il retombe sur une ligne coupée, laide et
 sans conséquence).
 
 **Checkpoint téléphone**, en salle ou à défaut à bout de bras :
