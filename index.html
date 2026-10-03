@@ -58,14 +58,20 @@
       Le module principal est différé : sans ce script bloquant, un utilisateur en
       thème clair voit un flash noir à chaque démarrage. Doit rester synchrone et
       utiliser la même clé que src/stores/theme.ts.
+
+      La table des couleurs est celle de `SYSTEM_BAR_COLOR` dans ce même fichier, et
+      une valeur mémorisée hors de la table retombe sur le thème sombre, comme
+      `loadTheme`. Deux copies d'une table finissent par dériver : le test
+      src/stores/themeBootScript.test.ts exécute ce script tel quel et le compare à
+      `applyTheme`, pour chaque thème.
     -->
     <script>
       (function () {
-        var theme = localStorage.getItem('fittrack:theme') === 'light' ? 'light' : 'dark';
+        var colors = { dark: '#12110f', light: '#f7f8f6', tty1: '#000000' };
+        var stored = localStorage.getItem('fittrack:theme');
+        var theme = Object.prototype.hasOwnProperty.call(colors, stored) ? stored : 'dark';
         document.documentElement.setAttribute('data-theme', theme);
-        document
-          .querySelector('meta[name="theme-color"]')
-          .setAttribute('content', theme === 'light' ? '#f7f8f6' : '#12110f');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', colors[theme]);
       })();
     </script>
   </head>
