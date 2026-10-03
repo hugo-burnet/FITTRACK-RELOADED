@@ -7,9 +7,11 @@
 
 ## TTY1 à débloquer, ouverture complète (2026-10-03)
 
-**Branche de session `ccr-19a013d9-m9sh2y`, pas fusionnée dans `master`, pas versionnée** : l'accord de
-fusionner et de publier donné pour la v2.8.0 ne valait que pour elle. Un déblocage et une ouverture de plus
-sont une version **mineure** (2.9.0) : à demander.
+Publication : un tag, **v2.9.0** — mineur et non correctif : TTY1 se gagne au lieu d'être offert, son
+ouverture devient un démarrage complet et un palier secret s'ajoute, sans rien changer à ce qui existait ni
+au schéma. Fusionné dans `master` et publié sur demande explicite de l'utilisateur, une fois la branche
+terminée : l'accord donné pour la v2.8.0 ne valait que pour elle. Le numéro est celui de `package.json`, que
+l'APK lit aussi pour son `versionName`.
 
 Deux demandes, une session : « ce skin se débloque lors de la première fois où l'on voit l'easter egg de
 l'écran de chargement » (et, après plus d'un mois d'usage, on l'a forcément vu), et « une fois ce skin
